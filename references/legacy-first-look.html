@@ -1,0 +1,178 @@
+<div id="dabin-board-demo" aria-label="DaBin daily board mockup">
+  <style>
+    #dabin-board-demo { color-scheme: light dark; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: light-dark(#292432,#eeeaf2); }
+    #dabin-board-demo * { box-sizing: border-box; }
+    #dabin-board-demo .db-stage { display: grid; grid-template-columns: minmax(0,1fr) 210px; gap: 16px; align-items: start; position: relative; }
+    #dabin-board-demo .db-app { overflow: hidden; min-width: 0; border: 1px solid light-dark(#dad5df,#514b58); border-radius: 15px; background: light-dark(#faf9fb,#292630); box-shadow: 0 14px 35px light-dark(#321d4c26,#00000066); }
+    #dabin-board-demo .db-titlebar { display: flex; align-items: center; padding: 10px 14px; border-bottom: 1px solid light-dark(#e6e1e9,#403b46); background: light-dark(#f4f1f6,#302c36); }
+    #dabin-board-demo .db-lights { display: flex; gap: 6px; }
+    #dabin-board-demo .db-lights span { display: block; width: 10px; height: 10px; border-radius: 50%; }
+    #dabin-board-demo .db-lights span:nth-child(1) { background: #ec6961; }
+    #dabin-board-demo .db-lights span:nth-child(2) { background: #edbd54; }
+    #dabin-board-demo .db-lights span:nth-child(3) { background: #61bd6a; }
+    #dabin-board-demo .db-titlebar strong { flex: 1; text-align: center; font-weight: 500; }
+    #dabin-board-demo .db-layout { display: grid; grid-template-columns: 132px minmax(0,1fr); min-height: 660px; }
+    #dabin-board-demo .db-sidebar { padding: 20px 9px; border-right: 1px solid light-dark(#e8e4eb,#403b46); background: light-dark(#f3f0f5,#302c36); }
+    #dabin-board-demo .db-brand { padding: 2px 8px 24px; font-weight: 500; }
+    #dabin-board-demo .db-mark { display: inline-grid; place-items: center; width: 26px; height: 26px; margin-right: 5px; border-radius: 8px; background: light-dark(#7755a6,#a587d1); color: #fff; }
+    #dabin-board-demo .db-nav { display: block; width: 100%; margin-bottom: 4px; padding: 9px; border: 0; border-radius: 8px; background: transparent; color: inherit; font: inherit; text-align: left; cursor: pointer; }
+    #dabin-board-demo .db-nav[aria-current="page"] { background: light-dark(#e8dff2,#51445d); color: light-dark(#593980,#f2e6fa); font-weight: 500; }
+    #dabin-board-demo .db-main { padding: 24px; min-width: 0; }
+    #dabin-board-demo .db-heading { display: flex; gap: 12px; justify-content: space-between; align-items: end; flex-wrap: wrap; }
+    #dabin-board-demo .db-kicker { color: light-dark(#785e96,#c6a9e3); font-weight: 500; letter-spacing: .07em; }
+    #dabin-board-demo h2 { margin: 3px 0 5px; font-weight: 500; letter-spacing: -.03em; }
+    #dabin-board-demo .db-intro { margin: 0; color: light-dark(#7b7481,#bdb4c1); }
+    #dabin-board-demo .db-date-controls { display: flex; gap: 5px; align-items: center; }
+    #dabin-board-demo button, #dabin-board-demo input, #dabin-board-demo textarea { font: inherit; }
+    #dabin-board-demo .db-date-controls button, #dabin-board-demo .db-date-controls input { padding: 7px; border: 1px solid light-dark(#ddd6e1,#544d5a); border-radius: 8px; background: light-dark(#fff,#3a3540); color: inherit; }
+    #dabin-board-demo .db-date-controls button { cursor: pointer; }
+    #dabin-board-demo .db-date-controls input { width: 136px; }
+    #dabin-board-demo .db-search { display: block; width: 100%; margin-top: 19px; padding: 9px 11px; border: 1px solid light-dark(#ddd6e1,#544d5a); border-radius: 9px; background: light-dark(#fff,#3a3540); color: inherit; }
+    #dabin-board-demo .db-filters { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 12px; }
+    #dabin-board-demo .db-filter { padding: 6px 10px; border: 1px solid light-dark(#ded8e4,#5c5262); border-radius: 18px; background: light-dark(#fff,#3a3540); color: inherit; cursor: pointer; }
+    #dabin-board-demo .db-filter[aria-pressed="true"] { border-color: transparent; background: light-dark(#7551a2,#9c7dc1); color: #fff; }
+    #dabin-board-demo .db-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; margin-top: 18px; }
+    #dabin-board-demo .db-card { width: 100%; padding: 0; overflow: hidden; border: 1px solid light-dark(#e3dee6,#4e4754); border-radius: 11px; background: light-dark(#fff,#37323d); color: inherit; text-align: left; cursor: pointer; }
+    #dabin-board-demo .db-card:hover { border-color: light-dark(#b496d0,#a487bd); }
+    #dabin-board-demo .db-preview { height: 92px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    #dabin-board-demo .db-link-art { background: linear-gradient(125deg,light-dark(#a783b9,#5c496e),light-dark(#d6bfa6,#93736d)); color: #fff; letter-spacing: .15em; }
+    #dabin-board-demo .db-image-art { position: relative; background: linear-gradient(145deg,light-dark(#e4bd97,#66505d),light-dark(#ab8eaa,#655670) 54%,light-dark(#8082a3,#454a6d)); }
+    #dabin-board-demo .db-image-art::before { content: ""; position: absolute; width: 55px; height: 55px; border-radius: 50%; background: light-dark(#f6d9a7,#c5aa8e); left: 18%; top: 20%; }
+    #dabin-board-demo .db-image-art::after { content: ""; position: absolute; width: 120px; height: 82px; background: light-dark(#566c7d,#2c4759); transform: rotate(-15deg); right: -8px; bottom: -50px; border-radius: 13px; }
+    #dabin-board-demo .db-video-art { background: linear-gradient(145deg,light-dark(#273d5a,#182943),light-dark(#8c6d79,#665060)); color: #fff; }
+    #dabin-board-demo .db-video-art span { display: grid; place-items: center; width: 38px; height: 38px; border: 1px solid #ffffffbb; border-radius: 50%; background: #ffffff2b; }
+    #dabin-board-demo .db-file-art { background: light-dark(#eeeaf0,#403945); }
+    #dabin-board-demo .db-sheet { display: flex; flex-direction: column; gap: 7px; width: 67px; height: 79px; padding: 13px 9px; border-radius: 4px 12px 4px 4px; background: light-dark(#fff,#e5e1e9); box-shadow: 0 4px 12px light-dark(#34223d22,#00000044); }
+    #dabin-board-demo .db-sheet span { height: 4px; border-radius: 2px; background: #c7bccd; }
+    #dabin-board-demo .db-sheet span:nth-child(1) { width: 68%; background: #b29bc6; }
+    #dabin-board-demo .db-sheet span:nth-child(3) { width: 76%; }
+    #dabin-board-demo .db-ai-art { background: linear-gradient(135deg,light-dark(#342f3a,#17151c),light-dark(#625668,#53465e)); color: #f0b883; }
+    #dabin-board-demo .db-ai-art strong { display: grid; place-items: center; width: 55px; height: 55px; border: 1px solid #d6a17c; border-radius: 9px; font-weight: 500; }
+    #dabin-board-demo .db-text-art { background: light-dark(#efe9f4,#4a3c54); color: light-dark(#71518f,#e4cfef); }
+    #dabin-board-demo .db-card-body { display: block; padding: 10px 12px 12px; }
+    #dabin-board-demo .db-card-meta { display: flex; justify-content: space-between; gap: 8px; color: light-dark(#817987,#b8aeba); }
+    #dabin-board-demo .db-card-title { display: block; margin-top: 7px; font-weight: 500; overflow-wrap: anywhere; }
+    #dabin-board-demo .db-card-desc { display: block; margin-top: 3px; color: light-dark(#77707d,#c1b8c4); overflow-wrap: anywhere; }
+    #dabin-board-demo .db-card-attachments { display: flex; gap: 6px; flex-wrap: wrap; min-height: 23px; margin-top: 10px; }
+    #dabin-board-demo .db-pill { display: inline-block; padding: 3px 6px; border-radius: 5px; background: light-dark(#f0eaf6,#51455c); color: light-dark(#654485,#e3d1ef); }
+    #dabin-board-demo .db-empty { grid-column: 1 / -1; padding: 42px 10px; text-align: center; color: light-dark(#7c7482,#bdb3c0); }
+    #dabin-board-demo .db-widget { margin-top: 56px; padding: 12px; border: 1px solid light-dark(#d9d0e1,#65576d); border-radius: 15px; background: light-dark(#fff,#39323e); box-shadow: 0 15px 35px light-dark(#321d4c2d,#00000066); }
+    #dabin-board-demo .db-widget-heading { display: flex; justify-content: space-between; padding: 2px 2px 10px; font-weight: 500; }
+    #dabin-board-demo .db-today-count { color: light-dark(#847b8a,#c2b6c8); font-weight: 400; }
+    #dabin-board-demo .db-drop { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 142px; padding: 14px 7px; border: 1.5px dashed light-dark(#bba8cd,#9b80ad); border-radius: 10px; background: light-dark(#f8f3fb,#48394f); text-align: center; }
+    #dabin-board-demo .db-drop.db-dragging { border-style: solid; background: light-dark(#eee0f8,#60496a); }
+    #dabin-board-demo .db-down { display: grid; place-items: center; width: 31px; height: 31px; margin-bottom: 9px; border-radius: 8px; background: light-dark(#e7d8f1,#644f70); color: light-dark(#744d96,#f0defa); }
+    #dabin-board-demo .db-drop strong { font-weight: 500; }
+    #dabin-board-demo .db-drop small { margin-top: 4px; color: light-dark(#817589,#c7b9cb); }
+    #dabin-board-demo .db-widget-actions { display: flex; gap: 6px; margin-top: 9px; }
+    #dabin-board-demo .db-widget button, #dabin-board-demo .db-detail button { padding: 7px 9px; border: 1px solid light-dark(#ded5e6,#6b5d72); border-radius: 8px; background: light-dark(#fff,#4b4051); color: inherit; cursor: pointer; }
+    #dabin-board-demo .db-widget .db-primary, #dabin-board-demo .db-detail .db-primary { background: light-dark(#7551a2,#9c7dc1); border-color: transparent; color: #fff; }
+    #dabin-board-demo .db-paste { display: none; width: 100%; margin-top: 9px; padding: 8px; border: 1px solid light-dark(#ded5e6,#6b5d72); border-radius: 8px; background: light-dark(#fff,#4b4051); color: inherit; }
+    #dabin-board-demo .db-paste.db-visible { display: block; }
+    #dabin-board-demo .db-feedback { min-height: 24px; margin-top: 9px; color: light-dark(#72558f,#dfc9ed); }
+    #dabin-board-demo .db-widget-foot { color: light-dark(#877d8c,#c0b2c5); }
+    #dabin-board-demo .db-detail { display: none; position: absolute; z-index: 4; top: 95px; right: 226px; width: min(340px,86%); padding: 16px; border: 1px solid light-dark(#d9d1e0,#605467); border-radius: 12px; background: light-dark(#fff,#403747); box-shadow: 0 15px 37px light-dark(#2d1e3d3d,#00000099); }
+    #dabin-board-demo .db-detail.db-visible { display: block; }
+    #dabin-board-demo .db-detail-head { display: flex; align-items: start; justify-content: space-between; gap: 10px; }
+    #dabin-board-demo .db-detail h3 { margin: 0; font-weight: 500; overflow-wrap: anywhere; }
+    #dabin-board-demo .db-detail .db-close { border: 0; background: transparent; padding: 2px 5px; }
+    #dabin-board-demo .db-detail-meta { margin: 7px 0 16px; color: light-dark(#7d7281,#c6b9c9); overflow-wrap: anywhere; }
+    #dabin-board-demo .db-detail label { display: block; margin-top: 11px; }
+    #dabin-board-demo .db-detail textarea, #dabin-board-demo .db-detail input { display: block; width: 100%; margin-top: 5px; padding: 8px; border: 1px solid light-dark(#ddd5e2,#716276); border-radius: 7px; background: light-dark(#fff,#4b4051); color: inherit; }
+    #dabin-board-demo .db-detail textarea { min-height: 76px; resize: vertical; }
+    #dabin-board-demo .db-detail .db-primary { margin-top: 13px; }
+    #dabin-board-demo[data-widget="compact"] .db-widget { border-radius: 22px; }
+    #dabin-board-demo[data-widget="compact"] .db-drop { min-height: 70px; flex-direction: row; gap: 8px; }
+    #dabin-board-demo[data-widget="compact"] .db-down { margin: 0; }
+    #dabin-board-demo[data-widget="compact"] .db-drop small { display: none; }
+    #dabin-board-demo[data-accent="sage"] .db-mark, #dabin-board-demo[data-accent="sage"] .db-widget .db-primary, #dabin-board-demo[data-accent="sage"] .db-detail .db-primary { background: light-dark(#477b70,#65a392); }
+    #dabin-board-demo[data-accent="sage"] .db-nav[aria-current="page"] { background: light-dark(#dceee8,#36524b); color: light-dark(#326d5e,#e5f7ef); }
+    #dabin-board-demo[data-accent="sage"] .db-kicker { color: light-dark(#477b70,#9bd0bf); }
+    #dabin-board-demo[data-accent="sage"] .db-drop { border-color: light-dark(#9ac5b8,#70a999); background: light-dark(#f2faf7,#344c45); }
+    #dabin-board-demo[data-accent="sage"] .db-filter[aria-pressed="true"] { background: light-dark(#477b70,#65a392); }
+    @media (max-width: 760px) { #dabin-board-demo .db-stage { grid-template-columns: 1fr; } #dabin-board-demo .db-widget { order: -1; margin-top: 0; max-width: 300px; } #dabin-board-demo .db-detail { right: 12px; top: 180px; } }
+    @media (max-width: 520px) { #dabin-board-demo .db-layout { grid-template-columns: 1fr; } #dabin-board-demo .db-sidebar { display: none; } #dabin-board-demo .db-main { padding: 18px 14px; } #dabin-board-demo .db-grid { grid-template-columns: 1fr; } }
+  </style>
+  <div class="db-stage">
+    <div class="db-app" aria-label="DaBin Daily board window">
+      <div class="db-titlebar"><span class="db-lights" aria-hidden="true"><span></span><span></span><span></span></span><strong>DaBin</strong></div>
+      <div class="db-layout">
+        <nav class="db-sidebar" aria-label="DaBin views"><div class="db-brand"><span class="db-mark">D</span>DaBin</div><button class="db-nav" id="db-daily-nav" aria-current="page" type="button">Daily board</button><button class="db-nav" id="db-reminders-nav" type="button">Reminders</button></nav>
+        <main class="db-main">
+          <div class="db-kicker" id="db-kicker">DAILY BOARD</div>
+          <div class="db-heading"><div><h2 id="db-day-title">Tuesday, September 22</h2><p class="db-intro" id="db-intro">What you saved as you worked</p></div><div class="db-date-controls" id="db-date-controls"><button type="button" id="db-prev" aria-label="Previous day">←</button><input type="date" id="db-date" aria-label="Choose day" value="2026-09-22"><button type="button" id="db-next" aria-label="Next day">→</button></div></div>
+          <input class="db-search" type="search" id="db-search" aria-label="Search cards" placeholder="Search this board">
+          <div class="db-filters" id="db-filters" role="group" aria-label="Filter Daily board by type"><button class="db-filter" type="button" data-filter="all" aria-pressed="true">All</button><button class="db-filter" type="button" data-filter="links" aria-pressed="false">Links</button><button class="db-filter" type="button" data-filter="files" aria-pressed="false">Files</button><button class="db-filter" type="button" data-filter="media" aria-pressed="false">Media</button></div>
+          <div class="db-grid" id="db-grid" aria-live="polite"><div class="db-empty">Loading daily cards…</div></div>
+        </main>
+      </div>
+    </div>
+    <aside class="db-widget" aria-label="Floating capture panel"><div class="db-widget-heading"><span>DaBin</span><span class="db-today-count" id="db-today-count">5 today</span></div><div class="db-drop" id="db-drop"><span class="db-down" aria-hidden="true">↓</span><strong>Drop or paste</strong><small>Links, images, videos, PDFs, files</small></div><div class="db-widget-actions"><button class="db-primary" type="button" id="db-paste-button">Paste</button><button type="button" id="db-sample-button">Try link</button></div><input class="db-paste" id="db-paste-input" aria-label="Paste a link or text" placeholder="Paste link or text, press Enter"><div class="db-feedback" id="db-feedback" aria-live="polite"></div><div class="db-widget-foot">Always within reach</div></aside>
+    <section class="db-detail" id="db-detail" aria-label="Card details"><div class="db-detail-head"><h3 id="db-detail-title">Card</h3><button type="button" class="db-close" id="db-close" aria-label="Close details">✕</button></div><div class="db-detail-meta" id="db-detail-meta"></div><label for="db-comment">Comment</label><textarea id="db-comment" placeholder="Add a personal note"></textarea><label for="db-reminder">Remind me</label><input type="datetime-local" id="db-reminder"><button type="button" class="db-primary" id="db-save-detail">Save</button></section>
+  </div>
+  <script>
+    (() => {
+      const root = document.getElementById('dabin-board-demo');
+      const demoDay = '2026-09-22';
+      const entries = [
+        {day:demoDay,time:'12:04',kind:'Video',title:'Walkthrough-cut.mp4',description:'Video · 1 min 18 sec',source:'Local file',comment:'',reminder:''},
+        {day:demoDay,time:'11:36',kind:'Link',title:'Making space for creative work',description:'A short essay about protecting time for ideas.',source:'fieldnotes.example',url:'https://fieldnotes.example/creative-work',comment:'Share this with the team.',reminder:''},
+        {day:demoDay,time:'10:14',kind:'Image',title:'Moodboard-export.png',description:'Image · 2.4 MB',source:'Local file',comment:'',reminder:''},
+        {day:demoDay,time:'09:42',kind:'PDF',title:'Budget notes.pdf',description:'PDF · 8 pages',source:'Local file',comment:'Check the last page.',reminder:'2026-09-24T09:00'},
+        {day:demoDay,time:'08:55',kind:'AI',title:'Poster-final.ai',description:'Illustrator file · 18 MB',source:'Local file',comment:'',reminder:''},
+        {day:'2026-09-21',time:'15:22',kind:'Text',title:'Idea for the weekend',description:'Look up pottery classes nearby.',source:'Pasted text',comment:'',reminder:''}
+      ];
+      const grid = root.querySelector('#db-grid');
+      const date = root.querySelector('#db-date');
+      const search = root.querySelector('#db-search');
+      let view = 'daily';
+      let filter = 'all';
+      let selected = null;
+      const esc = s => String(s || '').replace(/[&<>"']/g,c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+      const pretty = day => new Date(day+'T12:00:00').toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
+      const moveDay = n => { const d = new Date(date.value+'T12:00:00'); d.setDate(d.getDate()+n); date.value = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; render(); };
+      const preview = e => e.kind === 'Link' ? '<span class="db-preview db-link-art">FIELD / NOTES</span>' : e.kind === 'Image' ? '<span class="db-preview db-image-art"></span>' : e.kind === 'Video' ? '<span class="db-preview db-video-art"><span>▶</span></span>' : e.kind === 'PDF' || e.kind === 'Document' ? '<span class="db-preview db-file-art"><span class="db-sheet"><span></span><span></span><span></span><span></span></span></span>' : e.kind === 'AI' ? '<span class="db-preview db-ai-art"><strong>Ai</strong></span>' : `<span class="db-preview db-text-art">${esc(e.kind)}</span>`;
+      const category = e => e.kind === 'Link' ? 'links' : ['Image','Video'].includes(e.kind) ? 'media' : ['PDF','Document','AI','File'].includes(e.kind) ? 'files' : 'other';
+      function render() {
+        root.querySelector('#db-day-title').textContent = view === 'reminders' ? 'Reminders' : pretty(date.value || demoDay);
+        root.querySelector('#db-kicker').textContent = view === 'reminders' ? 'PERSONAL REMINDERS' : 'DAILY BOARD';
+        root.querySelector('#db-intro').textContent = view === 'reminders' ? 'Notes you asked to revisit' : 'What you saved as you worked';
+        root.querySelector('#db-date-controls').style.display = view === 'reminders' ? 'none' : 'flex';
+        root.querySelector('#db-filters').style.display = view === 'reminders' ? 'none' : 'flex';
+        root.querySelector('#db-daily-nav').setAttribute('aria-current',view === 'daily' ? 'page' : 'false');
+        root.querySelector('#db-reminders-nav').setAttribute('aria-current',view === 'reminders' ? 'page' : 'false');
+        root.querySelectorAll('[data-filter]').forEach(button => button.setAttribute('aria-pressed',button.dataset.filter === filter ? 'true' : 'false'));
+        const q = search.value.trim().toLowerCase();
+        const visible = entries.filter(e => (view === 'reminders' ? !!e.reminder : e.day === date.value && (filter === 'all' || category(e) === filter)) && (!q || [e.title,e.description,e.source,e.comment,e.kind].join(' ').toLowerCase().includes(q))).sort((a,b) => b.time.localeCompare(a.time));
+        grid.innerHTML = visible.length ? visible.map(e => { const i = entries.indexOf(e); const chips = [e.comment ? '<span class="db-pill">Comment</span>' : '',e.reminder ? '<span class="db-pill">Reminder</span>' : ''].join(''); return `<button class="db-card" type="button" data-index="${i}" aria-label="Open ${esc(e.title)}">${preview(e)}<span class="db-card-body"><span class="db-card-meta"><span>${esc(e.source)}</span><span>${esc(e.time)}</span></span><span class="db-card-title">${esc(e.title)}</span><span class="db-card-desc">${esc(e.description)}</span><span class="db-card-attachments">${chips}</span></span></button>`; }).join('') : '<div class="db-empty">No matching cards on this day.</div>';
+        root.querySelector('#db-today-count').textContent = `${entries.filter(e => e.day === demoDay).length} today`;
+      }
+      root.querySelector('#db-daily-nav').addEventListener('click',() => { view = 'daily'; render(); });
+      root.querySelector('#db-reminders-nav').addEventListener('click',() => { view = 'reminders'; render(); });
+      root.querySelector('#db-filters').addEventListener('click',e => { const button = e.target.closest('[data-filter]'); if (!button) return; filter = button.dataset.filter; render(); });
+      root.querySelector('#db-prev').addEventListener('click',() => moveDay(-1));
+      root.querySelector('#db-next').addEventListener('click',() => moveDay(1));
+      date.addEventListener('change',render);
+      search.addEventListener('input',render);
+      grid.addEventListener('click',e => { const card = e.target.closest('[data-index]'); if (!card) return; selected = Number(card.dataset.index); const item = entries[selected]; root.querySelector('#db-detail-title').textContent = item.title; root.querySelector('#db-detail-meta').textContent = `${item.kind} · ${pretty(item.day)} at ${item.time}`; root.querySelector('#db-comment').value = item.comment || ''; root.querySelector('#db-reminder').value = item.reminder || ''; root.querySelector('#db-detail').classList.add('db-visible'); });
+      root.querySelector('#db-close').addEventListener('click',() => root.querySelector('#db-detail').classList.remove('db-visible'));
+      root.querySelector('#db-save-detail').addEventListener('click',() => { if (selected === null) return; entries[selected].comment = root.querySelector('#db-comment').value.trim(); entries[selected].reminder = root.querySelector('#db-reminder').value; root.querySelector('#db-detail').classList.remove('db-visible'); render(); });
+      const paste = root.querySelector('#db-paste-input');
+      root.querySelector('#db-paste-button').addEventListener('click',() => { paste.classList.toggle('db-visible'); if (paste.classList.contains('db-visible')) paste.focus(); });
+      const add = e => { entries.push(e); view = 'daily'; filter = 'all'; date.value = demoDay; search.value = ''; root.querySelector('#db-feedback').textContent = 'Saved to today’s board'; render(); };
+      const now = () => new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+      function addText(t) { const value = t.trim(); if (!value) return; if (/^https?:\/\//i.test(value)) { let domain = value; try { domain = new URL(value).hostname; } catch {} add({day:demoDay,time:now(),kind:'Link',title:domain,description:'Link preview card · original URL saved',source:domain,url:value,comment:'',reminder:''}); } else add({day:demoDay,time:now(),kind:'Text',title:value.slice(0,55),description:value,source:'Pasted text',comment:'',reminder:''}); }
+      paste.addEventListener('keydown',e => { if (e.key === 'Enter') { addText(paste.value); paste.value = ''; paste.classList.remove('db-visible'); } });
+      root.querySelector('#db-sample-button').addEventListener('click',() => add({day:demoDay,time:now(),kind:'Link',title:'A visual notebook for everyday ideas',description:'A sample preview card with a title, source, and summary.',source:'journal.example',url:'https://journal.example/ideas',comment:'',reminder:''}));
+      const drop = root.querySelector('#db-drop');
+      drop.addEventListener('dragover',e => { e.preventDefault(); drop.classList.add('db-dragging'); });
+      drop.addEventListener('dragleave',() => drop.classList.remove('db-dragging'));
+      drop.addEventListener('drop',e => { e.preventDefault(); drop.classList.remove('db-dragging'); if (e.dataTransfer.files.length) { Array.from(e.dataTransfer.files).forEach(f => { const ext = f.name.split('.').pop().toLowerCase(); const kind = f.type.startsWith('image/') ? 'Image' : f.type.startsWith('video/') || ['mp4','mov','m4v','webm'].includes(ext) ? 'Video' : ext === 'pdf' ? 'PDF' : ext === 'ai' ? 'AI' : ['doc','docx','pages','ppt','pptx'].includes(ext) ? 'Document' : 'File'; add({day:demoDay,time:now(),kind,title:f.name,description:`${kind} · original file captured in this preview`,source:'Local file',comment:'',reminder:''}); }); } else addText(e.dataTransfer.getData('text/uri-list') || e.dataTransfer.getData('text/plain')); });
+      render();
+      const design = { widget:'card', accent:'violet' };
+      const applyDesign = () => { root.dataset.widget = design.widget; root.dataset.accent = design.accent; };
+      applyDesign();
+      if (globalThis.Tweak) { const tweak = new Tweak({container:root,onChange:applyDesign}); tweak.addSelect(design,'widget',{label:'Capture panel',options:[{label:'Floating card',value:'card'},{label:'Compact tab',value:'compact'}]}); tweak.addSelect(design,'accent',{label:'Accent',options:[{label:'Violet',value:'violet'},{label:'Sage',value:'sage'}]}); }
+    })();
+  </script>
+</div>

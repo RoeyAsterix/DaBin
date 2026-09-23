@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>DaBin — macOS widget design</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <main class="desktop" id="desktop" aria-label="DaBin desktop prototype">
+    <div class="desktop-glow desktop-glow-one" aria-hidden="true"></div>
+    <div class="desktop-glow desktop-glow-two" aria-hidden="true"></div>
+    <div class="menu-bar" aria-hidden="true"><span>DaBin</span><span>Tuesday · 22 September</span></div>
+
+    <section class="widget" id="widget" aria-label="DaBin capture widget">
+      <button class="widget-grip" id="widget-grip" type="button" aria-label="Move DaBin widget. Use arrow keys to reposition." title="Drag to move"><span class="grip-dots" aria-hidden="true">⠿</span></button>
+      <button class="widget-capture" id="widget-capture" type="button" aria-label="DaBin robot. Click to paste, double-click to open Daily board" title="Click to paste · Double-click for Daily">
+        <svg class="robot-art" viewBox="0 0 136 156" fill="none" aria-hidden="true">
+          <defs>
+            <linearGradient id="robot-shell" x1="19" y1="62" x2="112" y2="136" gradientUnits="userSpaceOnUse"><stop stop-color="#C8B5EF"/><stop offset=".28" stop-color="#987ACB"/><stop offset=".68" stop-color="#6E519F"/><stop offset="1" stop-color="#4D356F"/></linearGradient>
+            <linearGradient id="robot-lid-fill" x1="31" y1="31" x2="106" y2="55" gradientUnits="userSpaceOnUse"><stop stop-color="#E1D3FA"/><stop offset=".43" stop-color="#A98AD9"/><stop offset="1" stop-color="#59417F"/></linearGradient>
+            <linearGradient id="robot-face" x1="38" y1="63" x2="100" y2="103" gradientUnits="userSpaceOnUse"><stop stop-color="#35264E"/><stop offset="1" stop-color="#1F1932"/></linearGradient>
+            <linearGradient id="robot-foot" x1="40" y1="127" x2="93" y2="145" gradientUnits="userSpaceOnUse"><stop stop-color="#8D72B9"/><stop offset="1" stop-color="#493464"/></linearGradient>
+            <filter id="robot-eye-glow"><feGaussianBlur stdDeviation="3"/></filter>
+          </defs>
+          <ellipse cx="68" cy="146" rx="45" ry="5" fill="#39304E" fill-opacity=".21"/>
+          <g class="robot-feet"><path d="M39 126h22l-4 14c-1 3-3 4-6 4H36c-3 0-5-3-4-6l7-12Z" fill="url(#robot-foot)" stroke="#493464" stroke-width="2"/><path d="M75 126h22l7 12c1 3-1 6-4 6H85c-3 0-5-1-6-4l-4-14Z" fill="url(#robot-foot)" stroke="#493464" stroke-width="2"/></g>
+          <path d="M24 82c-8-2-13 2-14 9-1 7 2 13 9 14l7-2M112 82c8-2 13 2 14 9 1 7-2 13-9 14l-7-2" stroke="#5B447F" stroke-width="8" stroke-linecap="round"/>
+          <path d="M23 56c0-9 8-16 17-16h56c9 0 17 7 17 16v68c0 8-6 14-14 14H37c-8 0-14-6-14-14V56Z" fill="url(#robot-shell)" stroke="#49346C" stroke-width="2"/>
+          <path d="M30 62v60c0 5 4 9 9 9" stroke="#F0E8FF" stroke-opacity=".64" stroke-width="2" stroke-linecap="round"/>
+          <path d="M107 62v57c0 7-3 10-8 11" stroke="#35264F" stroke-opacity=".55" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="33" cy="67" r="2" fill="#E9DDF8"/><circle cx="103" cy="67" r="2" fill="#E9DDF8"/><circle cx="33" cy="122" r="2" fill="#D3BDEB"/><circle cx="103" cy="122" r="2" fill="#D3BDEB"/>
+          <rect x="35" y="64" width="66" height="40" rx="15" fill="url(#robot-face)" stroke="#D7C3F2" stroke-opacity=".52" stroke-width="1.5"/>
+          <ellipse cx="54" cy="82" rx="8" ry="6" fill="#BCEBFF" opacity=".65" filter="url(#robot-eye-glow)"/><ellipse cx="82" cy="82" rx="8" ry="6" fill="#BCEBFF" opacity=".65" filter="url(#robot-eye-glow)"/>
+          <g class="robot-eyes"><rect x="47" y="77" width="14" height="10" rx="5" fill="#D5F6FF"/><rect x="75" y="77" width="14" height="10" rx="5" fill="#D5F6FF"/><circle cx="53" cy="79" r="2" fill="#FFF"/><circle cx="81" cy="79" r="2" fill="#FFF"/></g>
+          <path d="M60 94c4 3 12 3 16 0" stroke="#A9E7FA" stroke-width="2" stroke-linecap="round"/>
+          <path d="M43 114c0-3 2-5 5-5h40c3 0 5 2 5 5v8c0 3-2 5-5 5H48c-3 0-5-2-5-5v-8Z" fill="#49345F" stroke="#D7BEEB" stroke-opacity=".64"/>
+          <path d="M51 116h34" stroke="#1F1730" stroke-width="4" stroke-linecap="round"/><path d="M51 122h34" stroke="#8D70AF" stroke-width="1.5" stroke-linecap="round"/>
+          <g class="robot-lid"><path d="M26 52c0-8 6-14 14-14h56c8 0 14 6 14 14v6H26v-6Z" fill="url(#robot-lid-fill)" stroke="#49346C" stroke-width="2"/><path d="M32 45c3-3 6-4 10-4h51" stroke="#F5EFFF" stroke-opacity=".75" stroke-width="2" stroke-linecap="round"/><path d="M58 37v-8c0-3 2-5 5-5h10c3 0 5 2 5 5v8" fill="#8265AF" stroke="#49346C" stroke-width="2"/><circle cx="68" cy="25" r="4" fill="#DCCBF3"/></g>
+          <g class="robot-digest-particle"><rect x="61" y="8" width="14" height="17" rx="2" transform="rotate(12 61 8)" fill="#FBF7FF" stroke="#8E7AA7"/><path d="m67 14 4 1" stroke="#AE9BC7" stroke-linecap="round"/></g>
+        </svg>
+      </button>
+      <button class="widget-paste" id="widget-paste" type="button" aria-label="Paste or add to DaBin" title="Paste or add">+</button>
+      <button class="widget-today" id="widget-today" type="button" aria-label="Open Daily board" aria-haspopup="dialog" aria-expanded="false" title="Open Daily board"><strong id="today-count">05</strong></button>
+      <span class="robot-status" id="robot-status" aria-hidden="true">Drop anything</span>
+    </section>
+
+    <section class="composer" id="composer" role="dialog" aria-modal="false" aria-labelledby="composer-title" hidden>
+      <div class="composer-heading"><h2 id="composer-title">Add to today</h2><button class="icon-button" id="composer-close" type="button" aria-label="Close paste entry">×</button></div>
+      <label for="paste-input">Paste a link, note, or image</label>
+      <textarea id="paste-input" rows="4" placeholder="Paste here, or drop a file on the widget"></textarea>
+      <div class="composer-actions"><span>⌘ V works while DaBin is focused</span><button class="primary-button" id="save-paste" type="button">Save to today</button></div>
+    </section>
+
+    <section class="board" id="board" role="dialog" aria-modal="false" aria-labelledby="board-title" hidden>
+      <div class="board-top">
+        <div class="board-heading"><span class="board-kicker">DABIN</span><h1 id="board-title">Daily board</h1></div>
+        <div class="board-actions"><button class="icon-button" id="reminders-toggle" type="button" aria-label="Show reminders" title="Reminders"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"></circle><path d="M12 7.5v5l3.3 2"></path></svg></button><button class="icon-button" id="compact-toggle" type="button" aria-label="Switch to compact widget" title="Compact widget">−</button><button class="icon-button" id="board-close" type="button" aria-label="Close Daily board">×</button></div>
+      </div>
+
+      <div id="daily-view">
+        <div class="date-row"><button class="nav-button" id="previous-day" type="button" aria-label="Previous day">‹</button><div class="date-copy"><strong id="date-label">Tuesday, 22 September</strong><span id="date-subtitle">Your captures, in the order they arrived</span></div><button class="nav-button" id="next-day" type="button" aria-label="Next day">›</button><input id="date-picker" type="date" aria-label="Choose board date" value="2026-09-22"></div>
+        <div class="filter-row" id="filter-row" role="group" aria-label="Filter cards by type"><button class="filter-button" data-filter="all" aria-pressed="true" type="button">All</button><button class="filter-button" data-filter="links" aria-pressed="false" type="button">Links</button><button class="filter-button" data-filter="files" aria-pressed="false" type="button">Files</button><button class="filter-button" data-filter="media" aria-pressed="false" type="button">Media</button></div>
+        <div class="card-list" id="card-list" aria-live="polite"></div>
+      </div>
+
+      <div class="detail-view" id="detail-view" hidden>
+        <button class="back-button" id="detail-back" type="button">‹ &nbsp; Daily board</button>
+        <div class="detail-preview" id="detail-preview"></div>
+        <div class="detail-meta"><span id="detail-kind"></span><span id="detail-captured"></span></div>
+        <h2 id="detail-title"></h2>
+        <p class="detail-description" id="detail-description"></p>
+        <button class="open-original" id="open-original" type="button">Open original ↗</button>
+        <label for="comment-input">Comment</label>
+        <textarea id="comment-input" rows="3" placeholder="Add a thought about this item"></textarea>
+        <label for="reminder-input">Reminder</label>
+        <div class="reminder-fields"><input id="reminder-input" type="datetime-local" aria-label="Reminder date and time"><button class="text-button" id="clear-reminder" type="button">Clear</button></div>
+        <button class="primary-button detail-save" id="save-detail" type="button">Save changes</button>
+      </div>
+
+      <div class="reminders-view" id="reminders-view" hidden><div class="reminders-intro">Items you asked to revisit</div><div class="card-list" id="reminders-list"></div></div>
+    </section>
+
+    <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+    <div class="demo-note">Drag the handle to move · Drop or paste into DaBin · Double-click the robot for Daily</div>
+  </main>
+</body>
+</html>

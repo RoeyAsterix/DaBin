@@ -1,0 +1,123 @@
+{
+  "source": "reference/prototype/styles.css",
+  "units": "logical points for native layout",
+  "conversion": "OKLCH \u2192 OKLab \u2192 linear sRGB \u2192 clipped, rounded 8-bit sRGB",
+  "light": {
+    "bg": {
+      "oklch": "oklch(99.3% .003 310)",
+      "srgbHex": "#FDFCFE"
+    },
+    "surface": {
+      "oklch": "oklch(100% 0 0)",
+      "srgbHex": "#FFFFFF"
+    },
+    "fg": {
+      "oklch": "oklch(28% .020 302)",
+      "srgbHex": "#2B2731"
+    },
+    "muted": {
+      "oklch": "oklch(48% .024 305)",
+      "srgbHex": "#615A69"
+    },
+    "border": {
+      "oklch": "oklch(91% .009 308)",
+      "srgbHex": "#E3E0E6"
+    },
+    "accent": {
+      "oklch": "oklch(49% .087 307)",
+      "srgbHex": "#6D5387"
+    },
+    "soft": {
+      "oklch": "oklch(96% .006 308)",
+      "srgbHex": "#F3F1F5"
+    },
+    "success": {
+      "oklch": "oklch(44% .07 160)",
+      "srgbHex": "#2B5E45"
+    },
+    "danger": {
+      "oklch": "oklch(49% .14 24)",
+      "srgbHex": "#A13737"
+    }
+  },
+  "dark": {
+    "bg": {
+      "oklch": "oklch(23% .009 300)",
+      "srgbHex": "#1D1C21"
+    },
+    "surface": {
+      "oklch": "oklch(26% .009 300)",
+      "srgbHex": "#252328"
+    },
+    "fg": {
+      "oklch": "oklch(94% .004 300)",
+      "srgbHex": "#EBEAED"
+    },
+    "muted": {
+      "oklch": "oklch(73% .012 305)",
+      "srgbHex": "#A9A6AE"
+    },
+    "border": {
+      "oklch": "oklch(35% .012 305)",
+      "srgbHex": "#3C3940"
+    },
+    "accent": {
+      "oklch": "oklch(70% .08 307)",
+      "srgbHex": "#AB92C6"
+    },
+    "soft": {
+      "oklch": "oklch(29% .013 308)",
+      "srgbHex": "#2D2A30"
+    },
+    "success": {
+      "oklch": "oklch(77% .08 160)",
+      "srgbHex": "#87C4A3"
+    },
+    "danger": {
+      "oklch": "oklch(77% .12 24)",
+      "srgbHex": "#F7958F"
+    }
+  },
+  "fonts": {
+    "display": "macOS system display",
+    "body": "macOS system text",
+    "numeric": "monospaced system digits; SF Mono where needed"
+  },
+  "spacing": [
+    4,
+    8,
+    12,
+    16,
+    20
+  ],
+  "panelRadius": 19,
+  "sizes": {
+    "restArtwork": [
+      32,
+      43
+    ],
+    "robotHitTarget": [
+      52,
+      56
+    ],
+    "widget": [
+      58,
+      78
+    ],
+    "moveHandle": [
+      44,
+      18
+    ],
+    "hoverArtwork": [
+      39,
+      50
+    ],
+    "dropTarget": [
+      84,
+      92
+    ],
+    "contentPanelWidth": 420,
+    "contentPanelMaxHeight": 640,
+    "captureWidth": 400
+  }
+}

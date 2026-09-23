@@ -1,0 +1,319 @@
+# DaBin QA cycle — 23 September 2026
+
+## GitHub update channel — 0.3.0 (25)
+
+DaBin now has a user-initiated direct update flow in **Settings → Software updates** and the native app menu. The app reads only the fixed `RoeyAsterix/DaBin` GitHub Release manifest, follows HTTPS redirects only to GitHub release hosts, validates the manifest schema, bundle, numeric version/build, Apple Silicon and macOS requirements, exact release path, byte count and SHA-256, then opens its embedded signed helper. The helper independently rechecks the ZIP checksum, rejects symbolic links and unexpected layouts, validates the ARM64 Release app and strict signature, asks before updating, preserves a verified backup, rolls back on failure and leaves the capture archive untouched. It never checks or downloads silently.
+
+The generated Xcode Store configuration does not define `DABIN_DIRECT_UPDATES`, contains no direct feed key and does not embed the helper. Its Settings screen reports that updates are delivered through the Mac App Store. The standalone builder alone enables the GitHub channel. The current ad-hoc package is for this Mac; broad direct distribution still needs stable Developer ID signing and Apple notarization.
+
+The exact optimized source passed **22/22 registered suites and 1,859 checks**. This includes **21 no-network software-update checks**, **10 channel-boundary checks**, **25 privacy checks**, menu/composition ownership, checksum rejection, fixed-origin rejection, no automatic network request, and the complete existing storage/input/window suite. The run found and fixed a two-display edge case: releasing the board below a non-main display could select the other display as a fallback. The final window resize run keeps the board on its active display and clamps the whole panel on screen.
+
+Separate synthetic PDF, RTF and H.264 processing passed **39/39** checks. **28 production-view release renders** passed in light and dark, including the Software updates section, grouped imports, compact empty view, Daily, Week, Search, Detail, tasks, Settings and native 2× samples. The refreshed one-page PDF passed extraction, one-page A4 geometry, boundary checks and visual inspection.
+
+The optimized direct build is **0.3.0 (25)** with source fingerprint `2a81ade40c1f47a608216bdc4e29e1a2af4bb552152f9139e7ea94a1ba96ab86` and executable SHA-256 `69ce68583abbe2fa702be6b17e7039d072c90eeb27bb4311da744c46c7eeedc7`. The final update asset is **2,895,714 bytes**, SHA-256 `d85be187dc910be4436f20c349595fd0d0d9d9093d6089d415b9be49753b0cbb`. Packaging exercised the exact helper through fresh install, replacement, backup and downloaded-package modes at isolated destinations.
+
+Static Store packaging passed **20/20** checks. Release preflight now has **two environment/owner blockers**: the Apple Developer Team ID and full Xcode. The configured GitHub privacy/support URLs pass the offline URL gate; Store signing, archive validation, App Store Connect metadata and Apple review remain external.
+
+[Full optimized run](../docs/qa/0.3.0/full-run/report.json) · [Media integration](../docs/qa/0.3.0/media-integration-v0.3.0.log) · [Release render manifest](../docs/qa/0.3.0/release-ui-renders.json) · [Static Store preflight](../docs/qa/0.3.0/app-store-preflight-static-v0.3.0.log) · [Release preflight](../docs/qa/0.3.0/app-store-preflight-release-v0.3.0.log).
+
+## Appearance controls and grouped imports — 0.2.2 (24)
+
+Settings now has a persistent **Dark mode** switch and a **Transparency** slider from 35% to 100% board opacity, with the existing 75% value as the default. Light and dark mode are explicit app preferences and update the open board immediately. Malformed or non-finite saved appearance values fall back safely without touching capture data.
+
+Files supplied by one explicit paste or drop now appear under one compact caption card in Daily and Week. Every original remains an independent verified archive record and can be opened separately. The shared card exposes one Comment, Reminder, minimize/expand and confirmed batch-removal control. Its boundary is derived from the immutable receipt instant already assigned to the input batch, so grouping survives archive reopen without a metadata migration; unrelated text in the same transfer remains its own card.
+
+The exact Release source passed **20/20 suites and 1,825 checks**, including new preference validation, native Finder batches, promised-file batches and archive-reopen grouping. Local PDF, RTF and H.264 processing passed **39/39**. **28 production-view renders** passed with the production Dark mode preference as the only appearance driver; grouped cards and Settings were inspected in light and dark, including native 2× samples.
+
+The optimized ARM64 build, strict signature, generated Xcode inventory and **18/18 static App Store packaging checks** passed. Version **0.2.2 (24)** is installed and running from `~/Applications/DaBin.app`; the installer left the capture archive untouched and preserved the previous app. The dedicated update ZIP passed isolated fresh-install, replacement, backup, signature, hash and live confirmation-dialog checks. The live rehearsal was cancelled before installation.
+
+[Release evidence](build/qa/release-v0.2.2.json) · [Full optimized run](build/qa/runs/20260923T121820562041Z/report.json) · [Production renders](build/qa/screenshots/release-ui-renders.json) · [Media integration](build/qa/media-integration-v0.2.2.log) · [Static App Store preflight](build/qa/app-store-preflight-static-v0.2.2.log).
+
+## Translucent board and visible capture actions — 0.2.1 (23)
+
+The floating board now draws its base surface at exactly **75% opacity** over the clear native panel. Text, icons, previews and controls remain fully opaque. Every capture card in Daily, Week, Search and Reminders retains a visible minimize/expand button and a separate trash button; both now use larger purple icon surfaces. Delete still requires confirmation and preserves the source file. Minimize remains persistent and keeps the capture searchable, editable and available in Detail.
+
+The complete optimized suite passed **20/20 suites and 1,812 checks**. The additional check locks the board opacity at 0.75. Removal/minimize persistence, rollback, reminder cleanup, 203 two-display window checks, 138 Daily input checks, weekly cards and filter resizing all pass. The separate PDF/RTF/H.264 and optional public-link run passed **41/41**, for **1,853 current automated checks** in total.
+
+**26 production-view renders** passed in light and dark appearances, including four native 2× Retina samples. Direct PNG inspection measured **0.7490 alpha** at unobstructed board-background points in both appearances, the 8-bit representation of 0.75. The new capture controls fit expanded and minimized cards without clipping.
+
+[Full optimized run](build/qa/runs/20260923T100551361291Z/report.json) · [Current renders](build/qa/screenshots/release-ui-renders.json) · [Render log](build/qa/release-ui-v0.2.1.log) · [Media integration](build/qa/media-integration-link-v0.2.1.log) · [Opacity/action evidence](build/qa/translucency-v0.2.1.json) · [Release build](build/qa/build-v0.2.1.log).
+
+A dedicated local update ZIP now contains the verified DaBin app, a native **DaBin Update.app**, the PDF guide, instructions and a hash manifest. The exact updater binary passed an isolated fresh install and a second replacement run. The second run created and verified one previous-app backup; both installed copies matched the Release executable hash and strict signature. Its live confirmation showed the current and update versions and the archive-preservation explanation; Cancel exited without installing. The rehearsal used a temporary destination, did not quit the installed app and did not open the production archive. [Update-package evidence](build/qa/update-package-v0.2.1.json).
+
+## Native standalone refactor — 0.2.0 (22), 23 September 2026
+
+**Installed local Release candidate; all registered local automated suites pass. App Store distribution still needs owner and Apple release inputs.** The optimized ARM64 build passed compilation with warnings treated as errors, strict local signing and verified standalone packaging. After the Mac was unlocked, one clean full run passed **20 of 20 suites**. Input hashes remained stable throughout the run.
+
+### Architecture and reliability changes
+
+- Swift/AppKit/SwiftUI application with its own resources and only Apple system-framework dependencies. No browser runtime, server, helper install or downloaded code is required.
+- A composition root owns storage, services, shared preferences, native panels and commands. The small macOS delegate handles launch, reopen and safe quit. Native About, Hide, Show All, app commands and responder-chain editing are explicit.
+- The 1,129-line board view is now a 132-line shell with cohesive feature files and shared components. The UI split preserved all 27 existing declaration bodies apart from visibility needed between files.
+- Startup/shutdown is explicit and idempotent. Timers, notifications, keyboard monitors, preview work, hosting views and callbacks are released. A regression exposed a retained SwiftUI view at shutdown; detaching hosting views fixes it. Stale corner callbacks cannot reopen a stopped session.
+- Preview cancellation now reaches native QuickLook/video requests promptly. Concurrent preview-cache directory creation tolerates a verified directory created by another worker while rejecting symlinks or files.
+- One source inventory drives local build, Xcode and tests. Release compilation uses ARM64, optimization, whole-module compilation and warnings as errors. Symbols are outside the app. Build/test/package receipts preserve hashes and failures.
+
+[Architecture](ARCHITECTURE.md) · [Release build log](build/qa/build-v0.2.0.log) · [Build receipt](build/build-receipt.json).
+
+### Full optimized QA results
+
+| Suite | Passed checks / outcome |
+| --- | ---: |
+| Theme settings and contrast | 153 |
+| Privacy information | 24 |
+| Domain/persistence/search | 185 |
+| Archive layout and path safety | 50 |
+| Archive store and recovery | 81 |
+| Removal/minimize/source preservation | 76 |
+| Preview/reminder services | 61 |
+| Scoped storage and 1,000-record fixture | 22 |
+| Lifecycle/cache recovery | 22 |
+| Application ownership/menu/shutdown | 29 |
+| Native preview cancellation/shutdown/concurrent cache | 130 |
+| Tasks and carryover | 109 |
+| Capture actions and deletion races | 30 |
+| Weekly state | 99 |
+| Paste/drop representations and promised-file intake | 103 |
+| **15 non-focus suites subtotal** | **1,174** |
+| Weekly native windows | 76 |
+| Filter/minimize/expand panel transitions | 110 |
+| Native robot drag destination callbacks | 110 |
+| General native windows across two displays | 203 |
+| Daily paste/drop, shortcuts and controller integration | 138 |
+| **20-suite optimized total** | **1,811** |
+| Separate real-media/public-link integration | 41 |
+| **Complete automated total including media** | **1,852** |
+
+The first run while macOS was locked retained two general-window keyboard-focus failures and one Daily key-window failure. After unlocking, the complete suite was rerun from the start without weakening or excluding those assertions: all **203/203** general-window checks and all **138/138** Daily checks passed. The final report below is the unlocked run.
+
+The runner used Swift 6.3.2, SDK 26.5, macOS 26.6.2, ARM64, `-O` and whole-module optimization. Input hashes did not change during the run. Final production source/resource hashes were compared with the built application receipt and match. Temporary archives, private pasteboards and fake notifications protected real captures. Expected corrupt-store diagnostics belong to an intentionally invalid fixture.
+
+[Full run and every per-suite log](build/qa/runs/20260923T094648766418Z/report.json) · [Media integration](build/qa/media-integration-link-v0.2.0.log) · [Live release verification](build/qa/live-release-v0.2.0.json) · [Final source/build/package evidence](build/qa/final-source-v0.2.0.json).
+
+### Visual and media QA
+
+**26 production-view layouts were individually reviewed:** 22 at 1× and 4 rendered directly at 2× on an actual Retina backing surface. Coverage includes light/dark compact Daily, empty Daily, minimized task, full/narrow Week, contextual Search, fitted Detail preview, scrolled Detail editor, Settings top/bottom and New Task. Header geometry, action controls, fitted previews, scroll areas, typography and icon rendering passed the reviewed fixtures. Retina samples were inspected at original resolution. No screenshot was enlarged to simulate Retina.
+
+[Render manifest and review limits](build/qa/screenshots/release-ui-renders.json) · [Render execution log](build/qa/refactor-release-ui.log).
+
+The separate optimized media run passed all 41 checks: synthetic PDF/RTF/H.264 MOV previews, original-byte preservation, nonblank fitted thumbnails, distinct decoded video frames, reopened metadata and portrait/landscape PDF pages fitting ordinary/narrow viewports. Two checks exercised Apple's public homepage with isolated opt-in preferences. No personal file, URL or capture was sent. This sample coverage does not certify every third-party format or codec.
+
+Live verification of the installed app passed weekly navigation, empty-day/task filtering, contextual search, settings, the complete in-app privacy explanation, hide/keyboard reopen and a fitted document preview with its source location. No production capture was changed. A separately signed 0.2.0 QA app with an isolated sandbox passed direct Daily paste, newest-first ordering, minimize/expand, task creation, Task → Completed → Task, comment save and search-by-comment with neighboring context. Its two fictional records and sandbox were removed after verification.
+
+CUA's synthetic drag still ends its native dragging session before AppKit reports a destination callback; the isolated diagnostic records that limitation. Production native destination callbacks, copy-only transfer rules, file/text representations, exact source bytes and controller integration pass the automated suites. A physical Finder/browser drag remains a manual acceptance check. Real notification permission/delivery/reopen was not changed because enabling notifications is a user-controlled system permission; VoiceOver interaction, Spaces/Hot Corners behavior and macOS 14/15 runtime acceptance also remain external coverage. “Pixel perfect” across every display, accessibility setting and supported OS cannot be established from one machine.
+
+### Installed application and standalone ZIP
+
+DaBin **0.2.0 (22)** was installed at `~/Applications/DaBin.app` after the previous app quit normally. Its prior version is preserved at `~/Applications/.DaBinBackups/20260923-102137-96f927b9.app`. Strict signature and executable-hash verification passed. The installed app was exercised live in the unlocked session and left on today's Daily view with All selected. The Desktop shortcut still points to this installation. No personal capture was added, edited, minimized or removed by QA.
+
+[Installed verification](build/qa/installed-app-v0.2.0.json).
+
+`../output/downloads/DaBin-0.2.0-AppleSilicon.zip` contains the standalone application, friendly launch instructions, the existing one-page PDF guide and a file manifest. Packaging verified Release/ARM64/system-library dependencies, every ZIP hash, extracted executable permissions and strict extracted-app signing. It excludes developer caches and personal captures. The package remains locally ad-hoc signed and has not been notarized or approved by the Mac App Store.
+
+### Store gate
+
+**18 static source checks pass; four release inputs remain blocked:** full Xcode, Apple Developer Team ID, real privacy-policy URL and real support URL. Publisher identity, Bundle ID ownership, distribution signing/validation, App Store Connect metadata and Apple review are also necessary. No account, certificate or public submission was changed. See [App Store readiness](APP_STORE_READINESS.md).
+
+## Previous 0.1.20 cycle (historical evidence)
+
+## Current update: 0.1.20 (21)
+
+**Installed. Local automated QA passed in the areas listed below; live focus/notification acceptance and Mac App Store submission remain incomplete.** This is not an unconditional release sign-off.
+
+### Changes delivered
+
+- Every capture has a small **minimize/expand chevron** and **trash icon** in Daily, Week, contextual Search and Reminders. Minimized state persists, keeps title/time/type or task toggle and Comment/Reminder controls, and does not remove content from search or full Detail.
+- Removal requires one confirmation, deletes only that capture's DaBin-owned records/copies, clears its reminder, and preserves source files and other captures. Durable removal intent retries interrupted cleanup before import recovery; stale service writes cannot restore a deleted record. Background preview work is drained first. Quitting is blocked while removal and reminder cleanup are still in progress.
+- Daily's bottom edge animates during minimize/expand with its header fixed. Height accounts for long titles, comments and task creation labels so controls remain in the initial viewport where screen space permits. Taller collections remain scrollable.
+- Detail now explains failed previews and expired reminders. Expired reminders guide users to choose a future time. Lost link thumbnails can rebuild only when website previews are enabled; metadata-only cards do not refetch unnecessarily.
+- Settings includes an offline privacy policy and clearer optional website-preview disclosure. Both builds bundle the policy and privacy manifest; release metadata includes the Productivity category. Release signing configuration, a preflight and archive helper are supplied.
+
+### Automated checks on this update
+
+| Suite | Passed checks |
+| --- | ---: |
+| Theme persistence and contrast | 153 |
+| Privacy information and manifest | 24 |
+| Domain, persistence, classification and search | 185 |
+| Dated archive layout/path safety | 50 |
+| Archive integration and recovery | 81 |
+| Removal, minimize, interruption and source preservation | 76 |
+| Preview/reminder services and deletion races | 61 |
+| Scoped storage and 1,000-record benchmark | 22 |
+| Lifecycle/cache recovery | 22 |
+| Task workflow and carryover | 109 |
+| Capture actions, confirmation state, drafts and reminder deletion races | 30 |
+| Weekly state | 99 |
+| Input representations/promises/partial failures | 103 |
+| **Storage/service/state subtotal** | **1,015** |
+| Weekly native window states | 76 |
+| Native filter/minimize/expand panel transitions | 110 |
+| Native robot drag destination callbacks | 110 |
+| Real PDF/QuickLook/video integration and optional public-link smoke | 41 |
+| **Complete passing suites total** | **1,352** |
+
+The main storage log contains the first 67-check removal suite and 28-check action suite. The final targeted reruns extend those to 76 and 30, respectively; the totals above use the final count once per suite. The other final-source suites retained their passing results. The media network run includes the same 39 local checks plus 2 website checks; these are counted once. Fixtures used temporary archives, private pasteboards and fake notifications. No real capture was removed or minimized by QA. The expected corrupt-database messages verify preservation of a deliberately invalid test store.
+
+Evidence: [storage regression](build/qa/full-qa-storage-v0.1.20-final.log), [final removal](build/qa/capture-removal-v0.1.20.log), [final capture actions](build/qa/capture-actions-v0.1.20.log), [final resize](build/qa/FilterResizeTests-v0.1.20-final.log), [weekly](build/qa/WeeklyWindowTests-v0.1.20-final.log), [robot](build/qa/RobotDropTests-v0.1.20-final.log), [media and public link](build/qa/media-integration-link-v0.1.20.log).
+
+A 1,000-record fixture saved one scoped state update in about 0.0030 seconds and one text preview update in about 0.0025 seconds. Performance values are local measurements, not a cross-device guarantee.
+
+### Visual and real-media verification
+
+**22 native capture-action layouts** and **6 recovery-guidance layouts** were visually inspected in light/dark appearances. The action set uses production Daily sizing and includes expanded/minimized long notes, images, open/completed tasks, full Week and narrow Week. Comment, Reminder, minimize and remove controls fit; title/time/task status remain readable. Initial clipping candidates are clearly retained under `build/qa/diagnostics/`, outside the approved render manifests. These are production-view renders, not live pointer interaction.
+
+[Capture-action render manifest](build/qa/screenshots/capture-actions-renders.json) · [Recovery-guidance manifest](build/qa/recovery-guidance/recovery-guidance-renders.json).
+
+A separate privacy-sheet probe passed **11 checks**, with **four light/dark top/bottom renders** of the full bundled policy. All six sections, Done, and the data-folder control are readable and reachable; missing public URLs do not create invented links. No foreground application change occurred. [Privacy render manifest](build/qa/privacy/privacy-renders.json) · [Privacy probe log](build/qa/privacy/privacy-render.log).
+
+Real media integration generated synthetic PDF, RTF and H.264 MOV files and exercised the production preview service: nonblank thumbnails, unchanged original hashes, distinct decoded video frames, persisted state, and native fitted-PDF geometry for both pages at two viewport sizes passed. A separate opt-in test fetched Apple's public homepage using isolated preferences; no personal content or saved URL was sent. Unsupported or malformed formats are retained with an original-file fallback; testing these sample formats is not a claim that every third-party format/codec renders.
+
+The implemented categorization is by content type. Automatic AI project assignment from the original concept is not implemented. Folder and symbolic-link imports are rejected with feedback; this build accepts individual supported transfer representations, not every possible draggable object.
+
+### Locked-session limits and outstanding acceptance
+
+macOS was confirmed locked. The general window suite attempted all 203 assertions: 201 passed and **2 keyboard-focus assertions failed**. The Daily suite stopped at its native Edit-routing focus check. These failures are retained in the report and were not disabled or counted in the complete passing-suite total. The locked session prevents a final determination of those focus behaviors on this build; the earlier unlocked 0.1.18 run passed, but that is historical evidence only.
+
+[Window attempt](build/qa/WindowTests-v0.1.20.log) · [Daily focus attempt](build/qa/DailyCaptureTests-v0.1.20.log).
+
+Still needed: unlock and rerun those two suites; live collapse/expand and Remove/Cancel interaction on fictional captures; physical Finder/browser drag-and-drop and hover Control-V; notification permission, actual timed delivery while running/quit and notification-click reopening; VoiceOver/system accessibility interaction; oldest-supported macOS and hardware/Spaces/Hot Corners coverage. Unit scheduling and native drag callbacks do not replace those checks.
+
+### Build, installation and App Store result
+
+The final native ARM64 build and strict installed-app signature passed. DaBin quit normally through its own application handler before replacement; no process was forcibly terminated. Version **0.1.20 (21)** was installed at `~/Applications/DaBin.app`, with the previous app saved at `~/Applications/.DaBinBackups/20260923-095330-1ff6d689.app`. The app was launched and its running process observed. The installed executable and bundled privacy resources match the final build. Live visual launch verification remains blocked by the locked session. The existing Desktop link continues pointing to this installation.
+
+[Build log](build/qa/build-v0.1.20.log) · [Installed verification](build/qa/installed-app-v0.1.20.json) · [Final source/resource hashes](build/qa/final-source-v0.1.20.json).
+
+**App Store submission is blocked.** Thirteen source packaging checks pass; the release gate identifies four missing inputs: full Xcode, the Apple Developer team, published privacy-policy URL and real support URL. App Store signing, Bundle ID ownership, distribution validation, listing metadata/contacts and Apple review remain necessary. The current app is an ad-hoc local development build. No credentials were accessed and no app/policy was published or submitted. [Apple requirements audit and release workflow](APP_STORE_READINESS.md).
+
+## Earlier recorded QA cycles
+
+Previously installed version: **0.1.19 (20)** repairs the weekly entry control: **Today opens This Week**, with today and the preceding six dates. The weekly control reads **This Week** and all seven columns remain visible with no captures or tasks. The directional slide remains; columns no longer depend on an opacity animation to become visible. **175 targeted checks passed:** 99 weekly state checks and 76 native weekly window checks. **8 native renders** cover empty Daily/Week, empty Tasks and a narrow weekly viewport in both appearances. Native build, strict installed-app signing and plist/project validation passed. [State checks](build/qa/weekly-state-tests-v0.1.19.log) · [Window checks](build/qa/weekly-window-tests-v0.1.19.log) · [Renders](build/qa/weekly-entry-renders-v0.1.19.log) · [Render manifest](build/qa/screenshots/weekly-entry-renders.json) · [Build](build/qa/build-v0.1.19.log).
+
+**Live navigation passed in the installed app:** select an empty Links filter in Daily → click Today → the window changes to Week, the control reads This Week, and all seven date headings show zero captures with seven No links messages. Clicking an empty day opens that date in Daily; clicking Today opens the current week again. All was restored and the app was left on This Week, showing the existing archive. No captures, tasks, comments or reminders were added or edited. The previous app is preserved at `~/Applications/.DaBinBackups/20260923-084418-b70795c3.app`. [Live verification](build/qa/live-weekly-entry-v0.1.19.json).
+
+The optional own-process SwiftUI accessibility probe exposed only host nodes; that unsupported test approach is retained as a diagnostic, outside the passing suite. The actual buttons and seven empty headings were verified through CUA in the running installed app instead. Native tests cover empty-store expansion, every empty filter, selecting an empty day, calendar boundaries, drafts retained and unchanged persisted storage.
+
+The preceding **0.1.18 (19)** adds direct paste and drag-and-drop to Daily, using the existing capture/import pipeline. **647 targeted checks passed:** 138 new Daily capture checks, 103 input lifecycle checks, 203 native window checks, 93 filter-resize checks and 110 robot-drop regression checks. Native build, strict installed-app signature and plist/project validation passed. [Daily capture checks](build/qa/daily-capture-v0.1.18.log) · [Input lifecycle](build/qa/InputTests-v0.1.18.log) · [Window regression](build/qa/WindowTests-v0.1.18.log) · [Filter regression](build/qa/FilterResizeTests-v0.1.18.log) · [Robot regression](build/qa/RobotDropTests-v0.1.18.log) · [Build](build/qa/build-v0.1.18.log).
+
+Tests cover text/link/image/file drops, durable local originals, source bytes and timestamps, unsupported/move-only/cancelled drops, normal child hit testing, temporary highlight lifecycle, Control-V/Command-V, Edit → Paste responder-chain resolution, repeat/duplicate protection, normal native text editing, failure handling, and navigation while a capture is saving. They exposed a pre-existing RobotView shortcut bug: reading the mouse-only `NSEvent.eventNumber` on a key event can throw an AppKit exception. Both robot and Daily handlers now deduplicate using key-safe metadata, with a regression test for distinct objects representing the same key event.
+
+**Live paste verification passed** in a separately signed QA app with its own sandbox: pasting a fictional note directly into Daily created one visible capture and displayed saved feedback. An additional document appeared through user interaction during that check; its saved test-app capture was preserved, with transfer preference requested. It was not inspected or included in this delivery. A physical Finder-to-Daily drag was not completed by the automation in this cycle; native destination callbacks and hit routing are tested above. The normal app was quit cleanly, installed, reopened on Daily, and showed the same four existing captures for today. The previous app is preserved at `~/Applications/.DaBinBackups/20260923-083351-7f1b6a77.app`. [Live verification](build/qa/live-daily-capture-v0.1.18.json).
+
+The included **0.1.17 (18)** filter update keeps Daily/Search headers fixed and eases the bottom edge over 0.38 seconds. Growth stops at the display bottom and leaves overflow to existing scroll views. Its original 93 filter/window and 61 weekly checks passed. The former locked-session focus and installation block is now resolved: all 203 general window checks and 93 filter checks passed on the final 0.1.18 source, and the combined update is installed. [Original weekly checks](build/qa/weekly-window-tests-v0.1.17.log).
+
+The preceding **0.1.16 (17)** adds **Settings → Theme color**, with six presets, a native custom color well and Reset. **153 preference/contrast checks** passed for persistence, invalid stored values, color-space conversion and light/dark accents. **19 native renders** passed, covering all presets, custom Settings/Daily/detail, both appearances and narrow Settings. The selected accent reaches filters, dates, actions, the logo and carryover frames; task status colors retain their red/green meanings. [Theme checks](build/qa/theme-settings-v0.1.16.log) · [Theme renders](build/qa/theme-renders-v0.1.16.log) · [Render manifest](build/qa/screenshots/theme-renders.json) · [Build](build/qa/build-v0.1.16.log).
+
+Live verification in the installed app passed: Purple → Teal updated immediately; quit/relaunch retained Teal in both Daily and Settings; Reset restored Purple and the correct selected-state accessibility labels. The native Custom theme color well is present; custom conversion and persistence were exercised by isolated model checks, while separate macOS color-panel editing was not automated. Native build, strict installed-app signature and plist/project validation passed. No captures were added or edited. Previous app preserved at `~/Applications/.DaBinBackups/20260923-073248-6490b52e.app`. [Live theme verification](build/qa/live-theme-v0.1.16.json).
+
+The preceding **0.1.15 (16)** fits previews to their compact viewport while preserving proportions. **16 image/document renders** pass four-corner raster checks across tall/wide images, Daily thumbnails, 260/380-point widths and both themes. **8 additional PDF renders** verify surrounding layout only: macOS view caching omits PDFKit's tiled page drawing. **18 native PDF checks** verify complete-page fit, portrait/landscape pages, narrower bounds, page retention, navigation and URL changes. Native build, clean-copy signing, strict installed-app signature and project/plist validation passed. [Preview render log](build/qa/preview-fit-v0.1.15.log) · [Render manifest](build/qa/screenshots/preview-fit-renders.json) · [PDF checks](build/qa/pdf-fit-probe-v0.1.15.log) · [Build](build/qa/build-v0.1.15.log).
+
+Live CUA verification of the production PDF component in an isolated fixture app passed: the complete portrait page and complete landscape page both display all four coloured corner markers; Next changes 1/2 to 2/2, and Previous returns to 1/2 with the correct disabled end buttons. This resolves the blank cached-PDF snapshot question without substituting generated page pixels for a real native preview. No personal captures were involved. The briefly locked screen was unlocked by the user, and the app was then quit cleanly and updated. Previous build preserved at `~/Applications/.DaBinBackups/20260923-072422-b5fe4d9d.app`. [Live verification record](build/qa/live-preview-fit-v0.1.15.json).
+
+The preceding **0.1.14 (15)** repairs direct file/text drop behavior on the robot, including while Daily or Week is open. **416 targeted checks passed:** 103 input lifecycle checks, 110 robot/drop integration checks and 203 existing native window checks across two displays. Native build, strict installed-app signature and project/plist validation passed. The app was quit cleanly, installed, and reopened on today's Daily view. Previous app preserved at `~/Applications/.DaBinBackups/20260923-065654-989395b5.app`.
+
+New tests cover native multi-file URL representations and transfer metadata, selected plain/RTF/browser text, no payload reads during hover, source bytes and timestamps preserved, copy-only acceptance, rejected/cancelled drops, the robot artwork/badge hit target, all corners while Daily is open, digestion visibility, and retirement. A first-open Daily board keeps its top-left and display after receiving a drop at a different corner and resizing; no unintended placement preference is saved. Tests use temporary archives and private named pasteboards. [Input log](build/qa/input-drag-v0.1.14.log) · [Robot/drop log](build/qa/robot-drop-v0.1.14.log) · [Window log](build/qa/window-tests-v0.1.14.log) · [Build](build/qa/build-v0.1.14.log).
+
+**Live drag limitation:** the isolated native fixture launched, but CUA's drag gesture delivered mouse events without AppKit destination callbacks, so no fixture transfer completed. This is not a live Finder/browser-to-sandbox pass. The production callback/import path is covered by the tests above; a physical cross-application drag remains a manual check. The diagnostic is retained in [native drag attempt](build/qa/native-drag-attempt-v0.1.14.json). `scripts/build_drop_qa.sh` builds a fixture-only app for repeating native drag checks; its archive is separate from normal DaBin. No personal capture content was added or edited by this update. Broad storage tests and board renders were not repeated for this input change.
+
+The preceding **0.1.13 (14)** adds the seven-day weekly board opened from Daily's date. **447 targeted checks passed:** 109 existing task checks, 74 weekly state checks, 61 weekly window checks and all 203 existing window checks across two displays. **60 native view renders** passed, including populated/empty/task-filter weeks, both themes and an 800-point narrow layout. Native build, clean-copy signing and project/plist validation passed. [Task regression](build/qa/task-regression-v0.1.13.log) · [Weekly state](build/qa/weekly-state-v0.1.13.log) · [Weekly windows](build/qa/weekly-window-tests-v0.1.13-unlocked.log) · [Existing windows](build/qa/window-tests-v0.1.13-unlocked.log) · [Build](build/qa/build-v0.1.13.log) · [Renders](build/qa/render-v0.1.13.log).
+
+Native window tests verify both unfolding directions, actual intermediate resize frames, screen clamping, rapid reversal, compact-position restoration, detail return, weekly dragging and the Reduce Motion policy. Calendar tests include year/leap-month/DST boundaries, midnight/wake, filters and unchanged archive bytes. The initial locked-screen run failed two keyboard-focus assertions; both passed after unlocking without weakening the assertions. The last accessibility-only refinement was then confirmed in the installed app: unselected Tasks no longer announces Selected, and decorative checkmarks are hidden from the accessibility tree.
+
+Live CUA verification passed: date → seven side-by-side days; Tasks filter → one existing task; day heading → compact Daily on that day; Today → current day; weekly capture → detail → original week. The app was quit cleanly, updated, reopened, and left on the current week with All selected. The same three existing captures remain; no live records were added or edited. All accumulated updates since 0.1.8 are installed. The original 0.1.8 app is backed up at `~/Applications/.DaBinBackups/20260922-232649-e38ec038.app`; the final installation also retained its preceding candidate. [Live verification record](build/qa/live-weekly-v0.1.13.json).
+
+The included **0.1.12 (13)** change moves capture types below the time, puts the task status toggle there without a duplicate label, increases row titles exactly 15%, and adds the purple checkmark Tasks filter. **185 domain assertions + 109 task workflow checks (294 total)** and **52 native view renders** passed, together with native build/signing and project/plist validation. Tasks includes open/completed tasks while respecting creation, carryover and reminder dates; Search restricts hits to tasks while preserving neighbor context. Native renders cover the new task/file filters, task search, notes, media and scheduled-task frames in both themes. The status toggle is a sibling of the open-capture button. [Domain tests](build/qa/domain-v0.1.12.log) · [Task tests](build/qa/task-filter-v0.1.12.log) · [Build log](build/qa/build-v0.1.12.log) · [Render log](build/qa/render-v0.1.12.log).
+
+The included **0.1.11 (12)** change shows unfinished tasks with reminders at the top only on their reminder date; tasks without reminders retain daily carryover. Same-day reminders receive the same purple frame, once. Original-day records are preserved. **100 task workflow checks** (38 new reminder-day checks), **46 native view renders**, native build/signing and project/plist validation passed. Tests cover before/on/after dates, midnight transitions, completion/reopening, edits/removal, filtering, current-local reminder dates, no duplicates and unchanged original archive locations. Before/day/after layouts were inspected in light/dark mode. [Task tests](build/qa/task-reminder-day-tests-v0.1.11.log) · [Build log](build/qa/build-v0.1.11.log) · [Render log](build/qa/render-v0.1.11.log).
+
+The included **0.1.10 (11)** change replaces the Daily heading with a custom native DaBin wordmark and metallic purple robot-bin emblem. The existing 30-point header and drag overlay are retained. Native build/signing, project/plist validation and **40 native view renders** passed. The light/dark logo, carried-task rows, toolbar spacing and compact empty layout were visually checked. No behavior or storage logic changed in this logo update. [Build log](build/qa/build-v0.1.10.log) · [Render log](build/qa/render-v0.1.10.log).
+
+The included **0.1.9 (10)** change adds unfinished-task carryover at the top of Daily, original creation dates and thin purple frames. **62 task workflow checks** (32 new carryover checks) and **40 native view renders** passed. Coverage includes skipped days, year/month boundaries, filters, completion/reopening, unchanged original archive locations, no duplicate records, time-zone receipt dates, midnight refresh and the actual calendar-day notification. Light/dark carryover renders were inspected. Native build/signing and plist/project validation passed. [Task tests](build/qa/task-carryover-tests-v0.1.9.log) · [Build log](build/qa/build-v0.1.9.log) · [Render log](build/qa/render-v0.1.9.log).
+
+The earlier 0.1.9–0.1.12 installations were held while the screen was locked; that installation block is now resolved by 0.1.13 above. The full storage/service suite was not rerun for these scoped interface updates; the affected task, weekly and window suites were exercised.
+
+The **0.1.8 (9)** release made the title/blank header move the board, with a locally remembered position across route changes, hiding and relaunch. Native build/signing, **203 window checks across two displays**, and **38 view renders** passed. New checks dispatch mouse events directly to the actual native header, verify no snap-back while dragging or resizing, restore saved placement, and recover from invalid/disconnected-display coordinates. A live CUA drag on the installed app successfully saved a new window position. [Window log](build/qa/window-tests-v0.1.8.log) · [Build log](build/qa/build-v0.1.8.log) · [Render log](build/qa/render-v0.1.8.log) · [Live movement evidence](build/qa/movable-daily-v0.1.8.json).
+
+The preceding **0.1.7 (8)** update enlarged capture-row timestamps by 15% (11 → 12.65 pt), verified by native builds and renders. The full QA cycle below covers **0.1.6 (7)**; the storage/service logic was not changed or broadly retested for these UI follow-ups.
+
+**657 automated checks passed. 38 native view renders passed. Live native capture, search, comment, task and relaunch workflows passed.** Notification delivery and some cross-application input checks remain open; this is not an unconditional release sign-off.
+
+## Fixes made during this cycle
+
+| Finding | Repair and verification |
+| --- | --- |
+| One preview/reminder update rewrote the whole archive and blocked the UI | Services save only changed records. In a synthetic 1,000-record archive, one state update improved from approximately 2.14 seconds to **0.0027 seconds** in the final run. Scoped-save tests verify unrelated metadata and sidecars remain untouched. |
+| Failed notification-state writes could suppress later retries | Restore the previous in-memory state after persistence failure; a later reconciliation is proven to save it successfully. |
+| Notification permission changes required manual retry/relaunch | Reconcile on activation and wake, without requesting permission. Event bursts coalesce; tests cover permission changes and concurrent events. |
+| Deleted thumbnail caches were not rebuilt at launch | Pass all captures to the preview service; missing local thumbnails regenerate and intact thumbnails are skipped. |
+| Capture failures displayed a success icon | Explicit success/warning/error message types and matching icons; partial batches have warning feedback. |
+| New task reminder failures were hidden after returning to Daily | Scheduling/permission failures are visible on the board; retries update the message. |
+| Partial capture failures sounded successful to assistive technology | The robot announcement now identifies both saved and failed items. |
+| Reminder failures remained after clearing/completing the task | Feedback belongs to its capture and current reminder revision; clearing removes the matching notice without erasing unrelated errors or restoring stale async messages. |
+
+## Automated results
+
+| Suite | Passed checks |
+| --- | ---: |
+| Domain, persistence, classification and contextual search | 171 |
+| Dated archive layout and path safety | 50 |
+| Archive integration, migration and interruption recovery | 81 |
+| Preview/reminder services | 36 |
+| Scoped persistence, failures and 1,000-record archive | 22 |
+| App lifecycle and missing-cache recovery | 22 |
+| Task workflow and feedback races | 30 |
+| Pasteboard and promised-file lifecycle | 57 |
+| Native window states across two attached displays | 188 |
+| **Total** | **657** |
+
+[Final full-suite log](build/qa/full-qa-tests-v0.1.6-final.log).
+All suites ran against the final source. Fixtures use temporary stores, private named pasteboards and fake notification clients. The automated suite never reads the general clipboard or personal captures. Expected Core Data diagnostics come from an intentionally corrupt fixture; the fixture verifies preservation of its bytes.
+
+The first window attempt failed while macOS was locked. After unlocking, the full window suite passed twice. Assertions were not disabled: the runner now reports every independent failure and still exits unsuccessfully if any fail. It checks actual NSPanel/NSHostingView instances, internally supplied pointer positions, all four corners, retreat, focus acquisition/release, drag exclusion, keyboard routing and two-screen geometry. It does not synthesize a physical cross-app drag.
+
+## Native rendering and live interaction
+
+**38 production-view renders** cover light/dark Daily, compact empty board, media, contextual search, source paths, comments/reminders, active/completed tasks, task forms, Settings, capture errors and notification warnings. Inspected layouts show no clipping of essential controls. The robot changed **15,499 raster bytes** between active frames and **0 bytes** while inactive.
+
+[Render log](build/qa/full-qa-render-v0.1.6-final.log) · [Render manifest](build/qa/screenshots/native-view-renders.json).
+These are native view snapshots, not desktop screenshots. Live desktop screenshots and accessibility trees were inspected separately through the native UI tool.
+
+Live testing used the isolated bundle `com.dabin.mac.qa.cycle58ff3dc821`, with four fictional captures in its own sandbox:
+
+- Text and URL pasted directly to the robot, then visible in Daily newest first.
+- Search for the fictional URL returned its date, the matching link and the immediate note before and after. Selecting Links retained the neighboring text context.
+- A comment saved in Detail appeared on Daily and survived quit/relaunch.
+- The plus button created a task at the top of Daily. Task → Completed → Task worked and the reopened task survived relaunch.
+- Ordinary copied text honestly showed unavailable source metadata. The link showed its exact URL.
+- Show saved folder opened the matching year/month/day/capture folder in Finder, with readable generated records.
+- Saving a reminder retained its desired date when native authorization failed and displayed a clear error. Clearing the reminder was exercised; the stale-error finding was then repaired and covered by final regression tests.
+
+The live run used the 0.1.6 QA candidate. The final feedback-cleanup adjustment was subsequently covered by the full suite, new renders and the rebuilt installed application. QA data was retained separately; it was not seeded into normal DaBin storage.
+
+## Notification integration: permission response still needed
+
+The temporary QA application under `/private/tmp` was rejected by macOS notification client validation. An identical signed copy under `~/Applications` passed validation and macOS presented its permission alert. The desired reminder remained pending while authorization awaited a response. At the end of testing, the synthetic task was marked Completed (the board showed Paused) and the QA app was quit, so it will not produce a later test alert. This controlled comparison resolved the temporary-location rejection without changing signing or entitlements.
+
+Permission approval was requested from the user. **Real notification delivery, delivery while quit and notification-click reopening are not marked passed.** See [scoped diagnosis and Apple API references](build/qa/notification-validation-v0.1.6.md). Fake-client scheduling tests do not substitute for this OS integration check.
+
+## Build, installation and delivery
+
+- Native ARM64 build and strict signature verification passed. Installed app reports **0.1.6 (7)**. [Final build log](build/qa/full-qa-build-v0.1.6-final.log).
+- The previous installed app was preserved at `~/Applications/.DaBinBackups/20260922-222611-7c6a798e.app`. The normal app was quit cleanly before replacement. The final installed build was launched through macOS and showed the same three existing captures; no QA fixtures appeared in that archive.
+- Xcode project, Info.plist and entitlements passed `plutil -lint`. The new lifecycle source is included in the generated Xcode project.
+- The robot SVG remains byte-identical to the supplied handoff.
+- The earlier delivered ZIP passed CRC, all 209 manifest hashes, executable permissions and strict signature verification after clean extraction. The final updated delivery is validated again by the guarded packaging script.
+- Synced Desktop/Documents app folders can receive FinderInfo attributes from the provider. Clean signed contents and the installed Applications copy are verified; use the installed app.
+
+## Remaining acceptance checks
+
+- Physical-pointer hover with real Control-V from another app, Finder/browser drag-and-drop, live external file promises, and active-drag corner reveal. Finder file-copy/paste automation in this cycle was inconclusive and is not counted as passing.
+- Notification permission response, actual timed delivery, delivery while quit, Focus behavior and notification-click reopening.
+- Separate Spaces/fullscreen apps, configured macOS Hot Corners, physical display removal and pointer traversal between displays.
+- Live website preview fetching, redirects and offline behavior; network previews remained off during this cycle.
+- VoiceOver navigation and system Increase Contrast/Reduce Motion. Labels, partial-success announcements and the static Reduce Motion branch were reviewed, but full assistive-technology interaction was not run.
+- Intel and macOS 14–25 runtime coverage; Developer ID signing/notarization for distribution; full Xcode build/XCTest execution.
+
+## Environment
+
+Apple Silicon; macOS **26.6.2 (25G83)**; Apple Swift **6.3.2**; Command Line Tools macOS SDK **26.5**; Swift 5 language mode; macOS 14 minimum target. Full Xcode is not installed. Data and QA artifacts stayed local; only synthetic DaBin fixtures were used.

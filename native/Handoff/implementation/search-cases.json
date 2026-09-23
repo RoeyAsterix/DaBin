@@ -1,0 +1,373 @@
+{
+  "purpose": "Fictional deterministic native-port expectations",
+  "entries": [
+    {
+      "id": "a",
+      "day": "2026-09-20",
+      "capturedAt": "2026-09-20T09:00:00.000Z",
+      "zone": "UTC",
+      "kind": "image",
+      "title": "Window light",
+      "original": "",
+      "description": "",
+      "comment": ""
+    },
+    {
+      "id": "b",
+      "day": "2026-09-20",
+      "capturedAt": "2026-09-20T10:00:00.000Z",
+      "zone": "UTC",
+      "kind": "link",
+      "title": "Quiet room",
+      "original": "https://quiet.example/room",
+      "description": "",
+      "comment": ""
+    },
+    {
+      "id": "c",
+      "day": "2026-09-20",
+      "capturedAt": "2026-09-20T11:00:00.000Z",
+      "zone": "UTC",
+      "kind": "document",
+      "title": "Materials.txt",
+      "original": "",
+      "description": "",
+      "comment": ""
+    },
+    {
+      "id": "d",
+      "day": "2026-09-20",
+      "capturedAt": "2026-09-20T12:00:00.000Z",
+      "zone": "UTC",
+      "kind": "text",
+      "title": "Quiet idea",
+      "original": "",
+      "description": "",
+      "comment": ""
+    },
+    {
+      "id": "e",
+      "day": "2026-09-20",
+      "capturedAt": "2026-09-20T13:00:00.000Z",
+      "zone": "UTC",
+      "kind": "video",
+      "title": "Evening",
+      "original": "",
+      "description": "",
+      "comment": ""
+    },
+    {
+      "id": "f",
+      "day": "2026-09-21",
+      "capturedAt": "2026-09-21T09:00:00.000Z",
+      "zone": "UTC",
+      "kind": "text",
+      "title": "Quiet morning",
+      "original": "",
+      "description": "",
+      "comment": ""
+    },
+    {
+      "id": "g",
+      "day": "2026-09-21",
+      "capturedAt": "2026-09-21T10:00:00.000Z",
+      "zone": "UTC",
+      "kind": "pdf",
+      "title": "Plans.pdf",
+      "original": "",
+      "description": "",
+      "comment": ""
+    }
+  ],
+  "cases": [
+    {
+      "name": "multiple-days-overlap-deduplicated",
+      "query": "quiet",
+      "filter": "all",
+      "expected": [
+        {
+          "day": "2026-09-21",
+          "hits": 1,
+          "items": [
+            {
+              "id": "f",
+              "match": true
+            },
+            {
+              "id": "g",
+              "match": false
+            }
+          ]
+        },
+        {
+          "day": "2026-09-20",
+          "hits": 2,
+          "items": [
+            {
+              "id": "a",
+              "match": false
+            },
+            {
+              "id": "b",
+              "match": true
+            },
+            {
+              "id": "c",
+              "match": false
+            },
+            {
+              "id": "d",
+              "match": true
+            },
+            {
+              "id": "e",
+              "match": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "filter-only-hits",
+      "query": "quiet",
+      "filter": "links",
+      "expected": [
+        {
+          "day": "2026-09-20",
+          "hits": 1,
+          "items": [
+            {
+              "id": "a",
+              "match": false
+            },
+            {
+              "id": "b",
+              "match": true
+            },
+            {
+              "id": "c",
+              "match": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "multiword-and-match",
+      "query": "quiet room",
+      "filter": "all",
+      "expected": [
+        {
+          "day": "2026-09-20",
+          "hits": 1,
+          "items": [
+            {
+              "id": "a",
+              "match": false
+            },
+            {
+              "id": "b",
+              "match": true
+            },
+            {
+              "id": "c",
+              "match": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "last-item-no-next-day-neighbor",
+      "query": "evening",
+      "filter": "all",
+      "expected": [
+        {
+          "day": "2026-09-20",
+          "hits": 1,
+          "items": [
+            {
+              "id": "d",
+              "match": false
+            },
+            {
+              "id": "e",
+              "match": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "filename-and-file-filter",
+      "query": "plans.pdf",
+      "filter": "files",
+      "expected": [
+        {
+          "day": "2026-09-21",
+          "hits": 1,
+          "items": [
+            {
+              "id": "f",
+              "match": false
+            },
+            {
+              "id": "g",
+              "match": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "empty-query",
+      "query": "  ",
+      "filter": "all",
+      "expected": []
+    },
+    {
+      "name": "no-match",
+      "query": "missingneedle",
+      "filter": "all",
+      "expected": []
+    },
+    {
+      "name": "all-hits-own-day-once",
+      "query": "2026-09-20",
+      "filter": "all",
+      "expected": [
+        {
+          "day": "2026-09-20",
+          "hits": 5,
+          "items": [
+            {
+              "id": "a",
+              "match": true
+            },
+            {
+              "id": "b",
+              "match": true
+            },
+            {
+              "id": "c",
+              "match": true
+            },
+            {
+              "id": "d",
+              "match": true
+            },
+            {
+              "id": "e",
+              "match": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "diacritic-and-case",
+      "query": "CAFE",
+      "filter": "all",
+      "entries": [
+        {
+          "id": "u",
+          "day": "2026-09-19",
+          "capturedAt": "2026-09-19T09:00:00.000Z",
+          "zone": "UTC",
+          "kind": "text",
+          "title": "Café notes",
+          "original": "",
+          "description": "",
+          "comment": ""
+        },
+        {
+          "id": "v",
+          "day": "2026-09-19",
+          "capturedAt": "2026-09-19T10:00:00.000Z",
+          "zone": "UTC",
+          "kind": "image",
+          "title": "Window",
+          "original": "",
+          "description": "",
+          "comment": ""
+        }
+      ],
+      "expected": [
+        {
+          "day": "2026-09-19",
+          "hits": 1,
+          "items": [
+            {
+              "id": "u",
+              "match": true
+            },
+            {
+              "id": "v",
+              "match": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "equal-time-id-tiebreak",
+      "query": "hit",
+      "filter": "all",
+      "entries": [
+        {
+          "id": "z",
+          "day": "2026-09-19",
+          "capturedAt": "2026-09-19T09:00:00.000Z",
+          "zone": "UTC",
+          "kind": "text",
+          "title": "After",
+          "original": "",
+          "description": "",
+          "comment": ""
+        },
+        {
+          "id": "m",
+          "day": "2026-09-19",
+          "capturedAt": "2026-09-19T09:00:00.000Z",
+          "zone": "UTC",
+          "kind": "text",
+          "title": "Hit",
+          "original": "",
+          "description": "",
+          "comment": ""
+        },
+        {
+          "id": "a",
+          "day": "2026-09-19",
+          "capturedAt": "2026-09-19T09:00:00.000Z",
+          "zone": "UTC",
+          "kind": "text",
+          "title": "Before",
+          "original": "",
+          "description": "",
+          "comment": ""
+        }
+      ],
+      "expected": [
+        {
+          "day": "2026-09-19",
+          "hits": 1,
+          "items": [
+            {
+              "id": "a",
+              "match": false
+            },
+            {
+              "id": "m",
+              "match": true
+            },
+            {
+              "id": "z",
+              "match": false
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

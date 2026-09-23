@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>DaBin — Drop it now. See your day later.</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <svg class="icon-library" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.4v5.2l3.1 2"/></symbol>
+    <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3.5" y="5.5" width="17" height="15" rx="2.5"/><path d="M7.5 3.5v4M16.5 3.5v4M3.5 10h17"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h13M13 7l5 5-5 5"/></symbol>
+    <symbol id="i-link" viewBox="0 0 24 24"><path d="M9.7 14.3l4.6-4.6M8.8 7.8l1.4-1.4a4 4 0 0 1 5.7 5.6l-1.3 1.3M9.4 10.7l-1.3 1.3a4 4 0 0 0 5.7 5.7l1.4-1.4"/></symbol>
+    <symbol id="i-file" viewBox="0 0 24 24"><path d="M6 2.8h8l4 4V21H6zM14 2.8V7h4"/></symbol>
+    <symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.2" cy="9" r="1.3"/><path d="m4 17 5.3-5 3.2 3 2.5-2.4 5 4.5"/></symbol>
+    <symbol id="i-note" viewBox="0 0 24 24"><path d="M5 4.5h14v15H5zM8 9h8M8 12.5h8M8 16h5"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m4.5 12.5 5.2 5.1L19.5 7"/></symbol>
+    <symbol id="i-external" viewBox="0 0 24 24"><path d="M13 5h6v6M19 5l-9 9M19 14v4.5H5.5V5H10"/></symbol>
+    <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"/></symbol>
+    <symbol id="i-bell" viewBox="0 0 24 24"><path d="M5.5 17.5h13l-1.5-2V10a5 5 0 0 0-10 0v5.5l-1.5 2ZM10 20h4"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5"/></symbol>
+  </svg>
+
+  <main class="desktop" id="desktop" aria-label="DaBin macOS prototype">
+
+    <section class="widget" id="widget" aria-label="Floating DaBin capture robot">
+      <button class="widget-grip" id="widget-grip" type="button" aria-label="Move DaBin. Drag this handle, or use arrow keys; Shift moves faster." title="Drag to move DaBin"><span></span><span></span><span></span><span></span></button>
+      <button class="robot-body" id="robot-body" type="button" aria-label="DaBin robot. Single-click to capture, double-click for Daily" title="Click to capture · Double-click for Daily">
+        <svg class="robot-art" viewBox="0 0 64 78" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <defs>
+            <linearGradient id="shell" x1="12" y1="17" x2="53" y2="68" gradientUnits="userSpaceOnUse"><stop stop-color="#B89CCF"/><stop offset=".53" stop-color="#765D94"/><stop offset="1" stop-color="#503E6E"/></linearGradient>
+            <linearGradient id="lid" x1="16" y1="12" x2="51" y2="24" gradientUnits="userSpaceOnUse"><stop stop-color="#C9B5DA"/><stop offset="1" stop-color="#6B537F"/></linearGradient>
+          </defs>
+          <ellipse cx="32" cy="74" rx="18" ry="2.5" fill="#261E32" opacity=".18"/>
+          <path d="M18 63h10l-2 7h-9l1-7Zm18 0h10l1 7h-9l-2-7Z" fill="#4A3A62"/>
+          <path d="M14 43c-4-1-7 1-7 5s2 6 6 6m37-11c4-1 7 1 7 5s-2 6-6 6" stroke="#59466E" stroke-width="4" stroke-linecap="round"/>
+          <rect x="12" y="20" width="40" height="46" rx="10" fill="url(#shell)" stroke="#433451" stroke-width="1.5"/>
+          <path d="M16 24v34c0 2 1 4 3 5" stroke="#E2D1EF" stroke-opacity=".63" stroke-width="1.2" stroke-linecap="round"/>
+          <path d="M48 24v35c0 2-1 3-2 4" stroke="#35283F" stroke-opacity=".42" stroke-width="1.2" stroke-linecap="round"/>
+          <rect x="18" y="30" width="28" height="20" rx="6" fill="#292338" stroke="#B49CC7" stroke-width="1"/>
+          <g class="robot-eyes" fill="#D7F4EF"><circle cx="26" cy="39" r="2.7"/><circle cx="38" cy="39" r="2.7"/></g>
+          <path d="M29 45c1.6 1.1 4.4 1.1 6 0" stroke="#96CEC9" stroke-linecap="round" stroke-width="1.1"/>
+          <rect x="23" y="55" width="18" height="5" rx="2.5" fill="#30263C" stroke="#B398C7" stroke-width=".8"/>
+          <g class="robot-lid"><path d="M14 18c0-4 3-7 7-7h22c4 0 7 3 7 7v5H14v-5Z" fill="url(#lid)" stroke="#483556" stroke-width="1.4"/><path d="M17 16h30" stroke="#E9D9F1" stroke-opacity=".7" stroke-width="1" stroke-linecap="round"/></g>
+          <g class="robot-digest-paper"><rect x="28" y="-3" width="9" height="12" rx="1.5" transform="rotate(8 28 -3)" fill="#F7F5F8" stroke="#97899F"/></g>
+        </svg>
+      </button>
+      <div class="robot-bubble" id="robot-bubble" aria-hidden="true">Release to capture</div>
+    </section>
+
+    <section class="composer" id="composer" role="dialog" aria-modal="false" aria-labelledby="composer-title" hidden>
+      <div class="composer-head"><h2 id="composer-title">Add to today</h2><button class="plain-icon" id="composer-close" type="button" aria-label="Close paste entry">×</button></div>
+      <label class="sr-only" for="paste-input">A link or a thought</label>
+      <textarea id="paste-input" rows="3" placeholder="Paste a link or a thought…"></textarea>
+      <div class="composer-bottom"><label class="file-add" for="file-picker"><svg><use href="#i-file"/></svg><span>Choose files</span></label><input id="file-picker" type="file" multiple hidden><button class="primary-button" id="save-paste" type="button">Save to today</button></div>
+    </section>
+
+    <section class="board" id="board" role="dialog" aria-modal="false" aria-labelledby="window-title" hidden>
+      <div class="window-titlebar">
+        <span class="sr-only" id="window-title">DaBin</span>
+        <div class="board-day"><h1 id="daily-title">Today</h1><p id="day-summary"></p></div>
+        <div class="date-controls"><button class="square-button" id="previous-day" type="button" aria-label="Previous day"><svg class="flip"><use href="#i-chevron"/></svg></button><button class="square-button" id="next-day" type="button" aria-label="Next day"><svg><use href="#i-chevron"/></svg></button><label class="date-trigger" title="Choose a date"><svg><use href="#i-calendar"/></svg><input id="date-picker" type="date" aria-label="Choose board date"></label></div>
+        <div class="titlebar-end"><button class="titlebar-button" id="search-toggle" type="button" aria-label="Search captures" aria-pressed="false" title="Search"><svg><use href="#i-search"/></svg></button><button class="titlebar-button" id="reminders-toggle" type="button" aria-label="Show reminders" title="Reminders"><svg><use href="#i-bell"/></svg></button><button class="titlebar-button board-close" id="board-close" type="button" aria-label="Close Daily window" title="Close">×</button></div>
+      </div>
+      <div class="board-search" id="board-search" hidden><svg aria-hidden="true"><use href="#i-search"/></svg><input id="search-input" type="search" autocomplete="off" placeholder="Search your captures" aria-label="Search captures"><button id="search-clear" type="button" aria-label="Clear search" hidden>×</button></div>
+      <div class="window-content">
+        <div class="main-pane">
+          <div class="daily-view" id="daily-view">
+            <div class="filter-bar"><div class="filters" id="filter-row" role="group" aria-label="Filter captures"><button data-filter="all" aria-pressed="true" type="button">All</button><button data-filter="links" aria-pressed="false" type="button">Links</button><button data-filter="files" aria-pressed="false" type="button">Files</button><button data-filter="media" aria-pressed="false" type="button">Media</button></div></div>
+            <div class="capture-list" id="capture-list" aria-live="polite"></div>
+          </div>
+          <div class="detail-view" id="detail-view" hidden><div class="detail-scroll"><button class="back-link" id="detail-back" type="button"><svg class="flip"><use href="#i-arrow"/></svg>Back to <span id="detail-return-label">Daily</span></button><div class="detail-hero" id="detail-hero"></div><div class="detail-top"><div><span class="eyebrow" id="detail-kind"></span><h1 id="detail-title"></h1></div><span class="detail-time" id="detail-time"></span></div><p class="detail-description" id="detail-description"></p><div class="original-row"><div><span class="field-label">ORIGINAL</span><strong id="detail-source"></strong><small id="detail-original-note"></small></div><button class="secondary-button" id="open-original" type="button"><svg><use href="#i-external"/></svg>Open original</button></div><div class="detail-edit-grid"><div class="edit-block"><label for="comment-input">Your comment <span>Optional</span></label><textarea id="comment-input" rows="4" placeholder="Add a thought for later…"></textarea></div><div class="edit-block"><label for="reminder-input">Remind me <span>Optional</span></label><input id="reminder-input" type="datetime-local" aria-label="Reminder date and time"><button class="clear-link" id="clear-reminder" type="button">Clear reminder</button><p>A reminder stays with this card on its original day.</p></div></div><div class="detail-footer"><span id="detail-save-status" role="status"></span><button class="primary-button" id="save-detail" type="button">Save changes</button></div></div></div>
+          <div class="reminders-view" id="reminders-view" hidden><header class="content-head"><div><span class="eyebrow">LOOK AHEAD</span><h1>Reminders</h1><p>Small nudges for things you saved, never a to-do list.</p></div></header><div class="reminders-list" id="reminders-list"></div></div>
+        </div>
+      </div>
+    </section>
+    <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+  </main>
+</body>
+</html>

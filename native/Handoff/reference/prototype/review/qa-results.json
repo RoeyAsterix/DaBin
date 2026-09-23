@@ -1,0 +1,25 @@
+{
+  "status": "passed",
+  "count": 14,
+  "checks": [
+    "Text, HTTP links, and unsafe URI classification",
+    "File groups and MIME-less extension fallbacks",
+    "Comment and reminder edits preserve capture identity, time, day and timezone",
+    "Single-hit search includes only immediate same-day neighbors",
+    "Multi-day search includes only dates with a match",
+    "Overlapping search context is deduplicated and cannot cross midnight",
+    "Type filter restricts hits but preserves other-type context",
+    "Local dates roll over month and year boundaries",
+    "daily initialization and primary handler smoke check",
+    "capture initialization and primary handler smoke check",
+    "search initialization and primary handler smoke check",
+    "detail initialization and primary handler smoke check",
+    "reminders initialization and primary handler smoke check",
+    "rest initialization and primary handler smoke check"
+  ],
+  "limits": [
+    "DOM-neutral smoke harness is not rendered browser QA.",
+    "Native double-click threshold, OS drag delivery, dark appearance, and layout require real browser/native checks.",
+    "WebMCP handlers tested in mock registration context; no supported browser WebMCP context was available."
+  ]
+}

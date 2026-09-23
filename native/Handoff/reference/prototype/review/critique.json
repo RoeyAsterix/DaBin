@@ -1,0 +1,48 @@
+{
+  "kind": "critique-panel",
+  "score": 4,
+  "method": "Source and interaction-model review; rendered verification unavailable",
+  "axes": {
+    "clarity": {
+      "score": 4,
+      "notes": "One main surface and explicit dates; comments/reminders stay optional."
+    },
+    "hierarchy": {
+      "score": 4,
+      "notes": "Visual capture first, calm type and content dividers; no sidebar."
+    },
+    "typography": {
+      "score": 4,
+      "notes": "Intentional macOS stacks, 14\u201316px body, 12px metadata; real rendering remains unverified."
+    },
+    "motion": {
+      "score": 4,
+      "notes": "Small digest response with Reduced Motion support; native click timing still needs testing."
+    },
+    "brand": {
+      "score": 4,
+      "notes": "Source metallic-purple robot retained; neutral content panel."
+    },
+    "philosophy": {
+      "score": 4,
+      "notes": "Minimal permanent footprint and readable on-demand content."
+    },
+    "execution": {
+      "score": 3,
+      "notes": "Source checks passed; actual rendered layout and screenshot review are outstanding."
+    },
+    "specificity": {
+      "score": 4,
+      "notes": "Fictional capture examples labeled in overview; no invented performance claims."
+    },
+    "restraint": {
+      "score": 4,
+      "notes": "No rail, wallpaper, settings overlay or project-management UI."
+    }
+  },
+  "open_items": [
+    "Rendered screenshots",
+    "Real-browser interaction QA",
+    "Native macOS validation"
+  ]
+}

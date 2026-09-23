@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "kind": "html",
+  "title": "DaBin/open-design-v2/rest.html",
+  "entry": "DaBin/open-design-v2/rest.html",
+  "renderer": "html",
+  "status": "complete",
+  "exports": [
+    "html",
+    "pdf",
+    "zip"
+  ],
+  "createdAt": "2026-09-22T16:32:55.807Z",
+  "updatedAt": "2026-09-22T16:32:55.807Z",
+  "metadata": {
+    "inferred": true,
+    "reconciled": true
+  }
+}

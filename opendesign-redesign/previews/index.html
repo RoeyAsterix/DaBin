@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DaBin — visual review frames</title>
+  <style>
+    :root { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif; color: #272a36; background: #fff; }
+    * { box-sizing: border-box; }
+    body { margin: 0; padding: 32px max(22px, calc((100vw - 1280px)/2)); }
+    header { margin-bottom: 24px; } h1 { margin: 0 0 6px; font-size: 25px; letter-spacing: -.03em; } p { margin: 0; color: #666b77; font-size: 13px; line-height: 1.5; }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 22px; }
+    figure { margin: 0; min-width: 0; background: #fff; border: 1px solid #dfe1e7; border-radius: 16px; padding: 14px; box-shadow: 0 5px 22px #35415810; }
+    figcaption { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; padding: 4px 4px 14px; } figcaption strong { font-size: 13px; } figcaption span { color: #777b87; font-size: 11px; }
+    .frame { position: relative; width: 100%; height: 380px; overflow: hidden; border-radius: 8px; background: transparent; }
+    .frame iframe { position: absolute; left: 0; top: 0; width: 1440px; height: 900px; border: 0; transform: scale(.42); transform-origin: 0 0; }
+    .frame.narrow { height: 455px; display: flex; justify-content: center; background: transparent; }.frame.narrow iframe { position: relative; width: 390px; height: 780px; transform: scale(.57); transform-origin: top center; box-shadow: 0 0 0 1px #4d5060; }
+    .hint { margin-top: 19px; } a { color: #50408f; }
+    @media (max-width: 900px) { .grid { grid-template-columns: 1fr; }.frame { height: 380px; } }
+    @media (max-width: 700px) { .frame { height: 290px; }.frame iframe { transform: scale(.32); }.frame.narrow { height: 455px; } }
+  </style>
+</head>
+<body>
+  <header><h1>DaBin visual review</h1><p>Live frames of the local prototype. Open a frame for full-size interaction; these are not exported PNG screenshots.</p></header>
+  <div class="grid">
+    <figure><figcaption><strong>01 · Resting robot</strong><span>Default · 1440 × 900</span></figcaption><div class="frame"><iframe title="Minimal floating robot" src="../index.html?appearance=light"></iframe></div></figure>
+    <figure><figcaption><strong>02 · Daily board</strong><span>Opened · 1440 × 900</span></figcaption><div class="frame"><iframe title="Light Daily board" src="../index.html?appearance=light&amp;view=daily"></iframe></div></figure>
+    <figure><figcaption><strong>03 · Dark appearance</strong><span>Opened · 1440 × 900</span></figcaption><div class="frame"><iframe title="Dark Daily board" src="../index.html?appearance=dark&amp;view=daily"></iframe></div></figure>
+    <figure><figcaption><strong>04 · Narrow window</strong><span>Opened · 390 × 780</span></figcaption><div class="frame narrow"><iframe title="Narrow DaBin prototype" src="../index.html?appearance=light&amp;view=daily"></iframe></div></figure>
+  </div>
+  <p class="hint"><a href="../index.html">Open the full prototype</a> · The visual frames run locally with fictional content and no network preview requests.</p>
+</body>
+</html>

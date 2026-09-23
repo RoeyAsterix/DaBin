@@ -1,0 +1,99 @@
+# DaBin — Mac App Store readiness
+
+**Audit date:** 23 September 2026
+**Source version:** 0.3.0 (25)
+**Result: BLOCKED for submission; local app QA is a separate result.**
+
+The source now has a Productivity category, a bundled privacy explanation, privacy manifest, and an Xcode Release configuration that does not force ad-hoc signing. These changes improve readiness. They do not make the locally signed app an App Store distribution build or guarantee approval.
+
+## Results
+
+| Status | Area | Evidence and remaining work |
+| --- | --- | --- |
+| PASS | App Sandbox | `Resources/DaBin.entitlements` enables App Sandbox, read-only access to user-selected files, and outgoing network access for optional website previews. The inspected local app's embedded entitlements match. There are no sandbox exceptions or root privileges. [Apple sandbox documentation](https://developer.apple.com/documentation/security/protecting-user-data-with-app-sandbox) |
+| PASS | Store/direct update separation | The generated Xcode Store configuration compiles a Store-managed update stub, has no direct feed key and does not embed the installer. The standalone builder alone enables `DABIN_DIRECT_UPDATES` and creates the GitHub helper. An exported Store candidate still needs binary inspection before submission. Source imports and linked libraries use Apple frameworks; no manually invoked private API was found. [App Review, 2.4.5 and 2.5.1](https://developer.apple.com/app-store/review/guidelines/#hardware-compatibility) |
+| PASS | Explicit capture and limited permissions | Clipboard contents are read in response to paste, and file access comes from paste/drop transfers. The corner mechanism reads pointer position; it does not require Accessibility or Screen Recording. No login, analytics, ad SDK, cloud sync, or external AI service is present. Source files are copied rather than modified. |
+| PASS | Optional website requests | Website preview fetching defaults off. Settings explains website contact, and the bundled policy describes URLs, IP addresses, redirects, earlier saved links, cancellation, and locally cached previews. Disabling previews cancels pending work. Links still save while previews are off. |
+| PASS | Local notification design | Permission is requested when saving a reminder, not at startup. A denied permission does not prevent capture or saving a reminder record. Notification messages omit capture contents. Actual system delivery remains part of live QA. |
+| PASS | Category and icon packaging | `Info.plist` now declares `public.app-category.productivity`. `AppIcon.icns` includes normal/Retina sizes through the 1024-pixel `ic10` entry. [Category key](https://developer.apple.com/documentation/bundleresources/information-property-list/lsapplicationcategorytype), [Mac submission category requirement](https://developer.apple.com/library/archive/releasenotes/General/SubmittingToMacAppStore/) |
+| PARTIAL | Privacy and support | The bundle now points to the public GitHub privacy policy and repository Issues page, and Settings retains the complete offline explanation. The owner must still confirm that the support route and publisher contact information satisfy the App Store listing and remain maintained. The policy now discloses user-initiated GitHub update requests for the direct build. [App Review, 1.5 and 5.1.1](https://developer.apple.com/app-store/review/guidelines/#privacy), [App privacy URL requirement](https://developer.apple.com/help/app-store-connect/reference/app-information/app-privacy) |
+| BLOCKED | App Store signing and validation | The inspected development app is ad-hoc signed and has no TeamIdentifier. The generated Release configuration now uses automatic signing; a real Apple Developer team, registered Bundle ID, appropriate distribution signing/profile, and successful Xcode distribution validation remain necessary. `com.dabin.mac` is a local configured ID; availability/ownership was not checked. [Distribution signing for macOS](https://developer.apple.com/documentation/xcode/creating-distribution-signed-code-for-the-mac/), [App Store provisioning](https://developer.apple.com/help/account/provisioning-profiles/create-an-app-store-provisioning-profile) |
+| BLOCKED | Archive tooling in this environment | The selected tools are `/Library/Developer/CommandLineTools` with macOS SDK 26.5; `xcrun xcodebuild -version` fails because full Xcode is unavailable. The archive helper cannot run until full Xcode is installed/selected. This is an environment limitation of the supplied Xcode workflow, not a claim that the current SDK is prohibited. |
+| BLOCKED | App Store Connect release information | No App Store Connect record or account was accessed. Publisher identity, support and privacy URLs, screenshots, description, age-rating answers, privacy answers, review contact/notes, availability/pricing, and applicable export-compliance answers need owner confirmation and submission validation. Do not submit placeholder URLs. [Platform version information](https://developer.apple.com/help/app-store-connect/reference/app-information/platform-version-information), [App privacy details](https://developer.apple.com/app-store/app-privacy-details/) |
+| PARTIAL | Supported machines | The local build is Apple Silicon (`arm64`) and declares macOS 14+. It does not support Intel Macs. Full oldest-supported-macOS, multiple-display, and current distribution-build testing have not been established by this audit. The QA report records the actual machine and tests. |
+
+## Privacy manifest: scope and meaning
+
+`Resources/PrivacyInfo.xcprivacy` records no tracking and no developer/SDK data collection, plus these uses:
+
+- `NSPrivacyAccessedAPICategoryUserDefaults` / `CA92.1`: app-owned theme, placement, and preview preferences.
+- `NSPrivacyAccessedAPICategorySystemBootTime` / `35F9.1`: elapsed animation time inside the app.
+
+Both build paths include the manifest in `Contents/Resources/`, Apple's macOS location. The source's file-attribute checks read file type; no explicit timestamp API from Apple's covered list was found. [Reasons and API list](https://developer.apple.com/documentation/bundleresources/app-privacy-configuration/nsprivacyaccessedapitypes/nsprivacyaccessedapitype), [Bundle placement](https://developer.apple.com/documentation/bundleresources/placing-content-in-a-bundle).
+
+Apple's current required-reason enforcement text lists iOS, iPadOS, tvOS, visionOS, and watchOS, **not native macOS**. Including accurate declarations is useful preparation; the prior absence is not classified here as a confirmed native macOS rejection. [Privacy manifests](https://developer.apple.com/documentation/bundleresources/privacy-manifest-files), [Required-reason API scope](https://developer.apple.com/documentation/bundleresources/describing-use-of-required-reason-api).
+
+The candidate App Store privacy answer is **Data Not Collected**, based on the present code: the developer receives no captures or analytics. This is an inference for owner review, not a submitted declaration. Apple distinguishes on-device processing from off-device collection. Optional previews contact user-selected websites; that behavior is explained separately and must remain accurate if network behavior changes. [Apple's data-collection definition and on-device guidance](https://developer.apple.com/app-store/app-privacy-details/).
+
+## Release workflow and verified gates
+
+`scripts/build.sh` now defaults to an optimized **Release ARM64** app targeting macOS 14, with compiler warnings treated as errors and symbols stored separately at `build/DaBin.app.dSYM`. `--configuration Debug` is explicit. One sorted source/resource inventory drives local builds, the Xcode project, QA and source fingerprints. The generated project has cohesive source groups and a Release archive action.
+
+`build/build-receipt.json` records the compiler, SDK, configuration, source hashes and executable hash. The local signature remains ad-hoc unless a developer explicitly configures a signing identity. An optimized local build is not an App Store distribution approval.
+
+`scripts/install_app.py` refuses installation while DaBin is running, stages and verifies the copied app, preserves the previous owned app and restores it if installation fails. `scripts/package_standalone.py` creates an app-only ZIP with documentation and an optional explicit PDF. It verifies ARM64/system-library dependencies, stale-build hashes, signature and the extracted ZIP. It never includes the user's archive or removes macOS security controls. These local delivery tools are not inside the app bundle.
+
+`UpdateTools/package_update.py` creates a current-Mac update ZIP with a native **DaBin Update.app** and a public `DaBin-update.json`. The direct app downloads only from the fixed repository path, verifies the published size and SHA-256, then opens its embedded helper. The helper rechecks the package, requests a normal quit, copies without extended metadata, backs up the prior owned app, verifies the staged and installed signatures and rolls back on failure. It never opens the capture archive. The generated Xcode Store build compiles out this downloader and does not embed the helper; an App Store build must use Apple's distribution channel.
+
+The standard `scripts/test.sh` runner defaults to Release, compiles a testable module from the production sources and records all requested suite outcomes even after failures. Cached compiler artifacts are hashed before reuse. Reports under `build/qa/runs/` include configuration, OS, Swift/SDK, input hashes and individual logs; source changes invalidate the result. Window-focus failures remain failures. The final functional results belong in `QA_RESULTS.md`.
+
+The offline preflight can be run without credentials or network access:
+
+```sh
+python3 scripts/app_store_preflight.py --static-only
+python3 scripts/app_store_preflight.py
+```
+
+Audit results are retained at:
+
+- `build/qa/app-store-preflight-static-v0.3.0.log`: **20 source packaging checks passed**.
+- `build/qa/app-store-preflight-release-v0.3.0.log`: release preflight remains blocked by the Apple Developer Team ID and full Xcode. The configured GitHub policy/support URLs pass offline syntax checks; their content and continuing reachability remain owner responsibilities.
+
+`bash -n` validated the build/archive shell scripts; Python compilation validated the preflight/project generator; property-list checks passed for Info.plist, entitlements, privacy manifest, and the generated Xcode project. Thirteen offline URL validation cases rejected placeholder, credential-bearing, local/private, malformed-port, whitespace, and invalid-host inputs as intended. URL validation is syntactic; the owner must verify that each published page is reachable and contains the required information.
+
+After the owner provides real values, set `DABIN_DEVELOPMENT_TEAM`, `DABIN_PRIVACY_POLICY_URL`, and `DABIN_SUPPORT_URL` in the terminal environment. The two URLs may instead be supplied using the `DaBinPrivacyPolicyURL` and `DaBinSupportURL` Info.plist keys. Then run:
+
+```sh
+./scripts/archive_app_store.sh
+```
+
+The helper checks readiness inputs, injects those real URLs into the archive's Info.plist, and requests a Release archive at `build/app-store/DaBin.xcarchive`. It refuses to replace an existing archive. It does not enable automatic provisioning downloads, export, upload, submit, change keychain identities, or claim Apple approval. Distribution signing/export and validation are completed in Xcode Organizer using the owner's account. An exported candidate can additionally be inspected with:
+
+```sh
+python3 scripts/app_store_preflight.py --app /absolute/path/to/DaBin.app
+```
+
+This rejects ad-hoc/Developer ID signatures, the wrong configured team, non-ARM64/non-Release builds, missing App Sandbox, debugger entitlements, missing resources, and missing release URLs. It is a local check and cannot replace App Store Connect processing or review.
+
+## Reviewer and listing notes to preserve
+
+- DaBin is a quiet corner app. Move to a screen corner to reveal its robot; double-click it to open Daily. The app menu also provides Open Daily and Settings. Include these steps in review notes so the initially hidden widget is discoverable.
+- Daily accepts explicit paste/drop. Today opens This Week, including empty days. Comments and task editors retain normal text editing. Explain optional website-preview permission separately from local capture.
+- The current app categorizes by content type; it does not yet perform AI project recognition. Do not advertise automatic AI project assignment or uploading to an AI service.
+- Describe Apple Silicon/macOS support accurately. Keep screenshots synthetic and free of personal captures.
+- No account means no account-deletion flow is needed. Retention/removal instructions still matter. No payment system or purchase entitlement is present; monetization changes require a separate review.
+- The app does not create a Desktop shortcut automatically. A shortcut explicitly requested by the user and created outside the running app is not an app auto-launch/shortcut behavior.
+
+## Limits of this result
+
+The Mac App Store and Developer ID distribution channels have different signing workflows. Developer ID notarization is not a substitute for Mac App Store distribution signing or approval. Likewise, Apple's April 2026 SDK minimum announcement lists the mobile/TV/vision/watch platforms, not macOS; the current upload table lists macOS separately. [SDK announcement](https://developer.apple.com/news/upcoming-requirements/?id=04282026a), [Upload requirements](https://developer.apple.com/help/app-store-connect/manage-builds/upload-builds/).
+
+The GitHub source/release channel is separate from App Store distribution. No certificate creation, App Store archive export, upload, or review submission was performed. Functional test results and live QA limits are recorded separately in `QA_RESULTS.md`.
+
+### Prior 0.1.20 real-media integration evidence
+
+The separate `scripts/test_media_integration.sh` runner uses synthetic temporary files and production preview/storage components. The native run passed **39/39** checks: PDFKit produced a two-page PDF thumbnail; QuickLook produced an RTF document thumbnail; AVFoundation encoded/decoded a two-second H.264 movie and produced its preview. Thumbnails contain rendered content, managed/source bytes match, and preview records survive reopening. The production PDF view fits portrait and landscape pages at ordinary and narrow preview sizes in an invisible window that never takes focus. See `build/qa/media-integration-v0.1.20.log`.
+
+An explicit `--link-smoke` run additionally fetched metadata for the generic public Apple homepage: **41/41 total checks**, including those same 39 local checks plus two link checks. The two logs describe overlapping runs, not 80 unique tests. Website access is opt-in in this separate runner, never part of the generic test suite; the runner uses a temporary archive and volatile process-only preferences. See `build/qa/media-integration-link-v0.1.20.log`.
+
+Native media services require scoped access from the agent execution environment: the first restricted run could not encode its synthetic movie; the same executable passed after macOS media/QuickLook service access was allowed. No production media or user capture was read, and no notification or general-clipboard action was performed.

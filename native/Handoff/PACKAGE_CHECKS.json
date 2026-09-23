@@ -1,0 +1,216 @@
+{
+  "scope": "Handoff package only; not native app QA",
+  "date": "2026-09-22",
+  "status": "passed",
+  "byteIdenticalReferenceFiles": 39,
+  "curatedAndPrototypeLocalLinksChecked": 105,
+  "searchFixtureCasesAgainstExistingJSModel": 10,
+  "nativeAppBuilt": false,
+  "nativeTestsRun": false,
+  "nativeScreenshotsCaptured": false,
+  "copiedReferences": [
+    {
+      "source": "DaBin/open-design-v2/DESIGN_NOTES.md",
+      "package": "reference/prototype/DESIGN_NOTES.md",
+      "sha256": "942389aa4d9796b902f08c906864ed7aafcb8cab6b4560f7ef14c3e2978204d3"
+    },
+    {
+      "source": "DaBin/open-design-v2/QA_NOTES.md",
+      "package": "reference/prototype/QA_NOTES.md",
+      "sha256": "40cbf988077bca7aa623a68710ae43dbfc5f118deec9109ead77598f92685751"
+    },
+    {
+      "source": "DaBin/open-design-v2/README.md",
+      "package": "reference/prototype/README.md",
+      "sha256": "6078af6b82e81ce19d7345f16a9de3b7f432804ef7e6dd51b4d57d413af29c7b"
+    },
+    {
+      "source": "DaBin/open-design-v2/app.js",
+      "package": "reference/prototype/app.js",
+      "sha256": "5767a55ed717804f9c72b431d9b6e9870d3acac2d0264e9e1bdf8cabe524e2ca"
+    },
+    {
+      "source": "DaBin/open-design-v2/assets/material-shortlist.txt",
+      "package": "reference/prototype/assets/material-shortlist.txt",
+      "sha256": "e9f63207566246b3388c84d25c72438ff89f1a9456b51fa7ac1ef159b445c0e7"
+    },
+    {
+      "source": "DaBin/open-design-v2/assets/quiet-forms.svg",
+      "package": "reference/prototype/assets/quiet-forms.svg",
+      "sha256": "8f071ed0345d96f17a228fb537f41fae37dfaa3f49e347f005f8fee7746ce7f8"
+    },
+    {
+      "source": "DaBin/open-design-v2/assets/robot.svg",
+      "package": "reference/prototype/assets/robot.svg",
+      "sha256": "20bd5c1de92dd5e79ef259430c441e2b9a1d3608812ae79e5b2999a64eaf8a7a"
+    },
+    {
+      "source": "DaBin/open-design-v2/assets/studio-notes.svg",
+      "package": "reference/prototype/assets/studio-notes.svg",
+      "sha256": "8137d7d325fb99774756e71729e8c32721888df3f5100df9dc9fc9f8f21fae98"
+    },
+    {
+      "source": "DaBin/open-design-v2/bottom-rest.html",
+      "package": "reference/prototype/bottom-rest.html",
+      "sha256": "fb16f9628d1b38b7fd44abd6d18c6a926fbe904b74daca7eb6669f4b68da5a4c"
+    },
+    {
+      "source": "DaBin/open-design-v2/bottom-rest.html.artifact.json",
+      "package": "reference/prototype/bottom-rest.html.artifact.json",
+      "sha256": "2027adf96bf4dbb7206bba3902c94d338de50fd20fc86783db95b74323957429"
+    },
+    {
+      "source": "DaBin/open-design-v2/bottom-tray.html",
+      "package": "reference/prototype/bottom-tray.html",
+      "sha256": "e53d7f05ba553906ebe2dc3501781ab1ea14ed8ab28d445d6e3eda1afcf173b6"
+    },
+    {
+      "source": "DaBin/open-design-v2/bottom-tray.html.artifact.json",
+      "package": "reference/prototype/bottom-tray.html.artifact.json",
+      "sha256": "ef54e19201d33832fdfd4a0e8df3812fdb908b74c472ab7877b14656910b6343"
+    },
+    {
+      "source": "DaBin/open-design-v2/capture.html",
+      "package": "reference/prototype/capture.html",
+      "sha256": "fa8537609bcd32ebf624991dac8eb632c98441a13bfe57ff876fbdc34aea8b8b"
+    },
+    {
+      "source": "DaBin/open-design-v2/capture.html.artifact.json",
+      "package": "reference/prototype/capture.html.artifact.json",
+      "sha256": "70b338065c1b09b7822ab1e87a657ee75c0fca78d2a2ce33467170cc5480f87c"
+    },
+    {
+      "source": "DaBin/open-design-v2/concepts.html",
+      "package": "reference/prototype/concepts.html",
+      "sha256": "75be07b2e769c4191fb3b8a00e3bcef0b7807c57cc6d007444e240219598783a"
+    },
+    {
+      "source": "DaBin/open-design-v2/concepts.html.artifact.json",
+      "package": "reference/prototype/concepts.html.artifact.json",
+      "sha256": "b0d933319b47b8599a7d57d9cbae176071642e4d14aa205db25b9539de7b213c"
+    },
+    {
+      "source": "DaBin/open-design-v2/daily.html",
+      "package": "reference/prototype/daily.html",
+      "sha256": "256b0d5efa171643e10035d7c2144993c2b19f4be8191d79c535bfa271f0aec6"
+    },
+    {
+      "source": "DaBin/open-design-v2/daily.html.artifact.json",
+      "package": "reference/prototype/daily.html.artifact.json",
+      "sha256": "d9640ec45921b8a8349f1eea692b66bd7572e9b832b60f5a20149c6f200638db"
+    },
+    {
+      "source": "DaBin/open-design-v2/detail.html",
+      "package": "reference/prototype/detail.html",
+      "sha256": "5755a1e3d9bfd03bfb3054a44a7740a4c9ab053aeecbc7c774ffc3ffb7b2517f"
+    },
+    {
+      "source": "DaBin/open-design-v2/detail.html.artifact.json",
+      "package": "reference/prototype/detail.html.artifact.json",
+      "sha256": "33ad8b36d00eb4957f26a67edf2f34dfb154266b318f153cba2c12e72cf38257"
+    },
+    {
+      "source": "DaBin/open-design-v2/index.html",
+      "package": "reference/prototype/index.html",
+      "sha256": "bc3ef603eb9df5ec03ba47d10dbec1dfd5f85c10180634d4ada8e06ecb497935"
+    },
+    {
+      "source": "DaBin/open-design-v2/index.html.artifact.json",
+      "package": "reference/prototype/index.html.artifact.json",
+      "sha256": "5da658f80b98f8d742b946422f895883049dabd106e4934c77297b79caf4c625"
+    },
+    {
+      "source": "DaBin/open-design-v2/model.js",
+      "package": "reference/prototype/model.js",
+      "sha256": "59abc0ff0bab65b5cd67a0ee8e69350fe2d79d041303cfca46c9de57f0f926aa"
+    },
+    {
+      "source": "DaBin/open-design-v2/reminders.html",
+      "package": "reference/prototype/reminders.html",
+      "sha256": "4f95d7e79b88daeccc127b7f0c4a903e9d8593ba5a6cd8eb490d9fb7d309de44"
+    },
+    {
+      "source": "DaBin/open-design-v2/reminders.html.artifact.json",
+      "package": "reference/prototype/reminders.html.artifact.json",
+      "sha256": "77601c1a385a80e8697536e5e3bc5d507122cb94e8c9ad5e188fe363ece3e791"
+    },
+    {
+      "source": "DaBin/open-design-v2/rest.html",
+      "package": "reference/prototype/rest.html",
+      "sha256": "8c9378a5a09e294d1520bce8f7f17b6671e95262e583d253c4e4c92c94cff7c0"
+    },
+    {
+      "source": "DaBin/open-design-v2/rest.html.artifact.json",
+      "package": "reference/prototype/rest.html.artifact.json",
+      "sha256": "1d50f28655e073ca0e653fee24c39c0f48143511394204094f1e5facb0208168"
+    },
+    {
+      "source": "DaBin/open-design-v2/review/critique.json",
+      "package": "reference/prototype/review/critique.json",
+      "sha256": "67accdb18d46123100a52fc539b6b1e6ce85517d83987b23d7506f653095ce1d"
+    },
+    {
+      "source": "DaBin/open-design-v2/review/index.html",
+      "package": "reference/prototype/review/index.html",
+      "sha256": "1f684126c35b7a1c4ad908597576ce423590daebcf5cf92a9e9b20cfd5fb53e2"
+    },
+    {
+      "source": "DaBin/open-design-v2/review/index.html.artifact.json",
+      "package": "reference/prototype/review/index.html.artifact.json",
+      "sha256": "5977b2881be8a7298a58715d5fda8e878beaa5912ff275e1c62cab137942a0be"
+    },
+    {
+      "source": "DaBin/open-design-v2/review/qa-results.json",
+      "package": "reference/prototype/review/qa-results.json",
+      "sha256": "e779151abbb5b38bd955f71508aed2dd3e508a80a0c42da63f0c03bdce2209b7"
+    },
+    {
+      "source": "DaBin/open-design-v2/review/static-check.json",
+      "package": "reference/prototype/review/static-check.json",
+      "sha256": "904e7713093d50251347eb18dd48b719ca15bf07b1cf2fcbc25d11337fc1dce2"
+    },
+    {
+      "source": "DaBin/open-design-v2/search.html",
+      "package": "reference/prototype/search.html",
+      "sha256": "9ef8cd22f0f898e8af8485bf78f8cebb2e377d1e5b2a7fc08332fcf91b10bd5f"
+    },
+    {
+      "source": "DaBin/open-design-v2/search.html.artifact.json",
+      "package": "reference/prototype/search.html.artifact.json",
+      "sha256": "30bda4ba4b1d10fb8de3a57ac97b8c4a898127305a41744a8c8e0380575f9514"
+    },
+    {
+      "source": "DaBin/open-design-v2/styles.css",
+      "package": "reference/prototype/styles.css",
+      "sha256": "c3417ab00cad9b4c9b2386547665c13e5e6158896b43a33b007189964ba9e60c"
+    },
+    {
+      "source": "source/DaBin/PRODUCT_PLAN.md",
+      "package": "reference/product/PRODUCT_PLAN.md",
+      "sha256": "ca0a641ad7693686799ee8d9f766e30969175711b557f71b3b3ba784e342dfcd"
+    },
+    {
+      "source": "source/DaBin/OPEN_DESIGN_HANDOFF.md",
+      "package": "reference/product/OPEN_DESIGN_HANDOFF.md",
+      "sha256": "0050e88695aefc69cb2abab24e8e77d966f262e83afeb962a78533769484f78b"
+    },
+    {
+      "source": "brand-spec.md",
+      "package": "reference/brand-spec.md",
+      "sha256": "fc780068c5c1fbf735b2d69b1b3527541e29ee5960c1a61d2766472f73ef7c28"
+    },
+    {
+      "source": "tools/qa_dabin.cjs",
+      "package": "reference/tools/qa_dabin.cjs",
+      "sha256": "38e348e47136f853427d4a6049e91fdf2fb76574c8ecd4b79aa5c6c487fb6e04"
+    }
+  ],
+  "critique": {
+    "philosophy": 5,
+    "hierarchy": 4,
+    "execution": 4,
+    "specificity": 5,
+    "restraint": 4,
+    "note": "Selected no-sidebar direction preserved; engineering defaults distinguished from observed behavior; no unverified native completion claims."
+  }
+}
