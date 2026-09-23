@@ -1,5 +1,23 @@
 # DaBin QA cycle — 24 September 2026
 
+## Day Export and compact header — 0.3.8 (33)
+
+DaBin 0.3.8 adds **Export Day** between Search and Notifications in the centered primary-action row. Its anchored action popover exports every stored action for the selected calendar date, independent of the active content filter, in chronological plain text. **Copy Day** and **Export Text File** use the same UTF-8 document; empty days disable both actions, while success, cancellation and failure remain distinct. The export UI and real-window header suites cover presentation state, keyboard shortcuts, Escape dismissal, accessible labels and native placement beneath the icon. Outside-click dismissal uses the native transient popover behavior plus a board-window event monitor and is reserved for the installed-app check.
+
+The Daily and Weekly headers now use three compact rows: logo/date navigation/mode/neutral close control, primary actions, then filters. Add, Search, Export Day, Notifications and the Settings wheel share the existing coloured icon language, hover, pressed and keyboard-focus treatment. The action and filter rows share one center axis, and the narrow 380-point Daily layout retains every control without clipping or the former vertical dead area.
+
+The exact optimized source passed **29/29 registered Release suites and 2,102 checks** with no source changes during the run. Focused coverage includes **24 Day Export checks**, **22 Day Export UI checks** and **18 live header-interaction checks**. Broader regression coverage retained **214 general window checks across two displays**, **78 Weekly window checks**, **110 filter-resize checks**, **110 robot/drop checks** and **138 Daily-capture checks**.
+
+Fresh rendering passed **34 production interface views**. Original-resolution inspection covered compact Daily at 380 points and Weekly at 900 points in light and dark appearances, including native 2× Daily samples. The three-row hierarchy, centered alignment, coloured export/settings actions, neutral close control and narrow-layout fit passed visual review.
+
+The optimized ARM64 direct build is **0.3.8 (33)** with source fingerprint `b286601bf9262b09651661655e03b455a28832cd2996dc25827160af535f648c` and executable SHA-256 `49afd0e82795639d967511bdd74296262e6a169b05ebaf6e6270eb234b10516d`. The verified update ZIP is **3,270,792 bytes**, SHA-256 `d4700284846007251d75f033d4dcfb578bf221c85fb90282a497be9ae150ffef`. Packaging passed isolated fresh installation, replacement, backup, strict clean-copy signature validation, extraction, manifest round trip, exact executable identity and the sandbox-compatible document handoff.
+
+The refreshed one-page A4 guide is **299,779 bytes**, SHA-256 `61c0a585b5a978a317ae9b2f133401e587027d57e9aaded4871ac5e0f9d36291`. Its tracked and output copies are byte-identical and passed one-page geometry, text extraction, boundary and visual inspection.
+
+Static Store packaging passed **20/20** checks. App Store release preflight retains two external prerequisites: an Apple Developer Team ID and full Xcode. GitHub publication and live installation through DaBin's updater remain pending and are not represented by the current evidence set.
+
+[0.3.8 evidence index](../docs/qa/0.3.8/README.md) · [Full optimized run](../docs/qa/0.3.8/full-run/report.json) · [Release renders](../docs/qa/0.3.8/release-ui-renders.json) · [Build receipt](../docs/qa/0.3.8/build-receipt-v0.3.8.json) · [Update manifest](../docs/qa/0.3.8/update-manifest-v0.3.8.json) · [Quick-guide layout check](../docs/qa/0.3.8/quick-guide-layout-check.json) · [Static Store preflight](../docs/qa/0.3.8/app-store-preflight-static-v0.3.8.log) · [Release preflight](../docs/qa/0.3.8/app-store-preflight-release-v0.3.8.log).
+
 ## Settings wheel — 0.3.7 (32)
 
 The Daily and Weekly header menu now uses the outline `gearshape` SF Symbol instead of the three-dot ellipsis. Its 13-point size, 30 × 30-point target and muted colour match the adjacent task, search and reminder controls. The menu behavior is unchanged, and its help and accessibility label now read **Settings and options**.

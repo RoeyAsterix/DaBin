@@ -91,6 +91,11 @@ def icon(kind,x,top,size=20,color=PURPLE):
         c.drawPath(p,stroke=1,fill=0)
     elif kind=='search':
         c.circle(10,14,6.5,stroke=1,fill=0);c.line(15,9,21,3)
+    elif kind=='export':
+        c.roundRect(4,3,16,12,2.5,stroke=1,fill=0)
+        c.line(12,8,12,22)
+        c.line(12,22,8,18)
+        c.line(12,22,16,18)
     elif kind=='comment':
         p=c.beginPath();p.moveTo(3,20);p.lineTo(21,20);p.lineTo(21,7);p.lineTo(10,7);p.lineTo(5,2);p.lineTo(5,7);p.lineTo(3,7);p.close()
         c.drawPath(p,stroke=1,fill=0)
@@ -173,9 +178,9 @@ icon('pause',315,607,22)
 text('Stay in control',346,610,14,BOLD)
 para('Everything stays on your Mac. <b>Pause</b> any time; DaBin and common password managers are excluded by default. At <b>4 actions</b> in one clock hour, click the summary to expand and use the minus button to collapse.',315,640,224,9.4,12.7,max_height=66)
 
-icon('search',42,740,18)
-text('Find it again',68,742,11.5,BOLD)
-para('Filter by links, files, media or tasks. Search opens the matching date.',42,764,151,8.9,12.2,max_height=37)
+icon('export',42,740,18)
+text('Find & export',68,742,11.5,BOLD)
+para('Filter or search any date. <b>Export Day</b> copies or saves its complete record as UTF-8 text.',42,764,151,8.9,12.2,max_height=37)
 
 icon('comment',216,740,18)
 text('Add context',242,742,11.5,BOLD)
@@ -195,7 +200,7 @@ reader=PdfReader(OUT)
 assert len(reader.pages)==1
 extracted=reader.pages[0].extract_text()
 normalized=' '.join(extracted.split())
-for required in ['camera island','Control-V','Command-V','Double-click','Daily / Weekly','Settings > Capture','OFF BY DEFAULT','future copies','dedicated screenshot folder','stays on your Mac','Pause','password managers','4 actions','expand','minus button','collapse','Manual drag and paste']:
+for required in ['camera island','Control-V','Command-V','Double-click','Daily / Weekly','Settings > Capture','OFF BY DEFAULT','future copies','dedicated screenshot folder','stays on your Mac','Pause','password managers','4 actions','expand','minus button','collapse','Export Day','complete record','UTF-8 text','Manual drag and paste']:
     assert required in normalized, required
 assert '\ufffd' not in extracted
 assert all(b['x']>=30 and b['x']+b['width']<=W-30 and b['top']+b['height']<803 for b in blocks)

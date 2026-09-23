@@ -21,27 +21,6 @@ struct DailyScreen: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            ZStack {
-                HStack {
-                    HStack(spacing: 1) {
-                        SmallIcon(symbol: "chevron.left", label: "Previous day") { state.moveDay(-1) }
-                        SmallIcon(symbol: "chevron.right", label: "Next day") { state.moveDay(1) }
-                            .disabled(Calendar.current.isDateInToday(state.selectedDay))
-                    }.frame(width: 68, alignment: .leading)
-                    Spacer(minLength: 0)
-                    TimelineModePicker(state: state)
-                }
-                Button { state.openWeekly() } label: {
-                    Text(state.selectedDay, format: .dateTime.month(.abbreviated).day().weekday(.abbreviated))
-                        .font(.system(size: 13, weight: .medium)).lineLimit(1)
-                        .padding(.horizontal, 17).padding(.vertical, 7)
-                        .overlay(alignment: .trailing) {
-                            Image(systemName: "rectangle.split.3x1").font(.system(size: 9, weight: .semibold))
-                        }
-                }.buttonStyle(.plain).help("Open the last seven days")
-                    .accessibilityLabel("Open weekly view ending \(state.selectedDay.formatted(date: .complete, time: .omitted))")
-            }.padding(.horizontal, 13).padding(.bottom, 5)
-            FilterBar(selection: $state.filter)
             if state.dailyCaptures.isEmpty {
                 VStack(spacing: 4) {
                     Spacer(minLength: 0)

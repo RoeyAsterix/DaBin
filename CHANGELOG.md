@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.3.8 — 2026-09-24
+
+- Added **Export Day** between Search and Notifications with **Copy Day** and **Export Text File** actions.
+- Exported the complete selected calendar date in chronological order, independently of the active content filter, with timestamps, types, source applications and available text.
+- Preserved multi-item capture boundaries in the export, added clear image placeholders when no caption or OCR text exists, and made clipboard and file output byte-for-byte equivalent UTF-8 text.
+- Added empty, success, cancellation and failure handling, plus keyboard shortcuts, focus treatment, accessible labels, Escape dismissal and outside-click dismissal for the export popover.
+- Rebuilt Daily and Weekly navigation as three compact rows for navigation, primary actions and filters, removing the previous vertical dead space while retaining narrow-window behavior.
+- Restyled Add, Search, Export Day, Notifications and Settings with the filter icon language, kept their rows centered on one axis, and preserved the neutral independent window-close control.
+
 ## 0.3.7 — 2026-09-24
 
 - Replaced the Daily and Weekly header's three-dot options icon with an outline settings wheel.

@@ -1,7 +1,7 @@
 # DaBin — Mac App Store readiness
 
 **Audit date:** 24 September 2026
-**Source version:** 0.3.7 (32)
+**Source version:** 0.3.8 (33)
 **Result: BLOCKED for submission; local app QA is a separate result.**
 
 The source now has a Productivity category, a bundled privacy explanation, privacy manifest, and an Xcode Release configuration that does not force ad-hoc signing. These changes improve readiness. They do not make the locally signed app an App Store distribution build or guarantee approval.
@@ -10,7 +10,7 @@ The source now has a Productivity category, a bundled privacy explanation, priva
 
 | Status | Area | Evidence and remaining work |
 | --- | --- | --- |
-| PARTIAL | App Sandbox and selected-folder scope | `Resources/DaBin.entitlements` enables App Sandbox, read-only access to user-selected files, and outgoing network access for optional website previews. The previously inspected local app's embedded entitlements match and has no sandbox exceptions or root privileges. Auto Capture relies on an explicit folder selection and a security-scoped bookmark for the screenshot location; an exported candidate containing this feature still needs entitlement, bookmark-restoration and revoked-access inspection. [Apple sandbox documentation](https://developer.apple.com/documentation/security/protecting-user-data-with-app-sandbox) |
+| PARTIAL | App Sandbox and selected-file scope | `Resources/DaBin.entitlements` enables App Sandbox, read/write access only to locations the user explicitly chooses in Open or Save panels, and outgoing network access for optional website previews. Write access is required for Export Day's user-selected text destination. The previously inspected local app's embedded entitlements match and has no sandbox exceptions or root privileges. Auto Capture relies on an explicit folder selection and a security-scoped bookmark for the screenshot location; an exported candidate containing this feature still needs entitlement, bookmark-restoration and revoked-access inspection. [Apple sandbox documentation](https://developer.apple.com/documentation/security/protecting-user-data-with-app-sandbox) |
 | PASS | Store/direct update separation | The generated Xcode Store configuration compiles a Store-managed update stub, has no direct feed key and does not embed the installer. The standalone builder alone enables `DABIN_DIRECT_UPDATES` and creates the GitHub helper. An exported Store candidate still needs binary inspection before submission. Source imports and linked libraries use Apple frameworks; no manually invoked private API was found. [App Review, 2.4.5 and 2.5.1](https://developer.apple.com/app-store/review/guidelines/#hardware-compatibility) |
 | PARTIAL | Manual and automatic capture controls | Manual clipboard reads remain tied to paste. Auto Capture is a separate opt-in setting that defaults off, takes a clipboard baseline before considering later changes, uses a user-selected screenshot folder, and is intended to stop its observers immediately when paused or disabled. DaBin and common password managers are excluded by default, but source-app attribution is best effort and cannot guarantee origin. Live review must verify first launch, enable, pause, disable, relaunch, exclusion and permission-revocation behavior against the final signed candidate. Robot reveal still needs no camera, Accessibility or Screen Recording permission. |
 | PARTIAL | Optional website requests | Website preview fetching defaults off. Settings and the bundled policy explain website contact, URLs, IP addresses, redirects, cancellation and local caching. The Auto Capture design requires automatic links to remain ineligible for preview requests even when previews are enabled. Network instrumentation against the final candidate must verify that separation, including automatic captures created while manual preview fetching is on. |
@@ -68,10 +68,10 @@ python3 scripts/app_store_preflight.py --static-only
 python3 scripts/app_store_preflight.py
 ```
 
-The final 0.3.7 preflight logs are retained at:
+The final 0.3.8 preflight logs are retained at:
 
-- `../docs/qa/0.3.7/app-store-preflight-static-v0.3.7.log`: **20 source packaging checks passed**.
-- `../docs/qa/0.3.7/app-store-preflight-release-v0.3.7.log`: release preflight remains blocked by the Apple Developer Team ID and full Xcode. The configured GitHub policy/support URLs pass offline syntax checks; their content and continuing reachability remain owner responsibilities.
+- `../docs/qa/0.3.8/app-store-preflight-static-v0.3.8.log`: source packaging results for this release.
+- `../docs/qa/0.3.8/app-store-preflight-release-v0.3.8.log`: release preflight remains blocked by the Apple Developer Team ID and full Xcode. The configured GitHub policy/support URLs pass offline syntax checks; their content and continuing reachability remain owner responsibilities.
 
 The functional and package evidence for this source version is recorded in `QA_RESULTS.md`.
 

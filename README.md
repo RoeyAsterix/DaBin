@@ -2,7 +2,7 @@
 
 DaBin is a native Apple Silicon macOS app that turns things you paste or drag into a private daily board. By default, moving the pointer into any screen corner reveals a small purple robot. On a Mac with a built-in camera island, Settings can move its home below the island; displays without one continue using their corners. Drop text, links, images, videos, PDFs, documents, or several files onto the robot, or hover and paste; double-click it to browse Daily.
 
-Captures stay on the Mac in a dated archive. Each card can hold a comment or reminder. Tasks carry forward until completed, unless they have a reminder date. Daily includes type filters and contextual search; a compact Daily/Weekly control opens seven days ending on the selected date and returns without losing the selected date, filter, scroll position or drafts. The board supports dark mode, theme colors and adjustable transparency. The native robot looks toward the pointer, opens up for incoming content, chews while saving and responds to the result. It follows the macOS Reduce Motion preference.
+Captures stay on the Mac in a dated archive. Each card can hold a comment or reminder. Tasks carry forward until completed, unless they have a reminder date. Daily includes type filters and contextual search; a compact Daily/Weekly control opens seven days ending on the selected date and returns without losing the selected date, filter, scroll position or drafts. Export Day can copy the complete selected date or save the same chronological record as a UTF-8 text file, regardless of the active filter. The board supports dark mode, theme colors and adjustable transparency. The native robot looks toward the pointer, opens up for incoming content, chews while saving and responds to the result. It follows the macOS Reduce Motion preference.
 
 ## Optional Auto Capture
 
@@ -19,7 +19,7 @@ Automatic captures use the same local archive as manual captures. An automatical
 ## Start here
 
 - [Native app guide](native/README.md)
-- [0.3.7 release notes](docs/RELEASE_NOTES_0.3.7.md)
+- [0.3.8 release notes](docs/RELEASE_NOTES_0.3.8.md)
 - [One-page PDF guide](docs/DaBin-Quick-Guide.pdf)
 - [Architecture](native/ARCHITECTURE.md)
 - [QA results](native/QA_RESULTS.md)
@@ -43,7 +43,7 @@ The optimized app is written to `native/build/DaBin.app`. Full GUI QA needs an u
 
 The direct build has a user-initiated GitHub Releases channel under **Settings → Software updates**. It accepts only this repository’s fixed HTTPS release path, verifies the published byte count and SHA-256 checksum, then gives the bundled installer a private, one-use update document. The installer validates and consumes that document, re-verifies the package and application, asks before replacement, and backs up the previous installation. The capture archive remains untouched. There are no silent update checks.
 
-Release 0.3.7 replaces the header's three-dot menu icon with a matching settings wheel and retains 0.3.6's rounded caption cards.
+Release 0.3.8 adds complete-day clipboard and text-file export, and compacts Daily and Weekly into aligned navigation, action and filter rows. It retains the settings wheel, rounded caption cards, Auto Capture and verified one-use update handoff from earlier releases.
 
 The current personal release is ad-hoc signed for the owner’s Mac. General distribution still requires a stable Developer ID signature and Apple notarization. The Mac App Store configuration compiles without the direct downloader and helper; Store builds update through Apple.
 

@@ -1,0 +1,26 @@
+PASS: Bundle identifier is configured (ownership must be verified in the developer account)
+PASS: Productivity category is configured
+PASS: Copyright is present (publisher must confirm ownership)
+PASS: Marketing version has a numeric release format
+PASS: Build number has a numeric release format
+PASS: App Sandbox is enabled
+PASS: Source entitlement file does not allow debugger attachment
+PASS: Bundled manifest declares no tracking
+PASS: Manifest contains the collected-data declaration
+PASS: Readable in-app privacy policy resource exists
+PASS: Xcode project includes PrivacyInfo.xcprivacy
+PASS: Xcode project includes PrivacyPolicy.md
+PASS: Xcode project includes PrivacyInformation.swift
+PASS: Xcode Store builds compile the Store-managed update stub, not the direct downloader
+PASS: The direct update helper and feed are limited to the standalone build path
+PASS: Minimum supported macOS is 14.0
+PASS: Xcode project includes every current production source and required resource
+PASS: Generated project and shared scheme match the deterministic source inventory
+PASS: Debug and Release app/test/project configurations target ARM64 and macOS 14
+PASS: All configurations enforce Swift warnings; Release uses whole-module optimization
+BLOCKED: Set DABIN_DEVELOPMENT_TEAM to your 10-character Apple Developer Team ID
+BLOCKED: Full Xcode is selected and xcodebuild is available
+PASS: Set DABIN_PRIVACY_POLICY_URL to an HTTPS published privacy policy; public reachability/content still require review
+PASS: Set DABIN_SUPPORT_URL to an HTTPS support page with real contact details; public reachability/content still require review
+
+2 blocking check(s). No archive or upload was performed.

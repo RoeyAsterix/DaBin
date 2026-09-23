@@ -4,10 +4,16 @@ import SwiftUI
 struct BoardView: View {
     @ObservedObject var state: AppState
     @StateObject private var theme: ThemeSettings
+    @StateObject private var dayExportController: DayExportActionController
+    @State private var showWeekCalendar = false
+    @State private var settingsHovered = false
+    @FocusState private var settingsFocused: Bool
 
-    init(state: AppState, theme: ThemeSettings? = nil) {
+    init(state: AppState, theme: ThemeSettings? = nil,
+         dayExportController: DayExportActionController? = nil) {
         self.state = state
         _theme = StateObject(wrappedValue: theme ?? ThemeSettings())
+        _dayExportController = StateObject(wrappedValue: dayExportController ?? .live())
     }
 
     private var accent: Color { theme.accent }
@@ -81,31 +87,21 @@ struct BoardView: View {
         }
     }
 
+    @ViewBuilder
     private var header: some View {
+        if state.route == .daily || state.route == .weekly {
+            timelineHeader
+        } else {
+            routeHeader
+        }
+    }
+
+    private var routeHeader: some View {
         HStack(spacing: 8) {
-            if state.route != .daily {
-                SmallIcon(symbol: "chevron.left", label: "Back") { state.back() }
-            }
+            SmallIcon(symbol: "chevron.left", label: "Back") { state.back() }
             HStack(spacing: 0) {
-                if state.route == .daily || state.route == .weekly {
-                    DaBinLogo()
-                    if state.autoCapture.settings.isEnabled {
-                        Circle()
-                            .fill(autoCaptureIndicatorColor)
-                            .frame(width: 7, height: 7)
-                            .padding(.leading, 7)
-                            .help(autoCaptureStatusText)
-                            .accessibilityLabel(autoCaptureStatusText)
-                    }
-                    if state.route == .weekly {
-                        Text("Week").font(.system(size: 13, weight: .medium))
-                            .foregroundStyle(Palette.muted).padding(.leading, 13)
-                            .accessibilityAddTraits(.isHeader)
-                    }
-                } else {
-                    Text(title).font(.system(size: 23, weight: .semibold, design: .rounded))
-                        .accessibilityAddTraits(.isHeader)
-                }
+                Text(title).font(.system(size: 23, weight: .semibold, design: .rounded))
+                    .accessibilityAddTraits(.isHeader)
                 Spacer(minLength: 0)
             }
             .frame(height: 30)
@@ -113,31 +109,177 @@ struct BoardView: View {
                 WindowDragHandle(onDragStarted: { state.onBoardDragStarted?() })
                     .accessibilityHidden(true)
             }
-            if state.route == .daily || state.route == .weekly {
-                SmallIcon(symbol: "plus", label: "Add task", tint: accent) { state.openNewTask() }
-                SmallIcon(symbol: "magnifyingglass", label: "Search captures, Command K") { state.openSearch() }
-                SmallIcon(symbol: "bell", label: "Reminders") { state.showReminders() }
-                Menu {
-                    if state.autoCapture.settings.isEnabled {
-                        Text(autoCaptureStatusText)
-                        Button(state.autoCapture.settings.isPaused ? "Resume Auto Capture" : "Pause Auto Capture") {
-                            state.autoCapture.setPaused(!state.autoCapture.settings.isPaused)
-                        }
-                        Divider()
-                    }
-                    Button("Settings…") { state.showSettings() }
-                } label: {
-                    Image(systemName: "gearshape")
-                        .font(.system(size: 13))
-                        .frame(width: 30, height: 30)
-                        .contentShape(Rectangle())
-                        .foregroundStyle(Palette.muted)
-                }.menuStyle(.borderlessButton).menuIndicator(.hidden).fixedSize()
-                    .help("Settings and options").accessibilityLabel("Settings and options")
-            }
             SmallIcon(symbol: "xmark", label: "Hide DaBin") { state.onDismiss?() }
         }
         .padding(.horizontal, 16).padding(.top, 13).padding(.bottom, 10)
+    }
+
+    private var timelineHeader: some View {
+        VStack(spacing: 1) {
+            timelineNavigationRow
+                .frame(height: 30)
+                .padding(.horizontal, 12)
+                .padding(.top, 7)
+            timelinePrimaryActions
+                .frame(height: 34)
+            FilterBar(selection: $state.filter)
+        }
+        .fixedSize(horizontal: false, vertical: true)
+    }
+
+    private var timelineNavigationRow: some View {
+        HStack(spacing: 2) {
+            ZStack(alignment: .trailing) {
+                DaBinLogo()
+                    .scaleEffect(0.86, anchor: .leading)
+                    .frame(width: 80, height: 30, alignment: .leading)
+                if state.autoCapture.settings.isEnabled {
+                    Circle()
+                        .fill(autoCaptureIndicatorColor)
+                        .frame(width: 7, height: 7)
+                        .help(autoCaptureStatusText)
+                        .accessibilityLabel(autoCaptureStatusText)
+                }
+            }
+            .frame(width: 80, height: 30, alignment: .leading)
+            .overlay {
+                WindowDragHandle(onDragStarted: { state.onBoardDragStarted?() })
+                    .accessibilityHidden(true)
+            }
+            .layoutPriority(3)
+
+            SmallIcon(symbol: "chevron.left", label: previousDateLabel, size: 28) {
+                moveTimeline(-1)
+            }
+            timelineDateButton
+            SmallIcon(symbol: "chevron.right", label: nextDateLabel, size: 28) {
+                moveTimeline(1)
+            }
+            .disabled(Calendar.current.isDateInToday(timelineExportDate))
+
+            TimelineModePicker(state: state, width: 92, compact: true)
+                .layoutPriority(2)
+            Spacer(minLength: 2)
+            SmallIcon(symbol: "xmark", label: "Hide DaBin", size: 28) { state.onDismiss?() }
+                .accessibilityIdentifier("window-close")
+        }
+    }
+
+    @ViewBuilder
+    private var timelineDateButton: some View {
+        if state.route == .weekly {
+            Button { showWeekCalendar.toggle() } label: {
+                HStack(spacing: 4) {
+                    Text(weeklyRangeLabel)
+                    Image(systemName: "chevron.down").font(.system(size: 8, weight: .semibold))
+                }
+                .font(.system(size: 12, weight: .medium))
+                .lineLimit(1)
+                .minimumScaleFactor(0.72)
+                .frame(width: 86, height: 30)
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .help("Choose the last day of the week")
+            .accessibilityLabel("Choose week, \(weeklyRangeLabel)")
+            .accessibilityIdentifier("timeline-date")
+            .popover(isPresented: $showWeekCalendar, arrowEdge: .bottom) {
+                DatePicker("Week ending", selection: $state.weekEndingDay,
+                           in: ...Date(), displayedComponents: .date)
+                    .datePickerStyle(.graphical)
+                    .padding(12)
+                    .frame(width: 280)
+                    .onChange(of: state.weekEndingDay) { _, _ in showWeekCalendar = false }
+                    .onExitCommand { showWeekCalendar = false }
+            }
+        } else {
+            Button { state.openWeekly() } label: {
+                Text(state.selectedDay, format: .dateTime.day().month(.abbreviated))
+                    .font(.system(size: 12, weight: .medium))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
+                    .frame(width: 52, height: 30)
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .help("Open the last seven days")
+            .accessibilityLabel("Open weekly view ending \(state.selectedDay.formatted(date: .complete, time: .omitted))")
+            .accessibilityIdentifier("timeline-date")
+        }
+    }
+
+    private var timelinePrimaryActions: some View {
+        HStack(spacing: 8) {
+            AccentIconButton(symbol: TimelinePrimaryAction.add.symbol,
+                             label: TimelinePrimaryAction.add.label,
+                             accessibilityIdentifier: "timeline-action-add") {
+                state.openNewTask()
+            }
+            AccentIconButton(symbol: TimelinePrimaryAction.search.symbol,
+                             label: TimelinePrimaryAction.search.label,
+                             accessibilityIdentifier: "timeline-action-search") {
+                state.openSearch()
+            }
+            DayExportButton(state: state, selectedDate: timelineExportDate,
+                            controller: dayExportController)
+            AccentIconButton(symbol: TimelinePrimaryAction.notifications.symbol,
+                             label: TimelinePrimaryAction.notifications.label,
+                             accessibilityIdentifier: "timeline-action-notifications") {
+                state.showReminders()
+            }
+            settingsMenu
+        }
+        .frame(maxWidth: .infinity)
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel("Primary actions")
+    }
+
+    private var settingsMenu: some View {
+        Menu {
+            if state.autoCapture.settings.isEnabled {
+                Text(autoCaptureStatusText)
+                Button(state.autoCapture.settings.isPaused ? "Resume Auto Capture" : "Pause Auto Capture") {
+                    state.autoCapture.setPaused(!state.autoCapture.settings.isPaused)
+                }
+                Divider()
+            }
+            Button("Settings…") { state.showSettings() }
+        } label: {
+            AccentIconMenuLabel(symbol: TimelinePrimaryAction.settings.symbol,
+                                hovered: $settingsHovered, focused: settingsFocused)
+        }
+        .menuStyle(.borderlessButton)
+        .menuIndicator(.hidden)
+        .fixedSize()
+        .frame(width: 40, height: 34)
+        .focused($settingsFocused)
+        .help(TimelinePrimaryAction.settings.label)
+        .accessibilityLabel(TimelinePrimaryAction.settings.label)
+        .accessibilityIdentifier("timeline-action-settings")
+    }
+
+    private var timelineExportDate: Date {
+        state.route == .weekly ? state.weekEndingDay : state.selectedDay
+    }
+
+    private var weeklyRangeLabel: String {
+        guard let first = state.weeklyDays.first else { return "Last 7 days" }
+        let start = first.formatted(.dateTime.month(.abbreviated).day())
+        let end = state.weekEndingDay.formatted(.dateTime.month(.abbreviated).day())
+        return "\(start)–\(end)"
+    }
+
+    private var previousDateLabel: String {
+        state.route == .weekly ? "Previous seven days" : "Previous day"
+    }
+
+    private var nextDateLabel: String {
+        state.route == .weekly ? "Next seven days" : "Next day"
+    }
+
+    private func moveTimeline(_ amount: Int) {
+        if state.route == .weekly { state.moveWeek(amount) }
+        else { state.moveDay(amount) }
     }
 
     private var autoCaptureStatusText: String {

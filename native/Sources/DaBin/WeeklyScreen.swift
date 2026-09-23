@@ -4,42 +4,10 @@ import SwiftUI
 struct WeeklyScreen: View {
     @ObservedObject var state: AppState
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    @State private var showCalendar = false
     @State private var columnsSettled = false
-
-    private var rangeLabel: String {
-        guard let first = state.weeklyDays.first else { return "Last seven days" }
-        let start = first.formatted(.dateTime.month(.abbreviated).day())
-        let end = state.weekEndingDay.formatted(.dateTime.month(.abbreviated).day().year())
-        return "\(start) – \(end)"
-    }
 
     var body: some View {
         VStack(spacing: 0) {
-            ZStack {
-                HStack {
-                    HStack(spacing: 1) {
-                        SmallIcon(symbol: "chevron.left", label: "Previous seven days") { state.moveWeek(-1) }
-                        SmallIcon(symbol: "chevron.right", label: "Next seven days") { state.moveWeek(1) }
-                            .disabled(Calendar.current.isDateInToday(state.weekEndingDay))
-                    }
-                    Spacer(minLength: 0)
-                    TimelineModePicker(state: state)
-                }
-                Button { showCalendar.toggle() } label: {
-                    HStack(spacing: 7) {
-                        Text(rangeLabel).font(.system(size: 13, weight: .medium))
-                        Image(systemName: "chevron.down").font(.system(size: 9, weight: .semibold))
-                    }.padding(.horizontal, 9).padding(.vertical, 7)
-                }.buttonStyle(.plain).help("Choose the last day of the week")
-                    .accessibilityLabel("Choose week, \(rangeLabel)")
-                    .popover(isPresented: $showCalendar, arrowEdge: .bottom) {
-                        DatePicker("Week ending", selection: $state.weekEndingDay, in: ...Date(), displayedComponents: .date)
-                            .datePickerStyle(.graphical).padding(12).frame(width: 280)
-                            .onChange(of: state.weekEndingDay) { _, _ in showCalendar = false }
-                    }
-            }.padding(.horizontal, 17).padding(.bottom, 4)
-            FilterBar(selection: $state.filter)
             GeometryReader { geometry in
                 let columnWidth = max(170, (geometry.size.width - 32 - 48) / 7)
                 ScrollViewReader { proxy in

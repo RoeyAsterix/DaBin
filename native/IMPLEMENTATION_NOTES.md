@@ -10,6 +10,14 @@ The default corner trigger is 9 logical points along each edge, polled every 100
 
 No persistent menu-bar item was added, to honor complete hiding at rest. Reopening DaBin, its active-app menu, the focused robot's context menu, and keyboard actions provide recovery. A system-wide hotkey is not registered. OS Hot Corners may activate at the same corners; this app does not change system settings.
 
+## Update 0.3.8
+
+Daily and Weekly now share one compact three-row header. The first row keeps the DaBin logo, previous date, selected date, next date and Daily/Weekly control together, while the neutral close control remains independent at the far right. The second row centers Add, Search, Export Day, Notifications and Settings in that order. The third row centers the existing content filters on the same axis. Shared accent icon components give the primary actions and filters matching symbol size, spacing, hover, pressed and focus treatment without changing their behavior. Fixed oversized header spacers were removed, and the navigation row reduces spacing at the 380-point compact width before content can clip.
+
+`DayExportDocument` builds a deterministic plain-text record from the complete archive for the selected calendar date. It intentionally has no visible-filter input, applies a current-moment cutoff only when the selected day is today, groups records by their persisted manual or automatic action boundary, sorts actions chronologically, and includes timestamps, types, available source-application details and textual content. Image-only records use an explicit screenshot or image placeholder when no stored caption or OCR text is available. The document owns the `DaBin-YYYY-MM-DD.txt` name and UTF-8 bytes so Copy Day and Export Text File cannot diverge.
+
+The Export Day icon opens a small native popover beneath the button. Empty days disable both actions and state that there is nothing to export. Copy success shows a brief checkmark and **Day copied.**; file export uses a sandbox-compatible save panel and reports success or failure without treating cancellation as an error. The two choices are ordinary action buttons with visible keyboard focus, Command-C and Command-S shortcuts, help and accessibility text. Escape, clicking outside, changing the selected date or leaving the timeline dismisses the popover.
+
 ## Update 0.3.7
 
 The Daily and Weekly header menu now uses the outline SF Symbol `gearshape` instead of `ellipsis`. Its 13-point symbol, 30 × 30-point hit area and muted colour match the adjacent task, search and reminder controls. The menu actions are unchanged, while the help and accessibility label now read **Settings and options**.

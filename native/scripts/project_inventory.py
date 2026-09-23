@@ -25,7 +25,7 @@ def source_group(path):
     name = path.stem
     if name in {"DaBinMain", "AppDelegate", "AppComposition", "AppEnvironment", "AppDependencies"} or "Composition" in name or name.startswith("Application"):
         return "Application"
-    if name in {"Domain", "AppState", "AutoCaptureSettings", "HourlyCaptureFeed"}:
+    if name in {"Domain", "AppState", "AutoCaptureSettings", "HourlyCaptureFeed", "DayExport"}:
         return "State and Domain"
     if name in {"CaptureStore", "CaptureRepository", "CaptureRemoval", "DailyArchive", "OriginalFileStorage"}:
         return "Storage"

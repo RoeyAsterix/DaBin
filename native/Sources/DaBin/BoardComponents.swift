@@ -23,24 +23,17 @@ enum Palette {
 
 @MainActor
 struct FilterBar: View {
-    @Environment(\.daBinAccent) private var accent
     @Binding var selection: CaptureFilter
     var body: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: 8) {
             ForEach(CaptureFilter.allCases) { filter in
-                Button { selection = filter } label: {
-                    Image(systemName: symbol(for: filter))
-                        .font(.system(size: 15, weight: selection == filter ? .semibold : .regular))
-                        .accessibilityHidden(true)
-                        .foregroundStyle(accent.opacity(selection == filter ? 1 : 0.8))
-                        .frame(width: 40, height: 34)
-                        .background(selection == filter ? accent.opacity(0.13) : .clear, in: Capsule())
-                        .contentShape(Capsule())
-                }.buttonStyle(.plain).help(filter.title).accessibilityLabel(filter.title)
-                    .accessibilityAddTraits(selection == filter ? .isSelected : [])
-                    .accessibilityRemoveTraits(selection == filter ? [] : .isSelected)
+                AccentIconButton(symbol: symbol(for: filter), label: filter.title,
+                                 selected: selection == filter,
+                                 accessibilityIdentifier: "filter-\(filter.rawValue)") {
+                    selection = filter
+                }
             }
-        }.padding(.top, 2).padding(.bottom, 6).frame(maxWidth: .infinity)
+        }.padding(.bottom, 4).frame(maxWidth: .infinity)
             .overlay(alignment: .bottom) { Rectangle().fill(Palette.line).frame(height: 0.5) }
     }
 
@@ -55,14 +48,107 @@ struct FilterBar: View {
     }
 }
 
+/// The shared visual language for the two centered icon rows. Every control
+/// keeps the same hit target while hover, press and keyboard focus remain
+/// visible against either board appearance.
+@MainActor
+struct AccentIconButton: View {
+    @Environment(\.daBinAccent) private var accent
+    let symbol: String
+    let label: String
+    var selected = false
+    var accessibilityIdentifier: String? = nil
+    let action: () -> Void
+    @State private var hovered = false
+    @FocusState private var focused: Bool
+
+    var body: some View {
+        Button(action: action) {
+            Image(systemName: symbol)
+                .font(.system(size: 15, weight: selected ? .semibold : .regular))
+                .accessibilityHidden(true)
+                .frame(width: 40, height: 34)
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(AccentIconButtonStyle(accent: accent, selected: selected,
+                                           hovered: hovered, focused: focused))
+        .focused($focused)
+        .onHover { hovered = $0 }
+        .help(label)
+        .accessibilityLabel(label)
+        .accessibilityIdentifier(accessibilityIdentifier ?? label)
+        .accessibilityAddTraits(selected ? .isSelected : [])
+        .accessibilityRemoveTraits(selected ? [] : .isSelected)
+    }
+}
+
+private struct AccentIconButtonStyle: ButtonStyle {
+    @Environment(\.isEnabled) private var isEnabled
+    let accent: Color
+    let selected: Bool
+    let hovered: Bool
+    let focused: Bool
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .foregroundStyle(accent.opacity(isEnabled ? (selected ? 1 : 0.82) : 0.35))
+            .background {
+                if selected {
+                    Capsule().fill(accent.opacity(configuration.isPressed ? 0.20 : 0.13))
+                        .frame(width: 40, height: 30)
+                } else if hovered || configuration.isPressed {
+                    Circle().fill(accent.opacity(configuration.isPressed ? 0.18 : 0.09))
+                        .frame(width: 30, height: 30)
+                }
+            }
+            .overlay {
+                if focused {
+                    Circle().stroke(accent.opacity(0.82), lineWidth: 1.5)
+                        .frame(width: 31, height: 31)
+                }
+            }
+            .scaleEffect(configuration.isPressed ? 0.94 : 1)
+            .animation(.easeOut(duration: 0.12), value: configuration.isPressed)
+    }
+}
+
+/// A label for the Settings menu, whose native menu behavior cannot use a
+/// ButtonStyle. Its hover and focus surfaces match AccentIconButton.
+@MainActor
+struct AccentIconMenuLabel: View {
+    @Environment(\.daBinAccent) private var accent
+    let symbol: String
+    @Binding var hovered: Bool
+    let focused: Bool
+
+    var body: some View {
+        Image(systemName: symbol)
+            .font(.system(size: 15))
+            .foregroundStyle(accent.opacity(0.82))
+            .frame(width: 40, height: 34)
+            .contentShape(Rectangle())
+            .background {
+                if hovered { Circle().fill(accent.opacity(0.09)).frame(width: 30, height: 30) }
+            }
+            .overlay {
+                if focused {
+                    Circle().stroke(accent.opacity(0.82), lineWidth: 1.5)
+                        .frame(width: 31, height: 31)
+                }
+            }
+            .onHover { hovered = $0 }
+    }
+}
+
 @MainActor
 struct SmallIcon: View {
     let symbol: String
     let label: String
     var tint: Color = Palette.muted
+    var size: CGFloat = 30
     let action: () -> Void
     var body: some View {
-        Button(action: action) { Image(systemName: symbol).font(.system(size: 13)).frame(width: 30, height: 30).contentShape(Rectangle()) }
+        Button(action: action) { Image(systemName: symbol).font(.system(size: 13)).frame(width: size, height: 30).contentShape(Rectangle()) }
             .buttonStyle(.plain).foregroundStyle(tint).help(label).accessibilityLabel(label)
     }
 }
@@ -71,6 +157,8 @@ struct SmallIcon: View {
 struct TimelineModePicker: View {
     @Environment(\.daBinAccent) private var accent
     @ObservedObject var state: AppState
+    var width: CGFloat = 108
+    var compact = false
 
     private var selection: Binding<BoardTimelineMode> {
         Binding(get: { state.timelineMode }, set: { state.selectTimelineMode($0) })
@@ -82,9 +170,9 @@ struct TimelineModePicker: View {
             Text("Weekly").tag(BoardTimelineMode.weekly)
         }
         .pickerStyle(.segmented)
-        .controlSize(.small)
+        .controlSize(compact ? .mini : .small)
         .tint(accent)
-        .frame(width: 108)
+        .frame(width: width)
         .help("Switch between one day and seven days")
         .accessibilityLabel("Board view")
     }
