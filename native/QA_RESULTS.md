@@ -14,9 +14,13 @@ The optimized ARM64 direct build is **0.3.8 (33)** with source fingerprint `b286
 
 The refreshed one-page A4 guide is **299,779 bytes**, SHA-256 `61c0a585b5a978a317ae9b2f133401e587027d57e9aaded4871ac5e0f9d36291`. Its tracked and output copies are byte-identical and passed one-page geometry, text extraction, boundary and visual inspection.
 
-Static Store packaging passed **20/20** checks. App Store release preflight retains two external prerequisites: an Apple Developer Team ID and full Xcode. GitHub publication and live installation through DaBin's updater remain pending and are not represented by the current evidence set.
+Static Store packaging passed **20/20** checks. App Store release preflight retains two external prerequisites: an Apple Developer Team ID and full Xcode.
 
-[0.3.8 evidence index](../docs/qa/0.3.8/README.md) · [Full optimized run](../docs/qa/0.3.8/full-run/report.json) · [Release renders](../docs/qa/0.3.8/release-ui-renders.json) · [Build receipt](../docs/qa/0.3.8/build-receipt-v0.3.8.json) · [Update manifest](../docs/qa/0.3.8/update-manifest-v0.3.8.json) · [Quick-guide layout check](../docs/qa/0.3.8/quick-guide-layout-check.json) · [Static Store preflight](../docs/qa/0.3.8/app-store-preflight-static-v0.3.8.log) · [Release preflight](../docs/qa/0.3.8/app-store-preflight-release-v0.3.8.log).
+Release [v0.3.8](https://github.com/RoeyAsterix/DaBin/releases/tag/v0.3.8) is public and latest. Unauthenticated requests returned HTTP 200 for the repository, release, all four assets and the latest manifest; every downloaded asset was byte-identical to the verified local release.
+
+The installed 0.3.7 app discovered, downloaded and installed the public 0.3.8 package through its own verified updater. The installed app and embedded helper pass strict signature checks, the exact prior 0.3.7 app is backed up, the Desktop link remains valid, one ARM64 DaBin process is running, and a subsequent check reports that 0.3.8 is current. All **29 archive files** and the preferences file remain byte-identical. Live inspection confirmed the three compact header rows, required action order and accessible names, disabled empty-day export state, physical click-away dismissal, the Settings gear menu and Settings navigation.
+
+[0.3.8 evidence index](../docs/qa/0.3.8/README.md) · [Publication](../docs/qa/0.3.8/release-publication.json) · [Live installation](../docs/qa/0.3.8/live-install-v0.3.8.json) · [Full optimized run](../docs/qa/0.3.8/full-run/report.json) · [Release renders](../docs/qa/0.3.8/release-ui-renders.json) · [Build receipt](../docs/qa/0.3.8/build-receipt-v0.3.8.json) · [Update manifest](../docs/qa/0.3.8/update-manifest-v0.3.8.json) · [Quick-guide layout check](../docs/qa/0.3.8/quick-guide-layout-check.json) · [Static Store preflight](../docs/qa/0.3.8/app-store-preflight-static-v0.3.8.log) · [Release preflight](../docs/qa/0.3.8/app-store-preflight-release-v0.3.8.log).
 
 ## Settings wheel — 0.3.7 (32)
 

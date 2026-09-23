@@ -1,6 +1,6 @@
 # DaBin 0.3.8 release evidence
 
-This directory records the functional, visual, build, package and Store-readiness checks completed for DaBin 0.3.8 (33). GitHub publication and live installation have not yet been recorded.
+This directory records the functional, visual, build, package, publication, live-installation and Store-readiness checks completed for DaBin 0.3.8 (33).
 
 ## Result
 
@@ -12,7 +12,9 @@ This directory records the functional, visual, build, package and Store-readines
 - The update ZIP is **3,270,792 bytes**, SHA-256 `d4700284846007251d75f033d4dcfb578bf221c85fb90282a497be9ae150ffef`. Package QA passed isolated fresh installation, replacement, backup, strict clean-copy signature validation, extraction, manifest round trip, exact executable identity and document handoff.
 - The one-page A4 PDF guide is **299,779 bytes**, SHA-256 `61c0a585b5a978a317ae9b2f133401e587027d57e9aaded4871ac5e0f9d36291`. The tracked and output copies are byte-identical and passed extraction, geometry, boundary and visual checks.
 - Static App Store packaging passed **20/20**. Release preflight remains blocked by two external prerequisites: the owner's Apple Developer Team ID and a full Xcode installation.
-- Publication and installed-app evidence remain pending. This index therefore makes no claim that v0.3.8 is public, latest, downloaded through the update channel or installed over the current DaBin application.
+- Release [v0.3.8](https://github.com/RoeyAsterix/DaBin/releases/tag/v0.3.8) is public and latest. Unauthenticated checks returned HTTP 200 for the repository, release, four assets and latest manifest, and every downloaded asset was byte-identical to its verified local source.
+- The installed 0.3.7 app found and installed the public 0.3.8 package through DaBin's native updater. The installed app and helper pass strict signature checks, the exact prior app is backed up, one ARM64 process is running, the Desktop link is unchanged and the follow-up update check reports 0.3.8 as current.
+- All 29 archive files and the preferences file remained byte-identical. Live UI inspection confirmed the three-row header, required primary-action order and accessible labels, disabled **Nothing to export** state, physical click-away dismissal, the Settings gear menu and Settings navigation.
 
 The direct package is locally ad-hoc signed for this Mac. Developer ID signing and notarization, or Mac App Store signing, remain the public-distribution trust boundary.
 
@@ -26,8 +28,8 @@ The direct package is locally ad-hoc signed for this Mac. Developer ID signing a
 - `renders/`: selected Daily native 2× and compact Daily/Weekly samples in light and dark appearances.
 - `build-receipt-v0.3.8.json`: compiler, SDK, source inputs, source fingerprint and executable identity.
 - `update-manifest-v0.3.8.json`: exact release version, filename, byte count, checksum and intended release URLs.
+- `release-publication.json`: public release metadata and unauthenticated byte-identity checks for all assets and the latest manifest.
+- `live-install-v0.3.8.json`: in-app update, backup, strict signatures, archive/preferences preservation, Desktop link, runtime and live UI checks.
 - `quick-guide-layout-check.json`: one-page A4 guide geometry, extraction and copy-identity evidence.
 - `app-store-preflight-static-v0.3.8.log`: 20 passing static source and packaging checks.
 - `app-store-preflight-release-v0.3.8.log`: the two external signing and tooling prerequisites.
-
-`release-publication.json` and `live-install-v0.3.8.json` will be added only after those workflows are completed and verified.
