@@ -1,0 +1,91 @@
+{
+  "archive": {
+    "baselineFileCount": 29,
+    "byteForByteUnchanged": true,
+    "fileCount": 29,
+    "root": "/Users/roeylibfeld/Library/Containers/com.dabin.mac/Data/Library/Application Support/DaBin/Archive"
+  },
+  "checkCount": 17,
+  "checkedAtUTC": "2026-09-23T19:12:00.885708+00:00",
+  "desktopShortcut": {
+    "isSymlink": true,
+    "target": "/Users/roeylibfeld/Applications/DaBin.app"
+  },
+  "helper": {
+    "build": "29",
+    "documentTypes": [
+      {
+        "CFBundleTypeName": "DaBin Verified Update Request",
+        "CFBundleTypeRole": "Viewer",
+        "LSHandlerRank": "Owner",
+        "LSItemContentTypes": [
+          "com.dabin.update-request"
+        ]
+      }
+    ],
+    "executableSHA256": "d908d2ffe53a83987dd41154b86b7d62302db6ac740f83a4ee11b8f1228134ff",
+    "strictSignature": {
+      "exitCode": 0,
+      "stderr": "",
+      "stdout": ""
+    },
+    "version": "0.3.4"
+  },
+  "installed": {
+    "architecture": {
+      "exitCode": 0,
+      "stderr": "",
+      "stdout": "arm64"
+    },
+    "build": "29",
+    "executableSHA256": "fbe81f1c063795112596e43a4ddcb7d187d51903a8d87d3177f15c2ddd66ea99",
+    "expectedExecutableSHA256": "fbe81f1c063795112596e43a4ddcb7d187d51903a8d87d3177f15c2ddd66ea99",
+    "path": "/Users/roeylibfeld/Applications/DaBin.app",
+    "runningPIDs": [
+      "79333"
+    ],
+    "sourceFingerprint": "52798f6254f2b08f47049508e1a924848adf474f0e29af5c01be74ab30b80152",
+    "strictSignature": {
+      "exitCode": 0,
+      "stderr": "",
+      "stdout": ""
+    },
+    "version": "0.3.4"
+  },
+  "latestBackup": {
+    "build": "28",
+    "executableSHA256": "6d78fa40307b6c69e1d1340ad51a2621c809b7628dc833bd730db35473277ed1",
+    "path": "/Users/roeylibfeld/Applications/.DaBinBackups/20260923-220926-D141707C.app",
+    "strictSignature": {
+      "exitCode": 0,
+      "stderr": "",
+      "stdout": ""
+    },
+    "version": "0.3.3"
+  },
+  "liveUI": {
+    "dailyToWeekly": "passed: Weekly selected, 17 Sep\u201323 Sep shown with seven days including empty days",
+    "source": "Accessibility inspection through native UI",
+    "upToDate": "passed: Settings displayed You\u2019re up to date with DaBin 0.3.4",
+    "weeklyToDaily": "passed: Daily selected again on Wed, 23 Sep with four captures"
+  },
+  "preferences": {
+    "boardOpacity": 1.0,
+    "boardTopLeft": [
+      2064.0,
+      539.0
+    ],
+    "darkMode": true,
+    "robotHome": "cameraIsland",
+    "themeColor": "6D5387"
+  },
+  "status": "passed",
+  "updatesDirectory": {
+    "pendingHandoffFiles": [],
+    "zipFiles": [
+      "DaBin-0.3.1-Update.zip",
+      "DaBin-0.3.3-Update.zip",
+      "DaBin-0.3.4-Update.zip"
+    ]
+  }
+}

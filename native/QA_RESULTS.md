@@ -12,7 +12,9 @@ The optimized ARM64 direct build is **0.3.4 (29)** with source fingerprint `5279
 
 The patched 0.3.3 bridge was installed over 0.3.2 to enable a true in-app rehearsal. It retained the Desktop link, produced one running DaBin process, and left all **29 archive files** byte-for-byte unchanged. Static Store packaging passed **20/20** checks. App Store release preflight retains two external prerequisites: an Apple Developer Team ID and full Xcode. No Store archive or upload was performed.
 
-[0.3.4 evidence index](../docs/qa/0.3.4/README.md) · [Full optimized run](../docs/qa/0.3.4/full-run/report.json) · [Release renders](../docs/qa/0.3.4/release-ui-renders.json) · [Empty Daily/Weekly renders](../docs/qa/0.3.4/weekly-entry-renders.json) · [Build receipt](../docs/qa/0.3.4/build-receipt-v0.3.4.json) · [Update manifest](../docs/qa/0.3.4/update-manifest-v0.3.4.json).
+Release [v0.3.4](https://github.com/RoeyAsterix/DaBin/releases/tag/v0.3.4) is public and latest. Independent unauthenticated requests returned HTTP 200 for the repository, release, four assets and latest manifest; every expected asset was byte-identical to the verified local release. The installed 0.3.3 bridge then found, downloaded and installed the public 0.3.4 package through the native document handoff. The final app and helper pass strict signature checks, one DaBin process is running, the exact 0.3.3 bridge is backed up, preferences and the Desktop link remain intact, no handoff file remains, and all 29 archive files are still byte-for-byte unchanged. Live Daily → Weekly → Daily interaction and the final “up to date” state passed.
+
+[0.3.4 evidence index](../docs/qa/0.3.4/README.md) · [Publication](../docs/qa/0.3.4/release-publication.json) · [Live installation](../docs/qa/0.3.4/live-install-v0.3.4.json) · [Full optimized run](../docs/qa/0.3.4/full-run/report.json) · [Release renders](../docs/qa/0.3.4/release-ui-renders.json) · [Empty Daily/Weekly renders](../docs/qa/0.3.4/weekly-entry-renders.json) · [Build receipt](../docs/qa/0.3.4/build-receipt-v0.3.4.json) · [Update manifest](../docs/qa/0.3.4/update-manifest-v0.3.4.json).
 
 ## Daily / Weekly toggle — 0.3.3 (28)
 

@@ -1,0 +1,107 @@
+{
+  "allExpectedAssetsByteIdentical": true,
+  "assets": [
+    {
+      "digest": "sha256:6945e85bc95709771b3077bbadbab2af9f2d16a43aa4a8d25ab9ebf66192fa40",
+      "name": "DaBin-0.3.4-Update.zip",
+      "size": 2984144,
+      "url": "https://github.com/RoeyAsterix/DaBin/releases/download/v0.3.4/DaBin-0.3.4-Update.zip"
+    },
+    {
+      "digest": "sha256:b04a1501c06f86ba7d501e367621f4730a9dc89333fff86ea7936f1330faf716",
+      "name": "DaBin-Quick-Guide.pdf",
+      "size": 298784,
+      "url": "https://github.com/RoeyAsterix/DaBin/releases/download/v0.3.4/DaBin-Quick-Guide.pdf"
+    },
+    {
+      "digest": "sha256:dae3b10d90063838b8f3cda50c450a44a774fc42ba8d0b1c2e69d97c20910743",
+      "name": "DaBin-update.json",
+      "size": 591,
+      "url": "https://github.com/RoeyAsterix/DaBin/releases/download/v0.3.4/DaBin-update.json"
+    },
+    {
+      "digest": "sha256:2b539b3bc6c1d3422484bc7f0208b38a946b71bd2ed3cf80d4e633cc9d4f4938",
+      "name": "RELEASE_NOTES_0.3.4.md",
+      "size": 1625,
+      "url": "https://github.com/RoeyAsterix/DaBin/releases/download/v0.3.4/RELEASE_NOTES_0.3.4.md"
+    }
+  ],
+  "checkedAtUTC": "2026-09-23T19:13:17.067862+00:00",
+  "latestReleaseTag": "v0.3.4",
+  "release": {
+    "isDraft": false,
+    "isPrerelease": false,
+    "name": "DaBin 0.3.4",
+    "publishedAt": "2026-09-23T19:07:54Z",
+    "sourceCommit": "a26ddb47284298f79906117cb3c58bedd9b60c84",
+    "tag": "v0.3.4",
+    "targetCommitish": "main",
+    "url": "https://github.com/RoeyAsterix/DaBin/releases/tag/v0.3.4"
+  },
+  "unauthenticatedPublicChecks": [
+    {
+      "bytes": 273602,
+      "label": "repository",
+      "sha256": "04c80984cef4c663fc58ea0de9dcdc7184836348713c5f7b0187ccff2c4d2bb5",
+      "status": 200,
+      "url": "https://github.com/RoeyAsterix/DaBin"
+    },
+    {
+      "bytes": 203842,
+      "label": "release",
+      "sha256": "2a46603e353d143977b3c9718f56838577c0d0d12fb17e6a8ae8b62e47ce4886",
+      "status": 200,
+      "url": "https://github.com/RoeyAsterix/DaBin/releases/tag/v0.3.4"
+    },
+    {
+      "byteIdentical": true,
+      "bytes": 2984144,
+      "expectedBytes": 2984144,
+      "expectedSHA256": "6945e85bc95709771b3077bbadbab2af9f2d16a43aa4a8d25ab9ebf66192fa40",
+      "label": "DaBin-0.3.4-Update.zip",
+      "sha256": "6945e85bc95709771b3077bbadbab2af9f2d16a43aa4a8d25ab9ebf66192fa40",
+      "status": 200,
+      "url": "https://github.com/RoeyAsterix/DaBin/releases/download/v0.3.4/DaBin-0.3.4-Update.zip"
+    },
+    {
+      "byteIdentical": true,
+      "bytes": 591,
+      "expectedBytes": 591,
+      "expectedSHA256": "dae3b10d90063838b8f3cda50c450a44a774fc42ba8d0b1c2e69d97c20910743",
+      "label": "DaBin-update.json",
+      "sha256": "dae3b10d90063838b8f3cda50c450a44a774fc42ba8d0b1c2e69d97c20910743",
+      "status": 200,
+      "url": "https://github.com/RoeyAsterix/DaBin/releases/download/v0.3.4/DaBin-update.json"
+    },
+    {
+      "byteIdentical": true,
+      "bytes": 298784,
+      "expectedBytes": 298784,
+      "expectedSHA256": "b04a1501c06f86ba7d501e367621f4730a9dc89333fff86ea7936f1330faf716",
+      "label": "DaBin-Quick-Guide.pdf",
+      "sha256": "b04a1501c06f86ba7d501e367621f4730a9dc89333fff86ea7936f1330faf716",
+      "status": 200,
+      "url": "https://github.com/RoeyAsterix/DaBin/releases/download/v0.3.4/DaBin-Quick-Guide.pdf"
+    },
+    {
+      "byteIdentical": true,
+      "bytes": 1625,
+      "expectedBytes": 1625,
+      "expectedSHA256": "2b539b3bc6c1d3422484bc7f0208b38a946b71bd2ed3cf80d4e633cc9d4f4938",
+      "label": "RELEASE_NOTES_0.3.4.md",
+      "sha256": "2b539b3bc6c1d3422484bc7f0208b38a946b71bd2ed3cf80d4e633cc9d4f4938",
+      "status": 200,
+      "url": "https://github.com/RoeyAsterix/DaBin/releases/download/v0.3.4/RELEASE_NOTES_0.3.4.md"
+    },
+    {
+      "byteIdentical": true,
+      "bytes": 591,
+      "expectedBytes": 591,
+      "expectedSHA256": "dae3b10d90063838b8f3cda50c450a44a774fc42ba8d0b1c2e69d97c20910743",
+      "label": "latest-manifest",
+      "sha256": "dae3b10d90063838b8f3cda50c450a44a774fc42ba8d0b1c2e69d97c20910743",
+      "status": 200,
+      "url": "https://github.com/RoeyAsterix/DaBin/releases/latest/download/DaBin-update.json"
+    }
+  ]
+}
