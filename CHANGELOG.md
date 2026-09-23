@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.3.2 — 2026-09-23
+
+- Forced the embedded updater to open as a fresh LaunchServices instance so the verified ZIP path and SHA-256 arguments always reach it.
+- Added the underlying updater error to the native failure alert instead of showing only a generic heading.
+
 ## 0.3.1 — 2026-09-23
 
 - Added **Settings → Your quiet corner → Below camera island** for Macs with a built-in camera island.

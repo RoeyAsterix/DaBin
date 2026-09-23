@@ -376,6 +376,7 @@ private final class UpdateDelegate: NSObject, NSApplicationDelegate {
         } catch {
             let alert = NSAlert(error: error)
             alert.messageText = "DaBin could not be updated"
+            alert.informativeText = error.localizedDescription
             alert.addButton(withTitle: "Close")
             alert.runModal()
         }

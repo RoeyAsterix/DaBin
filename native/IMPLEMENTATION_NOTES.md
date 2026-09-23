@@ -10,6 +10,10 @@ The default corner trigger is 9 logical points along each edge, polled every 100
 
 No persistent menu-bar item was added, to honor complete hiding at rest. Reopening DaBin, its active-app menu, the focused robot's context menu, and keyboard actions provide recovery. A system-wide hotkey is not registered. OS Hot Corners may activate at the same corners; this app does not change system settings.
 
+## Update 0.3.2
+
+The direct update launcher sets `NSWorkspace.OpenConfiguration.createsNewApplicationInstance` before opening the embedded helper. This prevents LaunchServices from reusing a helper process without forwarding the verified package path and SHA-256 arguments. The helper still performs its own checksum, layout, architecture and signature validation before presenting confirmation. Failure alerts now include the underlying localized error so a rejected handoff can be diagnosed without a terminal.
+
 ## Update 0.3.1
 
 Settings adds a segmented **Robot home** choice under **Your quiet corner**. `RobotPlacementSettings` stores `corners` or `cameraIsland` under the app-owned `DaBin.robotHome.v1` preference. It is independent of the Daily-board position and capture archive. Invalid or absent values resolve to corners without rewriting preferences; tests and renders can use a non-persisting instance. A live choice change dismisses the current transient robot before the next reveal.

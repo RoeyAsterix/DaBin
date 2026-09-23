@@ -1,7 +1,7 @@
 # DaBin — Mac App Store readiness
 
 **Audit date:** 23 September 2026
-**Source version:** 0.3.1 (26)
+**Source version:** 0.3.2 (27)
 **Result: BLOCKED for submission; local app QA is a separate result.**
 
 The source now has a Productivity category, a bundled privacy explanation, privacy manifest, and an Xcode Release configuration that does not force ad-hoc signing. These changes improve readiness. They do not make the locally signed app an App Store distribution build or guarantee approval.
@@ -54,10 +54,10 @@ python3 scripts/app_store_preflight.py --static-only
 python3 scripts/app_store_preflight.py
 ```
 
-The final 0.3.1 preflight logs are retained at:
+The final 0.3.2 preflight logs are retained at:
 
-- `../docs/qa/0.3.1/app-store-preflight-static-v0.3.1.log`: **20 source packaging checks passed**.
-- `../docs/qa/0.3.1/app-store-preflight-release-v0.3.1.log`: release preflight remains blocked by the Apple Developer Team ID and full Xcode. The configured GitHub policy/support URLs pass offline syntax checks; their content and continuing reachability remain owner responsibilities.
+- `../docs/qa/0.3.2/app-store-preflight-static-v0.3.2.log`: **20 source packaging checks passed**.
+- `../docs/qa/0.3.2/app-store-preflight-release-v0.3.2.log`: release preflight remains blocked by the Apple Developer Team ID and full Xcode. The configured GitHub policy/support URLs pass offline syntax checks; their content and continuing reachability remain owner responsibilities.
 
 The functional and package evidence for this source version is recorded in `QA_RESULTS.md`.
 

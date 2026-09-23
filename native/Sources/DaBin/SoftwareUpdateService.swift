@@ -391,6 +391,10 @@ final class SoftwareUpdateService: ObservableObject {
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
             let configuration = NSWorkspace.OpenConfiguration()
             configuration.activates = true
+            // LaunchServices can reuse an accessory helper without forwarding
+            // a new argv. A fresh instance guarantees that the verified package
+            // path and checksum reach ProcessInfo.arguments.
+            configuration.createsNewApplicationInstance = true
             configuration.arguments = arguments
             NSWorkspace.shared.openApplication(at: url, configuration: configuration) { application, error in
                 if let error { continuation.resume(throwing: error) }

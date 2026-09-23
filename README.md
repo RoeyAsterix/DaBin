@@ -9,7 +9,7 @@ Captures stay on the Mac in a dated archive. Each card can hold a comment or rem
 ## Start here
 
 - [Native app guide](native/README.md)
-- [0.3.1 release notes](docs/RELEASE_NOTES_0.3.1.md)
+- [0.3.2 release notes](docs/RELEASE_NOTES_0.3.2.md)
 - [One-page PDF guide](docs/DaBin-Quick-Guide.pdf)
 - [Architecture](native/ARCHITECTURE.md)
 - [QA results](native/QA_RESULTS.md)

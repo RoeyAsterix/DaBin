@@ -1,0 +1,135 @@
+{
+  "changedBytesFromIdle": {
+    "curious": 32201,
+    "delighted": 42482,
+    "digesting": 216,
+    "hungry": 36255,
+    "partial": 30817,
+    "puzzled": 35678
+  },
+  "cleanup": {
+    "ambientWorkActive": false,
+    "changedBytesOverPointFourSeconds": 0,
+    "mood": "hidden"
+  },
+  "description": "Native transient RobotCharacterView personality states rendered at 2x after settling, plus live digest motion and lifecycle checks.",
+  "deterministicStateCount": 7,
+  "digestAnimation": {
+    "changedBytes": 45620,
+    "sampleIntervalSeconds": 0.26
+  },
+  "distinctStateRasterCount": 7,
+  "fixturePrivacy": "Code-drawn local character only; no clipboard, files, network, notifications or personal content.",
+  "reduceMotion": {
+    "ambientWorkActive": false,
+    "changedBytesOverHalfSecond": 0
+  },
+  "screenshots": [
+    {
+      "file": "native-robot-personality-idle@2x.png",
+      "logicalHeight": 88,
+      "logicalWidth": 72,
+      "pixelHeight": 176,
+      "pixelScale": 2,
+      "pixelWidth": 144,
+      "renderMethod": "RobotCharacterView cacheDisplay directly into a 2x bitmap after the semantic pose settles; no image scaling",
+      "semanticState": "idle"
+    },
+    {
+      "changedBytesFromIdle": 32201,
+      "file": "native-robot-personality-curious@2x.png",
+      "logicalHeight": 88,
+      "logicalWidth": 72,
+      "pixelHeight": 176,
+      "pixelScale": 2,
+      "pixelWidth": 144,
+      "renderMethod": "RobotCharacterView cacheDisplay directly into a 2x bitmap after the semantic pose settles; no image scaling",
+      "semanticState": "curious"
+    },
+    {
+      "changedBytesFromIdle": 36255,
+      "file": "native-robot-personality-hungry@2x.png",
+      "logicalHeight": 88,
+      "logicalWidth": 72,
+      "pixelHeight": 176,
+      "pixelScale": 2,
+      "pixelWidth": 144,
+      "renderMethod": "RobotCharacterView cacheDisplay directly into a 2x bitmap after the semantic pose settles; no image scaling",
+      "semanticState": "hungry"
+    },
+    {
+      "changedBytesFromIdle": 216,
+      "file": "native-robot-personality-digesting@2x.png",
+      "logicalHeight": 88,
+      "logicalWidth": 72,
+      "pixelHeight": 176,
+      "pixelScale": 2,
+      "pixelWidth": 144,
+      "renderMethod": "RobotCharacterView cacheDisplay directly into a 2x bitmap after the semantic pose settles; no image scaling",
+      "semanticState": "digesting"
+    },
+    {
+      "changedBytesFromIdle": 42482,
+      "file": "native-robot-personality-delighted@2x.png",
+      "logicalHeight": 88,
+      "logicalWidth": 72,
+      "pixelHeight": 176,
+      "pixelScale": 2,
+      "pixelWidth": 144,
+      "renderMethod": "RobotCharacterView cacheDisplay directly into a 2x bitmap after the semantic pose settles; no image scaling",
+      "semanticState": "delighted"
+    },
+    {
+      "changedBytesFromIdle": 30817,
+      "file": "native-robot-personality-partial@2x.png",
+      "logicalHeight": 88,
+      "logicalWidth": 72,
+      "pixelHeight": 176,
+      "pixelScale": 2,
+      "pixelWidth": 144,
+      "renderMethod": "RobotCharacterView cacheDisplay directly into a 2x bitmap after the semantic pose settles; no image scaling",
+      "semanticState": "partial"
+    },
+    {
+      "changedBytesFromIdle": 35678,
+      "file": "native-robot-personality-puzzled@2x.png",
+      "logicalHeight": 88,
+      "logicalWidth": 72,
+      "pixelHeight": 176,
+      "pixelScale": 2,
+      "pixelWidth": 144,
+      "renderMethod": "RobotCharacterView cacheDisplay directly into a 2x bitmap after the semantic pose settles; no image scaling",
+      "semanticState": "puzzled"
+    },
+    {
+      "file": "native-robot-personality-digest-motion-a@2x.png",
+      "logicalHeight": 88,
+      "logicalWidth": 72,
+      "pixelHeight": 176,
+      "pixelScale": 2,
+      "pixelWidth": 144,
+      "renderMethod": "Timed native presentation frame at 2x; used only to prove live digest movement",
+      "semanticState": "digesting-live"
+    },
+    {
+      "file": "native-robot-personality-digest-motion-b@2x.png",
+      "logicalHeight": 88,
+      "logicalWidth": 72,
+      "pixelHeight": 176,
+      "pixelScale": 2,
+      "pixelWidth": 144,
+      "renderMethod": "Timed native presentation frame at 2x; used only to prove live digest movement",
+      "semanticState": "digesting-live"
+    },
+    {
+      "file": "native-robot-personality-reduced-motion-delighted@2x.png",
+      "logicalHeight": 88,
+      "logicalWidth": 72,
+      "pixelHeight": 176,
+      "pixelScale": 2,
+      "pixelWidth": 144,
+      "renderMethod": "RobotCharacterView cacheDisplay directly into a 2x bitmap with injected Reduce Motion",
+      "semanticState": "delighted-reduced-motion"
+    }
+  ]
+}

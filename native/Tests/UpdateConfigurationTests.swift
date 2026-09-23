@@ -46,13 +46,17 @@ private enum UpdateConfigurationTests {
                     && packager.contains("--package-sha256"),
                    "Release packaging publishes and exercises the verified update manifest")
         try expect(helper.contains("The update ZIP does not match the checksum")
-                    && helper.contains("rejectSymlinks") && helper.contains("codesign"),
+                    && helper.contains("rejectSymlinks") && helper.contains("codesign")
+                    && helper.contains("informativeText = error.localizedDescription"),
                    "The installer rechecks the ZIP, extracted layout and app signature")
+        try expect(service.contains("configuration.createsNewApplicationInstance = true")
+                    && service.contains("configuration.arguments = arguments"),
+                   "The app launches a fresh helper instance so the verified package arguments arrive")
         try expect(privacy.contains("checks for updates only when you choose")
                     && privacy.contains("does not check or download updates silently"),
                    "The bundled privacy policy explains GitHub contact and user control")
-        try expect(info["CFBundleShortVersionString"] as? String == "0.3.1"
-                    && info["CFBundleVersion"] as? String == "26",
+        try expect(info["CFBundleShortVersionString"] as? String == "0.3.2"
+                    && info["CFBundleVersion"] as? String == "27",
                    "The release version and monotonically increasing build are configured")
         print("PASS: \(checks) update-channel configuration checks")
     }

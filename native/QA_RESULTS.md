@@ -1,5 +1,17 @@
 # DaBin QA cycle — 23 September 2026
 
+## Updater handoff hotfix — 0.3.2 (27)
+
+DaBin 0.3.2 preserves the complete camera-island placement and robot-personality work from 0.3.1 and fixes the direct updater handoff. A live update rehearsal from the installed 0.3.0 app exposed that LaunchServices could reuse an existing updater-helper instance and omit the verified ZIP path and SHA-256 command-line arguments. The failure occurred before confirmation or replacement. Setting `NSWorkspace.OpenConfiguration.createsNewApplicationInstance` to `true` made the exact package arguments appear in the helper process and produced the correct native confirmation for 0.3.1; that rehearsal was cancelled before installation. The helper now also includes the underlying localized error in its failure alert.
+
+The final optimized 0.3.2 source passed **23/23 registered suites and 1,917 checks**. Separate local PDF, RTF and H.264 processing passed **39/39**, for **1,956 automated checks**. Update coverage includes **21 service checks** and **11 channel/configuration checks**, including the fresh-instance requirement and argument preservation. The release renderer passed **28 production board views** and **10 direct native 2× robot artifacts**. Its timed digest samples changed 45,620 raster bytes; Reduce Motion and hidden-character cleanup remained visually stable with no background animation work.
+
+The optimized ARM64 direct build is **0.3.2 (27)** with source fingerprint `9cfa700e92720b2beda2c67e972c625f4ee5bb2d14ac01bca5ede19f4ea4c1e3` and executable SHA-256 `f95a3805ea5bf28f63afb529571a09546ce855e5ae1fa2b7ea78e19f87bfa00f`. The verified update ZIP is **2,940,064 bytes**, SHA-256 `6ced075743d2af5497d94711071d34fed85b3fc6a36bc7f7c9699281e22131a3`; its bundled PDF is byte-identical to the standalone guide. Packaging exercised the exact helper through isolated fresh install, replacement, backup, extracted-package verification and embedded-helper download modes.
+
+Static Store packaging passed **20/20** checks. App Store release preflight retains the same two environment/owner blockers: an Apple Developer Team ID and full Xcode. The direct build is locally ad-hoc signed for this Mac; general distribution still needs Developer ID signing and notarization.
+
+[0.3.2 evidence index](../docs/qa/0.3.2/README.md) · [Full optimized run](../docs/qa/0.3.2/full-run/report.json) · [Media integration](../docs/qa/0.3.2/media-integration-v0.3.2.log) · [Release renders](../docs/qa/0.3.2/release-ui-renders.json) · [Robot personality QA](../docs/qa/0.3.2/robot-personality-renders.json) · [Build receipt](../docs/qa/0.3.2/build-receipt-v0.3.2.json) · [Update manifest](../docs/qa/0.3.2/update-manifest-v0.3.2.json).
+
 ## Camera-island home and robot personality — 0.3.1 (26)
 
 Settings now offers **Screen corners** and **Below camera island** under **Your quiet corner**. The second mode derives the physical cutout from `NSScreen.safeAreaInsets` and the two auxiliary top regions instead of using a model list or display name. On the built-in screen used for live verification, macOS reported a 32-point top safe area and a 185-point center gap; the 72 × 88-point robot appeared centered directly below it. The external display reported no cutout geometry and retained corner reveal under the same preference. Changing the setting hid the previous target cleanly, and moving the pointer away stopped the character and removed its window.
