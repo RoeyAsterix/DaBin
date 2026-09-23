@@ -1,13 +1,22 @@
 # Changelog
 
+## 0.3.4 — 2026-09-23
+
+- Superseded 0.3.3 and carried forward its compact **Daily / Weekly** segmented control, selected-date anchoring, filter and scroll continuity, drafts, panel transition and Reduce Motion behavior.
+- Replaced the sandbox-incompatible updater launch-argument handoff with a private, one-use document beside the verified ZIP.
+- Made the installer validate the document owner, permissions, schema, package name, location and SHA-256 before consuming it and independently checking the package as before.
+- Kept the local capture archive outside the update flow and unchanged during installation.
+
 ## 0.3.3 — 2026-09-23
 
 - Replaced the separate Today and This Week actions with one compact **Daily / Weekly** segmented control.
 - Anchored Daily → Weekly to the selected day and made Weekly → Daily return without resetting the selected date, type filter, Daily scroll position or unsaved drafts.
 
+This release is superseded by 0.3.4 because its direct updater still relied on launch arguments that macOS does not deliver from the sandboxed caller.
+
 ## 0.3.2 — 2026-09-23
 
-- Forced the embedded updater to open as a fresh LaunchServices instance so the verified ZIP path and SHA-256 arguments always reach it.
+- Requested a fresh embedded-updater instance to avoid helper-process reuse; later live QA showed that sandboxed LaunchServices still discarded the ZIP path and SHA-256 arguments, so 0.3.4 replaces this transport.
 - Added the underlying updater error to the native failure alert instead of showing only a generic heading.
 
 ## 0.3.1 — 2026-09-23

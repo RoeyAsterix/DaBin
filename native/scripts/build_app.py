@@ -49,7 +49,7 @@ def build_update_helper(app, sdk, identity, version, build_number):
     resources.mkdir()
     run(["xcrun", "swiftc", "-swift-version", "5", "-target", TARGET, "-sdk", sdk,
          "-warnings-as-errors", "-O", "-whole-module-optimization", "-parse-as-library",
-         ROOT / "UpdateTools/DaBinUpdater.swift", "-o", executable])
+         ROOT / "Sources/DaBin/UpdateHandoff.swift", ROOT / "UpdateTools/DaBinUpdater.swift", "-o", executable])
     helper_info = {
         "CFBundleIdentifier": "com.dabin.mac.updater.local",
         "CFBundleName": "DaBin Update",
@@ -63,6 +63,21 @@ def build_update_helper(app, sdk, identity, version, build_number):
         "LSMinimumSystemVersion": "14.0",
         "NSHighResolutionCapable": True,
         "NSHumanReadableCopyright": "© 2026 DaBin",
+        "CFBundleDocumentTypes": [{
+            "CFBundleTypeName": "DaBin Verified Update Request",
+            "CFBundleTypeRole": "Viewer",
+            "LSHandlerRank": "Owner",
+            "LSItemContentTypes": ["com.dabin.update-request"],
+        }],
+        "UTExportedTypeDeclarations": [{
+            "UTTypeIdentifier": "com.dabin.update-request",
+            "UTTypeDescription": "DaBin Verified Update Request",
+            "UTTypeConformsTo": ["public.json"],
+            "UTTypeTagSpecification": {
+                "public.filename-extension": ["dabinupdate"],
+                "public.mime-type": ["application/vnd.dabin.update+json"],
+            },
+        }],
     }
     (helper / "Contents/Info.plist").write_bytes(plistlib.dumps(helper_info))
     copy_permissions(ROOT / "Resources/AppIcon.icns", resources / "AppIcon.icns")

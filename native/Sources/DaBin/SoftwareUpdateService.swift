@@ -167,7 +167,7 @@ struct SoftwareUpdateTransport {
 @MainActor
 final class SoftwareUpdateService: ObservableObject {
     typealias HelperValidator = (URL) throws -> Void
-    typealias InstallerLauncher = (URL, [String]) async throws -> Void
+    typealias InstallerLauncher = (URL, URL) async throws -> Void
 
     @Published private(set) var phase: SoftwareUpdatePhase = .idle
     @Published private(set) var availableRelease: SoftwareReleaseManifest?
@@ -281,10 +281,15 @@ final class SoftwareUpdateService: ObservableObject {
                 try self.validateHelper(self.helperURL)
                 guard self.operationID == identifier else { return }
                 self.downloadedArchive = archive
-                try await self.launchInstaller(self.helperURL, [
-                    "--package", archive.path,
-                    "--package-sha256", release.asset.sha256
-                ])
+                let handoffURL = try DaBinUpdateHandoff.create(package: archive,
+                                                               sha256: release.asset.sha256,
+                                                               in: self.updatesDirectory)
+                do {
+                    try await self.launchInstaller(self.helperURL, handoffURL)
+                } catch {
+                    try? FileManager.default.removeItem(at: handoffURL)
+                    throw error
+                }
                 guard self.operationID == identifier else { return }
                 self.phase = .installerOpened
                 self.message = "The verified installer is open. Choose Update to continue."
@@ -387,16 +392,17 @@ final class SoftwareUpdateService: ObservableObject {
         }
     }
 
-    private static func openInstaller(_ url: URL, arguments: [String]) async throws {
+    private static func openInstaller(_ url: URL, handoffURL: URL) async throws {
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
             let configuration = NSWorkspace.OpenConfiguration()
             configuration.activates = true
-            // LaunchServices can reuse an accessory helper without forwarding
-            // a new argv. A fresh instance guarantees that the verified package
-            // path and checksum reach ProcessInfo.arguments.
             configuration.createsNewApplicationInstance = true
-            configuration.arguments = arguments
-            NSWorkspace.shared.openApplication(at: url, configuration: configuration) { application, error in
+            configuration.allowsRunningApplicationSubstitution = false
+            // App Sandbox deliberately strips OpenConfiguration.arguments.
+            // A document-open event is the supported cross-application handoff and
+            // carries the verified package path and checksum to the exact helper.
+            NSWorkspace.shared.open([handoffURL], withApplicationAt: url,
+                                    configuration: configuration) { application, error in
                 if let error { continuation.resume(throwing: error) }
                 else if application == nil {
                     continuation.resume(throwing: SoftwareUpdateError.message("macOS could not open the DaBin installer."))

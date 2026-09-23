@@ -10,13 +10,21 @@ The default corner trigger is 9 logical points along each edge, polled every 100
 
 No persistent menu-bar item was added, to honor complete hiding at rest. Reopening DaBin, its active-app menu, the focused robot's context menu, and keyboard actions provide recovery. A system-wide hotkey is not registered. OS Hot Corners may activate at the same corners; this app does not change system settings.
 
+## Update 0.3.4
+
+Release 0.3.4 supersedes 0.3.3. Live update QA showed that `NSWorkspace.OpenConfiguration.arguments` is ignored when the caller is sandboxed, so the verified ZIP path never reached the helper even when a new helper instance was requested. The failure occurred before installation; the existing app and local capture archive were not replaced or modified.
+
+The direct updater now creates a private, permission-restricted, one-use `.dabinupdate` document beside the downloaded ZIP and asks LaunchServices to open that document with the embedded helper. The document contains only its schema version, the same-directory package filename and the expected SHA-256. The helper accepts the file through the native application-open callback, constrains it to the app-owned Updates directory, rejects symbolic links and unexpected keys, checks its owner and permissions, validates the package name, location and checksum, and removes the handoff after consumption. Existing independent ZIP, layout, ARM64, signature, confirmation, backup, replacement and rollback checks remain in place.
+
+Direct command-line package arguments remain available for build and package QA. The Mac App Store build still omits the direct downloader and helper.
+
 ## Current Daily/Weekly navigation
 
 The date row uses one compact native segmented control labeled **Daily** and **Weekly**. Daily → Weekly opens the seven-day range ending on `selectedDay`. Weekly → Daily changes only the route, so it returns to the same selected day without resetting the active type filter, Daily scroll position or unsaved drafts. Re-selecting the active segment is idempotent. The centered date continues to open Weekly, and a weekly day heading or Back returns to Daily.
 
-## Update 0.3.2
+## Update 0.3.2 (historical)
 
-The direct update launcher sets `NSWorkspace.OpenConfiguration.createsNewApplicationInstance` before opening the embedded helper. This prevents LaunchServices from reusing a helper process without forwarding the verified package path and SHA-256 arguments. The helper still performs its own checksum, layout, architecture and signature validation before presenting confirmation. Failure alerts now include the underlying localized error so a rejected handoff can be diagnosed without a terminal.
+The direct update launcher began setting `NSWorkspace.OpenConfiguration.createsNewApplicationInstance` before opening the embedded helper, and failure alerts began including the underlying localized error. That change prevented helper-process reuse but did not solve argument delivery from the sandboxed main app. The argument transport carried through 0.3.3 and is superseded by the 0.3.4 document handoff described above. The helper's independent checksum, layout, architecture and signature validation remains.
 
 ## Update 0.3.1
 

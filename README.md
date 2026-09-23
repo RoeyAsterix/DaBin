@@ -9,7 +9,7 @@ Captures stay on the Mac in a dated archive. Each card can hold a comment or rem
 ## Start here
 
 - [Native app guide](native/README.md)
-- [0.3.3 release notes](docs/RELEASE_NOTES_0.3.3.md)
+- [0.3.4 release notes](docs/RELEASE_NOTES_0.3.4.md)
 - [One-page PDF guide](docs/DaBin-Quick-Guide.pdf)
 - [Architecture](native/ARCHITECTURE.md)
 - [QA results](native/QA_RESULTS.md)
@@ -31,7 +31,9 @@ The optimized app is written to `native/build/DaBin.app`. Full GUI QA needs an u
 
 ## Updates
 
-The direct build has a user-initiated GitHub Releases channel under **Settings → Software updates**. It accepts only this repository’s fixed HTTPS release path, verifies the published byte count and SHA-256 checksum, then opens a bundled installer that asks before replacing the app. The installer re-verifies the package and application, backs up the previous installation, and leaves the capture archive unchanged. There are no silent update checks.
+The direct build has a user-initiated GitHub Releases channel under **Settings → Software updates**. It accepts only this repository’s fixed HTTPS release path, verifies the published byte count and SHA-256 checksum, then gives the bundled installer a private, one-use update document. The installer validates and consumes that document, re-verifies the package and application, asks before replacement, and backs up the previous installation. The capture archive remains untouched. There are no silent update checks.
+
+Release 0.3.4 supersedes 0.3.3, whose sandboxed updater launch could lose its package arguments before the installer opened.
 
 The current personal release is ad-hoc signed for the owner’s Mac. General distribution still requires a stable Developer ID signature and Apple notarization. The Mac App Store configuration compiles without the direct downloader and helper; Store builds update through Apple.
 

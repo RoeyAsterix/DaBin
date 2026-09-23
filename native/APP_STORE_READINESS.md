@@ -1,7 +1,7 @@
 # DaBin — Mac App Store readiness
 
 **Audit date:** 23 September 2026
-**Source version:** 0.3.3 (28)
+**Source version:** 0.3.4 (29)
 **Result: BLOCKED for submission; local app QA is a separate result.**
 
 The source now has a Productivity category, a bundled privacy explanation, privacy manifest, and an Xcode Release configuration that does not force ad-hoc signing. These changes improve readiness. They do not make the locally signed app an App Store distribution build or guarantee approval.
@@ -43,7 +43,7 @@ The candidate App Store privacy answer is **Data Not Collected**, based on the p
 
 `scripts/install_app.py` refuses installation while DaBin is running, stages and verifies the copied app, preserves the previous owned app and restores it if installation fails. `scripts/package_standalone.py` creates an app-only ZIP with documentation and an optional explicit PDF. It verifies ARM64/system-library dependencies, stale-build hashes, signature and the extracted ZIP. It never includes the user's archive or removes macOS security controls. These local delivery tools are not inside the app bundle.
 
-`UpdateTools/package_update.py` creates a current-Mac update ZIP with a native **DaBin Update.app** and a public `DaBin-update.json`. The direct app downloads only from the fixed repository path, verifies the published size and SHA-256, then opens its embedded helper. The helper rechecks the package, requests a normal quit, copies without extended metadata, backs up the prior owned app, verifies the staged and installed signatures and rolls back on failure. It never opens the capture archive. The generated Xcode Store build compiles out this downloader and does not embed the helper; an App Store build must use Apple's distribution channel.
+`UpdateTools/package_update.py` creates a current-Mac update ZIP with a native **DaBin Update.app** and a public `DaBin-update.json`. The direct app downloads only from the fixed repository path, verifies the published size and SHA-256, then opens its embedded helper through a private, one-use document in the app-owned Updates directory. The helper validates and consumes that handoff, rechecks the package, requests a normal quit, copies without extended metadata, backs up the prior owned app, verifies the staged and installed signatures and rolls back on failure. It never opens the capture archive. This 0.3.4 document handoff supersedes 0.3.3's sandbox-incompatible launch arguments. The generated Xcode Store build compiles out this downloader and does not embed the helper; an App Store build must use Apple's distribution channel.
 
 The standard `scripts/test.sh` runner defaults to Release, compiles a testable module from the production sources and records all requested suite outcomes even after failures. Cached compiler artifacts are hashed before reuse. Reports under `build/qa/runs/` include configuration, OS, Swift/SDK, input hashes and individual logs; source changes invalidate the result. Window-focus failures remain failures. The final functional results belong in `QA_RESULTS.md`.
 
@@ -54,10 +54,10 @@ python3 scripts/app_store_preflight.py --static-only
 python3 scripts/app_store_preflight.py
 ```
 
-The final 0.3.3 preflight logs are retained at:
+The final 0.3.4 preflight logs are retained at:
 
-- `../docs/qa/0.3.3/app-store-preflight-static-v0.3.3.log`: **20 source packaging checks passed**.
-- `../docs/qa/0.3.3/app-store-preflight-release-v0.3.3.log`: release preflight remains blocked by the Apple Developer Team ID and full Xcode. The configured GitHub policy/support URLs pass offline syntax checks; their content and continuing reachability remain owner responsibilities.
+- `../docs/qa/0.3.4/app-store-preflight-static-v0.3.4.log`: **20 source packaging checks passed**.
+- `../docs/qa/0.3.4/app-store-preflight-release-v0.3.4.log`: release preflight remains blocked by the Apple Developer Team ID and full Xcode. The configured GitHub policy/support URLs pass offline syntax checks; their content and continuing reachability remain owner responsibilities.
 
 The functional and package evidence for this source version is recorded in `QA_RESULTS.md`.
 

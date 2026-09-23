@@ -83,7 +83,7 @@ def main():
         resources.mkdir()
         run(['xcrun', 'swiftc', '-swift-version', '5', '-target', TARGET,
              '-warnings-as-errors', '-O', '-whole-module-optimization', '-parse-as-library',
-             ROOT / 'UpdateTools/DaBinUpdater.swift', '-o', executable])
+             ROOT / 'Sources/DaBin/UpdateHandoff.swift', ROOT / 'UpdateTools/DaBinUpdater.swift', '-o', executable])
         updater_info = {
             'CFBundleIdentifier': 'com.dabin.mac.updater.local',
             'CFBundleName': 'DaBin Update',
@@ -97,6 +97,21 @@ def main():
             'LSMinimumSystemVersion': '14.0',
             'NSHighResolutionCapable': True,
             'NSHumanReadableCopyright': '© 2026 DaBin',
+            'CFBundleDocumentTypes': [{
+                'CFBundleTypeName': 'DaBin Verified Update Request',
+                'CFBundleTypeRole': 'Viewer',
+                'LSHandlerRank': 'Owner',
+                'LSItemContentTypes': ['com.dabin.update-request'],
+            }],
+            'UTExportedTypeDeclarations': [{
+                'UTTypeIdentifier': 'com.dabin.update-request',
+                'UTTypeDescription': 'DaBin Verified Update Request',
+                'UTTypeConformsTo': ['public.json'],
+                'UTTypeTagSpecification': {
+                    'public.filename-extension': ['dabinupdate'],
+                    'public.mime-type': ['application/vnd.dabin.update+json'],
+                },
+            }],
         }
         (updater / 'Contents/Info.plist').write_bytes(plistlib.dumps(updater_info))
         copy_permissions(ROOT / 'Resources/AppIcon.icns', resources / 'AppIcon.icns')
@@ -147,6 +162,7 @@ def main():
                 'backup': 'passed',
                 'installedSignature': 'passed',
                 'installedExecutableHash': 'passed',
+                'sandboxCompatibleDocumentHandoff': 'passed',
             },
             'files': {str(path.relative_to(package)): hashlib.sha256(path.read_bytes()).hexdigest()
                       for path in files},
@@ -168,7 +184,8 @@ def main():
         delivered = extracted / package.name
         validate_app(delivered / 'DaBin.app')
         delivered_updater = validate_updater(delivered / 'DaBin Update.app')
-        validate_updater(delivered / 'DaBin.app/Contents/Helpers/DaBin Update.app')
+        delivered_embedded_updater = validate_updater(
+            delivered / 'DaBin.app/Contents/Helpers/DaBin Update.app')
         verified = output([delivered_updater, '--verify-only'])
         if f'Verified DaBin {version} ({build_number})' not in verified:
             raise SystemExit('Extracted updater did not verify the delivered app')
@@ -176,14 +193,23 @@ def main():
             if hashlib.sha256((delivered / name).read_bytes()).hexdigest() != expected:
                 raise SystemExit('Update ZIP round-trip hash mismatch: ' + name)
         zip_sha256 = hashlib.sha256(staged_zip.read_bytes()).hexdigest()
-        # Exercise the embedded helper's GitHub-download path against a second
-        # isolated destination. The helper rechecks the ZIP hash, extracts it,
-        # validates DaBin and installs without touching the user's application.
+        # Exercise the embedded helper's exact LaunchServices document handoff
+        # against a second isolated destination. A sandboxed app cannot pass
+        # OpenConfiguration.arguments, so package identity travels in this
+        # one-use file while QA-only destination controls remain command args.
         downloaded_destination = temporary / 'downloaded-qa-home/Applications/DaBin.app'
         downloaded_destination.parent.mkdir(parents=True)
-        run([embedded_updater_executable, '--package', staged_zip,
-             '--package-sha256', zip_sha256, '--destination', downloaded_destination,
-             '--non-interactive', '--no-launch'])
+        handoff = temporary / f'DaBin-{version}-package-qa.dabinupdate'
+        handoff.write_text(json.dumps({
+            'schemaVersion': 1,
+            'packageName': staged_zip.name,
+            'packageSHA256': zip_sha256,
+        }, sort_keys=True, separators=(',', ':')))
+        handoff.chmod(0o600)
+        run(['/usr/bin/open', '-W', '-n', '-a', delivered_embedded_updater, handoff, '--args',
+             '--destination', downloaded_destination, '--non-interactive', '--no-launch'])
+        if handoff.exists():
+            raise SystemExit('Embedded updater did not consume its one-use handoff')
         validate_app(downloaded_destination)
         if receipt['sourceFingerprint'] != fingerprint(build_inventory()):
             raise SystemExit('DaBin source changed while packaging the update')

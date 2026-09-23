@@ -8,7 +8,7 @@ private enum SoftwareUpdateTests {
         var dataCalls = 0
         var downloadCalls = 0
         var helperChecks = 0
-        var launches: [(URL, [String])] = []
+        var launches: [(URL, URL)] = []
     }
 
     private static var checks = 0
@@ -25,6 +25,14 @@ private enum SoftwareUpdateTests {
         let deadline = Date().addingTimeInterval(4)
         while !condition() && Date() < deadline { try await Task.sleep(for: .milliseconds(10)) }
         try expect(condition(), message)
+    }
+
+    private static func expectHandoffRejected(_ url: URL, allowedDirectory: URL,
+                                               _ message: String) throws {
+        var rejected = false
+        do { _ = try DaBinUpdateHandoff.consume(url, allowedDirectory: allowedDirectory) }
+        catch { rejected = true }
+        try expect(rejected, message)
     }
 
     private static func response(_ url: URL, status: Int = 200) -> URLResponse {
@@ -74,7 +82,7 @@ private enum SoftwareUpdateTests {
             updatesDirectory: root.appendingPathComponent("Updates"),
             helperURL: root.appendingPathComponent("DaBin Update.app"),
             validateHelper: { _ in box.helperChecks += 1 },
-            launchInstaller: { url, arguments in box.launches.append((url, arguments)) }
+            launchInstaller: { url, handoffURL in box.launches.append((url, handoffURL)) }
         )
     }
 
@@ -111,14 +119,77 @@ private enum SoftwareUpdateTests {
         try await wait("The verified helper opens") { service.phase == .installerOpened }
         try expect(box.downloadCalls == 1 && box.helperChecks == 1 && box.launches.count == 1,
                    "Download, bundled-helper validation and launch each run once")
-        let arguments = box.launches[0].1
-        try expect(arguments == ["--package", root.appendingPathComponent("Updates/DaBin-0.3.0-Update.zip").path,
-                                 "--package-sha256", checksum],
-                   "The installer receives only the verified archive path and published checksum")
+        let handoff = box.launches[0].1
+        try expect(handoff.pathExtension == DaBinUpdateHandoff.fileExtension,
+                   "The installer receives a dedicated update-request document")
+        let resolved = try DaBinUpdateHandoff.consume(handoff,
+            allowedDirectory: root.appendingPathComponent("Updates"))
+        try expect(resolved.package == root.appendingPathComponent("Updates/DaBin-0.3.0-Update.zip")
+                   && resolved.packageSHA256 == checksum && !FileManager.default.fileExists(atPath: handoff.path),
+                   "The one-use handoff resolves only the verified archive and published checksum")
         let retainedChecksum = try SoftwareUpdateService.sha256(root.appendingPathComponent("Updates/DaBin-0.3.0-Update.zip"))
         try expect(retainedChecksum == checksum,
                    "The archive retained for the installer matches the published SHA-256")
         service.cancel()
+
+        let hostileRoot = root.appendingPathComponent("HostileHandoffs")
+        try FileManager.default.createDirectory(at: hostileRoot, withIntermediateDirectories: false)
+        let hostilePackage = hostileRoot.appendingPathComponent("DaBin-0.3.0-Update.zip")
+        try Data("safe test package".utf8).write(to: hostilePackage)
+        func request(_ name: String, _ dictionary: [String: Any]) throws -> URL {
+            let url = hostileRoot.appendingPathComponent(name)
+            let data = try JSONSerialization.data(withJSONObject: dictionary, options: [.sortedKeys])
+            try data.write(to: url, options: .withoutOverwriting)
+            try FileManager.default.setAttributes([.posixPermissions: 0o600], ofItemAtPath: url.path)
+            return url
+        }
+        let invalidHash = try request("invalid-hash.dabinupdate", [
+            "schemaVersion": 1, "packageName": hostilePackage.lastPathComponent,
+            "packageSHA256": "not-a-checksum"
+        ])
+        try expectHandoffRejected(invalidHash, allowedDirectory: hostileRoot,
+                                  "A handoff with a malformed checksum fails closed")
+        let extraField = try request("extra-field.dabinupdate", [
+            "schemaVersion": 1, "packageName": hostilePackage.lastPathComponent,
+            "packageSHA256": checksum, "destination": "/Applications/Other.app"
+        ])
+        try expectHandoffRejected(extraField, allowedDirectory: hostileRoot,
+                                  "A handoff cannot smuggle extra installer controls")
+        let writable = try request("group-writable.dabinupdate", [
+            "schemaVersion": 1, "packageName": hostilePackage.lastPathComponent,
+            "packageSHA256": checksum
+        ])
+        try FileManager.default.setAttributes([.posixPermissions: 0o620], ofItemAtPath: writable.path)
+        try expectHandoffRejected(writable, allowedDirectory: hostileRoot,
+                                  "A group-writable handoff is rejected")
+        let symlinkTarget = try request("symlink-target.dabinupdate", [
+            "schemaVersion": 1, "packageName": hostilePackage.lastPathComponent,
+            "packageSHA256": checksum
+        ])
+        let symlinkRequest = hostileRoot.appendingPathComponent("symlink-request.dabinupdate")
+        try FileManager.default.createSymbolicLink(at: symlinkRequest, withDestinationURL: symlinkTarget)
+        try expectHandoffRejected(symlinkRequest, allowedDirectory: hostileRoot,
+                                  "A symbolic-link handoff is rejected")
+        let linkedPackage = hostileRoot.appendingPathComponent("DaBin-0.3.1-Update.zip")
+        try FileManager.default.createSymbolicLink(at: linkedPackage, withDestinationURL: hostilePackage)
+        let linkedPackageRequest = try request("linked-package.dabinupdate", [
+            "schemaVersion": 1, "packageName": linkedPackage.lastPathComponent,
+            "packageSHA256": checksum
+        ])
+        try expectHandoffRejected(linkedPackageRequest, allowedDirectory: hostileRoot,
+                                  "A symbolic-link update package is rejected")
+        let oversized = hostileRoot.appendingPathComponent("oversized.dabinupdate")
+        try Data(repeating: 0x61, count: DaBinUpdateHandoff.maximumBytes + 1).write(to: oversized)
+        try FileManager.default.setAttributes([.posixPermissions: 0o600], ofItemAtPath: oversized.path)
+        try expectHandoffRejected(oversized, allowedDirectory: hostileRoot,
+                                  "An oversized handoff is rejected before decoding")
+        let outsideRoot = root.appendingPathComponent("OutsideHandoffs")
+        try FileManager.default.createDirectory(at: outsideRoot, withIntermediateDirectories: false)
+        let outside = outsideRoot.appendingPathComponent("outside.dabinupdate")
+        try Data("{}".utf8).write(to: outside)
+        try FileManager.default.setAttributes([.posixPermissions: 0o600], ofItemAtPath: outside.path)
+        try expectHandoffRejected(outside, allowedDirectory: hostileRoot,
+                                  "A handoff outside the allowed update directory is rejected")
 
         let staleBox = Box()
         let stale = try makeService(root: root.appendingPathComponent("stale"),

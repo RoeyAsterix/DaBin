@@ -1,5 +1,19 @@
 # DaBin QA cycle — 23 September 2026
 
+## Daily / Weekly toggle and sandboxed updater — 0.3.4 (29)
+
+DaBin 0.3.4 carries forward the compact native **Daily / Weekly** segmented control and supersedes 0.3.3. Daily → Weekly opens seven days ending on the selected date. Weekly → Daily preserves the selected date, type filter, Daily scroll target and unsaved drafts. The centered date, weekly day headings, Back navigation, directional panel transition and Reduce Motion behavior remain available.
+
+Live installation QA for 0.3.3 exposed that macOS ignores `NSWorkspace.OpenConfiguration.arguments` from a sandboxed caller. The failure happened before replacement and left the installed app and archive unchanged. The 0.3.4 app now opens a private, one-use `.dabinupdate` document with its helper. The handoff constrains the verified ZIP to DaBin's own Updates directory and validates its schema, owner, permissions, name, location and SHA-256. The helper independently rechecks the ZIP, extracted layout, ARM64 app and signature before confirmation. Exact LaunchServices document delivery passed package QA against the extracted release helper.
+
+The final optimized source passed **23/23 registered suites and 1,932 checks**. Update coverage increased to **29 service checks** and **12 channel/configuration checks**; weekly coverage retained **103 state checks**, **78 live window checks**, **110 filter-resize checks** and **214 general window checks across two real displays**. Fresh release rendering passed **28 production board views**, **10 direct native robot artifacts** and **8 empty Daily/Weekly views** in light and dark appearances. Original-resolution inspection covered Daily at 380 points and Weekly at 800, 900 and 1,440 points without selector, date, range or navigation overlap.
+
+The optimized ARM64 direct build is **0.3.4 (29)** with source fingerprint `52798f6254f2b08f47049508e1a924848adf474f0e29af5c01be74ab30b80152` and executable SHA-256 `fbe81f1c063795112596e43a4ddcb7d187d51903a8d87d3177f15c2ddd66ea99`. The verified update ZIP is **2,984,144 bytes**, SHA-256 `6945e85bc95709771b3077bbadbab2af9f2d16a43aa4a8d25ab9ebf66192fa40`. Packaging passed isolated fresh install, replacement, backup, signature, extraction, manifest round trip and the sandbox-compatible document handoff. The included one-page guide remains byte-identical to the visually approved repository PDF.
+
+The patched 0.3.3 bridge was installed over 0.3.2 to enable a true in-app rehearsal. It retained the Desktop link, produced one running DaBin process, and left all **29 archive files** byte-for-byte unchanged. Static Store packaging passed **20/20** checks. App Store release preflight retains two external prerequisites: an Apple Developer Team ID and full Xcode. No Store archive or upload was performed.
+
+[0.3.4 evidence index](../docs/qa/0.3.4/README.md) · [Full optimized run](../docs/qa/0.3.4/full-run/report.json) · [Release renders](../docs/qa/0.3.4/release-ui-renders.json) · [Empty Daily/Weekly renders](../docs/qa/0.3.4/weekly-entry-renders.json) · [Build receipt](../docs/qa/0.3.4/build-receipt-v0.3.4.json) · [Update manifest](../docs/qa/0.3.4/update-manifest-v0.3.4.json).
+
 ## Daily / Weekly toggle — 0.3.3 (28)
 
 DaBin 0.3.3 replaces the separate Today and This Week actions with one native segmented control labeled **Daily** and **Weekly**. Daily → Weekly opens seven days ending on the selected date. Weekly → Daily changes only the presentation route, preserving the selected date, type filter, Daily scroll target and unsaved drafts. The centered date, weekly day headings, Back navigation, directional panel transition and Reduce Motion behavior remain available.

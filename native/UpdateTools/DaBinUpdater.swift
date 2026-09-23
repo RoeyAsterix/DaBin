@@ -38,13 +38,33 @@ private struct AppIdentity {
 }
 
 private struct UpdateOptions {
-    var destination = FileManager.default.homeDirectoryForCurrentUser
-        .appendingPathComponent("Applications/DaBin.app")
+    static var defaultDestination: URL {
+        FileManager.default.homeDirectoryForCurrentUser
+            .appendingPathComponent("Applications/DaBin.app")
+            .standardizedFileURL
+    }
+
+    var destination = defaultDestination
     var nonInteractive = false
     var noLaunch = false
     var verifyOnly = false
     var package: URL?
     var packageSHA256: String?
+
+    static var installedUpdatesDirectory: URL {
+        FileManager.default.homeDirectoryForCurrentUser
+            .appendingPathComponent("Library/Containers/\(daBinBundleIdentifier)/Data/Library/Application Support/DaBin/Updates",
+                                    isDirectory: true).standardizedFileURL
+    }
+
+    mutating func applyHandoff(_ url: URL, allowedDirectory: URL = installedUpdatesDirectory) throws {
+        guard package == nil, packageSHA256 == nil else {
+            throw UpdateFailure.message("The updater received conflicting package requests.")
+        }
+        let resolved = try DaBinUpdateHandoff.consume(url, allowedDirectory: allowedDirectory)
+        package = resolved.package
+        packageSHA256 = resolved.packageSHA256
+    }
 
     static func parse(_ arguments: [String]) throws -> UpdateOptions {
         var result = UpdateOptions()
@@ -56,7 +76,7 @@ private struct UpdateOptions {
             case "--verify-only": result.verifyOnly = true
             case "--package":
                 index += 1
-                guard index < arguments.count else {
+                guard index < arguments.count, result.package == nil else {
                     throw UpdateFailure.message("--package needs an absolute update ZIP path.")
                 }
                 let path = arguments[index]
@@ -64,9 +84,16 @@ private struct UpdateOptions {
                     throw UpdateFailure.message("--package must be an absolute path to a ZIP file.")
                 }
                 result.package = URL(fileURLWithPath: path).standardizedFileURL
+            case "--handoff-file":
+                index += 1
+                guard index < arguments.count else {
+                    throw UpdateFailure.message("--handoff-file needs an absolute request path.")
+                }
+                let handoff = URL(fileURLWithPath: arguments[index]).standardizedFileURL
+                try result.applyHandoff(handoff, allowedDirectory: handoff.deletingLastPathComponent())
             case "--package-sha256":
                 index += 1
-                guard index < arguments.count,
+                guard index < arguments.count, result.packageSHA256 == nil,
                       arguments[index].range(of: "^[0-9a-f]{64}$", options: .regularExpression) != nil else {
                     throw UpdateFailure.message("--package-sha256 needs a lowercase SHA-256 checksum.")
                 }
@@ -186,12 +213,13 @@ private struct UpdateResult {
 
 private final class DaBinInstaller {
     private let files = FileManager.default
-    let source: URL
+    private let preparedUpdate: PreparedUpdate
+    var source: URL { preparedUpdate.source.standardizedFileURL }
     let destination: URL
     let standardDestination: URL
 
-    init(source: URL, destination: URL) {
-        self.source = source.standardizedFileURL
+    init(preparedUpdate: PreparedUpdate, destination: URL) {
+        self.preparedUpdate = preparedUpdate
         self.destination = destination.standardizedFileURL
         standardDestination = files.homeDirectoryForCurrentUser
             .appendingPathComponent("Applications/DaBin.app").standardizedFileURL
@@ -343,19 +371,85 @@ private final class DaBinInstaller {
 
 @MainActor
 private final class UpdateDelegate: NSObject, NSApplicationDelegate {
-    let options: UpdateOptions
-    let prepared: PreparedUpdate
-    let installer: DaBinInstaller
+    private let baseOptions: UpdateOptions
+    private let waitingForHandoff: Bool
+    private var readyOptions: UpdateOptions?
+    private var pendingError: Error?
+    private var didFinishLaunching = false
+    private var didStart = false
+    private var timeoutScheduled = false
 
-    init(options: UpdateOptions, prepared: PreparedUpdate, installer: DaBinInstaller) {
-        self.options = options
-        self.prepared = prepared
-        self.installer = installer
+    init(options: UpdateOptions, waitingForHandoff: Bool) {
+        baseOptions = options
+        self.waitingForHandoff = waitingForHandoff
+        readyOptions = waitingForHandoff ? nil : options
+    }
+
+    func application(_ application: NSApplication, open urls: [URL]) {
+        guard waitingForHandoff, !didStart, readyOptions == nil, pendingError == nil, urls.count == 1 else {
+            pendingError = UpdateFailure.message("The updater received an unexpected or duplicate update request.")
+            application.reply(toOpenOrPrint: .failure)
+            startIfReady()
+            return
+        }
+        do {
+            var options = baseOptions
+            let isolatedQARoot = baseOptions.nonInteractive && baseOptions.noLaunch
+                && baseOptions.destination != UpdateOptions.defaultDestination
+                ? urls[0].deletingLastPathComponent()
+                : UpdateOptions.installedUpdatesDirectory
+            try options.applyHandoff(urls[0], allowedDirectory: isolatedQARoot)
+            readyOptions = options
+            application.reply(toOpenOrPrint: .success)
+        } catch {
+            pendingError = error
+            application.reply(toOpenOrPrint: .failure)
+        }
+        startIfReady()
     }
 
     func applicationDidFinishLaunching(_ notification: Notification) {
+        didFinishLaunching = true
         NSApp.activate(ignoringOtherApps: true)
+        startIfReady()
+        guard waitingForHandoff, readyOptions == nil, pendingError == nil, !timeoutScheduled else { return }
+        timeoutScheduled = true
+        DispatchQueue.main.asyncAfter(deadline: .now() + 10) { [weak self] in
+            guard let self, !self.didStart, self.readyOptions == nil, self.pendingError == nil else { return }
+            self.pendingError = UpdateFailure.message("DaBin Update did not receive a verified update request. Try again from DaBin Settings, or open the updater from the downloaded package.")
+            self.startIfReady()
+        }
+    }
+
+    private func startIfReady() {
+        guard didFinishLaunching, !didStart else { return }
+        if let pendingError {
+            didStart = true
+            finish(with: pendingError)
+            return
+        }
+        guard let options = readyOptions else { return }
+        didStart = true
+        perform(options)
+    }
+
+    private func perform(_ options: UpdateOptions) {
         do {
+            let prepared = try PreparedUpdate(options: options, updaterBundle: .main)
+            let installer = DaBinInstaller(preparedUpdate: prepared, destination: options.destination)
+            if options.verifyOnly {
+                let identity = try installer.validateSource()
+                print("Verified DaBin \(identity.version) (\(identity.build)) ARM64 Release update")
+                NSApp.terminate(nil)
+                return
+            }
+            if options.nonInteractive {
+                let result = try installer.install(launch: !options.noLaunch)
+                print("Installed DaBin \(result.identity.version) (\(result.identity.build)) at \(options.destination.path)")
+                if let backup = result.backup { print("Previous app backed up at \(backup.path)") }
+                NSApp.terminate(nil)
+                return
+            }
             let update = try installer.validateSource()
             let current = try? AppIdentity(app: options.destination, requireRelease: false)
             let alert = NSAlert()
@@ -374,6 +468,16 @@ private final class UpdateDelegate: NSObject, NSApplicationDelegate {
             done.addButton(withTitle: "Done")
             done.runModal()
         } catch {
+            finish(with: error)
+            return
+        }
+        NSApp.terminate(nil)
+    }
+
+    private func finish(with error: Error) {
+        if baseOptions.nonInteractive {
+            fputs("DaBin Update: \(error.localizedDescription)\n", stderr)
+        } else {
             let alert = NSAlert(error: error)
             alert.messageText = "DaBin could not be updated"
             alert.informativeText = error.localizedDescription
@@ -389,22 +493,26 @@ private enum DaBinUpdaterMain {
     @MainActor static func main() {
         do {
             let options = try UpdateOptions.parse(CommandLine.arguments)
-            let prepared = try PreparedUpdate(options: options, updaterBundle: .main)
-            let installer = DaBinInstaller(source: prepared.source, destination: options.destination)
-            if options.verifyOnly {
-                let identity = try installer.validateSource()
-                print("Verified DaBin \(identity.version) (\(identity.build)) ARM64 Release update")
-                return
-            }
-            if options.nonInteractive {
-                let result = try installer.install(launch: !options.noLaunch)
-                print("Installed DaBin \(result.identity.version) (\(result.identity.build)) at \(options.destination.path)")
-                if let backup = result.backup { print("Previous app backed up at \(backup.path)") }
+            let siblingApp = Bundle.main.bundleURL.deletingLastPathComponent()
+                .appendingPathComponent("DaBin.app", isDirectory: true)
+            let waitingForHandoff = options.package == nil
+                && !FileManager.default.fileExists(atPath: siblingApp.path)
+            if !waitingForHandoff && (options.verifyOnly || options.nonInteractive) {
+                let prepared = try PreparedUpdate(options: options, updaterBundle: .main)
+                let installer = DaBinInstaller(preparedUpdate: prepared, destination: options.destination)
+                if options.verifyOnly {
+                    let identity = try installer.validateSource()
+                    print("Verified DaBin \(identity.version) (\(identity.build)) ARM64 Release update")
+                } else {
+                    let result = try installer.install(launch: !options.noLaunch)
+                    print("Installed DaBin \(result.identity.version) (\(result.identity.build)) at \(options.destination.path)")
+                    if let backup = result.backup { print("Previous app backed up at \(backup.path)") }
+                }
                 return
             }
             let application = NSApplication.shared
             application.setActivationPolicy(.regular)
-            let delegate = UpdateDelegate(options: options, prepared: prepared, installer: installer)
+            let delegate = UpdateDelegate(options: options, waitingForHandoff: waitingForHandoff)
             application.delegate = delegate
             application.run()
             _ = delegate
