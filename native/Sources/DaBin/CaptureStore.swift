@@ -38,7 +38,9 @@ import UniformTypeIdentifiers
     }
 
     func capture(text: String, at: Date = Date(), timeZone: TimeZone = .current,
-                 source: CaptureSource = .unknown) throws -> [Capture] {
+                 source: CaptureSource = .unknown,
+                 receipt: CaptureReceiptContext = .manual,
+                 commitGuard: () -> Bool = { true }) throws -> [Capture] {
         let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { throw CaptureStoreError.emptyInput }
         let nonemptyLines = text.components(separatedBy: .newlines).filter {
@@ -52,9 +54,10 @@ import UniformTypeIdentifiers
             let title = kind == .link ? (URL(string: value)?.host ?? value) : String(value.prefix(100))
             return Capture(capturedAt: at, timeZone: timeZone, kind: kind,
                            originalURL: kind == .link ? value : nil, originalText: original, title: title,
-                           sourceFilePath: source.filePath, sourceURL: source.url)
+                           sourceFilePath: source.filePath, sourceURL: source.url, receipt: receipt)
         }
         // URL-only multiline pastes commit as one transaction. Mixed prose remains one exact text original.
+        guard commitGuard() else { throw CaptureStoreError.captureCancelled }
         try repository.save(newCaptures)
         captures.append(contentsOf: newCaptures)
         try refresh()
@@ -63,7 +66,9 @@ import UniformTypeIdentifiers
     }
 
     func importFile(_ source: URL, at: Date = Date(), timeZone: TimeZone = .current,
-                    originalName: String? = nil, source provenance: CaptureSource? = nil) async throws -> Capture {
+                    originalName: String? = nil, source provenance: CaptureSource? = nil,
+                    receipt: CaptureReceiptContext = .manual,
+                    commitGuard: @escaping () -> Bool = { true }) async throws -> Capture {
         let access = source.startAccessingSecurityScopedResource()
         defer { if access { source.stopAccessingSecurityScopedResource() } }
         // Scope failure alone does not mean unreadable; resources already in the container need no grant.
@@ -72,7 +77,7 @@ import UniformTypeIdentifiers
         let type = (try? source.resourceValues(forKeys: [.contentTypeKey]).contentType) ?? UTType(filenameExtension: source.pathExtension)
         let origin = provenance ?? CaptureSource(filePath: source.standardizedFileURL.path)
         return try await importOriginal(filename: filename, contentType: type, at: at, timeZone: timeZone,
-                                        source: origin) { destination in
+                                        source: origin, receipt: receipt, commitGuard: commitGuard) { destination in
             try FileManager.default.copyItem(at: source, to: destination)
         }
     }
@@ -189,22 +194,30 @@ import UniformTypeIdentifiers
     }
 
     func importData(_ data: Data, filename: String, at: Date = Date(), timeZone: TimeZone = .current,
-                    source: CaptureSource = .unknown) async throws -> Capture {
+                    source: CaptureSource = .unknown,
+                    receipt: CaptureReceiptContext = .manual,
+                    commitGuard: @escaping () -> Bool = { true }) async throws -> Capture {
         try await importOriginal(filename: filename,
                                  contentType: UTType(filenameExtension: (filename as NSString).pathExtension),
-                                 at: at, timeZone: timeZone, source: source) { destination in
+                                 at: at, timeZone: timeZone, source: source, receipt: receipt,
+                                 commitGuard: commitGuard) { destination in
             try data.write(to: destination, options: [.atomic])
         }
     }
 
     private func importOriginal(filename: String, contentType: UTType?, at: Date, timeZone: TimeZone,
-                                source: CaptureSource,
+                                source: CaptureSource, receipt: CaptureReceiptContext,
+                                commitGuard: @escaping () -> Bool,
                                 copy: @escaping @Sendable (URL) throws -> Void) async throws -> Capture {
         let id = UUID()
         let safeName = CaptureClassifier.storageFilename(filename)
         var journal = ImportJournal(id: id, capturedAt: at, captureDay: CaptureCalendar.dayString(at, timeZone: timeZone),
                                     timeZoneID: timeZone.identifier, utcOffset: timeZone.secondsFromGMT(for: at),
                                     originalFilename: filename, sourceFilePath: source.filePath, sourceURL: source.url,
+                                    captureOriginRaw: receipt.origin.rawValue,
+                                    automaticActionID: receipt.origin.isAutomatic ? receipt.automaticActionID : nil,
+                                    sourceApplicationName: receipt.sourceApplicationName,
+                                    sourceApplicationBundleIdentifier: receipt.sourceApplicationBundleIdentifier,
                                     relativePath: try DailyArchive.originalRelativePath(id: id, capturedAt: at, captureDay: CaptureCalendar.dayString(at, timeZone: timeZone), utcOffset: timeZone.secondsFromGMT(for: at), filename: safeName),
                                     stagingRelativePath: "Staging/\(id.uuidString)/\(safeName)",
                                     kind: CaptureClassifier.fileKind(filename: filename, contentType: contentType),
@@ -232,6 +245,7 @@ import UniformTypeIdentifiers
             journal.phase = "moved"
             try writeJournal(journal, at: journalURL)
             try failureInjector?(.afterMove)
+            guard commitGuard() else { throw CaptureStoreError.captureCancelled }
             let capture = model(for: journal)
             inserted = capture
             try failureInjector?(.beforeMetadataSave)
@@ -480,7 +494,12 @@ import UniformTypeIdentifiers
                 byteCount: journal.byteCount, title: journal.originalFilename,
                 captureDay: journal.captureDay, captureTimeZoneID: journal.timeZoneID,
                 captureUTCOffsetSeconds: journal.utcOffset,
-                sourceFilePath: journal.sourceFilePath, sourceURL: journal.sourceURL)
+                sourceFilePath: journal.sourceFilePath, sourceURL: journal.sourceURL,
+                receipt: CaptureReceiptContext(
+                    origin: CaptureOrigin(rawValue: journal.captureOriginRaw ?? "") ?? .manual,
+                    automaticActionID: journal.automaticActionID,
+                    sourceApplicationName: journal.sourceApplicationName,
+                    sourceApplicationBundleIdentifier: journal.sourceApplicationBundleIdentifier))
     }
 
     private func cleanupCompleted(_ journal: ImportJournal, journalURL: URL) {

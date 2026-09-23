@@ -72,7 +72,16 @@ struct WeeklyStateTests {
         let originalDay = date("2024-01-03 12:00")
         state.selectedDay = originalDay
         state.filter = .tasks
-        state.dailyScrollID = capture.id
+        state.dailyScrollID = .capture(.capture(capture.id))
+        let hour = AutomaticHourKey(capture: capture)
+        state.toggleHourlyGroup(hour)
+        try expect(state.isHourlyGroupExpanded(hour)
+                   && state.dailyScrollID == .capture(.capture(capture.id)),
+                   "Expanding an hourly summary preserves the existing Daily scroll anchor")
+        state.toggleHourlyGroup(hour)
+        try expect(!state.isHourlyGroupExpanded(hour)
+                   && state.dailyScrollID == .capture(.capture(capture.id)),
+                   "Collapsing an hourly summary preserves the existing Daily scroll anchor")
         state.newTaskDraft.text = "An unfinished weekly task draft"
         state.selectTimelineMode(.daily)
         try expect(state.timelineMode == .daily, "The board starts with Daily selected")
@@ -92,7 +101,7 @@ struct WeeklyStateTests {
         state.selectTimelineMode(.daily)
         try expect(state.route == .daily && state.timelineMode == .daily
                    && state.selectedDay == originalDay && state.filter == .tasks
-                   && state.dailyScrollID == capture.id,
+                   && state.dailyScrollID == .capture(.capture(capture.id)),
                    "Selecting Daily restores the same date, filter and scroll target")
         state.selectTimelineMode(.daily)
         try expect(state.route == .daily && state.selectedDay == originalDay,
@@ -115,7 +124,7 @@ struct WeeklyStateTests {
         try expect(state.route == .daily && state.selectedDay == originalDay && state.filter == .tasks,
                    "Back from Weekly returns to the original Daily date and filter")
         state.selectTimelineMode(.weekly)
-        state.dailyScrollID = capture.id
+        state.dailyScrollID = .capture(.capture(capture.id))
         let chosenDay = state.weeklyDays[2]
         state.selectWeeklyDay(chosenDay)
         try expect(state.route == .daily && state.dayKey == "2023-12-30" && state.dailyScrollID == nil,

@@ -25,13 +25,15 @@ def source_group(path):
     name = path.stem
     if name in {"DaBinMain", "AppDelegate", "AppComposition", "AppEnvironment", "AppDependencies"} or "Composition" in name or name.startswith("Application"):
         return "Application"
-    if name in {"Domain", "AppState"}:
+    if name in {"Domain", "AppState", "AutoCaptureSettings", "HourlyCaptureFeed"}:
         return "State and Domain"
     if name in {"CaptureStore", "CaptureRepository", "CaptureRemoval", "DailyArchive", "OriginalFileStorage"}:
         return "Storage"
-    if name in {"InputService", "PreviewService", "ReminderService", "ReminderLifecycle", "PreviewRequest"}:
+    if name in {"InputService", "PreviewService", "ReminderService", "ReminderLifecycle", "PreviewRequest",
+                "AutoCaptureService", "AutoCaptureFingerprint", "ScreenshotFolderMonitor"}:
         return "Services"
-    if name in {"CornerController", "RobotView", "WindowDragHandle", "DailyCaptureView"}:
+    if name in {"CornerController", "RobotView", "WindowDragHandle", "DailyCaptureView",
+                "AutoCaptureRobotPresenter"}:
         return "Desktop"
     return "Interface"
 

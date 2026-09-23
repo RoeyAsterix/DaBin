@@ -5,10 +5,18 @@ struct DailyScreen: View {
     @Environment(\.daBinAccent) private var accent
     @ObservedObject var state: AppState
 
-    private var cards: [CaptureCardGroup] { CaptureCardGroup.cards(from: state.dailyCaptures) }
+    private var cards: [CaptureFeedCard] {
+        HourlyCaptureFeed.cards(from: state.allCapturesForDay, filter: state.filter)
+    }
     private var featuredID: UUID? {
-        cards.first(where: { !$0.isImportedBatch && !$0.primary.isMinimized
-            && $0.primary.thumbnailRelativePath != nil })?.primary.id
+        for card in cards {
+            if case .capture(let captureCard) = card,
+               !captureCard.isImportedBatch, !captureCard.primary.isMinimized,
+               captureCard.primary.thumbnailRelativePath != nil {
+                return captureCard.primary.id
+            }
+        }
+        return nil
     }
 
     var body: some View {
@@ -54,14 +62,17 @@ struct DailyScreen: View {
                 ScrollView {
                     LazyVStack(spacing: 0) {
                         ForEach(cards) { card in
-                            if card.isImportedBatch {
-                                GroupedCaptureCard(state: state, group: card)
-                                    .id(card.primary.id)
-                            } else {
-                                CaptureRow(state: state, capture: card.primary,
-                                           featured: card.primary.id == featuredID,
-                                           taskAtTop: state.isTaskAtTop(card.primary))
-                                    .id(card.primary.id)
+                            switch card {
+                            case .capture(let captureCard):
+                                if captureCard.isImportedBatch {
+                                    GroupedCaptureCard(state: state, group: captureCard)
+                                } else {
+                                    CaptureRow(state: state, capture: captureCard.primary,
+                                               featured: captureCard.primary.id == featuredID,
+                                               taskAtTop: state.isTaskAtTop(captureCard.primary))
+                                }
+                            case .automaticHour(let group):
+                                HourlyCaptureCard(state: state, group: group)
                             }
                         }
                     }.scrollTargetLayout().padding(.horizontal, 16)

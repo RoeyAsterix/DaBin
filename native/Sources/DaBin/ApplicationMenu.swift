@@ -1,4 +1,5 @@
 import AppKit
+import Combine
 
 /// Native macOS commands use the responder chain for editing, so text editors
 /// retain standard cut/copy/paste, undo and keyboard behavior.
@@ -9,16 +10,20 @@ final class ApplicationMenu: NSObject {
     private let focusRobotAction: () -> Void
     private let checkForUpdatesAction: () -> Void
     private let showSettingsAction: () -> Void
+    private weak var autoCapture: AutoCaptureService?
     private var installedMenu: NSMenu?
+    private weak var autoCaptureItem: NSMenuItem?
+    private var subscriptions = Set<AnyCancellable>()
 
     init(openDaily: @escaping () -> Void, openSearch: @escaping () -> Void,
          focusRobot: @escaping () -> Void, checkForUpdates: @escaping () -> Void = {},
-         showSettings: @escaping () -> Void) {
+         showSettings: @escaping () -> Void, autoCapture: AutoCaptureService? = nil) {
         openDailyAction = openDaily
         openSearchAction = openSearch
         focusRobotAction = focusRobot
         checkForUpdatesAction = checkForUpdates
         showSettingsAction = showSettings
+        self.autoCapture = autoCapture
     }
 
     func install() {
@@ -32,6 +37,15 @@ final class ApplicationMenu: NSObject {
         add("Open Daily", #selector(openDaily), key: "o", to: appMenu)
         add("Focus robot for paste", #selector(focusRobot), key: "v", modifiers: [.command, .shift], to: appMenu)
         add("Search", #selector(openSearch), key: "k", to: appMenu)
+        autoCaptureItem = add("Auto Capture Off", #selector(toggleAutoCapturePause), key: "", to: appMenu)
+        refreshAutoCaptureItem()
+        if let autoCapture {
+            autoCapture.settings.$isEnabled.combineLatest(autoCapture.settings.$isPaused)
+                .sink { [weak self] _, _ in self?.refreshAutoCaptureItem() }
+                .store(in: &subscriptions)
+            autoCapture.$isRunning.sink { [weak self] _ in self?.refreshAutoCaptureItem() }
+                .store(in: &subscriptions)
+        }
         appMenu.addItem(.separator())
         add("Settings…", #selector(showSettings), key: ",", to: appMenu)
         appMenu.addItem(.separator())
@@ -60,13 +74,16 @@ final class ApplicationMenu: NSObject {
     func uninstall() {
         if let installedMenu, NSApp.mainMenu === installedMenu { NSApp.mainMenu = nil }
         installedMenu = nil
+        autoCaptureItem = nil
+        subscriptions.removeAll()
     }
 
-    private func add(_ title: String, _ selector: Selector, key: String,
-                     modifiers: NSEvent.ModifierFlags = .command, to menu: NSMenu) {
+    @discardableResult private func add(_ title: String, _ selector: Selector, key: String,
+                                        modifiers: NSEvent.ModifierFlags = .command, to menu: NSMenu) -> NSMenuItem {
         let item = menu.addItem(withTitle: title, action: selector, keyEquivalent: key)
         item.target = self
         item.keyEquivalentModifierMask = modifiers
+        return item
     }
 
     @objc private func openDaily() { openDailyAction() }
@@ -74,4 +91,20 @@ final class ApplicationMenu: NSObject {
     @objc private func focusRobot() { focusRobotAction() }
     @objc private func checkForUpdates() { checkForUpdatesAction() }
     @objc private func showSettings() { showSettingsAction() }
+    @objc private func toggleAutoCapturePause() {
+        guard let autoCapture, autoCapture.settings.isEnabled else { return }
+        autoCapture.setPaused(!autoCapture.settings.isPaused)
+        refreshAutoCaptureItem()
+    }
+
+    private func refreshAutoCaptureItem() {
+        guard let item = autoCaptureItem else { return }
+        guard let autoCapture, autoCapture.settings.isEnabled else {
+            item.title = "Auto Capture Off"
+            item.isEnabled = false
+            return
+        }
+        item.isEnabled = true
+        item.title = autoCapture.settings.isPaused ? "Resume Auto Capture" : "Pause Auto Capture"
+    }
 }

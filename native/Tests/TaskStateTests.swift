@@ -158,22 +158,22 @@ struct TaskStateTests {
         let january31 = date("2024-01-31 23:59")
         state.refreshCurrentDay(at: january31)
         state.selectedDay = january31
-        state.dailyScrollID = older.id
+        state.dailyScrollID = .capture(.capture(older.id))
         state.refreshCurrentDay(at: date("2024-02-01 00:01"))
         try expect(state.dayKey == "2024-02-01" && state.dailyScrollID == nil,
                    "Midnight advances an open current-day board across the month boundary and clears its old scroll anchor")
         try expect(ids(state.dailyCaptures) == [sameDayTask.id, newer.id, older.id],
                    "Automatic month rollover retains each unfinished task once at the top")
-        state.dailyScrollID = older.id
+        state.dailyScrollID = .capture(.capture(older.id))
         state.refreshCurrentDay(at: date("2024-02-01 18:00"))
-        try expect(state.dailyScrollID == older.id, "A clock refresh within the same day preserves scrolling")
+        try expect(state.dailyScrollID == .capture(.capture(older.id)), "A clock refresh within the same day preserves scrolling")
         state.refreshCurrentDay(at: date("2024-02-05 09:00"))
         try expect(state.dayKey == "2024-02-05" && state.dailyScrollID == nil,
                    "Waking after several days advances a previously current board directly to today")
         state.selectedDay = date("2023-12-31 12:00")
-        state.dailyScrollID = newer.id
+        state.dailyScrollID = .capture(.capture(newer.id))
         state.refreshCurrentDay(at: date("2024-02-06 09:00"))
-        try expect(state.dayKey == "2023-12-31" && state.dailyScrollID == newer.id,
+        try expect(state.dayKey == "2023-12-31" && state.dailyScrollID == .capture(.capture(newer.id)),
                    "A day change preserves an intentionally browsed historical date and its scroll anchor")
         state.selectedDay = date("2024-02-06 12:00")
         state.refreshCurrentDay(at: date("2024-02-07 09:00"))
@@ -195,7 +195,7 @@ struct TaskStateTests {
         let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: now)!
         state.refreshCurrentDay(at: yesterday)
         state.selectedDay = yesterday
-        state.dailyScrollID = older.id
+        state.dailyScrollID = .capture(.capture(older.id))
         NotificationCenter.default.post(name: .NSCalendarDayChanged, object: nil)
         try await waitUntil { state.dayKey == CaptureCalendar.dayString(now) }
         try expect(state.dailyScrollID == nil, "The real calendar-day notification refreshes the board and clears the old scroll anchor")

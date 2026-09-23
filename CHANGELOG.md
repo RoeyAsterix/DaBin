@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.3.5 — 2026-09-23
+
+- Added opt-in **Auto Capture** under Settings → Capture, off by default, for future clipboard changes and new screenshots written to a user-selected folder.
+- Added visible enabled, paused, permission and exclusion states; a quick Pause command; and default exclusions for DaBin and common password managers.
+- Stored automatic action origin, timestamp, content and best-effort source-application metadata in the existing local archive, with cross-channel image duplicate suppression and no automatic website-preview requests.
+- Grouped the fourth successful automatic action in a fixed local clock hour into one expandable summary with a stable count and accessible minus control.
+- Added a passive success robot on the hardware primary display, with safe-area placement, burst counting, screen-capture exclusion and Reduce Motion support.
+- Preserved immediate cancellation on Pause or Off, prevented pre-existing clipboard and folder contents from importing, and withheld success confirmation for failed or partly failed actions.
+
 ## 0.3.4 — 2026-09-23
 
 - Superseded 0.3.3 and carried forward its compact **Daily / Weekly** segmented control, selected-date anchoring, filter and scroll continuity, drafts, panel transition and Reduce Motion behavior.

@@ -15,6 +15,33 @@ extension NSFilePromiseReceiver: InputFilePromise {
     }
 }
 
+/// Holds the native NSURL pasteboard readers that consume App Sandbox file
+/// transfer grants. The object stays alive until every asynchronous import
+/// finishes; rebuilding file URLs from strings does not preserve Finder's
+/// sandbox handoff.
+@MainActor
+final class InputFileURLTransfer {
+    fileprivate let objects: [NSURL]
+
+    init(retaining objects: [NSURL]) {
+        self.objects = objects
+    }
+
+    static func consume(from pasteboard: NSPasteboard) -> InputFileURLTransfer {
+        let values = pasteboard.readObjects(
+            forClasses: [NSURL.self],
+            options: [.urlReadingFileURLsOnly: true]
+        ) ?? []
+        return InputFileURLTransfer(retaining: values.compactMap { $0 as? NSURL })
+    }
+
+    fileprivate var urls: [URL] {
+        objects.map { $0 as URL }
+    }
+
+    var retainedURLCount: Int { objects.count }
+}
+
 /// Reads the pasteboard only after an explicit Paste or accepted drop.
 @MainActor
 final class InputService {
@@ -99,11 +126,16 @@ final class InputService {
     func paste() { receive(.general) }
 
     func receive(_ pasteboard: NSPasteboard, at receivedAt: Date = Date(), timeZone zone: TimeZone = .current,
+                 receipt: CaptureReceiptContext = .manual,
+                 fileURLTransfer suppliedFileURLTransfer: InputFileURLTransfer? = nil,
+                 commitGuard: @escaping () -> Bool = { true },
                  completion: (([Capture], [String]) -> Void)? = nil) {
         let receivers = promiseReader(pasteboard)
         // AppKit's URL reader also consumes the sandbox transfer grants supplied by
-        // Finder. Reading only the file-url string can lose that native handoff.
-        let transferredURLs = (pasteboard.readObjects(forClasses: [NSURL.self], options: [.urlReadingFileURLsOnly: true]) as? [URL]) ?? []
+        // Finder. Auto Capture supplies the transfer consumed from the original
+        // system pasteboard before it creates its immutable private snapshot.
+        let fileURLTransfer = suppliedFileURLTransfer ?? InputFileURLTransfer.consume(from: pasteboard)
+        let transferredURLs = fileURLTransfer.urls
         let promiseTypes = Set(NSFilePromiseReceiver.readableDraggedTypes)
         let items = pasteboard.pasteboardItems ?? []
         var payloads: [Payload] = []
@@ -135,7 +167,9 @@ final class InputService {
             }
         }
         if items.isEmpty, receivers.isEmpty { payloads.append(.failure("The clipboard has no readable content to capture.")) }
-        let batch = InputBatch(date: receivedAt, zone: zone, remaining: (payloads.isEmpty ? 0 : 1) + receivers.count,
+        let batch = InputBatch(date: receivedAt, zone: zone, receipt: receipt,
+                               fileURLTransfer: fileURLTransfer, commitGuard: commitGuard,
+                               remaining: (payloads.isEmpty ? 0 : 1) + receivers.count,
                                completion: completion)
         setBusy(1)
         if !payloads.isEmpty {
@@ -173,9 +207,9 @@ final class InputService {
         for payload in payloads {
             do {
                 switch payload {
-                case .text(let text, let source): batch.captures += try store.capture(text: text, at: batch.date, timeZone: batch.zone, source: source)
-                case .file(let url, let source): batch.captures.append(try await store.importFile(url, at: batch.date, timeZone: batch.zone, source: source))
-                case .bytes(let data, let filename, let source): batch.captures.append(try await store.importData(data, filename: filename, at: batch.date, timeZone: batch.zone, source: source))
+                case .text(let text, let source): batch.captures += try store.capture(text: text, at: batch.date, timeZone: batch.zone, source: source, receipt: batch.receipt, commitGuard: batch.commitGuard)
+                case .file(let url, let source): batch.captures.append(try await store.importFile(url, at: batch.date, timeZone: batch.zone, source: source, receipt: batch.receipt, commitGuard: batch.commitGuard))
+                case .bytes(let data, let filename, let source): batch.captures.append(try await store.importData(data, filename: filename, at: batch.date, timeZone: batch.zone, source: source, receipt: batch.receipt, commitGuard: batch.commitGuard))
                 case .failure(let reason): batch.failures.append(reason)
                 }
             } catch { batch.failures.append(error.localizedDescription) }
@@ -228,7 +262,10 @@ final class InputService {
         let target: InputBatch
         if batch.reported {
             // A timed-out source may finish later. Report only new captures, never past successes.
-            target = InputBatch(date: batch.date, zone: batch.zone, remaining: 1, completion: batch.completion)
+            target = InputBatch(date: batch.date, zone: batch.zone, receipt: batch.receipt,
+                                fileURLTransfer: batch.fileURLTransfer,
+                                commitGuard: batch.commitGuard,
+                                remaining: 1, completion: batch.completion)
             setBusy(1)
         } else {
             target = batch
@@ -263,13 +300,22 @@ final class InputService {
 @MainActor private final class InputBatch {
     let date: Date
     let zone: TimeZone
+    let receipt: CaptureReceiptContext
+    /// Retains the NSURL readers, and therefore Finder's sandbox transfer grant,
+    /// through all asynchronous file imports in this batch.
+    let fileURLTransfer: InputFileURLTransfer
+    let commitGuard: () -> Bool
     var remaining: Int
     var captures: [Capture] = []
     var failures: [String] = []
     var reported = false
     let completion: (([Capture], [String]) -> Void)?
-    init(date: Date, zone: TimeZone, remaining: Int, completion: (([Capture], [String]) -> Void)? = nil) {
-        self.date = date; self.zone = zone; self.remaining = remaining
+    init(date: Date, zone: TimeZone, receipt: CaptureReceiptContext = .manual,
+         fileURLTransfer: InputFileURLTransfer,
+         commitGuard: @escaping () -> Bool = { true }, remaining: Int,
+         completion: (([Capture], [String]) -> Void)? = nil) {
+        self.date = date; self.zone = zone; self.receipt = receipt
+        self.fileURLTransfer = fileURLTransfer; self.commitGuard = commitGuard; self.remaining = remaining
         self.completion = completion
     }
 }

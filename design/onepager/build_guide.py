@@ -95,6 +95,21 @@ def icon(kind,x,top,size=20,color=PURPLE):
         p=c.beginPath();p.moveTo(3,20);p.lineTo(21,20);p.lineTo(21,7);p.lineTo(10,7);p.lineTo(5,2);p.lineTo(5,7);p.lineTo(3,7);p.close()
         c.drawPath(p,stroke=1,fill=0)
         c.line(7,15,17,15);c.line(7,11,14,11)
+    elif kind=='capture':
+        c.roundRect(3,4,18,15,3,stroke=1,fill=0)
+        c.circle(12,11.5,4.2,stroke=1,fill=0)
+        c.line(7,19,9,22);c.line(9,22,15,22);c.line(15,22,17,19)
+    elif kind=='pause':
+        c.roundRect(3,3,18,18,5,stroke=1,fill=0)
+        c.roundRect(8,7,2.5,10,1.2,stroke=0,fill=1)
+        c.roundRect(13.5,7,2.5,10,1.2,stroke=0,fill=1)
+    elif kind=='move':
+        c.line(12,3,12,21);c.line(3,12,21,12)
+        p=c.beginPath();p.moveTo(12,21);p.lineTo(8.5,17.5);p.moveTo(12,21);p.lineTo(15.5,17.5)
+        p.moveTo(12,3);p.lineTo(8.5,6.5);p.moveTo(12,3);p.lineTo(15.5,6.5)
+        p.moveTo(3,12);p.lineTo(6.5,8.5);p.moveTo(3,12);p.lineTo(6.5,15.5)
+        p.moveTo(21,12);p.lineTo(17.5,8.5);p.moveTo(21,12);p.lineTo(17.5,15.5)
+        c.drawPath(p,stroke=1,fill=0)
     c.restoreState()
 
 # Brand header.
@@ -143,21 +158,35 @@ for idx,(num,title,body) in enumerate(steps):
     text(title,x,421,13.5,BOLD)
     para(body,x,448,151,10.5,14.7,max_height=90)
 
-line(42,552,W-42,552)
-text('Keep the good stuff close.',42,574,19,BOLD)
+line(42,548,W-42,548)
+text('AUTO CAPTURE, WHEN YOU WANT IT',42,563,9,BOLD,PURPLE)
+rect(W-153,556,111,24,PALE,r=12)
+text('OFF BY DEFAULT',W-138,563,8.5,BOLD,PURPLE)
 
-icon('search',42,614,19)
-text('Find it again',70,616,12,BOLD)
-para('Filter by links, files, media or tasks. Search shows matching dates, with one capture before and after each result.',42,641,235,10.5,14.7,max_height=74)
+rect(42,592,W-84,125,PALE,r=14)
+icon('capture',56,607,22)
+text('Turn it on',87,610,14,BOLD)
+para('Open <b>Settings &gt; Capture</b> and enable Auto Capture. Choose a dedicated screenshot folder when asked. DaBin then saves <b>future copies</b> and new images added there.',56,640,220,9.4,12.7,max_height=66)
 
-icon('comment',313,614,19)
-text('A thought or a nudge',341,616,12,BOLD)
-para('Use <b>Comment</b> or <b>Reminder</b> on any capture. Press <b>+</b> to add a task, then toggle <b>Task</b> to <b>Completed</b> when you\u2019re done.',313,641,240,10.5,14.7,max_height=74)
+line(298,608,298,701,color=LINE,width=.8)
+icon('pause',315,607,22)
+text('Stay in control',346,610,14,BOLD)
+para('Everything stays on your Mac. <b>Pause</b> any time; DaBin and common password managers are excluded by default. At <b>4 actions</b> in one clock hour, click the summary to expand and use the minus button to collapse.',315,640,224,9.4,12.7,max_height=66)
 
-rect(30,729,W-60,73,PALE,r=14)
-text('Made to fit your day.',44,743,12,BOLD,PURPLE)
-para('Drag the logo to move your board. Settings adjusts appearance, Robot home and GitHub updates.<br/>Captures stay local, organized by year, month and day.',44,765,W-88,10,14,max_height=28)
-text('For alerts, allow DaBin notifications in macOS.',42,817,8.5,color=BODY)
+icon('search',42,740,18)
+text('Find it again',68,742,11.5,BOLD)
+para('Filter by links, files, media or tasks. Search opens the matching date.',42,764,151,8.9,12.2,max_height=37)
+
+icon('comment',216,740,18)
+text('Add context',242,742,11.5,BOLD)
+para('Comment, set a reminder, or press <b>+</b> for a task you can mark complete.',216,764,151,8.9,12.2,max_height=37)
+
+icon('move',390,740,18)
+text('Make it yours',416,742,11.5,BOLD)
+para('Drag the logo to move the board. Settings controls theme, opacity and robot home.',390,764,151,8.9,12.2,max_height=37)
+
+line(42,811,W-42,811)
+text('Manual drag and paste always stay available.',42,820,8.5,color=BODY)
 right('DaBin  /  Quick start',W-42,817,8.5,color=PURPLE)
 c.showPage()
 c.save()
@@ -165,8 +194,9 @@ c.save()
 reader=PdfReader(OUT)
 assert len(reader.pages)==1
 extracted=reader.pages[0].extract_text()
-for required in ['camera island','Control-V','Command-V','Double-click','Daily / Weekly','Comment','Reminder','Completed','GitHub updates','Captures stay local']:
-    assert required in extracted, required
+normalized=' '.join(extracted.split())
+for required in ['camera island','Control-V','Command-V','Double-click','Daily / Weekly','Settings > Capture','OFF BY DEFAULT','future copies','dedicated screenshot folder','stays on your Mac','Pause','password managers','4 actions','expand','minus button','collapse','Manual drag and paste']:
+    assert required in normalized, required
 assert '\ufffd' not in extracted
 assert all(b['x']>=30 and b['x']+b['width']<=W-30 and b['top']+b['height']<803 for b in blocks)
 (ROOT/'tmp/pdfs').mkdir(parents=True, exist_ok=True)

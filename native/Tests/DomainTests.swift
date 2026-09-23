@@ -133,13 +133,32 @@ private struct Fixtures: Decodable { let entries: [FixtureEntry]; let cases: [Fi
         let attributedSource = CaptureSource(filePath: "/Users/example/Documents/notes.txt", url: "https://example.test/notes")
         let sourcedText = try store!.capture(text: "An exported excerpt", source: attributedSource)[0]
         try expect(sourcedText.sourceFilePath == attributedSource.filePath && sourcedText.sourceURL == attributedSource.url, "Explicit source metadata retained")
+        let automaticActionID = UUID()
+        let automatic = try store!.capture(text: "Copied planning note", at: receipt, timeZone: zone,
+            receipt: .automatic(.automaticClipboard, actionID: automaticActionID,
+                                sourceApplicationName: "Notes",
+                                sourceApplicationBundleIdentifier: "com.apple.Notes"))[0]
+        try expect(automatic.captureOrigin == .automaticClipboard
+                   && automatic.automaticActionID == automaticActionID
+                   && automatic.sourceApplicationName == "Notes"
+                   && automatic.sourceApplicationBundleIdentifier == "com.apple.Notes",
+                   "Automatic capture receipt retains action identity and source application")
+        try expect(CaptureSearch.groups(captures: [automatic], query: "copied notes", filter: .all).first != nil,
+                   "Automatic origin and source application are searchable")
         var legacyPayload = try JSONSerialization.jsonObject(with: JSONEncoder().encode(CaptureSnapshot(sourcedText))) as! [String: Any]
         legacyPayload.removeValue(forKey: "sourceFilePath")
         legacyPayload.removeValue(forKey: "sourceURL")
+        legacyPayload.removeValue(forKey: "captureOriginRaw")
+        legacyPayload.removeValue(forKey: "automaticActionID")
+        legacyPayload.removeValue(forKey: "sourceApplicationName")
+        legacyPayload.removeValue(forKey: "sourceApplicationBundleIdentifier")
         legacyPayload["schemaVersion"] = 1
         let legacySnapshot = try JSONDecoder().decode(CaptureSnapshot.self, from: JSONSerialization.data(withJSONObject: legacyPayload))
         let legacyCapture = Capture(snapshot: legacySnapshot)
-        try expect(legacyCapture.originalText == sourcedText.originalText && legacyCapture.sourceFilePath == nil && legacyCapture.sourceURL == nil, "Version 1 payload migrates with unknown source")
+        try expect(legacyCapture.originalText == sourcedText.originalText && legacyCapture.sourceFilePath == nil
+                   && legacyCapture.sourceURL == nil && legacyCapture.captureOrigin == .manual
+                   && legacyCapture.automaticActionID == nil,
+                   "Version 1 payload migrates with unknown source and manual origin")
         for version in [1, 2] {
             var payload = try JSONSerialization.jsonObject(with: JSONEncoder().encode(CaptureSnapshot(sourcedText))) as! [String: Any]
             payload["schemaVersion"] = version
@@ -158,7 +177,7 @@ private struct Fixtures: Decodable { let entries: [FixtureEntry]; let cases: [Fi
         let taskStamp = (task.id, task.capturedAt, task.captureDay, task.captureTimeZoneID, task.captureUTCOffsetSeconds)
         try expect(task.isTask && !task.isCompleted && task.originalText == "Send studio brief" && task.title == "Send studio brief", "Explicit task keeps trimmed task text and defaults to open")
         try expect(task.reminderAt == taskReminder && task.reminderTimeZoneID == "Asia/Jerusalem" && task.reminderRevision == 1, "Task and initial reminder commit together")
-        try expect(CaptureSnapshot(task).schemaVersion == 3, "Task snapshots use schema 3")
+        try expect(CaptureSnapshot(task).schemaVersion == 4, "Task snapshots use schema 4")
         try expect(CaptureFilter.all.includes(.task) && !CaptureFilter.files.includes(.task) && !CaptureFilter.links.includes(.task) && !CaptureFilter.media.includes(.task), "Tasks appear in All without changing file/link/media filters")
         try expect(CaptureSearch.groups(captures: [task], query: "studio brief", filter: .all).first?.entries.first?.id == task.id, "Task text is searchable")
         try taskStore.setTaskCompleted(task, completed: true)

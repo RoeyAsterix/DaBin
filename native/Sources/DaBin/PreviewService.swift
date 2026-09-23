@@ -42,7 +42,7 @@ final class PreviewService {
                 for capture in store.captures where capture.kind == .link && capture.previewState == "unavailable" && running[capture.id] != nil {
                     restartAfterCancellation.insert(capture.id)
                 }
-                process(store.captures.filter { $0.kind == .link })
+                process(store.captures.filter { $0.kind == .link && !$0.captureOrigin.isAutomatic })
             } else {
                 cancelNetwork()
             }
@@ -78,8 +78,10 @@ final class PreviewService {
                 }
                 continue
             }
-            if capture.kind == .link && !enabled {
-                let message = "Website previews are off. The saved link is available."
+            if capture.kind == .link && (capture.captureOrigin.isAutomatic || !enabled) {
+                let message = capture.captureOrigin.isAutomatic
+                    ? "Automatic captures stay local. Open the saved link when you choose."
+                    : "Website previews are off. The saved link is available."
                 if capture.previewState != "unavailable" || capture.previewError != message {
                     capture.previewState = "unavailable"
                     capture.previewError = message

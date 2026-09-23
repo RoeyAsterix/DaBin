@@ -98,8 +98,11 @@ import CoreData
     }
 
     private func validate(_ snapshot: CaptureSnapshot, recordID: UUID?) throws {
-        guard [1, 2, 3].contains(snapshot.schemaVersion), CaptureKind(rawValue: snapshot.kindRaw) != nil,
-              recordID == snapshot.id else {
+        let origin = snapshot.captureOriginRaw.flatMap(CaptureOrigin.init(rawValue:)) ?? .manual
+        guard [1, 2, 3, 4].contains(snapshot.schemaVersion), CaptureKind(rawValue: snapshot.kindRaw) != nil,
+              recordID == snapshot.id,
+              snapshot.captureOriginRaw.map({ CaptureOrigin(rawValue: $0) != nil }) ?? true,
+              !origin.isAutomatic || snapshot.automaticActionID != nil else {
             throw CaptureStoreError.invalidOriginal("The metadata schema or identity is unsupported. The store was preserved.")
         }
     }

@@ -10,6 +10,18 @@ The default corner trigger is 9 logical points along each edge, polled every 100
 
 No persistent menu-bar item was added, to honor complete hiding at rest. Reopening DaBin, its active-app menu, the focused robot's context menu, and keyboard actions provide recovery. A system-wide hotkey is not registered. OS Hot Corners may activate at the same corners; this app does not change system settings.
 
+## Update 0.3.5
+
+Auto Capture is a separate default-off service composed from `AutoCaptureSettings`, `AutoCaptureService`, `ScreenshotFolderMonitor` and the existing `InputService`. Enabling it first presents a local-storage explanation and asks the user to choose the folder configured as the macOS screenshot destination. The resulting read-only security-scoped bookmark, enabled and paused state, privacy acknowledgement and excluded bundle identifiers live in app preferences. Starting or resuming seeds `NSPasteboard.changeCount` without reading a payload, so existing clipboard contents are never imported.
+
+Clipboard events and authorized-folder additions enter one serialized pipeline with an immutable automatic action ID and receipt metadata. Pause, Off and shutdown advance a generation token, stop the timer and directory source, cancel delayed images, clear queued private pasteboards and reject an in-flight commit before durable metadata is written. Workspace activation also reseeds the counter when leaving an excluded app, closing the normal copy-then-switch interval without loading that clipboard content. DaBin and common password managers start excluded; source attribution remains best effort.
+
+A bounded normalized-pixel digest deduplicates a screenshot that arrives through the folder and clipboard channels within the short comparison interval. Automatic links stay outside the website-preview queue. Durable subsets from a partly failed action still appear in the feed, while only a completely successful action can invoke the confirmation robot.
+
+Automatic action IDs drive fixed local-clock-hour grouping. One to three actions remain ordinary cards; the fourth converts that hour to one stable summary whose count updates as actions arrive. Filtering changes visible members without dissolving the qualifying group. Expansion retains the same outer identity and leaves the Daily scroll binding unchanged; the top-right minus control has the accessibility label `Collapse actions`.
+
+`AutoCaptureRobotPresenter` owns one borderless nonactivating panel. It chooses the hardware primary display, centers below a built-in safe top area or uses the top-right of an external primary display, ignores input, cannot become key or main, joins the current Space without switching it, and uses `NSWindow.SharingType.none` to stay out of screen capture. One burst reuses the panel and increments its action count. Reduce Motion removes character travel and leaves a short fade.
+
 ## Update 0.3.4
 
 Release 0.3.4 supersedes 0.3.3. Live update QA showed that `NSWorkspace.OpenConfiguration.arguments` is ignored when the caller is sandboxed, so the verified ZIP path never reached the helper even when a new helper instance was requested. The failure occurred before installation; the existing app and local capture archive were not replaced or modified.

@@ -6,6 +6,47 @@ enum CaptureKind: String, Codable, CaseIterable {
     case link, text, image, video, pdf, document, ai, file, task
 }
 
+/// How an immutable capture receipt entered DaBin. Manual is the safe legacy
+/// default; automatic origins are only assigned by the opt-in monitor.
+enum CaptureOrigin: String, Codable, CaseIterable, Sendable {
+    case manual
+    case automaticClipboard
+    case automaticScreenshot
+
+    var isAutomatic: Bool { self != .manual }
+
+    var displayName: String {
+        switch self {
+        case .manual: return "Manual capture"
+        case .automaticClipboard: return "Copied content"
+        case .automaticScreenshot: return "Screenshot"
+        }
+    }
+}
+
+/// Metadata shared by every saved item produced by one user action. Keeping the
+/// action ID separate from Capture.id lets an automatic multi-item copy count as
+/// one action in the hourly feed.
+struct CaptureReceiptContext: Sendable {
+    let origin: CaptureOrigin
+    let automaticActionID: UUID?
+    let sourceApplicationName: String?
+    let sourceApplicationBundleIdentifier: String?
+
+    static let manual = CaptureReceiptContext(origin: .manual, automaticActionID: nil,
+                                               sourceApplicationName: nil,
+                                               sourceApplicationBundleIdentifier: nil)
+
+    static func automatic(_ origin: CaptureOrigin, actionID: UUID = UUID(),
+                          sourceApplicationName: String? = nil,
+                          sourceApplicationBundleIdentifier: String? = nil) -> CaptureReceiptContext {
+        precondition(origin.isAutomatic)
+        return CaptureReceiptContext(origin: origin, automaticActionID: actionID,
+                                     sourceApplicationName: sourceApplicationName,
+                                     sourceApplicationBundleIdentifier: sourceApplicationBundleIdentifier)
+    }
+}
+
 /// Provenance explicitly supplied by a transfer, never inferred from surrounding apps.
 struct CaptureSource: Sendable {
     let filePath: String?
@@ -48,6 +89,10 @@ final class Capture: ObservableObject, Identifiable {
     private(set) var originalFilename: String?
     private(set) var contentType: String?
     private(set) var byteCount: Int64?
+    private(set) var captureOriginRaw: String
+    private(set) var automaticActionID: UUID?
+    private(set) var sourceApplicationName: String?
+    private(set) var sourceApplicationBundleIdentifier: String?
     @Published var title: String
     @Published var previewDescription: String
     @Published var thumbnailRelativePath: String?
@@ -64,13 +109,15 @@ final class Capture: ObservableObject, Identifiable {
     @Published var updatedAt: Date
     var kind: CaptureKind { CaptureKind(rawValue: kindRaw) ?? .file }
     var isTask: Bool { kind == .task }
+    var captureOrigin: CaptureOrigin { CaptureOrigin(rawValue: captureOriginRaw) ?? .manual }
 
     init(id: UUID = UUID(), capturedAt: Date = Date(), timeZone: TimeZone = .current,
          kind: CaptureKind, originalURL: String? = nil, originalText: String? = nil,
          attachmentRelativePath: String? = nil, originalFilename: String? = nil,
          contentType: String? = nil, byteCount: Int64? = nil, title: String,
          captureDay: String? = nil, captureTimeZoneID: String? = nil,
-         captureUTCOffsetSeconds: Int? = nil, sourceFilePath: String? = nil, sourceURL: String? = nil) {
+         captureUTCOffsetSeconds: Int? = nil, sourceFilePath: String? = nil, sourceURL: String? = nil,
+         receipt: CaptureReceiptContext = .manual) {
         self.id = id
         self.capturedAt = capturedAt
         self.captureDay = captureDay ?? CaptureCalendar.dayString(capturedAt, timeZone: timeZone)
@@ -85,6 +132,10 @@ final class Capture: ObservableObject, Identifiable {
         self.originalFilename = originalFilename
         self.contentType = contentType
         self.byteCount = byteCount
+        self.captureOriginRaw = receipt.origin.rawValue
+        self.automaticActionID = receipt.origin.isAutomatic ? receipt.automaticActionID : nil
+        self.sourceApplicationName = receipt.sourceApplicationName
+        self.sourceApplicationBundleIdentifier = receipt.sourceApplicationBundleIdentifier
         self.title = title
         self.previewDescription = ""
         self.previewState = "idle"
@@ -108,7 +159,12 @@ final class Capture: ObservableObject, Identifiable {
                   originalFilename: snapshot.originalFilename, contentType: snapshot.contentType,
                   byteCount: snapshot.byteCount, title: snapshot.title, captureDay: snapshot.captureDay,
                   captureTimeZoneID: snapshot.captureTimeZoneID, captureUTCOffsetSeconds: snapshot.captureUTCOffsetSeconds,
-                  sourceFilePath: snapshot.sourceFilePath, sourceURL: snapshot.sourceURL)
+                  sourceFilePath: snapshot.sourceFilePath, sourceURL: snapshot.sourceURL,
+                  receipt: CaptureReceiptContext(
+                    origin: CaptureOrigin(rawValue: snapshot.captureOriginRaw ?? "") ?? .manual,
+                    automaticActionID: snapshot.automaticActionID,
+                    sourceApplicationName: snapshot.sourceApplicationName,
+                    sourceApplicationBundleIdentifier: snapshot.sourceApplicationBundleIdentifier))
         self.previewDescription = snapshot.previewDescription
         self.thumbnailRelativePath = snapshot.thumbnailRelativePath
         self.previewState = snapshot.previewState
@@ -143,6 +199,11 @@ struct CaptureSnapshot: Codable {
     let originalFilename: String?
     let contentType: String?
     let byteCount: Int64?
+    // Optional in versions 1–3. Older records remain manual captures.
+    let captureOriginRaw: String?
+    let automaticActionID: UUID?
+    let sourceApplicationName: String?
+    let sourceApplicationBundleIdentifier: String?
     let title: String
     let previewDescription: String
     let thumbnailRelativePath: String?
@@ -161,7 +222,7 @@ struct CaptureSnapshot: Codable {
     let updatedAt: Date
 
     init(_ capture: Capture) {
-        schemaVersion = 3
+        schemaVersion = 4
         id = capture.id
         capturedAt = capture.capturedAt
         captureDay = capture.captureDay
@@ -176,6 +237,10 @@ struct CaptureSnapshot: Codable {
         originalFilename = capture.originalFilename
         contentType = capture.contentType
         byteCount = capture.byteCount
+        captureOriginRaw = capture.captureOriginRaw
+        automaticActionID = capture.automaticActionID
+        sourceApplicationName = capture.sourceApplicationName
+        sourceApplicationBundleIdentifier = capture.sourceApplicationBundleIdentifier
         title = capture.title
         previewDescription = capture.previewDescription
         thumbnailRelativePath = capture.thumbnailRelativePath
@@ -274,7 +339,12 @@ enum CaptureSearch {
                 guard filter.includes(item.kind) else { return false }
                 let haystack = normalized([item.title, item.previewDescription, item.originalURL ?? "",
                                            item.originalText ?? "", item.originalFilename ?? "", item.comment,
-                                           item.kind.rawValue, item.captureDay].joined(separator: " "))
+                                           item.kind.rawValue, item.captureDay,
+                                           item.sourceApplicationName ?? "",
+                                           item.sourceApplicationBundleIdentifier ?? "",
+                                           item.captureOrigin.displayName,
+                                           item.captureOrigin == .automaticClipboard ? "copied clipboard" : "",
+                                           item.captureOrigin == .automaticScreenshot ? "screenshot screen capture" : ""].joined(separator: " "))
                 return words.allSatisfy(haystack.contains)
             })
             guard !hits.isEmpty else { return nil }

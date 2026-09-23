@@ -10,6 +10,8 @@ final class ApplicationCoordinator {
     let reminders: ReminderService
     let updates: SoftwareUpdateService
     let input: InputService
+    let autoCapture: AutoCaptureService
+    let autoCaptureRobot: AutoCaptureRobotPresenter
     let state: AppState
     let theme: ThemeSettings
     let robotPlacement: RobotPlacementSettings
@@ -37,20 +39,36 @@ final class ApplicationCoordinator {
             ?? ReminderService(store: store)
         let updates = SoftwareUpdateService()
         let input = InputService(store: store)
+        let autoInput = InputService(store: store)
+        let autoCaptureSettings = AutoCaptureSettings(defaults: defaults)
+        let autoCapture = AutoCaptureService(settings: autoCaptureSettings, input: autoInput)
+        let autoCaptureRobot = AutoCaptureRobotPresenter()
         let robotPlacement = RobotPlacementSettings(defaults: defaults)
         let state = AppState(store: store, previews: previews, reminders: reminders,
-                             updates: updates, robotPlacement: robotPlacement)
+                             updates: updates, robotPlacement: robotPlacement,
+                             autoCapture: autoCapture)
         let theme = ThemeSettings(defaults: defaults)
         let corners = CornerController(state: state, input: input, placementDefaults: defaults, theme: theme)
         self.previews = previews
         self.reminders = reminders
         self.updates = updates
         self.input = input
+        self.autoCapture = autoCapture
+        self.autoCaptureRobot = autoCaptureRobot
         self.state = state
         self.theme = theme
         self.robotPlacement = robotPlacement
         self.corners = corners
         lifecycle = ReminderLifecycle { await reminders.reconcile() }
+        autoCapture.onCommitted = { [weak state] action in
+            state?.didAutoCapture(action.captures)
+        }
+        autoCapture.onSaved = { [weak autoCaptureRobot] _ in
+            _ = autoCaptureRobot?.present(additionalCaptureCount: 1)
+        }
+        autoCapture.onFailure = { [weak state] message in
+            state?.status = AppStatusMessage(text: "Auto Capture: \(message)", severity: .warning)
+        }
         commands = ApplicationMenu(
             openDaily: { [weak corners] in corners?.openDaily() },
             openSearch: { [weak corners] in corners?.openSearch() },
@@ -60,7 +78,8 @@ final class ApplicationCoordinator {
                 corners?.showBoard()
                 state?.updates.checkForUpdates()
             },
-            showSettings: { [weak state, weak corners] in state?.showSettings(); corners?.showBoard() }
+            showSettings: { [weak state, weak corners] in state?.showSettings(); corners?.showBoard() },
+            autoCapture: autoCapture
         )
     }
 
@@ -70,6 +89,7 @@ final class ApplicationCoordinator {
         isStarted = true
         if installMenu { commands.install() }
         corners.start(pointerPosition: pointerPosition)
+        autoCapture.start()
         lifecycle.start(applicationEvents: applicationEvents, workspaceEvents: workspaceEvents)
         previews.process(store.captures)
         if showDaily { corners.openDaily() }
@@ -82,6 +102,8 @@ final class ApplicationCoordinator {
         isStopped = true
         isStarted = false
         lifecycle.stop()
+        autoCapture.shutdown()
+        autoCaptureRobot.shutdown()
         corners.shutdown()
         previews.shutdown()
         updates.cancel()

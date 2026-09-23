@@ -9,14 +9,15 @@ DaBin is a self-contained Apple Silicon macOS application. It uses Swift, AppKit
 | Entry and macOS lifecycle | Start the application, respond to reopen/quit, present native quit decisions | `DaBinMain.swift`, `AppDelegate.swift` |
 | Composition | Own one archive, services, preferences, state and panel controller for the session; start once and shut down explicitly | `ApplicationCoordinator.swift` |
 | Native commands | Standard macOS About/Hide/Quit and app commands; responder-chain editing | `ApplicationMenu.swift` |
-| Desktop integration | Per-display reveal targets, camera-island geometry, robot character and motion state, paste/drop destinations, keyboard focus, panel placement and animations | `CornerController.swift`, `RobotView.swift`, `RobotCharacterView.swift`, `RobotMotion.swift`, `DailyCaptureView.swift`, `WindowDragHandle.swift` |
-| Presentation | Small SwiftUI screens and shared visual components; no database construction | `BoardView.swift`, feature screen files, shared capture components |
+| Desktop integration | Per-display reveal targets, camera-island geometry, robot character and motion state, paste/drop destinations, keyboard focus, panel placement, automatic-capture confirmation and animations | `CornerController.swift`, `RobotView.swift`, `RobotCharacterView.swift`, `RobotMotion.swift`, `AutoCaptureRobotPresenter.swift`, `DailyCaptureView.swift`, `WindowDragHandle.swift` |
+| Presentation | Small SwiftUI screens, hourly automatic-capture summaries and shared visual components; no database construction | `BoardView.swift`, `HourlyCaptureFeed.swift`, `HourlyCaptureCard.swift`, feature screen files, shared capture components |
 | State and domain | Navigation, drafts, chronological membership, filters, task carryover, source facts and search context | `AppState.swift`, `Domain.swift` |
 | Capture intake | Read only explicit paste/drop transfers; preserve receipt time; coordinate promised files and partial failures | `InputService.swift` |
+| Optional automatic intake | Gate opt-in clipboard and screenshot-folder monitoring; retain the user-selected folder grant; apply source exclusions and duplicate suppression; stop promptly on pause, disable and shutdown | `AutoCaptureService.swift`, `ScreenshotFolderMonitor.swift`, `AutoCaptureFingerprint.swift`, `AutoCaptureSettings.swift` |
 | Persistence | Transactional metadata, owned original copies, readable dated archive and interrupted-operation recovery | `CaptureStore.swift`, `CaptureRepository.swift`, `DailyArchive.swift`, `OriginalFileStorage.swift`, `CaptureRemoval.swift` |
 | Disposable previews | Bounded parallel local previews, optional website requests, cancellation/timeout bridging, cache regeneration | `PreviewService.swift`, `PreviewRequest.swift` |
 | Reminders | Serialized scheduling, revision checks, permission feedback and wake/activation reconciliation | `ReminderService.swift`, `ReminderLifecycle.swift` |
-| Preferences and policy | Shared local theme, board placement, robot-home and preview settings; accessible bundled privacy information | `ThemeSettings.swift`, `RobotPlacementSettings.swift`, `PrivacyInformation.swift`, `Resources/` |
+| Preferences and policy | Shared local theme, board placement, robot-home, previews and Auto Capture settings; accessible bundled privacy information | `ThemeSettings.swift`, `RobotPlacementSettings.swift`, `AutoCaptureSettings.swift`, `PrivacyInformation.swift`, `Resources/` |
 
 The Xcode navigator groups these boundaries. Sources remain in one flat directory so the portable build and Xcode inventory use the same files.
 
@@ -24,13 +25,14 @@ The Xcode navigator groups these boundaries. Sources remain in one flat director
 
 `ApplicationCoordinator` constructs all production dependencies and passes them to the desktop controller and views. Tests inject temporary storage, isolated preferences, fake notification clients, private event centers and synthetic pointer positions.
 
-Startup is idempotent. Shutdown removes the pointer and animation timers, local keyboard monitor, desktop notifications and view callbacks. It detaches native hosting views before closing panels so SwiftUI state can be released, stops new lifecycle reconciliations, and cancels queued/running preview work. A reconciliation already underway may finish; an already-started disposable thumbnail write may also finish. A stopped controller rejects stale reveal requests. Saved system reminders survive normal quit; deleting a capture separately cancels its reminder. The app does not install a background helper or launch-at-login service.
+Startup is idempotent. Shutdown removes the pointer and animation timers, local keyboard monitor, desktop notifications and view callbacks. It detaches native hosting views before closing panels so SwiftUI state can be released, stops Auto Capture's clipboard and folder observers, stops new lifecycle reconciliations, and cancels queued/running preview work. A reconciliation already underway may finish; an already-started disposable thumbnail write may also finish. A stopped controller rejects stale reveal requests. Saved system reminders survive normal quit; deleting a capture separately cancels its reminder. The app does not install a background helper or launch-at-login service, so Auto Capture operates only while DaBin is running.
 
 The first launch remains quiet: screen corners are the default reveal target, and a setting can move the robot below a compatible built-in camera island. Displays without camera-island geometry use their corners even when that setting is selected. Double-clicking the revealed robot opens Daily. The standalone guide and App Review notes must explain this. Reopening the running app opens Daily. Native About, Hide, Show All, Settings and Quit commands are available when DaBin is active.
 
 ## Persistence invariants
 
 - Receipt date/time and source metadata remain facts about the original capture.
+- Automatic records retain their automatic origin and stable action identity. Source-application metadata is best effort and must never be presented as authoritative provenance.
 - Imported source files are copied and verified; their external originals are not moved or edited.
 - Core Data is the authoritative index. Readable folders and thumbnails are managed derivatives or owned copies, not an alternative mutable index.
 - A failed import compensates its own work; recoverable interrupted imports retain a journal and verified bytes.
@@ -39,6 +41,22 @@ The first launch remains quiet: screen corners are the default reveal target, an
 - Parallel cache-folder creation tolerates a validated existing directory, while rejecting symlinks and obstructing files.
 - Minimize is a persisted presentation preference. It does not discard content, comments, reminders, task state or searchability.
 - Notification work rechecks the current capture/revision after each suspension, so stale scheduling cannot override a newer edit/removal.
+
+## Optional Auto Capture boundary
+
+Auto Capture is a separate, explicit intake mode and defaults off. Constructing its settings or starting the normal app does not by itself read the clipboard or request folder access. Enabling it requires a user action. The screenshot path is selected through the system folder picker; its security-scoped bookmark is stored locally and resolved only for that user-authorized location.
+
+The clipboard observer establishes the current pasteboard change count as its baseline after Auto Capture is enabled or resumed. It processes only later changes, rather than importing content already present when monitoring began. Turning Auto Capture off or pausing it tears down clipboard polling and screenshot-folder observation immediately. Restarting monitoring takes a fresh baseline. Normal explicit paste and drop continue to use `InputService` independently of this mode.
+
+Folder observation records the existing image files as a baseline, then covers new screenshot images written to the selected save location. macOS exposes no public notification that identifies every screenshot produced by the system, so DaBin does not claim system-wide screenshot detection. A screenshot whose destination is the clipboard can be considered through the post-enable clipboard-change path; a screenshot saved outside the chosen folder is not supplied by the folder observer. Neither path requires screen recording or captures the live screen itself.
+
+Attribution to a source application is a best-effort sample of available macOS application state near receipt time. It can be missing or imprecise and is never treated as verified file provenance. DaBin's own bundle identifier and a default set of password-manager bundle identifiers are excluded. The settings model can retain an explicit exclusion set, but attribution limits make exclusions an additional guard rather than a promise to identify every content origin. Pause or disable Auto Capture for work that should not be observed.
+
+For single images, a bounded normalized-pixel fingerprint suppresses an opposite-channel repeat that arrives through the screenshot folder and clipboard within the short duplicate interval. A later copy or a repeat through the same channel remains a distinct user action. Successfully saved automatic records remain local, use the normal transactional archive, and never initiate website-preview fetching. Preview eligibility for manually saved links is a separate preference.
+
+Automatic records keep a stable action identifier so one user action that yields several records stays together. Daily collapses a busy civil-clock hour into an expandable summary once the hour reaches four successful automatic actions; the immutable receipt day, local hour and UTC offset define that group. Filtering affects visible members without changing whether the original hour qualifies.
+
+After a successful automatic save, a reused nonactivating, click-through robot panel appears briefly on the hardware primary display and combines captures received in the same visible burst. It is confirmation only and does not become an input surface. The panel uses the public macOS window-sharing exclusion and is also presented only after persistence succeeds, so it is not composited into screenshots while visible.
 
 ## Native interface
 

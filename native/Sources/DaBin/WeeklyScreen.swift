@@ -81,8 +81,11 @@ private struct WeeklyDayColumn: View {
     @ObservedObject var state: AppState
     let day: Date
 
-    private var captures: [Capture] { state.captures(for: day) }
-    private var cards: [CaptureCardGroup] { CaptureCardGroup.cards(from: captures) }
+    private var allCaptures: [Capture] { state.allCaptures(for: day) }
+    private var captures: [Capture] { allCaptures.filter { state.filter.includes($0.kind) } }
+    private var cards: [CaptureFeedCard] {
+        HourlyCaptureFeed.cards(from: allCaptures, filter: state.filter)
+    }
     private var isToday: Bool { Calendar.current.isDateInToday(day) }
     private var isSelected: Bool { Calendar.current.isDate(day, inSameDayAs: state.selectedDay) }
 
@@ -124,11 +127,16 @@ private struct WeeklyDayColumn: View {
                 ScrollView {
                     LazyVStack(spacing: 8) {
                         ForEach(cards) { card in
-                            if card.isImportedBatch {
-                                GroupedCaptureCard(state: state, group: card, compact: true)
-                            } else {
-                                WeeklyCaptureCard(state: state, capture: card.primary,
-                                                  taskAtTop: state.isTaskAtTop(card.primary, on: day))
+                            switch card {
+                            case .capture(let captureCard):
+                                if captureCard.isImportedBatch {
+                                    GroupedCaptureCard(state: state, group: captureCard, compact: true)
+                                } else {
+                                    WeeklyCaptureCard(state: state, capture: captureCard.primary,
+                                                      taskAtTop: state.isTaskAtTop(captureCard.primary, on: day))
+                                }
+                            case .automaticHour(let group):
+                                HourlyCaptureCard(state: state, group: group, compact: true)
                             }
                         }
                     }.padding(8)

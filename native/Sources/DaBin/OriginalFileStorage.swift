@@ -4,7 +4,7 @@ import CryptoKit
 enum CaptureStoreError: LocalizedError {
     case emptyInput, directoryNotSupported, symbolicLinkNotSupported, invalidManagedPath
     case invalidOriginal(String), importVerificationFailed, injectedInterruption
-    case reminderNotFuture
+    case reminderNotFuture, captureCancelled
     var errorDescription: String? {
         switch self {
         case .emptyInput: return "There is no readable content to save."
@@ -15,6 +15,7 @@ enum CaptureStoreError: LocalizedError {
         case .importVerificationFailed: return "The copied original could not be verified. Your source file is unchanged."
         case .injectedInterruption: return "Simulated process interruption."
         case .reminderNotFuture: return "Choose a reminder time in the future."
+        case .captureCancelled: return "Auto Capture stopped before this item was saved."
         }
     }
 }
@@ -33,6 +34,10 @@ struct ImportJournal: Codable, Sendable {
     let originalFilename: String
     let sourceFilePath: String?
     let sourceURL: String?
+    var captureOriginRaw: String? = nil
+    var automaticActionID: UUID? = nil
+    var sourceApplicationName: String? = nil
+    var sourceApplicationBundleIdentifier: String? = nil
     let relativePath: String
     let stagingRelativePath: String
     let kind: CaptureKind

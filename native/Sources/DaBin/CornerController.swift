@@ -21,16 +21,20 @@ enum CornerGeometry {
         let extra: CGFloat = state.status != nil || state.store.error != nil ? 45 : 0
         let captures = state.dailyCaptures
         guard !captures.isEmpty else { return 290 + extra }
-        let cards = CaptureCardGroup.cards(from: captures)
-        let featuredID = cards.first { !$0.isImportedBatch && !$0.primary.isMinimized
+        let feed = HourlyCaptureFeed.cards(from: state.allCapturesForDay, filter: state.filter)
+        let featuredID = feed.compactMap { item -> CaptureCardGroup? in
+            if case .capture(let card) = item { return card }
+            return nil
+        }.first { !$0.isImportedBatch && !$0.primary.isMinimized
             && $0.primary.thumbnailRelativePath != nil }?.primary.id
-        let rows = cards.reduce(CGFloat.zero) { total, card in
+
+        func cardHeight(_ card: CaptureCardGroup) -> CGFloat {
             if card.isImportedBatch {
-                if card.isMinimized { return total + 88 }
+                if card.isMinimized { return 88 }
                 var height = CGFloat(92 + card.captures.count * 58)
                 if !card.primary.comment.isEmpty { height += 30 }
                 if card.primary.reminderAt != nil { height += 22 }
-                return total + height
+                return height
             }
             let capture = card.primary
             let promoted = state.isTaskAtTop(capture)
@@ -38,7 +42,7 @@ enum CornerGeometry {
             if promoted { height += 32 }
             if capture.isMinimized {
                 if capture.isTask { height += 12 }
-                return total + height
+                return height
             }
             let featured = capture.id == featuredID
             let titleSize: CGFloat = featured ? 19.55 : 16.1
@@ -61,7 +65,20 @@ enum CornerGeometry {
             }
             if capture.reminderAt != nil { height += 22 }
             if capture.kind == .link && !promoted { height += 18 }
-            return total + height
+            return height
+        }
+
+        let rows = feed.reduce(CGFloat.zero) { total, item in
+            switch item {
+            case .capture(let card):
+                return total + cardHeight(card)
+            case .automaticHour(let group):
+                guard state.isHourlyGroupExpanded(group.id) else { return total + 66 }
+                let actions = group.actions.reduce(CGFloat.zero) { partial, action in
+                    partial + action.cards.reduce(CGFloat.zero) { $0 + cardHeight($1) } + 34
+                }
+                return total + 58 + actions
+            }
         }
         return min(500, 155 + rows + (featuredID == nil ? 0 : 125) + extra)
     }
@@ -773,7 +790,7 @@ final class CornerController: NSObject {
     private func receiveOnDaily(_ pasteboard: NSPasteboard) {
         guard state.route == .daily else { return }
         let navigationRevision = state.captureNavigationRevision
-        input.receive(pasteboard) { [weak self] captures, _ in
+        input.receive(pasteboard, completion: { [weak self] captures, _ in
             // Reveal a successful capture on its receipt day, even if the
             // board was showing an older date or an incompatible filter.
             // A slow import must never pull the user out of a later action.
@@ -782,8 +799,8 @@ final class CornerController: NSObject {
                   self.state.captureNavigationRevision == navigationRevision else { return }
             self.state.openDaily()
             self.state.selectedDay = first.capturedAt
-            self.state.dailyScrollID = first.id
-        }
+            self.state.dailyScrollID = self.state.feedID(for: first, on: self.state.selectedDay)
+        })
     }
 
     private func showMessage(_ text: String) {

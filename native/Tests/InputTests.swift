@@ -145,6 +145,48 @@ private final class PromiseFixture: InputFilePromise {
             try expect(log.durableAtSuccess && log.busy == [true, false], "Finder batch is durable before finishing once")
         }
 
+        // Auto Capture freezes the clipboard on a private pasteboard. Its native
+        // NSURL readers from the source board must remain retained while that
+        // immutable snapshot is imported asynchronously.
+        do {
+            let store = try CaptureStore(root: root.appendingPathComponent("retained-file-transfer"))
+            let input = InputService(store: store); let log = InputRecorder(input)
+            let urls = [root.appendingPathComponent("Retained first.txt"),
+                        root.appendingPathComponent("Retained second.pdf")]
+            for (index, url) in urls.enumerated() {
+                try Data("retained-transfer-\(index)".utf8).write(to: url)
+            }
+
+            let source = try board([]); defer { source.releaseGlobally() }
+            try expect(source.writeObjects(urls.map { $0 as NSURL }),
+                       "Source pasteboard publishes native NSURL readers")
+            var transfer: InputFileURLTransfer? = InputFileURLTransfer.consume(from: source)
+            try expect(transfer?.retainedURLCount == 2,
+                       "Reading the source pasteboard consumes both native file transfer grants")
+            weak let retainedTransfer = transfer
+            let frozenItems = urls.map { item($0.absoluteString, type: .fileURL) }
+            let snapshot = try board(frozenItems); defer { snapshot.releaseGlobally() }
+            source.clearContents()
+
+            input.receive(snapshot, at: stamp, timeZone: zone, fileURLTransfer: transfer)
+            transfer = nil
+            try expect(input.isBusy && retainedTransfer != nil,
+                       "The asynchronous input batch retains native transfer readers")
+            try await wait("Retained file transfer completes") { log.results.count == 1 }
+            let captures = log.results[0].0
+            try expect(captures.count == 2 && log.results[0].1.isEmpty,
+                       "Retained source grant imports every frozen file item")
+            try expect(captures.compactMap(\.sourceFilePath) == urls.map { $0.standardizedFileURL.path },
+                       "Frozen multi-file snapshot preserves Finder item order")
+            let cards = CaptureCardGroup.cards(from: captures)
+            try expect(cards.count == 1 && cards[0].captures.count == 2,
+                       "Frozen multi-file snapshot remains one grouped caption card")
+            for (capture, original) in zip(captures, urls) {
+                try expect(try Data(contentsOf: store.managedURL(for: capture)!) == Data(contentsOf: original),
+                           "Retained source grant preserves each original's bytes")
+            }
+        }
+
         do {
             let store = try CaptureStore(root: root.appendingPathComponent("rich-text"))
             let input = InputService(store: store); let log = InputRecorder(input)

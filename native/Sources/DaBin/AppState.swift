@@ -88,6 +88,7 @@ final class AppState: ObservableObject {
     let reminders: ReminderService
     let updates: SoftwareUpdateService
     let robotPlacement: RobotPlacementSettings
+    let autoCapture: AutoCaptureService
     let newTaskDraft = NewTaskDraft()
     @Published var route: BoardRoute = .daily {
         didSet {
@@ -111,8 +112,9 @@ final class AppState: ObservableObject {
     @Published var status: AppStatusMessage?
     @Published var detailFocus: String?
     @Published var selectedDraft: CaptureDraft?
-    @Published var dailyScrollID: UUID?
+    @Published var dailyScrollID: CaptureFeedCardID?
     @Published var searchScrollID: UUID?
+    @Published private(set) var expandedAutomaticHours: Set<AutomaticHourKey> = []
     @Published var isBoardVisible = false
     @Published var isDailyDropTargeted = false
     private(set) var captureNavigationRevision: UInt = 0
@@ -125,16 +127,25 @@ final class AppState: ObservableObject {
     private var currentDayKey = CaptureCalendar.dayString(Date())
 
     init(store: CaptureStore, previews: PreviewService, reminders: ReminderService,
-         updates: SoftwareUpdateService? = nil, robotPlacement: RobotPlacementSettings? = nil) {
+         updates: SoftwareUpdateService? = nil, robotPlacement: RobotPlacementSettings? = nil,
+         autoCapture: AutoCaptureService? = nil) {
         self.store = store
         self.previews = previews
         self.reminders = reminders
         self.updates = updates ?? SoftwareUpdateService()
         self.robotPlacement = robotPlacement ?? RobotPlacementSettings(defaults: nil)
+        self.autoCapture = autoCapture ?? AutoCaptureService(
+            settings: AutoCaptureSettings(defaults: nil), input: InputService(store: store))
         store.objectWillChange.sink { [weak self] _ in
             self?.objectWillChange.send()
         }.store(in: &subscriptions)
         reminders.objectWillChange.sink { [weak self] _ in
+            self?.objectWillChange.send()
+        }.store(in: &subscriptions)
+        self.autoCapture.objectWillChange.sink { [weak self] _ in
+            self?.objectWillChange.send()
+        }.store(in: &subscriptions)
+        self.autoCapture.settings.objectWillChange.sink { [weak self] _ in
             self?.objectWillChange.send()
         }.store(in: &subscriptions)
         newTaskDraft.objectWillChange.sink { [weak self] _ in
@@ -164,19 +175,18 @@ final class AppState: ObservableObject {
         return (-6...0).compactMap { calendar.date(byAdding: .day, value: $0, to: end) }
     }
 
-    func captures(for day: Date) -> [Capture] {
+    func allCaptures(for day: Date) -> [Capture] {
         let key = CaptureCalendar.dayString(day)
         return store.captures.filter {
-            filter.includes($0.kind) && ($0.captureDay == key || isTaskAtTop($0, dayKey: key))
+            $0.captureDay == key || isTaskAtTop($0, dayKey: key)
         }.sorted {
             let lhsAtTop = isTaskAtTop($0, dayKey: key), rhsAtTop = isTaskAtTop($1, dayKey: key)
             if lhsAtTop != rhsAtTop { return lhsAtTop }
             return $0.capturedAt == $1.capturedAt ? $0.id.uuidString < $1.id.uuidString : $0.capturedAt > $1.capturedAt
         }
     }
-    var allCapturesForDay: [Capture] {
-        store.captures.filter { $0.captureDay == dayKey || isTaskAtTop($0) }
-    }
+    func captures(for day: Date) -> [Capture] { allCaptures(for: day).filter { filter.includes($0.kind) } }
+    var allCapturesForDay: [Capture] { allCaptures(for: selectedDay) }
     func isTaskAtTop(_ capture: Capture) -> Bool {
         isTaskAtTop(capture, on: selectedDay)
     }
@@ -282,7 +292,7 @@ final class AppState: ObservableObject {
                 reminderTimeZoneID: reminder == nil ? nil : TimeZone.current.identifier)
             newTaskDraft.reset()
             openDaily()
-            dailyScrollID = capture.id
+            dailyScrollID = feedID(for: capture, on: selectedDay)
             if reminder != nil {
                 Task { await saveReminderAndReport(for: capture) }
             }
@@ -331,6 +341,15 @@ final class AppState: ObservableObject {
         }
     }
 
+    func isHourlyGroupExpanded(_ key: AutomaticHourKey) -> Bool {
+        expandedAutomaticHours.contains(key)
+    }
+
+    func toggleHourlyGroup(_ key: AutomaticHourKey) {
+        if expandedAutomaticHours.remove(key) == nil { expandedAutomaticHours.insert(key) }
+        captureLayoutRevision &+= 1
+    }
+
     func requestRemoval(_ capture: Capture) {
         guard removingCaptureID == nil, store.captures.contains(where: { $0 === capture }) else { return }
         pendingRemoval = capture
@@ -355,7 +374,9 @@ final class AppState: ObservableObject {
             drafts.removeValue(forKey: capture.id)
             clearReminderFeedback(for: capture)
             if pendingRemoval?.id == capture.id { pendingRemoval = nil }
-            if dailyScrollID == capture.id { dailyScrollID = nil }
+            // Removing an action can dissolve a four-action summary, so a prior
+            // feed anchor may no longer exist.
+            dailyScrollID = nil
             if searchScrollID == capture.id { searchScrollID = nil }
             if selectedCapture?.id == capture.id {
                 selectedCapture = nil
@@ -412,7 +433,13 @@ final class AppState: ObservableObject {
         selectedDay = parser.date(from: capture.captureDay) ?? capture.capturedAt
         filter = .all
         route = .daily
-        dailyScrollID = capture.id
+        if capture.captureOrigin.isAutomatic {
+            let hour = AutomaticHourKey(capture: capture)
+            if automaticActionCount(in: hour, on: selectedDay) >= HourlyCaptureFeed.summaryThreshold {
+                expandedAutomaticHours.insert(hour)
+            }
+        }
+        dailyScrollID = feedID(for: capture, on: selectedDay)
     }
 
     func moveDay(_ amount: Int) {
@@ -427,6 +454,14 @@ final class AppState: ObservableObject {
         let days = Set(captures.map(\.captureDay)).sorted()
         status = AppStatusMessage(text: "Saved \(captures.count == 1 ? "capture" : "\(captures.count) captures") · \(days.joined(separator: ", "))", severity: .success)
         previews.process(captures)
+    }
+
+    func didAutoCapture(_ captures: [Capture]) {
+        guard !captures.isEmpty else { return }
+        // The passive robot confirms automatic saves. Keep the board calm while
+        // still scheduling local previews and publishing the live feed update.
+        previews.process(captures)
+        objectWillChange.send()
     }
 
     func reportFailure(_ message: String) {
@@ -526,8 +561,30 @@ final class AppState: ObservableObject {
 
     func setLinkPreviews(_ enabled: Bool) {
         previews.enabled = enabled
-        if enabled { previews.process(store.captures.filter { $0.kind == .link }) }
+        if enabled { previews.process(store.captures.filter { $0.kind == .link && !$0.captureOrigin.isAutomatic }) }
         else { previews.cancelNetwork() }
         objectWillChange.send()
+    }
+
+    func feedID(for capture: Capture, on day: Date) -> CaptureFeedCardID {
+        if capture.captureOrigin.isAutomatic {
+            let hour = AutomaticHourKey(capture: capture)
+            if automaticActionCount(in: hour, on: day) >= HourlyCaptureFeed.summaryThreshold {
+                return .automaticHour(hour)
+            }
+        }
+        if capture.attachmentRelativePath != nil {
+            let batchCount = allCaptures(for: day).filter {
+                $0.attachmentRelativePath != nil && $0.capturedAt == capture.capturedAt
+            }.count
+            if batchCount > 1 { return .capture(.importedBatch(capture.capturedAt)) }
+        }
+        return .capture(.capture(capture.id))
+    }
+
+    private func automaticActionCount(in hour: AutomaticHourKey, on day: Date) -> Int {
+        Set(allCaptures(for: day).filter {
+            $0.captureOrigin.isAutomatic && AutomaticHourKey(capture: $0) == hour
+        }.map { $0.automaticActionID ?? $0.id }).count
     }
 }

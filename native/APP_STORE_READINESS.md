@@ -1,7 +1,7 @@
 # DaBin — Mac App Store readiness
 
 **Audit date:** 23 September 2026
-**Source version:** 0.3.4 (29)
+**Source version:** 0.3.5 (30)
 **Result: BLOCKED for submission; local app QA is a separate result.**
 
 The source now has a Productivity category, a bundled privacy explanation, privacy manifest, and an Xcode Release configuration that does not force ad-hoc signing. These changes improve readiness. They do not make the locally signed app an App Store distribution build or guarantee approval.
@@ -10,30 +10,44 @@ The source now has a Productivity category, a bundled privacy explanation, priva
 
 | Status | Area | Evidence and remaining work |
 | --- | --- | --- |
-| PASS | App Sandbox | `Resources/DaBin.entitlements` enables App Sandbox, read-only access to user-selected files, and outgoing network access for optional website previews. The inspected local app's embedded entitlements match. There are no sandbox exceptions or root privileges. [Apple sandbox documentation](https://developer.apple.com/documentation/security/protecting-user-data-with-app-sandbox) |
+| PARTIAL | App Sandbox and selected-folder scope | `Resources/DaBin.entitlements` enables App Sandbox, read-only access to user-selected files, and outgoing network access for optional website previews. The previously inspected local app's embedded entitlements match and has no sandbox exceptions or root privileges. Auto Capture relies on an explicit folder selection and a security-scoped bookmark for the screenshot location; an exported candidate containing this feature still needs entitlement, bookmark-restoration and revoked-access inspection. [Apple sandbox documentation](https://developer.apple.com/documentation/security/protecting-user-data-with-app-sandbox) |
 | PASS | Store/direct update separation | The generated Xcode Store configuration compiles a Store-managed update stub, has no direct feed key and does not embed the installer. The standalone builder alone enables `DABIN_DIRECT_UPDATES` and creates the GitHub helper. An exported Store candidate still needs binary inspection before submission. Source imports and linked libraries use Apple frameworks; no manually invoked private API was found. [App Review, 2.4.5 and 2.5.1](https://developer.apple.com/app-store/review/guidelines/#hardware-compatibility) |
-| PASS | Explicit capture and limited permissions | Clipboard contents are read in response to paste, and file access comes from paste/drop transfers. Robot reveal reads pointer position and ordinary `NSScreen` safe-area/auxiliary geometry; it does not use the camera or require Accessibility or Screen Recording. No login, analytics, ad SDK, cloud sync, or external AI service is present. Source files are copied rather than modified. |
-| PASS | Optional website requests | Website preview fetching defaults off. Settings explains website contact, and the bundled policy describes URLs, IP addresses, redirects, earlier saved links, cancellation, and locally cached previews. Disabling previews cancels pending work. Links still save while previews are off. |
+| PARTIAL | Manual and automatic capture controls | Manual clipboard reads remain tied to paste. Auto Capture is a separate opt-in setting that defaults off, takes a clipboard baseline before considering later changes, uses a user-selected screenshot folder, and is intended to stop its observers immediately when paused or disabled. DaBin and common password managers are excluded by default, but source-app attribution is best effort and cannot guarantee origin. Live review must verify first launch, enable, pause, disable, relaunch, exclusion and permission-revocation behavior against the final signed candidate. Robot reveal still needs no camera, Accessibility or Screen Recording permission. |
+| PARTIAL | Optional website requests | Website preview fetching defaults off. Settings and the bundled policy explain website contact, URLs, IP addresses, redirects, cancellation and local caching. The Auto Capture design requires automatic links to remain ineligible for preview requests even when previews are enabled. Network instrumentation against the final candidate must verify that separation, including automatic captures created while manual preview fetching is on. |
 | PASS | Local notification design | Permission is requested when saving a reminder, not at startup. A denied permission does not prevent capture or saving a reminder record. Notification messages omit capture contents. Actual system delivery remains part of live QA. |
 | PASS | Category and icon packaging | `Info.plist` now declares `public.app-category.productivity`. `AppIcon.icns` includes normal/Retina sizes through the 1024-pixel `ic10` entry. [Category key](https://developer.apple.com/documentation/bundleresources/information-property-list/lsapplicationcategorytype), [Mac submission category requirement](https://developer.apple.com/library/archive/releasenotes/General/SubmittingToMacAppStore/) |
-| PARTIAL | Privacy and support | The bundle now points to the public GitHub privacy policy and repository Issues page, and Settings retains the complete offline explanation. The owner must still confirm that the support route and publisher contact information satisfy the App Store listing and remain maintained. The policy now discloses user-initiated GitHub update requests for the direct build. [App Review, 1.5 and 5.1.1](https://developer.apple.com/app-store/review/guidelines/#privacy), [App privacy URL requirement](https://developer.apple.com/help/app-store-connect/reference/app-information/app-privacy) |
+| PARTIAL | Privacy and support | The bundle points to the public GitHub privacy policy and repository Issues page, and Settings retains the offline explanation. The policy now describes opt-in clipboard polling, the selected screenshot folder, best-effort source-app attribution, default password-manager exclusions, duplicate suppression, local storage and automatic-link network isolation. The owner must confirm that the public policy matches the final binary, and that support and publisher contact information satisfy the listing and remain maintained. [App Review, 1.5 and 5.1.1](https://developer.apple.com/app-store/review/guidelines/#privacy), [App privacy URL requirement](https://developer.apple.com/help/app-store-connect/reference/app-information/app-privacy) |
 | BLOCKED | App Store signing and validation | The inspected development app is ad-hoc signed and has no TeamIdentifier. The generated Release configuration now uses automatic signing; a real Apple Developer team, registered Bundle ID, appropriate distribution signing/profile, and successful Xcode distribution validation remain necessary. `com.dabin.mac` is a local configured ID; availability/ownership was not checked. [Distribution signing for macOS](https://developer.apple.com/documentation/xcode/creating-distribution-signed-code-for-the-mac/), [App Store provisioning](https://developer.apple.com/help/account/provisioning-profiles/create-an-app-store-provisioning-profile) |
 | BLOCKED | Archive tooling in this environment | The selected tools are `/Library/Developer/CommandLineTools` with macOS SDK 26.5; `xcrun xcodebuild -version` fails because full Xcode is unavailable. The archive helper cannot run until full Xcode is installed/selected. This is an environment limitation of the supplied Xcode workflow, not a claim that the current SDK is prohibited. |
 | BLOCKED | App Store Connect release information | No App Store Connect record or account was accessed. Publisher identity, support and privacy URLs, screenshots, description, age-rating answers, privacy answers, review contact/notes, availability/pricing, and applicable export-compliance answers need owner confirmation and submission validation. Do not submit placeholder URLs. [Platform version information](https://developer.apple.com/help/app-store-connect/reference/app-information/platform-version-information), [App privacy details](https://developer.apple.com/app-store/app-privacy-details/) |
 | PARTIAL | Supported machines | The local build is Apple Silicon (`arm64`) and declares macOS 14+. It does not support Intel Macs. Full oldest-supported-macOS, multiple-display, and current distribution-build testing have not been established by this audit. The QA report records the actual machine and tests. |
 
+## Auto Capture review boundary
+
+Auto Capture is sensitive functionality and should be described directly in App Review notes and in the product listing where relevant. It is off by default. Reviewers need a short path to enable it, select a screenshot folder, make a new clipboard change, pause it and turn it off. The explanation should state that monitoring runs only while DaBin is running, saves into DaBin's local archive, and does not upload captured content.
+
+The macOS capability boundary must remain accurate:
+
+- Folder monitoring treats new regular image files in the location the user selected and authorized through the system picker as screenshot captures. It is not a system-wide screenshot feed.
+- Screenshots sent to the clipboard can be considered through post-enable clipboard changes. Content already present when monitoring starts is not imported.
+- There is no public notification delivered to an ordinary sandboxed app for every screenshot made anywhere on the Mac. DaBin must not advertise universal screenshot capture.
+- The source application recorded for an automatic capture is best effort and can be unavailable or imprecise. Default password-manager exclusions reduce accidental capture when attribution is available; they are not proof of origin or a complete data-loss-prevention boundary.
+- The short confirmation popup is presented only after the triggering screenshot has been saved and uses the public macOS window-sharing exclusion so it is not composited into screen captures while visible.
+
+Before submission, exercise the final signed candidate with a clean preferences domain and verify: the default-off state; no import of the pre-enable clipboard or pre-existing folder images; immediate observer shutdown on Pause and Off; bookmark restoration and revoked folder access; the default exclusion list; opposite-channel screenshot/clipboard image deduplication without suppressing intentional same-channel repeats; no website request for automatic links while manual previews are enabled; four-action hourly grouping; and the passive confirmation popup. These requirements are documented behavior, not a claim that the current App Store candidate has passed them.
+
 ## Privacy manifest: scope and meaning
 
 `Resources/PrivacyInfo.xcprivacy` records no tracking and no developer/SDK data collection, plus these uses:
 
-- `NSPrivacyAccessedAPICategoryUserDefaults` / `CA92.1`: app-owned theme, board placement, robot-home, and preview preferences.
+- `NSPrivacyAccessedAPICategoryUserDefaults` / `CA92.1`: app-owned theme, board placement, robot-home, preview and Auto Capture preferences, including the selected-folder bookmark.
 - `NSPrivacyAccessedAPICategorySystemBootTime` / `35F9.1`: elapsed animation time inside the app.
 
 Both build paths include the manifest in `Contents/Resources/`, Apple's macOS location. The source's file-attribute checks read file type; no explicit timestamp API from Apple's covered list was found. [Reasons and API list](https://developer.apple.com/documentation/bundleresources/app-privacy-configuration/nsprivacyaccessedapitypes/nsprivacyaccessedapitype), [Bundle placement](https://developer.apple.com/documentation/bundleresources/placing-content-in-a-bundle).
 
 Apple's current required-reason enforcement text lists iOS, iPadOS, tvOS, visionOS, and watchOS, **not native macOS**. Including accurate declarations is useful preparation; the prior absence is not classified here as a confirmed native macOS rejection. [Privacy manifests](https://developer.apple.com/documentation/bundleresources/privacy-manifest-files), [Required-reason API scope](https://developer.apple.com/documentation/bundleresources/describing-use-of-required-reason-api).
 
-The candidate App Store privacy answer is **Data Not Collected**, based on the present code: the developer receives no captures or analytics. This is an inference for owner review, not a submitted declaration. Apple distinguishes on-device processing from off-device collection. Optional previews contact user-selected websites; that behavior is explained separately and must remain accurate if network behavior changes. [Apple's data-collection definition and on-device guidance](https://developer.apple.com/app-store/app-privacy-details/).
+The candidate App Store privacy answer is **Data Not Collected**, based on the intended on-device behavior: the developer receives no manual or automatic captures or analytics. This remains an inference for owner review, not a submitted declaration or a substitute for inspecting the final binary. Apple distinguishes on-device processing from off-device collection. Eligible manual link previews contact user-selected websites; automatic links must never do so. The answer and policy must be revisited if any network behavior changes. [Apple's data-collection definition and on-device guidance](https://developer.apple.com/app-store/app-privacy-details/).
 
 ## Release workflow and verified gates
 
@@ -54,10 +68,10 @@ python3 scripts/app_store_preflight.py --static-only
 python3 scripts/app_store_preflight.py
 ```
 
-The final 0.3.4 preflight logs are retained at:
+The final 0.3.5 preflight logs are retained at:
 
-- `../docs/qa/0.3.4/app-store-preflight-static-v0.3.4.log`: **20 source packaging checks passed**.
-- `../docs/qa/0.3.4/app-store-preflight-release-v0.3.4.log`: release preflight remains blocked by the Apple Developer Team ID and full Xcode. The configured GitHub policy/support URLs pass offline syntax checks; their content and continuing reachability remain owner responsibilities.
+- `../docs/qa/0.3.5/app-store-preflight-static-v0.3.5.log`: **20 source packaging checks passed**.
+- `../docs/qa/0.3.5/app-store-preflight-release-v0.3.5.log`: release preflight remains blocked by the Apple Developer Team ID and full Xcode. The configured GitHub policy/support URLs pass offline syntax checks; their content and continuing reachability remain owner responsibilities.
 
 The functional and package evidence for this source version is recorded in `QA_RESULTS.md`.
 
@@ -81,7 +95,8 @@ This rejects ad-hoc/Developer ID signatures, the wrong configured team, non-ARM6
 
 - DaBin is quiet while idle. Screen corners are the default reveal target; Settings can move the robot below the built-in camera island when macOS exposes compatible safe-area geometry, and displays without it keep using corners. Double-click the robot to open Daily. The app menu also provides Open Daily and Settings. Include these steps in review notes so the initially hidden widget is discoverable.
 - The robot uses native character animation for pointer attention, drag acceptance, saving and results. It observes the macOS Reduce Motion preference and removes positional, repeated and keyframed movement when that setting is active.
-- Daily accepts explicit paste/drop. The Daily / Weekly control switches between one selected day and seven days ending on that date, including empty days. Comments and task editors retain normal text editing. Explain optional website-preview permission separately from local capture.
+- Manual capture accepts explicit paste/drop. Auto Capture is a separately disclosed, default-off setting for later clipboard changes and a user-authorized screenshot folder; provide review steps for both channels and for Pause/Off. Daily can group four or more successful automatic actions from the same civil-clock hour into an expandable summary. The Daily / Weekly control switches between one selected day and seven days ending on that date, including empty days. Comments and task editors retain normal text editing.
+- Explain website-preview networking separately from local capture. Automatically captured links never request a preview; reviewers should be able to verify this while previews for eligible manual links are enabled.
 - The current app categorizes by content type; it does not yet perform AI project recognition. Do not advertise automatic AI project assignment or uploading to an AI service.
 - Describe Apple Silicon/macOS support accurately. Keep screenshots synthetic and free of personal captures.
 - No account means no account-deletion flow is needed. Retention/removal instructions still matter. No payment system or purchase entitlement is present; monetization changes require a separate review.
@@ -91,7 +106,7 @@ This rejects ad-hoc/Developer ID signatures, the wrong configured team, non-ARM6
 
 The Mac App Store and Developer ID distribution channels have different signing workflows. Developer ID notarization is not a substitute for Mac App Store distribution signing or approval. Likewise, Apple's April 2026 SDK minimum announcement lists the mobile/TV/vision/watch platforms, not macOS; the current upload table lists macOS separately. [SDK announcement](https://developer.apple.com/news/upcoming-requirements/?id=04282026a), [Upload requirements](https://developer.apple.com/help/app-store-connect/manage-builds/upload-builds/).
 
-The GitHub source/release channel is separate from App Store distribution. No certificate creation, App Store archive export, upload, or review submission was performed. Functional test results and live QA limits are recorded separately in `QA_RESULTS.md`.
+The GitHub source/release channel is separate from App Store distribution. No certificate creation, App Store archive export, upload, or review submission was performed. This document also does not establish that Auto Capture passed live clipboard, folder, exclusion, deduplication, popup or network-isolation QA in a distribution-signed candidate. Functional test results and live QA limits are recorded separately in `QA_RESULTS.md`.
 
 ### Prior 0.1.20 real-media integration evidence
 

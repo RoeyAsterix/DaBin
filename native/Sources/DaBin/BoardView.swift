@@ -89,6 +89,14 @@ struct BoardView: View {
             HStack(spacing: 0) {
                 if state.route == .daily || state.route == .weekly {
                     DaBinLogo()
+                    if state.autoCapture.settings.isEnabled {
+                        Circle()
+                            .fill(autoCaptureIndicatorColor)
+                            .frame(width: 7, height: 7)
+                            .padding(.leading, 7)
+                            .help(autoCaptureStatusText)
+                            .accessibilityLabel(autoCaptureStatusText)
+                    }
                     if state.route == .weekly {
                         Text("Week").font(.system(size: 13, weight: .medium))
                             .foregroundStyle(Palette.muted).padding(.leading, 13)
@@ -110,6 +118,13 @@ struct BoardView: View {
                 SmallIcon(symbol: "magnifyingglass", label: "Search captures, Command K") { state.openSearch() }
                 SmallIcon(symbol: "bell", label: "Reminders") { state.showReminders() }
                 Menu {
+                    if state.autoCapture.settings.isEnabled {
+                        Text(autoCaptureStatusText)
+                        Button(state.autoCapture.settings.isPaused ? "Resume Auto Capture" : "Pause Auto Capture") {
+                            state.autoCapture.setPaused(!state.autoCapture.settings.isPaused)
+                        }
+                        Divider()
+                    }
                     Button("Settings…") { state.showSettings() }
                 } label: {
                     Image(systemName: "ellipsis").frame(width: 28, height: 30)
@@ -118,6 +133,28 @@ struct BoardView: View {
             SmallIcon(symbol: "xmark", label: "Hide DaBin") { state.onDismiss?() }
         }
         .padding(.horizontal, 16).padding(.top, 13).padding(.bottom, 10)
+    }
+
+    private var autoCaptureStatusText: String {
+        switch state.autoCapture.settings.status {
+        case .disabled: return "Auto Capture off"
+        case .paused: return "Auto Capture paused"
+        case .ready: return "Auto Capture ready"
+        case .monitoring: return "Auto Capture enabled"
+        case .permissionRequired: return "Auto Capture needs a screenshot folder"
+        case .permissionRevoked: return "Auto Capture permission needs attention"
+        case .sourceApplicationExcluded(let name): return "Auto Capture is skipping \(name)"
+        case .failed: return "Auto Capture needs attention"
+        }
+    }
+
+    private var autoCaptureIndicatorColor: Color {
+        switch state.autoCapture.settings.status {
+        case .monitoring, .sourceApplicationExcluded: return accent
+        case .paused: return .orange
+        case .permissionRequired, .permissionRevoked, .failed: return Palette.task
+        case .disabled, .ready: return Palette.muted
+        }
     }
 
     private func statusBanner(_ message: AppStatusMessage) -> some View {

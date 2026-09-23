@@ -895,6 +895,40 @@ private final class NativeRenderTests: NSObject, NSApplicationDelegate {
         let emptyStore = try CaptureStore(root: root.appendingPathComponent("ReleaseEmpty"))
         let emptyState = AppState(store: emptyStore, previews: PreviewService(store: emptyStore),
                                   reminders: ReminderService(store: emptyStore, client: RenderNotificationClient()))
+
+        // Keep a focused visual fixture for the fourth-action threshold and the
+        // expanded in-place state. Its separate archive prevents the release
+        // Daily, Weekly, search and detail fixtures from changing shape.
+        let hourlyStore = try CaptureStore(root: root.appendingPathComponent("ReleaseHourly"))
+        let hourlyStart = today.addingTimeInterval(14 * 3600)
+        let automaticReceipts: [(CaptureOrigin, String)] = [
+            (.automaticClipboard, "Notes"),
+            (.automaticClipboard, "Safari"),
+            (.automaticScreenshot, "Preview"),
+            (.automaticClipboard, "Mail")
+        ]
+        for (index, fixture) in automaticReceipts.enumerated() {
+            let receipt = CaptureReceiptContext.automatic(
+                fixture.0,
+                actionID: UUID(),
+                sourceApplicationName: fixture.1,
+                sourceApplicationBundleIdentifier: "com.dabin.render.\(fixture.1.lowercased())"
+            )
+            let stamp = hourlyStart.addingTimeInterval(TimeInterval(index * 9 * 60))
+            if fixture.0 == .automaticScreenshot {
+                _ = try await hourlyStore.importData(Self.fixturePNG(), filename: "Captured screen.png",
+                                                     at: stamp, receipt: receipt)
+            } else {
+                _ = try hourlyStore.capture(text: "Automatic capture \(index + 1) from \(fixture.1)",
+                                            at: stamp, receipt: receipt)
+            }
+        }
+        let hourlyState = AppState(store: hourlyStore, previews: PreviewService(store: hourlyStore),
+                                   reminders: ReminderService(store: hourlyStore, client: RenderNotificationClient()))
+        hourlyState.selectedDay = today
+        guard let hourlyKey = hourlyStore.captures.first.map(AutomaticHourKey.init) else {
+            throw RenderError.message("Hourly release fixture did not create captures")
+        }
         for mode in ["light", "dark"] {
             try await snapshot(emptyState, name: "release-empty", mode: mode, output: output,
                                height: CornerGeometry.dailyPanelHeight(for: emptyState))
@@ -928,6 +962,13 @@ private final class NativeRenderTests: NSObject, NSApplicationDelegate {
             try await snapshot(state, name: "release-settings", mode: mode, output: output, height: 430)
             try await snapshot(state, name: "release-settings", mode: mode, output: output, height: 430, pixelScale: 2)
             try await snapshot(state, name: "release-settings-bottom", mode: mode, output: output, scrollToBottom: true, height: 430)
+            hourlyState.openDaily()
+            try await snapshot(hourlyState, name: "release-hourly-collapsed", mode: mode,
+                               output: output, height: 430)
+            hourlyState.toggleHourlyGroup(hourlyKey)
+            try await snapshot(hourlyState, name: "release-hourly-expanded", mode: mode,
+                               output: output, height: 560)
+            hourlyState.toggleHourlyGroup(hourlyKey)
             state.openNewTask()
             state.newTaskDraft.text = "Prepare the next workshop reference board"
             state.newTaskDraft.reminderEnabled = true

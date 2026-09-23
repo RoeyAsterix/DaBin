@@ -13,7 +13,9 @@ struct CaptureSourceView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 7) {
             HStack(spacing: 6) {
-                Label("Source location", systemImage: capture.sourceFilePath == nil ? "link" : "folder")
+                Label("Capture source", systemImage: capture.captureOrigin == .automaticScreenshot
+                      ? "camera.viewfinder" : capture.captureOrigin == .automaticClipboard
+                      ? "doc.on.clipboard" : capture.sourceFilePath == nil ? "link" : "folder")
                     .font(.system(size: 12, weight: .medium))
                 Spacer(minLength: 8)
                 if let location {
@@ -29,6 +31,15 @@ struct CaptureSourceView: View {
                     .accessibilityLabel("Copy source location")
                 }
             }
+            if capture.captureOrigin.isAutomatic {
+                Text(capture.captureOrigin.displayName)
+                    .font(.system(size: 11, weight: .medium)).foregroundStyle(.secondary)
+            }
+            if let application = capture.sourceApplicationName ?? capture.sourceApplicationBundleIdentifier {
+                Text("From \(application)")
+                    .font(.system(size: 12)).foregroundStyle(.secondary)
+                    .textSelection(.enabled).fixedSize(horizontal: false, vertical: true)
+            }
             if let location {
                 Text(location)
                     .font(.system(size: 11, design: .monospaced))
@@ -36,7 +47,7 @@ struct CaptureSourceView: View {
                     .textSelection(.enabled)
                     .fixedSize(horizontal: false, vertical: true)
                     .accessibilityLabel("Source location: \(location)")
-            } else {
+            } else if capture.sourceApplicationName == nil && capture.sourceApplicationBundleIdentifier == nil {
                 Text("Source location wasn’t provided with this capture.")
                     .font(.system(size: 12))
                     .foregroundStyle(.secondary)

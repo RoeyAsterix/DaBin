@@ -1,5 +1,21 @@
 # DaBin QA cycle — 23 September 2026
 
+## Auto Capture — 0.3.5 (30)
+
+DaBin 0.3.5 adds the default-off **Auto Capture** setting under Settings → Capture. It monitors only future clipboard changes and new images in a user-authorized screenshot folder, retains native Finder transfer grants for copied files, stores best-effort source-application metadata, excludes DaBin and common password managers by default, and stops pending work immediately when paused or disabled. Automatic links never request website previews. The first-enable explanation describes local-only storage and the editable exclusions list.
+
+The fourth successfully recorded automatic action in a fixed local clock hour becomes one expandable Daily summary. A stable outer identity preserves the feed anchor across expand/collapse, the count updates from durable records, previous-day summaries include their date, and the minus control has the exact accessibility label **Collapse actions**. Successful complete actions alone trigger the reused, click-through robot panel on the hardware primary display; partial and failed actions do not. The panel stays inside safe display geometry, does not become key or main, is excluded from screen capture, combines burst counts and follows Reduce Motion.
+
+The exact optimized source passed **26/26 registered Release suites and 2,038 checks**. Focused coverage includes **41 Auto Capture service checks**, **116 clipboard/file intake checks**, **25 hourly-grouping checks**, **25 confirmation-presenter checks**, **105 weekly-state checks**, **214 general window checks across two real displays**, **110 filter-resize checks**, **110 robot/drop checks** and **138 Daily-capture checks**. Tests verify default-off state, no startup import, immediate Pause/Off cancellation, missing/revoked folder access, excluded-app transitions, activity-time screenshot attribution, opposite-channel image deduplication, full file-write/decode settling, PDF exclusion, Finder sandbox-grant retention, multi-file grouping and success-only confirmation.
+
+Fresh rendering passed **32 production board views**. Original-resolution review covered Auto Capture Settings and collapsed/expanded hourly groups in light and dark appearances, including native 2× Settings samples. The refreshed one-page A4 guide passed extraction, bounds and visual checks; its tracked, packaged and standalone copies are byte-identical.
+
+The optimized ARM64 direct build is **0.3.5 (30)** with source fingerprint `098cfbd3fcc749bce73265e644f92aa48000f789da501b21590eb148d57f7f72` and executable SHA-256 `70ffc44111382fbf9cf63a4e2a22383783681b45e61d8e63dc320f0a2b1230a9`. The verified update ZIP is **3,197,682 bytes**, SHA-256 `9b283809330946d3ff58faeab30258502e6478717f80c6c417c36d1fcdfbd5cd`. Packaging passed isolated fresh install, replacement, backup, signature, extraction, manifest round trip, exact executable identity and the sandbox-compatible document handoff.
+
+Static Store packaging passed **20/20** checks. App Store release preflight retains two external prerequisites: an Apple Developer Team ID and full Xcode. The selected screenshot-folder monitor treats each new image in that folder as a screenshot, so the UI and guide recommend a dedicated screenshot folder; source attribution remains best effort. No Store archive or upload was performed.
+
+[0.3.5 evidence index](../docs/qa/0.3.5/README.md) · [Full optimized run](../docs/qa/0.3.5/full-run/report.json) · [Release renders](../docs/qa/0.3.5/release-ui-renders.json) · [Build receipt](../docs/qa/0.3.5/build-receipt-v0.3.5.json) · [Update manifest](../docs/qa/0.3.5/update-manifest-v0.3.5.json) · [Static Store preflight](../docs/qa/0.3.5/app-store-preflight-static-v0.3.5.log).
+
 ## Daily / Weekly toggle and sandboxed updater — 0.3.4 (29)
 
 DaBin 0.3.4 carries forward the compact native **Daily / Weekly** segmented control and supersedes 0.3.3. Daily → Weekly opens seven days ending on the selected date. Weekly → Daily preserves the selected date, type filter, Daily scroll target and unsaved drafts. The centered date, weekly day headings, Back navigation, directional panel transition and Reduce Motion behavior remain available.

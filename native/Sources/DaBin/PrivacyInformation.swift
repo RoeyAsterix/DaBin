@@ -31,7 +31,7 @@ enum PrivacyInformation {
               !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
             return """
             ## Your data
-            DaBin saves content you explicitly add on this Mac. It has no account, analytics, ads or cloud sync. Optional link previews contact the websites of saved links and are off by default. You can disable them in Settings. Captures remain locally until you remove the app's data folder.
+            DaBin saves content you explicitly add on this Mac. Auto Capture is off by default; if you enable it, DaBin can save later clipboard changes and new images from a screenshot folder you authorize. Pause or turn it off to stop monitoring. DaBin has no account, analytics, ads or cloud sync. Optional previews for manually saved links may contact those websites and are off by default. Automatic links never fetch previews. Captures remain locally until you remove the app's data folder.
 
             ## Privacy information unavailable
             The detailed privacy document could not be loaded from this app installation. Keep the local data folder intact and reinstall DaBin to restore the full policy and removal instructions.
