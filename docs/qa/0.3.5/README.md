@@ -13,6 +13,10 @@ This directory records the final source, functional, visual, package, guide and 
 - The ARM64 Release build is 0.3.5 (30), source fingerprint `098cfbd3fcc749bce73265e644f92aa48000f789da501b21590eb148d57f7f72`, executable SHA-256 `70ffc44111382fbf9cf63a4e2a22383783681b45e61d8e63dc320f0a2b1230a9`.
 - The update ZIP is 3,197,682 bytes, SHA-256 `9b283809330946d3ff58faeab30258502e6478717f80c6c417c36d1fcdfbd5cd`.
 - The refreshed A4 one-page guide is 299,724 bytes, SHA-256 `b0068c47a2b72187f07027d949d874148791bed4929d0826d0efed5e3192353a`; its packaged and repository copies are byte-identical.
+- Release [v0.3.5](https://github.com/RoeyAsterix/DaBin/releases/tag/v0.3.5) is public and latest. Unauthenticated requests returned HTTP 200 for the repository, release, all four assets and latest manifest; each downloaded asset was byte-identical to the verified local release.
+- The installed 0.3.4 app discovered, downloaded and installed the public 0.3.5 package through its native updater. The installed app and embedded helper pass strict signature checks, the executable matches the release receipt, one ARM64 DaBin process is running, the 0.3.4 backup is valid, and the Desktop link is unchanged.
+- The live Settings view reports **DaBin 0.3.5 (30)**, **Auto Capture: Off**, the exact setting description and the default-exclusion explanation. A subsequent update check reports that 0.3.5 is current.
+- All eight existing user payload files remained byte-identical. First launch regenerated 21 generated sidecars for seven captures to add schema-4 capture-origin metadata; reconstructing the prior JSON and Markdown from that single migration matched all pre-install hashes exactly.
 - Static App Store packaging passed **20/20**. Submission remains blocked by the owner's Apple Developer Team ID and a full Xcode installation.
 
 The direct package is locally ad-hoc signed for this Mac. Developer ID signing and notarization, or Mac App Store signing, remain the public-distribution trust boundary.
@@ -27,3 +31,5 @@ The direct package is locally ad-hoc signed for this Mac. Developer ID signing a
 - `quick-guide-layout-check.json`: one-page A4 bounds and extraction result.
 - `app-store-preflight-static-v0.3.5.log`: 20 passing source packaging checks.
 - `app-store-preflight-release-v0.3.5.log`: the two external signing/tooling prerequisites.
+- `release-publication.json`: public release metadata and unauthenticated byte-for-byte asset checks.
+- `live-install-v0.3.5.json`: native updater path, installed app identity, backup, payload preservation, schema migration, preferences, runtime and Desktop-link checks.

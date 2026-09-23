@@ -1,0 +1,119 @@
+{
+  "archive": {
+    "afterFileCount": 29,
+    "allPayloadFilesByteIdentical": true,
+    "allSevenLegacyJSONSnapshotsReconstructExactly": true,
+    "allSevenLegacyMarkdownSnapshotsReconstructExactly": true,
+    "beforeFileCount": 29,
+    "captureCount": 7,
+    "changedGeneratedSidecars": [
+      "2026/09 September/22 Tuesday September 2026/22-08-53 - 1C38B842-CF16-452A-BC33-3BC839B47315/.dabin-generated.json",
+      "2026/09 September/22 Tuesday September 2026/22-08-53 - 1C38B842-CF16-452A-BC33-3BC839B47315/Capture.json",
+      "2026/09 September/22 Tuesday September 2026/22-08-53 - 1C38B842-CF16-452A-BC33-3BC839B47315/Capture.md",
+      "2026/09 September/22 Tuesday September 2026/22-10-07 - 5AD25AD9-6A68-4585-8322-1D91F6C00E0F/.dabin-generated.json",
+      "2026/09 September/22 Tuesday September 2026/22-10-07 - 5AD25AD9-6A68-4585-8322-1D91F6C00E0F/Capture.json",
+      "2026/09 September/22 Tuesday September 2026/22-10-07 - 5AD25AD9-6A68-4585-8322-1D91F6C00E0F/Capture.md",
+      "2026/09 September/22 Tuesday September 2026/22-12-09 - 059A7F10-6217-4235-9934-3FD81772B5D0/.dabin-generated.json",
+      "2026/09 September/22 Tuesday September 2026/22-12-09 - 059A7F10-6217-4235-9934-3FD81772B5D0/Capture.json",
+      "2026/09 September/22 Tuesday September 2026/22-12-09 - 059A7F10-6217-4235-9934-3FD81772B5D0/Capture.md",
+      "2026/09 September/23 Wednesday September 2026/08-08-24 - 91F758A9-CC59-434E-8D77-A0FCC57071B3/.dabin-generated.json",
+      "2026/09 September/23 Wednesday September 2026/08-08-24 - 91F758A9-CC59-434E-8D77-A0FCC57071B3/Capture.json",
+      "2026/09 September/23 Wednesday September 2026/08-08-24 - 91F758A9-CC59-434E-8D77-A0FCC57071B3/Capture.md",
+      "2026/09 September/23 Wednesday September 2026/08-09-58 - 3A1FB3E5-C19D-4B7A-8F54-169DD8831ECE/.dabin-generated.json",
+      "2026/09 September/23 Wednesday September 2026/08-09-58 - 3A1FB3E5-C19D-4B7A-8F54-169DD8831ECE/Capture.json",
+      "2026/09 September/23 Wednesday September 2026/08-09-58 - 3A1FB3E5-C19D-4B7A-8F54-169DD8831ECE/Capture.md",
+      "2026/09 September/23 Wednesday September 2026/08-10-02 - CCC39425-71AA-4BAF-86BA-5F92955A7462/.dabin-generated.json",
+      "2026/09 September/23 Wednesday September 2026/08-10-02 - CCC39425-71AA-4BAF-86BA-5F92955A7462/Capture.json",
+      "2026/09 September/23 Wednesday September 2026/08-10-02 - CCC39425-71AA-4BAF-86BA-5F92955A7462/Capture.md",
+      "2026/09 September/23 Wednesday September 2026/08-10-07 - 94E08766-2317-47F3-8B56-F7D695331CF5/.dabin-generated.json",
+      "2026/09 September/23 Wednesday September 2026/08-10-07 - 94E08766-2317-47F3-8B56-F7D695331CF5/Capture.json",
+      "2026/09 September/23 Wednesday September 2026/08-10-07 - 94E08766-2317-47F3-8B56-F7D695331CF5/Capture.md"
+    ],
+    "changedPayloadFiles": [],
+    "generatedSidecarsMigratedCount": 21,
+    "migrationExplanation": "On first 0.3.5 launch, DaBin deterministically regenerated seven record sidecars from schema 3 to schema 4 to add manual capture-origin metadata. User payloads were not rewritten.",
+    "onlyExpectedGeneratedSidecarsChanged": true,
+    "path": "/Users/roeylibfeld/Library/Containers/com.dabin.mac/Data/Library/Application Support/DaBin/Archive",
+    "payloadFileCount": 8,
+    "uniqueCaptureIDs": 7
+  },
+  "checkedAtUTC": "2026-09-23T20:58:48.492308+00:00",
+  "desktopLink": {
+    "isSymlink": true,
+    "path": "/Users/roeylibfeld/Desktop/DaBin.app",
+    "target": "/Users/roeylibfeld/Applications/DaBin.app",
+    "unchanged": true
+  },
+  "embeddedUpdater": {
+    "build": "30",
+    "path": "/Users/roeylibfeld/Applications/DaBin.app/Contents/Helpers/DaBin Update.app",
+    "strictDeepSignatureVerified": true,
+    "version": "0.3.5"
+  },
+  "installation": {
+    "fromBuild": "29",
+    "fromVersion": "0.3.4",
+    "method": "public in-app update",
+    "oldInstalledHelperAcceptedExactPublishedPackage": true,
+    "packageSHA256": "9b283809330946d3ff58faeab30258502e6478717f80c6c417c36d1fcdfbd5cd",
+    "steps": [
+      "Settings \u2192 Software updates",
+      "Check for updates",
+      "Download & install",
+      "Update"
+    ],
+    "toBuild": "30",
+    "toVersion": "0.3.5"
+  },
+  "installedApp": {
+    "architecture": "arm64",
+    "build": "30",
+    "executableSHA256": "70ffc44111382fbf9cf63a4e2a22383783681b45e61d8e63dc320f0a2b1230a9",
+    "matchesReleaseExecutable": true,
+    "path": "/Users/roeylibfeld/Applications/DaBin.app",
+    "sourceFingerprint": "098cfbd3fcc749bce73265e644f92aa48000f789da501b21590eb148d57f7f72",
+    "strictDeepSignatureVerified": true,
+    "version": "0.3.5"
+  },
+  "liveUI": {
+    "autoCaptureToggle": "off",
+    "defaultExclusionExplanationVisible": true,
+    "description": "Automatically save screenshots and copied content to DaBin.",
+    "postInstallUpdateCheck": "You\u2019re up to date with DaBin 0.3.5.",
+    "versionText": "DaBin 0.3.5 (30)"
+  },
+  "passed": true,
+  "preferences": {
+    "afterSHA256": "6fdafb4b336d6820f1c2867113e16fdbea881e9fdee1d5e6a94105416d079aa1",
+    "autoCaptureEnabledKeyPresent": false,
+    "autoCapturePausedKeyPresent": false,
+    "autoCaptureStatus": "disabled",
+    "beforeSHA256": "7d2b9ba45d1a79da2b823571f62bbc72a1161cc8c9fcb1de639e463cd8595196",
+    "changeExplanation": "First launch persisted the new Auto Capture status as disabled. Existing visible preferences were checked before and after update.",
+    "existingVisiblePreferencesPreserved": {
+      "backgroundOpacity": "100%",
+      "darkMode": "on",
+      "linkPreviews": "off",
+      "robotHome": "Below camera island",
+      "theme": "Purple"
+    },
+    "fileChanged": true,
+    "liveAutoCaptureSwitchOff": true,
+    "path": "/Users/roeylibfeld/Library/Containers/com.dabin.mac/Data/Library/Preferences/com.dabin.mac.plist"
+  },
+  "previousBackup": {
+    "build": "29",
+    "executableSHA256": "fbe81f1c063795112596e43a4ddcb7d187d51903a8d87d3177f15c2ddd66ea99",
+    "matchesPreinstallExecutable": true,
+    "path": "/Users/roeylibfeld/Applications/.DaBinBackups/20260923-235237-0E540B5E.app",
+    "strictDeepSignatureVerified": true,
+    "version": "0.3.4"
+  },
+  "remainingHandoffDocuments": [],
+  "runtime": {
+    "oneInstalledDaBinProcess": true,
+    "runningPIDs": [
+      "96091"
+    ]
+  }
+}

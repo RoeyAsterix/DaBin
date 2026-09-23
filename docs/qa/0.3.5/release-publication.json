@@ -1,0 +1,114 @@
+{
+  "allExpectedAssetsByteIdentical": true,
+  "assets": [
+    {
+      "digest": "sha256:9b283809330946d3ff58faeab30258502e6478717f80c6c417c36d1fcdfbd5cd",
+      "name": "DaBin-0.3.5-Update.zip",
+      "size": 3197682,
+      "url": "https://github.com/RoeyAsterix/DaBin/releases/download/v0.3.5/DaBin-0.3.5-Update.zip"
+    },
+    {
+      "digest": "sha256:91ffaf9bca4576fb50c3d6ee0fa5561bcdef6dd617ea0292444102a100e1b1ce",
+      "name": "DaBin-update.json",
+      "size": 591,
+      "url": "https://github.com/RoeyAsterix/DaBin/releases/download/v0.3.5/DaBin-update.json"
+    },
+    {
+      "digest": "sha256:b0068c47a2b72187f07027d949d874148791bed4929d0826d0efed5e3192353a",
+      "name": "DaBin-Quick-Guide.pdf",
+      "size": 299724,
+      "url": "https://github.com/RoeyAsterix/DaBin/releases/download/v0.3.5/DaBin-Quick-Guide.pdf"
+    },
+    {
+      "digest": "sha256:aeec27a0f254b0dccc5211b19acd459470614d85b6cb49af7b867649e86bd0ee",
+      "name": "RELEASE_NOTES_0.3.5.md",
+      "size": 2720,
+      "url": "https://github.com/RoeyAsterix/DaBin/releases/download/v0.3.5/RELEASE_NOTES_0.3.5.md"
+    }
+  ],
+  "checkedAtUTC": "2026-09-23T20:50:12.835547+00:00",
+  "latestReleaseTag": "v0.3.5",
+  "release": {
+    "isDraft": false,
+    "isPrerelease": false,
+    "name": "DaBin 0.3.5",
+    "publishedAt": "2026-09-23T20:49:22Z",
+    "sourceCommit": "7538a21a8aa3764893c07afec21f11f6d42e416e",
+    "tag": "v0.3.5",
+    "targetCommitish": "main",
+    "url": "https://github.com/RoeyAsterix/DaBin/releases/tag/v0.3.5"
+  },
+  "unauthenticatedPublicChecks": [
+    {
+      "bytes": 279985,
+      "finalURL": "https://github.com/RoeyAsterix/DaBin",
+      "label": "repository",
+      "sha256": "7681f078229b94c6b53ebbb35c61ac45633db54a250a995e62863b8495fc7dbc",
+      "status": 200,
+      "url": "https://github.com/RoeyAsterix/DaBin"
+    },
+    {
+      "bytes": 204898,
+      "finalURL": "https://github.com/RoeyAsterix/DaBin/releases/tag/v0.3.5",
+      "label": "release",
+      "sha256": "71ff4fada82b6c85cc548290b9716b47bc18c4748e46b10e71c51efc41efbf7f",
+      "status": 200,
+      "url": "https://github.com/RoeyAsterix/DaBin/releases/tag/v0.3.5"
+    },
+    {
+      "byteIdentical": true,
+      "bytes": 3197682,
+      "expectedBytes": 3197682,
+      "expectedSHA256": "9b283809330946d3ff58faeab30258502e6478717f80c6c417c36d1fcdfbd5cd",
+      "finalURL": "https://release-assets.githubusercontent.com/github-production-release-asset/1383499467/13b86bd4-abae-4c8a-b465-4611bbc1a2e5?sp=r&sv=2018-11-09&sr=b&spr=https&se=2026-09-23T21%3A42%3A16Z&rscd=attachment%3B+filename%3DDaBin-0.3.5-Update.zip&rsct=application%2Foctet-stream&skoid=96c2d410-5711-43a1-aedd-ab1947aa7ab0&sktid=398a6654-997b-47e9-b12b-9515b896b4de&skt=2026-09-23T20%3A41%3A35Z&ske=2026-09-23T21%3A42%3A16Z&sks=b&skv=2018-11-09&sig=RrQjThd7Hi6iG%2BLCnvuebltJx%2FHY6CEKLQZXF4KtotY%3D&jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmVsZWFzZS1hc3NldHMuZ2l0aHVidXNlcmNvbnRlbnQuY29tIiwia2V5Ijoia2V5MSIsImV4cCI6MTc5MDE5NjkwOSwibmJmIjoxNzkwMTk2NjA5LCJwYXRoIjoicmVsZWFzZWFzc2V0cHJvZHVjdGlvbi5ibG9iLmNvcmUud2luZG93cy5uZXQifQ.vEugRA-RtKVN-VmOMUDwc5kXwXqn7_bWrEKDXWdeDGA&response-content-disposition=attachment%3B%20filename%3DDaBin-0.3.5-Update.zip&response-content-type=application%2Foctet-stream",
+      "label": "DaBin-0.3.5-Update.zip",
+      "sha256": "9b283809330946d3ff58faeab30258502e6478717f80c6c417c36d1fcdfbd5cd",
+      "status": 200,
+      "url": "https://github.com/RoeyAsterix/DaBin/releases/download/v0.3.5/DaBin-0.3.5-Update.zip"
+    },
+    {
+      "byteIdentical": true,
+      "bytes": 591,
+      "expectedBytes": 591,
+      "expectedSHA256": "91ffaf9bca4576fb50c3d6ee0fa5561bcdef6dd617ea0292444102a100e1b1ce",
+      "finalURL": "https://release-assets.githubusercontent.com/github-production-release-asset/1383499467/c5e0cb66-57a8-477e-8b29-a1413fe6c76a?sp=r&sv=2018-11-09&sr=b&spr=https&se=2026-09-23T21%3A47%3A38Z&rscd=attachment%3B+filename%3DDaBin-update.json&rsct=application%2Foctet-stream&skoid=96c2d410-5711-43a1-aedd-ab1947aa7ab0&sktid=398a6654-997b-47e9-b12b-9515b896b4de&skt=2026-09-23T20%3A47%3A00Z&ske=2026-09-23T21%3A47%3A38Z&sks=b&skv=2018-11-09&sig=N9EGcChzvfUlMjP%2FypY15wqQ6ZM4AFS7mxWAVDa%2ByP4%3D&jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmVsZWFzZS1hc3NldHMuZ2l0aHVidXNlcmNvbnRlbnQuY29tIiwia2V5Ijoia2V5MSIsImV4cCI6MTc5MDE5NjkxMCwibmJmIjoxNzkwMTk2NjEwLCJwYXRoIjoicmVsZWFzZWFzc2V0cHJvZHVjdGlvbi5ibG9iLmNvcmUud2luZG93cy5uZXQifQ.ed9J0TMPDVYLJgh0y7cL2eK-UUpuuJJy5_NlR26CePA&response-content-disposition=attachment%3B%20filename%3DDaBin-update.json&response-content-type=application%2Foctet-stream",
+      "label": "DaBin-update.json",
+      "sha256": "91ffaf9bca4576fb50c3d6ee0fa5561bcdef6dd617ea0292444102a100e1b1ce",
+      "status": 200,
+      "url": "https://github.com/RoeyAsterix/DaBin/releases/download/v0.3.5/DaBin-update.json"
+    },
+    {
+      "byteIdentical": true,
+      "bytes": 299724,
+      "expectedBytes": 299724,
+      "expectedSHA256": "b0068c47a2b72187f07027d949d874148791bed4929d0826d0efed5e3192353a",
+      "finalURL": "https://release-assets.githubusercontent.com/github-production-release-asset/1383499467/b36eb881-60bf-430a-a5d3-a0f235c9c605?sp=r&sv=2018-11-09&sr=b&spr=https&se=2026-09-23T21%3A43%3A56Z&rscd=attachment%3B+filename%3DDaBin-Quick-Guide.pdf&rsct=application%2Foctet-stream&skoid=96c2d410-5711-43a1-aedd-ab1947aa7ab0&sktid=398a6654-997b-47e9-b12b-9515b896b4de&skt=2026-09-23T20%3A43%3A34Z&ske=2026-09-23T21%3A43%3A56Z&sks=b&skv=2018-11-09&sig=Z89Yomc%2FEJSrAcFQaAKOD6YvTMo8pAybAaeHr8qS9OA%3D&jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmVsZWFzZS1hc3NldHMuZ2l0aHVidXNlcmNvbnRlbnQuY29tIiwia2V5Ijoia2V5MSIsImV4cCI6MTc5MDE5NjkxMSwibmJmIjoxNzkwMTk2NjExLCJwYXRoIjoicmVsZWFzZWFzc2V0cHJvZHVjdGlvbi5ibG9iLmNvcmUud2luZG93cy5uZXQifQ.YZk31KpzD_wbswaUeUpoS-8q3rwAQAsXgjLZMDM0M-A&response-content-disposition=attachment%3B%20filename%3DDaBin-Quick-Guide.pdf&response-content-type=application%2Foctet-stream",
+      "label": "DaBin-Quick-Guide.pdf",
+      "sha256": "b0068c47a2b72187f07027d949d874148791bed4929d0826d0efed5e3192353a",
+      "status": 200,
+      "url": "https://github.com/RoeyAsterix/DaBin/releases/download/v0.3.5/DaBin-Quick-Guide.pdf"
+    },
+    {
+      "byteIdentical": true,
+      "bytes": 2720,
+      "expectedBytes": 2720,
+      "expectedSHA256": "aeec27a0f254b0dccc5211b19acd459470614d85b6cb49af7b867649e86bd0ee",
+      "finalURL": "https://release-assets.githubusercontent.com/github-production-release-asset/1383499467/3a32de0c-a230-4acb-a9ae-cb2fad5c8169?sp=r&sv=2018-11-09&sr=b&spr=https&se=2026-09-23T21%3A27%3A35Z&rscd=attachment%3B+filename%3DRELEASE_NOTES_0.3.5.md&rsct=application%2Foctet-stream&skoid=96c2d410-5711-43a1-aedd-ab1947aa7ab0&sktid=398a6654-997b-47e9-b12b-9515b896b4de&skt=2026-09-23T20%3A26%3A51Z&ske=2026-09-23T21%3A27%3A35Z&sks=b&skv=2018-11-09&sig=Pth4quZROBhx4eksGYZ2UmtrRmt0%2Fq4uTyQYEHPAC4g%3D&jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmVsZWFzZS1hc3NldHMuZ2l0aHVidXNlcmNvbnRlbnQuY29tIiwia2V5Ijoia2V5MSIsImV4cCI6MTc5MDE5NjkxMiwibmJmIjoxNzkwMTk2NjEyLCJwYXRoIjoicmVsZWFzZWFzc2V0cHJvZHVjdGlvbi5ibG9iLmNvcmUud2luZG93cy5uZXQifQ.atpcf2APRilaKTVkHvL_SqAjVzTXtGfQyS4dEU1H0Gs&response-content-disposition=attachment%3B%20filename%3DRELEASE_NOTES_0.3.5.md&response-content-type=application%2Foctet-stream",
+      "label": "RELEASE_NOTES_0.3.5.md",
+      "sha256": "aeec27a0f254b0dccc5211b19acd459470614d85b6cb49af7b867649e86bd0ee",
+      "status": 200,
+      "url": "https://github.com/RoeyAsterix/DaBin/releases/download/v0.3.5/RELEASE_NOTES_0.3.5.md"
+    },
+    {
+      "byteIdentical": true,
+      "bytes": 591,
+      "expectedBytes": 591,
+      "expectedSHA256": "91ffaf9bca4576fb50c3d6ee0fa5561bcdef6dd617ea0292444102a100e1b1ce",
+      "finalURL": "https://release-assets.githubusercontent.com/github-production-release-asset/1383499467/c5e0cb66-57a8-477e-8b29-a1413fe6c76a?sp=r&sv=2018-11-09&sr=b&spr=https&se=2026-09-23T21%3A47%3A38Z&rscd=attachment%3B+filename%3DDaBin-update.json&rsct=application%2Foctet-stream&skoid=96c2d410-5711-43a1-aedd-ab1947aa7ab0&sktid=398a6654-997b-47e9-b12b-9515b896b4de&skt=2026-09-23T20%3A47%3A00Z&ske=2026-09-23T21%3A47%3A38Z&sks=b&skv=2018-11-09&sig=N9EGcChzvfUlMjP%2FypY15wqQ6ZM4AFS7mxWAVDa%2ByP4%3D&jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmVsZWFzZS1hc3NldHMuZ2l0aHVidXNlcmNvbnRlbnQuY29tIiwia2V5Ijoia2V5MSIsImV4cCI6MTc5MDE5NjkxMCwibmJmIjoxNzkwMTk2NjEwLCJwYXRoIjoicmVsZWFzZWFzc2V0cHJvZHVjdGlvbi5ibG9iLmNvcmUud2luZG93cy5uZXQifQ.ed9J0TMPDVYLJgh0y7cL2eK-UUpuuJJy5_NlR26CePA&response-content-disposition=attachment%3B%20filename%3DDaBin-update.json&response-content-type=application%2Foctet-stream",
+      "label": "latest-manifest",
+      "sha256": "91ffaf9bca4576fb50c3d6ee0fa5561bcdef6dd617ea0292444102a100e1b1ce",
+      "status": 200,
+      "url": "https://github.com/RoeyAsterix/DaBin/releases/latest/download/DaBin-update.json"
+    }
+  ]
+}
