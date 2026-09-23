@@ -12,7 +12,11 @@ The optimized ARM64 direct build is **0.3.6 (31)** with source fingerprint `783f
 
 Static Store packaging passed **20/20** checks. App Store release preflight retains two external prerequisites: an Apple Developer Team ID and full Xcode. No Store archive or upload was performed.
 
-[0.3.6 evidence index](../docs/qa/0.3.6/README.md) · [Full optimized run](../docs/qa/0.3.6/full-run/report.json) · [Release renders](../docs/qa/0.3.6/release-ui-renders.json) · [Build receipt](../docs/qa/0.3.6/build-receipt-v0.3.6.json) · [Update manifest](../docs/qa/0.3.6/update-manifest-v0.3.6.json) · [Static Store preflight](../docs/qa/0.3.6/app-store-preflight-static-v0.3.6.log).
+Release [v0.3.6](https://github.com/RoeyAsterix/DaBin/releases/tag/v0.3.6) is public and latest. Unauthenticated requests returned HTTP 200 for the repository, release, four assets and latest manifest; every expected asset was byte-identical to the verified local release. The installed 0.3.5 app then discovered, downloaded and installed the public 0.3.6 package through the native updater. The final app and helper pass strict signature checks, one ARM64 DaBin process is running, the exact 0.3.5 app is backed up, the Desktop link is intact, and a subsequent update check reports that 0.3.6 is current. Live Daily inspection showed the new thin rounded card frame.
+
+All **29 existing archive files** and the preferences file remained byte-identical. The visual-only update required no archive migration and preserved the existing dark mode, opacity, theme, link-preview, robot-placement and default-off Auto Capture settings.
+
+[0.3.6 evidence index](../docs/qa/0.3.6/README.md) · [Publication](../docs/qa/0.3.6/release-publication.json) · [Live installation](../docs/qa/0.3.6/live-install-v0.3.6.json) · [Full optimized run](../docs/qa/0.3.6/full-run/report.json) · [Release renders](../docs/qa/0.3.6/release-ui-renders.json) · [Build receipt](../docs/qa/0.3.6/build-receipt-v0.3.6.json) · [Update manifest](../docs/qa/0.3.6/update-manifest-v0.3.6.json) · [Static Store preflight](../docs/qa/0.3.6/app-store-preflight-static-v0.3.6.log).
 
 ## Auto Capture — 0.3.5 (30)
 
