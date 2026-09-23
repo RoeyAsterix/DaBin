@@ -10,6 +10,10 @@ The default corner trigger is 9 logical points along each edge, polled every 100
 
 No persistent menu-bar item was added, to honor complete hiding at rest. Reopening DaBin, its active-app menu, the focused robot's context menu, and keyboard actions provide recovery. A system-wide hotkey is not registered. OS Hot Corners may activate at the same corners; this app does not change system settings.
 
+## Current Daily/Weekly navigation
+
+The date row uses one compact native segmented control labeled **Daily** and **Weekly**. Daily → Weekly opens the seven-day range ending on `selectedDay`. Weekly → Daily changes only the route, so it returns to the same selected day without resetting the active type filter, Daily scroll position or unsaved drafts. Re-selecting the active segment is idempotent. The centered date continues to open Weekly, and a weekly day heading or Back returns to Daily.
+
 ## Update 0.3.2
 
 The direct update launcher sets `NSWorkspace.OpenConfiguration.createsNewApplicationInstance` before opening the embedded helper. This prevents LaunchServices from reusing a helper process without forwarding the verified package path and SHA-256 arguments. The helper still performs its own checksum, layout, architecture and signature validation before presenting confirmation. Failure alerts now include the underlying localized error so a rejected handoff can be diagnosed without a terminal.
@@ -26,7 +30,7 @@ The transient mascot is rebuilt as `RobotCharacterView`, a native layer hierarch
 
 ## Update 0.1.19
 
-Daily's Today control now calls `showCurrentWeek()`, which explicitly opens the weekly route and selects the current seven-day range regardless of capture count or filter. The weekly control reads This Week and restores that current range when browsing history. The centered Daily date still opens a week ending on the selected day; a weekly day heading and Back return to Daily.
+In 0.1.19, before the current Daily/Weekly segmented control, Daily's Today control called `showCurrentWeek()`, which explicitly opened the weekly route and selected the current seven-day range regardless of capture count or filter. The weekly control read This Week and restored that current range when browsing history. The centered Daily date still opened a week ending on the selected day; a weekly day heading and Back returned to Daily.
 
 Weekly day columns are always rendered, including empty archives and empty task/type filters. Their entrance keeps its directional slide but no longer starts at zero opacity; content visibility does not depend on an appearance animation completing. The seven-day structure and per-day empty labels remain available throughout layout and resizing.
 

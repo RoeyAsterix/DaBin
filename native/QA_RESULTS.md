@@ -1,5 +1,17 @@
 # DaBin QA cycle — 23 September 2026
 
+## Daily / Weekly toggle — 0.3.3 (28)
+
+DaBin 0.3.3 replaces the separate Today and This Week actions with one native segmented control labeled **Daily** and **Weekly**. Daily → Weekly opens seven days ending on the selected date. Weekly → Daily changes only the presentation route, preserving the selected date, type filter, Daily scroll target and unsaved drafts. The centered date, weekly day headings, Back navigation, directional panel transition and Reduce Motion behavior remain available.
+
+The final optimized source passed **23/23 registered suites and 1,923 checks**. The updated weekly coverage includes **103 state checks**, **78 live window checks**, **110 filter-resize checks** and **214 general window checks across two real displays**. The release renderer passed **28 production board views**, **10 direct native robot artifacts** and **8 additional empty Daily/Weekly views**. Original-resolution inspection covered Daily at 380 points and Weekly at 800, 900 and 1,440 points in light and dark appearances; the toggle labels, selected state, centered date/range and navigation remained readable without overlap.
+
+The optimized ARM64 direct build is **0.3.3 (28)** with source fingerprint `5e265bbda90bc9f4f7d82e5e2fb1a4cbb4134e61ab719abc7f7bd7379a9a3af9` and executable SHA-256 `23bac4cf61a4f960198edc1e04fd41490aef843c99dce9ac0a69018dfe677411`. The verified update ZIP is **2,942,317 bytes**, SHA-256 `36048bd1248c2cfd2593ef2282c121cf2e4d76edbb1a9f3ab7349def6599ce23`. Packaging passed isolated fresh install, replacement, backup, signature, extraction and downloaded-package checks. Its one-page A4 guide passed text extraction, bounds checks and full-page visual inspection; the bundled and repository copies are byte-identical.
+
+Static Store packaging passed **20/20** checks. App Store release preflight retains the same two external prerequisites: an Apple Developer Team ID and full Xcode. No archive or Store upload was performed.
+
+[0.3.3 evidence index](../docs/qa/0.3.3/README.md) · [Full optimized run](../docs/qa/0.3.3/full-run/report.json) · [Release renders](../docs/qa/0.3.3/release-ui-renders.json) · [Empty Daily/Weekly renders](../docs/qa/0.3.3/weekly-entry-renders.json) · [Build receipt](../docs/qa/0.3.3/build-receipt-v0.3.3.json) · [Update manifest](../docs/qa/0.3.3/update-manifest-v0.3.3.json).
+
 ## Updater handoff hotfix — 0.3.2 (27)
 
 DaBin 0.3.2 preserves the complete camera-island placement and robot-personality work from 0.3.1 and fixes the direct updater handoff. A live update rehearsal from the installed 0.3.0 app exposed that LaunchServices could reuse an existing updater-helper instance and omit the verified ZIP path and SHA-256 command-line arguments. The failure occurred before confirmation or replacement. Setting `NSWorkspace.OpenConfiguration.createsNewApplicationInstance` to `true` made the exact package arguments appear in the helper process and produced the correct native confirmation for 0.3.1; that rehearsal was cancelled before installation. The helper now also includes the underlying localized error in its failure alert.

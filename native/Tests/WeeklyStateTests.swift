@@ -74,11 +74,14 @@ struct WeeklyStateTests {
         state.filter = .tasks
         state.dailyScrollID = capture.id
         state.newTaskDraft.text = "An unfinished weekly task draft"
-        state.openWeekly()
-        try expect(state.route == .weekly && state.selectedDay == originalDay && state.filter == .tasks,
-                   "Opening Weekly preserves the selected date and active filter")
+        state.selectTimelineMode(.daily)
+        try expect(state.timelineMode == .daily, "The board starts with Daily selected")
+        state.selectTimelineMode(.weekly)
+        try expect(state.route == .weekly && state.timelineMode == .weekly
+                   && state.selectedDay == originalDay && state.filter == .tasks,
+                   "Selecting Weekly preserves the selected date and active filter")
         try expect(state.newTaskDraft.text == "An unfinished weekly task draft" && state.hasUnsavedDrafts,
-                   "Opening Weekly preserves an existing new-task draft")
+                   "Selecting Weekly preserves an existing new-task draft")
         state.moveWeek(-1)
         try expect(keys(state.weeklyDays) == ["2023-12-21", "2023-12-22", "2023-12-23", "2023-12-24", "2023-12-25", "2023-12-26", "2023-12-27"],
                    "Previous week moves the seven-day range backward by seven calendar days")
@@ -86,6 +89,17 @@ struct WeeklyStateTests {
         state.moveWeek(1)
         try expect(CaptureCalendar.dayString(state.weekEndingDay) == "2024-01-03",
                    "Next week reverses a previous-week step exactly")
+        state.selectTimelineMode(.daily)
+        try expect(state.route == .daily && state.timelineMode == .daily
+                   && state.selectedDay == originalDay && state.filter == .tasks
+                   && state.dailyScrollID == capture.id,
+                   "Selecting Daily restores the same date, filter and scroll target")
+        state.selectTimelineMode(.daily)
+        try expect(state.route == .daily && state.selectedDay == originalDay,
+                   "Selecting the active Daily segment is idempotent")
+        state.selectTimelineMode(.weekly)
+        try expect(state.route == .weekly && CaptureCalendar.dayString(state.weekEndingDay) == "2024-01-03",
+                   "Selecting Weekly again anchors seven days to the preserved Daily date")
         state.openCapture(capture.id, focus: "comment")
         let draft = state.selectedDraft!
         draft.comment = "A comment not saved yet"
@@ -100,7 +114,7 @@ struct WeeklyStateTests {
         state.back()
         try expect(state.route == .daily && state.selectedDay == originalDay && state.filter == .tasks,
                    "Back from Weekly returns to the original Daily date and filter")
-        state.openWeekly()
+        state.selectTimelineMode(.weekly)
         state.dailyScrollID = capture.id
         let chosenDay = state.weeklyDays[2]
         state.selectWeeklyDay(chosenDay)
@@ -166,11 +180,16 @@ struct WeeklyStateTests {
             state.selectedDay = date("2024-01-03 12:00")
             state.weekEndingDay = date("2024-01-03 12:00")
             state.filter = filter
-            state.showCurrentWeek()
-            try expect(state.route == .weekly && state.dayKey == today,
-                       "Today opens Weekly from a historical empty Daily with \(filter.title) selected")
-            try expect(keys(state.weeklyDays) == expected && CaptureCalendar.dayString(state.weekEndingDay) == today,
-                       "An empty \(filter.title) view retains all seven consecutive dates ending today")
+            state.selectTimelineMode(.weekly)
+            try expect(state.route == .weekly && state.dayKey == "2024-01-03",
+                       "The toggle opens Weekly from a historical empty Daily with \(filter.title) selected")
+            let historicalExpected = (0..<7).reversed().map {
+                CaptureCalendar.dayString(Calendar.current.date(byAdding: .day, value: -$0,
+                    to: date("2024-01-03 12:00"))!)
+            }
+            try expect(keys(state.weeklyDays) == historicalExpected
+                       && CaptureCalendar.dayString(state.weekEndingDay) == "2024-01-03",
+                       "An empty \(filter.title) toggle keeps seven dates ending on the selected day")
             try expect(state.filter == filter && state.weeklyDays.allSatisfy { state.captures(for: $0).isEmpty },
                        "An empty \(filter.title) filter leaves seven empty day columns instead of hiding the week")
             let emptyDay = state.weeklyDays[2]
@@ -183,7 +202,7 @@ struct WeeklyStateTests {
         state.refreshCurrentDay(at: date("2024-01-03 23:59"))
         state.showCurrentWeek()
         try expect(state.dayKey == today && keys(state.weeklyDays) == expected,
-                   "Today refreshes a stale current-day clock before opening the empty current week")
+                   "The current-week command refreshes a stale clock before opening the empty current week")
         let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: Date())!
         state.refreshCurrentDay(at: tomorrow)
         try expect(state.dayKey == CaptureCalendar.dayString(tomorrow)

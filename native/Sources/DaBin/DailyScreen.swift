@@ -21,10 +21,7 @@ struct DailyScreen: View {
                             .disabled(Calendar.current.isDateInToday(state.selectedDay))
                     }.frame(width: 68, alignment: .leading)
                     Spacer(minLength: 0)
-                    Button("Today") { state.showCurrentWeek() }
-                        .font(.system(size: 12, weight: .medium)).buttonStyle(.plain).foregroundStyle(accent)
-                        .padding(.vertical, 7).frame(width: 68, alignment: .trailing)
-                        .help("Show This Week")
+                    TimelineModePicker(state: state)
                 }
                 Button { state.openWeekly() } label: {
                     Text(state.selectedDay, format: .dateTime.month(.abbreviated).day().weekday(.abbreviated))

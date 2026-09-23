@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.3.3 — 2026-09-23
+
+- Replaced the separate Today and This Week actions with one compact **Daily / Weekly** segmented control.
+- Anchored Daily → Weekly to the selected day and made Weekly → Daily return without resetting the selected date, type filter, Daily scroll position or unsaved drafts.
+
 ## 0.3.2 — 2026-09-23
 
 - Forced the embedded updater to open as a fresh LaunchServices instance so the verified ZIP path and SHA-256 arguments always reach it.

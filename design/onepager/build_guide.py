@@ -134,7 +134,7 @@ text('START WITH THREE SMALL MOVES',42,355,9,BOLD,PURPLE)
 steps=[
     ('1','Meet your robot','Move your pointer to a screen corner. Or choose <b>Below camera island</b> in Settings so your robot peeks from the notch. It stays hidden while you work.'),
     ('2','Drop or paste','Drop one or several files onto the robot, or hover and press <b>Control-V</b> or <b>Command-V</b>. Files from one move stay together in one card.'),
-    ('3','Open your day','<b>Double-click</b> the robot for Daily, with the newest captures first. Click the <b>date</b> to see seven days side by side.'),
+    ('3','Open your day','<b>Double-click</b> the robot for Daily, with the newest captures first. Use <b>Daily / Weekly</b> to switch between one day and seven.'),
 ]
 for idx,(num,title,body) in enumerate(steps):
     x=42+idx*174
@@ -165,7 +165,7 @@ c.save()
 reader=PdfReader(OUT)
 assert len(reader.pages)==1
 extracted=reader.pages[0].extract_text()
-for required in ['camera island','Control-V','Command-V','Double-click','Comment','Reminder','Completed','GitHub updates','Captures stay local']:
+for required in ['camera island','Control-V','Command-V','Double-click','Daily / Weekly','Comment','Reminder','Completed','GitHub updates','Captures stay local']:
     assert required in extracted, required
 assert '\ufffd' not in extracted
 assert all(b['x']>=30 and b['x']+b['width']<=W-30 and b['top']+b['height']<803 for b in blocks)

@@ -2,7 +2,6 @@ import SwiftUI
 
 @MainActor
 struct WeeklyScreen: View {
-    @Environment(\.daBinAccent) private var accent
     @ObservedObject var state: AppState
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var showCalendar = false
@@ -25,10 +24,7 @@ struct WeeklyScreen: View {
                             .disabled(Calendar.current.isDateInToday(state.weekEndingDay))
                     }
                     Spacer(minLength: 0)
-                    Button("This Week") { state.showCurrentWeek() }
-                        .font(.system(size: 12, weight: .medium)).buttonStyle(.plain)
-                        .foregroundStyle(accent).padding(.vertical, 7)
-                        .help("Show the last seven days ending today")
+                    TimelineModePicker(state: state)
                 }
                 Button { showCalendar.toggle() } label: {
                     HStack(spacing: 7) {

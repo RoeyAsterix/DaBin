@@ -68,6 +68,29 @@ struct SmallIcon: View {
 }
 
 @MainActor
+struct TimelineModePicker: View {
+    @Environment(\.daBinAccent) private var accent
+    @ObservedObject var state: AppState
+
+    private var selection: Binding<BoardTimelineMode> {
+        Binding(get: { state.timelineMode }, set: { state.selectTimelineMode($0) })
+    }
+
+    var body: some View {
+        Picker("Board view", selection: selection) {
+            Text("Daily").tag(BoardTimelineMode.daily)
+            Text("Weekly").tag(BoardTimelineMode.weekly)
+        }
+        .pickerStyle(.segmented)
+        .controlSize(.small)
+        .tint(accent)
+        .frame(width: 108)
+        .help("Switch between one day and seven days")
+        .accessibilityLabel("Board view")
+    }
+}
+
+@MainActor
 struct EmptyMessage: View {
     @Environment(\.daBinAccent) private var accent
     let symbol: String

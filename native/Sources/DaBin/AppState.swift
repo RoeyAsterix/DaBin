@@ -6,6 +6,10 @@ enum BoardRoute: Equatable {
     case daily, weekly, search, detail, reminders, settings, newTask
 }
 
+enum BoardTimelineMode: Hashable {
+    case daily, weekly
+}
+
 enum WeeklyExpansionDirection: Equatable { case left, right }
 
 struct AppStatusMessage: Equatable {
@@ -214,6 +218,19 @@ final class AppState: ObservableObject {
     func openWeekly() {
         weekEndingDay = min(selectedDay, Date())
         route = .weekly
+    }
+
+    var timelineMode: BoardTimelineMode { route == .weekly ? .weekly : .daily }
+
+    func selectTimelineMode(_ mode: BoardTimelineMode) {
+        switch (route, mode) {
+        case (.daily, .weekly):
+            openWeekly()
+        case (.weekly, .daily):
+            route = .daily
+        default:
+            break
+        }
     }
 
     func selectWeeklyDay(_ day: Date) {

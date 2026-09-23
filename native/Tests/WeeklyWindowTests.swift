@@ -37,11 +37,13 @@ private final class WeeklyWindowNotificationClient: ReminderNotificationClient {
         state.selectedDay = Calendar.current.date(byAdding: .day, value: -30, to: Date())!
         settle()
         let compact = controller.board.frame
-        state.showCurrentWeek()
+        let historicalDay = state.selectedDay
+        state.selectTimelineMode(.weekly)
         settle()
-        expect(state.route == .weekly && Calendar.current.isDateInToday(state.weekEndingDay)
-               && Calendar.current.isDateInToday(state.selectedDay),
-               "The Today navigation action opens the current week from a historical empty Daily")
+        expect(state.route == .weekly
+               && Calendar.current.isDate(state.weekEndingDay, inSameDayAs: historicalDay)
+               && Calendar.current.isDate(state.selectedDay, inSameDayAs: historicalDay),
+               "The toggle opens a seven-day view ending on the selected historical day")
         let expanded = controller.board.frame
         expect(expanded.width > compact.width && expanded.height > compact.height,
                "An empty weekly panel still expands to a full weekly layout")
@@ -53,6 +55,15 @@ private final class WeeklyWindowNotificationClient: ReminderNotificationClient {
             expect(controller.board.frame == expanded && state.weeklyDays.count == 7,
                    "Filtering an empty \(filter.title) week keeps its full weekly dimensions and dates")
         }
+        state.selectTimelineMode(.daily)
+        settle()
+        expect(state.route == .daily && state.dailyCaptures.isEmpty && state.filter == .tasks
+               && Calendar.current.isDate(state.selectedDay, inSameDayAs: historicalDay),
+               "The Daily segment preserves the selected day and Tasks filter")
+        expect(controller.board.frame.width == compact.width && controller.board.frame.height == compact.height,
+               "The Daily segment folds the panel back to its compact dimensions")
+        state.selectTimelineMode(.weekly)
+        settle()
         let chosenDay = state.weeklyDays[2]
         state.selectWeeklyDay(chosenDay)
         settle()

@@ -144,10 +144,10 @@ private final class NativeRenderTests: NSObject, NSApplicationDelegate {
             for mode in ["light", "dark"] {
                 state.openDaily()
                 try await snapshot(state, name: "weekly-entry-empty-daily", mode: mode, output: output, height: 290)
-                state.showCurrentWeek()
+                state.selectTimelineMode(.weekly)
                 guard state.route == .weekly, state.weeklyDays.count == 7,
                       state.weeklyDays.allSatisfy({ state.captures(for: $0).isEmpty }) else {
-                    throw RenderError.message("Empty Today action must still open seven days")
+                    throw RenderError.message("Empty Daily/Weekly toggle must still open seven days")
                 }
                 try await snapshot(state, name: "weekly-entry-empty-week", mode: mode, output: output, height: 560, width: 1440)
                 state.filter = .tasks
@@ -232,7 +232,7 @@ private final class NativeRenderTests: NSObject, NSApplicationDelegate {
                     guard capture.isMinimized else { throw RenderError.message("Minimize action did not update production state") }
                 }
                 for capture in store.captures { try store.setMinimized(capture, minimized: false) }
-                state.showCurrentWeek()
+                state.selectTimelineMode(.weekly)
                 try await snapshot(state, name: "capture-actions-week-expanded", mode: mode, output: output, height: 560, width: 1440)
                 for capture in store.captures { state.toggleMinimized(capture) }
                 try await snapshot(state, name: "capture-actions-week-minimized", mode: mode, output: output, height: 560, width: 1440)
@@ -914,7 +914,7 @@ private final class NativeRenderTests: NSObject, NSApplicationDelegate {
             try await snapshot(state, name: "release-minimized-task", mode: mode, output: output,
                                height: CornerGeometry.dailyPanelHeight(for: state))
             state.filter = .all
-            state.showCurrentWeek()
+            state.selectTimelineMode(.weekly)
             try await snapshot(state, name: "release-week", mode: mode, output: output, height: 560, width: 1440)
             try await snapshot(state, name: "release-week-narrow", mode: mode, output: output, height: 560, width: 900)
             state.openSearch()
