@@ -83,6 +83,7 @@ final class AppState: ObservableObject {
     let previews: PreviewService
     let reminders: ReminderService
     let updates: SoftwareUpdateService
+    let robotPlacement: RobotPlacementSettings
     let newTaskDraft = NewTaskDraft()
     @Published var route: BoardRoute = .daily {
         didSet {
@@ -120,11 +121,12 @@ final class AppState: ObservableObject {
     private var currentDayKey = CaptureCalendar.dayString(Date())
 
     init(store: CaptureStore, previews: PreviewService, reminders: ReminderService,
-         updates: SoftwareUpdateService? = nil) {
+         updates: SoftwareUpdateService? = nil, robotPlacement: RobotPlacementSettings? = nil) {
         self.store = store
         self.previews = previews
         self.reminders = reminders
         self.updates = updates ?? SoftwareUpdateService()
+        self.robotPlacement = robotPlacement ?? RobotPlacementSettings(defaults: nil)
         store.objectWillChange.sink { [weak self] _ in
             self?.objectWillChange.send()
         }.store(in: &subscriptions)

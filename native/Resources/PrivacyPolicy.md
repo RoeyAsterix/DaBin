@@ -10,9 +10,9 @@ DaBin has no account, cloud sync, ads, analytics or external AI service. The dev
 
 ## You choose what to capture
 
-The clipboard is read when you explicitly paste into DaBin. Hovering over the robot does not read it. DaBin reads your pointer position to reveal the robot at a screen corner; it does not record your screen or monitor what you type elsewhere.
+The clipboard is read when you explicitly paste into DaBin. Hovering over the robot does not read it. DaBin reads your pointer position to reveal the robot at a screen corner or, if you select it on a compatible Mac, below the built-in camera island. Camera-island placement uses ordinary macOS screen safe-area geometry; it does not use the camera, record your screen or monitor what you type elsewhere.
 
-Files are accessed through your paste or drop. DaBin does not scan your folders. Theme, window position and preview preferences are stored locally.
+Files are accessed through your paste or drop. DaBin does not scan your folders. Theme, window position, robot-home and preview preferences are stored locally.
 
 ## Optional website previews
 
@@ -40,7 +40,7 @@ Choose Remove on a capture and confirm to remove its record, comments, reminder 
 
 To remove all captures, first turn Fetch link previews off and turn off and save any active reminders. Choose Show DaBin data folder below, then quit DaBin. In Finder, move that whole DaBin data folder to Trash. Empty Trash when you are ready to permanently remove it. Do not delete only the database or individual day folders while keeping the rest of the archive.
 
-Removing this data folder removes DaBin's capture index, archive, copied originals, previews and recovery copies together. Original files elsewhere on your Mac, exports and backups are separate and are not removed. Theme and window preferences are stored separately and may remain. Removing the app alone may leave its local data on the Mac. Removal is ordinary file and database deletion; DaBin does not promise forensic secure erasure.
+Removing this data folder removes DaBin's capture index, archive, copied originals, previews and recovery copies together. Original files elsewhere on your Mac, exports and backups are separate and are not removed. Theme, window and robot-home preferences are stored separately and may remain. Removing the app alone may leave its local data on the Mac. Removal is ordinary file and database deletion; DaBin does not promise forensic secure erasure.
 
 ## Backups and security
 

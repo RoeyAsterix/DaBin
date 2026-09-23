@@ -8,6 +8,11 @@ enum ScreenCorner: String, CaseIterable {
     var isTop: Bool { self == .topLeft || self == .topRight }
 }
 
+enum RobotRevealTarget: Equatable {
+    case corner(ScreenCorner)
+    case cameraIsland
+}
+
 enum CornerGeometry {
     /// Preserve the compact single-line size, while leaving enough initial
     /// room for visible card content and its capture actions. Taller boards
@@ -82,6 +87,43 @@ enum CornerGeometry {
         return nil
     }
 
+    /// The physical camera cutout is the gap between macOS' two usable menu-bar
+    /// areas. Display names and model lists are intentionally not used.
+    static func cameraIslandRect(frame: NSRect, safeAreaTop: CGFloat,
+                                 auxiliaryLeft: NSRect?, auxiliaryRight: NSRect?) -> NSRect? {
+        guard safeAreaTop.isFinite, safeAreaTop > 0,
+              let left = auxiliaryLeft, let right = auxiliaryRight,
+              left.maxX.isFinite, right.minX.isFinite,
+              right.minX - left.maxX >= 24 else { return nil }
+        let bottom = max(frame.minY, frame.maxY - safeAreaTop)
+        let candidate = NSRect(x: left.maxX, y: bottom,
+                               width: right.minX - left.maxX,
+                               height: min(safeAreaTop, frame.height))
+        guard candidate.width > 0, candidate.height > 0,
+              frame.insetBy(dx: -1, dy: -1).contains(NSPoint(x: candidate.midX, y: candidate.midY)) else { return nil }
+        return candidate
+    }
+
+    static func cameraIslandRect(on screen: NSScreen) -> NSRect? {
+        cameraIslandRect(frame: screen.frame, safeAreaTop: screen.safeAreaInsets.top,
+                         auxiliaryLeft: screen.auxiliaryTopLeftArea,
+                         auxiliaryRight: screen.auxiliaryTopRightArea)
+    }
+
+    static func cameraIslandTriggerFrame(on screen: NSScreen) -> NSRect? {
+        cameraIslandRect(on: screen).map {
+            $0.insetBy(dx: -10, dy: 0).union(NSRect(x: $0.minX - 10, y: $0.minY - 12,
+                                                   width: $0.width + 20, height: 12))
+        }
+    }
+
+    static func revealTarget(at point: NSPoint, on screen: NSScreen, home: RobotHome) -> RobotRevealTarget? {
+        if home == .cameraIsland, let trigger = cameraIslandTriggerFrame(on: screen) {
+            return trigger.contains(point) ? .cameraIsland : nil
+        }
+        return corner(at: point, in: screen.frame).map(RobotRevealTarget.corner)
+    }
+
     static func robotFrame(corner: ScreenCorner, visible: NSRect) -> NSRect {
         let size = NSSize(width: min(72, visible.width), height: min(88, visible.height))
         return NSRect(x: corner.isRight ? visible.maxX - size.width - 3 : visible.minX + 3,
@@ -89,11 +131,48 @@ enum CornerGeometry {
                       width: size.width, height: size.height)
     }
 
+    static func robotFrame(cameraIsland: NSRect, visible: NSRect) -> NSRect {
+        let size = NSSize(width: min(72, visible.width), height: min(88, visible.height))
+        // Borderless NSWindows resolve their origin to whole display points.
+        // Match that placement up front so geometry and the actual panel agree.
+        let idealX = floor(cameraIsland.midX - size.width / 2)
+        return NSRect(x: min(max(idealX, visible.minX), visible.maxX - size.width),
+                      y: max(visible.minY, visible.maxY - size.height - 3),
+                      width: size.width, height: size.height)
+    }
+
+    static func robotFrame(target: RobotRevealTarget, on screen: NSScreen) -> NSRect {
+        switch target {
+        case .corner(let corner): return robotFrame(corner: corner, visible: screen.visibleFrame)
+        case .cameraIsland:
+            let island = cameraIslandRect(on: screen)
+                ?? NSRect(x: screen.frame.midX, y: screen.visibleFrame.maxY, width: 0, height: 0)
+            return robotFrame(cameraIsland: island, visible: screen.visibleFrame)
+        }
+    }
+
     static func panelFrame(robot: NSRect, visible: NSRect, corner: ScreenCorner, preferredHeight: CGFloat = 500) -> NSRect {
         let width = min(380, max(260, visible.width - 16))
         let height = min(preferredHeight, max(240, visible.height - 16))
         var frame = NSRect(x: corner.isRight ? robot.maxX - width : robot.minX,
                            y: corner.isTop ? robot.minY - height - 6 : robot.maxY + 6,
+                           width: min(width, visible.width), height: min(height, visible.height))
+        frame.origin.x = min(max(frame.minX, visible.minX), visible.maxX - frame.width)
+        frame.origin.y = min(max(frame.minY, visible.minY), visible.maxY - frame.height)
+        return frame
+    }
+
+    static func panelFrame(robot: NSRect, visible: NSRect, target: RobotRevealTarget,
+                           preferredHeight: CGFloat = 500) -> NSRect {
+        guard target == .cameraIsland else {
+            if case .corner(let corner) = target {
+                return panelFrame(robot: robot, visible: visible, corner: corner, preferredHeight: preferredHeight)
+            }
+            return panelFrame(robot: robot, visible: visible, corner: .bottomRight, preferredHeight: preferredHeight)
+        }
+        let width = min(380, max(260, visible.width - 16))
+        let height = min(preferredHeight, max(240, visible.height - 16))
+        var frame = NSRect(x: robot.midX - width / 2, y: robot.minY - height - 6,
                            width: min(width, visible.width), height: min(height, visible.height))
         frame.origin.x = min(max(frame.minX, visible.minX), visible.maxX - frame.width)
         frame.origin.y = min(max(frame.minY, visible.minY), visible.maxY - frame.height)
@@ -169,7 +248,7 @@ final class CornerController: NSObject {
     private var timer: Timer?
     private(set) var isShutDown = false
     private var activeScreen: NSScreen?
-    private var activeCorner: ScreenCorner = .bottomRight
+    private var activeTarget: RobotRevealTarget = .corner(.bottomRight)
     private var dragActive = false
     private var saving = false
     private var lastInteraction = Date.distantPast
@@ -181,6 +260,7 @@ final class CornerController: NSObject {
     private var escapeMonitor: Any?
     private var message: NSPopover?
     private var layoutSubscription: AnyCancellable?
+    private var placementSubscription: AnyCancellable?
     private let placementDefaults: UserDefaults?
     private var boardTopLeft: NSPoint?
     private var boardDragStartFrame: NSRect?
@@ -240,6 +320,9 @@ final class CornerController: NSObject {
         layoutSubscription = state.objectWillChange.debounce(for: .milliseconds(40), scheduler: RunLoop.main).sink { [weak self] _ in
             MainActor.assumeIsolated { self?.resizeBoard() }
         }
+        placementSubscription = state.robotPlacement.$home.dropFirst().sink { [weak self] _ in
+            MainActor.assumeIsolated { self?.robotHomeChanged() }
+        }
         state.reminders.onOpenCapture = { [weak self] id in
             self?.state.openCapture(id); self?.showBoard()
         }
@@ -248,6 +331,8 @@ final class CornerController: NSObject {
         NotificationCenter.default.addObserver(self, selector: #selector(updateBoardVisibility), name: NSWindow.didChangeOcclusionStateNotification, object: board)
         NotificationCenter.default.addObserver(self, selector: #selector(updateBoardVisibility), name: NSApplication.didHideNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(updateBoardVisibility), name: NSApplication.didUnhideNotification, object: nil)
+        NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(accessibilityDisplayOptionsChanged),
+            name: NSWorkspace.accessibilityDisplayOptionsDidChangeNotification, object: nil)
         escapeMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
             if event.keyCode == 53, event.window === self?.board || event.window === self?.bin {
                 // Let native popovers/pickers handle their own Escape first.
@@ -289,9 +374,11 @@ final class CornerController: NSObject {
         boardDragTimer?.invalidate(); boardDragTimer = nil
         stopBoardAnimation()
         layoutSubscription?.cancel(); layoutSubscription = nil
+        placementSubscription?.cancel(); placementSubscription = nil
         if let escapeMonitor { NSEvent.removeMonitor(escapeMonitor) }
         escapeMonitor = nil
         NotificationCenter.default.removeObserver(self)
+        NSWorkspace.shared.notificationCenter.removeObserver(self)
         message?.close(); message = nil
         if let hosting = board.contentView as? DailyCaptureHostingView {
             hosting.clearDropTarget()
@@ -312,18 +399,19 @@ final class CornerController: NSObject {
     func pollPointer(at simulatedPoint: NSPoint? = nil, now: Date = Date(), pressedMouseButtons: Int = NSEvent.pressedMouseButtons) {
         guard !isShutDown else { return }
         let point = simulatedPoint ?? NSEvent.mouseLocation
-        let corner = NSScreen.screens.compactMap { screen -> (NSScreen, ScreenCorner)? in
-            guard let corner = CornerGeometry.corner(at: point, in: screen.frame) else { return nil }
-            return (screen, corner)
+        let target = NSScreen.screens.compactMap { screen -> (NSScreen, RobotRevealTarget)? in
+            guard let target = CornerGeometry.revealTarget(at: point, on: screen,
+                                                           home: state.robotPlacement.home) else { return nil }
+            return (screen, target)
         }.first
-        if corner == nil { suppressUntilExit = false }
+        if target == nil { suppressUntilExit = false }
         // A file or text drag can reach the robot while the board stays open.
         // Moving DaBin's own header must not reveal a second surface.
         let draggingTowardCorner = pressedMouseButtons & 1 != 0 && boardDragStartFrame == nil
-        if let (screen, corner) = corner, !suppressUntilExit,
+        if let (screen, target) = target, !suppressUntilExit,
            (!board.isVisible || draggingTowardCorner), !saving, !dragActive {
             keyboardHold = false
-            reveal(on: screen, corner: corner)
+            reveal(on: screen, target: target)
             updateHoverFocus(at: point, pressedMouseButtons: pressedMouseButtons)
             lastInteraction = now
             return
@@ -332,9 +420,16 @@ final class CornerController: NSObject {
         updateHoverFocus(at: point, pressedMouseButtons: pressedMouseButtons)
         var corridor = bin.frame.insetBy(dx: -12, dy: -12)
         if let screen = activeScreen {
-            let cornerPoint = NSPoint(x: activeCorner.isRight ? screen.frame.maxX : screen.frame.minX,
-                                      y: activeCorner.isTop ? screen.frame.maxY : screen.frame.minY)
-            corridor = corridor.union(NSRect(x: cornerPoint.x - 9, y: cornerPoint.y - 9, width: 18, height: 18))
+            switch activeTarget {
+            case .corner(let corner):
+                let cornerPoint = NSPoint(x: corner.isRight ? screen.frame.maxX : screen.frame.minX,
+                                          y: corner.isTop ? screen.frame.maxY : screen.frame.minY)
+                corridor = corridor.union(NSRect(x: cornerPoint.x - 9, y: cornerPoint.y - 9, width: 18, height: 18))
+            case .cameraIsland:
+                if let trigger = CornerGeometry.cameraIslandTriggerFrame(on: screen) {
+                    corridor = corridor.union(trigger)
+                }
+            }
         }
         if corridor.contains(point) || dragActive || saving {
             lastInteraction = now; return
@@ -378,9 +473,13 @@ final class CornerController: NSObject {
     }
 
     func reveal(on screen: NSScreen, corner: ScreenCorner, focus: Bool = false) {
+        reveal(on: screen, target: .corner(corner), focus: focus)
+    }
+
+    func reveal(on screen: NSScreen, target: RobotRevealTarget, focus: Bool = false) {
         guard !isShutDown else { return }
-        let frame = CornerGeometry.robotFrame(corner: corner, visible: screen.visibleFrame)
-        let changed = activeScreen != screen || activeCorner != corner
+        let frame = CornerGeometry.robotFrame(target: target, on: screen)
+        let changed = activeScreen != screen || activeTarget != target
         if changed { releaseHoverFocus() }
         // A new drop corner must not relocate an already-open board when the
         // incoming capture resizes it. This is only an in-memory anchor; the
@@ -388,19 +487,19 @@ final class CornerController: NSObject {
         if board.isVisible, boardTopLeft == nil {
             boardTopLeft = NSPoint(x: board.frame.minX, y: board.frame.maxY)
         }
-        activeScreen = screen; activeCorner = corner
+        activeScreen = screen; activeTarget = target
         if !bin.isVisible || changed {
             let entering = !bin.isVisible
             bin.setFrame(frame, display: true)
             bin.alphaValue = 1
             bin.orderFrontRegardless()
-            if entering && !NSWorkspace.shared.accessibilityDisplayShouldReduceMotion {
-                let slide = CABasicAnimation(keyPath: "transform.translation.x")
-                slide.fromValue = corner.isRight ? 28 : -28
-                slide.toValue = 0
-                slide.duration = 0.18
-                slide.timingFunction = CAMediaTimingFunction(name: .easeOut)
-                robot.layer?.add(slide, forKey: "peek")
+            if entering || changed {
+                let entrance: RobotEntrance
+                switch target {
+                case .corner(let corner): entrance = corner.isRight ? .right : .left
+                case .cameraIsland: entrance = .top
+                }
+                robot.present(from: entrance)
             }
         }
         if focus {
@@ -417,7 +516,9 @@ final class CornerController: NSObject {
         guard let screen = NSScreen.screens.first(where: { $0.frame.contains(NSEvent.mouseLocation) }) ?? NSScreen.main else { return }
         board.orderOut(nil)
         state.isBoardVisible = false
-        reveal(on: screen, corner: .bottomRight, focus: true)
+        let target: RobotRevealTarget = state.robotPlacement.home == .cameraIsland
+            && CornerGeometry.cameraIslandRect(on: screen) != nil ? .cameraIsland : .corner(.bottomRight)
+        reveal(on: screen, target: target, focus: true)
         lastInteraction = Date()
     }
 
@@ -486,8 +587,9 @@ final class CornerController: NSObject {
         if let topLeft = boardTopLeft {
             return CornerGeometry.movedPanelFrame(topLeft: topLeft, visible: screen.visibleFrame, preferredHeight: boardHeight)
         }
-        let robotFrame = CornerGeometry.robotFrame(corner: activeCorner, visible: screen.visibleFrame)
-        return CornerGeometry.panelFrame(robot: robotFrame, visible: screen.visibleFrame, corner: activeCorner, preferredHeight: boardHeight)
+        let robotFrame = CornerGeometry.robotFrame(target: activeTarget, on: screen)
+        return CornerGeometry.panelFrame(robot: robotFrame, visible: screen.visibleFrame,
+                                         target: activeTarget, preferredHeight: boardHeight)
     }
 
     private func layoutBoard(on screen: NSScreen) {
@@ -653,6 +755,7 @@ final class CornerController: NSObject {
     private func hideRobot() {
         guard !saving && !dragActive else { return }
         hoverFocus = false
+        robot.hideCharacter()
         bin.orderOut(nil)
         keyboardHold = false
     }
@@ -691,7 +794,12 @@ final class CornerController: NSObject {
         popover.contentViewController = NSHostingController(rootView:
             Text(text).font(.system(size: 12)).padding(12).frame(width: 245).fixedSize(horizontal: false, vertical: true)
         )
-        popover.show(relativeTo: robot.bounds, of: robot, preferredEdge: activeCorner.isRight ? .minX : .maxX)
+        let edge: NSRectEdge
+        switch activeTarget {
+        case .corner(let corner): edge = corner.isRight ? .minX : .maxX
+        case .cameraIsland: edge = .minY
+        }
+        popover.show(relativeTo: robot.bounds, of: robot, preferredEdge: edge)
         message = popover
     }
 
@@ -702,6 +810,16 @@ final class CornerController: NSObject {
         lastLayoutRoute = nil
         if board.isVisible { showBoard() }
         else { hideRobot() }
+    }
+
+    private func robotHomeChanged() {
+        suppressUntilExit = false
+        guard !saving, !dragActive else { return }
+        hideRobot()
+    }
+
+    @objc private func accessibilityDisplayOptionsChanged() {
+        robot.refreshMotionPreference()
     }
 
     @objc private func updateBoardVisibility() {

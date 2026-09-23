@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.3.1 — 2026-09-23
+
+- Added **Settings → Your quiet corner → Below camera island** for Macs with a built-in camera island.
+- Used macOS screen safe-area and auxiliary top-region geometry to place the robot below the real camera cutout; displays without that geometry continue using their corners.
+- Rebuilt the transient robot as a native character that peeks in, follows the pointer, welcomes a drop, digests a capture and reacts to successful, partial and failed saves.
+- Added quiet idle blinks, glances and shrugs while the robot is visible, with animation work stopped when it hides.
+- Respected the macOS Reduce Motion setting by keeping the robot's expressions while removing positional, repeated and keyframed movement.
+- Kept the robot-home choice in a local app preference, separate from captures and the movable Daily-board position.
+
 ## 0.3.0 — 2026-09-23
 
 - Added a user-initiated GitHub Releases update check in Settings and the app menu.

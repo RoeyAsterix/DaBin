@@ -2,13 +2,23 @@
 
 ## Latest conversation takes precedence
 
-The attached handoff retains an always-visible, movable widget and separate Capture editor. Both are superseded by the user's latest instruction. This app uses zero visible idle UI, any-corner reveal, direct robot paste/drop, digest, and retreat. There is no move handle or separate capture view. Single click only focuses the robot; there is therefore no delayed single-click composer or double-click flash.
+The attached handoff retains an always-visible, movable widget and separate Capture editor. Both are superseded by the user's latest instruction. This app uses zero visible idle UI, a selectable corner or built-in-camera-island reveal target, direct robot paste/drop, digest, and retreat. There is no move handle or separate capture view. Single click only focuses the robot; there is therefore no delayed single-click composer or double-click flash.
 
-The explicitly opened board remains usable until dismissed. It is one native panel switching among Daily, Week, Search, Detail, Reminders and Settings. Compact views are 380 points wide with height following content, capped at 500; an empty Daily is 290 points. Week expands to at most 1440 × 560 points within the usable display. The transient robot window is 72 × 88 points, using the supplied SVG unchanged. The background outside the native surfaces is transparent. No sidebar or simulated desktop exists.
+The explicitly opened board remains usable until dismissed. It is one native panel switching among Daily, Week, Search, Detail, Reminders and Settings. Compact views are 380 points wide with height following content, capped at 500; an empty Daily is 290 points. Week expands to at most 1440 × 560 points within the usable display. The transient robot window is 72 × 88 points and contains a native AppKit/Core Animation character. The original supplied SVG remains preserved as a handoff resource. The background outside the native surfaces is transparent. No sidebar or simulated desktop exists.
 
-The active corner trigger is 9 logical points along each edge, polled every 100 ms with tolerance in common run-loop modes (including drag tracking). A corridor connects the physical corner to the robot inside the usable screen frame. It permits slow travel across Dock/menu-bar insets. Exit grace is 0.8 seconds; saving, drag interaction and digest feedback keep the target available. One robot is shown at the active corner; it does not duplicate across displays. The panel uses ordinary floating level and never creates a screen-sized input overlay.
+The default corner trigger is 9 logical points along each edge, polled every 100 ms with tolerance in common run-loop modes (including drag tracking). Camera-island mode instead uses a small trigger around the actual top cutout reported by macOS. A corridor connects the active reveal target to the robot inside the usable screen frame and permits slow travel across Dock/menu-bar insets. Exit grace is 0.8 seconds; saving, drag interaction and digest feedback keep the target available. One robot is shown on the active display; it does not duplicate across displays. The panel uses ordinary floating level and never creates a screen-sized input overlay.
 
 No persistent menu-bar item was added, to honor complete hiding at rest. Reopening DaBin, its active-app menu, the focused robot's context menu, and keyboard actions provide recovery. A system-wide hotkey is not registered. OS Hot Corners may activate at the same corners; this app does not change system settings.
+
+## Update 0.3.1
+
+Settings adds a segmented **Robot home** choice under **Your quiet corner**. `RobotPlacementSettings` stores `corners` or `cameraIsland` under the app-owned `DaBin.robotHome.v1` preference. It is independent of the Daily-board position and capture archive. Invalid or absent values resolve to corners without rewriting preferences; tests and renders can use a non-persisting instance. A live choice change dismisses the current transient robot before the next reveal.
+
+`CornerGeometry.cameraIslandRect` combines `NSScreen.safeAreaInsets.top`, `auxiliaryTopLeftArea` and `auxiliaryTopRightArea`. A positive safe-area inset and a valid gap between the two top auxiliary regions identify the built-in camera island. The trigger expands slightly around and below that gap; the 72 × 88 point robot is centered beneath it, enters from the top, and the Daily panel opens below the robot. On any display without valid island geometry, camera-island mode resolves to the established corner triggers. This fallback applies per display, so an attached external monitor continues using corners.
+
+The transient mascot is rebuilt as `RobotCharacterView`, a native layer hierarchy for its body, shell, face, eyes, mouth, lid, arms, intake card and shadow. `RobotMotionState` gives interaction feedback a fixed priority: result, saving, accepted drag, hover, then idle. The character peeks in from the active edge, gives a greeting, follows the pointer, opens for an accepted drop, performs a two-part digest, and uses separate successful, partial and failed result reactions. Quiet visible idle work includes blinking, looking around and an occasional shrug. Ambient tasks and layer animations stop when the robot hides or the controller shuts down.
+
+`NSWorkspace.accessibilityDisplayShouldReduceMotion` is observed while the app runs. Reduce Motion keeps immediate facial/result expression changes but removes positional, scaling, rotating, repeated and keyframed movement. The existing `RobotView` remains the single drag, paste, click, keyboard and accessibility hit target; decorative character layers do not intercept input.
 
 ## Update 0.1.19
 
@@ -34,7 +44,7 @@ Rapid filter changes retarget from the displayed frame, and preview/status chang
 
 Settings adds six accent presets and the native custom color picker. A dedicated `ThemeSettings` observable object normalizes an opaque sRGB choice and persists it under `DaBin.themeColor.v1` in local preferences. Invalid values fall back to Purple without rewriting preferences. Changing a theme has no archive or capture writes.
 
-The board passes its adaptive accent through SwiftUI's environment and tint. Filters, dates, buttons, source-copy actions, task frames, the DaBin wordmark/emblem and PDF navigation update immediately. The original corner/empty-state purple robot remains the mascot; red Task and green Completed retain their status meanings. Light/dark accent variants maintain contrast against the board's neutral surfaces; selected color swatches retain the chosen source color. Theme render fixtures use an isolated preference suite.
+The board passes its adaptive accent through SwiftUI's environment and tint. Filters, dates, buttons, source-copy actions, task frames, the DaBin wordmark/emblem and PDF navigation update immediately. The purple transient and empty-state robots remain the mascots; red Task and green Completed retain their status meanings. Light/dark accent variants maintain contrast against the board's neutral surfaces; selected color swatches retain the chosen source color. Theme render fixtures use an isolated preference suite.
 
 ## Update 0.1.15
 
@@ -44,11 +54,11 @@ PDF previews now fit a whole page instead of using PDFKit's continuous-mode fit-
 
 ## Update 0.1.14
 
-Dragging toward a screen corner can reveal the robot while Daily or Week remains open. Moving the board's own header does not trigger this path. Ordinary hover retains the previous minimal-presence behavior. The robot remains visible through input completion and digest feedback, and retreats after the pointer leaves even when the board is still open.
+Dragging toward the selected reveal target can show the robot while Daily or Week remains open. Moving the board's own header does not trigger this path. Ordinary hover retains the previous minimal-presence behavior. The robot remains visible through input completion and digest feedback, and retreats after the pointer leaves even when the board is still open.
 
 The entire robot view owns hit testing; its artwork and feedback badge cannot intercept drops. Destination callbacks validate advertised readable types and require a copy operation before accepting a transfer. Unsupported or move-only drags are rejected, and exit/end/cancel paths clear drag state. The destination is never ordered out to release hover focus during an active accepted drag. File originals remain untouched; ordinary text without explicit source metadata still reports no source path.
 
-The open board's existing top-left is retained in memory before changing the robot's corner/display, preventing an incoming capture from moving an initially unplaced Daily board. This does not rewrite the user's placement preference. HTML and generic data registrations expose the existing original-byte import fallback; HTML-only content remains a local file without loading web resources, while browser selections offering plain text capture that text once.
+The open board's existing top-left is retained in memory before changing the robot's reveal target or display, preventing an incoming capture from moving an initially unplaced Daily board. This does not rewrite the user's placement preference. HTML and generic data registrations expose the existing original-byte import fallback; HTML-only content remains a local file without loading web resources, while browser selections offering plain text capture that text once.
 
 ## Update 0.1.13
 
@@ -82,7 +92,7 @@ Carryover is a view of the existing record: no duplicate capture, archive move, 
 
 ## Update 0.1.8
 
-The title and blank header area are a native AppKit drag surface; header buttons retain their normal interactions. Mouse events move the borderless panel using screen coordinates. The window controller pauses layout during the gesture, remembers its top-left point locally, and preserves that anchor during route/height changes and relaunch. Saved coordinates are validated and clamped to a connected display if the screen arrangement changes. The robot continues to reveal at screen corners.
+The title and blank header area are a native AppKit drag surface; header buttons retain their normal interactions. Mouse events move the borderless panel using screen coordinates. The window controller pauses layout during the gesture, remembers its top-left point locally, and preserves that anchor during route/height changes and relaunch. Saved coordinates are validated and clamped to a connected display if the screen arrangement changes. The robot continues to reveal at the selected target, with corners as the default and fallback.
 
 203 native window checks passed, including actual header-handler event dispatch, live resizing during route changes, persistence, two-display placement and invalid/offscreen preference recovery. The installed app received a real CUA header drag and saved its new position.
 
@@ -126,7 +136,7 @@ Daily now lists captures newest first across all type filters, using the origina
 
 ## Update 0.1.1
 
-Daily uses purple icon filters with tooltips and accessibility labels, a geometrically centered date, and a 24-point continuous panel radius. The original robot gets a small sleepy face, glances, blinks and sighs in empty Daily states. Its timeline pauses when the panel is hidden or occluded, and Reduce Motion selects a static pose. The normal corner robot remains unchanged.
+Daily uses purple icon filters with tooltips and accessibility labels, a geometrically centered date, and a 24-point continuous panel radius. The original empty-state robot gets a small sleepy face, glances, blinks and sighs in empty Daily states. Its timeline pauses when the panel is hidden or occluded, and Reduce Motion selects a static pose. The separate transient robot is superseded by the native 0.3.1 character described above.
 
 Capture detail shows the source location separately from the managed original, with a copy action. Actual file-transfer URLs supply the original path. Explicit WebArchive main-resource URLs can supply the origin of copied text or media; text content, HTML links and the frontmost application are never treated as evidence of origin. Ordinary plain-text clipboard content cannot reveal its source document path unless the sender includes it. File promises expose a temporary delivery location, so that location is deliberately excluded. Source metadata is saved at receipt and retained across source deletion and app relaunch.
 
@@ -135,7 +145,8 @@ Capture payload schema 2 adds optional `sourceFilePath` and `sourceURL`; v1 payl
 ## Native architecture
 
 - `DaBinMain.swift`: accessory lifecycle, native menus, safe quit, startup recovery.
-- `CornerController.swift` / `RobotView.swift` / `DailyCaptureView.swift`: transparent panels, corner state, focus, robot and Daily drag/paste, preserved vector robot, digest/Reduced Motion.
+- `CornerController.swift` / `RobotPlacementSettings.swift`: transparent panels, per-display corner/camera-island targets, fallback geometry and local robot-home preference.
+- `RobotView.swift` / `RobotCharacterView.swift` / `RobotMotion.swift` / `DailyCaptureView.swift`: one robot input surface, native character state and Reduced Motion, and robot/Daily drag and paste.
 - `InputService.swift`: one representation per pasteboard item, native URL transfer grants, ordinary files and file promises, aggregate/partial-failure feedback, original intake stamp even on late delivery.
 - `Domain.swift`: immutable receipts, versioned snapshots, classification and contextual search.
 - `CaptureStore.swift`: capture lifecycle, recovery and migration coordination. `CaptureRepository.swift` owns Core Data transactions; `DailyArchive.swift` owns dated paths/readable records; `OriginalFileStorage.swift` owns import receipts and integrity checks.
@@ -159,7 +170,7 @@ Thumbnails are stored under the app's managed `Previews/` directory, relative to
 
 ## Reference and test provenance
 
-`Handoff/` is extracted unchanged from the user's ZIP. Prototype HTML is reference only; the app does not embed a web view. `Resources/robot.svg` is byte-identical to the handoff robot. Icon raster sizes are local derivatives of that vector. Native views use system fonts and the handoff's light/dark color roles.
+`Handoff/` is extracted unchanged from the user's ZIP. Prototype HTML is reference only; the app does not embed a web view. `Resources/robot.svg` is byte-identical to the handoff robot and remains the source for its existing icon derivatives. The transient 0.3.1 character is rendered from native layers rather than that SVG. Native views use system fonts and the handoff's light/dark color roles.
 
 `build/qa/screenshots/` contains native NSHostingView renders backed by real isolated persistence. The manifest explicitly labels them as native-view renders, not desktop screenshots. GUI interaction checks used a separately signed `com.dabin.mac.qa` sandbox; fictional items never entered normal DaBin storage.
 

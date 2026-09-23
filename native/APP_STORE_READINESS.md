@@ -1,7 +1,7 @@
 # DaBin — Mac App Store readiness
 
 **Audit date:** 23 September 2026
-**Source version:** 0.3.0 (25)
+**Source version:** 0.3.1 (26)
 **Result: BLOCKED for submission; local app QA is a separate result.**
 
 The source now has a Productivity category, a bundled privacy explanation, privacy manifest, and an Xcode Release configuration that does not force ad-hoc signing. These changes improve readiness. They do not make the locally signed app an App Store distribution build or guarantee approval.
@@ -12,7 +12,7 @@ The source now has a Productivity category, a bundled privacy explanation, priva
 | --- | --- | --- |
 | PASS | App Sandbox | `Resources/DaBin.entitlements` enables App Sandbox, read-only access to user-selected files, and outgoing network access for optional website previews. The inspected local app's embedded entitlements match. There are no sandbox exceptions or root privileges. [Apple sandbox documentation](https://developer.apple.com/documentation/security/protecting-user-data-with-app-sandbox) |
 | PASS | Store/direct update separation | The generated Xcode Store configuration compiles a Store-managed update stub, has no direct feed key and does not embed the installer. The standalone builder alone enables `DABIN_DIRECT_UPDATES` and creates the GitHub helper. An exported Store candidate still needs binary inspection before submission. Source imports and linked libraries use Apple frameworks; no manually invoked private API was found. [App Review, 2.4.5 and 2.5.1](https://developer.apple.com/app-store/review/guidelines/#hardware-compatibility) |
-| PASS | Explicit capture and limited permissions | Clipboard contents are read in response to paste, and file access comes from paste/drop transfers. The corner mechanism reads pointer position; it does not require Accessibility or Screen Recording. No login, analytics, ad SDK, cloud sync, or external AI service is present. Source files are copied rather than modified. |
+| PASS | Explicit capture and limited permissions | Clipboard contents are read in response to paste, and file access comes from paste/drop transfers. Robot reveal reads pointer position and ordinary `NSScreen` safe-area/auxiliary geometry; it does not use the camera or require Accessibility or Screen Recording. No login, analytics, ad SDK, cloud sync, or external AI service is present. Source files are copied rather than modified. |
 | PASS | Optional website requests | Website preview fetching defaults off. Settings explains website contact, and the bundled policy describes URLs, IP addresses, redirects, earlier saved links, cancellation, and locally cached previews. Disabling previews cancels pending work. Links still save while previews are off. |
 | PASS | Local notification design | Permission is requested when saving a reminder, not at startup. A denied permission does not prevent capture or saving a reminder record. Notification messages omit capture contents. Actual system delivery remains part of live QA. |
 | PASS | Category and icon packaging | `Info.plist` now declares `public.app-category.productivity`. `AppIcon.icns` includes normal/Retina sizes through the 1024-pixel `ic10` entry. [Category key](https://developer.apple.com/documentation/bundleresources/information-property-list/lsapplicationcategorytype), [Mac submission category requirement](https://developer.apple.com/library/archive/releasenotes/General/SubmittingToMacAppStore/) |
@@ -26,7 +26,7 @@ The source now has a Productivity category, a bundled privacy explanation, priva
 
 `Resources/PrivacyInfo.xcprivacy` records no tracking and no developer/SDK data collection, plus these uses:
 
-- `NSPrivacyAccessedAPICategoryUserDefaults` / `CA92.1`: app-owned theme, placement, and preview preferences.
+- `NSPrivacyAccessedAPICategoryUserDefaults` / `CA92.1`: app-owned theme, board placement, robot-home, and preview preferences.
 - `NSPrivacyAccessedAPICategorySystemBootTime` / `35F9.1`: elapsed animation time inside the app.
 
 Both build paths include the manifest in `Contents/Resources/`, Apple's macOS location. The source's file-attribute checks read file type; no explicit timestamp API from Apple's covered list was found. [Reasons and API list](https://developer.apple.com/documentation/bundleresources/app-privacy-configuration/nsprivacyaccessedapitypes/nsprivacyaccessedapitype), [Bundle placement](https://developer.apple.com/documentation/bundleresources/placing-content-in-a-bundle).
@@ -54,10 +54,12 @@ python3 scripts/app_store_preflight.py --static-only
 python3 scripts/app_store_preflight.py
 ```
 
-Audit results are retained at:
+The final 0.3.1 preflight logs are retained at:
 
-- `build/qa/app-store-preflight-static-v0.3.0.log`: **20 source packaging checks passed**.
-- `build/qa/app-store-preflight-release-v0.3.0.log`: release preflight remains blocked by the Apple Developer Team ID and full Xcode. The configured GitHub policy/support URLs pass offline syntax checks; their content and continuing reachability remain owner responsibilities.
+- `../docs/qa/0.3.1/app-store-preflight-static-v0.3.1.log`: **20 source packaging checks passed**.
+- `../docs/qa/0.3.1/app-store-preflight-release-v0.3.1.log`: release preflight remains blocked by the Apple Developer Team ID and full Xcode. The configured GitHub policy/support URLs pass offline syntax checks; their content and continuing reachability remain owner responsibilities.
+
+The functional and package evidence for this source version is recorded in `QA_RESULTS.md`.
 
 `bash -n` validated the build/archive shell scripts; Python compilation validated the preflight/project generator; property-list checks passed for Info.plist, entitlements, privacy manifest, and the generated Xcode project. Thirteen offline URL validation cases rejected placeholder, credential-bearing, local/private, malformed-port, whitespace, and invalid-host inputs as intended. URL validation is syntactic; the owner must verify that each published page is reachable and contains the required information.
 
@@ -77,7 +79,8 @@ This rejects ad-hoc/Developer ID signatures, the wrong configured team, non-ARM6
 
 ## Reviewer and listing notes to preserve
 
-- DaBin is a quiet corner app. Move to a screen corner to reveal its robot; double-click it to open Daily. The app menu also provides Open Daily and Settings. Include these steps in review notes so the initially hidden widget is discoverable.
+- DaBin is quiet while idle. Screen corners are the default reveal target; Settings can move the robot below the built-in camera island when macOS exposes compatible safe-area geometry, and displays without it keep using corners. Double-click the robot to open Daily. The app menu also provides Open Daily and Settings. Include these steps in review notes so the initially hidden widget is discoverable.
+- The robot uses native character animation for pointer attention, drag acceptance, saving and results. It observes the macOS Reduce Motion preference and removes positional, repeated and keyframed movement when that setting is active.
 - Daily accepts explicit paste/drop. Today opens This Week, including empty days. Comments and task editors retain normal text editing. Explain optional website-preview permission separately from local capture.
 - The current app categorizes by content type; it does not yet perform AI project recognition. Do not advertise automatic AI project assignment or uploading to an AI service.
 - Describe Apple Silicon/macOS support accurately. Keep screenshots synthetic and free of personal captures.

@@ -5,15 +5,24 @@ The direct channel and Mac App Store are separate builds. The standalone build e
 ## Direct GitHub release
 
 1. Increase `CFBundleShortVersionString` and the monotonically increasing `CFBundleVersion` in `native/Resources/Info.plist`.
-2. Run full QA in an unlocked macOS session.
-3. Build the optimized direct app:
+2. Update `CHANGELOG.md`, create `docs/RELEASE_NOTES_VERSION.md`, and update user-facing guides and privacy text for behavior or data-flow changes.
+3. Regenerate and verify the Xcode project so every new Swift source is present:
+
+   ```sh
+   cd native
+   python3 scripts/generate_project.py
+   python3 scripts/generate_project.py --check
+   ```
+
+4. Run full QA in an unlocked macOS session. For robot-placement or motion changes, cover real built-in camera-island geometry, no-island display fallback, all interaction/result states, hidden-state cleanup and Reduce Motion.
+5. Build the optimized direct app:
 
    ```sh
    cd native
    ./scripts/build.sh
    ```
 
-4. Create the package and public update manifest:
+6. Create the package and public update manifest:
 
    ```sh
    python3 UpdateTools/package_update.py \
@@ -24,15 +33,16 @@ The direct channel and Mac App Store are separate builds. The standalone build e
 
    The packager tests fresh install, replacement, backup, signature, ZIP extraction, package-mode install, executable hash, and source freshness in temporary locations.
 
-5. Commit the exact source and documentation, tag that commit `vVERSION`, and push both.
-6. Create a GitHub Release for the tag with these assets:
+7. Commit the exact source and documentation, tag that commit `vVERSION`, and push both.
+8. Create a GitHub Release for the tag with these assets:
 
    - `DaBin-VERSION-Update.zip`
    - `DaBin-update.json`
    - `DaBin-Quick-Guide.pdf`
+   - `RELEASE_NOTES_VERSION.md`
 
-7. Verify that `https://github.com/RoeyAsterix/DaBin/releases/latest/download/DaBin-update.json` returns the released manifest and that its size and SHA-256 match the ZIP asset.
-8. In the installed app, open **Settings → Software updates** and check the live feed.
+9. Verify that `https://github.com/RoeyAsterix/DaBin/releases/latest/download/DaBin-update.json` returns the released manifest and that its size and SHA-256 match the ZIP asset.
+10. In the installed app, open **Settings → Software updates** and check the live feed.
 
 Never edit `DaBin-update.json` after packaging. Rebuild and create a new version if the application or archive changes. Do not reuse a tag or overwrite a published asset.
 

@@ -45,7 +45,9 @@ private final class WindowNotificationClient: ReminderNotificationClient {
         let notificationClient = WindowNotificationClient()
         let previews = PreviewService(store: store)
         let reminders = ReminderService(store: store, client: notificationClient)
-        let state = AppState(store: store, previews: previews, reminders: reminders)
+        let robotPlacement = RobotPlacementSettings(defaults: placementDefaults)
+        let state = AppState(store: store, previews: previews, reminders: reminders,
+                             robotPlacement: robotPlacement)
         let input = InputService(store: store, stagingRoot: root.appendingPathComponent("Promises"))
         let controller = CornerController(state: state, input: input, placementDefaults: placementDefaults)
         defer {
@@ -96,11 +98,82 @@ private final class WindowNotificationClient: ReminderNotificationClient {
             }
         }
 
+        let syntheticFrame = NSRect(x: 2560, y: 458, width: 1512, height: 982)
+        let syntheticVisible = NSRect(x: 2560, y: 458, width: 1512, height: 950)
+        let syntheticLeft = NSRect(x: 2560, y: 1408, width: 663, height: 32)
+        let syntheticRight = NSRect(x: 3408, y: 1408, width: 664, height: 32)
+        let syntheticIsland = CornerGeometry.cameraIslandRect(frame: syntheticFrame, safeAreaTop: 32,
+                                                              auxiliaryLeft: syntheticLeft,
+                                                              auxiliaryRight: syntheticRight)
+        try expect(syntheticIsland == NSRect(x: 3223, y: 1408, width: 185, height: 32),
+                   "Camera island is derived from the gap between macOS auxiliary menu-bar areas")
+        if let syntheticIsland {
+            let islandRobot = CornerGeometry.robotFrame(cameraIsland: syntheticIsland, visible: syntheticVisible)
+            try expect(syntheticVisible.contains(islandRobot) && abs(islandRobot.midX - syntheticIsland.midX) <= 0.5,
+                       "Camera-island robot is centered immediately below the cutout and stays visible")
+            let islandBoard = CornerGeometry.panelFrame(robot: islandRobot, visible: syntheticVisible,
+                                                        target: .cameraIsland)
+            try expect(syntheticVisible.contains(islandBoard) && abs(islandBoard.midX - syntheticIsland.midX) <= 0.5,
+                       "Camera-island Daily opens below the centered robot and stays on screen")
+        }
+        try expect(CornerGeometry.cameraIslandRect(frame: syntheticFrame, safeAreaTop: 0,
+                                                   auxiliaryLeft: nil, auxiliaryRight: nil) == nil,
+                   "A display without safe-area and auxiliary data is not guessed to have an island")
+        try expect(CornerGeometry.cameraIslandRect(frame: syntheticFrame, safeAreaTop: 32,
+                                                   auxiliaryLeft: syntheticRight,
+                                                   auxiliaryRight: syntheticLeft) == nil,
+                   "Overlapping or reversed auxiliary regions cannot form a camera island")
+        let negativeNotchFrame = NSRect(x: -1728, y: -200, width: 1728, height: 1117)
+        let negativeNotchVisible = NSRect(x: -1728, y: -200, width: 1728, height: 1085)
+        let negativeLeft = NSRect(x: -1728, y: 885, width: 770, height: 32)
+        let negativeRight = NSRect(x: -770, y: 885, width: 770, height: 32)
+        let negativeIsland = CornerGeometry.cameraIslandRect(frame: negativeNotchFrame, safeAreaTop: 32,
+                                                             auxiliaryLeft: negativeLeft,
+                                                             auxiliaryRight: negativeRight)
+        try expect(negativeIsland == NSRect(x: -958, y: 885, width: 188, height: 32),
+                   "Camera-island geometry supports displays with negative coordinates")
+        if let negativeIsland {
+            try expect(negativeNotchVisible.contains(CornerGeometry.robotFrame(cameraIsland: negativeIsland,
+                                                                               visible: negativeNotchVisible)),
+                       "Negative-coordinate island robot remains inside its display")
+        }
+
+        if let islandScreen = screens.first(where: { CornerGeometry.cameraIslandRect(on: $0) != nil }),
+           let trigger = CornerGeometry.cameraIslandTriggerFrame(on: islandScreen),
+           let island = CornerGeometry.cameraIslandRect(on: islandScreen) {
+            robotPlacement.setHome(.cameraIsland)
+            let islandAway = NSPoint(x: islandScreen.visibleFrame.minX + 40,
+                                     y: islandScreen.visibleFrame.midY)
+            controller.pollPointer(at: islandAway, now: clock.addingTimeInterval(1))
+            controller.pollPointer(at: NSPoint(x: trigger.midX, y: trigger.minY + 2),
+                                   now: clock.addingTimeInterval(2))
+            try expect(controller.bin.isVisible, "Camera-island preference reveals the robot from the top center")
+            try expect(controller.bin.frame == CornerGeometry.robotFrame(cameraIsland: island,
+                                                                          visible: islandScreen.visibleFrame),
+                       "Live island reveal uses the detected cutout geometry")
+            controller.dismiss()
+            controller.pollPointer(at: islandAway, now: clock.addingTimeInterval(3))
+        }
+        if let external = screens.first(where: { CornerGeometry.cameraIslandRect(on: $0) == nil }) {
+            robotPlacement.setHome(.cameraIsland)
+            let externalCorner = cornerPoint(.topRight, frame: external.frame)
+            controller.pollPointer(at: NSPoint(x: external.visibleFrame.midX, y: external.visibleFrame.midY),
+                                   now: clock.addingTimeInterval(4))
+            controller.pollPointer(at: externalCorner, now: clock.addingTimeInterval(5))
+            try expect(controller.bin.isVisible,
+                       "A display without an island keeps corner reveal while island mode is selected")
+            try expect(controller.bin.frame == CornerGeometry.robotFrame(corner: .topRight,
+                                                                          visible: external.visibleFrame),
+                       "External-display fallback uses normal corner geometry")
+        }
+        robotPlacement.setHome(.corners)
+
         let screen = screens[0]
         let corner = ScreenCorner.bottomRight
         let point = cornerPoint(corner, frame: screen.frame)
         let away = NSPoint(x: screen.visibleFrame.midX, y: screen.visibleFrame.midY)
         clock = clock.addingTimeInterval(3)
+        controller.pollPointer(at: away, now: clock.addingTimeInterval(-0.1))
         controller.pollPointer(at: point, now: clock)
         try expect(controller.bin.isVisible, "Robot visible before opening Daily")
         let hoverPoint = NSPoint(x: controller.bin.frame.midX, y: controller.bin.frame.midY)

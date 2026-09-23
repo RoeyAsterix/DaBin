@@ -7,12 +7,14 @@ struct SettingsScreen: View {
     @ObservedObject var state: AppState
     @ObservedObject var theme: ThemeSettings
     @ObservedObject private var updates: SoftwareUpdateService
+    @ObservedObject private var robotPlacement: RobotPlacementSettings
     @State private var showPrivacyPolicy = false
 
     init(state: AppState, theme: ThemeSettings) {
         self.state = state
         self.theme = theme
         updates = state.updates
+        robotPlacement = state.robotPlacement
     }
 
     private var selectedName: String {
@@ -158,7 +160,17 @@ struct SettingsScreen: View {
                 Divider()
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Your quiet corner").font(.system(size: 14, weight: .medium))
-                    Text("Reach any screen corner to reveal DaBin. Drop onto the robot, or hover over it and press ⌃V or ⌘V. Double-click opens Daily.")
+                    Picker("Robot home", selection: Binding(
+                        get: { robotPlacement.home },
+                        set: { robotPlacement.setHome($0) }
+                    )) {
+                        ForEach(RobotHome.allCases) { home in Text(home.title).tag(home) }
+                    }
+                    .pickerStyle(.segmented)
+                    .accessibilityHint("Choose whether DaBin appears from screen corners or below a built-in camera island")
+                    Text(robotHomeDescription)
+                        .font(.system(size: 12)).foregroundStyle(Palette.muted).fixedSize(horizontal: false, vertical: true)
+                    Text("Drop onto the robot, or hover over it and press ⌃V or ⌘V. Double-click opens Daily.")
                         .font(.system(size: 12)).foregroundStyle(Palette.muted).fixedSize(horizontal: false, vertical: true)
                 }
             }.padding(.horizontal, 16).padding(.bottom, 20)
@@ -166,6 +178,18 @@ struct SettingsScreen: View {
         .sheet(isPresented: $showPrivacyPolicy) {
             PrivacyPolicySheet(dataFolder: state.store.root)
                 .environment(\.daBinAccent, accent)
+        }
+    }
+
+    private var robotHomeDescription: String {
+        switch robotPlacement.home {
+        case .corners:
+            return "Reach any screen corner to reveal DaBin."
+        case .cameraIsland:
+            if NSScreen.screens.contains(where: { CornerGeometry.cameraIslandRect(on: $0) != nil }) {
+                return "Move the pointer to the built-in camera island and DaBin peeks out below it. Displays without an island keep their screen corners."
+            }
+            return "No camera island is currently detected, so DaBin keeps using screen corners. Your choice stays ready for a compatible display."
         }
     }
 }

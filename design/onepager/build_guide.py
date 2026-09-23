@@ -132,7 +132,7 @@ line(42,338,W-42,338)
 text('START WITH THREE SMALL MOVES',42,355,9,BOLD,PURPLE)
 
 steps=[
-    ('1','Meet your robot','Move your pointer to any screen corner. Your little robot peeks out when you need it and stays hidden while you work.'),
+    ('1','Meet your robot','Move your pointer to a screen corner. Or choose <b>Below camera island</b> in Settings so your robot peeks from the notch. It stays hidden while you work.'),
     ('2','Drop or paste','Drop one or several files onto the robot, or hover and press <b>Control-V</b> or <b>Command-V</b>. Files from one move stay together in one card.'),
     ('3','Open your day','<b>Double-click</b> the robot for Daily, with the newest captures first. Click the <b>date</b> to see seven days side by side.'),
 ]
@@ -156,7 +156,7 @@ para('Use <b>Comment</b> or <b>Reminder</b> on any capture. Press <b>+</b> to ad
 
 rect(30,729,W-60,73,PALE,r=14)
 text('Made to fit your day.',44,743,12,BOLD,PURPLE)
-para('Drag the logo to move your board. Settings controls Dark mode, transparency, theme color and GitHub updates.<br/>Captures stay local, organized by year, month and day.',44,765,W-88,10,14,max_height=28)
+para('Drag the logo to move your board. Settings adjusts appearance, Robot home and GitHub updates.<br/>Captures stay local, organized by year, month and day.',44,765,W-88,10,14,max_height=28)
 text('For alerts, allow DaBin notifications in macOS.',42,817,8.5,color=BODY)
 right('DaBin  /  Quick start',W-42,817,8.5,color=PURPLE)
 c.showPage()
@@ -165,7 +165,7 @@ c.save()
 reader=PdfReader(OUT)
 assert len(reader.pages)==1
 extracted=reader.pages[0].extract_text()
-for required in ['Control-V','Command-V','Double-click','Comment','Reminder','Completed','GitHub updates','Captures stay local']:
+for required in ['camera island','Control-V','Command-V','Double-click','Comment','Reminder','Completed','GitHub updates','Captures stay local']:
     assert required in extracted, required
 assert '\ufffd' not in extracted
 assert all(b['x']>=30 and b['x']+b['width']<=W-30 and b['top']+b['height']<803 for b in blocks)

@@ -16,7 +16,7 @@ from project_inventory import ROOT, TARGET, sources, resources, hashes, fingerpr
 NONFOCUS = ["ThemeSettingsTests", "PrivacyInformationTests", "DomainTests", "ArchiveLayoutTests",
             "ArchiveStoreTests", "CaptureRemovalTests", "ServiceTests", "QAStorageScopedSaveTests",
             "QALifecycleTests", "ApplicationLifecycleTests", "PreviewLifecycleTests", "TaskStateTests", "CaptureActionTests",
-            "WeeklyStateTests", "InputTests", "SoftwareUpdateTests", "UpdateConfigurationTests"]
+            "WeeklyStateTests", "InputTests", "SoftwareUpdateTests", "UpdateConfigurationTests", "RobotMotionTests"]
 WINDOW = ["WindowTests", "WeeklyWindowTests", "FilterResizeTests", "RobotDropTests", "DailyCaptureTests"]
 MODULE = "DaBinTestCore"
 

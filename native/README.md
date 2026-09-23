@@ -1,12 +1,12 @@
 # DaBin for macOS
 
-A native, local daily capture board. DaBin stays invisible while idle. Reach any screen corner to reveal the metallic purple robot, then drop onto its body or hover over it and press **Control-V** or **⌘V**. A brief digest confirms a saved capture. Double-click the robot to open Daily. The floating board starts at 75% opacity and can be adjusted in Settings.
+A native, local daily capture board. DaBin stays invisible while idle. By default, reach any screen corner to reveal the metallic purple robot. On a Mac with a built-in camera island, you can instead let it peek out below the island. Drop onto its body or hover over it and press **Control-V** or **⌘V**. The robot watches the pointer, welcomes incoming content, chews while saving and reacts to the result. Double-click it to open Daily. The floating board starts at 75% opacity and can be adjusted in Settings.
 
 ## Run
 
 Open **DaBin.app in your personal Applications folder** (`~/Applications/DaBin.app`) on this Apple Silicon Mac. A copy also ships at [build/DaBin.app](build/DaBin.app). The first launch is intentionally hidden: move the pointer into a screen corner. Reopening the app while hidden opens Daily. There is no permanent Dock icon, menu-bar icon, drop zone, or paste composer.
 
-- Drag files from Finder or selected text from another app to a screen corner, then onto the robot and release. This also works while Daily or Week is open. The whole robot accepts drops, including its badge. A down arrow confirms an accepted drop; the robot digests after saving, then retreats after the pointer leaves. Files are copied into the local archive; their originals stay in place. Multiple files from one paste or drop appear together in one caption card, with every item independently openable. The card shares its comment, reminder, minimize and remove controls.
+- Drag files from Finder or selected text from another app to the selected reveal target, then onto the robot and release. This also works while Daily or Week is open. The whole robot accepts drops, including its badge. It opens its lid for accepted content, digests while saving, reacts to the result, then retreats after the pointer leaves. Files are copied into the local archive; their originals stay in place. Multiple files from one paste or drop appear together in one caption card, with every item independently openable. The card shares its comment, reminder, minimize and remove controls.
 - Hover over the robot to paste with **Control-V** or **⌘V**, without clicking. Leaving the robot releases this temporary keyboard focus; holding the shortcut does not create repeated captures. Clicking also focuses it; double-click for Daily. Return/Space on the focused robot also opens Daily.
 - With **Daily** open, drop text, links, files, images or videos directly anywhere in the window, or focus Daily and press **Control-V** or **⌘V** (Edit → Paste also works). An accepted drag briefly outlines the board in your theme color. Successful captures appear on their receipt date with All selected; a slow import respects any navigation you make while it saves. Search, comments and task editors keep their usual text-paste behavior.
 - In an active DaBin window: **⌘O** opens Today, **⌘K** opens Search, **⌘⇧V** focuses the robot, **Escape** hides, **⌘Q** quits.
@@ -16,6 +16,8 @@ Open **DaBin.app in your personal Applications folder** (`~/Applications/DaBin.a
 - Open a capture to see its **Source location**, with a copy button. New file imports retain their original path. Copied text retains a source only when the sending app supplies explicit origin metadata; ordinary text often has none. Old records cannot recover paths that were never saved. Promised-file staging folders are never presented as the original source.
 - Previews fit their available space without stretching or cropping. PDF previews fit a complete page, with arrows to browse multi-page files. Document previews show a fitted page thumbnail; **Open original** opens the full document.
 - In **… → Settings → Appearance**, toggle Dark mode and adjust the board transparency from 35% to 100% opacity. Under **Theme color**, choose Purple, Blue, Teal, Green, Rose or Amber, or pick a custom color. Changes apply immediately and are remembered on this Mac. **Reset** returns the accent to Purple.
+- In **… → Settings → Your quiet corner**, choose **Screen corners** or **Below camera island**. Camera-island mode uses the built-in display's safe-area geometry and only activates where macOS reports a real camera cutout. An external display or a Mac without that geometry keeps using its screen corners. The choice is stored locally and can be changed at any time.
+- The transient robot blinks, glances and occasionally shrugs while it is visible; this ambient work stops when it hides. macOS **Reduce Motion** keeps the expressions but removes moving, repeated and keyframed reactions.
 - In **… → Settings → Software updates**, choose **Check for updates** to read DaBin’s latest public GitHub Release. DaBin never checks silently. When a newer verified build is available, **Download & install** checks the release URL, exact size and SHA-256 checksum before opening the built-in installer. The installer asks before changing the app.
 - Changing a filter keeps the header in place and gently resizes the bottom edge. If the board reaches the bottom of the display, scroll through the results inside it. Reduce Motion makes resizing immediate.
 - Use **Settings → Open local archive** to browse saved content in Finder. Each record also has **Show saved folder**.
@@ -30,9 +32,9 @@ Open **DaBin.app in your personal Applications folder** (`~/Applications/DaBin.a
 
 ## What is included
 
-Native SwiftUI content in AppKit panels; Core Data metadata; a dated local archive with readable records and managed originals; drag/paste and file-promise intake; PDF/image/video/system previews; contextual search; comments; UserNotifications scheduling; light/dark colors; Reduced Motion feedback; an Xcode project, source, tests, and the unchanged handoff.
+Native SwiftUI content in AppKit panels; Core Data metadata; a dated local archive with readable records and managed originals; drag/paste and file-promise intake; PDF/image/video/system previews; contextual search; comments; UserNotifications scheduling; light/dark colors; a native layer-based robot character with Reduced Motion behavior; an Xcode project, source, tests, and the unchanged handoff.
 
-The supplied robot SVG is preserved. Normal app storage starts empty; review fixtures are isolated from it.
+The supplied robot SVG is preserved as an original handoff resource. The transient robot is drawn with native macOS layers so its face, lid, arms, intake and body can react independently. Normal app storage starts empty; review fixtures are isolated from it.
 
 ## Update the current installation
 
@@ -113,7 +115,7 @@ Edit comments and task status in DaBin. If generated files were changed external
 
 For local maintenance with DaBin closed, the installed executable accepts `--organize-archive`. It updates dated folders without opening windows, contacting websites, reading the clipboard, or scheduling notifications.
 
-There is no account, analytics, cloud sync, external AI processing, clipboard polling, launch-at-login registration, automatic update check, or automatic upload. An explicit update check contacts GitHub; optional link previews contact saved websites only when enabled. No Accessibility, Screen Recording, camera, or microphone permission is needed by the app. Corner detection reads pointer position only. External file access comes from explicit paste/drop transfers. Directories, aliases and symbolic links are rejected with an explanation; import their regular files instead. Source files are preserved.
+There is no account, analytics, cloud sync, external AI processing, clipboard polling, launch-at-login registration, automatic update check, or automatic upload. An explicit update check contacts GitHub; optional link previews contact saved websites only when enabled. No Accessibility, Screen Recording, camera, or microphone permission is needed by the app. Reveal detection reads pointer position and ordinary macOS screen geometry only. External file access comes from explicit paste/drop transfers. Directories, aliases and symbolic links are rejected with an explanation; import their regular files instead. Source files are preserved.
 
 ## Verification and limits
 

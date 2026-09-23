@@ -1,14 +1,15 @@
 # DaBin
 
-DaBin is a native Apple Silicon macOS app that turns things you paste or drag into a private daily board. Move the pointer into any screen corner and a small purple robot appears. Drop text, links, images, videos, PDFs, documents, or several files onto it; double-click the robot to browse Daily.
+DaBin is a native Apple Silicon macOS app that turns things you paste or drag into a private daily board. By default, moving the pointer into any screen corner reveals a small purple robot. On a Mac with a built-in camera island, Settings can move its home below the island; displays without one continue using their corners. Drop text, links, images, videos, PDFs, documents, or several files onto the robot, or hover and paste; double-click it to browse Daily.
 
-Captures stay on the Mac in a dated archive. Each card can hold a comment or reminder. Tasks carry forward until completed, unless they have a reminder date. Daily includes type filters and contextual search; Today opens a seven-day view. The board supports dark mode, theme colors and adjustable transparency.
+Captures stay on the Mac in a dated archive. Each card can hold a comment or reminder. Tasks carry forward until completed, unless they have a reminder date. Daily includes type filters and contextual search; Today opens a seven-day view. The board supports dark mode, theme colors and adjustable transparency. The native robot looks toward the pointer, opens up for incoming content, chews while saving and responds to the result. It follows the macOS Reduce Motion preference.
 
 ![DaBin robot and Daily board](design/robot-preview.png)
 
 ## Start here
 
 - [Native app guide](native/README.md)
+- [0.3.1 release notes](docs/RELEASE_NOTES_0.3.1.md)
 - [One-page PDF guide](docs/DaBin-Quick-Guide.pdf)
 - [Architecture](native/ARCHITECTURE.md)
 - [QA results](native/QA_RESULTS.md)

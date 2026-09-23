@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 1,
+  "verifiedAtLocal": "2026-09-23T17:13:00+03:00",
+  "version": "0.3.1",
+  "buildNumber": "26",
+  "buildPath": "native/build/DaBin.app",
+  "preference": {
+    "key": "DaBin.robotHome.v1",
+    "value": "cameraIsland"
+  },
+  "displays": [
+    {
+      "role": "external-main",
+      "framePoints": {
+        "x": 0,
+        "y": 0,
+        "width": 2560,
+        "height": 1440
+      },
+      "safeAreaTopPoints": 0,
+      "cameraIslandDetected": false,
+      "effectiveRevealTarget": "screen corners"
+    },
+    {
+      "role": "built-in",
+      "appKitFramePoints": {
+        "x": 2560,
+        "y": 458,
+        "width": 1512,
+        "height": 982
+      },
+      "safeAreaTopPoints": 32,
+      "cameraIslandGapPoints": {
+        "x": 3223,
+        "y": 1408,
+        "width": 185,
+        "height": 32
+      },
+      "cameraIslandDetected": true,
+      "effectiveRevealTarget": "camera island"
+    }
+  ],
+  "liveRobotWindow": {
+    "appKitFramePoints": {
+      "x": 3279,
+      "y": 1317,
+      "width": 72,
+      "height": 88
+    },
+    "quartzFramePoints": {
+      "x": 3279,
+      "y": 36,
+      "width": 72,
+      "height": 88
+    },
+    "centeredBelowGap": true
+  },
+  "checks": [
+    "Settings exposed both Screen corners and Below camera island and updated its explanatory text immediately.",
+    "Moving the pointer into the real built-in cutout revealed the robot centered below it.",
+    "Moving the pointer away hid the robot after its retreat grace period.",
+    "The no-island external display remained a corner target under the same preference.",
+    "A six-second Retina screen recording showed distinct reveal, gaze, blink/glance and retreat frames."
+  ],
+  "privacy": "Read-only UI and pointer verification. No capture, paste, drop, comment, reminder, task, archive, notification or website action was performed.",
+  "screenshot": "live-robot-below-camera-island.png"
+}

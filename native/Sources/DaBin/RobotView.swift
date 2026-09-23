@@ -9,27 +9,35 @@ final class RobotView: NSView {
     var onDragState: ((Bool) -> Void)?
     var onFocus: (() -> Void)?
     var onHoverChange: (() -> Void)?
-    private let imageView = NSImageView()
+    private let character: RobotCharacterView
     private let indicator = NSTextField(labelWithString: "")
     private var feedbackTask: Task<Void, Never>?
     private var hoverTrackingArea: NSTrackingArea?
     private var lastPasteEvent: NSEvent?
-    var isSaving = false { didSet { updateIndicator() } }
+    private(set) var isPresented = false
+    var mood: RobotMood { character.mood }
+    var motionState: RobotMotionState { character.motionState }
+    var hasActiveAmbientMotion: Bool { character.hasActiveAmbientMotion }
+    var isSaving = false {
+        didSet {
+            updateIndicator()
+            if isSaving != oldValue { character.send(.saving(isSaving)) }
+        }
+    }
     private var isOverDrop = false { didSet { updateIndicator() } }
     private var feedback: String?
 
     override var acceptsFirstResponder: Bool { true }
     override func acceptsFirstMouse(for event: NSEvent?) -> Bool { true }
 
-    override init(frame frameRect: NSRect) {
+    init(frame frameRect: NSRect, reduceMotion: @escaping RobotCharacterView.ReduceMotionProvider = {
+        NSWorkspace.shared.accessibilityDisplayShouldReduceMotion
+    }) {
+        character = RobotCharacterView(frame: frameRect.insetBy(dx: 4, dy: 4), reduceMotion: reduceMotion)
         super.init(frame: frameRect)
         wantsLayer = true
         layer?.backgroundColor = NSColor.clear.cgColor
-        imageView.image = Bundle.main.url(forResource: "robot", withExtension: "svg").flatMap(NSImage.init(contentsOf:))
-        imageView.imageScaling = .scaleProportionallyUpOrDown
-        imageView.frame = NSRect(x: 4, y: 4, width: 64, height: 78)
-        imageView.wantsLayer = true
-        addSubview(imageView)
+        addSubview(character)
         indicator.frame = NSRect(x: 43, y: 61, width: 25, height: 22)
         indicator.font = .systemFont(ofSize: 14, weight: .semibold)
         indicator.alignment = .center
@@ -48,7 +56,7 @@ final class RobotView: NSView {
     }
 
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
-    override func layout() { super.layout(); imageView.frame = bounds.insetBy(dx: 4, dy: 4) }
+    override func layout() { super.layout(); character.frame = bounds.insetBy(dx: 4, dy: 4) }
 
     // The image and feedback badge are decoration. Keep the entire compact
     // robot one destination, including where the badge covers the artwork.
@@ -60,14 +68,23 @@ final class RobotView: NSView {
         super.updateTrackingAreas()
         if let hoverTrackingArea { removeTrackingArea(hoverTrackingArea) }
         let area = NSTrackingArea(rect: bounds.insetBy(dx: 4, dy: 4),
-                                  options: [.mouseEnteredAndExited, .activeAlways],
+                                  options: [.mouseEnteredAndExited, .mouseMoved, .activeAlways],
                                   owner: self, userInfo: nil)
         hoverTrackingArea = area
         addTrackingArea(area)
     }
 
-    override func mouseEntered(with event: NSEvent) { onHoverChange?() }
-    override func mouseExited(with event: NSEvent) { onHoverChange?() }
+    override func mouseEntered(with event: NSEvent) {
+        character.send(.hover(true, pointer: normalizedPointer(for: event)))
+        onHoverChange?()
+    }
+    override func mouseMoved(with event: NSEvent) {
+        character.send(.hover(true, pointer: normalizedPointer(for: event)))
+    }
+    override func mouseExited(with event: NSEvent) {
+        character.send(.hover(false))
+        onHoverChange?()
+    }
 
     override func mouseDown(with event: NSEvent) {
         onFocus?()
@@ -164,13 +181,27 @@ final class RobotView: NSView {
     private func setDropActive(_ active: Bool) {
         guard isOverDrop != active else { return }
         isOverDrop = active
+        character.send(.acceptedDrag(active))
         onDragState?(active)
     }
 
+    func present(from entrance: RobotEntrance) {
+        isPresented = true
+        character.send(.reveal(entrance))
+    }
+
+    func hideCharacter() {
+        isPresented = false
+        character.send(.hide)
+    }
+
+    func refreshMotionPreference() { character.refreshMotionPreference() }
+
     func stopFeedback() {
         feedbackTask?.cancel(); feedbackTask = nil
-        imageView.layer?.removeAnimation(forKey: "digest")
         feedback = nil; isSaving = false; isOverDrop = false
+        isPresented = false
+        character.stopMotion()
         updateIndicator()
     }
 
@@ -178,16 +209,7 @@ final class RobotView: NSView {
         feedbackTask?.cancel()
         feedback = success ? (partial ? "!" : "✓") : "!"
         updateIndicator()
-        if success && !NSWorkspace.shared.accessibilityDisplayShouldReduceMotion {
-            let chew = CAKeyframeAnimation(keyPath: "transform")
-            chew.values = [CATransform3DIdentity,
-                           CATransform3DMakeScale(1.08, 0.86, 1),
-                           CATransform3DMakeScale(0.96, 1.07, 1),
-                           CATransform3DMakeScale(1.04, 0.94, 1), CATransform3DIdentity].map { NSValue(caTransform3D: $0) }
-            chew.duration = 0.56
-            chew.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
-            imageView.layer?.add(chew, forKey: "digest")
-        }
+        character.send(.result(success ? (partial ? .partialSuccess : .success) : .failure))
         NSAccessibility.post(element: self, notification: .announcementRequested, userInfo: [
             .announcement: success ? (partial ? "Some captures saved; some items failed" : "Capture saved") : "Capture failed",
             .priority: NSAccessibilityPriorityLevel.medium.rawValue
@@ -195,8 +217,17 @@ final class RobotView: NSView {
         feedbackTask = Task { @MainActor [weak self] in
             try? await Task.sleep(for: .seconds(1.3))
             guard !Task.isCancelled else { return }
-            self?.feedback = nil; self?.updateIndicator()
+            self?.feedback = nil
+            self?.character.send(.feedbackExpired)
+            self?.updateIndicator()
         }
+    }
+
+    private func normalizedPointer(for event: NSEvent) -> CGPoint {
+        let point = convert(event.locationInWindow, from: nil)
+        guard bounds.width > 0, bounds.height > 0 else { return .zero }
+        return CGPoint(x: min(1, max(-1, (point.x - bounds.midX) / (bounds.width / 2))),
+                       y: min(1, max(-1, (bounds.midY - point.y) / (bounds.height / 2))))
     }
 
     private func updateIndicator() {

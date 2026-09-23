@@ -135,6 +135,29 @@ struct ThemeSettingsTests {
         }
         try expect(hex(resolved(ThemeSettings.accentNSColor(for: "invalid"), dark: true)) == "AB92C6",
                    "Invalid helper input also resolves to the safe default")
+
+        let robotSuiteName = "DaBin.RobotPlacementSettingsTests.\(UUID().uuidString)"
+        let robotDefaults = UserDefaults(suiteName: robotSuiteName)!
+        defer { robotDefaults.removePersistentDomain(forName: robotSuiteName) }
+        let robotSettings = RobotPlacementSettings(defaults: robotDefaults)
+        try expect(robotSettings.home == .corners && robotDefaults.persistentDomain(forName: robotSuiteName) == nil,
+                   "A new profile uses corners without writing a preference")
+        robotSettings.setHome(.cameraIsland)
+        try expect(robotSettings.home == .cameraIsland
+                   && robotDefaults.string(forKey: RobotPlacementSettings.defaultsKey) == RobotHome.cameraIsland.rawValue,
+                   "Camera-island home updates the live and stored preference")
+        try expect(RobotPlacementSettings(defaults: robotDefaults).home == .cameraIsland,
+                   "Robot home survives settings reinitialization")
+        robotDefaults.set("future-invalid-value", forKey: RobotPlacementSettings.defaultsKey)
+        let malformedSnapshot = robotDefaults.persistentDomain(forName: robotSuiteName)! as NSDictionary
+        try expect(RobotPlacementSettings(defaults: robotDefaults).home == .corners,
+                   "An unknown robot home falls back safely to corners")
+        try expect(malformedSnapshot.isEqual(to: robotDefaults.persistentDomain(forName: robotSuiteName)!),
+                   "Reading an unknown robot home never rewrites preferences")
+        let isolatedRobotSettings = RobotPlacementSettings(defaults: nil)
+        isolatedRobotSettings.setHome(.cameraIsland)
+        try expect(isolatedRobotSettings.home == .cameraIsland,
+                   "An isolated robot preference supports previews without persistent defaults")
         print("PASS: \(checks) theme settings checks")
     }
 }

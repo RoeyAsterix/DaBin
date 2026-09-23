@@ -12,6 +12,7 @@ final class ApplicationCoordinator {
     let input: InputService
     let state: AppState
     let theme: ThemeSettings
+    let robotPlacement: RobotPlacementSettings
     let corners: CornerController
     let commands: ApplicationMenu
     private let lifecycle: ReminderLifecycle
@@ -36,7 +37,9 @@ final class ApplicationCoordinator {
             ?? ReminderService(store: store)
         let updates = SoftwareUpdateService()
         let input = InputService(store: store)
-        let state = AppState(store: store, previews: previews, reminders: reminders, updates: updates)
+        let robotPlacement = RobotPlacementSettings(defaults: defaults)
+        let state = AppState(store: store, previews: previews, reminders: reminders,
+                             updates: updates, robotPlacement: robotPlacement)
         let theme = ThemeSettings(defaults: defaults)
         let corners = CornerController(state: state, input: input, placementDefaults: defaults, theme: theme)
         self.previews = previews
@@ -45,6 +48,7 @@ final class ApplicationCoordinator {
         self.input = input
         self.state = state
         self.theme = theme
+        self.robotPlacement = robotPlacement
         self.corners = corners
         lifecycle = ReminderLifecycle { await reminders.reconcile() }
         commands = ApplicationMenu(

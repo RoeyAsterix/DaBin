@@ -18,13 +18,13 @@ private final class RenderNotificationClient: ReminderNotificationClient {
 }
 
 @MainActor
-private final class RobotMotionState: ObservableObject {
+private final class BoredRobotMotionState: ObservableObject {
     @Published var isActive = true
 }
 
 @MainActor
 private struct RobotMotionFixture: View {
-    @ObservedObject var state: RobotMotionState
+    @ObservedObject var state: BoredRobotMotionState
     var body: some View {
         BoredRobotView(isActive: state.isActive)
             .frame(width: 128, height: 156)
@@ -66,6 +66,7 @@ private final class NativeRenderTests: NSObject, NSApplicationDelegate {
         let arguments = Array(CommandLine.arguments.dropFirst())
         let previewFitOnly = arguments.contains("--preview-fit")
         let themeOnly = arguments.contains("--theme")
+        let robotPersonalityOnly = arguments.contains("--robot-personality")
         let output = URL(fileURLWithPath: arguments.first(where: { !$0.hasPrefix("--") }) ?? "DaBin/native/build/qa/screenshots", isDirectory: true)
         try FileManager.default.createDirectory(at: output, withIntermediateDirectories: true)
         let root = FileManager.default.temporaryDirectory.appendingPathComponent("DaBinNativeRender-\(UUID().uuidString)", isDirectory: true)
@@ -83,11 +84,22 @@ private final class NativeRenderTests: NSObject, NSApplicationDelegate {
             else { UserDefaults.standard.removeObject(forKey: PreviewService.linkPreviewPreference) }
         }
 
+        if robotPersonalityOnly {
+            let manifest = try await verifyRobotPersonality(output: output)
+            try JSONSerialization.data(withJSONObject: manifest, options: [.prettyPrinted, .sortedKeys])
+                .write(to: output.appendingPathComponent("robot-personality-renders.json"), options: .atomic)
+            let screenshotCount = (manifest["screenshots"] as? [[String: Any]])?.count ?? 0
+            print("PASS: \(screenshotCount) native 2x robot personality renders with raster, motion, Reduce Motion and cleanup checks")
+            return
+        }
+
         if arguments.contains("--release-ui") {
             try await renderReleaseUI(root: root, output: output)
+            let robotPersonality = try await verifyRobotPersonality(output: output)
             try JSONSerialization.data(withJSONObject: [
-                "description": "Refactored production screens at compact application sizes, in light and dark appearance, with selected 2x bitmap renders.",
+                "description": "Refactored production screens at compact application sizes, in light and dark appearance, with selected 2x bitmap renders and native robot personality states.",
                 "fixturePrivacy": "Fictional isolated archive and theme preferences; no clipboard access, network requests, notification delivery, or personal captures.",
+                "robotPersonality": robotPersonality,
                 "screenshots": records
             ], options: [.prettyPrinted, .sortedKeys])
                 .write(to: output.appendingPathComponent("release-ui-renders.json"), options: .atomic)
@@ -469,12 +481,14 @@ private final class NativeRenderTests: NSObject, NSApplicationDelegate {
             try await snapshot(state, name: "settings", mode: mode, output: output)
         }
         let robotMotion = try await verifyRobotMotion(output: output)
+        let robotPersonality = try await verifyRobotPersonality(output: output)
         let manifest: [String: Any] = [
             "description": "Native NSHostingView renders of production BoardView, AppState and services backed by a real isolated Core Data store. These are native-view renders, not screen captures.",
             "fixturePrivacy": "Fictional local-only fixtures; no network, clipboard reads, permission prompts or notification scheduling.",
             "defaultLogicalSize": ["width": 380, "height": 500],
             "systemAppearanceChanged": false,
             "robotMotion": robotMotion,
+            "robotPersonality": robotPersonality,
             "screenshots": records
         ]
         try JSONSerialization.data(withJSONObject: manifest, options: [.prettyPrinted, .sortedKeys]).write(to: output.appendingPathComponent("native-view-renders.json"), options: .atomic)
@@ -488,7 +502,7 @@ private final class NativeRenderTests: NSObject, NSApplicationDelegate {
               let image = NSImage(contentsOf: asset), image.size.width > 0, image.size.height > 0 else {
             throw RenderError.message("The production robot SVG is missing or unreadable in the native renderer")
         }
-        let state = RobotMotionState()
+        let state = BoredRobotMotionState()
         let hosting = NSHostingView(rootView: RobotMotionFixture(state: state))
         hosting.frame = NSRect(x: 0, y: 0, width: 128, height: 156)
         hosting.wantsLayer = true
@@ -563,6 +577,219 @@ private final class NativeRenderTests: NSObject, NSApplicationDelegate {
             "systemReduceMotionEnabled": systemReduceMotion,
             "reduceMotionVerification": systemReduceMotion ? "Verified static with current system setting." : "Code review only: macOS accessibilityReduceMotion is a read-only environment value; system preferences are not changed by QA.",
             "description": "Raster comparison of the production BoredRobotView; mounted inactive state remains static."]
+    }
+
+    /// Render the transient native robot itself. Each semantic state is allowed to
+    /// settle onto its model-layer pose before capture, so these 2x artifacts are
+    /// deterministic and do not depend on sampling an animation at a lucky frame.
+    /// A separate digest pair proves that the live keyframes visibly move.
+    private func verifyRobotPersonality(output: URL) async throws -> [String: Any] {
+        let logicalSize = NSSize(width: 72, height: 88)
+        let pixelScale = 2
+        var reduceMotionEnabled = false
+        let character = RobotCharacterView(frame: NSRect(origin: .zero, size: logicalSize),
+                                           reduceMotion: { reduceMotionEnabled })
+        character.wantsLayer = true
+        let window = NSWindow(contentRect: NSRect(x: -10000, y: -10000,
+                                                   width: logicalSize.width, height: logicalSize.height),
+                              styleMask: [.borderless], backing: .buffered, defer: false)
+        window.isReleasedWhenClosed = false
+        window.isOpaque = false
+        window.backgroundColor = .clear
+        window.contentView = character
+        retainedWindows.append(window)
+        defer {
+            character.stopMotion()
+            window.orderOut(nil)
+            window.contentView = nil
+            window.close()
+            retainedWindows.removeAll { $0 === window }
+        }
+        window.orderFront(nil)
+
+        func changedBytes(_ first: Data, _ second: Data) -> Int {
+            zip(first, second).reduce(0) { $0 + ($1.0 == $1.1 ? 0 : 1) }
+        }
+
+        @discardableResult
+        func frame(_ name: String? = nil, presentation: Bool = false) throws -> Data {
+            character.layoutSubtreeIfNeeded()
+            character.displayIfNeeded()
+            guard let bitmap = NSBitmapImageRep(bitmapDataPlanes: nil,
+                    pixelsWide: Int(logicalSize.width) * pixelScale,
+                    pixelsHigh: Int(logicalSize.height) * pixelScale,
+                    bitsPerSample: 8, samplesPerPixel: 4, hasAlpha: true,
+                    isPlanar: false, colorSpaceName: .deviceRGB,
+                    bytesPerRow: 0, bitsPerPixel: 0),
+                  let bytes = bitmap.bitmapData else {
+                throw RenderError.message("Could not allocate a 2x robot personality frame")
+            }
+            let byteCount = bitmap.bytesPerRow * bitmap.pixelsHigh
+            bytes.initialize(repeating: 0, count: byteCount)
+            bitmap.size = logicalSize
+            if presentation {
+                guard let context = NSGraphicsContext(bitmapImageRep: bitmap),
+                      let renderedLayer = character.layer?.presentation() ?? character.layer else {
+                    throw RenderError.message("Could not create a native presentation-layer robot frame")
+                }
+                NSGraphicsContext.saveGraphicsState()
+                NSGraphicsContext.current = context
+                renderedLayer.render(in: context.cgContext)
+                NSGraphicsContext.restoreGraphicsState()
+            } else {
+                character.cacheDisplay(in: character.bounds, to: bitmap)
+            }
+            let raster = Data(bytes: bytes, count: byteCount)
+            if let name {
+                guard let png = bitmap.representation(using: .png, properties: [:]) else {
+                    throw RenderError.message("Could not encode the 2x \(name) robot frame")
+                }
+                try png.write(to: output.appendingPathComponent("native-robot-personality-\(name)@2x.png"),
+                              options: .atomic)
+            }
+            return raster
+        }
+
+        func resetVisibleRobot() async throws {
+            character.send(.hide)
+            character.send(.reveal(.top))
+            try await Task.sleep(for: .milliseconds(360))
+            guard character.mood == .idle else {
+                throw RenderError.message("Robot did not settle into idle after its top entrance")
+            }
+        }
+
+        let curiousPoint = CGPoint(x: 0.82, y: -0.64)
+        let states: [(name: String, event: RobotMotionEvent?, expected: RobotMood, settleMS: Int)] = [
+            ("idle", nil, .idle, 30),
+            ("curious", .hover(true, pointer: curiousPoint), .curious(pointer: curiousPoint), 230),
+            ("hungry", .acceptedDrag(true), .hungry, 280),
+            ("digesting", .saving(true), .digesting, 760),
+            ("delighted", .result(.success), .delighted, 740),
+            ("partial", .result(.partialSuccess), .partialSuccess, 580),
+            ("puzzled", .result(.failure), .puzzled, 520)
+        ]
+        var stateRasters: [String: Data] = [:]
+        for state in states {
+            try await resetVisibleRobot()
+            if let event = state.event { character.send(event) }
+            try await Task.sleep(for: .milliseconds(state.settleMS))
+            guard character.mood == state.expected else {
+                throw RenderError.message("Robot personality state \(state.name) did not reach its expected mood")
+            }
+            let raster = try frame(state.name)
+            guard raster.filter({ $0 != 0 }).count > 3_000 else {
+                throw RenderError.message("The 2x \(state.name) robot render is blank or nearly blank")
+            }
+            stateRasters[state.name] = raster
+        }
+
+        guard let idleRaster = stateRasters["idle"] else {
+            throw RenderError.message("Idle robot personality render is missing")
+        }
+        var changedFromIdle: [String: Int] = [:]
+        for state in states where state.name != "idle" {
+            guard let raster = stateRasters[state.name] else {
+                throw RenderError.message("Robot personality render is missing for \(state.name)")
+            }
+            let changed = changedBytes(idleRaster, raster)
+            guard changed > 20 else {
+                throw RenderError.message("The \(state.name) robot is not visibly distinct from idle (\(changed) changed bytes)")
+            }
+            changedFromIdle[state.name] = changed
+        }
+        guard Set(stateRasters.values).count == states.count else {
+            throw RenderError.message("Two semantic robot moods produced identical 2x raster output")
+        }
+
+        // Sample the real digest animation twice. This supplements the settled,
+        // deterministic state renders without making them timing dependent.
+        try await resetVisibleRobot()
+        character.send(.saving(true))
+        try await Task.sleep(for: .milliseconds(90))
+        let digestMotionA = try frame("digest-motion-a", presentation: true)
+        try await Task.sleep(for: .milliseconds(260))
+        let digestMotionB = try frame("digest-motion-b", presentation: true)
+        let digestMotionChange = changedBytes(digestMotionA, digestMotionB)
+        guard digestMotionChange > 40 else {
+            throw RenderError.message("Digest keyframes did not visibly move across two 2x frames (\(digestMotionChange) changed bytes)")
+        }
+
+        // The accessibility path keeps expressions but removes repeated and
+        // positional motion. It must neither schedule ambient work nor drift.
+        character.send(.hide)
+        reduceMotionEnabled = true
+        character.send(.reveal(.top))
+        character.send(.result(.success))
+        try await Task.sleep(for: .milliseconds(40))
+        guard character.mood == .delighted, !character.hasActiveAmbientMotion else {
+            throw RenderError.message("Reduce Motion did not retain the delighted expression without ambient work")
+        }
+        let reducedBefore = try frame("reduced-motion-delighted")
+        try await Task.sleep(for: .milliseconds(500))
+        let reducedAfter = try frame()
+        let reducedMotionChange = changedBytes(reducedBefore, reducedAfter)
+        guard reducedMotionChange == 0 else {
+            throw RenderError.message("Reduce Motion robot drifted by \(reducedMotionChange) raster bytes")
+        }
+
+        // Cleanup is verified while the view remains mounted, matching a hidden
+        // transient panel whose AppKit view has not yet been released.
+        character.stopMotion()
+        try await Task.sleep(for: .milliseconds(40))
+        guard character.mood == .hidden, !character.hasActiveAmbientMotion else {
+            throw RenderError.message("Robot cleanup retained visible state or ambient work")
+        }
+        let cleanupBefore = try frame()
+        try await Task.sleep(for: .milliseconds(400))
+        let cleanupAfter = try frame()
+        let cleanupChange = changedBytes(cleanupBefore, cleanupAfter)
+        guard cleanupChange == 0 else {
+            throw RenderError.message("Stopped robot kept changing by \(cleanupChange) raster bytes")
+        }
+
+        let stateScreenshots: [[String: Any]] = states.map { state in
+            var record: [String: Any] = [
+                "file": "native-robot-personality-\(state.name)@2x.png",
+                "semanticState": state.name,
+                "logicalWidth": Int(logicalSize.width),
+                "logicalHeight": Int(logicalSize.height),
+                "pixelWidth": Int(logicalSize.width) * pixelScale,
+                "pixelHeight": Int(logicalSize.height) * pixelScale,
+                "pixelScale": pixelScale,
+                "renderMethod": "RobotCharacterView cacheDisplay directly into a 2x bitmap after the semantic pose settles; no image scaling"
+            ]
+            if let changed = changedFromIdle[state.name] { record["changedBytesFromIdle"] = changed }
+            return record
+        }
+        let motionScreenshots: [[String: Any]] = ["digest-motion-a", "digest-motion-b"].map {
+            ["file": "native-robot-personality-\($0)@2x.png", "semanticState": "digesting-live",
+             "logicalWidth": Int(logicalSize.width), "logicalHeight": Int(logicalSize.height),
+             "pixelWidth": Int(logicalSize.width) * pixelScale,
+             "pixelHeight": Int(logicalSize.height) * pixelScale, "pixelScale": pixelScale,
+             "renderMethod": "Timed native presentation frame at 2x; used only to prove live digest movement"]
+        }
+        let reducedScreenshot: [String: Any] = [
+            "file": "native-robot-personality-reduced-motion-delighted@2x.png",
+            "semanticState": "delighted-reduced-motion",
+            "logicalWidth": Int(logicalSize.width), "logicalHeight": Int(logicalSize.height),
+            "pixelWidth": Int(logicalSize.width) * pixelScale,
+            "pixelHeight": Int(logicalSize.height) * pixelScale, "pixelScale": pixelScale,
+            "renderMethod": "RobotCharacterView cacheDisplay directly into a 2x bitmap with injected Reduce Motion"
+        ]
+        print("PASS: Native robot personality states are distinct; digest changed \(digestMotionChange) bytes; Reduce Motion and cleanup changed 0 bytes.")
+        return [
+            "description": "Native transient RobotCharacterView personality states rendered at 2x after settling, plus live digest motion and lifecycle checks.",
+            "fixturePrivacy": "Code-drawn local character only; no clipboard, files, network, notifications or personal content.",
+            "deterministicStateCount": states.count,
+            "distinctStateRasterCount": Set(stateRasters.values).count,
+            "changedBytesFromIdle": changedFromIdle,
+            "digestAnimation": ["sampleIntervalSeconds": 0.26, "changedBytes": digestMotionChange],
+            "reduceMotion": ["ambientWorkActive": false, "changedBytesOverHalfSecond": reducedMotionChange],
+            "cleanup": ["mood": "hidden", "ambientWorkActive": false,
+                         "changedBytesOverPointFourSeconds": cleanupChange],
+            "screenshots": stateScreenshots + motionScreenshots + [reducedScreenshot]
+        ]
     }
 
     private func snapshot(_ state: AppState, name: String, mode: String, output: URL, scrollToBottom: Bool = false, height: CGFloat = 500, width: CGFloat = 380, requireCornerMarkers: Bool = false, theme: ThemeSettings? = nil, pixelScale: Int = 1) async throws {
