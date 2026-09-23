@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "checkedAt": "2026-09-23T15:06:43Z",
+  "installedVersion": "0.3.2 (27)",
+  "robotHomePreference": "cameraIsland",
+  "builtInDisplay": {
+    "safeAreaTopPoints": 32,
+    "cameraIslandGapPoints": 185,
+    "robotWindowQuartzBounds": {
+      "x": 3279,
+      "y": 36,
+      "width": 72,
+      "height": 88
+    },
+    "centeredBelowReportedGap": true
+  },
+  "liveCharacter": {
+    "idleScreenshot": {
+      "file": "live-robot-below-camera-island.png",
+      "sha256": "de33bf172ddc21e0a3e9cb0f1aacbe1c4ce3a90f2152239e20c7f5474a3eeff2"
+    },
+    "gazeLeftScreenshot": {
+      "file": "live-robot-gaze-left.png",
+      "sha256": "968c93d5816d4f130b908942a06c599a789002ed1d8a21d981143c408d4d5132"
+    },
+    "gazeRightScreenshot": {
+      "file": "live-robot-gaze-right.png",
+      "sha256": "05f4cd8a737171068808d309a6789d4d7210d70cab9beba0fa068bb642e1bd0b"
+    },
+    "decodedRasterBytesChangedBetweenGazeSamples": 257,
+    "retreatDelaySeconds": 1.4,
+    "onScreenRobotWindowsAfterRetreat": 0
+  },
+  "result": "PASS"
+}

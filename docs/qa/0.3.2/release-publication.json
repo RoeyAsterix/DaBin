@@ -1,0 +1,94 @@
+{
+  "schemaVersion": 1,
+  "checkedAt": "2026-09-23T15:06:43Z",
+  "repository": {
+    "url": "https://github.com/RoeyAsterix/DaBin",
+    "visibility": "public",
+    "defaultBranch": "main",
+    "httpStatus": 200,
+    "releaseSourceCommit": "223a1e8503cf04d92d2e9410288e271d91897db6"
+  },
+  "release": {
+    "tag": "v0.3.2",
+    "url": "https://github.com/RoeyAsterix/DaBin/releases/tag/v0.3.2",
+    "publishedAt": "2026-09-23T14:50:31Z",
+    "draft": false,
+    "prerelease": false,
+    "tagObject": "59cb7eb07984495dfc7c4ae3a4a6b13646165324",
+    "taggedCommit": "223a1e8503cf04d92d2e9410288e271d91897db6",
+    "latestReleaseRedirectVerified": true
+  },
+  "updateManifest": {
+    "url": "https://github.com/RoeyAsterix/DaBin/releases/latest/download/DaBin-update.json",
+    "httpStatus": 200,
+    "bytes": 591,
+    "sha256": "13a623f55b2f3c4cc83a914b58522ef73a46adc2efb41fbdd2ba0607dceff1e7",
+    "matchesLocalBytes": true,
+    "version": "0.3.2",
+    "buildNumber": 27,
+    "bundleIdentifier": "com.dabin.mac",
+    "architecture": "arm64",
+    "minimumMacOS": "14.0",
+    "sourceFingerprint": "9cfa700e92720b2beda2c67e972c625f4ee5bb2d14ac01bca5ede19f4ea4c1e3"
+  },
+  "releaseAssets": {
+    "updateZip": {
+      "url": "https://github.com/RoeyAsterix/DaBin/releases/download/v0.3.2/DaBin-0.3.2-Update.zip",
+      "httpStatus": 200,
+      "bytes": 2940064,
+      "sha256": "6ced075743d2af5497d94711071d34fed85b3fc6a36bc7f7c9699281e22131a3",
+      "matchesManifest": true,
+      "matchesLocalBytes": true,
+      "safeArchivePaths": true
+    },
+    "quickGuidePdf": {
+      "url": "https://github.com/RoeyAsterix/DaBin/releases/download/v0.3.2/DaBin-Quick-Guide.pdf",
+      "httpStatus": 200,
+      "bytes": 298779,
+      "sha256": "f6861eb5b8128866af2204c42b1d0b3a2922029017242d32dc20a65b21e3f598",
+      "matchesLocalBytes": true,
+      "matchesBundledPdf": true,
+      "pages": 1,
+      "pageSize": "A4"
+    },
+    "releaseNotes": {
+      "url": "https://github.com/RoeyAsterix/DaBin/releases/download/v0.3.2/RELEASE_NOTES_0.3.2.md",
+      "httpStatus": 200,
+      "bytes": 1576,
+      "sha256": "6f852f2011585c860b9d784cd70ebcf71cda958b63d1ce37658ea283b8774e0c",
+      "matchesLocalBytes": true
+    }
+  },
+  "installedApplication": {
+    "location": "~/Applications/DaBin.app",
+    "version": "0.3.2",
+    "buildNumber": 27,
+    "executableSha256": "f95a3805ea5bf28f63afb529571a09546ce855e5ae1fa2b7ea78e19f87bfa00f",
+    "matchesReleaseBuild": true,
+    "strictSignatureValid": true,
+    "architecture": "arm64",
+    "embeddedUpdateHelperValid": true,
+    "desktopShortcutValid": true,
+    "previousApplicationPreserved": true,
+    "captureArchiveLogicalRecordsUnchanged": true,
+    "capturePayloadManifestUnchanged": true,
+    "metadataQuickCheck": "ok",
+    "robotHomePreference": "cameraIsland",
+    "liveFeedCheck": "You’re up to date with DaBin 0.3.2."
+  },
+  "previousApplicationBackup": {
+    "location": "~/Applications/.DaBinBackups/20260923-175310-244D09EF.app",
+    "version": "0.3.0",
+    "buildNumber": 25,
+    "executableSha256": "69ce68583abbe2fa702be6b17e7039d072c90eeb27bb4311da744c46c7eeedc7",
+    "matchesPreUpdateApplication": true,
+    "strictSignatureValid": true
+  },
+  "verification": {
+    "publicEndpointsCheckedWithoutAuthentication": true,
+    "releaseAssetsDownloadedAndHashed": true,
+    "liveFeedReadByInstalledApplication": true,
+    "captureArchiveComparedBeforeAndAfter": true,
+    "result": "PASS"
+  }
+}

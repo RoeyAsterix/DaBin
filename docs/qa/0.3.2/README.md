@@ -11,6 +11,9 @@ This directory records the final source, functional, visual, media, package and 
 - Static App Store packaging passed **20/20**. Release preflight is blocked only by the missing Apple Developer Team ID and full Xcode.
 - The ARM64 Release build is 0.3.2 (27), source fingerprint `9cfa700e92720b2beda2c67e972c625f4ee5bb2d14ac01bca5ede19f4ea4c1e3`, executable SHA-256 `f95a3805ea5bf28f63afb529571a09546ce855e5ae1fa2b7ea78e19f87bfa00f`.
 - The verified update ZIP is 2,940,064 bytes with SHA-256 `6ced075743d2af5497d94711071d34fed85b3fc6a36bc7f7c9699281e22131a3`.
+- Public release assets returned HTTP 200 without authentication and matched the local manifest, ZIP, PDF and release-note bytes.
+- The installed 0.3.2 app, strict signature, backup, Desktop link, live update feed and pre/post capture integrity comparison passed.
+- Live camera-island reveal, pointer gaze and timed retreat passed on the installed build.
 
 ## Files
 
@@ -20,6 +23,10 @@ This directory records the final source, functional, visual, media, package and 
 - `robot-personality-renders.json`: direct character states, motion delta, Reduce Motion and cleanup evidence.
 - `build-receipt-v0.3.2.json`: compiler, SDK, source inputs and executable identity.
 - `update-manifest-v0.3.2.json`: exact public asset identity prepared for release.
+- `release-publication.json`: public release, asset identity, installation, backup, feed and capture-preservation result.
+- `updater-handoff-live.json`: reproduced LaunchServices failure and verified fresh-instance handoff.
+- `live-camera-island-v0.3.2.json`: installed window geometry, live gaze change and retreat result.
+- `live-robot-below-camera-island.png`, `live-robot-gaze-left.png`, `live-robot-gaze-right.png`: direct installed-window captures.
 - `app-store-preflight-static-v0.3.2.log`: static Store packaging result.
 - `app-store-preflight-release-v0.3.2.log`: external signing/tooling blockers.
 

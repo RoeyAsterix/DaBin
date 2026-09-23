@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "checkedAt": "2026-09-23T15:06:43Z",
+  "initialInstalledVersion": "0.3.0 (25)",
+  "observedFailure": {
+    "condition": "LaunchServices reused the already-running accessory updater helper",
+    "processArgumentsForwarded": false,
+    "result": "The helper rejected the handoff before confirmation; the application and capture archive were unchanged."
+  },
+  "correctedLaunchRehearsal": {
+    "configuration": "NSWorkspace.OpenConfiguration.createsNewApplicationInstance = true",
+    "processArgumentsForwarded": true,
+    "argumentsIncluded": [
+      "--package",
+      "--package-sha256"
+    ],
+    "confirmation": "Update DaBin to 0.3.1? Current app: 0.3.0 (25) Update: 0.3.1 (26)",
+    "result": "PASS; cancelled before installation."
+  },
+  "finalRelease": {
+    "version": "0.3.2",
+    "buildNumber": 27,
+    "sourceContainsFreshInstanceRequirement": true,
+    "configurationRegressionChecks": 11,
+    "verifiedPackageSha256": "6ced075743d2af5497d94711071d34fed85b3fc6a36bc7f7c9699281e22131a3",
+    "liveProcessArgumentsObserved": true,
+    "installationUsedSameEmbeddedSignedHelper": true,
+    "installedExecutableMatchesReleaseBuild": true,
+    "futureFeedCheck": "You’re up to date with DaBin 0.3.2.",
+    "result": "PASS"
+  }
+}
