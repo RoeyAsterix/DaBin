@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.7 — 2026-09-24
+
+- Replaced the Daily and Weekly header's three-dot options icon with an outline settings wheel.
+- Matched the wheel's size, colour and hit area to the adjacent task, search and reminder icons.
+- Renamed the control's help and accessibility label to **Settings and options** while preserving its existing menu actions.
+
 ## 0.3.6 — 2026-09-24
 
 - Replaced flat separators on individual caption cards with thin, continuous rounded frames in Daily, Search and Reminders.

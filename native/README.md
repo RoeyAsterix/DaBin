@@ -43,7 +43,7 @@ The supplied robot SVG is preserved as an original handoff resource. The transie
 
 The direct GitHub build can pull a release from inside DaBin: open **Settings → Software updates**, choose **Check for updates**, then **Download & install**. The app accepts only the fixed `RoeyAsterix/DaBin` HTTPS release path and validates the published size and SHA-256 checksum. It writes a small, private, one-use update document beside the downloaded ZIP and opens that document with its signed built-in helper. The helper validates the document and package location, independently rechecks the ZIP, asks for confirmation, verifies the ARM64 Release app, backs up `~/Applications/DaBin.app` under `~/Applications/.DaBinBackups/`, installs and verifies the replacement, then reopens Daily. It does not read, move or delete the sandboxed capture archive.
 
-Release 0.3.6 adds the rounded caption-card treatment and retains Auto Capture plus the private one-use update-document handoff. An installed 0.3.5 build can pull this release directly from Settings.
+Release 0.3.7 replaces the header's three-dot menu icon with a matching settings wheel and retains the rounded caption-card treatment, Auto Capture and private one-use update-document handoff. An installed 0.3.6 build can pull this release directly from Settings.
 
 The same release includes `DaBin-<version>-Update.zip` as a manual fallback. Extract it and open **DaBin Update.app**, then choose **Update**.
 

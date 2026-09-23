@@ -1,5 +1,19 @@
 # DaBin QA cycle — 24 September 2026
 
+## Settings wheel — 0.3.7 (32)
+
+The Daily and Weekly header menu now uses the outline `gearshape` SF Symbol instead of the three-dot ellipsis. Its 13-point size, 30 × 30-point target and muted colour match the adjacent task, search and reminder controls. The menu behavior is unchanged, and its help and accessibility label now read **Settings and options**.
+
+The exact optimized source passed **26/26 registered Release suites and 2,038 checks** with no source changes during the run. This includes application lifecycle and update configuration coverage, **214 general window checks across two displays**, **78 Weekly window checks**, **110 filter-resize checks**, **110 robot/drop checks** and **138 Daily-capture checks**.
+
+Fresh rendering passed **34 production interface views**. Original-resolution inspection covered the compact Daily header at native 2× density and the 900-point Weekly header in light and dark appearances. The wheel remains crisp, evenly spaced and visually aligned with the surrounding outline icons.
+
+The optimized ARM64 direct build is **0.3.7 (32)** with source fingerprint `a2fde0f178bfc50ebc7fa2c03788908b437225dadd8f0c0c3cbb5eec3ac5990a` and executable SHA-256 `e02c499b89cfb5b85e720954843e366739e8eb1616362f2bffaaf7bd3ac499db`. The verified update ZIP is **3,198,381 bytes**, SHA-256 `1a4154cabbc8f8fc9acba9e68a816ef79693f973d9fc21e424e7db2088f5b40a`. Packaging passed isolated fresh install, replacement, backup, signature, extraction, manifest round trip and exact executable identity.
+
+Static Store packaging passed **20/20** checks. App Store release preflight retains two external prerequisites: an Apple Developer Team ID and full Xcode. No Store archive or upload was performed.
+
+[0.3.7 evidence index](../docs/qa/0.3.7/README.md) · [Full optimized run](../docs/qa/0.3.7/full-run/report.json) · [Release renders](../docs/qa/0.3.7/release-ui-renders.json) · [Build receipt](../docs/qa/0.3.7/build-receipt-v0.3.7.json) · [Update manifest](../docs/qa/0.3.7/update-manifest-v0.3.7.json) · [Static Store preflight](../docs/qa/0.3.7/app-store-preflight-static-v0.3.7.log).
+
 ## Rounded caption cards — 0.3.6 (31)
 
 Every top-level individual caption in Daily, Search and Reminders now uses a lightly filled continuous rounded rectangle with a thin 0.75-point neutral outline. Carried tasks retain their stronger 1-point theme-colour frame. Rows inside expanded automatic-hour actions omit the inner outline because the action container already provides the rounded card boundary. The compact panel-height calculation reserves the new inter-card spacing and enough room for a minimized task's complete rounded edge and controls above the footer.

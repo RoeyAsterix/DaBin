@@ -127,8 +127,13 @@ struct BoardView: View {
                     }
                     Button("Settings…") { state.showSettings() }
                 } label: {
-                    Image(systemName: "ellipsis").frame(width: 28, height: 30)
-                }.menuStyle(.borderlessButton).menuIndicator(.hidden).fixedSize().help("More options").accessibilityLabel("More options")
+                    Image(systemName: "gearshape")
+                        .font(.system(size: 13))
+                        .frame(width: 30, height: 30)
+                        .contentShape(Rectangle())
+                        .foregroundStyle(Palette.muted)
+                }.menuStyle(.borderlessButton).menuIndicator(.hidden).fixedSize()
+                    .help("Settings and options").accessibilityLabel("Settings and options")
             }
             SmallIcon(symbol: "xmark", label: "Hide DaBin") { state.onDismiss?() }
         }

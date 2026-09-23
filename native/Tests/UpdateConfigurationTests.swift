@@ -60,8 +60,8 @@ private enum UpdateConfigurationTests {
         try expect(privacy.contains("checks for updates only when you choose")
                     && privacy.contains("does not check or download updates silently"),
                    "The bundled privacy policy explains GitHub contact and user control")
-        try expect(info["CFBundleShortVersionString"] as? String == "0.3.6"
-                    && info["CFBundleVersion"] as? String == "31",
+        try expect(info["CFBundleShortVersionString"] as? String == "0.3.7"
+                    && info["CFBundleVersion"] as? String == "32",
                    "The release version and monotonically increasing build are configured")
         print("PASS: \(checks) update-channel configuration checks")
     }

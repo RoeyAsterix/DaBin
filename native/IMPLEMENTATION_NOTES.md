@@ -10,6 +10,10 @@ The default corner trigger is 9 logical points along each edge, polled every 100
 
 No persistent menu-bar item was added, to honor complete hiding at rest. Reopening DaBin, its active-app menu, the focused robot's context menu, and keyboard actions provide recovery. A system-wide hotkey is not registered. OS Hot Corners may activate at the same corners; this app does not change system settings.
 
+## Update 0.3.7
+
+The Daily and Weekly header menu now uses the outline SF Symbol `gearshape` instead of `ellipsis`. Its 13-point symbol, 30 × 30-point hit area and muted colour match the adjacent task, search and reminder controls. The menu actions are unchanged, while the help and accessibility label now read **Settings and options**.
+
 ## Update 0.3.6
 
 `CaptureRow` now presents every top-level individual caption as a lightly filled continuous rounded rectangle with a 0.75-point neutral stroke. Carried tasks retain a 1-point theme-colour stroke. Six points of outer vertical spacing keep adjacent frames from touching, and the Daily panel-height estimate includes that spacing.
