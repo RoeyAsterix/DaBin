@@ -954,6 +954,7 @@ private final class NativeRenderTests: NSObject, NSApplicationDelegate {
             state.openSearch()
             state.query = "workshop"
             try await snapshot(state, name: "release-search", mode: mode, output: output)
+            try await snapshot(state, name: "release-search", mode: mode, output: output, pixelScale: 2)
             state.openCapture(image.id)
             try await snapshot(state, name: "release-detail-preview", mode: mode, output: output)
             state.detailFocus = "comment"

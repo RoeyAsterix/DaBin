@@ -8,6 +8,11 @@ struct CaptureRow: View {
     let featured: Bool
     var isMatch: Bool? = nil
     var taskAtTop = false
+    /// Automatic-hour actions already provide their own rounded card surface.
+    /// Keep the row content unframed there to avoid a competing nested outline.
+    var embeddedInCard = false
+
+    private let cardCornerRadius: CGFloat = 12
 
     var body: some View {
         VStack(alignment: .leading, spacing: 7) {
@@ -77,15 +82,23 @@ struct CaptureRow: View {
                 Text("\(capture.kind == .task && capture.isCompleted ? "Paused" : "Remind") \(reminder.formatted(date: .abbreviated, time: .shortened))")
                     .font(.system(size: 11)).foregroundStyle(Palette.muted)
             }
-        }.padding(.vertical, capture.isMinimized ? 8 : 12).padding(.horizontal, taskAtTop ? 10 : 0)
-            .overlay(alignment: .bottom) {
-                if taskAtTop {
-                    RoundedRectangle(cornerRadius: 11).strokeBorder(accent.opacity(0.7), lineWidth: 1)
-                } else {
-                    Rectangle().fill(Palette.line).frame(height: 1)
-                }
+        }
+        .padding(.vertical, capture.isMinimized ? 8 : 12)
+        .padding(.horizontal, embeddedInCard ? 0 : 10)
+        .background {
+            if !embeddedInCard {
+                RoundedRectangle(cornerRadius: cardCornerRadius, style: .continuous)
+                    .fill(Palette.surface.opacity(0.42))
             }
-            .padding(.top, taskAtTop ? 8 : 0).padding(.bottom, taskAtTop ? 4 : 0)
+        }
+        .overlay {
+            if !embeddedInCard {
+                RoundedRectangle(cornerRadius: cardCornerRadius, style: .continuous)
+                    .strokeBorder(taskAtTop ? accent.opacity(0.7) : Palette.line.opacity(0.88),
+                                  lineWidth: taskAtTop ? 1 : 0.75)
+            }
+        }
+        .padding(.vertical, embeddedInCard ? 0 : 6)
     }
 }
 

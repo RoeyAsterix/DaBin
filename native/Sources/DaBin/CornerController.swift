@@ -28,7 +28,7 @@ enum CornerGeometry {
         }.first { !$0.isImportedBatch && !$0.primary.isMinimized
             && $0.primary.thumbnailRelativePath != nil }?.primary.id
 
-        func cardHeight(_ card: CaptureCardGroup) -> CGFloat {
+        func cardHeight(_ card: CaptureCardGroup, includesSingleFrameSpacing: Bool = true) -> CGFloat {
             if card.isImportedBatch {
                 if card.isMinimized { return 88 }
                 var height = CGFloat(92 + card.captures.count * 58)
@@ -38,7 +38,14 @@ enum CornerGeometry {
             }
             let capture = card.primary
             let promoted = state.isTaskAtTop(capture)
-            var height: CGFloat = capture.isMinimized ? 88 : 118
+            // Top-level single-caption cards include six points of breathing
+            // room on each side of their rounded frame. Automatic-hour actions
+            // supply their own outer card and omit this spacing.
+            let frameSpacing: CGFloat = includesSingleFrameSpacing ? 12 : 0
+            // The minimized row still keeps its action controls inside the
+            // frame, so reserve enough room for the complete rounded bottom
+            // edge above the board footer.
+            var height: CGFloat = (capture.isMinimized ? 112 : 118) + frameSpacing
             if promoted { height += 32 }
             if capture.isMinimized {
                 if capture.isTask { height += 12 }
@@ -75,7 +82,9 @@ enum CornerGeometry {
             case .automaticHour(let group):
                 guard state.isHourlyGroupExpanded(group.id) else { return total + 66 }
                 let actions = group.actions.reduce(CGFloat.zero) { partial, action in
-                    partial + action.cards.reduce(CGFloat.zero) { $0 + cardHeight($1) } + 34
+                    partial + action.cards.reduce(CGFloat.zero) {
+                        $0 + cardHeight($1, includesSingleFrameSpacing: false)
+                    } + 34
                 }
                 return total + 58 + actions
             }

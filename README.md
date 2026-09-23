@@ -19,7 +19,7 @@ Automatic captures use the same local archive as manual captures. An automatical
 ## Start here
 
 - [Native app guide](native/README.md)
-- [0.3.5 release notes](docs/RELEASE_NOTES_0.3.5.md)
+- [0.3.6 release notes](docs/RELEASE_NOTES_0.3.6.md)
 - [One-page PDF guide](docs/DaBin-Quick-Guide.pdf)
 - [Architecture](native/ARCHITECTURE.md)
 - [QA results](native/QA_RESULTS.md)
@@ -43,7 +43,7 @@ The optimized app is written to `native/build/DaBin.app`. Full GUI QA needs an u
 
 The direct build has a user-initiated GitHub Releases channel under **Settings → Software updates**. It accepts only this repository’s fixed HTTPS release path, verifies the published byte count and SHA-256 checksum, then gives the bundled installer a private, one-use update document. The installer validates and consumes that document, re-verifies the package and application, asks before replacement, and backs up the previous installation. The capture archive remains untouched. There are no silent update checks.
 
-Release 0.3.5 adds the opt-in Auto Capture workflow and retains 0.3.4's verified sandbox-compatible installer handoff.
+Release 0.3.6 gives every individual caption card a thin rounded frame and retains 0.3.5's opt-in Auto Capture workflow.
 
 The current personal release is ad-hoc signed for the owner’s Mac. General distribution still requires a stable Developer ID signature and Apple notarization. The Mac App Store configuration compiles without the direct downloader and helper; Store builds update through Apple.
 

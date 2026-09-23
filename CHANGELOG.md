@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.6 — 2026-09-24
+
+- Replaced flat separators on individual caption cards with thin, continuous rounded frames in Daily, Search and Reminders.
+- Kept the stronger theme-colour outline for carried tasks while giving ordinary cards a quiet neutral frame in light and dark appearances.
+- Preserved the existing hourly-action frame without adding a competing nested outline, and adjusted compact panel sizing for the new card spacing.
+
 ## 0.3.5 — 2026-09-23
 
 - Added opt-in **Auto Capture** under Settings → Capture, off by default, for future clipboard changes and new screenshots written to a user-selected folder.

@@ -1,4 +1,18 @@
-# DaBin QA cycle — 23 September 2026
+# DaBin QA cycle — 24 September 2026
+
+## Rounded caption cards — 0.3.6 (31)
+
+Every top-level individual caption in Daily, Search and Reminders now uses a lightly filled continuous rounded rectangle with a thin 0.75-point neutral outline. Carried tasks retain their stronger 1-point theme-colour frame. Rows inside expanded automatic-hour actions omit the inner outline because the action container already provides the rounded card boundary. The compact panel-height calculation reserves the new inter-card spacing and enough room for a minimized task's complete rounded edge and controls above the footer.
+
+The exact optimized source passed **26/26 registered Release suites and 2,038 checks** with no source changes during the run. Relevant coverage includes **30 capture-action checks**, **110 filter-resize checks**, **138 Daily-capture checks**, **214 general window checks across two displays**, Weekly window/state coverage, and the unchanged storage, input, Auto Capture and update suites.
+
+Fresh rendering passed **34 production interface views**. Original-resolution inspection covered ordinary framed captions, carried tasks, minimized cards and expanded automatic actions in light and dark appearances. Dedicated native 2× Search renders confirm the 0.75-point outline stays continuous and legible at Retina density without clipping content or creating a duplicate frame inside hourly actions.
+
+The optimized ARM64 direct build is **0.3.6 (31)** with source fingerprint `783f074b0a0c5ba52378ffc1ad07aeb69228864d05f03b23e77119c5a4084e3c` and executable SHA-256 `054497fee397658bfd54ef76e77440a5320a2c05a426ce725dc890a42a4db2e6`. The verified update ZIP is **3,197,313 bytes**, SHA-256 `1f6f5c49bc6dd6c3466c8d94debc07da776297edcf45c9257fcc8b12f41e5b80`. Packaging passed isolated fresh install, replacement, backup, signature, extraction, manifest round trip and exact executable identity.
+
+Static Store packaging passed **20/20** checks. App Store release preflight retains two external prerequisites: an Apple Developer Team ID and full Xcode. No Store archive or upload was performed.
+
+[0.3.6 evidence index](../docs/qa/0.3.6/README.md) · [Full optimized run](../docs/qa/0.3.6/full-run/report.json) · [Release renders](../docs/qa/0.3.6/release-ui-renders.json) · [Build receipt](../docs/qa/0.3.6/build-receipt-v0.3.6.json) · [Update manifest](../docs/qa/0.3.6/update-manifest-v0.3.6.json) · [Static Store preflight](../docs/qa/0.3.6/app-store-preflight-static-v0.3.6.log).
 
 ## Auto Capture — 0.3.5 (30)
 

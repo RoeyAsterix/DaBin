@@ -115,7 +115,8 @@ struct HourlyCaptureCard: View {
                 if card.isImportedBatch {
                     GroupedCaptureCard(state: state, group: card, compact: compact)
                 } else {
-                    CaptureRow(state: state, capture: card.primary, featured: false)
+                    CaptureRow(state: state, capture: card.primary, featured: false,
+                               embeddedInCard: true)
                         .padding(.horizontal, compact ? 7 : 9)
                 }
             }

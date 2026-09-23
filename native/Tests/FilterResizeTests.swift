@@ -152,7 +152,7 @@ private final class FilterResizeNotificationClient: ReminderNotificationClient {
 
         let shrink = sample(controller.board) { state.filter = .tasks }
         let taskFrame = controller.board.frame
-        expect(state.dailyCaptures.count == 1 && near(taskFrame.height, 273), "Tasks leaves one record and the compact content height")
+        expect(state.dailyCaptures.count == 1 && near(taskFrame.height, 285), "Tasks leaves one framed record and the compact content height")
         expectTransition(shrink, from: initial, to: taskFrame, reducedMotion: reducedMotion, label: "Daily shrink")
         expect(defaults.object(forKey: CornerController.boardPlacementKey) == nil, "Filter animation does not become a saved user placement")
 
@@ -282,9 +282,9 @@ private final class FilterResizeNotificationClient: ReminderNotificationClient {
             settle()
             expect(screen.visibleFrame.contains(controller.board.frame),
                    "Releasing the header near the bottom recovers the entire panel on screen (\(topOffset)pt); visible=\(screen.visibleFrame), board=\(controller.board.frame)")
-            expect(near(controller.board.frame.height, 273),
+            expect(near(controller.board.frame.height, 285),
                    "Offscreen drag recovery restores the full one-task height (\(topOffset)pt)")
-            expect(controller.board.frame.maxY >= screen.visibleFrame.minY + 273,
+            expect(controller.board.frame.maxY >= screen.visibleFrame.minY + 285,
                    "Offscreen drag recovery leaves an accessible header and usable content (\(topOffset)pt)")
         }
 
@@ -317,7 +317,7 @@ private final class FilterResizeNotificationClient: ReminderNotificationClient {
                    "Dragging during a weekly collapse restores the standard compact width")
             expect(screen.visibleFrame.contains(controller.board.frame),
                    "The interrupted weekly collapse recovers a fully visible Daily panel")
-            expect(near(controller.board.frame.height, 273),
+            expect(near(controller.board.frame.height, 285),
                    "The interrupted weekly collapse retains the selected Tasks content height")
         }
         expect(store.captures.count == 6, "Filtering and resizing leave all six archived fixtures intact")

@@ -10,6 +10,12 @@ The default corner trigger is 9 logical points along each edge, polled every 100
 
 No persistent menu-bar item was added, to honor complete hiding at rest. Reopening DaBin, its active-app menu, the focused robot's context menu, and keyboard actions provide recovery. A system-wide hotkey is not registered. OS Hot Corners may activate at the same corners; this app does not change system settings.
 
+## Update 0.3.6
+
+`CaptureRow` now presents every top-level individual caption as a lightly filled continuous rounded rectangle with a 0.75-point neutral stroke. Carried tasks retain a 1-point theme-colour stroke. Six points of outer vertical spacing keep adjacent frames from touching, and the Daily panel-height estimate includes that spacing.
+
+The same row component covers Daily, Search and Reminders. Rows embedded inside an expanded automatic-hour action omit their own frame because the action container already supplies the rounded card surface. Grouped batches, hourly summaries and Weekly cards retain their existing rounded frames.
+
 ## Update 0.3.5
 
 Auto Capture is a separate default-off service composed from `AutoCaptureSettings`, `AutoCaptureService`, `ScreenshotFolderMonitor` and the existing `InputService`. Enabling it first presents a local-storage explanation and asks the user to choose the folder configured as the macOS screenshot destination. The resulting read-only security-scoped bookmark, enabled and paused state, privacy acknowledgement and excluded bundle identifiers live in app preferences. Starting or resuming seeds `NSPasteboard.changeCount` without reading a payload, so existing clipboard contents are never imported.
