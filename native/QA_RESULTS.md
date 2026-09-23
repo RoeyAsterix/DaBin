@@ -2,6 +2,8 @@
 
 ## GitHub update channel — 0.3.0 (25)
 
+The complete source and documentation are published at [github.com/RoeyAsterix/DaBin](https://github.com/RoeyAsterix/DaBin). Release [v0.3.0](https://github.com/RoeyAsterix/DaBin/releases/tag/v0.3.0) contains the verified update ZIP, public update manifest and one-page PDF guide. Independent unauthenticated checks returned HTTP 200 for the repository, release, manifest, ZIP and PDF; the downloaded ZIP size and SHA-256 matched the manifest exactly. DaBin 0.3.0 (25) is installed at `~/Applications/DaBin.app`, the previous app is preserved, the Desktop shortcut is valid, and the in-app live check reports “You’re up to date with DaBin 0.3.0.” The capture archive was not modified.
+
 DaBin now has a user-initiated direct update flow in **Settings → Software updates** and the native app menu. The app reads only the fixed `RoeyAsterix/DaBin` GitHub Release manifest, follows HTTPS redirects only to GitHub release hosts, validates the manifest schema, bundle, numeric version/build, Apple Silicon and macOS requirements, exact release path, byte count and SHA-256, then opens its embedded signed helper. The helper independently rechecks the ZIP checksum, rejects symbolic links and unexpected layouts, validates the ARM64 Release app and strict signature, asks before updating, preserves a verified backup, rolls back on failure and leaves the capture archive untouched. It never checks or downloads silently.
 
 The generated Xcode Store configuration does not define `DABIN_DIRECT_UPDATES`, contains no direct feed key and does not embed the helper. Its Settings screen reports that updates are delivered through the Mac App Store. The standalone builder alone enables the GitHub channel. The current ad-hoc package is for this Mac; broad direct distribution still needs stable Developer ID signing and Apple notarization.
@@ -14,7 +16,7 @@ The optimized direct build is **0.3.0 (25)** with source fingerprint `2a81ade40c
 
 Static Store packaging passed **20/20** checks. Release preflight now has **two environment/owner blockers**: the Apple Developer Team ID and full Xcode. The configured GitHub privacy/support URLs pass the offline URL gate; Store signing, archive validation, App Store Connect metadata and Apple review remain external.
 
-[Full optimized run](../docs/qa/0.3.0/full-run/report.json) · [Media integration](../docs/qa/0.3.0/media-integration-v0.3.0.log) · [Release render manifest](../docs/qa/0.3.0/release-ui-renders.json) · [Static Store preflight](../docs/qa/0.3.0/app-store-preflight-static-v0.3.0.log) · [Release preflight](../docs/qa/0.3.0/app-store-preflight-release-v0.3.0.log).
+[Public release verification](../docs/qa/0.3.0/release-publication.json) · [Full optimized run](../docs/qa/0.3.0/full-run/report.json) · [Media integration](../docs/qa/0.3.0/media-integration-v0.3.0.log) · [Release render manifest](../docs/qa/0.3.0/release-ui-renders.json) · [Static Store preflight](../docs/qa/0.3.0/app-store-preflight-static-v0.3.0.log) · [Release preflight](../docs/qa/0.3.0/app-store-preflight-release-v0.3.0.log).
 
 ## Appearance controls and grouped imports — 0.2.2 (24)
 
