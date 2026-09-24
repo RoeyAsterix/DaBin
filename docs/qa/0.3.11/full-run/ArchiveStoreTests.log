@@ -1,0 +1,1 @@
+PASS: 81 archive-store integration assertions; dated originals, readable records, updates, migration, legacy/current recovery, and retryable mirror failure.
