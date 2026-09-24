@@ -26,6 +26,16 @@ enum TimelinePrimaryAction: String, CaseIterable, Identifiable {
         case .settings: return "Settings and options"
         }
     }
+
+    var tooltipLabel: String {
+        switch self {
+        case .add: return "Add task"
+        case .search: return "Search"
+        case .exportDay: return "Export"
+        case .notifications: return "Notifications"
+        case .settings: return "Settings"
+        }
+    }
 }
 
 enum DayExportDestinationSelection: Equatable {
@@ -241,6 +251,12 @@ struct TimelineExportButton: View {
     var body: some View {
         AccentIconButton(symbol: TimelinePrimaryAction.exportDay.symbol,
                          label: state.route == .weekly ? "Download or copy a day or week" : TimelinePrimaryAction.exportDay.label,
+                         tooltip: TimelineTooltipDescriptor(
+                            id: "primary-tooltip-exportDay",
+                            text: state.route == .weekly ? "Export day or week" : TimelinePrimaryAction.exportDay.tooltipLabel,
+                            index: 2,
+                            itemCount: TimelinePrimaryAction.allCases.count
+                         ),
                          selected: controller.isPresented,
                          accessibilityIdentifier: "timeline-action-export-day") {
             controller.togglePresentation()

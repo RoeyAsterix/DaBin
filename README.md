@@ -19,7 +19,7 @@ Automatic captures use the same local archive as manual captures. An automatical
 ## Start here
 
 - [Native app guide](native/README.md)
-- [0.3.13 release notes](docs/RELEASE_NOTES_0.3.13.md)
+- [0.3.14 release notes](docs/RELEASE_NOTES_0.3.14.md)
 - [One-page PDF guide](docs/DaBin-Quick-Guide.pdf)
 - [Architecture](native/ARCHITECTURE.md)
 - [QA results](native/QA_RESULTS.md)
@@ -43,7 +43,7 @@ The optimized app is written to `native/build/DaBin.app`. Full GUI QA needs an u
 
 The direct build has a user-initiated GitHub Releases channel under **Settings → Software updates**. It accepts only this repository’s fixed HTTPS release path, verifies the published byte count and SHA-256 checksum, then gives the bundled installer a private, one-use update document. The installer validates and consumes that document, re-verifies the package and application, asks before replacement, and backs up the previous installation. The capture archive remains untouched. There are no silent update checks.
 
-Release 0.3.13 aligns the primary actions and filters as two identical 280 × 34-point icon rows. Every control uses the same symbol, canvas, target and circular interaction surface, while the five primary actions retain their order and distribute across the same outer edges as the six filters. The day and week search and download behavior introduced in 0.3.12 remains unchanged.
+Release 0.3.14 adds small custom tooltips to the five primary actions and six content filters. A short label appears after a 220 ms hover delay, the same cue is available from keyboard focus, and click dismisses it. Full accessibility names remain attached to the controls, and the two 280 × 34-point icon rows keep their existing geometry. All 30 optimized Release suites, 46 production-view renders, the ARM64 build and isolated update-package QA passed; public publication and installed-app verification are the remaining release steps.
 
 The current personal release is ad-hoc signed for the owner’s Mac. General distribution still requires a stable Developer ID signature and Apple notarization. The Mac App Store configuration compiles without the direct downloader and helper; Store builds update through Apple.
 

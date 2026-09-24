@@ -11,6 +11,12 @@ struct WeeklySearchButton: View {
     var body: some View {
         AccentIconButton(symbol: TimelinePrimaryAction.search.symbol,
                          label: "Search a day or week",
+                         tooltip: TimelineTooltipDescriptor(
+                            id: "primary-tooltip-search",
+                            text: "Search day or week",
+                            index: 1,
+                            itemCount: TimelinePrimaryAction.allCases.count
+                         ),
                          selected: isPresented,
                          accessibilityIdentifier: "timeline-action-search") {
             isPresented.toggle()

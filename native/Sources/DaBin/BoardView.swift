@@ -5,15 +5,18 @@ struct BoardView: View {
     @ObservedObject var state: AppState
     @StateObject private var theme: ThemeSettings
     @StateObject private var dayExportController: DayExportActionController
+    @StateObject private var tooltipController: TimelineTooltipController
     @State private var showWeekCalendar = false
     @State private var settingsHovered = false
     @FocusState private var settingsFocused: Bool
 
     init(state: AppState, theme: ThemeSettings? = nil,
-         dayExportController: DayExportActionController? = nil) {
+         dayExportController: DayExportActionController? = nil,
+         tooltipController: TimelineTooltipController? = nil) {
         self.state = state
         _theme = StateObject(wrappedValue: theme ?? ThemeSettings())
         _dayExportController = StateObject(wrappedValue: dayExportController ?? .live())
+        _tooltipController = StateObject(wrappedValue: tooltipController ?? TimelineTooltipController())
     }
 
     private var accent: Color { theme.accent }
@@ -127,6 +130,33 @@ struct BoardView: View {
             FilterBar(selection: $state.filter)
         }
         .fixedSize(horizontal: false, vertical: true)
+        .environment(\.timelineTooltipController, tooltipController)
+        .overlay(alignment: .topLeading) {
+            GeometryReader { proxy in
+                if let tooltip = tooltipController.visible {
+                    TimelineHoverTooltip(text: tooltip.text)
+                        .position(x: tooltip.anchorX(in: proxy.size.width),
+                                  y: tooltipY(tooltip, headerHeight: proxy.size.height))
+                }
+            }
+            .allowsHitTesting(false)
+            .accessibilityHidden(true)
+        }
+        .animation(.easeOut(duration: 0.12), value: tooltipController.visible)
+        .zIndex(10)
+        .onDisappear { tooltipController.dismiss() }
+    }
+
+    private func tooltipY(_ tooltip: TimelineTooltipDescriptor,
+                          headerHeight: CGFloat) -> CGFloat {
+        switch tooltip.row {
+        case .primary:
+            // Point directly back to the primary icon and temporarily cover
+            // the aligned filter beneath it instead of looking attached to it.
+            return headerHeight - (TimelineIconRowMetrics.controlHeight + 4) + 15
+        case .filters:
+            return headerHeight + 15
+        }
     }
 
     private var timelineNavigationRow: some View {
@@ -217,6 +247,7 @@ struct BoardView: View {
         HStack(spacing: TimelineIconRowMetrics.spacing(itemCount: TimelinePrimaryAction.allCases.count)) {
             AccentIconButton(symbol: TimelinePrimaryAction.add.symbol,
                              label: TimelinePrimaryAction.add.label,
+                             tooltip: primaryTooltip(.add, index: 0),
                              accessibilityIdentifier: "timeline-action-add") {
                 state.openNewTask()
             }
@@ -225,6 +256,7 @@ struct BoardView: View {
             } else {
                 AccentIconButton(symbol: TimelinePrimaryAction.search.symbol,
                                  label: TimelinePrimaryAction.search.label,
+                                 tooltip: primaryTooltip(.search, index: 1),
                                  accessibilityIdentifier: "timeline-action-search") {
                     state.openSearch()
                 }
@@ -232,6 +264,7 @@ struct BoardView: View {
             TimelineExportButton(state: state, controller: dayExportController)
             AccentIconButton(symbol: TimelinePrimaryAction.notifications.symbol,
                              label: TimelinePrimaryAction.notifications.label,
+                             tooltip: primaryTooltip(.notifications, index: 3),
                              accessibilityIdentifier: "timeline-action-notifications") {
                 state.showReminders()
             }
@@ -256,6 +289,7 @@ struct BoardView: View {
             Button("Settings…") { state.showSettings() }
         } label: {
             AccentIconMenuLabel(symbol: TimelinePrimaryAction.settings.symbol,
+                                tooltip: primaryTooltip(.settings, index: 4),
                                 hovered: $settingsHovered, focused: settingsFocused)
         }
         .menuStyle(.borderlessButton)
@@ -264,9 +298,18 @@ struct BoardView: View {
         .frame(width: TimelineIconRowMetrics.controlWidth,
                height: TimelineIconRowMetrics.controlHeight)
         .focused($settingsFocused)
-        .help(TimelinePrimaryAction.settings.label)
+        .simultaneousGesture(TapGesture().onEnded {
+            tooltipController.activate(id: "primary-tooltip-settings")
+        })
         .accessibilityLabel(TimelinePrimaryAction.settings.label)
         .accessibilityIdentifier("timeline-action-settings")
+    }
+
+    private func primaryTooltip(_ action: TimelinePrimaryAction, index: Int) -> TimelineTooltipDescriptor {
+        TimelineTooltipDescriptor(id: "primary-tooltip-\(action.rawValue)",
+                                  text: action.tooltipLabel,
+                                  index: index,
+                                  itemCount: TimelinePrimaryAction.allCases.count)
     }
 
     private var timelineExportDate: Date {

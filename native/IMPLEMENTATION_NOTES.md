@@ -10,6 +10,12 @@ The default corner trigger is 9 logical points along each edge, polled every 100
 
 No persistent menu-bar item was added, to honor complete hiding at rest. Reopening DaBin, its active-app menu, the focused robot's context menu, and keyboard actions provide recovery. A system-wide hotkey is not registered. OS Hot Corners may activate at the same corners; this app does not change system settings.
 
+## Update 0.3.14
+
+The five primary actions and six content filters now share a compact custom tooltip treatment. Each short visual label appears after a 220 ms pointer dwell or when its icon receives keyboard focus. Activating a control dismisses its label, and the label clears after both pointer and keyboard focus leave; the controls retain their complete accessibility labels.
+
+The tooltip is an overlay rather than layout content, so the paired 280 × 34-point rows and all existing icon targets remain unchanged. A small pointer and row-aware vertical anchor keep an action label attached to its primary icon while filter labels appear below the filter row. The exact source passed all 30 optimized Release suites; 46 production-view renders include representative first-action and last-filter labels in light and dark appearance. The ARM64 build and verified update package are complete, with publication and live installation tracked separately.
+
 ## Update 0.3.13
 
 Daily and Weekly now render their primary actions and filters in the same 280 × 34-point footprint. `TimelineIconRowMetrics` standardizes each control on a 15-point SF Symbol inside an 18-point canvas, a 40 × 34-point interaction target and a 30-point circular hover or selected surface. The two rows therefore align vertically and share identical outer bounds instead of relying on different button and spacing measurements.

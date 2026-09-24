@@ -142,13 +142,15 @@ private enum HeaderInteractionTests {
                              robotPlacement: RobotPlacementSettings(defaults: defaults),
                              autoCapture: autoCapture)
         let theme = ThemeSettings(defaults: defaults)
+        let tooltipController = TimelineTooltipController(delay: 0.02)
         var dismissals = 0
         state.onDismiss = { dismissals += 1 }
         state.isBoardVisible = true
 
         let size = NSSize(width: 380, height: 500)
         let hosting = NSHostingView(rootView: BoardView(state: state, theme: theme,
-                                                        dayExportController: exportController)
+                                                        dayExportController: exportController,
+                                                        tooltipController: tooltipController)
             .frame(width: size.width, height: size.height))
         hosting.frame = NSRect(origin: .zero, size: size)
         let window = NSWindow(contentRect: NSRect(x: 80, y: 80, width: size.width, height: size.height),
@@ -188,6 +190,44 @@ private enum HeaderInteractionTests {
         try expect(abs(primaryWidth - TimelineIconRowMetrics.rowWidth) < 0.01
                    && abs(filterWidth - TimelineIconRowMetrics.rowWidth) < 0.01,
                    "Primary actions and filters occupy identical 280-point rows")
+
+        let primaryTooltipLabels = TimelinePrimaryAction.allCases.map(\.tooltipLabel)
+        let filterTooltipLabels = CaptureFilter.allCases.map(\.tooltipLabel)
+        try expect(primaryTooltipLabels == ["Add task", "Search", "Export", "Notifications", "Settings"],
+                   "Every primary icon has concise hover text")
+        try expect(filterTooltipLabels == ["All", "Text", "Links", "Files", "Media", "Tasks"],
+                   "Every filter icon has concise hover text")
+        let firstPrimaryTooltip = TimelineTooltipDescriptor(
+            id: "primary-tooltip-add", text: primaryTooltipLabels[0], index: 0,
+            itemCount: TimelinePrimaryAction.allCases.count
+        )
+        let lastFilterTooltip = TimelineTooltipDescriptor(
+            id: "filter-tooltip-tasks", text: filterTooltipLabels[5], index: 5,
+            itemCount: CaptureFilter.allCases.count, row: .filters
+        )
+        try expect(abs(firstPrimaryTooltip.anchorX(in: size.width) - 70) < 0.01
+                   && abs(lastFilterTooltip.anchorX(in: size.width) - 310) < 0.01,
+                   "Tooltip anchors follow the shared row geometry at both edges")
+        tooltipController.begin(firstPrimaryTooltip)
+        settle(0.04)
+        try expect(tooltipController.visible == firstPrimaryTooltip,
+                   "Hover delay reveals one coordinated tooltip")
+        tooltipController.end(id: firstPrimaryTooltip.id)
+        try expect(tooltipController.visible == nil,
+                   "Leaving an icon dismisses its tooltip immediately")
+        tooltipController.begin(lastFilterTooltip)
+        tooltipController.end(id: lastFilterTooltip.id)
+        settle(0.04)
+        try expect(tooltipController.visible == nil,
+                   "Leaving before the delay cancels tooltip presentation")
+        tooltipController.begin(firstPrimaryTooltip, immediate: true)
+        try expect(tooltipController.visible == firstPrimaryTooltip,
+                   "Keyboard focus uses the immediate tooltip presentation path")
+        tooltipController.activate(id: firstPrimaryTooltip.id)
+        try expect(tooltipController.visible == nil,
+                   "Activating an icon clears its tooltip before navigation or a popover")
+        tooltipController.end(id: firstPrimaryTooltip.id)
+
         click(window, x: 70, topY: 55)
         try expect(state.route == .newTask, "Add opens the task composer from the compact primary row")
         state.route = .daily; settle()

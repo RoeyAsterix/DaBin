@@ -19,6 +19,148 @@ enum TimelineIconRowMetrics {
     }
 }
 
+/// The compact hover label is coordinated at header level so it can draw
+/// below both icon rows without changing either row's measured size.
+struct TimelineTooltipDescriptor: Equatable, Identifiable {
+    enum Row: Equatable { case primary, filters }
+
+    let id: String
+    let text: String
+    let index: Int
+    let itemCount: Int
+    var row: Row = .primary
+
+    func anchorX(in containerWidth: CGFloat) -> CGFloat {
+        let leading = max(0, (containerWidth - TimelineIconRowMetrics.rowWidth) / 2)
+        let step = TimelineIconRowMetrics.controlWidth
+            + TimelineIconRowMetrics.spacing(itemCount: itemCount)
+        return leading + TimelineIconRowMetrics.controlWidth / 2 + CGFloat(index) * step
+    }
+}
+
+@MainActor
+final class TimelineTooltipController: ObservableObject {
+    @Published private(set) var visible: TimelineTooltipDescriptor?
+
+    private let delayNanoseconds: UInt64
+    private var pending: Task<Void, Never>?
+    private var activeID: String?
+    private var suppressedID: String?
+
+    init(delay: TimeInterval = 0.22) {
+        delayNanoseconds = UInt64(max(0, delay) * 1_000_000_000)
+    }
+
+    deinit { pending?.cancel() }
+
+    func begin(_ descriptor: TimelineTooltipDescriptor, immediate: Bool = false) {
+        if visible?.id != descriptor.id { visible = nil }
+        activeID = descriptor.id
+        pending?.cancel()
+        guard suppressedID != descriptor.id else { return }
+        guard !immediate, delayNanoseconds > 0 else {
+            visible = descriptor
+            return
+        }
+        pending = Task { [weak self] in
+            do { try await Task.sleep(nanoseconds: self?.delayNanoseconds ?? 0) }
+            catch { return }
+            guard let self, self.activeID == descriptor.id,
+                  self.suppressedID != descriptor.id else { return }
+            self.visible = descriptor
+        }
+    }
+
+    func end(id: String) {
+        if visible?.id == id { visible = nil }
+        if suppressedID == id { suppressedID = nil }
+        guard activeID == id else { return }
+        pending?.cancel()
+        pending = nil
+        activeID = nil
+    }
+
+    /// Hide a label before its action opens a route, popover, or menu. It stays
+    /// hidden until the pointer and keyboard focus leave that control.
+    func activate(id: String) {
+        pending?.cancel()
+        pending = nil
+        suppressedID = id
+        if visible?.id == id { visible = nil }
+    }
+
+    func dismiss() {
+        pending?.cancel()
+        pending = nil
+        activeID = nil
+        suppressedID = nil
+        visible = nil
+    }
+
+    /// Deterministic visual QA hook; production hover still uses `begin`.
+    func presentImmediately(_ descriptor: TimelineTooltipDescriptor) {
+        dismiss()
+        activeID = descriptor.id
+        visible = descriptor
+    }
+}
+
+private struct TimelineTooltipControllerKey: EnvironmentKey {
+    static let defaultValue: TimelineTooltipController? = nil
+}
+
+extension EnvironmentValues {
+    var timelineTooltipController: TimelineTooltipController? {
+        get { self[TimelineTooltipControllerKey.self] }
+        set { self[TimelineTooltipControllerKey.self] = newValue }
+    }
+}
+
+@MainActor
+struct TimelineHoverTooltip: View {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    let text: String
+
+    var body: some View {
+        VStack(spacing: -1) {
+            TimelineTooltipPointer()
+                .fill(Palette.surface)
+                .overlay(TimelineTooltipPointer().stroke(Palette.line, lineWidth: 0.75))
+                .frame(width: 10, height: 5)
+            Text(text)
+                .font(.system(size: 11, weight: .medium))
+                .foregroundStyle(Palette.foreground)
+                .lineLimit(1)
+                .fixedSize(horizontal: true, vertical: true)
+                .padding(.horizontal, 7)
+                .padding(.vertical, 4)
+                .background(Palette.surface,
+                            in: RoundedRectangle(cornerRadius: 7, style: .continuous))
+                .overlay {
+                    RoundedRectangle(cornerRadius: 7, style: .continuous)
+                        .strokeBorder(Palette.line, lineWidth: 0.75)
+                }
+        }
+            .shadow(color: .black.opacity(0.16), radius: 5, y: 2)
+            .transition(reduceMotion
+                        ? .opacity
+                        : .opacity.combined(with: .scale(scale: 0.96, anchor: .top)))
+            .allowsHitTesting(false)
+            .accessibilityHidden(true)
+    }
+}
+
+private struct TimelineTooltipPointer: Shape {
+    func path(in rect: CGRect) -> Path {
+        var path = Path()
+        path.move(to: CGPoint(x: rect.midX, y: rect.minY))
+        path.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY))
+        path.addLine(to: CGPoint(x: rect.minX, y: rect.maxY))
+        path.closeSubpath()
+        return path
+    }
+}
+
 enum Palette {
     static let background = adaptive(light: 0xFDFCFE, dark: 0x1D1C21)
     static let surface = adaptive(light: 0xFFFFFF, dark: 0x252328)
@@ -44,8 +186,15 @@ struct FilterBar: View {
     @Binding var selection: CaptureFilter
     var body: some View {
         HStack(spacing: TimelineIconRowMetrics.spacing(itemCount: CaptureFilter.allCases.count)) {
-            ForEach(CaptureFilter.allCases) { filter in
+            ForEach(Array(CaptureFilter.allCases.enumerated()), id: \.element.id) { index, filter in
                 AccentIconButton(symbol: symbol(for: filter), label: label(for: filter),
+                                 tooltip: TimelineTooltipDescriptor(
+                                    id: "filter-tooltip-\(filter.rawValue)",
+                                    text: filter.tooltipLabel,
+                                    index: index,
+                                    itemCount: CaptureFilter.allCases.count,
+                                    row: .filters
+                                 ),
                                  selected: selection == filter,
                                  accessibilityIdentifier: "filter-\(filter.rawValue)") {
                     selection = filter
@@ -75,14 +224,29 @@ struct FilterBar: View {
     }
 }
 
+extension CaptureFilter {
+    var tooltipLabel: String {
+        switch self {
+        case .all: return "All"
+        case .text: return "Text"
+        case .links: return "Links"
+        case .files: return "Files"
+        case .media: return "Media"
+        case .tasks: return "Tasks"
+        }
+    }
+}
+
 /// The shared visual language for the two centered icon rows. Every control
 /// keeps the same hit target while hover, press and keyboard focus remain
 /// visible against either board appearance.
 @MainActor
 struct AccentIconButton: View {
     @Environment(\.daBinAccent) private var accent
+    @Environment(\.timelineTooltipController) private var tooltipController
     let symbol: String
     let label: String
+    var tooltip: TimelineTooltipDescriptor? = nil
     var selected = false
     var accessibilityIdentifier: String? = nil
     let action: () -> Void
@@ -90,7 +254,10 @@ struct AccentIconButton: View {
     @FocusState private var focused: Bool
 
     var body: some View {
-        Button(action: action) {
+        Button {
+            if let tooltip { tooltipController?.activate(id: tooltip.id) }
+            action()
+        } label: {
             Image(systemName: symbol)
                 .font(.system(size: TimelineIconRowMetrics.symbolPointSize, weight: .regular))
                 .accessibilityHidden(true)
@@ -103,12 +270,29 @@ struct AccentIconButton: View {
         .buttonStyle(AccentIconButtonStyle(accent: accent, selected: selected,
                                            hovered: hovered, focused: focused))
         .focused($focused)
-        .onHover { hovered = $0 }
-        .help(label)
+        .onHover { isHovering in
+            hovered = isHovering
+            updateTooltip(hovered: isHovering, focused: focused)
+        }
+        .onChange(of: focused) { _, isFocused in
+            updateTooltip(hovered: hovered, focused: isFocused)
+        }
+        .onDisappear {
+            if let tooltip { tooltipController?.end(id: tooltip.id) }
+        }
         .accessibilityLabel(label)
         .accessibilityIdentifier(accessibilityIdentifier ?? label)
         .accessibilityAddTraits(selected ? .isSelected : [])
         .accessibilityRemoveTraits(selected ? [] : .isSelected)
+    }
+
+    private func updateTooltip(hovered: Bool, focused: Bool) {
+        guard let tooltip else { return }
+        if hovered || focused {
+            tooltipController?.begin(tooltip, immediate: focused && !hovered)
+        } else {
+            tooltipController?.end(id: tooltip.id)
+        }
     }
 }
 
@@ -150,7 +334,9 @@ private struct AccentIconButtonStyle: ButtonStyle {
 @MainActor
 struct AccentIconMenuLabel: View {
     @Environment(\.daBinAccent) private var accent
+    @Environment(\.timelineTooltipController) private var tooltipController
     let symbol: String
+    let tooltip: TimelineTooltipDescriptor
     @Binding var hovered: Bool
     let focused: Bool
 
@@ -177,7 +363,25 @@ struct AccentIconMenuLabel: View {
                                height: TimelineIconRowMetrics.focusRingDiameter)
                 }
             }
-            .onHover { hovered = $0 }
+            .onHover { isHovering in
+                hovered = isHovering
+                updateTooltip(hovered: isHovering, focused: focused)
+            }
+            .onChange(of: focused) { _, isFocused in
+                updateTooltip(hovered: hovered, focused: isFocused)
+            }
+            .onDisappear {
+                hovered = false
+                tooltipController?.end(id: tooltip.id)
+            }
+    }
+
+    private func updateTooltip(hovered: Bool, focused: Bool) {
+        if hovered || focused {
+            tooltipController?.begin(tooltip, immediate: focused && !hovered)
+        } else {
+            tooltipController?.end(id: tooltip.id)
+        }
     }
 }
 

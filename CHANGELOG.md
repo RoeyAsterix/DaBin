@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.14 — 2026-09-24
+
+- Added compact custom hover tooltips to all five primary actions and six content filters, with short visible labels and complete accessibility names.
+- Showed each tooltip after a 220 ms hover delay, exposed the same label for keyboard focus, dismissed it on click and cleared it after pointer and focus leave.
+- Kept the existing 280 × 34-point action and filter row geometry unchanged, with representative light and dark render coverage and targeted interaction tests added for release verification.
+
 ## 0.3.13 — 2026-09-24
 
 - Aligned the primary-action and filter controls as two visually identical compact rows with the same 280 × 34-point footprint.

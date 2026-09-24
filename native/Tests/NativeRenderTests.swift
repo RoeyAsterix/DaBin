@@ -1024,13 +1024,16 @@ private final class NativeRenderTests: NSObject, NSApplicationDelegate {
         ]
     }
 
-    private func snapshot(_ state: AppState, name: String, mode: String, output: URL, scrollToBottom: Bool = false, height: CGFloat = 500, width: CGFloat = 380, requireCornerMarkers: Bool = false, theme: ThemeSettings? = nil, pixelScale: Int = 1) async throws {
+    private func snapshot(_ state: AppState, name: String, mode: String, output: URL, scrollToBottom: Bool = false, height: CGFloat = 500, width: CGFloat = 380, requireCornerMarkers: Bool = false, theme: ThemeSettings? = nil, pixelScale: Int = 1, tooltip: TimelineTooltipDescriptor? = nil) async throws {
         let size = NSSize(width: width, height: height)
         let selectedTheme = theme ?? renderTheme!
         selectedTheme.setDarkMode(mode == "dark")
+        let tooltipController = TimelineTooltipController()
+        if let tooltip { tooltipController.presentImmediately(tooltip) }
         // Appearance is driven only by the production Dark mode preference.
         // The fixture does not set the window or SwiftUI environment appearance.
-        let hosting = NSHostingView(rootView: BoardView(state: state, theme: selectedTheme)
+        let hosting = NSHostingView(rootView: BoardView(state: state, theme: selectedTheme,
+                                                        tooltipController: tooltipController)
             .frame(width: size.width, height: size.height))
         hosting.frame = NSRect(origin: .zero, size: size)
         hosting.wantsLayer = true
@@ -1080,6 +1083,7 @@ private final class NativeRenderTests: NSObject, NSApplicationDelegate {
                                    "themeHex": selectedTheme.selectedHex,
                                    "darkModeEnabled": selectedTheme.darkModeEnabled,
                                    "boardOpacity": selectedTheme.boardOpacity]
+        if let tooltip { record["timelineTooltip"] = tooltip.text }
         if requireCornerMarkers {
             let counts = Self.cornerMarkerCounts(in: bitmap)
             record["cornerMarkerPixelCounts"] = counts
@@ -1225,6 +1229,18 @@ private final class NativeRenderTests: NSObject, NSApplicationDelegate {
         for mode in ["light", "dark"] {
             try await snapshot(emptyState, name: "release-empty", mode: mode, output: output,
                                height: CornerGeometry.dailyPanelHeight(for: emptyState))
+            try await snapshot(emptyState, name: "release-tooltip-add", mode: mode, output: output,
+                               height: CornerGeometry.dailyPanelHeight(for: emptyState),
+                               tooltip: TimelineTooltipDescriptor(
+                                id: "primary-tooltip-add", text: "Add task", index: 0,
+                                itemCount: TimelinePrimaryAction.allCases.count
+                               ))
+            try await snapshot(emptyState, name: "release-tooltip-tasks", mode: mode, output: output,
+                               height: CornerGeometry.dailyPanelHeight(for: emptyState),
+                               tooltip: TimelineTooltipDescriptor(
+                                id: "filter-tooltip-tasks", text: "Tasks", index: 5,
+                                itemCount: CaptureFilter.allCases.count, row: .filters
+                               ))
             state.openDaily()
             try store.setMinimized(task, minimized: false)
             try await snapshot(state, name: "release-daily", mode: mode, output: output,

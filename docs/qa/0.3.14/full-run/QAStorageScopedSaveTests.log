@@ -1,0 +1,3 @@
+BENCHMARK 1000 records, one scoped state update: 0.0025 seconds
+BENCHMARK 1000 records, one text preview update: 0.0022 seconds
+PASS: 22 scoped-storage assertions; touched-record saves, no-op previews, transaction rollback, reminder retry, retained archive warnings, and 1,000-record benchmark.

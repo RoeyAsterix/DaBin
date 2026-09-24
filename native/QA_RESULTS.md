@@ -1,5 +1,15 @@
 # DaBin QA cycle — 24 September 2026
 
+## Compact icon tooltips — 0.3.14 (39)
+
+DaBin 0.3.14 adds compact custom tooltips to the five primary actions and six content filters. Each short visual label appears after a 220 ms hover delay or on keyboard focus, while the icon keeps its complete accessibility name. Activating a control dismisses the cue, and it clears after pointer and focus leave. The overlay does not alter the matched **280 × 34-point** action and filter row geometry.
+
+The exact source passed **30/30 registered optimized Release suites** with no source changes during the final run. The native header suite passed **39 checks**, including the shared geometry, all eleven concise labels, edge anchors, delayed reveal, cancellation, the keyboard-focus presentation path, activation dismissal and every existing header action. Fresh rendering produced **46 production-view renders**; retained first-action and last-filter views are readable, pointed at the correct row and unclipped in light and dark appearance at 380 points.
+
+The optimized ARM64 direct build is **0.3.14 (39)** with production fingerprint `e39dd3182ad87aeb266805bfb038b432b42f3e4b23b9e3e5a8e76b9fd88891c4`. Its executable is **5,973,664 bytes**, SHA-256 `80fb1e1c39455ad765b313c714b9abe20a3f5e52548e3ad4a10bad697e901f0c`. The verified update ZIP is **3,391,196 bytes**, SHA-256 `38495e16b2b5d1629fccaa152815b6c1c7da2f7800ab370e51267504631a96c2`; isolated package QA passed fresh installation, replacement, backup, clean-copy signature checks, extraction, exact executable identity and document handoff. Static Store packaging passed **20/20** checks. App Store release preflight retains the same two external prerequisites: an Apple Developer Team ID and full Xcode.
+
+Public release verification and the installed 0.3.13 → 0.3.14 in-app update remain pending until the tagged assets exist. [0.3.14 pre-publication evidence](../docs/qa/0.3.14/README.md) · [Full optimized run](../docs/qa/0.3.14/full-run/report.json) · [Release renders](../docs/qa/0.3.14/release-ui-renders.json) · [Build receipt](../docs/qa/0.3.14/build-receipt-v0.3.14.json) · [Update manifest](../docs/qa/0.3.14/update-manifest-v0.3.14.json).
+
 ## Matched compact icon rows — 0.3.13 (38)
 
 DaBin 0.3.13 gives the primary actions and filters the same **280 × 34-point** row footprint. Every control now uses one 15-point SF Symbol in an 18-point canvas, a 40 × 34-point target and a 30-point circular selected or hover surface. The five primary actions distribute between the same outer edges as the six filters, preserving Add, Search, Export, Notifications and Settings in their existing order while removing the visible row stagger.
