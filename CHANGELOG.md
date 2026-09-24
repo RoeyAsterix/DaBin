@@ -5,6 +5,7 @@
 - Replaced the text Daily/Weekly segmented control with matched purple `1` and `7` calendar icons.
 - Reused the action/filter icon language: 15-point symbols, 40 × 34-point targets, 30-point selected and hover circles, pressed feedback, focus rings and 220 ms tooltips.
 - Kept both modes accessible as individually labeled buttons with selected state, left/right keyboard switching and stable identifiers, while reducing the control from 92 to 80 points for the narrow header.
+- Published and installed 0.3.16 through DaBin's verified updater; live Daily/Weekly interaction, the real hover label and current-version check passed while the archive, preferences and Desktop link remained unchanged.
 
 ## 0.3.15 — 2026-09-24
 

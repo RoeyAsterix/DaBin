@@ -16,6 +16,8 @@ The native text `Picker` for Daily and Weekly is replaced by `TimelineModeContro
 
 `TimelineNavigationMetrics` owns the narrow-header geometry and explicit tooltip anchors for the 52-point Daily date and 86-point Weekly range. The pair is 12 points narrower than the old segmented control. The header preserves its total vertical footprint by using the 34-point icon target with five points of top inset and removing the two one-point row gaps. Each mode remains an individually labeled accessibility button with a selected trait and stable identifier; left/right move commands select the corresponding mode. Mode activation still routes through `AppState.selectTimelineMode`, so selected dates, filters, scroll positions and drafts keep their existing behavior.
 
+The public 0.3.16 assets matched the verified local package byte for byte. The installed 0.3.15 app downloaded and installed 0.3.16 through its own update screen, retained all 33 archive files, preferences and the Desktop link, and created an exact signed backup of 0.3.15. Live installed-app inspection confirmed the separate **Daily view** and **Weekly view** buttons, both switch directions, the real pointer tooltip and the current-version response.
+
 ## Update 0.3.15
 
 Live pointer QA of the installed 0.3.14 release found one platform-specific gap: Settings is a native SwiftUI `Menu`, whose outer control owns pointer hit testing and prevents the inner icon label's hover callback from firing. The Settings tooltip therefore did not appear even though its keyboard-focus cue and menu actions remained available. The other ten action and filter tooltips behaved as designed.

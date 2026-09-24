@@ -13,6 +13,6 @@ DaBin 0.3.16 gives the Daily and Weekly switch the same clean purple icon design
 
 ## Verification
 
-The exact source passed all **30 registered optimized Release suites**, including **46 compact-header checks**. **50 production-view renders** cover Daily and Weekly, light and dark appearances, 380-point narrow layout, Retina output and both new tooltip positions. A verified packaged build then passed a real pointer dwell, accessibility inspection and Daily → Weekly → Daily interaction. The local 33-file archive and preferences remained byte-identical. The ARM64 build and isolated update package also passed their signature, extraction, replacement, backup and hash checks.
+The exact source passed all **30 registered optimized Release suites**, including **46 compact-header checks**. **50 production-view renders** cover Daily and Weekly, light and dark appearances, 380-point narrow layout, Retina output and both new tooltip positions. A verified packaged build then passed a real pointer dwell, accessibility inspection and Daily → Weekly → Daily interaction. The ARM64 build and update package also passed their signature, extraction, replacement, backup and hash checks.
 
-Public publication and the installed-app update are the remaining release steps.
+The public release assets were downloaded without authentication and matched their local bytes. DaBin then updated itself from **0.3.15 (40)** to **0.3.16 (41)** through Settings. The installed app repeated the pointer, accessibility and mode-switch checks, reported that it was current, and retained all 33 archive files, preferences and the Desktop link unchanged. The updater preserved an exact verified backup of 0.3.15.
