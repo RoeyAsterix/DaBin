@@ -4,6 +4,10 @@ This directory records functional, visual, build, package, stable-download, publ
 
 ## Result
 
+### Post-publication direct-install correction
+
+A browser/WhatsApp fresh-install check found that the app and updater are ad-hoc signed and have no notarization ticket. Gatekeeper rejects the quarantined download before launch. Package integrity, executable permissions, ARM64 architecture and code-seal verification all pass; the missing Developer ID signature and Apple notarization are the cause. The installed app's in-app update flow remains verified. See `direct-install-gatekeeper-failure.md`.
+
 - The exact source passed **30/30 registered optimized Release suites** with no source changes during the run.
 - Software update coverage passed **34 checks**. Update configuration and stable-release staging passed **21 checks**.
 - The production renderer completed **50 views**. The first Settings screen was inspected in light and dark appearance at the shipping 380 × 430-point size; the complete **Get updates** card is visible without scrolling or clipping. The 260-point stress render remains below the supported layout width.

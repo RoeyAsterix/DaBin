@@ -16,13 +16,13 @@ Automatic captures use the same local archive as manual captures. An automatical
 
 ![DaBin robot and Daily board](design/robot-preview.png)
 
-## Download the latest version
+## Latest release files
 
-- [Recommended installer or update](https://github.com/RoeyAsterix/DaBin/releases/latest/download/DaBin-Latest-Update.zip)
-- [Direct Apple Silicon installation](https://github.com/RoeyAsterix/DaBin/releases/latest/download/DaBin-Latest-AppleSilicon.zip)
+- [In-app update package for an existing DaBin installation](https://github.com/RoeyAsterix/DaBin/releases/latest/download/DaBin-Latest-Update.zip)
+- [Unsigned Apple Silicon test package](https://github.com/RoeyAsterix/DaBin/releases/latest/download/DaBin-Latest-AppleSilicon.zip)
 - [Latest release details](https://github.com/RoeyAsterix/DaBin/releases/latest)
 
-These permanent links follow the newest public GitHub release. The recommended package can install DaBin for the first time or update the copy in `~/Applications`; the direct package contains `DaBin.app` for manual installation.
+These permanent links follow the newest public GitHub release. The current files are ad-hoc signed and are not notarized. A browser, messaging app, or AirDrop marks them as downloaded, so Gatekeeper blocks a normal first installation. Existing DaBin installations can update safely through **Settings → Get updates**. A public first-install package must be signed with a Developer ID and notarized before it is described as a direct installer.
 
 ## Start here
 

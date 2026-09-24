@@ -2,6 +2,8 @@
 
 ## Visible updates and permanent latest downloads — 0.3.18 (43)
 
+**Direct-install correction:** post-publication testing from a browser/WhatsApp download exposed a missing distribution gate. The ZIP bytes, executable modes, architecture and code seals are correct, but the app and updater are ad-hoc signed and have no Apple notarization ticket. Gatekeeper therefore blocks a quarantined first installation. The existing app's verified in-app update remains functional because it launches its already-installed helper. The repository no longer describes the 0.3.18 standalone ZIP as a working public installer. A replacement requires Developer ID signing and notarization; no valid signing identity is installed on the current build host. [Incident evidence](../docs/qa/0.3.18/direct-install-gatekeeper-failure.md).
+
 DaBin 0.3.18 places a compact **Get updates** card first in Settings. The installed version, update status, **Check for updates**, conditional **Download & install**, progress, and latest GitHub release link are visible in the initial 380 × 430-point window. Direct builds expose the trusted repository's permanent latest-release page before a check; Store builds retain Apple-managed status and omit the GitHub actions.
 
 The exact source passed **30/30 registered optimized Release suites** with no source changes during the run. Software update coverage passed **34 checks**, release configuration passed **21 checks**, and the renderer completed **50 production views**. Original-resolution light and dark Settings inspection found the entire update card visible and unclipped at the shipping width. The static Store source/package preflight passed all **20 checks**.
