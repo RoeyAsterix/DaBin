@@ -1,6 +1,6 @@
 # DaBin 0.3.17 release evidence
 
-This directory records the functional, visual, build, package, and Store-readiness checks completed for DaBin 0.3.17 (42) before publication.
+This directory records the completed functional, visual, build, package, publication, update, direct-install, and complete-quit checks for DaBin 0.3.17 (42).
 
 ## Result
 
@@ -12,6 +12,11 @@ This directory records the functional, visual, build, package, and Store-readine
 - The update package passed fresh-install, replacement, backup, embedded-helper handoff, signature, extraction, source-freshness, and executable-hash checks.
 - The standalone package passed ARM64, dependency, resource, signature, source-freshness, per-file-manifest, and ZIP round-trip checks.
 - Both packages contain the exact same DaBin executable and identify `~/Applications/DaBin.app` as the installation target.
+- GitHub published v0.3.17 as the latest public release with all five expected assets. Every anonymous download matched the verified local file in both size and SHA-256.
+- The anonymously downloaded one-click package independently completed an isolated fresh installation and replacement, preserved one strict-signature-verified backup, and installed the exact release executable.
+- The installed 0.3.16 app discovered, downloaded, verified, and installed 0.3.17 through Settings. The signed backup was created while all 33 archive files, preferences, originals, imports, and Desktop links remained byte-identical.
+- The installed 0.3.17 app reported **You’re up to date with DaBin 0.3.17.** Its Settings accessibility tree exposed **Quit DaBin completely** with identifier `settings-quit-dabin`; activation left zero DaBin and updater processes.
+- The public standalone ZIP was separately installed to `~/Applications/DaBin.app`, passed strict signature and ARM64 checks, matched the build receipt, launched Daily, and again preserved local data, preferences, and Desktop links.
 
 ## Distribution boundary
 
@@ -29,7 +34,7 @@ The build and both helpers are locally ad-hoc signed. Strict code-signature veri
 | `DaBin-0.3.17-Update.zip` | 3,395,784 | `158324bf1f3cf798d5245c659b147352312cd00402df64630c37793b0e880e9e` |
 | `DaBin-0.3.17-AppleSilicon.zip` | 2,816,983 | `c690cdfab583698f6642759b2e3b093815eb274d1df4952a3d1bdaa847f78457` |
 
-The two ZIP files remain outside Git and are published as immutable GitHub Release assets. Public-byte, live update, direct-install launch, and complete-quit evidence is added after publication.
+The two ZIP files remain outside Git and are published as immutable GitHub Release assets.
 
 ## Evidence map
 
@@ -42,3 +47,8 @@ The two ZIP files remain outside Git and are published as immutable GitHub Relea
 - `package-comparison-v0.3.17.json`: cross-package application identity.
 - `app-store-preflight-static-v0.3.17.log`: all 20 offline source/package checks passed.
 - `app-store-preflight-release-v0.3.17.log`: the two external App Store prerequisites.
+- `release-publication.json`: latest-release state and anonymous byte identity for all five public assets.
+- `public-update-installer-v0.3.17.json`: isolated fresh-install and replacement execution from the anonymously downloaded one-click package.
+- `live-update-v0.3.17.json`: public 0.3.16 → 0.3.17 self-update, backup, process, archive, preferences, and Desktop-link result.
+- `live-quit-v0.3.17.json`: process-level proof that the Settings command left DaBin and its updater stopped.
+- `direct-install-v0.3.17.json`: independent public standalone installation and launch result.

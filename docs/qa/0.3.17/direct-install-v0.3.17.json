@@ -1,0 +1,23 @@
+{
+  "architecture": "arm64",
+  "archiveFiles": 33,
+  "archiveUnchanged": true,
+  "buildNumber": "42",
+  "desktopLinksUnchanged": true,
+  "executableSHA256": "dc8b6c54455729dc4b25db74166f110703f304296fa0bc4786cfa7c8d5a389f9",
+  "importsUnchanged": true,
+  "installationTarget": "/Users/roeylibfeld/Applications/DaBin.app",
+  "launched": true,
+  "matchesBuildReceipt": true,
+  "originalsUnchanged": true,
+  "preferencesUnchanged": true,
+  "previousAppBackup": "/Users/roeylibfeld/Applications/.DaBinBackups/20260924-095958-DirectInstall.app",
+  "runningProcesses": [
+    "71116 /Users/roeylibfeld/Applications/DaBin.app/Contents/MacOS/DaBin --show-daily"
+  ],
+  "schemaVersion": 1,
+  "sourceAsset": "public DaBin-0.3.17-AppleSilicon.zip",
+  "sourceAssetSHA256": "c690cdfab583698f6642759b2e3b093815eb274d1df4952a3d1bdaa847f78457",
+  "strictDeepSignature": "passed",
+  "version": "0.3.17"
+}

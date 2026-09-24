@@ -1,0 +1,11 @@
+{
+  "completeQuitPassed": true,
+  "dabinProcessesAfterQuit": [],
+  "schemaVersion": 1,
+  "settingsControl": {
+    "activated": true,
+    "identifier": "settings-quit-dabin",
+    "label": "Quit DaBin completely"
+  },
+  "updaterProcessesAfterQuit": []
+}

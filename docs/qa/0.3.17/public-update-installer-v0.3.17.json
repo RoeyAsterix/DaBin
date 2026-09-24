@@ -1,0 +1,16 @@
+{
+  "backup": "passed",
+  "backupStrictSignature": "passed",
+  "buildNumber": "42",
+  "executableSHA256": "dc8b6c54455729dc4b25db74166f110703f304296fa0bc4786cfa7c8d5a389f9",
+  "firstRunOutput": "Installed DaBin 0.3.17 (42) at /var/folders/qy/zfgc4dgx02x2k_c04330ghy00000gn/T/dabin-public-updater-6ucua5dc/qa-home/Applications/DaBin.app",
+  "freshInstall": "passed",
+  "installedStrictSignature": "passed",
+  "matchesBuildReceipt": true,
+  "replacement": "passed",
+  "schemaVersion": 1,
+  "secondRunOutput": "Installed DaBin 0.3.17 (42) at /var/folders/qy/zfgc4dgx02x2k_c04330ghy00000gn/T/dabin-public-updater-6ucua5dc/qa-home/Applications/DaBin.app\nPrevious app backed up at /var/folders/qy/zfgc4dgx02x2k_c04330ghy00000gn/T/dabin-public-updater-6ucua5dc/qa-home/Applications/.DaBinBackups/20260924-100123-1CFCFCC5.app",
+  "sourceAsset": "public DaBin-0.3.17-Update.zip",
+  "sourceAssetSHA256": "158324bf1f3cf798d5245c659b147352312cd00402df64630c37793b0e880e9e",
+  "version": "0.3.17"
+}

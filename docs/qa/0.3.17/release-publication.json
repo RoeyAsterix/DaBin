@@ -1,0 +1,36 @@
+{
+  "assets": {
+    "DaBin-0.3.17-AppleSilicon.zip": {
+      "bytes": 2816983,
+      "matchesLocal": true,
+      "sha256": "c690cdfab583698f6642759b2e3b093815eb274d1df4952a3d1bdaa847f78457"
+    },
+    "DaBin-0.3.17-Update.zip": {
+      "bytes": 3395784,
+      "matchesLocal": true,
+      "sha256": "158324bf1f3cf798d5245c659b147352312cd00402df64630c37793b0e880e9e"
+    },
+    "DaBin-Quick-Guide.pdf": {
+      "bytes": 299779,
+      "matchesLocal": true,
+      "sha256": "61c0a585b5a978a317ae9b2f133401e587027d57e9aaded4871ac5e0f9d36291"
+    },
+    "DaBin-update.json": {
+      "bytes": 596,
+      "matchesLocal": true,
+      "sha256": "c95320b7b0219a75b21951f5edbc4b428264ba393e3e63bba48346a3b50cbad4"
+    },
+    "RELEASE_NOTES_0.3.17.md": {
+      "bytes": 1897,
+      "matchesLocal": true,
+      "sha256": "f1b7ac2d98bce2ff90f3c2c9db483e6e2e725b927b4df08e627232a9033fdead"
+    }
+  },
+  "draft": false,
+  "htmlURL": "https://github.com/RoeyAsterix/DaBin/releases/tag/v0.3.17",
+  "latestTag": "v0.3.17",
+  "name": "DaBin 0.3.17",
+  "prerelease": false,
+  "schemaVersion": 1,
+  "tagName": "v0.3.17"
+}

@@ -6,6 +6,7 @@
 - Routed the action through the native macOS termination flow so removal, active input, and unsaved-draft checks still apply before every window and background service shuts down.
 - Verified that termination stops Auto Capture clipboard polling and screenshot-folder monitoring and prevents any later automatic capture from committing.
 - Added a separate Apple Silicon manual-install package alongside the verified GitHub update/installer package, with both installation paths targeting `~/Applications/DaBin.app`.
+- Published both packages, completed the public 0.3.16 → 0.3.17 in-app update, directly installed the standalone package, and confirmed the Settings action leaves no DaBin process running while local data and preferences remain unchanged.
 
 ## 0.3.16 — 2026-09-24
 

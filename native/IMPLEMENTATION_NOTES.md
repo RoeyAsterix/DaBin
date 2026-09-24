@@ -18,6 +18,8 @@ The Settings row explains that quitting stops Auto Capture and removes the robot
 
 The direct GitHub release now has two explicit user paths. `DaBin-VERSION-Update.zip` supports a fresh **Install**, an existing **Update**, and the in-app verified download flow. `DaBin-VERSION-AppleSilicon.zip` contains the same Release app for manual installation. Both packages identify `~/Applications/DaBin.app` as the canonical location so subsequent in-app updates cannot target a different copy.
 
+The five public v0.3.17 assets matched their verified local files byte for byte. The installed 0.3.16 app completed the public update, created a signed backup and reported that it was current without changing the 33-file archive, preferences, originals, imports or Desktop links. Live activation of the new Settings action left no DaBin or updater process. The public standalone app was then independently installed to the canonical location, matched the exact release executable, passed strict signature checks and launched Daily with the same local state intact.
+
 ## Update 0.3.16
 
 The native text `Picker` for Daily and Weekly is replaced by `TimelineModeControl`, an 80-point pair of `AccentIconButton` controls. Daily uses the matched `1.calendar` symbol and Weekly uses `7.calendar`; both resolve at the same intrinsic size on the macOS 14 target. The buttons inherit the established 15-point glyph, 40 × 34-point target, 30-point selected/hover circle, press scale and focus ring. Their concise **Daily** and **Weekly** labels use the same 220 ms tooltip controller as the action and filter rows.

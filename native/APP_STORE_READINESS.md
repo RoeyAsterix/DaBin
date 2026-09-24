@@ -1,7 +1,7 @@
 # DaBin — Mac App Store readiness
 
 **Audit date:** 24 September 2026
-**Source version:** 0.3.17 (42), direct build and package checks passed
+**Source version:** 0.3.17 (42), direct release and installed-app checks passed
 **Result: BLOCKED for submission; local app QA is a separate result.**
 
 The source now has a Productivity category, a bundled privacy explanation, privacy manifest, and an Xcode Release configuration that does not force ad-hoc signing. These changes improve readiness. They do not make the locally signed app an App Store distribution build or guarantee approval.
@@ -73,7 +73,7 @@ The 0.3.17 source adds a native Settings action that routes through the existing
 - `../docs/qa/0.3.17/app-store-preflight-static-v0.3.17.log`: all 20 source and packaging checks passed.
 - `../docs/qa/0.3.17/app-store-preflight-release-v0.3.17.log`: release preflight remains blocked by the Apple Developer Team ID and full Xcode. The configured GitHub policy/support URLs pass offline syntax checks; their content and continuing reachability remain owner responsibilities.
 
-The 0.3.17 direct-build and dual-package checks are recorded in `QA_RESULTS.md`. Publication, public-byte verification and live installation are recorded after release. These direct-channel checks do not satisfy the separate Apple signing, full-Xcode archive and App Store Connect prerequisites above.
+The completed 0.3.17 publication, public-byte verification, in-app update, standalone installation, and complete-quit checks are recorded in `QA_RESULTS.md`. These direct-channel checks do not satisfy the separate Apple signing, full-Xcode archive and App Store Connect prerequisites above.
 
 `bash -n` validated the build/archive shell scripts; Python compilation validated the preflight/project generator; property-list checks passed for Info.plist, entitlements, privacy manifest, and the generated Xcode project. Thirteen offline URL validation cases rejected placeholder, credential-bearing, local/private, malformed-port, whitespace, and invalid-host inputs as intended. URL validation is syntactic; the owner must verify that each published page is reachable and contains the required information.
 

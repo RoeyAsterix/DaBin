@@ -1,0 +1,26 @@
+{
+  "archiveFiles": 33,
+  "archiveUnchanged": true,
+  "desktopLinksUnchanged": true,
+  "from": {
+    "buildNumber": "41",
+    "executableSHA256": "100a77fa2f09631fc3903f453e97f5bd8dc124a97fde50b5b59ee147eed0b158",
+    "version": "0.3.16"
+  },
+  "importsUnchanged": true,
+  "newBackups": [
+    "20260924-095803-33D2562B.app"
+  ],
+  "originalsUnchanged": true,
+  "preferencesUnchanged": true,
+  "runningProcesses": [
+    "70979 /Users/roeylibfeld/Applications/DaBin.app/Contents/MacOS/DaBin --show-daily"
+  ],
+  "schemaVersion": 1,
+  "strictSignature": "passed",
+  "to": {
+    "buildNumber": "42",
+    "executableSHA256": "dc8b6c54455729dc4b25db74166f110703f304296fa0bc4786cfa7c8d5a389f9",
+    "version": "0.3.17"
+  }
+}
