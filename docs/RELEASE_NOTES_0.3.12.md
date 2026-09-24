@@ -30,4 +30,4 @@ This update changes timeline navigation, search scope and generated text exports
 
 ## Verification status
 
-Focused domain, export-controller, Weekly-state and native popover interaction coverage accompanies this implementation. The full optimized Release suite, fresh visual review, packaging, public release verification and live in-app update remain pending for the 0.3.12 release candidate.
+The exact optimized source passed all **30 registered Release suites with 2,704 checks**. Fresh native rendering produced **42 release interface views** and **62 broader views**, including light/dark Weekly popovers, scoped results and the narrow board. The ARM64 build and update package passed clean-copy signature, extraction, fresh-install, replacement, backup and checksum verification. Public GitHub asset verification and the live in-app update remain pending.

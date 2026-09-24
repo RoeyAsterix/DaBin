@@ -1,12 +1,22 @@
 # DaBin QA cycle — 24 September 2026
 
-## Weekly scoped Search and downloads — 0.3.12 (37), release verification pending
+## Weekly scoped Search and downloads — 0.3.12 (37), publication and live update pending
 
 DaBin 0.3.12 adds two explicit Search choices in Weekly: **Search Day** for a date selected from the displayed seven-day range and **Search Week** for the complete fixed range. Scoped Search keeps the active type filter, limits matches before adding the established immediate same-day context, labels the chosen scope and returns Back to Weekly. The date picker includes empty dates whose Weekly columns are hidden.
 
 Weekly export now offers **Copy Day**, **Download Day**, **Copy Week** and **Download Week**. Day and week copy/download pairs share their exact deterministic UTF-8 documents. Export reads immutable stored capture days in chronological order, ignores active content filters, does not repeat task carryover projections, disables empty scopes independently and uses scope-specific success or failure feedback. The week filename is `DaBin-Week-YYYY-MM-DD-to-YYYY-MM-DD.txt`.
 
-Focused domain, export-controller, Weekly-state and native popover interaction coverage has been added for the new behavior. The full optimized test suite, fresh native renders, build, package, public release checks and live in-app update are pending and will replace this status with exact evidence before 0.3.12 is treated as a completed release.
+The exact optimized source passed **30/30 registered Release suites and 2,704 checks** with no source changes during the final run. Feature coverage includes **207 Domain**, **36 day/week export**, **28 export UI**, **138 Weekly state** and **29 native header interaction** checks. The unlocked two-display regressions passed **214 general window**, **97 Weekly window**, **110 filter resize**, **110 robot/drop** and **138 Daily capture** checks.
+
+Fresh rendering produced **42 release interface views** and **62 broader native interface views**. Retained original-resolution evidence covers both Weekly action popovers at native Retina density, Search Day and Search Week results, the 380-point narrow Weekly board and the 428-point two-day board in light and dark appearances.
+
+The optimized ARM64 direct build is **0.3.12 (37)** with production-source fingerprint `8bd0134c782ddbc2ee6989fe949e2c153acd71dad2f595fc8d7ddfe9e781ce30`. Its executable is **5,789,296 bytes**, SHA-256 `39fa0d88bf3a36bffbbe843e73f21e2ed6d398d7c5e312642203334b6f2692a2`. The verified update ZIP is **3,362,970 bytes**, SHA-256 `9c4956eb8c9a8273c94b1b6e8e00f48114fc202da28dccc31d5caf62410b0b1b`. Packaging passed isolated fresh installation, replacement, backup, strict clean-copy signature validation, extraction, manifest round trip, exact executable identity and the sandbox-compatible document handoff.
+
+The one-page A4 PDF guide is unchanged and byte-identical at **299,779 bytes**, SHA-256 `61c0a585b5a978a317ae9b2f133401e587027d57e9aaded4871ac5e0f9d36291`. Static Store packaging passed **20/20** checks. App Store release preflight retains two external prerequisites: an Apple Developer Team ID and full Xcode.
+
+GitHub release publication, unauthenticated asset verification and the live in-app update of the existing installation have not yet been performed. The generated manifest records the intended v0.3.12 destinations but is not proof that they are public.
+
+[0.3.12 pre-publication evidence index](../docs/qa/0.3.12/README.md) · [Full optimized run](../docs/qa/0.3.12/full-run/report.json) · [Release renders](../docs/qa/0.3.12/release-ui-renders.json) · [Native renders](../docs/qa/0.3.12/native-view-renders.json) · [Build receipt](../docs/qa/0.3.12/build-receipt-v0.3.12.json) · [Update manifest](../docs/qa/0.3.12/update-manifest-v0.3.12.json) · [Static Store preflight](../docs/qa/0.3.12/app-store-preflight-static-v0.3.12.log) · [Release preflight](../docs/qa/0.3.12/app-store-preflight-release-v0.3.12.log).
 
 ## Playful camera-island capture confirmation — 0.3.11 (36)
 

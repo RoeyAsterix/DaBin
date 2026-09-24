@@ -68,10 +68,10 @@ python3 scripts/app_store_preflight.py --static-only
 python3 scripts/app_store_preflight.py
 ```
 
-Final 0.3.12 static and release preflight logs will be retained with the release evidence after the candidate build is complete. Until then, the most recent completed preflight remains 0.3.11 and the submission blockers below are unchanged:
+The final 0.3.12 preflight logs are retained with the pre-publication release evidence:
 
-- `../docs/qa/0.3.11/app-store-preflight-static-v0.3.11.log`: most recent completed source-packaging results.
-- `../docs/qa/0.3.11/app-store-preflight-release-v0.3.11.log`: release preflight remains blocked by the Apple Developer Team ID and full Xcode. The configured GitHub policy/support URLs pass offline syntax checks; their content and continuing reachability remain owner responsibilities.
+- `../docs/qa/0.3.12/app-store-preflight-static-v0.3.12.log`: all 20 source and packaging checks passed.
+- `../docs/qa/0.3.12/app-store-preflight-release-v0.3.12.log`: release preflight remains blocked by the Apple Developer Team ID and full Xcode. The configured GitHub policy/support URLs pass offline syntax checks; their content and continuing reachability remain owner responsibilities.
 
 The functional and package evidence for this source version is recorded in `QA_RESULTS.md`.
 

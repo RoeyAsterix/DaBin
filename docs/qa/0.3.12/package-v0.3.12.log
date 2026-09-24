@@ -1,0 +1,7 @@
+/var/folders/qy/zfgc4dgx02x2k_c04330ghy00000gn/T/dabin-update-package-qvr0s6xp/DaBin-0.3.12-Update/DaBin Update.app: replacing existing signature
+Installed DaBin 0.3.12 (37) at /var/folders/qy/zfgc4dgx02x2k_c04330ghy00000gn/T/dabin-update-package-qvr0s6xp/qa-home/Applications/DaBin.app
+Installed DaBin 0.3.12 (37) at /var/folders/qy/zfgc4dgx02x2k_c04330ghy00000gn/T/dabin-update-package-qvr0s6xp/qa-home/Applications/DaBin.app
+Previous app backed up at /var/folders/qy/zfgc4dgx02x2k_c04330ghy00000gn/T/dabin-update-package-qvr0s6xp/qa-home/Applications/.DaBinBackups/20260924-072250-09635704.app
+Created and verified /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/../output/downloads/DaBin-0.3.12-Update.zip
+Updater QA passed fresh install, replacement, backup, signature and hash checks.
+Created GitHub update manifest /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/../tmp/release-v0.3.12/DaBin-update.json
