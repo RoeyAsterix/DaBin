@@ -1,3 +1,4 @@
+import CryptoKit
 import Foundation
 
 @main
@@ -16,6 +17,87 @@ private enum UpdateConfigurationTests {
         try String(contentsOfFile: path, encoding: .utf8)
     }
 
+    private static func sha256(_ data: Data) -> String {
+        SHA256.hash(data: data).map { String(format: "%02x", $0) }.joined()
+    }
+
+    private static func run(_ executable: String, _ arguments: [String]) throws -> (Int32, String) {
+        let process = Process()
+        let pipe = Pipe()
+        process.executableURL = URL(fileURLWithPath: executable)
+        process.arguments = arguments
+        process.standardOutput = pipe
+        process.standardError = pipe
+        try process.run()
+        process.waitUntilExit()
+        let output = String(data: pipe.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) ?? ""
+        return (process.terminationStatus, output)
+    }
+
+    private static func verifyStableReleaseStaging() throws {
+        let files = FileManager.default
+        let root = files.temporaryDirectory.appendingPathComponent("DaBinLatestReleaseTests-\(UUID().uuidString)")
+        defer { try? files.removeItem(at: root) }
+        try files.createDirectory(at: root, withIntermediateDirectories: false)
+
+        let version = "9.8.7"
+        let update = root.appendingPathComponent("DaBin-\(version)-Update.zip")
+        let standalone = root.appendingPathComponent("DaBin-\(version)-AppleSilicon.zip")
+        let manifest = root.appendingPathComponent("DaBin-update.json")
+        let guide = root.appendingPathComponent("DaBin-Quick-Guide.pdf")
+        let notes = root.appendingPathComponent("RELEASE_NOTES_\(version).md")
+        let updateBytes = Data("verified update fixture".utf8)
+        let standaloneBytes = Data("verified standalone fixture".utf8)
+        try updateBytes.write(to: update, options: .withoutOverwriting)
+        try standaloneBytes.write(to: standalone, options: .withoutOverwriting)
+        try Data("%PDF-1.4 fixture".utf8).write(to: guide, options: .withoutOverwriting)
+        try Data("# Release fixture".utf8).write(to: notes, options: .withoutOverwriting)
+        let payload: [String: Any] = [
+            "schemaVersion": 1,
+            "version": version,
+            "asset": [
+                "name": update.lastPathComponent,
+                "url": "https://github.com/RoeyAsterix/DaBin/releases/download/v\(version)/\(update.lastPathComponent)",
+                "bytes": updateBytes.count,
+                "sha256": sha256(updateBytes),
+            ],
+        ]
+        try JSONSerialization.data(withJSONObject: payload, options: [.prettyPrinted, .sortedKeys])
+            .write(to: manifest, options: .withoutOverwriting)
+
+        let destination = root.appendingPathComponent("release-assets")
+        let arguments = ["scripts/stage_release_assets.py", "--update", update.path,
+                         "--standalone", standalone.path, "--manifest", manifest.path,
+                         "--guide", guide.path, "--notes", notes.path,
+                         "--output-directory", destination.path]
+        let staged = try run("/usr/bin/python3", arguments)
+        try expect(staged.0 == 0, "The release tool stages a complete valid fixture: \(staged.1)")
+        let expectedNames = Set([update.lastPathComponent, standalone.lastPathComponent,
+                                 "DaBin-Latest-Update.zip", "DaBin-Latest-AppleSilicon.zip",
+                                 manifest.lastPathComponent, guide.lastPathComponent, notes.lastPathComponent])
+        let stagedNames = Set(try files.contentsOfDirectory(atPath: destination.path))
+        try expect(stagedNames == expectedNames,
+                   "A release contains versioned packages, permanent aliases, manifest, guide and notes")
+        let stagedLatestUpdate = try Data(contentsOf: destination.appendingPathComponent("DaBin-Latest-Update.zip"))
+        let stagedLatestStandalone = try Data(contentsOf: destination.appendingPathComponent("DaBin-Latest-AppleSilicon.zip"))
+        try expect(stagedLatestUpdate == updateBytes,
+                   "The permanent update URL serves byte-identical verified update data")
+        try expect(stagedLatestStandalone == standaloneBytes,
+                   "The permanent direct-install URL serves byte-identical verified standalone data")
+
+        let repeated = try run("/usr/bin/python3", arguments)
+        let preservedLatestUpdate = try Data(contentsOf: destination.appendingPathComponent("DaBin-Latest-Update.zip"))
+        try expect(repeated.0 != 0 && preservedLatestUpdate == updateBytes,
+                   "Release staging refuses to replace existing verified output")
+        try Data("changed after manifest".utf8).write(to: update)
+        let rejectedDestination = root.appendingPathComponent("rejected-assets")
+        var rejectedArguments = arguments
+        rejectedArguments[rejectedArguments.count - 1] = rejectedDestination.path
+        let rejected = try run("/usr/bin/python3", rejectedArguments)
+        try expect(rejected.0 != 0 && !files.fileExists(atPath: rejectedDestination.path),
+                   "Release staging rejects bytes that do not match the public update manifest")
+    }
+
     static func main() throws {
         let infoData = try Data(contentsOf: URL(fileURLWithPath: "Resources/Info.plist"))
         let info = try PropertyListSerialization.propertyList(from: infoData, format: nil) as! [String: Any]
@@ -25,6 +107,10 @@ private enum UpdateConfigurationTests {
         let builder = try text("scripts/build_app.py")
         let archive = try text("scripts/archive_app_store.sh")
         let packager = try text("UpdateTools/package_update.py")
+        let latestStager = try text("scripts/stage_release_assets.py")
+        let latestWorkflow = try text("../.github/workflows/stable-latest-downloads.yml")
+        let releasing = try text("../docs/RELEASING.md")
+        let rootReadme = try text("../README.md")
         let helper = try text("UpdateTools/DaBinUpdater.swift")
         let privacy = try text("Resources/PrivacyPolicy.md")
 
@@ -46,6 +132,20 @@ private enum UpdateConfigurationTests {
         try expect(packager.contains("releasePageURL") && packager.contains("sha256")
                     && packager.contains("sandboxCompatibleDocumentHandoff"),
                    "Release packaging publishes and exercises the verified update manifest")
+        try expect(latestStager.contains("DaBin-Latest-Update.zip")
+                    && latestStager.contains("DaBin-Latest-AppleSilicon.zip")
+                    && latestStager.contains("The manifest does not describe the exact versioned update package"),
+                   "Release staging creates stable aliases only after validating the versioned update")
+        try expect(latestWorkflow.contains("release:") && latestWorkflow.contains("types: [published]")
+                    && latestWorkflow.contains("gh release upload") && latestWorkflow.contains("--clobber")
+                    && latestWorkflow.contains("DaBin-Latest-Update.zip")
+                    && latestWorkflow.contains("DaBin-Latest-AppleSilicon.zip"),
+                   "A published-release workflow restores both permanent GitHub asset names")
+        try expect(releasing.contains("releases/latest/download/DaBin-Latest-Update.zip")
+                    && releasing.contains("releases/latest/download/DaBin-Latest-AppleSilicon.zip")
+                    && rootReadme.contains("releases/latest/download/DaBin-Latest-Update.zip")
+                    && rootReadme.contains("releases/latest/download/DaBin-Latest-AppleSilicon.zip"),
+                   "Release instructions and the repository front page expose permanent latest downloads")
         try expect(helper.contains("The update ZIP does not match the checksum")
                     && helper.contains("rejectSymlinks") && helper.contains("codesign")
                     && helper.contains("informativeText = error.localizedDescription"),
@@ -60,9 +160,10 @@ private enum UpdateConfigurationTests {
         try expect(privacy.contains("checks for updates only when you choose")
                     && privacy.contains("does not check or download updates silently"),
                    "The bundled privacy policy explains GitHub contact and user control")
-        try expect(info["CFBundleShortVersionString"] as? String == "0.3.17"
-                    && info["CFBundleVersion"] as? String == "42",
+        try expect(info["CFBundleShortVersionString"] as? String == "0.3.18"
+                    && info["CFBundleVersion"] as? String == "43",
                    "The release version and monotonically increasing build are configured")
+        try verifyStableReleaseStaging()
         print("PASS: \(checks) update-channel configuration checks")
     }
 }

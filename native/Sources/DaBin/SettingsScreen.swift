@@ -34,6 +34,8 @@ struct SettingsScreen: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 18) {
+                SettingsSoftwareUpdateSection(updates: updates)
+                Divider()
                 VStack(alignment: .leading, spacing: 9) {
                     Text("Capture").font(.system(size: 14, weight: .medium))
                     Toggle("Auto Capture", isOn: Binding(
@@ -116,35 +118,6 @@ struct SettingsScreen: View {
                         }
                         .controlSize(.small)
                         .accessibilityValue("\(Int((theme.boardOpacity * 100).rounded())) percent opaque")
-                    }
-                }
-                Divider()
-                VStack(alignment: .leading, spacing: 8) {
-                    HStack {
-                        Text("Software updates").font(.system(size: 14, weight: .medium))
-                        Spacer()
-                        Text(updates.versionLabel).font(.system(size: 11)).foregroundStyle(Palette.muted)
-                    }
-                    Text(updates.message)
-                        .font(.system(size: 12)).foregroundStyle(Palette.muted)
-                        .fixedSize(horizontal: false, vertical: true)
-                    if updates.isDirectChannel {
-                        HStack(spacing: 14) {
-                            Button(updates.phase == .checking ? "Checking…" : "Check for updates") {
-                                updates.checkForUpdates()
-                            }
-                            .buttonStyle(.plain).font(.system(size: 12)).foregroundStyle(accent)
-                            .disabled(!updates.canCheck)
-                            if updates.canInstall {
-                                Button("Download & install") { updates.downloadAndInstall() }
-                                    .buttonStyle(.plain).font(.system(size: 12, weight: .medium)).foregroundStyle(accent)
-                            }
-                            if updates.isBusy { ProgressView().controlSize(.small) }
-                        }
-                        if let release = updates.releasePageURL {
-                            Link("View release on GitHub", destination: release)
-                                .font(.system(size: 12)).foregroundStyle(accent)
-                        }
                     }
                 }
                 Divider()
@@ -320,6 +293,115 @@ struct SettingsScreen: View {
                 return "Move the pointer to the built-in camera island and DaBin peeks out below it. Displays without an island keep their screen corners."
             }
             return "No camera island is currently detected, so DaBin keeps using screen corners. Your choice stays ready for a compatible display."
+        }
+    }
+}
+
+@MainActor
+struct SettingsSoftwareUpdateSection: View {
+    static let title = "Get updates"
+    static let accessibilityIdentifier = "settings-software-updates"
+    static let checkAccessibilityLabel = "Check for DaBin updates"
+    static let installAccessibilityLabel = "Download and install the DaBin update"
+    static let releaseAccessibilityLabel = "View the latest DaBin release on GitHub"
+
+    @Environment(\.daBinAccent) private var accent
+    @ObservedObject var updates: SoftwareUpdateService
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 7) {
+                Image(systemName: "arrow.down.circle.fill")
+                    .font(.system(size: 15, weight: .semibold))
+                    .foregroundStyle(accent)
+                    .accessibilityHidden(true)
+                Text(Self.title)
+                    .font(.system(size: 14, weight: .semibold))
+                    .accessibilityAddTraits(.isHeader)
+                Spacer(minLength: 8)
+                Text(updates.versionLabel)
+                    .font(.system(size: 11))
+                    .foregroundStyle(Palette.muted)
+                    .lineLimit(1)
+                    .accessibilityLabel("Installed version, \(updates.versionLabel)")
+            }
+
+            HStack(alignment: .firstTextBaseline, spacing: 7) {
+                Circle()
+                    .fill(statusColor)
+                    .frame(width: 7, height: 7)
+                    .accessibilityHidden(true)
+                Text(updates.message)
+                    .font(.system(size: 12))
+                    .foregroundStyle(Palette.muted)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .accessibilityLabel("Update status: \(updates.message)")
+            }
+
+            if updates.isDirectChannel {
+                ViewThatFits(in: .horizontal) {
+                    HStack(spacing: 8) { updateButtons }
+                    VStack(alignment: .leading, spacing: 7) { updateButtons }
+                }
+                if let release = updates.releasePageURL {
+                    Link(destination: release) {
+                        Label("Latest release on GitHub", systemImage: "arrow.up.right.square")
+                    }
+                    .font(.system(size: 11, weight: .medium))
+                    .foregroundStyle(accent)
+                    .accessibilityLabel(Self.releaseAccessibilityLabel)
+                    .help("Open the latest DaBin release on GitHub")
+                }
+            }
+        }
+        .padding(11)
+        .background {
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .fill(accent.opacity(0.055))
+        }
+        .overlay {
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .strokeBorder(accent.opacity(0.28), lineWidth: 1)
+        }
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier(Self.accessibilityIdentifier)
+    }
+
+    @ViewBuilder
+    private var updateButtons: some View {
+        Button(updates.phase == .checking ? "Checking…" : "Check for updates") {
+            updates.checkForUpdates()
+        }
+        .buttonStyle(.bordered)
+        .controlSize(.small)
+        .disabled(!updates.canCheck)
+        .accessibilityLabel(Self.checkAccessibilityLabel)
+        .accessibilityHint("Checks DaBin’s official GitHub release feed")
+        .help("Check GitHub for a newer DaBin release")
+
+        if updates.canInstall {
+            Button("Download & install") { updates.downloadAndInstall() }
+                .buttonStyle(.borderedProminent)
+                .controlSize(.small)
+                .accessibilityLabel(Self.installAccessibilityLabel)
+                .accessibilityHint("Downloads, verifies, and opens the DaBin updater")
+                .help("Download and install this verified DaBin update")
+        }
+
+        if updates.isBusy {
+            ProgressView()
+                .controlSize(.small)
+                .accessibilityLabel(updates.phase == .checking ? "Checking for updates" : "Downloading update")
+        }
+    }
+
+    private var statusColor: Color {
+        switch updates.phase {
+        case .updateAvailable: return accent
+        case .installerOpened, .upToDate: return .green
+        case .failed: return Palette.task
+        case .checking, .downloading: return accent
+        case .idle, .storeManaged: return Palette.muted
         }
     }
 }

@@ -33,21 +33,39 @@ The direct channel and Mac App Store are separate builds. The standalone build e
    python3 scripts/package_standalone.py \
      --output ../output/downloads/DaBin-VERSION-AppleSilicon.zip \
      --guide ../output/pdf/DaBin-Quick-Guide.pdf
+
+   python3 scripts/stage_release_assets.py \
+     --update ../output/downloads/DaBin-VERSION-Update.zip \
+     --standalone ../output/downloads/DaBin-VERSION-AppleSilicon.zip \
+     --manifest ../output/downloads/DaBin-update.json \
+     --guide ../output/pdf/DaBin-Quick-Guide.pdf \
+     --notes ../docs/RELEASE_NOTES_VERSION.md \
+     --output-directory ../output/releases/vVERSION
    ```
 
-   The update packager tests fresh install, replacement, backup, signature, ZIP extraction, package-mode install, executable hash, and source freshness in temporary locations. The standalone packager verifies its ARM64 app, strict signature, executable hash, per-file manifest, source freshness, and ZIP round trip. Its README directs manual installations to `~/Applications/DaBin.app`, which is the same location used by in-app updates.
+   The update packager tests fresh install, replacement, backup, signature, ZIP extraction, package-mode install, executable hash, and source freshness in temporary locations. The standalone packager verifies its ARM64 app, strict signature, executable hash, per-file manifest, source freshness, and ZIP round trip. Its README directs manual installations to `~/Applications/DaBin.app`, which is the same location used by in-app updates. The staging tool verifies that the public manifest describes the exact update bytes, then creates byte-identical `DaBin-Latest-Update.zip` and `DaBin-Latest-AppleSilicon.zip` aliases alongside the versioned packages. It refuses to replace an existing staging directory.
 
 7. Commit the exact source and documentation, tag that commit `vVERSION`, and push both.
 8. Create a GitHub Release for the tag with these assets:
 
    - `DaBin-VERSION-Update.zip`
+   - `DaBin-Latest-Update.zip`
    - `DaBin-VERSION-AppleSilicon.zip`
+   - `DaBin-Latest-AppleSilicon.zip`
    - `DaBin-update.json`
    - `DaBin-Quick-Guide.pdf`
    - `RELEASE_NOTES_VERSION.md`
 
-9. Verify that `https://github.com/RoeyAsterix/DaBin/releases/latest/download/DaBin-update.json` returns the released manifest, that its size and SHA-256 match the update ZIP, and that the executable in both ZIPs matches the build receipt.
-10. In the installed app, open **Settings → Software updates** and check the live feed.
+   Upload every file from `output/releases/vVERSION` in the initial release command and publish it as a normal, non-prerelease release. The repository workflow also recreates the two stable aliases from the versioned assets when a release is published; a manual workflow run can repair an older release. A workflow failure is a release failure and must be resolved before announcing the download.
+
+9. Verify that all three permanent URLs return HTTP 200 without authentication:
+
+   - `https://github.com/RoeyAsterix/DaBin/releases/latest/download/DaBin-update.json`
+   - `https://github.com/RoeyAsterix/DaBin/releases/latest/download/DaBin-Latest-Update.zip`
+   - `https://github.com/RoeyAsterix/DaBin/releases/latest/download/DaBin-Latest-AppleSilicon.zip`
+
+   Confirm that each stable ZIP is byte-identical to its versioned asset, that the manifest size and SHA-256 match the versioned update ZIP, and that the executable in both package types matches the build receipt. `/releases/latest` follows the newest non-draft, non-prerelease GitHub release, so do not mark a release latest until these checks pass.
+10. In the installed app, open **Settings → Get updates** and check the live feed.
 
 Never edit `DaBin-update.json` after packaging. Rebuild and create a new version if the application or archive changes. Do not reuse a tag or overwrite a published asset.
 

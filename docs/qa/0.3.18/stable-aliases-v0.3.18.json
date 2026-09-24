@@ -1,0 +1,52 @@
+{
+  "permanentURLs": [
+    "https://github.com/RoeyAsterix/DaBin/releases/latest/download/DaBin-Latest-Update.zip",
+    "https://github.com/RoeyAsterix/DaBin/releases/latest/download/DaBin-Latest-AppleSilicon.zip"
+  ],
+  "recommended": {
+    "bytes": 3414052,
+    "identical": true,
+    "sha256": "2c5444c20fa44b87b77eaa90a225ee90d08186f9ac6bf846a08e0fa02c6ee406",
+    "stable": "DaBin-Latest-Update.zip",
+    "versioned": "DaBin-0.3.18-Update.zip"
+  },
+  "release": "v0.3.18",
+  "schemaVersion": 1,
+  "stagedAssets": {
+    "DaBin-0.3.18-AppleSilicon.zip": {
+      "bytes": 2835253,
+      "sha256": "2dd604b8a4eb7f146c75f0efd223ecd3e95085a7a64b3fedeb89925fa2870201"
+    },
+    "DaBin-0.3.18-Update.zip": {
+      "bytes": 3414052,
+      "sha256": "2c5444c20fa44b87b77eaa90a225ee90d08186f9ac6bf846a08e0fa02c6ee406"
+    },
+    "DaBin-Latest-AppleSilicon.zip": {
+      "bytes": 2835253,
+      "sha256": "2dd604b8a4eb7f146c75f0efd223ecd3e95085a7a64b3fedeb89925fa2870201"
+    },
+    "DaBin-Latest-Update.zip": {
+      "bytes": 3414052,
+      "sha256": "2c5444c20fa44b87b77eaa90a225ee90d08186f9ac6bf846a08e0fa02c6ee406"
+    },
+    "DaBin-Quick-Guide.pdf": {
+      "bytes": 299779,
+      "sha256": "61c0a585b5a978a317ae9b2f133401e587027d57e9aaded4871ac5e0f9d36291"
+    },
+    "DaBin-update.json": {
+      "bytes": 596,
+      "sha256": "9cf5c705bfa388b5bd2e65344770013af8acd248d0d0b77c47c757060e169fdb"
+    },
+    "RELEASE_NOTES_0.3.18.md": {
+      "bytes": 1953,
+      "sha256": "2f51e6cfd45fae7adf721b6f684693f482fcf590085fc209728073f41bc3ec9c"
+    }
+  },
+  "standalone": {
+    "bytes": 2835253,
+    "identical": true,
+    "sha256": "2dd604b8a4eb7f146c75f0efd223ecd3e95085a7a64b3fedeb89925fa2870201",
+    "stable": "DaBin-Latest-AppleSilicon.zip",
+    "versioned": "DaBin-0.3.18-AppleSilicon.zip"
+  }
+}

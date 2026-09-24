@@ -10,6 +10,12 @@ The default corner trigger is 9 logical points along each edge, polled every 100
 
 No persistent menu-bar item was added, to honor complete hiding at rest. Reopening DaBin, its active-app menu, the focused robot's context menu, and keyboard actions provide recovery. A system-wide hotkey is not registered. OS Hot Corners may activate at the same corners; this app does not change system settings.
 
+## Update 0.3.18
+
+`SettingsSoftwareUpdateSection` is the first Settings section. Its compact rounded card keeps the installed version, update status, **Check for updates**, conditional **Download & install**, progress indicator, and latest-release link in the initial 380 × 430-point viewport. `ViewThatFits` moves the action controls into a vertical stack before clipping at narrow widths. Direct builds expose the trusted repository’s `/releases/latest` page before any network request, then use the exact validated tag page when a newer manifest is available. Store builds retain Apple-managed status and omit GitHub actions.
+
+The repository now publishes `DaBin-Latest-Update.zip` and `DaBin-Latest-AppleSilicon.zip` beside the versioned assets. `stage_release_assets.py` validates the manifest against the exact versioned update before creating exclusive, byte-identical aliases and a complete seven-file staging directory. The release workflow downloads the versioned assets and restores both stable names on publication. README links use GitHub’s `/releases/latest/download/` route, while the in-app updater continues using the manifest’s versioned URL, byte count and SHA-256.
+
 ## Update 0.3.17
 
 Settings ends with an **Application** section whose **Quit DaBin** button invokes `NSApplication.terminate`. It therefore uses `AppDelegate.applicationShouldTerminate` for the existing removal, active-input and unsaved-draft decisions, followed by `applicationWillTerminate` and `ApplicationCoordinator.shutdown()` after termination is accepted. The coordinator stops reminder lifecycle work, Auto Capture and both of its monitors, the transient confirmation robot, screen-corner polling, preview work, updates, menu commands and panels. The action never calls `exit`, so native cleanup is not bypassed.

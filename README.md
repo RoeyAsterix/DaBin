@@ -16,9 +16,18 @@ Automatic captures use the same local archive as manual captures. An automatical
 
 ![DaBin robot and Daily board](design/robot-preview.png)
 
+## Download the latest version
+
+- [Recommended installer or update](https://github.com/RoeyAsterix/DaBin/releases/latest/download/DaBin-Latest-Update.zip)
+- [Direct Apple Silicon installation](https://github.com/RoeyAsterix/DaBin/releases/latest/download/DaBin-Latest-AppleSilicon.zip)
+- [Latest release details](https://github.com/RoeyAsterix/DaBin/releases/latest)
+
+These permanent links follow the newest public GitHub release. The recommended package can install DaBin for the first time or update the copy in `~/Applications`; the direct package contains `DaBin.app` for manual installation.
+
 ## Start here
 
 - [Native app guide](native/README.md)
+- [0.3.18 release notes](docs/RELEASE_NOTES_0.3.18.md)
 - [0.3.17 release notes](docs/RELEASE_NOTES_0.3.17.md)
 - [0.3.16 release notes](docs/RELEASE_NOTES_0.3.16.md)
 - [0.3.15 release notes](docs/RELEASE_NOTES_0.3.15.md)
@@ -43,9 +52,9 @@ The optimized app is written to `native/build/DaBin.app`. Full GUI QA needs an u
 
 ## Updates
 
-The direct build has a user-initiated GitHub Releases channel under **Settings → Software updates**. It accepts only this repository’s fixed HTTPS release path, verifies the published byte count and SHA-256 checksum, then gives the bundled installer a private, one-use update document. The installer validates and consumes that document, re-verifies the package and application, asks before replacement, and backs up the previous installation. The capture archive remains untouched. There are no silent update checks.
+The direct build has a user-initiated GitHub Releases channel under **Settings → Get updates**. It accepts only this repository’s fixed HTTPS release path, verifies the published byte count and SHA-256 checksum, then gives the bundled installer a private, one-use update document. The installer validates and consumes that document, re-verifies the package and application, asks before replacement, and backs up the previous installation. The capture archive remains untouched. There are no silent update checks.
 
-Release 0.3.17 adds **Quit DaBin** at the bottom of Settings. It uses the normal macOS termination path, stops every DaBin background service after existing safety checks pass, and keeps the local archive and reminders intact. GitHub provides both a verified one-click installer/update ZIP and a separate Apple Silicon manual-install ZIP; both target `~/Applications/DaBin.app` so future in-app updates replace the same copy. Public byte verification, the live 0.3.16 → 0.3.17 self-update, a separate direct installation, and the process-level complete-quit check all passed without changing the archive or preferences.
+Release 0.3.18 places **Get updates** at the top of Settings, with the installed version, live status, update check, conditional installation, and latest GitHub release link visible without scrolling. The repository’s permanent installer and direct-download URLs follow the newest public release while the in-app updater retains its exact versioned package and checksum validation.
 
 The current personal release is ad-hoc signed for the owner’s Mac. General distribution still requires a stable Developer ID signature and Apple notarization. The Mac App Store configuration compiles without the direct downloader and helper; Store builds update through Apple.
 

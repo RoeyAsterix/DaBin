@@ -2,8 +2,11 @@
 
 ## User documentation
 
+- [Download the latest installer or update](https://github.com/RoeyAsterix/DaBin/releases/latest/download/DaBin-Latest-Update.zip)
+- [Download the latest direct Apple Silicon package](https://github.com/RoeyAsterix/DaBin/releases/latest/download/DaBin-Latest-AppleSilicon.zip)
 - [Quick guide PDF](DaBin-Quick-Guide.pdf)
 - [Native app guide](../native/README.md)
+- [DaBin 0.3.18 release notes](RELEASE_NOTES_0.3.18.md)
 - [DaBin 0.3.17 release notes](RELEASE_NOTES_0.3.17.md)
 - [DaBin 0.3.16 release notes](RELEASE_NOTES_0.3.16.md)
 - [DaBin 0.3.15 release notes](RELEASE_NOTES_0.3.15.md)

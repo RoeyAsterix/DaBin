@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.3.18 — 2026-09-24
+
+- Moved a compact **Get updates** card to the top of Settings so the installed version, update status, and controls are visible immediately at the 380-point window size.
+- Kept **Check for updates**, conditional **Download & install**, progress, failure and success states, while adding complete accessibility labels and an always-visible latest GitHub release link to direct builds.
+- Added permanent GitHub download URLs for the recommended installer/update and direct Apple Silicon packages.
+- Added verified release staging that creates byte-identical stable aliases, plus a GitHub release workflow that restores those aliases whenever a release is published.
+
 ## 0.3.17 — 2026-09-24
 
 - Added a clearly labeled **Quit DaBin** action at the bottom of Settings, with a power icon, tooltip, and complete accessibility label and hint.

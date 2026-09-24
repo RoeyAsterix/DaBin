@@ -1,0 +1,53 @@
+name: Preserve stable latest downloads
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Release tag to repair, such as v0.3.18
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  stable-downloads:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+      RELEASE_TAG: ${{ github.event.release.tag_name || inputs.tag }}
+    steps:
+      - name: Copy versioned packages to stable asset names
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ ! "$RELEASE_TAG" =~ ^v([0-9]+\.[0-9]+\.[0-9]+)$ ]]; then
+            echo "Release tag must use vMAJOR.MINOR.PATCH: $RELEASE_TAG" >&2
+            exit 1
+          fi
+          version="${BASH_REMATCH[1]}"
+          release_dir="$RUNNER_TEMP/dabin-release"
+          mkdir -p "$release_dir"
+          update="DaBin-${version}-Update.zip"
+          standalone="DaBin-${version}-AppleSilicon.zip"
+          gh release download "$RELEASE_TAG" --repo "$GH_REPO" --pattern "$update" --dir "$release_dir"
+          gh release download "$RELEASE_TAG" --repo "$GH_REPO" --pattern "$standalone" --dir "$release_dir"
+          test -s "$release_dir/$update"
+          test -s "$release_dir/$standalone"
+          cp "$release_dir/$update" "$release_dir/DaBin-Latest-Update.zip"
+          cp "$release_dir/$standalone" "$release_dir/DaBin-Latest-AppleSilicon.zip"
+          gh release upload "$RELEASE_TAG" --repo "$GH_REPO" --clobber \
+            "$release_dir/DaBin-Latest-Update.zip" \
+            "$release_dir/DaBin-Latest-AppleSilicon.zip"
+
+      - name: Verify stable assets exist on the release
+        shell: bash
+        run: |
+          set -euo pipefail
+          assets="$(gh release view "$RELEASE_TAG" --repo "$GH_REPO" --json assets --jq '.assets[].name')"
+          grep -Fxq 'DaBin-Latest-Update.zip' <<<"$assets"
+          grep -Fxq 'DaBin-Latest-AppleSilicon.zip' <<<"$assets"

@@ -106,6 +106,8 @@ private enum SoftwareUpdateTests {
         let service = try makeService(root: root, release: manifest, download: downloaded, box: box)
         try expect(service.phase == .idle && service.canCheck && !service.canInstall,
                    "A configured direct build starts idle and user controlled")
+        try expect(service.releasePageURL == SoftwareUpdateConfiguration.latestReleasePageURL,
+                   "Settings always has a stable link to the latest GitHub release before a check")
         try await Task.sleep(for: .milliseconds(30))
         try expect(box.dataCalls == 0 && box.downloadCalls == 0,
                    "Constructing the service never contacts GitHub automatically")
@@ -113,6 +115,8 @@ private enum SoftwareUpdateTests {
         try await wait("A newer GitHub release becomes available") { service.phase == .updateAvailable }
         try expect(box.dataCalls == 1 && service.availableRelease == manifest,
                    "One explicit check reads one manifest and keeps the validated release")
+        try expect(service.releasePageURL == manifest.releasePageURL,
+                   "An available update links to its validated GitHub release page")
         try expect(service.canInstall && service.message.contains("0.3.0"),
                    "The settings state offers the validated newer release")
         service.downloadAndInstall()
@@ -234,6 +238,23 @@ private enum SoftwareUpdateTests {
         )
         try expect(!disabled.isDirectChannel && !disabled.canCheck && disabled.phase == .failed,
                    "A build without the fixed feed cannot improvise an update source")
+        try expect(disabled.releasePageURL == nil,
+                   "A build without the direct channel does not expose a GitHub release link")
+
+        let settingsSource = try String(contentsOfFile: "Sources/DaBin/SettingsScreen.swift", encoding: .utf8)
+        guard let updateSection = settingsSource.range(of: "SettingsSoftwareUpdateSection(updates: updates)"),
+              let captureSection = settingsSource.range(of: "Text(\"Capture\")") else {
+            try expect(false, "Settings contains both its update and Capture sections")
+            return
+        }
+        try expect(updateSection.lowerBound < captureSection.lowerBound,
+                   "Get updates is the first visible Settings section rather than being hidden below Capture")
+        try expect(settingsSource.contains("static let title = \"Get updates\"")
+                   && settingsSource.contains("settings-software-updates")
+                   && settingsSource.contains("Check for DaBin updates")
+                   && settingsSource.contains("Download and install the DaBin update")
+                   && settingsSource.contains("View the latest DaBin release on GitHub"),
+                   "The compact update panel keeps clear controls and accessible names")
         print("PASS: \(checks) software update checks; no external network, installed app or user archive used.")
     }
 }

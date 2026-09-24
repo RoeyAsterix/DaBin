@@ -1,5 +1,17 @@
 # DaBin QA cycle — 24 September 2026
 
+## Visible updates and permanent latest downloads — 0.3.18 (43)
+
+DaBin 0.3.18 places a compact **Get updates** card first in Settings. The installed version, update status, **Check for updates**, conditional **Download & install**, progress, and latest GitHub release link are visible in the initial 380 × 430-point window. Direct builds expose the trusted repository's permanent latest-release page before a check; Store builds retain Apple-managed status and omit the GitHub actions.
+
+The exact source passed **30/30 registered optimized Release suites** with no source changes during the run. Software update coverage passed **34 checks**, release configuration passed **21 checks**, and the renderer completed **50 production views**. Original-resolution light and dark Settings inspection found the entire update card visible and unclipped at the shipping width. The static Store source/package preflight passed all **20 checks**.
+
+The ARM64 Release build has source fingerprint `9fc4068359db0ca42297ae4e197aaa69f0268b370cd7c1030fe2d54b144c613d` and executable SHA-256 `096fa1475294e8e782836a72fe8f5e7b3db1e3d563566c7ac72f9c98c86494b1`. The verified update package passed isolated fresh-install, replacement, backup, signature and helper-handoff checks. The manual Apple Silicon package passed its signature and ZIP round trip. Both contain the exact same executable. Release staging produced all seven assets; `DaBin-Latest-Update.zip` and `DaBin-Latest-AppleSilicon.zip` are byte-identical to their versioned packages.
+
+Publication and live 0.3.17 → 0.3.18 update evidence will be added after the immutable release is public.
+
+[0.3.18 evidence](../docs/qa/0.3.18/README.md) · [Full run](../docs/qa/0.3.18/full-run/report.json) · [Release renders](../docs/qa/0.3.18/release-ui-renders.json) · [Build receipt](../docs/qa/0.3.18/build-receipt-v0.3.18.json) · [Package comparison](../docs/qa/0.3.18/package-comparison-v0.3.18.json) · [Stable aliases](../docs/qa/0.3.18/stable-aliases-v0.3.18.json) · [Update manifest](../docs/qa/0.3.18/update-manifest-v0.3.18.json).
+
 ## Complete Settings quit and dual GitHub install paths — 0.3.17 (42)
 
 DaBin 0.3.17 adds **Settings → Application → Quit DaBin**. The control uses the standard macOS termination request, retains the existing removal, active-input and unsaved-draft decisions, and then reaches `ApplicationCoordinator.shutdown()` through `applicationWillTerminate`. Focused tests verify the action fires once, Auto Capture is stopped, clipboard polling and screenshot-folder monitoring stop, and later automatic events cannot commit. The local archive and reminders remain intact.

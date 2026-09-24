@@ -80,6 +80,9 @@ enum SoftwareUpdateConfiguration {
     static let helperBundleIdentifier = "com.dabin.mac.updater.local"
     static let maximumManifestBytes = 64 * 1024
     static let maximumAssetBytes: Int64 = 1_073_741_824
+    static let latestReleasePageURL = URL(
+        string: "https://github.com/\(repositoryOwner)/\(repositoryName)/releases/latest"
+    )!
 
     static var currentMacOS: String {
         let value = ProcessInfo.processInfo.operatingSystemVersion
@@ -225,7 +228,10 @@ final class SoftwareUpdateService: ObservableObject {
     var isBusy: Bool { phase == .checking || phase == .downloading }
     var canCheck: Bool { isDirectChannel && !isBusy }
     var canInstall: Bool { phase == .updateAvailable && availableRelease != nil }
-    var releasePageURL: URL? { availableRelease?.releasePageURL }
+    var releasePageURL: URL? {
+        availableRelease?.releasePageURL
+            ?? (isDirectChannel ? SoftwareUpdateConfiguration.latestReleasePageURL : nil)
+    }
     var versionLabel: String { "DaBin \(currentVersion) (\(currentBuild))" }
 
     func checkForUpdates() {
