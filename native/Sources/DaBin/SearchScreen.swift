@@ -6,6 +6,7 @@ struct SearchScreen: View {
     @FocusState private var focused: Bool
 
     var body: some View {
+        let groups = state.searchGroups
         VStack(spacing: 0) {
             HStack(spacing: 8) {
                 Image(systemName: "magnifyingglass").foregroundStyle(Palette.muted)
@@ -33,18 +34,34 @@ struct SearchScreen: View {
                 .accessibilityLabel("Search scope, \(state.searchScopeTitle)")
             }
             FilterBar(selection: $state.filter)
+            if let index = state.contentIndex, index.isBusy {
+                HStack(spacing: 7) {
+                    ProgressView().controlSize(.small)
+                    Text(index.pendingCount == 1
+                         ? "Making 1 capture searchable…"
+                         : "Making \(index.pendingCount) captures searchable…")
+                    Spacer(minLength: 0)
+                }
+                .font(.system(size: 11)).foregroundStyle(Palette.muted)
+                .padding(.horizontal, 18).padding(.top, 5)
+                .accessibilityElement(children: .combine)
+            }
             if state.query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                 EmptyMessage(symbol: "magnifyingglass", title: "Remember the moment", message: searchPrompt)
-            } else if state.searchGroups.isEmpty {
+            } else if groups.isEmpty, state.contentIndex?.isBusy == true {
+                EmptyMessage(symbol: "text.viewfinder", title: "Search is still getting ready",
+                             message: "Results update as saved captures become searchable.")
+            } else if groups.isEmpty {
                 EmptyMessage(symbol: "magnifyingglass", title: "No matching captures", message: "Try another word or choose All.")
             } else {
                 ScrollView {
                     LazyVStack(alignment: .leading, spacing: 0) {
-                        ForEach(state.searchGroups) { group in
+                        ForEach(groups) { group in
                             Text(prettyDay(group.day)).font(.system(size: 13, weight: .semibold))
                                 .padding(.top, 15).padding(.bottom, 2).accessibilityAddTraits(.isHeader)
                             ForEach(group.entries) { entry in
-                                CaptureRow(state: state, capture: entry.capture, featured: false, isMatch: entry.isMatch)
+                                CaptureRow(state: state, capture: entry.capture, featured: false,
+                                           isMatch: entry.isMatch, indexedTextMatch: entry.indexedTextMatch)
                                     .id(entry.id)
                             }
                         }
@@ -55,7 +72,7 @@ struct SearchScreen: View {
     }
 
     private var searchPrompt: String {
-        let base = "Search words, links, filenames, comments or a date. Matches keep a little of their day around them."
+        let base = "Search words, links, filenames, comments, screenshots, supported documents or a date. Matches keep a little of their day around them."
         return state.searchScope == .all ? base : "Search within \(state.searchScopeTitle). Matches keep a little of their day around them."
     }
 }

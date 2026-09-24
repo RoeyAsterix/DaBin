@@ -17,6 +17,7 @@ DaBin is a self-contained Apple Silicon macOS application. It uses Swift, AppKit
 | Capture copy | Reconstruct one visible action from immutable text/link values or validated managed originals, then perform one native pasteboard write | `CaptureClipboard.swift`, `CaptureCopyButton.swift` |
 | Persistence | Transactional metadata, owned original copies, readable dated archive and interrupted-operation recovery | `CaptureStore.swift`, `CaptureRepository.swift`, `DailyArchive.swift`, `OriginalFileStorage.swift`, `CaptureRemoval.swift` |
 | Disposable previews | Bounded parallel local previews, optional website requests, cancellation/timeout bridging, cache regeneration | `PreviewService.swift`, `PreviewRequest.swift` |
+| Local content index | Bounded on-device Vision/PDFKit/text extraction, legacy indexing, retry and removal-safe publication; no network collaborator | `ContentIndexService.swift` |
 | Reminders | Serialized scheduling, revision checks, permission feedback and wake/activation reconciliation | `ReminderService.swift`, `ReminderLifecycle.swift` |
 | Preferences and policy | Shared local theme, board placement, robot-home, previews and Auto Capture settings; accessible bundled privacy information | `ThemeSettings.swift`, `RobotPlacementSettings.swift`, `AutoCaptureSettings.swift`, `PrivacyInformation.swift`, `Resources/` |
 
@@ -32,7 +33,8 @@ The first launch remains quiet: screen corners are the default reveal target, an
 
 ## Persistence invariants
 
-- Converting an existing capture to a task persists a separate `convertedToTask` flag in payload schema 5; `kindRaw` remains the original content type. Schemas 1–4 still decode without that flag. `isTask` combines legacy task records and converted content, so previews and clipboard payloads retain the original content while filters, reminders and carryover use task status. Conversion saves in place, is idempotent and rolls back the flag on metadata failure.
+- Schema 6 adds optional local-content-index fields; schemas 1–5 decode with an empty pending index. The Core Data model remains stable because each record stores one versioned JSON payload.
+- Converting an existing capture to a task persists a separate `convertedToTask` flag introduced in schema 5; `kindRaw` remains the original content type. Older records still decode without that flag. `isTask` combines legacy task records and converted content, so previews and clipboard payloads retain the original content while filters, reminders and carryover use task status. Conversion saves in place, is idempotent and rolls back the flag on metadata failure.
 - Task cards are presented individually outside imported batches and automatic-hour summaries. The original action still contributes to its hour's count; summary placement follows its remaining non-task content. Exports retain original receipt grouping and include task status without moving or duplicating receipt dates.
 - Receipt date/time and source metadata remain facts about the original capture.
 - Automatic records retain their automatic origin and stable action identity. Source-application metadata is best effort and must never be presented as authoritative provenance.
@@ -42,6 +44,7 @@ The first launch remains quiet: screen corners are the default reveal target, an
 - A failed import compensates its own work; recoverable interrupted imports retain a journal and verified bytes.
 - Removal commits the metadata deletion before removing owned files. A durable intent handles cleanup retries before import recovery. Deleted or stale objects cannot upsert themselves through service saves.
 - Preview work is quiesced before capture removal. Callback cancellation, completion and timeout produce one result; late results cannot restore a removed record or update capture metadata after session shutdown.
+- Content indexing is separate from preview state and link-preview consent. It reads only DaBin-managed immutable originals, runs with one local worker, retains a prior index if rebuilding fails, and is quiesced before removal. Images use Vision, PDFs use native text plus per-page OCR fallback, and supported text documents are decoded locally. Empty successful recognition is terminal; explicit page, byte and character limits bound work.
 - Parallel cache-folder creation tolerates a validated existing directory, while rejecting symlinks and obstructing files.
 - Minimize is a persisted presentation preference. It does not discard content, comments, reminders, task state or searchability.
 - Notification work rechecks the current capture/revision after each suspension, so stale scheduling cannot override a newer edit/removal.

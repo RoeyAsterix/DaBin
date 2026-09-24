@@ -2,7 +2,7 @@ import Foundation
 import Combine
 import UniformTypeIdentifiers
 
-enum CaptureKind: String, Codable, CaseIterable {
+enum CaptureKind: String, Codable, CaseIterable, Sendable {
     case link, text, image, video, pdf, document, ai, file, task
 }
 
@@ -105,6 +105,15 @@ final class Capture: ObservableObject, Identifiable {
     @Published var thumbnailRelativePath: String?
     @Published var previewState: String
     @Published var previewError: String?
+    /// Searchable text derived locally from the saved original. It is metadata,
+    /// never a replacement for the immutable image or document bytes.
+    @Published var indexedText: String {
+        didSet { normalizedIndexedTextCache = nil }
+    }
+    @Published var contentIndexState: String
+    @Published var contentIndexError: String?
+    @Published var contentIndexVersion: Int
+    @Published var contentIndexCanRetry: Bool
     @Published var comment: String
     @Published private(set) var convertedToTask = false
     @Published var isCompleted: Bool
@@ -115,9 +124,16 @@ final class Capture: ObservableObject, Identifiable {
     @Published var notificationState: String
     private(set) var createdAt: Date
     @Published var updatedAt: Date
+    private var normalizedIndexedTextCache: String?
     var kind: CaptureKind { CaptureKind(rawValue: kindRaw) ?? .file }
     var isTask: Bool { kind == .task || convertedToTask }
     var captureOrigin: CaptureOrigin { CaptureOrigin(rawValue: captureOriginRaw) ?? .manual }
+    var normalizedIndexedTextForSearch: String {
+        if let cached = normalizedIndexedTextCache { return cached }
+        let normalized = CaptureSearch.normalized(indexedText)
+        normalizedIndexedTextCache = normalized
+        return normalized
+    }
 
     init(id: UUID = UUID(), capturedAt: Date = Date(), timeZone: TimeZone = .current,
          kind: CaptureKind, originalURL: String? = nil, originalText: String? = nil,
@@ -147,6 +163,10 @@ final class Capture: ObservableObject, Identifiable {
         self.title = title
         self.previewDescription = ""
         self.previewState = "idle"
+        self.indexedText = ""
+        self.contentIndexState = "idle"
+        self.contentIndexVersion = 0
+        self.contentIndexCanRetry = false
         self.comment = ""
         self.isCompleted = false
         self.isMinimized = false
@@ -180,6 +200,11 @@ final class Capture: ObservableObject, Identifiable {
         self.thumbnailRelativePath = snapshot.thumbnailRelativePath
         self.previewState = snapshot.previewState
         self.previewError = snapshot.previewError
+        self.indexedText = snapshot.indexedText ?? ""
+        self.contentIndexState = snapshot.contentIndexState ?? "idle"
+        self.contentIndexError = snapshot.contentIndexError
+        self.contentIndexVersion = snapshot.contentIndexVersion ?? 0
+        self.contentIndexCanRetry = snapshot.contentIndexCanRetry ?? false
         self.comment = snapshot.comment
         self.convertedToTask = snapshot.convertedToTask ?? false
         self.isCompleted = self.isTask && (snapshot.isCompleted ?? false)
@@ -221,6 +246,13 @@ struct CaptureSnapshot: Codable {
     let thumbnailRelativePath: String?
     let previewState: String
     let previewError: String?
+    // Missing before schema 6. Eligible legacy captures are indexed locally on
+    // their next launch without changing their originals or receipt dates.
+    let indexedText: String?
+    let contentIndexState: String?
+    let contentIndexError: String?
+    let contentIndexVersion: Int?
+    let contentIndexCanRetry: Bool?
     let comment: String
     // Missing in schema 1–4: only legacy kind=task records were tasks.
     let convertedToTask: Bool?
@@ -236,7 +268,7 @@ struct CaptureSnapshot: Codable {
     let updatedAt: Date
 
     init(_ capture: Capture) {
-        schemaVersion = 5
+        schemaVersion = 6
         id = capture.id
         capturedAt = capture.capturedAt
         captureDay = capture.captureDay
@@ -260,6 +292,11 @@ struct CaptureSnapshot: Codable {
         thumbnailRelativePath = capture.thumbnailRelativePath
         previewState = capture.previewState
         previewError = capture.previewError
+        indexedText = capture.indexedText
+        contentIndexState = capture.contentIndexState
+        contentIndexError = capture.contentIndexError
+        contentIndexVersion = capture.contentIndexVersion
+        contentIndexCanRetry = capture.contentIndexCanRetry
         comment = capture.comment
         convertedToTask = capture.convertedToTask
         isCompleted = capture.isCompleted
@@ -284,6 +321,12 @@ enum CaptureCalendar {
 }
 
 enum CaptureClassifier {
+    static let locallySearchableDocumentExtensions: Set<String> = [
+        "txt", "md", "markdown", "csv", "tsv", "json", "log", "xml", "yaml", "yml", "rtf",
+        "swift", "m", "mm", "h", "c", "cc", "cpp", "js", "jsx", "ts", "tsx", "py", "rb", "go", "rs",
+        "java", "kt", "css", "scss", "sh", "zsh", "sql"
+    ]
+
     static func textKind(_ text: String) -> CaptureKind {
         let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.contains(where: { $0.isWhitespace }),
@@ -303,7 +346,10 @@ enum CaptureClassifier {
             ["png", "jpg", "jpeg", "gif", "webp", "svg", "heic", "avif", "tiff", "tif", "bmp"].contains(ext) { return .image }
         if contentType?.conforms(to: .movie) == true ||
             ["mov", "mp4", "webm", "m4v", "avi", "mkv"].contains(ext) { return .video }
-        if ["doc", "docx", "ppt", "pptx", "xls", "xlsx", "txt", "md", "rtf", "csv", "pages", "numbers", "key"].contains(ext) { return .document }
+        if locallySearchableDocumentExtensions.contains(ext)
+            || ["doc", "docx", "ppt", "pptx", "xls", "xlsx", "pages", "numbers", "key"].contains(ext) {
+            return .document
+        }
         return .file
     }
 
@@ -329,6 +375,7 @@ struct SearchGroup: Identifiable {
 struct SearchEntry: Identifiable {
     let capture: Capture
     let isMatch: Bool
+    let indexedTextMatch: String?
     var id: UUID { capture.id }
 }
 
@@ -374,7 +421,7 @@ enum CaptureSearch {
             let hits = Set(items.indices.filter { index in
                 let item = items[index]
                 guard filter.includes(item) else { return false }
-                let haystack = normalized([item.title, item.previewDescription, item.originalURL ?? "",
+                let metadata = normalized([item.title, item.previewDescription, item.originalURL ?? "",
                                            item.originalText ?? "", item.originalFilename ?? "", item.comment,
                                            item.kind.rawValue, item.isTask ? "task" : "", item.captureDay,
                                            item.sourceApplicationName ?? "",
@@ -382,7 +429,8 @@ enum CaptureSearch {
                                            item.captureOrigin.displayName,
                                            item.captureOrigin == .automaticClipboard ? "copied clipboard" : "",
                                            item.captureOrigin == .automaticScreenshot ? "screenshot screen capture" : ""].joined(separator: " "))
-                return words.allSatisfy(haystack.contains)
+                let indexed = item.normalizedIndexedTextForSearch
+                return words.allSatisfy { metadata.contains($0) || indexed.contains($0) }
             })
             guard !hits.isEmpty else { return nil }
             var included = hits
@@ -391,8 +439,28 @@ enum CaptureSearch {
                 if index + 1 < items.count { included.insert(index + 1) }
             }
             return SearchGroup(day: day, entries: included.sorted().map {
-                SearchEntry(capture: items[$0], isMatch: hits.contains($0))
+                let isMatch = hits.contains($0)
+                return SearchEntry(capture: items[$0], isMatch: isMatch,
+                    indexedTextMatch: isMatch ? indexedTextSnippet(items[$0].indexedText, words: words) : nil)
             })
         }
+    }
+
+    /// Prefer the recognized line containing the most query terms. This avoids
+    /// manufacturing a summary and gives the user direct evidence for a hit.
+    private static func indexedTextSnippet(_ text: String, words: [String]) -> String? {
+        guard !text.isEmpty else { return nil }
+        let candidates = text.components(separatedBy: .newlines)
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }.filter { !$0.isEmpty }
+        let scored = candidates.compactMap { candidate -> (String, Int)? in
+            let folded = normalized(candidate)
+            let score = words.reduce(0) { $0 + (folded.contains($1) ? 1 : 0) }
+            return score > 0 ? (candidate, score) : nil
+        }
+        guard let best = scored.max(by: { lhs, rhs in
+            lhs.1 == rhs.1 ? lhs.0.count > rhs.0.count : lhs.1 < rhs.1
+        })?.0 else { return nil }
+        let compact = best.split(whereSeparator: { $0.isWhitespace }).joined(separator: " ")
+        return compact.count > 180 ? String(compact.prefix(177)) + "…" : compact
     }
 }

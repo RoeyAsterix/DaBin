@@ -99,10 +99,21 @@ import CoreData
 
     private func validate(_ snapshot: CaptureSnapshot, recordID: UUID?) throws {
         let origin = snapshot.captureOriginRaw.flatMap(CaptureOrigin.init(rawValue:)) ?? .manual
-        guard [1, 2, 3, 4, 5].contains(snapshot.schemaVersion), CaptureKind(rawValue: snapshot.kindRaw) != nil,
+        let indexState = snapshot.contentIndexState ?? "idle"
+        let indexVersion = snapshot.contentIndexVersion ?? 0
+        let indexCanRetry = snapshot.contentIndexCanRetry ?? false
+        let indexValid = snapshot.schemaVersion < 6 || (
+            ["idle", "indexing", "ready", "unavailable"].contains(indexState)
+            && (0...ContentIndexService.currentVersion).contains(indexVersion)
+            && (snapshot.indexedText?.count ?? 0) <= ContentTextExtractor.maximumCharacters
+            && (snapshot.contentIndexError?.count ?? 0) <= 4_000
+            && (["idle", "indexing"].contains(indexState) ? indexVersion == 0 : indexVersion == ContentIndexService.currentVersion)
+            && (!indexCanRetry || indexState == "unavailable")
+        )
+        guard [1, 2, 3, 4, 5, 6].contains(snapshot.schemaVersion), CaptureKind(rawValue: snapshot.kindRaw) != nil,
               recordID == snapshot.id,
               snapshot.captureOriginRaw.map({ CaptureOrigin(rawValue: $0) != nil }) ?? true,
-              !origin.isAutomatic || snapshot.automaticActionID != nil else {
+              (!origin.isAutomatic || snapshot.automaticActionID != nil), indexValid else {
             throw CaptureStoreError.invalidOriginal("The metadata schema or identity is unsupported. The store was preserved.")
         }
     }

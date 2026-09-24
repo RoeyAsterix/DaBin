@@ -71,7 +71,7 @@ struct PrivacyPolicySheet: View {
             Divider()
             ScrollView {
                 VStack(alignment: .leading, spacing: 18) {
-                    Text("DaBin · Updated 23 September 2026")
+                    Text("DaBin · Updated 24 September 2026")
                         .font(.system(size: 11)).foregroundStyle(.secondary)
                     ForEach(sections) { section in
                         VStack(alignment: .leading, spacing: 8) {

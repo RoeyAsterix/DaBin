@@ -17,6 +17,7 @@ NONFOCUS = ["ThemeSettingsTests", "PrivacyInformationTests", "DomainTests", "Arc
             "ArchiveStoreTests", "CaptureRemovalTests", "ServiceTests", "QAStorageScopedSaveTests",
             "QALifecycleTests", "ApplicationLifecycleTests", "PreviewLifecycleTests", "TaskStateTests", "CaptureActionTests",
             "CaptureClipboardTests", "CaptureTaskConversionTests",
+            "LocalContentSearchTests",
             "HourlyGroupingTests", "DayExportTests", "DayExportUITests", "WeeklyStateTests", "InputTests", "AutoCaptureServiceTests", "AutoCaptureRobotPresenterTests", "AutoCaptureRobotCelebrationTests",
             "SoftwareUpdateTests", "UpdateConfigurationTests", "RobotMotionTests"]
 WINDOW = ["WindowTests", "WeeklyWindowTests", "FilterResizeTests", "RobotDropTests", "DailyCaptureTests", "HeaderInteractionTests"]

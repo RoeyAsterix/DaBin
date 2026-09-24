@@ -7,6 +7,7 @@ import Foundation
 final class ApplicationCoordinator {
     let store: CaptureStore
     let previews: PreviewService
+    let contentIndex: ContentIndexService
     let reminders: ReminderService
     let updates: SoftwareUpdateService
     let input: InputService
@@ -35,6 +36,7 @@ final class ApplicationCoordinator {
         self.applicationEvents = applicationEvents
         self.workspaceEvents = workspaceEvents
         let previews = PreviewService(store: store, defaults: defaults)
+        let contentIndex = ContentIndexService(store: store)
         let reminders = notificationClient.map { ReminderService(store: store, client: $0) }
             ?? ReminderService(store: store)
         let updates = SoftwareUpdateService()
@@ -44,12 +46,13 @@ final class ApplicationCoordinator {
         let autoCapture = AutoCaptureService(settings: autoCaptureSettings, input: autoInput)
         let autoCaptureRobot = AutoCaptureRobotPresenter()
         let robotPlacement = RobotPlacementSettings(defaults: defaults)
-        let state = AppState(store: store, previews: previews, reminders: reminders,
+        let state = AppState(store: store, previews: previews, contentIndex: contentIndex, reminders: reminders,
                              updates: updates, robotPlacement: robotPlacement,
                              autoCapture: autoCapture)
         let theme = ThemeSettings(defaults: defaults)
         let corners = CornerController(state: state, input: input, placementDefaults: defaults, theme: theme)
         self.previews = previews
+        self.contentIndex = contentIndex
         self.reminders = reminders
         self.updates = updates
         self.input = input
@@ -92,6 +95,7 @@ final class ApplicationCoordinator {
         autoCapture.start()
         lifecycle.start(applicationEvents: applicationEvents, workspaceEvents: workspaceEvents)
         previews.process(store.captures)
+        contentIndex.process(store.captures)
         if showDaily { corners.openDaily() }
     }
 
@@ -106,6 +110,7 @@ final class ApplicationCoordinator {
         autoCaptureRobot.shutdown()
         corners.shutdown()
         previews.shutdown()
+        contentIndex.shutdown()
         updates.cancel()
         commands.uninstall()
     }

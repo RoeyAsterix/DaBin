@@ -16,7 +16,7 @@ struct PrivacyInformationTests {
         let root = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
         let policy = try String(contentsOf: root.appendingPathComponent("Resources/PrivacyPolicy.md"), encoding: .utf8)
         let sections = PrivacyInformation.sections(in: policy)
-        try expect(sections.count == 8, "All eight privacy sections are readable")
+        try expect(sections.count == 9, "All nine privacy sections are readable")
         try expect(sections.allSatisfy { !$0.title.isEmpty && !$0.paragraphs.isEmpty }, "Every section has content")
         try expect(sections.first?.title == "Your daily board stays on your Mac", "Title and update line are not presented as a body section")
         try expect(sections.last?.title == "Backups and security", "Final policy section is retained")
@@ -29,6 +29,12 @@ struct PrivacyInformationTests {
                    && automaticText.contains("does not import what was already on the clipboard")
                    && automaticText.contains("not uploaded"),
                    "The in-app policy explains Auto Capture opt-in, baseline and local-storage boundaries")
+        let recognition = sections.first { $0.title == "Local text recognition and search" }
+        let recognitionText = recognition?.paragraphs.joined(separator: " ") ?? ""
+        try expect(recognitionText.contains("Apple frameworks on this Mac")
+                   && recognitionText.contains("does not require Screen Recording permission")
+                   && recognitionText.contains("Removing the capture also removes its recognized text"),
+                   "The policy explains local processing, permission boundaries and recognized-text removal")
         try expect(PrivacyInformation.sections(in: "## First\n\nOne.\n\nTwo.").first?.paragraphs == ["One.", "Two."],
                    "A heading at the start of a fallback document is retained")
         try expect(PrivacyInformation.sections(in: "").isEmpty, "Empty documents produce no empty sections")

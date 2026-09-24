@@ -85,6 +85,7 @@ final class CaptureDraft: ObservableObject {
 final class AppState: ObservableObject {
     let store: CaptureStore
     let previews: PreviewService
+    let contentIndex: ContentIndexService?
     let reminders: ReminderService
     let updates: SoftwareUpdateService
     let robotPlacement: RobotPlacementSettings
@@ -131,12 +132,14 @@ final class AppState: ObservableObject {
     private var reminderServiceFeedback: (captureID: UUID, message: String?)?
     private var currentDayKey = CaptureCalendar.dayString(Date())
 
-    init(store: CaptureStore, previews: PreviewService, reminders: ReminderService,
+    init(store: CaptureStore, previews: PreviewService, contentIndex: ContentIndexService? = nil,
+         reminders: ReminderService,
          updates: SoftwareUpdateService? = nil, robotPlacement: RobotPlacementSettings? = nil,
          autoCapture: AutoCaptureService? = nil,
          captureClipboard: CaptureClipboardService? = nil) {
         self.store = store
         self.previews = previews
+        self.contentIndex = contentIndex
         self.reminders = reminders
         self.updates = updates ?? SoftwareUpdateService()
         self.robotPlacement = robotPlacement ?? RobotPlacementSettings(defaults: nil)
@@ -144,6 +147,9 @@ final class AppState: ObservableObject {
             settings: AutoCaptureSettings(defaults: nil), input: InputService(store: store))
         self.captureClipboard = captureClipboard ?? CaptureClipboardService()
         store.objectWillChange.sink { [weak self] _ in
+            self?.objectWillChange.send()
+        }.store(in: &subscriptions)
+        contentIndex?.objectWillChange.sink { [weak self] _ in
             self?.objectWillChange.send()
         }.store(in: &subscriptions)
         reminders.objectWillChange.sink { [weak self] _ in
@@ -481,6 +487,7 @@ final class AppState: ObservableObject {
         guard removingCaptureID == nil, store.captures.contains(where: { $0 === capture }) else { return }
         removingCaptureID = capture.id
         defer { removingCaptureID = nil }
+        await contentIndex?.cancel(for: capture.id)
         await previews.cancel(for: capture.id)
         do {
             let result = try store.remove(capture)
@@ -504,6 +511,7 @@ final class AppState: ObservableObject {
         } catch {
             reportFailure("Could not remove this capture: \(error.localizedDescription)")
             previews.process([capture])
+            contentIndex?.process([capture])
         }
     }
 
@@ -574,6 +582,7 @@ final class AppState: ObservableObject {
         let days = Set(captures.map(\.captureDay)).sorted()
         status = AppStatusMessage(text: "Saved \(captures.count == 1 ? "capture" : "\(captures.count) captures") · \(days.joined(separator: ", "))", severity: .success)
         previews.process(captures)
+        contentIndex?.process(captures)
     }
 
     func didAutoCapture(_ captures: [Capture]) {
@@ -581,7 +590,23 @@ final class AppState: ObservableObject {
         // The passive robot confirms automatic saves. Keep the board calm while
         // still scheduling local previews and publishing the live feed update.
         previews.process(captures)
+        contentIndex?.process(captures)
         objectWillChange.send()
+    }
+
+    func retryContentIndex(_ capture: Capture) {
+        contentIndex?.retry(capture)
+    }
+
+    func rebuildContentIndex() {
+        guard let contentIndex else { return }
+        Task {
+            if await contentIndex.rebuildAll() {
+                status = AppStatusMessage(text: "Rebuilding local text search in the background.", severity: .success)
+            } else {
+                status = AppStatusMessage(text: "Local text search is already running.", severity: .warning)
+            }
+        }
     }
 
     func reportFailure(_ message: String) {

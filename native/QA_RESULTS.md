@@ -1,5 +1,22 @@
 # DaBin QA cycle — 24 September 2026
 
+## Local screenshot and document search — local build 0.3.18 (45)
+
+DaBin now builds a private searchable-text index from its own saved screenshots, images, PDFs and supported text documents. Vision recognition, PDF text-layer reading, scanned-page fallback and document decoding all run on this Mac. No recognized content is sent to a website or external AI service. Search keeps the existing date and neighboring-capture layout while showing the matched recognized line inside the clickable card. Detail shows a bounded preview and can copy the complete recognized text; day/week exports and the readable archive include it. Settings reports progress and can rebuild the index without repeatedly restarting active work.
+
+The index uses optional schema-6 fields in the existing JSON payload, so the Core Data model does not migrate. Schemas 1–5 reopen with an empty pending index. One background worker processes immutable managed originals, persists only the active item, retains prior searchable text during rebuild, and is canceled before removal. Images are orientation-corrected and downsampled; PDFs use up to 100 pages with sequential autorelease cleanup; plain/structured text and RTF are limited to 12 MB; stored searchable text is capped at 300,000 characters with visible partial-index feedback. HTML and proprietary office formats stay unsupported because their available import paths do not provide the same local-only guarantee.
+
+Verification on 24 September 2026:
+
+- **27/27 nonwindow optimized Release suites passed**, including **90 dedicated local content-search checks** for schema compatibility, persistence/reopen, exact metadata and original-byte preservation, OCR-only results and snippets, filters/day/week/context, task conversion, serial queueing, cancellation/shutdown/relaunch, removal races, retry policy, local Vision OCR, PDF text and scanned-PDF fallback, JSON/Unicode/RTF decoding, limits, corruption and a source-level no-network boundary. [Run report](build/qa/runs/20260924T095803196549Z/report.json).
+- **6/6 live window suites passed** on the unlocked native session: general and Weekly windows, filter resizing, robot drops, Daily paste/drop and compact-header interaction. [Window report](build/qa/runs/20260924T095959764888Z/report.json).
+- **10 production-view renders passed** in light and dark appearance. Original-resolution review covered an OCR-only search result, long searchable-text detail, unsupported and empty states, and Settings progress at the shipping 380-point width. [Render manifest](build/qa/screenshots/content-search-renders.json). Reproduce with `./scripts/render_qa.sh --content-search`.
+- **20/20 static Store packaging checks passed**, including sandbox entitlements, privacy manifest/policy inclusion, deterministic Xcode inventory and Store/direct-update separation. Signing, notarization and Apple review remain external release gates.
+- The optimized **ARM64** app compiled with warnings as errors. Source fingerprint: `f14a65abc463c753dc0160f92ef43b6affa06768dfa3894bced8ce1ea0f54b89`. Installed executable: **6,547,728 bytes**, SHA-256 `5b1d0b239ed8893aa07efd3fe2df59e5e7331dc03ce4d4261c0dfa384c2fe8b0`.
+- Build **45** replaced build 44 through the guarded local installer, created a backup, passed strict deep-signature and ARM64 checks, and launched the installed Daily window. The Desktop link still resolves to `~/Applications/DaBin.app`. The 57-file archive was byte-identical immediately before and after installation; opening the app then created the expected updated metadata/readable sidecars for schema 6.
+
+This is a locally installed build, not a new public release. Public release assets remain 0.3.18 (43); browser-downloaded builds still require Developer ID signing and Apple notarization before they can be presented as a direct installer.
+
 ## Capture to task — local build 0.3.18 (44)
 
 Any saved capture can become a task from its Detail screen or card context menu in Daily, Weekly, Search and Reminders. Conversion preserves receipt identity, original content type, files/previews, sources, comments, reminders and unsaved drafts. The task flag is persisted with schema 5; earlier schemas still load. Task status, completion, filters and carryover use the flag, while copy/preview/export retain the original content. Converted batch/hour members have individual task cards; summaries keep receipt counts and stay below promoted tasks.

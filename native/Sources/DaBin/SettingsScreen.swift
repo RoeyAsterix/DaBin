@@ -160,10 +160,23 @@ struct SettingsScreen: View {
                 Divider()
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Local archive").font(.system(size: 14, weight: .medium))
-                    Text("Saved on this Mac, organized by year, month and day. Each capture keeps its content, comments and reminder together.")
+                    Text("Saved on this Mac, organized by year, month and day. Images, PDFs and supported text documents are made searchable on this Mac; recognized text is never sent to a service.")
                         .font(.system(size: 12)).foregroundStyle(Palette.muted).fixedSize(horizontal: false, vertical: true)
-                    Button { state.showArchiveFolder() } label: { Label("Open local archive", systemImage: "folder") }
-                        .buttonStyle(.plain).font(.system(size: 12)).foregroundStyle(accent)
+                    ViewThatFits(in: .horizontal) {
+                        HStack(spacing: 16) { localArchiveActions }
+                        VStack(alignment: .leading, spacing: 8) { localArchiveActions }
+                    }
+                    .buttonStyle(.plain).font(.system(size: 12)).foregroundStyle(accent)
+                    if let index = state.contentIndex, index.isBusy {
+                        HStack(spacing: 7) {
+                            ProgressView().controlSize(.small)
+                            Text(index.pendingCount == 1
+                                 ? "Making 1 capture searchable…"
+                                 : "Making \(index.pendingCount) captures searchable…")
+                        }
+                        .font(.system(size: 11)).foregroundStyle(Palette.muted)
+                        .accessibilityElement(children: .combine)
+                    }
                 }
                 Divider()
                 VStack(alignment: .leading, spacing: 8) {
@@ -230,6 +243,20 @@ struct SettingsScreen: View {
         .sheet(isPresented: $showExcludedApplications) {
             ExcludedApplicationsSheet(settings: autoCaptureSettings)
                 .environment(\.daBinAccent, accent)
+        }
+    }
+
+    @ViewBuilder
+    private var localArchiveActions: some View {
+        Button { state.showArchiveFolder() } label: {
+            Label("Open local archive", systemImage: "folder")
+        }
+        if let index = state.contentIndex {
+            Button { state.rebuildContentIndex() } label: {
+                Label("Rebuild text search", systemImage: "arrow.clockwise")
+            }
+            .disabled(index.isBusy)
+            .help(index.isBusy ? "Local text search is already running" : "Recognize text in saved images and documents again")
         }
     }
 

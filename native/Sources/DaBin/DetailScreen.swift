@@ -8,6 +8,7 @@ struct DetailScreen: View {
     @ObservedObject var capture: Capture
     @ObservedObject var draft: CaptureDraft
     @FocusState private var focusedField: String?
+    @State private var copiedSearchableText = false
 
     var body: some View {
         VStack(spacing: 0) {
@@ -39,6 +40,9 @@ struct DetailScreen: View {
                                 .buttonStyle(.plain).font(.system(size: 12)).foregroundStyle(accent)
                         } else if !capture.previewDescription.isEmpty {
                             Text(capture.previewDescription).font(.system(size: 13)).foregroundStyle(Palette.muted).textSelection(.enabled)
+                        }
+                        if ContentIndexService.isEligible(capture.kind) {
+                            searchableText
                         }
                         if capture.kind != .task {
                             original
@@ -88,6 +92,79 @@ struct DetailScreen: View {
                 Button("Save changes") { state.saveDetail() }.buttonStyle(.borderedProminent)
                     .controlSize(.regular).disabled(!draft.hasChanges).keyboardShortcut("s", modifiers: .command)
             }.padding(13).overlay(alignment: .top) { Rectangle().fill(Palette.line).frame(height: 1) }
+        }
+    }
+
+    @ViewBuilder
+    private var searchableText: some View {
+        switch capture.contentIndexState {
+        case "indexing":
+            Label("Making this capture searchable…", systemImage: "text.viewfinder")
+                .font(.system(size: 12)).foregroundStyle(Palette.muted)
+                .accessibilityLabel("Recognizing text on this Mac")
+        case "ready" where !capture.indexedText.isEmpty:
+            VStack(alignment: .leading, spacing: 6) {
+                Label("Searchable text", systemImage: "text.viewfinder")
+                    .font(.system(size: 12, weight: .medium)).foregroundStyle(accent)
+                if capture.indexedText.count > 2_000 {
+                    Text("Preview · first 2,000 of \(capture.indexedText.count.formatted()) characters")
+                        .font(.system(size: 10, weight: .medium)).foregroundStyle(Palette.muted)
+                }
+                Text(indexedTextPreview)
+                    .font(.system(size: 12)).foregroundStyle(Palette.muted)
+                    .lineLimit(8).textSelection(.enabled).fixedSize(horizontal: false, vertical: true)
+                Button { copySearchableText() } label: {
+                    Label(copiedSearchableText ? "Searchable text copied" : "Copy all searchable text",
+                          systemImage: copiedSearchableText ? "checkmark" : "doc.on.doc")
+                }
+                .buttonStyle(.plain).font(.system(size: 11, weight: .medium)).foregroundStyle(accent)
+                .help("Copy all recognized text to the clipboard")
+                if let message = capture.contentIndexError {
+                    Text(message).font(.system(size: 11)).foregroundStyle(Palette.muted)
+                }
+            }
+            .padding(10).background(Palette.soft, in: RoundedRectangle(cornerRadius: 11, style: .continuous))
+            .accessibilityElement(children: .contain)
+        case "ready":
+            Label("No readable text found", systemImage: "text.viewfinder")
+                .font(.system(size: 12)).foregroundStyle(Palette.muted)
+        case "unavailable":
+            VStack(alignment: .leading, spacing: 5) {
+                Label(capture.contentIndexError ?? "Text search is unavailable for this capture.",
+                      systemImage: "text.viewfinder")
+                    .font(.system(size: 12)).foregroundStyle(Palette.muted)
+                    .fixedSize(horizontal: false, vertical: true)
+                if state.contentIndex != nil, capture.contentIndexCanRetry {
+                    Button("Try text recognition again") { state.retryContentIndex(capture) }
+                        .buttonStyle(.plain).font(.system(size: 12)).foregroundStyle(accent)
+                        .help("Retry local text recognition")
+                }
+            }
+        default:
+            if state.contentIndex?.isBusy == true {
+                Label("Waiting for local text recognition…", systemImage: "text.viewfinder")
+                    .font(.system(size: 12)).foregroundStyle(Palette.muted)
+            }
+        }
+    }
+
+    private var indexedTextPreview: String {
+        capture.indexedText.count > 2_000
+            ? String(capture.indexedText.prefix(2_000)) + "…"
+            : capture.indexedText
+    }
+
+    private func copySearchableText() {
+        let pasteboard = NSPasteboard.general
+        pasteboard.clearContents()
+        guard pasteboard.setString(capture.indexedText, forType: .string) else {
+            state.reportFailure("Searchable text could not be copied.")
+            return
+        }
+        copiedSearchableText = true
+        Task { @MainActor in
+            try? await Task.sleep(for: .seconds(1.4))
+            copiedSearchableText = false
         }
     }
 

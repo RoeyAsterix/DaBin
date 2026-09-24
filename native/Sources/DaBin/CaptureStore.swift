@@ -155,8 +155,8 @@ import UniformTypeIdentifiers
         }
     }
 
-    /// The caller first cancels and awaits the capture's preview work. Notification
-    /// cancellation follows this committed removal, so delayed schedules see no record.
+    /// The caller first cancels and awaits the capture's preview and local text-index
+    /// work. Notification cancellation follows this committed removal, so delayed schedules see no record.
     /// No owned files are removed until the database deletion has committed.
     func remove(_ capture: Capture) throws -> CaptureRemovalResult {
         try requireCurrent(capture)

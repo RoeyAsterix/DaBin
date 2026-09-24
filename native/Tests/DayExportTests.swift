@@ -155,7 +155,10 @@ private enum DayExportTests {
                                   origin: .automaticScreenshot, sourceBundle: "com.apple.screencapture")
         placeholder.previewDescription = "1440 × 900"
         let ocr = capture(id: 41, at: "2026-09-24 09:01:00", kind: .image,
-                          title: "Whiteboard", text: "OCR: launch checklist")
+                          title: "Whiteboard")
+        ocr.indexedText = "OCR: launch checklist"
+        ocr.contentIndexState = "ready"
+        ocr.contentIndexVersion = ContentIndexService.currentVersion
         let captioned = capture(id: 42, at: "2026-09-24 09:02:00", kind: .image,
                                 title: "Sketch")
         captioned.comment = "Purple robot concept"
@@ -166,9 +169,9 @@ private enum DayExportTests {
                    "An image-only screenshot has an explicit type and placeholder")
         try expect(document.text.contains("Source: com.apple.screencapture"),
                    "The source bundle identifies an app when no display name exists")
-        try expect(document.text.contains("Text: OCR: launch checklist")
+        try expect(document.text.contains("Recognized text: OCR: launch checklist")
                    && document.text.contains("Comment: Purple robot concept"),
-                   "Image OCR and caption text are exported when available")
+                   "Locally recognized image text and caption text are exported when available")
         try expect(document.text.components(separatedBy: "Content: [Image]").count == 1,
                    "OCR and captioned images do not receive misleading empty-image placeholders")
     }

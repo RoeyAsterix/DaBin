@@ -272,7 +272,7 @@ private struct Fixtures: Decodable { let entries: [FixtureEntry]; let cases: [Fi
         let taskStamp = (task.id, task.capturedAt, task.captureDay, task.captureTimeZoneID, task.captureUTCOffsetSeconds)
         try expect(task.isTask && !task.isCompleted && task.originalText == "Send studio brief" && task.title == "Send studio brief", "Explicit task keeps trimmed task text and defaults to open")
         try expect(task.reminderAt == taskReminder && task.reminderTimeZoneID == "Asia/Jerusalem" && task.reminderRevision == 1, "Task and initial reminder commit together")
-        try expect(CaptureSnapshot(task).schemaVersion == 5, "Task snapshots use schema 5")
+        try expect(CaptureSnapshot(task).schemaVersion == 6, "Capture snapshots use schema 6")
         try expect(CaptureFilter.all.includes(.task) && !CaptureFilter.text.includes(.task) && !CaptureFilter.files.includes(.task) && !CaptureFilter.links.includes(.task) && !CaptureFilter.media.includes(.task), "Tasks appear in All without changing text/file/link/media filters")
         try expect(CaptureSearch.groups(captures: [task], query: "studio brief", filter: .all).first?.entries.first?.id == task.id, "Task text is searchable")
         try taskStore.setTaskCompleted(task, completed: true)

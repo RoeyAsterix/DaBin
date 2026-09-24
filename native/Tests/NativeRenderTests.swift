@@ -96,6 +96,18 @@ private final class NativeRenderTests: NSObject, NSApplicationDelegate {
             return
         }
 
+        if arguments.contains("--content-search") {
+            try await renderContentSearch(root: root, output: output)
+            try JSONSerialization.data(withJSONObject: [
+                "description": "Local recognized-text search, capture-detail states and text-index settings in production views.",
+                "fixturePrivacy": "Fictional isolated files and archive; no personal captures, network, clipboard reads, permissions or notifications.",
+                "screenshots": records
+            ], options: [.prettyPrinted, .sortedKeys])
+                .write(to: output.appendingPathComponent("content-search-renders.json"), options: .atomic)
+            print("PASS: \(records.count) local content-search renders in light and dark appearance")
+            return
+        }
+
         if robotPersonalityOnly {
             let manifest = try await verifyRobotPersonality(output: output)
             try JSONSerialization.data(withJSONObject: manifest, options: [.prettyPrinted, .sortedKeys])
@@ -1212,6 +1224,62 @@ private final class NativeRenderTests: NSObject, NSApplicationDelegate {
             try await snapshot(state, name: "conversion-daily-tasks", mode: mode, output: output, height: 430, width: 360, pixelScale: 2)
             state.openWeekly()
             try await snapshot(state, name: "conversion-weekly-tasks", mode: mode, output: output, height: 430, width: 710, pixelScale: 2)
+        }
+    }
+
+    private func renderContentSearch(root: URL, output: URL) async throws {
+        let store = try CaptureStore(root: root.appendingPathComponent("ContentSearch", isDirectory: true))
+        let today = Calendar.current.startOfDay(for: Date())
+        let searchable = try await store.importData(
+            Data(#"{"project":"Violet Orbit","note":"Review the quiet purple board before launch."}"#.utf8),
+            filename: "project-notes.json", at: today.addingTimeInterval(9 * 3_600))
+        searchable.title = "Project notes"
+        searchable.indexedText = "Violet Orbit launch checklist\n" + String(repeating: "A detailed local archive line. ", count: 95)
+        searchable.contentIndexState = "ready"
+        searchable.contentIndexVersion = ContentIndexService.currentVersion
+
+        let unsupported = try await store.importData(Data("Fictional Office fixture".utf8),
+            filename: "planning.docx", at: today.addingTimeInterval(8 * 3_600))
+        unsupported.contentIndexState = "unavailable"
+        unsupported.contentIndexError = "Text search is not available yet for this document format."
+        unsupported.contentIndexVersion = ContentIndexService.currentVersion
+        unsupported.contentIndexCanRetry = false
+
+        let empty = try await store.importData(Self.fixturePNG(), filename: "empty-board.png",
+                                               at: today.addingTimeInterval(7 * 3_600))
+        empty.contentIndexState = "ready"
+        empty.contentIndexVersion = ContentIndexService.currentVersion
+
+        let queued = try await store.importData(Self.fixturePNG(), filename: "queued-board.png",
+                                                at: today.addingTimeInterval(6 * 3_600))
+        try store.save(captures: [searchable, unsupported, empty, queued])
+
+        let contentIndex = ContentIndexService(store: store) { _, _, _ in
+            try? await Task.sleep(for: .seconds(30))
+            return .ready("Queued fixture")
+        }
+        contentIndex.process([queued])
+        let state = AppState(store: store, previews: PreviewService(store: store), contentIndex: contentIndex,
+                             reminders: ReminderService(store: store, client: RenderNotificationClient()))
+        defer { contentIndex.shutdown() }
+
+        for mode in ["light", "dark"] {
+            state.openSearch()
+            state.query = "violet orbit"
+            try await snapshot(state, name: "content-search-match", mode: mode, output: output,
+                               height: 500, width: 380)
+            state.openCapture(searchable.id)
+            try await snapshot(state, name: "content-search-detail-long", mode: mode, output: output,
+                               height: 700, width: 380)
+            state.openCapture(unsupported.id)
+            try await snapshot(state, name: "content-search-detail-unsupported", mode: mode, output: output,
+                               height: 620, width: 380)
+            state.openCapture(empty.id)
+            try await snapshot(state, name: "content-search-detail-empty", mode: mode, output: output,
+                               height: 620, width: 380)
+            state.showSettings()
+            try await snapshot(state, name: "content-search-settings-indexing", mode: mode, output: output,
+                               height: 920, width: 380)
         }
     }
 

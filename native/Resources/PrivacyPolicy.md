@@ -1,12 +1,18 @@
 # DaBin privacy & your data
 
-Updated 23 September 2026
+Updated 24 September 2026
 
 ## Your daily board stays on your Mac
 
 DaBin saves the content you choose to paste, drop or type: text, links, files, tasks, comments and reminders. If you separately enable Auto Capture, it can also save later clipboard changes and new image files from a folder you authorize as your screenshot location. DaBin keeps capture time, any available source path or URL, best-effort source-application information for automatic captures, and local preview information. These help you find your work again. Original files stay at their source; DaBin keeps its own copies.
 
 DaBin has no account, cloud sync, ads, analytics or external AI service. The developer does not receive your captures, searches or usage. DaBin does not track you across apps or websites.
+
+## Local text recognition and search
+
+DaBin uses Apple frameworks on this Mac to recognize text in saved images, screenshots, PDFs and supported text documents. It reads DaBin's own saved copy after the capture succeeds. Recognition does not record the live screen, contact a website, use an external AI service or upload the file or recognized text. It does not require Screen Recording permission.
+
+Recognized text is stored with the capture in the same local archive and is used by Search and text exports. A PDF with an existing text layer is read directly; image-only pages are recognized locally. DaBin limits the amount of very large documents it processes and reports a partial index when that limit applies. You can inspect recognized text in capture details and rebuild the local index from Settings. Removing the capture also removes its recognized text.
 
 ## Manual capture
 

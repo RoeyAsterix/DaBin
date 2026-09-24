@@ -133,6 +133,11 @@ import CryptoKit
             "Capture.md": Data(try markdown(capture).utf8)
         ]
         if let text = capture.originalText { outputs["Content.txt"] = Data(text.utf8) }
+        if ContentIndexService.isEligible(capture.kind) {
+            // Always own the sidecar for eligible immutable types, including an
+            // empty result, so rebuilding cannot leave stale recognized text.
+            outputs["Searchable Text.txt"] = Data(capture.indexedText.utf8)
+        }
         if capture.kind == .link, let link = capture.originalURL {
             outputs["Link.webloc"] = try PropertyListSerialization.data(fromPropertyList: ["URL": link], format: .xml, options: 0)
         }
@@ -256,6 +261,9 @@ import CryptoKit
         } else { lines.append("- Reminder: None") }
         if let original = capture.originalURL { lines += ["", "## Link", "", fenced(original)] }
         if let text = capture.originalText { lines += ["", "## Content", "", fenced(text)] }
+        if !capture.indexedText.isEmpty {
+            lines += ["", "## Searchable text", "", fenced(capture.indexedText)]
+        }
         lines += ["", "## Comment", "", capture.comment.isEmpty ? "No comment." : fenced(capture.comment), ""]
         return lines.joined(separator: "\n")
     }

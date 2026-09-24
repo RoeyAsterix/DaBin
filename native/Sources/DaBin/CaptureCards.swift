@@ -7,6 +7,7 @@ struct CaptureRow: View {
     @ObservedObject var capture: Capture
     let featured: Bool
     var isMatch: Bool? = nil
+    var indexedTextMatch: String? = nil
     var taskAtTop = false
     var showsCopyButton = true
     /// Automatic-hour actions already provide their own rounded card surface.
@@ -50,12 +51,23 @@ struct CaptureRow: View {
                                 Text(capture.previewDescription).font(.system(size: 12)).foregroundStyle(Palette.muted)
                                     .lineLimit(2).multilineTextAlignment(.leading)
                             }
+                            if let indexedTextMatch {
+                                HStack(alignment: .firstTextBaseline, spacing: 5) {
+                                    Image(systemName: "text.viewfinder").foregroundStyle(accent)
+                                    Text(indexedTextMatch).foregroundStyle(Palette.muted)
+                                        .multilineTextAlignment(.leading)
+                                }
+                                .font(.system(size: 11)).lineLimit(2)
+                                .fixedSize(horizontal: false, vertical: true)
+                                .accessibilityLabel("Matched recognized text: \(indexedTextMatch)")
+                            }
                         }
                     }.contentShape(Rectangle())
                 }.buttonStyle(.plain)
                     .accessibilityLabel(taskAtTop
                         ? "Open unfinished task \(capture.title), created \(prettyDay(capture.captureDay)) at \(captureClock(capture))"
                         : "Open \(capture.title), captured at \(captureClock(capture))")
+                    .accessibilityHint(indexedTextMatch.map { "Matched recognized text: \($0)" } ?? "")
                 VStack(alignment: .trailing, spacing: 4) {
                     HStack(spacing: 4) {
                         Text(captureClock(capture)).font(.system(size: 12.65)).monospacedDigit()

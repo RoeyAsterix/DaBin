@@ -29,7 +29,7 @@ def source_group(path):
         return "State and Domain"
     if name in {"CaptureStore", "CaptureRepository", "CaptureRemoval", "DailyArchive", "OriginalFileStorage"}:
         return "Storage"
-    if name in {"InputService", "PreviewService", "ReminderService", "ReminderLifecycle", "PreviewRequest",
+    if name in {"InputService", "PreviewService", "ContentIndexService", "ReminderService", "ReminderLifecycle", "PreviewRequest",
                 "AutoCaptureService", "AutoCaptureFingerprint", "CaptureClipboard", "ScreenshotFolderMonitor"}:
         return "Services"
     if name in {"CornerController", "RobotView", "WindowDragHandle", "DailyCaptureView",

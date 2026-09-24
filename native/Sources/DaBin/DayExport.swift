@@ -98,14 +98,17 @@ private enum CaptureTextExport {
         if !capture.previewDescription.isEmpty {
             append("Details", capture.previewDescription, to: &lines, indent: indent)
         }
+        if !capture.indexedText.isEmpty {
+            append("Recognized text", capture.indexedText, to: &lines, indent: indent)
+        }
         if !capture.comment.isEmpty {
             append("Comment", capture.comment, to: &lines, indent: indent)
         }
-        // Original text is the stored text/OCR channel and Comment is the
-        // user's caption. Preview details are commonly dimensions or file
-        // metadata, so they do not suppress an honest image placeholder.
+        // Preview details are commonly dimensions or file metadata, so they do
+        // not suppress an honest image placeholder. Local recognition does.
         if capture.kind == .image,
            cleaned(capture.originalText ?? "").isEmpty,
+           cleaned(capture.indexedText).isEmpty,
            cleaned(capture.comment).isEmpty {
             lines.append(indent + (capture.captureOrigin == .automaticScreenshot
                                    ? "Content: [Screenshot]" : "Content: [Image]"))
