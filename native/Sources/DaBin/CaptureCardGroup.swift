@@ -15,14 +15,16 @@ struct CaptureCardGroup: Identifiable {
     var isImportedBatch: Bool { captures.count > 1 }
     var isMinimized: Bool { captures.allSatisfy(\.isMinimized) }
 
-    static func cards(from captures: [Capture]) -> [CaptureCardGroup] {
-        let imported = captures.filter { $0.attachmentRelativePath != nil }
+    /// Tasks have their own visible status/carryover. Exports can retain the
+    /// original receipt grouping independently of this presentation choice.
+    static func cards(from captures: [Capture], separateTasks: Bool = true) -> [CaptureCardGroup] {
+        let imported = captures.filter { $0.attachmentRelativePath != nil && (!separateTasks || !$0.isTask) }
         let byReceipt = Dictionary(grouping: imported, by: \.capturedAt)
         var emittedReceipts = Set<Date>()
         var result: [CaptureCardGroup] = []
 
         for capture in captures {
-            if capture.attachmentRelativePath != nil,
+            if capture.attachmentRelativePath != nil, (!separateTasks || !capture.isTask),
                let batch = byReceipt[capture.capturedAt], batch.count > 1 {
                 guard emittedReceipts.insert(capture.capturedAt).inserted else { continue }
                 result.append(CaptureCardGroup(id: .importedBatch(capture.capturedAt), captures: batch))

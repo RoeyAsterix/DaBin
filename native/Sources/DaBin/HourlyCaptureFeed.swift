@@ -102,8 +102,10 @@ enum HourlyCaptureFeed {
         let indexed = captures.enumerated().map { IndexedCapture(position: $0.offset, capture: $0.element) }
         let positionByID = Dictionary(uniqueKeysWithValues: indexed.map { ($0.capture.id, $0.position) })
 
-        let manualCaptures = indexed.filter { !$0.capture.captureOrigin.isAutomatic }.map(\.capture)
-        var seeds = CaptureCardGroup.cards(from: manualCaptures).map { card -> FeedSeed in
+        // Tasks need an individual status control and carryover position even
+        // when their original receipt belonged to an automatic hour.
+        let individualCaptures = indexed.filter { !$0.capture.captureOrigin.isAutomatic || $0.capture.isTask }.map(\.capture)
+        var seeds = CaptureCardGroup.cards(from: individualCaptures).map { card -> FeedSeed in
             let position = card.captures.compactMap { positionByID[$0.id] }.min() ?? Int.max
             return .manual(card: card, position: position)
         }
@@ -119,10 +121,13 @@ enum HourlyCaptureFeed {
                 return lhs.capture.id.uuidString < rhs.capture.id.uuidString
             }
             return RawAutomaticAction(id: actionID, captures: ordered.map(\.capture),
-                                      position: ordered[0].position,
+                                      position: ordered.first(where: { !$0.capture.isTask })?.position ?? ordered[0].position,
                                       hour: AutomaticHourKey(capture: ordered[0].capture))
         }
-        seeds += automaticActions.map { .automatic(action: $0) }
+        // Retain every receipt in hour counts, but anchor the summary only to
+        // remaining non-task content so it cannot overtake a promoted task.
+        seeds += automaticActions.filter { $0.captures.contains(where: { !$0.isTask }) }
+            .map { .automatic(action: $0) }
         seeds.sort {
             if $0.position != $1.position { return $0.position < $1.position }
             return $0.tieBreaker < $1.tieBreaker
@@ -148,13 +153,13 @@ enum HourlyCaptureFeed {
                 result += visibleCards(in: card.captures, filter: filter).map(CaptureFeedCard.capture)
             case .automatic(let action):
                 guard qualifyingHours.contains(action.hour) else {
-                    result += visibleCards(in: action.captures, filter: filter).map(CaptureFeedCard.capture)
+                    result += visibleCards(in: action.captures.filter { !$0.isTask }, filter: filter).map(CaptureFeedCard.capture)
                     continue
                 }
                 guard emittedHours.insert(action.hour).inserted,
                       let allActions = actionsByHour[action.hour] else { continue }
                 let visibleActions = allActions.compactMap { item -> AutomaticCaptureAction? in
-                    let cards = visibleCards(in: item.captures, filter: filter)
+                    let cards = visibleCards(in: item.captures.filter { !$0.isTask }, filter: filter)
                     return cards.isEmpty ? nil : AutomaticCaptureAction(id: item.id, cards: cards)
                 }
                 guard !visibleActions.isEmpty else { continue }
@@ -170,7 +175,7 @@ enum HourlyCaptureFeed {
     }
 
     private static func visibleCards(in captures: [Capture], filter: CaptureFilter) -> [CaptureCardGroup] {
-        CaptureCardGroup.cards(from: captures.filter { filter.includes($0.kind) })
+        CaptureCardGroup.cards(from: captures.filter { filter.includes($0) })
     }
 }
 

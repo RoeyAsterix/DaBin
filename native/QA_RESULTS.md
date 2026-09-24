@@ -1,5 +1,18 @@
 # DaBin QA cycle — 24 September 2026
 
+## Capture to task — local build 0.3.18 (44)
+
+Any saved capture can become a task from its Detail screen or card context menu in Daily, Weekly, Search and Reminders. Conversion preserves receipt identity, original content type, files/previews, sources, comments, reminders and unsaved drafts. The task flag is persisted with schema 5; earlier schemas still load. Task status, completion, filters and carryover use the flag, while copy/preview/export retain the original content. Converted batch/hour members have individual task cards; summaries keep receipt counts and stay below promoted tasks.
+
+Verification on 24 September 2026:
+
+- **10/10 selected Release suites passed, 847 checks**, including **140 conversion checks**. Coverage includes all eight convertible content types, persistence/reopen, legacy payloads, atomic failures, stale record rejection, draft preservation, every page route, reminders, filters/search/carryover, batch/hour ordering and receipt-based exports. No source changes occurred during the final run. [Run report](build/qa/runs/20260924T092236474989Z/report.json).
+- **10 native 2× renders**, with light and dark Detail, Daily and Weekly layouts at compact sizes. Original-resolution inspection confirmed the conversion button and task controls are visible and previews retain their content. [Render manifest](build/qa/screenshots/task-conversion-renders.json). Reproduce with `./scripts/render_qa.sh --task-conversion`.
+- Optimized ARM64 build, warnings-as-errors compilation, generated Xcode inventory, plist validation and whitespace checks passed. Installed executable SHA-256: `1acb98c01b32a20cc36f1836a1f42f2810315876a00051deaaabff65e9f35de1`.
+- Local build **44** was installed with a backup, verified with strict code signing and an exact executable comparison, and reopened successfully. The Desktop link still points to the installed app. Live accessibility inspection confirmed **Turn into task** on an existing capture’s Detail screen without converting personal content. [Install evidence](build/qa/task-conversion-install.json).
+
+This was focused feature QA, not a new full release cycle or a live VoiceOver audit. Public release assets remain 0.3.18 (43); this local update does not resolve the Developer ID/notarization requirement documented below.
+
 ## Visible updates and permanent latest downloads — 0.3.18 (43)
 
 **Direct-install correction:** post-publication testing from a browser/WhatsApp download exposed a missing distribution gate. The ZIP bytes, executable modes, architecture and code seals are correct, but the app and updater are ad-hoc signed and have no Apple notarization ticket. Gatekeeper therefore blocks a quarantined first installation. The existing app's verified in-app update remains functional because it launches its already-installed helper. The repository no longer describes the 0.3.18 standalone ZIP as a working public installer. A replacement requires Developer ID signing and notarization; no valid signing identity is installed on the current build host. [Incident evidence](../docs/qa/0.3.18/direct-install-gatekeeper-failure.md).

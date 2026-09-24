@@ -43,7 +43,7 @@ struct CaptureRow: View {
                                 Text(host).font(.system(size: 11)).foregroundStyle(Palette.muted).lineLimit(1)
                             }
                             Text(capture.title.isEmpty ? "Untitled capture" : capture.title)
-                                .strikethrough(capture.kind == .task && capture.isCompleted, color: Palette.muted)
+                                .strikethrough(capture.isTask && capture.isCompleted, color: Palette.muted)
                                 .font(.system(size: featured && !capture.isMinimized ? 19.55 : 16.1, weight: .medium)).lineLimit(capture.isMinimized ? 1 : 3)
                                 .multilineTextAlignment(.leading).frame(maxWidth: .infinity, alignment: .leading)
                             if !capture.isMinimized && !capture.previewDescription.isEmpty {
@@ -64,7 +64,7 @@ struct CaptureRow: View {
                             CaptureCopyButton(state: state, captures: [capture])
                         }
                     }
-                    if capture.kind == .task {
+                    if capture.isTask {
                         TaskStatusButton(state: state, capture: capture)
                     } else {
                         Text(captureTypeLabel(capture.kind)).font(.system(size: 11)).foregroundStyle(Palette.muted)
@@ -85,7 +85,7 @@ struct CaptureRow: View {
                 CaptureControls(state: state, capture: capture)
             }.font(.system(size: 12)).buttonStyle(.plain).foregroundStyle(accent).padding(.vertical, 4)
             if !capture.isMinimized, let reminder = capture.reminderAt {
-                Text("\(capture.kind == .task && capture.isCompleted ? "Paused" : "Remind") \(reminder.formatted(date: .abbreviated, time: .shortened))")
+                Text("\(capture.isTask && capture.isCompleted ? "Paused" : "Remind") \(reminder.formatted(date: .abbreviated, time: .shortened))")
                     .font(.system(size: 11)).foregroundStyle(Palette.muted)
             }
         }
@@ -105,6 +105,9 @@ struct CaptureRow: View {
             }
         }
         .padding(.vertical, embeddedInCard ? 0 : 6)
+        .contextMenu {
+            CaptureTaskConversionMenu(state: state, capture: capture)
+        }
     }
 }
 
@@ -139,6 +142,47 @@ struct CaptureControls: View {
 }
 
 @MainActor
+struct CaptureTaskConversionButton: View {
+    @Environment(\.daBinAccent) private var accent
+    @ObservedObject var state: AppState
+    @ObservedObject var capture: Capture
+
+    var body: some View {
+        Button { state.convertToTask(capture) } label: {
+            Label("Turn into task", systemImage: "checkmark.circle")
+                .font(.system(size: 12, weight: .medium))
+                .padding(.horizontal, 10).padding(.vertical, 7)
+                .background(accent.opacity(0.11), in: Capsule())
+                .contentShape(Capsule())
+        }
+        .buttonStyle(.plain).foregroundStyle(accent)
+        .help("Turn this capture into a task")
+        .accessibilityLabel("Turn \(capture.title) into a task")
+        .accessibilityHint("Keeps the captured content, comment and reminder")
+        .accessibilityIdentifier("capture-convert-to-task-\(capture.id.uuidString)")
+        .disabled(state.removingCaptureID == capture.id)
+    }
+}
+
+@MainActor
+struct CaptureTaskConversionMenu: View {
+    @ObservedObject var state: AppState
+    @ObservedObject var capture: Capture
+
+    var body: some View {
+        if !capture.isTask {
+            Button { state.convertToTask(capture) } label: {
+                Label("Turn into task", systemImage: "checkmark.circle")
+            }
+            .help("Turn this capture into a task")
+            .accessibilityLabel("Turn \(capture.title) into a task")
+            .accessibilityIdentifier("capture-convert-to-task-menu-\(capture.id.uuidString)")
+            .disabled(state.removingCaptureID == capture.id)
+        }
+    }
+}
+
+@MainActor
 struct TaskStatusButton: View {
     @ObservedObject var state: AppState
     @ObservedObject var capture: Capture
@@ -159,5 +203,6 @@ struct TaskStatusButton: View {
             .accessibilityLabel("\(label): \(capture.title)")
             .accessibilityHint(capture.isCompleted ? "Mark this task incomplete" : "Mark this task completed")
             .accessibilityValue(label)
+            .accessibilityIdentifier("capture-task-status-\(capture.id.uuidString)")
     }
 }

@@ -32,6 +32,8 @@ The first launch remains quiet: screen corners are the default reveal target, an
 
 ## Persistence invariants
 
+- Converting an existing capture to a task persists a separate `convertedToTask` flag in payload schema 5; `kindRaw` remains the original content type. Schemas 1–4 still decode without that flag. `isTask` combines legacy task records and converted content, so previews and clipboard payloads retain the original content while filters, reminders and carryover use task status. Conversion saves in place, is idempotent and rolls back the flag on metadata failure.
+- Task cards are presented individually outside imported batches and automatic-hour summaries. The original action still contributes to its hour's count; summary placement follows its remaining non-task content. Exports retain original receipt grouping and include task status without moving or duplicating receipt dates.
 - Receipt date/time and source metadata remain facts about the original capture.
 - Automatic records retain their automatic origin and stable action identity. Source-application metadata is best effort and must never be presented as authoritative provenance.
 - Imported source files are copied and verified; their external originals are not moved or edited.

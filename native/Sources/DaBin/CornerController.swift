@@ -54,7 +54,7 @@ enum CornerGeometry {
             let featured = capture.id == featuredID
             let titleSize: CGFloat = featured ? 19.55 : 16.1
             let timestampWidth: CGFloat = capture.isTask ? (capture.isCompleted ? 98 : 66) : 44
-            let thumbnailWidth: CGFloat = !featured && capture.kind != .text && !capture.isTask ? 67 : 0
+            let thumbnailWidth: CGFloat = !featured && capture.kind != .text && capture.kind != .task ? 67 : 0
             let contentWidth: CGFloat = 348 - (promoted ? 20 : 0)
             let titleWidth = max(100, contentWidth - timestampWidth - 11 - thumbnailWidth)
             let titleFont = NSFont.systemFont(ofSize: titleSize, weight: .medium)
@@ -586,7 +586,7 @@ final class CornerController: NSObject {
         case .newTask: return (state.newTaskDraft.reminderEnabled ? 370 : 310) + extra
         case .settings: return 430
         case .reminders:
-            let count = state.store.captures.filter { $0.reminderAt != nil && !($0.kind == .task && $0.isCompleted) }.count
+            let count = state.store.captures.filter { $0.reminderAt != nil && !($0.isTask && $0.isCompleted) }.count
             return count == 0 ? 270 + extra : min(500, 120 + CGFloat(count) * 125 + extra)
         }
     }

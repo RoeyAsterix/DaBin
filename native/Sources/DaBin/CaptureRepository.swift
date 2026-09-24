@@ -99,7 +99,7 @@ import CoreData
 
     private func validate(_ snapshot: CaptureSnapshot, recordID: UUID?) throws {
         let origin = snapshot.captureOriginRaw.flatMap(CaptureOrigin.init(rawValue:)) ?? .manual
-        guard [1, 2, 3, 4].contains(snapshot.schemaVersion), CaptureKind(rawValue: snapshot.kindRaw) != nil,
+        guard [1, 2, 3, 4, 5].contains(snapshot.schemaVersion), CaptureKind(rawValue: snapshot.kindRaw) != nil,
               recordID == snapshot.id,
               snapshot.captureOriginRaw.map({ CaptureOrigin(rawValue: $0) != nil }) ?? true,
               !origin.isAutomatic || snapshot.automaticActionID != nil else {

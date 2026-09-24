@@ -167,25 +167,37 @@ private struct GroupedCaptureItem: View {
     let compact: Bool
 
     var body: some View {
-        Button { state.openCapture(capture.id) } label: {
-            HStack(spacing: compact ? 7 : 10) {
-                CaptureThumbnail(store: state.store, capture: capture)
-                    .frame(width: compact ? 36 : 44, height: compact ? 38 : 46)
-                    .clipped().clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-                VStack(alignment: .leading, spacing: 3) {
-                    Text(capture.title.isEmpty ? "Untitled item" : capture.title)
-                        .font(.system(size: compact ? 11 : 13, weight: .medium)).lineLimit(compact ? 2 : 1)
-                        .multilineTextAlignment(.leading).frame(maxWidth: .infinity, alignment: .leading)
-                    Text(captureTypeLabel(capture.kind))
-                        .font(.system(size: compact ? 9 : 10)).foregroundStyle(Palette.muted)
+        VStack(alignment: .leading, spacing: 5) {
+            Button { state.openCapture(capture.id) } label: {
+                HStack(spacing: compact ? 7 : 10) {
+                    CaptureThumbnail(store: state.store, capture: capture)
+                        .frame(width: compact ? 36 : 44, height: compact ? 38 : 46)
+                        .clipped().clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text(capture.title.isEmpty ? "Untitled item" : capture.title)
+                            .font(.system(size: compact ? 11 : 13, weight: .medium)).lineLimit(compact ? 2 : 1)
+                            .strikethrough(capture.isTask && capture.isCompleted, color: Palette.muted)
+                            .multilineTextAlignment(.leading).frame(maxWidth: .infinity, alignment: .leading)
+                        if !capture.isTask {
+                            Text(captureTypeLabel(capture.kind))
+                                .font(.system(size: compact ? 9 : 10)).foregroundStyle(Palette.muted)
+                        }
+                    }
+                    Image(systemName: "chevron.right").font(.system(size: 9, weight: .semibold))
+                        .foregroundStyle(Palette.muted).accessibilityHidden(true)
                 }
-                Image(systemName: "chevron.right").font(.system(size: 9, weight: .semibold))
-                    .foregroundStyle(Palette.muted).accessibilityHidden(true)
+                .contentShape(Rectangle())
             }
-            .padding(.horizontal, compact ? 7 : 9).padding(.vertical, compact ? 6 : 7)
-            .contentShape(Rectangle())
+            .buttonStyle(.plain)
+            .accessibilityLabel("Open \(capture.title), \(capture.isTask ? "Task" : captureTypeLabel(capture.kind))")
+            if capture.isTask {
+                TaskStatusButton(state: state, capture: capture)
+                    .padding(.leading, compact ? 43 : 54)
+            }
         }
-        .buttonStyle(.plain)
-        .accessibilityLabel("Open \(capture.title), \(captureTypeLabel(capture.kind))")
+        .padding(.horizontal, compact ? 7 : 9).padding(.vertical, compact ? 6 : 7)
+        .contextMenu {
+            CaptureTaskConversionMenu(state: state, capture: capture)
+        }
     }
 }

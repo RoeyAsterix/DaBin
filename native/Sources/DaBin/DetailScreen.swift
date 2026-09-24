@@ -14,19 +14,23 @@ struct DetailScreen: View {
             ScrollViewReader { proxy in
                 ScrollView {
                     VStack(alignment: .leading, spacing: 16) {
-                        DetailPreview(store: state.store, capture: capture)
-                        if let error = capture.previewError, !error.isEmpty {
-                            Label(error, systemImage: "info.circle")
-                                .font(.system(size: 12)).foregroundStyle(Palette.muted)
-                                .fixedSize(horizontal: false, vertical: true)
-                        }
                         VStack(alignment: .leading, spacing: 5) {
                             Text(capture.title).font(.system(size: 20, weight: .semibold)).textSelection(.enabled).fixedSize(horizontal: false, vertical: true)
                             Button { state.showCaptureDay(capture) } label: {
                                 Text("\(prettyDay(capture.captureDay)) · \(captureClock(capture))")
                             }.font(.system(size: 12)).buttonStyle(.plain).foregroundStyle(accent).help("Show original capture day")
                         }
-                        if capture.kind == .task { TaskStatusButton(state: state, capture: capture) }
+                        if capture.isTask {
+                            TaskStatusButton(state: state, capture: capture)
+                        } else {
+                            CaptureTaskConversionButton(state: state, capture: capture)
+                        }
+                        DetailPreview(store: state.store, capture: capture)
+                        if let error = capture.previewError, !error.isEmpty {
+                            Label(error, systemImage: "info.circle")
+                                .font(.system(size: 12)).foregroundStyle(Palette.muted)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
                         if let text = capture.originalText, !text.isEmpty, capture.kind == .text || capture.kind == .task {
                             if capture.kind == .text || text != capture.title {
                                 Text(text).font(.system(size: 14)).lineSpacing(4).textSelection(.enabled).fixedSize(horizontal: false, vertical: true)
@@ -48,7 +52,7 @@ struct DetailScreen: View {
                         if let serviceStatus = state.reminders.status {
                             Text(serviceStatus).font(.system(size: 12)).foregroundStyle(Palette.muted).fixedSize(horizontal: false, vertical: true)
                         }
-                        if let reminder = capture.reminderAt, !(capture.kind == .task && capture.isCompleted) {
+                        if let reminder = capture.reminderAt, !(capture.isTask && capture.isCompleted) {
                             if reminder <= Date() {
                                 Text("This reminder time has passed. Choose a future time and save to receive another reminder.")
                                     .font(.system(size: 12)).foregroundStyle(Palette.muted)
@@ -126,7 +130,7 @@ struct DetailScreen: View {
                     .onChange(of: draft.reminderDate) { _, _ in draft.message = nil }
                 Text("\(TimeZone.current.identifier) · \(draft.reminderDate.formatted(.dateTime.timeZone(.iso8601(.long))))")
                     .font(.system(size: 11)).foregroundStyle(Palette.muted)
-                if capture.kind == .task && capture.isCompleted {
+                if capture.isTask && capture.isCompleted {
                     Text("Reminder is paused while this task is completed.")
                         .font(.system(size: 11)).foregroundStyle(Palette.muted)
                 }

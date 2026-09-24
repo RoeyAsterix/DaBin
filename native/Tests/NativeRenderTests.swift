@@ -84,6 +84,18 @@ private final class NativeRenderTests: NSObject, NSApplicationDelegate {
             else { UserDefaults.standard.removeObject(forKey: PreviewService.linkPreviewPreference) }
         }
 
+        if arguments.contains("--task-conversion") {
+            try await renderTaskConversion(root: root, output: output)
+            try JSONSerialization.data(withJSONObject: [
+                "description": "Capture conversion controls and converted tasks in production Detail, Daily and Weekly views.",
+                "fixturePrivacy": "Fictional isolated archive and theme preferences; no user content, clipboard reads, network or notification delivery.",
+                "screenshots": records
+            ], options: [.prettyPrinted, .sortedKeys])
+                .write(to: output.appendingPathComponent("task-conversion-renders.json"), options: .atomic)
+            print("PASS: \(records.count) native capture-to-task renders in light and dark appearance")
+            return
+        }
+
         if robotPersonalityOnly {
             let manifest = try await verifyRobotPersonality(output: output)
             try JSONSerialization.data(withJSONObject: manifest, options: [.prettyPrinted, .sortedKeys])
@@ -1159,6 +1171,48 @@ private final class NativeRenderTests: NSObject, NSApplicationDelegate {
         window.contentView = nil
         window.close()
         retainedWindows.removeAll { $0 === window }
+    }
+
+    private func renderTaskConversion(root: URL, output: URL) async throws {
+        let store = try CaptureStore(root: root.appendingPathComponent("TaskConversion"))
+        let today = Calendar.current.startOfDay(for: Date())
+        let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: today)!
+        let note = try store.capture(text: "Review the workshop reference notes", at: today.addingTimeInterval(8 * 3600))[0]
+        let image = try await store.importData(Self.fixturePNG(), filename: "Workshop reference.png",
+                                              at: yesterday.addingTimeInterval(9 * 3600))
+        try store.update(image, comment: "Keep this reference for the next sketch.", reminderAt: nil, reminderTimeZoneID: nil)
+        let previews = PreviewService(store: store)
+        defer { previews.shutdown() }
+        previews.process([image])
+        let deadline = Date().addingTimeInterval(8)
+        while image.previewState == "loading" && Date() < deadline {
+            try await Task.sleep(for: .milliseconds(20))
+        }
+        guard image.previewState == "ready" else { throw RenderError.message("Conversion image preview failed") }
+        let state = AppState(store: store, previews: previews,
+                             reminders: ReminderService(store: store, client: RenderNotificationClient()))
+        for mode in ["light", "dark"] {
+            state.openCapture(note.id)
+            try await snapshot(state, name: "conversion-note-before", mode: mode, output: output, height: 430, width: 360, pixelScale: 2)
+            state.openCapture(image.id)
+            try await snapshot(state, name: "conversion-image-before", mode: mode, output: output, height: 500, width: 360, pixelScale: 2)
+        }
+        state.convertToTask(note)
+        state.convertToTask(image)
+        guard note.isTask && image.isTask && image.kind == .image else {
+            throw RenderError.message("Conversion did not retain original image content")
+        }
+        state.status = nil
+        for mode in ["light", "dark"] {
+            state.openCapture(image.id)
+            try await snapshot(state, name: "conversion-image-task", mode: mode, output: output, height: 500, width: 360, pixelScale: 2)
+            state.openDaily()
+            state.selectedDay = today
+            state.filter = .tasks
+            try await snapshot(state, name: "conversion-daily-tasks", mode: mode, output: output, height: 430, width: 360, pixelScale: 2)
+            state.openWeekly()
+            try await snapshot(state, name: "conversion-weekly-tasks", mode: mode, output: output, height: 430, width: 710, pixelScale: 2)
+        }
     }
 
     private func renderReleaseUI(root: URL, output: URL) async throws {

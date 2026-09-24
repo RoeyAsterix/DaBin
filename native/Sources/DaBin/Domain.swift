@@ -73,6 +73,12 @@ enum CaptureFilter: String, CaseIterable, Identifiable {
         case .tasks: return kind == .task
         }
     }
+
+    /// Task status is independent of content type: an image task remains an
+    /// image in Media and is also available in Tasks.
+    func includes(_ capture: Capture) -> Bool {
+        self == .tasks ? capture.isTask : includes(capture.kind)
+    }
 }
 
 final class Capture: ObservableObject, Identifiable {
@@ -100,6 +106,7 @@ final class Capture: ObservableObject, Identifiable {
     @Published var previewState: String
     @Published var previewError: String?
     @Published var comment: String
+    @Published private(set) var convertedToTask = false
     @Published var isCompleted: Bool
     @Published var isMinimized: Bool
     @Published var reminderAt: Date?
@@ -109,7 +116,7 @@ final class Capture: ObservableObject, Identifiable {
     private(set) var createdAt: Date
     @Published var updatedAt: Date
     var kind: CaptureKind { CaptureKind(rawValue: kindRaw) ?? .file }
-    var isTask: Bool { kind == .task }
+    var isTask: Bool { kind == .task || convertedToTask }
     var captureOrigin: CaptureOrigin { CaptureOrigin(rawValue: captureOriginRaw) ?? .manual }
 
     init(id: UUID = UUID(), capturedAt: Date = Date(), timeZone: TimeZone = .current,
@@ -152,6 +159,9 @@ final class Capture: ObservableObject, Identifiable {
     // Repository-coordinated relocation changes only managed storage, never provenance.
     func relocateManagedAttachment(to relativePath: String) { attachmentRelativePath = relativePath }
 
+    // Store-coordinated task conversion leaves immutable receipt/content fields intact.
+    func setConvertedToTask(_ value: Bool) { convertedToTask = value }
+
     convenience init(snapshot: CaptureSnapshot) {
         self.init(id: snapshot.id, capturedAt: snapshot.capturedAt,
                   timeZone: TimeZone(identifier: snapshot.captureTimeZoneID) ?? TimeZone(secondsFromGMT: snapshot.captureUTCOffsetSeconds) ?? TimeZone(secondsFromGMT: 0)!,
@@ -171,6 +181,7 @@ final class Capture: ObservableObject, Identifiable {
         self.previewState = snapshot.previewState
         self.previewError = snapshot.previewError
         self.comment = snapshot.comment
+        self.convertedToTask = snapshot.convertedToTask ?? false
         self.isCompleted = self.isTask && (snapshot.isCompleted ?? false)
         self.isMinimized = snapshot.isMinimized ?? false
         self.reminderAt = snapshot.reminderAt
@@ -211,6 +222,8 @@ struct CaptureSnapshot: Codable {
     let previewState: String
     let previewError: String?
     let comment: String
+    // Missing in schema 1–4: only legacy kind=task records were tasks.
+    let convertedToTask: Bool?
     // Older payloads omit task state; ordinary captures remain ordinary captures.
     let isCompleted: Bool?
     // Optional for existing version 3 records; the capture stays searchable.
@@ -223,7 +236,7 @@ struct CaptureSnapshot: Codable {
     let updatedAt: Date
 
     init(_ capture: Capture) {
-        schemaVersion = 4
+        schemaVersion = 5
         id = capture.id
         capturedAt = capture.capturedAt
         captureDay = capture.captureDay
@@ -248,6 +261,7 @@ struct CaptureSnapshot: Codable {
         previewState = capture.previewState
         previewError = capture.previewError
         comment = capture.comment
+        convertedToTask = capture.convertedToTask
         isCompleted = capture.isCompleted
         isMinimized = capture.isMinimized
         reminderAt = capture.reminderAt
@@ -359,10 +373,10 @@ enum CaptureSearch {
             let items = ordered(days[day]!)
             let hits = Set(items.indices.filter { index in
                 let item = items[index]
-                guard filter.includes(item.kind) else { return false }
+                guard filter.includes(item) else { return false }
                 let haystack = normalized([item.title, item.previewDescription, item.originalURL ?? "",
                                            item.originalText ?? "", item.originalFilename ?? "", item.comment,
-                                           item.kind.rawValue, item.captureDay,
+                                           item.kind.rawValue, item.isTask ? "task" : "", item.captureDay,
                                            item.sourceApplicationName ?? "",
                                            item.sourceApplicationBundleIdentifier ?? "",
                                            item.captureOrigin.displayName,

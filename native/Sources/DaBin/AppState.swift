@@ -199,7 +199,7 @@ final class AppState: ObservableObject {
             return $0.capturedAt == $1.capturedAt ? $0.id.uuidString < $1.id.uuidString : $0.capturedAt > $1.capturedAt
         }
     }
-    func captures(for day: Date) -> [Capture] { allCaptures(for: day).filter { filter.includes($0.kind) } }
+    func captures(for day: Date) -> [Capture] { allCaptures(for: day).filter { filter.includes($0) } }
     var allCapturesForDay: [Capture] { allCaptures(for: selectedDay) }
     func isTaskAtTop(_ capture: Capture) -> Bool {
         isTaskAtTop(capture, on: selectedDay)
@@ -383,8 +383,24 @@ final class AppState: ObservableObject {
         }
     }
 
+    func convertToTask(_ capture: Capture) {
+        guard removingCaptureID != capture.id else { return }
+        do {
+            let wasTask = capture.isTask
+            try store.convertToTask(capture)
+            guard !wasTask else { return }
+            captureLayoutRevision &+= 1
+            // Conversion can split a file batch or an automatic-hour summary.
+            // Keep the converted card as the return-to-Daily scroll target.
+            dailyScrollID = feedID(for: capture, on: selectedDay)
+            status = AppStatusMessage(text: "Turned into a task.", severity: .success)
+        } catch {
+            reportFailure("Couldn’t turn this capture into a task: \(error.localizedDescription)")
+        }
+    }
+
     func toggleTaskCompletion(_ capture: Capture) {
-        guard capture.kind == .task else { return }
+        guard capture.isTask else { return }
         do {
             try store.setTaskCompleted(capture, completed: !capture.isCompleted)
             if capture.isCompleted { clearReminderFeedback(for: capture) }
@@ -537,7 +553,7 @@ final class AppState: ObservableObject {
         selectedDay = parser.date(from: capture.captureDay) ?? capture.capturedAt
         filter = .all
         route = .daily
-        if capture.captureOrigin.isAutomatic {
+        if capture.captureOrigin.isAutomatic && !capture.isTask {
             let hour = AutomaticHourKey(capture: capture)
             if automaticActionCount(in: hour, on: selectedDay) >= HourlyCaptureFeed.summaryThreshold {
                 expandedAutomaticHours.insert(hour)
@@ -671,19 +687,9 @@ final class AppState: ObservableObject {
     }
 
     func feedID(for capture: Capture, on day: Date) -> CaptureFeedCardID {
-        if capture.captureOrigin.isAutomatic {
-            let hour = AutomaticHourKey(capture: capture)
-            if automaticActionCount(in: hour, on: day) >= HourlyCaptureFeed.summaryThreshold {
-                return .automaticHour(hour)
-            }
-        }
-        if capture.attachmentRelativePath != nil {
-            let batchCount = allCaptures(for: day).filter {
-                $0.attachmentRelativePath != nil && $0.capturedAt == capture.capturedAt
-            }.count
-            if batchCount > 1 { return .capture(.importedBatch(capture.capturedAt)) }
-        }
-        return .capture(.capture(capture.id))
+        HourlyCaptureFeed.cards(from: allCaptures(for: day), filter: .all)
+            .first { $0.captures.contains(where: { $0.id == capture.id }) }?.id
+            ?? .capture(.capture(capture.id))
     }
 
     private func automaticActionCount(in hour: AutomaticHourKey, on day: Date) -> Int {

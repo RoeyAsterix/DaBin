@@ -101,6 +101,27 @@ import UniformTypeIdentifiers
         return task
     }
 
+    /// Converts in place. Content type and receipt identity stay immutable, so
+    /// previews, originals, clipboard copies and reminders retain their meaning.
+    func convertToTask(_ capture: Capture) throws {
+        try requireCurrent(capture)
+        guard !capture.isTask else { return }
+        let previous = (capture.convertedToTask, capture.isCompleted, capture.updatedAt)
+        capture.setConvertedToTask(true)
+        capture.isCompleted = false
+        capture.updatedAt = Date()
+        do {
+            try failureInjector?(.beforeMetadataSave)
+            try persist(capture)
+            objectWillChange.send()
+        } catch {
+            capture.setConvertedToTask(previous.0)
+            capture.isCompleted = previous.1
+            capture.updatedAt = previous.2
+            throw error
+        }
+    }
+
     func setTaskCompleted(_ capture: Capture, completed: Bool) throws {
         guard capture.isTask, capture.isCompleted != completed else { return }
         guard captures.contains(where: { $0 === capture }) else {

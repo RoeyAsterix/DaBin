@@ -4,7 +4,7 @@ import SwiftUI
 struct RemindersScreen: View {
     @ObservedObject var state: AppState
     private var items: [Capture] {
-        state.store.captures.filter { $0.reminderAt != nil && !($0.kind == .task && $0.isCompleted) }.sorted { $0.reminderAt! < $1.reminderAt! }
+        state.store.captures.filter { $0.reminderAt != nil && !($0.isTask && $0.isCompleted) }.sorted { $0.reminderAt! < $1.reminderAt! }
     }
     var body: some View {
         if items.isEmpty {

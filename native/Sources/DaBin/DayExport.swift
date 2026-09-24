@@ -13,7 +13,7 @@ private enum CaptureTextExport {
     static func actions(from captures: [Capture]) -> [TextExportAction] {
         let orderedInput = orderedCaptures(captures)
         let manual = orderedInput.filter { !$0.captureOrigin.isAutomatic }
-        var actions = CaptureCardGroup.cards(from: manual).map { card in
+        var actions = CaptureCardGroup.cards(from: manual, separateTasks: false).map { card in
             let ordered = orderedCaptures(card.captures)
             return TextExportAction(captures: ordered, tieBreaker: ordered[0].id.uuidString)
         }
@@ -83,6 +83,9 @@ private enum CaptureTextExport {
     private static func appendCaptureDetails(_ capture: Capture, to lines: inout [String],
                                              indent: String = "") {
         append("Title", capture.title, to: &lines, indent: indent)
+        if capture.isTask {
+            append("Status", capture.isCompleted ? "Completed" : "Task", to: &lines, indent: indent)
+        }
         if let filename = capture.originalFilename {
             append("File", filename, to: &lines, indent: indent)
         }

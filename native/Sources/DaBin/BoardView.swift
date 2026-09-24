@@ -86,7 +86,7 @@ struct BoardView: View {
         case .weekly: return "Week"
         case .search: return "Search"
         case .newTask: return "New task"
-        case .detail: return state.selectedCapture?.kind == .task ? "Task" : "Capture"
+        case .detail: return state.selectedCapture?.isTask == true ? "Task" : "Capture"
         case .reminders: return "Reminders"
         case .settings: return "Settings"
         }

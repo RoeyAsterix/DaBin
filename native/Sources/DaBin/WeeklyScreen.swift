@@ -87,7 +87,7 @@ private struct WeeklyDayColumn: View {
     let day: Date
 
     private var allCaptures: [Capture] { state.allCaptures(for: day) }
-    private var captures: [Capture] { allCaptures.filter { state.filter.includes($0.kind) } }
+    private var captures: [Capture] { allCaptures.filter { state.filter.includes($0) } }
     private var cards: [CaptureFeedCard] {
         HourlyCaptureFeed.cards(from: allCaptures, filter: state.filter)
     }
@@ -226,5 +226,8 @@ private struct WeeklyCaptureCard: View {
             .background(Palette.surface, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
             .overlay(RoundedRectangle(cornerRadius: 10, style: .continuous)
                 .strokeBorder(taskAtTop ? accent.opacity(0.7) : Palette.line.opacity(0.7), lineWidth: taskAtTop ? 1 : 0.5))
+            .contextMenu {
+                CaptureTaskConversionMenu(state: state, capture: capture)
+            }
     }
 }
