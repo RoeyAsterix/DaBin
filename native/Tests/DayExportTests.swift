@@ -56,7 +56,10 @@ private enum DayExportTests {
         try checkImageContentAndSourceFallback()
         try checkMultiItemActionGrouping()
         try checkEmptyAndByteEquivalence()
-        print("PASS: \(checks) day export checks; deterministic content, day selection, cutoff, media placeholders and UTF-8 identity.")
+        try checkWeekRangeAndChronology()
+        try checkWeekCutoffAndActionGrouping()
+        try checkWeekFilterIndependenceAndEmptyOutput()
+        print("PASS: \(checks) day/week export checks; deterministic content, fixed date scopes, cutoff, grouping and UTF-8 identity.")
     }
 
     @MainActor private static func checkExactFormattingAndOrder() throws {
@@ -226,5 +229,121 @@ private enum DayExportTests {
                    "Clipboard text and file bytes represent exactly the same output")
         try expect(document.utf8Data == Data(document.text.utf8),
                    "The file payload is unambiguously UTF-8")
+    }
+
+    @MainActor private static func checkWeekRangeAndChronology() throws {
+        let outsideBefore = capture(id: 60, at: "2026-12-26 23:59:59", day: "2026-12-26",
+                                    title: "Outside before", text: "Excluded")
+        let weekStart = capture(id: 61, at: "2026-12-27 07:00:00", day: "2026-12-27",
+                                title: "Week start", text: "First")
+        let yearEnd = capture(id: 62, at: "2026-12-31 18:30:00", day: "2026-12-31",
+                              kind: .link, title: "Year-end link",
+                              url: "https://example.com/year-end")
+        let weekEnd = capture(id: 63, at: "2027-01-02 23:59:59", day: "2027-01-02",
+                              title: "Week end", text: "Last")
+        let outsideAfter = capture(id: 64, at: "2027-01-03 00:00:00", day: "2027-01-03",
+                                   title: "Outside after", text: "Excluded")
+        let document = WeekExportDocument.make(
+            captures: [outsideAfter, weekEnd, yearEnd, weekStart, outsideBefore],
+            weekEndingDate: date("2027-01-02 12:00:00"),
+            now: date("2027-01-03 12:00:00"), calendarTimeZone: plusTwo)
+        let expected = """
+        DaBin Week Export
+        Week: 2026-12-27 to 2027-01-02
+        Actions: 3
+
+        1. 2026-12-27 07:00:00 +02:00
+        Type: Note
+        Title: Week start
+        Text: First
+
+        2. 2026-12-31 18:30:00 +02:00
+        Type: Link
+        Title: Year-end link
+        URL: https://example.com/year-end
+
+        3. 2027-01-02 23:59:59 +02:00
+        Type: Note
+        Title: Week end
+        Text: Last
+
+        """
+        try expect(document.startDay == "2026-12-27" && document.endDay == "2027-01-02",
+                   "Week export spans exactly seven local calendar dates across month and year")
+        try expect(document.actionCount == 3 && document.text == expected,
+                   "Week export excludes adjacent dates and formats in chronological order")
+        try expect(!document.text.contains("Outside before") && !document.text.contains("Outside after"),
+                   "Stored captureDay membership controls both week boundaries")
+        try expect(document.filename == "DaBin-Week-2026-12-27-to-2027-01-02.txt",
+                   "Week export filename contains its exact ISO date range")
+    }
+
+    @MainActor private static func checkWeekCutoffAndActionGrouping() throws {
+        let batchStamp = "2026-09-20 10:00:00"
+        let firstFile = capture(id: 70, at: batchStamp, day: "2026-09-20", kind: .document,
+                                title: "Weekly brief", filename: "brief.txt",
+                                attachmentRelativePath: "Items/brief.txt")
+        let secondFile = capture(id: 71, at: batchStamp, day: "2026-09-20", kind: .pdf,
+                                 title: "Weekly research", filename: "research.pdf",
+                                 attachmentRelativePath: "Items/research.pdf")
+        let copiedActionID = uuid(72_000)
+        let copiedText = capture(id: 72, at: "2026-09-24 11:59:00", title: "Copied before now",
+                                 text: "Saved text", origin: .automaticClipboard,
+                                 sourceName: "Notes", sourceBundle: "com.apple.Notes",
+                                 actionID: copiedActionID)
+        let copiedLink = capture(id: 73, at: "2026-09-24 11:59:00", kind: .link,
+                                 title: "Copied link before now", url: "https://example.com/today",
+                                 origin: .automaticClipboard, sourceName: "Notes",
+                                 sourceBundle: "com.apple.Notes", actionID: copiedActionID)
+        let afterNow = capture(id: 74, at: "2026-09-24 12:00:01",
+                               title: "Today after now", text: "Excluded")
+        let futureStoredDay = capture(id: 75, at: "2026-09-25 08:00:00", day: "2026-09-25",
+                                      title: "Future stored day", text: "Excluded")
+        let document = WeekExportDocument.make(
+            captures: [afterNow, copiedLink, secondFile, futureStoredDay, copiedText, firstFile],
+            weekEndingDate: date("2026-09-24 09:00:00"),
+            now: date("2026-09-24 12:00:00"), calendarTimeZone: plusTwo)
+
+        try expect(document.actionCount == 2,
+                   "A manual multi-file receipt and automatic multi-item receipt each count as one week action")
+        try expect(document.text.components(separatedBy: "Items: 2").count == 3
+                   && document.text.contains("Weekly brief")
+                   && document.text.contains("Weekly research")
+                   && document.text.contains("Copied before now")
+                   && document.text.contains("Copied link before now"),
+                   "Week action grouping retains every member and its available content")
+        try expect(!document.text.contains("Today after now")
+                   && !document.text.contains("Future stored day"),
+                   "A current week stops at now and never imports a future stored day")
+        try expect(document.text.range(of: "Weekly brief")!.lowerBound
+                   < document.text.range(of: "Copied before now")!.lowerBound,
+                   "Grouped week actions remain chronological across dates")
+    }
+
+    @MainActor private static func checkWeekFilterIndependenceAndEmptyOutput() throws {
+        let note = capture(id: 80, at: "2026-09-21 09:00:00", day: "2026-09-21",
+                           title: "Unfiltered weekly note", text: "Note body")
+        let link = capture(id: 81, at: "2026-09-22 09:00:00", day: "2026-09-22", kind: .link,
+                           title: "Unfiltered weekly link", url: "https://example.com/week")
+        let captures = [note, link]
+        try expect(captures.filter { CaptureFilter.links.includes($0.kind) }.map(\.id) == [link.id],
+                   "The fixture's visible Links filter excludes the weekly note")
+        let document = WeekExportDocument.make(
+            captures: captures, weekEndingDate: date("2026-09-24 09:00:00"),
+            now: date("2026-09-24 12:00:00"), calendarTimeZone: plusTwo)
+        try expect(document.actionCount == 2 && document.text.contains("Unfiltered weekly note")
+                   && document.text.contains("Unfiltered weekly link"),
+                   "Week export receives the complete archive and ignores active content filters")
+
+        let empty = WeekExportDocument.make(
+            captures: [], weekEndingDate: date("2027-01-02 12:00:00"),
+            now: date("2027-01-03 12:00:00"), calendarTimeZone: plusTwo)
+        try expect(empty.isEmpty && empty.actionCount == 0
+                   && empty.text == "DaBin Week Export\nWeek: 2026-12-27 to 2027-01-02\nActions: 0\n",
+                   "An empty fixed week has deterministic explicit output")
+        try expect(String(data: document.utf8Data, encoding: .utf8) == document.text
+                   && document.utf8Data == Data(document.text.utf8)
+                   && String(data: empty.utf8Data, encoding: .utf8) == empty.text,
+                   "Week downloads are exact UTF-8 representations of copied text")
     }
 }

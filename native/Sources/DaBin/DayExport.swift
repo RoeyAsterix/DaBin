@@ -1,42 +1,40 @@
 import Foundation
 
-/// A deterministic, shareable representation of one recorded calendar day.
-/// Callers provide the complete capture archive; this boundary deliberately has
-/// no filter input, so a visible board filter cannot change exported history.
-struct DayExportDocument: Equatable {
-    let day: String
-    let actionCount: Int
-    let text: String
+private struct TextExportAction {
+    let captures: [Capture]
+    let tieBreaker: String
 
-    var isEmpty: Bool { actionCount == 0 }
-    var filename: String { "DaBin-\(day).txt" }
-    var utf8Data: Data { Data(text.utf8) }
+    var primary: Capture { captures[0] }
+}
 
-    private struct ExportAction {
-        let captures: [Capture]
-        let tieBreaker: String
+/// Shared formatting keeps day and week downloads byte-for-byte consistent at
+/// the action level. Date membership is resolved before this formatter runs.
+private enum CaptureTextExport {
+    static func actions(from captures: [Capture]) -> [TextExportAction] {
+        let orderedInput = orderedCaptures(captures)
+        let manual = orderedInput.filter { !$0.captureOrigin.isAutomatic }
+        var actions = CaptureCardGroup.cards(from: manual).map { card in
+            let ordered = orderedCaptures(card.captures)
+            return TextExportAction(captures: ordered, tieBreaker: ordered[0].id.uuidString)
+        }
 
-        var primary: Capture { captures[0] }
+        var automaticByID: [UUID: [Capture]] = [:]
+        for capture in orderedInput where capture.captureOrigin.isAutomatic {
+            automaticByID[capture.automaticActionID ?? capture.id, default: []].append(capture)
+        }
+        actions += automaticByID.map { actionID, members in
+            TextExportAction(captures: orderedCaptures(members), tieBreaker: actionID.uuidString)
+        }
+
+        return actions.sorted { lhs, rhs in
+            if lhs.primary.capturedAt != rhs.primary.capturedAt {
+                return lhs.primary.capturedAt < rhs.primary.capturedAt
+            }
+            return lhs.tieBreaker < rhs.tieBreaker
+        }
     }
 
-    static func make(captures: [Capture], selectedDate: Date,
-                     now: Date = Date(), calendarTimeZone: TimeZone = .current) -> DayExportDocument {
-        let day = CaptureCalendar.dayString(selectedDate, timeZone: calendarTimeZone)
-        let today = CaptureCalendar.dayString(now, timeZone: calendarTimeZone)
-        let eligible = captures.filter { capture in
-            guard capture.captureDay == day else { return false }
-            return day != today || capture.capturedAt <= now
-        }.sorted { lhs, rhs in
-            if lhs.capturedAt != rhs.capturedAt { return lhs.capturedAt < rhs.capturedAt }
-            return lhs.id.uuidString < rhs.id.uuidString
-        }
-        let actions = groupedActions(from: eligible)
-
-        var lines = [
-            "DaBin Day Export",
-            "Date: \(day)",
-            "Actions: \(actions.count)"
-        ]
+    static func append(_ actions: [TextExportAction], to lines: inout [String]) {
         for (index, action) in actions.enumerated() {
             lines.append("")
             lines.append("\(index + 1). \(timestamp(action.primary))")
@@ -60,34 +58,6 @@ struct DayExportDocument: Equatable {
                     appendCaptureDetails(capture, to: &lines, indent: "  ")
                 }
             }
-        }
-        return DayExportDocument(day: day, actionCount: actions.count,
-                                 text: lines.joined(separator: "\n") + "\n")
-    }
-
-    /// Mirrors the board's action boundaries: one manual multi-file receipt is
-    /// one action, and every record carrying the same automatic action ID is
-    /// one action. All item content remains present in the exported text.
-    private static func groupedActions(from captures: [Capture]) -> [ExportAction] {
-        let manual = captures.filter { !$0.captureOrigin.isAutomatic }
-        var actions = CaptureCardGroup.cards(from: manual).map { card in
-            let ordered = orderedCaptures(card.captures)
-            return ExportAction(captures: ordered, tieBreaker: ordered[0].id.uuidString)
-        }
-
-        var automaticByID: [UUID: [Capture]] = [:]
-        for capture in captures where capture.captureOrigin.isAutomatic {
-            automaticByID[capture.automaticActionID ?? capture.id, default: []].append(capture)
-        }
-        actions += automaticByID.map { actionID, members in
-            ExportAction(captures: orderedCaptures(members), tieBreaker: actionID.uuidString)
-        }
-
-        return actions.sorted { lhs, rhs in
-            if lhs.primary.capturedAt != rhs.primary.capturedAt {
-                return lhs.primary.capturedAt < rhs.primary.capturedAt
-            }
-            return lhs.tieBreaker < rhs.tieBreaker
         }
     }
 
@@ -186,5 +156,82 @@ struct DayExportDocument: Equatable {
         value.replacingOccurrences(of: "\r\n", with: "\n")
             .replacingOccurrences(of: "\r", with: "\n")
             .trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+}
+
+/// A deterministic, shareable representation of one recorded calendar day.
+/// Callers provide the complete capture archive; this boundary deliberately has
+/// no filter input, so a visible board filter cannot change exported history.
+struct DayExportDocument: Equatable {
+    let day: String
+    let actionCount: Int
+    let text: String
+
+    var isEmpty: Bool { actionCount == 0 }
+    var filename: String { "DaBin-\(day).txt" }
+    var utf8Data: Data { Data(text.utf8) }
+
+    static func make(captures: [Capture], selectedDate: Date,
+                     now: Date = Date(), calendarTimeZone: TimeZone = .current) -> DayExportDocument {
+        let day = CaptureCalendar.dayString(selectedDate, timeZone: calendarTimeZone)
+        let today = CaptureCalendar.dayString(now, timeZone: calendarTimeZone)
+        let eligible = captures.filter { capture in
+            guard capture.captureDay == day else { return false }
+            return day != today || capture.capturedAt <= now
+        }
+        let actions = CaptureTextExport.actions(from: eligible)
+
+        var lines = [
+            "DaBin Day Export",
+            "Date: \(day)",
+            "Actions: \(actions.count)"
+        ]
+        CaptureTextExport.append(actions, to: &lines)
+        return DayExportDocument(day: day, actionCount: actions.count,
+                                 text: lines.joined(separator: "\n") + "\n")
+    }
+}
+
+/// A deterministic export of seven fixed local calendar days ending on the
+/// selected date. Only immutable stored receipt dates determine membership;
+/// carried tasks and active board filters cannot add or remove actions.
+struct WeekExportDocument: Equatable {
+    let startDay: String
+    let endDay: String
+    let actionCount: Int
+    let text: String
+
+    var isEmpty: Bool { actionCount == 0 }
+    var filename: String { "DaBin-Week-\(startDay)-to-\(endDay).txt" }
+    var utf8Data: Data { Data(text.utf8) }
+
+    static func make(captures: [Capture], weekEndingDate: Date,
+                     now: Date = Date(), calendarTimeZone: TimeZone = .current) -> WeekExportDocument {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.locale = Locale(identifier: "en_US_POSIX")
+        calendar.timeZone = calendarTimeZone
+        let end = calendar.startOfDay(for: weekEndingDate)
+        let dates = (-6...0).compactMap { calendar.date(byAdding: .day, value: $0, to: end) }
+        let dayKeys = dates.map { CaptureCalendar.dayString($0, timeZone: calendarTimeZone) }
+        let startDay = dayKeys.first ?? CaptureCalendar.dayString(end, timeZone: calendarTimeZone)
+        let endDay = dayKeys.last ?? startDay
+        let allowedDays = Set(dayKeys)
+        let today = CaptureCalendar.dayString(now, timeZone: calendarTimeZone)
+        let eligible = captures.filter { capture in
+            guard allowedDays.contains(capture.captureDay) else { return false }
+            if capture.captureDay == today { return capture.capturedAt <= now }
+            return capture.captureDay < today
+        }
+        let actions = CaptureTextExport.actions(from: eligible)
+
+        var lines = [
+            "DaBin Week Export",
+            "Week: \(startDay) to \(endDay)",
+            "Actions: \(actions.count)"
+        ]
+        CaptureTextExport.append(actions, to: &lines)
+        return WeekExportDocument(startDay: startDay, endDay: endDay,
+                                  actionCount: actions.count,
+                                  text: lines.joined(separator: "\n") + "\n")
     }
 }

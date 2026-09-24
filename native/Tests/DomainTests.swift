@@ -107,6 +107,76 @@ private struct Fixtures: Decodable { let entries: [FixtureEntry]; let cases: [Fi
                    "Text search excludes matching tasks while retaining surrounding context")
     }
 
+    @MainActor private static func checkDateScopedSearch() throws {
+        let zone = TimeZone(secondsFromGMT: 0)!
+        func item(_ stamp: String, day: String, kind: CaptureKind = .text,
+                  title: String) -> Capture {
+            Capture(capturedAt: date(stamp), timeZone: zone, kind: kind,
+                    title: title, captureDay: day,
+                    captureTimeZoneID: zone.identifier, captureUTCOffsetSeconds: 0)
+        }
+
+        let outsideBefore = item("2026-12-27T23:59:00Z", day: "2026-12-27",
+                                 title: "Needle before week")
+        let decemberHit = item("2026-12-31T12:00:00Z", day: "2026-12-31",
+                               title: "Needle in December")
+        let dayBefore = item("2027-01-01T08:00:00Z", day: "2027-01-01",
+                             title: "Same-day context before")
+        let januaryHit = item("2027-01-01T09:00:00Z", day: "2027-01-01",
+                              title: "Needle on New Year")
+        let dayAfter = item("2027-01-01T10:00:00Z", day: "2027-01-01",
+                            title: "Same-day context after")
+        let linkHit = item("2027-01-02T11:00:00Z", day: "2027-01-02", kind: .link,
+                           title: "Needle link")
+        let finalHit = item("2027-01-03T12:00:00Z", day: "2027-01-03",
+                            title: "Needle at week end")
+        let outsideAfter = item("2027-01-04T00:01:00Z", day: "2027-01-04",
+                                title: "Needle after week")
+        let captures = [outsideAfter, linkHit, dayAfter, decemberHit, outsideBefore,
+                        januaryHit, finalHit, dayBefore]
+
+        let weekDays = Set(["2026-12-28", "2026-12-29", "2026-12-30", "2026-12-31",
+                            "2027-01-01", "2027-01-02", "2027-01-03"])
+        let dayScope = CaptureSearchScope.day("2027-01-01")
+        let weekScope = CaptureSearchScope.week(weekDays)
+        try expect(CaptureSearchScope.all.includes(captureDay: "1900-01-01")
+                   && dayScope.includes(captureDay: "2027-01-01")
+                   && !dayScope.includes(captureDay: "2026-12-31")
+                   && weekScope.includes(captureDay: "2026-12-31")
+                   && !weekScope.includes(captureDay: "2027-01-04"),
+                   "Search scopes expose stable stored-day membership across a year boundary")
+
+        let dayGroups = CaptureSearch.groups(captures: captures, query: "needle",
+                                             filter: .all, scope: dayScope)
+        try expect(dayGroups.map(\.day) == ["2027-01-01"],
+                   "Day search cannot leak matches from adjacent calendar days")
+        try expect(dayGroups[0].entries.map(\.id) == [dayBefore.id, januaryHit.id, dayAfter.id]
+                   && dayGroups[0].entries.map(\.isMatch) == [false, true, false],
+                   "Day search preserves one-before and one-after context inside its selected date")
+
+        let weekGroups = CaptureSearch.groups(captures: captures, query: "needle",
+                                              filter: .all, scope: weekScope)
+        try expect(weekGroups.map(\.day) == ["2027-01-03", "2027-01-02", "2027-01-01", "2026-12-31"],
+                   "Week search uses exact day keys and retains newest-day-first group ordering")
+        try expect(!weekGroups.flatMap(\.entries).contains { $0.id == outsideBefore.id || $0.id == outsideAfter.id },
+                   "Week search excludes both dates immediately outside its fixed seven days")
+
+        let filteredWeek = CaptureSearch.groups(captures: captures, query: "needle",
+                                                filter: .text, scope: weekScope)
+        try expect(!filteredWeek.map(\.day).contains("2027-01-02"),
+                   "Content filters still decide matches within a date-scoped search")
+        let defaultGroups = CaptureSearch.groups(captures: captures, query: "needle", filter: .all)
+        let explicitAllGroups = CaptureSearch.groups(captures: captures, query: "needle",
+                                                     filter: .all, scope: .all)
+        try expect(defaultGroups.map(\.day) == explicitAllGroups.map(\.day)
+                   && defaultGroups.flatMap(\.entries).map(\.id)
+                   == explicitAllGroups.flatMap(\.entries).map(\.id),
+                   "The default API preserves archive-wide search behavior")
+        try expect(CaptureSearch.groups(captures: captures, query: "needle", filter: .all,
+                                       scope: .week([])).isEmpty,
+                   "An empty week scope produces no search results")
+    }
+
     @MainActor static func main() async throws {
         let root = FileManager.default.temporaryDirectory.appendingPathComponent("DaBinDomainTests-\(UUID().uuidString)", isDirectory: true)
         try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
@@ -137,6 +207,7 @@ private struct Fixtures: Decodable { let entries: [FixtureEntry]; let cases: [Fi
         try expect(CaptureFilter.media.includes(.image) && CaptureFilter.media.includes(.video), "Media filter scope")
         try checkTextFilterAndSearch()
         try checkTasksFilterAndSearch()
+        try checkDateScopedSearch()
         let newYork = TimeZone(identifier: "America/New_York")!
         let beforeDST = date("2026-11-01T05:30:00Z")
         let afterDST = date("2026-11-01T06:30:00Z")

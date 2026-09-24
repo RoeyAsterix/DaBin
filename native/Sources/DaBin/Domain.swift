@@ -318,6 +318,26 @@ struct SearchEntry: Identifiable {
     var id: UUID { capture.id }
 }
 
+/// Limits a search to immutable receipt dates. A week is represented by its
+/// exact local calendar-day keys so month, year and daylight-saving boundaries
+/// cannot turn it into a rolling duration.
+enum CaptureSearchScope: Hashable {
+    case all
+    case day(String)
+    case week(Set<String>)
+
+    func includes(captureDay: String) -> Bool {
+        switch self {
+        case .all:
+            return true
+        case .day(let day):
+            return captureDay == day
+        case .week(let days):
+            return days.contains(captureDay)
+        }
+    }
+}
+
 enum CaptureSearch {
     static func ordered(_ captures: [Capture]) -> [Capture] {
         captures.sorted {
@@ -329,10 +349,12 @@ enum CaptureSearch {
         text.folding(options: [.diacriticInsensitive, .caseInsensitive], locale: Locale(identifier: "en_US_POSIX"))
     }
 
-    static func groups(captures: [Capture], query: String, filter: CaptureFilter) -> [SearchGroup] {
+    static func groups(captures: [Capture], query: String, filter: CaptureFilter,
+                       scope: CaptureSearchScope = .all) -> [SearchGroup] {
         let words = normalized(query).split(whereSeparator: { $0.isWhitespace }).map(String.init)
         guard !words.isEmpty else { return [] }
-        let days = Dictionary(grouping: captures, by: \.captureDay)
+        let days = Dictionary(grouping: captures.filter { scope.includes(captureDay: $0.captureDay) },
+                              by: \.captureDay)
         return days.keys.sorted(by: >).compactMap { day in
             let items = ordered(days[day]!)
             let hits = Set(items.indices.filter { index in
