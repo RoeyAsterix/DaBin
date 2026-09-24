@@ -13,6 +13,8 @@ This directory records the functional, visual, build, package and Store-readines
 - The update ZIP is **3,314,777 bytes**, SHA-256 `81a691c6e5f9cfbfe82afe95f151a795b3e2737e678d4a01d8263ae4ccfc02ec`. Package QA passed isolated fresh installation, replacement, backup, strict clean-copy signature validation, extraction, manifest round trip, exact executable identity and document handoff.
 - The unchanged one-page A4 PDF guide is **299,779 bytes**, SHA-256 `61c0a585b5a978a317ae9b2f133401e587027d57e9aaded4871ac5e0f9d36291`; its retained geometry and extraction check remains one page with no boundary failure.
 - Static App Store packaging passed **20/20** checks. Release preflight remains blocked by two external prerequisites: the owner's Apple Developer Team ID and a full Xcode installation.
+- Release [v0.3.11](https://github.com/RoeyAsterix/DaBin/releases/tag/v0.3.11) is public and latest. Unauthenticated checks returned HTTP 200 for the release and all four assets; every downloaded asset was byte-identical to its verified local source, including the latest manifest URL.
+- The installed 0.3.10 app found, downloaded and installed the public 0.3.11 package through DaBin's own updater. The installed app, embedded helper and exact 0.3.10 backup pass strict signature checks. All **29 archive files** and the preferences file remain byte-identical, the Desktop link is unchanged, and one ARM64 process is running. A subsequent live check reports 0.3.11 as current; DaBin was left on today's Daily view with All selected and Auto Capture still off.
 
 The direct package is locally ad-hoc signed for this Mac. Developer ID signing and notarization, or Mac App Store signing, remain the public-distribution trust boundary.
 
@@ -31,4 +33,5 @@ The direct package is locally ad-hoc signed for this Mac. Developer ID signing a
 - `quick-guide-layout-check.json`: retained one-page A4 guide geometry and text extraction evidence for the byte-identical PDF.
 - `app-store-preflight-static-v0.3.11.log`: 20 passing static source and packaging checks.
 - `app-store-preflight-release-v0.3.11.log`: the two external signing and tooling prerequisites.
-
+- `release-publication.json`: public release metadata and unauthenticated byte-identity checks for every asset and the latest manifest.
+- `live-install-v0.3.11.json`: in-app update, backup, signatures, archive/preferences preservation, Desktop link, handoff cleanup and runtime checks.

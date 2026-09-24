@@ -1,0 +1,51 @@
+{
+  "assets": {
+    "DaBin-0.3.11-Update.zip": {
+      "bytes": 3314777,
+      "matchesLocal": true,
+      "sha256": "81a691c6e5f9cfbfe82afe95f151a795b3e2737e678d4a01d8263ae4ccfc02ec",
+      "status": 200,
+      "url": "https://github.com/RoeyAsterix/DaBin/releases/download/v0.3.11/DaBin-0.3.11-Update.zip"
+    },
+    "DaBin-Quick-Guide.pdf": {
+      "bytes": 299779,
+      "matchesLocal": true,
+      "sha256": "61c0a585b5a978a317ae9b2f133401e587027d57e9aaded4871ac5e0f9d36291",
+      "status": 200,
+      "url": "https://github.com/RoeyAsterix/DaBin/releases/download/v0.3.11/DaBin-Quick-Guide.pdf"
+    },
+    "DaBin-update.json": {
+      "bytes": 596,
+      "matchesLocal": true,
+      "sha256": "02dbf1bb432eceb42e41b57a605e59b51bcd4c7b5f70ece46518f08fcae506a9",
+      "status": 200,
+      "url": "https://github.com/RoeyAsterix/DaBin/releases/download/v0.3.11/DaBin-update.json"
+    },
+    "RELEASE_NOTES_0.3.11.md": {
+      "bytes": 2197,
+      "matchesLocal": true,
+      "sha256": "bbbaa88eda28e2aaddd28adc2dc33d0a97cda92081b1cc176c04897da1d8ccac",
+      "status": 200,
+      "url": "https://github.com/RoeyAsterix/DaBin/releases/download/v0.3.11/RELEASE_NOTES_0.3.11.md"
+    }
+  },
+  "checkedAtUTC": "2026-09-24T01:09:11Z",
+  "draft": false,
+  "latestManifest": {
+    "bytes": 596,
+    "matchesReleaseManifest": true,
+    "sha256": "02dbf1bb432eceb42e41b57a605e59b51bcd4c7b5f70ece46518f08fcae506a9",
+    "status": 200,
+    "url": "https://github.com/RoeyAsterix/DaBin/releases/latest/download/DaBin-update.json"
+  },
+  "name": "DaBin 0.3.11",
+  "passed": true,
+  "prerelease": false,
+  "publishedAt": "2026-09-24T01:08:41Z",
+  "releaseStatus": 200,
+  "releaseURL": "https://github.com/RoeyAsterix/DaBin/releases/tag/v0.3.11",
+  "repositoryStatus": 200,
+  "repositoryURL": "https://github.com/RoeyAsterix/DaBin",
+  "tagName": "v0.3.11",
+  "unauthenticated": true
+}
