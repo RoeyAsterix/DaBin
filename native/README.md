@@ -46,7 +46,7 @@ The supplied robot SVG is preserved as an original handoff resource. The transie
 
 The direct GitHub build can pull a release from inside DaBin: open **Settings → Software updates**, choose **Check for updates**, then **Download & install**. The app accepts only the fixed `RoeyAsterix/DaBin` HTTPS release path and validates the published size and SHA-256 checksum. It writes a small, private, one-use update document beside the downloaded ZIP and opens that document with its signed built-in helper. The helper validates the document and package location, independently rechecks the ZIP, asks for confirmation, verifies the ARM64 Release app, backs up `~/Applications/DaBin.app` under `~/Applications/.DaBinBackups/`, installs and verifies the replacement, then reopens Daily. It does not read, move or delete the sandboxed capture archive.
 
-Release 0.3.12 adds explicit day and week scopes to Weekly Search and export. A selected Weekly date can be searched, copied or downloaded independently, while the complete fixed seven-day range can be searched, copied or downloaded as one record. An installed 0.3.11 build can pull this release directly from Settings after publication.
+Release 0.3.12 adds explicit day and week scopes to Weekly Search and export. A selected Weekly date can be searched, copied or downloaded independently, while the complete fixed seven-day range can be searched, copied or downloaded as one record. The public release is available through Settings, and the installed 0.3.11 build successfully updated itself to 0.3.12 through that flow.
 
 The same release includes `DaBin-<version>-Update.zip` as a manual fallback. Extract it and open **DaBin Update.app**, then choose **Update**.
 

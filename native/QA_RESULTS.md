@@ -1,6 +1,6 @@
 # DaBin QA cycle — 24 September 2026
 
-## Weekly scoped Search and downloads — 0.3.12 (37), publication and live update pending
+## Weekly scoped Search and downloads — 0.3.12 (37)
 
 DaBin 0.3.12 adds two explicit Search choices in Weekly: **Search Day** for a date selected from the displayed seven-day range and **Search Week** for the complete fixed range. Scoped Search keeps the active type filter, limits matches before adding the established immediate same-day context, labels the chosen scope and returns Back to Weekly. The date picker includes empty dates whose Weekly columns are hidden.
 
@@ -14,9 +14,9 @@ The optimized ARM64 direct build is **0.3.12 (37)** with production-source finge
 
 The one-page A4 PDF guide is unchanged and byte-identical at **299,779 bytes**, SHA-256 `61c0a585b5a978a317ae9b2f133401e587027d57e9aaded4871ac5e0f9d36291`. Static Store packaging passed **20/20** checks. App Store release preflight retains two external prerequisites: an Apple Developer Team ID and full Xcode.
 
-GitHub release publication, unauthenticated asset verification and the live in-app update of the existing installation have not yet been performed. The generated manifest records the intended v0.3.12 destinations but is not proof that they are public.
+The public GitHub release is live and marked latest. Its page and four assets returned HTTP 200 without authentication, and the downloaded ZIP, manifest, PDF guide and release notes were byte-identical to their verified local sources. The installed 0.3.11 app then downloaded that public package and updated itself to 0.3.12 through Settings. The installed executable matches the verified production build; strict signatures, the 29-file archive, preferences, Desktop link and verified 0.3.11 backup all passed post-install checks. Live inspection confirmed both Weekly scope menus and their independently enabled day/week actions.
 
-[0.3.12 pre-publication evidence index](../docs/qa/0.3.12/README.md) · [Full optimized run](../docs/qa/0.3.12/full-run/report.json) · [Release renders](../docs/qa/0.3.12/release-ui-renders.json) · [Native renders](../docs/qa/0.3.12/native-view-renders.json) · [Build receipt](../docs/qa/0.3.12/build-receipt-v0.3.12.json) · [Update manifest](../docs/qa/0.3.12/update-manifest-v0.3.12.json) · [Static Store preflight](../docs/qa/0.3.12/app-store-preflight-static-v0.3.12.log) · [Release preflight](../docs/qa/0.3.12/app-store-preflight-release-v0.3.12.log).
+[0.3.12 evidence index](../docs/qa/0.3.12/README.md) · [Publication](../docs/qa/0.3.12/release-publication.json) · [Live installation](../docs/qa/0.3.12/live-install-v0.3.12.json) · [Full optimized run](../docs/qa/0.3.12/full-run/report.json) · [Release renders](../docs/qa/0.3.12/release-ui-renders.json) · [Native renders](../docs/qa/0.3.12/native-view-renders.json) · [Build receipt](../docs/qa/0.3.12/build-receipt-v0.3.12.json) · [Update manifest](../docs/qa/0.3.12/update-manifest-v0.3.12.json) · [Static Store preflight](../docs/qa/0.3.12/app-store-preflight-static-v0.3.12.log) · [Release preflight](../docs/qa/0.3.12/app-store-preflight-release-v0.3.12.log).
 
 ## Playful camera-island capture confirmation — 0.3.11 (36)
 

@@ -1,6 +1,6 @@
 # DaBin 0.3.12 release evidence
 
-This directory records the completed functional, visual, build, package and Store-readiness checks for the DaBin 0.3.12 (37) release candidate. GitHub publication and the live update of the user's installed app are still pending.
+This directory records the completed functional, visual, build, package, publication, live-update and Store-readiness checks for DaBin 0.3.12 (37).
 
 ## Result
 
@@ -13,7 +13,8 @@ This directory records the completed functional, visual, build, package and Stor
 - The verified update ZIP is **3,362,970 bytes**, SHA-256 `9c4956eb8c9a8273c94b1b6e8e00f48114fc202da28dccc31d5caf62410b0b1b`. Package QA passed isolated fresh installation, replacement, backup, strict clean-copy signature validation, extraction, manifest round trip, exact executable identity and the private document handoff.
 - The unchanged one-page A4 PDF guide is **299,779 bytes**, SHA-256 `61c0a585b5a978a317ae9b2f133401e587027d57e9aaded4871ac5e0f9d36291`. It is byte-identical to the prior verified guide.
 - Static App Store packaging passed **20/20** checks. Release preflight remains blocked by two owner/environment prerequisites: a 10-character Apple Developer Team ID and a full Xcode installation.
-- The 596-byte update manifest, SHA-256 `cbaa9aabb1c06b89f3d68e627500fc6e83926c828c397800f6b4c2f56791beb2`, matches the ZIP's name, byte count and checksum. Its GitHub URLs are intended publication destinations and have not yet been verified as live.
+- The public GitHub release is the current latest release. Its release page and all four assets returned HTTP 200 without authentication; each downloaded asset was byte-identical to its local source. The 596-byte update manifest, SHA-256 `cbaa9aabb1c06b89f3d68e627500fc6e83926c828c397800f6b4c2f56791beb2`, matches the ZIP's name, byte count and checksum, and the `/releases/latest/` manifest is byte-identical to the tagged manifest.
+- The installed 0.3.11 (36) app downloaded the public ZIP and updated itself to 0.3.12 (37) through its normal Settings flow. The installed executable matches the verified production build, strict deep signature checks pass, all 29 archive files and the preferences file stayed byte-identical, the Desktop link stayed intact, and the prior app was preserved as a verified backup. Live inspection confirmed the Weekly day/week Search and copy/download controls and a subsequent update check reported that 0.3.12 is current.
 
 The direct package is locally ad-hoc signed for this Mac. Developer ID signing and notarization, or Mac App Store distribution signing, remain separate release trust boundaries.
 
@@ -44,5 +45,5 @@ The direct package is locally ad-hoc signed for this Mac. Developer ID signing a
 - `quick-guide-layout-check.json`: retained one-page A4 guide geometry and extraction evidence for the byte-identical PDF.
 - `app-store-preflight-static-v0.3.12.log`: 20 passing source and packaging checks.
 - `app-store-preflight-release-v0.3.12.log`: the two remaining external signing and tooling prerequisites.
-
-`release-publication.json` and `live-install-v0.3.12.json` do not exist yet. They belong here only after unauthenticated public-asset verification and the installed-app update have actually succeeded.
+- `release-publication.json`: unauthenticated GitHub release, latest-manifest and byte-identity verification.
+- `live-install-v0.3.12.json`: in-app update, installed-binary, backup, archive, preferences, Desktop link and live feature verification.

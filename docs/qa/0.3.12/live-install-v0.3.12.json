@@ -1,0 +1,116 @@
+{
+  "archive": {
+    "afterFileCount": 29,
+    "allFilesByteIdentical": true,
+    "beforeFileCount": 29,
+    "changedFiles": [],
+    "path": "/Users/roeylibfeld/Library/Containers/com.dabin.mac/Data/Library/Application Support/DaBin/Archive"
+  },
+  "checkedAtUTC": "2026-09-24T04:30:12.828217+00:00",
+  "desktopLink": {
+    "isSymlink": true,
+    "path": "/Users/roeylibfeld/Desktop/DaBin.app",
+    "target": "/Users/roeylibfeld/Applications/DaBin.app",
+    "unchanged": true
+  },
+  "downloadedArchive": {
+    "bytes": 3362970,
+    "matchesPublishedPackage": true,
+    "path": "/Users/roeylibfeld/Library/Containers/com.dabin.mac/Data/Library/Application Support/DaBin/Updates/DaBin-0.3.12-Update.zip",
+    "sha256": "9c4956eb8c9a8273c94b1b6e8e00f48114fc202da28dccc31d5caf62410b0b1b"
+  },
+  "embeddedUpdater": {
+    "build": "37",
+    "executableSHA256": "83aed72ca74abad9faf808cd133dfcecabd514bb820d850f13b2eea2b6ead1ba",
+    "path": "/Users/roeylibfeld/Applications/DaBin.app/Contents/Helpers/DaBin Update.app",
+    "strictDeepSignatureVerified": true,
+    "version": "0.3.12"
+  },
+  "installation": {
+    "fromBuild": "36",
+    "fromVersion": "0.3.11",
+    "method": "public in-app update",
+    "packageSHA256": "9c4956eb8c9a8273c94b1b6e8e00f48114fc202da28dccc31d5caf62410b0b1b",
+    "steps": [
+      "Settings \u2192 Software updates",
+      "Check for updates",
+      "Download & install",
+      "Update",
+      "Done"
+    ],
+    "toBuild": "37",
+    "toVersion": "0.3.12"
+  },
+  "installedApp": {
+    "architecture": "arm64",
+    "build": "37",
+    "executableSHA256": "39fa0d88bf3a36bffbbe843e73f21e2ed6d398d7c5e312642203334b6f2692a2",
+    "path": "/Users/roeylibfeld/Applications/DaBin.app",
+    "sourceFingerprint": "8bd0134c782ddbc2ee6989fe949e2c153acd71dad2f595fc8d7ddfe9e781ce30",
+    "strictDeepSignatureVerified": true,
+    "version": "0.3.12"
+  },
+  "liveUI": {
+    "autoCaptureStatus": "disabled",
+    "leftOn": "Today Daily with All selected",
+    "postInstallUpdateCheck": "You\u2019re up to date with DaBin 0.3.12.",
+    "settingsPreserved": {
+      "backgroundOpacity": "100%",
+      "darkMode": "on",
+      "linkPreviews": "off",
+      "robotHome": "Below camera island",
+      "theme": "Purple"
+    },
+    "versionText": "DaBin 0.3.12 (37)",
+    "weeklyFeatureInspection": {
+      "emptyDayDisabledIndependently": true,
+      "exportButton": "Download or copy a day or week",
+      "exportChoices": [
+        "Copy Day",
+        "Download Day",
+        "Copy Week",
+        "Download Week"
+      ],
+      "nonemptyWeekEnabled": true,
+      "searchButton": "Search a day or week",
+      "searchChoices": [
+        "Search Day",
+        "Search Week"
+      ]
+    }
+  },
+  "passed": true,
+  "preferences": {
+    "afterSHA256": "8a49fc37c12c64053fb5c85bf31c168565f73acaab2d6ddf0b323fc0cf575703",
+    "autoCaptureStatus": "disabled",
+    "beforeSHA256": "8a49fc37c12c64053fb5c85bf31c168565f73acaab2d6ddf0b323fc0cf575703",
+    "existingVisiblePreferencesPreserved": {
+      "backgroundOpacity": "100%",
+      "darkMode": "on",
+      "linkPreviews": "off",
+      "robotHome": "Below camera island",
+      "theme": "Purple"
+    },
+    "fileChanged": false,
+    "path": "/Users/roeylibfeld/Library/Containers/com.dabin.mac/Data/Library/Preferences/com.dabin.mac.plist"
+  },
+  "previousBackup": {
+    "build": "36",
+    "executableSHA256": "0c735ddde9ef87c4a0ff464f0fd8dd6b2c967de582420c70ec52b3dafa6b4ad2",
+    "matchesPreinstallExecutable": true,
+    "path": "/Users/roeylibfeld/Applications/.DaBinBackups/20260924-072830-14BBD1EB.app",
+    "sourceFingerprint": "397ec7f2133b857114262ca2a12020ff643f5fc983411d30bf1b152bb0fc8a22",
+    "strictDeepSignatureVerified": true,
+    "version": "0.3.11"
+  },
+  "runtime": {
+    "oneInstalledDaBinProcess": true,
+    "runningPIDs": [
+      "44692"
+    ]
+  },
+  "updateHandoff": {
+    "consumed": true,
+    "remainingDocuments": []
+  }
+}
