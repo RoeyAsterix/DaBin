@@ -1058,6 +1058,7 @@ private final class NativeRenderTests: NSObject, NSApplicationDelegate {
         // The fixture does not set the window or SwiftUI environment appearance.
         let hosting = NSHostingView(rootView: BoardView(state: state, theme: selectedTheme,
                                                         tooltipController: tooltipController)
+            .environment(\.displayScale, CGFloat(pixelScale))
             .frame(width: size.width, height: size.height))
         hosting.frame = NSRect(origin: .zero, size: size)
         hosting.wantsLayer = true

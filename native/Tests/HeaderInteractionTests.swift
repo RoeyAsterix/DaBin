@@ -187,22 +187,25 @@ private enum HeaderInteractionTests {
             + CGFloat(TimelinePrimaryAction.allCases.count - 1) * primarySpacing
         let filterWidth = CGFloat(CaptureFilter.allCases.count) * TimelineIconRowMetrics.controlWidth
             + CGFloat(CaptureFilter.allCases.count - 1) * filterSpacing
-        try expect(TimelineIconRowMetrics.symbolCanvasSize == 18
+        try expect(TimelineIconRowMetrics.iconScale == 1.10
+                   && TimelineIconRowMetrics.symbolCanvasSize == 26
+                   && abs(TimelineIconRowMetrics.symbolPointSize - 16.5) < 0.001
+                   && abs(TimelineIconRowMetrics.navigationSymbolPointSize - 14.3) < 0.001
                    && TimelineIconRowMetrics.controlWidth == 40
                    && TimelineIconRowMetrics.controlHeight == 34,
-                   "Every timeline icon uses one glyph canvas and 40 by 34 point target")
+                   "Header icons render 10% larger inside the same 40 by 34 point targets")
         try expect(abs(primaryWidth - TimelineIconRowMetrics.rowWidth) < 0.01
                    && abs(filterWidth - TimelineIconRowMetrics.rowWidth) < 0.01,
                    "Primary actions and filters occupy identical 280-point rows")
         try expect(TimelineNavigationMetrics.modeGroupWidth == 80,
                    "Daily and Weekly use two compact 40-point icon targets")
-        try expect(abs(TimelineNavigationMetrics.modeAnchorX(weekly: false, index: 0) - 198) < 0.01
-                   && abs(TimelineNavigationMetrics.modeAnchorX(weekly: false, index: 1) - 238) < 0.01
-                   && abs(TimelineNavigationMetrics.modeAnchorX(weekly: true, index: 0) - 222) < 0.01
-                   && abs(TimelineNavigationMetrics.modeAnchorX(weekly: true, index: 1) - 262) < 0.01,
+        try expect(abs(TimelineNavigationMetrics.modeAnchorX(weekly: false, index: 0) - 204) < 0.01
+                   && abs(TimelineNavigationMetrics.modeAnchorX(weekly: false, index: 1) - 244) < 0.01
+                   && abs(TimelineNavigationMetrics.modeAnchorX(weekly: true, index: 0) - 228) < 0.01
+                   && abs(TimelineNavigationMetrics.modeAnchorX(weekly: true, index: 1) - 268) < 0.01,
                    "Mode icons and their tooltips remain aligned in narrow Daily and Weekly headers")
-        try expect(abs(TimelineNavigationMetrics.autoCaptureAnchorX(weekly: false) - 280) < 0.01
-                   && abs(TimelineNavigationMetrics.autoCaptureAnchorX(weekly: true) - 304) < 0.01
+        try expect(abs(TimelineNavigationMetrics.autoCaptureAnchorX(weekly: false) - 286) < 0.01
+                   && abs(TimelineNavigationMetrics.autoCaptureAnchorX(weekly: true) - 310) < 0.01
                    && TimelineNavigationMetrics.fixedContentWidth(weekly: true)
                         <= size.width - TimelineNavigationMetrics.horizontalPadding * 2,
                    "Auto Capture sits immediately right of 7 Days without clipping the narrow header")
@@ -246,9 +249,9 @@ private enum HeaderInteractionTests {
                    && abs(lastFilterTooltip.anchorX(in: size.width) - 310) < 0.01,
                    "Tooltip anchors follow the shared row geometry at both edges")
         try expect(weeklyModeTooltip.text == "Weekly"
-                   && abs(weeklyModeTooltip.anchorX(in: size.width) - 238) < 0.01,
+                   && abs(weeklyModeTooltip.anchorX(in: size.width) - 244) < 0.01,
                    "The Weekly icon has concise hover text anchored beneath the navigation control")
-        try expect(abs(autoCaptureTooltip.anchorX(in: size.width) - 280) < 0.01,
+        try expect(abs(autoCaptureTooltip.anchorX(in: size.width) - 286) < 0.01,
                    "Auto Capture has a coordinated tooltip immediately right of 7 Days")
         tooltipController.begin(firstPrimaryTooltip)
         settle(0.04)
@@ -370,28 +373,28 @@ private enum HeaderInteractionTests {
         let initialDay = CaptureCalendar.dayString(state.selectedDay)
         try expect(!autoCaptureSettings.isEnabled && !autoCapture.isRunning,
                    "Auto Capture starts off before using its header toggle")
-        click(window, x: 280, topY: 22)
+        click(window, x: 286, topY: 22)
         try expect(autoCaptureSettings.isEnabled && autoCapture.isRunning
                    && autoCaptureSettings.status == .monitoring,
                    "The button right of 7 Days turns Auto Capture on")
-        click(window, x: 280, topY: 22)
+        click(window, x: 286, topY: 22)
         try expect(!autoCaptureSettings.isEnabled && !autoCapture.isRunning
                    && autoCaptureSettings.status == .disabled,
                    "The same header button turns Auto Capture off immediately")
 
-        click(window, x: 88, topY: 22)
+        click(window, x: 94, topY: 22)
         try expect(CaptureCalendar.dayString(state.selectedDay) < initialDay,
                    "Previous-day navigation remains interactive beside the logo")
-        click(window, x: 164, topY: 22)
+        click(window, x: 170, topY: 22)
         try expect(Calendar.current.isDateInToday(state.selectedDay),
                    "Next-day navigation returns to today and then disables")
-        click(window, x: 238, topY: 22)
+        click(window, x: 244, topY: 22)
         try expect(state.route == .weekly && state.timelineMode == .weekly,
                    "The purple Weekly icon opens the seven-day view")
-        click(window, x: 222, topY: 22)
+        click(window, x: 228, topY: 22)
         try expect(state.route == .daily && state.timelineMode == .daily,
                    "The purple Daily icon returns to the selected day")
-        click(window, x: 126, topY: 22)
+        click(window, x: 132, topY: 22)
         try expect(state.route == .weekly, "The selected date still opens the Weekly view")
 
         let windowsBeforeMenuSearch = Set(application.windows.filter { $0 !== window && $0.isVisible }.map(\.windowNumber))
@@ -498,13 +501,13 @@ private enum HeaderInteractionTests {
             try expect(false, "Weekly Download reopens for keyboard file export")
         }
 
-        click(window, x: 222, topY: 22)
+        click(window, x: 228, topY: 22)
         try expect(state.route == .daily,
                    "The Daily icon remains usable when Weekly is laid out at 380 points")
 
         autoCaptureSettings.setPrivacyExplanationAcknowledged(false)
         autoCaptureSettings.setScreenshotFolderBookmark(nil)
-        click(window, x: 280, topY: 22)
+        click(window, x: 286, topY: 22)
         try expect(state.route == .settings && !autoCaptureSettings.isEnabled,
                    "First use opens the required local privacy and folder setup instead of monitoring silently")
         state.route = .daily

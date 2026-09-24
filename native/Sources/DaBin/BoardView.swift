@@ -171,8 +171,7 @@ struct BoardView: View {
 
     private var timelineNavigationRow: some View {
         HStack(spacing: 2) {
-            DaBinLogo()
-                .scaleEffect(0.76, anchor: .leading)
+            DaBinLogo(variant: .compact)
                 .frame(width: TimelineNavigationMetrics.logoWidth, height: 30, alignment: .leading)
             .overlay {
                 WindowDragHandle(onDragStarted: { state.onBoardDragStarted?() })
@@ -214,7 +213,9 @@ struct BoardView: View {
             Button { showWeekCalendar.toggle() } label: {
                 HStack(spacing: 4) {
                     Text(weeklyRangeLabel)
-                    Image(systemName: "chevron.down").font(.system(size: 8, weight: .semibold))
+                    Image(systemName: "chevron.down")
+                        .symbolRenderingMode(.monochrome)
+                        .font(.system(size: 8.8, weight: .semibold))
                 }
                 .font(.system(size: 12, weight: .medium))
                 .lineLimit(1)

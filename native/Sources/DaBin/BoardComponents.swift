@@ -5,11 +5,13 @@ import SwiftUI
 /// different number of controls, so each one distributes its fixed-size
 /// buttons between the same leading and trailing edges.
 enum TimelineIconRowMetrics {
+    static let iconScale: CGFloat = 1.10
     static let rowWidth: CGFloat = 280
     static let controlWidth: CGFloat = 40
     static let controlHeight: CGFloat = 34
-    static let symbolCanvasSize: CGFloat = 18
-    static let symbolPointSize: CGFloat = 15
+    static let symbolCanvasSize: CGFloat = 26
+    static let symbolPointSize: CGFloat = 15 * iconScale
+    static let navigationSymbolPointSize: CGFloat = 13 * iconScale
     static let stateSurfaceDiameter: CGFloat = 30
     static let focusRingDiameter: CGFloat = 31
 
@@ -24,7 +26,7 @@ enum TimelineIconRowMetrics {
 enum TimelineNavigationMetrics {
     static let horizontalPadding: CGFloat = 8
     static let itemSpacing: CGFloat = 2
-    static let logoWidth: CGFloat = 66
+    static let logoWidth: CGFloat = 72
     static let navigationButtonWidth: CGFloat = 24
     static let closeButtonWidth: CGFloat = 24
     static let dailyDateWidth: CGFloat = 48
@@ -312,7 +314,8 @@ struct AccentIconButton: View {
             action()
         } label: {
             Image(systemName: symbol)
-                .font(.system(size: TimelineIconRowMetrics.symbolPointSize, weight: .regular))
+                .symbolRenderingMode(.monochrome)
+                .font(.system(size: TimelineIconRowMetrics.symbolPointSize, weight: .medium))
                 .rotationEffect(.degrees(symbolRotationDegrees), anchor: .center)
                 .accessibilityHidden(true)
                 .frame(width: TimelineIconRowMetrics.symbolCanvasSize,
@@ -361,14 +364,14 @@ private struct AccentIconButtonStyle: ButtonStyle {
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .foregroundStyle(accent.opacity(isEnabled ? (selected || emphasized ? 1 : 0.82) : 0.35))
-            .shadow(color: emphasized ? accent.opacity(0.52) : .clear,
-                    radius: emphasized ? 2.5 : 0)
+            .foregroundStyle(accent.opacity(isEnabled ? (selected || emphasized ? 1 : 0.92) : 0.35))
             .background {
                 if selected {
                     Circle().fill(accent.opacity(configuration.isPressed ? 0.20 : 0.13))
                         .frame(width: TimelineIconRowMetrics.stateSurfaceDiameter,
                                height: TimelineIconRowMetrics.stateSurfaceDiameter)
+                        .shadow(color: emphasized ? accent.opacity(0.42) : .clear,
+                                radius: emphasized ? 3 : 0)
                 } else if hovered || configuration.isPressed {
                     Circle().fill(accent.opacity(configuration.isPressed ? 0.18 : 0.09))
                         .frame(width: TimelineIconRowMetrics.stateSurfaceDiameter,
@@ -382,8 +385,8 @@ private struct AccentIconButtonStyle: ButtonStyle {
                                height: TimelineIconRowMetrics.focusRingDiameter)
                 }
             }
-            .scaleEffect(configuration.isPressed ? 0.94 : 1)
-            .animation(.easeOut(duration: 0.12), value: configuration.isPressed)
+            .opacity(configuration.isPressed ? 0.90 : 1)
+            .animation(.easeOut(duration: 0.10), value: configuration.isPressed)
     }
 }
 
@@ -398,8 +401,9 @@ struct AccentIconMenuLabel: View {
 
     var body: some View {
         Image(systemName: symbol)
-            .font(.system(size: TimelineIconRowMetrics.symbolPointSize, weight: .regular))
-            .foregroundStyle(accent.opacity(0.82))
+            .symbolRenderingMode(.monochrome)
+            .font(.system(size: TimelineIconRowMetrics.symbolPointSize, weight: .medium))
+            .foregroundStyle(accent.opacity(0.92))
             .frame(width: TimelineIconRowMetrics.symbolCanvasSize,
                    height: TimelineIconRowMetrics.symbolCanvasSize)
             .frame(width: TimelineIconRowMetrics.controlWidth,
@@ -430,7 +434,14 @@ struct SmallIcon: View {
     var size: CGFloat = 30
     let action: () -> Void
     var body: some View {
-        Button(action: action) { Image(systemName: symbol).font(.system(size: 13)).frame(width: size, height: 30).contentShape(Rectangle()) }
+        Button(action: action) {
+            Image(systemName: symbol)
+                .symbolRenderingMode(.monochrome)
+                .font(.system(size: TimelineIconRowMetrics.navigationSymbolPointSize,
+                              weight: .medium))
+                .frame(width: size, height: 30)
+                .contentShape(Rectangle())
+        }
             .buttonStyle(.plain).foregroundStyle(tint).help(label).accessibilityLabel(label)
     }
 }
