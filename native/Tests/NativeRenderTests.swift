@@ -409,6 +409,13 @@ private final class NativeRenderTests: NSObject, NSApplicationDelegate {
             try await snapshot(state, name: "daily-reminder-warning", mode: mode, output: output)
             state.status = nil
 
+            state.filter = .text
+            state.dailyScrollID = nil
+            guard !state.dailyCaptures.isEmpty && state.dailyCaptures.allSatisfy({ $0.kind == .text }) else {
+                throw RenderError.message("Text filter must show only copied or pasted plain-text captures")
+            }
+            try await snapshot(state, name: "daily-text", mode: mode, output: output)
+
             state.filter = .media
             state.dailyScrollID = nil
             try await snapshot(state, name: "daily-media", mode: mode, output: output)

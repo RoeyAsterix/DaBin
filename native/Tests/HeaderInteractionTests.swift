@@ -192,9 +192,11 @@ private enum HeaderInteractionTests {
         try expect(state.route == .reminders, "Notifications preserves its existing reminders destination")
         state.route = .daily; settle()
 
-        click(window, x: 142, topY: 90)
+        click(window, x: 118, topY: 90)
+        try expect(state.filter == .text, "Copy/paste Text is the second centered filter")
+        click(window, x: 166, topY: 90)
         try expect(state.filter == .links, "The filter row remains interactive beneath primary actions")
-        click(window, x: 94, topY: 90)
+        click(window, x: 70, topY: 90)
         try expect(state.filter == .all, "The All filter remains the first centered filter")
 
         let initialDay = CaptureCalendar.dayString(state.selectedDay)

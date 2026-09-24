@@ -309,6 +309,7 @@ struct WeeklyStateTests {
             let values = state.weeklyDays.flatMap { state.captures(for: $0) }
             switch filter {
             case .all: try expect(values.count == expected.flatMap { $0 }.count, "All filter restores all seven columns")
+            case .text: try expect(ids(values) == notes.map(\.id), "Text filter applies across the whole week")
             case .links: try expect(ids(values) == [link.id], "Links filter applies across the whole week")
             case .files: try expect(ids(values) == [document.id], "Files filter applies across the whole week")
             case .media: try expect(ids(values) == [image.id], "Media filter applies across the whole week")

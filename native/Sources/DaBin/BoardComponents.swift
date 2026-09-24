@@ -27,7 +27,7 @@ struct FilterBar: View {
     var body: some View {
         HStack(spacing: 8) {
             ForEach(CaptureFilter.allCases) { filter in
-                AccentIconButton(symbol: symbol(for: filter), label: filter.title,
+                AccentIconButton(symbol: symbol(for: filter), label: label(for: filter),
                                  selected: selection == filter,
                                  accessibilityIdentifier: "filter-\(filter.rawValue)") {
                     selection = filter
@@ -40,11 +40,16 @@ struct FilterBar: View {
     private func symbol(for filter: CaptureFilter) -> String {
         switch filter {
         case .all: return "square.grid.2x2"
+        case .text: return "text.alignleft"
         case .links: return "link"
         case .files: return "doc.text"
         case .media: return "photo.on.rectangle"
         case .tasks: return "checkmark"
         }
+    }
+
+    private func label(for filter: CaptureFilter) -> String {
+        filter == .text ? "Copy/paste text" : filter.title
     }
 }
 

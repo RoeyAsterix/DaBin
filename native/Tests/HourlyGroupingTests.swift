@@ -134,6 +134,10 @@ struct HourlyGroupingTests {
                    "Filtering never reverses a qualifying four-action hour")
         try expect(linksOnly.summaryTitle == "14:00–14:59 · 1 of 4 actions",
                    "Filtered summary distinguishes matching actions from the stable total")
+        let textOnly = groups(feed([link, image, pdf, text], filter: .text))[0]
+        try expect(textOnly.totalActionCount == 4 && textOnly.visibleActionCount == 1
+                   && textOnly.captures.map(\.id) == [text.id],
+                   "Text filter retains only copied plain text inside a qualifying automatic hour")
         try expect(feed([link, image, pdf, text], filter: .tasks).isEmpty,
                    "A qualifying hour is hidden when none of its actions match the filter")
 

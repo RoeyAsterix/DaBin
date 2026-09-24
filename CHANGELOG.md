@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.3.10 — 2026-09-24
+
+- Added a dedicated **Text** filter immediately before Links in the centered filter row.
+- Used DaBin's existing aligned-text SF Symbol and purple filter treatment, with the tooltip and accessible name **Copy/paste text**.
+- Limited the filter to copied, pasted or dragged plain text, excluding links, tasks and document files.
+- Applied the filter consistently to Daily, contextual Search, Weekly and automatic hourly groups without changing active Weekly dates.
+
+## 0.3.9 — 2026-09-24
+
+- Removed empty dates from Weekly while preserving the complete seven-date navigation range.
+- Counted carried tasks and reminder-day tasks as activity so the dates where they appear remain visible.
+- Sized the Weekly panel to its active date columns and kept a completely empty range at the compact bored-robot view.
+
 ## 0.3.8 — 2026-09-24
 
 - Added **Export Day** between Search and Notifications with **Copy Day** and **Export Text File** actions.

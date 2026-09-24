@@ -1,5 +1,19 @@
 # DaBin QA cycle — 24 September 2026
 
+## Copy/paste Text filter — 0.3.10 (35)
+
+DaBin 0.3.10 adds a dedicated Text filter immediately before Links. It includes only plain-text captures, whether copied, pasted or dragged, and excludes links, tasks and document files. The existing purple aligned-text symbol gives the icon a familiar visual match with text cards. Its tooltip and accessible name read **Copy/paste text**. Daily, contextual Search, Weekly and automatic hourly summaries use the same rule, while Weekly continues to keep every date with any recorded activity visible.
+
+The exact optimized source passed **29/29 registered Release suites and 2,059 checks** with no source changes during the final run. New coverage verifies the exact six-filter order, text-only classification, contextual Search neighbors, hourly summary membership, full/sparse/empty Weekly behavior and native 380-point hit targets. All existing capture, task, export, reminder, Auto Capture, drag/paste, resizing and update suites remain passing.
+
+Fresh rendering passed **34 release interface views** and **62 broader native interface views**. Original-resolution inspection covered the six centered icons in light and dark Daily at 380 points and Retina density, the selected Text state, the 428-point two-day Weekly view, and a 380-point constrained Weekly view. Text is immediately left of Links, every control remains evenly spaced, and the row neither clips nor wraps.
+
+The optimized ARM64 direct build is **0.3.10 (35)** with source fingerprint `9d3a0f2ab06e2252760581e951bcf5fb8a0c35d15f7d9e9421a4c543047b2f8e` and executable SHA-256 `d2513dcb124068bf095d77118b9e6f3179c2ec9a7b3af04d32de0dad818c390b`. The verified update ZIP is **3,279,679 bytes**, SHA-256 `e1fa9fb3d741f5b705926cecef3374bab66f1ed65cb443ba033a178f8043b2eb`. Packaging passed isolated fresh installation, replacement, backup, strict clean-copy signature validation, extraction, manifest round trip, exact executable identity and the sandbox-compatible document handoff.
+
+The one-page A4 PDF guide is unchanged and byte-identical at **299,779 bytes**, SHA-256 `61c0a585b5a978a317ae9b2f133401e587027d57e9aaded4871ac5e0f9d36291`. Static Store packaging passed **20/20** checks. App Store release preflight retains two external prerequisites: an Apple Developer Team ID and full Xcode.
+
+[0.3.10 evidence index](../docs/qa/0.3.10/README.md) · [Full optimized run](../docs/qa/0.3.10/full-run/report.json) · [Release renders](../docs/qa/0.3.10/release-ui-renders.json) · [Native renders](../docs/qa/0.3.10/native-view-renders.json) · [Build receipt](../docs/qa/0.3.10/build-receipt-v0.3.10.json) · [Update manifest](../docs/qa/0.3.10/update-manifest-v0.3.10.json) · [Static Store preflight](../docs/qa/0.3.10/app-store-preflight-static-v0.3.10.log) · [Release preflight](../docs/qa/0.3.10/app-store-preflight-release-v0.3.10.log).
+
 ## Active-date Weekly view — 0.3.9 (34)
 
 DaBin 0.3.9 keeps the seven-date calendar range for navigation while rendering only dates that contain captures or tasks. Carried and reminder-day tasks count as activity. Filters remain independent of date visibility, so changing a content filter does not rearrange the week. The floating panel now sizes itself from zero through seven active dates; a completely empty range stays at the compact 380 × 290 point size and shows one bored-robot message instead of seven empty columns.

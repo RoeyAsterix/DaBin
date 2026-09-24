@@ -60,12 +60,13 @@ struct CaptureSource: Sendable {
 }
 
 enum CaptureFilter: String, CaseIterable, Identifiable {
-    case all, links, files, media, tasks
+    case all, text, links, files, media, tasks
     var id: String { rawValue }
     var title: String { rawValue.capitalized }
     func includes(_ kind: CaptureKind) -> Bool {
         switch self {
         case .all: return true
+        case .text: return kind == .text
         case .links: return kind == .link
         case .media: return kind == .image || kind == .video
         case .files: return [.pdf, .document, .ai, .file].contains(kind)

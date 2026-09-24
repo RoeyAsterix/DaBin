@@ -84,6 +84,29 @@ private struct Fixtures: Decodable { let entries: [FixtureEntry]; let cases: [Fi
                    "A query matching only an ordinary note produces no task-filtered result")
     }
 
+    @MainActor private static func checkTextFilterAndSearch() throws {
+        try expect(CaptureFilter.allCases == [.all, .text, .links, .files, .media, .tasks],
+                   "Text filter is immediately before Links in the visible filter order")
+        try expect(CaptureFilter.text.includes(.text), "Text filter accepts plain-text captures")
+        for kind in CaptureKind.allCases where kind != .text {
+            try expect(!CaptureFilter.text.includes(kind), "Text filter excludes \(kind.rawValue) captures")
+        }
+        let zone = TimeZone(secondsFromGMT: 0)!
+        func item(_ stamp: String, _ kind: CaptureKind, _ title: String) -> Capture {
+            Capture(capturedAt: date(stamp), timeZone: zone, kind: kind, title: title)
+        }
+        let before = item("2024-01-02T09:00:00Z", .link, "Text filter context link")
+        let copiedText = item("2024-01-02T10:00:00Z", .text, "Copied planning text")
+        let after = item("2024-01-02T11:00:00Z", .document, "Text filter context document")
+        let matchingTask = item("2024-01-02T12:00:00Z", .task, "Copied planning task")
+        let groups = CaptureSearch.groups(captures: [matchingTask, after, copiedText, before],
+                                          query: "Copied planning", filter: .text)
+        try expect(groups.first?.entries.map(\.id) == [before.id, copiedText.id, after.id],
+                   "Text search keeps one chronological neighbor on each side of its text match")
+        try expect(groups.first?.entries.filter(\.isMatch).map(\.id) == [copiedText.id],
+                   "Text search excludes matching tasks while retaining surrounding context")
+    }
+
     @MainActor static func main() async throws {
         let root = FileManager.default.temporaryDirectory.appendingPathComponent("DaBinDomainTests-\(UUID().uuidString)", isDirectory: true)
         try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
@@ -112,6 +135,7 @@ private struct Fixtures: Decodable { let entries: [FixtureEntry]; let cases: [Fi
         for (name, kind) in fileCases { try expect(CaptureClassifier.fileKind(filename: name) == kind, "File kind for \(name)") }
         try expect(CaptureFilter.files.includes(.ai) && !CaptureFilter.files.includes(.text), "File filter scope")
         try expect(CaptureFilter.media.includes(.image) && CaptureFilter.media.includes(.video), "Media filter scope")
+        try checkTextFilterAndSearch()
         try checkTasksFilterAndSearch()
         let newYork = TimeZone(identifier: "America/New_York")!
         let beforeDST = date("2026-11-01T05:30:00Z")
@@ -178,7 +202,7 @@ private struct Fixtures: Decodable { let entries: [FixtureEntry]; let cases: [Fi
         try expect(task.isTask && !task.isCompleted && task.originalText == "Send studio brief" && task.title == "Send studio brief", "Explicit task keeps trimmed task text and defaults to open")
         try expect(task.reminderAt == taskReminder && task.reminderTimeZoneID == "Asia/Jerusalem" && task.reminderRevision == 1, "Task and initial reminder commit together")
         try expect(CaptureSnapshot(task).schemaVersion == 4, "Task snapshots use schema 4")
-        try expect(CaptureFilter.all.includes(.task) && !CaptureFilter.files.includes(.task) && !CaptureFilter.links.includes(.task) && !CaptureFilter.media.includes(.task), "Tasks appear in All without changing file/link/media filters")
+        try expect(CaptureFilter.all.includes(.task) && !CaptureFilter.text.includes(.task) && !CaptureFilter.files.includes(.task) && !CaptureFilter.links.includes(.task) && !CaptureFilter.media.includes(.task), "Tasks appear in All without changing text/file/link/media filters")
         try expect(CaptureSearch.groups(captures: [task], query: "studio brief", filter: .all).first?.entries.first?.id == task.id, "Task text is searchable")
         try taskStore.setTaskCompleted(task, completed: true)
         let completedRevision = task.reminderRevision
