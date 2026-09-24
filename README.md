@@ -2,7 +2,7 @@
 
 DaBin is a native Apple Silicon macOS app that turns things you paste or drag into a private daily board. By default, moving the pointer into any screen corner reveals a small purple robot. On a Mac with a built-in camera island, Settings can move its home below the island; displays without one continue using their corners. Drop text, links, images, videos, PDFs, documents, or several files onto the robot, or hover and paste; double-click it to browse Daily.
 
-Captures stay on the Mac in a dated archive. Each card can hold a comment or reminder. Tasks carry forward until completed, unless they have a reminder date. Daily includes All, Text, Links, Files, Media and Tasks filters plus contextual search; Text isolates copied, pasted or dragged plain text. A compact Daily/Weekly control browses the seven-day range ending on the selected date, while Weekly displays only dates that contain captures or tasks. Switching views preserves the selected date, filter, scroll position and drafts. Export Day can copy the complete selected date or save the same chronological record as a UTF-8 text file, regardless of the active filter. The board supports dark mode, theme colors and adjustable transparency. The native robot looks toward the pointer, opens up for incoming content, chews while saving and responds to the result. It follows the macOS Reduce Motion preference.
+Captures stay on the Mac in a dated archive. Each card can hold a comment or reminder. Tasks carry forward until completed, unless they have a reminder date. Daily includes All, Text, Links, Files, Media and Tasks filters plus contextual search; Text isolates copied, pasted or dragged plain text. A compact Daily/Weekly control browses the seven-day range ending on the selected date, while Weekly displays only dates that contain captures or tasks. In Weekly, Search can target one explicitly selected day or the complete seven-day range, and Export can copy or download either scope. Switching views preserves the selected date, filter, scroll position and drafts. Downloads use chronological UTF-8 text and include the complete selected day or week regardless of the active filter. The board supports dark mode, theme colors and adjustable transparency. The native robot looks toward the pointer, opens up for incoming content, chews while saving and responds to the result. It follows the macOS Reduce Motion preference.
 
 ## Optional Auto Capture
 
@@ -19,7 +19,7 @@ Automatic captures use the same local archive as manual captures. An automatical
 ## Start here
 
 - [Native app guide](native/README.md)
-- [0.3.11 release notes](docs/RELEASE_NOTES_0.3.11.md)
+- [0.3.12 release notes](docs/RELEASE_NOTES_0.3.12.md)
 - [One-page PDF guide](docs/DaBin-Quick-Guide.pdf)
 - [Architecture](native/ARCHITECTURE.md)
 - [QA results](native/QA_RESULTS.md)
@@ -43,7 +43,7 @@ The optimized app is written to `native/build/DaBin.app`. Full GUI QA needs an u
 
 The direct build has a user-initiated GitHub Releases channel under **Settings → Software updates**. It accepts only this repository’s fixed HTTPS release path, verifies the published byte count and SHA-256 checksum, then gives the bundled installer a private, one-use update document. The installer validates and consumes that document, re-verifies the package and application, asks before replacement, and backs up the previous installation. The capture archive remains untouched. There are no silent update checks.
 
-Release 0.3.11 gives successful Auto Capture a smoother camera-island entrance, twelve shuffled celebrations, nonrepeating variety and one shared rapid-capture count. Reduce Motion uses a quiet peek, checkmark and fade. It retains the Text filter, active-date Weekly layout, complete-day export, compact header and verified update handoff.
+Release 0.3.12 adds explicit **Search Day** and **Search Week** actions to Weekly, plus **Copy Day**, **Download Day**, **Copy Week** and **Download Week**. The day picker covers every date in the fixed seven-day range, including dates whose empty columns are hidden, while downloads ignore the active content filter and preserve chronological order.
 
 The current personal release is ad-hoc signed for the owner’s Mac. General distribution still requires a stable Developer ID signature and Apple notarization. The Mac App Store configuration compiles without the direct downloader and helper; Store builds update through Apple.
 

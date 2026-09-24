@@ -1,5 +1,13 @@
 # DaBin QA cycle — 24 September 2026
 
+## Weekly scoped Search and downloads — 0.3.12 (37), release verification pending
+
+DaBin 0.3.12 adds two explicit Search choices in Weekly: **Search Day** for a date selected from the displayed seven-day range and **Search Week** for the complete fixed range. Scoped Search keeps the active type filter, limits matches before adding the established immediate same-day context, labels the chosen scope and returns Back to Weekly. The date picker includes empty dates whose Weekly columns are hidden.
+
+Weekly export now offers **Copy Day**, **Download Day**, **Copy Week** and **Download Week**. Day and week copy/download pairs share their exact deterministic UTF-8 documents. Export reads immutable stored capture days in chronological order, ignores active content filters, does not repeat task carryover projections, disables empty scopes independently and uses scope-specific success or failure feedback. The week filename is `DaBin-Week-YYYY-MM-DD-to-YYYY-MM-DD.txt`.
+
+Focused domain, export-controller, Weekly-state and native popover interaction coverage has been added for the new behavior. The full optimized test suite, fresh native renders, build, package, public release checks and live in-app update are pending and will replace this status with exact evidence before 0.3.12 is treated as a completed release.
+
 ## Playful camera-island capture confirmation — 0.3.11 (36)
 
 DaBin 0.3.11 rebuilds the successful Auto Capture confirmation as a complete native camera-island performance. The robot peeks toward the capture, emerges from behind the physical island, performs one celebration and retreats fully behind the edge. Twelve reactions cover a wink, victory dance, double bounce, camera flash, card catch, clipboard hug, dizzy spin, wobbly salute, Saved stamp, confetti sneeze, screen high-five and sneak-and-grab. A shuffled deck excludes the previous three reactions; bounded gaze, timing and entrance variation keeps later performances alive without changing their 1.8–2.6 second budget.

@@ -10,6 +10,14 @@ The default corner trigger is 9 logical points along each edge, polled every 100
 
 No persistent menu-bar item was added, to honor complete hiding at rest. Reopening DaBin, its active-app menu, the focused robot's context menu, and keyboard actions provide recovery. A system-wide hotkey is not registered. OS Hot Corners may activate at the same corners; this app does not change system settings.
 
+## Update 0.3.12
+
+Weekly keeps the compact five-icon action row. Its Search icon now opens `WeeklySearchPopover`, which uses `WeeklyDayPicker` to expose every calendar date in the current seven-day range, including dates whose empty columns are hidden. **Search Day** applies an exact persisted-day scope; **Search Week** applies the complete fixed date set. Scope filtering happens before the established same-day-neighbor expansion, the active content filter still limits hits, and leaving scoped Search returns to Weekly. Daily's existing general Search behavior remains available.
+
+The shared export icon opens the existing Day popover in Daily and `WeeklyExportPopover` in Weekly. Weekly offers **Copy Day**, **Download Day**, **Copy Week** and **Download Week**. `WeekExportDocument` uses seven local Gregorian calendar dates ending on the displayed week-ending date, reads exact persisted capture days, excludes future actions and applies the current-moment cutoff to today. It does not use the visible content filter or duplicate task carryover projections. Its deterministic filename is `DaBin-Week-YYYY-MM-DD-to-YYYY-MM-DD.txt`; the day document retains `DaBin-YYYY-MM-DD.txt`.
+
+Both popovers use native transient presentation, Escape dismissal, keyboard focus and shortcuts, tooltips and accessibility names. Day and week emptiness are evaluated independently. The injected export controller accepts either document through one protocol so each copy/download pair writes identical UTF-8 bytes and reports scope-specific success or failure. Existing Daily export behavior and stored data need no migration.
+
 ## Update 0.3.8
 
 Daily and Weekly now share one compact three-row header. The first row keeps the DaBin logo, previous date, selected date, next date and Daily/Weekly control together, while the neutral close control remains independent at the far right. The second row centers Add, Search, Export Day, Notifications and Settings in that order. The third row centers the existing content filters on the same axis. Shared accent icon components give the primary actions and filters matching symbol size, spacing, hover, pressed and focus treatment without changing their behavior. Fixed oversized header spacers were removed, and the navigation row reduces spacing at the 380-point compact width before content can clip.

@@ -1,7 +1,7 @@
 # DaBin — Mac App Store readiness
 
 **Audit date:** 24 September 2026
-**Source version:** 0.3.10 (35)
+**Source version:** 0.3.12 (37), release verification pending
 **Result: BLOCKED for submission; local app QA is a separate result.**
 
 The source now has a Productivity category, a bundled privacy explanation, privacy manifest, and an Xcode Release configuration that does not force ad-hoc signing. These changes improve readiness. They do not make the locally signed app an App Store distribution build or guarantee approval.
@@ -10,7 +10,7 @@ The source now has a Productivity category, a bundled privacy explanation, priva
 
 | Status | Area | Evidence and remaining work |
 | --- | --- | --- |
-| PARTIAL | App Sandbox and selected-file scope | `Resources/DaBin.entitlements` enables App Sandbox, read/write access only to locations the user explicitly chooses in Open or Save panels, and outgoing network access for optional website previews. Write access is required for Export Day's user-selected text destination. The previously inspected local app's embedded entitlements match and has no sandbox exceptions or root privileges. Auto Capture relies on an explicit folder selection and a security-scoped bookmark for the screenshot location; an exported candidate containing this feature still needs entitlement, bookmark-restoration and revoked-access inspection. [Apple sandbox documentation](https://developer.apple.com/documentation/security/protecting-user-data-with-app-sandbox) |
+| PARTIAL | App Sandbox and selected-file scope | `Resources/DaBin.entitlements` enables App Sandbox, read/write access only to locations the user explicitly chooses in Open or Save panels, and outgoing network access for optional website previews. Write access is required for the user-selected destination of a day or week text download. The previously inspected local app's embedded entitlements match and has no sandbox exceptions or root privileges. Auto Capture relies on an explicit folder selection and a security-scoped bookmark for the screenshot location; an exported candidate containing this feature still needs entitlement, bookmark-restoration and revoked-access inspection. [Apple sandbox documentation](https://developer.apple.com/documentation/security/protecting-user-data-with-app-sandbox) |
 | PASS | Store/direct update separation | The generated Xcode Store configuration compiles a Store-managed update stub, has no direct feed key and does not embed the installer. The standalone builder alone enables `DABIN_DIRECT_UPDATES` and creates the GitHub helper. An exported Store candidate still needs binary inspection before submission. Source imports and linked libraries use Apple frameworks; no manually invoked private API was found. [App Review, 2.4.5 and 2.5.1](https://developer.apple.com/app-store/review/guidelines/#hardware-compatibility) |
 | PARTIAL | Manual and automatic capture controls | Manual clipboard reads remain tied to paste. Auto Capture is a separate opt-in setting that defaults off, takes a clipboard baseline before considering later changes, uses a user-selected screenshot folder, and is intended to stop its observers immediately when paused or disabled. DaBin and common password managers are excluded by default, but source-app attribution is best effort and cannot guarantee origin. Live review must verify first launch, enable, pause, disable, relaunch, exclusion and permission-revocation behavior against the final signed candidate. Robot reveal still needs no camera, Accessibility or Screen Recording permission. |
 | PARTIAL | Optional website requests | Website preview fetching defaults off. Settings and the bundled policy explain website contact, URLs, IP addresses, redirects, cancellation and local caching. The Auto Capture design requires automatic links to remain ineligible for preview requests even when previews are enabled. Network instrumentation against the final candidate must verify that separation, including automatic captures created while manual preview fetching is on. |
@@ -68,10 +68,10 @@ python3 scripts/app_store_preflight.py --static-only
 python3 scripts/app_store_preflight.py
 ```
 
-The final 0.3.10 preflight logs are retained at:
+Final 0.3.12 static and release preflight logs will be retained with the release evidence after the candidate build is complete. Until then, the most recent completed preflight remains 0.3.11 and the submission blockers below are unchanged:
 
-- `../docs/qa/0.3.10/app-store-preflight-static-v0.3.10.log`: source packaging results for this release.
-- `../docs/qa/0.3.10/app-store-preflight-release-v0.3.10.log`: release preflight remains blocked by the Apple Developer Team ID and full Xcode. The configured GitHub policy/support URLs pass offline syntax checks; their content and continuing reachability remain owner responsibilities.
+- `../docs/qa/0.3.11/app-store-preflight-static-v0.3.11.log`: most recent completed source-packaging results.
+- `../docs/qa/0.3.11/app-store-preflight-release-v0.3.11.log`: release preflight remains blocked by the Apple Developer Team ID and full Xcode. The configured GitHub policy/support URLs pass offline syntax checks; their content and continuing reachability remain owner responsibilities.
 
 The functional and package evidence for this source version is recorded in `QA_RESULTS.md`.
 
@@ -96,6 +96,7 @@ This rejects ad-hoc/Developer ID signatures, the wrong configured team, non-ARM6
 - DaBin is quiet while idle. Screen corners are the default reveal target; Settings can move the robot below the built-in camera island when macOS exposes compatible safe-area geometry, and displays without it keep using corners. Double-click the robot to open Daily. The app menu also provides Open Daily and Settings. Include these steps in review notes so the initially hidden widget is discoverable.
 - The robot uses native character animation for pointer attention, drag acceptance, saving and results. Successful automatic saves select from a shuffled twelve-reaction rotation only after durable persistence, reuse one nonactivating click-through popup for bursts, and never play on failure. The popup is excluded from screen capture and contains no sound. Reduce Motion replaces the full automatic performance with a short static peek, success check and fade, while the interactive robot removes positional, repeated and keyframed movement.
 - Manual capture accepts explicit paste/drop. Auto Capture is a separately disclosed, default-off setting for later clipboard changes and a user-authorized screenshot folder; provide review steps for both channels and for Pause/Off. Daily can group four or more successful automatic actions from the same civil-clock hour into an expandable summary. The Daily / Weekly control switches between one selected day and the seven-day range ending on that date; Weekly omits dates with no capture or task and shows one compact empty state when the whole range is empty. Comments and task editors retain normal text editing.
+- Weekly Search can target an explicitly selected date or all seven dates in the displayed range. Weekly export can copy or download that selected day or the complete fixed range; file output goes only to the location the user chooses in the system save panel. Search retains the active content filter, while exported text intentionally includes the complete stored scope.
 - Explain website-preview networking separately from local capture. Automatically captured links never request a preview; reviewers should be able to verify this while previews for eligible manual links are enabled.
 - The current app categorizes by content type; it does not yet perform AI project recognition. Do not advertise automatic AI project assignment or uploading to an AI service.
 - Describe Apple Silicon/macOS support accurately. Keep screenshots synthetic and free of personal captures.

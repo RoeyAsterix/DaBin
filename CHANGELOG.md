@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3.12 — 2026-09-24
+
+- Added an anchored Weekly Search menu with an explicit seven-day picker and separate **Search Day** and **Search Week** actions.
+- Added Weekly export choices for **Copy Day**, **Download Day**, **Copy Week** and **Download Week**, with matching deterministic UTF-8 output for each copy/download pair.
+- Kept search aligned with the active content filter and same-day neighboring context while making downloads include every stored action in their selected day or fixed seven-day range.
+- Included empty dates in the day picker even when Weekly hides their columns, preserved the selected week and feed state, and returned scoped Search to Weekly.
+- Added keyboard shortcuts, focus treatment, accessible names, empty-state disabling and scope-specific success or failure feedback to both action popovers.
+
 ## 0.3.11 — 2026-09-24
 
 - Rebuilt the successful Auto Capture confirmation as a single polished anticipation, entrance, reaction and exit timeline that lives against the Mac camera island.
