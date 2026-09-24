@@ -2,6 +2,7 @@
 """Offline release checks. Passing does not replace Xcode/App Store validation."""
 import argparse
 import ipaddress
+import json
 import os
 from pathlib import Path
 import plistlib
@@ -80,10 +81,17 @@ def main():
     if args.static_only and args.app:
         parser.error("--static-only and --app cannot be combined")
     errors.clear()
+    signing = json.loads((ROOT / "Config/AppStoreSigning.json").read_text())
+    configured_team = signing.get("developmentTeam", "")
+    configured_bundle_identifier = signing.get("bundleIdentifier", "")
+    effective_team = os.environ.get("DABIN_DEVELOPMENT_TEAM", configured_team)
     info = read_plist(ROOT / "Resources/Info.plist")
     entitlements = read_plist(ROOT / "Resources/DaBin.entitlements")
     manifest = read_plist(ROOT / "Resources/PrivacyInfo.xcprivacy")
-    check(bool(info.get("CFBundleIdentifier")), "Bundle identifier is configured (ownership must be verified in the developer account)")
+    check(bool(re.fullmatch(r"[A-Z0-9]{10}", configured_team)), "Apple Developer Team ID is configured")
+    check(effective_team == configured_team, "Environment Team ID matches the checked-in signing configuration")
+    check(bool(re.fullmatch(r"[A-Za-z0-9.-]+", configured_bundle_identifier)), "App Store bundle identifier is configured")
+    check(info.get("CFBundleIdentifier") == configured_bundle_identifier, "Info.plist uses the configured App Store bundle identifier")
     check(info.get("LSApplicationCategoryType") == "public.app-category.productivity", "Productivity category is configured")
     check(bool(info.get("NSHumanReadableCopyright")), "Copyright is present (publisher must confirm ownership)")
     check(bool(re.fullmatch(r"\d+(?:\.\d+){0,2}", info.get("CFBundleShortVersionString", ""))), "Marketing version has a numeric release format")
@@ -97,6 +105,10 @@ def main():
     check((ROOT / "Resources/PrivacyPolicy.md").is_file(), "Readable in-app privacy policy resource exists")
     project = ROOT / "DaBin.xcodeproj/project.pbxproj"
     project_text = project.read_text() if project.is_file() else ""
+    check(f'DEVELOPMENT_TEAM = "{configured_team}";' in project_text,
+          "Release build uses the configured Apple Developer Team")
+    check(f'PRODUCT_BUNDLE_IDENTIFIER = "{configured_bundle_identifier}";' in project_text,
+          "Xcode app target uses the configured App Store bundle identifier")
     for name in ("PrivacyInfo.xcprivacy", "PrivacyPolicy.md", "PrivacyInformation.swift"):
         check(name in project_text, f"Xcode project includes {name}")
 
@@ -119,8 +131,6 @@ def main():
           "All configurations enforce Swift warnings; Release uses whole-module optimization")
 
     if not args.static_only:
-        team = os.environ.get("DABIN_DEVELOPMENT_TEAM", "")
-        check(bool(re.fullmatch(r"[A-Z0-9]{10}", team)), "Set DABIN_DEVELOPMENT_TEAM to your 10-character Apple Developer Team ID")
         xcode = command(["xcrun", "xcodebuild", "-version"])
         check(xcode.returncode == 0 and "Xcode " in xcode.stdout, "Full Xcode is selected and xcodebuild is available")
         for environment_key, plist_key, label in (
@@ -128,7 +138,7 @@ def main():
             ("DABIN_SUPPORT_URL", "DaBinSupportURL", "support page with real contact details"),
         ):
             value = os.environ.get(environment_key, info.get(plist_key, ""))
-            check(public_https(value), f"Set {environment_key} to an HTTPS {label}; public reachability/content still require review")
+            check(public_https(value), f"An HTTPS {label} is configured; public reachability/content still require review")
 
     if args.app:
         app = args.app.resolve()
@@ -141,7 +151,7 @@ def main():
         check(signature.returncode == 0 and any(line.startswith(("Authority=Apple Distribution:", "Authority=3rd Party Mac Developer Application:")) for line in signature.stdout.splitlines()),
               "App has an App Store distribution signing identity, not ad-hoc/Developer ID signing")
         team_line = next((line.removeprefix("TeamIdentifier=") for line in signature.stdout.splitlines() if line.startswith("TeamIdentifier=")), "")
-        check(team_line == os.environ.get("DABIN_DEVELOPMENT_TEAM") and bool(team_line), "Distribution signature matches the configured developer team")
+        check(team_line == effective_team and bool(team_line), "Distribution signature matches the configured developer team")
         verified = command(["codesign", "--verify", "--deep", "--strict", str(app)])
         check(verified.returncode == 0, "Exact supplied app passes strict code-signature verification")
         claims = command(["codesign", "-d", "--entitlements", "-", "--xml", str(app)])

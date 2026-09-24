@@ -170,6 +170,8 @@ private enum UpdateConfigurationTests {
         let infoData = try Data(contentsOf: URL(fileURLWithPath: "Resources/Info.plist"))
         let info = try PropertyListSerialization.propertyList(from: infoData, format: nil) as! [String: Any]
         let project = try text("DaBin.xcodeproj/project.pbxproj")
+        let signingData = try Data(contentsOf: URL(fileURLWithPath: "Config/AppStoreSigning.json"))
+        let signing = try JSONSerialization.jsonObject(with: signingData) as! [String: String]
         let service = try text("Sources/DaBin/SoftwareUpdateService.swift")
         let handoff = try text("Sources/DaBin/UpdateHandoff.swift")
         let builder = try text("scripts/build_app.py")
@@ -188,6 +190,11 @@ private enum UpdateConfigurationTests {
                    "The shared Info.plist does not opt an App Store archive into direct updates")
         try expect(!project.contains("DABIN_DIRECT_UPDATES") && !project.contains("DaBinUpdater.swift"),
                    "The generated Xcode Store path excludes the direct-update flag and helper source")
+        try expect(signing["developmentTeam"] == "8QG4967CSU"
+                    && signing["bundleIdentifier"] == info["CFBundleIdentifier"] as? String
+                    && project.contains("DEVELOPMENT_TEAM = \"8QG4967CSU\";")
+                    && project.contains("DevelopmentTeam = \"8QG4967CSU\";"),
+                   "The Store project uses the enrolled Apple Developer team and configured bundle identifier")
         try expect(project.contains("SoftwareUpdateService.swift"),
                    "The Xcode path compiles the Store-managed update-service stub")
         try expect(service.contains("#if DABIN_DIRECT_UPDATES") && service.contains("#else")

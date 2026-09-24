@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Generate a dependency-free Xcode project; portable command-line build uses build.sh."""
 import argparse
+import json
 from pathlib import Path
 from hashlib import sha256
 from project_inventory import sources as production_sources, resources, RESOURCE_TYPES, source_group
@@ -17,6 +18,9 @@ def write_artifact(path, text):
         path.write_text(text)
 
 root = Path(__file__).resolve().parents[1]
+signing = json.loads((root / 'Config/AppStoreSigning.json').read_text())
+bundle_identifier = signing['bundleIdentifier']
+development_team = signing['developmentTeam']
 def ident(value): return sha256(value.encode()).hexdigest()[:24].upper()
 def q(value): return '"' + str(value).replace('\\', '\\\\').replace('"', '\\"') + '"'
 objects = []
@@ -73,13 +77,13 @@ for owner in ['project','app','test']:
         if name == 'Debug': settings.update(SWIFT_OPTIMIZATION_LEVEL='-Onone', SWIFT_ACTIVE_COMPILATION_CONDITIONS='DEBUG', ENABLE_TESTABILITY='YES', DEBUG_INFORMATION_FORMAT='dwarf')
         else: settings.update(SWIFT_OPTIMIZATION_LEVEL='-O', SWIFT_COMPILATION_MODE='wholemodule', DEBUG_INFORMATION_FORMAT='dwarf-with-dsym')
         if owner == 'app':
-            settings.update(PRODUCT_NAME='DaBin', PRODUCT_BUNDLE_IDENTIFIER='com.dabin.mac', INFOPLIST_FILE='Resources/Info.plist', CODE_SIGN_ENTITLEMENTS='Resources/DaBin.entitlements', ENABLE_APP_SANDBOX='YES', COMBINE_HIDPI_IMAGES='YES', SKIP_INSTALL='NO')
+            settings.update(PRODUCT_NAME='DaBin', PRODUCT_BUNDLE_IDENTIFIER=bundle_identifier, INFOPLIST_FILE='Resources/Info.plist', CODE_SIGN_ENTITLEMENTS='Resources/DaBin.entitlements', ENABLE_APP_SANDBOX='YES', COMBINE_HIDPI_IMAGES='YES', SKIP_INSTALL='NO')
             if name == 'Debug':
                 settings.update(CODE_SIGN_IDENTITY='-', CODE_SIGN_STYLE='Manual')
             else:
-                # The release team comes from the developer's Xcode account or
-                # archive helper. Never ship the local ad-hoc signing override.
-                settings.update(CODE_SIGN_STYLE='Automatic')
+                # Release archives use the enrolled team while Xcode manages the
+                # App Store certificate and provisioning profile.
+                settings.update(CODE_SIGN_STYLE='Automatic', DEVELOPMENT_TEAM=development_team)
         if owner == 'test':
             settings.update(PRODUCT_NAME='DaBinTests', PRODUCT_BUNDLE_IDENTIFIER='com.dabin.mac.tests', GENERATE_INFOPLIST_FILE='YES', CODE_SIGN_IDENTITY='-', TEST_HOST='$(BUILT_PRODUCTS_DIR)/DaBin.app/Contents/MacOS/DaBin', BUNDLE_LOADER='$(TEST_HOST)', LD_RUNPATH_SEARCH_PATHS='$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks')
         body = ' '.join(f'{k} = {q(v)};' for k,v in settings.items())
@@ -89,7 +93,7 @@ target = obj('target', f'isa = PBXNativeTarget; buildConfigurationList = {config
 proxy = obj('proxy', f'isa = PBXContainerItemProxy; containerPortal = {ident("project")}; proxyType = 1; remoteGlobalIDString = {target}; remoteInfo = DaBin;')
 dependency = obj('dependency', f'isa = PBXTargetDependency; target = {target}; targetProxy = {proxy};')
 testtarget = obj('testtarget', f'isa = PBXNativeTarget; buildConfigurationList = {configs["test"]}; buildPhases = ({testsrc}, {testframeworks},); buildRules = (); dependencies = ({dependency},); name = DaBinTests; productName = DaBinTests; productReference = {testproduct}; productType = "com.apple.product-type.bundle.unit-test";')
-project = obj('project', f'isa = PBXProject; attributes = {{ LastUpgradeCheck = 1600; }}; buildConfigurationList = {configs["project"]}; compatibilityVersion = "Xcode 14.0"; developmentRegion = en; hasScannedForEncodings = 0; knownRegions = (en, Base,); mainGroup = {main}; productRefGroup = {products}; projectDirPath = ""; projectRoot = ""; targets = ({target}, {testtarget},);')
+project = obj('project', f'isa = PBXProject; attributes = {{ LastUpgradeCheck = 1600; TargetAttributes = {{ {target} = {{ DevelopmentTeam = {q(development_team)}; ProvisioningStyle = Automatic; }}; }}; }}; buildConfigurationList = {configs["project"]}; compatibilityVersion = "Xcode 14.0"; developmentRegion = en; hasScannedForEncodings = 0; knownRegions = (en, Base,); mainGroup = {main}; productRefGroup = {products}; projectDirPath = ""; projectRoot = ""; targets = ({target}, {testtarget},);')
 projectdir = root/'DaBin.xcodeproj'
 projectdir.mkdir(exist_ok=True)
 write_artifact(projectdir/'project.pbxproj', '// !$*UTF8*$!\n{ archiveVersion = 1; classes = {}; objectVersion = 56; objects = {\n'+'\n'.join(objects)+f'\n}}; rootObject = {project}; }}\n')

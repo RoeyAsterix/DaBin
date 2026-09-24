@@ -1,6 +1,6 @@
 # DaBin App Store Connect draft
 
-Use this as a working copy after the Apple Developer account and App Store Connect record exist. Replace every owner field and compare the text with the final signed archive before upload.
+Apple Developer Team `8QG4967CSU` is configured in the Release project. Use this as a working copy when creating the App Store Connect record. Replace every owner field and compare the text with the final signed archive before upload.
 
 ## Product page
 
@@ -81,7 +81,7 @@ The three drafts in [`screenshots/1440x900`](screenshots/1440x900/README.md) are
 ## Final submission checklist
 
 - Confirm the app name and reserve the Bundle ID.
-- Install and select full Xcode; add the owner account and Team ID.
+- Install and select full Xcode; add the owner account and confirm Team `8QG4967CSU` is selected.
 - Replace support and copyright placeholders with real owner information.
 - Freeze and bump the release version/build, then tag the exact archived commit.
 - Archive with `native/scripts/archive_app_store.sh`.

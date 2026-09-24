@@ -3,6 +3,12 @@
 set -euo pipefail
 project_root="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$project_root"
+configured_team="$(python3 - <<'PY'
+import json
+print(json.load(open('Config/AppStoreSigning.json'))['developmentTeam'])
+PY
+)"
+export DABIN_DEVELOPMENT_TEAM="${DABIN_DEVELOPMENT_TEAM:-$configured_team}"
 python3 scripts/app_store_preflight.py
 
 archive_stamp="$(date -u +%Y%m%dT%H%M%SZ)"

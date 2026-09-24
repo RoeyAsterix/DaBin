@@ -12,7 +12,7 @@ Fresh QA passed **50/50 release interface renders**, **11/11 privacy checks** wi
 
 Three fictional-data screenshot drafts pass Apple's 1440 × 900 RGB/no-alpha geometry checks. [Evidence and remaining gates](../docs/qa/app-store-preflight-2026-09-24/README.md) · [Screenshot drafts](../docs/app-store/screenshots/1440x900/README.md).
 
-No functional, compile, render, static packaging, quarantine or clean-copy integrity failure remains. Submission is still blocked by full Xcode, Apple Developer enrollment/Team ID, Bundle ID ownership and Apple Distribution signing. Before upload, the owner must also publish real support contact information, confirm publisher/copyright details, complete App Store Connect metadata and privacy answers, validate the signed archive in Organizer, and test it on macOS 14 and current macOS.
+No functional, compile, render, static packaging, quarantine or clean-copy integrity failure remains. Apple Developer Team `8QG4967CSU` is now configured for the Release target. Submission is still blocked by full Xcode, Bundle ID ownership confirmation, Apple signing assets and archive validation. Before upload, the owner must also publish real support contact information, confirm publisher/copyright details, complete App Store Connect metadata and privacy answers, validate the signed archive in Organizer, and test it on macOS 14 and current macOS.
 
 ## Local screenshot and document search — local build 0.3.18 (45)
 
