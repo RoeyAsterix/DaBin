@@ -11,6 +11,9 @@ This directory records the functional, visual, build, package and Store-readines
 - The update ZIP is **3,279,679 bytes**, SHA-256 `e1fa9fb3d741f5b705926cecef3374bab66f1ed65cb443ba033a178f8043b2eb`. Package QA passed isolated fresh installation, replacement, backup, strict clean-copy signature validation, extraction, manifest round trip, exact executable identity and document handoff.
 - The unchanged one-page A4 PDF guide is **299,779 bytes**, SHA-256 `61c0a585b5a978a317ae9b2f133401e587027d57e9aaded4871ac5e0f9d36291`; its retained geometry and extraction check remains one page with no boundary failure.
 - Static App Store packaging passed **20/20** checks. Release preflight remains blocked by two external prerequisites: the owner's Apple Developer Team ID and a full Xcode installation.
+- Release [v0.3.10](https://github.com/RoeyAsterix/DaBin/releases/tag/v0.3.10) is public and latest. Unauthenticated checks returned HTTP 200 for the release and all four assets; every downloaded asset was byte-identical to its verified local source, including the latest manifest URL.
+- The installed 0.3.9 app found, downloaded and installed the public 0.3.10 package through DaBin's own updater. The installed app, embedded helper and exact 0.3.9 backup pass strict signature checks. All **29 archive files** and the preferences file remain byte-identical, the Desktop link is unchanged, and one ARM64 process is running.
+- Live UI inspection verified the order **All, Copy/paste text, Links, Files, Media, Tasks** and accessibility identifier `filter-text`. On 23 September, Text showed one plain-text capture while All showed all four records. A subsequent update check reports 0.3.10 as current, and DaBin was left on today's Daily view with All selected.
 
 The direct package is locally ad-hoc signed for this Mac. Developer ID signing and notarization, or Mac App Store signing, remain the public-distribution trust boundary.
 
@@ -29,3 +32,5 @@ The direct package is locally ad-hoc signed for this Mac. Developer ID signing a
 - `quick-guide-layout-check.json`: retained one-page A4 guide geometry and text extraction evidence for the byte-identical PDF.
 - `app-store-preflight-static-v0.3.10.log`: 20 passing static source and packaging checks.
 - `app-store-preflight-release-v0.3.10.log`: the two external signing and tooling prerequisites.
+- `release-publication.json`: public release metadata and unauthenticated byte-identity checks for every asset and the latest manifest.
+- `live-install-v0.3.10.json`: in-app update, backup, signatures, archive/preferences preservation, Desktop link, runtime and live Text-filter checks.

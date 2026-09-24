@@ -12,7 +12,11 @@ The optimized ARM64 direct build is **0.3.10 (35)** with source fingerprint `9d3
 
 The one-page A4 PDF guide is unchanged and byte-identical at **299,779 bytes**, SHA-256 `61c0a585b5a978a317ae9b2f133401e587027d57e9aaded4871ac5e0f9d36291`. Static Store packaging passed **20/20** checks. App Store release preflight retains two external prerequisites: an Apple Developer Team ID and full Xcode.
 
-[0.3.10 evidence index](../docs/qa/0.3.10/README.md) · [Full optimized run](../docs/qa/0.3.10/full-run/report.json) · [Release renders](../docs/qa/0.3.10/release-ui-renders.json) · [Native renders](../docs/qa/0.3.10/native-view-renders.json) · [Build receipt](../docs/qa/0.3.10/build-receipt-v0.3.10.json) · [Update manifest](../docs/qa/0.3.10/update-manifest-v0.3.10.json) · [Static Store preflight](../docs/qa/0.3.10/app-store-preflight-static-v0.3.10.log) · [Release preflight](../docs/qa/0.3.10/app-store-preflight-release-v0.3.10.log).
+Release [v0.3.10](https://github.com/RoeyAsterix/DaBin/releases/tag/v0.3.10) is public and latest. Unauthenticated requests returned HTTP 200 for all four assets and the latest manifest; every downloaded asset was byte-identical to its verified local source.
+
+The installed 0.3.9 app discovered, downloaded and installed the public 0.3.10 package through its own verified updater. The installed app, embedded helper and exact 0.3.9 backup pass strict signature checks. All **29 archive files** and the preferences file remain byte-identical, the Desktop link remains valid, and one ARM64 process is running. Live inspection confirmed the six-filter order and accessible Text label; on 23 September, Text showed one plain-text capture while All showed all four. A follow-up check reports that 0.3.10 is current. DaBin was left on today's Daily view with All selected.
+
+[0.3.10 evidence index](../docs/qa/0.3.10/README.md) · [Publication](../docs/qa/0.3.10/release-publication.json) · [Live installation](../docs/qa/0.3.10/live-install-v0.3.10.json) · [Full optimized run](../docs/qa/0.3.10/full-run/report.json) · [Release renders](../docs/qa/0.3.10/release-ui-renders.json) · [Native renders](../docs/qa/0.3.10/native-view-renders.json) · [Build receipt](../docs/qa/0.3.10/build-receipt-v0.3.10.json) · [Update manifest](../docs/qa/0.3.10/update-manifest-v0.3.10.json) · [Static Store preflight](../docs/qa/0.3.10/app-store-preflight-static-v0.3.10.log) · [Release preflight](../docs/qa/0.3.10/app-store-preflight-release-v0.3.10.log).
 
 ## Active-date Weekly view — 0.3.9 (34)
 
