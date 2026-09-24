@@ -1,11 +1,11 @@
-# DaBin one-page quick guide
+# DaBin one-page feature guide
 
 Final PDF: `../../output/pdf/DaBin-Quick-Guide.pdf`
 
-A4 portrait, one page. Uses the existing native `DaBinLogo.swift` logo, exported with `ExportLogo.swift`, and the existing app robot icon. No product asset was redesigned. The generator uses standard PDF fonts and has no machine-specific font dependency.
+The guide is one A4 landscape page. It uses the existing DaBin logo, the native robot icon, standard PDF fonts, and vector-drawn feature icons. The landscape grid keeps the complete feature inventory readable while preserving DaBin's compact purple visual language.
 
-Content checked against the current native implementation. It covers manual drag and paste, Daily/Weekly, search, comments, reminders, tasks, placement, appearance controls, and the opt-in Auto Capture flow. The Auto Capture section explains that it starts off, watches future clipboard changes and the selected screenshot folder, stores content locally, supports pausing and default exclusions, and groups four or more actions from one clock hour into an expandable summary.
+Content is checked against the current native implementation. The page covers manual capture, Daily and Weekly, filters, contextual local search, per-card actions, tasks, reminders, day and week export, Auto Capture, hourly grouping, robot behavior, appearance, menu bar controls, updates, shortcuts, storage, and privacy.
 
-Built with ReportLab; pypdf confirmed one A4 page and expected text. Poppler rendering was inspected at 2807px height for legibility, clipping, alignment and spacing. The PDF is self-contained.
+Run `build_guide.py` with Python, ReportLab, and pypdf. The generator writes the delivery copy to `../../output/pdf/DaBin-Quick-Guide.pdf`, syncs the identical repository copy to `../../docs/DaBin-Quick-Guide.pdf`, and writes structural and content checks to `../../tmp/pdfs/layout-check.json`.
 
-To regenerate, run `build_guide.py` with Python, ReportLab and pypdf. It uses the existing native app icon and writes a layout diagnostic into `../../tmp/pdfs/`.
+Before publishing, render the PDF with Poppler and inspect the page at print resolution for clipping, alignment, spacing, and legibility.

@@ -1,210 +1,432 @@
 from pathlib import Path
-from reportlab.pdfgen import canvas
-from reportlab.lib import colors
-from reportlab.lib.pagesizes import A4
-from reportlab.pdfbase import pdfmetrics
-from reportlab.platypus import Paragraph
-from reportlab.lib.styles import ParagraphStyle
-from reportlab.lib.utils import ImageReader
-from pypdf import PdfReader
+from shutil import copy2
 import json
 
+from reportlab.lib import colors
+from reportlab.lib.pagesizes import A4, landscape
+from reportlab.lib.styles import ParagraphStyle
+from reportlab.lib.utils import ImageReader
+from reportlab.pdfgen import canvas
+from reportlab.platypus import Paragraph
+from pypdf import PdfReader
+
+
 ROOT = Path(__file__).resolve().parents[2]
-OUT = ROOT / 'output/pdf/DaBin-Quick-Guide.pdf'
+OUT = ROOT / "output/pdf/DaBin-Quick-Guide.pdf"
+DOC_COPY = ROOT / "docs/DaBin-Quick-Guide.pdf"
+QA_PATH = ROOT / "tmp/pdfs/layout-check.json"
 OUT.parent.mkdir(parents=True, exist_ok=True)
-NORMAL = 'Helvetica'
-BOLD = 'Helvetica-Bold'
+QA_PATH.parent.mkdir(parents=True, exist_ok=True)
 
-W, H = A4
-INK = colors.HexColor('#362E44')
-PURPLE = colors.HexColor('#6D5387')
-BODY = colors.HexColor('#5F5867')
-PALE = colors.HexColor('#F2EDF7')
-PAPER = colors.HexColor('#FDFCFD')
-LINE = colors.HexColor('#E4DDEB')
+NORMAL = "Helvetica"
+BOLD = "Helvetica-Bold"
+W, H = landscape(A4)
+
+INK = colors.HexColor("#30283D")
+PURPLE = colors.HexColor("#72508E")
+PURPLE_DARK = colors.HexColor("#4A365C")
+BODY = colors.HexColor("#625B6A")
+MUTED = colors.HexColor("#6D6574")
+PALE = colors.HexColor("#F3EDF7")
+PALE_2 = colors.HexColor("#F8F5FA")
+PAPER = colors.HexColor("#FDFCFD")
+LINE = colors.HexColor("#E2D9E8")
+MINT = colors.HexColor("#DDF4ED")
+MINT_INK = colors.HexColor("#35695C")
 WHITE = colors.white
-c = canvas.Canvas(str(OUT), pagesize=A4, pageCompression=1)
-c.setTitle('DaBin | A little home for your day')
-c.setAuthor('DaBin')
-c.setSubject('A friendly one-page introduction and quick-start guide to DaBin for macOS')
-c.setCreator('DaBin PDF guide')
-blocks = []
 
-def rect(x, top, w, h, fill, r=0, stroke=None):
+c = canvas.Canvas(str(OUT), pagesize=(W, H), pageCompression=1)
+c.setTitle("DaBin | Everything your day leaves behind")
+c.setAuthor("DaBin")
+c.setSubject("A complete one-page guide to DaBin for macOS")
+c.setCreator("DaBin one-page guide")
+
+text_blocks = []
+card_checks = []
+
+
+def rect(x, top, width, height, fill, radius=0, stroke=None, line_width=0.7):
     c.setFillColor(fill)
     c.setStrokeColor(stroke or fill)
-    c.setLineWidth(.7)
-    c.roundRect(x, H-top-h, w, h, r, fill=1, stroke=int(stroke is not None))
+    c.setLineWidth(line_width)
+    c.roundRect(
+        x,
+        H - top - height,
+        width,
+        height,
+        radius,
+        fill=1,
+        stroke=int(stroke is not None),
+    )
 
-def line(x1, y1, x2, y2, color=LINE, width=.7):
+
+def rule(x1, y1, x2, y2, color=LINE, width=0.7):
     c.setStrokeColor(color)
     c.setLineWidth(width)
-    c.line(x1,H-y1,x2,H-y2)
+    c.line(x1, H - y1, x2, H - y2)
 
-def text(value,x,top,size=11,font=NORMAL,color=INK):
-    c.setFont(font,size)
+
+def text(value, x, top, size=10, font=NORMAL, color=INK):
+    c.setFont(font, size)
     c.setFillColor(color)
-    c.drawString(x,H-top-size*.82,value)
+    c.drawString(x, H - top - size * 0.82, value)
 
-def right(value,x,top,size=9,font=NORMAL,color=BODY):
-    c.setFont(font,size)
+
+def right(value, x, top, size=9, font=NORMAL, color=BODY):
+    c.setFont(font, size)
     c.setFillColor(color)
-    c.drawRightString(x,H-top-size*.82,value)
+    c.drawRightString(x, H - top - size * 0.82, value)
 
-def para(value,x,top,w,size=11,leading=15,color=BODY,max_height=None):
-    p=Paragraph(value, ParagraphStyle('p',fontName=NORMAL,fontSize=size,leading=leading,textColor=color,spaceAfter=0))
-    _,h=p.wrap(w,H)
+
+def centered(value, x, top, width, size=9, font=NORMAL, color=BODY):
+    c.setFont(font, size)
+    c.setFillColor(color)
+    c.drawCentredString(x + width / 2, H - top - size * 0.82, value)
+
+
+def paragraph(value, x, top, width, size=9, leading=11, color=BODY, font=NORMAL, max_height=None):
+    p = Paragraph(
+        value,
+        ParagraphStyle(
+            "p",
+            fontName=font,
+            fontSize=size,
+            leading=leading,
+            textColor=color,
+            spaceAfter=0,
+            allowWidows=0,
+            allowOrphans=0,
+        ),
+    )
+    _, height = p.wrap(width, H)
     if max_height is not None:
-        assert h<=max_height, (value,h,max_height)
-    p.drawOn(c,x,H-top-h)
-    blocks.append({'text': value, 'x':x,'top':top,'width':w,'height':h})
-    return h
+        assert height <= max_height, (value, height, max_height)
+    p.drawOn(c, x, H - top - height)
+    text_blocks.append({"text": value, "x": x, "top": top, "width": width, "height": height})
+    return height
 
-def image(path,x,top,w,h):
-    c.drawImage(ImageReader(str(path)),x,H-top-h,width=w,height=h,mask='auto')
 
-def icon(kind,x,top,size=20,color=PURPLE):
+def image(path, x, top, width, height):
+    c.drawImage(ImageReader(str(path)), x, H - top - height, width=width, height=height, mask="auto")
+
+
+def icon(kind, x, top, size=18, color=PURPLE):
+    """Small line icons drawn as vectors so the guide remains sharp when printed."""
     c.saveState()
-    c.translate(x,H-top-size)
-    c.scale(size/24,size/24)
+    c.translate(x, H - top - size)
+    c.scale(size / 24, size / 24)
     c.setStrokeColor(color)
     c.setFillColor(color)
-    c.setLineWidth(1.6)
+    c.setLineWidth(1.65)
     c.setLineCap(1)
     c.setLineJoin(1)
-    if kind=='link':
-        c.saveState()
-        c.translate(12,12)
-        c.rotate(-42)
-        c.roundRect(-8,-4,11,8,4,stroke=1,fill=0)
-        c.roundRect(-3,-4,11,8,4,stroke=1,fill=0)
-        c.restoreState()
-    elif kind=='file':
-        p=c.beginPath(); p.moveTo(5,2);p.lineTo(19,2);p.lineTo(19,16);p.lineTo(13,22);p.lineTo(5,22);p.close()
-        c.drawPath(p,stroke=1,fill=0)
-        c.line(13,22,13,16); c.line(13,16,19,16)
-        c.line(8,11,16,11);c.line(8,7,14,7)
-    elif kind=='media':
-        c.roundRect(2,3,20,18,3,stroke=1,fill=0)
-        c.circle(8,15,1.6,stroke=1,fill=0)
-        p=c.beginPath();p.moveTo(3,6);p.lineTo(9,11);p.lineTo(13,7);p.lineTo(17,12);p.lineTo(21,8)
-        c.drawPath(p,stroke=1,fill=0)
-    elif kind=='search':
-        c.circle(10,14,6.5,stroke=1,fill=0);c.line(15,9,21,3)
-    elif kind=='export':
-        c.roundRect(4,3,16,12,2.5,stroke=1,fill=0)
-        c.line(12,8,12,22)
-        c.line(12,22,8,18)
-        c.line(12,22,16,18)
-    elif kind=='comment':
-        p=c.beginPath();p.moveTo(3,20);p.lineTo(21,20);p.lineTo(21,7);p.lineTo(10,7);p.lineTo(5,2);p.lineTo(5,7);p.lineTo(3,7);p.close()
-        c.drawPath(p,stroke=1,fill=0)
-        c.line(7,15,17,15);c.line(7,11,14,11)
-    elif kind=='capture':
-        c.roundRect(3,4,18,15,3,stroke=1,fill=0)
-        c.circle(12,11.5,4.2,stroke=1,fill=0)
-        c.line(7,19,9,22);c.line(9,22,15,22);c.line(15,22,17,19)
-    elif kind=='pause':
-        c.roundRect(3,3,18,18,5,stroke=1,fill=0)
-        c.roundRect(8,7,2.5,10,1.2,stroke=0,fill=1)
-        c.roundRect(13.5,7,2.5,10,1.2,stroke=0,fill=1)
-    elif kind=='move':
-        c.line(12,3,12,21);c.line(3,12,21,12)
-        p=c.beginPath();p.moveTo(12,21);p.lineTo(8.5,17.5);p.moveTo(12,21);p.lineTo(15.5,17.5)
-        p.moveTo(12,3);p.lineTo(8.5,6.5);p.moveTo(12,3);p.lineTo(15.5,6.5)
-        p.moveTo(3,12);p.lineTo(6.5,8.5);p.moveTo(3,12);p.lineTo(6.5,15.5)
-        p.moveTo(21,12);p.lineTo(17.5,8.5);p.moveTo(21,12);p.lineTo(17.5,15.5)
-        c.drawPath(p,stroke=1,fill=0)
+
+    if kind == "capture":
+        c.roundRect(3, 4, 18, 15, 3, stroke=1, fill=0)
+        c.circle(12, 11.5, 4.2, stroke=1, fill=0)
+        c.line(7, 19, 9, 22)
+        c.line(9, 22, 15, 22)
+        c.line(15, 22, 17, 19)
+    elif kind == "calendar":
+        c.roundRect(3, 3, 18, 17, 3, stroke=1, fill=0)
+        c.line(3, 15.5, 21, 15.5)
+        c.line(8, 19, 8, 22)
+        c.line(16, 19, 16, 22)
+        for cx in (7.5, 12, 16.5):
+            c.circle(cx, 10.5, 0.75, stroke=0, fill=1)
+        c.circle(7.5, 6.8, 0.75, stroke=0, fill=1)
+        c.circle(12, 6.8, 0.75, stroke=0, fill=1)
+    elif kind == "search":
+        c.circle(10, 14, 6.5, stroke=1, fill=0)
+        c.line(15, 9, 21, 3)
+        c.line(7, 14, 13, 14)
+        c.line(7, 11, 11, 11)
+    elif kind == "card":
+        c.roundRect(3, 4, 18, 16, 3, stroke=1, fill=0)
+        c.line(7, 16, 17, 16)
+        c.line(7, 12, 14, 12)
+        c.line(7, 8, 12, 8)
+        c.circle(18.5, 6.5, 3.2, stroke=0, fill=1)
+        c.setStrokeColor(WHITE)
+        c.setLineWidth(1.4)
+        c.line(17, 6.5, 20, 6.5)
+    elif kind == "task":
+        c.roundRect(3, 3, 18, 18, 5, stroke=1, fill=0)
+        p = c.beginPath()
+        p.moveTo(7, 12)
+        p.lineTo(10.5, 8)
+        p.lineTo(17.5, 16)
+        c.drawPath(p, stroke=1, fill=0)
+    elif kind == "export":
+        c.roundRect(4, 3, 16, 12, 2.5, stroke=1, fill=0)
+        c.line(12, 8, 12, 22)
+        c.line(12, 22, 8, 18)
+        c.line(12, 22, 16, 18)
+    elif kind == "auto":
+        c.circle(12, 12, 9, stroke=1, fill=0)
+        c.line(12, 7, 12, 17)
+        c.line(7, 12, 17, 12)
+        c.circle(12, 12, 2.2, stroke=0, fill=1)
+    elif kind == "settings":
+        c.circle(12, 12, 4, stroke=1, fill=0)
+        for angle in range(0, 360, 45):
+            c.saveState()
+            c.translate(12, 12)
+            c.rotate(angle)
+            c.line(0, 6, 0, 10)
+            c.restoreState()
+    elif kind == "pin":
+        c.circle(12, 13, 8, stroke=1, fill=0)
+        c.circle(12, 13, 2.2, stroke=1, fill=0)
+        c.line(12, 5, 12, 1)
     c.restoreState()
 
-# Brand header.
-rect(0,0,W,H,PAPER)
-image(ROOT/'design/onepager/assets/DaBin-logo.png',40,33,126,126*256/781)
-right('YOUR DAILY COMPANION',W-42,41,8.5,BOLD,PURPLE)
-right('A QUICK GUIDE FOR macOS',W-42,57,8.2,color=BODY)
 
-# A spacious introduction with the existing mascot.
-text('A little home',42,113,34,BOLD)
-text('for your day.',42,153,34,BOLD)
-para('Keep the links, files, images and ideas you want to come back to. DaBin saves what you drop or paste into a personal daily board, right on your Mac.',42,211,306,12,17,max_height=68)
-c.setFillColor(PALE)
-c.circle(466,H-199,76,fill=1,stroke=0)
-image(ROOT/'native/Resources/Assets.xcassets/AppIcon.appiconset/icon_512x512@2x.png',382,119,167,167)
+def pill(label, x, top, width, fill=PALE, ink=PURPLE):
+    rect(x, top, width, 20, fill, radius=10)
+    centered(label, x, top + 6, width, 7.2, BOLD, ink)
 
-# Small familiar content icons, all pointing toward the robot itself.
-for kind,x,top,angle in [('file',388,105,-9),('link',501,121,9),('media',516,242,-7)]:
-    c.saveState()
-    c.translate(x+17,H-top-17)
-    c.rotate(angle)
-    c.setFillColor(WHITE);c.setStrokeColor(LINE);c.setLineWidth(.7)
-    c.roundRect(-17,-17,34,34,8,fill=1,stroke=1)
-    c.restoreState()
-    icon(kind,x+7,top+7,20)
 
-x=42
-for label in ['Text','Links','Files & PDFs','Images & video']:
-    w=pdfmetrics.stringWidth(label,NORMAL,9.3)+22
-    rect(x,291,w,25,PALE,r=12.5)
-    text(label,x+11,299,9.3,color=PURPLE)
-    x+=w+7
+def step(number, title, body, x, top, width):
+    rect(x, top + 1, 20, 20, PURPLE, radius=10)
+    centered(str(number), x, top + 7, 20, 8.5, BOLD, WHITE)
+    text(title, x + 29, top + 2, 9.4, BOLD, INK)
+    paragraph(body, x + 29, top + 18, width - 29, 7.5, 9.2, BODY, max_height=29)
 
-line(42,338,W-42,338)
-text('START WITH THREE SMALL MOVES',42,355,9,BOLD,PURPLE)
 
-steps=[
-    ('1','Meet your robot','Move your pointer to a screen corner. Or choose <b>Below camera island</b> in Settings so your robot peeks from the notch. It stays hidden while you work.'),
-    ('2','Drop or paste','Drop one or several files onto the robot, or hover and press <b>Control-V</b> or <b>Command-V</b>. Files from one move stay together in one card.'),
-    ('3','Open your day','<b>Double-click</b> the robot for Daily, with the newest captures first. Use <b>Daily / Weekly</b> to switch between one day and seven.'),
+def feature_card(title, kind, items, x, top, width, height):
+    rect(x, top, width, height, WHITE, radius=12, stroke=LINE, line_width=0.75)
+    rect(x + 11, top + 10, 26, 26, PALE, radius=8)
+    icon(kind, x + 15, top + 14, 18)
+    text(title.upper(), x + 45, top + 14, 8.4, BOLD, PURPLE_DARK)
+
+    cursor = top + 43
+    max_bottom = top + height - 8
+    for item in items:
+        c.setFillColor(PURPLE)
+        c.circle(x + 15, H - cursor - 3.6, 1.55, stroke=0, fill=1)
+        used = paragraph(item, x + 22, cursor, width - 33, 7.5, 9.0, BODY, max_height=29)
+        cursor += used + 3.1
+    card_checks.append({"title": title, "bottom": cursor, "limit": max_bottom})
+    assert cursor <= max_bottom, (title, cursor, max_bottom)
+
+
+# Page foundation and brand header.
+rect(0, 0, W, H, PAPER)
+rect(0, 0, W, 110, PALE_2)
+image(ROOT / "design/onepager/assets/DaBin-logo.png", 32, 20, 111, 111 * 256 / 781)
+pill("macOS 14+", W - 336, 24, 58)
+pill("APPLE SILICON", W - 271, 24, 77)
+pill("LOCAL FIRST", W - 187, 24, 59, MINT, MINT_INK)
+
+text("Everything your day leaves behind, saved in one glance.", 32, 67, 23.5, BOLD, INK)
+paragraph(
+    "Drop it. Paste it. Find it later. DaBin turns the things you touch on your Mac into a private daily board.",
+    33,
+    96,
+    640,
+    9.3,
+    12,
+    BODY,
+    max_height=14,
+)
+rect(W - 108, 17, 76, 76, PALE, radius=38)
+image(ROOT / "native/Resources/Assets.xcassets/AppIcon.appiconset/icon_512x512@2x.png", W - 103, 22, 66, 66)
+
+# Three-step quick start.
+rect(32, 124, W - 64, 58, WHITE, radius=12, stroke=LINE)
+text("START HERE", 45, 141, 8.2, BOLD, PURPLE)
+step(1, "Reveal", "Move to a corner, or choose the camera island home.", 129, 138, 192)
+rule(328, 135, 328, 171)
+step(2, "Feed DaBin", "Drop or paste into the robot or Daily window.", 343, 138, 192)
+rule(542, 135, 542, 171)
+step(3, "Open your day", "Double-click the robot, then browse Daily or Weekly.", 557, 138, 211)
+
+text("EVERYTHING DABIN CAN DO", 32, 199, 8.2, BOLD, PURPLE)
+right("Newest captures appear first", W - 32, 199, 7.7, NORMAL, MUTED)
+
+LEFT = 32
+GAP = 10
+CARD_W = (W - 64 - 3 * GAP) / 4
+CARD_H = 145
+ROW_GAP = 10
+GRID_TOP = 216
+
+cards = [
+    (
+        "Capture anything",
+        "capture",
+        [
+            "Drag or paste text, links, media, PDFs, documents, or files onto the robot or Daily.",
+            "Hover the robot and press <b>Control-V</b> or <b>Command-V</b>; use <b>+</b> to create a task.",
+            "Items added together share one card; previews fit and originals stay untouched.",
+            "Stores time, type, source app, and source path when available.",
+        ],
+    ),
+    (
+        "Revisit your work",
+        "calendar",
+        [
+            "First launch opens Daily; later, use the robot or menu bar to return.",
+            "Daily has date navigation. Weekly ends on your selected date and hides empty days.",
+            "Filter by <b>All, Text, Links, Files, Media,</b> or <b>Tasks</b>. Notifications gathers reminders.",
+            "Move the board anywhere; DaBin remembers its position. Empty views show the bored robot.",
+        ],
+    ),
+    (
+        "Find anything",
+        "search",
+        [
+            "Search the archive, a selected day, or the displayed week.",
+            "Results open on the date with the same-day capture immediately before and after.",
+            "Local recognition reads screenshots, images, PDFs, and supported text documents.",
+            "Search also checks filenames, comments, and links. Copy recognized text or rebuild the index.",
+        ],
+    ),
+    (
+        "Work with each capture",
+        "card",
+        [
+            "Copy original text, links, tasks, or saved files from the card; grouped files copy together.",
+            "Add a comment or reminder, preview content, open the original, or reveal its saved folder.",
+            "View and copy source details when available.",
+            "Minimize, expand, or remove DaBin's saved card.",
+        ],
+    ),
+    (
+        "Tasks and reminders",
+        "task",
+        [
+            "Create a task with <b>+</b>, or turn any capture into one without losing its content or date.",
+            "Toggle red <b>Task</b> to green <b>Completed</b>.",
+            "Open tasks without reminders carry forward at the top with their original creation date.",
+            "Reminder tasks appear at the top only on their reminder day; macOS notifications are optional.",
+        ],
+    ),
+    (
+        "Copy or export",
+        "export",
+        [
+            "Daily offers Copy Day or Export Text File; Weekly copies or downloads a chosen day or full week.",
+            "Exports ignore filters, include every action, and sort chronologically.",
+            "Includes time, type, source, text, captions, and recognized text when available.",
+            "Copy and download output match; downloads use UTF-8 and clear date-based names.",
+        ],
+    ),
+    (
+        "Optional Auto Capture",
+        "auto",
+        [
+            "Off by default. Saves only future clipboard changes and chosen-folder screenshots; never existing content.",
+            "DaBin and common password managers are excluded by default. Pause or stop instantly; duplicates save once.",
+            "Four automatic saves in one local clock hour form an expandable summary; success triggers the robot and burst count.",
+        ],
+    ),
+    (
+        "Robot, settings and menu bar",
+        "settings",
+        [
+            "Corner or camera island home; the robot tracks, digests, and rotates through 12 success reactions.",
+            "Dark mode, theme color, 35-100% opacity, Reduce Motion, and Reduce Transparency.",
+            "Menu bar: Daily, status, pause or resume, Settings, and Quit. Direct builds add Get updates; Store builds update through Apple.",
+        ],
+    ),
 ]
-for idx,(num,title,body) in enumerate(steps):
-    x=42+idx*174
-    rect(x,385,24,24,PURPLE,r=12)
-    text(num,x+8,391,11,BOLD,WHITE)
-    text(title,x,421,13.5,BOLD)
-    para(body,x,448,151,10.5,14.7,max_height=90)
 
-line(42,548,W-42,548)
-text('AUTO CAPTURE, WHEN YOU WANT IT',42,563,9,BOLD,PURPLE)
-rect(W-153,556,111,24,PALE,r=12)
-text('OFF BY DEFAULT',W-138,563,8.5,BOLD,PURPLE)
+for index, (title_value, kind, items) in enumerate(cards):
+    row = index // 4
+    column = index % 4
+    x = LEFT + column * (CARD_W + GAP)
+    top = GRID_TOP + row * (CARD_H + ROW_GAP)
+    feature_card(title_value, kind, items, x, top, CARD_W, CARD_H)
 
-rect(42,592,W-84,125,PALE,r=14)
-icon('capture',56,607,22)
-text('Turn it on',87,610,14,BOLD)
-para('Open <b>Settings &gt; Capture</b> and enable Auto Capture. Choose a dedicated screenshot folder when asked. DaBin then saves <b>future copies</b> and new images added there.',56,640,220,9.4,12.7,max_height=66)
+# Privacy promise and footer.
+FOOT_TOP = GRID_TOP + 2 * CARD_H + ROW_GAP + 12
+rect(32, FOOT_TOP, W - 64, 43, PURPLE_DARK, radius=12)
+icon("pin", 44, FOOT_TOP + 12, 18, WHITE)
+text("PRIVATE AND LOCAL", 71, FOOT_TOP + 9, 8.3, BOLD, WHITE)
+paragraph(
+    "Readable Year / Month / Day folders on this Mac. No account, analytics, ads, cloud sync, external AI, or automatic uploads. Link previews connect only when you enable them; Quit stops every background activity.",
+    71,
+    FOOT_TOP + 22,
+    W - 117,
+    7.5,
+    9.1,
+    colors.HexColor("#F7F1FA"),
+    max_height=20,
+)
 
-line(298,608,298,701,color=LINE,width=.8)
-icon('pause',315,607,22)
-text('Stay in control',346,610,14,BOLD)
-para('Everything stays on your Mac. <b>Pause</b> any time; DaBin and common password managers are excluded by default. At <b>4 actions</b> in one clock hour, click the summary to expand and use the minus button to collapse.',315,640,224,9.4,12.7,max_height=66)
+text("DaBin", 32, 574, 7.7, BOLD, PURPLE)
+right("Keys: Command-O Today  |  Command-K Search  |  Command-Shift-V robot  |  Esc hide  |  Command-Q quit", W - 32, 574, 7.4, NORMAL, MUTED)
 
-icon('export',42,740,18)
-text('Find & export',68,742,11.5,BOLD)
-para('Filter or search any date. <b>Export Day</b> copies or saves its complete record as UTF-8 text.',42,764,151,8.9,12.2,max_height=37)
-
-icon('comment',216,740,18)
-text('Add context',242,742,11.5,BOLD)
-para('Comment, set a reminder, or press <b>+</b> for a task you can mark complete.',216,764,151,8.9,12.2,max_height=37)
-
-icon('move',390,740,18)
-text('Make it yours',416,742,11.5,BOLD)
-para('Drag the logo to move the board. Settings controls theme, opacity and robot home.',390,764,151,8.9,12.2,max_height=37)
-
-line(42,811,W-42,811)
-text('Manual drag and paste always stay available.',42,820,8.5,color=BODY)
-right('DaBin  /  Quick start',W-42,817,8.5,color=PURPLE)
 c.showPage()
 c.save()
+copy2(OUT, DOC_COPY)
 
-reader=PdfReader(OUT)
-assert len(reader.pages)==1
-extracted=reader.pages[0].extract_text()
-normalized=' '.join(extracted.split())
-for required in ['camera island','Control-V','Command-V','Double-click','Daily / Weekly','Settings > Capture','OFF BY DEFAULT','future copies','dedicated screenshot folder','stays on your Mac','Pause','password managers','4 actions','expand','minus button','collapse','Export Day','complete record','UTF-8 text','Manual drag and paste']:
-    assert required in normalized, required
-assert '\ufffd' not in extracted
-assert all(b['x']>=30 and b['x']+b['width']<=W-30 and b['top']+b['height']<803 for b in blocks)
-(ROOT/'tmp/pdfs').mkdir(parents=True, exist_ok=True)
-(ROOT/'tmp/pdfs/layout-check.json').write_text(json.dumps({'page_count':len(reader.pages),'page_size':'A4','paragraphs':blocks,'text':extracted},indent=2))
+# Structural and content checks stay with the generator so future edits cannot
+# silently turn this one-pager into a multi-page or incomplete guide.
+reader = PdfReader(OUT)
+assert len(reader.pages) == 1
+page = reader.pages[0]
+media_box = tuple(round(float(value), 2) for value in page.mediabox)
+assert media_box == (0.0, 0.0, round(W, 2), round(H, 2)), media_box
+extracted = page.extract_text()
+normalized = " ".join(extracted.split())
+
+required = [
+    "Capture anything",
+    "Daily",
+    "Weekly",
+    "All, Text, Links, Files, Media, or Tasks",
+    "Search the archive",
+    "Local recognition",
+    "same-day capture immediately before and after",
+    "Add a comment or reminder",
+    "source path",
+    "Minimize, expand, or remove",
+    "turn any capture into one",
+    "Completed",
+    "carry forward",
+    "Copy or export",
+    "full week",
+    "ignore filters",
+    "UTF-8",
+    "Auto Capture",
+    "Off by default",
+    "common password managers are excluded by default",
+    "Four automatic saves in one local clock hour",
+    "expandable summary",
+    "12 success reactions",
+    "dark mode",
+    "35-100% opacity",
+    "Get updates",
+    "Store builds update through Apple",
+    "APPLE SILICON",
+    "Readable Year / Month / Day folders",
+    "No account, analytics, ads, cloud sync, external AI, or automatic uploads",
+]
+for phrase in required:
+    assert phrase.lower() in normalized.lower(), phrase
+assert "\ufffd" not in extracted
+assert all(block["x"] >= 28 and block["x"] + block["width"] <= W - 28 for block in text_blocks)
+assert all(block["top"] + block["height"] < H - 11 for block in text_blocks)
+assert OUT.read_bytes() == DOC_COPY.read_bytes()
+
+QA_PATH.write_text(
+    json.dumps(
+        {
+            "page_count": len(reader.pages),
+            "page_size": "A4 landscape",
+            "media_box": media_box,
+            "word_count": len(extracted.split()),
+            "cards": card_checks,
+            "paragraphs": text_blocks,
+            "required_phrases": required,
+            "text": extracted,
+        },
+        indent=2,
+    )
+)
 print(OUT)
-print(f'PASS: one A4 page, {len(extracted.split())} words, all text blocks within bounds')
+print(DOC_COPY)
+print(f"PASS: one A4 page, {len(extracted.split())} words, complete feature checklist, matching copies")
