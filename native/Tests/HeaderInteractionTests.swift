@@ -363,6 +363,14 @@ private enum HeaderInteractionTests {
         try expect(state.route == .reminders, "Notifications preserves its existing reminders destination")
         state.route = .daily; settle()
 
+        let windowsBeforeSettings = Set(application.windows.filter { $0 !== window && $0.isVisible }.map(\.windowNumber))
+        click(window, x: 310, topY: 55)
+        settle()
+        let windowsAfterSettings = Set(application.windows.filter { $0 !== window && $0.isVisible }.map(\.windowNumber))
+        try expect(state.route == .settings && windowsAfterSettings == windowsBeforeSettings,
+                   "Settings opens its page directly without an intermediate submenu")
+        state.route = .daily; settle()
+
         click(window, x: 118, topY: 90)
         try expect(state.filter == .text, "Copy/paste Text is the second centered filter")
         click(window, x: 166, topY: 90)

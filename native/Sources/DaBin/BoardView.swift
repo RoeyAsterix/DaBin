@@ -8,8 +8,6 @@ struct BoardView: View {
     @StateObject private var dayExportController: DayExportActionController
     @StateObject private var tooltipController: TimelineTooltipController
     @State private var showWeekCalendar = false
-    @State private var settingsHovered = false
-    @FocusState private var settingsFocused: Bool
 
     init(state: AppState, theme: ThemeSettings? = nil,
          dayExportController: DayExportActionController? = nil,
@@ -280,62 +278,18 @@ struct BoardView: View {
                              accessibilityIdentifier: "timeline-action-notifications") {
                 state.showReminders()
             }
-            settingsMenu
+            AccentIconButton(symbol: TimelinePrimaryAction.settings.symbol,
+                             label: TimelinePrimaryAction.settings.label,
+                             tooltip: primaryTooltip(.settings, index: 4),
+                             accessibilityIdentifier: "timeline-action-settings") {
+                state.showSettings()
+            }
         }
         .frame(width: TimelineIconRowMetrics.rowWidth,
                height: TimelineIconRowMetrics.controlHeight)
         .frame(maxWidth: .infinity)
         .accessibilityElement(children: .contain)
         .accessibilityLabel("Primary actions")
-    }
-
-    private var settingsMenu: some View {
-        Menu {
-            if state.autoCapture.settings.isEnabled {
-                Text(autoCaptureStatusText)
-                Button(state.autoCapture.settings.isPaused ? "Resume Auto Capture" : "Pause Auto Capture") {
-                    state.autoCapture.setPaused(!state.autoCapture.settings.isPaused)
-                }
-                Divider()
-            }
-            Button("Settings…") { state.showSettings() }
-        } label: {
-            AccentIconMenuLabel(symbol: TimelinePrimaryAction.settings.symbol,
-                                hovered: $settingsHovered, focused: settingsFocused)
-        }
-        .menuStyle(.borderlessButton)
-        .menuIndicator(.hidden)
-        .fixedSize()
-        .frame(width: TimelineIconRowMetrics.controlWidth,
-               height: TimelineIconRowMetrics.controlHeight)
-        .focused($settingsFocused)
-        // Menu owns AppKit's tracking region, so hover must be observed here
-        // rather than on its SwiftUI label content.
-        .onHover { isHovering in
-            settingsHovered = isHovering
-            updateSettingsTooltip(hovered: isHovering, focused: settingsFocused)
-        }
-        .onChange(of: settingsFocused) { _, isFocused in
-            updateSettingsTooltip(hovered: settingsHovered, focused: isFocused)
-        }
-        .simultaneousGesture(TapGesture().onEnded {
-            tooltipController.activate(id: "primary-tooltip-settings")
-        })
-        .onDisappear {
-            settingsHovered = false
-            tooltipController.end(id: "primary-tooltip-settings")
-        }
-        .accessibilityLabel(TimelinePrimaryAction.settings.label)
-        .accessibilityIdentifier("timeline-action-settings")
-    }
-
-    private func updateSettingsTooltip(hovered: Bool, focused: Bool) {
-        let tooltip = primaryTooltip(.settings, index: 4)
-        if hovered || focused {
-            tooltipController.begin(tooltip, immediate: focused && !hovered)
-        } else {
-            tooltipController.end(id: tooltip.id)
-        }
     }
 
     private func primaryTooltip(_ action: TimelinePrimaryAction, index: Int) -> TimelineTooltipDescriptor {

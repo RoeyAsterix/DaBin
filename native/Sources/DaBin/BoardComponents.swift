@@ -390,42 +390,6 @@ private struct AccentIconButtonStyle: ButtonStyle {
     }
 }
 
-/// A label for the Settings menu, whose native menu behavior cannot use a
-/// ButtonStyle. Its hover and focus surfaces match AccentIconButton.
-@MainActor
-struct AccentIconMenuLabel: View {
-    @Environment(\.daBinAccent) private var accent
-    let symbol: String
-    @Binding var hovered: Bool
-    let focused: Bool
-
-    var body: some View {
-        Image(systemName: symbol)
-            .symbolRenderingMode(.monochrome)
-            .font(.system(size: TimelineIconRowMetrics.symbolPointSize, weight: .medium))
-            .foregroundStyle(accent.opacity(0.92))
-            .frame(width: TimelineIconRowMetrics.symbolCanvasSize,
-                   height: TimelineIconRowMetrics.symbolCanvasSize)
-            .frame(width: TimelineIconRowMetrics.controlWidth,
-                   height: TimelineIconRowMetrics.controlHeight)
-            .contentShape(Rectangle())
-            .background {
-                if hovered {
-                    Circle().fill(accent.opacity(0.09))
-                        .frame(width: TimelineIconRowMetrics.stateSurfaceDiameter,
-                               height: TimelineIconRowMetrics.stateSurfaceDiameter)
-                }
-            }
-            .overlay {
-                if focused {
-                    Circle().stroke(accent.opacity(0.82), lineWidth: 1.5)
-                        .frame(width: TimelineIconRowMetrics.focusRingDiameter,
-                               height: TimelineIconRowMetrics.focusRingDiameter)
-                }
-            }
-    }
-}
-
 @MainActor
 struct SmallIcon: View {
     let symbol: String
