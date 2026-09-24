@@ -621,7 +621,8 @@ private final class NativeRenderTests: NSObject, NSApplicationDelegate {
         }
 
         @discardableResult
-        func frame(_ name: String? = nil, presentation: Bool = false) throws -> Data {
+        func frame(_ name: String? = nil, presentation: Bool = false,
+                   background: NSColor? = nil) throws -> Data {
             character.layoutSubtreeIfNeeded()
             character.displayIfNeeded()
             guard let bitmap = NSBitmapImageRep(bitmapDataPlanes: nil,
@@ -643,6 +644,10 @@ private final class NativeRenderTests: NSObject, NSApplicationDelegate {
                 }
                 NSGraphicsContext.saveGraphicsState()
                 NSGraphicsContext.current = context
+                if let background {
+                    context.cgContext.setFillColor(background.cgColor)
+                    context.cgContext.fill(CGRect(origin: .zero, size: logicalSize))
+                }
                 renderedLayer.render(in: context.cgContext)
                 NSGraphicsContext.restoreGraphicsState()
             } else {
@@ -757,6 +762,196 @@ private final class NativeRenderTests: NSObject, NSApplicationDelegate {
             throw RenderError.message("Stopped robot kept changing by \(cleanupChange) raster bytes")
         }
 
+        // Every automatic-capture reaction is sampled from its real presentation
+        // timeline against representative light and dark desktop colors. The
+        // same transparent native view is used in production; the backing colors
+        // exist only to verify that the outlined robot and cues remain readable.
+        reduceMotionEnabled = false
+        let lightBackground = NSColor(calibratedWhite: 0.94, alpha: 1)
+        let darkBackground = NSColor(calibratedWhite: 0.075, alpha: 1)
+        var celebrationRasters: [AutoCaptureRobotReaction: Data] = [:]
+        var celebrationScreenshots: [[String: Any]] = []
+        for reaction in AutoCaptureRobotReaction.allCases {
+            character.stopMotion()
+            let performance = AutoCaptureRobotPerformance.make(reaction: reaction,
+                                                                variation: .standard,
+                                                                entrance: .top,
+                                                                reduceMotion: false)
+            guard let reactionPhase = performance.phases.first(where: {
+                if case .reaction = $0.kind { return true }
+                return false
+            }) else {
+                throw RenderError.message("Missing reaction phase for \(reaction.rawValue)")
+            }
+            character.playAutoCaptureCelebration(performance)
+            try await Task.sleep(for: .seconds(reactionPhase.startTime + reactionPhase.duration * 0.58))
+            guard character.currentAutoCaptureReaction == reaction,
+                  !character.hasActiveAmbientMotion else {
+                throw RenderError.message("\(reaction.rawValue) did not retain its automatic reaction state")
+            }
+            let lightName = "auto-\(reaction.rawValue)-light"
+            let darkName = "auto-\(reaction.rawValue)-dark"
+            let light = try frame(lightName, presentation: true, background: lightBackground)
+            let dark = try frame(darkName, presentation: true, background: darkBackground)
+            guard changedBytes(light, dark) > 1_000 else {
+                throw RenderError.message("\(reaction.rawValue) did not render distinctly on light and dark backgrounds")
+            }
+            celebrationRasters[reaction] = light
+            for (name, appearance) in [(lightName, "light"), (darkName, "dark")] {
+                celebrationScreenshots.append([
+                    "file": "native-robot-personality-\(name)@2x.png",
+                    "semanticState": reaction.rawValue,
+                    "appearance": appearance,
+                    "logicalWidth": Int(logicalSize.width), "logicalHeight": Int(logicalSize.height),
+                    "pixelWidth": Int(logicalSize.width) * pixelScale,
+                    "pixelHeight": Int(logicalSize.height) * pixelScale, "pixelScale": pixelScale,
+                    "renderMethod": "Timed native Core Animation presentation frame rendered directly at 2x over a QA-only backing color"
+                ])
+            }
+        }
+        guard celebrationRasters.count == AutoCaptureRobotReaction.allCases.count,
+              Set(celebrationRasters.values).count == AutoCaptureRobotReaction.allCases.count else {
+            throw RenderError.message("Automatic capture reactions did not produce twelve distinct peak rasters")
+        }
+
+        // A phase strip makes the island relationship reviewable: eye-first
+        // anticipation, spring entrance, success reaction and upward retreat.
+        character.stopMotion()
+        let phasePerformance = AutoCaptureRobotPerformance.make(reaction: .peekAndWink,
+                                                                variation: .standard,
+                                                                entrance: .top,
+                                                                reduceMotion: false)
+        character.playAutoCaptureCelebration(phasePerformance)
+        var previousSampleTime: TimeInterval = 0
+        var phaseRasters: [Data] = []
+        var phaseScreenshots: [[String: Any]] = []
+        for phase in phasePerformance.phases {
+            let sampleTime = phase.startTime + phase.duration * 0.58
+            try await Task.sleep(for: .seconds(max(0, sampleTime - previousSampleTime)))
+            previousSampleTime = sampleTime
+            let name = "auto-phase-\(phase.kind.id)"
+            phaseRasters.append(try frame(name, presentation: true, background: darkBackground))
+            phaseScreenshots.append([
+                "file": "native-robot-personality-\(name)@2x.png",
+                "semanticState": phase.kind.id,
+                "appearance": "dark",
+                "logicalWidth": Int(logicalSize.width), "logicalHeight": Int(logicalSize.height),
+                "pixelWidth": Int(logicalSize.width) * pixelScale,
+                "pixelHeight": Int(logicalSize.height) * pixelScale, "pixelScale": pixelScale,
+                "renderMethod": "Timed native phase presentation frame rendered directly at 2x"
+            ])
+        }
+        guard Set(phaseRasters).count == phaseRasters.count else {
+            throw RenderError.message("Anticipation, entrance, reaction and exit phase renders are not distinct")
+        }
+
+        // The accessibility sequence keeps one static cropped peek while its
+        // check is visible. Two samples during the hold must have identical
+        // pixels, proving that no travel, bounce, spin or particles continue.
+        character.stopMotion()
+        reduceMotionEnabled = true
+        let reducedPerformance = AutoCaptureRobotPerformance.make(reaction: .confettiSneeze,
+                                                                  variation: .standard,
+                                                                  entrance: .top,
+                                                                  reduceMotion: true)
+        character.playAutoCaptureCelebration(reducedPerformance)
+        try await Task.sleep(for: .milliseconds(360))
+        let reducedAutoBefore = try frame("auto-reduced-check-light", presentation: true,
+                                          background: lightBackground)
+        let reducedAutoDark = try frame("auto-reduced-check-dark", presentation: true,
+                                        background: darkBackground)
+        try await Task.sleep(for: .milliseconds(80))
+        let reducedAutoAfter = try frame(presentation: true, background: lightBackground)
+        let reducedAutoChange = changedBytes(reducedAutoBefore, reducedAutoAfter)
+        guard reducedAutoChange == 0, !character.hasActiveAmbientMotion else {
+            throw RenderError.message("Reduced automatic confirmation moved by \(reducedAutoChange) bytes or started ambient work")
+        }
+        guard changedBytes(reducedAutoBefore, reducedAutoDark) > 1_000 else {
+            throw RenderError.message("Reduced automatic success check is not readable across backing colors")
+        }
+
+        character.stopMotion()
+        try await Task.sleep(for: .milliseconds(40))
+        let automaticCleanupBefore = try frame()
+        try await Task.sleep(for: .milliseconds(320))
+        let automaticCleanupAfter = try frame()
+        let automaticCleanupChange = changedBytes(automaticCleanupBefore, automaticCleanupAfter)
+        guard automaticCleanupChange == 0, character.currentAutoCaptureReaction == nil,
+              !character.hasActiveAmbientMotion else {
+            throw RenderError.message("Automatic celebration cleanup retained movement or state")
+        }
+
+        // Render the complete production popup as a final composition check:
+        // transparent panel, physical island lip, robot, success cue and ×3 burst.
+        let syntheticIsland = CGRect(x: 690, y: 950, width: 132, height: 32)
+        let islandScreen = AutoCaptureRobotScreen(
+            displayID: 7,
+            frame: CGRect(x: 0, y: 0, width: 1512, height: 982),
+            visibleFrame: CGRect(x: 0, y: 0, width: 1512, height: 950),
+            safeAreaTop: 32,
+            isBuiltIn: true,
+            cameraIslandRect: syntheticIsland
+        )
+        let presenter = AutoCaptureRobotPresenter(dismissDelay: 5,
+                                                   primaryScreen: { islandScreen },
+                                                   reduceMotion: { false },
+                                                   reactionDeck: AutoCaptureRobotReactionDeck(seed: 0xDA_B1_11))
+        defer { presenter.shutdown() }
+        guard presenter.present(additionalCaptureCount: 1),
+              presenter.present(additionalCaptureCount: 2),
+              presenter.badgeText == "×3",
+              presenter.performanceStartCount == 1,
+              let popupPerformance = presenter.currentPerformance,
+              let popupReaction = popupPerformance.phases.first(where: {
+                  if case .reaction = $0.kind { return true }
+                  return false
+              }), let popupContent = presenter.panel.contentView else {
+            throw RenderError.message("Could not compose the production camera-island burst popup")
+        }
+        try await Task.sleep(for: .seconds(popupReaction.startTime + popupReaction.duration * 0.58))
+        popupContent.layoutSubtreeIfNeeded()
+
+        let popupLogicalSize = AutoCaptureRobotGeometry.panelSize
+        func popupRaster(name: String, background: NSColor) throws -> Data {
+            guard let bitmap = NSBitmapImageRep(bitmapDataPlanes: nil,
+                    pixelsWide: Int(popupLogicalSize.width) * pixelScale,
+                    pixelsHigh: Int(popupLogicalSize.height) * pixelScale,
+                    bitsPerSample: 8, samplesPerPixel: 4, hasAlpha: true,
+                    isPlanar: false, colorSpaceName: .deviceRGB,
+                    bytesPerRow: 0, bitsPerPixel: 0),
+                  let bytes = bitmap.bitmapData else {
+                throw RenderError.message("Could not allocate the 2x camera-island popup render")
+            }
+            let byteCount = bitmap.bytesPerRow * bitmap.pixelsHigh
+            bytes.initialize(repeating: 0, count: byteCount)
+            bitmap.size = popupLogicalSize
+            guard let context = NSGraphicsContext(bitmapImageRep: bitmap),
+                  let renderedLayer = popupContent.layer?.presentation() ?? popupContent.layer else {
+                throw RenderError.message("Could not create the 2x camera-island popup context")
+            }
+            NSGraphicsContext.saveGraphicsState()
+            NSGraphicsContext.current = context
+            context.cgContext.setFillColor(background.cgColor)
+            context.cgContext.fill(CGRect(origin: .zero, size: popupLogicalSize))
+            renderedLayer.render(in: context.cgContext)
+            NSGraphicsContext.restoreGraphicsState()
+            guard let png = bitmap.representation(using: .png, properties: [:]) else {
+                throw RenderError.message("Could not encode the 2x camera-island popup render")
+            }
+            try png.write(to: output.appendingPathComponent("native-auto-capture-island-\(name)@2x.png"),
+                          options: .atomic)
+            return Data(bytes: bytes, count: byteCount)
+        }
+        let islandLight = try popupRaster(name: "burst-light", background: lightBackground)
+        let islandDark = try popupRaster(name: "burst-dark", background: darkBackground)
+        guard changedBytes(islandLight, islandDark) > 2_000,
+              presenter.panel.ignoresMouseEvents,
+              presenter.panel.sharingType == .none,
+              !presenter.panel.isKeyWindow,
+              !presenter.panel.isMainWindow else {
+            throw RenderError.message("Camera-island burst popup lost contrast, focus safety or capture exclusion")
+        }
+
         let stateScreenshots: [[String: Any]] = states.map { state in
             var record: [String: Any] = [
                 "file": "native-robot-personality-\(state.name)@2x.png",
@@ -786,18 +981,46 @@ private final class NativeRenderTests: NSObject, NSApplicationDelegate {
             "pixelHeight": Int(logicalSize.height) * pixelScale, "pixelScale": pixelScale,
             "renderMethod": "RobotCharacterView cacheDisplay directly into a 2x bitmap with injected Reduce Motion"
         ]
-        print("PASS: Native robot personality states are distinct; digest changed \(digestMotionChange) bytes; Reduce Motion and cleanup changed 0 bytes.")
+        let reducedAutoScreenshots: [[String: Any]] = [
+            ("auto-reduced-check-light", "light"), ("auto-reduced-check-dark", "dark")
+        ].map { item in
+            ["file": "native-robot-personality-\(item.0)@2x.png",
+             "semanticState": "automatic-success-reduced-motion", "appearance": item.1,
+             "logicalWidth": Int(logicalSize.width), "logicalHeight": Int(logicalSize.height),
+             "pixelWidth": Int(logicalSize.width) * pixelScale,
+             "pixelHeight": Int(logicalSize.height) * pixelScale, "pixelScale": pixelScale,
+             "renderMethod": "Static reduced automatic-confirmation check rendered directly at 2x"]
+        }
+        let islandScreenshots: [[String: Any]] = [
+            ("burst-light", "light"), ("burst-dark", "dark")
+        ].map { item in
+            ["file": "native-auto-capture-island-\(item.0)@2x.png",
+             "semanticState": "camera-island-burst-×3", "appearance": item.1,
+             "logicalWidth": Int(popupLogicalSize.width),
+             "logicalHeight": Int(popupLogicalSize.height),
+             "pixelWidth": Int(popupLogicalSize.width) * pixelScale,
+             "pixelHeight": Int(popupLogicalSize.height) * pixelScale, "pixelScale": pixelScale,
+             "renderMethod": "Complete production popup presentation tree rendered directly at 2x"]
+        }
+        print("PASS: Native robot personality and twelve automatic reactions are distinct; full and reduced timelines clean up without drift.")
         return [
-            "description": "Native transient RobotCharacterView personality states rendered at 2x after settling, plus live digest motion and lifecycle checks.",
+            "description": "Native transient RobotCharacterView personality states and twelve automatic capture celebrations rendered at 2x, plus live motion and lifecycle checks.",
             "fixturePrivacy": "Code-drawn local character only; no clipboard, files, network, notifications or personal content.",
             "deterministicStateCount": states.count,
             "distinctStateRasterCount": Set(stateRasters.values).count,
             "changedBytesFromIdle": changedFromIdle,
             "digestAnimation": ["sampleIntervalSeconds": 0.26, "changedBytes": digestMotionChange],
-            "reduceMotion": ["ambientWorkActive": false, "changedBytesOverHalfSecond": reducedMotionChange],
+            "automaticCelebrations": ["reactionCount": celebrationRasters.count,
+                                       "distinctPeakRasterCount": Set(celebrationRasters.values).count,
+                                       "selectionPolicy": "Shuffled bag; previous three excluded"],
+            "reduceMotion": ["ambientWorkActive": false,
+                             "genericChangedBytesOverHalfSecond": reducedMotionChange,
+                             "automaticChangedBytesDuringCheck": reducedAutoChange],
             "cleanup": ["mood": "hidden", "ambientWorkActive": false,
-                         "changedBytesOverPointFourSeconds": cleanupChange],
+                         "genericChangedBytesOverPointFourSeconds": cleanupChange,
+                         "automaticChangedBytesOverPointThreeSeconds": automaticCleanupChange],
             "screenshots": stateScreenshots + motionScreenshots + [reducedScreenshot]
+                + celebrationScreenshots + phaseScreenshots + reducedAutoScreenshots + islandScreenshots
         ]
     }
 

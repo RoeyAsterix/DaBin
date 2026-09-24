@@ -10,7 +10,7 @@ Auto Capture is **off by default**. If you turn it on, DaBin can save later clip
 
 Screenshot-folder access begins only after you choose a folder in the macOS folder picker. DaBin retains that authorization as a security-scoped bookmark so it can monitor the chosen location while Auto Capture is enabled. New image files in that folder are treated as screenshot captures, so choose a dedicated screenshot folder. macOS does not provide a public notification for every system screenshot: DaBin can see images written to the chosen folder, while screenshots sent to the clipboard can arrive through clipboard monitoring. A screenshot saved somewhere else is outside the folder monitor.
 
-DaBin records a best-effort source application when macOS makes one reasonably identifiable. Source attribution can be unavailable or imprecise, so it is descriptive rather than proof of origin. DaBin itself and common password managers are excluded by default. If the same image arrives through the screenshot folder and clipboard within a short interval, a normalized fingerprint suppresses the second channel's copy; repeating the image later or through the same channel remains a new action. Four or more successful automatic actions in one capture hour become an expandable hourly group on Daily. A brief nonactivating robot popup confirms successful automatic saves.
+DaBin records a best-effort source application when macOS makes one reasonably identifiable. Source attribution can be unavailable or imprecise, so it is descriptive rather than proof of origin. DaBin itself and common password managers are excluded by default. If the same image arrives through the screenshot folder and clipboard within a short interval, a normalized fingerprint suppresses the second channel's copy; repeating the image later or through the same channel remains a new action. Four or more successful automatic actions in one capture hour become an expandable hourly group on Daily. A brief nonactivating robot emerges from the primary display's camera island, or the external primary display's top-right, and plays one of twelve shuffled success reactions. Rapid captures share that popup and update its `×N` count.
 
 Automatic captures use the same local archive as manual captures. An automatically captured link never requests a website preview, even if previews are enabled for manually saved links. The confirmation appears only after an item has saved and is excluded from screen capture while visible.
 
@@ -19,7 +19,7 @@ Automatic captures use the same local archive as manual captures. An automatical
 ## Start here
 
 - [Native app guide](native/README.md)
-- [0.3.10 release notes](docs/RELEASE_NOTES_0.3.10.md)
+- [0.3.11 release notes](docs/RELEASE_NOTES_0.3.11.md)
 - [One-page PDF guide](docs/DaBin-Quick-Guide.pdf)
 - [Architecture](native/ARCHITECTURE.md)
 - [QA results](native/QA_RESULTS.md)
@@ -43,7 +43,7 @@ The optimized app is written to `native/build/DaBin.app`. Full GUI QA needs an u
 
 The direct build has a user-initiated GitHub Releases channel under **Settings → Software updates**. It accepts only this repository’s fixed HTTPS release path, verifies the published byte count and SHA-256 checksum, then gives the bundled installer a private, one-use update document. The installer validates and consumes that document, re-verifies the package and application, asks before replacement, and backs up the previous installation. The capture archive remains untouched. There are no silent update checks.
 
-Release 0.3.10 adds a dedicated Text filter immediately before Links. It isolates copied, pasted and dragged plain text across Daily, Search, Weekly and hourly summaries while retaining 0.3.9's active-date Weekly layout, complete-day export, compact header, Auto Capture and verified update handoff.
+Release 0.3.11 gives successful Auto Capture a smoother camera-island entrance, twelve shuffled celebrations, nonrepeating variety and one shared rapid-capture count. Reduce Motion uses a quiet peek, checkmark and fade. It retains the Text filter, active-date Weekly layout, complete-day export, compact header and verified update handoff.
 
 The current personal release is ad-hoc signed for the owner’s Mac. General distribution still requires a stable Developer ID signature and Apple notarization. The Mac App Store configuration compiles without the direct downloader and helper; Store builds update through Apple.
 

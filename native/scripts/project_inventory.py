@@ -33,7 +33,7 @@ def source_group(path):
                 "AutoCaptureService", "AutoCaptureFingerprint", "ScreenshotFolderMonitor"}:
         return "Services"
     if name in {"CornerController", "RobotView", "WindowDragHandle", "DailyCaptureView",
-                "AutoCaptureRobotPresenter"}:
+                "AutoCaptureRobotPresenter", "AutoCaptureRobotCelebration"}:
         return "Desktop"
     return "Interface"
 

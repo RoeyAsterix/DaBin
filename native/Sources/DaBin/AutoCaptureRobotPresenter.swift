@@ -2,30 +2,39 @@ import AppKit
 import CoreGraphics
 import QuartzCore
 
-/// The screen facts needed to place the passive automatic-capture confirmation.
-/// Keeping these as values makes multi-display and notch geometry testable without
-/// creating a window or depending on the current desktop arrangement.
+/// Value facts used to place the passive success confirmation without relying
+/// on whichever display currently owns the key window.
 struct AutoCaptureRobotScreen: Equatable {
     let displayID: CGDirectDisplayID
     let frame: CGRect
     let visibleFrame: CGRect
     let safeAreaTop: CGFloat
     let isBuiltIn: Bool
+    let cameraIslandRect: CGRect?
+
+    init(displayID: CGDirectDisplayID, frame: CGRect, visibleFrame: CGRect,
+         safeAreaTop: CGFloat, isBuiltIn: Bool, cameraIslandRect: CGRect? = nil) {
+        self.displayID = displayID
+        self.frame = frame
+        self.visibleFrame = visibleFrame
+        self.safeAreaTop = safeAreaTop
+        self.isBuiltIn = isBuiltIn
+        self.cameraIslandRect = cameraIslandRect
+    }
 }
 
 enum AutoCaptureRobotGeometry {
-    static let panelSize = CGSize(width: 88, height: 104)
+    static let panelSize = CGSize(width: 104, height: 122)
     static let edgeInset: CGFloat = 8
 
-    /// Selects the hardware primary display. `NSScreen.main` follows the key
-    /// window, so it is deliberately not used for this background presentation.
     static func primaryScreen(in screens: [AutoCaptureRobotScreen],
                               mainDisplayID: CGDirectDisplayID) -> AutoCaptureRobotScreen? {
         screens.first { $0.displayID == mainDisplayID }
     }
 
-    /// The built-in display presents below its safe top area, centered under the
-    /// camera housing. An external primary display uses its unobtrusive top-right.
+    /// A real camera housing is the robot's home: the panel meets its lower edge
+    /// and shares its center. Other built-in displays retain a safe top-center
+    /// fallback; external displays use the unobtrusive top-right.
     static func panelFrame(on screen: AutoCaptureRobotScreen,
                            size requestedSize: CGSize = panelSize,
                            inset requestedInset: CGFloat = edgeInset) -> CGRect {
@@ -36,28 +45,36 @@ enum AutoCaptureRobotGeometry {
         let size = CGSize(width: min(max(0, requestedSize.width), visible.width),
                           height: min(max(0, requestedSize.height), visible.height))
         let inset = max(0, requestedInset)
+        let island = screen.cameraIslandRect?.standardized.intersection(display)
+        let validIsland = island.flatMap { $0.isNull || $0.isEmpty ? nil : $0 }
+
         let topLimit: CGFloat
-        if screen.isBuiltIn {
+        if let validIsland {
+            topLimit = min(visible.maxY, validIsland.minY)
+        } else if screen.isBuiltIn {
             let safeTop = min(max(0, screen.safeAreaTop), display.height)
-            topLimit = min(visible.maxY, display.maxY - safeTop)
+            topLimit = min(visible.maxY, display.maxY - safeTop) - inset
         } else {
-            topLimit = visible.maxY
+            topLimit = visible.maxY - inset
         }
 
-        let idealX = screen.isBuiltIn
-            ? display.midX - size.width / 2
-            : visible.maxX - size.width - inset
-        let idealY = topLimit - size.height - inset
+        let idealX: CGFloat
+        if let validIsland {
+            idealX = validIsland.midX - size.width / 2
+        } else if screen.isBuiltIn {
+            idealX = display.midX - size.width / 2
+        } else {
+            idealX = visible.maxX - size.width - inset
+        }
         return CGRect(x: min(max(idealX, visible.minX), visible.maxX - size.width),
-                      y: min(max(idealY, visible.minY), visible.maxY - size.height),
+                      y: min(max(topLimit - size.height, visible.minY), visible.maxY - size.height),
                       width: size.width, height: size.height)
     }
 
     @MainActor
     static func livePrimaryScreen(screens: [NSScreen] = NSScreen.screens,
                                   mainDisplayID: CGDirectDisplayID = CGMainDisplayID()) -> AutoCaptureRobotScreen? {
-        let values = screens.compactMap(screenValue)
-        return primaryScreen(in: values, mainDisplayID: mainDisplayID)
+        primaryScreen(in: screens.compactMap(screenValue), mainDisplayID: mainDisplayID)
     }
 
     @MainActor
@@ -69,16 +86,16 @@ enum AutoCaptureRobotGeometry {
                                       frame: screen.frame,
                                       visibleFrame: screen.visibleFrame,
                                       safeAreaTop: screen.safeAreaInsets.top,
-                                      isBuiltIn: CGDisplayIsBuiltin(displayID) != 0)
+                                      isBuiltIn: CGDisplayIsBuiltin(displayID) != 0,
+                                      cameraIslandRect: CornerGeometry.cameraIslandRect(on: screen))
     }
 }
 
-/// Pure burst reducer. Every presentation returns a generation that owns the
-/// current dismissal deadline. A superseded deadline cannot dismiss a later burst.
+/// Pure count reducer retained separately from presentation timing. A capture
+/// can update the count without restarting the active celebration.
 struct AutoCaptureRobotBurstState: Equatable {
     private(set) var visibleCount = 0
     private(set) var generation: UInt64 = 0
-
     var isVisible: Bool { visibleCount > 0 }
 
     @discardableResult
@@ -86,9 +103,7 @@ struct AutoCaptureRobotBurstState: Equatable {
         guard additionalCount > 0 else { return nil }
         generation &+= 1
         if isVisible {
-            visibleCount = additionalCount > Int.max - visibleCount
-                ? Int.max
-                : visibleCount + additionalCount
+            visibleCount = additionalCount > Int.max - visibleCount ? Int.max : visibleCount + additionalCount
         } else {
             visibleCount = additionalCount
         }
@@ -102,7 +117,6 @@ struct AutoCaptureRobotBurstState: Equatable {
         return true
     }
 
-    /// Invalidates any scheduled generation even if the panel is already hidden.
     @discardableResult
     mutating func dismissNow() -> UInt64 {
         generation &+= 1
@@ -120,6 +134,8 @@ private final class AutoCaptureRobotPanel: NSPanel {
 private final class AutoCaptureRobotContentView: NSView {
     private let character: RobotCharacterView
     private let countBadge = NSTextField(labelWithString: "")
+    private let islandLip = CALayer()
+    private(set) var badgeText: String?
 
     init(frame frameRect: CGRect,
          reduceMotion: @escaping RobotCharacterView.ReduceMotionProvider) {
@@ -127,6 +143,7 @@ private final class AutoCaptureRobotContentView: NSView {
         super.init(frame: frameRect)
         wantsLayer = true
         layer?.backgroundColor = NSColor.clear.cgColor
+        layer?.masksToBounds = true
         addSubview(character)
 
         countBadge.font = .monospacedDigitSystemFont(ofSize: 11, weight: .bold)
@@ -134,15 +151,28 @@ private final class AutoCaptureRobotContentView: NSView {
         countBadge.textColor = .white
         countBadge.wantsLayer = true
         countBadge.layer?.backgroundColor = NSColor(calibratedRed: 0.32, green: 0.22,
-                                                    blue: 0.43, alpha: 0.96).cgColor
-        countBadge.layer?.borderColor = NSColor(calibratedWhite: 1, alpha: 0.46).cgColor
-        countBadge.layer?.borderWidth = 0.7
-        countBadge.layer?.cornerRadius = 9
+                                                    blue: 0.43, alpha: 0.98).cgColor
+        countBadge.layer?.borderColor = NSColor(calibratedWhite: 1, alpha: 0.62).cgColor
+        countBadge.layer?.borderWidth = 0.8
+        countBadge.layer?.cornerRadius = 10
         countBadge.layer?.shadowColor = NSColor.black.cgColor
-        countBadge.layer?.shadowOpacity = 0.18
-        countBadge.layer?.shadowRadius = 2
+        countBadge.layer?.shadowOpacity = 0.28
+        countBadge.layer?.shadowRadius = 3
         countBadge.layer?.shadowOffset = CGSize(width: 0, height: -1)
+        countBadge.isHidden = true
         addSubview(countBadge)
+
+        islandLip.backgroundColor = NSColor(calibratedWhite: 0.055, alpha: 0.98).cgColor
+        islandLip.borderColor = NSColor(calibratedWhite: 1, alpha: 0.12).cgColor
+        islandLip.borderWidth = 0.7
+        islandLip.cornerRadius = 6
+        islandLip.shadowColor = NSColor.black.cgColor
+        islandLip.shadowOpacity = 0.32
+        islandLip.shadowRadius = 3
+        islandLip.shadowOffset = CGSize(width: 0, height: -1)
+        islandLip.zPosition = 50
+        islandLip.isHidden = true
+        layer?.addSublayer(islandLip)
         setAccessibilityElement(false)
     }
 
@@ -150,48 +180,77 @@ private final class AutoCaptureRobotContentView: NSView {
 
     override func layout() {
         super.layout()
-        character.frame = CGRect(x: 8, y: 8, width: max(0, bounds.width - 16),
-                                 height: max(0, bounds.height - 16))
-        countBadge.frame = CGRect(x: max(4, bounds.maxX - 35), y: max(4, bounds.maxY - 27),
-                                  width: 29, height: 19)
+        character.frame = CGRect(x: 8, y: 5, width: max(0, bounds.width - 16),
+                                 height: max(0, bounds.height - 13))
+        countBadge.frame = CGRect(x: max(4, bounds.maxX - 39), y: max(4, bounds.maxY - 30),
+                                  width: 33, height: 21)
+        islandLip.frame = CGRect(x: bounds.midX - 29, y: bounds.maxY - 9, width: 58, height: 12)
     }
 
-    func present(count: Int, entrance: RobotEntrance) {
-        countBadge.stringValue = count > 99 ? "99+" : "×\(count)"
-        character.refreshMotionPreference()
-        character.send(.reveal(entrance))
-        character.send(.result(.success))
+    func begin(_ performance: AutoCaptureRobotPerformance, count: Int, showIslandLip: Bool) {
+        updateCount(count)
+        islandLip.isHidden = !showIslandLip
+        character.playAutoCaptureCelebration(performance)
     }
 
-    func hideCharacter() { character.stopMotion() }
+    func updateCount(_ count: Int) {
+        guard count > 1 else {
+            badgeText = nil
+            countBadge.stringValue = ""
+            countBadge.isHidden = true
+            return
+        }
+        let value = count > 99 ? "99+" : "×\(count)"
+        badgeText = value
+        countBadge.stringValue = value
+        countBadge.isHidden = false
+    }
+
+    func updateIslandLip(_ visible: Bool) { islandLip.isHidden = !visible }
+
+    func hideCharacter() {
+        badgeText = nil
+        countBadge.isHidden = true
+        islandLip.isHidden = true
+        character.stopMotion()
+    }
 }
 
 /// Shows successful automatic captures without activating DaBin or accepting
-/// input. The same passive panel is reused for the presenter's full lifetime.
+/// input. One passive panel and one animation are reused for each visible burst.
 @MainActor
 final class AutoCaptureRobotPresenter {
     typealias PrimaryScreenProvider = @MainActor () -> AutoCaptureRobotScreen?
     typealias ReduceMotionProvider = () -> Bool
 
     private(set) var state = AutoCaptureRobotBurstState()
+    private(set) var currentPerformance: AutoCaptureRobotPerformance?
+    private(set) var performanceStartCount = 0
     let panel: NSPanel
+    var badgeText: String? { content.badgeText }
 
     private let content: AutoCaptureRobotContentView
     private let primaryScreenProvider: PrimaryScreenProvider
-    private let dismissDelay: TimeInterval
-    private var dismissTask: Task<Void, Never>?
+    private let reduceMotionProvider: ReduceMotionProvider
+    private let dismissDelayOverride: TimeInterval?
+    private var reactionDeck: AutoCaptureRobotReactionDeck
+    private var performanceTask: Task<Void, Never>?
     private var hideTask: Task<Void, Never>?
+    private var performanceToken: UInt64 = 0
     private var isShutDown = false
 
-    init(dismissDelay: TimeInterval = 2.0,
-         primaryScreen: @escaping PrimaryScreenProvider = {
-             AutoCaptureRobotGeometry.livePrimaryScreen()
-         },
+    /// `dismissDelay` is a focused-test hook. Production uses the complete
+    /// anticipation-to-exit duration produced by the reaction deck.
+    init(dismissDelay: TimeInterval? = nil,
+         primaryScreen: @escaping PrimaryScreenProvider = { AutoCaptureRobotGeometry.livePrimaryScreen() },
          reduceMotion: @escaping ReduceMotionProvider = {
              NSWorkspace.shared.accessibilityDisplayShouldReduceMotion
-         }) {
-        self.dismissDelay = max(0, dismissDelay)
+         },
+         reactionDeck: AutoCaptureRobotReactionDeck = AutoCaptureRobotReactionDeck()) {
+        dismissDelayOverride = dismissDelay.map { max(0, $0) }
         primaryScreenProvider = primaryScreen
+        reduceMotionProvider = reduceMotion
+        self.reactionDeck = reactionDeck
 
         let frame = CGRect(origin: .zero, size: AutoCaptureRobotGeometry.panelSize)
         let panel = AutoCaptureRobotPanel(contentRect: frame,
@@ -210,8 +269,6 @@ final class AutoCaptureRobotPresenter {
         panel.hidesOnDeactivate = false
         panel.isReleasedWhenClosed = false
         panel.isMovableByWindowBackground = false
-        // Keep a confirmation that is still visible from being composited into
-        // the user's next screenshot or screen-share frame.
         panel.sharingType = .none
         panel.animationBehavior = .none
         panel.becomesKeyOnlyIfNeeded = false
@@ -220,43 +277,61 @@ final class AutoCaptureRobotPresenter {
         panel.alphaValue = 0
     }
 
-    /// Adds successful captures to the current visible burst, repositions on the
-    /// hardware primary display, and gives the whole burst a fresh dismissal time.
+    /// Starts one celebration for a new burst. Later successes update the same
+    /// badge immediately and leave the active sequence untouched.
     @discardableResult
     func present(additionalCaptureCount: Int = 1) -> Bool {
         guard !isShutDown, additionalCaptureCount > 0,
               let screen = primaryScreenProvider() else { return false }
         let frame = AutoCaptureRobotGeometry.panelFrame(on: screen)
-        guard !frame.isEmpty,
-              let generation = state.present(additionalCount: additionalCaptureCount) else { return false }
+        guard !frame.isEmpty else { return false }
 
-        dismissTask?.cancel()
-        hideTask?.cancel(); hideTask = nil
-        let wasVisible = panel.isVisible
+        let wasAnimating = state.isVisible
+        guard state.present(additionalCount: additionalCaptureCount) != nil else { return false }
         panel.setFrame(frame, display: true)
-        content.present(count: state.visibleCount, entrance: screen.isBuiltIn ? .top : .right)
 
-        if !wasVisible { panel.alphaValue = 0 }
+        if wasAnimating {
+            content.updateCount(state.visibleCount)
+            content.updateIslandLip(screen.cameraIslandRect != nil)
+            return true
+        }
+
+        hideTask?.cancel(); hideTask = nil
+        performanceTask?.cancel(); performanceTask = nil
+        performanceToken &+= 1
+        let token = performanceToken
+        let entrance: RobotEntrance = screen.isBuiltIn ? .top : .right
+        let performance = reactionDeck.nextPerformance(entrance: entrance,
+                                                       reduceMotion: reduceMotionProvider())
+        currentPerformance = performance
+        performanceStartCount += 1
+        content.begin(performance, count: state.visibleCount,
+                      showIslandLip: screen.cameraIslandRect != nil)
+
+        panel.alphaValue = 1
         panel.orderFrontRegardless()
-        fadePanel(to: 1, duration: 0.16)
-        scheduleDismiss(generation: generation)
+        scheduleCompletion(token: token,
+                           delay: dismissDelayOverride ?? performance.totalDuration)
         return true
     }
 
     func dismiss() {
         guard !isShutDown else { return }
-        dismissTask?.cancel(); dismissTask = nil
+        performanceTask?.cancel(); performanceTask = nil
         hideTask?.cancel(); hideTask = nil
-        let generation = state.dismissNow()
-        hidePanel(generation: generation, animated: panel.isVisible)
+        performanceToken &+= 1
+        state.dismissNow()
+        currentPerformance = nil
+        hidePanel(animated: panel.isVisible)
     }
 
-    /// One-way lifecycle cleanup for the composition root.
     func shutdown() {
         guard !isShutDown else { return }
-        dismissTask?.cancel(); dismissTask = nil
+        performanceTask?.cancel(); performanceTask = nil
         hideTask?.cancel(); hideTask = nil
+        performanceToken &+= 1
         state.dismissNow()
+        currentPerformance = nil
         isShutDown = true
         panel.alphaValue = 0
         panel.orderOut(nil)
@@ -264,44 +339,39 @@ final class AutoCaptureRobotPresenter {
         panel.close()
     }
 
-    private func scheduleDismiss(generation: UInt64) {
-        let delay = dismissDelay
-        dismissTask = Task { @MainActor [weak self] in
-            try? await Task.sleep(for: .seconds(delay))
-            guard !Task.isCancelled else { return }
-            self?.dismiss(generation: generation)
+    private func scheduleCompletion(token: UInt64, delay: TimeInterval) {
+        performanceTask = Task { @MainActor [weak self] in
+            try? await Task.sleep(for: .seconds(max(0, delay)))
+            guard !Task.isCancelled, let self, self.performanceToken == token else { return }
+            let latestGeneration = self.state.generation
+            guard self.state.dismiss(ifCurrent: latestGeneration) else { return }
+            self.performanceTask = nil
+            self.currentPerformance = nil
+            self.hidePanel(animated: true)
         }
     }
 
-    private func dismiss(generation: UInt64) {
-        guard state.dismiss(ifCurrent: generation) else { return }
-        dismissTask = nil
-        hidePanel(generation: generation, animated: true)
-    }
-
-    private func hidePanel(generation: UInt64, animated: Bool) {
+    private func hidePanel(animated: Bool) {
         guard animated else {
             panel.alphaValue = 0
             panel.orderOut(nil)
             content.hideCharacter()
             return
         }
-        let duration = 0.18
+        let duration = 0.10
         fadePanel(to: 0, duration: duration)
         hideTask?.cancel()
+        let token = performanceToken
         hideTask = Task { @MainActor [weak self] in
             try? await Task.sleep(for: .seconds(duration))
-            guard !Task.isCancelled, let self,
-                  !self.state.isVisible, self.state.generation == generation else { return }
+            guard !Task.isCancelled, let self, self.performanceToken == token,
+                  !self.state.isVisible else { return }
             self.panel.orderOut(nil)
             self.content.hideCharacter()
             self.hideTask = nil
         }
     }
 
-    /// Alpha is the only panel-level transition. RobotCharacterView removes its
-    /// travel, keyframes, and ambient motion when the macOS preference is enabled,
-    /// leaving this short fade as the complete Reduce Motion presentation.
     private func fadePanel(to alpha: CGFloat, duration: TimeInterval) {
         NSAnimationContext.runAnimationGroup { context in
             context.duration = duration

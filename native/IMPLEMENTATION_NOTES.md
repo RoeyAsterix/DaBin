@@ -22,6 +22,16 @@ The Export Day icon opens a small native popover beneath the button. Empty days 
 
 The Daily and Weekly header menu now uses the outline SF Symbol `gearshape` instead of `ellipsis`. Its 13-point symbol, 30 × 30-point hit area and muted colour match the adjacent task, search and reminder controls. The menu actions are unchanged, while the help and accessibility label now read **Settings and options**.
 
+## Update 0.3.11
+
+Automatic save confirmation now has its own value-only animation policy in `AutoCaptureRobotCelebration.swift`, separate from the interactive paste/drop robot reducer. `AutoCaptureRobotReactionDeck` uses a seeded shuffled bag of twelve reactions and carries its previous-three history across bag boundaries. Each performance fixes the reaction, bounded timing/gaze/entrance variation, display-edge entrance, ordered phases and total duration before any layer animation starts.
+
+`RobotCharacterView` schedules one automatic timeline for anticipation, spring entrance, a reaction-specific success move and complete retreat. The reactions reuse the robot's eyes, arms, lid, intake card and body, with small native vector props for the check, clipboard, flash, stamp and confetti. They do not add sound, image assets or windows. The ordinary reveal, hover, drag, digest, success, partial-success and failure states remain unchanged.
+
+`AutoCaptureRobotPresenter` still owns one nonactivating, click-through, capture-excluded panel. The first success starts one performance; later successes while it is active only update the `×N` badge. A single success relies on the robot's success cue and omits a redundant `×1`. The panel uses the exact camera-island rectangle macOS reports when available, meets its lower edge and centers beneath it. Safe top-center and external top-right fallbacks remain bounded by the usable display.
+
+Reduce Motion is evaluated for each new burst and selects a brief peek, checkmark and fade with no body travel, rotation, squash, spring, particles or ambient task. Dismissal and shutdown cancel the sequence, remove transient layers and order the panel out. The existing `AutoCaptureService.onSaved` boundary remains the sole caller, after complete durable success; failure and partial-failure paths cannot celebrate.
+
 ## Update 0.3.6
 
 `CaptureRow` now presents every top-level individual caption as a lightly filled continuous rounded rectangle with a 0.75-point neutral stroke. Carried tasks retain a 1-point theme-colour stroke. Six points of outer vertical spacing keep adjacent frames from touching, and the Daily panel-height estimate includes that spacing.

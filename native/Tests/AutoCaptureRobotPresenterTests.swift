@@ -33,6 +33,15 @@ private struct AutoCaptureRobotPresenterTests {
             safeAreaTop: 32,
             isBuiltIn: true
         )
+        let islandRect = CGRect(x: 690, y: 950, width: 132, height: 32)
+        let builtInWithIsland = AutoCaptureRobotScreen(
+            displayID: 7,
+            frame: builtIn.frame,
+            visibleFrame: builtIn.visibleFrame,
+            safeAreaTop: builtIn.safeAreaTop,
+            isBuiltIn: true,
+            cameraIslandRect: islandRect
+        )
 
         try expect(AutoCaptureRobotGeometry.primaryScreen(in: [external, builtIn], mainDisplayID: 7) == builtIn,
                    "The hardware main display ID wins even when it is not first")
@@ -46,6 +55,13 @@ private struct AutoCaptureRobotPresenterTests {
                    "The built-in presentation sits below both the safe top and edge inset")
         try expect(builtIn.visibleFrame.contains(builtInFrame),
                    "The built-in presentation remains inside the usable display")
+
+        let islandFrame = AutoCaptureRobotGeometry.panelFrame(on: builtInWithIsland)
+        try expect(near(islandFrame.midX, islandRect.midX)
+                   && near(islandFrame.maxY, islandRect.minY),
+                   "A real camera island centers the robot and meets its lower edge")
+        try expect(builtInWithIsland.visibleFrame.contains(islandFrame),
+                   "The camera-island presentation remains in the usable display")
 
         let externalFrame = AutoCaptureRobotGeometry.panelFrame(on: external)
         try expect(near(externalFrame.maxX, external.visibleFrame.maxX - 8),
@@ -80,9 +96,11 @@ private struct AutoCaptureRobotPresenterTests {
         try expect(!burst.isVisible && burst.generation == cancelledGeneration,
                    "Immediate dismissal invalidates scheduled callbacks")
 
-        let presenter = AutoCaptureRobotPresenter(dismissDelay: 0.06,
-                                                   primaryScreen: { builtIn },
-                                                   reduceMotion: { true })
+        var reduceMotion = true
+        let presenter = AutoCaptureRobotPresenter(dismissDelay: 0.12,
+                                                   primaryScreen: { builtInWithIsland },
+                                                   reduceMotion: { reduceMotion },
+                                                   reactionDeck: AutoCaptureRobotReactionDeck(seed: 77))
         let panelIdentity = ObjectIdentifier(presenter.panel)
         try expect(presenter.panel.styleMask.contains(.borderless)
                    && presenter.panel.styleMask.contains(.nonactivatingPanel),
@@ -94,21 +112,69 @@ private struct AutoCaptureRobotPresenterTests {
                    "The automatic confirmation is excluded from screen capture")
         try expect(presenter.present(additionalCaptureCount: 1),
                    "A valid automatic capture presents successfully")
+        guard let firstPerformance = presenter.currentPerformance else {
+            throw NSError(domain: "DaBinAutoCaptureRobotPresenterTests", code: 2,
+                          userInfo: [NSLocalizedDescriptionKey: "A successful presentation did not create a performance"])
+        }
+        try expect(firstPerformance.reduceMotion
+                   && firstPerformance.phases.map(\.kind) == [.reducedPeek, .successCheck, .fade],
+                   "The live accessibility preference selects the reduced peek, check and fade")
+        try expect(presenter.performanceStartCount == 1 && presenter.badgeText == nil,
+                   "One success starts one performance and does not show a redundant ×1 badge")
         try expect(ObjectIdentifier(presenter.panel) == panelIdentity && presenter.panel.isVisible,
                    "Presentation reuses the one panel instead of creating a window")
         try expect(presenter.present(additionalCaptureCount: 2)
                    && presenter.state.visibleCount == 3
+                   && presenter.performanceStartCount == 1
+                   && presenter.currentPerformance?.reaction == firstPerformance.reaction
+                   && presenter.badgeText == "×3"
                    && ObjectIdentifier(presenter.panel) == panelIdentity,
-                   "A live burst reuses its panel and updates its count")
+                   "A rapid burst updates ×3 without restarting or changing the reaction")
         try expect(!presenter.panel.isKeyWindow && !presenter.panel.isMainWindow,
                    "Ordering the passive panel never makes it key or main")
+        try expect(presenter.panel.ignoresMouseEvents && presenter.panel.sharingType == .none,
+                   "The visible burst remains click-through and excluded from capture")
 
         try await Task.sleep(for: .milliseconds(300))
         try expect(!presenter.state.isVisible && !presenter.panel.isVisible,
-                   "The latest burst deadline fades out and orders out the panel")
+                   "The one performance completes, fades out and orders out the panel")
+
+        reduceMotion = false
+        try expect(presenter.present(additionalCaptureCount: 1),
+                   "A later burst can start after cleanup")
+        try expect(presenter.currentPerformance?.reduceMotion == false
+                   && presenter.performanceStartCount == 2,
+                   "The accessibility preference is read live for each new burst")
+        presenter.dismiss()
+        try await Task.sleep(for: .milliseconds(180))
+        try expect(!presenter.panel.isVisible && !presenter.state.isVisible,
+                   "Explicit dismissal cancels and cleans the active performance")
         presenter.shutdown()
         try expect(!presenter.present(additionalCaptureCount: 1),
                    "A shut-down presenter cannot recreate its passive UI")
+
+        let externalPresenter = AutoCaptureRobotPresenter(
+            dismissDelay: 0.04,
+            primaryScreen: { external },
+            reduceMotion: { false },
+            reactionDeck: AutoCaptureRobotReactionDeck(seed: 91)
+        )
+        try expect(externalPresenter.present(additionalCaptureCount: 1)
+                   && externalPresenter.currentPerformance?.entrance == .right,
+                   "An external hardware primary display uses the right-edge entrance")
+        try expect(externalPresenter.panel.frame == externalFrame,
+                   "The external popup uses the tested top-right safe-area frame")
+        externalPresenter.shutdown()
+
+        let unavailablePresenter = AutoCaptureRobotPresenter(
+            primaryScreen: { nil },
+            reduceMotion: { false },
+            reactionDeck: AutoCaptureRobotReactionDeck(seed: 92)
+        )
+        try expect(!unavailablePresenter.present(additionalCaptureCount: 1)
+                   && !unavailablePresenter.panel.isVisible,
+                   "No popup is guessed when the hardware primary display is unavailable")
+        unavailablePresenter.shutdown()
 
         print("PASS: \(checks) automatic-capture robot presenter checks")
     }

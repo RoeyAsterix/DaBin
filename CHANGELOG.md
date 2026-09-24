@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3.11 — 2026-09-24
+
+- Rebuilt the successful Auto Capture confirmation as a single polished anticipation, entrance, reaction and exit timeline that lives against the Mac camera island.
+- Added twelve shuffled robot celebrations with no repeat among the previous three, plus subtle timing, gaze and entrance variation.
+- Kept rapid captures in one click-through panel: the current reaction finishes once while a compact `×N` badge updates immediately.
+- Added a dedicated Reduce Motion sequence with a short static peek, success check and gentle fade, with no sound.
+- Anchored the popup to the real camera-island rectangle when macOS reports one, retained a safe built-in fallback and kept external-primary placement at the top-right.
+
 ## 0.3.10 — 2026-09-24
 
 - Added a dedicated **Text** filter immediately before Links in the centered filter row.
