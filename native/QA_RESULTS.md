@@ -1,5 +1,19 @@
 # DaBin QA cycle — 24 September 2026
 
+## Mac App Store preflight — local build 0.3.18 (45)
+
+The final local Store review added a one-time first-launch Daily presentation and a persistent menu bar item with Open Daily, live Auto Capture state, Pause/Resume, Settings and Quit. It also forces a solid board when macOS Reduce Transparency is enabled, announces export results to VoiceOver, declares the export-compliance answer in the bundle, moves Store archives outside the File Provider source tree, rechecks the archived app, and rejects quarantine metadata recursively. The bundled privacy renderer was corrected to require all nine current policy topics.
+
+The exact amended source passed **33/33 registered Release suites and 2,929 checks** without changing during the run. This includes **51 application lifecycle/status checks**, **172 theme and Reduce Transparency checks**, **30 export UI and announcement checks**, and **26 update/archive/quarantine configuration checks.** [Full report](../docs/qa/app-store-preflight-2026-09-24/full-run-report.json) has SHA-256 `cd250373061288d29b0b2d076edb198ce5ff0fb3660474d64007cbce08902cdb` and QA fingerprint `b010397bddfe119fe589c1070828d9f437523aba481df60b600c4a5669bf68d8`.
+
+The optimized build passed warnings-as-errors compilation for ARM64 and macOS 14. Its production fingerprint is `3b14ec3991186b55b0550a15ab1b3d92615bfb905dde71cd3f175e56e7a26d45`; the main executable SHA-256 is `cfbf7a5d9250ae4a68d483e227aa28f4fa20b24e648a69c5b52a3a75623116a6`. All **86/86** receipt inputs still matched. A separate optimized Store-only compile omitted `DABIN_DIRECT_UPDATES`, compiled all **61 sources**, linked no non-system dependency, and produced SHA-256 `084f560e7d5b38e517a9e7702d9abea49a83330f2cf71bbc4e7e18d016cfbdb8`.
+
+Fresh QA passed **50/50 release interface renders**, **11/11 privacy checks** with four PNGs and nine policy topics, **39/39 synthetic media checks**, **21/21 static Store checks**, and **21/21 notarized-distribution tests**. A metadata-clean app copy had zero extended attributes, ARM64 executables, only Apple system dependencies, the expected sandbox entitlements, and strict valid ad-hoc signatures. Its Gatekeeper rejection is expected because this local direct build has no Developer ID or Store distribution identity.
+
+Three fictional-data screenshot drafts pass Apple's 1440 × 900 RGB/no-alpha geometry checks. [Evidence and remaining gates](../docs/qa/app-store-preflight-2026-09-24/README.md) · [Screenshot drafts](../docs/app-store/screenshots/1440x900/README.md).
+
+No functional, compile, render, static packaging, quarantine or clean-copy integrity failure remains. Submission is still blocked by full Xcode, Apple Developer enrollment/Team ID, Bundle ID ownership and Apple Distribution signing. Before upload, the owner must also publish real support contact information, confirm publisher/copyright details, complete App Store Connect metadata and privacy answers, validate the signed archive in Organizer, and test it on macOS 14 and current macOS.
+
 ## Local screenshot and document search — local build 0.3.18 (45)
 
 DaBin now builds a private searchable-text index from its own saved screenshots, images, PDFs and supported text documents. Vision recognition, PDF text-layer reading, scanned-page fallback and document decoding all run on this Mac. No recognized content is sent to a website or external AI service. Search keeps the existing date and neighboring-capture layout while showing the matched recognized line inside the clickable card. Detail shows a bounded preview and can copy the complete recognized text; day/week exports and the readable archive include it. Settings reports progress and can rebuild the index without repeatedly restarting active work.

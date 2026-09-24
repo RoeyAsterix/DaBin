@@ -42,8 +42,20 @@ private final class PrivacyRenderTests: NSObject, NSApplicationDelegate {
         let frontmostBefore = NSWorkspace.shared.frontmostApplication?.processIdentifier
         let document = PrivacyInformation.document()
         let sections = PrivacyInformation.sections(in: document)
+        let requiredSections: Set<String> = [
+            "Your daily board stays on your Mac",
+            "Local text recognition and search",
+            "Manual capture",
+            "Optional Auto Capture",
+            "Optional website previews",
+            "Software updates",
+            "Reminders",
+            "Keeping and removing your data",
+            "Backups and security",
+        ]
         try expect(Bundle.main.url(forResource: "PrivacyPolicy", withExtension: "md") != nil, "Real policy resource is present in the isolated app bundle")
-        try expect(sections.count == 6, "Full six-section policy is loaded, not fallback text")
+        try expect(Set(sections.map(\.title)).isSuperset(of: requiredSections),
+                   "Full current privacy policy is loaded with every required topic")
         try expect(document.contains("Choose Remove") && document.contains("Minimize only collapses"), "Policy includes current removal and minimize behavior")
         try expect(PrivacyInformation.configuredURL(for: PrivacyInformation.policyURLKey) == nil &&
                    PrivacyInformation.configuredURL(for: PrivacyInformation.supportURLKey) == nil, "Unconfigured public policy/support links are absent")

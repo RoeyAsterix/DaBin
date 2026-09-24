@@ -72,6 +72,10 @@ struct ThemeSettingsTests {
         try expect(ThemeSettings(defaults: defaults, systemDarkMode: false).boardOpacity == ThemeSettings.defaultBoardOpacity,
                    "Malformed stored opacity falls back without affecting the archive")
         settings.setBoardOpacity(ThemeSettings.defaultBoardOpacity)
+        try expect(ThemeSettings.effectiveBoardOpacity(preferred: 0.35, reduceTransparency: true) == 1,
+                   "Reduce Transparency forces a solid board surface")
+        try expect(ThemeSettings.effectiveBoardOpacity(preferred: 0.55, reduceTransparency: false) == 0.55,
+                   "The stored opacity remains effective when Reduce Transparency is off")
 
         settings.setDarkMode(true)
         try expect(settings.darkModeEnabled && defaults.bool(forKey: ThemeSettings.darkModeKey),

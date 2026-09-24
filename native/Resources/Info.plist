@@ -15,6 +15,7 @@
   <key>NSHighResolutionCapable</key><true/>
   <key>NSPrincipalClass</key><string>NSApplication</string>
   <key>CFBundleIconFile</key><string>AppIcon</string>
+  <key>ITSAppUsesNonExemptEncryption</key><false/>
   <key>DaBinPrivacyPolicyURL</key><string>https://github.com/RoeyAsterix/DaBin/blob/main/native/Resources/PrivacyPolicy.md</string>
   <key>DaBinSupportURL</key><string>https://github.com/RoeyAsterix/DaBin/issues</string>
 </dict></plist>

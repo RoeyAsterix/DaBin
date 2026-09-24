@@ -1,0 +1,29 @@
+{
+  "checks" : 11,
+  "fixturePrivacy" : "Production policy view and locally bundled policy only. No personal archive, clipboard, network, notification or input actions.",
+  "renders" : [
+    {
+      "appearance" : "light",
+      "bottom" : "privacy-policy-light-bottom.png",
+      "documentHeight" : 3546,
+      "policySectionCount" : 9,
+      "scrollBottom" : 3546,
+      "top" : "privacy-policy-light-top.png",
+      "viewportHeight" : 379,
+      "windowKey" : false,
+      "windowMain" : false
+    },
+    {
+      "appearance" : "dark",
+      "bottom" : "privacy-policy-dark-bottom.png",
+      "documentHeight" : 3546,
+      "policySectionCount" : 9,
+      "scrollBottom" : 3546,
+      "top" : "privacy-policy-dark-top.png",
+      "viewportHeight" : 379,
+      "windowKey" : false,
+      "windowMain" : false
+    }
+  ],
+  "visualReviewRequired" : "Inspect all four PNGs for readable headings\/body, a visible Done control and the bottom Show DaBin data folder button."
+}

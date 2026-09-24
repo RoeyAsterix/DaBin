@@ -75,6 +75,14 @@ final class ThemeSettings: ObservableObject {
         defaults.set(clamped, forKey: Self.boardOpacityKey)
     }
 
+    /// The user's preference remains stored while macOS temporarily requests
+    /// solid surfaces for readability.
+    nonisolated static func effectiveBoardOpacity(preferred: Double,
+                                                  reduceTransparency: Bool) -> Double {
+        reduceTransparency ? maximumBoardOpacity
+            : min(maximumBoardOpacity, max(minimumBoardOpacity, preferred))
+    }
+
     func setDarkMode(_ enabled: Bool) {
         if darkModeEnabled != enabled { darkModeEnabled = enabled }
         defaults.set(enabled, forKey: Self.darkModeKey)

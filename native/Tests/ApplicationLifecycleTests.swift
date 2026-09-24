@@ -52,6 +52,14 @@ private final class ApplicationLifecycleTests: NSObject, NSApplicationDelegate {
         while !condition() && Date() < end { try await Task.sleep(for: .milliseconds(10)) }
         try expect(condition(), message)
     }
+    private func unwrap<Value>(_ value: Value?, _ message: String) throws -> Value {
+        checks += 1
+        guard let value else {
+            throw NSError(domain: "ApplicationLifecycleTests", code: 2,
+                          userInfo: [NSLocalizedDescriptionKey: message])
+        }
+        return value
+    }
     private func run() async throws {
         let frontmost = NSWorkspace.shared.frontmostApplication?.processIdentifier
         let root = FileManager.default.temporaryDirectory.appendingPathComponent("DaBinSessionQA-\(UUID())")
@@ -77,11 +85,18 @@ private final class ApplicationLifecycleTests: NSObject, NSApplicationDelegate {
                    "Construction does not start observers or pointer monitoring")
         try expect(!coordinator!.corners.board.isVisible && !coordinator!.corners.bin.isVisible,
                    "Construction keeps both native panels hidden")
+        try expect(coordinator!.claimFirstLaunchDailyPresentation(),
+                   "A fresh preference domain claims one discoverable Daily presentation")
+        try expect(defaults.bool(forKey: ApplicationCoordinator.firstLaunchDailyPresentedKey),
+                   "The first-launch Daily presentation is persisted locally")
+        try expect(!coordinator!.claimFirstLaunchDailyPresentation(),
+                   "The discoverable Daily presentation is never claimed twice")
         coordinator!.theme.select(.teal)
         try expect(ThemeSettings(defaults: defaults).selectedHex == ThemePreset.teal.hex,
                    "The composition root shares injected local preferences with theme state")
         var reads = 0
-        coordinator!.start(installMenu: false, pointerPosition: { reads += 1; return NSPoint(x: -100_000, y: -100_000) })
+        coordinator!.start(installMenu: false, installStatusItem: false,
+                           pointerPosition: { reads += 1; return NSPoint(x: -100_000, y: -100_000) })
         try await wait("Start reconciles a saved reminder") { client.requests[identifier] != nil }
         try await wait("Pointer timer uses the supplied native boundary") { reads >= 2 }
         try expect(coordinator!.isStarted && !coordinator!.isStopped, "Session enters running state")
@@ -121,6 +136,65 @@ private final class ApplicationLifecycleTests: NSObject, NSApplicationDelegate {
         try expect(NSApp.mainMenu === installed, "Menu installation is idempotent")
         menu.uninstall()
         NSApp.mainMenu = oldMenu
+
+        var statusDaily = 0, statusSettings = 0, statusQuit = 0
+        let statusBar = StatusBarController(
+            openDaily: { statusDaily += 1 },
+            showSettings: { statusSettings += 1 },
+            quit: { statusQuit += 1 },
+            autoCapture: coordinator!.autoCapture
+        )
+        statusBar.install()
+        defer { statusBar.uninstall() }
+        let statusMenu = try unwrap(statusBar.statusItem?.menu, "Status item installs its native menu")
+        try expect(statusBar.statusItem?.isVisible == true && statusBar.presentation.indicator == .off,
+                   "The persistent menu bar icon starts visible with Auto Capture off")
+        try expect(statusBar.statusMenuItem?.isEnabled == false
+                   && statusBar.statusMenuItem?.title == "Auto Capture: Off",
+                   "The menu presents a noninteractive Auto Capture status row")
+        try expect(statusBar.pauseMenuItem?.isHidden == true,
+                   "Pause and Resume stay absent while Auto Capture is disabled")
+        try expect(statusMenu.items.map(\.title).contains("Open Daily")
+                   && statusMenu.items.map(\.title).contains("Settings…")
+                   && statusMenu.items.map(\.title).contains("Quit DaBin"),
+                   "The status menu exposes Daily, Settings and complete Quit actions")
+        let statusOpen = statusMenu.items.first { $0.title == "Open Daily" }!
+        let statusSettingsItem = statusMenu.items.first { $0.title == "Settings…" }!
+        let statusQuitItem = statusMenu.items.first { $0.title == "Quit DaBin" }!
+        try expect(NSApp.sendAction(statusOpen.action!, to: statusOpen.target, from: statusOpen)
+                   && NSApp.sendAction(statusSettingsItem.action!, to: statusSettingsItem.target, from: statusSettingsItem)
+                   && NSApp.sendAction(statusQuitItem.action!, to: statusQuitItem.target, from: statusQuitItem),
+                   "Every status-menu command dispatches through an explicit target")
+        try expect(statusDaily == 1 && statusSettings == 1 && statusQuit == 1,
+                   "Status-menu commands invoke their intended actions once")
+
+        coordinator!.autoCapture.settings.setEnabled(true)
+        coordinator!.autoCapture.settings.setStatus(.monitoring)
+        try await wait("Status item updates live when Auto Capture is enabled") {
+            statusBar.presentation.indicator == .enabled
+                && statusBar.statusMenuItem?.title == "Auto Capture: Enabled"
+                && statusBar.pauseMenuItem?.isHidden == false
+        }
+        try expect(statusBar.statusItem?.button?.toolTip == "DaBin — Enabled",
+                   "The enabled menu bar icon exposes its state without opening DaBin")
+        let pause = statusBar.pauseMenuItem!
+        try expect(NSApp.sendAction(pause.action!, to: pause.target, from: pause),
+                   "The enabled status menu dispatches Pause Auto Capture")
+        try await wait("Pausing updates the menu bar status and action") {
+            statusBar.presentation.indicator == .paused
+                && statusBar.statusMenuItem?.title == "Auto Capture: Paused"
+                && statusBar.pauseMenuItem?.title == "Resume Auto Capture"
+        }
+        coordinator!.autoCapture.settings.setPaused(false)
+        coordinator!.autoCapture.settings.setStatus(.permissionRevoked)
+        try await wait("Permission problems become visible in the persistent status") {
+            statusBar.presentation.indicator == .attention
+                && statusBar.statusMenuItem?.title == "Auto Capture: Permission needs attention"
+        }
+        let installedStatusItem = statusBar.statusItem
+        statusBar.uninstall()
+        try expect(statusBar.statusItem == nil && installedStatusItem?.menu == nil,
+                   "Status item teardown removes its menu and subscriptions")
 
         var settingsQuitRequests = 0
         let settingsQuitSection = SettingsQuitSection { settingsQuitRequests += 1 }

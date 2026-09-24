@@ -1,0 +1,37 @@
+{
+  "dimensions": [
+    1440,
+    900
+  ],
+  "colorMode": "RGB",
+  "alpha": false,
+  "screenshots": [
+    {
+      "file": "DaBin-AppStore-01-Daily.png",
+      "source": "native/build/qa/screenshots/native-view-release-daily-dark-380x500@2x.png",
+      "sourceSHA256": "a6b9309dadf9c47429ee698fd5c24747ad31f15924ea0f87fa528bf2ac74c97e",
+      "sha256": "1fd28fd00d3dd48cfcb250ad194078a36a7b2a27acbd444f8b32be1f0c09a8d0",
+      "width": 1440,
+      "height": 900,
+      "mode": "RGB"
+    },
+    {
+      "file": "DaBin-AppStore-02-Weekly.png",
+      "source": "native/build/qa/screenshots/native-view-release-week-dark-428x560.png",
+      "sourceSHA256": "cf112f968b8fe71adee90849d5b25397b15367b76ea862c3ab8cb3f94f787427",
+      "sha256": "c1d00c87a0cd1d544aebfd846594762e6045755e7fb77aa334354431061ed2ac",
+      "width": 1440,
+      "height": 900,
+      "mode": "RGB"
+    },
+    {
+      "file": "DaBin-AppStore-03-Search.png",
+      "source": "native/build/qa/screenshots/native-view-release-search-dark-380x500@2x.png",
+      "sourceSHA256": "52c8ad13f73365e0b2032343f20f45cfcd094922d14ad41a72b4d8c650f5b328",
+      "sha256": "c52d206f9c06c1b7a555ce61733792e77381d59e84ea2e5ac286b83326da420d",
+      "width": 1440,
+      "height": 900,
+      "mode": "RGB"
+    }
+  ]
+}

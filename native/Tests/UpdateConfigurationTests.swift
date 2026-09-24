@@ -174,6 +174,8 @@ private enum UpdateConfigurationTests {
         let handoff = try text("Sources/DaBin/UpdateHandoff.swift")
         let builder = try text("scripts/build_app.py")
         let archive = try text("scripts/archive_app_store.sh")
+        let archiveLocation = try text("scripts/app_store_archive_location.py")
+        let storePreflight = try text("scripts/app_store_preflight.py")
         let packager = try text("UpdateTools/package_update.py")
         let latestStager = try text("scripts/stage_release_assets.py")
         let latestWorkflow = try text("../.github/workflows/stable-latest-downloads.yml")
@@ -197,6 +199,17 @@ private enum UpdateConfigurationTests {
                    "Only the standalone builder enables the direct channel and embeds its helper")
         try expect(archive.contains("INFOPLIST_FILE") && !archive.contains("DABIN_DIRECT_UPDATES"),
                    "The App Store archive helper uses the generated Xcode path without the direct flag")
+        try expect(archive.contains("Library/Developer/Xcode/Archives")
+                    && archive.contains("app_store_archive_location.py")
+                    && archive.contains("app_store_preflight.py --app")
+                    && !archive.contains("$project_root/build/app-store")
+                    && archiveLocation.contains("com.apple.file-provider-domain-id")
+                    && archiveLocation.contains("The App Store archive must be outside the source repository"),
+                   "App Store archives stay outside File Provider source folders and are reverified after archiving")
+        try expect(storePreflight.contains("/usr/bin/xattr")
+                    && storePreflight.contains("com.apple.quarantine")
+                    && storePreflight.contains("Distribution app contains no quarantined files"),
+                   "App Store distribution preflight rejects quarantined content anywhere in the bundle")
         try expect(packager.contains("releasePageURL") && packager.contains("sha256")
                     && packager.contains("sandboxCompatibleDocumentHandoff"),
                    "Release packaging publishes and exercises the verified update manifest")
@@ -239,6 +252,8 @@ private enum UpdateConfigurationTests {
         try expect(info["CFBundleShortVersionString"] as? String == "0.3.18"
                     && info["CFBundleVersion"] as? String == "45",
                    "The release version and monotonically increasing build are configured")
+        try expect(info["ITSAppUsesNonExemptEncryption"] as? Bool == false,
+                   "The Store build declares that its OS networking and file hashes use no non-exempt encryption")
         try verifyStableReleaseStaging()
         print("PASS: \(checks) update-channel configuration checks")
     }

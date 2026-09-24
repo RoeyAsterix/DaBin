@@ -23,7 +23,7 @@ def resources():
 
 def source_group(path):
     name = path.stem
-    if name in {"DaBinMain", "AppDelegate", "AppComposition", "AppEnvironment", "AppDependencies"} or "Composition" in name or name.startswith("Application"):
+    if name in {"DaBinMain", "AppDelegate", "AppComposition", "AppEnvironment", "AppDependencies", "StatusBarController"} or "Composition" in name or name.startswith("Application"):
         return "Application"
     if name in {"Domain", "AppState", "AutoCaptureSettings", "HourlyCaptureFeed", "DayExport"}:
         return "State and Domain"

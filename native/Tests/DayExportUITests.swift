@@ -54,13 +54,14 @@ private enum DayExportUITests {
     private static func checkCopyFeedback(_ document: DayExportDocument) async throws {
         var copied: String?
         var chooserCalls = 0
+        var announcements: [String] = []
         let controller = DayExportActionController(pasteboardWriter: {
             copied = $0
             return true
         }, destinationChooser: { _, _ in
             chooserCalls += 1
             return .cancelled
-        }, fileWriter: { _, _ in })
+        }, fileWriter: { _, _ in }, accessibilityAnnouncer: { announcements.append($0) })
 
         controller.present()
         try expect(controller.isPresented && controller.feedback == nil,
@@ -68,6 +69,8 @@ private enum DayExportUITests {
         try expect(controller.copy(document), "Copy Day reports pasteboard success")
         try expect(copied == document.text && controller.feedback == .copied(.day),
                    "Copy Day uses the exact generated plain text and shows Day copied")
+        try expect(announcements == ["Day copied."],
+                   "Copy success is announced once without moving keyboard focus")
         try expect(controller.isPresented, "Copy success remains visible briefly")
         try await Task.sleep(for: .milliseconds(1_250))
         try expect(!controller.isPresented && controller.feedback == nil,
@@ -87,14 +90,18 @@ private enum DayExportUITests {
     @MainActor
     private static func checkCopyFailureAndEmpty(_ document: DayExportDocument) throws {
         var writes = 0
+        var announcements: [String] = []
         let failed = DayExportActionController(pasteboardWriter: { _ in
             writes += 1
             return false
-        }, destinationChooser: { _, _ in .cancelled }, fileWriter: { _, _ in })
+        }, destinationChooser: { _, _ in .cancelled }, fileWriter: { _, _ in },
+            accessibilityAnnouncer: { announcements.append($0) })
         failed.present()
         try expect(!failed.copy(document), "A pasteboard refusal is not reported as success")
         try expect(failed.isPresented && failed.feedback == .failed("Couldn’t copy this day."),
                    "Copy failure remains visible and actionable in the popover")
+        try expect(announcements == ["Couldn’t copy this day."],
+                   "Copy failure is announced once")
 
         let empty = DayExportDocument.make(captures: [], selectedDate: Date(), now: Date())
         failed.present()

@@ -5,6 +5,7 @@ import UniformTypeIdentifiers
 @MainActor
 struct SettingsScreen: View {
     @Environment(\.daBinAccent) private var accent
+    @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
     @ObservedObject var state: AppState
     @ObservedObject var theme: ThemeSettings
     @ObservedObject private var updates: SoftwareUpdateService
@@ -118,6 +119,12 @@ struct SettingsScreen: View {
                         }
                         .controlSize(.small)
                         .accessibilityValue("\(Int((theme.boardOpacity * 100).rounded())) percent opaque")
+                        if reduceTransparency {
+                            Text("macOS Reduce Transparency is on, so DaBin is using a solid background.")
+                                .font(.system(size: 11))
+                                .foregroundStyle(Palette.muted)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
                     }
                 }
                 Divider()

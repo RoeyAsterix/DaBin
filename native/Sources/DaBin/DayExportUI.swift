@@ -100,6 +100,7 @@ final class DayExportActionController: ObservableObject {
     typealias PasteboardWriter = (String) -> Bool
     typealias DestinationChooser = (TimelineExportPeriod, String) -> DayExportDestinationSelection
     typealias FileWriter = (Data, URL) throws -> Void
+    typealias AccessibilityAnnouncer = (String) -> Void
 
     @Published var isPresented = false
     @Published private(set) var feedback: DayExportActionFeedback?
@@ -107,15 +108,18 @@ final class DayExportActionController: ObservableObject {
     private let pasteboardWriter: PasteboardWriter
     private let destinationChooser: DestinationChooser
     private let fileWriter: FileWriter
+    private let accessibilityAnnouncer: AccessibilityAnnouncer
     private var dismissalTask: Task<Void, Never>?
     private var outsideClickMonitor: Any?
 
     init(pasteboardWriter: @escaping PasteboardWriter,
          destinationChooser: @escaping DestinationChooser,
-         fileWriter: @escaping FileWriter) {
+         fileWriter: @escaping FileWriter,
+         accessibilityAnnouncer: @escaping AccessibilityAnnouncer = { _ in }) {
         self.pasteboardWriter = pasteboardWriter
         self.destinationChooser = destinationChooser
         self.fileWriter = fileWriter
+        self.accessibilityAnnouncer = accessibilityAnnouncer
     }
 
     deinit {
@@ -141,6 +145,8 @@ final class DayExportActionController: ObservableObject {
             return .selected(url)
         }, fileWriter: { data, url in
             try data.write(to: url, options: .atomic)
+        }, accessibilityAnnouncer: { message in
+            AccessibilityAnnouncement.post(message)
         })
     }
 
@@ -177,10 +183,12 @@ final class DayExportActionController: ObservableObject {
         guard document.actionCount > 0 else { return false }
         if pasteboardWriter(document.text) {
             feedback = .copied(document.exportPeriod)
+            accessibilityAnnouncer(feedback!.message)
             dismissAfterFeedback()
             return true
         }
         feedback = .failed("Couldn’t copy this \(document.exportPeriod.rawValue).")
+        accessibilityAnnouncer(feedback!.message)
         return false
     }
 
@@ -195,11 +203,13 @@ final class DayExportActionController: ObservableObject {
             do {
                 try fileWriter(document.utf8Data, url)
                 feedback = .saved(document.exportPeriod)
+                accessibilityAnnouncer(feedback!.message)
                 dismissAfterFeedback()
                 return .saved(url)
             } catch {
                 let message = "Couldn’t export this \(document.exportPeriod.rawValue): \(error.localizedDescription)"
                 feedback = .failed(message)
+                accessibilityAnnouncer(message)
                 return .failed(message)
             }
         }

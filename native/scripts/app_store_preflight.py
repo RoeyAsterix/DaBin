@@ -62,6 +62,16 @@ def command(arguments):
         return subprocess.CompletedProcess(arguments, 1, str(error))
 
 
+def paths_with_extended_attribute(root, attribute):
+    """Return bundle paths carrying an attribute without following symlinks."""
+    result = command(["/usr/bin/xattr", "-r", str(root)])
+    if result.returncode != 0:
+        raise OSError(result.stdout.strip() or "xattr could not inspect the application bundle")
+    suffix = f": {attribute}"
+    return [Path(line.removesuffix(suffix))
+            for line in result.stdout.splitlines() if line.endswith(suffix)]
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--static-only", action="store_true", help="Check source packaging only; does not report release readiness")
@@ -78,6 +88,8 @@ def main():
     check(bool(info.get("NSHumanReadableCopyright")), "Copyright is present (publisher must confirm ownership)")
     check(bool(re.fullmatch(r"\d+(?:\.\d+){0,2}", info.get("CFBundleShortVersionString", ""))), "Marketing version has a numeric release format")
     check(bool(re.fullmatch(r"\d+(?:\.\d+){0,2}", info.get("CFBundleVersion", ""))), "Build number has a numeric release format")
+    check(info.get("ITSAppUsesNonExemptEncryption") is False,
+          "Export compliance declares only absent or exempt encryption")
     check(entitlements.get("com.apple.security.app-sandbox") is True, "App Sandbox is enabled")
     check(not entitlements.get("com.apple.security.get-task-allow"), "Source entitlement file does not allow debugger attachment")
     check(manifest.get("NSPrivacyTracking") is False, "Bundled manifest declares no tracking")
@@ -149,6 +161,15 @@ def main():
               "Distribution app has no direct GitHub update channel")
         check(not (app / "Contents/Helpers/DaBin Update.app").exists(),
               "Distribution app does not embed the direct update installer")
+        try:
+            quarantined = paths_with_extended_attribute(app, "com.apple.quarantine")
+        except OSError as error:
+            check(False, f"Distribution app extended attributes can be inspected: {error}")
+        else:
+            check(not quarantined,
+                  "Distribution app contains no quarantined files"
+                  + (f" ({quarantined[0]}" + (f" and {len(quarantined) - 1} more" if len(quarantined) > 1 else "") + ")"
+                     if quarantined else ""))
 
     if errors:
         print(f"\n{len(errors)} blocking check(s). No archive or upload was performed.")

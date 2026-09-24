@@ -2,6 +2,7 @@ import SwiftUI
 
 @MainActor
 struct BoardView: View {
+    @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
     @ObservedObject var state: AppState
     @StateObject private var theme: ThemeSettings
     @StateObject private var dayExportController: DayExportActionController
@@ -44,7 +45,10 @@ struct BoardView: View {
         .foregroundStyle(Palette.foreground)
         .tint(accent)
         .environment(\.daBinAccent, accent)
-        .background(Palette.background.opacity(theme.boardOpacity))
+        .background(Palette.background.opacity(ThemeSettings.effectiveBoardOpacity(
+            preferred: theme.boardOpacity,
+            reduceTransparency: reduceTransparency
+        )))
         .preferredColorScheme(theme.darkModeEnabled ? .dark : .light)
         .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
         .overlay(RoundedRectangle(cornerRadius: 24, style: .continuous).strokeBorder(Palette.line, lineWidth: 1))
@@ -70,6 +74,9 @@ struct BoardView: View {
             Text("This removes the capture, its comments, reminder and saved copies from DaBin. Files at their original locations are kept. This cannot be undone.")
         }
         .onExitCommand { state.onDismiss?() }
+        .onChange(of: state.status) { _, message in
+            if let message { AccessibilityAnnouncement.post(message.text) }
+        }
         .background {
             Group {
                 Button("Search captures") {

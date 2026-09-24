@@ -18,6 +18,7 @@
 - [DaBin 0.3.9 release notes](RELEASE_NOTES_0.3.9.md)
 - [DaBin 0.3.8 release notes](RELEASE_NOTES_0.3.8.md)
 - [Privacy policy](../native/Resources/PrivacyPolicy.md)
+- [App Store screenshot drafts](app-store/screenshots/1440x900/README.md)
 
 ## Product and design
 
@@ -37,5 +38,7 @@ The prototype and handoff folders preserve the design process. The native app an
 - [Implementation plan](../native/IMPLEMENTATION_PLAN.md)
 - [QA results](../native/QA_RESULTS.md)
 - [Mac App Store readiness](../native/APP_STORE_READINESS.md)
+- [App Store Connect draft](app-store/APP_STORE_CONNECT_DRAFT.md)
+- [Final local App Store preflight evidence](qa/app-store-preflight-2026-09-24/README.md)
 - [Persistence QA notes](../native/Tests/PERSISTENCE_QA.md)
 - [Release process](RELEASING.md)

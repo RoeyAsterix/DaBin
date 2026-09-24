@@ -11,7 +11,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         do {
             let application = try ApplicationCoordinator()
             self.application = application
-            application.start(showDaily: CommandLine.arguments.contains("--show-daily"))
+            let firstLaunch = application.claimFirstLaunchDailyPresentation()
+            application.start(showDaily: firstLaunch || CommandLine.arguments.contains("--show-daily"))
         } catch {
             NSApp.activate(ignoringOtherApps: true)
             let alert = NSAlert()

@@ -1,6 +1,6 @@
 # DaBin
 
-DaBin is a native Apple Silicon macOS app that turns things you paste or drag into a private daily board. By default, moving the pointer into any screen corner reveals a small purple robot. On a Mac with a built-in camera island, Settings can move its home below the island; displays without one continue using their corners. Drop text, links, images, videos, PDFs, documents, or several files onto the robot, or hover and paste; double-click it to browse Daily.
+DaBin is a native Apple Silicon macOS app that turns things you paste or drag into a private daily board. Daily opens once on first launch so the app is easy to discover. After you close it, moving the pointer into any screen corner reveals a small purple robot. On a Mac with a built-in camera island, Settings can move its home below the island; displays without one continue using their corners. A compact menu bar item keeps Open Daily, Auto Capture status, Pause/Resume, Settings, and Quit available while DaBin runs. Drop text, links, images, videos, PDFs, documents, or several files onto the robot, or hover and paste; double-click it to browse Daily.
 
 Captures stay on the Mac in a dated archive. Each card can hold a comment or reminder, and its upper-right copy icon returns the original captured text, link, task or locally saved file to the clipboard. Grouped drops copy all their files together. Open any capture and choose **Turn into task**, or use its card’s right-click menu; its original content, comments and reminders stay attached. Tasks carry forward until completed, unless they have a reminder date. Daily includes All, Text, Links, Files, Media and Tasks filters plus contextual search; Text isolates copied, pasted or dragged plain text. A compact Daily/Weekly control browses the seven-day range ending on the selected date, while Weekly displays only dates that contain captures or tasks. In Weekly, Search can target one explicitly selected day or the complete seven-day range, and Export can copy or download either scope. Switching views preserves the selected date, filter, scroll position and drafts. Downloads use chronological UTF-8 text and include the complete selected day or week regardless of the active filter. The board supports dark mode, theme colors and adjustable transparency. The native robot looks toward the pointer, opens up for incoming content, chews while saving and responds to the result. It follows the macOS Reduce Motion preference.
 
@@ -38,6 +38,8 @@ These permanent links follow the newest public GitHub release. The current files
 - [QA results](native/QA_RESULTS.md)
 - [Privacy policy](native/Resources/PrivacyPolicy.md)
 - [Mac App Store readiness](native/APP_STORE_READINESS.md)
+- [App Store Connect draft](docs/app-store/APP_STORE_CONNECT_DRAFT.md)
+- [App Store screenshot drafts](docs/app-store/screenshots/1440x900/README.md)
 - [Documentation index](docs/README.md)
 
 ## Build
