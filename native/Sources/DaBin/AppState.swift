@@ -110,6 +110,7 @@ final class AppState: ObservableObject {
     @Published var query = ""
     @Published private(set) var searchScope: CaptureSearchScope = .all
     @Published var weeklySearchActionsPresented = false
+    @Published private(set) var autoCaptureSetupRequested = false
     @Published var selectedCapture: Capture?
     @Published var pendingRemoval: Capture?
     @Published private(set) var removingCaptureID: UUID?
@@ -353,6 +354,25 @@ final class AppState: ObservableObject {
     }
     func showReminders() { route = .reminders }
     func showSettings() { route = .settings }
+
+    func toggleAutoCaptureFromHeader() {
+        let settings = autoCapture.settings
+        if settings.isEnabled {
+            autoCapture.setEnabled(false)
+        } else if settings.hasAcknowledgedPrivacyExplanation,
+                  settings.screenshotFolderBookmark != nil {
+            autoCapture.setEnabled(true)
+        } else {
+            autoCaptureSetupRequested = true
+            route = .settings
+        }
+    }
+
+    func consumeAutoCaptureSetupRequest() -> Bool {
+        guard autoCaptureSetupRequested else { return false }
+        autoCaptureSetupRequested = false
+        return true
+    }
 
     func openNewTask() {
         status = nil

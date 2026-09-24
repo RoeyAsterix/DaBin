@@ -251,6 +251,7 @@ struct SettingsScreen: View {
             ExcludedApplicationsSheet(settings: autoCaptureSettings)
                 .environment(\.daBinAccent, accent)
         }
+        .onAppear { beginRequestedAutoCaptureSetup() }
     }
 
     @ViewBuilder
@@ -315,6 +316,17 @@ struct SettingsScreen: View {
             }
         } catch {
             state.reportFailure("Could not authorize the screenshot folder: \(error.localizedDescription)")
+        }
+    }
+
+    private func beginRequestedAutoCaptureSetup() {
+        guard state.consumeAutoCaptureSetupRequest() else { return }
+        if !autoCaptureSettings.hasAcknowledgedPrivacyExplanation {
+            showAutoCaptureExplanation = true
+        } else if autoCaptureSettings.screenshotFolderBookmark == nil {
+            DispatchQueue.main.async { chooseScreenshotFolder(enableAfterSelection: true) }
+        } else {
+            autoCapture.setEnabled(true)
         }
     }
 

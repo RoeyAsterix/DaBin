@@ -1351,6 +1351,13 @@ private final class NativeRenderTests: NSObject, NSApplicationDelegate {
         for mode in ["light", "dark"] {
             try await snapshot(emptyState, name: "release-empty", mode: mode, output: output,
                                height: CornerGeometry.dailyPanelHeight(for: emptyState))
+            emptyState.autoCapture.settings.setEnabled(true)
+            emptyState.autoCapture.settings.setPaused(false)
+            emptyState.autoCapture.settings.setStatus(.monitoring)
+            try await snapshot(emptyState, name: "release-auto-capture-on", mode: mode, output: output,
+                               height: CornerGeometry.dailyPanelHeight(for: emptyState))
+            emptyState.autoCapture.settings.setEnabled(false)
+            emptyState.autoCapture.settings.setStatus(.disabled)
             try await snapshot(emptyState, name: "release-tooltip-add", mode: mode, output: output,
                                height: CornerGeometry.dailyPanelHeight(for: emptyState),
                                tooltip: TimelineTooltipDescriptor(

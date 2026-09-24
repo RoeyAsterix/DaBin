@@ -22,12 +22,13 @@ enum TimelineIconRowMetrics {
 /// Compact first-row measurements. The mode pair stays within the former
 /// segmented control's width while using the same targets as the icon rows.
 enum TimelineNavigationMetrics {
-    static let horizontalPadding: CGFloat = 12
+    static let horizontalPadding: CGFloat = 8
     static let itemSpacing: CGFloat = 2
-    static let logoWidth: CGFloat = 80
-    static let navigationButtonWidth: CGFloat = 28
-    static let dailyDateWidth: CGFloat = 52
-    static let weeklyDateWidth: CGFloat = 86
+    static let logoWidth: CGFloat = 66
+    static let navigationButtonWidth: CGFloat = 24
+    static let closeButtonWidth: CGFloat = 24
+    static let dailyDateWidth: CGFloat = 48
+    static let weeklyDateWidth: CGFloat = 72
     static let modeGroupWidth = TimelineIconRowMetrics.controlWidth * 2
 
     static func modeAnchorX(weekly: Bool, index: Int) -> CGFloat {
@@ -39,6 +40,31 @@ enum TimelineNavigationMetrics {
             + navigationButtonWidth + itemSpacing
         return modeLeading + TimelineIconRowMetrics.controlWidth / 2
             + CGFloat(index) * TimelineIconRowMetrics.controlWidth
+    }
+
+    static func autoCaptureAnchorX(weekly: Bool) -> CGFloat {
+        modeAnchorX(weekly: weekly, index: 1)
+            + TimelineIconRowMetrics.controlWidth + itemSpacing
+    }
+
+    static func fixedContentWidth(weekly: Bool) -> CGFloat {
+        let dateWidth = weekly ? weeklyDateWidth : dailyDateWidth
+        let fixedWidths = logoWidth + navigationButtonWidth + dateWidth
+            + navigationButtonWidth + modeGroupWidth
+            + TimelineIconRowMetrics.controlWidth + closeButtonWidth
+        // Eight visible controls create seven fixed inter-item gaps. The
+        // remaining width belongs to the flexible drag area before Close.
+        return fixedWidths + itemSpacing * 7
+    }
+}
+
+enum AutoCaptureHeaderAnimation {
+    static let maximumTiltDegrees = 4.5
+    static let halfCycleDuration: TimeInterval = 0.52
+
+    static func angle(isOn: Bool, reduceMotion: Bool, phase: Bool) -> Double {
+        guard isOn, !reduceMotion else { return 0 }
+        return phase ? maximumTiltDegrees : -maximumTiltDegrees
     }
 }
 
@@ -273,6 +299,8 @@ struct AccentIconButton: View {
     let label: String
     var tooltip: TimelineTooltipDescriptor? = nil
     var selected = false
+    var emphasized = false
+    var symbolRotationDegrees = 0.0
     var accessibilityIdentifier: String? = nil
     let action: () -> Void
     @State private var hovered = false
@@ -285,6 +313,7 @@ struct AccentIconButton: View {
         } label: {
             Image(systemName: symbol)
                 .font(.system(size: TimelineIconRowMetrics.symbolPointSize, weight: .regular))
+                .rotationEffect(.degrees(symbolRotationDegrees), anchor: .center)
                 .accessibilityHidden(true)
                 .frame(width: TimelineIconRowMetrics.symbolCanvasSize,
                        height: TimelineIconRowMetrics.symbolCanvasSize)
@@ -293,6 +322,7 @@ struct AccentIconButton: View {
                 .contentShape(Rectangle())
         }
         .buttonStyle(AccentIconButtonStyle(accent: accent, selected: selected,
+                                           emphasized: emphasized,
                                            hovered: hovered, focused: focused))
         .focused($focused)
         .onHover { isHovering in
@@ -325,12 +355,15 @@ private struct AccentIconButtonStyle: ButtonStyle {
     @Environment(\.isEnabled) private var isEnabled
     let accent: Color
     let selected: Bool
+    let emphasized: Bool
     let hovered: Bool
     let focused: Bool
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .foregroundStyle(accent.opacity(isEnabled ? (selected ? 1 : 0.82) : 0.35))
+            .foregroundStyle(accent.opacity(isEnabled ? (selected || emphasized ? 1 : 0.82) : 0.35))
+            .shadow(color: emphasized ? accent.opacity(0.52) : .clear,
+                    radius: emphasized ? 2.5 : 0)
             .background {
                 if selected {
                     Circle().fill(accent.opacity(configuration.isPressed ? 0.20 : 0.13))
@@ -448,6 +481,68 @@ struct TimelineModeControl: View {
             accessibilityIdentifier: "timeline-mode-\(daily ? "daily" : "weekly")"
         ) {
             state.selectTimelineMode(mode)
+        }
+    }
+}
+
+@MainActor
+struct AutoCaptureHeaderButton: View {
+    @ObservedObject private var service: AutoCaptureService
+    @ObservedObject private var settings: AutoCaptureSettings
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    let weekly: Bool
+    let statusText: String
+    let action: () -> Void
+    @State private var tiltPhase = false
+
+    init(service: AutoCaptureService, weekly: Bool, statusText: String,
+         action: @escaping () -> Void) {
+        self.service = service
+        settings = service.settings
+        self.weekly = weekly
+        self.statusText = statusText
+        self.action = action
+    }
+
+    private var isOn: Bool { settings.isEnabled && !settings.isPaused }
+    private var tiltAnimationActive: Bool { isOn && !reduceMotion }
+
+    var body: some View {
+        AccentIconButton(
+            symbol: "bolt.fill",
+            label: isOn ? "Turn Auto Capture off" : "Turn Auto Capture on",
+            tooltip: TimelineTooltipDescriptor(
+                id: "timeline-auto-capture-tooltip",
+                text: statusText,
+                index: 2,
+                itemCount: 3,
+                row: .navigation,
+                fixedAnchorX: TimelineNavigationMetrics.autoCaptureAnchorX(weekly: weekly)
+            ),
+            selected: isOn,
+            emphasized: isOn,
+            symbolRotationDegrees: AutoCaptureHeaderAnimation.angle(
+                isOn: isOn, reduceMotion: reduceMotion, phase: tiltPhase
+            ),
+            accessibilityIdentifier: "timeline-auto-capture",
+            action: action
+        )
+        .help(statusText)
+        .accessibilityValue(statusText)
+        .task(id: tiltAnimationActive) {
+            tiltPhase = false
+            guard tiltAnimationActive else { return }
+            while !Task.isCancelled {
+                withAnimation(.easeInOut(duration: AutoCaptureHeaderAnimation.halfCycleDuration)) {
+                    tiltPhase = true
+                }
+                try? await Task.sleep(for: .seconds(AutoCaptureHeaderAnimation.halfCycleDuration))
+                guard !Task.isCancelled else { return }
+                withAnimation(.easeInOut(duration: AutoCaptureHeaderAnimation.halfCycleDuration)) {
+                    tiltPhase = false
+                }
+                try? await Task.sleep(for: .seconds(AutoCaptureHeaderAnimation.halfCycleDuration))
+            }
         }
     }
 }

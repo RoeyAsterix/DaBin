@@ -130,7 +130,7 @@ struct BoardView: View {
         VStack(spacing: 0) {
             timelineNavigationRow
                 .frame(height: TimelineIconRowMetrics.controlHeight)
-                .padding(.horizontal, 12)
+                .padding(.horizontal, TimelineNavigationMetrics.horizontalPadding)
                 .padding(.top, 5)
                 .zIndex(2)
             timelinePrimaryActions
@@ -171,38 +171,39 @@ struct BoardView: View {
 
     private var timelineNavigationRow: some View {
         HStack(spacing: 2) {
-            ZStack(alignment: .trailing) {
-                DaBinLogo()
-                    .scaleEffect(0.86, anchor: .leading)
-                    .frame(width: 80, height: 30, alignment: .leading)
-                if state.autoCapture.settings.isEnabled {
-                    Circle()
-                        .fill(autoCaptureIndicatorColor)
-                        .frame(width: 7, height: 7)
-                        .help(autoCaptureStatusText)
-                        .accessibilityLabel(autoCaptureStatusText)
-                }
-            }
-            .frame(width: 80, height: 30, alignment: .leading)
+            DaBinLogo()
+                .scaleEffect(0.76, anchor: .leading)
+                .frame(width: TimelineNavigationMetrics.logoWidth, height: 30, alignment: .leading)
             .overlay {
                 WindowDragHandle(onDragStarted: { state.onBoardDragStarted?() })
                     .accessibilityHidden(true)
             }
             .layoutPriority(3)
 
-            SmallIcon(symbol: "chevron.left", label: previousDateLabel, size: 28) {
+            SmallIcon(symbol: "chevron.left", label: previousDateLabel,
+                      size: TimelineNavigationMetrics.navigationButtonWidth) {
                 moveTimeline(-1)
             }
             timelineDateButton
-            SmallIcon(symbol: "chevron.right", label: nextDateLabel, size: 28) {
+            SmallIcon(symbol: "chevron.right", label: nextDateLabel,
+                      size: TimelineNavigationMetrics.navigationButtonWidth) {
                 moveTimeline(1)
             }
             .disabled(Calendar.current.isDateInToday(timelineExportDate))
 
             TimelineModeControl(state: state)
                 .layoutPriority(2)
+            AutoCaptureHeaderButton(
+                service: state.autoCapture,
+                weekly: state.route == .weekly,
+                statusText: autoCaptureStatusText
+            ) {
+                state.toggleAutoCaptureFromHeader()
+            }
+            .layoutPriority(2)
             Spacer(minLength: 2)
-            SmallIcon(symbol: "xmark", label: "Hide DaBin", size: 28) { state.onDismiss?() }
+            SmallIcon(symbol: "xmark", label: "Hide DaBin",
+                      size: TimelineNavigationMetrics.closeButtonWidth) { state.onDismiss?() }
                 .accessibilityIdentifier("window-close")
         }
     }
@@ -218,7 +219,7 @@ struct BoardView: View {
                 .font(.system(size: 12, weight: .medium))
                 .lineLimit(1)
                 .minimumScaleFactor(0.72)
-                .frame(width: 86, height: 30)
+                .frame(width: TimelineNavigationMetrics.weeklyDateWidth, height: 30)
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
@@ -243,7 +244,7 @@ struct BoardView: View {
                     .font(.system(size: 12, weight: .medium))
                     .lineLimit(1)
                     .minimumScaleFactor(0.8)
-                    .frame(width: 52, height: 30)
+                    .frame(width: TimelineNavigationMetrics.dailyDateWidth, height: 30)
                     .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
@@ -377,15 +378,6 @@ struct BoardView: View {
         case .permissionRevoked: return "Auto Capture permission needs attention"
         case .sourceApplicationExcluded(let name): return "Auto Capture is skipping \(name)"
         case .failed: return "Auto Capture needs attention"
-        }
-    }
-
-    private var autoCaptureIndicatorColor: Color {
-        switch state.autoCapture.settings.status {
-        case .monitoring, .sourceApplicationExcluded: return accent
-        case .paused: return .orange
-        case .permissionRequired, .permissionRevoked, .failed: return Palette.task
-        case .disabled, .ready: return Palette.muted
         }
     }
 

@@ -12,6 +12,17 @@ private final class HeaderReminderClient: ReminderNotificationClient {
     func removeDelivered(_ identifiers: [String]) {}
 }
 
+@MainActor
+private final class HeaderScreenshotMonitor: ScreenshotFolderMonitoring {
+    var sourceApplicationAtDirectoryActivity: (() -> AutoCaptureSourceApplication?)?
+    var onNewScreenshot: ((URL, AutoCaptureSourceApplication?) -> Void)?
+    var onFailure: ((Error) -> Void)?
+    private(set) var isRunning = false
+
+    func start() throws { isRunning = true }
+    func stop() { isRunning = false }
+}
+
 /// Sends mouse/key events only to this suite's own isolated AppKit window. It
 /// never moves the system pointer, reads the clipboard or opens a save panel.
 @main
@@ -99,8 +110,19 @@ private enum HeaderInteractionTests {
         let previews = PreviewService(store: store, defaults: defaults)
         defer { previews.cancelNetwork() }
         let input = InputService(store: store)
-        let autoCapture = AutoCaptureService(settings: AutoCaptureSettings(defaults: defaults),
-                                             input: input)
+        let autoCaptureSettings = AutoCaptureSettings(defaults: defaults)
+        autoCaptureSettings.acknowledgePrivacyExplanation()
+        autoCaptureSettings.setScreenshotFolderBookmark(Data("header-fixture".utf8),
+                                                        displayName: root.lastPathComponent)
+        let screenshotMonitor = HeaderScreenshotMonitor()
+        let autoCapture = AutoCaptureService(
+            settings: autoCaptureSettings,
+            input: input,
+            screenshotMonitorFactory: { _ in screenshotMonitor },
+            bookmarkResolver: { _ in (root, false) },
+            pollInterval: 60
+        )
+        defer { autoCapture.shutdown() }
         let now = Date()
         let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: now)!
         let exportCapture = try store.capture(text: "TODAY UNIQUE keyboard export fixture", at: now)[0]
@@ -174,14 +196,27 @@ private enum HeaderInteractionTests {
                    "Primary actions and filters occupy identical 280-point rows")
         try expect(TimelineNavigationMetrics.modeGroupWidth == 80,
                    "Daily and Weekly use two compact 40-point icon targets")
-        try expect(abs(TimelineNavigationMetrics.modeAnchorX(weekly: false, index: 0) - 228) < 0.01
-                   && abs(TimelineNavigationMetrics.modeAnchorX(weekly: false, index: 1) - 268) < 0.01
-                   && abs(TimelineNavigationMetrics.modeAnchorX(weekly: true, index: 0) - 262) < 0.01
-                   && abs(TimelineNavigationMetrics.modeAnchorX(weekly: true, index: 1) - 302) < 0.01,
+        try expect(abs(TimelineNavigationMetrics.modeAnchorX(weekly: false, index: 0) - 198) < 0.01
+                   && abs(TimelineNavigationMetrics.modeAnchorX(weekly: false, index: 1) - 238) < 0.01
+                   && abs(TimelineNavigationMetrics.modeAnchorX(weekly: true, index: 0) - 222) < 0.01
+                   && abs(TimelineNavigationMetrics.modeAnchorX(weekly: true, index: 1) - 262) < 0.01,
                    "Mode icons and their tooltips remain aligned in narrow Daily and Weekly headers")
+        try expect(abs(TimelineNavigationMetrics.autoCaptureAnchorX(weekly: false) - 280) < 0.01
+                   && abs(TimelineNavigationMetrics.autoCaptureAnchorX(weekly: true) - 304) < 0.01
+                   && TimelineNavigationMetrics.fixedContentWidth(weekly: true)
+                        <= size.width - TimelineNavigationMetrics.horizontalPadding * 2,
+                   "Auto Capture sits immediately right of 7 Days without clipping the narrow header")
         try expect(NSImage(systemSymbolName: "1.calendar", accessibilityDescription: nil) != nil
-                   && NSImage(systemSymbolName: "7.calendar", accessibilityDescription: nil) != nil,
-                   "Daily and Weekly calendar symbols are available on the deployment target")
+                   && NSImage(systemSymbolName: "7.calendar", accessibilityDescription: nil) != nil
+                   && NSImage(systemSymbolName: "bolt.fill", accessibilityDescription: nil) != nil,
+                   "Daily, Weekly and Auto Capture symbols are available on the deployment target")
+        try expect(AutoCaptureHeaderAnimation.angle(isOn: false, reduceMotion: false, phase: true) == 0
+                   && AutoCaptureHeaderAnimation.angle(isOn: true, reduceMotion: true, phase: true) == 0
+                   && AutoCaptureHeaderAnimation.angle(isOn: true, reduceMotion: false, phase: true)
+                        == AutoCaptureHeaderAnimation.maximumTiltDegrees
+                   && AutoCaptureHeaderAnimation.angle(isOn: true, reduceMotion: false, phase: false)
+                        == -AutoCaptureHeaderAnimation.maximumTiltDegrees,
+                   "Auto Capture tilts around center only while on and respects Reduce Motion")
 
         let primaryTooltipLabels = TimelinePrimaryAction.allCases.map(\.tooltipLabel)
         let filterTooltipLabels = CaptureFilter.allCases.map(\.tooltipLabel)
@@ -202,12 +237,19 @@ private enum HeaderInteractionTests {
             itemCount: 2, row: .navigation,
             fixedAnchorX: TimelineNavigationMetrics.modeAnchorX(weekly: false, index: 1)
         )
+        let autoCaptureTooltip = TimelineTooltipDescriptor(
+            id: "timeline-auto-capture-tooltip", text: "Auto Capture off", index: 2,
+            itemCount: 3, row: .navigation,
+            fixedAnchorX: TimelineNavigationMetrics.autoCaptureAnchorX(weekly: false)
+        )
         try expect(abs(firstPrimaryTooltip.anchorX(in: size.width) - 70) < 0.01
                    && abs(lastFilterTooltip.anchorX(in: size.width) - 310) < 0.01,
                    "Tooltip anchors follow the shared row geometry at both edges")
         try expect(weeklyModeTooltip.text == "Weekly"
-                   && abs(weeklyModeTooltip.anchorX(in: size.width) - 268) < 0.01,
+                   && abs(weeklyModeTooltip.anchorX(in: size.width) - 238) < 0.01,
                    "The Weekly icon has concise hover text anchored beneath the navigation control")
+        try expect(abs(autoCaptureTooltip.anchorX(in: size.width) - 280) < 0.01,
+                   "Auto Capture has a coordinated tooltip immediately right of 7 Days")
         tooltipController.begin(firstPrimaryTooltip)
         settle(0.04)
         try expect(tooltipController.visible == firstPrimaryTooltip,
@@ -220,6 +262,11 @@ private enum HeaderInteractionTests {
         try expect(tooltipController.visible == weeklyModeTooltip,
                    "The navigation icons share the same delayed tooltip controller")
         tooltipController.end(id: weeklyModeTooltip.id)
+        tooltipController.begin(autoCaptureTooltip)
+        settle(0.04)
+        try expect(tooltipController.visible == autoCaptureTooltip,
+                   "Auto Capture uses the same delayed navigation tooltip")
+        tooltipController.end(id: autoCaptureTooltip.id)
         tooltipController.begin(lastFilterTooltip)
         tooltipController.end(id: lastFilterTooltip.id)
         settle(0.04)
@@ -321,19 +368,30 @@ private enum HeaderInteractionTests {
         try expect(state.filter == .all, "The All filter remains the first centered filter")
 
         let initialDay = CaptureCalendar.dayString(state.selectedDay)
-        click(window, x: 110, topY: 22)
+        try expect(!autoCaptureSettings.isEnabled && !autoCapture.isRunning,
+                   "Auto Capture starts off before using its header toggle")
+        click(window, x: 280, topY: 22)
+        try expect(autoCaptureSettings.isEnabled && autoCapture.isRunning
+                   && autoCaptureSettings.status == .monitoring,
+                   "The button right of 7 Days turns Auto Capture on")
+        click(window, x: 280, topY: 22)
+        try expect(!autoCaptureSettings.isEnabled && !autoCapture.isRunning
+                   && autoCaptureSettings.status == .disabled,
+                   "The same header button turns Auto Capture off immediately")
+
+        click(window, x: 88, topY: 22)
         try expect(CaptureCalendar.dayString(state.selectedDay) < initialDay,
                    "Previous-day navigation remains interactive beside the logo")
-        click(window, x: 194, topY: 22)
+        click(window, x: 164, topY: 22)
         try expect(Calendar.current.isDateInToday(state.selectedDay),
                    "Next-day navigation returns to today and then disables")
-        click(window, x: 268, topY: 22)
+        click(window, x: 238, topY: 22)
         try expect(state.route == .weekly && state.timelineMode == .weekly,
                    "The purple Weekly icon opens the seven-day view")
-        click(window, x: 262, topY: 22)
+        click(window, x: 222, topY: 22)
         try expect(state.route == .daily && state.timelineMode == .daily,
                    "The purple Daily icon returns to the selected day")
-        click(window, x: 152, topY: 22)
+        click(window, x: 126, topY: 22)
         try expect(state.route == .weekly, "The selected date still opens the Weekly view")
 
         let windowsBeforeMenuSearch = Set(application.windows.filter { $0 !== window && $0.isVisible }.map(\.windowNumber))
@@ -440,11 +498,19 @@ private enum HeaderInteractionTests {
             try expect(false, "Weekly Download reopens for keyboard file export")
         }
 
-        click(window, x: 262, topY: 22)
+        click(window, x: 222, topY: 22)
         try expect(state.route == .daily,
                    "The Daily icon remains usable when Weekly is laid out at 380 points")
 
-        click(window, x: 354, topY: 22)
+        autoCaptureSettings.setPrivacyExplanationAcknowledged(false)
+        autoCaptureSettings.setScreenshotFolderBookmark(nil)
+        click(window, x: 280, topY: 22)
+        try expect(state.route == .settings && !autoCaptureSettings.isEnabled,
+                   "First use opens the required local privacy and folder setup instead of monitoring silently")
+        state.route = .daily
+        settle()
+
+        click(window, x: 360, topY: 22)
         try expect(dismissals == 1 && state.route == .daily,
                    "The neutral X remains an independent close control")
         try expect(Set(store.captures.map(\.id)) == fixtureIDs,
