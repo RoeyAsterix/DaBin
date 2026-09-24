@@ -5,6 +5,7 @@
 - Moved Settings tooltip hover tracking from the menu's inner icon label to the outer native Menu, so the gear receives the same delayed hover label as the other header icons under real macOS hit testing.
 - Left the other ten action and filter tooltips, their timing, keyboard-focus behavior, accessibility names and the paired 280 × 34-point row geometry unchanged.
 - Superseded 0.3.14 after its public release and successful in-app installation: live pointer QA found this Settings-only hover gap after publication.
+- Published and installed 0.3.15 through DaBin's verified updater; live pointer QA passed and the existing archive and preferences remained byte-identical.
 
 ## 0.3.14 — 2026-09-24
 
