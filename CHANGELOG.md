@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.16 — 2026-09-24
+
+- Replaced the text Daily/Weekly segmented control with matched purple `1` and `7` calendar icons.
+- Reused the action/filter icon language: 15-point symbols, 40 × 34-point targets, 30-point selected and hover circles, pressed feedback, focus rings and 220 ms tooltips.
+- Kept both modes accessible as individually labeled buttons with selected state, left/right keyboard switching and stable identifiers, while reducing the control from 92 to 80 points for the narrow header.
+
 ## 0.3.15 — 2026-09-24
 
 - Moved Settings tooltip hover tracking from the menu's inner icon label to the outer native Menu, so the gear receives the same delayed hover label as the other header icons under real macOS hit testing.

@@ -1241,6 +1241,13 @@ private final class NativeRenderTests: NSObject, NSApplicationDelegate {
                                 id: "filter-tooltip-tasks", text: "Tasks", index: 5,
                                 itemCount: CaptureFilter.allCases.count, row: .filters
                                ))
+            try await snapshot(emptyState, name: "release-tooltip-mode-weekly", mode: mode, output: output,
+                               height: CornerGeometry.dailyPanelHeight(for: emptyState),
+                               tooltip: TimelineTooltipDescriptor(
+                                id: "timeline-mode-tooltip-weekly", text: "Weekly", index: 1,
+                                itemCount: 2, row: .navigation,
+                                fixedAnchorX: TimelineNavigationMetrics.modeAnchorX(weekly: false, index: 1)
+                               ))
             state.openDaily()
             try store.setMinimized(task, minimized: false)
             try await snapshot(state, name: "release-daily", mode: mode, output: output,
@@ -1263,6 +1270,13 @@ private final class NativeRenderTests: NSObject, NSApplicationDelegate {
             }
             try await snapshot(state, name: "release-week", mode: mode, output: output, height: 560, width: 428)
             try await snapshot(state, name: "release-week-narrow", mode: mode, output: output, height: 560, width: 380)
+            try await snapshot(state, name: "release-tooltip-mode-daily", mode: mode, output: output,
+                               height: 560, width: 380,
+                               tooltip: TimelineTooltipDescriptor(
+                                id: "timeline-mode-tooltip-daily", text: "Daily", index: 0,
+                                itemCount: 2, row: .navigation,
+                                fixedAnchorX: TimelineNavigationMetrics.modeAnchorX(weekly: true, index: 0)
+                               ))
             try await snapshotPopover(
                 WeeklySearchPopover(state: state, isPresented: .constant(true)),
                 name: "release-week-search-actions", mode: mode, output: output,

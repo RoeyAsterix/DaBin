@@ -10,6 +10,12 @@ The default corner trigger is 9 logical points along each edge, polled every 100
 
 No persistent menu-bar item was added, to honor complete hiding at rest. Reopening DaBin, its active-app menu, the focused robot's context menu, and keyboard actions provide recovery. A system-wide hotkey is not registered. OS Hot Corners may activate at the same corners; this app does not change system settings.
 
+## Update 0.3.16
+
+The native text `Picker` for Daily and Weekly is replaced by `TimelineModeControl`, an 80-point pair of `AccentIconButton` controls. Daily uses the matched `1.calendar` symbol and Weekly uses `7.calendar`; both resolve at the same intrinsic size on the macOS 14 target. The buttons inherit the established 15-point glyph, 40 × 34-point target, 30-point selected/hover circle, press scale and focus ring. Their concise **Daily** and **Weekly** labels use the same 220 ms tooltip controller as the action and filter rows.
+
+`TimelineNavigationMetrics` owns the narrow-header geometry and explicit tooltip anchors for the 52-point Daily date and 86-point Weekly range. The pair is 12 points narrower than the old segmented control. The header preserves its total vertical footprint by using the 34-point icon target with five points of top inset and removing the two one-point row gaps. Each mode remains an individually labeled accessibility button with a selected trait and stable identifier; left/right move commands select the corresponding mode. Mode activation still routes through `AppState.selectTimelineMode`, so selected dates, filters, scroll positions and drafts keep their existing behavior.
+
 ## Update 0.3.15
 
 Live pointer QA of the installed 0.3.14 release found one platform-specific gap: Settings is a native SwiftUI `Menu`, whose outer control owns pointer hit testing and prevents the inner icon label's hover callback from firing. The Settings tooltip therefore did not appear even though its keyboard-focus cue and menu actions remained available. The other ten action and filter tooltips behaved as designed.
@@ -86,7 +92,7 @@ Direct command-line package arguments remain available for build and package QA.
 
 ## Current Daily/Weekly navigation
 
-The date row uses one compact native segmented control labeled **Daily** and **Weekly**. Daily → Weekly opens the seven-day range ending on `selectedDay`. Weekly → Daily changes only the route, so it returns to the same selected day without resetting the active type filter, Daily scroll position or unsaved drafts. Re-selecting the active segment is idempotent. The centered date continues to open Weekly, and a weekly day heading or Back returns to Daily.
+The date row uses the compact purple **1-calendar** and **7-calendar** icon control for Daily and Weekly. Daily → Weekly opens the seven-day range ending on `selectedDay`. Weekly → Daily changes only the route, so it returns to the same selected day without resetting the active type filter, Daily scroll position or unsaved drafts. Re-selecting the active mode is idempotent. The centered date continues to open Weekly, and a weekly day heading or Back returns to Daily.
 
 ## Update 0.3.2 (historical)
 
@@ -104,7 +110,7 @@ The transient mascot is rebuilt as `RobotCharacterView`, a native layer hierarch
 
 ## Update 0.1.19
 
-In 0.1.19, before the current Daily/Weekly segmented control, Daily's Today control called `showCurrentWeek()`, which explicitly opened the weekly route and selected the current seven-day range regardless of capture count or filter. The weekly control read This Week and restored that current range when browsing history. The centered Daily date still opened a week ending on the selected day; a weekly day heading and Back returned to Daily.
+In 0.1.19, before the current Daily/Weekly icon control, Daily's Today control called `showCurrentWeek()`, which explicitly opened the weekly route and selected the current seven-day range regardless of capture count or filter. The weekly control read This Week and restored that current range when browsing history. The centered Daily date still opened a week ending on the selected day; a weekly day heading and Back returned to Daily.
 
 Weekly day columns are always rendered, including empty archives and empty task/type filters. Their entrance keeps its directional slide but no longer starts at zero opacity; content visibility does not depend on an appearance animation completing. The seven-day structure and per-day empty labels remain available throughout layout and resizing.
 

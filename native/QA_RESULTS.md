@@ -1,5 +1,17 @@
 # DaBin QA cycle — 24 September 2026
 
+## Purple Daily/Weekly icon control — 0.3.16 (41)
+
+DaBin 0.3.16 replaces the text segmented Daily/Weekly picker with an 80-point pair of purple `1.calendar` and `7.calendar` buttons. Each mode uses the same 15-point glyph, 40 × 34-point target, 30-point selected/hover circle, press animation, focus ring and 220 ms tooltip as the action and filter icons. The active mode exposes a selected accessibility trait; both buttons retain complete **Daily view** and **Weekly view** labels and stable identifiers. Explicit Daily and Weekly geometry keeps the tooltips aligned while the longer week range changes the first-row layout.
+
+The exact source passed **30/30 registered optimized Release suites**. Header interaction passed **46 checks**, including both ordinary button directions, narrow Daily/Weekly anchors, symbol availability, delayed navigation tooltips and every existing action. Window coverage passed **142 checks on one real display**; Daily/Weekly state, panel transitions, filters, input, archive, updater, privacy and robot suites also passed.
+
+Fresh rendering produced **50 release interface views**. Original-resolution inspection covered populated and empty Daily, the 380-point narrow Weekly board, light and dark appearances, native Retina samples, and **Daily**/**Weekly** tooltip positions. A clean app extracted from the verified package then received a real pointer dwell over Weekly, exposed the `Board view` group and both labeled buttons without adding the visual tooltip to the accessibility tree, switched Daily → Weekly → Daily, and left all 33 archive files and preferences byte-identical.
+
+The optimized ARM64 build has production fingerprint `5f45db94220540928f16778d000e8e6dec2082260b4ca169cdd70a1b37dd4e86`. Its **5,984,832-byte** executable has SHA-256 `100a77fa2f09631fc3903f453e97f5bd8dc124a97fde50b5b59ee147eed0b158`. The verified **3,391,707-byte** update ZIP has SHA-256 `c938b966d6154f28f9c3273c4e0b577646ea7a3be50b120e56777d1085120992`; isolated package QA passed fresh installation, replacement, backup, signature, extraction, exact executable identity and document handoff. Static Store packaging passed **20/20** checks; Store release preflight retains the Apple Team ID and full-Xcode prerequisites. Public publication and the installed 0.3.15 → 0.3.16 update remain pending the tag.
+
+[0.3.16 evidence](../docs/qa/0.3.16/README.md) · [Live packaged-app check](../docs/qa/0.3.16/local-live-mode-v0.3.16.json) · [Full run](../docs/qa/0.3.16/full-run/report.json) · [Release renders](../docs/qa/0.3.16/release-ui-renders.json) · [Build receipt](../docs/qa/0.3.16/build-receipt-v0.3.16.json) · [Update manifest](../docs/qa/0.3.16/update-manifest-v0.3.16.json).
+
 ## Settings tooltip Menu hotfix — 0.3.15 (40)
 
 DaBin 0.3.15 moves Settings pointer tracking from the gear's inner label to the outer native SwiftUI `Menu`, which owns real pointer hit testing. The hover state is still rendered by the shared gear label, preserving the 220 ms delay, short **Settings** text, complete **Settings and options** accessibility name, keyboard-focus cue, activation behavior and menu contents. The other ten action and filter tooltips and the paired **280 × 34-point** rows are unchanged.

@@ -1,0 +1,44 @@
+{
+  "accessibility": {
+    "daily": {
+      "identifier": "timeline-mode-daily",
+      "label": "Daily view",
+      "selectedInitially": true
+    },
+    "group": "Board view",
+    "tooltipExcludedFromAccessibilityTree": true,
+    "weekly": {
+      "identifier": "timeline-mode-weekly",
+      "label": "Weekly view",
+      "selectedAfterActivation": true
+    }
+  },
+  "archive": {
+    "afterFileCount": 33,
+    "allFilesByteIdentical": true,
+    "beforeFileCount": 33,
+    "changedFiles": []
+  },
+  "build": "41",
+  "candidate": "verified app extracted from DaBin-0.3.16-Update.zip",
+  "checkedAtUTC": "2026-09-24T05:51:40.356469+00:00",
+  "interaction": {
+    "dailyToWeekly": true,
+    "realPointerTooltip": "Weekly",
+    "tooltipDelayMilliseconds": 220,
+    "weeklyToDaily": true
+  },
+  "passed": true,
+  "preferences": {
+    "afterSHA256": "23435379c513e19e72e56e3b8057439d45db431c09154178665d5a7006e45ac0",
+    "beforeSHA256": "23435379c513e19e72e56e3b8057439d45db431c09154178665d5a7006e45ac0",
+    "byteIdentical": true
+  },
+  "version": "0.3.16",
+  "visual": {
+    "evidenceImage": "renders/live-mode-weekly-tooltip-dark-380pt@2x.png",
+    "evidenceImageSHA256": "1802ed2c6433644f2bd97da1fb52dfde0d14550e6a9b3a8d14417bc48fb56b96",
+    "lightDarkReleaseRendersReviewed": true,
+    "narrowWeekly380PointsReviewed": true
+  }
+}

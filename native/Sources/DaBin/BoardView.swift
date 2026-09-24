@@ -120,11 +120,12 @@ struct BoardView: View {
     }
 
     private var timelineHeader: some View {
-        VStack(spacing: 1) {
+        VStack(spacing: 0) {
             timelineNavigationRow
-                .frame(height: 30)
+                .frame(height: TimelineIconRowMetrics.controlHeight)
                 .padding(.horizontal, 12)
-                .padding(.top, 7)
+                .padding(.top, 5)
+                .zIndex(2)
             timelinePrimaryActions
                 .frame(height: 34)
             FilterBar(selection: $state.filter)
@@ -150,6 +151,8 @@ struct BoardView: View {
     private func tooltipY(_ tooltip: TimelineTooltipDescriptor,
                           headerHeight: CGFloat) -> CGFloat {
         switch tooltip.row {
+        case .navigation:
+            return 52
         case .primary:
             // Point directly back to the primary icon and temporarily cover
             // the aligned filter beneath it instead of looking attached to it.
@@ -189,7 +192,7 @@ struct BoardView: View {
             }
             .disabled(Calendar.current.isDateInToday(timelineExportDate))
 
-            TimelineModePicker(state: state, width: 92, compact: true)
+            TimelineModeControl(state: state)
                 .layoutPriority(2)
             Spacer(minLength: 2)
             SmallIcon(symbol: "xmark", label: "Hide DaBin", size: 28) { state.onDismiss?() }

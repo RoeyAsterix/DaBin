@@ -19,18 +19,43 @@ enum TimelineIconRowMetrics {
     }
 }
 
+/// Compact first-row measurements. The mode pair stays within the former
+/// segmented control's width while using the same targets as the icon rows.
+enum TimelineNavigationMetrics {
+    static let horizontalPadding: CGFloat = 12
+    static let itemSpacing: CGFloat = 2
+    static let logoWidth: CGFloat = 80
+    static let navigationButtonWidth: CGFloat = 28
+    static let dailyDateWidth: CGFloat = 52
+    static let weeklyDateWidth: CGFloat = 86
+    static let modeGroupWidth = TimelineIconRowMetrics.controlWidth * 2
+
+    static func modeAnchorX(weekly: Bool, index: Int) -> CGFloat {
+        let dateWidth = weekly ? weeklyDateWidth : dailyDateWidth
+        let modeLeading = horizontalPadding
+            + logoWidth + itemSpacing
+            + navigationButtonWidth + itemSpacing
+            + dateWidth + itemSpacing
+            + navigationButtonWidth + itemSpacing
+        return modeLeading + TimelineIconRowMetrics.controlWidth / 2
+            + CGFloat(index) * TimelineIconRowMetrics.controlWidth
+    }
+}
+
 /// The compact hover label is coordinated at header level so it can draw
 /// below both icon rows without changing either row's measured size.
 struct TimelineTooltipDescriptor: Equatable, Identifiable {
-    enum Row: Equatable { case primary, filters }
+    enum Row: Equatable { case navigation, primary, filters }
 
     let id: String
     let text: String
     let index: Int
     let itemCount: Int
     var row: Row = .primary
+    var fixedAnchorX: CGFloat? = nil
 
     func anchorX(in containerWidth: CGFloat) -> CGFloat {
+        if let fixedAnchorX { return fixedAnchorX }
         let leading = max(0, (containerWidth - TimelineIconRowMetrics.rowWidth) / 2)
         let step = TimelineIconRowMetrics.controlWidth
             + TimelineIconRowMetrics.spacing(itemCount: itemCount)
@@ -378,27 +403,52 @@ struct SmallIcon: View {
 }
 
 @MainActor
-struct TimelineModePicker: View {
-    @Environment(\.daBinAccent) private var accent
+struct TimelineModeControl: View {
     @ObservedObject var state: AppState
-    var width: CGFloat = 108
-    var compact = false
-
-    private var selection: Binding<BoardTimelineMode> {
-        Binding(get: { state.timelineMode }, set: { state.selectTimelineMode($0) })
-    }
 
     var body: some View {
-        Picker("Board view", selection: selection) {
-            Text("Daily").tag(BoardTimelineMode.daily)
-            Text("Weekly").tag(BoardTimelineMode.weekly)
+        HStack(spacing: 0) {
+            modeButton(.daily, symbol: "1.calendar", index: 0)
+            modeButton(.weekly, symbol: "7.calendar", index: 1)
         }
-        .pickerStyle(.segmented)
-        .controlSize(compact ? .mini : .small)
-        .tint(accent)
-        .frame(width: width)
-        .help("Switch between one day and seven days")
+        .frame(width: TimelineNavigationMetrics.modeGroupWidth,
+               height: TimelineIconRowMetrics.controlHeight)
+        .accessibilityElement(children: .contain)
         .accessibilityLabel("Board view")
+        .onMoveCommand { direction in
+            switch direction {
+            case .left: state.selectTimelineMode(.daily)
+            case .right: state.selectTimelineMode(.weekly)
+            default: break
+            }
+        }
+    }
+
+    private func modeButton(_ mode: BoardTimelineMode, symbol: String,
+                            index: Int) -> some View {
+        let daily = mode == .daily
+        let title = daily ? "Daily" : "Weekly"
+        let label = daily ? "Daily view" : "Weekly view"
+        let tooltip = TimelineTooltipDescriptor(
+            id: "timeline-mode-tooltip-\(daily ? "daily" : "weekly")",
+            text: title,
+            index: index,
+            itemCount: 2,
+            row: .navigation,
+            fixedAnchorX: TimelineNavigationMetrics.modeAnchorX(
+                weekly: state.timelineMode == .weekly,
+                index: index
+            )
+        )
+        return AccentIconButton(
+            symbol: symbol,
+            label: label,
+            tooltip: tooltip,
+            selected: state.timelineMode == mode,
+            accessibilityIdentifier: "timeline-mode-\(daily ? "daily" : "weekly")"
+        ) {
+            state.selectTimelineMode(mode)
+        }
     }
 }
 

@@ -43,24 +43,6 @@ private enum HeaderInteractionTests {
         settle()
     }
 
-    /// AppKit tracking controls synchronously wait for their mouse-up event.
-    /// Queue that event before delivering mouse-down so the native segmented
-    /// control can complete without depending on a running NSApplication loop.
-    @MainActor private static func clickTrackingControl(_ window: NSWindow,
-                                                        x: CGFloat, topY: CGFloat) {
-        let point = NSPoint(x: x, y: window.contentLayoutRect.height - topY)
-        let stamp = ProcessInfo.processInfo.systemUptime
-        let mouseUp = NSEvent.mouseEvent(with: .leftMouseUp, location: point, modifierFlags: [],
-                                         timestamp: stamp + 0.01, windowNumber: window.windowNumber,
-                                         context: nil, eventNumber: 2, clickCount: 1, pressure: 0)!
-        NSApp.postEvent(mouseUp, atStart: false)
-        let mouseDown = NSEvent.mouseEvent(with: .leftMouseDown, location: point, modifierFlags: [],
-                                           timestamp: stamp, windowNumber: window.windowNumber,
-                                           context: nil, eventNumber: 1, clickCount: 1, pressure: 1)!
-        window.sendEvent(mouseDown)
-        settle()
-    }
-
     @MainActor private static func key(_ window: NSWindow, keyCode: UInt16,
                                        characters: String,
                                        modifiers: NSEvent.ModifierFlags = []) {
@@ -190,6 +172,16 @@ private enum HeaderInteractionTests {
         try expect(abs(primaryWidth - TimelineIconRowMetrics.rowWidth) < 0.01
                    && abs(filterWidth - TimelineIconRowMetrics.rowWidth) < 0.01,
                    "Primary actions and filters occupy identical 280-point rows")
+        try expect(TimelineNavigationMetrics.modeGroupWidth == 80,
+                   "Daily and Weekly use two compact 40-point icon targets")
+        try expect(abs(TimelineNavigationMetrics.modeAnchorX(weekly: false, index: 0) - 228) < 0.01
+                   && abs(TimelineNavigationMetrics.modeAnchorX(weekly: false, index: 1) - 268) < 0.01
+                   && abs(TimelineNavigationMetrics.modeAnchorX(weekly: true, index: 0) - 262) < 0.01
+                   && abs(TimelineNavigationMetrics.modeAnchorX(weekly: true, index: 1) - 302) < 0.01,
+                   "Mode icons and their tooltips remain aligned in narrow Daily and Weekly headers")
+        try expect(NSImage(systemSymbolName: "1.calendar", accessibilityDescription: nil) != nil
+                   && NSImage(systemSymbolName: "7.calendar", accessibilityDescription: nil) != nil,
+                   "Daily and Weekly calendar symbols are available on the deployment target")
 
         let primaryTooltipLabels = TimelinePrimaryAction.allCases.map(\.tooltipLabel)
         let filterTooltipLabels = CaptureFilter.allCases.map(\.tooltipLabel)
@@ -205,9 +197,17 @@ private enum HeaderInteractionTests {
             id: "filter-tooltip-tasks", text: filterTooltipLabels[5], index: 5,
             itemCount: CaptureFilter.allCases.count, row: .filters
         )
+        let weeklyModeTooltip = TimelineTooltipDescriptor(
+            id: "timeline-mode-tooltip-weekly", text: "Weekly", index: 1,
+            itemCount: 2, row: .navigation,
+            fixedAnchorX: TimelineNavigationMetrics.modeAnchorX(weekly: false, index: 1)
+        )
         try expect(abs(firstPrimaryTooltip.anchorX(in: size.width) - 70) < 0.01
                    && abs(lastFilterTooltip.anchorX(in: size.width) - 310) < 0.01,
                    "Tooltip anchors follow the shared row geometry at both edges")
+        try expect(weeklyModeTooltip.text == "Weekly"
+                   && abs(weeklyModeTooltip.anchorX(in: size.width) - 268) < 0.01,
+                   "The Weekly icon has concise hover text anchored beneath the navigation control")
         tooltipController.begin(firstPrimaryTooltip)
         settle(0.04)
         try expect(tooltipController.visible == firstPrimaryTooltip,
@@ -215,6 +215,11 @@ private enum HeaderInteractionTests {
         tooltipController.end(id: firstPrimaryTooltip.id)
         try expect(tooltipController.visible == nil,
                    "Leaving an icon dismisses its tooltip immediately")
+        tooltipController.begin(weeklyModeTooltip)
+        settle(0.04)
+        try expect(tooltipController.visible == weeklyModeTooltip,
+                   "The navigation icons share the same delayed tooltip controller")
+        tooltipController.end(id: weeklyModeTooltip.id)
         tooltipController.begin(lastFilterTooltip)
         tooltipController.end(id: lastFilterTooltip.id)
         settle(0.04)
@@ -322,6 +327,12 @@ private enum HeaderInteractionTests {
         click(window, x: 194, topY: 22)
         try expect(Calendar.current.isDateInToday(state.selectedDay),
                    "Next-day navigation returns to today and then disables")
+        click(window, x: 268, topY: 22)
+        try expect(state.route == .weekly && state.timelineMode == .weekly,
+                   "The purple Weekly icon opens the seven-day view")
+        click(window, x: 262, topY: 22)
+        try expect(state.route == .daily && state.timelineMode == .daily,
+                   "The purple Daily icon returns to the selected day")
         click(window, x: 152, topY: 22)
         try expect(state.route == .weekly, "The selected date still opens the Weekly view")
 
@@ -429,9 +440,9 @@ private enum HeaderInteractionTests {
             try expect(false, "Weekly Download reopens for keyboard file export")
         }
 
-        clickTrackingControl(window, x: 265, topY: 22)
+        click(window, x: 262, topY: 22)
         try expect(state.route == .daily,
-                   "The Daily segment remains usable when Weekly is laid out at 380 points")
+                   "The Daily icon remains usable when Weekly is laid out at 380 points")
 
         click(window, x: 354, topY: 22)
         try expect(dismissals == 1 && state.route == .daily,
