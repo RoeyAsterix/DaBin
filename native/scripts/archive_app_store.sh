@@ -46,6 +46,6 @@ xcrun xcodebuild \
   CODE_SIGN_STYLE=Automatic ARCHS=arm64 ONLY_ACTIVE_ARCH=NO \
   INFOPLIST_FILE="$archive_info" \
   archive
-python3 scripts/app_store_preflight.py --app "$archive_path/Products/Applications/DaBin.app"
+python3 scripts/app_store_preflight.py --archive-app "$archive_path/Products/Applications/DaBin.app"
 echo "Archive prepared: $archive_path"
 echo "Use Xcode Organizer to validate and distribute with your App Store signing profile. No upload has been performed."

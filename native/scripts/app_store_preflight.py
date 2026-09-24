@@ -76,10 +76,14 @@ def paths_with_extended_attribute(root, attribute):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--static-only", action="store_true", help="Check source packaging only; does not report release readiness")
-    parser.add_argument("--app", type=Path, help="Also inspect a distribution-signed app bundle; an ad-hoc app must fail")
+    inspected_apps = parser.add_mutually_exclusive_group()
+    inspected_apps.add_argument("--app", type=Path,
+                                help="Also inspect a distribution-signed app bundle; an ad-hoc, development, or Developer ID app must fail")
+    inspected_apps.add_argument("--archive-app", type=Path,
+                                help="Also inspect the development-signed app inside an Xcode archive before Organizer export")
     args = parser.parse_args()
-    if args.static_only and args.app:
-        parser.error("--static-only and --app cannot be combined")
+    if args.static_only and (args.app or args.archive_app):
+        parser.error("--static-only cannot be combined with --app or --archive-app")
     errors.clear()
     signing = json.loads((ROOT / "Config/AppStoreSigning.json").read_text())
     configured_team = signing.get("developmentTeam", "")
@@ -140,16 +144,25 @@ def main():
             value = os.environ.get(environment_key, info.get(plist_key, ""))
             check(public_https(value), f"An HTTPS {label} is configured; public reachability/content still require review")
 
-    if args.app:
-        app = args.app.resolve()
+    inspected_app = args.app or args.archive_app
+    if inspected_app:
+        app = inspected_app.resolve()
         bundled_info = read_plist(app / "Contents/Info.plist")
         executable = app / "Contents/MacOS" / bundled_info.get("CFBundleExecutable", "DaBin")
         architectures = command(["lipo", "-archs", str(executable)])
         check(architectures.returncode == 0 and architectures.stdout.strip() == "arm64", "Distribution app contains only ARM64 code")
         check(bundled_info.get("DaBinBuildConfiguration") == "Release", "Distribution app records a Release build")
         signature = command(["codesign", "-d", "--verbose=4", str(app)])
-        check(signature.returncode == 0 and any(line.startswith(("Authority=Apple Distribution:", "Authority=3rd Party Mac Developer Application:")) for line in signature.stdout.splitlines()),
-              "App has an App Store distribution signing identity, not ad-hoc/Developer ID signing")
+        if args.archive_app:
+            expected_authorities = ("Authority=Apple Development:", "Authority=Mac Developer:")
+            signing_message = "Archive app has an Apple development signing identity for Organizer export"
+        else:
+            expected_authorities = ("Authority=Apple Distribution:",
+                                    "Authority=3rd Party Mac Developer Application:")
+            signing_message = "App has an App Store distribution signing identity, not ad-hoc/development/Developer ID signing"
+        check(signature.returncode == 0 and any(line.startswith(expected_authorities)
+                                                for line in signature.stdout.splitlines()),
+              signing_message)
         team_line = next((line.removeprefix("TeamIdentifier=") for line in signature.stdout.splitlines() if line.startswith("TeamIdentifier=")), "")
         check(team_line == effective_team and bool(team_line), "Distribution signature matches the configured developer team")
         verified = command(["codesign", "--verify", "--deep", "--strict", str(app)])

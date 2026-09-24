@@ -208,7 +208,7 @@ private enum UpdateConfigurationTests {
                    "The App Store archive helper uses the generated Xcode path without the direct flag")
         try expect(archive.contains("Library/Developer/Xcode/Archives")
                     && archive.contains("app_store_archive_location.py")
-                    && archive.contains("app_store_preflight.py --app")
+                    && archive.contains("app_store_preflight.py --archive-app")
                     && !archive.contains("$project_root/build/app-store")
                     && archiveLocation.contains("com.apple.file-provider-domain-id")
                     && archiveLocation.contains("The App Store archive must be outside the source repository"),
