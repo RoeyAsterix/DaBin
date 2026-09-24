@@ -16,6 +16,7 @@ from project_inventory import ROOT, TARGET, sources, resources, hashes, fingerpr
 NONFOCUS = ["ThemeSettingsTests", "PrivacyInformationTests", "DomainTests", "ArchiveLayoutTests",
             "ArchiveStoreTests", "CaptureRemovalTests", "ServiceTests", "QAStorageScopedSaveTests",
             "QALifecycleTests", "ApplicationLifecycleTests", "PreviewLifecycleTests", "TaskStateTests", "CaptureActionTests",
+            "CaptureClipboardTests",
             "HourlyGroupingTests", "DayExportTests", "DayExportUITests", "WeeklyStateTests", "InputTests", "AutoCaptureServiceTests", "AutoCaptureRobotPresenterTests", "AutoCaptureRobotCelebrationTests",
             "SoftwareUpdateTests", "UpdateConfigurationTests", "RobotMotionTests"]
 WINDOW = ["WindowTests", "WeeklyWindowTests", "FilterResizeTests", "RobotDropTests", "DailyCaptureTests", "HeaderInteractionTests"]

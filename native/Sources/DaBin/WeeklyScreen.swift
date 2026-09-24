@@ -174,7 +174,10 @@ private struct WeeklyCaptureCard: View {
                 CaptureControls(state: state, capture: capture)
                 Spacer(minLength: 0)
                 VStack(alignment: .trailing, spacing: 4) {
-                    Text(captureClock(capture)).font(.system(size: 12.65)).monospacedDigit().foregroundStyle(Palette.muted)
+                    HStack(spacing: 3) {
+                        Text(captureClock(capture)).font(.system(size: 12.65)).monospacedDigit().foregroundStyle(Palette.muted)
+                        CaptureCopyButton(state: state, captures: [capture], compact: true)
+                    }
                     if capture.isTask {
                         TaskStatusButton(state: state, capture: capture)
                     } else {

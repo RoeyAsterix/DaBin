@@ -14,6 +14,7 @@ DaBin is a self-contained Apple Silicon macOS application. It uses Swift, AppKit
 | State and domain | Navigation, drafts, chronological membership, filters, task carryover, source facts, selected-day and fixed-week search context, and deterministic day/week export text | `AppState.swift`, `Domain.swift`, `DayExport.swift` |
 | Capture intake | Read only explicit paste/drop transfers; preserve receipt time; coordinate promised files and partial failures | `InputService.swift` |
 | Optional automatic intake | Gate opt-in clipboard and screenshot-folder monitoring; retain the user-selected folder grant; apply source exclusions and duplicate suppression; stop promptly on pause, disable and shutdown | `AutoCaptureService.swift`, `ScreenshotFolderMonitor.swift`, `AutoCaptureFingerprint.swift`, `AutoCaptureSettings.swift` |
+| Capture copy | Reconstruct one visible action from immutable text/link values or validated managed originals, then perform one native pasteboard write | `CaptureClipboard.swift`, `CaptureCopyButton.swift` |
 | Persistence | Transactional metadata, owned original copies, readable dated archive and interrupted-operation recovery | `CaptureStore.swift`, `CaptureRepository.swift`, `DailyArchive.swift`, `OriginalFileStorage.swift`, `CaptureRemoval.swift` |
 | Disposable previews | Bounded parallel local previews, optional website requests, cancellation/timeout bridging, cache regeneration | `PreviewService.swift`, `PreviewRequest.swift` |
 | Reminders | Serialized scheduling, revision checks, permission feedback and wake/activation reconciliation | `ReminderService.swift`, `ReminderLifecycle.swift` |
@@ -34,6 +35,7 @@ The first launch remains quiet: screen corners are the default reveal target, an
 - Receipt date/time and source metadata remain facts about the original capture.
 - Automatic records retain their automatic origin and stable action identity. Source-application metadata is best effort and must never be presented as authoritative provenance.
 - Imported source files are copied and verified; their external originals are not moved or edited.
+- Card copy reads only persisted values and DaBin-managed originals. It never reopens the external source path, and a missing member prevents a grouped action from partially replacing the clipboard.
 - Core Data is the authoritative index. Readable folders and thumbnails are managed derivatives or owned copies, not an alternative mutable index.
 - A failed import compensates its own work; recoverable interrupted imports retain a journal and verified bytes.
 - Removal commits the metadata deletion before removing owned files. A durable intent handles cleanup retries before import recovery. Deleted or stale objects cannot upsert themselves through service saves.

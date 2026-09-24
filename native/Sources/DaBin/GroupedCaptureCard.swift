@@ -6,6 +6,7 @@ struct GroupedCaptureCard: View {
     @ObservedObject var state: AppState
     let group: CaptureCardGroup
     var compact = false
+    var showsCopyButton = true
     @State private var confirmsRemoval = false
 
     private var primary: Capture { group.primary }
@@ -13,29 +14,7 @@ struct GroupedCaptureCard: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: compact ? 7 : 9) {
-            HStack(alignment: .top, spacing: 9) {
-                Image(systemName: "square.stack.3d.up.fill")
-                    .font(.system(size: compact ? 13 : 15, weight: .medium))
-                    .foregroundStyle(accent)
-                    .frame(width: compact ? 18 : 22, height: 22)
-                    .accessibilityHidden(true)
-                VStack(alignment: .leading, spacing: 3) {
-                    Text(title).font(.system(size: compact ? 13 : 15, weight: .semibold))
-                    if group.isMinimized {
-                        Text(group.captures.map(\.title).joined(separator: " · "))
-                            .font(.system(size: 10)).foregroundStyle(Palette.muted).lineLimit(1)
-                    } else {
-                        Text("Saved together in one drop or paste")
-                            .font(.system(size: compact ? 9 : 11)).foregroundStyle(Palette.muted).lineLimit(1)
-                    }
-                }
-                Spacer(minLength: 5)
-                VStack(alignment: .trailing, spacing: 3) {
-                    Text(captureClock(primary)).font(.system(size: 12.65)).monospacedDigit()
-                        .foregroundStyle(Palette.muted)
-                    Text("Batch").font(.system(size: 10)).foregroundStyle(Palette.muted)
-                }.fixedSize()
-            }
+            cardHeader
 
             if !group.isMinimized {
                 VStack(spacing: 0) {
@@ -105,6 +84,68 @@ struct GroupedCaptureCard: View {
         }
         .accessibilityElement(children: .contain)
         .accessibilityLabel("Batch of \(group.captures.count) captured items")
+    }
+
+    @ViewBuilder
+    private var cardHeader: some View {
+        if compact {
+            VStack(alignment: .leading, spacing: 3) {
+                HStack(spacing: 7) {
+                    batchSymbol(size: 13, width: 18)
+                    Text(title)
+                        .font(.system(size: 13, weight: .semibold))
+                        .lineLimit(1)
+                        .layoutPriority(1)
+                    Spacer(minLength: 2)
+                    if showsCopyButton {
+                        CaptureCopyButton(state: state, captures: group.captures, compact: true)
+                    }
+                }
+                HStack(alignment: .firstTextBaseline, spacing: 5) {
+                    Text(group.isMinimized
+                         ? group.captures.map(\.title).joined(separator: " · ")
+                         : "Saved together")
+                        .lineLimit(1)
+                    Spacer(minLength: 3)
+                    Text("\(captureClock(primary)) · Batch").monospacedDigit().fixedSize()
+                }
+                .font(.system(size: 9))
+                .foregroundStyle(Palette.muted)
+            }
+        } else {
+            HStack(alignment: .top, spacing: 9) {
+                batchSymbol(size: 15, width: 22)
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(title).font(.system(size: 15, weight: .semibold))
+                    if group.isMinimized {
+                        Text(group.captures.map(\.title).joined(separator: " · "))
+                            .font(.system(size: 10)).foregroundStyle(Palette.muted).lineLimit(1)
+                    } else {
+                        Text("Saved together in one drop or paste")
+                            .font(.system(size: 11)).foregroundStyle(Palette.muted).lineLimit(1)
+                    }
+                }
+                Spacer(minLength: 5)
+                VStack(alignment: .trailing, spacing: 3) {
+                    HStack(spacing: 4) {
+                        Text(captureClock(primary)).font(.system(size: 12.65)).monospacedDigit()
+                            .foregroundStyle(Palette.muted)
+                        if showsCopyButton {
+                            CaptureCopyButton(state: state, captures: group.captures)
+                        }
+                    }
+                    Text("Batch").font(.system(size: 10)).foregroundStyle(Palette.muted)
+                }.fixedSize()
+            }
+        }
+    }
+
+    private func batchSymbol(size: CGFloat, width: CGFloat) -> some View {
+        Image(systemName: "square.stack.3d.up.fill")
+            .font(.system(size: size, weight: .medium))
+            .foregroundStyle(accent)
+            .frame(width: width, height: 22)
+            .accessibilityHidden(true)
     }
 
     private func batchIcon(symbol: String, label: String, action: @escaping () -> Void) -> some View {

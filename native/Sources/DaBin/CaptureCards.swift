@@ -8,6 +8,7 @@ struct CaptureRow: View {
     let featured: Bool
     var isMatch: Bool? = nil
     var taskAtTop = false
+    var showsCopyButton = true
     /// Automatic-hour actions already provide their own rounded card surface.
     /// Keep the row content unframed there to avoid a competing nested outline.
     var embeddedInCard = false
@@ -56,8 +57,13 @@ struct CaptureRow: View {
                         ? "Open unfinished task \(capture.title), created \(prettyDay(capture.captureDay)) at \(captureClock(capture))"
                         : "Open \(capture.title), captured at \(captureClock(capture))")
                 VStack(alignment: .trailing, spacing: 4) {
-                    Text(captureClock(capture)).font(.system(size: 12.65)).monospacedDigit()
-                        .foregroundStyle(Palette.muted)
+                    HStack(spacing: 4) {
+                        Text(captureClock(capture)).font(.system(size: 12.65)).monospacedDigit()
+                            .foregroundStyle(Palette.muted)
+                        if showsCopyButton {
+                            CaptureCopyButton(state: state, captures: [capture])
+                        }
+                    }
                     if capture.kind == .task {
                         TaskStatusButton(state: state, capture: capture)
                     } else {

@@ -89,6 +89,7 @@ final class AppState: ObservableObject {
     let updates: SoftwareUpdateService
     let robotPlacement: RobotPlacementSettings
     let autoCapture: AutoCaptureService
+    let captureClipboard: CaptureClipboardService
     let newTaskDraft = NewTaskDraft()
     @Published var route: BoardRoute = .daily {
         didSet {
@@ -132,7 +133,8 @@ final class AppState: ObservableObject {
 
     init(store: CaptureStore, previews: PreviewService, reminders: ReminderService,
          updates: SoftwareUpdateService? = nil, robotPlacement: RobotPlacementSettings? = nil,
-         autoCapture: AutoCaptureService? = nil) {
+         autoCapture: AutoCaptureService? = nil,
+         captureClipboard: CaptureClipboardService? = nil) {
         self.store = store
         self.previews = previews
         self.reminders = reminders
@@ -140,6 +142,7 @@ final class AppState: ObservableObject {
         self.robotPlacement = robotPlacement ?? RobotPlacementSettings(defaults: nil)
         self.autoCapture = autoCapture ?? AutoCaptureService(
             settings: AutoCaptureSettings(defaults: nil), input: InputService(store: store))
+        self.captureClipboard = captureClipboard ?? CaptureClipboardService()
         store.objectWillChange.sink { [weak self] _ in
             self?.objectWillChange.send()
         }.store(in: &subscriptions)
@@ -427,6 +430,22 @@ final class AppState: ObservableObject {
     func toggleHourlyGroup(_ key: AutomaticHourKey) {
         if expandedAutomaticHours.remove(key) == nil { expandedAutomaticHours.insert(key) }
         captureLayoutRevision &+= 1
+    }
+
+    @discardableResult
+    func copyCapturesToClipboard(_ captures: [Capture]) -> Bool {
+        let currentIDs = Set(store.captures.map(\.id))
+        guard !captures.isEmpty, captures.allSatisfy({ currentIDs.contains($0.id) }) else {
+            reportFailure("Couldn’t copy this action because it is no longer in the archive.")
+            return false
+        }
+        do {
+            try captureClipboard.copy(captures, managedURL: store.managedURL(for:))
+            return true
+        } catch {
+            reportFailure("Couldn’t copy this action: \(error.localizedDescription)")
+            return false
+        }
     }
 
     func requestRemoval(_ capture: Capture) {

@@ -31,7 +31,7 @@ struct DetailScreen: View {
                             if capture.kind == .text || text != capture.title {
                                 Text(text).font(.system(size: 14)).lineSpacing(4).textSelection(.enabled).fixedSize(horizontal: false, vertical: true)
                             }
-                            Button { NSPasteboard.general.clearContents(); NSPasteboard.general.setString(text, forType: .string) } label: { Label("Copy text", systemImage: "doc.on.doc") }
+                            Button { state.copyCapturesToClipboard([capture]) } label: { Label("Copy text", systemImage: "doc.on.doc") }
                                 .buttonStyle(.plain).font(.system(size: 12)).foregroundStyle(accent)
                         } else if !capture.previewDescription.isEmpty {
                             Text(capture.previewDescription).font(.system(size: 13)).foregroundStyle(Palette.muted).textSelection(.enabled)
