@@ -11,13 +11,16 @@ struct SettingsScreen: View {
     @ObservedObject private var robotPlacement: RobotPlacementSettings
     @ObservedObject private var autoCapture: AutoCaptureService
     @ObservedObject private var autoCaptureSettings: AutoCaptureSettings
+    private let quitApplication: @MainActor () -> Void
     @State private var showPrivacyPolicy = false
     @State private var showAutoCaptureExplanation = false
     @State private var showExcludedApplications = false
 
-    init(state: AppState, theme: ThemeSettings) {
+    init(state: AppState, theme: ThemeSettings,
+         quitApplication: @escaping @MainActor () -> Void = { NSApplication.shared.terminate(nil) }) {
         self.state = state
         self.theme = theme
+        self.quitApplication = quitApplication
         updates = state.updates
         robotPlacement = state.robotPlacement
         autoCapture = state.autoCapture
@@ -234,6 +237,8 @@ struct SettingsScreen: View {
                     Text("Drop onto the robot, or hover over it and press ⌃V or ⌘V. Double-click opens Daily.")
                         .font(.system(size: 12)).foregroundStyle(Palette.muted).fixedSize(horizontal: false, vertical: true)
                 }
+                Divider()
+                SettingsQuitSection(quitApplication: quitApplication)
             }.padding(.horizontal, 16).padding(.bottom, 20)
         }
         .sheet(isPresented: $showPrivacyPolicy) {
@@ -315,6 +320,33 @@ struct SettingsScreen: View {
                 return "Move the pointer to the built-in camera island and DaBin peeks out below it. Displays without an island keep their screen corners."
             }
             return "No camera island is currently detected, so DaBin keeps using screen corners. Your choice stays ready for a compatible display."
+        }
+    }
+}
+
+@MainActor
+struct SettingsQuitSection: View {
+    static let buttonTitle = "Quit DaBin"
+    static let accessibilityLabel = "Quit DaBin completely"
+    static let accessibilityHint = "Stops Auto Capture and closes DaBin so it is no longer running in the background"
+
+    let quitApplication: @MainActor () -> Void
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Application").font(.system(size: 14, weight: .medium))
+            Text("Quit DaBin to stop Auto Capture and remove the robot from every screen. Your local archive and saved reminders remain available when you open DaBin again.")
+                .font(.system(size: 12)).foregroundStyle(Palette.muted)
+                .fixedSize(horizontal: false, vertical: true)
+            Button(role: .destructive, action: quitApplication) {
+                Label(Self.buttonTitle, systemImage: "power")
+            }
+            .buttonStyle(.bordered)
+            .controlSize(.small)
+            .accessibilityLabel(Self.accessibilityLabel)
+            .accessibilityHint(Self.accessibilityHint)
+            .accessibilityIdentifier("settings-quit-dabin")
+            .help("Quit DaBin completely")
         }
     }
 }

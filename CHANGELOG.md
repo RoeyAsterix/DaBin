@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.3.17 — 2026-09-24
+
+- Added a clearly labeled **Quit DaBin** action at the bottom of Settings, with a power icon, tooltip, and complete accessibility label and hint.
+- Routed the action through the native macOS termination flow so removal, active input, and unsaved-draft checks still apply before every window and background service shuts down.
+- Verified that termination stops Auto Capture clipboard polling and screenshot-folder monitoring and prevents any later automatic capture from committing.
+- Added a separate Apple Silicon manual-install package alongside the verified GitHub update/installer package, with both installation paths targeting `~/Applications/DaBin.app`.
+
 ## 0.3.16 — 2026-09-24
 
 - Replaced the text Daily/Weekly segmented control with matched purple `1` and `7` calendar icons.

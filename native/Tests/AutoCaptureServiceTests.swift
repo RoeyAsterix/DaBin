@@ -211,6 +211,24 @@ struct AutoCaptureServiceTests {
         try expect(AutoCaptureSettings(defaults: defaults, ownBundleIdentifier: "com.dabin.mac").status == .ready,
                    "A persisted monitoring status relaunches as ready rather than falsely active")
 
+        let countBeforeShutdown = store.captures.count
+        service.shutdown()
+        writeString("Copied after the application began terminating", to: privateBoard)
+        service.pollNow()
+        fakeMonitor.emit(screenshotFolder.appendingPathComponent("ignored-after-shutdown.png"))
+        try await Task.sleep(for: .milliseconds(100))
+        try expect(!service.isRunning && !fakeMonitor.isRunning && settings.status == .ready,
+                   "Termination shutdown stops clipboard polling and the screenshot-folder monitor")
+        try expect(store.captures.count == countBeforeShutdown,
+                   "No automatic action can commit after termination shutdown")
+        service.start()
+        try expect(service.isRunning && fakeMonitor.isRunning && settings.status == .monitoring,
+                   "The shutdown fixture can restart without changing the persisted Auto Capture preference")
+        service.pollNow()
+        try await Task.sleep(for: .milliseconds(80))
+        try expect(store.captures.count == countBeforeShutdown,
+                   "Restart after shutdown seeds the clipboard counter instead of importing intervening content")
+
         // InputService schedules its work on the main actor. Pausing immediately
         // after observation invalidates the commit guard before durable storage.
         let countBeforePause = store.captures.count

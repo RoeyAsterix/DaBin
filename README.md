@@ -19,6 +19,7 @@ Automatic captures use the same local archive as manual captures. An automatical
 ## Start here
 
 - [Native app guide](native/README.md)
+- [0.3.17 release notes](docs/RELEASE_NOTES_0.3.17.md)
 - [0.3.16 release notes](docs/RELEASE_NOTES_0.3.16.md)
 - [0.3.15 release notes](docs/RELEASE_NOTES_0.3.15.md)
 - [One-page PDF guide](docs/DaBin-Quick-Guide.pdf)
@@ -44,7 +45,7 @@ The optimized app is written to `native/build/DaBin.app`. Full GUI QA needs an u
 
 The direct build has a user-initiated GitHub Releases channel under **Settings → Software updates**. It accepts only this repository’s fixed HTTPS release path, verifies the published byte count and SHA-256 checksum, then gives the bundled installer a private, one-use update document. The installer validates and consumes that document, re-verifies the package and application, asks before replacement, and backs up the previous installation. The capture archive remains untouched. There are no silent update checks.
 
-Release 0.3.16 replaces the text Daily/Weekly segment with matching purple `1` and `7` calendar icons. They use the same symbol size, circular selected/hover states, pressed feedback, keyboard focus and short delayed tooltips as the other header icons, while keeping full **Daily view** and **Weekly view** accessibility names. All 30 optimized Release suites, 50 release renders, public asset verification and the installed-app update passed. The verified updater preserved all 33 archive files and preferences byte for byte, along with the existing Desktop link.
+Release 0.3.17 adds **Quit DaBin** at the bottom of Settings. It uses the normal macOS termination path, stops every DaBin background service after existing safety checks pass, and keeps the local archive and reminders intact. GitHub provides both a verified one-click installer/update ZIP and a separate Apple Silicon manual-install ZIP; both target `~/Applications/DaBin.app` so future in-app updates replace the same copy.
 
 The current personal release is ad-hoc signed for the owner’s Mac. General distribution still requires a stable Developer ID signature and Apple notarization. The Mac App Store configuration compiles without the direct downloader and helper; Store builds update through Apple.
 

@@ -1,5 +1,15 @@
 # DaBin QA cycle — 24 September 2026
 
+## Complete Settings quit and dual GitHub install paths — 0.3.17 (42)
+
+DaBin 0.3.17 adds **Settings → Application → Quit DaBin**. The control uses the standard macOS termination request, retains the existing removal, active-input and unsaved-draft decisions, and then reaches `ApplicationCoordinator.shutdown()` through `applicationWillTerminate`. Focused tests verify the action fires once, Auto Capture is stopped, clipboard polling and screenshot-folder monitoring stop, and later automatic events cannot commit. The local archive and reminders remain intact.
+
+The exact source passed **30/30 registered optimized Release suites**. The lifecycle suite passed **35 checks** and Auto Capture passed **45 checks**. The production renderer completed **50 views**; the Settings bottom state is unclipped at 380 × 430 points in light and dark appearance. The static Store preflight passed all **20 source/package checks**.
+
+The ARM64 Release build has fingerprint `5f2a3ac34abf5ad4e99f71c181daec3e43b511249dd22f13ca4201b6d4f4446d` and executable SHA-256 `dc8b6c54455729dc4b25db74166f110703f304296fa0bc4786cfa7c8d5a389f9`. The verified update package passed isolated fresh-install, replacement, backup, signature and embedded-handoff checks. The separate manual Apple Silicon package passed its signature and ZIP round trip. Both contain the exact same app executable and target `~/Applications/DaBin.app`.
+
+[0.3.17 evidence](../docs/qa/0.3.17/README.md) · [Full run](../docs/qa/0.3.17/full-run/report.json) · [Release renders](../docs/qa/0.3.17/release-ui-renders.json) · [Build receipt](../docs/qa/0.3.17/build-receipt-v0.3.17.json) · [Package comparison](../docs/qa/0.3.17/package-comparison-v0.3.17.json) · [Update manifest](../docs/qa/0.3.17/update-manifest-v0.3.17.json).
+
 ## Purple Daily/Weekly icon control — 0.3.16 (41)
 
 DaBin 0.3.16 replaces the text segmented Daily/Weekly picker with an 80-point pair of purple `1.calendar` and `7.calendar` buttons. Each mode uses the same 15-point glyph, 40 × 34-point target, 30-point selected/hover circle, press animation, focus ring and 220 ms tooltip as the action and filter icons. The active mode exposes a selected accessibility trait; both buttons retain complete **Daily view** and **Weekly view** labels and stable identifiers. Explicit Daily and Weekly geometry keeps the tooltips aligned while the longer week range changes the first-row layout.

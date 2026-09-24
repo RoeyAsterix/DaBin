@@ -10,6 +10,14 @@ The default corner trigger is 9 logical points along each edge, polled every 100
 
 No persistent menu-bar item was added, to honor complete hiding at rest. Reopening DaBin, its active-app menu, the focused robot's context menu, and keyboard actions provide recovery. A system-wide hotkey is not registered. OS Hot Corners may activate at the same corners; this app does not change system settings.
 
+## Update 0.3.17
+
+Settings ends with an **Application** section whose **Quit DaBin** button invokes `NSApplication.terminate`. It therefore uses `AppDelegate.applicationShouldTerminate` for the existing removal, active-input and unsaved-draft decisions, followed by `applicationWillTerminate` and `ApplicationCoordinator.shutdown()` after termination is accepted. The coordinator stops reminder lifecycle work, Auto Capture and both of its monitors, the transient confirmation robot, screen-corner polling, preview work, updates, menu commands and panels. The action never calls `exit`, so native cleanup is not bypassed.
+
+The Settings row explains that quitting stops Auto Capture and removes the robot while preserving the local archive and saved reminders. It has a destructive role, power icon, tooltip, stable accessibility identifier, complete label and hint. The termination closure is injected for focused action coverage without terminating the test host. Lifecycle tests additionally prove that shutdown leaves Auto Capture stopped and that later clipboard or screenshot-folder events cannot commit an automatic capture.
+
+The direct GitHub release now has two explicit user paths. `DaBin-VERSION-Update.zip` supports a fresh **Install**, an existing **Update**, and the in-app verified download flow. `DaBin-VERSION-AppleSilicon.zip` contains the same Release app for manual installation. Both packages identify `~/Applications/DaBin.app` as the canonical location so subsequent in-app updates cannot target a different copy.
+
 ## Update 0.3.16
 
 The native text `Picker` for Daily and Weekly is replaced by `TimelineModeControl`, an 80-point pair of `AccentIconButton` controls. Daily uses the matched `1.calendar` symbol and Weekly uses `7.calendar`; both resolve at the same intrinsic size on the macOS 14 target. The buttons inherit the established 15-point glyph, 40 × 34-point target, 30-point selected/hover circle, press scale and focus ring. Their concise **Daily** and **Weekly** labels use the same 220 ms tooltip controller as the action and filter rows.

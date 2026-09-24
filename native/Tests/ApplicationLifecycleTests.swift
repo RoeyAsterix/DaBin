@@ -122,10 +122,24 @@ private final class ApplicationLifecycleTests: NSObject, NSApplicationDelegate {
         menu.uninstall()
         NSApp.mainMenu = oldMenu
 
+        var settingsQuitRequests = 0
+        let settingsQuitSection = SettingsQuitSection { settingsQuitRequests += 1 }
+        try expect(SettingsQuitSection.buttonTitle == "Quit DaBin"
+                   && SettingsQuitSection.accessibilityLabel == "Quit DaBin completely",
+                   "Settings exposes a clearly named complete-quit action")
+        try expect(SettingsQuitSection.accessibilityHint.contains("Stops Auto Capture")
+                   && SettingsQuitSection.accessibilityHint.contains("no longer running in the background"),
+                   "The complete-quit control explains its background-monitoring effect")
+        settingsQuitSection.quitApplication()
+        try expect(settingsQuitRequests == 1,
+                   "The Settings complete-quit control invokes its injected termination request exactly once")
+
         coordinator!.shutdown()
         let readCount = reads, callCount = client.authorizationCalls
         try expect(coordinator!.isStopped && !coordinator!.isStarted && coordinator!.corners.isShutDown,
                    "Shutdown closes the running session")
+        try expect(!coordinator!.autoCapture.isRunning,
+                   "Shutdown leaves Auto Capture and its background monitors stopped")
         try expect(coordinator!.input.onResult == nil && coordinator!.input.onBusy == nil && coordinator!.reminders.onOpenCapture == nil,
                    "Shutdown disconnects import and notification callbacks")
         try expect(coordinator!.state.onDismiss == nil && coordinator!.state.onBoardDragStarted == nil,
