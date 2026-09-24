@@ -16,6 +16,8 @@ No persistent menu-bar item was added, to honor complete hiding at rest. Reopeni
 
 The repository now publishes `DaBin-Latest-Update.zip` and `DaBin-Latest-AppleSilicon.zip` beside the versioned assets. `stage_release_assets.py` validates the manifest against the exact versioned update before creating exclusive, byte-identical aliases and a complete seven-file staging directory. The release workflow downloads the versioned assets and restores both stable names on publication. README links use GitHub’s `/releases/latest/download/` route, while the in-app updater continues using the manifest’s versioned URL, byte count and SHA-256.
 
+The seven public v0.3.18 assets matched their verified local files byte for byte, including both permanent aliases. The installed 0.3.17 app completed its public self-update, created a signed backup, preserved the 33-file archive, originals, preferences and Desktop link, and relaunched the exact release executable. Live inspection confirmed **Get updates** is the first visible Settings card and that the installed build reports itself current.
+
 ## Update 0.3.17
 
 Settings ends with an **Application** section whose **Quit DaBin** button invokes `NSApplication.terminate`. It therefore uses `AppDelegate.applicationShouldTerminate` for the existing removal, active-input and unsaved-draft decisions, followed by `applicationWillTerminate` and `ApplicationCoordinator.shutdown()` after termination is accepted. The coordinator stops reminder lifecycle work, Auto Capture and both of its monitors, the transient confirmation robot, screen-corner polling, preview work, updates, menu commands and panels. The action never calls `exit`, so native cleanup is not bypassed.

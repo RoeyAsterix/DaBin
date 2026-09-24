@@ -2,7 +2,7 @@
 
 This directory records functional, visual, build, package, stable-download, publication, and installed-update checks for DaBin 0.3.18 (43).
 
-## Pre-publication result
+## Result
 
 - The exact source passed **30/30 registered optimized Release suites** with no source changes during the run.
 - Software update coverage passed **34 checks**. Update configuration and stable-release staging passed **21 checks**.
@@ -13,6 +13,9 @@ This directory records functional, visual, build, package, stable-download, publ
 - The standalone package passed ARM64, dependency, resource, signature, source-freshness, per-file-manifest, and ZIP round-trip checks.
 - Both packages contain the exact same DaBin executable.
 - The stable installer and standalone aliases are byte-identical to their versioned packages. Release staging contains all seven required assets.
+- GitHub published v0.3.18 as the latest normal release. All seven bare `/releases/latest/download/` URLs returned HTTP 200 anonymously and matched the verified local assets byte for byte. The stable-alias workflow completed successfully.
+- The installed 0.3.17 app discovered, downloaded, verified, backed up, and installed 0.3.18 through its own Settings flow. All 33 archive files, five originals, preferences, and the Desktop app link remained unchanged.
+- In the installed build, **Get updates** is the first visible Settings section without scrolling, exposes its accessible check control and permanent release link, and reports **You’re up to date with DaBin 0.3.18.**
 
 ## Package identity
 
@@ -39,8 +42,8 @@ The ZIP files remain outside Git and are published as immutable GitHub Release a
 - `update-manifest-v0.3.18.json`: public updater metadata and exact versioned package checksum.
 - `app-store-preflight-static-v0.3.18.log`: all 20 source/package checks passed.
 - `app-store-preflight-release-v0.3.18.log`: the two external Store submission prerequisites.
-- `release-publication.json`: added after publication with latest-release and anonymous byte verification.
-- `live-update-v0.3.18.json`: added after the installed 0.3.17 app completes its public self-update.
+- `release-publication.json`: latest-release metadata, workflow result, all seven permanent URLs, and anonymous byte verification.
+- `live-update-v0.3.18.json`: installed 0.3.17 → 0.3.18 self-update, backup, archive, preferences, Desktop link, running process, and first-screen Settings result.
 
 ## Distribution boundary
 
