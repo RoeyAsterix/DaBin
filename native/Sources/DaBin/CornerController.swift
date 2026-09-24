@@ -239,8 +239,17 @@ enum CornerGeometry {
     }
 
     static func weeklyPanelFrame(compact: NSRect, visible: NSRect, direction: WeeklyExpansionDirection,
-                                 preferredHeight: CGFloat = 560) -> NSRect {
-        let width = min(1440, max(0, visible.width - 16))
+                                 activeDayCount: Int = 7, preferredHeight: CGFloat = 560) -> NSRect {
+        let count = min(7, max(0, activeDayCount))
+        let preferredWidth: CGFloat
+        if count == 0 {
+            preferredWidth = 380
+        } else if count == 7 {
+            preferredWidth = 1440
+        } else {
+            preferredWidth = max(380, 32 + CGFloat(count) * 194 + CGFloat(count - 1) * 8)
+        }
+        let width = min(preferredWidth, max(0, visible.width - 16))
         let height = min(preferredHeight, max(0, visible.height - 16))
         let x = direction == .left ? compact.maxX - width : compact.minX
         return NSRect(x: min(max(x, visible.minX), visible.maxX - width),
@@ -568,7 +577,7 @@ final class CornerController: NSObject {
     private var boardHeight: CGFloat {
         let extra: CGFloat = state.status != nil || state.store.error != nil ? 45 : 0
         switch state.route {
-        case .weekly: return 560
+        case .weekly: return state.weeklyVisibleDays.isEmpty ? 290 + extra : 560
         case .daily: return CornerGeometry.dailyPanelHeight(for: state)
         case .search:
             let entries = state.searchGroups.reduce(0) { $0 + $1.entries.count }
@@ -635,7 +644,9 @@ final class CornerController: NSObject {
             let direction = weeklyDirection ?? .right
             if state.weeklyExpansionDirection != direction { state.weeklyExpansionDirection = direction }
             frame = CornerGeometry.weeklyPanelFrame(compact: compactBoardFrame(on: screen), visible: screen.visibleFrame,
-                                                   direction: direction)
+                                                   direction: direction,
+                                                   activeDayCount: state.weeklyVisibleDays.count,
+                                                   preferredHeight: boardHeight)
         } else {
             frame = compactBoardFrame(on: screen)
             if state.route == .daily {

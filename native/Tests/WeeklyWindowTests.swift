@@ -45,15 +45,15 @@ private final class WeeklyWindowNotificationClient: ReminderNotificationClient {
                && Calendar.current.isDate(state.selectedDay, inSameDayAs: historicalDay),
                "The toggle opens a seven-day view ending on the selected historical day")
         let expanded = controller.board.frame
-        expect(expanded.width > compact.width && expanded.height > compact.height,
-               "An empty weekly panel still expands to a full weekly layout")
+        expect(expanded == compact,
+               "A completely empty week stays at the compact panel size")
         for filter in CaptureFilter.allCases {
             state.filter = filter
             settle()
-            expect(state.weeklyDays.count == 7 && state.weeklyDays.allSatisfy { state.captures(for: $0).isEmpty },
-                   "An empty \(filter.title) week preserves seven empty day columns")
-            expect(controller.board.frame == expanded && state.weeklyDays.count == 7,
-                   "Filtering an empty \(filter.title) week keeps its full weekly dimensions and dates")
+            expect(state.weeklyDays.count == 7 && state.weeklyVisibleDays.isEmpty,
+                   "An empty \(filter.title) week keeps seven navigation dates and renders no date columns")
+            expect(controller.board.frame == compact,
+                   "Filtering an empty \(filter.title) week keeps the compact empty-week panel")
         }
         state.selectTimelineMode(.daily)
         settle()
@@ -93,6 +93,18 @@ private final class WeeklyWindowNotificationClient: ReminderNotificationClient {
         expect(leftWeek.maxX == nearRight.maxX && leftWeek.maxY == nearRight.maxY,
                "Left expansion retains the compact right edge and header height")
         expect(visible.contains(leftWeek) && visible.contains(rightWeek), "Both directions stay inside the usable display")
+        let emptyWeek = CornerGeometry.weeklyPanelFrame(compact: nearLeft, visible: visible, direction: .right,
+                                                        activeDayCount: 0, preferredHeight: 290)
+        expect(emptyWeek.size == NSSize(width: 380, height: 290) && emptyWeek.origin == nearLeft.origin,
+               "A week with no active dates keeps the compact panel footprint")
+        let expectedWidths: [Int: CGFloat] = [1: 380, 2: 428, 3: 630, 4: 832, 5: 1034, 6: 1236, 7: 1440]
+        for (count, width) in expectedWidths {
+            let frame = CornerGeometry.weeklyPanelFrame(compact: nearLeft, visible: visible, direction: .right,
+                                                        activeDayCount: count)
+            expect(frame.width == width, "A week with \(count) active dates uses its content-sized width")
+            expect(frame.minX == nearLeft.minX && frame.maxY == nearLeft.maxY,
+                   "A \(count)-date week keeps the compact header anchor")
+        }
         expect(CornerGeometry.compactTopLeft(weeklyFrame: leftWeek, compactWidth: 380, direction: .left)
                == NSPoint(x: nearRight.minX, y: nearRight.maxY), "Left-expanded movement maps to a compact right anchor")
         expect(CornerGeometry.compactTopLeft(weeklyFrame: rightWeek, compactWidth: 380, direction: .right)
@@ -138,7 +150,11 @@ private final class WeeklyWindowNotificationClient: ReminderNotificationClient {
         let defaults = UserDefaults(suiteName: suite)!
         defer { defaults.removePersistentDomain(forName: suite) }
         let store = try CaptureStore(root: root)
-        let note = try store.capture(text: "Isolated weekly window fixture")[0]
+        let notes = try (-6...0).map { offset in
+            let stamp = Calendar.current.date(byAdding: .day, value: offset, to: Date())!
+            return try store.capture(text: "Isolated weekly window fixture \(offset)", at: stamp)[0]
+        }
+        let note = notes.last!
         let previews = PreviewService(store: store)
         let reminders = ReminderService(store: store, client: WeeklyWindowNotificationClient())
 
@@ -175,8 +191,13 @@ private final class WeeklyWindowNotificationClient: ReminderNotificationClient {
                    "Animation frames do not overwrite the user's compact placement")
             state.moveWeek(-1)
             settle()
-            expect(controller.board.frame == expanded && state.weeklyExpansionDirection == expectedDirection,
-                   "Browsing another week keeps the same panel frame and expansion side")
+            expect(state.weeklyVisibleDays.isEmpty && controller.board.frame.width == compact.width
+                   && controller.board.frame.height == 290 && state.weeklyExpansionDirection == expectedDirection,
+                   "Browsing an empty week removes its date columns and restores a compact panel")
+            state.moveWeek(1)
+            settle()
+            expect(state.weeklyVisibleDays.count == 7 && controller.board.frame == expanded,
+                   "Returning to an active week restores all seven content-sized columns")
             state.openCapture(note.id)
             controller.showBoard()
             settle()

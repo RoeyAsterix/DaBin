@@ -1,5 +1,19 @@
 # DaBin QA cycle — 24 September 2026
 
+## Active-date Weekly view — 0.3.9 (34)
+
+DaBin 0.3.9 keeps the seven-date calendar range for navigation while rendering only dates that contain captures or tasks. Carried and reminder-day tasks count as activity. Filters remain independent of date visibility, so changing a content filter does not rearrange the week. The floating panel now sizes itself from zero through seven active dates; a completely empty range stays at the compact 380 × 290 point size and shows one bored-robot message instead of seven empty columns.
+
+The exact optimized source passed **29/29 registered Release suites and 2,132 checks** with no source changes during the final run. Focused coverage includes **118 Weekly state checks** and **95 native Weekly window checks**. These verify empty and sparse ranges, nonconsecutive dates, carried and reminder-day tasks, filter stability, every active-date width, both unfolding directions, screen clamping, range navigation, detail return and compact restoration.
+
+Fresh rendering passed **34 production interface views** and **6 focused compact empty Daily/Weekly views**. Original-resolution inspection covered 380 × 290 point empty weeks and 428-point two-day weeks in light and dark appearances, plus a 380-point constrained sparse-week layout. Empty dates have no date heading or card, remaining dates retain chronological order, and the header remains fully usable.
+
+The optimized ARM64 direct build is **0.3.9 (34)** with source fingerprint `07a81ba16f933d992e95ca80d105409375557e6495d05bebaa53787834025d84` and executable SHA-256 `afcc90d51fce5e5768247ac8606acfe32184e4d5b4537feefe6fe7a0ef8fdc01`. The verified update ZIP is **3,279,344 bytes**, SHA-256 `e653928f65287cbb48ada20316d90cfab169483b0b7074317fb50fd0909890e6`. Packaging passed isolated fresh installation, replacement, backup, strict clean-copy signature validation, extraction, manifest round trip, exact executable identity and the sandbox-compatible document handoff.
+
+Static Store packaging passed **20/20** checks. App Store release preflight retains two external prerequisites: an Apple Developer Team ID and full Xcode.
+
+[0.3.9 evidence index](../docs/qa/0.3.9/README.md) · [Full optimized run](../docs/qa/0.3.9/full-run/report.json) · [Release renders](../docs/qa/0.3.9/release-ui-renders.json) · [Empty Weekly renders](../docs/qa/0.3.9/weekly-entry-renders.json) · [Build receipt](../docs/qa/0.3.9/build-receipt-v0.3.9.json) · [Update manifest](../docs/qa/0.3.9/update-manifest-v0.3.9.json) · [Static Store preflight](../docs/qa/0.3.9/app-store-preflight-static-v0.3.9.log) · [Release preflight](../docs/qa/0.3.9/app-store-preflight-release-v0.3.9.log).
+
 ## Day Export and compact header — 0.3.8 (33)
 
 DaBin 0.3.8 adds **Export Day** between Search and Notifications in the centered primary-action row. Its anchored action popover exports every stored action for the selected calendar date, independent of the active content filter, in chronological plain text. **Copy Day** and **Export Text File** use the same UTF-8 document; empty days disable both actions, while success, cancellation and failure remain distinct. The export UI and real-window header suites cover presentation state, keyboard shortcuts, Escape dismissal, accessible labels and native placement beneath the icon. Outside-click dismissal uses the native transient popover behavior plus a board-window event monitor and is reserved for the installed-app check.

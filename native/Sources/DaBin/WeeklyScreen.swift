@@ -8,38 +8,75 @@ struct WeeklyScreen: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            GeometryReader { geometry in
-                let columnWidth = max(170, (geometry.size.width - 32 - 48) / 7)
-                ScrollViewReader { proxy in
-                    ScrollView(.horizontal) {
-                        HStack(alignment: .top, spacing: 8) {
-                            ForEach(Array(state.weeklyDays.enumerated()), id: \.element) { index, day in
-                                WeeklyDayColumn(state: state, day: day)
-                                    .frame(width: columnWidth, height: max(0, geometry.size.height - 20))
-                                    .offset(x: columnsSettled || reduceMotion ? 0 : (state.weeklyExpansionDirection == .left ? 22 : -22))
-                                    .animation(reduceMotion ? nil : .easeOut(duration: 0.24)
-                                        .delay(Double(state.weeklyExpansionDirection == .left ? 6 - index : index) * 0.028), value: columnsSettled)
-                                    .id(CaptureCalendar.dayString(day))
+            if state.weeklyVisibleDays.isEmpty {
+                VStack(spacing: 4) {
+                    Spacer(minLength: 0)
+                    BoredRobotView(isActive: state.isBoardVisible).frame(width: 56, height: 68)
+                    Text(emptyTitle).font(.system(size: 14, weight: .medium))
+                    Text(emptyMessage).font(.system(size: 11)).foregroundStyle(Palette.muted)
+                        .multilineTextAlignment(.center)
+                    Spacer(minLength: 0)
+                }
+                .padding(.horizontal, 18).padding(.vertical, 4)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .accessibilityElement(children: .combine)
+                .accessibilityLabel("\(emptyTitle). \(emptyMessage)")
+            } else {
+                GeometryReader { geometry in
+                    let days = state.weeklyVisibleDays
+                    let gaps = CGFloat(max(0, days.count - 1)) * 8
+                    let available = max(0, geometry.size.width - 32 - gaps)
+                    let columnWidth = min(194, max(170, available / CGFloat(max(1, days.count))))
+                    ScrollViewReader { proxy in
+                        ScrollView(.horizontal) {
+                            HStack(alignment: .top, spacing: 8) {
+                                ForEach(Array(days.enumerated()), id: \.element) { index, day in
+                                    WeeklyDayColumn(state: state, day: day)
+                                        .frame(width: columnWidth, height: max(0, geometry.size.height - 20))
+                                        .offset(x: columnsSettled || reduceMotion ? 0 : (state.weeklyExpansionDirection == .left ? 22 : -22))
+                                        .animation(reduceMotion ? nil : .easeOut(duration: 0.24)
+                                            .delay(Double(state.weeklyExpansionDirection == .left ? days.count - 1 - index : index) * 0.028), value: columnsSettled)
+                                        .id(CaptureCalendar.dayString(day))
+                                }
                             }
-                        }.padding(.horizontal, 16).padding(.top, 10).padding(.bottom, 10)
-                    }
-                    .onAppear {
-                        columnsSettled = true
-                        if let last = state.weeklyDays.last { proxy.scrollTo(CaptureCalendar.dayString(last), anchor: .trailing) }
-                    }
-                    .onChange(of: state.weekEndingDay) { _, _ in
-                        if let last = state.weeklyDays.last { proxy.scrollTo(CaptureCalendar.dayString(last), anchor: .trailing) }
+                            .frame(minWidth: max(0, geometry.size.width - 32), alignment: .center)
+                            .padding(.horizontal, 16).padding(.top, 10).padding(.bottom, 10)
+                        }
+                        .onAppear {
+                            columnsSettled = true
+                            scrollToLatestVisibleDay(proxy)
+                        }
+                        .onChange(of: state.weekEndingDay) { _, _ in scrollToLatestVisibleDay(proxy) }
+                        .onChange(of: state.filter) { _, _ in scrollToLatestVisibleDay(proxy) }
                     }
                 }
             }
             HStack {
-                Text("7 days")
+                Text(footerCount)
                 Spacer(minLength: 8)
-                Text("Select a day to open Daily")
+                Text(state.weeklyVisibleDays.isEmpty ? "Browse another week" : "Select a day to open Daily")
             }.font(.system(size: 11)).foregroundStyle(Palette.muted)
                 .padding(.horizontal, 17).padding(.vertical, 9)
                 .overlay(alignment: .top) { Rectangle().fill(Palette.line).frame(height: 1) }
         }
+    }
+
+    private var emptyTitle: String {
+        "No captures or tasks this week"
+    }
+
+    private var emptyMessage: String {
+        "Only days with activity appear in Weekly."
+    }
+
+    private var footerCount: String {
+        let count = state.weeklyVisibleDays.count
+        return count == 0 ? "No active days" : "\(count) active \(count == 1 ? "day" : "days")"
+    }
+
+    private func scrollToLatestVisibleDay(_ proxy: ScrollViewProxy) {
+        guard let last = state.weeklyVisibleDays.last else { return }
+        proxy.scrollTo(CaptureCalendar.dayString(last), anchor: .trailing)
     }
 }
 

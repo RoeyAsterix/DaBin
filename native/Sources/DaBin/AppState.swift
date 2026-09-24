@@ -174,6 +174,13 @@ final class AppState: ObservableObject {
         let end = calendar.startOfDay(for: min(weekEndingDay, Date()))
         return (-6...0).compactMap { calendar.date(byAdding: .day, value: $0, to: end) }
     }
+    /// The seven-day range remains the navigation source of truth, while the
+    /// Weekly board only presents dates that contain activity. Filters change
+    /// the cards inside those dates without making the date columns jump.
+    /// Carried and reminder-day tasks are included by `allCaptures(for:)`.
+    var weeklyVisibleDays: [Date] {
+        weeklyDays.filter { !allCaptures(for: $0).isEmpty }
+    }
 
     func allCaptures(for day: Date) -> [Capture] {
         let key = CaptureCalendar.dayString(day)

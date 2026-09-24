@@ -1,7 +1,7 @@
 # DaBin — Mac App Store readiness
 
 **Audit date:** 24 September 2026
-**Source version:** 0.3.8 (33)
+**Source version:** 0.3.9 (34)
 **Result: BLOCKED for submission; local app QA is a separate result.**
 
 The source now has a Productivity category, a bundled privacy explanation, privacy manifest, and an Xcode Release configuration that does not force ad-hoc signing. These changes improve readiness. They do not make the locally signed app an App Store distribution build or guarantee approval.
@@ -68,10 +68,10 @@ python3 scripts/app_store_preflight.py --static-only
 python3 scripts/app_store_preflight.py
 ```
 
-The final 0.3.8 preflight logs are retained at:
+The final 0.3.9 preflight logs are retained at:
 
-- `../docs/qa/0.3.8/app-store-preflight-static-v0.3.8.log`: source packaging results for this release.
-- `../docs/qa/0.3.8/app-store-preflight-release-v0.3.8.log`: release preflight remains blocked by the Apple Developer Team ID and full Xcode. The configured GitHub policy/support URLs pass offline syntax checks; their content and continuing reachability remain owner responsibilities.
+- `../docs/qa/0.3.9/app-store-preflight-static-v0.3.9.log`: source packaging results for this release.
+- `../docs/qa/0.3.9/app-store-preflight-release-v0.3.9.log`: release preflight remains blocked by the Apple Developer Team ID and full Xcode. The configured GitHub policy/support URLs pass offline syntax checks; their content and continuing reachability remain owner responsibilities.
 
 The functional and package evidence for this source version is recorded in `QA_RESULTS.md`.
 
@@ -95,7 +95,7 @@ This rejects ad-hoc/Developer ID signatures, the wrong configured team, non-ARM6
 
 - DaBin is quiet while idle. Screen corners are the default reveal target; Settings can move the robot below the built-in camera island when macOS exposes compatible safe-area geometry, and displays without it keep using corners. Double-click the robot to open Daily. The app menu also provides Open Daily and Settings. Include these steps in review notes so the initially hidden widget is discoverable.
 - The robot uses native character animation for pointer attention, drag acceptance, saving and results. It observes the macOS Reduce Motion preference and removes positional, repeated and keyframed movement when that setting is active.
-- Manual capture accepts explicit paste/drop. Auto Capture is a separately disclosed, default-off setting for later clipboard changes and a user-authorized screenshot folder; provide review steps for both channels and for Pause/Off. Daily can group four or more successful automatic actions from the same civil-clock hour into an expandable summary. The Daily / Weekly control switches between one selected day and seven days ending on that date, including empty days. Comments and task editors retain normal text editing.
+- Manual capture accepts explicit paste/drop. Auto Capture is a separately disclosed, default-off setting for later clipboard changes and a user-authorized screenshot folder; provide review steps for both channels and for Pause/Off. Daily can group four or more successful automatic actions from the same civil-clock hour into an expandable summary. The Daily / Weekly control switches between one selected day and the seven-day range ending on that date; Weekly omits dates with no capture or task and shows one compact empty state when the whole range is empty. Comments and task editors retain normal text editing.
 - Explain website-preview networking separately from local capture. Automatically captured links never request a preview; reviewers should be able to verify this while previews for eligible manual links are enabled.
 - The current app categorizes by content type; it does not yet perform AI project recognition. Do not advertise automatic AI project assignment or uploading to an AI service.
 - Describe Apple Silicon/macOS support accurately. Keep screenshots synthetic and free of personal captures.

@@ -199,8 +199,8 @@ struct WeeklyStateTests {
             try expect(keys(state.weeklyDays) == historicalExpected
                        && CaptureCalendar.dayString(state.weekEndingDay) == "2024-01-03",
                        "An empty \(filter.title) toggle keeps seven dates ending on the selected day")
-            try expect(state.filter == filter && state.weeklyDays.allSatisfy { state.captures(for: $0).isEmpty },
-                       "An empty \(filter.title) filter leaves seven empty day columns instead of hiding the week")
+            try expect(state.filter == filter && state.weeklyDays.count == 7 && state.weeklyVisibleDays.isEmpty,
+                       "An empty \(filter.title) week keeps its seven-date range without rendering empty days")
             let emptyDay = state.weeklyDays[2]
             state.selectWeeklyDay(emptyDay)
             try expect(state.route == .daily && Calendar.current.isDate(state.selectedDay, inSameDayAs: emptyDay)
@@ -225,6 +225,28 @@ struct WeeklyStateTests {
                    "Empty weekly navigation creates no records or persisted capture changes")
         try expect(client.permissionRequests == 0 && client.scheduled.isEmpty,
                    "Empty weekly navigation never requests or schedules notifications")
+    }
+
+    @MainActor private static func checkSparseWeek(root: URL) throws {
+        let store = try CaptureStore(root: root)
+        _ = try store.capture(text: "Sparse first note", at: date("2023-12-28 09:00"))
+        _ = try store.capture(text: "Sparse middle note", at: date("2024-01-01 09:00"))
+        let task = try store.createTask(text: "Sparse completed task", at: date("2024-01-03 09:00"))
+        try store.setTaskCompleted(task, completed: true)
+        let state = AppState(store: store, previews: PreviewService(store: store),
+                             reminders: ReminderService(store: store, client: WeeklyNotificationClient()))
+        state.selectedDay = date("2024-01-03 12:00")
+        state.openWeekly()
+        try expect(keys(state.weeklyDays) == ["2023-12-28", "2023-12-29", "2023-12-30", "2023-12-31", "2024-01-01", "2024-01-02", "2024-01-03"],
+                   "A sparse week retains the complete seven-date navigation range")
+        let active = ["2023-12-28", "2024-01-01", "2024-01-03"]
+        try expect(keys(state.weeklyVisibleDays) == active,
+                   "A sparse week renders only its three nonconsecutive active dates")
+        for filter in CaptureFilter.allCases {
+            state.filter = filter
+            try expect(keys(state.weeklyVisibleDays) == active,
+                       "The \(filter.title) filter does not reintroduce empty dates or hide active dates")
+        }
     }
 
     @MainActor static func main() async throws {
@@ -264,6 +286,8 @@ struct WeeklyStateTests {
         })
         state.selectedDay = date("2024-01-03 12:00")
         state.openWeekly()
+        try expect(keys(state.weeklyVisibleDays) == dayKeys,
+                   "A fully active week renders all seven dates")
         let selectedBeforeReading = state.selectedDay
         let rangeBeforeReading = state.weekEndingDay
         for (index, day) in state.weeklyDays.enumerated() {
@@ -280,6 +304,8 @@ struct WeeklyStateTests {
                    "Reading all seven columns does not mutate Daily or Weekly navigation")
         for filter in CaptureFilter.allCases {
             state.filter = filter
+            try expect(keys(state.weeklyVisibleDays) == dayKeys,
+                       "The \(filter.title) filter preserves the active-date columns")
             let values = state.weeklyDays.flatMap { state.captures(for: $0) }
             switch filter {
             case .all: try expect(values.count == expected.flatMap { $0 }.count, "All filter restores all seven columns")
@@ -297,6 +323,7 @@ struct WeeklyStateTests {
         try checkNavigation(state, capture: scheduled)
         try checkRollover(state)
         try checkEmptyWeek()
+        try checkSparseWeek(root: root.appendingPathComponent("Sparse"))
         let snapshotsAfterBrowsing = try encodedCaptures(store)
         try expect(snapshotsAfterBrowsing == savedSnapshots, "Weekly browsing leaves every persisted capture field unchanged")
         try expect(store.captures.allSatisfy { store.archiveURL(for: $0) == folders[$0.id]! },

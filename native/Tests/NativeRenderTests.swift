@@ -146,19 +146,18 @@ private final class NativeRenderTests: NSObject, NSApplicationDelegate {
                 try await snapshot(state, name: "weekly-entry-empty-daily", mode: mode, output: output, height: 290)
                 state.selectTimelineMode(.weekly)
                 guard state.route == .weekly, state.weeklyDays.count == 7,
-                      state.weeklyDays.allSatisfy({ state.captures(for: $0).isEmpty }) else {
-                    throw RenderError.message("Empty Daily/Weekly toggle must still open seven days")
+                      state.weeklyVisibleDays.isEmpty else {
+                    throw RenderError.message("Empty Weekly must retain its range without rendering empty date columns")
                 }
-                try await snapshot(state, name: "weekly-entry-empty-week", mode: mode, output: output, height: 560, width: 1440)
+                try await snapshot(state, name: "weekly-entry-empty-week", mode: mode, output: output, height: 290, width: 380)
                 state.filter = .tasks
-                try await snapshot(state, name: "weekly-entry-empty-tasks", mode: mode, output: output, height: 560, width: 1440)
-                try await snapshot(state, name: "weekly-entry-empty-narrow", mode: mode, output: output, height: 560, width: 800)
+                try await snapshot(state, name: "weekly-entry-empty-tasks", mode: mode, output: output, height: 290, width: 380)
             }
             try JSONSerialization.data(withJSONObject: ["screenshots": records,
                 "fixturePrivacy": "Empty isolated archive; no personal captures, clipboard, network or notifications."],
                 options: [.prettyPrinted, .sortedKeys])
                 .write(to: output.appendingPathComponent("weekly-entry-renders.json"), options: .atomic)
-            print("PASS: \(records.count) empty Daily/Week renders across both appearances and a narrow display")
+            print("PASS: \(records.count) compact empty Daily/Week renders across both appearances")
             return
         }
 
@@ -383,7 +382,10 @@ private final class NativeRenderTests: NSObject, NSApplicationDelegate {
             try await snapshot(weeklyState, name: "weekly-tasks", mode: mode, output: output, height: 560, width: 1440)
             weeklyState.filter = .all
             weeklyState.weekEndingDay = receipt(0, 0, dayOffset: -14)
-            try await snapshot(weeklyState, name: "weekly-empty", mode: mode, output: output, height: 560, width: 1440)
+            guard weeklyState.weeklyVisibleDays.isEmpty else {
+                throw RenderError.message("Historical empty week rendered a date column")
+            }
+            try await snapshot(weeklyState, name: "weekly-empty", mode: mode, output: output, height: 290, width: 380)
             try await snapshot(carryoverState, name: "daily-carried-tasks", mode: mode, output: output)
             for fixture in reminderDayCases {
                 reminderDaysState.selectedDay = receipt(0, 0, dayOffset: fixture.offset)
@@ -949,8 +951,11 @@ private final class NativeRenderTests: NSObject, NSApplicationDelegate {
                                height: CornerGeometry.dailyPanelHeight(for: state))
             state.filter = .all
             state.selectTimelineMode(.weekly)
-            try await snapshot(state, name: "release-week", mode: mode, output: output, height: 560, width: 1440)
-            try await snapshot(state, name: "release-week-narrow", mode: mode, output: output, height: 560, width: 900)
+            guard state.weeklyVisibleDays.count == 2 else {
+                throw RenderError.message("Sparse release week must render only yesterday and today")
+            }
+            try await snapshot(state, name: "release-week", mode: mode, output: output, height: 560, width: 428)
+            try await snapshot(state, name: "release-week-narrow", mode: mode, output: output, height: 560, width: 380)
             state.openSearch()
             state.query = "workshop"
             try await snapshot(state, name: "release-search", mode: mode, output: output)
