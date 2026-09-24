@@ -49,7 +49,7 @@ private final class WindowNotificationClient: ReminderNotificationClient {
         let state = AppState(store: store, previews: previews, reminders: reminders,
                              robotPlacement: robotPlacement)
         let input = InputService(store: store, stagingRoot: root.appendingPathComponent("Promises"))
-        let controller = CornerController(state: state, input: input, placementDefaults: placementDefaults)
+        let controller = CornerController(state: state, input: input, placementDefaults: placementDefaults, animateRobotTransitions: false)
         defer {
             controller.dismiss()
             controller.bin.orderOut(nil)
@@ -295,16 +295,16 @@ private final class WindowNotificationClient: ReminderNotificationClient {
         try expect(controller.board.frame == draggedFrame, "Content changes cannot snap the board during a native drag")
         handle.mouseUp(with: dragEvent(.leftMouseUp, point: pointer))
         controller.finishBoardDragIfReleased(pressedMouseButtons: 0)
-        let expectedSettings = CornerGeometry.movedPanelFrame(topLeft: chosenTopLeft, visible: screen.visibleFrame, preferredHeight: 430)
+        let expectedSettings = CornerGeometry.movedPanelFrame(topLeft: chosenTopLeft, visible: screen.visibleFrame, preferredHeight: 480)
         try expect(controller.board.frame == expectedSettings, "Release keeps the chosen position and applies pending height changes")
         try expect(placementDefaults.array(forKey: CornerController.boardPlacementKey) as? [Double] == [Double(chosenTopLeft.x), Double(chosenTopLeft.y)], "Manual board position is saved separately from captures")
         state.openNewTask()
         RunLoop.main.run(until: Date().addingTimeInterval(0.12))
         try expect(controller.board.frame.minX == chosenTopLeft.x && controller.board.frame.maxY == chosenTopLeft.y, "Task composer preserves the moved header position")
-        try expect(controller.board.frame.height == 310, "Moved board retains compact route sizing")
+        try expect(controller.board.frame.height == 360, "Moved board retains compact route sizing")
         state.newTaskDraft.reminderEnabled = true
         RunLoop.main.run(until: Date().addingTimeInterval(0.12))
-        try expect(controller.board.frame.height == 370 && controller.board.frame.maxY == chosenTopLeft.y,
+        try expect(controller.board.frame.height == 420 && controller.board.frame.maxY == chosenTopLeft.y,
                    "Live reminder expansion resizes below the moved header without jumping to a corner")
         state.cancelNewTask()
         controller.dismiss()
@@ -313,7 +313,7 @@ private final class WindowNotificationClient: ReminderNotificationClient {
         controller.dismiss()
 
         let reopenedState = AppState(store: store, previews: previews, reminders: reminders)
-        let reopened = CornerController(state: reopenedState, input: InputService(store: store), placementDefaults: placementDefaults)
+        let reopened = CornerController(state: reopenedState, input: InputService(store: store), placementDefaults: placementDefaults, animateRobotTransitions: false)
         reopened.openDaily()
         try expect(reopened.board.frame.minX == chosenTopLeft.x && reopened.board.frame.maxY == chosenTopLeft.y, "A new controller restores placement from local preferences")
         if screens.count > 1 {
@@ -334,7 +334,7 @@ private final class WindowNotificationClient: ReminderNotificationClient {
         try expect(tinyVisible.contains(smallMoved), "Saved position fits a small replacement display")
         placementDefaults.set(["invalid", "position"], forKey: CornerController.boardPlacementKey)
         let invalidState = AppState(store: store, previews: previews, reminders: reminders)
-        let invalidPlacement = CornerController(state: invalidState, input: InputService(store: store), placementDefaults: placementDefaults)
+        let invalidPlacement = CornerController(state: invalidState, input: InputService(store: store), placementDefaults: placementDefaults, animateRobotTransitions: false)
         invalidPlacement.openDaily()
         try expect(screens.contains { $0.visibleFrame.contains(invalidPlacement.board.frame) }, "Malformed saved placement safely falls back to a visible corner")
         invalidPlacement.dismiss()

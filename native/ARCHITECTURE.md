@@ -9,7 +9,7 @@ DaBin is a self-contained Apple Silicon macOS application. It uses Swift, AppKit
 | Entry and macOS lifecycle | Start the application, respond to reopen/quit, present native quit decisions | `DaBinMain.swift`, `AppDelegate.swift` |
 | Composition | Own one archive, services, preferences, state and panel controller for the session; start once and shut down explicitly | `ApplicationCoordinator.swift` |
 | Native commands | Standard macOS About/Hide/Quit and app commands; responder-chain editing | `ApplicationMenu.swift` |
-| Desktop integration | Per-display reveal targets, camera-island geometry, robot character and motion state, paste/drop destinations, keyboard focus, panel placement, automatic-capture reaction rotation and animations | `CornerController.swift`, `RobotView.swift`, `RobotCharacterView.swift`, `RobotMotion.swift`, `AutoCaptureRobotCelebration.swift`, `AutoCaptureRobotPresenter.swift`, `DailyCaptureView.swift`, `WindowDragHandle.swift` |
+| Desktop integration | Per-display reveal targets, camera-island geometry, robot character and motion state, paste/drop destinations, keyboard focus, panel placement, automatic-capture reaction rotation and animations | `CornerController.swift`, `RobotView.swift`, `RobotCharacterView.swift`, `RobotMotion.swift`, `RobotLifecycle.swift`, `RobotAppFrameView.swift`, `AutoCaptureRobotCelebration.swift`, `AutoCaptureRobotPresenter.swift`, `DailyCaptureView.swift`, `WindowDragHandle.swift` |
 | Presentation | Small SwiftUI screens, compact timeline header, scoped Weekly Search and export action popovers, hourly automatic-capture summaries and shared visual components; no database construction | `BoardView.swift`, `WeeklyScopeActions.swift`, `DayExportUI.swift`, `HourlyCaptureFeed.swift`, `HourlyCaptureCard.swift`, feature screen files, shared capture components |
 | State and domain | Navigation, drafts, chronological membership, filters, task carryover, source facts, selected-day and fixed-week search context, and deterministic day/week export text | `AppState.swift`, `Domain.swift`, `DayExport.swift` |
 | Capture intake | Read only explicit paste/drop transfers; preserve receipt time; coordinate promised files and partial failures | `InputService.swift` |
@@ -29,7 +29,7 @@ The Xcode navigator groups these boundaries. Sources remain in one flat director
 
 Startup is idempotent. Shutdown removes the pointer and animation timers, local keyboard monitor, desktop notifications and view callbacks. It detaches native hosting views before closing panels so SwiftUI state can be released, stops Auto Capture's clipboard and folder observers, stops new lifecycle reconciliations, and cancels queued/running preview work. A reconciliation already underway may finish; an already-started disposable thumbnail write may also finish. A stopped controller rejects stale reveal requests. Saved system reminders survive normal quit; deleting a capture separately cancels its reminder. The app does not install a background helper or launch-at-login service, so Auto Capture operates only while DaBin is running.
 
-The first launch remains quiet: screen corners are the default reveal target, and a setting can move the robot below a compatible built-in camera island. Displays without camera-island geometry use their corners even when that setting is selected. Double-clicking the revealed robot opens Daily. The standalone guide and App Review notes must explain this. Reopening the running app opens Daily. Native About, Hide, Show All, Settings and Quit commands are available when DaBin is active.
+The first launch remains quiet: screen corners are the default reveal target, and a setting can move the robot below a compatible built-in camera island. Displays without camera-island geometry use the top-right corner when that setting is selected. Double-clicking the revealed robot opens Daily. The standalone guide and App Review notes must explain this. Reopening the running app opens Daily. Native About, Hide, Show All, Settings and Quit commands are available when DaBin is active.
 
 ## Persistence invariants
 
@@ -63,7 +63,7 @@ For single images, a bounded normalized-pixel fingerprint suppresses an opposite
 
 Automatic records keep a stable action identifier so one user action that yields several records stays together. Daily collapses a busy civil-clock hour into an expandable summary once the hour reaches four successful automatic actions; the immutable receipt day, local hour and UTC offset define that group. Filtering affects visible members without changing whether the original hour qualifies.
 
-After a successful automatic save, a reused nonactivating, click-through robot panel appears briefly on the hardware primary display. A shuffled bag selects among twelve celebrations, retaining the previous three choices across shuffle boundaries so they cannot repeat. One value timeline sequences anticipation, entrance, reaction and complete retreat in about 1.8–2.6 seconds. Later saves during that sequence update a single `×N` badge without creating another panel or restarting the robot. A real camera-island rectangle sets the built-in placement and visual edge; external-primary placement remains top-right. Reduce Motion replaces the full performance with a short static peek, success check and opacity fade. The panel is confirmation only, contains no sound, never becomes an input surface, uses the public macOS window-sharing exclusion, and is presented only after persistence succeeds.
+After a successful automatic save, a reused nonactivating, click-through robot panel appears briefly on the hardware primary display. A shuffled bag selects among ten eating reactions, retaining the previous three choices across shuffle boundaries so they cannot repeat. One value timeline sequences anticipation, climb, eating, reaction and complete retreat in about 1.8–2.6 seconds. Saves arriving while the token remains visible update its exact `×N` action count; later arrivals form one bounded follow-up aggregate. Board and manual-interaction suspension are independent and must both clear before feedback resumes. A real camera-island rectangle sets the built-in placement and visual edge; external-primary placement remains top-right. Reduce Motion replaces the full performance with a short static peek, success check and opacity fade. The panel is confirmation only, contains no sound, never becomes an input surface, uses the public macOS window-sharing exclusion, and is presented only after persistence succeeds.
 
 ## Native interface
 
@@ -75,7 +75,7 @@ Day and Week export documents are built directly from the complete store by immu
 
 Panel geometry is expressed in macOS points. Daily/Week transitions respect the selected screen and keep the compact header anchored. Image/document previews fit their bounds; PDF pages use the native PDFKit view. Visual QA records logical size and actual backing pixels, including real 2× Retina rendering; it does not upscale a 1× screenshot and call it Retina.
 
-Camera-island detection is geometric and local. `CornerGeometry` combines `NSScreen.safeAreaInsets` with `auxiliaryTopLeftArea` and `auxiliaryTopRightArea`; a valid top inset and the gap between the two auxiliary regions identify the camera island. The robot is centered below that gap and enters from the top. If a screen does not expose that geometry, the same preference resolves to the existing corner trigger on that screen.
+Camera-island detection is geometric and local. `CornerGeometry` combines `NSScreen.safeAreaInsets` with `auxiliaryTopLeftArea` and `auxiliaryTopRightArea`; a valid top inset and the gap between the two auxiliary regions identify the camera island. The robot is centered below that gap and enters from the top. If a screen does not expose that geometry, the same preference resolves to the top-right corner trigger on that screen.
 
 The transient robot is a native AppKit/Core Animation character, separate from capture storage and window ownership. `RobotMotionState` reduces reveal, hover, accepted-drag, saving and result events with a fixed priority. `RobotCharacterView` applies independent transforms to the body, face, eyes, lid, arms, intake and shadow, and cancels ambient animation when hidden. When macOS Reduce Motion is enabled, expressions update without positional, scaling, rotating, repeated or keyframed movement.
 
@@ -86,3 +86,36 @@ The local build emits an ARM64 `.app` with all runtime resources inside `Content
 The shared inventory feeds build, tests and the generated Xcode project. QA retains source/configuration fingerprints, per-suite logs and explicit failure/timeout results. See `QA_RESULTS.md` for the exact tested revision and environment and `APP_STORE_READINESS.md` for distribution gates.
 
 Minimum deployment target is macOS14. Runtime coverage on older supported macOS releases, App Store signing, full Xcode archive validation and Apple review must be completed separately; the local machine runs macOS26.6.2. There is no claim of Intel support.
+
+
+## Robot lifecycle and application frame
+
+`RobotLifecycle` is a value reducer with generation-tagged transitions. Capture
+phases, opening, closing, display changes and interruption have explicit endpoints.
+An open request wins over a capture or a pending close. Old callbacks cannot
+complete a newer transition. `CornerController` coordinates the interactive robot,
+app panel and capture presenter; shutdown cancels immediately.
+
+`AutoCaptureRobotCelebration` holds the ten-style shuffled deck, recent-three
+exclusion, timing, generic token paths and Reduce Motion sequence.
+`RobotCharacterView` renders those definitions with native vector CALayers.
+`AutoCaptureRobotPresenter` is a nonactivating, click-through panel on the primary
+display. It uses bounded counters rather than a capture-object queue and buffers
+feedback during an open app view. No captured content enters these layers.
+
+`RobotAppFrameView` wraps the existing `DailyCaptureHostingView`. Reserved chrome
+adds 20 points of width and 50 of height while leaving the established content
+width unchanged. During transformation the native panel temporarily covers both
+source and destination; the real content stays mounted at its final layout size.
+GPU transforms, reveal masks and opacity provide the transition, after which the
+normal panel frame is restored. Header drag, paste/drop, filters and previews keep
+the same hosting view and state. The controller's existing 10 Hz pointer tick feeds
+clamped, eased gaze only while the board is visible; no new continuous render loop
+is started. Reduce Motion disables gaze/blink motion and uses a short fade.
+
+The screenshot monitor waits for a stable local file and successful archive save
+before asking for feedback. Native panels use `sharingType = .none`, but that flag
+is not a universal exclusion contract for all macOS screenshot/recording APIs.
+DaBin does not initiate the user's system screenshot and has no public signal that
+can hide an already visible robot before every external screenshot. Hardware notch
+geometry uses safe-area and auxiliary menu-bar regions rather than device names.

@@ -105,10 +105,25 @@ final class DailyCaptureHostingView: NSHostingView<BoardView> {
 /// Native text editors continue to receive their own normal paste actions.
 @MainActor
 final class DailyCapturePanel: DaBinPanel {
-    private var captureView: DailyCaptureHostingView? { contentView as? DailyCaptureHostingView }
+    var onRequestClose: (() -> Void)?
+    weak var captureHostingView: DailyCaptureHostingView?
+    private var captureView: DailyCaptureHostingView? {
+        captureHostingView ?? contentView as? DailyCaptureHostingView
+    }
 
     override func performKeyEquivalent(with event: NSEvent) -> Bool {
-        captureView?.handlePasteShortcut(event) == true || super.performKeyEquivalent(with: event)
+        let modifiers = event.modifierFlags.intersection(.deviceIndependentFlagsMask).subtracting(.capsLock)
+        if event.type == .keyDown, modifiers == .command,
+           event.charactersIgnoringModifiers?.lowercased() == "w", let onRequestClose {
+            onRequestClose()
+            return true
+        }
+        return captureView?.handlePasteShortcut(event) == true || super.performKeyEquivalent(with: event)
+    }
+
+    override func performClose(_ sender: Any?) {
+        if let onRequestClose { onRequestClose() }
+        else { super.performClose(sender) }
     }
 
     override func keyDown(with event: NSEvent) {

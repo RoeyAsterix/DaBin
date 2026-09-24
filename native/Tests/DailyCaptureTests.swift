@@ -298,10 +298,10 @@ import Foundation
 
         // Exercise production controller wiring; the board imports at capture
         // time even when the user was viewing an old day through a narrow filter.
-        let controller = CornerController(state: state, input: input, placementDefaults: nil)
+        let controller = CornerController(state: state, input: input, placementDefaults: nil, animateRobotTransitions: false)
         defer { controller.dismiss(); controller.bin.orderOut(nil); controller.board.orderOut(nil) }
         try expect(controller.board.responds(to: #selector(DailyCapturePanel.paste(_:))), "Controller installs a native Paste responder")
-        let wired = try unwrap(controller.board.contentView as? DailyCaptureHostingView, "Controller installs Daily capture hosting")
+        let wired = try unwrap(controller.board.captureHostingView, "Controller installs Daily capture hosting")
         controller.openDaily()
         state.selectedDay = Calendar.current.date(byAdding: .day, value: -7, to: Date())!
         state.filter = .files

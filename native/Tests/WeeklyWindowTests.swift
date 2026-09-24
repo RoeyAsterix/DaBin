@@ -31,7 +31,7 @@ private final class WeeklyWindowNotificationClient: ReminderNotificationClient {
         let previews = PreviewService(store: store)
         let state = AppState(store: store, previews: previews,
                              reminders: ReminderService(store: store, client: WeeklyWindowNotificationClient()))
-        let controller = CornerController(state: state, input: InputService(store: store), placementDefaults: defaults)
+        let controller = CornerController(state: state, input: InputService(store: store), placementDefaults: defaults, animateRobotTransitions: false)
         defer { controller.dismiss(); previews.cancelNetwork() }
         controller.openDaily()
         state.selectedDay = Calendar.current.date(byAdding: .day, value: -30, to: Date())!
@@ -79,15 +79,15 @@ private final class WeeklyWindowNotificationClient: ReminderNotificationClient {
 
     @MainActor static func main() throws {
         let visible = NSRect(x: 0, y: 24, width: 1920, height: 1056)
-        let nearLeft = NSRect(x: 30, y: 700, width: 380, height: 290)
-        let nearRight = NSRect(x: 1510, y: 700, width: 380, height: 290)
+        let nearLeft = NSRect(x: 30, y: 700, width: 400, height: 290)
+        let nearRight = NSRect(x: 1510, y: 700, width: 400, height: 290)
         expect(CornerGeometry.weeklyExpansionDirection(compact: nearLeft, visible: visible) == .right,
                "A board near the left edge opens its week to the right")
         expect(CornerGeometry.weeklyExpansionDirection(compact: nearRight, visible: visible) == .left,
                "A board near the right edge opens its week to the left")
         let rightWeek = CornerGeometry.weeklyPanelFrame(compact: nearLeft, visible: visible, direction: .right)
         let leftWeek = CornerGeometry.weeklyPanelFrame(compact: nearRight, visible: visible, direction: .left)
-        expect(rightWeek.width == 1440 && rightWeek.height == 560, "A large screen uses the intended weekly size")
+        expect(rightWeek.width == 1460 && rightWeek.height == 560, "A large screen uses the intended weekly size")
         expect(rightWeek.minX == nearLeft.minX && rightWeek.maxY == nearLeft.maxY,
                "Right expansion retains the compact left edge and header height")
         expect(leftWeek.maxX == nearRight.maxX && leftWeek.maxY == nearRight.maxY,
@@ -95,9 +95,9 @@ private final class WeeklyWindowNotificationClient: ReminderNotificationClient {
         expect(visible.contains(leftWeek) && visible.contains(rightWeek), "Both directions stay inside the usable display")
         let emptyWeek = CornerGeometry.weeklyPanelFrame(compact: nearLeft, visible: visible, direction: .right,
                                                         activeDayCount: 0, preferredHeight: 290)
-        expect(emptyWeek.size == NSSize(width: 380, height: 290) && emptyWeek.origin == nearLeft.origin,
+        expect(emptyWeek.size == NSSize(width: 400, height: 290) && emptyWeek.origin == nearLeft.origin,
                "A week with no active dates keeps the compact panel footprint")
-        let expectedWidths: [Int: CGFloat] = [1: 380, 2: 428, 3: 630, 4: 832, 5: 1034, 6: 1236, 7: 1440]
+        let expectedWidths: [Int: CGFloat] = [1: 400, 2: 448, 3: 650, 4: 852, 5: 1054, 6: 1256, 7: 1460]
         for (count, width) in expectedWidths {
             let frame = CornerGeometry.weeklyPanelFrame(compact: nearLeft, visible: visible, direction: .right,
                                                         activeDayCount: count)
@@ -105,11 +105,11 @@ private final class WeeklyWindowNotificationClient: ReminderNotificationClient {
             expect(frame.minX == nearLeft.minX && frame.maxY == nearLeft.maxY,
                    "A \(count)-date week keeps the compact header anchor")
         }
-        expect(CornerGeometry.compactTopLeft(weeklyFrame: leftWeek, compactWidth: 380, direction: .left)
+        expect(CornerGeometry.compactTopLeft(weeklyFrame: leftWeek, compactWidth: 400, direction: .left)
                == NSPoint(x: nearRight.minX, y: nearRight.maxY), "Left-expanded movement maps to a compact right anchor")
-        expect(CornerGeometry.compactTopLeft(weeklyFrame: rightWeek, compactWidth: 380, direction: .right)
+        expect(CornerGeometry.compactTopLeft(weeklyFrame: rightWeek, compactWidth: 400, direction: .right)
                == NSPoint(x: nearLeft.minX, y: nearLeft.maxY), "Right-expanded movement maps to a compact left anchor")
-        let middle = NSRect(x: 770, y: 80, width: 380, height: 290)
+        let middle = NSRect(x: 770, y: 80, width: 400, height: 290)
         let centeredWeek = CornerGeometry.weeklyPanelFrame(compact: middle, visible: visible,
             direction: CornerGeometry.weeklyExpansionDirection(compact: middle, visible: visible))
         expect(visible.contains(centeredWeek), "A center board with insufficient room is clamped into the screen")
@@ -120,7 +120,7 @@ private final class WeeklyWindowNotificationClient: ReminderNotificationClient {
                 let frame = CornerGeometry.weeklyPanelFrame(
                     compact: NSRect(x: -9000, y: 9000, width: 380, height: 500), visible: screen, direction: direction)
                 expect(screen.contains(frame), "Offscreen anchor recovers on \(screen.width)pt display in \(direction) direction")
-                expect(frame.width == min(1440, screen.width - 16), "Weekly width adapts to the visible display")
+                expect(frame.width == min(1460, screen.width - 16), "Weekly width adapts to the visible display")
                 expect(frame.height <= screen.height - 16, "Weekly height adapts to the visible display")
             }
         }
@@ -164,7 +164,7 @@ private final class WeeklyWindowNotificationClient: ReminderNotificationClient {
             let saved = [Double(anchor.x), Double(anchor.y)]
             defaults.set(saved, forKey: CornerController.boardPlacementKey)
             let state = AppState(store: store, previews: previews, reminders: reminders)
-            let controller = CornerController(state: state, input: InputService(store: store), placementDefaults: defaults)
+            let controller = CornerController(state: state, input: InputService(store: store), placementDefaults: defaults, animateRobotTransitions: false)
             controller.openDaily()
             settle()
             let compact = controller.board.frame
@@ -179,7 +179,7 @@ private final class WeeklyWindowNotificationClient: ReminderNotificationClient {
             settle()
             NotificationCenter.default.removeObserver(resizeObserver)
             let expanded = controller.board.frame
-            let expected = CornerGeometry.weeklyPanelFrame(compact: compact, visible: screen.visibleFrame, direction: expectedDirection)
+            let expected = CornerGeometry.weeklyPanelFrame(compact: compact, visible: screen.visibleFrame, direction: expectedDirection, preferredHeight: 610)
             expect(expanded == expected, "The actual native panel expands in \(expectedDirection) direction")
             let intermediateFrames = expansionFrames.filter { $0.width > compact.width && $0.width < expanded.width }
             if NSWorkspace.shared.accessibilityDisplayShouldReduceMotion {
@@ -192,7 +192,7 @@ private final class WeeklyWindowNotificationClient: ReminderNotificationClient {
             state.moveWeek(-1)
             settle()
             expect(state.weeklyVisibleDays.isEmpty && controller.board.frame.width == compact.width
-                   && controller.board.frame.height == 290 && state.weeklyExpansionDirection == expectedDirection,
+                   && controller.board.frame.height == 340 && state.weeklyExpansionDirection == expectedDirection,
                    "Browsing an empty week removes its date columns and restores a compact panel")
             state.moveWeek(1)
             settle()

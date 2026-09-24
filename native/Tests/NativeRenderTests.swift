@@ -668,6 +668,8 @@ private final class NativeRenderTests: NSObject, NSApplicationDelegate {
                 }
                 NSGraphicsContext.saveGraphicsState()
                 NSGraphicsContext.current = context
+                // bitmap.size is set before context creation, so AppKit already
+                // supplies the logical-to-pixel transform. Scaling again crops it.
                 if let background {
                     context.cgContext.setFillColor(background.cgColor)
                     context.cgContext.fill(CGRect(origin: .zero, size: logicalSize))
@@ -795,14 +797,14 @@ private final class NativeRenderTests: NSObject, NSApplicationDelegate {
         let darkBackground = NSColor(calibratedWhite: 0.075, alpha: 1)
         var celebrationRasters: [AutoCaptureRobotReaction: Data] = [:]
         var celebrationScreenshots: [[String: Any]] = []
-        for reaction in AutoCaptureRobotReaction.allCases {
+        for reaction in AutoCaptureRobotReaction.eatingReactions {
             character.stopMotion()
             let performance = AutoCaptureRobotPerformance.make(reaction: reaction,
                                                                 variation: .standard,
                                                                 entrance: .top,
                                                                 reduceMotion: false)
             guard let reactionPhase = performance.phases.first(where: {
-                if case .reaction = $0.kind { return true }
+                if case .eating = $0.kind { return true }
                 return false
             }) else {
                 throw RenderError.message("Missing reaction phase for \(reaction.rawValue)")
@@ -833,9 +835,9 @@ private final class NativeRenderTests: NSObject, NSApplicationDelegate {
                 ])
             }
         }
-        guard celebrationRasters.count == AutoCaptureRobotReaction.allCases.count,
-              Set(celebrationRasters.values).count == AutoCaptureRobotReaction.allCases.count else {
-            throw RenderError.message("Automatic capture reactions did not produce twelve distinct peak rasters")
+        guard celebrationRasters.count == AutoCaptureRobotReaction.eatingReactions.count,
+              Set(celebrationRasters.values).count == AutoCaptureRobotReaction.eatingReactions.count else {
+            throw RenderError.message("Automatic capture reactions did not produce ten distinct eating rasters")
         }
 
         // A phase strip makes the island relationship reviewable: eye-first
@@ -846,13 +848,12 @@ private final class NativeRenderTests: NSObject, NSApplicationDelegate {
                                                                 entrance: .top,
                                                                 reduceMotion: false)
         character.playAutoCaptureCelebration(phasePerformance)
-        var previousSampleTime: TimeInterval = 0
+        let phaseStartTime = CACurrentMediaTime()
         var phaseRasters: [Data] = []
         var phaseScreenshots: [[String: Any]] = []
         for phase in phasePerformance.phases {
             let sampleTime = phase.startTime + phase.duration * 0.58
-            try await Task.sleep(for: .seconds(max(0, sampleTime - previousSampleTime)))
-            previousSampleTime = sampleTime
+            try await Task.sleep(for: .seconds(max(0, sampleTime - (CACurrentMediaTime() - phaseStartTime))))
             let name = "auto-phase-\(phase.kind.id)"
             phaseRasters.append(try frame(name, presentation: true, background: darkBackground))
             phaseScreenshots.append([
@@ -866,7 +867,7 @@ private final class NativeRenderTests: NSObject, NSApplicationDelegate {
             ])
         }
         guard Set(phaseRasters).count == phaseRasters.count else {
-            throw RenderError.message("Anticipation, entrance, reaction and exit phase renders are not distinct")
+            throw RenderError.message("Anticipation, entrance, eating, reaction and exit phase renders are not distinct")
         }
 
         // The accessibility sequence keeps one static cropped peek while its
@@ -927,7 +928,7 @@ private final class NativeRenderTests: NSObject, NSApplicationDelegate {
               presenter.performanceStartCount == 1,
               let popupPerformance = presenter.currentPerformance,
               let popupReaction = popupPerformance.phases.first(where: {
-                  if case .reaction = $0.kind { return true }
+                  if case .eating = $0.kind { return true }
                   return false
               }), let popupContent = presenter.panel.contentView else {
             throw RenderError.message("Could not compose the production camera-island burst popup")
@@ -955,6 +956,7 @@ private final class NativeRenderTests: NSObject, NSApplicationDelegate {
             }
             NSGraphicsContext.saveGraphicsState()
             NSGraphicsContext.current = context
+            // AppKit derives the 2x transform from bitmap.size above.
             context.cgContext.setFillColor(background.cgColor)
             context.cgContext.fill(CGRect(origin: .zero, size: popupLogicalSize))
             renderedLayer.render(in: context.cgContext)
@@ -1026,9 +1028,9 @@ private final class NativeRenderTests: NSObject, NSApplicationDelegate {
              "pixelHeight": Int(popupLogicalSize.height) * pixelScale, "pixelScale": pixelScale,
              "renderMethod": "Complete production popup presentation tree rendered directly at 2x"]
         }
-        print("PASS: Native robot personality and twelve automatic reactions are distinct; full and reduced timelines clean up without drift.")
+        print("PASS: Native robot personality and ten automatic eating reactions are distinct; full and reduced timelines clean up without drift.")
         return [
-            "description": "Native transient RobotCharacterView personality states and twelve automatic capture celebrations rendered at 2x, plus live motion and lifecycle checks.",
+            "description": "Native transient RobotCharacterView personality states and ten automatic eating reactions rendered at 2x, plus live motion and lifecycle checks.",
             "fixturePrivacy": "Code-drawn local character only; no clipboard, files, network, notifications or personal content.",
             "deterministicStateCount": states.count,
             "distinctStateRasterCount": Set(stateRasters.values).count,

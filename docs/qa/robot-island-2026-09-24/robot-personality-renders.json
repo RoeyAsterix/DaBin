@@ -1,0 +1,461 @@
+{
+  "automaticCelebrations" : {
+    "distinctPeakRasterCount" : 10,
+    "reactionCount" : 10,
+    "selectionPolicy" : "Shuffled bag; previous three excluded"
+  },
+  "changedBytesFromIdle" : {
+    "curious" : 32201,
+    "delighted" : 42482,
+    "digesting" : 216,
+    "hungry" : 36255,
+    "partial" : 30817,
+    "puzzled" : 35678
+  },
+  "cleanup" : {
+    "ambientWorkActive" : false,
+    "automaticChangedBytesOverPointThreeSeconds" : 0,
+    "genericChangedBytesOverPointFourSeconds" : 0,
+    "mood" : "hidden"
+  },
+  "description" : "Native transient RobotCharacterView personality states and ten automatic eating reactions rendered at 2x, plus live motion and lifecycle checks.",
+  "deterministicStateCount" : 7,
+  "digestAnimation" : {
+    "changedBytes" : 45590,
+    "sampleIntervalSeconds" : 0.26000000000000001
+  },
+  "distinctStateRasterCount" : 7,
+  "fixturePrivacy" : "Code-drawn local character only; no clipboard, files, network, notifications or personal content.",
+  "reduceMotion" : {
+    "ambientWorkActive" : false,
+    "automaticChangedBytesDuringCheck" : 0,
+    "genericChangedBytesOverHalfSecond" : 0
+  },
+  "screenshots" : [
+    {
+      "file" : "native-robot-personality-idle@2x.png",
+      "logicalHeight" : 88,
+      "logicalWidth" : 72,
+      "pixelHeight" : 176,
+      "pixelScale" : 2,
+      "pixelWidth" : 144,
+      "renderMethod" : "RobotCharacterView cacheDisplay directly into a 2x bitmap after the semantic pose settles; no image scaling",
+      "semanticState" : "idle"
+    },
+    {
+      "changedBytesFromIdle" : 32201,
+      "file" : "native-robot-personality-curious@2x.png",
+      "logicalHeight" : 88,
+      "logicalWidth" : 72,
+      "pixelHeight" : 176,
+      "pixelScale" : 2,
+      "pixelWidth" : 144,
+      "renderMethod" : "RobotCharacterView cacheDisplay directly into a 2x bitmap after the semantic pose settles; no image scaling",
+      "semanticState" : "curious"
+    },
+    {
+      "changedBytesFromIdle" : 36255,
+      "file" : "native-robot-personality-hungry@2x.png",
+      "logicalHeight" : 88,
+      "logicalWidth" : 72,
+      "pixelHeight" : 176,
+      "pixelScale" : 2,
+      "pixelWidth" : 144,
+      "renderMethod" : "RobotCharacterView cacheDisplay directly into a 2x bitmap after the semantic pose settles; no image scaling",
+      "semanticState" : "hungry"
+    },
+    {
+      "changedBytesFromIdle" : 216,
+      "file" : "native-robot-personality-digesting@2x.png",
+      "logicalHeight" : 88,
+      "logicalWidth" : 72,
+      "pixelHeight" : 176,
+      "pixelScale" : 2,
+      "pixelWidth" : 144,
+      "renderMethod" : "RobotCharacterView cacheDisplay directly into a 2x bitmap after the semantic pose settles; no image scaling",
+      "semanticState" : "digesting"
+    },
+    {
+      "changedBytesFromIdle" : 42482,
+      "file" : "native-robot-personality-delighted@2x.png",
+      "logicalHeight" : 88,
+      "logicalWidth" : 72,
+      "pixelHeight" : 176,
+      "pixelScale" : 2,
+      "pixelWidth" : 144,
+      "renderMethod" : "RobotCharacterView cacheDisplay directly into a 2x bitmap after the semantic pose settles; no image scaling",
+      "semanticState" : "delighted"
+    },
+    {
+      "changedBytesFromIdle" : 30817,
+      "file" : "native-robot-personality-partial@2x.png",
+      "logicalHeight" : 88,
+      "logicalWidth" : 72,
+      "pixelHeight" : 176,
+      "pixelScale" : 2,
+      "pixelWidth" : 144,
+      "renderMethod" : "RobotCharacterView cacheDisplay directly into a 2x bitmap after the semantic pose settles; no image scaling",
+      "semanticState" : "partial"
+    },
+    {
+      "changedBytesFromIdle" : 35678,
+      "file" : "native-robot-personality-puzzled@2x.png",
+      "logicalHeight" : 88,
+      "logicalWidth" : 72,
+      "pixelHeight" : 176,
+      "pixelScale" : 2,
+      "pixelWidth" : 144,
+      "renderMethod" : "RobotCharacterView cacheDisplay directly into a 2x bitmap after the semantic pose settles; no image scaling",
+      "semanticState" : "puzzled"
+    },
+    {
+      "file" : "native-robot-personality-digest-motion-a@2x.png",
+      "logicalHeight" : 88,
+      "logicalWidth" : 72,
+      "pixelHeight" : 176,
+      "pixelScale" : 2,
+      "pixelWidth" : 144,
+      "renderMethod" : "Timed native presentation frame at 2x; used only to prove live digest movement",
+      "semanticState" : "digesting-live"
+    },
+    {
+      "file" : "native-robot-personality-digest-motion-b@2x.png",
+      "logicalHeight" : 88,
+      "logicalWidth" : 72,
+      "pixelHeight" : 176,
+      "pixelScale" : 2,
+      "pixelWidth" : 144,
+      "renderMethod" : "Timed native presentation frame at 2x; used only to prove live digest movement",
+      "semanticState" : "digesting-live"
+    },
+    {
+      "file" : "native-robot-personality-reduced-motion-delighted@2x.png",
+      "logicalHeight" : 88,
+      "logicalWidth" : 72,
+      "pixelHeight" : 176,
+      "pixelScale" : 2,
+      "pixelWidth" : 144,
+      "renderMethod" : "RobotCharacterView cacheDisplay directly into a 2x bitmap with injected Reduce Motion",
+      "semanticState" : "delighted-reduced-motion"
+    },
+    {
+      "appearance" : "light",
+      "file" : "native-robot-personality-auto-quick-bite-light@2x.png",
+      "logicalHeight" : 88,
+      "logicalWidth" : 72,
+      "pixelHeight" : 176,
+      "pixelScale" : 2,
+      "pixelWidth" : 144,
+      "renderMethod" : "Timed native Core Animation presentation frame rendered directly at 2x over a QA-only backing color",
+      "semanticState" : "quick-bite"
+    },
+    {
+      "appearance" : "dark",
+      "file" : "native-robot-personality-auto-quick-bite-dark@2x.png",
+      "logicalHeight" : 88,
+      "logicalWidth" : 72,
+      "pixelHeight" : 176,
+      "pixelScale" : 2,
+      "pixelWidth" : 144,
+      "renderMethod" : "Timed native Core Animation presentation frame rendered directly at 2x over a QA-only backing color",
+      "semanticState" : "quick-bite"
+    },
+    {
+      "appearance" : "light",
+      "file" : "native-robot-personality-auto-oversized-bite-light@2x.png",
+      "logicalHeight" : 88,
+      "logicalWidth" : 72,
+      "pixelHeight" : 176,
+      "pixelScale" : 2,
+      "pixelWidth" : 144,
+      "renderMethod" : "Timed native Core Animation presentation frame rendered directly at 2x over a QA-only backing color",
+      "semanticState" : "oversized-bite"
+    },
+    {
+      "appearance" : "dark",
+      "file" : "native-robot-personality-auto-oversized-bite-dark@2x.png",
+      "logicalHeight" : 88,
+      "logicalWidth" : 72,
+      "pixelHeight" : 176,
+      "pixelScale" : 2,
+      "pixelWidth" : 144,
+      "renderMethod" : "Timed native Core Animation presentation frame rendered directly at 2x over a QA-only backing color",
+      "semanticState" : "oversized-bite"
+    },
+    {
+      "appearance" : "light",
+      "file" : "native-robot-personality-auto-capture-slurp-light@2x.png",
+      "logicalHeight" : 88,
+      "logicalWidth" : 72,
+      "pixelHeight" : 176,
+      "pixelScale" : 2,
+      "pixelWidth" : 144,
+      "renderMethod" : "Timed native Core Animation presentation frame rendered directly at 2x over a QA-only backing color",
+      "semanticState" : "capture-slurp"
+    },
+    {
+      "appearance" : "dark",
+      "file" : "native-robot-personality-auto-capture-slurp-dark@2x.png",
+      "logicalHeight" : 88,
+      "logicalWidth" : 72,
+      "pixelHeight" : 176,
+      "pixelScale" : 2,
+      "pixelWidth" : 144,
+      "renderMethod" : "Timed native Core Animation presentation frame rendered directly at 2x over a QA-only backing color",
+      "semanticState" : "capture-slurp"
+    },
+    {
+      "appearance" : "light",
+      "file" : "native-robot-personality-auto-corner-nibble-light@2x.png",
+      "logicalHeight" : 88,
+      "logicalWidth" : 72,
+      "pixelHeight" : 176,
+      "pixelScale" : 2,
+      "pixelWidth" : 144,
+      "renderMethod" : "Timed native Core Animation presentation frame rendered directly at 2x over a QA-only backing color",
+      "semanticState" : "corner-nibble"
+    },
+    {
+      "appearance" : "dark",
+      "file" : "native-robot-personality-auto-corner-nibble-dark@2x.png",
+      "logicalHeight" : 88,
+      "logicalWidth" : 72,
+      "pixelHeight" : 176,
+      "pixelScale" : 2,
+      "pixelWidth" : 144,
+      "renderMethod" : "Timed native Core Animation presentation frame rendered directly at 2x over a QA-only backing color",
+      "semanticState" : "corner-nibble"
+    },
+    {
+      "appearance" : "light",
+      "file" : "native-robot-personality-auto-toss-and-catch-light@2x.png",
+      "logicalHeight" : 88,
+      "logicalWidth" : 72,
+      "pixelHeight" : 176,
+      "pixelScale" : 2,
+      "pixelWidth" : 144,
+      "renderMethod" : "Timed native Core Animation presentation frame rendered directly at 2x over a QA-only backing color",
+      "semanticState" : "toss-and-catch"
+    },
+    {
+      "appearance" : "dark",
+      "file" : "native-robot-personality-auto-toss-and-catch-dark@2x.png",
+      "logicalHeight" : 88,
+      "logicalWidth" : 72,
+      "pixelHeight" : 176,
+      "pixelScale" : 2,
+      "pixelWidth" : 144,
+      "renderMethod" : "Timed native Core Animation presentation frame rendered directly at 2x over a QA-only backing color",
+      "semanticState" : "toss-and-catch"
+    },
+    {
+      "appearance" : "light",
+      "file" : "native-robot-personality-auto-oversized-swallow-light@2x.png",
+      "logicalHeight" : 88,
+      "logicalWidth" : 72,
+      "pixelHeight" : 176,
+      "pixelScale" : 2,
+      "pixelWidth" : 144,
+      "renderMethod" : "Timed native Core Animation presentation frame rendered directly at 2x over a QA-only backing color",
+      "semanticState" : "oversized-swallow"
+    },
+    {
+      "appearance" : "dark",
+      "file" : "native-robot-personality-auto-oversized-swallow-dark@2x.png",
+      "logicalHeight" : 88,
+      "logicalWidth" : 72,
+      "pixelHeight" : 176,
+      "pixelScale" : 2,
+      "pixelWidth" : 144,
+      "renderMethod" : "Timed native Core Animation presentation frame rendered directly at 2x over a QA-only backing color",
+      "semanticState" : "oversized-swallow"
+    },
+    {
+      "appearance" : "light",
+      "file" : "native-robot-personality-auto-escaping-capture-light@2x.png",
+      "logicalHeight" : 88,
+      "logicalWidth" : 72,
+      "pixelHeight" : 176,
+      "pixelScale" : 2,
+      "pixelWidth" : 144,
+      "renderMethod" : "Timed native Core Animation presentation frame rendered directly at 2x over a QA-only backing color",
+      "semanticState" : "escaping-capture"
+    },
+    {
+      "appearance" : "dark",
+      "file" : "native-robot-personality-auto-escaping-capture-dark@2x.png",
+      "logicalHeight" : 88,
+      "logicalWidth" : 72,
+      "pixelHeight" : 176,
+      "pixelScale" : 2,
+      "pixelWidth" : 144,
+      "renderMethod" : "Timed native Core Animation presentation frame rendered directly at 2x over a QA-only backing color",
+      "semanticState" : "escaping-capture"
+    },
+    {
+      "appearance" : "light",
+      "file" : "native-robot-personality-auto-suspicious-inspection-light@2x.png",
+      "logicalHeight" : 88,
+      "logicalWidth" : 72,
+      "pixelHeight" : 176,
+      "pixelScale" : 2,
+      "pixelWidth" : 144,
+      "renderMethod" : "Timed native Core Animation presentation frame rendered directly at 2x over a QA-only backing color",
+      "semanticState" : "suspicious-inspection"
+    },
+    {
+      "appearance" : "dark",
+      "file" : "native-robot-personality-auto-suspicious-inspection-dark@2x.png",
+      "logicalHeight" : 88,
+      "logicalWidth" : 72,
+      "pixelHeight" : 176,
+      "pixelScale" : 2,
+      "pixelWidth" : 144,
+      "renderMethod" : "Timed native Core Animation presentation frame rendered directly at 2x over a QA-only backing color",
+      "semanticState" : "suspicious-inspection"
+    },
+    {
+      "appearance" : "light",
+      "file" : "native-robot-personality-auto-stacked-capture-light@2x.png",
+      "logicalHeight" : 88,
+      "logicalWidth" : 72,
+      "pixelHeight" : 176,
+      "pixelScale" : 2,
+      "pixelWidth" : 144,
+      "renderMethod" : "Timed native Core Animation presentation frame rendered directly at 2x over a QA-only backing color",
+      "semanticState" : "stacked-capture"
+    },
+    {
+      "appearance" : "dark",
+      "file" : "native-robot-personality-auto-stacked-capture-dark@2x.png",
+      "logicalHeight" : 88,
+      "logicalWidth" : 72,
+      "pixelHeight" : 176,
+      "pixelScale" : 2,
+      "pixelWidth" : 144,
+      "renderMethod" : "Timed native Core Animation presentation frame rendered directly at 2x over a QA-only backing color",
+      "semanticState" : "stacked-capture"
+    },
+    {
+      "appearance" : "light",
+      "file" : "native-robot-personality-auto-digital-hiccups-light@2x.png",
+      "logicalHeight" : 88,
+      "logicalWidth" : 72,
+      "pixelHeight" : 176,
+      "pixelScale" : 2,
+      "pixelWidth" : 144,
+      "renderMethod" : "Timed native Core Animation presentation frame rendered directly at 2x over a QA-only backing color",
+      "semanticState" : "digital-hiccups"
+    },
+    {
+      "appearance" : "dark",
+      "file" : "native-robot-personality-auto-digital-hiccups-dark@2x.png",
+      "logicalHeight" : 88,
+      "logicalWidth" : 72,
+      "pixelHeight" : 176,
+      "pixelScale" : 2,
+      "pixelWidth" : 144,
+      "renderMethod" : "Timed native Core Animation presentation frame rendered directly at 2x over a QA-only backing color",
+      "semanticState" : "digital-hiccups"
+    },
+    {
+      "appearance" : "dark",
+      "file" : "native-robot-personality-auto-phase-anticipation@2x.png",
+      "logicalHeight" : 88,
+      "logicalWidth" : 72,
+      "pixelHeight" : 176,
+      "pixelScale" : 2,
+      "pixelWidth" : 144,
+      "renderMethod" : "Timed native phase presentation frame rendered directly at 2x",
+      "semanticState" : "anticipation"
+    },
+    {
+      "appearance" : "dark",
+      "file" : "native-robot-personality-auto-phase-entrance@2x.png",
+      "logicalHeight" : 88,
+      "logicalWidth" : 72,
+      "pixelHeight" : 176,
+      "pixelScale" : 2,
+      "pixelWidth" : 144,
+      "renderMethod" : "Timed native phase presentation frame rendered directly at 2x",
+      "semanticState" : "entrance"
+    },
+    {
+      "appearance" : "dark",
+      "file" : "native-robot-personality-auto-phase-eating-peek-and-wink@2x.png",
+      "logicalHeight" : 88,
+      "logicalWidth" : 72,
+      "pixelHeight" : 176,
+      "pixelScale" : 2,
+      "pixelWidth" : 144,
+      "renderMethod" : "Timed native phase presentation frame rendered directly at 2x",
+      "semanticState" : "eating-peek-and-wink"
+    },
+    {
+      "appearance" : "dark",
+      "file" : "native-robot-personality-auto-phase-reaction-peek-and-wink@2x.png",
+      "logicalHeight" : 88,
+      "logicalWidth" : 72,
+      "pixelHeight" : 176,
+      "pixelScale" : 2,
+      "pixelWidth" : 144,
+      "renderMethod" : "Timed native phase presentation frame rendered directly at 2x",
+      "semanticState" : "reaction-peek-and-wink"
+    },
+    {
+      "appearance" : "dark",
+      "file" : "native-robot-personality-auto-phase-exit@2x.png",
+      "logicalHeight" : 88,
+      "logicalWidth" : 72,
+      "pixelHeight" : 176,
+      "pixelScale" : 2,
+      "pixelWidth" : 144,
+      "renderMethod" : "Timed native phase presentation frame rendered directly at 2x",
+      "semanticState" : "exit"
+    },
+    {
+      "appearance" : "light",
+      "file" : "native-robot-personality-auto-reduced-check-light@2x.png",
+      "logicalHeight" : 88,
+      "logicalWidth" : 72,
+      "pixelHeight" : 176,
+      "pixelScale" : 2,
+      "pixelWidth" : 144,
+      "renderMethod" : "Static reduced automatic-confirmation check rendered directly at 2x",
+      "semanticState" : "automatic-success-reduced-motion"
+    },
+    {
+      "appearance" : "dark",
+      "file" : "native-robot-personality-auto-reduced-check-dark@2x.png",
+      "logicalHeight" : 88,
+      "logicalWidth" : 72,
+      "pixelHeight" : 176,
+      "pixelScale" : 2,
+      "pixelWidth" : 144,
+      "renderMethod" : "Static reduced automatic-confirmation check rendered directly at 2x",
+      "semanticState" : "automatic-success-reduced-motion"
+    },
+    {
+      "appearance" : "light",
+      "file" : "native-auto-capture-island-burst-light@2x.png",
+      "logicalHeight" : 122,
+      "logicalWidth" : 104,
+      "pixelHeight" : 244,
+      "pixelScale" : 2,
+      "pixelWidth" : 208,
+      "renderMethod" : "Complete production popup presentation tree rendered directly at 2x",
+      "semanticState" : "camera-island-burst-×3"
+    },
+    {
+      "appearance" : "dark",
+      "file" : "native-auto-capture-island-burst-dark@2x.png",
+      "logicalHeight" : 122,
+      "logicalWidth" : 104,
+      "pixelHeight" : 244,
+      "pixelScale" : 2,
+      "pixelWidth" : 208,
+      "renderMethod" : "Complete production popup presentation tree rendered directly at 2x",
+      "semanticState" : "camera-island-burst-×3"
+    }
+  ]
+}

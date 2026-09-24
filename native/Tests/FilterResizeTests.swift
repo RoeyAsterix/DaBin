@@ -135,7 +135,7 @@ private final class FilterResizeNotificationClient: ReminderNotificationClient {
         let previews = PreviewService(store: store)
         let reminders = ReminderService(store: store, client: FilterResizeNotificationClient())
         let state = AppState(store: store, previews: previews, reminders: reminders)
-        let controller = CornerController(state: state, input: InputService(store: store), placementDefaults: defaults)
+        let controller = CornerController(state: state, input: InputService(store: store), placementDefaults: defaults, animateRobotTransitions: false)
         defer { controller.dismiss(); previews.cancelNetwork() }
         let reducedMotion = NSWorkspace.shared.accessibilityDisplayShouldReduceMotion
 
@@ -147,12 +147,12 @@ private final class FilterResizeNotificationClient: ReminderNotificationClient {
         settle()
         let initial = controller.board.frame
         expect(state.dailyCaptures.count == 5, "Daily starts with five fictional records")
-        expect(near(initial.height, 500), "The unplaced bottom-corner Daily starts at full content height")
+        expect(near(initial.height, 550), "The unplaced bottom-corner Daily starts at full content height")
         expect(defaults.object(forKey: CornerController.boardPlacementKey) == nil, "Opening an unplaced Daily does not persist a user drag")
 
         let shrink = sample(controller.board) { state.filter = .tasks }
         let taskFrame = controller.board.frame
-        expect(state.dailyCaptures.count == 1 && near(taskFrame.height, 285), "Tasks leaves one framed record and the compact content height")
+        expect(state.dailyCaptures.count == 1 && near(taskFrame.height, 335), "Tasks leaves one framed record and the compact content height")
         expectTransition(shrink, from: initial, to: taskFrame, reducedMotion: reducedMotion, label: "Daily shrink")
         expect(defaults.object(forKey: CornerController.boardPlacementKey) == nil, "Filter animation does not become a saved user placement")
 
@@ -179,7 +179,7 @@ private final class FilterResizeNotificationClient: ReminderNotificationClient {
         settle()
 
         let empty = sample(controller.board) { state.filter = .files }
-        expect(state.dailyCaptures.isEmpty && near(controller.board.frame.height, 290), "An empty filter reserves room for the bored robot")
+        expect(state.dailyCaptures.isEmpty && near(controller.board.frame.height, 340), "An empty filter reserves room for the bored robot")
         expectFixedHeader(empty, anchor: initial, label: "Empty Daily filter")
         let beforeGrowth = controller.board.frame
         let growth = sample(controller.board) { state.filter = .all }
@@ -219,16 +219,16 @@ private final class FilterResizeNotificationClient: ReminderNotificationClient {
         controller.openSearch()
         settle()
         let searchFull = controller.board.frame
-        expect(near(searchFull.height, 500), "Search starts with enough matches for a full panel")
+        expect(near(searchFull.height, 550), "Search starts with enough matches for a full panel")
         let searchShrink = sample(controller.board) { state.filter = .links }
         let searchLink = controller.board.frame
         expect(state.searchGroups.count == 1 && state.searchGroups.first?.entries.count == 1,
                "Search Links finds the isolated previous-day link with no adjacent fixtures")
-        expect(near(searchLink.height, 305), "Single-entry search has the intended compact height")
+        expect(near(searchLink.height, 355), "Single-entry search has the intended compact height")
         expectTransition(searchShrink, from: searchFull, to: searchLink, reducedMotion: reducedMotion, label: "Search shrink")
         let searchEmpty = sample(controller.board) { state.filter = .media }
         expectFixedHeader(searchEmpty, anchor: searchFull, label: "Empty Search filter")
-        expect(state.searchGroups.isEmpty && near(controller.board.frame.height, 290), "Empty Search fits its status without moving the header")
+        expect(state.searchGroups.isEmpty && near(controller.board.frame.height, 340), "Empty Search fits its status without moving the header")
         let searchBeforeGrowth = controller.board.frame
         let searchGrowth = sample(controller.board) { state.filter = .all }
         expectTransition(searchGrowth, from: searchBeforeGrowth, to: searchFull, reducedMotion: reducedMotion, label: "Search growth")
@@ -248,7 +248,7 @@ private final class FilterResizeNotificationClient: ReminderNotificationClient {
 
         // Put the compact board near the display bottom, then ask for more
         // content. Its header should remain where it was deliberately placed.
-        let lowTop = screen.visibleFrame.minY + 320
+        let lowTop = screen.visibleFrame.minY + 370
         state.onBoardDragStarted?()
         let lowFrame = NSRect(x: controller.board.frame.minX,
                               y: lowTop - controller.board.frame.height,
@@ -260,7 +260,7 @@ private final class FilterResizeNotificationClient: ReminderNotificationClient {
         let constrainedGrowth = sample(controller.board) { state.filter = .all }
         expectFixedHeader(constrainedGrowth, anchor: lowAnchor, label: "Growth near the screen bottom")
         expect(near(controller.board.frame.minY, screen.visibleFrame.minY), "Available height stops at the screen bottom")
-        expect(near(controller.board.frame.height, 320), "Overflowing records use a constrained panel instead of moving its header")
+        expect(near(controller.board.frame.height, 370), "Overflowing records use a constrained panel instead of moving its header")
         expect(defaults.array(forKey: CornerController.boardPlacementKey) as? [Double]
                == [Double(lowFrame.minX), Double(lowFrame.maxY)], "Constrained animation preserves the saved user anchor")
 
@@ -282,9 +282,9 @@ private final class FilterResizeNotificationClient: ReminderNotificationClient {
             settle()
             expect(screen.visibleFrame.contains(controller.board.frame),
                    "Releasing the header near the bottom recovers the entire panel on screen (\(topOffset)pt); visible=\(screen.visibleFrame), board=\(controller.board.frame)")
-            expect(near(controller.board.frame.height, 285),
+            expect(near(controller.board.frame.height, 335),
                    "Offscreen drag recovery restores the full one-task height (\(topOffset)pt)")
-            expect(controller.board.frame.maxY >= screen.visibleFrame.minY + 285,
+            expect(controller.board.frame.maxY >= screen.visibleFrame.minY + 335,
                    "Offscreen drag recovery leaves an accessible header and usable content (\(topOffset)pt)")
         }
 
@@ -307,17 +307,17 @@ private final class FilterResizeNotificationClient: ReminderNotificationClient {
             controller.showBoard()
             settle(0.10)
             let folding = controller.board.frame
-            expect(folding.width > 381 && folding.width < fullWeek.width - 1,
+            expect(folding.width > 401 && folding.width < fullWeek.width - 1,
                    "Weekly-collapse drag regression begins at an actual intermediate width")
             state.onBoardDragStarted?()
             controller.board.setFrame(folding.offsetBy(dx: 0, dy: -10), display: true)
             controller.finishBoardDragIfReleased(pressedMouseButtons: 0)
             settle()
-            expect(near(controller.board.frame.width, 380),
+            expect(near(controller.board.frame.width, 400),
                    "Dragging during a weekly collapse restores the standard compact width")
             expect(screen.visibleFrame.contains(controller.board.frame),
                    "The interrupted weekly collapse recovers a fully visible Daily panel")
-            expect(near(controller.board.frame.height, 285),
+            expect(near(controller.board.frame.height, 335),
                    "The interrupted weekly collapse retains the selected Tasks content height")
         }
         expect(store.captures.count == 6, "Filtering and resizing leave all six archived fixtures intact")

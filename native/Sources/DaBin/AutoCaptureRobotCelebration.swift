@@ -4,6 +4,19 @@ import Foundation
 /// Raw values are stable so render manifests and regression failures can name a
 /// performance without depending on enum declaration order.
 enum AutoCaptureRobotReaction: String, CaseIterable, Identifiable, Sendable {
+    case quickBite = "quick-bite"
+    case oversizedBite = "oversized-bite"
+    case captureSlurp = "capture-slurp"
+    case cornerNibble = "corner-nibble"
+    case tossAndCatch = "toss-and-catch"
+    case oversizedSwallow = "oversized-swallow"
+    case escapingCapture = "escaping-capture"
+    case suspiciousInspection = "suspicious-inspection"
+    case stackedCapture = "stacked-capture"
+    case digitalHiccups = "digital-hiccups"
+
+    // Keep the original identifiers valid for saved render manifests. They now
+    // include an eating sequence before their familiar celebration gesture.
     case peekAndWink = "peek-and-wink"
     case victoryDance = "victory-dance"
     case doubleBounce = "double-bounce"
@@ -17,11 +30,28 @@ enum AutoCaptureRobotReaction: String, CaseIterable, Identifiable, Sendable {
     case screenHighFive = "screen-high-five"
     case sneakAndGrab = "sneak-and-grab"
 
+    /// Only these ten distinct eating styles participate in live rotation.
+    /// Legacy identifiers remain available to callers and historical QA fixtures.
+    static let eatingReactions: [AutoCaptureRobotReaction] = [
+        .quickBite, .oversizedBite, .captureSlurp, .cornerNibble, .tossAndCatch,
+        .oversizedSwallow, .escapingCapture, .suspiciousInspection, .stackedCapture, .digitalHiccups
+    ]
+
     var id: String { rawValue }
     var testIdentifier: String { "auto-capture-reaction-\(rawValue)" }
 
     var displayName: String {
         switch self {
+        case .quickBite: return "Quick Bite and Satisfied Blink"
+        case .oversizedBite: return "Oversized Bite and Recoil"
+        case .captureSlurp: return "Capture Noodle Slurp"
+        case .cornerNibble: return "Nibble the Corners"
+        case .tossAndCatch: return "Toss and Mouth Catch"
+        case .oversizedSwallow: return "Oversized Swallow"
+        case .escapingCapture: return "Chase the Escaping Capture"
+        case .suspiciousInspection: return "Suspicious Inspection"
+        case .stackedCapture: return "Stacked Capture Snack"
+        case .digitalHiccups: return "Digital Hiccups"
         case .peekAndWink: return "Peek and Wink"
         case .victoryDance: return "Victory Dance"
         case .doubleBounce: return "Double Bounce"
@@ -37,22 +67,31 @@ enum AutoCaptureRobotReaction: String, CaseIterable, Identifiable, Sendable {
         }
     }
 
-    /// The reaction is the flexible part of the performance. Anticipation,
-    /// entrance and exit have fixed bases around this value.
-    fileprivate var baseDuration: TimeInterval {
+    var eatingStyle: AutoCaptureEatingStyle {
         switch self {
-        case .sneakAndGrab: return 0.88
-        case .savedStamp: return 0.94
-        case .peekAndWink, .catchCapture: return 0.96
-        case .doubleBounce: return 0.98
-        case .cameraFlash: return 1.02
-        case .screenHighFive: return 1.04
-        case .clipboardHug: return 1.05
-        case .wobblySalute: return 1.08
-        case .victoryDance, .confettiSneeze: return 1.18
-        case .dizzySpin: return 1.22
+        case .quickBite, .peekAndWink, .savedStamp: return .bite
+        case .oversizedBite, .cameraFlash: return .recoil
+        case .captureSlurp: return .slurp
+        case .cornerNibble, .clipboardHug: return .nibble
+        case .tossAndCatch, .doubleBounce, .screenHighFive: return .toss
+        case .oversizedSwallow, .wobblySalute: return .swallow
+        case .escapingCapture, .sneakAndGrab: return .chase
+        case .suspiciousInspection: return .inspect
+        case .stackedCapture, .catchCapture: return .stack
+        case .digitalHiccups, .confettiSneeze, .victoryDance, .dizzySpin: return .hiccup
         }
     }
+
+    fileprivate var eatingDuration: TimeInterval {
+        switch eatingStyle {
+        case .bite, .recoil: return 0.82
+        case .slurp, .nibble, .stack, .hiccup: return 0.89
+        case .toss, .swallow, .chase, .inspect: return 0.96
+        }
+    }
+
+    fileprivate var baseDuration: TimeInterval { 0.38 }
+
 }
 
 /// Small bounded differences prevent consecutive performances from feeling
@@ -93,6 +132,7 @@ enum AutoCaptureRobotTimingCurve: Equatable, Sendable {
 enum AutoCaptureRobotPhaseKind: Equatable, Sendable {
     case anticipation
     case entrance
+    case eating(AutoCaptureRobotReaction)
     case reaction(AutoCaptureRobotReaction)
     case exit
     case reducedPeek
@@ -103,6 +143,7 @@ enum AutoCaptureRobotPhaseKind: Equatable, Sendable {
         switch self {
         case .anticipation: return "anticipation"
         case .entrance: return "entrance"
+        case .eating(let reaction): return "eating-\(reaction.rawValue)"
         case .reaction(let reaction): return "reaction-\(reaction.rawValue)"
         case .exit: return "exit"
         case .reducedPeek: return "reduced-peek"
@@ -123,6 +164,8 @@ struct AutoCaptureRobotPhaseEffects: OptionSet, Equatable, Sendable {
     static let overshoot = Self(rawValue: 1 << 3)
     static let successCue = Self(rawValue: 1 << 4)
     static let opacity = Self(rawValue: 1 << 5)
+    static let captureToken = Self(rawValue: 1 << 6)
+    static let eating = Self(rawValue: 1 << 7)
 }
 
 struct AutoCaptureRobotPerformancePhase: Equatable, Identifiable, Sendable {
@@ -165,10 +208,13 @@ struct AutoCaptureRobotPerformance: Equatable, Sendable {
 
         let scale = variation.timingScale
         let phases = timeline([
-            (.anticipation, 0.26 * scale, .easeInOut, [.eyeMovement]),
-            (.entrance, 0.44 * scale,
+            (.anticipation, 0.23 * scale, .easeInOut, [.eyeMovement]),
+            (.entrance, 0.50 * scale,
              .spring(response: 0.34 * scale, dampingFraction: 0.72),
              [.bodyTravel, .squashAndStretch, .overshoot]),
+            (.eating(reaction), reaction.eatingDuration * scale,
+             .spring(response: 0.30 * scale, dampingFraction: 0.78),
+             [.eyeMovement, .squashAndStretch, .captureToken, .eating]),
             (.reaction(reaction), reaction.baseDuration * scale,
              .spring(response: 0.38 * scale, dampingFraction: 0.76),
              [.eyeMovement, .squashAndStretch, .overshoot, .successCue]),
@@ -218,7 +264,7 @@ struct AutoCaptureRobotReactionDeck: Sendable {
 
     mutating func next() -> AutoCaptureRobotReaction {
         if remaining.isEmpty { refill() }
-        // With twelve reactions and at most three exclusions, an eligible item
+        // With more than three reactions and at most three exclusions, an eligible item
         // always exists. Within a bag, already-seen items have already been removed.
         let index = remaining.firstIndex { !previousThree.contains($0) } ?? 0
         let reaction = remaining.remove(at: index)
@@ -239,7 +285,15 @@ struct AutoCaptureRobotReactionDeck: Sendable {
     }
 
     mutating func nextPerformance(entrance: RobotEntrance,
-                                  reduceMotion: Bool) -> AutoCaptureRobotPerformance {
+                                  reduceMotion: Bool,
+                                  captureCount: Int = 1) -> AutoCaptureRobotPerformance {
+        // Prefer a stack for a burst only when that pick obeys the same deck and
+        // recent-history rules. Updating an active token never makes a new pick.
+        if remaining.isEmpty { refill() }
+        if captureCount > 1, !previousThree.contains(.stackedCapture),
+           let index = remaining.firstIndex(of: .stackedCapture) {
+            remaining.swapAt(0, index)
+        }
         let reaction = next()
         let variation = nextVariation()
         return .make(reaction: reaction, variation: variation,
@@ -247,7 +301,7 @@ struct AutoCaptureRobotReactionDeck: Sendable {
     }
 
     private mutating func refill() {
-        remaining = AutoCaptureRobotReaction.allCases
+        remaining = AutoCaptureRobotReaction.eatingReactions
         guard remaining.count > 1 else { return }
         for upper in stride(from: remaining.count - 1, through: 1, by: -1) {
             let index = randomIndex(upperBound: upper + 1)
@@ -274,5 +328,75 @@ private struct AutoCaptureRobotSplitMix64: RandomNumberGenerator, Sendable {
         value = (value ^ (value >> 30)) &* 0xBF58_476D_1CE4_E5B9
         value = (value ^ (value >> 27)) &* 0x94D0_49BB_1331_11EB
         return value ^ (value >> 31)
+    }
+}
+
+/// Value-only token choreography shared by the layer renderer and unit tests.
+/// Coordinates are in the robot's 64 × 78 design space relative to its mouth;
+/// these are generic paper tokens and cannot carry capture content.
+enum AutoCaptureEatingStyle: String, CaseIterable, Sendable {
+    case bite, recoil, slurp, nibble, toss, swallow, chase, inspect, stack, hiccup
+
+    struct TokenKeyframe: Equatable, Sendable {
+        let fraction: Double
+        let x: Double
+        let y: Double
+        let scaleX: Double
+        let scaleY: Double
+        let rotation: Double
+
+        init(_ fraction: Double, _ x: Double, _ y: Double,
+             _ scaleX: Double = 1, _ scaleY: Double = 1, _ rotation: Double = 0) {
+            self.fraction = fraction
+            self.x = x
+            self.y = y
+            self.scaleX = scaleX
+            self.scaleY = scaleY
+            self.rotation = rotation
+        }
+    }
+
+    /// Every path finishes inside the mouth with the paper folded to nothing.
+    var tokenKeyframes: [TokenKeyframe] {
+        typealias K = TokenKeyframe
+        let swallowed = K(0.94, 0, 0, 0.04, 0.04)
+        switch self {
+        case .bite:
+            return [K(0, 25, -20, 1, 1, -12), K(0.36, 9, -1),
+                    K(0.60, 2, 0, 0.65, 0.8), swallowed]
+        case .recoil:
+            return [K(0, 27, -16, 1.7, 1.5, 12), K(0.32, 12, 1, 1.7, 1.5),
+                    K(0.53, -2, -1, 0.9, 0.8, -9), swallowed]
+        case .slurp:
+            return [K(0, 26, 6, 1.8, 0.25, -8), K(0.28, 17, 3, 2.3, 0.18),
+                    K(0.55, 8, 1, 1.4, 0.12), K(0.80, 2, 0, 0.4, 0.1), swallowed]
+        case .nibble:
+            return [K(0, 18, -18), K(0.24, 7, 0, 1, 1, 28),
+                    K(0.42, 10, 0, 0.85, 0.85, -28), K(0.61, 6, 0, 0.65, 0.65, 28),
+                    K(0.79, 3, 0, 0.45, 0.45, -20), swallowed]
+        case .toss:
+            return [K(0, 22, 2, 1, 1, 10), K(0.22, 13, 3, 1, 1, -18),
+                    K(0.47, 1, -34, 0.9, 0.9, 145), K(0.66, -2, -24, 0.8, 0.8, 240),
+                    K(0.82, 0, -3, 0.65, 0.65, 350), swallowed]
+        case .swallow:
+            return [K(0, 27, -14, 1.8, 1.8), K(0.32, 9, 1, 1.6, 1.5),
+                    K(0.49, 6, 0, 1.1, 1.5, -8), K(0.63, 6, -1, 0.9, 1.1, 8),
+                    K(0.77, 3, 0, 0.65, 0.65), swallowed]
+        case .chase:
+            return [K(0, 16, -15, 1, 1, -12), K(0.23, 9, 0, 1, 1, 8),
+                    K(0.42, 29, -10, 0.9, 0.9, 18), K(0.59, 23, 2, 0.9, 0.9, -12),
+                    K(0.78, 3, 0, 0.65, 0.65), swallowed]
+        case .inspect:
+            return [K(0, 25, -18, 1, 1, 8), K(0.23, 13, -8, 1, 1, -14),
+                    K(0.49, 13, -8, 1, 1, 14), K(0.65, 11, -6, 1, 1, -8), swallowed]
+        case .stack:
+            return [K(0, 23, -18, 1.2, 1.2, -10), K(0.28, 10, 0, 1.2, 1.2),
+                    K(0.47, 7, 0, 1, 0.75), K(0.64, 4, 0, 0.7, 0.48),
+                    K(0.81, 2, 0, 0.4, 0.25), swallowed]
+        case .hiccup:
+            return [K(0, 22, -20, 1, 1, 12), K(0.30, 8, 0),
+                    K(0.51, 1, 0, 0.4, 0.4), K(0.65, 5, -4, 0.6, 0.6, -16),
+                    K(0.80, 1, 0, 0.3, 0.3), swallowed]
+        }
     }
 }

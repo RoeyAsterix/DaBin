@@ -1,6 +1,9 @@
+import AppKit
 import Foundation
+import QuartzCore
 
 @main
+@MainActor
 private struct AutoCaptureRobotCelebrationTests {
     private static var checks = 0
 
@@ -18,7 +21,7 @@ private struct AutoCaptureRobotCelebrationTests {
         abs(first - second) <= tolerance
     }
 
-    static func main() throws {
+    static func main() async throws {
         let reactions = AutoCaptureRobotReaction.allCases
         try expect(reactions.count >= 12, "The success library contains at least twelve reactions")
         try expect(Set(reactions.map(\.rawValue)).count == reactions.count,
@@ -28,10 +31,11 @@ private struct AutoCaptureRobotCelebrationTests {
         try expect(reactions.allSatisfy { !$0.displayName.isEmpty },
                    "Every reaction has a readable diagnostic name")
 
+        let activeReactions = AutoCaptureRobotReaction.eatingReactions
         var firstDeck = AutoCaptureRobotReactionDeck(seed: 0xDA_B1_2026)
         var secondDeck = AutoCaptureRobotReactionDeck(seed: 0xDA_B1_2026)
-        let firstSequence = (0..<120).map { _ in firstDeck.next() }
-        let secondSequence = (0..<120).map { _ in secondDeck.next() }
+        let firstSequence = (0..<(activeReactions.count * 10)).map { _ in firstDeck.next() }
+        let secondSequence = (0..<(activeReactions.count * 10)).map { _ in secondDeck.next() }
         try expect(firstSequence == secondSequence,
                    "An explicit seed reproduces the shuffled reaction rotation")
 
@@ -41,11 +45,15 @@ private struct AutoCaptureRobotCelebrationTests {
             try expect(!prior.contains(firstSequence[index]),
                        "Reaction \(index) does not repeat any of its previous three")
         }
-        for start in stride(from: 0, to: firstSequence.count, by: reactions.count) {
-            let end = min(start + reactions.count, firstSequence.count)
-            try expect(Set(firstSequence[start..<end]) == Set(reactions),
+        for start in stride(from: 0, to: firstSequence.count, by: activeReactions.count) {
+            let end = min(start + activeReactions.count, firstSequence.count)
+            try expect(Set(firstSequence[start..<end]) == Set(activeReactions),
                        "Each shuffled bag emits every reaction exactly once")
         }
+        try expect(Set(activeReactions.map { $0.eatingStyle.rawValue }).count == activeReactions.count,
+                   "Live rotation has no aliases that could visibly repeat a recent eating style")
+        try expect(firstSequence.allSatisfy { activeReactions.contains($0) },
+                   "Legacy celebration aliases never enter the live eating rotation")
         try expect(firstDeck.previousThree == Array(firstSequence.suffix(3)),
                    "The deck exposes only its three most recent reactions")
 
@@ -97,8 +105,8 @@ private struct AutoCaptureRobotCelebrationTests {
                            && !performance.reduceMotion,
                            "A normal plan retains its reaction, variation and entrance")
                 try expect(performance.phases.map(\.kind) == [
-                    .anticipation, .entrance, .reaction(reaction), .exit
-                ], "\(reaction.rawValue) follows anticipation, entrance, reaction and exit")
+                    .anticipation, .entrance, .eating(reaction), .reaction(reaction), .exit
+                ], "\(reaction.rawValue) follows anticipation, entrance, eating, reaction and exit")
                 try expect((1.8...2.6).contains(performance.totalDuration),
                            "\(reaction.rawValue) remains inside the requested duration at scale \(scale)")
                 try expect(performance.phases.allSatisfy { $0.duration > 0 },
@@ -114,8 +122,11 @@ private struct AutoCaptureRobotCelebrationTests {
 
                 let anticipation = performance.phases[0]
                 let entrance = performance.phases[1]
-                let reactionPhase = performance.phases[2]
-                let exit = performance.phases[3]
+                let eating = performance.phases[2]
+                let reactionPhase = performance.phases[3]
+                let exit = performance.phases[4]
+                try expect(eating.effects.isSuperset(of: [.captureToken, .eating, .eyeMovement]),
+                           "Every normal capture includes an explicit token eating phase")
                 try expect(anticipation.effects.contains(.eyeMovement)
                            && !anticipation.effects.contains(.bodyTravel),
                            "Anticipation moves the eyes before the body emerges")
@@ -138,7 +149,7 @@ private struct AutoCaptureRobotCelebrationTests {
             AutoCaptureRobotPerformance.make(reaction: $0, variation: .standard,
                                              entrance: .top, reduceMotion: false)
         }
-        try expect(Set(normalPlans.map { $0.phases[2].kind.id }).count == reactions.count,
+        try expect(Set(normalPlans.map { $0.phases[3].kind.id }).count == reactions.count,
                    "Every reaction produces a distinguishable performance phase")
 
         for entrance in RobotEntrance.allCases {
@@ -175,6 +186,99 @@ private struct AutoCaptureRobotCelebrationTests {
                             reduced.phases.reduce(0) { $0 + $1.duration }),
                        "The reduced total equals its contiguous phase durations")
         }
+
+        try expect(AutoCaptureEatingStyle.allCases.count >= 10,
+                   "The library provides at least ten eating choreographies")
+        let requiredReactions: [AutoCaptureRobotReaction] = [
+            .quickBite, .oversizedBite, .captureSlurp, .cornerNibble, .tossAndCatch,
+            .oversizedSwallow, .escapingCapture, .suspiciousInspection, .stackedCapture, .digitalHiccups
+        ]
+        try expect(Set(requiredReactions.map { $0.eatingStyle.rawValue }).count == 10,
+                   "The ten requested reactions each select a distinct eating choreography")
+        let tokenTracks = requiredReactions.map { $0.eatingStyle.tokenKeyframes }
+        for index in tokenTracks.indices {
+            try expect(!tokenTracks[..<index].contains(tokenTracks[index]),
+                       "Eating reactions have visually different token paths")
+            let track = tokenTracks[index]
+            try expect(zip(track, track.dropFirst()).allSatisfy { $0.fraction < $1.fraction },
+                       "Token keyframes are strictly chronological")
+            try expect(track.allSatisfy {
+                (0...1).contains($0.fraction) && $0.x.isFinite && $0.y.isFinite
+                    && $0.scaleX > 0 && $0.scaleY > 0
+            }, "Every token transform is finite and uses positive bounded scaling")
+            try expect(track.last?.x == 0 && track.last?.y == 0
+                       && track.last!.scaleX < 0.1 && track.last!.scaleY < 0.1,
+                       "Every capture token finishes folded inside the mouth")
+        }
+        var burstDeck = AutoCaptureRobotReactionDeck(seed: 917)
+        let stack = burstDeck.nextPerformance(entrance: .top, reduceMotion: false, captureCount: 7)
+        try expect(stack.reaction == .stackedCapture, "A fresh burst chooses the stack reaction")
+        var recent: [AutoCaptureRobotReaction] = [stack.reaction]
+        for _ in 0..<100 {
+            let performance = burstDeck.nextPerformance(entrance: .top, reduceMotion: false, captureCount: 3)
+            try expect(!recent.suffix(3).contains(performance.reaction),
+                       "Bursts preserve the previous-three exclusion including stacked reactions")
+            recent.append(performance.reaction)
+        }
+
+        func allLayers(_ layer: CALayer?) -> [CALayer] {
+            guard let layer else { return [] }
+            return [layer] + (layer.sublayers ?? []).flatMap { allLayers($0) }
+        }
+        let character = RobotCharacterView(frame: NSRect(x: 0, y: 0, width: 64, height: 78), reduceMotion: { false })
+        character.layoutSubtreeIfNeeded()
+        character.playAutoCaptureCelebration(stack)
+        let started = character.autoCaptureCelebrationStartCount
+        character.updateAutoCaptureCount(37)
+        try expect(character.autoCaptureTokenCount == 37 && character.autoCaptureCelebrationStartCount == started,
+                   "A token count update represents the full burst without restarting its animation")
+        let layers = allLayers(character.layer)
+        try expect(layers.contains { $0.animation(forKey: "robot.auto-success.eating-token") != nil }
+                   && layers.contains { $0.animation(forKey: "robot.auto-success.chewing-mouth") != nil },
+                   "The renderer schedules both token folding and a chewing mouth")
+        try expect(layers.contains { $0.animation(forKey: "robot.auto-success.feet-emergence") != nil }
+                   && layers.contains { $0.animation(forKey: "robot.auto-success.island-grip") != nil },
+                   "Island emergence stages the feet and gripping hands independently")
+        try expect(layers.compactMap { $0 as? CATextLayer }.contains { $0.string as? String == "×37" },
+                   "The generic token renders the accurate uncapped capture count")
+        character.stopMotion()
+        try expect(allLayers(character.layer).allSatisfy { ($0.animationKeys() ?? []).isEmpty },
+                   "Interruption removes all capture and climbing tracks")
+        try expect(character.playIslandPeek() > 0.9 && !character.hasActiveAmbientMotion,
+                   "An idle peek runs once without continuous ambient work")
+        character.stopMotion()
+        try expect(character.playIslandClimb() <= 0.7 && character.mood == .idle,
+                   "The physical climb finishes in a stable robot pose for app expansion")
+        character.send(.hover(true, pointer: CGPoint(x: -0.4, y: 0.2)))
+        character.send(.hover(true, pointer: CGPoint(x: 0.8, y: -0.6)))
+        try expect(allLayers(character.layer).contains {
+            $0.animation(forKey: "robot.island.climb-body") != nil
+        }, "Pointer entry and movement leave the physical climb running")
+        try expect(character.motionState.pointer == CGPoint(x: 0.8, y: -0.6),
+                   "Hover during the climb retains the most recent pointer position")
+        try await Task.sleep(for: .seconds(0.73))
+        try expect(character.mood == .curious(pointer: CGPoint(x: 0.8, y: -0.6))
+                   && character.hasActiveAmbientMotion,
+                   "Completed climb settles into the latest curious pose and resumes visible ambient motion")
+        _ = character.playIslandClimb()
+        character.send(.acceptedDrag(true))
+        try expect(character.mood == .hungry && !allLayers(character.layer).contains {
+            $0.animation(forKey: "robot.island.climb-body") != nil
+        }, "A real drag interrupts the climb immediately to preserve the capture target")
+        character.stopMotion()
+        try await Task.sleep(for: .seconds(0.73))
+        try expect(character.mood == .hidden && !character.hasActiveAmbientMotion,
+                   "A cancelled climb completion cannot restart motion or reveal the hidden robot")
+        let reducedCharacter = RobotCharacterView(frame: .zero, reduceMotion: { true })
+        reducedCharacter.playAutoCaptureCelebration(.make(reaction: .stackedCapture, entrance: .top, reduceMotion: true))
+        try expect(!allLayers(reducedCharacter.layer).contains {
+            $0.animation(forKey: "robot.auto-success.eating-token") != nil
+                || $0.animation(forKey: "robot.auto-success.gripping-arm-0") != nil
+        }, "Reduce Motion schedules neither climbing nor moving capture paper")
+        reducedCharacter.stopMotion()
+        try expect(reducedCharacter.playIslandClimb() <= 0.2,
+                   "Reduce Motion substitutes a brief static fade for the climb")
+        reducedCharacter.stopMotion()
 
         print("PASS: \(checks) auto-capture celebration rotation and performance checks")
     }

@@ -195,6 +195,17 @@ final class RobotView: NSView {
         character.send(.hide)
     }
 
+    @discardableResult
+    func peekFromIsland() -> TimeInterval {
+        isPresented = true
+        return character.playIslandPeek()
+    }
+
+    func climbFromIsland() {
+        isPresented = true
+        _ = character.playIslandClimb()
+    }
+
     func refreshMotionPreference() { character.refreshMotionPreference() }
 
     func stopFeedback() {

@@ -1,5 +1,27 @@
 # DaBin QA cycle — 24 September 2026
 
+## Robot island and application transformation — source update
+
+Implemented a generation-guarded lifecycle, ten distinct shuffled eating reactions,
+exact semantic-action burst counts, independent board/manual-interaction priority,
+notch and external-display positioning, a continuous native robot app frame, reverse
+closing, clamped gaze and Reduce Motion. The original live hosting view remains
+mounted and its content width, themes and transparency are preserved.
+
+The full optimized Release regression run passed **36/36 suites**. Visual review then
+found a content/frame alignment issue; after correction, all **7/7 affected native
+frame/window suites** passed on unchanged final sources, including 31 frame checks,
+27 transition checks and 214 general window checks across two attached displays.
+The Release Xcode build passed with signing disabled. Native robot rendering checks,
+input fingerprints, screenshots and limitations are in the
+[robot QA record](../docs/qa/robot-island-2026-09-24/README.md).
+
+This source update has not been packaged as a signed installer or published as a
+new GitHub Release. macOS cannot universally exclude visible panels from every
+external screenshot/recording API; the success animation starts after persistence
+and never displays private capture contents.
+
+
 ## Mac App Store preflight — local build 0.3.18 (45)
 
 The final local Store review added a one-time first-launch Daily presentation and a persistent menu bar item with Open Daily, live Auto Capture state, Pause/Resume, Settings and Quit. It also forces a solid board when macOS Reduce Transparency is enabled, announces export results to VoiceOver, declares the export-compliance answer in the bundle, moves Store archives outside the File Provider source tree, rechecks the archived app, and rejects quarantine metadata recursively. The bundled privacy renderer was corrected to require all nine current policy topics.

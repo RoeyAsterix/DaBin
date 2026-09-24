@@ -178,7 +178,7 @@ import Foundation
             let freshPreviews = PreviewService(store: freshStore)
             let freshReminders = ReminderService(store: freshStore, client: DropNotificationClient())
             let freshState = AppState(store: freshStore, previews: freshPreviews, reminders: freshReminders)
-            let freshController = CornerController(state: freshState, input: freshInput, placementDefaults: preferences)
+            let freshController = CornerController(state: freshState, input: freshInput, placementDefaults: preferences, animateRobotTransitions: false)
             defer { freshController.dismiss(); freshController.bin.orderOut(nil); freshController.board.orderOut(nil); freshPreviews.cancelNetwork() }
             freshController.reveal(on: initialScreen, corner: .bottomRight)
             freshController.openDaily()
@@ -209,7 +209,7 @@ import Foundation
         let previews = PreviewService(store: store)
         let reminders = ReminderService(store: store, client: notifications)
         let state = AppState(store: store, previews: previews, reminders: reminders)
-        let controller = CornerController(state: state, input: input, placementDefaults: nil)
+        let controller = CornerController(state: state, input: input, placementDefaults: nil, animateRobotTransitions: false)
         defer { controller.dismiss(); controller.bin.orderOut(nil); controller.board.orderOut(nil); previews.cancelNetwork() }
         try expect(!NSScreen.screens.isEmpty, "Corner drag checks require an attached screen")
         for (index, screen) in NSScreen.screens.enumerated() {

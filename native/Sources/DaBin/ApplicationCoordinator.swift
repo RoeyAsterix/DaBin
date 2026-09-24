@@ -67,10 +67,19 @@ final class ApplicationCoordinator {
         self.robotPlacement = robotPlacement
         self.corners = corners
         lifecycle = ReminderLifecycle { await reminders.reconcile() }
+        corners.onWillOpenBoard = { [weak autoCaptureRobot] in autoCaptureRobot?.suspendForBoard() }
+        corners.onDidCloseBoard = { [weak autoCaptureRobot] in autoCaptureRobot?.resumeAfterBoard() }
+        autoCaptureRobot.onPresentationChanged = { [weak corners] visible in
+            if visible { corners?.captureAnimationWillAppear() }
+        }
+        corners.onRobotInteractionBegan = { [weak autoCaptureRobot] in autoCaptureRobot?.suspendForInteraction() }
+        corners.onRobotInteractionEnded = { [weak autoCaptureRobot] in autoCaptureRobot?.resumeAfterInteraction() }
+        corners.isCaptureRobotVisible = { [weak autoCaptureRobot] in autoCaptureRobot?.panel.isVisible == true }
         autoCapture.onCommitted = { [weak state] action in
             state?.didAutoCapture(action.captures)
         }
         autoCapture.onSaved = { [weak autoCaptureRobot] _ in
+            // One receipt is one action, including a grouped multi-file paste.
             _ = autoCaptureRobot?.present(additionalCaptureCount: 1)
         }
         autoCapture.onFailure = { [weak state] message in

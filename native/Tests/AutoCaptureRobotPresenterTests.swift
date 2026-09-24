@@ -49,8 +49,8 @@ private struct AutoCaptureRobotPresenterTests {
                    "A missing hardware main display is not guessed from array order")
 
         let builtInFrame = AutoCaptureRobotGeometry.panelFrame(on: builtIn)
-        try expect(near(builtInFrame.midX, builtIn.frame.midX),
-                   "The built-in presentation is centered under the camera area")
+        try expect(near(builtInFrame.maxX, builtIn.visibleFrame.maxX - 8),
+                   "A built-in display without a verified camera island uses top-right")
         try expect(near(builtInFrame.maxY, 942),
                    "The built-in presentation sits below both the safe top and edge inset")
         try expect(builtIn.visibleFrame.contains(builtInFrame),
@@ -101,6 +101,8 @@ private struct AutoCaptureRobotPresenterTests {
                                                    primaryScreen: { builtInWithIsland },
                                                    reduceMotion: { reduceMotion },
                                                    reactionDeck: AutoCaptureRobotReactionDeck(seed: 77))
+        var presentationChanges: [Bool] = []
+        presenter.onPresentationChanged = { presentationChanges.append($0) }
         let panelIdentity = ObjectIdentifier(presenter.panel)
         try expect(presenter.panel.styleMask.contains(.borderless)
                    && presenter.panel.styleMask.contains(.nonactivatingPanel),
@@ -138,6 +140,8 @@ private struct AutoCaptureRobotPresenterTests {
         try await Task.sleep(for: .milliseconds(300))
         try expect(!presenter.state.isVisible && !presenter.panel.isVisible,
                    "The one performance completes, fades out and orders out the panel")
+        try expect(presentationChanges == [true, false],
+                   "Presentation coordination reports one visible edge and one hidden edge")
 
         reduceMotion = false
         try expect(presenter.present(additionalCaptureCount: 1),
@@ -166,13 +170,124 @@ private struct AutoCaptureRobotPresenterTests {
                    "The external popup uses the tested top-right safe-area frame")
         externalPresenter.shutdown()
 
+        let exactPresenter = AutoCaptureRobotPresenter(
+            dismissDelay: 0.20,
+            primaryScreen: { builtInWithIsland },
+            reduceMotion: { false },
+            reactionDeck: AutoCaptureRobotReactionDeck(seed: 101)
+        )
+        try expect(exactPresenter.present(additionalCaptureCount: 127)
+                   && exactPresenter.state.visibleCount == 127
+                   && exactPresenter.badgeText == "×127"
+                   && exactPresenter.currentPerformance?.reaction == .stackedCapture,
+                   "Large successful batches show their exact count and prefer the stack reaction")
+        exactPresenter.shutdown()
+
+        let suspendedPresenter = AutoCaptureRobotPresenter(
+            dismissDelay: 0.20,
+            primaryScreen: { builtInWithIsland },
+            reduceMotion: { false },
+            reactionDeck: AutoCaptureRobotReactionDeck(seed: 102)
+        )
+        var suspensionChanges: [Bool] = []
+        suspendedPresenter.onPresentationChanged = { suspensionChanges.append($0) }
+        try expect(suspendedPresenter.present(additionalCaptureCount: 2),
+                   "A pre-board capture begins normally")
+        suspendedPresenter.suspendForBoard()
+        try expect(suspendedPresenter.isSuspendedForBoard
+                   && suspendedPresenter.pendingCaptureCount == 2
+                   && !suspendedPresenter.state.isVisible
+                   && !suspendedPresenter.panel.isVisible,
+                   "Opening the board removes the passive robot and preserves its unconsumed count")
+        try expect(suspendedPresenter.present(additionalCaptureCount: 5)
+                   && suspendedPresenter.pendingCaptureCount == 7
+                   && !suspendedPresenter.panel.isVisible,
+                   "Captures received while the board owns the robot aggregate without presentation")
+        try expect(suspendedPresenter.resumeAfterBoard()
+                   && !suspendedPresenter.isSuspendedForBoard
+                   && suspendedPresenter.pendingCaptureCount == 0
+                   && suspendedPresenter.state.visibleCount == 7
+                   && suspendedPresenter.badgeText == "×7",
+                   "Closing the board resumes one performance with every pending capture")
+        try expect(suspensionChanges == [true, false, true],
+                   "Suspension and resumption expose exact presentation ownership changes")
+        suspendedPresenter.shutdown()
+
+        let latePresenter = AutoCaptureRobotPresenter(
+            dismissDelay: 0.16,
+            primaryScreen: { external },
+            reduceMotion: { false },
+            reactionDeck: AutoCaptureRobotReactionDeck(seed: 103)
+        )
+        var lateChanges: [Bool] = []
+        latePresenter.onPresentationChanged = { lateChanges.append($0) }
+        try expect(latePresenter.present(additionalCaptureCount: 1),
+                   "The first item starts a late-arrival test performance")
+        let firstLateReaction = latePresenter.currentPerformance?.reaction
+        try await Task.sleep(for: .milliseconds(120))
+        try expect(latePresenter.present(additionalCaptureCount: 4)
+                   && latePresenter.state.visibleCount == 1
+                   && latePresenter.pendingCaptureCount == 4
+                   && latePresenter.currentPerformance?.reaction == firstLateReaction,
+                   "An arrival after the eating window queues instead of overlapping the active robot")
+        try await Task.sleep(for: .milliseconds(80))
+        try expect(latePresenter.performanceStartCount == 2
+                   && latePresenter.state.visibleCount == 4
+                   && latePresenter.pendingCaptureCount == 0
+                   && latePresenter.badgeText == "×4"
+                   && lateChanges == [true],
+                   "The queued exact count receives a second non-overlapping performance with no visibility gap")
+        try await Task.sleep(for: .milliseconds(300))
+        try expect(!latePresenter.panel.isVisible && lateChanges == [true, false],
+                   "The chained performances report one continuous presentation interval")
+        latePresenter.shutdown()
+
+        var changingScreen: AutoCaptureRobotScreen? = builtInWithIsland
+        let changingPresenter = AutoCaptureRobotPresenter(
+            dismissDelay: 0.30,
+            primaryScreen: { changingScreen },
+            reduceMotion: { false },
+            reactionDeck: AutoCaptureRobotReactionDeck(seed: 104)
+        )
+        try expect(changingPresenter.present(additionalCaptureCount: 3),
+                   "A display-recovery capture starts on the current primary display")
+        changingScreen = nil
+        changingPresenter.displayConfigurationChanged()
+        try expect(!changingPresenter.panel.isVisible
+                   && changingPresenter.pendingCaptureCount == 3,
+                   "Losing all displays orders out the panel and retains unconsumed captures")
+        try expect(!changingPresenter.present(additionalCaptureCount: 2)
+                   && changingPresenter.pendingCaptureCount == 5,
+                   "New saved captures are retained while all displays are disconnected")
+        changingScreen = external
+        changingPresenter.displayConfigurationChanged()
+        try expect(changingPresenter.panel.isVisible
+                   && changingPresenter.panel.frame == externalFrame
+                   && changingPresenter.state.visibleCount == 5
+                   && changingPresenter.currentPerformance?.entrance == .right,
+                   "A replacement display repositions and resumes without a stranded window")
+        changingPresenter.shutdown()
+
+        let coordinated = AutoCaptureRobotPresenter(dismissDelay: 0.3, primaryScreen: { external }, reduceMotion: { false })
+        _ = coordinated.present(additionalCaptureCount: 2)
+        coordinated.suspendForInteraction()
+        coordinated.suspendForBoard()
+        try expect(coordinated.pendingCaptureCount == 2 && !coordinated.panel.isVisible,
+                   "Two suspension reasons preserve the active count exactly once")
+        _ = coordinated.present(additionalCaptureCount: 3)
+        try expect(!coordinated.resumeAfterInteraction() && coordinated.pendingCaptureCount == 5,
+                   "Finishing a manual drop cannot resume feedback while the board owns the robot")
+        try expect(coordinated.resumeAfterBoard() && coordinated.state.visibleCount == 5,
+                   "Releasing the final owner resumes exactly one aggregate")
+        coordinated.shutdown()
+
         let unavailablePresenter = AutoCaptureRobotPresenter(
             primaryScreen: { nil },
             reduceMotion: { false },
             reactionDeck: AutoCaptureRobotReactionDeck(seed: 92)
         )
         try expect(!unavailablePresenter.present(additionalCaptureCount: 1)
-                   && !unavailablePresenter.panel.isVisible,
+                   && !unavailablePresenter.panel.isVisible && unavailablePresenter.pendingCaptureCount == 1,
                    "No popup is guessed when the hardware primary display is unavailable")
         unavailablePresenter.shutdown()
 

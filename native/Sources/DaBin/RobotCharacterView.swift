@@ -13,11 +13,15 @@ final class RobotCharacterView: NSView {
 
     private let reduceMotionProvider: ReduceMotionProvider
     private var ambientTask: Task<Void, Never>?
+    private var islandMotionActive = false
+    private var islandCompletionTask: Task<Void, Never>?
 
     private let artLayer = CALayer()
     private let shadowLayer = CAShapeLayer()
     private let bodyLayer = CALayer()
     private let shellLayer = CALayer()
+    private let feetLayer = CAShapeLayer()
+    private let islandGripLayer = CAShapeLayer()
     private let faceLayer = CALayer()
     private let faceScreenLayer = CAShapeLayer()
     private let leftEyeLayer = CAShapeLayer()
@@ -31,6 +35,8 @@ final class RobotCharacterView: NSView {
     // Automatic captures use the same character, with a few small vector props.
     // These layers are deliberately local and transient: no image assets, sound,
     // or additional windows are involved in a celebration.
+    private let autoTokenLayer = CALayer()
+    private let autoCountLayer = CATextLayer()
     private let autoPropLayer = CAShapeLayer()
     private let autoPropDetailLayer = CAShapeLayer()
     private let autoSuccessBadgeLayer = CAShapeLayer()
@@ -41,6 +47,7 @@ final class RobotCharacterView: NSView {
 
     private(set) var currentAutoCaptureReaction: AutoCaptureRobotReaction?
     private(set) var autoCaptureCelebrationStartCount = 0
+    private(set) var autoCaptureTokenCount = 1
 
     private static let designSize = CGSize(width: 64, height: 78)
 
@@ -60,8 +67,30 @@ final class RobotCharacterView: NSView {
 
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
 
+    override func viewDidMoveToWindow() {
+        super.viewDidMoveToWindow()
+        updateLayerContentsScale()
+    }
+
+    override func viewDidChangeBackingProperties() {
+        super.viewDidChangeBackingProperties()
+        updateLayerContentsScale()
+    }
+
+    private func updateLayerContentsScale() {
+        let backing = window?.backingScaleFactor ?? NSScreen.main?.backingScaleFactor ?? 2
+        let artScale = max(1, min(bounds.width / Self.designSize.width, bounds.height / Self.designSize.height))
+        let scale = backing * artScale
+        func apply(_ layer: CALayer) {
+            layer.contentsScale = scale
+            for child in layer.sublayers ?? [] { apply(child) }
+        }
+        if let layer { apply(layer) }
+    }
+
     override func layout() {
         super.layout()
+        updateLayerContentsScale()
         let scale = min(bounds.width / Self.designSize.width, bounds.height / Self.designSize.height)
         withoutActions {
             artLayer.bounds = CGRect(origin: .zero, size: Self.designSize)
@@ -71,7 +100,20 @@ final class RobotCharacterView: NSView {
     }
 
     func send(_ event: RobotMotionEvent) {
+        // Pointer entry commonly happens before the climb has finished. Retain
+        // its latest gaze without replacing the coherent entrance layer tracks.
+        // A drag, save, hide or opening still interrupts immediately.
+        if islandMotionActive, case .hover = event {
+            motionState.send(event)
+            return
+        }
+        cancelIslandCompletion()
+        if currentAutoCaptureReaction != nil || islandMotionActive {
+            removeAllAnimations()
+            resetAutomaticCelebrationLayers()
+        }
         currentAutoCaptureReaction = nil
+        islandMotionActive = false
         let previous = motionState
         let previousMood = previous.mood
         motionState.send(event)
@@ -101,8 +143,11 @@ final class RobotCharacterView: NSView {
         guard currentAutoCaptureReaction == nil else { return }
         let reduceMotion = reduceMotionProvider()
         if reduceMotion {
+            cancelIslandCompletion()
+            islandMotionActive = false
             stopAmbientMotion()
             removeAllAnimations()
+            resetAutomaticCelebrationLayers()
         }
         guard mood != .hidden else { applyHiddenPose(); return }
         applyMood(mood, previous: mood, event: nil, reduceMotion: reduceMotion)
@@ -111,7 +156,9 @@ final class RobotCharacterView: NSView {
 
     /// One-way visual cleanup for panel hiding and application shutdown.
     func stopMotion() {
+        cancelIslandCompletion()
         currentAutoCaptureReaction = nil
+        islandMotionActive = false
         motionState.send(.hide)
         stopAmbientMotion()
         removeAllAnimations()
@@ -132,6 +179,13 @@ final class RobotCharacterView: NSView {
         configureContainer(bodyLayer, anchor: CGPoint(x: 32, y: 69))
         artLayer.addSublayer(shadowLayer)
         artLayer.addSublayer(bodyLayer)
+
+        islandGripLayer.path = Self.islandGripPath()
+        islandGripLayer.fillColor = Self.color(0xB99CCF)
+        islandGripLayer.strokeColor = Self.color(0x483556)
+        islandGripLayer.lineWidth = 1
+        islandGripLayer.opacity = 0
+        artLayer.addSublayer(islandGripLayer)
 
         configureShadow()
         configureContainer(leftArmLayer, anchor: CGPoint(x: 13, y: 45))
@@ -192,7 +246,7 @@ final class RobotCharacterView: NSView {
     }
 
     private func configureShell() {
-        let feet = CAShapeLayer()
+        let feet = feetLayer
         let feetPath = CGMutablePath()
         feetPath.addRoundedRect(in: CGRect(x: 16, y: 62, width: 12, height: 9), cornerWidth: 2, cornerHeight: 2)
         feetPath.addRoundedRect(in: CGRect(x: 36, y: 62, width: 12, height: 9), cornerWidth: 2, cornerHeight: 2)
@@ -251,6 +305,7 @@ final class RobotCharacterView: NSView {
 
         for (eye, center) in [(leftEyeLayer, CGPoint(x: 26, y: 39)),
                               (rightEyeLayer, CGPoint(x: 38, y: 39))] {
+            configureContainer(eye, anchor: center)
             eye.path = CGPath(roundedRect: CGRect(x: center.x - 2.8, y: center.y - 2.3, width: 5.6, height: 4.6),
                               cornerWidth: 2.3, cornerHeight: 2.3, transform: nil)
             eye.fillColor = Self.color(0xD7F4EF)
@@ -318,16 +373,30 @@ final class RobotCharacterView: NSView {
     }
 
     private func configureAutomaticCelebrationLayers() {
+        // A mouth-anchored token makes every scale/fold end inside the face.
+        // The token contains only vector strokes; private captures never enter it.
+        autoTokenLayer.position = CGPoint(x: 32, y: 45)
+        artLayer.addSublayer(autoTokenLayer)
+        autoCountLayer.frame = CGRect(x: -13, y: -19, width: 26, height: 10)
+        autoCountLayer.alignmentMode = .center
+        autoCountLayer.font = NSFont.monospacedDigitSystemFont(ofSize: 7, weight: .bold)
+        autoCountLayer.fontSize = 7
+        autoCountLayer.foregroundColor = Self.color(0xFFFFFF)
+        autoCountLayer.backgroundColor = Self.color(0x51346F)
+        autoCountLayer.cornerRadius = 4
+        autoCountLayer.contentsScale = 2
+        autoCountLayer.isHidden = true
         for prop in [autoPropLayer, autoPropDetailLayer] {
             prop.strokeColor = Self.color(0x4A385A)
             prop.lineWidth = 1.1
             prop.lineJoin = .round
             prop.lineCap = .round
             prop.opacity = 0
-            artLayer.addSublayer(prop)
+            autoTokenLayer.addSublayer(prop)
         }
         autoPropLayer.fillColor = Self.color(0xF8F2FC)
         autoPropDetailLayer.fillColor = nil
+        autoTokenLayer.addSublayer(autoCountLayer)
 
         autoSuccessBadgeLayer.path = CGPath(ellipseIn: CGRect(x: 45, y: 5, width: 14, height: 14), transform: nil)
         autoSuccessBadgeLayer.fillColor = Self.color(0x5C4275, alpha: 0.98)
@@ -393,6 +462,8 @@ final class RobotCharacterView: NSView {
     /// panel lifetime; this view owns a single synchronized Core Animation
     /// timeline, so entrance, reaction and retreat never compete for a layer.
     func playAutoCaptureCelebration(_ performance: AutoCaptureRobotPerformance) {
+        cancelIslandCompletion()
+        islandMotionActive = false
         stopAmbientMotion()
         removeAllAnimations()
         resetAutomaticCelebrationLayers()
@@ -403,9 +474,11 @@ final class RobotCharacterView: NSView {
         currentAutoCaptureReaction = performance.reaction
         autoCaptureCelebrationStartCount += 1
 
+        autoCaptureTokenCount = 1
         configureAutomaticProp(for: performance.reaction)
         withoutActions {
             artLayer.opacity = 1
+            artLayer.masksToBounds = performance.entrance == .top
             mouthLayer.path = automaticMouthPath(for: performance.reaction)
         }
 
@@ -430,6 +503,7 @@ final class RobotCharacterView: NSView {
         guard performance.totalDuration > 0,
               let anticipation = phase(.anticipation, in: performance),
               let entrance = phase(.entrance, in: performance),
+              let eating = phase(.eating(performance.reaction), in: performance),
               let reaction = reactionPhase(in: performance),
               let exit = phase(.exit, in: performance) else { return }
 
@@ -449,6 +523,8 @@ final class RobotCharacterView: NSView {
             AutomaticPoseFrame(time: phaseTime(entrance, 0.76), pose: overshoot),
             AutomaticPoseFrame(time: entrance.endTime, pose: .identity)
         ]
+        bodyFrames.append(contentsOf: automaticEatingBodyFrames(performance.reaction.eatingStyle,
+                                                                phase: eating))
         bodyFrames.append(contentsOf: automaticReactionBodyFrames(performance.reaction,
                                                                    phase: reaction,
                                                                    entrance: performance.entrance))
@@ -467,18 +543,18 @@ final class RobotCharacterView: NSView {
                                    performance: performance)
 
         addAutomaticTransformTrack(automaticArmFrames(reaction: performance.reaction,
-                                                       phase: reaction, left: true,
+                                                       phase: eating, left: true,
                                                        totalDuration: performance.totalDuration),
                                    to: leftArmLayer, key: "robot.auto-success.left-arm",
                                    performance: performance)
         addAutomaticTransformTrack(automaticArmFrames(reaction: performance.reaction,
-                                                       phase: reaction, left: false,
+                                                       phase: eating, left: false,
                                                        totalDuration: performance.totalDuration),
                                    to: rightArmLayer, key: "robot.auto-success.right-arm",
                                    performance: performance)
 
         let gaze = CGFloat(performance.variation.gazeX) * 4
-        let eyeTracks = automaticEyeFrames(reaction: performance.reaction, phase: reaction,
+        let eyeTracks = automaticEyeFrames(reaction: performance.reaction, phase: eating,
                                            anticipation: anticipation, entrance: entrance,
                                            totalDuration: performance.totalDuration, gaze: gaze)
         addAutomaticTransformTrack(eyeTracks.left, to: leftEyeLayer,
@@ -489,10 +565,13 @@ final class RobotCharacterView: NSView {
         addAutomaticShadowTimeline(anticipation: anticipation, entrance: entrance,
                                    reaction: reaction, exit: exit, performance: performance)
         addAutomaticSuccessBadgeTimeline(reaction: reaction, exit: exit, performance: performance)
-        addAutomaticPropTimeline(reaction: performance.reaction, phase: reaction,
+        addAutomaticPropTimeline(reaction: performance.reaction, phase: eating,
                                  totalDuration: performance.totalDuration, performance: performance)
-        addAutomaticSpecialEffects(reaction: performance.reaction, phase: reaction,
-                                   totalDuration: performance.totalDuration, performance: performance)
+        addAutomaticMouthTimeline(eating: eating, reaction: reaction, performance: performance)
+        if performance.entrance == .top {
+            addIslandClimbingDetails(anticipation: anticipation, entrance: entrance,
+                                    exit: exit, performance: performance)
+        }
     }
 
     private func playReducedMotionAutoCaptureCelebration(_ performance: AutoCaptureRobotPerformance) {
@@ -585,106 +664,70 @@ final class RobotCharacterView: NSView {
         }
     }
 
+    private func automaticEatingBodyFrames(_ style: AutoCaptureEatingStyle,
+                                            phase: AutoCaptureRobotPerformancePhase)
+        -> [AutomaticPoseFrame] {
+        func frame(_ fraction: Double, x: CGFloat = 0, y: CGFloat = 0,
+                   sx: CGFloat = 1, sy: CGFloat = 1, angle: CGFloat = 0) -> AutomaticPoseFrame {
+            AutomaticPoseFrame(time: phaseTime(phase, fraction),
+                               pose: RobotPartTransform(translation: CGPoint(x: x, y: y),
+                                                        scaleX: sx, scaleY: sy,
+                                                        rotationDegrees: angle))
+        }
+        switch style {
+        case .bite: return [frame(0.3, x: 2, angle: 3), frame(0.58, sx: 1.05, sy: 0.95), frame(0.88)]
+        case .recoil: return [frame(0.28, x: 3, angle: 5), frame(0.52, x: -7, y: -2, sx: 0.95, sy: 1.05, angle: -13), frame(0.79, x: 2, angle: 4), frame(0.96)]
+        case .slurp: return [frame(0.24, x: 3, sx: 0.98, sy: 1.04, angle: 4), frame(0.50, x: 1, sx: 0.95, sy: 1.07), frame(0.73, sx: 1.08, sy: 0.91), frame(0.96)]
+        case .nibble: return [frame(0.23, x: 2, angle: -4), frame(0.42, y: 1, sx: 1.04, sy: 0.96, angle: 4), frame(0.61, x: 1, angle: -4), frame(0.79, sx: 1.04, sy: 0.96, angle: 3), frame(0.96)]
+        case .toss: return [frame(0.2, x: 2, y: 2, sx: 1.03, sy: 0.94), frame(0.45, y: -4, sx: 0.97, sy: 1.06), frame(0.70, x: -2, angle: -4), frame(0.86, y: 2, sx: 1.08, sy: 0.9), frame(0.98)]
+        case .swallow: return [frame(0.30, x: 2, sx: 1.06, sy: 0.95), frame(0.49, sx: 1.13, sy: 0.86), frame(0.63, x: -2, sx: 1.05, sy: 0.92, angle: -5), frame(0.77, y: -2, sx: 0.94, sy: 1.11), frame(0.98)]
+        case .chase: return [frame(0.22, x: 2, angle: 4), frame(0.42, x: 6, y: -1, angle: 11), frame(0.60, x: 9, y: 1, sx: 0.95, sy: 1.04, angle: 7), frame(0.81, x: 2, sx: 1.05, sy: 0.94), frame(0.98)]
+        case .inspect: return [frame(0.24, x: -1, angle: -8), frame(0.49, x: 1, angle: 7), frame(0.65, x: -1, angle: -5), frame(0.87, x: 3, sx: 1.04, sy: 0.96), frame(0.98)]
+        case .stack: return [frame(0.28, sx: 1.03, sy: 0.98), frame(0.47, sx: 1.08, sy: 0.94), frame(0.64, sx: 1.12, sy: 0.89), frame(0.81, y: -2, sx: 0.96, sy: 1.05), frame(0.98)]
+        case .hiccup: return [frame(0.31, sx: 1.03, sy: 0.96), frame(0.54), frame(0.66, y: -5, sx: 0.95, sy: 1.1), frame(0.79, y: 1, sx: 1.06, sy: 0.93), frame(0.94)]
+        }
+    }
+
     private func automaticReactionBodyFrames(_ reaction: AutoCaptureRobotReaction,
                                              phase: AutoCaptureRobotPerformancePhase,
                                              entrance: RobotEntrance) -> [AutomaticPoseFrame] {
-        func frame(_ fraction: Double, _ pose: RobotPartTransform) -> AutomaticPoseFrame {
-            AutomaticPoseFrame(time: phaseTime(phase, fraction), pose: pose)
-        }
-        switch reaction {
-        case .peekAndWink:
-            return [frame(0.22, RobotPartTransform(translation: CGPoint(x: -2.2, y: -1), rotationDegrees: -4)),
-                    frame(0.50, RobotPartTransform(translation: CGPoint(x: 2.4, y: -1), rotationDegrees: 4)),
-                    frame(0.80, RobotPartTransform(translation: CGPoint(x: 0, y: -2), scaleX: 1.02, scaleY: 1.02))]
-        case .victoryDance:
-            return [frame(0.16, RobotPartTransform(translation: CGPoint(x: -3, y: -2), scaleX: 1.03, scaleY: 0.98, rotationDegrees: -8)),
-                    frame(0.36, RobotPartTransform(translation: CGPoint(x: 3, y: -1), scaleX: 0.98, scaleY: 1.04, rotationDegrees: 8)),
-                    frame(0.56, RobotPartTransform(translation: CGPoint(x: -2.5, y: -3), scaleX: 1.04, scaleY: 0.97, rotationDegrees: -7)),
-                    frame(0.78, RobotPartTransform(translation: CGPoint(x: 2, y: -1), rotationDegrees: 6))]
-        case .doubleBounce:
-            return [frame(0.17, RobotPartTransform(translation: CGPoint(x: 0, y: -6), scaleX: 0.96, scaleY: 1.08)),
-                    frame(0.34, RobotPartTransform(translation: CGPoint(x: 0, y: 1.5), scaleX: 1.09, scaleY: 0.88)),
-                    frame(0.55, RobotPartTransform(translation: CGPoint(x: 0, y: -4.5), scaleX: 0.97, scaleY: 1.06)),
-                    frame(0.74, RobotPartTransform(translation: CGPoint(x: 0, y: 0.8), scaleX: 1.05, scaleY: 0.94))]
-        case .cameraFlash:
-            return [frame(0.25, RobotPartTransform(translation: CGPoint(x: 0, y: 1), scaleX: 1.03, scaleY: 0.95)),
-                    frame(0.51, RobotPartTransform(translation: CGPoint(x: -2.5, y: -2), scaleX: 0.96, scaleY: 1.06, rotationDegrees: -4)),
-                    frame(0.72, RobotPartTransform(translation: CGPoint(x: 1, y: 0), rotationDegrees: 2))]
-        case .catchCapture:
-            return [frame(0.18, RobotPartTransform(translation: CGPoint(x: -3, y: -1), rotationDegrees: -5)),
-                    frame(0.39, RobotPartTransform(translation: CGPoint(x: 3, y: 1), scaleX: 1.05, scaleY: 0.94, rotationDegrees: 5)),
-                    frame(0.63, RobotPartTransform(translation: CGPoint(x: 0, y: 2), scaleX: 1.07, scaleY: 0.90)),
-                    frame(0.82, RobotPartTransform(translation: CGPoint(x: 0, y: -1), scaleX: 0.98, scaleY: 1.04))]
-        case .clipboardHug:
-            return [frame(0.24, RobotPartTransform(translation: CGPoint(x: 0, y: -1), scaleX: 1.04, scaleY: 1.02)),
-                    frame(0.55, RobotPartTransform(translation: CGPoint(x: 0, y: 0.8), scaleX: 1.07, scaleY: 0.95)),
-                    frame(0.82, RobotPartTransform(translation: CGPoint(x: 0, y: -1.5), scaleX: 1.02, scaleY: 1.03))]
-        case .dizzySpin:
-            return [frame(0.16, RobotPartTransform(translation: CGPoint(x: 0, y: -1), rotationDegrees: 0)),
-                    frame(0.34, RobotPartTransform(translation: CGPoint(x: 0, y: -2), rotationDegrees: 120)),
-                    frame(0.52, RobotPartTransform(translation: CGPoint(x: 0, y: -1), rotationDegrees: 240)),
-                    frame(0.68, RobotPartTransform(rotationDegrees: 360)),
-                    frame(0.82, RobotPartTransform(translation: CGPoint(x: 2, y: 1), rotationDegrees: 7)),
-                    frame(0.92, RobotPartTransform(translation: CGPoint(x: -1, y: 0), rotationDegrees: -3))]
-        case .wobblySalute:
-            return [frame(0.22, RobotPartTransform(translation: CGPoint(x: 0, y: -1), rotationDegrees: -2)),
-                    frame(0.47, RobotPartTransform(translation: CGPoint(x: 3, y: 1), rotationDegrees: 11)),
-                    frame(0.66, RobotPartTransform(translation: CGPoint(x: -2, y: 0), rotationDegrees: -8)),
-                    frame(0.84, RobotPartTransform(translation: CGPoint(x: 1, y: -1), rotationDegrees: 4))]
-        case .savedStamp:
-            return [frame(0.22, RobotPartTransform(translation: CGPoint(x: 0, y: -2), scaleX: 0.97, scaleY: 1.05)),
-                    frame(0.45, RobotPartTransform(translation: CGPoint(x: 0, y: 2.2), scaleX: 1.10, scaleY: 0.87)),
-                    frame(0.64, RobotPartTransform(translation: CGPoint(x: 0, y: -2.5), scaleX: 0.96, scaleY: 1.07)),
-                    frame(0.84, RobotPartTransform(translation: CGPoint(x: 0, y: 0.5), scaleX: 1.03, scaleY: 0.97))]
-        case .confettiSneeze:
-            return [frame(0.20, RobotPartTransform(translation: CGPoint(x: 0, y: 1.4), scaleX: 1.10, scaleY: 0.87)),
-                    frame(0.42, RobotPartTransform(translation: CGPoint(x: -2, y: -4), scaleX: 0.94, scaleY: 1.12, rotationDegrees: -4)),
-                    frame(0.62, RobotPartTransform(translation: CGPoint(x: 2, y: 0), rotationDegrees: 5)),
-                    frame(0.82, RobotPartTransform(translation: CGPoint(x: -1, y: -1), rotationDegrees: -2))]
-        case .screenHighFive:
-            let direction: CGFloat = entrance == .left ? -1 : 1
-            return [frame(0.24, RobotPartTransform(translation: CGPoint(x: direction * 2, y: -1), rotationDegrees: direction * 3)),
-                    frame(0.50, RobotPartTransform(translation: CGPoint(x: direction * 7, y: 0), scaleX: 1.06, scaleY: 0.96, rotationDegrees: direction * 9)),
-                    frame(0.65, RobotPartTransform(translation: CGPoint(x: direction * 4, y: 1), scaleX: 1.09, scaleY: 0.90, rotationDegrees: direction * 6)),
-                    frame(0.84, RobotPartTransform(translation: CGPoint(x: -direction, y: -1), rotationDegrees: -direction * 2))]
-        case .sneakAndGrab:
-            let direction: CGFloat = entrance == .left ? -1 : 1
-            return [frame(0.16, RobotPartTransform(translation: CGPoint(x: -direction * 4, y: 1), scaleX: 1.02, scaleY: 0.96, rotationDegrees: -direction * 6)),
-                    frame(0.39, RobotPartTransform(translation: CGPoint(x: direction * 4, y: -1), rotationDegrees: direction * 6)),
-                    frame(0.58, RobotPartTransform(translation: CGPoint(x: direction * 1, y: 2), scaleX: 1.08, scaleY: 0.89)),
-                    frame(0.78, RobotPartTransform(translation: CGPoint(x: -direction * 3, y: -1), rotationDegrees: -direction * 5))]
-        }
+        let style = reaction.eatingStyle
+        let angle: CGFloat = style == .inspect ? -5 : style == .recoil ? 4 : 0
+        let hop: CGFloat = style == .hiccup ? -4 : style == .stack ? -2 : -1
+        return [AutomaticPoseFrame(time: phase.startTime, pose: .identity),
+                AutomaticPoseFrame(time: phaseTime(phase, 0.36),
+                                   pose: RobotPartTransform(translation: CGPoint(x: 0, y: hop),
+                                                            scaleX: 1.025, scaleY: 1.02,
+                                                            rotationDegrees: angle)),
+                AutomaticPoseFrame(time: phaseTime(phase, 0.68),
+                                   pose: RobotPartTransform(scaleX: 1.025, scaleY: 0.98,
+                                                            rotationDegrees: -angle * 0.4)),
+                AutomaticPoseFrame(time: phase.endTime, pose: .identity)]
     }
 
     private func automaticArmFrames(reaction: AutoCaptureRobotReaction,
                                     phase: AutoCaptureRobotPerformancePhase,
                                     left: Bool,
                                     totalDuration: TimeInterval) -> [AutomaticPoseFrame] {
-        let angles: [CGFloat]
-        switch reaction {
-        case .peekAndWink: angles = left ? [-4, -8, -2] : [8, 28, 5]
-        case .victoryDance: angles = left ? [-22, 19, -27, 11] : [24, -18, 29, -9]
-        case .doubleBounce: angles = left ? [-10, -24, -12, -25] : [12, 26, 13, 27]
-        case .cameraFlash: angles = left ? [-18, -26, -12] : [18, 26, 12]
-        case .catchCapture: angles = left ? [-8, -31, -18, -5] : [9, 32, 18, 6]
-        case .clipboardHug: angles = left ? [-8, -34, -29, -8] : [8, 34, 29, 8]
-        case .dizzySpin: angles = left ? [-32, -35, -29, -5] : [32, 35, 29, 5]
-        case .wobblySalute: angles = left ? [-3, -10, 5, 0] : [18, 58, 41, 8]
-        case .savedStamp: angles = left ? [-5, -14, -5, 0] : [10, 39, -12, 4]
-        case .confettiSneeze: angles = left ? [-9, -35, 18, -4] : [9, 35, -18, 4]
-        case .screenHighFive: angles = left ? [-5, -10, -4, 0] : [16, 52, 72, 12]
-        case .sneakAndGrab: angles = left ? [-5, -21, -9, 0] : [11, 34, 19, 4]
-        }
-        let fractions: [Double]
-        switch angles.count {
-        case 3: fractions = [0.22, 0.53, 0.80]
-        default: fractions = [0.16, 0.39, 0.64, 0.84]
+        let sign: CGFloat = left ? -1 : 1
+        let values: [CGFloat]
+        switch reaction.eatingStyle {
+        case .bite: values = [8, 26, 12, 0]
+        case .recoil: values = [22, 48, 18, 0]
+        case .slurp: values = left ? [5, 10, 5, 0] : [24, 32, 20, 0]
+        case .nibble: values = [28, 36, 29, 34]
+        case .toss: values = left ? [10, 15, 26, 8] : [28, 62, 15, 9]
+        case .swallow: values = [29, 42, 37, 10]
+        case .chase: values = left ? [10, 20, 32, 8] : [32, 53, 38, 8]
+        case .inspect: values = left ? [4, 8, 5, 0] : [30, 34, 30, 10]
+        case .stack: values = [28, 36, 40, 9]
+        case .hiccup: values = [12, 20, 45, 8]
         }
         var frames = [AutomaticPoseFrame(time: 0, pose: .identity),
                       AutomaticPoseFrame(time: phase.startTime, pose: .identity)]
-        frames += zip(fractions, angles).map { fraction, angle in
+        frames += zip([0.22, 0.45, 0.67, 0.85], values).map { fraction, angle in
             AutomaticPoseFrame(time: phaseTime(phase, fraction),
-                               pose: RobotPartTransform(rotationDegrees: angle))
+                               pose: RobotPartTransform(rotationDegrees: angle * sign))
         }
         frames.append(AutomaticPoseFrame(time: phase.endTime, pose: .identity))
         frames.append(AutomaticPoseFrame(time: totalDuration, pose: .identity))
@@ -698,43 +741,27 @@ final class RobotCharacterView: NSView {
                                     totalDuration: TimeInterval,
                                     gaze: CGFloat)
         -> (left: [AutomaticPoseFrame], right: [AutomaticPoseFrame]) {
-        let start = [AutomaticPoseFrame(time: 0, pose: .identity),
-                     AutomaticPoseFrame(time: phaseTime(anticipation, 0.38),
-                                        pose: RobotPartTransform(translation: CGPoint(x: gaze, y: -0.5))),
-                     AutomaticPoseFrame(time: anticipation.endTime,
-                                        pose: RobotPartTransform(translation: CGPoint(x: -gaze * 0.55, y: 0))),
-                     AutomaticPoseFrame(time: entrance.endTime, pose: .identity)]
-        let leftReaction: [AutomaticPoseFrame]
-        let rightReaction: [AutomaticPoseFrame]
-        func eye(_ fraction: Double, x: CGFloat = 0, y: CGFloat = 0,
-                 scaleY: CGFloat = 1) -> AutomaticPoseFrame {
-            AutomaticPoseFrame(time: phaseTime(phase, fraction),
-                               pose: RobotPartTransform(translation: CGPoint(x: x, y: y),
-                                                        scaleX: 1, scaleY: scaleY))
+        var frames = [AutomaticPoseFrame(time: 0, pose: .identity),
+                      AutomaticPoseFrame(time: phaseTime(anticipation, 0.4),
+                                         pose: RobotPartTransform(translation: CGPoint(x: -1.2 + gaze * 0.3, y: 0))),
+                      AutomaticPoseFrame(time: anticipation.endTime,
+                                         pose: RobotPartTransform(translation: CGPoint(x: 1.6, y: -0.6))),
+                      AutomaticPoseFrame(time: entrance.endTime,
+                                         pose: RobotPartTransform(translation: CGPoint(x: 1.7, y: -0.5)))]
+        // Pupils follow the generic token, clamped to the screen's eye socket.
+        frames += reaction.eatingStyle.tokenKeyframes.map { token in
+            AutomaticPoseFrame(time: phaseTime(phase, token.fraction),
+                               pose: RobotPartTransform(translation: CGPoint(
+                                x: min(1.8, max(-1.8, token.x * 0.08)),
+                                y: min(1.2, max(-1.2, token.y * 0.055))),
+                                scaleX: 1, scaleY: reaction.eatingStyle == .inspect ? 0.65 : 1))
         }
-        switch reaction {
-        case .peekAndWink:
-            leftReaction = [eye(0.18, x: -1.6), eye(0.45, x: 1.4), eye(0.63, scaleY: 0.08), eye(0.82)]
-            rightReaction = [eye(0.18, x: -1.6), eye(0.45, x: 1.4), eye(0.63, scaleY: 0.72), eye(0.82)]
-        case .cameraFlash:
-            leftReaction = [eye(0.28, y: -0.5), eye(0.49, scaleY: 0.08), eye(0.66, scaleY: 1.22), eye(0.84)]
-            rightReaction = leftReaction
-        case .dizzySpin:
-            leftReaction = [eye(0.20, x: -2), eye(0.38, x: 1.8, y: -1), eye(0.57, x: 2, y: 1), eye(0.75, x: -1.7, y: 1), eye(0.91)]
-            rightReaction = [eye(0.20, x: 2), eye(0.38, x: -1.8, y: 1), eye(0.57, x: -2, y: -1), eye(0.75, x: 1.7, y: -1), eye(0.91)]
-        case .confettiSneeze:
-            leftReaction = [eye(0.20, scaleY: 1.15), eye(0.40, scaleY: 0.06), eye(0.61, scaleY: 0.35), eye(0.84)]
-            rightReaction = leftReaction
-        case .wobblySalute:
-            leftReaction = [eye(0.25, x: -1), eye(0.50, x: 1.4), eye(0.68, x: -1.2), eye(0.86)]
-            rightReaction = [eye(0.25, x: -1), eye(0.50, x: 1.4, scaleY: 0.40), eye(0.68, x: -1.2), eye(0.86)]
-        default:
-            leftReaction = [eye(0.22, x: gaze * 0.3), eye(0.52, scaleY: 0.34), eye(0.78, scaleY: 0.48), eye(0.90)]
-            rightReaction = leftReaction
-        }
-        let finish = [AutomaticPoseFrame(time: phase.endTime, pose: .identity),
-                      AutomaticPoseFrame(time: totalDuration, pose: .identity)]
-        return (start + leftReaction + finish, start + rightReaction + finish)
+        frames += [AutomaticPoseFrame(time: phase.endTime, pose: .identity),
+                   AutomaticPoseFrame(time: phase.endTime + 0.12,
+                                      pose: RobotPartTransform(scaleX: 1, scaleY: 0.09)),
+                   AutomaticPoseFrame(time: phase.endTime + 0.24, pose: .identity),
+                   AutomaticPoseFrame(time: totalDuration, pose: .identity)]
+        return (frames, frames)
     }
 
     private func addAutomaticShadowTimeline(anticipation: AutoCaptureRobotPerformancePhase,
@@ -790,141 +817,296 @@ final class RobotCharacterView: NSView {
     private func configureAutomaticProp(for reaction: AutoCaptureRobotReaction) {
         let path = CGMutablePath()
         let detail = CGMutablePath()
-        switch reaction {
-        case .cameraFlash:
-            path.addRoundedRect(in: CGRect(x: 23, y: 32, width: 18, height: 12),
-                                cornerWidth: 2.5, cornerHeight: 2.5)
-            path.addRoundedRect(in: CGRect(x: 27, y: 29, width: 7, height: 4),
-                                cornerWidth: 1, cornerHeight: 1)
-            detail.addEllipse(in: CGRect(x: 29, y: 34, width: 7, height: 7))
-            detail.addEllipse(in: CGRect(x: 37, y: 34, width: 1.6, height: 1.6))
-        case .catchCapture, .sneakAndGrab:
-            path.addRoundedRect(in: CGRect(x: 27, y: 26, width: 11, height: 15),
-                                cornerWidth: 1.8, cornerHeight: 1.8)
-            detail.move(to: CGPoint(x: 29.5, y: 31)); detail.addLine(to: CGPoint(x: 35.5, y: 31))
-            detail.move(to: CGPoint(x: 29.5, y: 35)); detail.addLine(to: CGPoint(x: 34, y: 35))
-        case .clipboardHug:
-            path.addRoundedRect(in: CGRect(x: 22, y: 31, width: 20, height: 25),
-                                cornerWidth: 3, cornerHeight: 3)
-            path.addRoundedRect(in: CGRect(x: 27.5, y: 28.5, width: 9, height: 5),
-                                cornerWidth: 1.5, cornerHeight: 1.5)
-            for y in [38.0, 43.0, 48.0] {
-                detail.move(to: CGPoint(x: 26, y: y)); detail.addLine(to: CGPoint(x: 38, y: y))
-            }
-        case .savedStamp:
-            path.addRoundedRect(in: CGRect(x: 20, y: 33, width: 24, height: 13),
-                                cornerWidth: 3, cornerHeight: 3)
-            let check = CGMutablePath()
-            check.move(to: CGPoint(x: 24, y: 39)); check.addLine(to: CGPoint(x: 27, y: 42)); check.addLine(to: CGPoint(x: 31, y: 36))
-            detail.addPath(check)
-            detail.move(to: CGPoint(x: 33, y: 38)); detail.addLine(to: CGPoint(x: 41, y: 38))
-            detail.move(to: CGPoint(x: 33, y: 42)); detail.addLine(to: CGPoint(x: 39, y: 42))
-        default: break
+        let stacked = reaction.eatingStyle == .stack || autoCaptureTokenCount > 1
+        if stacked {
+            path.addRoundedRect(in: CGRect(x: -8, y: -11, width: 13, height: 17),
+                                cornerWidth: 2, cornerHeight: 2)
+            path.addRoundedRect(in: CGRect(x: -4, y: -9, width: 13, height: 17),
+                                cornerWidth: 2, cornerHeight: 2)
         }
+        path.addRoundedRect(in: CGRect(x: -6.5, y: -8.5, width: 13, height: 17),
+                            cornerWidth: 2, cornerHeight: 2)
+        // A generic check is the only mark on the paper. Never use capture text,
+        // screenshots, OCR, file names or application icons in this animation.
+        detail.move(to: CGPoint(x: -3, y: 0))
+        detail.addLine(to: CGPoint(x: -0.5, y: 3))
+        detail.addLine(to: CGPoint(x: 4, y: -3))
         withoutActions {
             autoPropLayer.path = path
             autoPropDetailLayer.path = detail
+            autoPropLayer.opacity = 1
+            autoPropDetailLayer.opacity = 1
+            autoCountLayer.string = autoCaptureTokenCount > 1 ? "×\(autoCaptureTokenCount)" : ""
+            autoCountLayer.isHidden = autoCaptureTokenCount <= 1
         }
+    }
+
+    /// Updates the existing paper stack in place. No motion or phase is restarted,
+    /// even if a burst arrives while the current token is already being swallowed.
+    func updateAutoCaptureCount(_ count: Int) {
+        autoCaptureTokenCount = max(1, count)
+        if let currentAutoCaptureReaction {
+            configureAutomaticProp(for: currentAutoCaptureReaction)
+        }
+    }
+
+    /// Occasional idle invitation: only the eyes/upper face cross the island lip.
+    /// Callers own scheduling and panel lifetime; this method schedules no task.
+    @discardableResult
+    func playIslandPeek() -> TimeInterval {
+        cancelIslandCompletion()
+        stopAmbientMotion()
+        removeAllAnimations()
+        resetAutomaticCelebrationLayers()
+        currentAutoCaptureReaction = nil
+        islandMotionActive = true
+        motionState.send(.hide)
+        motionState.send(.reveal(.top))
+        let reduced = reduceMotionProvider()
+        let duration = reduced ? 0.38 : 1.10
+        let performance = AutoCaptureRobotPerformance(reaction: .quickBite, variation: .standard,
+                                                      entrance: .top, reduceMotion: reduced,
+                                                      phases: [], totalDuration: duration)
+        let peek = RobotPartTransform(translation: CGPoint(x: 0, y: -35.5))
+        withoutActions {
+            artLayer.masksToBounds = true
+            for part in [shellLayer, lidLayer, leftArmLayer, rightArmLayer, mouthLayer] { part.opacity = 0 }
+            bodyLayer.transform = transform(peek)
+            faceScreenLayer.opacity = 0.25
+        }
+        if !reduced {
+            addAutomaticTransformTrack([
+                AutomaticPoseFrame(time: 0, pose: automaticHiddenPose(for: .top)),
+                AutomaticPoseFrame(time: 0.22, pose: peek),
+                AutomaticPoseFrame(time: 0.82, pose: peek),
+                AutomaticPoseFrame(time: duration, pose: automaticHiddenPose(for: .top))
+            ], to: bodyLayer, key: "robot.island.peek-body", performance: performance)
+            for eye in [leftEyeLayer, rightEyeLayer] {
+                addAutomaticTransformTrack([
+                    AutomaticPoseFrame(time: 0, pose: .identity),
+                    AutomaticPoseFrame(time: 0.29, pose: RobotPartTransform(translation: CGPoint(x: -1.6, y: 0))),
+                    AutomaticPoseFrame(time: 0.59, pose: RobotPartTransform(translation: CGPoint(x: 1.6, y: 0))),
+                    AutomaticPoseFrame(time: 0.82, pose: .identity),
+                    AutomaticPoseFrame(time: duration, pose: .identity)
+                ], to: eye, key: "robot.island.peek-look", performance: performance)
+            }
+        }
+        addAutomaticOpacityTrack([
+            AutomaticOpacityFrame(time: 0, opacity: 0),
+            AutomaticOpacityFrame(time: duration * 0.18, opacity: 1),
+            AutomaticOpacityFrame(time: duration * 0.76, opacity: 1),
+            AutomaticOpacityFrame(time: duration, opacity: 0)
+        ], to: artLayer, key: "robot.island.peek-fade", performance: performance)
+        return duration
+    }
+
+    /// A head-first physical entrance, ending in a stable full robot pose.
+    /// The existing app controller can then hand that pose to the body expansion.
+    @discardableResult
+    func playIslandClimb() -> TimeInterval {
+        cancelIslandCompletion()
+        stopAmbientMotion()
+        removeAllAnimations()
+        resetAutomaticCelebrationLayers()
+        currentAutoCaptureReaction = nil
+        islandMotionActive = true
+        motionState.send(.hide)
+        motionState.send(.reveal(.top))
+        let reduced = reduceMotionProvider()
+        let duration = reduced ? 0.20 : 0.68
+        let anticipation = AutoCaptureRobotPerformancePhase(kind: .anticipation, startTime: 0,
+                                                            duration: reduced ? 0.05 : 0.16,
+                                                            timingCurve: .easeInOut, effects: [.eyeMovement])
+        let entrance = AutoCaptureRobotPerformancePhase(kind: .entrance, startTime: anticipation.endTime,
+                                                        duration: duration - anticipation.endTime,
+                                                        timingCurve: .spring(response: 0.3, dampingFraction: 0.78),
+                                                        effects: [.bodyTravel, .squashAndStretch])
+        let performance = AutoCaptureRobotPerformance(reaction: .quickBite, variation: .standard,
+                                                      entrance: .top, reduceMotion: reduced,
+                                                      phases: [anticipation, entrance], totalDuration: duration)
+        withoutActions {
+            artLayer.masksToBounds = true
+            mouthLayer.path = mouthPath(for: .idle)
+        }
+        if reduced {
+            addAutomaticOpacityTrack([AutomaticOpacityFrame(time: 0, opacity: 0),
+                                      AutomaticOpacityFrame(time: duration, opacity: 1)],
+                                     to: artLayer, key: "robot.island.climb-fade", performance: performance)
+        } else {
+            addAutomaticTransformTrack([
+                AutomaticPoseFrame(time: 0, pose: automaticHiddenPose(for: .top)),
+                AutomaticPoseFrame(time: anticipation.endTime, pose: automaticPeekPose(for: .top, offset: 0)),
+                AutomaticPoseFrame(time: phaseTime(entrance, 0.35),
+                                   pose: RobotPartTransform(translation: CGPoint(x: 1, y: -19), scaleX: 0.96, scaleY: 1.03)),
+                AutomaticPoseFrame(time: phaseTime(entrance, 0.51),
+                                   pose: RobotPartTransform(translation: CGPoint(x: -1, y: -15), rotationDegrees: -3)),
+                AutomaticPoseFrame(time: phaseTime(entrance, 0.79), pose: automaticEntranceOvershoot(for: .top, offset: 0)),
+                AutomaticPoseFrame(time: duration, pose: .identity)
+            ], to: bodyLayer, key: "robot.island.climb-body", performance: performance)
+            addIslandClimbingDetails(anticipation: anticipation, entrance: entrance,
+                                     exit: nil, performance: performance)
+        }
+        islandCompletionTask = Task { @MainActor [weak self] in
+            do { try await Task.sleep(for: .seconds(duration)) }
+            catch { return }
+            guard let self, !Task.isCancelled, self.islandMotionActive,
+                  self.motionState.isVisible else { return }
+            self.islandCompletionTask = nil
+            self.islandMotionActive = false
+            let reduced = self.reduceMotionProvider()
+            self.applyMood(self.mood, previous: .idle, event: nil, reduceMotion: reduced)
+            self.updateAmbientMotion(reduceMotion: reduced)
+        }
+        return duration
+    }
+
+    private func cancelIslandCompletion() {
+        islandCompletionTask?.cancel()
+        islandCompletionTask = nil
     }
 
     private func addAutomaticPropTimeline(reaction: AutoCaptureRobotReaction,
                                           phase: AutoCaptureRobotPerformancePhase,
                                           totalDuration: TimeInterval,
                                           performance: AutoCaptureRobotPerformance) {
-        guard [.cameraFlash, .catchCapture, .clipboardHug, .savedStamp, .sneakAndGrab].contains(reaction) else { return }
-        var poses: [AutomaticPoseFrame]
-        switch reaction {
-        case .catchCapture:
-            poses = [AutomaticPoseFrame(time: 0, pose: RobotPartTransform(translation: CGPoint(x: 0, y: -28), rotationDegrees: -8)),
-                     AutomaticPoseFrame(time: phaseTime(phase, 0.18), pose: RobotPartTransform(translation: CGPoint(x: 0, y: -20), rotationDegrees: -8)),
-                     AutomaticPoseFrame(time: phaseTime(phase, 0.48), pose: RobotPartTransform(translation: CGPoint(x: 2, y: 7), scaleX: 0.92, scaleY: 0.92, rotationDegrees: 6)),
-                     AutomaticPoseFrame(time: phaseTime(phase, 0.78), pose: RobotPartTransform(translation: CGPoint(x: 0, y: 22), scaleX: 0.45, scaleY: 0.45)),
-                     AutomaticPoseFrame(time: totalDuration, pose: RobotPartTransform(translation: CGPoint(x: 0, y: 22), scaleX: 0.45, scaleY: 0.45))]
-        case .sneakAndGrab:
-            poses = [AutomaticPoseFrame(time: 0, pose: RobotPartTransform(translation: CGPoint(x: 24, y: -4), rotationDegrees: 8)),
-                     AutomaticPoseFrame(time: phaseTime(phase, 0.22), pose: RobotPartTransform(translation: CGPoint(x: 19, y: -4), rotationDegrees: 8)),
-                     AutomaticPoseFrame(time: phaseTime(phase, 0.51), pose: RobotPartTransform(translation: CGPoint(x: 4, y: 4), rotationDegrees: -5)),
-                     AutomaticPoseFrame(time: phaseTime(phase, 0.78), pose: RobotPartTransform(translation: CGPoint(x: -9, y: 18), scaleX: 0.55, scaleY: 0.55)),
-                     AutomaticPoseFrame(time: totalDuration, pose: RobotPartTransform(translation: CGPoint(x: -9, y: 18), scaleX: 0.55, scaleY: 0.55))]
-        case .savedStamp:
-            poses = [AutomaticPoseFrame(time: 0, pose: RobotPartTransform(scaleX: 0.55, scaleY: 0.55, rotationDegrees: -8)),
-                     AutomaticPoseFrame(time: phaseTime(phase, 0.25), pose: RobotPartTransform(translation: CGPoint(x: 0, y: -4), scaleX: 0.65, scaleY: 0.65, rotationDegrees: -8)),
-                     AutomaticPoseFrame(time: phaseTime(phase, 0.48), pose: RobotPartTransform(scaleX: 1.20, scaleY: 0.82, rotationDegrees: 3)),
-                     AutomaticPoseFrame(time: phaseTime(phase, 0.64), pose: .identity),
-                     AutomaticPoseFrame(time: totalDuration, pose: .identity)]
-        default:
-            poses = [AutomaticPoseFrame(time: 0, pose: RobotPartTransform(scaleX: 0.82, scaleY: 0.82)),
-                     AutomaticPoseFrame(time: phaseTime(phase, 0.20), pose: RobotPartTransform(scaleX: 0.82, scaleY: 0.82)),
-                     AutomaticPoseFrame(time: phaseTime(phase, 0.42), pose: .identity),
-                     AutomaticPoseFrame(time: phaseTime(phase, 0.78), pose: .identity),
-                     AutomaticPoseFrame(time: totalDuration, pose: .identity)]
+        let poses = reaction.eatingStyle.tokenKeyframes.map { token in
+            AutomaticPoseFrame(time: phaseTime(phase, token.fraction),
+                               pose: RobotPartTransform(translation: CGPoint(x: token.x, y: token.y),
+                                                        scaleX: token.scaleX, scaleY: token.scaleY,
+                                                        rotationDegrees: token.rotation))
         }
-        let opacity = [AutomaticOpacityFrame(time: 0, opacity: 0),
-                       AutomaticOpacityFrame(time: phaseTime(phase, 0.12), opacity: 0),
-                       AutomaticOpacityFrame(time: phaseTime(phase, 0.23), opacity: 1),
-                       AutomaticOpacityFrame(time: phaseTime(phase, 0.80), opacity: 1),
-                       AutomaticOpacityFrame(time: phase.endTime, opacity: 0),
-                       AutomaticOpacityFrame(time: totalDuration, opacity: 0)]
-        for (index, layer) in [autoPropLayer, autoPropDetailLayer].enumerated() {
-            addAutomaticTransformTrack(poses, to: layer,
-                                       key: "robot.auto-success.prop-transform-\(index)", performance: performance)
-            addAutomaticOpacityTrack(opacity, to: layer,
-                                     key: "robot.auto-success.prop-opacity-\(index)", performance: performance)
-        }
-    }
-
-    private func addAutomaticSpecialEffects(reaction: AutoCaptureRobotReaction,
-                                            phase: AutoCaptureRobotPerformancePhase,
-                                            totalDuration: TimeInterval,
-                                            performance: AutoCaptureRobotPerformance) {
-        if reaction == .cameraFlash || reaction == .screenHighFive {
-            let centerFraction = reaction == .cameraFlash ? 0.49 : 0.58
-            let impactX: CGFloat = reaction == .screenHighFive ? 20 : 0
-            let opacity = [AutomaticOpacityFrame(time: 0, opacity: 0),
-                           AutomaticOpacityFrame(time: phaseTime(phase, centerFraction - 0.06), opacity: 0),
-                           AutomaticOpacityFrame(time: phaseTime(phase, centerFraction), opacity: 1),
-                           AutomaticOpacityFrame(time: phaseTime(phase, centerFraction + 0.12), opacity: 0),
-                           AutomaticOpacityFrame(time: totalDuration, opacity: 0)]
-            addAutomaticOpacityTrack(opacity, to: autoFlashLayer,
-                                     key: "robot.auto-success.flash-opacity", performance: performance)
-            addAutomaticTransformTrack([
-                AutomaticPoseFrame(time: 0, pose: RobotPartTransform(translation: CGPoint(x: impactX, y: 0), scaleX: 0.3, scaleY: 0.3)),
-                AutomaticPoseFrame(time: phaseTime(phase, centerFraction - 0.06), pose: RobotPartTransform(translation: CGPoint(x: impactX, y: 0), scaleX: 0.3, scaleY: 0.3)),
-                AutomaticPoseFrame(time: phaseTime(phase, centerFraction + 0.12), pose: RobotPartTransform(translation: CGPoint(x: impactX, y: 0), scaleX: 1.45, scaleY: 1.45, rotationDegrees: 12)),
-                AutomaticPoseFrame(time: totalDuration, pose: RobotPartTransform(translation: CGPoint(x: impactX, y: 0), scaleX: 1.45, scaleY: 1.45, rotationDegrees: 12))
-            ], to: autoFlashLayer, key: "robot.auto-success.flash-transform", performance: performance)
-        }
-        guard reaction == .confettiSneeze else { return }
-        let burst = phaseTime(phase, 0.40)
-        let settle = phaseTime(phase, 0.82)
+        addAutomaticTransformTrack([AutomaticPoseFrame(time: 0, pose: poses[0].pose)] + poses +
+                                   [AutomaticPoseFrame(time: totalDuration, pose: poses.last!.pose)],
+                                   to: autoTokenLayer, key: "robot.auto-success.eating-token",
+                                   performance: performance)
         addAutomaticOpacityTrack([
             AutomaticOpacityFrame(time: 0, opacity: 0),
-            AutomaticOpacityFrame(time: burst, opacity: 0),
-            AutomaticOpacityFrame(time: burst + phase.duration * 0.05, opacity: 1),
-            AutomaticOpacityFrame(time: settle, opacity: 0),
+            AutomaticOpacityFrame(time: phase.startTime, opacity: 0),
+            AutomaticOpacityFrame(time: phaseTime(phase, 0.09), opacity: 1),
+            AutomaticOpacityFrame(time: phaseTime(phase, 0.86), opacity: 1),
+            AutomaticOpacityFrame(time: phaseTime(phase, 0.96), opacity: 0),
             AutomaticOpacityFrame(time: totalDuration, opacity: 0)
-        ], to: autoConfettiLayer, key: "robot.auto-success.confetti-opacity", performance: performance)
-        let vectors = [CGPoint(x: -13, y: -15), CGPoint(x: -7, y: -20), CGPoint(x: 4, y: -21),
-                       CGPoint(x: 13, y: -14), CGPoint(x: -11, y: -8), CGPoint(x: 10, y: -7)]
-        for (index, piece) in autoConfettiPieces.enumerated() {
-            let destination = vectors[index]
-            addAutomaticTransformTrack([
-                AutomaticPoseFrame(time: 0, pose: RobotPartTransform(scaleX: 0.4, scaleY: 0.4)),
-                AutomaticPoseFrame(time: burst, pose: RobotPartTransform(scaleX: 0.4, scaleY: 0.4)),
-                AutomaticPoseFrame(time: settle,
-                                   pose: RobotPartTransform(translation: destination,
-                                                            rotationDegrees: CGFloat(index * 54))),
-                AutomaticPoseFrame(time: totalDuration,
-                                   pose: RobotPartTransform(translation: destination,
-                                                            rotationDegrees: CGFloat(index * 54)))
-            ], to: piece, key: "robot.auto-success.confetti-piece-\(index)", performance: performance)
+        ], to: autoTokenLayer, key: "robot.auto-success.token-opacity", performance: performance)
+    }
+
+    private func addAutomaticMouthTimeline(eating: AutoCaptureRobotPerformancePhase,
+                                           reaction: AutoCaptureRobotPerformancePhase,
+                                           performance: AutoCaptureRobotPerformance) {
+        // A filled mouth opens before contact, chews twice, then returns to the
+        // familiar smile. Path animation stays on one small GPU-backed layer.
+        // Matching curve topology keeps Core Animation interpolation smooth.
+        func chewingPath(width: CGFloat, opening: CGFloat) -> CGPath {
+            let path = CGMutablePath()
+            path.move(to: CGPoint(x: 32 - width / 2, y: 45))
+            path.addCurve(to: CGPoint(x: 32 + width / 2, y: 45),
+                          control1: CGPoint(x: 32 - width / 2, y: 45 - opening),
+                          control2: CGPoint(x: 32 + width / 2, y: 45 - opening))
+            path.addCurve(to: CGPoint(x: 32 - width / 2, y: 45),
+                          control1: CGPoint(x: 32 + width / 2, y: 45 + opening),
+                          control2: CGPoint(x: 32 - width / 2, y: 45 + opening))
+            path.closeSubpath()
+            return path
         }
+        let smile = chewingPath(width: 6, opening: 0.8)
+        let bite = chewingPath(width: 8, opening: 3.6)
+        let closed = chewingPath(width: 5, opening: 0.1)
+        let animation = CAKeyframeAnimation(keyPath: "path")
+        animation.values = [smile, smile, bite, closed, bite, closed, smile, smile]
+        animation.keyTimes = [0, eating.startTime, phaseTime(eating, 0.27),
+                              phaseTime(eating, 0.49), phaseTime(eating, 0.66),
+                              phaseTime(eating, 0.86), reaction.startTime,
+                              performance.totalDuration].map { NSNumber(value: $0 / performance.totalDuration) }
+        animation.duration = performance.totalDuration
+        animation.timingFunctions = Array(repeating: CAMediaTimingFunction(name: .easeInEaseOut), count: 7)
+        withoutActions { mouthLayer.path = smile }
+        mouthLayer.add(animation, forKey: "robot.auto-success.chewing-mouth")
+    }
+
+    private static func islandGripPath() -> CGPath {
+        let path = CGMutablePath()
+        for x in [12.0, 46.0] {
+            path.addRoundedRect(in: CGRect(x: x, y: 0.5, width: 7, height: 5),
+                                cornerWidth: 2.3, cornerHeight: 2.3)
+        }
+        return path
+    }
+
+    private func addIslandClimbingDetails(anticipation: AutoCaptureRobotPerformancePhase,
+                                          entrance: AutoCaptureRobotPerformancePhase,
+                                          exit: AutoCaptureRobotPerformancePhase?,
+                                          performance: AutoCaptureRobotPerformance) {
+        // Hide the lower parts while the face peeks. Without this stagger a body
+        // translated below a clipping edge would incorrectly reveal feet first.
+        let end = performance.totalDuration
+        func visibility(_ start: Double, _ finish: Double) -> [AutomaticOpacityFrame] {
+            var frames = [AutomaticOpacityFrame(time: 0, opacity: 0),
+                          AutomaticOpacityFrame(time: phaseTime(entrance, start), opacity: 0),
+                          AutomaticOpacityFrame(time: phaseTime(entrance, finish), opacity: 1)]
+            if let exit {
+                frames += [AutomaticOpacityFrame(time: phaseTime(exit, 0.25), opacity: 1),
+                           AutomaticOpacityFrame(time: phaseTime(exit, 0.72), opacity: 0)]
+            }
+            frames.append(AutomaticOpacityFrame(time: end, opacity: exit == nil ? 1 : 0))
+            return frames
+        }
+        addAutomaticOpacityTrack(visibility(0.18, 0.45), to: shellLayer,
+                                 key: "robot.auto-success.torso-emergence", performance: performance)
+        addAutomaticOpacityTrack(visibility(0.56, 0.83), to: feetLayer,
+                                 key: "robot.auto-success.feet-emergence", performance: performance)
+        addAutomaticOpacityTrack(visibility(0.08, 0.30), to: faceScreenLayer,
+                                 key: "robot.auto-success.face-emergence", performance: performance)
+        addAutomaticOpacityTrack(visibility(0.12, 0.35), to: mouthLayer,
+                                 key: "robot.auto-success.mouth-emergence", performance: performance)
+        addAutomaticOpacityTrack(visibility(0.04, 0.24), to: lidLayer,
+                                 key: "robot.auto-success.head-emergence", performance: performance)
+        for (index, arm) in [leftArmLayer, rightArmLayer].enumerated() {
+            addAutomaticOpacityTrack(visibility(0.08, 0.3), to: arm,
+                                     key: "robot.auto-success.arm-emergence-\(index)", performance: performance)
+            // Reach up to the lip, briefly slip, then release the hand as the
+            // torso settles. The model path is restored after the short track.
+            let left = index == 0
+            let normal = arm.path!
+            let reach = CGMutablePath()
+            reach.move(to: CGPoint(x: left ? 14 : 50, y: 43))
+            reach.addQuadCurve(to: CGPoint(x: left ? 15 : 49, y: 7),
+                               control: CGPoint(x: left ? 3 : 61, y: 23))
+            let armPath = CAKeyframeAnimation(keyPath: "path")
+            let values: [CGPath]
+            let times: [Double]
+            if let exit {
+                values = [normal, reach, reach, normal, normal, reach, normal]
+                times = [0, phaseTime(entrance, 0.22), phaseTime(entrance, 0.52), entrance.endTime,
+                         exit.startTime, phaseTime(exit, 0.45), end]
+            } else {
+                values = [normal, reach, reach, normal]
+                times = [0, phaseTime(entrance, 0.22), phaseTime(entrance, 0.52), end]
+            }
+            armPath.values = values
+            armPath.keyTimes = times.map { NSNumber(value: $0 / end) }
+            armPath.duration = end
+            arm.add(armPath, forKey: "robot.auto-success.gripping-arm-\(index)")
+        }
+        var grip = [AutomaticOpacityFrame(time: 0, opacity: 0),
+                    AutomaticOpacityFrame(time: anticipation.endTime * 0.7, opacity: 0),
+                    AutomaticOpacityFrame(time: anticipation.endTime, opacity: 1),
+                    AutomaticOpacityFrame(time: phaseTime(entrance, 0.46), opacity: 1),
+                    AutomaticOpacityFrame(time: phaseTime(entrance, 0.71), opacity: 0)]
+        if let exit {
+            grip += [AutomaticOpacityFrame(time: exit.startTime, opacity: 0),
+                     AutomaticOpacityFrame(time: phaseTime(exit, 0.45), opacity: 1),
+                     AutomaticOpacityFrame(time: phaseTime(exit, 0.87), opacity: 1)]
+        }
+        grip.append(AutomaticOpacityFrame(time: end, opacity: 0))
+        addAutomaticOpacityTrack(grip, to: islandGripLayer,
+                                 key: "robot.auto-success.island-grip", performance: performance)
     }
 
     private func resetAutomaticCelebrationLayers() {
         withoutActions {
             artLayer.opacity = 1
             bodyLayer.transform = CATransform3DIdentity
+            for part in [shellLayer, feetLayer, lidLayer, leftArmLayer, rightArmLayer,
+                         faceScreenLayer, mouthLayer] { part.opacity = 1 }
             faceLayer.transform = CATransform3DIdentity
             lidLayer.transform = CATransform3DIdentity
             leftArmLayer.transform = CATransform3DIdentity
@@ -934,7 +1116,7 @@ final class RobotCharacterView: NSView {
             shadowLayer.transform = CATransform3DIdentity
             shadowLayer.opacity = 0
             intakeLayer.opacity = 0
-            for layer in [autoPropLayer, autoPropDetailLayer, autoSuccessBadgeLayer,
+            for layer in [autoTokenLayer, autoPropLayer, autoPropDetailLayer, islandGripLayer, autoSuccessBadgeLayer,
                           autoSuccessCheckLayer, autoFlashLayer, autoConfettiLayer] {
                 layer.transform = CATransform3DIdentity
                 layer.opacity = 0
@@ -1056,6 +1238,7 @@ final class RobotCharacterView: NSView {
 
     private func animateReveal(from entrance: RobotEntrance, reduceMotion: Bool) {
         removeAllAnimations()
+        resetAutomaticCelebrationLayers()
         let descriptor = RobotMotionDescriptor.make(for: .reveal(entrance), reduceMotion: reduceMotion)
         applyExpression(.idle, duration: 0)
         applyPartTransforms(RobotMotionDescriptor.make(for: .mood(.idle), reduceMotion: reduceMotion), duration: 0)
@@ -1292,7 +1475,7 @@ final class RobotCharacterView: NSView {
             rightEyeLayer.transform = CATransform3DIdentity
             intakeLayer.opacity = 0
             shadowLayer.opacity = 0
-            for layer in [autoPropLayer, autoPropDetailLayer, autoSuccessBadgeLayer,
+            for layer in [autoTokenLayer, autoPropLayer, autoPropDetailLayer, islandGripLayer, autoSuccessBadgeLayer,
                           autoSuccessCheckLayer, autoFlashLayer, autoConfettiLayer] {
                 layer.transform = CATransform3DIdentity
                 layer.opacity = 0
@@ -1306,7 +1489,7 @@ final class RobotCharacterView: NSView {
                       leftEyeLayer, rightEyeLayer, mouthLayer, lidLayer, leftArmLayer,
                       rightArmLayer, intakeLayer, autoPropLayer, autoPropDetailLayer,
                       autoSuccessBadgeLayer, autoSuccessCheckLayer, autoFlashLayer,
-                      autoConfettiLayer] + autoConfettiPieces {
+                      autoConfettiLayer, autoTokenLayer, autoCountLayer, islandGripLayer, feetLayer] + autoConfettiPieces {
             layer.removeAllAnimations()
         }
     }
@@ -1315,7 +1498,7 @@ final class RobotCharacterView: NSView {
         for layer in [shadowLayer, bodyLayer, faceLayer, leftEyeLayer, rightEyeLayer,
                       mouthLayer, lidLayer, leftArmLayer, rightArmLayer, intakeLayer,
                       autoPropLayer, autoPropDetailLayer, autoSuccessBadgeLayer,
-                      autoSuccessCheckLayer, autoFlashLayer, autoConfettiLayer] + autoConfettiPieces {
+                      autoSuccessCheckLayer, autoFlashLayer, autoConfettiLayer, autoTokenLayer, autoCountLayer, islandGripLayer, feetLayer] + autoConfettiPieces {
             for key in layer.animationKeys() ?? [] where key.hasPrefix(prefix) {
                 layer.removeAnimation(forKey: key)
             }
