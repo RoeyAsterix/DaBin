@@ -173,13 +173,26 @@ private enum HeaderInteractionTests {
         }
         settle(0.25)
 
-        // The fixed header geometry is also the compact 380-point render
-        // contract: row 1 center 22, row 2 center 55, filters center 90.
-        click(window, x: 94, topY: 55)
+        // The compact 380-point contract keeps both icon rows at 280 × 34,
+        // with equal 40-point targets distributed between shared outer edges.
+        let primarySpacing = TimelineIconRowMetrics.spacing(itemCount: TimelinePrimaryAction.allCases.count)
+        let filterSpacing = TimelineIconRowMetrics.spacing(itemCount: CaptureFilter.allCases.count)
+        let primaryWidth = CGFloat(TimelinePrimaryAction.allCases.count) * TimelineIconRowMetrics.controlWidth
+            + CGFloat(TimelinePrimaryAction.allCases.count - 1) * primarySpacing
+        let filterWidth = CGFloat(CaptureFilter.allCases.count) * TimelineIconRowMetrics.controlWidth
+            + CGFloat(CaptureFilter.allCases.count - 1) * filterSpacing
+        try expect(TimelineIconRowMetrics.symbolCanvasSize == 18
+                   && TimelineIconRowMetrics.controlWidth == 40
+                   && TimelineIconRowMetrics.controlHeight == 34,
+                   "Every timeline icon uses one glyph canvas and 40 by 34 point target")
+        try expect(abs(primaryWidth - TimelineIconRowMetrics.rowWidth) < 0.01
+                   && abs(filterWidth - TimelineIconRowMetrics.rowWidth) < 0.01,
+                   "Primary actions and filters occupy identical 280-point rows")
+        click(window, x: 70, topY: 55)
         try expect(state.route == .newTask, "Add opens the task composer from the compact primary row")
         state.route = .daily; settle()
 
-        click(window, x: 142, topY: 55)
+        click(window, x: 130, topY: 55)
         try expect(state.route == .search, "Search opens from the second primary action")
         state.route = .daily; settle()
 
@@ -251,7 +264,7 @@ private enum HeaderInteractionTests {
             try expect(false, "Export Day opens before testing date-reset dismissal")
         }
 
-        click(window, x: 238, topY: 55)
+        click(window, x: 250, topY: 55)
         try expect(state.route == .reminders, "Notifications preserves its existing reminders destination")
         state.route = .daily; settle()
 
@@ -282,7 +295,7 @@ private enum HeaderInteractionTests {
         }
 
         let windowsBeforeWeeklySearch = Set(application.windows.filter { $0 !== window && $0.isVisible }.map(\.windowNumber))
-        click(window, x: 142, topY: 55)
+        click(window, x: 130, topY: 55)
         let weeklySearchWindow = newPopover(in: application, board: window, excluding: windowsBeforeWeeklySearch)
         try expect(weeklySearchWindow != nil,
                    "Weekly Search opens an anchored day-or-week action popover")
@@ -301,7 +314,7 @@ private enum HeaderInteractionTests {
         }
 
         let windowsBeforeWeekSearch = Set(application.windows.filter { $0 !== window && $0.isVisible }.map(\.windowNumber))
-        click(window, x: 142, topY: 55)
+        click(window, x: 130, topY: 55)
         if let weeklySearchWindow = newPopover(in: application, board: window, excluding: windowsBeforeWeekSearch) {
             applicationKey(application, window: weeklySearchWindow, keyCode: 26, characters: "7",
                            modifiers: .command)

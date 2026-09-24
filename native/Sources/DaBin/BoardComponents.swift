@@ -1,6 +1,24 @@
 import AppKit
 import SwiftUI
 
+/// Shared geometry for the two compact timeline icon rows. The rows have a
+/// different number of controls, so each one distributes its fixed-size
+/// buttons between the same leading and trailing edges.
+enum TimelineIconRowMetrics {
+    static let rowWidth: CGFloat = 280
+    static let controlWidth: CGFloat = 40
+    static let controlHeight: CGFloat = 34
+    static let symbolCanvasSize: CGFloat = 18
+    static let symbolPointSize: CGFloat = 15
+    static let stateSurfaceDiameter: CGFloat = 30
+    static let focusRingDiameter: CGFloat = 31
+
+    static func spacing(itemCount: Int) -> CGFloat {
+        guard itemCount > 1 else { return 0 }
+        return (rowWidth - CGFloat(itemCount) * controlWidth) / CGFloat(itemCount - 1)
+    }
+}
+
 enum Palette {
     static let background = adaptive(light: 0xFDFCFE, dark: 0x1D1C21)
     static let surface = adaptive(light: 0xFFFFFF, dark: 0x252328)
@@ -25,7 +43,7 @@ enum Palette {
 struct FilterBar: View {
     @Binding var selection: CaptureFilter
     var body: some View {
-        HStack(spacing: 8) {
+        HStack(spacing: TimelineIconRowMetrics.spacing(itemCount: CaptureFilter.allCases.count)) {
             ForEach(CaptureFilter.allCases) { filter in
                 AccentIconButton(symbol: symbol(for: filter), label: label(for: filter),
                                  selected: selection == filter,
@@ -33,7 +51,11 @@ struct FilterBar: View {
                     selection = filter
                 }
             }
-        }.padding(.bottom, 4).frame(maxWidth: .infinity)
+        }
+        .frame(width: TimelineIconRowMetrics.rowWidth,
+               height: TimelineIconRowMetrics.controlHeight)
+        .frame(maxWidth: .infinity)
+        .padding(.bottom, 4)
             .overlay(alignment: .bottom) { Rectangle().fill(Palette.line).frame(height: 0.5) }
     }
 
@@ -70,9 +92,12 @@ struct AccentIconButton: View {
     var body: some View {
         Button(action: action) {
             Image(systemName: symbol)
-                .font(.system(size: 15, weight: selected ? .semibold : .regular))
+                .font(.system(size: TimelineIconRowMetrics.symbolPointSize, weight: .regular))
                 .accessibilityHidden(true)
-                .frame(width: 40, height: 34)
+                .frame(width: TimelineIconRowMetrics.symbolCanvasSize,
+                       height: TimelineIconRowMetrics.symbolCanvasSize)
+                .frame(width: TimelineIconRowMetrics.controlWidth,
+                       height: TimelineIconRowMetrics.controlHeight)
                 .contentShape(Rectangle())
         }
         .buttonStyle(AccentIconButtonStyle(accent: accent, selected: selected,
@@ -99,17 +124,20 @@ private struct AccentIconButtonStyle: ButtonStyle {
             .foregroundStyle(accent.opacity(isEnabled ? (selected ? 1 : 0.82) : 0.35))
             .background {
                 if selected {
-                    Capsule().fill(accent.opacity(configuration.isPressed ? 0.20 : 0.13))
-                        .frame(width: 40, height: 30)
+                    Circle().fill(accent.opacity(configuration.isPressed ? 0.20 : 0.13))
+                        .frame(width: TimelineIconRowMetrics.stateSurfaceDiameter,
+                               height: TimelineIconRowMetrics.stateSurfaceDiameter)
                 } else if hovered || configuration.isPressed {
                     Circle().fill(accent.opacity(configuration.isPressed ? 0.18 : 0.09))
-                        .frame(width: 30, height: 30)
+                        .frame(width: TimelineIconRowMetrics.stateSurfaceDiameter,
+                               height: TimelineIconRowMetrics.stateSurfaceDiameter)
                 }
             }
             .overlay {
                 if focused {
                     Circle().stroke(accent.opacity(0.82), lineWidth: 1.5)
-                        .frame(width: 31, height: 31)
+                        .frame(width: TimelineIconRowMetrics.focusRingDiameter,
+                               height: TimelineIconRowMetrics.focusRingDiameter)
                 }
             }
             .scaleEffect(configuration.isPressed ? 0.94 : 1)
@@ -128,17 +156,25 @@ struct AccentIconMenuLabel: View {
 
     var body: some View {
         Image(systemName: symbol)
-            .font(.system(size: 15))
+            .font(.system(size: TimelineIconRowMetrics.symbolPointSize, weight: .regular))
             .foregroundStyle(accent.opacity(0.82))
-            .frame(width: 40, height: 34)
+            .frame(width: TimelineIconRowMetrics.symbolCanvasSize,
+                   height: TimelineIconRowMetrics.symbolCanvasSize)
+            .frame(width: TimelineIconRowMetrics.controlWidth,
+                   height: TimelineIconRowMetrics.controlHeight)
             .contentShape(Rectangle())
             .background {
-                if hovered { Circle().fill(accent.opacity(0.09)).frame(width: 30, height: 30) }
+                if hovered {
+                    Circle().fill(accent.opacity(0.09))
+                        .frame(width: TimelineIconRowMetrics.stateSurfaceDiameter,
+                               height: TimelineIconRowMetrics.stateSurfaceDiameter)
+                }
             }
             .overlay {
                 if focused {
                     Circle().stroke(accent.opacity(0.82), lineWidth: 1.5)
-                        .frame(width: 31, height: 31)
+                        .frame(width: TimelineIconRowMetrics.focusRingDiameter,
+                               height: TimelineIconRowMetrics.focusRingDiameter)
                 }
             }
             .onHover { hovered = $0 }

@@ -1,5 +1,21 @@
 # DaBin QA cycle — 24 September 2026
 
+## Matched compact icon rows — 0.3.13 (38), publication and live update pending
+
+DaBin 0.3.13 gives the primary actions and filters the same **280 × 34-point** row footprint. Every control now uses one 15-point SF Symbol in an 18-point canvas, a 40 × 34-point target and a 30-point circular selected or hover surface. The five primary actions distribute between the same outer edges as the six filters, preserving Add, Search, Export, Notifications and Settings in their existing order while removing the visible row stagger.
+
+The exact optimized source passed **30/30 registered Release suites and 2,706 checks** with no source changes during the final run. The native header suite passed **31 checks**, including the shared-width geometry contract and real interaction at the redistributed action positions. The unlocked two-display regressions passed **214 general window**, **97 Weekly window** and **110 filter-resize** checks.
+
+Fresh rendering produced **42 release interface views**. Retained original-resolution evidence covers empty and populated Daily at 1× and 2×, the 380-point narrow Weekly board and the representative 428-point two-day Weekly board in light and dark appearances. The inspected headers are centered, balanced and unclipped.
+
+The optimized ARM64 direct build is **0.3.13 (38)** with production-source fingerprint `5f15ba6f71e53b59c8e99312c64654f4cab8edc7d6cfa012f87c2cdd9a07fa66`. Its executable is **5,794,496 bytes**, SHA-256 `a85a557812a41c7783bfe411c1a25f1ade6088de9969d0f09f96b5a307455314`. The verified update ZIP is **3,363,483 bytes**, SHA-256 `56f3474526ae6509971f0dec5357de665a719282a88bf1b75c30b57c12cebbbd`. Packaging passed isolated fresh installation, replacement, backup, strict clean-copy signature validation, extraction, manifest round trip, exact executable identity and the sandbox-compatible document handoff.
+
+The one-page A4 PDF guide is unchanged and byte-identical at **299,779 bytes**, SHA-256 `61c0a585b5a978a317ae9b2f133401e587027d57e9aaded4871ac5e0f9d36291`. Static Store packaging passed **20/20** checks. App Store release preflight retains two external prerequisites: an Apple Developer Team ID and full Xcode.
+
+GitHub release publication, unauthenticated asset verification and the live in-app update of the existing installation have not yet been performed. The generated manifest records the intended v0.3.13 destinations but is not proof that they are public.
+
+[0.3.13 pre-publication evidence index](../docs/qa/0.3.13/README.md) · [Full optimized run](../docs/qa/0.3.13/full-run/report.json) · [Release renders](../docs/qa/0.3.13/release-ui-renders.json) · [Build receipt](../docs/qa/0.3.13/build-receipt-v0.3.13.json) · [Update manifest](../docs/qa/0.3.13/update-manifest-v0.3.13.json) · [Static Store preflight](../docs/qa/0.3.13/app-store-preflight-static-v0.3.13.log) · [Release preflight](../docs/qa/0.3.13/app-store-preflight-release-v0.3.13.log).
+
 ## Weekly scoped Search and downloads — 0.3.12 (37)
 
 DaBin 0.3.12 adds two explicit Search choices in Weekly: **Search Day** for a date selected from the displayed seven-day range and **Search Week** for the complete fixed range. Scoped Search keeps the active type filter, limits matches before adding the established immediate same-day context, labels the chosen scope and returns Back to Weekly. The date picker includes empty dates whose Weekly columns are hidden.

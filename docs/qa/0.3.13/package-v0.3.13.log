@@ -1,0 +1,6 @@
+Installed DaBin 0.3.13 (38) in the isolated fresh-install destination.
+Installed DaBin 0.3.13 (38) in the isolated replacement destination.
+Previous isolated app preserved under the isolated .DaBinBackups directory.
+Created and verified output/downloads/DaBin-0.3.13-Update.zip.
+Updater QA passed fresh install, replacement, backup, signature and hash checks.
+Created GitHub update manifest tmp/release-v0.3.13/DaBin-update.json.

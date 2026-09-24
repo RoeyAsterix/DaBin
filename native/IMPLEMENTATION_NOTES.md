@@ -10,6 +10,12 @@ The default corner trigger is 9 logical points along each edge, polled every 100
 
 No persistent menu-bar item was added, to honor complete hiding at rest. Reopening DaBin, its active-app menu, the focused robot's context menu, and keyboard actions provide recovery. A system-wide hotkey is not registered. OS Hot Corners may activate at the same corners; this app does not change system settings.
 
+## Update 0.3.13
+
+Daily and Weekly now render their primary actions and filters in the same 280 × 34-point footprint. `TimelineIconRowMetrics` standardizes each control on a 15-point SF Symbol inside an 18-point canvas, a 40 × 34-point interaction target and a 30-point circular hover or selected surface. The two rows therefore align vertically and share identical outer bounds instead of relying on different button and spacing measurements.
+
+The five primary actions preserve Add, Search, Export, Notifications and Settings in that order. They use flexible distribution inside the shared footprint so their first and last controls meet the same outer edges as the six evenly placed filters. Their commands, popovers, keyboard behavior, tooltips and accessibility names are unchanged. Narrow Daily and Weekly layouts have dedicated light and dark render coverage.
+
 ## Update 0.3.12
 
 Weekly keeps the compact five-icon action row. Its Search icon now opens `WeeklySearchPopover`, which uses `WeeklyDayPicker` to expose every calendar date in the current seven-day range, including dates whose empty columns are hidden. **Search Day** applies an exact persisted-day scope; **Search Week** applies the complete fixed date set. Scope filtering happens before the established same-day-neighbor expansion, the active content filter still limits hits, and leaving scoped Search returns to Weekly. Daily's existing general Search behavior remains available.

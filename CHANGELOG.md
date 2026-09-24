@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.3.13 — 2026-09-24
+
+- Aligned the primary-action and filter controls as two visually identical compact rows with the same 280 × 34-point footprint.
+- Standardized every row control on a 15-point SF Symbol in an 18-point canvas, a 40 × 34-point target and a 30-point circular selected or hover surface.
+- Distributed the five primary actions between the same outer edges as the six filters while preserving every action's order and behavior.
+- Kept the compact Daily and Weekly headers aligned at narrow width in both light and dark appearances.
+
 ## 0.3.12 — 2026-09-24
 
 - Added an anchored Weekly Search menu with an explicit seven-day picker and separate **Search Day** and **Search Week** actions.

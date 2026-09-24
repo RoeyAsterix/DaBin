@@ -1,0 +1,6 @@
+swift-driver version: 1.148.6
+DaBin.app/Contents/Helpers/DaBin Update.app: replacing existing signature
+DaBin.app: replacing existing signature
+Built Release ARM64 app: native/build/DaBin.app
+Debug symbols remain outside the app: native/build/DaBin.app.dSYM
+Local signing is separate from App Store distribution validation.

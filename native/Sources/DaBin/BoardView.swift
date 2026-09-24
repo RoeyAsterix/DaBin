@@ -214,7 +214,7 @@ struct BoardView: View {
     }
 
     private var timelinePrimaryActions: some View {
-        HStack(spacing: 8) {
+        HStack(spacing: TimelineIconRowMetrics.spacing(itemCount: TimelinePrimaryAction.allCases.count)) {
             AccentIconButton(symbol: TimelinePrimaryAction.add.symbol,
                              label: TimelinePrimaryAction.add.label,
                              accessibilityIdentifier: "timeline-action-add") {
@@ -237,6 +237,8 @@ struct BoardView: View {
             }
             settingsMenu
         }
+        .frame(width: TimelineIconRowMetrics.rowWidth,
+               height: TimelineIconRowMetrics.controlHeight)
         .frame(maxWidth: .infinity)
         .accessibilityElement(children: .contain)
         .accessibilityLabel("Primary actions")
@@ -259,7 +261,8 @@ struct BoardView: View {
         .menuStyle(.borderlessButton)
         .menuIndicator(.hidden)
         .fixedSize()
-        .frame(width: 40, height: 34)
+        .frame(width: TimelineIconRowMetrics.controlWidth,
+               height: TimelineIconRowMetrics.controlHeight)
         .focused($settingsFocused)
         .help(TimelinePrimaryAction.settings.label)
         .accessibilityLabel(TimelinePrimaryAction.settings.label)
