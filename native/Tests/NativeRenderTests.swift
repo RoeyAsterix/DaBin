@@ -1096,6 +1096,67 @@ private final class NativeRenderTests: NSObject, NSApplicationDelegate {
         retainedWindows.removeAll { $0 === window }
     }
 
+    /// Renders the production contents of an anchored action popover. AppKit's
+    /// private popover window is not part of a BoardView cacheDisplay snapshot,
+    /// so render the same view tree inside representative system-like chrome.
+    private func snapshotPopover<Content: View>(_ content: Content, name: String, mode: String,
+                                                output: URL, width: CGFloat, height: CGFloat) async throws {
+        let size = NSSize(width: width, height: height)
+        renderTheme.setDarkMode(mode == "dark")
+        let rendered = content
+            .environment(\.daBinAccent, renderTheme.accent)
+            .preferredColorScheme(renderTheme.darkModeEnabled ? .dark : .light)
+            .frame(width: size.width, height: size.height)
+            .background(Palette.background)
+            .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+            .overlay(RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .strokeBorder(Palette.line, lineWidth: 1))
+        let hosting = NSHostingView(rootView: rendered)
+        hosting.frame = NSRect(origin: .zero, size: size)
+        hosting.wantsLayer = true
+        let window = NSWindow(contentRect: NSRect(x: -10000, y: -10000, width: size.width, height: size.height),
+                              styleMask: [.borderless], backing: .buffered, defer: false)
+        window.isReleasedWhenClosed = false
+        window.isOpaque = false
+        window.backgroundColor = .clear
+        window.contentView = hosting
+        retainedWindows.append(window)
+        window.orderFront(nil)
+        try await Task.sleep(for: .milliseconds(220))
+        hosting.layoutSubtreeIfNeeded()
+        hosting.displayIfNeeded()
+        let backingScale = window.backingScaleFactor
+        let pixelScale = 2
+        guard backingScale >= 2 else {
+            throw RenderError.message("A native Retina backing surface is required for the 2x popover render; this window reports \(backingScale)x")
+        }
+        guard let bitmap = NSBitmapImageRep(bitmapDataPlanes: nil,
+            pixelsWide: Int(width) * pixelScale, pixelsHigh: Int(height) * pixelScale,
+            bitsPerSample: 8, samplesPerPixel: 4, hasAlpha: true, isPlanar: false,
+            colorSpaceName: .deviceRGB, bytesPerRow: 0, bitsPerPixel: 0) else {
+            throw RenderError.message("Could not allocate popover render bitmap")
+        }
+        bitmap.size = size
+        hosting.cacheDisplay(in: hosting.bounds, to: bitmap)
+        guard let png = bitmap.representation(using: .png, properties: [:]) else {
+            throw RenderError.message("Popover PNG encoding failed")
+        }
+        let filename = "native-view-\(name)-\(mode)-\(Int(width))x\(Int(height))@2x.png"
+        try png.write(to: output.appendingPathComponent(filename), options: .atomic)
+        records.append([
+            "file": filename, "route": "weekly-action-popover", "appearance": mode,
+            "pixelWidth": bitmap.pixelsWide, "pixelHeight": bitmap.pixelsHigh,
+            "logicalWidth": Int(width), "logicalHeight": Int(height), "pixelScale": pixelScale,
+            "nativeWindowBackingScale": backingScale,
+            "renderMethod": "Production popover content rendered directly at 2x inside representative local chrome",
+            "themeHex": renderTheme.selectedHex, "darkModeEnabled": renderTheme.darkModeEnabled
+        ])
+        window.orderOut(nil)
+        window.contentView = nil
+        window.close()
+        retainedWindows.removeAll { $0 === window }
+    }
+
     private func renderReleaseUI(root: URL, output: URL) async throws {
         let store = try CaptureStore(root: root.appendingPathComponent("ReleaseUI"))
         let today = Calendar.current.startOfDay(for: Date())
@@ -1186,6 +1247,33 @@ private final class NativeRenderTests: NSObject, NSApplicationDelegate {
             }
             try await snapshot(state, name: "release-week", mode: mode, output: output, height: 560, width: 428)
             try await snapshot(state, name: "release-week-narrow", mode: mode, output: output, height: 560, width: 380)
+            try await snapshotPopover(
+                WeeklySearchPopover(state: state, isPresented: .constant(true)),
+                name: "release-week-search-actions", mode: mode, output: output,
+                width: 258, height: 174
+            )
+            let exportController = DayExportActionController(
+                pasteboardWriter: { _ in true },
+                destinationChooser: { _, _ in .cancelled },
+                fileWriter: { _, _ in }
+            )
+            try await snapshotPopover(
+                WeeklyExportPopover(
+                    state: state,
+                    controller: exportController,
+                    reportFailure: { _ in }
+                ),
+                name: "release-week-download-actions", mode: mode, output: output,
+                width: 262, height: 286
+            )
+            state.openSearch(day: state.weeklyActionDay)
+            state.query = "workshop"
+            try await snapshot(state, name: "release-search-day", mode: mode, output: output)
+            state.back()
+            state.openSearch(week: state.weeklyDays)
+            state.query = "workshop"
+            try await snapshot(state, name: "release-search-week", mode: mode, output: output)
+            state.back()
             state.openSearch()
             state.query = "workshop"
             try await snapshot(state, name: "release-search", mode: mode, output: output)

@@ -171,6 +171,62 @@ struct WeeklyStateTests {
                    "A current weekly range can advance without changing a historical Daily return date")
     }
 
+    @MainActor private static func checkScopedSearchActions(_ state: AppState) throws {
+        state.filter = .all
+        state.query = "Weekly fictional note"
+        state.selectedDay = date("2024-01-03 12:00")
+        state.openWeekly()
+        state.performSearchCommand()
+        try expect(state.route == .weekly && state.weeklySearchActionsPresented,
+                   "The shared Search command opens Weekly's day-or-week chooser")
+        state.weeklySearchActionsPresented = false
+        try expect(CaptureCalendar.dayString(state.weeklyActionDay) == "2024-01-03",
+                   "Weekly day actions use the preserved selected day when it is inside the range")
+
+        state.moveWeek(-1)
+        try expect(state.dayKey == "2024-01-03"
+                   && CaptureCalendar.dayString(state.weeklyActionDay) == "2023-12-27",
+                   "An off-screen Daily return date is preserved while Weekly actions resolve to the visible range end")
+        let chosen = state.weeklyDays[2]
+        state.selectWeeklyActionDay(chosen)
+        try expect(state.route == .weekly && Calendar.current.isDate(state.selectedDay, inSameDayAs: chosen),
+                   "The Weekly action picker changes its day without leaving Weekly")
+
+        state.selectedDay = date("2024-01-03 12:00")
+        state.openWeekly()
+        state.openSearch(day: state.weeklyActionDay)
+        let scopedSearch = state.searchScope
+        state.performSearchCommand()
+        try expect(state.route == .search && state.searchScope == scopedSearch,
+                   "Repeating the Search command preserves an active scoped search")
+        try expect(state.route == .search && state.searchScope == .day("2024-01-03")
+                   && state.searchScopeTitle.contains("2024"),
+                   "Search Day records its exact receipt date and exposes a readable scope")
+        try expect(state.searchGroups.map(\.day) == ["2024-01-03"],
+                   "Search Day returns matches only from the selected day")
+        state.back()
+        try expect(state.route == .weekly && CaptureCalendar.dayString(state.weekEndingDay) == "2024-01-03",
+                   "Back from a day-scoped search restores the same Weekly range")
+
+        let weekKeys = Set(keys(state.weeklyDays))
+        state.openSearch(week: state.weeklyDays)
+        try expect(state.searchScope == .week(weekKeys)
+                   && Set(state.searchGroups.map(\.day)) == weekKeys,
+                   "Search Week covers all seven fixed calendar dates, including across the year boundary")
+        try expect(state.searchGroups.flatMap(\.entries).allSatisfy { weekKeys.contains($0.capture.captureDay) },
+                   "Search Week context never leaks beyond its selected date set")
+        state.back()
+        try expect(state.route == .weekly,
+                   "Back from a week-scoped search returns to Weekly")
+
+        state.openSearch()
+        try expect(state.searchScope == .all && state.route == .search,
+                   "The existing unscoped Search action still searches the full archive")
+        state.back()
+        try expect(state.route == .weekly,
+                   "An unscoped search opened from Weekly also restores Weekly")
+    }
+
     @MainActor private static func checkEmptyWeek() throws {
         let root = FileManager.default.temporaryDirectory.appendingPathComponent("DaBinEmptyWeek-\(UUID().uuidString)")
         defer { try? FileManager.default.removeItem(at: root) }
@@ -320,6 +376,7 @@ struct WeeklyStateTests {
             }
         }
         state.filter = .all
+        try checkScopedSearchActions(state)
         try checkCalendar(state)
         try checkNavigation(state, capture: scheduled)
         try checkRollover(state)

@@ -17,9 +17,24 @@ struct SearchScreen: View {
                         .buttonStyle(.plain).help("Clear search").accessibilityLabel("Clear search")
                 }
             }.padding(10).background(Palette.soft, in: RoundedRectangle(cornerRadius: 12)).padding(.horizontal, 16).padding(.bottom, 7)
+            if state.searchScope != .all {
+                HStack(spacing: 6) {
+                    Image(systemName: "calendar")
+                        .accessibilityHidden(true)
+                    Text(state.searchScopeTitle)
+                        .lineLimit(1)
+                    Spacer(minLength: 0)
+                }
+                .font(.system(size: 11, weight: .medium))
+                .foregroundStyle(Palette.muted)
+                .padding(.horizontal, 18)
+                .padding(.bottom, 6)
+                .accessibilityElement(children: .combine)
+                .accessibilityLabel("Search scope, \(state.searchScopeTitle)")
+            }
             FilterBar(selection: $state.filter)
             if state.query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                EmptyMessage(symbol: "magnifyingglass", title: "Remember the moment", message: "Search words, links, filenames, comments or a date. Matches keep a little of their day around them.")
+                EmptyMessage(symbol: "magnifyingglass", title: "Remember the moment", message: searchPrompt)
             } else if state.searchGroups.isEmpty {
                 EmptyMessage(symbol: "magnifyingglass", title: "No matching captures", message: "Try another word or choose All.")
             } else {
@@ -37,5 +52,10 @@ struct SearchScreen: View {
                 }.scrollPosition(id: $state.searchScrollID, anchor: .top)
             }
         }.onAppear { focused = true }
+    }
+
+    private var searchPrompt: String {
+        let base = "Search words, links, filenames, comments or a date. Matches keep a little of their day around them."
+        return state.searchScope == .all ? base : "Search within \(state.searchScopeTitle). Matches keep a little of their day around them."
     }
 }

@@ -75,6 +75,31 @@ private enum HeaderInteractionTests {
         settle()
     }
 
+    /// Sends through NSApplication so production menu key equivalents get the
+    /// first chance to handle the command, exactly as they do in the app.
+    @MainActor private static func applicationKey(_ application: NSApplication, window: NSWindow,
+                                                  keyCode: UInt16, characters: String,
+                                                  modifiers: NSEvent.ModifierFlags) {
+        window.makeKey()
+        let eventCharacters = modifiers.contains(.shift) ? characters.uppercased() : characters
+        for type in [NSEvent.EventType.keyDown, .keyUp] {
+            let event = NSEvent.keyEvent(with: type, location: .zero, modifierFlags: modifiers,
+                                         timestamp: ProcessInfo.processInfo.systemUptime,
+                                         windowNumber: window.windowNumber, context: nil,
+                                         characters: eventCharacters, charactersIgnoringModifiers: characters.lowercased(),
+                                         isARepeat: false, keyCode: keyCode)!
+            application.sendEvent(event)
+        }
+        settle(0.18)
+    }
+
+    @MainActor private static func newPopover(in application: NSApplication, board: NSWindow,
+                                               excluding existing: Set<Int>) -> NSWindow? {
+        application.windows.first {
+            $0 !== board && $0.isVisible && !existing.contains($0.windowNumber)
+        }
+    }
+
     @MainActor
     static func main() throws {
         let application = NSApplication.shared
@@ -94,14 +119,22 @@ private enum HeaderInteractionTests {
         let input = InputService(store: store)
         let autoCapture = AutoCaptureService(settings: AutoCaptureSettings(defaults: defaults),
                                              input: input)
-        let exportCapture = try store.capture(text: "Keyboard export fixture")[0]
+        let now = Date()
+        let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: now)!
+        let exportCapture = try store.capture(text: "TODAY UNIQUE keyboard export fixture", at: now)[0]
+        let priorExportCapture = try store.capture(text: "YESTERDAY UNIQUE weekly picker fixture", at: yesterday)[0]
+        var fixtureIDs = Set([exportCapture.id, priorExportCapture.id])
         var copiedDay: String?
         var destinationChoices = 0
+        var chosenExportPeriod: TimelineExportPeriod?
+        var chosenExportFilename: String?
         let exportController = DayExportActionController(pasteboardWriter: {
             copiedDay = $0
             return true
-        }, destinationChooser: { _ in
+        }, destinationChooser: { period, filename in
             destinationChoices += 1
+            chosenExportPeriod = period
+            chosenExportFilename = filename
             return .cancelled
         }, fileWriter: { _, _ in })
         let state = AppState(store: store, previews: previews,
@@ -124,7 +157,16 @@ private enum HeaderInteractionTests {
         window.contentView = hosting
         application.activate(ignoringOtherApps: true)
         window.makeKeyAndOrderFront(nil)
+        let previousMenu = application.mainMenu
+        let commandMenu = ApplicationMenu(
+            openDaily: { state.openDaily() },
+            openSearch: { state.performSearchCommand() },
+            focusRobot: {}, showSettings: { state.showSettings() }
+        )
+        commandMenu.install()
         defer {
+            commandMenu.uninstall()
+            application.mainMenu = previousMenu
             window.orderOut(nil)
             window.contentView = nil
             window.close()
@@ -156,21 +198,27 @@ private enum HeaderInteractionTests {
         }
         try expect(state.route == .daily, "Opening Export Day leaves the selected timeline route intact")
         if let exportWindow {
-            exportWindow.makeKey()
-            settle()
-            key(exportWindow, keyCode: 8, characters: "c", modifiers: .command)
+            let lateCapture = try store.capture(text: "LATE UNIQUE action saved after opening export", at: Date())[0]
+            fixtureIDs.insert(lateCapture.id)
+            settle(0.3)
+            let refreshedExportWindow = application.windows.first {
+                $0 !== window && $0.isVisible
+            } ?? exportWindow
+            applicationKey(application, window: refreshedExportWindow, keyCode: 18, characters: "1",
+                           modifiers: .command)
             let expected = DayExportDocument.make(captures: store.captures,
                                                   selectedDate: state.selectedDay).text
-            try expect(copiedDay == expected && exportController.feedback == .copied,
-                       "Command C activates Copy Day without a pointer")
+            try expect(copiedDay == expected && copiedDay?.contains("LATE UNIQUE") == true
+                       && exportController.feedback == .copied(.day),
+                       "Command 1 copies the current day, including actions saved after the popover opened")
             let escape = NSEvent.keyEvent(with: .keyDown, location: .zero, modifierFlags: [],
                                           timestamp: ProcessInfo.processInfo.systemUptime,
-                                          windowNumber: exportWindow.windowNumber, context: nil,
+                                          windowNumber: refreshedExportWindow.windowNumber, context: nil,
                                           characters: "\u{1b}", charactersIgnoringModifiers: "\u{1b}",
                                           isARepeat: false, keyCode: 53)!
-            exportWindow.sendEvent(escape)
+            refreshedExportWindow.sendEvent(escape)
             settle(0.2)
-            try expect(!exportWindow.isVisible, "Escape closes only the Export Day popover")
+            try expect(!refreshedExportWindow.isVisible, "Escape closes only the Export Day popover")
             try expect(window.isVisible && dismissals == 0,
                        "Escape from Export Day preserves the board window")
         }
@@ -179,13 +227,28 @@ private enum HeaderInteractionTests {
         if let reopenedPopover = application.windows.first(where: { $0 !== window && $0.isVisible }) {
             reopenedPopover.makeKey()
             settle()
-            key(reopenedPopover, keyCode: 1, characters: "s", modifiers: .command)
+            applicationKey(application, window: reopenedPopover, keyCode: 19, characters: "2",
+                           modifiers: .command)
             try expect(destinationChoices == 1,
-                       "Command S activates Export Text File without a pointer")
+                       "Command 2 activates Export Text File without a pointer")
             exportController.dismiss()
             settle(0.2)
         } else {
             try expect(false, "Export Day reopens for keyboard navigation")
+        }
+
+        state.selectedDay = yesterday
+        settle()
+        let windowsBeforeDailyReset = Set(application.windows.filter { $0 !== window && $0.isVisible }.map(\.windowNumber))
+        click(window, x: 190, topY: 55)
+        if let resetPopover = newPopover(in: application, board: window, excluding: windowsBeforeDailyReset) {
+            applicationKey(application, window: resetPopover, keyCode: 31, characters: "o",
+                           modifiers: .command)
+            try expect(Calendar.current.isDateInToday(state.selectedDay) && state.route == .daily
+                       && !exportController.isPresented,
+                       "The production Open Daily command closes a stale day export popover")
+        } else {
+            try expect(false, "Export Day opens before testing date-reset dismissal")
         }
 
         click(window, x: 238, topY: 55)
@@ -208,6 +271,111 @@ private enum HeaderInteractionTests {
                    "Next-day navigation returns to today and then disables")
         click(window, x: 152, topY: 22)
         try expect(state.route == .weekly, "The selected date still opens the Weekly view")
+
+        let windowsBeforeMenuSearch = Set(application.windows.filter { $0 !== window && $0.isVisible }.map(\.windowNumber))
+        applicationKey(application, window: window, keyCode: 40, characters: "k", modifiers: .command)
+        let menuSearchWindow = newPopover(in: application, board: window, excluding: windowsBeforeMenuSearch)
+        try expect(state.route == .weekly && state.weeklySearchActionsPresented && menuSearchWindow != nil,
+                   "The production Command-K menu opens Weekly's scoped Search popover")
+        if let menuSearchWindow {
+            key(menuSearchWindow, keyCode: 53, characters: "\u{1b}")
+        }
+
+        let windowsBeforeWeeklySearch = Set(application.windows.filter { $0 !== window && $0.isVisible }.map(\.windowNumber))
+        click(window, x: 142, topY: 55)
+        let weeklySearchWindow = newPopover(in: application, board: window, excluding: windowsBeforeWeeklySearch)
+        try expect(weeklySearchWindow != nil,
+                   "Weekly Search opens an anchored day-or-week action popover")
+        if let weeklySearchWindow {
+            weeklySearchWindow.makeKey(); settle()
+            applicationKey(application, window: weeklySearchWindow, keyCode: 18, characters: "1",
+                           modifiers: .command)
+            try expect(state.route == .search
+                       && state.searchScope == .day(CaptureCalendar.dayString(state.selectedDay)),
+                       "Command 1 chooses Search Day from the Weekly popover")
+            let scopedSearch = state.searchScope
+            applicationKey(application, window: window, keyCode: 40, characters: "k", modifiers: .command)
+            try expect(state.route == .search && state.searchScope == scopedSearch,
+                       "Command K preserves an active scoped Search and its Weekly return route")
+            state.back(); settle()
+        }
+
+        let windowsBeforeWeekSearch = Set(application.windows.filter { $0 !== window && $0.isVisible }.map(\.windowNumber))
+        click(window, x: 142, topY: 55)
+        if let weeklySearchWindow = newPopover(in: application, board: window, excluding: windowsBeforeWeekSearch) {
+            applicationKey(application, window: weeklySearchWindow, keyCode: 26, characters: "7",
+                           modifiers: .command)
+            try expect(state.route == .search
+                       && state.searchScope == .week(Set(state.weeklyDays.map { CaptureCalendar.dayString($0) })),
+                       "Command 7 chooses Search Week from the Weekly popover")
+            state.back(); settle()
+        } else {
+            try expect(false, "Weekly Search reopens for keyboard scope selection")
+        }
+
+        let windowsBeforeWeeklyDayCopy = Set(application.windows.filter { $0 !== window && $0.isVisible }.map(\.windowNumber))
+        click(window, x: 190, topY: 55)
+        if let weeklyExportWindow = newPopover(in: application, board: window, excluding: windowsBeforeWeeklyDayCopy) {
+            state.selectWeeklyActionDay(yesterday); settle(0.3)
+            let refreshedExportWindow = application.windows.first {
+                $0 !== window && $0.isVisible
+            } ?? weeklyExportWindow
+            applicationKey(application, window: refreshedExportWindow, keyCode: 18, characters: "1",
+                           modifiers: .command)
+            let expectedDay = DayExportDocument.make(captures: store.captures,
+                                                     selectedDate: yesterday)
+            try expect(copiedDay == expectedDay.text && copiedDay?.contains("YESTERDAY UNIQUE") == true
+                       && copiedDay?.contains("TODAY UNIQUE") == false,
+                       "Weekly Copy Day follows a day-picker change made after the popover opens")
+            exportController.dismiss(); settle(0.2)
+        } else {
+            try expect(false, "Weekly Download opens for the selected-day copy action")
+        }
+
+        let windowsBeforeWeeklyDayDownload = Set(application.windows.filter { $0 !== window && $0.isVisible }.map(\.windowNumber))
+        click(window, x: 190, topY: 55)
+        if let weeklyExportWindow = newPopover(in: application, board: window, excluding: windowsBeforeWeeklyDayDownload) {
+            applicationKey(application, window: weeklyExportWindow, keyCode: 19, characters: "2",
+                           modifiers: .command)
+            let expectedDay = DayExportDocument.make(captures: store.captures,
+                                                     selectedDate: yesterday)
+            try expect(destinationChoices == 2 && chosenExportPeriod == .day
+                       && chosenExportFilename == expectedDay.filename,
+                       "Weekly Download Day uses the selected day and its ISO filename")
+            exportController.dismiss(); settle(0.2)
+        } else {
+            try expect(false, "Weekly Download reopens for the selected-day file action")
+        }
+
+        let windowsBeforeWeeklyCopy = Set(application.windows.filter { $0 !== window && $0.isVisible }.map(\.windowNumber))
+        click(window, x: 190, topY: 55)
+        if let weeklyExportWindow = newPopover(in: application, board: window, excluding: windowsBeforeWeeklyCopy) {
+            applicationKey(application, window: weeklyExportWindow, keyCode: 26, characters: "7",
+                           modifiers: .command)
+            let expectedWeek = WeekExportDocument.make(captures: store.captures,
+                                                       weekEndingDate: state.weekEndingDay)
+            try expect(copiedDay == expectedWeek.text && exportController.feedback == .copied(.week),
+                       "Command 7 copies the complete displayed week")
+            exportController.dismiss(); settle()
+        } else {
+            try expect(false, "Weekly Download opens its anchored action popover")
+        }
+
+        let windowsBeforeWeeklyDownload = Set(application.windows.filter { $0 !== window && $0.isVisible }.map(\.windowNumber))
+        click(window, x: 190, topY: 55)
+        if let weeklyExportWindow = newPopover(in: application, board: window, excluding: windowsBeforeWeeklyDownload) {
+            applicationKey(application, window: weeklyExportWindow, keyCode: 28, characters: "8",
+                           modifiers: .command)
+            let expectedWeek = WeekExportDocument.make(captures: store.captures,
+                                                       weekEndingDate: state.weekEndingDay)
+            try expect(destinationChoices == 3 && chosenExportPeriod == .week
+                       && chosenExportFilename == expectedWeek.filename,
+                       "Command 8 opens Download Week with the ISO range filename")
+            exportController.dismiss(); settle()
+        } else {
+            try expect(false, "Weekly Download reopens for keyboard file export")
+        }
+
         clickTrackingControl(window, x: 265, topY: 22)
         try expect(state.route == .daily,
                    "The Daily segment remains usable when Weekly is laid out at 380 points")
@@ -215,8 +383,8 @@ private enum HeaderInteractionTests {
         click(window, x: 354, topY: 22)
         try expect(dismissals == 1 && state.route == .daily,
                    "The neutral X remains an independent close control")
-        try expect(store.captures.map(\.id) == [exportCapture.id],
-                   "Header interaction QA leaves its one isolated fixture unchanged")
+        try expect(Set(store.captures.map(\.id)) == fixtureIDs,
+                   "Header interaction QA leaves its isolated fixtures unchanged")
         print("PASS: \(checks) compact header interaction checks; native Add, Search, Export, Notifications, filters, dates, Escape and close controls.")
     }
 }

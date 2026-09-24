@@ -69,7 +69,9 @@ struct BoardView: View {
         .onExitCommand { state.onDismiss?() }
         .background {
             Group {
-                Button("Search captures") { state.openSearch() }.keyboardShortcut("k", modifiers: .command)
+                Button("Search captures") {
+                    state.performSearchCommand()
+                }.keyboardShortcut("k", modifiers: .command)
                 Button("Open Daily") { state.openDaily() }.keyboardShortcut("d", modifiers: [.command, .shift])
             }.frame(width: 0, height: 0).opacity(0).accessibilityHidden(true)
         }
@@ -184,7 +186,10 @@ struct BoardView: View {
             .accessibilityLabel("Choose week, \(weeklyRangeLabel)")
             .accessibilityIdentifier("timeline-date")
             .popover(isPresented: $showWeekCalendar, arrowEdge: .bottom) {
-                DatePicker("Week ending", selection: $state.weekEndingDay,
+                DatePicker("Week ending", selection: Binding(
+                    get: { state.weekEndingDay },
+                    set: { state.setWeekEndingDay($0) }
+                ),
                            in: ...Date(), displayedComponents: .date)
                     .datePickerStyle(.graphical)
                     .padding(12)
@@ -215,13 +220,16 @@ struct BoardView: View {
                              accessibilityIdentifier: "timeline-action-add") {
                 state.openNewTask()
             }
-            AccentIconButton(symbol: TimelinePrimaryAction.search.symbol,
-                             label: TimelinePrimaryAction.search.label,
-                             accessibilityIdentifier: "timeline-action-search") {
-                state.openSearch()
+            if state.route == .weekly {
+                WeeklySearchButton(state: state, isPresented: $state.weeklySearchActionsPresented)
+            } else {
+                AccentIconButton(symbol: TimelinePrimaryAction.search.symbol,
+                                 label: TimelinePrimaryAction.search.label,
+                                 accessibilityIdentifier: "timeline-action-search") {
+                    state.openSearch()
+                }
             }
-            DayExportButton(state: state, selectedDate: timelineExportDate,
-                            controller: dayExportController)
+            TimelineExportButton(state: state, controller: dayExportController)
             AccentIconButton(symbol: TimelinePrimaryAction.notifications.symbol,
                              label: TimelinePrimaryAction.notifications.label,
                              accessibilityIdentifier: "timeline-action-notifications") {

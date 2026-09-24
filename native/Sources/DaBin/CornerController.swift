@@ -558,7 +558,7 @@ final class CornerController: NSObject {
     }
 
     func openDaily() { state.openDaily(); showBoard() }
-    func openSearch() { state.openSearch(); showBoard() }
+    func openSearch() { state.performSearchCommand(); showBoard() }
     func showBoard() {
         guard !isShutDown else { return }
         guard boardDragStartFrame == nil else { return }

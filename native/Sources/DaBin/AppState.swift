@@ -94,6 +94,7 @@ final class AppState: ObservableObject {
         didSet {
             if route != oldValue { captureNavigationRevision &+= 1 }
             if route != .daily { isDailyDropTargeted = false }
+            if route != .weekly { weeklySearchActionsPresented = false }
         }
     }
     @Published var selectedDay = Date() {
@@ -105,6 +106,8 @@ final class AppState: ObservableObject {
         didSet { if filter != oldValue { captureNavigationRevision &+= 1 } }
     }
     @Published var query = ""
+    @Published private(set) var searchScope: CaptureSearchScope = .all
+    @Published var weeklySearchActionsPresented = false
     @Published var selectedCapture: Capture?
     @Published var pendingRemoval: Capture?
     @Published private(set) var removingCaptureID: UUID?
@@ -121,6 +124,7 @@ final class AppState: ObservableObject {
     var onDismiss: (() -> Void)?
     var onBoardDragStarted: (() -> Void)?
     private var origin: BoardRoute = .daily
+    private var searchReturnRoute: BoardRoute = .daily
     private var drafts: [UUID: CaptureDraft] = [:]
     private var subscriptions = Set<AnyCancellable>()
     private var reminderServiceFeedback: (captureID: UUID, message: String?)?
@@ -221,7 +225,32 @@ final class AppState: ObservableObject {
         if weekEnd == currentDayKey || weekEnd > nextDay { weekEndingDay = now }
         currentDayKey = nextDay
     }
-    var searchGroups: [SearchGroup] { CaptureSearch.groups(captures: store.captures, query: query, filter: filter) }
+    var searchGroups: [SearchGroup] {
+        CaptureSearch.groups(captures: store.captures, query: query, filter: filter,
+                             scope: searchScope)
+    }
+    var searchScopeTitle: String {
+        switch searchScope {
+        case .all:
+            return "All dates"
+        case .day(let day):
+            return prettyDay(day)
+        case .week(let days):
+            let ordered = days.sorted()
+            guard let first = ordered.first, let last = ordered.last else { return "Selected week" }
+            return "\(prettyDay(first, includeWeekday: false))–\(prettyDay(last, includeWeekday: false))"
+        }
+    }
+
+    /// The day used by Weekly's day-scoped Search and Export actions. Keep a
+    /// preserved in-range selection; after range navigation, fall back to the
+    /// visible week end so the action never silently targets an off-screen day.
+    var weeklyActionDay: Date {
+        let selectedKey = CaptureCalendar.dayString(selectedDay)
+        return weeklyDays.first(where: { CaptureCalendar.dayString($0) == selectedKey })
+            ?? weeklyDays.last
+            ?? weekEndingDay
+    }
     var hasUnsavedDrafts: Bool { newTaskDraft.hasChanges || drafts.values.contains(where: \.hasChanges) }
 
     func openDaily() {
@@ -256,9 +285,19 @@ final class AppState: ObservableObject {
         route = .daily
     }
 
+    func selectWeeklyActionDay(_ day: Date) {
+        let key = CaptureCalendar.dayString(day)
+        guard let selected = weeklyDays.first(where: { CaptureCalendar.dayString($0) == key }) else { return }
+        selectedDay = selected
+    }
+
+    func setWeekEndingDay(_ day: Date) {
+        weekEndingDay = min(day, Date())
+    }
+
     func moveWeek(_ amount: Int) {
         guard let end = Calendar.current.date(byAdding: .day, value: amount * 7, to: weekEndingDay) else { return }
-        weekEndingDay = min(end, Date())
+        setWeekEndingDay(end)
     }
 
     func showCurrentWeek() {
@@ -269,7 +308,40 @@ final class AppState: ObservableObject {
         route = .weekly
     }
 
-    func openSearch() { route = .search }
+    func openSearch() {
+        guard route != .search else { return }
+        searchScope = .all
+        searchReturnRoute = route == .weekly ? .weekly : .daily
+        searchScrollID = nil
+        route = .search
+    }
+
+    /// Routes the application-wide Search command through Weekly's explicit
+    /// day/week chooser. Keeping this in state lets the native application
+    /// menu and the compact header share exactly the same behavior.
+    func performSearchCommand() {
+        if route == .weekly {
+            weeklySearchActionsPresented = true
+        } else if route != .search {
+            openSearch()
+        }
+    }
+
+    func openSearch(day: Date) {
+        weeklySearchActionsPresented = false
+        searchScope = .day(CaptureCalendar.dayString(day))
+        searchReturnRoute = .weekly
+        searchScrollID = nil
+        route = .search
+    }
+
+    func openSearch(week days: [Date]) {
+        weeklySearchActionsPresented = false
+        searchScope = .week(Set(days.map { CaptureCalendar.dayString($0) }))
+        searchReturnRoute = .weekly
+        searchScrollID = nil
+        route = .search
+    }
     func showReminders() { route = .reminders }
     func showSettings() { route = .settings }
 
@@ -428,7 +500,13 @@ final class AppState: ObservableObject {
     }
 
     func back() {
-        route = route == .detail ? origin : .daily
+        if route == .detail {
+            route = origin
+        } else if route == .search {
+            route = searchReturnRoute
+        } else {
+            route = .daily
+        }
         detailFocus = nil
     }
 
