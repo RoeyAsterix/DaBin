@@ -1,6 +1,6 @@
 # DaBin 0.3.9 release evidence
 
-This directory records the completed functional, visual, build, package and Store-readiness checks for DaBin 0.3.9 (34). Publication and live-installation records are added after the release is public.
+This directory records the functional, visual, build, package, publication, live-installation and Store-readiness checks completed for DaBin 0.3.9 (34).
 
 ## Result
 
@@ -11,6 +11,9 @@ This directory records the completed functional, visual, build, package and Stor
 - The update ZIP is **3,279,344 bytes**, SHA-256 `e653928f65287cbb48ada20316d90cfab169483b0b7074317fb50fd0909890e6`. Package QA passed isolated fresh installation, replacement, backup, strict clean-copy signature validation, extraction, manifest round trip, exact executable identity and document handoff.
 - The unchanged one-page A4 PDF guide is **299,779 bytes**, SHA-256 `61c0a585b5a978a317ae9b2f133401e587027d57e9aaded4871ac5e0f9d36291`; its retained geometry and extraction check remains one page with no boundary failure.
 - Static App Store packaging passed **20/20**. Release preflight remains blocked by two external prerequisites: the owner's Apple Developer Team ID and a full Xcode installation.
+- Release [v0.3.9](https://github.com/RoeyAsterix/DaBin/releases/tag/v0.3.9) is public and latest. Unauthenticated checks returned HTTP 200 for the repository, release, all four assets and latest manifest; every downloaded asset was byte-identical to its verified local source.
+- The installed 0.3.8 app found, downloaded and installed the public 0.3.9 package through DaBin's own updater. The final app, helper and exact 0.3.8 backup pass strict signature checks; one ARM64 process is running, the Desktop link is unchanged and a follow-up update check reports 0.3.9 as current.
+- All **29 archive files** and the preferences file remained byte-identical. Live UI inspection showed only 22 and 23 September in the current seven-day range, omitting five empty dates in a **428 × 560** point panel. The empty prior range showed no date headings and contracted to **380 × 290** points.
 
 The direct package is locally ad-hoc signed for this Mac. Developer ID signing and notarization, or Mac App Store signing, remain the public-distribution trust boundary.
 
@@ -27,5 +30,5 @@ The direct package is locally ad-hoc signed for this Mac. Developer ID signing a
 - `quick-guide-layout-check.json`: retained one-page A4 guide geometry and text extraction evidence for the byte-identical PDF.
 - `app-store-preflight-static-v0.3.9.log`: 20 passing static source and packaging checks.
 - `app-store-preflight-release-v0.3.9.log`: the two external signing and tooling prerequisites.
-- `release-publication.json`: added after public release verification.
-- `live-install-v0.3.9.json`: added after the installed 0.3.8 app completes its verified update.
+- `release-publication.json`: public release metadata and unauthenticated byte-identity checks for every asset and the latest manifest.
+- `live-install-v0.3.9.json`: in-app update, backup, signatures, archive/preferences preservation, Desktop link, runtime and live sparse/empty Weekly checks.

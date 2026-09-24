@@ -12,7 +12,13 @@ The optimized ARM64 direct build is **0.3.9 (34)** with source fingerprint `07a8
 
 Static Store packaging passed **20/20** checks. App Store release preflight retains two external prerequisites: an Apple Developer Team ID and full Xcode.
 
-[0.3.9 evidence index](../docs/qa/0.3.9/README.md) · [Full optimized run](../docs/qa/0.3.9/full-run/report.json) · [Release renders](../docs/qa/0.3.9/release-ui-renders.json) · [Empty Weekly renders](../docs/qa/0.3.9/weekly-entry-renders.json) · [Build receipt](../docs/qa/0.3.9/build-receipt-v0.3.9.json) · [Update manifest](../docs/qa/0.3.9/update-manifest-v0.3.9.json) · [Static Store preflight](../docs/qa/0.3.9/app-store-preflight-static-v0.3.9.log) · [Release preflight](../docs/qa/0.3.9/app-store-preflight-release-v0.3.9.log).
+Release [v0.3.9](https://github.com/RoeyAsterix/DaBin/releases/tag/v0.3.9) is public and latest. Unauthenticated requests returned HTTP 200 for the repository, release, all four assets and latest manifest; every downloaded asset was byte-identical to its verified local source.
+
+The installed 0.3.8 app discovered, downloaded and installed the public 0.3.9 package through its own verified updater. The installed app and helper pass strict signature checks, the exact prior 0.3.8 app is backed up, the Desktop link remains valid, one ARM64 process is running, and a subsequent check reports that 0.3.9 is current. All **29 archive files** and the preferences file remain byte-identical.
+
+Live Weekly verification used the existing archive without editing it. In the 18–24 September range, only Tuesday 22 and Wednesday 23 rendered, the five empty dates were absent, the footer read **2 active days**, and the panel measured **428 × 560** points. The empty 11–17 September range rendered no date headings, showed the single bored-robot empty state, and measured **380 × 290** points. DaBin was left on the current two-day Weekly view.
+
+[0.3.9 evidence index](../docs/qa/0.3.9/README.md) · [Publication](../docs/qa/0.3.9/release-publication.json) · [Live installation](../docs/qa/0.3.9/live-install-v0.3.9.json) · [Full optimized run](../docs/qa/0.3.9/full-run/report.json) · [Release renders](../docs/qa/0.3.9/release-ui-renders.json) · [Empty Weekly renders](../docs/qa/0.3.9/weekly-entry-renders.json) · [Build receipt](../docs/qa/0.3.9/build-receipt-v0.3.9.json) · [Update manifest](../docs/qa/0.3.9/update-manifest-v0.3.9.json) · [Static Store preflight](../docs/qa/0.3.9/app-store-preflight-static-v0.3.9.log) · [Release preflight](../docs/qa/0.3.9/app-store-preflight-release-v0.3.9.log).
 
 ## Day Export and compact header — 0.3.8 (33)
 
