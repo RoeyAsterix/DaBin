@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: Release tag to repair, such as v0.3.18
+        description: Release tag to validate and repair, such as v0.3.19
         required: true
         type: string
 
@@ -14,14 +14,14 @@ permissions:
   contents: write
 
 jobs:
-  stable-downloads:
-    runs-on: ubuntu-latest
+  verified-stable-downloads:
+    runs-on: macos-14
     env:
       GH_TOKEN: ${{ github.token }}
       GH_REPO: ${{ github.repository }}
       RELEASE_TAG: ${{ github.event.release.tag_name || inputs.tag }}
     steps:
-      - name: Copy versioned packages to stable asset names
+      - name: Download versioned packages and release evidence
         shell: bash
         run: |
           set -euo pipefail
@@ -32,17 +32,164 @@ jobs:
           version="${BASH_REMATCH[1]}"
           release_dir="$RUNNER_TEMP/dabin-release"
           mkdir -p "$release_dir"
-          update="DaBin-${version}-Update.zip"
-          standalone="DaBin-${version}-AppleSilicon.zip"
-          gh release download "$RELEASE_TAG" --repo "$GH_REPO" --pattern "$update" --dir "$release_dir"
-          gh release download "$RELEASE_TAG" --repo "$GH_REPO" --pattern "$standalone" --dir "$release_dir"
-          test -s "$release_dir/$update"
-          test -s "$release_dir/$standalone"
-          cp "$release_dir/$update" "$release_dir/DaBin-Latest-Update.zip"
-          cp "$release_dir/$standalone" "$release_dir/DaBin-Latest-AppleSilicon.zip"
+          gh release download "$RELEASE_TAG" --repo "$GH_REPO" \
+            --pattern "DaBin-${version}-Update.zip" \
+            --pattern "DaBin-${version}-AppleSilicon.zip" \
+            --pattern 'DaBin-update.json' \
+            --pattern 'DISTRIBUTION-ATTESTATION.json' \
+            --dir "$release_dir"
+          test -s "$release_dir/DaBin-${version}-Update.zip"
+          test -s "$release_dir/DaBin-${version}-AppleSilicon.zip"
+          test -s "$release_dir/DaBin-update.json"
+          test -s "$release_dir/DISTRIBUTION-ATTESTATION.json"
+          echo "DABIN_VERSION=$version" >> "$GITHUB_ENV"
+          echo "DABIN_RELEASE_DIR=$release_dir" >> "$GITHUB_ENV"
+
+      - name: Verify notarized distribution attestation and package bytes
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib
+          import json
+          import os
+          from pathlib import Path
+          import re
+
+          root = Path(os.environ["DABIN_RELEASE_DIR"])
+          version = os.environ["DABIN_VERSION"]
+          update = root / f"DaBin-{version}-Update.zip"
+          standalone = root / f"DaBin-{version}-AppleSilicon.zip"
+          manifest = json.loads((root / "DaBin-update.json").read_text())
+          attestation = json.loads((root / "DISTRIBUTION-ATTESTATION.json").read_text())
+          if not isinstance(manifest, dict) or not isinstance(attestation, dict):
+              raise SystemExit("Release evidence must contain JSON objects")
+
+          def digest(path):
+              value = hashlib.sha256()
+              with path.open("rb") as stream:
+                  for block in iter(lambda: stream.read(1024 * 1024), b""):
+                      value.update(block)
+              return value.hexdigest()
+
+          identity = attestation.get("developerIDIdentity")
+          match = re.fullmatch(r"Developer ID Application: .+ \(([A-Z0-9]{10})\)", identity or "")
+          submission = str(attestation.get("notarySubmissionID", ""))
+          if not match or not re.fullmatch(
+              r"[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}", submission
+          ):
+              raise SystemExit("Invalid Developer ID or notarization identity")
+          if attestation.get("schemaVersion") != 1 or attestation.get("version") != version:
+              raise SystemExit("Attestation release identity does not match the tag")
+          if attestation.get("teamIdentifier") != match.group(1) or attestation.get("localAdHocSigning") is not False:
+              raise SystemExit("Ad-hoc or wrong-team distribution is forbidden")
+          gates = ("hardenedRuntime", "trustedTimestamp", "notarizationValidated",
+                   "stapleValidated", "gatekeeperValidated")
+          if any(attestation.get(field) is not True for field in gates):
+              raise SystemExit("One or more required distribution gates did not pass")
+          signed_hashes = ("signedExecutableSHA256", "signedUpdaterExecutableSHA256")
+          if any(not re.fullmatch(r"[0-9a-f]{64}", str(attestation.get(field, ""))) for field in signed_hashes):
+              raise SystemExit("Attestation has invalid signed executable hashes")
+
+          fields = ("developerIDIdentity", "teamIdentifier", "localAdHocSigning", *gates,
+                    "notarySubmissionID")
+          if manifest.get("distribution") != {field: attestation[field] for field in fields}:
+              raise SystemExit("Manifest and attestation distribution identities disagree")
+          if (manifest.get("schemaVersion") != 1 or manifest.get("bundleIdentifier") != "com.dabin.mac"
+                  or manifest.get("version") != version or manifest.get("buildNumber") != attestation.get("buildNumber")
+                  or manifest.get("architecture") != "arm64" or manifest.get("minimumMacOS") != "14.0"):
+              raise SystemExit("Update manifest identity is invalid")
+
+          artifacts = attestation.get("artifacts")
+          expected = {update.name: update, standalone.name: standalone}
+          if not isinstance(artifacts, dict) or set(artifacts) != set(expected):
+              raise SystemExit("Attestation must describe both exact versioned packages")
+          for name, path in expected.items():
+              record = artifacts.get(name)
+              if (not isinstance(record, dict) or set(record) != {"bytes", "sha256"}
+                      or record.get("bytes") != path.stat().st_size or record.get("sha256") != digest(path)):
+                  raise SystemExit(f"Attestation does not match {name}")
+          updater_qa = attestation.get("updaterQA")
+          updater_gates = ("freshInstall", "replacement", "backup", "installedCodeSignature",
+                           "installedStaple", "installedGatekeeper", "installedSystemPolicy")
+          if (not isinstance(updater_qa, dict)
+                  or any(updater_qa.get(field) != "passed" for field in updater_gates)
+                  or updater_qa.get("updateZIPSHA256") != digest(update)
+                  or manifest.get("updaterQA") != updater_qa):
+              raise SystemExit("Attestation lacks complete updater installation QA")
+          asset = manifest.get("asset")
+          expected_url = f"https://github.com/RoeyAsterix/DaBin/releases/download/v{version}/{update.name}"
+          if (not isinstance(asset, dict) or asset.get("name") != update.name
+                  or asset.get("url") != expected_url or asset.get("bytes") != update.stat().st_size
+                  or asset.get("sha256") != digest(update)):
+              raise SystemExit("Public update manifest does not match the update package")
+          PY
+
+      - name: Recheck exact downloads with macOS distribution policy
+        shell: bash
+        run: |
+          set -euo pipefail
+          update_root="$RUNNER_TEMP/extracted-update"
+          standalone_root="$RUNNER_TEMP/extracted-standalone"
+          mkdir -p "$update_root" "$standalone_root"
+          ditto -x -k "$DABIN_RELEASE_DIR/DaBin-${DABIN_VERSION}-Update.zip" "$update_root"
+          ditto -x -k "$DABIN_RELEASE_DIR/DaBin-${DABIN_VERSION}-AppleSilicon.zip" "$standalone_root"
+
+          expected_identity="$(python3 -c 'import json,os; print(json.load(open(os.path.join(os.environ["DABIN_RELEASE_DIR"], "DISTRIBUTION-ATTESTATION.json")))["developerIDIdentity"])')"
+          expected_team="$(python3 -c 'import json,os; print(json.load(open(os.path.join(os.environ["DABIN_RELEASE_DIR"], "DISTRIBUTION-ATTESTATION.json")))["teamIdentifier"])')"
+          expected_main_sha="$(python3 -c 'import json,os; print(json.load(open(os.path.join(os.environ["DABIN_RELEASE_DIR"], "DISTRIBUTION-ATTESTATION.json")))["signedExecutableSHA256"])')"
+          expected_helper_sha="$(python3 -c 'import json,os; print(json.load(open(os.path.join(os.environ["DABIN_RELEASE_DIR"], "DISTRIBUTION-ATTESTATION.json")))["signedUpdaterExecutableSHA256"])')"
+
+          verify_bundle() {
+            local app="$1"
+            local label="$2"
+            local helper="$app/Contents/Helpers/DaBin Update.app"
+            test -d "$app"
+            test -d "$helper"
+            if find "$app" -type l -print -quit | grep -q .; then
+              echo "$label contains an unsupported symbolic link" >&2
+              exit 1
+            fi
+            test -x "$app/Contents/MacOS/DaBin"
+            test -x "$helper/Contents/MacOS/DaBinUpdate"
+            test "$(shasum -a 256 "$app/Contents/MacOS/DaBin" | awk '{print $1}')" = "$expected_main_sha"
+            test "$(shasum -a 256 "$helper/Contents/MacOS/DaBinUpdate" | awk '{print $1}')" = "$expected_helper_sha"
+            test "$(xxd -p -l 4 "$app/Contents/CodeResources")" = 73386368
+            test "$(lipo -archs "$app/Contents/MacOS/DaBin")" = arm64
+            test "$(lipo -archs "$helper/Contents/MacOS/DaBinUpdate")" = arm64
+            codesign --verify --deep --strict "$app"
+            codesign --verify --deep --strict "$helper"
+            for bundle in "$helper" "$app"; do
+              details="$(codesign -d --verbose=4 "$bundle" 2>&1)"
+              grep -Fq "Authority=$expected_identity" <<<"$details"
+              grep -Fq "TeamIdentifier=$expected_team" <<<"$details"
+              grep -Fq '(runtime)' <<<"$details"
+              grep -Eq '^Timestamp=.+$' <<<"$details"
+              ! grep -Fq 'Signature=adhoc' <<<"$details"
+            done
+            xcrun stapler validate -v "$app"
+            xattr -w com.apple.quarantine \
+              "0081;$(printf '%x' "$(date +%s)");GitHub_Actions;00000000-0000-0000-0000-000000000000" "$app"
+            gatekeeper="$(spctl --assess --type execute --verbose=4 "$app" 2>&1)"
+            grep -Fqi accepted <<<"$gatekeeper"
+            grep -Fqi 'source=Notarized Developer ID' <<<"$gatekeeper"
+            syspolicy_check distribution "$app"
+          }
+
+          verify_bundle "$update_root/DaBin-${DABIN_VERSION}-Update/DaBin.app" update
+          verify_bundle "$standalone_root/DaBin-${DABIN_VERSION}-AppleSilicon/DaBin.app" standalone
+
+      - name: Publish permanent aliases only after every gate passes
+        shell: bash
+        run: |
+          set -euo pipefail
+          cp "$DABIN_RELEASE_DIR/DaBin-${DABIN_VERSION}-Update.zip" \
+             "$DABIN_RELEASE_DIR/DaBin-Latest-Update.zip"
+          cp "$DABIN_RELEASE_DIR/DaBin-${DABIN_VERSION}-AppleSilicon.zip" \
+             "$DABIN_RELEASE_DIR/DaBin-Latest-AppleSilicon.zip"
           gh release upload "$RELEASE_TAG" --repo "$GH_REPO" --clobber \
-            "$release_dir/DaBin-Latest-Update.zip" \
-            "$release_dir/DaBin-Latest-AppleSilicon.zip"
+            "$DABIN_RELEASE_DIR/DaBin-Latest-Update.zip" \
+            "$DABIN_RELEASE_DIR/DaBin-Latest-AppleSilicon.zip"
 
       - name: Verify stable assets exist on the release
         shell: bash
