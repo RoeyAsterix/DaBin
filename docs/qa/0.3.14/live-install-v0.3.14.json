@@ -1,0 +1,82 @@
+{
+  "archive": {
+    "afterFileCount": 33,
+    "allFilesByteIdentical": true,
+    "beforeFileCount": 33,
+    "changedFiles": [],
+    "path": "/Users/roeylibfeld/Library/Containers/com.dabin.mac/Data/Library/Application Support/DaBin/Archive"
+  },
+  "checkedAtUTC": "2026-09-24T05:17:17.434813+00:00",
+  "desktopLink": {
+    "isSymlink": true,
+    "path": "/Users/roeylibfeld/Desktop/DaBin.app",
+    "target": "/Users/roeylibfeld/Applications/DaBin.app",
+    "unchanged": true
+  },
+  "downloadedArchive": {
+    "bytes": 3391196,
+    "matchesPublishedPackage": true,
+    "path": "/Users/roeylibfeld/Library/Containers/com.dabin.mac/Data/Library/Application Support/DaBin/Updates/DaBin-0.3.14-Update.zip",
+    "sha256": "38495e16b2b5d1629fccaa152815b6c1c7da2f7800ab370e51267504631a96c2"
+  },
+  "embeddedUpdater": {
+    "build": "39",
+    "executableSHA256": "6f855d9545c69266b5ce92a38cdb61e5ca1c21fc14aa42897ddc547454bdbc1d",
+    "path": "/Users/roeylibfeld/Applications/DaBin.app/Contents/Helpers/DaBin Update.app",
+    "strictDeepSignatureVerified": true,
+    "version": "0.3.14"
+  },
+  "installation": {
+    "fromBuild": "38",
+    "fromVersion": "0.3.13",
+    "method": "public in-app update",
+    "packageSHA256": "38495e16b2b5d1629fccaa152815b6c1c7da2f7800ab370e51267504631a96c2",
+    "steps": [
+      "Settings \u2192 Software updates",
+      "Check for updates",
+      "Download & install",
+      "Update",
+      "Done"
+    ],
+    "toBuild": "39",
+    "toVersion": "0.3.14"
+  },
+  "installedApp": {
+    "architecture": "arm64",
+    "build": "39",
+    "executableSHA256": "80fb1e1c39455ad765b313c714b9abe20a3f5e52548e3ad4a10bad697e901f0c",
+    "path": "/Users/roeylibfeld/Applications/DaBin.app",
+    "sourceFingerprint": "e39dd3182ad87aeb266805bfb038b432b42f3e4b23b9e3e5a8e76b9fd88891c4",
+    "strictDeepSignatureVerified": true,
+    "version": "0.3.14"
+  },
+  "liveUI": {
+    "filterTooltip": "Tasks appeared after real pointer hover",
+    "primaryActionTooltip": "Add task appeared after real pointer hover",
+    "settingsMenuOpened": true,
+    "settingsTooltip": "Live QA found the inner Menu label did not receive hover; corrected in follow-up 0.3.15",
+    "visualTooltipExcludedFromAccessibilityTree": true
+  },
+  "passed": false,
+  "preferences": {
+    "afterSHA256": "23435379c513e19e72e56e3b8057439d45db431c09154178665d5a7006e45ac0",
+    "beforeSHA256": "f6e6bb653b52b8a8f572d12f802b59c4913941db20ddd384cab4d8afcfb868b2",
+    "fileChanged": true,
+    "path": "/Users/roeylibfeld/Library/Containers/com.dabin.mac/Data/Library/Preferences/com.dabin.mac.plist"
+  },
+  "previousBackup": {
+    "build": "38",
+    "executableSHA256": "a85a557812a41c7783bfe411c1a25f1ade6088de9969d0f09f96b5a307455314",
+    "matchesPreinstallExecutable": true,
+    "path": "/Users/roeylibfeld/Applications/.DaBinBackups/20260924-081356-409E27C7.app",
+    "sourceFingerprint": "5f15ba6f71e53b59c8e99312c64654f4cab8edc7d6cfa012f87c2cdd9a07fa66",
+    "strictDeepSignatureVerified": true,
+    "version": "0.3.13"
+  },
+  "runtime": {
+    "oneInstalledDaBinProcess": true,
+    "runningPIDs": [
+      "55029"
+    ]
+  }
+}

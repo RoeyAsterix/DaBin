@@ -289,7 +289,6 @@ struct BoardView: View {
             Button("Settings…") { state.showSettings() }
         } label: {
             AccentIconMenuLabel(symbol: TimelinePrimaryAction.settings.symbol,
-                                tooltip: primaryTooltip(.settings, index: 4),
                                 hovered: $settingsHovered, focused: settingsFocused)
         }
         .menuStyle(.borderlessButton)
@@ -298,11 +297,33 @@ struct BoardView: View {
         .frame(width: TimelineIconRowMetrics.controlWidth,
                height: TimelineIconRowMetrics.controlHeight)
         .focused($settingsFocused)
+        // Menu owns AppKit's tracking region, so hover must be observed here
+        // rather than on its SwiftUI label content.
+        .onHover { isHovering in
+            settingsHovered = isHovering
+            updateSettingsTooltip(hovered: isHovering, focused: settingsFocused)
+        }
+        .onChange(of: settingsFocused) { _, isFocused in
+            updateSettingsTooltip(hovered: settingsHovered, focused: isFocused)
+        }
         .simultaneousGesture(TapGesture().onEnded {
             tooltipController.activate(id: "primary-tooltip-settings")
         })
+        .onDisappear {
+            settingsHovered = false
+            tooltipController.end(id: "primary-tooltip-settings")
+        }
         .accessibilityLabel(TimelinePrimaryAction.settings.label)
         .accessibilityIdentifier("timeline-action-settings")
+    }
+
+    private func updateSettingsTooltip(hovered: Bool, focused: Bool) {
+        let tooltip = primaryTooltip(.settings, index: 4)
+        if hovered || focused {
+            tooltipController.begin(tooltip, immediate: focused && !hovered)
+        } else {
+            tooltipController.end(id: tooltip.id)
+        }
     }
 
     private func primaryTooltip(_ action: TimelinePrimaryAction, index: Int) -> TimelineTooltipDescriptor {

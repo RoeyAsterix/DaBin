@@ -10,11 +10,17 @@ The default corner trigger is 9 logical points along each edge, polled every 100
 
 No persistent menu-bar item was added, to honor complete hiding at rest. Reopening DaBin, its active-app menu, the focused robot's context menu, and keyboard actions provide recovery. A system-wide hotkey is not registered. OS Hot Corners may activate at the same corners; this app does not change system settings.
 
+## Update 0.3.15
+
+Live pointer QA of the installed 0.3.14 release found one platform-specific gap: Settings is a native SwiftUI `Menu`, whose outer control owns pointer hit testing and prevents the inner icon label's hover callback from firing. The Settings tooltip therefore did not appear even though its keyboard-focus cue and menu actions remained available. The other ten action and filter tooltips behaved as designed.
+
+The hotfix moves only Settings pointer tracking to the outer `Menu` and passes that hover state into the shared gear label. Its 220 ms delay, short **Settings** text, complete **Settings and options** accessibility name, keyboard-focus presentation, activation behavior and menu contents remain the same. No row measurement, archive, capture, privacy or update-channel behavior changes. All 30 optimized Release suites, 46 renders, the exact built-app pointer/Menu check, ARM64 build and isolated update-package QA passed; publication and final installed-app verification are tracked separately.
+
 ## Update 0.3.14
 
 The five primary actions and six content filters now share a compact custom tooltip treatment. Each short visual label appears after a 220 ms pointer dwell or when its icon receives keyboard focus. Activating a control dismisses its label, and the label clears after both pointer and keyboard focus leave; the controls retain their complete accessibility labels.
 
-The tooltip is an overlay rather than layout content, so the paired 280 × 34-point rows and all existing icon targets remain unchanged. A small pointer and row-aware vertical anchor keep an action label attached to its primary icon while filter labels appear below the filter row. The exact source passed all 30 optimized Release suites; 46 production-view renders include representative first-action and last-filter labels in light and dark appearance. The ARM64 build and verified update package are complete, with publication and live installation tracked separately.
+The tooltip is an overlay rather than layout content, so the paired 280 × 34-point rows and all existing icon targets remain unchanged. A small pointer and row-aware vertical anchor keep an action label attached to its primary icon while filter labels appear below the filter row. The exact source passed all 30 optimized Release suites; 46 production-view renders include representative first-action and last-filter labels in light and dark appearance. The ARM64 build, verified update package, public publication and in-app installation completed successfully. Live pointer QA after installation found the Settings-only outer-Menu interception corrected in 0.3.15.
 
 ## Update 0.3.13
 

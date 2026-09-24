@@ -1,6 +1,6 @@
 # DaBin 0.3.14 release evidence
 
-This directory records the completed functional, visual, build, package and Store-readiness checks for DaBin 0.3.14 (39). Public publication and the live in-app update are recorded after the tagged release exists.
+This directory records the functional, visual, build, package, publication, installed-update and live pointer checks for DaBin 0.3.14 (39). The release installed successfully, then live QA found the Settings-only hover gap corrected in 0.3.15.
 
 ## Pre-publication result
 
@@ -12,7 +12,7 @@ This directory records the completed functional, visual, build, package and Stor
 - The verified update ZIP is **3,391,196 bytes**, SHA-256 `38495e16b2b5d1629fccaa152815b6c1c7da2f7800ab370e51267504631a96c2`. Package QA passed isolated fresh installation, replacement, backup, strict clean-copy signature validation, extraction, manifest round trip, executable identity and document handoff.
 - The unchanged one-page A4 PDF guide is **299,779 bytes**, SHA-256 `61c0a585b5a978a317ae9b2f133401e587027d57e9aaded4871ac5e0f9d36291`.
 - Static Store source packaging passed all **20** checks. Release preflight remains blocked by the two external prerequisites already documented: a 10-character Apple Developer Team ID and full Xcode.
-- GitHub publication, unauthenticated asset verification, the installed 0.3.13 → 0.3.14 self-update, archive/preferences preservation and live pointer/Menu checks are pending the tagged release.
+- GitHub publication and all four unauthenticated asset checks passed with byte-identical downloads. The installed 0.3.13 app updated itself to 0.3.14, the installed binary and downloaded package matched the verified release, its 33 archive files stayed byte-identical, the Desktop link and verified 0.3.13 backup were preserved, and Settings still opened. Live pointer QA passed Add and filter tooltips but found that Settings' native outer `Menu` intercepted hover before its inner label; 0.3.15 moves that tracking to the outer control.
 
 The direct package is locally ad-hoc signed for this Mac. Developer ID signing and notarization, or Mac App Store distribution signing, remain separate trust boundaries.
 
@@ -39,3 +39,5 @@ The direct package is locally ad-hoc signed for this Mac. Developer ID signing a
 - `quick-guide-layout-check.json`: retained A4 guide geometry and extraction evidence for the byte-identical PDF.
 - `app-store-preflight-static-v0.3.14.log`: 20 passing source and packaging checks.
 - `app-store-preflight-release-v0.3.14.log`: the two remaining external signing and tooling prerequisites.
+- `release-publication.json`: unauthenticated release, latest-manifest and public byte-identity verification.
+- `live-install-v0.3.14.json`: successful in-app installation, archive/binary/backup checks and the Settings-only live hover finding that triggered 0.3.15.

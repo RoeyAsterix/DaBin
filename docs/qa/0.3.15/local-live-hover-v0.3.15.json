@@ -1,0 +1,47 @@
+{
+  "appPath": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/DaBin.app",
+  "archive": {
+    "fileCount": 33,
+    "matchesPreTooltipArchive": true
+  },
+  "build": "40",
+  "checkedAtUTC": "2026-09-24T05:25:59.661423+00:00",
+  "executableSHA256": "59a9db45185dc6ca8cba91bf82ae960acdceeae1f038bda0c0630a29afb14f8a",
+  "launchMethod": "Built Release app launched separately with --show-daily; installed 0.3.14 restored afterward",
+  "passed": true,
+  "pointer": {
+    "dwellMilliseconds": 500,
+    "method": "real CG mouse-moved event",
+    "settingsTargetGlobal": [
+      1383,
+      188
+    ]
+  },
+  "result": {
+    "accessibleLabel": "Settings and options",
+    "menuOpenedAfterHover": true,
+    "tooltipExcludedFromAccessibilityTree": true,
+    "tooltipVisible": true,
+    "visualLabel": "Settings"
+  },
+  "screenshot": {
+    "file": "renders/live-settings-tooltip-header-dark-380pt@2x.png",
+    "pixelSize": [
+      760,
+      230
+    ],
+    "privacy": "Header-only crop; capture content excluded",
+    "sha256": "42c149930d0c6d7522190cb99480454dd7f2c841b1316e7ea0c3a22ac2add9e4"
+  },
+  "version": "0.3.15",
+  "window": {
+    "logicalSize": [
+      380,
+      323
+    ],
+    "topLeft": [
+      1073,
+      133
+    ]
+  }
+}

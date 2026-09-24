@@ -1,0 +1,59 @@
+{
+  "assets": {
+    "DaBin-0.3.14-Update.zip": {
+      "bytes": 3391196,
+      "localSource": "output/downloads/DaBin-0.3.14-Update.zip",
+      "matchesLocal": true,
+      "sha256": "38495e16b2b5d1629fccaa152815b6c1c7da2f7800ab370e51267504631a96c2",
+      "status": 200,
+      "url": "https://github.com/RoeyAsterix/DaBin/releases/download/v0.3.14/DaBin-0.3.14-Update.zip"
+    },
+    "DaBin-Quick-Guide.pdf": {
+      "bytes": 299779,
+      "localSource": "output/pdf/DaBin-Quick-Guide.pdf",
+      "matchesLocal": true,
+      "sha256": "61c0a585b5a978a317ae9b2f133401e587027d57e9aaded4871ac5e0f9d36291",
+      "status": 200,
+      "url": "https://github.com/RoeyAsterix/DaBin/releases/download/v0.3.14/DaBin-Quick-Guide.pdf"
+    },
+    "DaBin-update.json": {
+      "bytes": 596,
+      "localSource": "tmp/release-v0.3.14/DaBin-update.json",
+      "matchesLocal": true,
+      "sha256": "5533b478adec138554ec84fb7103d414c12f41ed67adcba1071b3348a061b65d",
+      "status": 200,
+      "url": "https://github.com/RoeyAsterix/DaBin/releases/download/v0.3.14/DaBin-update.json"
+    },
+    "RELEASE_NOTES_0.3.14.md": {
+      "bytes": 1086,
+      "localSource": "docs/RELEASE_NOTES_0.3.14.md",
+      "matchesLocal": true,
+      "sha256": "9d6f650d279bcbc8317e8cb90715638628a29c7863240eadefb81508aefbfd1d",
+      "status": 200,
+      "url": "https://github.com/RoeyAsterix/DaBin/releases/download/v0.3.14/RELEASE_NOTES_0.3.14.md"
+    }
+  },
+  "checkedAtUTC": "2026-09-24T05:12:37.289905Z",
+  "defaultBranch": "main",
+  "draft": false,
+  "latest": true,
+  "latestManifest": {
+    "bytes": 596,
+    "matchesReleaseManifest": true,
+    "sha256": "5533b478adec138554ec84fb7103d414c12f41ed67adcba1071b3348a061b65d",
+    "status": 200,
+    "url": "https://github.com/RoeyAsterix/DaBin/releases/latest/download/DaBin-update.json"
+  },
+  "name": "DaBin 0.3.14",
+  "passed": true,
+  "prerelease": false,
+  "publishedAt": "2026-09-24T05:12:15Z",
+  "releaseStatus": 200,
+  "releaseURL": "https://github.com/RoeyAsterix/DaBin/releases/tag/v0.3.14",
+  "repositoryStatus": 200,
+  "repositoryURL": "https://github.com/RoeyAsterix/DaBin",
+  "tagName": "v0.3.14",
+  "tagObject": "a70002a83a1db32aaa6dd10ad32d37d3561bb34d",
+  "targetCommit": "e5319343a63cc2c22bb3cb6a99c75b9d639f8609",
+  "unauthenticated": true
+}

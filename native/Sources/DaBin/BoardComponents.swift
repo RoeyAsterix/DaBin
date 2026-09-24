@@ -334,9 +334,7 @@ private struct AccentIconButtonStyle: ButtonStyle {
 @MainActor
 struct AccentIconMenuLabel: View {
     @Environment(\.daBinAccent) private var accent
-    @Environment(\.timelineTooltipController) private var tooltipController
     let symbol: String
-    let tooltip: TimelineTooltipDescriptor
     @Binding var hovered: Bool
     let focused: Bool
 
@@ -363,25 +361,6 @@ struct AccentIconMenuLabel: View {
                                height: TimelineIconRowMetrics.focusRingDiameter)
                 }
             }
-            .onHover { isHovering in
-                hovered = isHovering
-                updateTooltip(hovered: isHovering, focused: focused)
-            }
-            .onChange(of: focused) { _, isFocused in
-                updateTooltip(hovered: hovered, focused: isFocused)
-            }
-            .onDisappear {
-                hovered = false
-                tooltipController?.end(id: tooltip.id)
-            }
-    }
-
-    private func updateTooltip(hovered: Bool, focused: Bool) {
-        if hovered || focused {
-            tooltipController?.begin(tooltip, immediate: focused && !hovered)
-        } else {
-            tooltipController?.end(id: tooltip.id)
-        }
     }
 }
 

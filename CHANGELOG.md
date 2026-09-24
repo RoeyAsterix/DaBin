@@ -1,10 +1,17 @@
 # Changelog
 
+## 0.3.15 — 2026-09-24
+
+- Moved Settings tooltip hover tracking from the menu's inner icon label to the outer native Menu, so the gear receives the same delayed hover label as the other header icons under real macOS hit testing.
+- Left the other ten action and filter tooltips, their timing, keyboard-focus behavior, accessibility names and the paired 280 × 34-point row geometry unchanged.
+- Superseded 0.3.14 after its public release and successful in-app installation: live pointer QA found this Settings-only hover gap after publication.
+
 ## 0.3.14 — 2026-09-24
 
 - Added compact custom hover tooltips to all five primary actions and six content filters, with short visible labels and complete accessibility names.
 - Showed each tooltip after a 220 ms hover delay, exposed the same label for keyboard focus, dismissed it on click and cleared it after pointer and focus leave.
 - Kept the existing 280 × 34-point action and filter row geometry unchanged, with representative light and dark render coverage and targeted interaction tests added for release verification.
+- Published and installed the release successfully through DaBin's verified updater; subsequent live pointer QA exposed the Settings-only menu-hover gap corrected in 0.3.15.
 
 ## 0.3.13 — 2026-09-24
 

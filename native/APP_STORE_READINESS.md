@@ -1,7 +1,7 @@
 # DaBin — Mac App Store readiness
 
 **Audit date:** 24 September 2026
-**Source version:** 0.3.14 (39), direct pre-publication checks passed
+**Source version:** 0.3.15 (40), direct pre-publication checks passed
 **Result: BLOCKED for submission; local app QA is a separate result.**
 
 The source now has a Productivity category, a bundled privacy explanation, privacy manifest, and an Xcode Release configuration that does not force ad-hoc signing. These changes improve readiness. They do not make the locally signed app an App Store distribution build or guarantee approval.
@@ -68,12 +68,12 @@ python3 scripts/app_store_preflight.py --static-only
 python3 scripts/app_store_preflight.py
 ```
 
-The 0.3.14 source adds visual tooltips without changing sandbox, privacy or update behavior. Its static source/package preflight passed all 20 checks; Store release preflight retains the same two external prerequisites:
+The 0.3.15 source moves Settings tooltip hover tracking from an inner label to its outer native `Menu`. It does not change sandbox, privacy, capture, persistence or update behavior. Its static source/package preflight passed all 20 checks; Store release preflight retains the same two external prerequisites:
 
-- `../docs/qa/0.3.14/app-store-preflight-static-v0.3.14.log`: all 20 source and packaging checks passed.
-- `../docs/qa/0.3.14/app-store-preflight-release-v0.3.14.log`: release preflight remains blocked by the Apple Developer Team ID and full Xcode. The configured GitHub policy/support URLs pass offline syntax checks; their content and continuing reachability remain owner responsibilities.
+- `../docs/qa/0.3.15/app-store-preflight-static-v0.3.15.log`: all 20 source and packaging checks passed.
+- `../docs/qa/0.3.15/app-store-preflight-release-v0.3.15.log`: release preflight remains blocked by the Apple Developer Team ID and full Xcode. The configured GitHub policy/support URLs pass offline syntax checks; their content and continuing reachability remain owner responsibilities.
 
-The functional and package evidence for this source version is recorded in `QA_RESULTS.md`.
+The completed 0.3.14 evidence, its live Settings-only gap, and the completed 0.3.15 pre-publication verification are recorded in `QA_RESULTS.md`.
 
 `bash -n` validated the build/archive shell scripts; Python compilation validated the preflight/project generator; property-list checks passed for Info.plist, entitlements, privacy manifest, and the generated Xcode project. Thirteen offline URL validation cases rejected placeholder, credential-bearing, local/private, malformed-port, whitespace, and invalid-host inputs as intended. URL validation is syntactic; the owner must verify that each published page is reachable and contains the required information.
 

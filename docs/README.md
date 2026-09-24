@@ -4,6 +4,7 @@
 
 - [Quick guide PDF](DaBin-Quick-Guide.pdf)
 - [Native app guide](../native/README.md)
+- [DaBin 0.3.15 release notes](RELEASE_NOTES_0.3.15.md)
 - [DaBin 0.3.14 release notes](RELEASE_NOTES_0.3.14.md)
 - [DaBin 0.3.13 release notes](RELEASE_NOTES_0.3.13.md)
 - [DaBin 0.3.12 release notes](RELEASE_NOTES_0.3.12.md)

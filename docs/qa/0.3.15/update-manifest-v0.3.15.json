@@ -1,0 +1,16 @@
+{
+  "architecture": "arm64",
+  "asset": {
+    "bytes": 3391579,
+    "name": "DaBin-0.3.15-Update.zip",
+    "sha256": "b4e93f9d85147fc196b0a5e73038e70f4334003ac405fd5ad5323f7b96457b58",
+    "url": "https://github.com/RoeyAsterix/DaBin/releases/download/v0.3.15/DaBin-0.3.15-Update.zip"
+  },
+  "buildNumber": "40",
+  "bundleIdentifier": "com.dabin.mac",
+  "minimumMacOS": "14.0",
+  "releasePageURL": "https://github.com/RoeyAsterix/DaBin/releases/tag/v0.3.15",
+  "schemaVersion": 1,
+  "sourceFingerprint": "9678a70e2bb9ecc0e0e4a4df9f44d00dcbbe6c5eb3e5094126477e7aa3884192",
+  "version": "0.3.15"
+}
