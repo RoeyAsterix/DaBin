@@ -15,6 +15,7 @@ struct SettingsScreen: View {
     private let quitApplication: @MainActor () -> Void
     @State private var showPrivacyPolicy = false
     @State private var showAutoCaptureExplanation = false
+    @State private var pendingCaptureChannel: AutoCaptureChannel = .clipboard
     @State private var showExcludedApplications = false
 
     init(state: AppState, theme: ThemeSettings,
@@ -38,58 +39,63 @@ struct SettingsScreen: View {
                 SettingsSoftwareUpdateSection(updates: updates)
                 Divider()
                 VStack(alignment: .leading, spacing: 9) {
-                    Text("Capture").font(.system(size: 14, weight: .medium))
-                    Toggle("Auto Capture", isOn: Binding(
-                        get: { autoCaptureSettings.isEnabled },
-                        set: { requested in
-                            if requested {
-                                if !autoCaptureSettings.hasAcknowledgedPrivacyExplanation {
-                                    showAutoCaptureExplanation = true
-                                } else if autoCaptureSettings.screenshotFolderBookmark == nil {
-                                    DispatchQueue.main.async { chooseScreenshotFolder(enableAfterSelection: true) }
-                                } else {
-                                    autoCapture.setEnabled(true)
-                                }
-                            } else {
-                                autoCapture.setEnabled(false)
-                            }
-                        }
+                    Text("Automatic capture").font(.system(size: 14, weight: .medium))
+                    Text("Choose what to save. Both are off until you turn them on.")
+                        .font(.system(size: 12)).foregroundStyle(Palette.muted)
+                        .fixedSize(horizontal: false, vertical: true)
+                    Toggle("Clipboard", isOn: Binding(
+                        get: { autoCaptureSettings.isClipboardEnabled },
+                        set: { requestCapture(.clipboard, enabled: $0) }
                     ))
                     .toggleStyle(.switch).controlSize(.small)
                     .font(.system(size: 13, weight: .medium))
-                    Text("Automatically save screenshots and copied content to DaBin.")
-                        .font(.system(size: 12)).foregroundStyle(Palette.muted)
+                    .accessibilityIdentifier("settings-capture-clipboard")
+                    Text("Save future copied text, links, images and files.")
+                        .font(.system(size: 11)).foregroundStyle(Palette.muted)
+                    Toggle("Screenshots", isOn: Binding(
+                        get: { autoCaptureSettings.isScreenshotsEnabled },
+                        set: { requestCapture(.screenshots, enabled: $0) }
+                    ))
+                    .toggleStyle(.switch).controlSize(.small)
+                    .font(.system(size: 13, weight: .medium))
+                    .accessibilityIdentifier("settings-capture-screenshots")
+                    Text("Save new images from the screenshot folder you choose.")
+                        .font(.system(size: 11)).foregroundStyle(Palette.muted)
                         .fixedSize(horizontal: false, vertical: true)
                     HStack(spacing: 7) {
                         Circle().fill(autoCaptureStatusColor).frame(width: 7, height: 7)
                             .accessibilityHidden(true)
                         Text(autoCaptureStatusText).font(.system(size: 11, weight: .medium))
+                            .fixedSize(horizontal: false, vertical: true)
                         Spacer(minLength: 0)
                     }
-                    if let folder = autoCaptureSettings.screenshotFolderDisplayName {
-                        Label("Screenshots: \(folder)", systemImage: "folder")
-                            .font(.system(size: 11)).foregroundStyle(Palette.muted).lineLimit(1)
+                    if autoCaptureSettings.isScreenshotsEnabled {
+                        HStack(spacing: 8) {
+                            if let folder = autoCaptureSettings.screenshotFolderDisplayName {
+                                Label(folder, systemImage: "folder")
+                                    .font(.system(size: 11)).foregroundStyle(Palette.muted).lineLimit(1)
+                            }
+                            Button(needsScreenshotPermission ? "Choose screenshot folder…" : "Change folder…") {
+                                chooseScreenshotFolder(enableAfterSelection: false)
+                            }
+                            .buttonStyle(.plain).font(.system(size: 12)).foregroundStyle(accent)
+                        }
                     }
                     if autoCaptureSettings.isEnabled {
-                        HStack(spacing: 14) {
-                            Button(autoCaptureSettings.isPaused ? "Resume Auto Capture" : "Pause Auto Capture") {
-                                autoCapture.setPaused(!autoCaptureSettings.isPaused)
-                            }
-                            .buttonStyle(.plain).font(.system(size: 12, weight: .medium)).foregroundStyle(accent)
-                            if needsScreenshotPermission {
-                                Button("Choose screenshot folder…") {
-                                    chooseScreenshotFolder(enableAfterSelection: false)
-                                }
-                                .buttonStyle(.plain).font(.system(size: 12)).foregroundStyle(accent)
-                            }
+                        Button(autoCaptureSettings.isPaused ? "Resume capture" : "Pause capture") {
+                            autoCapture.setPaused(!autoCaptureSettings.isPaused)
                         }
+                        .buttonStyle(.plain).font(.system(size: 12, weight: .medium)).foregroundStyle(accent)
+                        .help("Pause or resume your selected capture sources together")
                     }
                     Button("Excluded applications…") { showExcludedApplications = true }
                         .buttonStyle(.plain).font(.system(size: 12)).foregroundStyle(accent)
-                    Text("DaBin and common password managers are excluded by default. Copied content and screenshot copies stay in your local archive and are not shared.")
+                    Text("Existing clipboard contents and screenshots are never imported when capture starts. DaBin and common password managers are excluded by default. Captures stay in your local archive.")
                         .font(.system(size: 11)).foregroundStyle(Palette.muted)
                         .fixedSize(horizontal: false, vertical: true)
                 }
+                Divider()
+                quickAccessSection
                 Divider()
                 VStack(alignment: .leading, spacing: 12) {
                     Text("Appearance").font(.system(size: 14, weight: .medium))
@@ -239,9 +245,11 @@ struct SettingsScreen: View {
                 .environment(\.daBinAccent, accent)
         }
         .sheet(isPresented: $showAutoCaptureExplanation) {
-            AutoCaptureExplanationSheet {
+            AutoCaptureExplanationSheet(channel: pendingCaptureChannel) {
+                autoCaptureSettings.acknowledgePrivacyExplanation()
                 showAutoCaptureExplanation = false
-                DispatchQueue.main.async { chooseScreenshotFolder(enableAfterSelection: true) }
+                let channel = pendingCaptureChannel
+                DispatchQueue.main.async { enableCapture(channel) }
             } cancel: {
                 showAutoCaptureExplanation = false
             }
@@ -269,26 +277,22 @@ struct SettingsScreen: View {
     }
 
     private var needsScreenshotPermission: Bool {
-        switch autoCaptureSettings.status {
+        guard autoCaptureSettings.isScreenshotsEnabled else { return false }
+        switch autoCapture.screenshotStatus {
         case .permissionRequired, .permissionRevoked: return true
-        default: return false
+        default: return autoCaptureSettings.screenshotFolderBookmark == nil
         }
     }
 
     private var autoCaptureStatusText: String {
-        switch autoCaptureSettings.status {
-        case .disabled: return "Off"
-        case .paused: return "Paused · existing captures remain"
-        case .ready: return "Enabled · ready"
-        case .monitoring: return "Enabled · monitoring future copies and screenshots"
-        case .permissionRequired: return "Enabled · choose a screenshot folder"
-        case .permissionRevoked: return "Enabled · screenshot folder permission was revoked"
-        case .sourceApplicationExcluded(let name): return "Enabled · skipping \(name)"
-        case .failed(let message): return "Needs attention · \(message)"
+        if case .sourceApplicationExcluded(let name) = autoCaptureSettings.status {
+            return "\(autoCapture.overallStatusText) · skipping \(name)"
         }
+        return autoCapture.overallStatusText
     }
 
     private var autoCaptureStatusColor: Color {
+        if needsScreenshotPermission && !autoCaptureSettings.isPaused { return .orange }
         switch autoCaptureSettings.status {
         case .monitoring, .sourceApplicationExcluded: return accent
         case .paused: return .orange
@@ -312,7 +316,7 @@ struct SettingsScreen: View {
             try autoCapture.authorizeScreenshotFolder(url)
             if enableAfterSelection {
                 autoCaptureSettings.acknowledgePrivacyExplanation()
-                autoCapture.setEnabled(true)
+                autoCapture.setScreenshotsEnabled(true)
             }
         } catch {
             state.reportFailure("Could not authorize the screenshot folder: \(error.localizedDescription)")
@@ -320,13 +324,71 @@ struct SettingsScreen: View {
     }
 
     private func beginRequestedAutoCaptureSetup() {
-        guard state.consumeAutoCaptureSetupRequest() else { return }
+        // Opening setup shows the two independent choices; it never selects a
+        // source or requests folder access on the user's behalf.
+        _ = state.consumeAutoCaptureSetupRequest()
+    }
+
+    private func requestCapture(_ channel: AutoCaptureChannel, enabled: Bool) {
+        guard enabled else {
+            switch channel {
+            case .clipboard: autoCapture.setClipboardEnabled(false)
+            case .screenshots: autoCapture.setScreenshotsEnabled(false)
+            }
+            return
+        }
         if !autoCaptureSettings.hasAcknowledgedPrivacyExplanation {
+            pendingCaptureChannel = channel
             showAutoCaptureExplanation = true
-        } else if autoCaptureSettings.screenshotFolderBookmark == nil {
-            DispatchQueue.main.async { chooseScreenshotFolder(enableAfterSelection: true) }
         } else {
-            autoCapture.setEnabled(true)
+            enableCapture(channel)
+        }
+    }
+
+    private func enableCapture(_ channel: AutoCaptureChannel) {
+        switch channel {
+        case .clipboard:
+            autoCapture.setClipboardEnabled(true)
+        case .screenshots:
+            if autoCaptureSettings.screenshotFolderBookmark == nil || needsScreenshotPermission {
+                chooseScreenshotFolder(enableAfterSelection: true)
+            } else {
+                autoCapture.setScreenshotsEnabled(true)
+            }
+        }
+    }
+
+    private var quickAccessSection: some View {
+        VStack(alignment: .leading, spacing: 9) {
+            Text("Quick access").font(.system(size: 14, weight: .medium))
+            Toggle("Global shortcuts", isOn: Binding(
+                get: { state.quickAccessSettings.isEnabled },
+                set: { state.quickAccessSettings.setEnabled($0) }
+            ))
+            .toggleStyle(.switch).controlSize(.small).font(.system(size: 13))
+            Picker("Shortcut keys", selection: Binding(
+                get: { state.quickAccessSettings.shortcutStyle },
+                set: { state.quickAccessSettings.setShortcutStyle($0) }
+            )) {
+                ForEach(GlobalShortcutStyle.allCases) { style in
+                    Text(style.title).tag(style)
+                }
+            }
+            .font(.system(size: 12)).controlSize(.small)
+            Text("Search: \(state.quickAccessSettings.shortcutStyle.searchLabel) · Save clipboard: \(state.quickAccessSettings.shortcutStyle.captureLabel)")
+                .font(.system(size: 11)).foregroundStyle(Palette.muted)
+                .fixedSize(horizontal: false, vertical: true)
+            if let error = state.quickAccessSettings.registrationError {
+                Text(error).font(.system(size: 11)).foregroundStyle(Palette.task)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            Toggle("Quiet mode", isOn: Binding(
+                get: { state.quickAccessSettings.quietMode },
+                set: { state.quickAccessSettings.setQuietMode($0) }
+            ))
+            .toggleStyle(.switch).controlSize(.small).font(.system(size: 13))
+            Text("Open quickly and skip automatic capture celebrations.")
+                .font(.system(size: 11)).foregroundStyle(Palette.muted)
         }
     }
 
@@ -479,9 +541,15 @@ struct SettingsQuitSection: View {
     }
 }
 
+private enum AutoCaptureChannel {
+    case clipboard
+    case screenshots
+}
+
 @MainActor
 private struct AutoCaptureExplanationSheet: View {
     @Environment(\.daBinAccent) private var accent
+    let channel: AutoCaptureChannel
     let continueAction: () -> Void
     let cancel: () -> Void
 
@@ -489,20 +557,24 @@ private struct AutoCaptureExplanationSheet: View {
         VStack(alignment: .leading, spacing: 16) {
             Image(systemName: "tray.and.arrow.down.fill")
                 .font(.system(size: 28)).foregroundStyle(accent).accessibilityHidden(true)
-            Text("Turn on Auto Capture?")
+            Text(channel == .clipboard ? "Turn on clipboard capture?" : "Turn on screenshot capture?")
                 .font(.system(size: 21, weight: .semibold, design: .rounded))
-            Text("DaBin will watch future clipboard changes and new screenshots in a folder you choose. It will not import what is already on your clipboard.")
+            Text(channel == .clipboard
+                 ? "DaBin will save future copied text, links, images and files. It will not import what is already on your clipboard. Screenshot capture stays as you set it."
+                 : "DaBin will save new images from a folder you choose. Existing files will not be imported. Clipboard capture stays as you set it.")
                 .font(.system(size: 13)).fixedSize(horizontal: false, vertical: true)
             Label("Everything is stored only in DaBin’s local archive on this Mac.", systemImage: "lock.fill")
                 .font(.system(size: 12, weight: .medium)).foregroundStyle(Palette.muted)
                 .fixedSize(horizontal: false, vertical: true)
-            Text("macOS folder access is requested next so DaBin can notice new images saved there. Use a dedicated screenshot folder. DaBin does not share copied or captured content with anyone.")
+            Text(channel == .clipboard
+                 ? "DaBin and common password managers are excluded by default. You can add exclusions or pause capture at any time. No folder access is needed."
+                 : "Choose the folder set in macOS Screenshot Options. DaBin treats new images there as screenshots, so use a dedicated folder. You can pause capture at any time.")
                 .font(.system(size: 12)).foregroundStyle(Palette.muted)
                 .fixedSize(horizontal: false, vertical: true)
             HStack {
                 Button("Not now", action: cancel).keyboardShortcut(.cancelAction)
                 Spacer()
-                Button("Choose screenshot folder…", action: continueAction)
+                Button(channel == .clipboard ? "Turn on clipboard capture" : "Choose screenshot folder…", action: continueAction)
                     .buttonStyle(.borderedProminent).keyboardShortcut(.defaultAction)
             }
         }

@@ -15,6 +15,14 @@ final class RobotView: NSView {
     private var hoverTrackingArea: NSTrackingArea?
     private var lastPasteEvent: NSEvent?
     private(set) var isPresented = false
+    private(set) var isIslandStage = false
+    var interactionBounds: NSRect {
+        CornerGeometry.robotInteractionFrame(in: bounds, target: isIslandStage ? .cameraIsland : .corner(.topRight))
+    }
+    var bodyBounds: NSRect {
+        CornerGeometry.robotBodyFrame(in: bounds, target: isIslandStage ? .cameraIsland : .corner(.topRight))
+    }
+    var hoverBounds: NSRect { isIslandStage ? interactionBounds : bounds.insetBy(dx: 4, dy: 4) }
     var mood: RobotMood { character.mood }
     var motionState: RobotMotionState { character.motionState }
     var hasActiveAmbientMotion: Bool { character.hasActiveAmbientMotion }
@@ -37,6 +45,7 @@ final class RobotView: NSView {
         super.init(frame: frameRect)
         wantsLayer = true
         layer?.backgroundColor = NSColor.clear.cgColor
+        layer?.masksToBounds = true
         addSubview(character)
         indicator.frame = NSRect(x: 43, y: 61, width: 25, height: 22)
         indicator.font = .systemFont(ofSize: 14, weight: .semibold)
@@ -56,18 +65,26 @@ final class RobotView: NSView {
     }
 
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
-    override func layout() { super.layout(); character.frame = bounds.insetBy(dx: 4, dy: 4) }
+    override func layout() {
+        super.layout()
+        character.frame = isIslandStage ? bounds : bounds.insetBy(dx: 4, dy: 4)
+        indicator.frame = isIslandStage
+            ? NSRect(x: bodyBounds.maxX - 22, y: bodyBounds.maxY - 23, width: 25, height: 22)
+            : NSRect(x: 43, y: 61, width: 25, height: 22)
+    }
 
-    // The image and feedback badge are decoration. Keep the entire compact
-    // robot one destination, including where the badge covers the artwork.
+    // The artwork and badge are decoration. Keep one stable destination around
+    // the robot, while the extra island animation space stays click-through.
     override func hitTest(_ point: NSPoint) -> NSView? {
-        super.hitTest(point) == nil ? nil : self
+        let localPoint = convert(point, from: superview)
+        guard interactionBounds.contains(localPoint), super.hitTest(point) != nil else { return nil }
+        return self
     }
 
     override func updateTrackingAreas() {
         super.updateTrackingAreas()
         if let hoverTrackingArea { removeTrackingArea(hoverTrackingArea) }
-        let area = NSTrackingArea(rect: bounds.insetBy(dx: 4, dy: 4),
+        let area = NSTrackingArea(rect: hoverBounds,
                                   options: [.mouseEnteredAndExited, .mouseMoved, .activeAlways],
                                   owner: self, userInfo: nil)
         hoverTrackingArea = area
@@ -168,7 +185,8 @@ final class RobotView: NSView {
     override func draggingEnded(_ sender: NSDraggingInfo) { setDropActive(false) }
 
     private func acceptsDrop(_ sender: NSDraggingInfo) -> Bool {
-        onDrop != nil && sender.draggingSourceOperationMask.contains(.copy)
+        interactionBounds.contains(convert(sender.draggingLocation, from: nil))
+            && onDrop != nil && sender.draggingSourceOperationMask.contains(.copy)
             && InputService.canReceive(sender.draggingPasteboard)
     }
 
@@ -186,6 +204,7 @@ final class RobotView: NSView {
     }
 
     func present(from entrance: RobotEntrance) {
+        configureIslandStage(false)
         isPresented = true
         character.send(.reveal(entrance))
     }
@@ -197,13 +216,23 @@ final class RobotView: NSView {
 
     @discardableResult
     func peekFromIsland() -> TimeInterval {
+        configureIslandStage(true)
         isPresented = true
         return character.playIslandPeek()
     }
 
     func climbFromIsland() {
+        configureIslandStage(true)
         isPresented = true
         _ = character.playIslandClimb()
+    }
+
+    private func configureIslandStage(_ enabled: Bool) {
+        isIslandStage = enabled
+        character.configureIslandStage(enabled)
+        needsLayout = true
+        layoutSubtreeIfNeeded()
+        updateTrackingAreas()
     }
 
     func refreshMotionPreference() { character.refreshMotionPreference() }
@@ -236,9 +265,10 @@ final class RobotView: NSView {
 
     private func normalizedPointer(for event: NSEvent) -> CGPoint {
         let point = convert(event.locationInWindow, from: nil)
-        guard bounds.width > 0, bounds.height > 0 else { return .zero }
-        return CGPoint(x: min(1, max(-1, (point.x - bounds.midX) / (bounds.width / 2))),
-                       y: min(1, max(-1, (bounds.midY - point.y) / (bounds.height / 2))))
+        let area = interactionBounds
+        guard area.width > 0, area.height > 0 else { return .zero }
+        return CGPoint(x: min(1, max(-1, (point.x - area.midX) / (area.width / 2))),
+                       y: min(1, max(-1, (area.midY - point.y) / (area.height / 2))))
     }
 
     private func updateIndicator() {

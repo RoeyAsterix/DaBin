@@ -84,6 +84,18 @@ private final class NativeRenderTests: NSObject, NSApplicationDelegate {
             else { UserDefaults.standard.removeObject(forKey: PreviewService.linkPreviewPreference) }
         }
 
+        if arguments.contains("--simpler-ui") {
+            try await renderSimplerUI(root: root, output: output)
+            try JSONSerialization.data(withJSONObject: [
+                "description": "Production Today, Library, Follow-ups, global Search, note editor, project detail, Recently Deleted and channel settings at 380 and 720 points.",
+                "fixturePrivacy": "Fictional isolated archive and preferences; no personal data, clipboard access, network, permission requests or notification delivery.",
+                "screenshots": records
+            ], options: [.prettyPrinted, .sortedKeys])
+                .write(to: output.appendingPathComponent("simpler-ui-renders.json"), options: .atomic)
+            print("PASS: \(records.count) simpler native UI renders in light and dark appearance")
+            return
+        }
+
         if arguments.contains("--task-conversion") {
             try await renderTaskConversion(root: root, output: output)
             try JSONSerialization.data(withJSONObject: [
@@ -1460,6 +1472,80 @@ private final class NativeRenderTests: NSObject, NSApplicationDelegate {
             state.newTaskDraft.reminderEnabled = true
             try await snapshot(state, name: "release-new-task", mode: mode, output: output, height: 370)
             state.cancelNewTask()
+        }
+    }
+
+    private func renderSimplerUI(root: URL, output: URL) async throws {
+        let suite = "DaBin.SimplerUI.Render.\(UUID().uuidString)"
+        let defaults = UserDefaults(suiteName: suite)!
+        defer { defaults.removePersistentDomain(forName: suite) }
+        let store = try CaptureStore(root: root.appendingPathComponent("SimplerUI"))
+        let today = Calendar.current.startOfDay(for: Date())
+        let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: today)!
+        let note = try store.capture(text: "A quieter first screen\nShow what I saved before showing every action.", at: today.addingTimeInterval(11 * 3600))[0]
+        let reference = try store.capture(text: "https://example.invalid/website-launch-reference", at: today.addingTimeInterval(10 * 3600))[0]
+        reference.title = "Launch page reference"
+        reference.previewDescription = "One clear promise and a useful product example."
+        reference.previewState = "ready"
+        try store.setOrganization(note, pinned: true, projectName: "Website launch")
+        try store.setOrganization(reference, pinned: false, projectName: "Website launch")
+        try store.update(note, comment: "Keep the first experience calm.", reminderAt: nil, reminderTimeZoneID: nil)
+        let task = try store.createTask(text: "Ask Maya for the final illustration", at: yesterday.addingTimeInterval(14 * 3600))
+        try store.setOrganization(task, pinned: false, projectName: "Website launch")
+        try store.update(task, comment: "Use the simpler background.", reminderAt: Date().addingTimeInterval(-600), reminderTimeZoneID: TimeZone.current.identifier)
+        try store.update(reference, comment: "", reminderAt: Date().addingTimeInterval(86400), reminderTimeZoneID: TimeZone.current.identifier)
+        let discarded = try store.capture(text: "An earlier homepage idea", at: yesterday)[0]
+        try store.moveToTrash(discarded)
+        for index in 0..<4 {
+            _ = try store.capture(text: "Copied research note \(index + 1)", at: today.addingTimeInterval(Double(9 * 3600 + index * 300)),
+                                  receipt: .automatic(.automaticClipboard, sourceApplicationName: "Notes", sourceApplicationBundleIdentifier: "com.dabin.fixture.notes"))
+        }
+        let settings = AutoCaptureSettings(defaults: defaults)
+        let autoCapture = AutoCaptureService(settings: settings, input: InputService(store: store),
+                                             pasteboardProvider: { fatalError("Render fixture must not access the clipboard") },
+                                             sourceApplicationProvider: { nil })
+        defer { autoCapture.shutdown() }
+        let previews = PreviewService(store: store, defaults: defaults)
+        let state = AppState(store: store, previews: previews,
+                             reminders: ReminderService(store: store, client: RenderNotificationClient()),
+                             autoCapture: autoCapture)
+        guard state.todayTimelineCaptures.allSatisfy({ $0.captureDay == CaptureCalendar.dayString(today) }),
+              state.followUpCaptures.contains(where: { $0.id == task.id }) else {
+            throw RenderError.message("Today must contain receipt-day captures while the older task remains in Follow-ups")
+        }
+        for mode in ["light", "dark"] {
+            state.openDaily()
+            try await snapshot(state, name: "simpler-today", mode: mode, output: output, height: 560)
+            try await snapshot(state, name: "simpler-today-wide", mode: mode, output: output, height: 560, width: 720)
+            state.selectedDay = Calendar.current.date(byAdding: .day, value: -3, to: today)!
+            try await snapshot(state, name: "simpler-today-empty", mode: mode, output: output, height: 380)
+            state.openLibrary()
+            try await snapshot(state, name: "simpler-library", mode: mode, output: output, height: 560)
+            state.libraryProject = "Website launch"
+            try await snapshot(state, name: "simpler-project-resume", mode: mode, output: output, height: 560)
+            state.libraryProject = nil
+            state.showReminders()
+            try await snapshot(state, name: "simpler-follow-ups", mode: mode, output: output, height: 450)
+            state.updateGlobalSearch("quieter")
+            state.showSearchContext = false
+            try await snapshot(state, name: "simpler-search-matches", mode: mode, output: output, height: 480)
+            state.showSearchContext = true
+            try await snapshot(state, name: "simpler-search-context", mode: mode, output: output, height: 560)
+            state.showSearchContext = false
+            state.openNewNote()
+            state.newNoteText = "Remember the first successful outcome.\n\nShow a capture being found and used again."
+            try await snapshot(state, name: "simpler-new-note", mode: mode, output: output, height: 420)
+            state.cancelNewNote()
+            state.openCapture(note.id)
+            try await snapshot(state, name: "simpler-project-detail", mode: mode, output: output, height: 500)
+            state.showTrash()
+            try await snapshot(state, name: "simpler-recently-deleted", mode: mode, output: output, height: 500)
+            state.showSettings()
+            try await snapshot(state, name: "simpler-settings", mode: mode, output: output, height: 500)
+            settings.setClipboardEnabled(true)
+            settings.setScreenshotsEnabled(false)
+            try await snapshot(state, name: "simpler-settings-clipboard", mode: mode, output: output, height: 500)
+            settings.setClipboardEnabled(false)
         }
     }
 

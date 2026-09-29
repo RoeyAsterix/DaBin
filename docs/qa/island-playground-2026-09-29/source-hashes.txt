@@ -1,0 +1,6 @@
+d6ce9c79099ed54101513f41b8c65575a77d811dfb08ed2e80b6ba33fb8d499f  /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/Sources/DaBin/RobotMotion.swift
+a0389d611241abde2d57fb7c8a2218501c436806c5b175ee8b58ca6e5556b1e3  /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/Sources/DaBin/AutoCaptureRobotCelebration.swift
+169d408033ca94901c6dcf34d97097acd16f3a3481c24060621a31535b1ac68a  /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/Sources/DaBin/IslandRobotChoreography.swift
+6786366775bb22123fa7368780e4b47daef5959ef4e84038a4a89d131f0151f0  /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/Sources/DaBin/RobotCharacterView.swift
+ff3afc2f684f3505adbd940d0dd0bcdafb6754b5f0226b0d4f062caf757726cb  /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/Tests/IslandPlaygroundRender.swift
+4f44888c554ed76e26b8816c39c71b05c4e5c916f1993e6c6cb35c4a816bd678  /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/scripts/render_island_playground.sh

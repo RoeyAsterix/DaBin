@@ -1,0 +1,3 @@
+FAIL: Hover grants robot keyboard focus without a click
+FAIL: Returning to robot restores hover paste focus
+FAIL: 2 of 142 window checks failed across 1 real screen(s). All independent checks were attempted.

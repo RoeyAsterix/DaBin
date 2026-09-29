@@ -9,6 +9,8 @@ struct DetailScreen: View {
     @ObservedObject var draft: CaptureDraft
     @FocusState private var focusedField: String?
     @State private var copiedSearchableText = false
+    @State private var projectDraft = ""
+    @State private var showingProjectEditor = false
 
     var body: some View {
         VStack(spacing: 0) {
@@ -26,6 +28,7 @@ struct DetailScreen: View {
                         } else {
                             CaptureTaskConversionButton(state: state, capture: capture)
                         }
+                        organization.id("project")
                         DetailPreview(store: state.store, capture: capture)
                         if let error = capture.previewError, !error.isEmpty {
                             Label(error, systemImage: "info.circle")
@@ -74,7 +77,9 @@ struct DetailScreen: View {
                         }
                     }.padding(.horizontal, 16).padding(.bottom, 18)
                 }.onAppear {
+                    projectDraft = capture.projectName ?? ""
                     if let target = state.detailFocus {
+                        if target == "project" { showingProjectEditor = true }
                         proxy.scrollTo(target, anchor: .top)
                         focusedField = target
                     }
@@ -93,6 +98,42 @@ struct DetailScreen: View {
                     .controlSize(.regular).disabled(!draft.hasChanges).keyboardShortcut("s", modifiers: .command)
             }.padding(13).overlay(alignment: .top) { Rectangle().fill(Palette.line).frame(height: 1) }
         }
+    }
+
+    private var organization: some View {
+        VStack(alignment: .leading, spacing: 9) {
+            HStack(spacing: 14) {
+                Button { state.togglePinned(capture) } label: {
+                    Label(capture.isPinned ? "Pinned" : "Pin", systemImage: capture.isPinned ? "pin.fill" : "pin")
+                }.buttonStyle(.plain).foregroundStyle(accent)
+                Menu {
+                    Button("No project") { state.assignProject(capture, name: nil); projectDraft = "" }
+                    ForEach(state.projectNames, id: \.self) { project in
+                        Button(project) { state.assignProject(capture, name: project); projectDraft = project }
+                    }
+                    Divider()
+                    Button("Create project…") { showingProjectEditor = true; projectDraft = ""; focusedField = "project" }
+                } label: { Label(capture.projectName ?? "Add to project", systemImage: "folder").lineLimit(1) }
+                    .menuStyle(.borderlessButton).fixedSize(horizontal: false, vertical: true)
+                Spacer(minLength: 0)
+            }.font(.system(size: 12))
+            if showingProjectEditor {
+                HStack(spacing: 8) {
+                    TextField("Project name", text: $projectDraft).textFieldStyle(.roundedBorder)
+                        .focused($focusedField, equals: "project").accessibilityLabel("Project name")
+                        .onSubmit { saveProject() }
+                    Button("Add") { saveProject() }.disabled(projectDraft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                    Button("Cancel") { showingProjectEditor = false }.buttonStyle(.plain)
+                }.font(.system(size: 12))
+            }
+        }
+    }
+
+    private func saveProject() {
+        let name = projectDraft.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !name.isEmpty else { return }
+        state.assignProject(capture, name: name)
+        showingProjectEditor = false
     }
 
     @ViewBuilder
@@ -186,12 +227,12 @@ struct DetailScreen: View {
 
     private var commentField: some View {
         VStack(alignment: .leading, spacing: 7) {
-            Text("Comment").font(.system(size: 13, weight: .medium))
+            Text("Note").font(.system(size: 13, weight: .medium))
             TextEditor(text: $draft.comment).font(.system(size: 13)).scrollContentBackground(.hidden)
                 .padding(7).frame(minHeight: 76, maxHeight: 108).background(Palette.surface)
                 .clipShape(RoundedRectangle(cornerRadius: 11))
                 .overlay(RoundedRectangle(cornerRadius: 11).stroke(Palette.line))
-                .focused($focusedField, equals: "comment").accessibilityLabel("Comment")
+                .focused($focusedField, equals: "comment").accessibilityLabel("Capture note")
                 .onChange(of: draft.comment) { _, _ in draft.message = nil }
         }
     }

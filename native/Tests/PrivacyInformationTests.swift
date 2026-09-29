@@ -33,7 +33,7 @@ struct PrivacyInformationTests {
         let recognitionText = recognition?.paragraphs.joined(separator: " ") ?? ""
         try expect(recognitionText.contains("Apple frameworks on this Mac")
                    && recognitionText.contains("does not require Screen Recording permission")
-                   && recognitionText.contains("Removing the capture also removes its recognized text"),
+                   && recognitionText.contains("permanently deleting the capture also removes its recognized text"),
                    "The policy explains local processing, permission boundaries and recognized-text removal")
         try expect(PrivacyInformation.sections(in: "## First\n\nOne.\n\nTwo.").first?.paragraphs == ["One.", "Two."],
                    "A heading at the start of a fallback document is retained")

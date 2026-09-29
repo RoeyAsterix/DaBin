@@ -1,0 +1,1 @@
+FAIL: Error Domain=RobotWindowTransitionTests Code=1 "The settled native frame is actually visible after staging cleanup" UserInfo={NSLocalizedDescription=The settled native frame is actually visible after staging cleanup}

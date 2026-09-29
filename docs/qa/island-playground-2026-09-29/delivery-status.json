@@ -1,0 +1,15 @@
+{
+  "version": "0.4.0",
+  "build": "48",
+  "installed": false,
+  "published": false,
+  "installationBlocker": "The installer refused to replace a running DaBin process; the Mac remained locked in computer-use inspection.",
+  "liveArchiveOpenedByCandidate": false,
+  "buildInputsVerified": 96,
+  "standaloneReleaseBuild": "passed",
+  "xcodeReleaseBuild": "passed",
+  "targetedSuitesPassed": 8,
+  "targetedSuitesFailed": 2,
+  "videoSHA256": "8f926be6b53199b734ea664fe2e1afa532f2f278154aaf68ea62e04b2202ab7b",
+  "videoType": "Native production Core Animation render over a fictional backdrop; not the installed app or a screen recording."
+}

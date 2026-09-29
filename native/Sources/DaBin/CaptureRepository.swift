@@ -97,6 +97,15 @@ import CoreData
         }
     }
 
+    /// Backup restoration validates its entire batch before writing files or
+    /// touching the managed object context.
+    func validateSnapshots(_ snapshots: [CaptureSnapshot]) throws {
+        guard Set(snapshots.map(\.id)).count == snapshots.count else {
+            throw CaptureStoreError.invalidOriginal("The backup contains duplicate capture identities.")
+        }
+        for snapshot in snapshots { try validate(snapshot, recordID: snapshot.id) }
+    }
+
     private func validate(_ snapshot: CaptureSnapshot, recordID: UUID?) throws {
         let origin = snapshot.captureOriginRaw.flatMap(CaptureOrigin.init(rawValue:)) ?? .manual
         let indexState = snapshot.contentIndexState ?? "idle"
@@ -110,7 +119,7 @@ import CoreData
             && (["idle", "indexing"].contains(indexState) ? indexVersion == 0 : indexVersion == ContentIndexService.currentVersion)
             && (!indexCanRetry || indexState == "unavailable")
         )
-        guard [1, 2, 3, 4, 5, 6].contains(snapshot.schemaVersion), CaptureKind(rawValue: snapshot.kindRaw) != nil,
+        guard [1, 2, 3, 4, 5, 6, 7].contains(snapshot.schemaVersion), CaptureKind(rawValue: snapshot.kindRaw) != nil,
               recordID == snapshot.id,
               snapshot.captureOriginRaw.map({ CaptureOrigin(rawValue: $0) != nil }) ?? true,
               (!origin.isAutomatic || snapshot.automaticActionID != nil), indexValid else {

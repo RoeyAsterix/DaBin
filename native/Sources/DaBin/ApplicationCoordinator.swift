@@ -1,5 +1,6 @@
 import AppKit
 import Foundation
+import Combine
 
 /// The application's composition root. One session owns the archive, services,
 /// state, native panels and event observers; SwiftUI views never create storage.
@@ -19,6 +20,8 @@ final class ApplicationCoordinator {
     let corners: CornerController
     let commands: ApplicationMenu
     let statusBar: StatusBarController
+    let shortcuts: GlobalShortcutService
+    private var quietSubscription: AnyCancellable?
     private let lifecycle: ReminderLifecycle
     private let applicationEvents: NotificationCenter
     private let workspaceEvents: NotificationCenter
@@ -50,9 +53,10 @@ final class ApplicationCoordinator {
         let autoCapture = AutoCaptureService(settings: autoCaptureSettings, input: autoInput)
         let autoCaptureRobot = AutoCaptureRobotPresenter()
         let robotPlacement = RobotPlacementSettings(defaults: defaults)
+        let quickAccess = QuickAccessSettings(defaults: defaults)
         let state = AppState(store: store, previews: previews, contentIndex: contentIndex, reminders: reminders,
                              updates: updates, robotPlacement: robotPlacement,
-                             autoCapture: autoCapture)
+                             autoCapture: autoCapture, quickAccessSettings: quickAccess)
         let theme = ThemeSettings(defaults: defaults)
         let corners = CornerController(state: state, input: input, placementDefaults: defaults, theme: theme)
         self.previews = previews
@@ -78,8 +82,9 @@ final class ApplicationCoordinator {
         autoCapture.onCommitted = { [weak state] action in
             state?.didAutoCapture(action.captures)
         }
-        autoCapture.onSaved = { [weak autoCaptureRobot] _ in
+        autoCapture.onSaved = { [weak autoCaptureRobot, weak quickAccess] _ in
             // One receipt is one action, including a grouped multi-file paste.
+            guard quickAccess?.quietMode != true else { return }
             _ = autoCaptureRobot?.present(additionalCaptureCount: 1)
         }
         autoCapture.onFailure = { [weak state] message in
@@ -103,6 +108,16 @@ final class ApplicationCoordinator {
             quit: { NSApplication.shared.terminate(nil) },
             autoCapture: autoCapture
         )
+        shortcuts = GlobalShortcutService(settings: quickAccess,
+            search: { [weak corners] in corners?.openSearch() },
+            capture: { [weak state, weak corners] in
+                state?.openDaily()
+                corners?.showBoard(immediate: true)
+                state?.pasteClipboard()
+            })
+        quietSubscription = quickAccess.$quietMode.sink { [weak autoCaptureRobot] quiet in
+            if quiet { autoCaptureRobot?.dismiss() }
+        }
     }
 
     /// Returns true once for this preference domain. AppDelegate uses the result
@@ -118,7 +133,7 @@ final class ApplicationCoordinator {
                pointerPosition: @escaping () -> NSPoint = { NSEvent.mouseLocation }) {
         guard !isStarted, !isStopped else { return }
         isStarted = true
-        if installMenu { commands.install() }
+        if installMenu { commands.install(); shortcuts.start() }
         if installStatusItem { statusBar.install() }
         corners.start(pointerPosition: pointerPosition)
         autoCapture.start()
@@ -136,6 +151,8 @@ final class ApplicationCoordinator {
         isStarted = false
         lifecycle.stop()
         autoCapture.shutdown()
+        shortcuts.stop()
+        quietSubscription?.cancel(); quietSubscription = nil
         autoCaptureRobot.shutdown()
         corners.shutdown()
         previews.shutdown()
@@ -146,6 +163,7 @@ final class ApplicationCoordinator {
     }
 
     var terminationBlock: String? {
-        state.removingCaptureID == nil ? nil : "The capture and its reminder are being removed. Give DaBin a moment to finish, then quit again."
+        if state.isArchiveOperationRunning || state.isImporting { return "DaBin is saving your archive. Give it a moment to finish, then quit again." }
+        return state.removingCaptureID == nil ? nil : "The capture and its reminder are being updated. Give DaBin a moment to finish, then quit again."
     }
 }

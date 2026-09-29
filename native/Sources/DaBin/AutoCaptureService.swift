@@ -31,7 +31,7 @@ enum AutoCaptureServiceError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .screenshotFolderNotAuthorized:
-            return "Choose the folder where macOS saves screenshots before enabling Auto Capture."
+            return "Choose the folder where macOS saves screenshots to start screenshot capture."
         case .screenshotFolderAuthorizationStale:
             return "DaBin no longer has access to the screenshot folder. Choose it again in Settings."
         case .unreadableClipboard:
@@ -50,6 +50,9 @@ final class AutoCaptureService: ObservableObject {
     typealias BookmarkResolver = (Data) throws -> (url: URL, isStale: Bool)
 
     @Published private(set) var isRunning = false
+    @Published private(set) var isClipboardRunning = false
+    @Published private(set) var isScreenshotsRunning = false
+    @Published private(set) var screenshotStatus: AutoCaptureStatus = .disabled
     @Published private(set) var lastError: String?
 
     let settings: AutoCaptureSettings
@@ -79,6 +82,8 @@ final class AutoCaptureService: ObservableObject {
     private var securityScopeStarted = false
     private var lastPasteboardChangeCount: Int?
     private var sessionGeneration: UInt = 0
+    private var clipboardGeneration: UInt = 0
+    private var screenshotGeneration: UInt = 0
     private var queue: [PendingEvent] = []
     private var isProcessingEvent = false
     private var delayedClipboardImages: [UUID: DelayedClipboardImage] = [:]
@@ -115,21 +120,51 @@ final class AutoCaptureService: ObservableObject {
         fingerprintHistory = AutoCaptureFingerprintHistory(interval: duplicateInterval)
     }
 
-    /// Starts only when the persisted opt-in, pause state and folder grant allow
-    /// it. Missing authorization becomes visible state; no panel is opened here.
+    /// Each selected channel starts independently. A missing screenshot grant
+    /// never stops clipboard capture, and startup never opens a permission panel.
     func start() {
-        guard !isRunning else { return }
         guard settings.isEnabled else {
             settings.setStatus(.disabled)
+            screenshotStatus = .disabled
             return
         }
         guard !settings.isPaused else {
             settings.setStatus(.paused)
+            screenshotStatus = settings.isScreenshotsEnabled ? .paused : .disabled
             return
         }
+        lastError = nil
+        if settings.isClipboardEnabled && !isClipboardRunning {
+            clipboardGeneration &+= 1
+            // Read only changeCount so pre-launch contents are never imported.
+            lastPasteboardChangeCount = pasteboardProvider().changeCount
+            isClipboardRunning = true
+            installPollTimer()
+        }
+        if settings.isScreenshotsEnabled && !isScreenshotsRunning {
+            startScreenshotMonitor()
+        } else if !settings.isScreenshotsEnabled {
+            screenshotStatus = .disabled
+        }
+        isRunning = isClipboardRunning || isScreenshotsRunning
+        if isRunning {
+            let activeApplication = sourceApplicationProvider()
+            let isExcluded = settings.isExcluded(bundleIdentifier: activeApplication?.bundleIdentifier)
+            if isClipboardRunning && activeSourceIsExcluded && !isExcluded {
+                lastPasteboardChangeCount = pasteboardProvider().changeCount
+            }
+            activeSourceIsExcluded = isExcluded
+            installApplicationActivationObserver()
+            updateRuntimeStatus(excludedApplication: activeSourceIsExcluded ? activeApplication : nil)
+        } else {
+            removeApplicationActivationObserver()
+            settings.setStatus(screenshotStatus)
+        }
+    }
+
+    private func startScreenshotMonitor() {
         guard let bookmark = settings.screenshotFolderBookmark else {
-            settings.setStatus(.permissionRequired)
-            report(AutoCaptureServiceError.screenshotFolderNotAuthorized)
+            screenshotStatus = .permissionRequired
             return
         }
 
@@ -137,18 +172,19 @@ final class AutoCaptureService: ObservableObject {
         do {
             resolution = try bookmarkResolver(bookmark)
         } catch {
-            settings.setStatus(.permissionRevoked)
+            screenshotStatus = .permissionRevoked
             report(AutoCaptureServiceError.screenshotFolderAuthorizationStale)
             return
         }
         guard !resolution.isStale else {
-            settings.setStatus(.permissionRevoked)
+            screenshotStatus = .permissionRevoked
             report(AutoCaptureServiceError.screenshotFolderAuthorizationStale)
             return
         }
 
-        sessionGeneration &+= 1
         let generation = sessionGeneration
+        screenshotGeneration &+= 1
+        let channelGeneration = screenshotGeneration
         let folder = resolution.url.standardizedFileURL
         securityScopeStarted = folder.startAccessingSecurityScopedResource()
         authorizedFolder = folder
@@ -156,41 +192,39 @@ final class AutoCaptureService: ObservableObject {
         monitor.sourceApplicationAtDirectoryActivity = { [weak self] in
             guard let self,
                   self.sessionGeneration == generation,
-                  self.settings.isEnabled,
+                  self.screenshotGeneration == channelGeneration,
+                  self.settings.isScreenshotsEnabled,
                   !self.settings.isPaused else { return nil }
             return self.sourceApplicationProvider()
         }
         monitor.onNewScreenshot = { [weak self] url, sampledApplication in
-            guard let self, self.isSessionGenerationCurrent(generation) else { return }
+            guard let self, self.isSessionGenerationCurrent(generation),
+                  self.screenshotGeneration == channelGeneration else { return }
             self.receiveScreenshot(url, application: sampledApplication, generation: generation)
         }
         monitor.onFailure = { [weak self] error in
-            guard let self, self.sessionGeneration == generation else { return }
-            self.stopRuntime(status: .permissionRevoked)
+            guard let self, self.sessionGeneration == generation,
+                  self.screenshotGeneration == channelGeneration else { return }
+            self.stopScreenshotRuntime()
+            self.screenshotStatus = .permissionRevoked
+            self.isRunning = self.isClipboardRunning
+            if !self.isRunning { self.removeApplicationActivationObserver() }
+            self.updateRuntimeStatus()
             self.report(error)
         }
         do {
             try monitor.start()
         } catch {
+            monitor.stop()
             releaseFolderAccess()
-            settings.setStatus(.permissionRevoked)
+            screenshotStatus = .permissionRevoked
             report(error)
             return
         }
 
         screenshotMonitor = monitor
-        // Seeding the monotonic counter, without reading any pasteboard items,
-        // guarantees that pre-launch clipboard contents are not imported.
-        lastPasteboardChangeCount = pasteboardProvider().changeCount
-        let activeApplication = sourceApplicationProvider()
-        activeSourceIsExcluded = settings.isExcluded(bundleIdentifier: activeApplication?.bundleIdentifier)
-        isRunning = true
-        lastError = nil
-        settings.setStatus(activeSourceIsExcluded
-                           ? .sourceApplicationExcluded(activeApplication?.name ?? "Excluded application")
-                           : .monitoring)
-        installApplicationActivationObserver()
-        installPollTimer()
+        isScreenshotsRunning = true
+        screenshotStatus = .monitoring
     }
 
     func shutdown() {
@@ -201,7 +235,6 @@ final class AutoCaptureService: ObservableObject {
 
     func setEnabled(_ enabled: Bool) {
         if enabled {
-            settings.setEnabled(true)
             settings.setPaused(false)
             start()
         } else {
@@ -209,6 +242,29 @@ final class AutoCaptureService: ObservableObject {
             settings.setEnabled(false)
             settings.setPaused(false)
             settings.setStatus(.disabled)
+        }
+    }
+
+    func setClipboardEnabled(_ enabled: Bool) {
+        guard settings.isClipboardEnabled != enabled else { return }
+        if !enabled { stopClipboardRuntime() }
+        settings.setClipboardEnabled(enabled)
+        refreshSelectedChannels()
+    }
+
+    func setScreenshotsEnabled(_ enabled: Bool) {
+        guard settings.isScreenshotsEnabled != enabled else { return }
+        if !enabled { stopScreenshotRuntime() }
+        settings.setScreenshotsEnabled(enabled)
+        refreshSelectedChannels()
+    }
+
+    private func refreshSelectedChannels() {
+        isRunning = isClipboardRunning || isScreenshotsRunning
+        if settings.isEnabled {
+            start()
+        } else {
+            stopRuntime(status: .disabled)
         }
     }
 
@@ -233,22 +289,22 @@ final class AutoCaptureService: ObservableObject {
     /// This method creates the durable grant but never presents UI itself.
     func authorizeScreenshotFolder(_ url: URL) throws {
         let bookmark = try bookmarkCreator(url.standardizedFileURL)
-        if isRunning { stopRuntime(status: .ready) }
+        stopScreenshotRuntime()
         settings.setScreenshotFolderBookmark(bookmark, displayName: url.lastPathComponent)
-        settings.setStatus(settings.isEnabled ? (settings.isPaused ? .paused : .ready) : .disabled)
-        if settings.isEnabled, !settings.isPaused { start() }
+        refreshSelectedChannels()
     }
 
     func removeScreenshotFolderAuthorization() {
-        if isRunning { stopRuntime(status: .permissionRequired) }
+        stopScreenshotRuntime()
         settings.setScreenshotFolderBookmark(nil)
-        settings.setStatus(settings.isEnabled ? .permissionRequired : .disabled)
+        refreshSelectedChannels()
     }
 
     /// Exposed for deterministic tests and for an optional menu command. Normal
     /// production polling is driven by a timer in the common run-loop mode.
     func pollNow() {
-        guard isSessionGenerationCurrent(sessionGeneration) else { return }
+        guard isClipboardRunning, settings.isClipboardEnabled,
+              isSessionGenerationCurrent(sessionGeneration) else { return }
         let pasteboard = pasteboardProvider()
         let currentCount = pasteboard.changeCount
         let application = sourceApplicationProvider()
@@ -266,11 +322,11 @@ final class AutoCaptureService: ObservableObject {
             // copied while an excluded application was active.
             lastPasteboardChangeCount = currentCount
             activeSourceIsExcluded = false
-            settings.setStatus(.monitoring)
+            updateRuntimeStatus()
             return
         }
         if case .sourceApplicationExcluded = settings.status {
-            settings.setStatus(.monitoring)
+            updateRuntimeStatus()
         }
         guard currentCount != lastPasteboardChangeCount else { return }
         lastPasteboardChangeCount = currentCount
@@ -283,7 +339,7 @@ final class AutoCaptureService: ObservableObject {
                               application: application,
                               fingerprint: AutoCaptureFingerprint.image(on: snapshot.pasteboard),
                               generation: sessionGeneration)
-        if let fingerprint = event.fingerprint {
+        if let fingerprint = event.fingerprint, isScreenshotsRunning {
             delayClipboardImage(event, fingerprint: fingerprint)
         } else {
             enqueue(event)
@@ -300,30 +356,28 @@ final class AutoCaptureService: ObservableObject {
     func applicationDidActivate(_ application: AutoCaptureSourceApplication) {
         guard isSessionGenerationCurrent(sessionGeneration) else { return }
         let isExcluded = settings.isExcluded(bundleIdentifier: application.bundleIdentifier)
-        if isExcluded || activeSourceIsExcluded {
+        if isClipboardRunning && (isExcluded || activeSourceIsExcluded) {
             lastPasteboardChangeCount = pasteboardProvider().changeCount
         }
         activeSourceIsExcluded = isExcluded
-        settings.setStatus(isExcluded
-                           ? .sourceApplicationExcluded(application.name ?? "Excluded application")
-                           : .monitoring)
+        updateRuntimeStatus(excludedApplication: isExcluded ? application : nil)
     }
 
     private func receiveScreenshot(_ url: URL, application: AutoCaptureSourceApplication?, generation: UInt) {
-        guard isSessionGenerationCurrent(generation) else { return }
+        guard isScreenshotsRunning, settings.isScreenshotsEnabled,
+              isSessionGenerationCurrent(generation) else { return }
         if settings.isExcluded(bundleIdentifier: application?.bundleIdentifier) {
             settings.setStatus(.sourceApplicationExcluded(application?.name ?? "Excluded application"))
             return
         }
         if case .sourceApplicationExcluded = settings.status {
-            settings.setStatus(.monitoring)
+            updateRuntimeStatus()
         }
         guard let snapshot = AutoCapturePasteboardSnapshot.file(at: url) else {
             report(AutoCaptureServiceError.unreadableClipboard)
             return
         }
         let fingerprint = AutoCaptureFingerprint.image(at: url)
-        if let fingerprint { cancelDelayedClipboardImages(matching: fingerprint) }
         enqueue(makeEvent(origin: .automaticScreenshot, snapshot: snapshot,
                           application: application, fingerprint: fingerprint,
                           generation: generation))
@@ -342,7 +396,9 @@ final class AutoCaptureService: ObservableObject {
         return PendingEvent(actionID: actionID, origin: origin, snapshot: snapshot,
                             receivedAt: dateProvider(), timeZone: timeZoneProvider(),
                             sourceApplication: application, receipt: receipt,
-                            fingerprint: fingerprint, generation: generation)
+                            fingerprint: fingerprint, generation: generation,
+                            screenshotGeneration: screenshotGeneration,
+                            clipboardGeneration: clipboardGeneration)
     }
 
     private func delayClipboardImage(_ event: PendingEvent, fingerprint: AutoCaptureFingerprint) {
@@ -351,8 +407,11 @@ final class AutoCaptureService: ObservableObject {
             guard let self else { return }
             try? await Task.sleep(for: clipboardImageDelay)
             guard !Task.isCancelled,
-                  let pending = delayedClipboardImages.removeValue(forKey: pendingID),
-                  isSessionGenerationCurrent(pending.event.generation) else { return }
+                  let pending = delayedClipboardImages.removeValue(forKey: pendingID) else { return }
+            guard isEventCurrent(pending.event) else {
+                pending.event.snapshot.clear()
+                return
+            }
             enqueue(pending.event)
         }
         delayedClipboardImages[pendingID] = DelayedClipboardImage(
@@ -372,7 +431,7 @@ final class AutoCaptureService: ObservableObject {
     }
 
     private func enqueue(_ event: PendingEvent) {
-        guard isSessionGenerationCurrent(event.generation) else {
+        guard isEventCurrent(event) else {
             event.snapshot.clear()
             return
         }
@@ -383,12 +442,12 @@ final class AutoCaptureService: ObservableObject {
     private func processNextEventIfPossible() {
         guard !isProcessingEvent, !queue.isEmpty else { return }
         let event = queue.removeFirst()
-        guard isSessionGenerationCurrent(event.generation) else {
+        guard isEventCurrent(event) else {
             event.snapshot.clear()
             processNextEventIfPossible()
             return
         }
-        if let fingerprint = event.fingerprint,
+        if isClipboardRunning && isScreenshotsRunning, let fingerprint = event.fingerprint,
            fingerprintHistory.isOppositeChannelDuplicate(fingerprint, origin: event.origin, at: event.receivedAt) {
             event.snapshot.clear()
             processNextEventIfPossible()
@@ -396,7 +455,6 @@ final class AutoCaptureService: ObservableObject {
         }
 
         isProcessingEvent = true
-        let generation = event.generation
         input.receive(
             event.snapshot.pasteboard,
             at: event.receivedAt,
@@ -404,15 +462,21 @@ final class AutoCaptureService: ObservableObject {
             receipt: event.receipt,
             fileURLTransfer: event.snapshot.fileURLTransfer,
             commitGuard: { [weak self] in
-                self?.isSessionGenerationCurrent(generation) == true
+                self?.isEventCurrent(event) == true
             }
         ) { [weak self] captures, failures in
             event.snapshot.clear()
             guard let self else { return }
             self.isProcessingEvent = false
-            if self.isSessionGenerationCurrent(generation) {
+            if self.isEventCurrent(event) {
                 if !captures.isEmpty {
                     if let fingerprint = event.fingerprint {
+                        // Keep the clipboard fallback until the screenshot has
+                        // actually committed; disabling its channel or a failed
+                        // file import must not discard both representations.
+                        if event.origin == .automaticScreenshot {
+                            self.cancelDelayedClipboardImages(matching: fingerprint)
+                        }
                         self.fingerprintHistory.record(fingerprint, origin: event.origin, at: self.dateProvider())
                     }
                     let action = AutoCaptureSavedAction(
@@ -441,9 +505,7 @@ final class AutoCaptureService: ObservableObject {
     }
 
     private func installApplicationActivationObserver() {
-        if let observer = applicationActivationObserver {
-            NSWorkspace.shared.notificationCenter.removeObserver(observer)
-        }
+        guard applicationActivationObserver == nil else { return }
         applicationActivationObserver = NSWorkspace.shared.notificationCenter.addObserver(
             forName: NSWorkspace.didActivateApplicationNotification,
             object: nil,
@@ -463,27 +525,86 @@ final class AutoCaptureService: ObservableObject {
     private func stopRuntime(status: AutoCaptureStatus) {
         sessionGeneration &+= 1
         isRunning = false
-        pollTimer?.invalidate()
-        pollTimer = nil
+        stopClipboardRuntime()
+        removeApplicationActivationObserver()
+        stopScreenshotRuntime()
+        screenshotStatus = settings.isScreenshotsEnabled ? status : .disabled
+        activeSourceIsExcluded = false
+        settings.setStatus(status)
+    }
+
+    private func removeApplicationActivationObserver() {
         if let observer = applicationActivationObserver {
             NSWorkspace.shared.notificationCenter.removeObserver(observer)
             applicationActivationObserver = nil
         }
-        screenshotMonitor?.stop()
-        screenshotMonitor = nil
-        lastPasteboardChangeCount = nil
+    }
 
+    private func stopClipboardRuntime() {
+        clipboardGeneration &+= 1
+        isClipboardRunning = false
+        pollTimer?.invalidate()
+        pollTimer = nil
+        lastPasteboardChangeCount = nil
         for pending in delayedClipboardImages.values {
             pending.task.cancel()
             pending.event.snapshot.clear()
         }
         delayedClipboardImages.removeAll()
-        for event in queue { event.snapshot.clear() }
-        queue.removeAll()
+        discardQueuedEvents(origin: .automaticClipboard)
         fingerprintHistory.reset()
-        activeSourceIsExcluded = false
+    }
+
+    private func stopScreenshotRuntime() {
+        screenshotGeneration &+= 1
+        isScreenshotsRunning = false
+        screenshotMonitor?.stop()
+        screenshotMonitor = nil
+        discardQueuedEvents(origin: .automaticScreenshot)
+        fingerprintHistory.reset()
         releaseFolderAccess()
-        settings.setStatus(status)
+    }
+
+    private func discardQueuedEvents(origin: CaptureOrigin) {
+        for event in queue where event.origin == origin { event.snapshot.clear() }
+        queue.removeAll { $0.origin == origin }
+    }
+
+    private func isEventCurrent(_ event: PendingEvent) -> Bool {
+        guard isSessionGenerationCurrent(event.generation) else { return false }
+        if event.origin == .automaticScreenshot {
+            return settings.isScreenshotsEnabled && isScreenshotsRunning
+                && event.screenshotGeneration == screenshotGeneration
+        }
+        return settings.isClipboardEnabled && isClipboardRunning
+            && event.clipboardGeneration == clipboardGeneration
+    }
+
+    private func updateRuntimeStatus(excludedApplication: AutoCaptureSourceApplication? = nil) {
+        if isRunning {
+            settings.setStatus(excludedApplication.map {
+                .sourceApplicationExcluded($0.name ?? "Excluded application")
+            } ?? .monitoring)
+        } else {
+            settings.setStatus(screenshotStatus)
+        }
+    }
+
+    var overallStatusText: String {
+        guard settings.isEnabled else { return "Off · choose what to capture" }
+        if settings.isPaused { return "Paused · existing captures remain" }
+        if isClipboardRunning && isScreenshotsRunning { return "Clipboard and screenshots active" }
+        if isClipboardRunning {
+            return settings.isScreenshotsEnabled
+                ? "Clipboard active · screenshots need folder access" : "Clipboard active"
+        }
+        if isScreenshotsRunning { return "Screenshots active" }
+        switch settings.status {
+        case .permissionRequired: return "Screenshots waiting for a folder"
+        case .permissionRevoked: return "Screenshots need folder access"
+        case .failed(let message): return "Needs attention · \(message)"
+        default: return "Ready to capture"
+        }
     }
 
     private func releaseFolderAccess() {
@@ -526,6 +647,8 @@ private struct PendingEvent {
     let receipt: CaptureReceiptContext
     let fingerprint: AutoCaptureFingerprint?
     let generation: UInt
+    let screenshotGeneration: UInt
+    let clipboardGeneration: UInt
 }
 
 private struct DelayedClipboardImage {

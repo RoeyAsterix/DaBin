@@ -167,6 +167,43 @@ import Foundation
         try expect(robot.draggingEntered(textDrag).isEmpty && !robot.prepareForDragOperation(textDrag) && !robot.performDragOperation(textDrag), "Robot without capture handler never claims successful drop")
         try expect(dropCount == 2 && batches.count == 2 && store.captures.count == 2 && !input.isBusy, "All rejected and cancelled drags leave archive untouched")
 
+        let islandHost = NSView(frame: NSRect(x: 0, y: 0, width: 280, height: 190))
+        let islandRobot = RobotView(frame: NSRect(x: 11, y: 17, width: 232, height: 150), reduceMotion: { true })
+        islandHost.addSubview(islandRobot)
+        islandRobot.climbFromIsland()
+        var islandDrops = 0
+        var islandDragActive = false
+        islandRobot.onDrop = { _ in islandDrops += 1 }
+        islandRobot.onDragState = { islandDragActive = $0 }
+        let centralPoint = NSPoint(x: islandRobot.interactionBounds.midX, y: islandRobot.interactionBounds.midY)
+        let marginPoint = NSPoint(x: 4, y: islandRobot.bounds.midY)
+        try expect(islandRobot.isIslandStage
+                   && islandRobot.subviews.first?.frame == islandRobot.bounds
+                   && islandRobot.interactionBounds == NSRect(x: 52, y: 20, width: 128, height: 130),
+                   "Island artwork gets the full wide stage with a stable central interaction target")
+        try expect(islandRobot.hitTest(islandRobot.convert(centralPoint, to: islandHost)) === islandRobot
+                   && islandRobot.hitTest(islandRobot.convert(marginPoint, to: islandHost)) == nil,
+                   "An island body owns its hits while transparent animation margins reject them")
+        let islandDrag = DropFixture(textBoard)
+        islandDrag.draggingLocation = islandRobot.convert(centralPoint, to: nil)
+        try expect(islandRobot.draggingEntered(islandDrag) == .copy && islandDragActive,
+                   "The visible central island robot accepts supported copied content")
+        islandDrag.draggingLocation = islandRobot.convert(marginPoint, to: nil)
+        try expect(islandRobot.draggingUpdated(islandDrag).isEmpty && !islandDragActive
+                   && !islandRobot.prepareForDragOperation(islandDrag)
+                   && !islandRobot.performDragOperation(islandDrag) && islandDrops == 0,
+                   "Moving into transparent island margins withdraws a drag and cannot capture on release")
+        islandDrag.draggingLocation = islandRobot.convert(centralPoint, to: nil)
+        try expect(islandRobot.draggingEntered(islandDrag) == .copy
+                   && islandRobot.performDragOperation(islandDrag) && islandDrops == 1 && !islandDragActive,
+                   "Returning to the central target dispatches exactly one copy and clears drag state")
+        islandRobot.setFrameSize(NSSize(width: 72, height: 88))
+        islandRobot.present(from: .right)
+        try expect(!islandRobot.isIslandStage && islandRobot.interactionBounds == islandRobot.bounds
+                   && islandRobot.subviews.first?.frame == islandRobot.bounds.insetBy(dx: 4, dy: 4),
+                   "Returning to corner mode restores compact artwork and the original full drop target")
+        islandRobot.stopFeedback()
+
         // A first-open board has no saved placement yet. Revealing its robot at
         // another corner must not re-anchor the board when the import resizes it.
         if let initialScreen = NSScreen.main {

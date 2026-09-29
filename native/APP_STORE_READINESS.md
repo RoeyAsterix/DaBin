@@ -1,14 +1,14 @@
 # DaBin — Mac App Store readiness
 
 **Audit date:** 24 September 2026
-**Source version:** 0.3.18 (45), final local Store preflight completed
-**Result: LOCAL QA PASSED; Apple Developer Team configured; submission remains blocked by Xcode, signing, and listing prerequisites.**
+**Source version:** 0.3.19 (46), TestFlight candidate preparation
+**Result: LOCAL QA PASSED; Apple Developer Team and full Xcode configured; archive signing and App Store Connect remain pending.**
 
 The exact amended source passed 33/33 registered Release suites and 2,929 checks, a 61-source Store-only compile, 50 UI renders, 11 privacy render checks, 39 media checks, 21 static Store checks, and 21 notarized-distribution tests. The optimized ARM64 build contains only Apple system dependencies. A metadata-clean copy had no extended attributes and passed strict signature verification; its Gatekeeper rejection is expected because the local direct build is ad hoc signed.
 
 The review also fixed issues that could have made the app difficult to evaluate: DaBin now opens Daily once on first launch and keeps a small menu bar status item while running. The item exposes Open Daily, live Auto Capture state, Pause/Resume, Settings, and Quit. Reduce Transparency forces an opaque readable board, export feedback is announced to VoiceOver, and the Store preflight rejects quarantine metadata recursively. App Store archives now default to Xcode's archive directory outside the File Provider source tree and are rechecked after creation.
 
-This source is not yet a distribution candidate. Apple Developer Team `8QG4967CSU` is now recorded in the deterministic Store signing configuration and generated Release project. Full Xcode is absent, Command Line Tools are selected, and there are no signing identities or provisioning profiles on this Mac. The owner must still reserve or confirm `com.dabin.mac`, let Xcode create or download the appropriate signing assets, publish support contact details, confirm publisher/copyright information, complete App Store Connect metadata and privacy answers, archive, validate in Organizer, and test the signed build on macOS 14 and current macOS. The three prepared 1440 × 900 screenshot drafts use fictional data and must be compared with that signed archive before upload.
+This source is not yet an uploaded distribution candidate. Apple Developer Team `8QG4967CSU` is recorded in the deterministic Store signing configuration and generated Release project, and full Xcode 27 is selected. Xcode contains the team account, but the login keychain currently has no valid Apple code-signing identity. The owner must let Xcode create or download the appropriate signing assets, reserve or confirm `com.dabin.mac`, create the App Store Connect app record, complete TestFlight metadata, archive, validate in Organizer, and test the signed build on macOS 14 and current macOS. The three prepared 1440 × 900 screenshot drafts use fictional data and must be compared with that signed archive before upload.
 
 [Final evidence](../docs/qa/app-store-preflight-2026-09-24/README.md) · [Screenshot drafts](../docs/app-store/screenshots/1440x900/README.md)
 

@@ -3,8 +3,8 @@ import Foundation
 
 /// The durable and user-visible state of the opt-in automatic monitor.
 ///
-/// `ready` means the preference and folder grant are present but the runtime
-/// monitor has not started yet. It prevents a persisted `monitoring` value from
+/// `ready` means a channel is selected but its runtime has not started yet.
+/// It prevents a persisted `monitoring` value from
 /// claiming that a newly launched process is already observing anything.
 enum AutoCaptureStatus: Equatable, Sendable {
     case disabled
@@ -49,6 +49,8 @@ enum AutoCaptureStatus: Equatable, Sendable {
 @MainActor
 final class AutoCaptureSettings: ObservableObject {
     nonisolated static let enabledKey = "DaBin.autoCapture.enabled.v1"
+    nonisolated static let clipboardEnabledKey = "DaBin.autoCapture.clipboardEnabled.v2"
+    nonisolated static let screenshotsEnabledKey = "DaBin.autoCapture.screenshotsEnabled.v2"
     nonisolated static let pausedKey = "DaBin.autoCapture.paused.v1"
     nonisolated static let statusKey = "DaBin.autoCapture.status.v1"
     nonisolated static let statusDetailKey = "DaBin.autoCapture.statusDetail.v1"
@@ -74,6 +76,8 @@ final class AutoCaptureSettings: ObservableObject {
     ]
 
     @Published private(set) var isEnabled: Bool
+    @Published private(set) var isClipboardEnabled: Bool
+    @Published private(set) var isScreenshotsEnabled: Bool
     @Published private(set) var isPaused: Bool
     @Published private(set) var status: AutoCaptureStatus
     @Published private(set) var excludedBundleIdentifiers: Set<String>
@@ -87,10 +91,25 @@ final class AutoCaptureSettings: ObservableObject {
          ownBundleIdentifier: String = Bundle.main.bundleIdentifier ?? "com.dabin.mac") {
         self.defaults = defaults
         self.ownBundleIdentifier = ownBundleIdentifier
-        let savedEnabled = defaults?.object(forKey: Self.enabledKey) as? Bool ?? false
+        let legacyEnabled = defaults?.object(forKey: Self.enabledKey) as? Bool ?? false
+        let savedClipboard = defaults?.object(forKey: Self.clipboardEnabledKey) as? Bool
+        let savedScreenshots = defaults?.object(forKey: Self.screenshotsEnabledKey) as? Bool
+        // Once either channel has an explicit choice, absent channels remain off.
+        // Only the old all-or-nothing opt-in migrates to both channels.
+        let hasChannelChoices = savedClipboard != nil || savedScreenshots != nil
+        let clipboard = hasChannelChoices ? (savedClipboard ?? false) : legacyEnabled
+        let screenshots = hasChannelChoices ? (savedScreenshots ?? false) : legacyEnabled
+        let savedEnabled = clipboard || screenshots
         let savedPaused = defaults?.object(forKey: Self.pausedKey) as? Bool ?? false
         isEnabled = savedEnabled
-        isPaused = savedPaused
+        isClipboardEnabled = clipboard
+        isScreenshotsEnabled = screenshots
+        isPaused = savedEnabled && savedPaused
+        if !savedEnabled && savedPaused { defaults?.set(false, forKey: Self.pausedKey) }
+        if !hasChannelChoices, defaults?.object(forKey: Self.enabledKey) != nil {
+            defaults?.set(clipboard, forKey: Self.clipboardEnabledKey)
+            defaults?.set(screenshots, forKey: Self.screenshotsEnabledKey)
+        }
         hasAcknowledgedPrivacyExplanation = defaults?.object(forKey: Self.privacyExplanationAcknowledgedKey) as? Bool ?? false
         screenshotFolderDisplayName = defaults?.string(forKey: Self.screenshotFolderDisplayNameKey)
 
@@ -112,10 +131,12 @@ final class AutoCaptureSettings: ObservableObject {
             case .monitoring, .sourceApplicationExcluded:
                 // A previous process cannot still be monitoring after relaunch.
                 status = .ready
+            case .permissionRequired where clipboard, .permissionRevoked where clipboard:
+                status = .ready
             case .some(let saved):
                 status = saved
             case nil:
-                status = defaults?.data(forKey: Self.screenshotFolderBookmarkKey) == nil
+                status = !clipboard && screenshots && defaults?.data(forKey: Self.screenshotFolderBookmarkKey) == nil
                     ? .permissionRequired : .ready
             }
         }
@@ -131,8 +152,31 @@ final class AutoCaptureSettings: ObservableObject {
     }
 
     func setEnabled(_ enabled: Bool) {
+        // A master enable cannot add a channel the user did not select.
+        if !enabled {
+            isClipboardEnabled = false
+            isScreenshotsEnabled = false
+        }
+        persistChannels()
+    }
+
+    func setClipboardEnabled(_ enabled: Bool) {
+        if isClipboardEnabled != enabled { isClipboardEnabled = enabled }
+        persistChannels()
+    }
+
+    func setScreenshotsEnabled(_ enabled: Bool) {
+        if isScreenshotsEnabled != enabled { isScreenshotsEnabled = enabled }
+        persistChannels()
+    }
+
+    private func persistChannels() {
+        let enabled = isClipboardEnabled || isScreenshotsEnabled
         if isEnabled != enabled { isEnabled = enabled }
+        defaults?.set(isClipboardEnabled, forKey: Self.clipboardEnabledKey)
+        defaults?.set(isScreenshotsEnabled, forKey: Self.screenshotsEnabledKey)
         defaults?.set(enabled, forKey: Self.enabledKey)
+        if !enabled { setPaused(false) }
     }
 
     func setPaused(_ paused: Bool) {

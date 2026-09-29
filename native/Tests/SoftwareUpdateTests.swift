@@ -243,7 +243,7 @@ private enum SoftwareUpdateTests {
 
         let settingsSource = try String(contentsOfFile: "Sources/DaBin/SettingsScreen.swift", encoding: .utf8)
         guard let updateSection = settingsSource.range(of: "SettingsSoftwareUpdateSection(updates: updates)"),
-              let captureSection = settingsSource.range(of: "Text(\"Capture\")") else {
+              let captureSection = settingsSource.range(of: "Text(\"Automatic capture\")") else {
             try expect(false, "Settings contains both its update and Capture sections")
             return
         }

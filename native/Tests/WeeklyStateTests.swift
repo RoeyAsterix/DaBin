@@ -177,9 +177,9 @@ struct WeeklyStateTests {
         state.selectedDay = date("2024-01-03 12:00")
         state.openWeekly()
         state.performSearchCommand()
-        try expect(state.route == .weekly && state.weeklySearchActionsPresented,
-                   "The shared Search command opens Weekly's day-or-week chooser")
-        state.weeklySearchActionsPresented = false
+        try expect(state.route == .search && state.searchScope == .all && !state.weeklySearchActionsPresented,
+                   "The shared Search command searches every date immediately")
+        state.back()
         try expect(CaptureCalendar.dayString(state.weeklyActionDay) == "2024-01-03",
                    "Weekly day actions use the preserved selected day when it is inside the range")
 
@@ -195,15 +195,14 @@ struct WeeklyStateTests {
         state.selectedDay = date("2024-01-03 12:00")
         state.openWeekly()
         state.openSearch(day: state.weeklyActionDay)
-        let scopedSearch = state.searchScope
-        state.performSearchCommand()
-        try expect(state.route == .search && state.searchScope == scopedSearch,
-                   "Repeating the Search command preserves an active scoped search")
         try expect(state.route == .search && state.searchScope == .day("2024-01-03")
                    && state.searchScopeTitle.contains("2024"),
                    "Search Day records its exact receipt date and exposes a readable scope")
         try expect(state.searchGroups.map(\.day) == ["2024-01-03"],
                    "Search Day returns matches only from the selected day")
+        state.performSearchCommand()
+        try expect(state.route == .search && state.searchScope == .all,
+                   "A general search command clears an explicit date scope")
         state.back()
         try expect(state.route == .weekly && CaptureCalendar.dayString(state.weekEndingDay) == "2024-01-03",
                    "Back from a day-scoped search restores the same Weekly range")

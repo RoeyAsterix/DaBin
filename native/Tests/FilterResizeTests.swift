@@ -146,22 +146,22 @@ private final class FilterResizeNotificationClient: ReminderNotificationClient {
         controller.openDaily()
         settle()
         let initial = controller.board.frame
-        expect(state.dailyCaptures.count == 5, "Daily starts with five fictional records")
-        expect(near(initial.height, 550), "The unplaced bottom-corner Daily starts at full content height")
+        expect(state.todayTimelineCaptures.count == 5, "Today starts with five fictional receipt records")
+        expect(near(initial.height, 610), "The unplaced bottom-corner Today reserves 560 points of content plus its outer frame")
         expect(defaults.object(forKey: CornerController.boardPlacementKey) == nil, "Opening an unplaced Daily does not persist a user drag")
 
         let shrink = sample(controller.board) { state.filter = .tasks }
         let taskFrame = controller.board.frame
-        expect(state.dailyCaptures.count == 1 && near(taskFrame.height, 335), "Tasks leaves one framed record and the compact content height")
+        expect(state.todayTimelineCaptures.count == 1 && taskFrame.height >= 429 && taskFrame.height < 609,
+               "Tasks leaves one receipt in a compact panel between the 430-point shell minimum and the full 610-point height")
         expectTransition(shrink, from: initial, to: taskFrame, reducedMotion: reducedMotion, label: "Daily shrink")
         expect(defaults.object(forKey: CornerController.boardPlacementKey) == nil, "Filter animation does not become a saved user placement")
 
-        let task = state.dailyCaptures[0]
-        // Give collapse a meaningful travel distance. A plain task only shrinks
-        // 18 points; pixel rounding makes the filter helper's 1-point endpoint
-        // exclusion inappropriate for its visible-duration assertion.
+        let task = state.todayTimelineCaptures[0]
+        // A comment and reminder leave a visible transition above the shell
+        // minimum, without endpoint pixel rounding dominating its duration.
         try store.update(task, comment: "Keep this detailed context visible while reviewing the workshop notes and the next steps for tomorrow.",
-                         reminderAt: nil, reminderTimeZoneID: nil)
+                         reminderAt: Date().addingTimeInterval(3600), reminderTimeZoneID: TimeZone.current.identifier)
         settle()
         let expandedTaskFrame = controller.board.frame
         let collapsed = sample(controller.board) { state.toggleMinimized(task) }
@@ -179,7 +179,8 @@ private final class FilterResizeNotificationClient: ReminderNotificationClient {
         settle()
 
         let empty = sample(controller.board) { state.filter = .files }
-        expect(state.dailyCaptures.isEmpty && near(controller.board.frame.height, 340), "An empty filter reserves room for the bored robot")
+        expect(state.todayTimelineCaptures.isEmpty && near(controller.board.frame.height, 430),
+               "An empty filter retains the labeled shell and its 380-point content minimum")
         expectFixedHeader(empty, anchor: initial, label: "Empty Daily filter")
         let beforeGrowth = controller.board.frame
         let growth = sample(controller.board) { state.filter = .all }
@@ -219,16 +220,16 @@ private final class FilterResizeNotificationClient: ReminderNotificationClient {
         controller.openSearch()
         settle()
         let searchFull = controller.board.frame
-        expect(near(searchFull.height, 550), "Search starts with enough matches for a full panel")
+        expect(near(searchFull.height, 610), "Search starts with enough matches for a full panel")
         let searchShrink = sample(controller.board) { state.filter = .links }
         let searchLink = controller.board.frame
         expect(state.searchGroups.count == 1 && state.searchGroups.first?.entries.count == 1,
                "Search Links finds the isolated previous-day link with no adjacent fixtures")
-        expect(near(searchLink.height, 355), "Single-entry search has the intended compact height")
+        expect(near(searchLink.height, 530), "Single-entry search keeps the labeled shell and result actions visible")
         expectTransition(searchShrink, from: searchFull, to: searchLink, reducedMotion: reducedMotion, label: "Search shrink")
         let searchEmpty = sample(controller.board) { state.filter = .media }
         expectFixedHeader(searchEmpty, anchor: searchFull, label: "Empty Search filter")
-        expect(state.searchGroups.isEmpty && near(controller.board.frame.height, 340), "Empty Search fits its status without moving the header")
+        expect(state.searchGroups.isEmpty && near(controller.board.frame.height, 430), "Empty Search fits its status without moving the header")
         let searchBeforeGrowth = controller.board.frame
         let searchGrowth = sample(controller.board) { state.filter = .all }
         expectTransition(searchGrowth, from: searchBeforeGrowth, to: searchFull, reducedMotion: reducedMotion, label: "Search growth")
@@ -248,7 +249,7 @@ private final class FilterResizeNotificationClient: ReminderNotificationClient {
 
         // Put the compact board near the display bottom, then ask for more
         // content. Its header should remain where it was deliberately placed.
-        let lowTop = screen.visibleFrame.minY + 370
+        let lowTop = screen.visibleFrame.minY + 470
         state.onBoardDragStarted?()
         let lowFrame = NSRect(x: controller.board.frame.minX,
                               y: lowTop - controller.board.frame.height,
@@ -260,7 +261,7 @@ private final class FilterResizeNotificationClient: ReminderNotificationClient {
         let constrainedGrowth = sample(controller.board) { state.filter = .all }
         expectFixedHeader(constrainedGrowth, anchor: lowAnchor, label: "Growth near the screen bottom")
         expect(near(controller.board.frame.minY, screen.visibleFrame.minY), "Available height stops at the screen bottom")
-        expect(near(controller.board.frame.height, 370), "Overflowing records use a constrained panel instead of moving its header")
+        expect(near(controller.board.frame.height, 470), "Overflowing records use a constrained panel instead of moving its header")
         expect(defaults.array(forKey: CornerController.boardPlacementKey) as? [Double]
                == [Double(lowFrame.minX), Double(lowFrame.maxY)], "Constrained animation preserves the saved user anchor")
 
@@ -282,9 +283,9 @@ private final class FilterResizeNotificationClient: ReminderNotificationClient {
             settle()
             expect(screen.visibleFrame.contains(controller.board.frame),
                    "Releasing the header near the bottom recovers the entire panel on screen (\(topOffset)pt); visible=\(screen.visibleFrame), board=\(controller.board.frame)")
-            expect(near(controller.board.frame.height, 335),
+            expect(near(controller.board.frame.height, taskFrame.height),
                    "Offscreen drag recovery restores the full one-task height (\(topOffset)pt)")
-            expect(controller.board.frame.maxY >= screen.visibleFrame.minY + 335,
+            expect(controller.board.frame.maxY >= screen.visibleFrame.minY + 430,
                    "Offscreen drag recovery leaves an accessible header and usable content (\(topOffset)pt)")
         }
 
@@ -317,7 +318,7 @@ private final class FilterResizeNotificationClient: ReminderNotificationClient {
                    "Dragging during a weekly collapse restores the standard compact width")
             expect(screen.visibleFrame.contains(controller.board.frame),
                    "The interrupted weekly collapse recovers a fully visible Daily panel")
-            expect(near(controller.board.frame.height, 335),
+            expect(near(controller.board.frame.height, taskFrame.height),
                    "The interrupted weekly collapse retains the selected Tasks content height")
         }
         expect(store.captures.count == 6, "Filtering and resizing leave all six archived fixtures intact")

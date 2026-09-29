@@ -118,7 +118,216 @@ struct AutoCaptureServiceTests {
     }
 
     @MainActor
+    private static func migrationChecks() throws {
+        let suiteName = "DaBin.AutoCaptureMigration.\(UUID().uuidString)"
+        let defaults = UserDefaults(suiteName: suiteName)!
+        defer { defaults.removePersistentDomain(forName: suiteName) }
+        let fresh = AutoCaptureSettings(defaults: defaults)
+        try expect(!fresh.isClipboardEnabled && !fresh.isScreenshotsEnabled && !fresh.isEnabled,
+                   "Fresh installs leave both channels off")
+
+        defaults.set(true, forKey: AutoCaptureSettings.enabledKey)
+        defaults.set(true, forKey: AutoCaptureSettings.pausedKey)
+        defaults.set(["com.example.private"], forKey: AutoCaptureSettings.exclusionsKey)
+        defaults.set(Data("kept bookmark".utf8), forKey: AutoCaptureSettings.screenshotFolderBookmarkKey)
+        defaults.set(true, forKey: AutoCaptureSettings.privacyExplanationAcknowledgedKey)
+        let legacy = AutoCaptureSettings(defaults: defaults)
+        try expect(legacy.isClipboardEnabled && legacy.isScreenshotsEnabled && legacy.isPaused
+                   && legacy.status == .paused,
+                   "An existing enabled legacy preference preserves both sources and pause")
+        try expect(legacy.screenshotFolderBookmark == Data("kept bookmark".utf8)
+                   && legacy.isExcluded(bundleIdentifier: "com.example.private")
+                   && legacy.hasAcknowledgedPrivacyExplanation,
+                   "Migration preserves authorization, exclusions and privacy acknowledgement")
+        try expect(defaults.bool(forKey: AutoCaptureSettings.clipboardEnabledKey)
+                   && defaults.bool(forKey: AutoCaptureSettings.screenshotsEnabledKey),
+                   "Legacy choices migrate durably only once")
+        legacy.setScreenshotsEnabled(false)
+        let restored = AutoCaptureSettings(defaults: defaults)
+        try expect(restored.isClipboardEnabled && !restored.isScreenshotsEnabled && restored.isPaused,
+                   "A later channel choice overrides the legacy aggregate enabled value")
+
+        defaults.removePersistentDomain(forName: suiteName)
+        defaults.set(false, forKey: AutoCaptureSettings.enabledKey)
+        defaults.set(true, forKey: AutoCaptureSettings.pausedKey)
+        let disabled = AutoCaptureSettings(defaults: defaults)
+        try expect(!disabled.isEnabled && !disabled.isClipboardEnabled
+                   && !disabled.isScreenshotsEnabled && !disabled.isPaused
+                   && !defaults.bool(forKey: AutoCaptureSettings.pausedKey),
+                   "Legacy disabled state never opts into a channel and clears stale pause")
+
+        defaults.removePersistentDomain(forName: suiteName)
+        defaults.set(true, forKey: AutoCaptureSettings.enabledKey)
+        defaults.set(false, forKey: AutoCaptureSettings.clipboardEnabledKey)
+        let partial = AutoCaptureSettings(defaults: defaults)
+        try expect(!partial.isClipboardEnabled && !partial.isScreenshotsEnabled,
+                   "An explicit channel preference prevents missing keys from inheriting legacy opt-in")
+    }
+
+    @MainActor
+    private static func independentChannelChecks() async throws {
+        let suiteName = "DaBin.AutoCaptureChannels.\(UUID().uuidString)"
+        let defaults = UserDefaults(suiteName: suiteName)!
+        defer { defaults.removePersistentDomain(forName: suiteName) }
+        let root = try temporaryDirectory("IndependentChannels")
+        defer { try? FileManager.default.removeItem(at: root) }
+        let screenshots = try temporaryDirectory("IndependentScreenshots")
+        defer { try? FileManager.default.removeItem(at: screenshots) }
+        let board = NSPasteboard(name: .init("DaBin.AutoCaptureChannels.\(UUID().uuidString)"))
+        defer { board.clearContents() }
+        writeString("Already on clipboard", to: board)
+        let store = try CaptureStore(root: root)
+        let settings = AutoCaptureSettings(defaults: defaults)
+        let monitor = FakeScreenshotMonitor()
+        var clipboardReads = 0
+        var folderResolutions = 0
+        var staleBookmark = false
+        let service = AutoCaptureService(
+            settings: settings, input: InputService(store: store),
+            pasteboardProvider: { clipboardReads += 1; return board },
+            sourceApplicationProvider: { AutoCaptureSourceApplication(name: "Notes", bundleIdentifier: "com.apple.Notes") },
+            screenshotMonitorFactory: { _ in monitor },
+            bookmarkCreator: { Data($0.path.utf8) },
+            bookmarkResolver: { _ in folderResolutions += 1; return (screenshots, staleBookmark) },
+            pollInterval: 60, clipboardImageDelay: .milliseconds(160)
+        )
+        defer { service.shutdown() }
+        service.setClipboardEnabled(true)
+        try expect(service.isClipboardRunning && !service.isScreenshotsRunning
+                   && folderResolutions == 0 && clipboardReads == 1 && store.captures.isEmpty,
+                   "Clipboard alone starts without folder access and seeds the existing content")
+        writeString("Clipboard without any folder grant", to: board)
+        service.pollNow()
+        try await waitUntil { store.captures.count == 1 }
+
+        service.setScreenshotsEnabled(true)
+        try expect(service.isRunning && service.isClipboardRunning && !service.isScreenshotsRunning
+                   && service.screenshotStatus == .permissionRequired,
+                   "Missing screenshot access leaves clipboard capture active")
+        writeString("Clipboard while screenshots wait for access", to: board)
+        service.pollNow()
+        try await waitUntil { store.captures.count == 2 }
+        service.setClipboardEnabled(false)
+        let readsBeforeScreenshotOnly = clipboardReads
+        try expect(!service.isRunning && settings.status == .permissionRequired,
+                   "Screenshot-only mode waits for its grant")
+        try service.authorizeScreenshotFolder(screenshots)
+        try expect(service.isScreenshotsRunning && !service.isClipboardRunning
+                   && clipboardReads == readsBeforeScreenshotOnly,
+                   "Screenshot-only capture starts without touching clipboard")
+        service.applicationDidActivate(AutoCaptureSourceApplication(name: "Bitwarden", bundleIdentifier: "com.bitwarden.desktop"))
+        service.applicationDidActivate(AutoCaptureSourceApplication(name: "Notes", bundleIdentifier: "com.apple.Notes"))
+        service.pollNow()
+        try expect(clipboardReads == readsBeforeScreenshotOnly,
+                   "App activation and explicit polling cannot read a disabled clipboard channel")
+        let imageURL = screenshots.appendingPathComponent("independent.png")
+        try pngData(red: 0.73).write(to: imageURL)
+        monitor.emit(imageURL)
+        try await waitUntil { store.captures.count == 3 }
+        try expect(store.captures.first(where: { $0.captureOrigin == .automaticScreenshot }) != nil,
+                   "Screenshot-only capture commits a screenshot receipt")
+
+        monitor.emit(imageURL)
+        let obsoleteScreenshotCallback = monitor.onNewScreenshot
+        service.setScreenshotsEnabled(false)
+        service.setScreenshotsEnabled(true)
+        obsoleteScreenshotCallback?(imageURL, nil)
+        try await Task.sleep(for: .milliseconds(180))
+        try expect(store.captures.count == 3,
+                   "Disabling and immediately restarting screenshots cancels pending events and obsolete callbacks")
+
+        service.setClipboardEnabled(true)
+        writePNG(try pngData(red: 0.37), to: board)
+        service.pollNow()
+        service.setClipboardEnabled(false)
+        try await Task.sleep(for: .milliseconds(260))
+        try expect(store.captures.count == 3 && service.isScreenshotsRunning,
+                   "Disabling clipboard cancels its delayed image while screenshots stay selected and active")
+        writeString("Copied while clipboard channel was off", to: board)
+        service.setClipboardEnabled(true)
+        service.pollNow()
+        try await Task.sleep(for: .milliseconds(80))
+        try expect(store.captures.count == 3,
+                   "Enabling clipboard again seeds its counter rather than importing content from while off")
+
+        monitor.emit(imageURL)
+        writeString("Clipboard survives screenshot permission loss", to: board)
+        service.pollNow()
+        monitor.fail(NSError(domain: "DaBinChannels", code: 1))
+        try await waitUntil { store.captures.count == 4 }
+        try expect(service.isClipboardRunning && !service.isScreenshotsRunning
+                   && service.screenshotStatus == .permissionRevoked
+                   && store.captures.contains(where: { $0.originalText == "Clipboard survives screenshot permission loss" }),
+                   "Screenshot failure cancels its pending commit without canceling queued clipboard work")
+
+        staleBookmark = true
+        service.shutdown()
+        service.start()
+        try expect(service.isClipboardRunning && !service.isScreenshotsRunning
+                   && service.screenshotStatus == .permissionRevoked,
+                   "A stale bookmark on relaunch does not prevent clipboard startup")
+        staleBookmark = false
+        monitor.startError = NSError(domain: "DaBinChannels", code: 2)
+        service.shutdown()
+        service.start()
+        try expect(service.isClipboardRunning && !service.isScreenshotsRunning,
+                   "A screenshot monitor startup failure leaves clipboard running")
+        monitor.startError = nil
+        try service.authorizeScreenshotFolder(screenshots)
+        try expect(service.isScreenshotsRunning && service.isClipboardRunning,
+                   "Choosing a new folder recovers screenshots alongside clipboard")
+        service.removeScreenshotFolderAuthorization()
+        try expect(service.isClipboardRunning && !service.isScreenshotsRunning
+                   && service.screenshotStatus == .permissionRequired,
+                   "Removing folder access does not disable clipboard or forget selected sources")
+        service.pause()
+        service.setScreenshotsEnabled(false)
+        service.setScreenshotsEnabled(true)
+        try expect(settings.isPaused && !service.isRunning,
+                   "Changing selected channels while paused does not resume either channel")
+        writeString("Copied while all selected sources paused", to: board)
+        service.resume()
+        service.pollNow()
+        try await Task.sleep(for: .milliseconds(80))
+        try expect(store.captures.count == 4 && service.isClipboardRunning,
+                   "Shared resume reseeds clipboard even when screenshots are degraded")
+        writeString("Clipboard work survives changing screenshot selection", to: board)
+        service.pollNow()
+        let readsBeforeUnrelatedChange = clipboardReads
+        service.setScreenshotsEnabled(false)
+        try await waitUntil { store.captures.count == 5 }
+        try expect(clipboardReads == readsBeforeUnrelatedChange && service.isClipboardRunning,
+                   "Changing screenshot selection neither cancels pending clipboard work nor reseeds clipboard")
+        try service.authorizeScreenshotFolder(screenshots)
+        service.setScreenshotsEnabled(true)
+        monitor.emit(imageURL)
+        service.setClipboardEnabled(false)
+        try await waitUntil { store.captures.count == 6 }
+        try expect(service.isScreenshotsRunning && !service.isClipboardRunning,
+                   "Disabling clipboard preserves a screenshot already waiting to commit")
+        service.setClipboardEnabled(true)
+        let fallbackImage = try pngData(red: 0.21)
+        try fallbackImage.write(to: imageURL)
+        writePNG(fallbackImage, to: board)
+        service.pollNow()
+        monitor.emit(imageURL)
+        service.setScreenshotsEnabled(false)
+        try await waitUntil { store.captures.count == 7 }
+        try expect(store.captures.filter { $0.captureOrigin == .automaticClipboard && $0.kind == .image }.count == 1,
+                   "Canceling a screenshot before commit preserves its pending clipboard representation")
+        service.setEnabled(false)
+        try expect(!settings.isEnabled && !settings.isClipboardEnabled && !settings.isScreenshotsEnabled
+                   && !service.isRunning && !settings.isPaused,
+                   "Explicit master disable stops and clears both choices")
+        service.setEnabled(true)
+        try expect(!service.isRunning && !settings.isEnabled,
+                   "A later master enable cannot resurrect disabled source choices")
+    }
+
+    @MainActor
     static func main() async throws {
+        try migrationChecks()
+        try await independentChannelChecks()
         let suiteName = "DaBin.AutoCaptureServiceTests.\(UUID().uuidString)"
         let defaults = UserDefaults(suiteName: suiteName)!
         defer { defaults.removePersistentDomain(forName: suiteName) }
@@ -169,12 +378,17 @@ struct AutoCaptureServiceTests {
         try expect(pasteboardProviderCalls == 0 && !service.isRunning && !fakeMonitor.isRunning,
                    "Starting while disabled does not touch the clipboard or folder monitor")
         service.setEnabled(true)
+        try expect(!service.isRunning && !settings.isEnabled,
+                   "Master enable cannot select channels on the user's behalf")
+        service.setScreenshotsEnabled(true)
         try expect(!service.isRunning && settings.isEnabled && settings.status == .permissionRequired,
-                   "Enabling without a folder grant exposes the missing-permission state")
+                   "Screenshot-only opt-in exposes missing folder access without reading clipboard")
         service.setEnabled(false)
 
         settings.setScreenshotFolderBookmark(Data("fixture-bookmark".utf8))
-        service.setEnabled(true)
+        settings.setClipboardEnabled(true)
+        settings.setScreenshotsEnabled(true)
+        service.start()
         try expect(service.isRunning && fakeMonitor.isRunning && settings.status == .monitoring,
                    "The explicit opt-in starts both monitors")
         try expect(pasteboardProviderCalls == 1 && store.captures.isEmpty,
@@ -355,9 +569,10 @@ struct AutoCaptureServiceTests {
         let failuresBeforeRevocation = failures.count
         fakeMonitor.fail(NSError(domain: "DaBinRevokedFolderFixture", code: 1,
                                  userInfo: [NSLocalizedDescriptionKey: "Folder access revoked."]))
-        try await waitUntil { !service.isRunning && failures.count > failuresBeforeRevocation }
-        try expect(settings.isEnabled && settings.status == .permissionRevoked,
-                   "A lost screenshot-folder grant stops monitoring and exposes the revoked state")
+        try await waitUntil { !service.isScreenshotsRunning && failures.count > failuresBeforeRevocation }
+        try expect(settings.isEnabled && service.isClipboardRunning && service.isRunning
+                   && settings.status == .monitoring && service.screenshotStatus == .permissionRevoked,
+                   "A lost screenshot-folder grant stops only screenshots and keeps clipboard active")
 
         let captureCountBeforeDisable = store.captures.count
         service.setEnabled(false)

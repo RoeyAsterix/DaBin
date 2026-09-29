@@ -111,11 +111,29 @@ private final class WindowNotificationClient: ReminderNotificationClient {
             let islandRobot = CornerGeometry.robotFrame(cameraIsland: syntheticIsland, visible: syntheticVisible)
             try expect(syntheticVisible.contains(islandRobot) && abs(islandRobot.midX - syntheticIsland.midX) <= 0.5,
                        "Camera-island robot is centered immediately below the cutout and stays visible")
+            try expect(islandRobot.size == NSSize(width: 232, height: 150)
+                       && islandRobot.maxY == syntheticIsland.minY,
+                       "Manual island choreography has a wide stage attached to the real underside")
+            let islandInteraction = CornerGeometry.robotInteractionFrame(in: islandRobot, target: .cameraIsland)
+            let islandBody = CornerGeometry.robotBodyFrame(in: islandRobot, target: .cameraIsland)
+            try expect(islandInteraction.size == NSSize(width: 128, height: 130)
+                       && islandInteraction.midX == islandRobot.midX
+                       && islandInteraction.maxY == islandRobot.maxY
+                       && islandRobot.contains(islandInteraction),
+                       "Island clicks and drops use a central top-aligned target inside the swept stage")
+            try expect(islandBody.size == NSSize(width: 88, height: 108)
+                       && islandBody.maxY == islandRobot.maxY - 8
+                       && islandInteraction.contains(islandBody),
+                       "Board expansion starts at the visible central body rather than the full stage")
             let islandBoard = CornerGeometry.panelFrame(robot: islandRobot, visible: syntheticVisible,
                                                         target: .cameraIsland)
             try expect(syntheticVisible.contains(islandBoard) && abs(islandBoard.midX - syntheticIsland.midX) <= 0.5,
                        "Camera-island Daily opens below the centered robot and stays on screen")
         }
+        let smallIslandStage = NSRect(x: -80, y: -40, width: 60, height: 70)
+        try expect(CornerGeometry.robotInteractionFrame(in: smallIslandStage, target: .cameraIsland) == smallIslandStage
+                   && smallIslandStage.contains(CornerGeometry.robotBodyFrame(in: smallIslandStage, target: .cameraIsland)),
+                   "Constrained stages keep both hit and transition geometry within their bounds")
         try expect(CornerGeometry.cameraIslandRect(frame: syntheticFrame, safeAreaTop: 0,
                                                    auxiliaryLeft: nil, auxiliaryRight: nil) == nil,
                    "A display without safe-area and auxiliary data is not guessed to have an island")
@@ -151,6 +169,22 @@ private final class WindowNotificationClient: ReminderNotificationClient {
             try expect(controller.bin.frame == CornerGeometry.robotFrame(cameraIsland: island,
                                                                           visible: islandScreen.visibleFrame),
                        "Live island reveal uses the detected cutout geometry")
+            let transparentEdge = NSPoint(x: controller.bin.frame.minX + 3, y: controller.bin.frame.midY)
+            controller.pollPointer(at: transparentEdge, now: clock.addingTimeInterval(2.1), pressedMouseButtons: 0)
+            try expect(controller.bin.isVisible && controller.bin.ignoresMouseEvents && !controller.bin.isKeyWindow,
+                       "The island animation margins pass clicks through and never take hover focus")
+            let islandBodyPoint = NSPoint(x: controller.bin.frame.midX, y: controller.bin.frame.maxY - 60)
+            controller.pollPointer(at: islandBodyPoint, now: clock.addingTimeInterval(2.2), pressedMouseButtons: 0)
+            try expect(!controller.bin.ignoresMouseEvents && controller.bin.isKeyWindow,
+                       "The central island robot remains an immediate hover-paste target")
+            controller.robot.onDragState?(true)
+            controller.pollPointer(at: transparentEdge, now: clock.addingTimeInterval(2.3), pressedMouseButtons: 1)
+            try expect(!controller.bin.ignoresMouseEvents && controller.bin.isVisible,
+                       "An accepted drag retains its destination until AppKit finishes the transfer")
+            controller.robot.onDragState?(false)
+            controller.pollPointer(at: transparentEdge, now: clock.addingTimeInterval(2.4), pressedMouseButtons: 0)
+            try expect(controller.bin.ignoresMouseEvents && !controller.bin.isKeyWindow,
+                       "Ending a drag restores transparent island margins and releases hover focus")
             controller.dismiss()
             controller.pollPointer(at: islandAway, now: clock.addingTimeInterval(3))
         }
@@ -176,6 +210,8 @@ private final class WindowNotificationClient: ReminderNotificationClient {
         controller.pollPointer(at: away, now: clock.addingTimeInterval(-0.1))
         controller.pollPointer(at: point, now: clock)
         try expect(controller.bin.isVisible, "Robot visible before opening Daily")
+        try expect(!controller.bin.ignoresMouseEvents && !controller.robot.isIslandStage,
+                   "Returning to a normal corner restores the compact interactive destination")
         let hoverPoint = NSPoint(x: controller.bin.frame.midX, y: controller.bin.frame.midY)
         let frontmostBeforeHover = NSWorkspace.shared.frontmostApplication?.processIdentifier
         controller.pollPointer(at: hoverPoint, now: clock, pressedMouseButtons: 0)
@@ -273,7 +309,8 @@ private final class WindowNotificationClient: ReminderNotificationClient {
         guard let handle = controller.board.contentView.flatMap({ dragSurface(in: $0) }) else {
             throw NSError(domain: "DaBinWindowTests", code: 2, userInfo: [NSLocalizedDescriptionKey: "Native header drag surface is mounted"])
         }
-        try expect(handle.bounds.width > 30 && handle.bounds.height == 30, "Native header has a usable drag surface")
+        try expect(handle.bounds.width == 68 && handle.bounds.height == 28,
+                   "The labeled header keeps the complete 68-by-28 logo available for native dragging")
         func dragEvent(_ type: NSEvent.EventType, point: NSPoint) -> NSEvent {
             NSEvent.mouseEvent(with: type, location: point, modifierFlags: [], timestamp: 10,
                               windowNumber: controller.board.windowNumber, context: nil,
@@ -295,16 +332,16 @@ private final class WindowNotificationClient: ReminderNotificationClient {
         try expect(controller.board.frame == draggedFrame, "Content changes cannot snap the board during a native drag")
         handle.mouseUp(with: dragEvent(.leftMouseUp, point: pointer))
         controller.finishBoardDragIfReleased(pressedMouseButtons: 0)
-        let expectedSettings = CornerGeometry.movedPanelFrame(topLeft: chosenTopLeft, visible: screen.visibleFrame, preferredHeight: 480)
+        let expectedSettings = CornerGeometry.movedPanelFrame(topLeft: chosenTopLeft, visible: screen.visibleFrame, preferredHeight: 550)
         try expect(controller.board.frame == expectedSettings, "Release keeps the chosen position and applies pending height changes")
         try expect(placementDefaults.array(forKey: CornerController.boardPlacementKey) as? [Double] == [Double(chosenTopLeft.x), Double(chosenTopLeft.y)], "Manual board position is saved separately from captures")
         state.openNewTask()
         RunLoop.main.run(until: Date().addingTimeInterval(0.12))
         try expect(controller.board.frame.minX == chosenTopLeft.x && controller.board.frame.maxY == chosenTopLeft.y, "Task composer preserves the moved header position")
-        try expect(controller.board.frame.height == 360, "Moved board retains compact route sizing")
+        try expect(controller.board.frame.height == 490, "Moved task composer reserves 440 points of content plus its outer frame")
         state.newTaskDraft.reminderEnabled = true
         RunLoop.main.run(until: Date().addingTimeInterval(0.12))
-        try expect(controller.board.frame.height == 420 && controller.board.frame.maxY == chosenTopLeft.y,
+        try expect(controller.board.frame.height == 550 && controller.board.frame.maxY == chosenTopLeft.y,
                    "Live reminder expansion resizes below the moved header without jumping to a corner")
         state.cancelNewTask()
         controller.dismiss()

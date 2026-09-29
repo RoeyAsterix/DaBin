@@ -4,6 +4,7 @@ import UniformTypeIdentifiers
 
 @MainActor final class CaptureStore: ObservableObject {
     @Published private(set) var captures: [Capture] = []
+    @Published private(set) var trashedCaptures: [Capture] = []
     @Published var error: String?
     let root: URL
     private let repository: CaptureRepository
@@ -12,6 +13,7 @@ import UniformTypeIdentifiers
     private var archiveFailures: [UUID: String] = [:]
     var failureInjector: ((ImportCheckpoint) throws -> Void)?
     var removalFailureInjector: ((RemovalCheckpoint) throws -> Void)?
+    var backupFailureInjector: ((ArchiveRestoreCheckpoint) throws -> Void)?
     private var pendingRemovalIDs: Set<UUID> = []
 
     init(root requestedRoot: URL? = nil) throws {
@@ -34,7 +36,7 @@ import UniformTypeIdentifiers
         try recoverInterruptedImports()
         try refresh()
         migrateLegacyOriginals()
-        synchronizeArchive(captures)
+        synchronizeArchive(captures + trashedCaptures)
     }
 
     func capture(text: String, at: Date = Date(), timeZone: TimeZone = .current,
@@ -155,11 +157,128 @@ import UniformTypeIdentifiers
         }
     }
 
+    func setOrganization(_ capture: Capture, pinned: Bool, projectName: String?) throws {
+        try requireCurrent(capture)
+        let trimmed = projectName?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        let project = trimmed.isEmpty ? nil : String(trimmed.prefix(120))
+        guard capture.isPinned != pinned || capture.projectName != project else { return }
+        let old = (capture.isPinned, capture.projectName, capture.updatedAt)
+        capture.isPinned = pinned
+        capture.projectName = project
+        capture.updatedAt = Date()
+        do {
+            try failureInjector?(.beforeMetadataSave)
+            try persist(capture)
+            objectWillChange.send()
+        } catch {
+            capture.isPinned = old.0
+            capture.projectName = old.1
+            capture.updatedAt = old.2
+            throw error
+        }
+    }
+
+    /// A logical snapshot and verified owned files, never a copy of live SQLite.
+    func exportBackup(to destination: URL) throws {
+        let scoped = destination.startAccessingSecurityScopedResource()
+        defer { if scoped { destination.stopAccessingSecurityScopedResource() } }
+        try requireStableArchiveForBackup()
+        let snapshots = try repository.load()
+        try repository.validateSnapshots(snapshots)
+        try ArchiveBackup.export(snapshots: snapshots, archiveRoot: root, to: destination)
+    }
+
+    func restoreBackup(from source: URL) throws -> ArchiveRestoreResult {
+        let scoped = source.startAccessingSecurityScopedResource()
+        defer { if scoped { source.stopAccessingSecurityScopedResource() } }
+        try requireStableArchiveForBackup()
+        let result = try ArchiveBackup.restore(from: source, into: root,
+            existing: repository.load(), validate: repository.validateSnapshots,
+            checkpoint: { try self.backupFailureInjector?($0) },
+            commit: { try self.repository.saveSnapshots($0) })
+        let restored = result.addedSnapshots.map(Capture.init(snapshot:))
+        captures.append(contentsOf: restored.filter { $0.deletedAt == nil })
+        trashedCaptures.append(contentsOf: restored.filter { $0.deletedAt != nil })
+        captures.sort { $0.capturedAt == $1.capturedAt ? $0.id.uuidString < $1.id.uuidString : $0.capturedAt > $1.capturedAt }
+        trashedCaptures.sort { ($0.deletedAt ?? .distantPast) > ($1.deletedAt ?? .distantPast) }
+        synchronizeArchive(restored)
+        return ArchiveRestoreResult(addedCount: restored.count, existingCount: result.existingCount)
+    }
+
+    private func requireStableArchiveForBackup() throws {
+        let imports = try FileManager.default.contentsOfDirectory(at: safeURL("Imports"), includingPropertiesForKeys: nil)
+        guard pendingRemovalIDs.isEmpty, !imports.contains(where: { $0.pathExtension == "json" }) else {
+            throw ArchiveBackupError.busy
+        }
+    }
+
     /// The caller first cancels and awaits the capture's preview and local text-index
     /// work. Notification cancellation follows this committed removal, so delayed schedules see no record.
     /// No owned files are removed until the database deletion has committed.
     func remove(_ capture: Capture) throws -> CaptureRemovalResult {
         try requireCurrent(capture)
+        return try removeOwnedCapture(capture)
+    }
+
+    /// Recoverable removal retains all originals and annotations. Replace the
+    /// visible object after commit so a delayed service cannot mutate the trash.
+    func moveToTrash(_ capture: Capture) throws {
+        try requireCurrent(capture)
+        let old = (capture.deletedAt, capture.reminderRevision, capture.notificationState, capture.updatedAt)
+        capture.deletedAt = Date()
+        capture.reminderRevision += 1
+        capture.notificationState = "trashed"
+        capture.updatedAt = Date()
+        do {
+            try failureInjector?(.beforeMetadataSave)
+            try repository.save([capture])
+        } catch {
+            capture.deletedAt = old.0
+            capture.reminderRevision = old.1
+            capture.notificationState = old.2
+            capture.updatedAt = old.3
+            throw error
+        }
+        let retained = Capture(snapshot: CaptureSnapshot(capture))
+        captures.removeAll { $0.id == capture.id }
+        trashedCaptures.append(retained)
+        trashedCaptures.sort { ($0.deletedAt ?? .distantPast) > ($1.deletedAt ?? .distantPast) }
+        synchronizeArchive([retained])
+    }
+
+    func restoreFromTrash(_ capture: Capture) throws {
+        try requireTrashed(capture)
+        let old = (capture.deletedAt, capture.reminderRevision, capture.notificationState, capture.updatedAt)
+        capture.deletedAt = nil
+        capture.reminderRevision += 1
+        capture.notificationState = capture.isTask && capture.isCompleted ? "completed"
+            : (capture.reminderAt == nil ? "none" : "pending")
+        capture.updatedAt = Date()
+        do {
+            try failureInjector?(.beforeMetadataSave)
+            try repository.save([capture])
+        } catch {
+            capture.deletedAt = old.0
+            capture.reminderRevision = old.1
+            capture.notificationState = old.2
+            capture.updatedAt = old.3
+            throw error
+        }
+        let restored = Capture(snapshot: CaptureSnapshot(capture))
+        trashedCaptures.removeAll { $0.id == capture.id }
+        captures.append(restored)
+        captures.sort { $0.capturedAt == $1.capturedAt ? $0.id.uuidString < $1.id.uuidString : $0.capturedAt > $1.capturedAt }
+        synchronizeArchive([restored])
+    }
+
+    /// Destructive deletion is available only for an explicitly selected trash
+    /// record. Legacy remove() retains its existing active-record semantics.
+    func permanentlyRemove(_ capture: Capture) throws -> CaptureRemovalResult {
+        try requireTrashed(capture)
+        return try removeOwnedCapture(capture)
+    }
+
+    private func removeOwnedCapture(_ capture: Capture) throws -> CaptureRemovalResult {
         let journal = CaptureRemovalJournal(capture)
         let paths = try journal.ownedPaths()
         // Reject unsafe path components before modifying metadata or journal state.
@@ -185,6 +304,7 @@ import UniformTypeIdentifiers
             try repository.remove(id: capture.id)
             committed = true
             captures.removeAll { $0.id == capture.id }
+            trashedCaptures.removeAll { $0.id == capture.id }
             archiveFailures.removeValue(forKey: capture.id)
             synchronizeArchive([])
             try removalFailureInjector?(.afterMetadataDelete)
@@ -327,7 +447,8 @@ import UniformTypeIdentifiers
     }
 
     private func persist(_ capture: Capture) throws {
-        guard !pendingRemovalIDs.contains(capture.id) else {
+        guard !pendingRemovalIDs.contains(capture.id), capture.deletedAt == nil,
+              !trashedCaptures.contains(where: { $0.id == capture.id }) else {
             throw CaptureStoreError.invalidOriginal("This capture is being removed.")
         }
         try repository.save([capture])
@@ -337,9 +458,12 @@ import UniformTypeIdentifiers
     }
 
     func refresh() throws {
-        let existing = Dictionary(uniqueKeysWithValues: captures.map { ($0.id, $0) })
-        captures = try repository.load().map { existing[$0.id] ?? Capture(snapshot: $0) }
+        let existing = Dictionary(uniqueKeysWithValues: (captures + trashedCaptures).map { ($0.id, $0) })
+        let records = try repository.load().map { existing[$0.id] ?? Capture(snapshot: $0) }
+        captures = records.filter { $0.deletedAt == nil }
             .sorted { $0.capturedAt == $1.capturedAt ? $0.id.uuidString < $1.id.uuidString : $0.capturedAt > $1.capturedAt }
+        trashedCaptures = records.filter { $0.deletedAt != nil }
+            .sorted { ($0.deletedAt ?? .distantPast) > ($1.deletedAt ?? .distantPast) }
     }
 
     var archiveRoot: URL { root.appendingPathComponent("Archive", isDirectory: true) }
@@ -386,8 +510,15 @@ import UniformTypeIdentifiers
     private func safeURL(_ relative: String) throws -> URL { try archive.safeURL(relative) }
 
     private func requireCurrent(_ capture: Capture) throws {
-        guard captures.contains(where: { $0 === capture }), !pendingRemovalIDs.contains(capture.id) else {
+        guard capture.deletedAt == nil, captures.contains(where: { $0 === capture }), !pendingRemovalIDs.contains(capture.id) else {
             throw CaptureStoreError.invalidOriginal("This capture is no longer in the current archive.")
+        }
+    }
+
+    private func requireTrashed(_ capture: Capture) throws {
+        guard capture.deletedAt != nil, trashedCaptures.contains(where: { $0 === capture }),
+              !pendingRemovalIDs.contains(capture.id) else {
+            throw CaptureStoreError.invalidOriginal("This capture is no longer in Recently Deleted.")
         }
     }
 
@@ -405,7 +536,7 @@ import UniformTypeIdentifiers
                 let journal = try JSONDecoder().decode(CaptureRemovalJournal.self, from: Data(contentsOf: url))
                 guard url.lastPathComponent == "\(journal.id.uuidString).json" else { throw CaptureStoreError.invalidManagedPath }
                 _ = try journal.ownedPaths()
-                if captures.contains(where: { $0.id == journal.id }) {
+                if (captures + trashedCaptures).contains(where: { $0.id == journal.id }) {
                     // A crash before metadata commit leaves every file intact.
                     try FileManager.default.removeItem(at: url)
                     pendingRemovalIDs.remove(journal.id)
@@ -466,7 +597,7 @@ import UniformTypeIdentifiers
     }
 
     private func migrateLegacyOriginals() {
-        for capture in captures {
+        for capture in captures + trashedCaptures {
             guard let previous = capture.attachmentRelativePath, previous.hasPrefix("Originals/") else { continue }
             do {
                 guard let source = managedURL(for: capture) else { throw CaptureStoreError.importVerificationFailed }
@@ -562,7 +693,7 @@ import UniformTypeIdentifiers
                 }
                 let original = try safeURL(journal.relativePath)
                 let staging = try safeURL(journal.stagingRelativePath)
-                if let capture = captures.first(where: { $0.id == journal.id }) {
+                if let capture = (captures + trashedCaptures).first(where: { $0.id == journal.id }) {
                     guard capture.attachmentRelativePath == journal.relativePath,
                           managedURL(for: capture) != nil else { throw CaptureStoreError.importVerificationFailed }
                     cleanupCompleted(journal, journalURL: journalURL)
@@ -591,7 +722,7 @@ import UniformTypeIdentifiers
         }
         // Unknown files are never deleted. They may be the only surviving copy after an interrupted import.
         let remainingJournalIDs = Set((try manager.contentsOfDirectory(at: root.appendingPathComponent("Imports"), includingPropertiesForKeys: nil)).map { $0.deletingPathExtension().lastPathComponent })
-        let savedIDs = Set(captures.map { $0.id.uuidString })
+        let savedIDs = Set((captures + trashedCaptures).map { $0.id.uuidString })
         for directory in ["Staging", "Originals"] {
             let children = try manager.contentsOfDirectory(at: root.appendingPathComponent(directory), includingPropertiesForKeys: nil)
             let unknown = children.filter {

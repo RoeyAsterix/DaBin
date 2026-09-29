@@ -35,7 +35,7 @@ enum ThemePreset: String, CaseIterable, Identifiable {
 final class ThemeSettings: ObservableObject {
     nonisolated static let defaultHex = "6D5387"
     nonisolated static let defaultsKey = "DaBin.themeColor.v1"
-    nonisolated static let defaultBoardOpacity = 0.75
+    nonisolated static let defaultBoardOpacity = 1.0
     nonisolated static let minimumBoardOpacity = 0.35
     nonisolated static let maximumBoardOpacity = 1.0
     nonisolated static let boardOpacityKey = "DaBin.boardOpacity.v1"

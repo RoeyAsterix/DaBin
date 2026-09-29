@@ -13,13 +13,13 @@ import subprocess
 import time
 from project_inventory import ROOT, TARGET, sources, resources, hashes, fingerprint
 
-NONFOCUS = ["ThemeSettingsTests", "PrivacyInformationTests", "DomainTests", "ArchiveLayoutTests",
+NONFOCUS = ["QuickAccessTests", "WorkInboxTests", "ManualCaptureLifecycleTests", "ArchiveRecoveryTests", "ThemeSettingsTests", "PrivacyInformationTests", "DomainTests", "ArchiveLayoutTests",
             "ArchiveStoreTests", "CaptureRemovalTests", "ServiceTests", "QAStorageScopedSaveTests",
             "QALifecycleTests", "ApplicationLifecycleTests", "PreviewLifecycleTests", "TaskStateTests", "CaptureActionTests",
             "CaptureClipboardTests", "CaptureTaskConversionTests",
             "LocalContentSearchTests",
             "HourlyGroupingTests", "DayExportTests", "DayExportUITests", "WeeklyStateTests", "InputTests", "AutoCaptureServiceTests", "AutoCaptureRobotPresenterTests", "AutoCaptureRobotCelebrationTests",
-            "SoftwareUpdateTests", "UpdateConfigurationTests", "RobotMotionTests", "RobotLifecycleTests", "RobotAppFrameTests"]
+            "SoftwareUpdateTests", "UpdateConfigurationTests", "RobotMotionTests", "IslandRobotChoreographyTests", "RobotLifecycleTests", "RobotAppFrameTests"]
 WINDOW = ["WindowTests", "WeeklyWindowTests", "FilterResizeTests", "RobotDropTests", "DailyCaptureTests", "HeaderInteractionTests", "RobotWindowTransitionTests"]
 MODULE = "DaBinTestCore"
 

@@ -1,0 +1,203 @@
+<div id="dabin-ux-concept" aria-label="DaBin interface concept">
+  <style>
+    #dabin-ux-concept { --db-bg: light-dark(#faf9fc,#211f28); --db-panel: light-dark(#ffffff,#292631); --db-ink: light-dark(#272330,#f1edf7); --db-muted: light-dark(#726b7e,#b5adbf); --db-line: light-dark(#e7e2ed,#413a4c); --db-accent: light-dark(#6e46bd,#c0a3ff); --db-tint: light-dark(#f0eafa,#3b2f51); --db-button: light-dark(#7546bf,#ad83ed); --db-button-ink: light-dark(#ffffff,#20112f); --db-hover: light-dark(#f6f3fa,#322d3d); font: 400 14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; color:var(--db-ink); width:100%; }
+    #dabin-ux-concept * { box-sizing:border-box; }
+    #dabin-ux-concept [hidden] { display:none !important; }
+    #dabin-ux-concept button, #dabin-ux-concept input, #dabin-ux-concept select, #dabin-ux-concept textarea { font:inherit; color:inherit; }
+    #dabin-ux-concept button { cursor:pointer; }
+    #dabin-ux-concept button:disabled { cursor:default; opacity:.5; }
+    #dabin-ux-concept button { min-height:34px; }
+    #dabin-ux-concept .db-window { border:1px solid var(--db-line); border-radius:18px; background:var(--db-bg); overflow:hidden; }
+    #dabin-ux-concept .db-chrome { display:flex; align-items:center; gap:12px; padding:14px 22px 10px; }
+    #dabin-ux-concept .db-lights { display:flex; gap:6px; margin-right:8px; }
+    #dabin-ux-concept .db-lights span { width:10px; height:10px; border-radius:50%; background:var(--db-line); }
+    #dabin-ux-concept .db-brand { display:flex; gap:8px; align-items:center; font-weight:500; }
+    #dabin-ux-concept .db-bot { display:grid; place-items:center; width:28px; height:25px; color:var(--db-accent); background:var(--db-tint); border-radius:9px; }
+    #dabin-ux-concept .db-concept { margin-left:auto; color:var(--db-muted); font-size:12px; }
+    #dabin-ux-concept .db-toolbar { display:flex; gap:12px; padding:12px 22px 18px; align-items:center; }
+    #dabin-ux-concept .db-search { display:flex; align-items:center; gap:8px; background:var(--db-panel); border:1px solid var(--db-line); border-radius:9px; padding:0 12px; flex:1; min-width:0; }
+    #dabin-ux-concept .db-search input { width:100%; min-width:0; background:transparent; border:0; min-height:40px; font-size:14px; }
+    #dabin-ux-concept .db-search input::placeholder { color:var(--db-muted); opacity:1; }
+    #dabin-ux-concept .db-add { display:flex; align-items:center; justify-content:center; gap:6px; border:0; border-radius:9px; min-height:40px; padding:0 16px; background:var(--db-button); color:var(--db-button-ink); font-weight:500; }
+    #dabin-ux-concept .db-add-menu { display:flex; flex-wrap:wrap; gap:8px; align-items:center; padding:0 22px 14px; }
+    #dabin-ux-concept .db-add-menu small { font-size:12px; color:var(--db-muted); }
+    #dabin-ux-concept .db-nav { display:flex; padding:0 22px; gap:20px; border-bottom:1px solid var(--db-line); }
+    #dabin-ux-concept .db-tab { display:flex; gap:7px; align-items:center; padding:10px 0 13px; background:transparent; border:0; border-bottom:2px solid transparent; color:var(--db-muted); }
+    #dabin-ux-concept .db-tab[aria-selected="true"] { border-bottom-color:var(--db-accent); color:var(--db-accent); font-weight:500; }
+    #dabin-ux-concept i, #dabin-ux-concept svg { width:17px; height:17px; flex-shrink:0; }
+    #dabin-ux-concept .db-main { padding:22px; }
+    #dabin-ux-concept .db-heading { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:16px; flex-wrap:wrap; }
+    #dabin-ux-concept h2 { margin:0; font-size:20px; line-height:1.3; font-weight:500; }
+    #dabin-ux-concept .db-subtitle { margin-top:3px; color:var(--db-muted); font-size:12px; }
+    #dabin-ux-concept .db-project-control { display:flex; gap:7px; align-items:center; font-size:12px; color:var(--db-muted); }
+    #dabin-ux-concept select { border:1px solid var(--db-line); border-radius:7px; padding:6px 9px; background:var(--db-panel); min-width:0; }
+    #dabin-ux-concept .db-capture-list { display:grid; gap:10px; }
+    #dabin-ux-concept .db-capture { width:100%; display:flex; align-items:flex-start; gap:13px; border:1px solid var(--db-line); border-radius:11px; padding:var(--db-item-space,16px); background:var(--db-panel); text-align:left; }
+    #dabin-ux-concept .db-capture:hover { background:var(--db-hover); }
+    #dabin-ux-concept .db-type { width:34px; height:34px; display:grid; place-items:center; border-radius:8px; background:var(--db-tint); color:var(--db-accent); flex-shrink:0; }
+    #dabin-ux-concept .db-item-body { flex:1; min-width:0; }
+    #dabin-ux-concept .db-item-title { display:block; font-weight:500; overflow-wrap:anywhere; }
+    #dabin-ux-concept .db-item-preview { display:block; margin-top:4px; color:var(--db-muted); font-size:13px; overflow-wrap:anywhere; }
+    #dabin-ux-concept .db-item-meta { display:block; margin-top:9px; font-size:12px; color:var(--db-muted); }
+    #dabin-ux-concept .db-time { font-size:12px; color:var(--db-muted); white-space:nowrap; padding-top:2px; }
+    #dabin-ux-concept .db-batch { background:transparent; border-style:dashed; align-items:center; }
+    #dabin-ux-concept .db-batch .db-type { background:transparent; color:var(--db-muted); }
+    #dabin-ux-concept .db-batch .db-item-title { font-weight:400; }
+    #dabin-ux-concept .db-batch .db-item-preview { margin-top:0; font-size:12px; }
+    #dabin-ux-concept .db-batch-items { display:grid; gap:8px; margin-left:22px; }
+    #dabin-ux-concept .db-footer { display:flex; gap:8px; align-items:center; padding:12px 22px; border-top:1px solid var(--db-line); color:var(--db-muted); font-size:12px; flex-wrap:wrap; }
+    #dabin-ux-concept .db-status { display:flex; gap:6px; align-items:center; }
+    #dabin-ux-concept .db-dot { width:6px; height:6px; border-radius:50%; background:var(--db-accent); }
+    #dabin-ux-concept .db-footer .db-text-btn { min-height:28px; }
+    #dabin-ux-concept .db-private { margin-left:auto; }
+    #dabin-ux-concept .db-text-btn { background:transparent; border:0; color:var(--db-accent); padding:3px 6px; }
+    #dabin-ux-concept .db-secondary { background:var(--db-panel); border:1px solid var(--db-line); border-radius:8px; padding:6px 10px; }
+    #dabin-ux-concept .db-empty { color:var(--db-muted); padding:22px 0; }
+    #dabin-ux-concept .db-detail { border:1px solid var(--db-line); background:var(--db-panel); border-radius:12px; padding:20px; }
+    #dabin-ux-concept .db-back { display:flex; gap:6px; align-items:center; padding-left:0; margin-bottom:15px; }
+    #dabin-ux-concept .db-detail h2 { margin:12px 0 5px; }
+    #dabin-ux-concept .db-detail-copy { margin:20px 0; white-space:pre-wrap; overflow-wrap:anywhere; }
+    #dabin-ux-concept .db-detail-actions { display:flex; align-items:center; flex-wrap:wrap; gap:8px; border-top:1px solid var(--db-line); padding-top:16px; }
+    #dabin-ux-concept .db-extra { margin-top:12px; display:flex; gap:8px; flex-wrap:wrap; }
+    #dabin-ux-concept .db-compose { padding:18px; margin-bottom:16px; border:1px solid var(--db-line); background:var(--db-panel); border-radius:11px; }
+    #dabin-ux-concept .db-compose label { display:block; font-weight:500; margin-bottom:8px; }
+    #dabin-ux-concept .db-compose textarea { display:block; width:100%; min-height:90px; resize:vertical; background:var(--db-bg); border:1px solid var(--db-line); border-radius:8px; padding:10px; margin-bottom:10px; }
+    #dabin-ux-concept .db-compose-footer { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+    #dabin-ux-concept .db-compose-footer small { color:var(--db-muted); margin-right:auto; font-size:12px; }
+    #dabin-ux-concept .db-notice { margin:12px 0 0; color:var(--db-accent); font-size:12px; }
+    #dabin-ux-concept .db-notice:empty { display:none; }
+    #dabin-ux-concept .db-followup { display:flex; gap:9px; align-items:center; }
+    #dabin-ux-concept .db-followup label { display:flex; align-items:center; justify-content:center; padding:8px; }
+    #dabin-ux-concept .db-followup input { width:18px; height:18px; accent-color:var(--db-accent); }
+    #dabin-ux-concept .db-sr { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+    @media (max-width:520px) { #dabin-ux-concept .db-chrome { padding:12px 14px 6px; } #dabin-ux-concept .db-toolbar { padding:10px 14px 14px; gap:8px; } #dabin-ux-concept .db-nav { padding:0 14px; gap:18px; } #dabin-ux-concept .db-nav svg { display:none; } #dabin-ux-concept .db-main { padding:18px 14px; } #dabin-ux-concept .db-footer { padding:10px 14px; } #dabin-ux-concept .db-lights { display:none; } #dabin-ux-concept .db-capture { gap:9px; } #dabin-ux-concept .db-type { width:28px; height:28px; } #dabin-ux-concept .db-time { font-size:11px; } #dabin-ux-concept .db-private { width:100%; margin-left:0; } #dabin-ux-concept .db-detail { padding:14px; } }
+    @media (pointer:coarse) { #dabin-ux-concept button, #dabin-ux-concept select { min-height:44px; } #dabin-ux-concept input, #dabin-ux-concept textarea { font-size:16px; } #dabin-ux-concept .db-footer .db-text-btn { min-height:44px; } }
+  </style>
+  <section class="db-window" aria-label="DaBin capture window">
+    <header>
+      <div class="db-chrome">
+        <div class="db-lights" aria-hidden="true"><span></span><span></span><span></span></div>
+        <div class="db-brand"><span class="db-bot"><i data-lucide="bot" aria-hidden="true"></i></span> DaBin</div>
+        <span class="db-concept">Interactive concept</span>
+      </div>
+      <div class="db-toolbar">
+        <label class="db-search"><i data-lucide="search" aria-hidden="true"></i><span class="db-sr">Search all captures</span><input id="db-search" type="search" placeholder="Search all captures" autocomplete="off"></label>
+        <button type="button" class="db-add" id="db-add" aria-expanded="false" aria-controls="db-add-menu"><i data-lucide="plus" aria-hidden="true"></i>Add</button>
+      </div>
+      <div class="db-add-menu" id="db-add-menu" hidden aria-label="Add capture"><button class="db-secondary" type="button" id="db-add-note">New note</button><button class="db-secondary" type="button" id="db-add-paste">Paste text</button><button class="db-secondary" type="button" id="db-add-file">Import file</button><small>Preview: New note is interactive</small></div>
+      <nav class="db-nav" aria-label="Capture views" role="tablist">
+        <button type="button" class="db-tab" id="db-tab-today" data-view="today" role="tab" aria-controls="db-view" aria-selected="true"><i data-lucide="sun" aria-hidden="true"></i>Today</button>
+        <button type="button" class="db-tab" id="db-tab-library" data-view="library" role="tab" aria-controls="db-view" aria-selected="false"><i data-lucide="archive" aria-hidden="true"></i>Library</button>
+        <button type="button" class="db-tab" id="db-tab-followups" data-view="followups" role="tab" aria-controls="db-view" aria-selected="false"><i data-lucide="circle-check" aria-hidden="true"></i>Follow-ups</button>
+      </nav>
+    </header>
+    <main class="db-main">
+      <form class="db-compose" id="db-compose" hidden>
+        <label for="db-new-note">New note</label>
+        <textarea id="db-new-note" placeholder="Catch a thought…" required></textarea>
+        <div class="db-compose-footer"><small>Demo note · stays in this preview</small><button type="button" class="db-text-btn" id="db-cancel">Cancel</button><button type="submit" class="db-add">Save note</button></div>
+      </form>
+      <section id="db-view" role="tabpanel" aria-labelledby="db-tab-today">
+        <div class="db-heading"><div><h2 id="db-heading">Today</h2><div class="db-subtitle" id="db-subtitle">Tuesday, September 29</div></div><label class="db-project-control" id="db-project-control" hidden>Project<select id="db-project"><option value="all">All projects</option><option value="Website launch">Website launch</option></select></label></div>
+        <div class="db-capture-list" id="db-list"></div>
+        <p class="db-sr" id="db-search-count" aria-live="polite"></p>
+      </section>
+      <section id="db-detail" hidden aria-label="Capture details"></section>
+      <p class="db-notice" id="db-notice" role="status" aria-live="polite"></p>
+      <button type="button" class="db-text-btn" id="db-undo" hidden>Undo delete</button>
+    </main>
+    <footer class="db-footer"><span class="db-status"><span class="db-dot" aria-hidden="true"></span><span id="db-capture-status">Clipboard capture on</span></span><button type="button" class="db-text-btn" id="db-pause">Pause</button><span class="db-private">Saved on this Mac</span></footer>
+  </section>
+  <script>
+    (() => {
+      const root = document.getElementById('dabin-ux-concept');
+      const get = id => root.querySelector('#' + id);
+      const escape = text => String(text).replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+      const captures = [
+        { id:'note-1', kind:'note', title:'A quieter first screen', preview:'Start with what I saved. Let the actions appear when I need them.', body:'Start with what I saved. Let the actions appear when I need them.\n\nFor the homepage: one promise, one real example, one clear next step.', source:'Quick note', time:'11:42', today:true, project:'Website launch', due:null },
+        { id:'link-1', kind:'link', title:'A useful reference for the launch page', preview:'A simple product story, with the detail one click away.', body:'A useful reference for the launch page.\n\nKeep the page focused on the customer’s first successful outcome. Save the deeper feature list for people who want it.', source:'Safari · example.com', time:'10:18', today:true, project:'Website launch', due:'Tomorrow, 9:00', url:'https://example.com' },
+        { id:'file-1', kind:'file', title:'Homepage-feedback.pdf', preview:'Notes from the first round of feedback.', body:'Homepage-feedback.pdf\n\nExample file saved for review. A real capture would retain the source file and its preview here.', source:'Finder · PDF', time:'09:36', today:true, project:'Website launch', due:null },
+        { id:'auto-1', kind:'clipboard', title:'Meeting link for Friday', preview:'Video call details copied from Calendar.', body:'Friday project review\n11:00–11:30\nVideo call details copied from Calendar.', source:'Clipboard · Calendar', time:'09:12', today:true, automatic:true, project:null, due:null },
+        { id:'auto-2', kind:'clipboard', title:'Shipping address', preview:'A copied address for the sample pack.', body:'Example Studio\n24 Orchard Lane\nSample City', source:'Clipboard · Mail', time:'09:04', today:true, automatic:true, project:null, due:null },
+        { id:'older-1', kind:'note', title:'Ask Maya for the final illustration', preview:'Use the version with the simpler background.', body:'Ask Maya for the final illustration.\n\nUse the version with the simpler background. Check the mobile crop before signing off.', source:'Quick note', time:'Yesterday', today:false, project:'Website launch', due:'Today, 14:00' }
+      ];
+      const state = {view:'today', selected:null, query:'', project:'all', batch:false, paused:false, density:'Comfortable', appearance:'System'};
+      let deleted = null;
+      const icons = {note:'sticky-note',link:'link',file:'file-text',clipboard:'clipboard'};
+      const initIcons = () => { if (globalThis.lucide) lucide.createIcons({ attrs:{width:17,height:17} }); };
+      const announce = text => { get('db-notice').textContent = text; };
+      function captureButton(item) {
+        return `<button class="db-capture" type="button" data-open="${escape(item.id)}"><span class="db-type"><i data-lucide="${icons[item.kind]}" aria-hidden="true"></i></span><span class="db-item-body"><span class="db-item-title">${escape(item.title)}</span><span class="db-item-preview">${escape(item.preview)}</span><span class="db-item-meta">${escape(item.source)}${item.due ? ' · ' + escape(item.due) : ''}</span></span><span class="db-time">${escape(item.time)}</span></button>`;
+      }
+      function showDetail() {
+        const item = captures.find(capture => capture.id === state.selected);
+        if (!item) { state.selected = null; render(); return; }
+        get('db-view').hidden = true;
+        get('db-detail').hidden = false;
+        get('db-detail').innerHTML = `<button class="db-text-btn db-back" id="db-back" type="button"><i data-lucide="arrow-left" aria-hidden="true"></i>Back to ${state.query ? 'results' : {today:'Today',library:'Library',followups:'Follow-ups'}[state.view]}</button><div class="db-detail"><span class="db-type"><i data-lucide="${icons[item.kind]}" aria-hidden="true"></i></span><h2>${escape(item.title)}</h2><div class="db-subtitle">${escape(item.source)} · ${escape(item.time)}${item.project ? ' · ' + escape(item.project) : ''}</div><p class="db-detail-copy">${escape(item.body)}</p><div class="db-detail-actions">${item.url || item.kind === 'file' ? '<button type="button" class="db-secondary" id="db-original">Open original</button>' : ''}<button type="button" class="db-secondary" id="db-copy">Copy</button><button type="button" class="db-secondary" id="db-remind">${item.due ? 'Remove reminder' : 'Remind tomorrow'}</button><button type="button" class="db-secondary" id="db-assign">${item.project ? 'Remove from project' : 'Add to Website launch'}</button><button type="button" class="db-text-btn" id="db-more" aria-expanded="false">More</button></div><div class="db-extra" id="db-extra" hidden><button type="button" class="db-text-btn" id="db-delete">Delete demo capture</button></div></div>`;
+        get('db-back').onclick = () => { const previous = state.selected; state.selected = null; announce(''); render(); const button = [...root.querySelectorAll('[data-open]')].find(button => button.dataset.open === previous); if (button) button.focus(); };
+        if (get('db-original')) get('db-original').onclick = () => announce('Demo: this would open the original in its source app.');
+        get('db-copy').onclick = async () => {
+          try { await navigator.clipboard.writeText(item.body); announce('Copied capture text.'); }
+          catch { const range = document.createRange(); range.selectNodeContents(root.querySelector('.db-detail-copy')); const selection = window.getSelection(); selection.removeAllRanges(); selection.addRange(range); announce('Text selected. Use your system Copy command.'); }
+        };
+        get('db-remind').onclick = () => { item.due = item.due ? null : 'Tomorrow, 9:00'; announce(item.due ? 'Reminder added to Follow-ups in this preview.' : 'Reminder removed.'); showDetail(); };
+        get('db-assign').onclick = () => { item.project = item.project ? null : 'Website launch'; announce(item.project ? 'Added to Website launch in this preview.' : 'Removed from project. The capture stays in Library.'); showDetail(); };
+        get('db-more').onclick = () => { get('db-extra').hidden = !get('db-extra').hidden; get('db-more').setAttribute('aria-expanded', String(!get('db-extra').hidden)); };
+        get('db-delete').onclick = () => { deleted = {item,index:captures.indexOf(item)}; captures.splice(deleted.index,1); state.selected = null; render(); announce('Demo capture deleted.'); get('db-undo').hidden = false; get('db-undo').focus(); };
+        initIcons();
+      }
+      function render() {
+        root.style.setProperty('--db-item-space', state.density === 'Compact' ? '11px' : '16px');
+        if (state.appearance === 'System') root.style.removeProperty('color-scheme');
+        else root.style.colorScheme = state.appearance.toLowerCase();
+        root.querySelectorAll('[data-view]').forEach(button => button.setAttribute('aria-selected', String(button.dataset.view === state.view)));
+        get('db-view').setAttribute('aria-labelledby','db-tab-' + state.view);
+        if (state.selected) { showDetail(); return; }
+        get('db-view').hidden = false;
+        get('db-detail').hidden = true;
+        const searching = Boolean(state.query.trim());
+        get('db-heading').textContent = searching ? 'Search results' : {today:'Today',library:'Library',followups:'Follow-ups'}[state.view];
+        get('db-project-control').hidden = searching || state.view !== 'library';
+        get('db-subtitle').textContent = searching ? 'Across all captures, projects and dates' : {today:'Tuesday, September 29',library:'Everything you saved, whenever you saved it',followups:'The original capture, with a next step'}[state.view];
+        let items = captures.filter(item => !item.done && (searching ? (item.title + ' ' + item.body + ' ' + item.source + ' ' + (item.project || '')).toLowerCase().includes(state.query.toLowerCase().trim()) : state.view === 'today' ? item.today : state.view === 'followups' ? item.due : state.project === 'all' || item.project === state.project));
+        get('db-search-count').textContent = searching ? `${items.length} result${items.length === 1 ? '' : 's'} across all captures` : '';
+        if (state.view === 'followups' && !searching) items.sort((a,b) => Number(b.due.startsWith('Today')) - Number(a.due.startsWith('Today')));
+        let html = '';
+        if (state.view === 'today' && !searching) {
+          html = items.filter(item => !item.automatic).map(captureButton).join('');
+          const automatic = items.filter(item => item.automatic);
+          if (automatic.length) html += `<button type="button" class="db-capture db-batch" id="db-batch" aria-expanded="${state.batch}" aria-controls="db-batch-items"><span class="db-type"><i data-lucide="layers" aria-hidden="true"></i></span><span class="db-item-body"><span class="db-item-title">${automatic.length} clipboard captures</span><span class="db-item-preview">Captured automatically · 09:04–09:12</span></span><i data-lucide="${state.batch ? 'chevron-up' : 'chevron-down'}" aria-hidden="true"></i></button><div class="db-batch-items" id="db-batch-items" ${state.batch ? '' : 'hidden'}>${automatic.map(captureButton).join('')}</div>`;
+        } else if (state.view === 'followups' && !searching) html = items.map(item => `<div class="db-followup"><label><input type="checkbox" data-complete="${escape(item.id)}" aria-label="Complete follow-up: ${escape(item.title)}"></label>${captureButton(item)}</div>`).join('');
+        else html = items.map(captureButton).join('');
+        get('db-list').innerHTML = html || `<p class="db-empty">${searching ? 'No captures match this search.' : state.view === 'followups' ? 'All caught up. Add a reminder from any capture.' : 'No captures here yet.'}</p>`;
+        root.querySelectorAll('[data-open]').forEach(button => button.onclick = () => { state.selected = button.dataset.open; announce(''); showDetail(); get('db-back').focus(); });
+        root.querySelectorAll('[data-complete]').forEach(input => input.onchange = () => { const item = captures.find(capture => capture.id === input.dataset.complete); item.due = null; render(); announce('Follow-up completed. The original stays in Library.'); });
+        if (get('db-batch')) get('db-batch').onclick = () => { state.batch = !state.batch; render(); };
+        initIcons();
+      }
+      root.querySelectorAll('[data-view]').forEach(button => button.onclick = () => { state.view = button.dataset.view; state.selected = null; state.query = ''; get('db-search').value = ''; announce(''); render(); });
+      get('db-search').oninput = event => { state.query = event.target.value; state.selected = null; announce(''); render(); };
+      get('db-project').onchange = event => { state.project = event.target.value; render(); };
+      const closeAdd = () => { get('db-add-menu').hidden = true; get('db-add').setAttribute('aria-expanded','false'); };
+      get('db-add').onclick = () => { get('db-add-menu').hidden = !get('db-add-menu').hidden; get('db-add').setAttribute('aria-expanded',String(!get('db-add-menu').hidden)); };
+      get('db-add-note').onclick = () => { closeAdd(); get('db-compose').hidden = false; get('db-new-note').focus(); };
+      get('db-add-paste').onclick = () => { closeAdd(); announce('Preview: Paste text would save the current clipboard as a capture. Try New note here.'); get('db-add').focus(); };
+      get('db-add-file').onclick = () => { closeAdd(); announce('Preview: Import file would open the Mac file picker. Try New note here.'); get('db-add').focus(); };
+      get('db-undo').onclick = () => { if (!deleted) return; captures.splice(deleted.index,0,deleted.item); deleted = null; get('db-undo').hidden = true; render(); announce('Capture restored.'); };
+      get('db-cancel').onclick = () => { get('db-compose').hidden = true; get('db-add').focus(); };
+      get('db-compose').onsubmit = event => {
+        event.preventDefault(); const body = get('db-new-note').value.trim(); if (!body) return;
+        const lines = body.split('\n'); captures.unshift({id:'demo-'+Date.now(),kind:'note',title:lines[0],preview:lines.slice(1).join(' ').trim() || 'A thought, safely caught.',body,source:'Quick note',time:'Now',today:true,project:null,due:null});
+        state.view = 'today'; state.selected = null; state.query = ''; get('db-search').value = ''; get('db-new-note').value = ''; get('db-compose').hidden = true; render(); announce('Demo note saved to Today and Library.');
+      };
+      get('db-pause').onclick = () => { state.paused = !state.paused; get('db-capture-status').textContent = state.paused ? 'Clipboard capture paused' : 'Clipboard capture on'; get('db-pause').textContent = state.paused ? 'Resume' : 'Pause'; announce('Capture status changed in this preview.'); };
+      render();
+      if (globalThis.Tweak) {
+        const tweak = new Tweak({container:root,onChange:render});
+        tweak.addSelect(state,'density',{label:'Capture spacing',options:['Comfortable','Compact']});
+        tweak.addSelect(state,'appearance',{label:'Appearance',options:['System','Light','Dark']});
+      }
+    })();
+  </script>
+</div>

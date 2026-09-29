@@ -86,15 +86,15 @@ struct CaptureActionTests {
 
         let failed = try store.capture(text: "Retain capture after database failure")[0]
         previews.process([failed])
-        store.removalFailureInjector = { stage in
-            if stage == .beforeMetadataDelete { throw NSError(domain: "QAExpectedRemovalFailure", code: 1) }
+        store.failureInjector = { stage in
+            if stage == .beforeMetadataSave { throw NSError(domain: "QAExpectedRemovalFailure", code: 1) }
         }
         state.openCapture(failed.id)
         await state.removeCapture(failed)
         try expect(store.captures.contains { $0 === failed } && state.route == .detail, "Failed removal preserves capture and open detail")
         try expect(state.status?.severity == .error && state.removingCaptureID == nil, "Failed removal reports actionable error and clears busy state")
         try expect(failed.previewState == "ready", "Failed removal restores preview processing")
-        store.removalFailureInjector = nil
+        store.failureInjector = nil
 
         let raced = try store.createTask(text: "Delete during delayed notification scheduling", reminderAt: Date().addingTimeInterval(7200))
         client.pauseAdd = true

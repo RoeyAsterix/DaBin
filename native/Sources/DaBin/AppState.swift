@@ -3,7 +3,7 @@ import Combine
 import Foundation
 
 enum BoardRoute: Equatable {
-    case daily, weekly, search, detail, reminders, settings, newTask
+    case daily, weekly, library, search, detail, reminders, settings, newTask, newNote, trash
 }
 
 enum BoardTimelineMode: Hashable {
@@ -79,6 +79,16 @@ final class CaptureDraft: ObservableObject {
         message = "Changes saved."
         hasError = false
     }
+
+    /// A newer Complete/Snooze action owns the reminder, while an unfinished
+    /// comment remains the user's draft until they save or discard it.
+    func adoptSavedReminder(from capture: Capture) {
+        reminderEnabled = capture.reminderAt != nil
+        if let date = capture.reminderAt { reminderDate = date }
+        savedReminder = capture.reminderAt
+        message = nil
+        hasError = false
+    }
 }
 
 @MainActor
@@ -91,7 +101,18 @@ final class AppState: ObservableObject {
     let robotPlacement: RobotPlacementSettings
     let autoCapture: AutoCaptureService
     let captureClipboard: CaptureClipboardService
+    let quickAccessSettings: QuickAccessSettings
+    private let manualInput: InputService
     let newTaskDraft = NewTaskDraft()
+    @Published var newNoteText = ""
+    @Published var libraryProject: String?
+    @Published var libraryPinnedOnly = false
+    @Published var showSearchContext = false
+    @Published var globalSearchFocusRequest = 0
+    @Published private(set) var isArchiveOperationRunning = false
+    @Published private var isFileImporting = false
+    var isImporting: Bool { isFileImporting || manualInput.isBusy }
+    @Published private var undoRemovalIDs: [UUID] = []
     @Published var route: BoardRoute = .daily {
         didSet {
             if route != oldValue { captureNavigationRevision &+= 1 }
@@ -137,7 +158,9 @@ final class AppState: ObservableObject {
          reminders: ReminderService,
          updates: SoftwareUpdateService? = nil, robotPlacement: RobotPlacementSettings? = nil,
          autoCapture: AutoCaptureService? = nil,
-         captureClipboard: CaptureClipboardService? = nil) {
+         captureClipboard: CaptureClipboardService? = nil,
+         quickAccessSettings: QuickAccessSettings? = nil,
+         manualInput: InputService? = nil) {
         self.store = store
         self.previews = previews
         self.contentIndex = contentIndex
@@ -147,6 +170,9 @@ final class AppState: ObservableObject {
         self.autoCapture = autoCapture ?? AutoCaptureService(
             settings: AutoCaptureSettings(defaults: nil), input: InputService(store: store))
         self.captureClipboard = captureClipboard ?? CaptureClipboardService()
+        self.quickAccessSettings = quickAccessSettings ?? QuickAccessSettings(defaults: nil)
+        self.manualInput = manualInput ?? InputService(store: store)
+        self.manualInput.onBusy = { [weak self] _ in self?.objectWillChange.send() }
         store.objectWillChange.sink { [weak self] _ in
             self?.objectWillChange.send()
         }.store(in: &subscriptions)
@@ -163,6 +189,9 @@ final class AppState: ObservableObject {
             self?.objectWillChange.send()
         }.store(in: &subscriptions)
         newTaskDraft.objectWillChange.sink { [weak self] _ in
+            self?.objectWillChange.send()
+        }.store(in: &subscriptions)
+        self.quickAccessSettings.objectWillChange.sink { [weak self] _ in
             self?.objectWillChange.send()
         }.store(in: &subscriptions)
         // Advance a board left on Today across midnight or sleep without moving
@@ -237,7 +266,7 @@ final class AppState: ObservableObject {
     }
     var searchGroups: [SearchGroup] {
         CaptureSearch.groups(captures: store.captures, query: query, filter: filter,
-                             scope: searchScope)
+                             scope: searchScope, includeContext: showSearchContext)
     }
     var searchScopeTitle: String {
         switch searchScope {
@@ -261,7 +290,42 @@ final class AppState: ObservableObject {
             ?? weeklyDays.last
             ?? weekEndingDay
     }
-    var hasUnsavedDrafts: Bool { newTaskDraft.hasChanges || drafts.values.contains(where: \.hasChanges) }
+    var hasUnsavedDrafts: Bool {
+        !newNoteText.isEmpty || newTaskDraft.hasChanges || drafts.values.contains(where: \.hasChanges)
+    }
+
+    /// The primary Today view shows receipt history. Outstanding work has its
+    /// own Follow-ups queue rather than being repeated on every later day.
+    func receiptCaptures(for day: Date) -> [Capture] {
+        let key = CaptureCalendar.dayString(day)
+        return store.captures.filter { $0.captureDay == key }
+            .sorted { $0.capturedAt == $1.capturedAt ? $0.id.uuidString < $1.id.uuidString : $0.capturedAt > $1.capturedAt }
+    }
+    var todayTimelineCaptures: [Capture] { receiptCaptures(for: selectedDay).filter { filter.includes($0) } }
+    var projectNames: [String] {
+        Set(store.captures.compactMap(\.projectName)).sorted { $0.localizedStandardCompare($1) == .orderedAscending }
+    }
+    var libraryCaptures: [Capture] {
+        store.captures.filter {
+            (libraryProject == nil || $0.projectName == libraryProject)
+                && (!libraryPinnedOnly || $0.isPinned) && filter.includes($0)
+        }.sorted {
+            if $0.isPinned != $1.isPinned { return $0.isPinned }
+            return $0.capturedAt == $1.capturedAt ? $0.id.uuidString < $1.id.uuidString : $0.capturedAt > $1.capturedAt
+        }
+    }
+    var followUpCaptures: [Capture] {
+        store.captures.filter { ($0.isTask && !$0.isCompleted) || ($0.reminderAt != nil && !($0.isTask && $0.isCompleted)) }
+            .sorted {
+                let lhs = $0.reminderAt ?? .distantFuture, rhs = $1.reminderAt ?? .distantFuture
+                if lhs != rhs { return lhs < rhs }
+                return $0.capturedAt == $1.capturedAt ? $0.id.uuidString < $1.id.uuidString : $0.capturedAt > $1.capturedAt
+            }
+    }
+    var canUndoRemoval: Bool { store.trashedCaptures.contains { undoRemovalIDs.contains($0.id) } }
+
+    func openLibrary() { filter = .all; route = .library }
+    func showTrash() { route = .trash }
 
     func openDaily() {
         refreshCurrentDay()
@@ -319,22 +383,29 @@ final class AppState: ObservableObject {
     }
 
     func openSearch() {
-        guard route != .search else { return }
+        if route != .search {
+            searchReturnRoute = [.daily, .weekly, .library, .reminders].contains(route) ? route : .daily
+        }
         searchScope = .all
-        searchReturnRoute = route == .weekly ? .weekly : .daily
+        filter = .all
+        weeklySearchActionsPresented = false
         searchScrollID = nil
         route = .search
     }
 
-    /// Routes the application-wide Search command through Weekly's explicit
-    /// day/week chooser. Keeping this in state lets the native application
-    /// menu and the compact header share exactly the same behavior.
+    /// Every general Search entry point searches the full archive. Explicit
+    /// scoped commands remain available but cannot silently scope this action.
     func performSearchCommand() {
-        if route == .weekly {
-            weeklySearchActionsPresented = true
-        } else if route != .search {
-            openSearch()
-        }
+        openSearch()
+        globalSearchFocusRequest &+= 1
+    }
+
+    func updateGlobalSearch(_ text: String) {
+        // SwiftUI can write a field's empty display value when it mounts or
+        // loses focus. Navigating between views must not initiate a search.
+        guard route == .search || !text.isEmpty else { return }
+        if route != .search { openSearch() }
+        query = text
     }
 
     func openSearch(day: Date) {
@@ -358,10 +429,7 @@ final class AppState: ObservableObject {
     func toggleAutoCaptureFromHeader() {
         let settings = autoCapture.settings
         if settings.isEnabled {
-            autoCapture.setEnabled(false)
-        } else if settings.hasAcknowledgedPrivacyExplanation,
-                  settings.screenshotFolderBookmark != nil {
-            autoCapture.setEnabled(true)
+            autoCapture.setPaused(!settings.isPaused)
         } else {
             autoCaptureSetupRequested = true
             route = .settings
@@ -378,6 +446,78 @@ final class AppState: ObservableObject {
         status = nil
         newTaskDraft.message = nil
         route = .newTask
+    }
+
+    func openNewNote() { status = nil; route = .newNote }
+    func cancelNewNote() { newNoteText = ""; route = .daily }
+    func saveNewNote() {
+        do {
+            let saved = try store.capture(text: newNoteText)
+            newNoteText = ""
+            openDaily()
+            didCapture(saved)
+        } catch { reportFailure("Could not save the note: \(error.localizedDescription)") }
+    }
+
+    func pasteClipboard(from pasteboard: NSPasteboard = .general) {
+        guard !isImporting, !isArchiveOperationRunning else { return }
+        let navigation = captureNavigationRevision
+        manualInput.receive(pasteboard, completion: { [weak self] captures, failures in
+            guard let self else { return }
+            if !captures.isEmpty, self.captureNavigationRevision == navigation { self.openDaily() }
+            self.reportCaptureResult(captures, errors: failures)
+        })
+    }
+
+    func importFiles() {
+        guard !isImporting, !isArchiveOperationRunning else { return }
+        let picker = NSOpenPanel()
+        picker.title = "Add files to DaBin"
+        picker.prompt = "Add files"
+        picker.canChooseDirectories = false
+        picker.allowsMultipleSelection = true
+        guard picker.runModal() == .OK else { return }
+        let urls = picker.urls
+        let receivedAt = Date()
+        let navigation = captureNavigationRevision
+        isFileImporting = true
+        Task {
+            var saved: [Capture] = [], failures: [String] = []
+            for url in urls {
+                do { saved.append(try await store.importFile(url, at: receivedAt)) }
+                catch { failures.append("\(url.lastPathComponent): \(error.localizedDescription)") }
+            }
+            isFileImporting = false
+            if !saved.isEmpty, captureNavigationRevision == navigation { openDaily() }
+            reportCaptureResult(saved, errors: failures)
+        }
+    }
+
+    func togglePinned(_ capture: Capture) {
+        do { try store.setOrganization(capture, pinned: !capture.isPinned, projectName: capture.projectName) }
+        catch { reportFailure("Could not update the pin: \(error.localizedDescription)") }
+    }
+    func assignProject(_ capture: Capture, name: String?) {
+        do { try store.setOrganization(capture, pinned: capture.isPinned, projectName: name) }
+        catch { reportFailure("Could not update the project: \(error.localizedDescription)") }
+    }
+    func completeFollowUp(_ capture: Capture) {
+        if capture.isTask { if !capture.isCompleted { toggleTaskCompletion(capture) }; return }
+        do {
+            try store.update(capture, comment: capture.comment, reminderAt: nil, reminderTimeZoneID: nil)
+            drafts[capture.id]?.adoptSavedReminder(from: capture)
+            clearReminderFeedback(for: capture)
+            Task { await reminders.clearForCapture(capture.id) }
+        } catch { reportFailure("Could not complete this follow-up: \(error.localizedDescription)") }
+    }
+    func snoozeFollowUp(_ capture: Capture) {
+        let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: Date()) ?? Date().addingTimeInterval(86400)
+        let morning = Calendar.current.date(bySettingHour: 9, minute: 0, second: 0, of: tomorrow) ?? tomorrow
+        do {
+            try store.update(capture, comment: capture.comment, reminderAt: morning, reminderTimeZoneID: TimeZone.current.identifier)
+            drafts[capture.id]?.adoptSavedReminder(from: capture)
+            Task { await saveReminderAndReport(for: capture) }
+        } catch { reportFailure("Could not snooze this follow-up: \(error.localizedDescription)") }
     }
 
     func cancelNewTask() {
@@ -501,8 +641,8 @@ final class AppState: ObservableObject {
         Task { await removeCapture(capture) }
     }
 
-    /// The view obtains confirmation first. Quiesce preview IO before deleting
-    /// its files, then clear notifications through the service's serialized queue.
+    /// Quiesce background writes before moving the record to Recently Deleted.
+    /// Its files and annotations stay available until explicit permanent removal.
     func removeCapture(_ capture: Capture) async {
         guard removingCaptureID == nil, store.captures.contains(where: { $0 === capture }) else { return }
         removingCaptureID = capture.id
@@ -510,7 +650,8 @@ final class AppState: ObservableObject {
         await contentIndex?.cancel(for: capture.id)
         await previews.cancel(for: capture.id)
         do {
-            let result = try store.remove(capture)
+            try store.moveToTrash(capture)
+            undoRemovalIDs = [capture.id]
             captureLayoutRevision &+= 1
             drafts.removeValue(forKey: capture.id)
             clearReminderFeedback(for: capture)
@@ -525,8 +666,7 @@ final class AppState: ObservableObject {
                 detailFocus = nil
                 if route == .detail { route = origin }
             }
-            status = AppStatusMessage(text: result.warning ?? "Capture removed.",
-                                     severity: result.cleanupPending ? .warning : .success)
+            status = AppStatusMessage(text: "Moved to Recently Deleted. You can undo this.", severity: .success)
             await reminders.clearForCapture(capture.id)
         } catch {
             reportFailure("Could not remove this capture: \(error.localizedDescription)")
@@ -542,11 +682,95 @@ final class AppState: ObservableObject {
             await removeCapture(capture)
         }
         let remaining = store.captures.filter { ids.contains($0.id) }
+        undoRemovalIDs = store.trashedCaptures.filter { ids.contains($0.id) }.map(\.id)
         if remaining.isEmpty {
-            status = AppStatusMessage(text: "Removed \(ids.count) items from the batch.", severity: .success)
+            status = AppStatusMessage(text: "Moved \(ids.count) items to Recently Deleted.", severity: .success)
         } else if status?.severity != .error {
             reportFailure("Could not remove every item in this batch.")
         }
+    }
+
+    func restoreCapture(_ capture: Capture) async {
+        guard removingCaptureID == nil, !isArchiveOperationRunning else { return }
+        removingCaptureID = capture.id
+        defer { removingCaptureID = nil }
+        do {
+            try store.restoreFromTrash(capture)
+            guard let restored = store.captures.first(where: { $0.id == capture.id }) else {
+                throw CaptureStoreError.invalidOriginal("The restored record could not be found.")
+            }
+            undoRemovalIDs.removeAll { $0 == capture.id }
+            captureLayoutRevision &+= 1
+            previews.process([restored])
+            contentIndex?.process([restored])
+            if let due = restored.reminderAt, due > Date(), !(restored.isTask && restored.isCompleted) {
+                await reminders.saveReminder(for: restored)
+            }
+            status = AppStatusMessage(text: "Capture restored to its original date and project.", severity: .success)
+        } catch { reportFailure("Could not restore this capture: \(error.localizedDescription)") }
+    }
+
+    func undoLastRemoval() async {
+        let ids = undoRemovalIDs
+        for id in ids {
+            if let capture = store.trashedCaptures.first(where: { $0.id == id }) { await restoreCapture(capture) }
+        }
+    }
+
+    func permanentlyRemoveCapture(_ capture: Capture) async {
+        guard removingCaptureID == nil, !isArchiveOperationRunning,
+              store.trashedCaptures.contains(where: { $0 === capture }) else { return }
+        removingCaptureID = capture.id
+        defer { removingCaptureID = nil }
+        await contentIndex?.cancel(for: capture.id)
+        await previews.cancel(for: capture.id)
+        do {
+            let result = try store.permanentlyRemove(capture)
+            undoRemovalIDs.removeAll { $0 == capture.id }
+            status = AppStatusMessage(text: result.warning ?? "Capture permanently deleted.",
+                                     severity: result.cleanupPending ? .warning : .success)
+            await reminders.clearForCapture(capture.id)
+        } catch { reportFailure("Could not permanently remove this capture: \(error.localizedDescription)") }
+    }
+
+    func exportArchiveBackup() {
+        guard !isArchiveOperationRunning, !isImporting, removingCaptureID == nil else { return }
+        let picker = NSSavePanel()
+        picker.title = "Back up your DaBin archive"
+        picker.prompt = "Create backup"
+        picker.message = "Includes your captures, original files, projects, notes, reminders and Recently Deleted. Choose a local folder for a private backup."
+        picker.nameFieldStringValue = "DaBin-\(CaptureCalendar.dayString(Date())).dabinbackup"
+        picker.canCreateDirectories = true
+        guard picker.runModal() == .OK, let url = picker.url else { return }
+        isArchiveOperationRunning = true
+        defer { isArchiveOperationRunning = false }
+        do {
+            try store.exportBackup(to: url)
+            status = AppStatusMessage(text: "Backup saved to \(url.lastPathComponent).", severity: .success)
+        } catch { reportFailure("Could not create the backup: \(error.localizedDescription)") }
+    }
+
+    func restoreArchiveBackup() {
+        guard !isArchiveOperationRunning, !isImporting, removingCaptureID == nil else { return }
+        let picker = NSOpenPanel()
+        picker.title = "Restore a DaBin backup"
+        picker.prompt = "Restore backup"
+        picker.message = "Choose a .dabinbackup folder. Missing captures are added; existing captures are never overwritten."
+        picker.canChooseDirectories = true
+        picker.canChooseFiles = false
+        picker.allowsMultipleSelection = false
+        picker.treatsFilePackagesAsDirectories = true
+        guard picker.runModal() == .OK, let url = picker.url else { return }
+        isArchiveOperationRunning = true
+        defer { isArchiveOperationRunning = false }
+        do {
+            let result = try store.restoreBackup(from: url)
+            previews.process(store.captures)
+            contentIndex?.process(store.captures)
+            Task { await reminders.reconcile() }
+            captureLayoutRevision &+= 1
+            status = AppStatusMessage(text: "Restored \(result.addedCount) captures; \(result.existingCount) already present.", severity: .success)
+        } catch { reportFailure("Could not restore the backup: \(error.localizedDescription)") }
     }
 
     func openCapture(_ id: UUID, focus: String? = nil) {

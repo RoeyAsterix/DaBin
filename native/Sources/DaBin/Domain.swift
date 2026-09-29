@@ -118,6 +118,11 @@ final class Capture: ObservableObject, Identifiable {
     @Published private(set) var convertedToTask = false
     @Published var isCompleted: Bool
     @Published var isMinimized: Bool
+    /// Optional organization never changes the original capture or its receipt date.
+    @Published var isPinned = false
+    @Published var projectName: String?
+    /// A soft-deleted record keeps its originals until explicitly removed forever.
+    @Published var deletedAt: Date?
     @Published var reminderAt: Date?
     @Published var reminderTimeZoneID: String?
     @Published var reminderRevision: Int
@@ -209,6 +214,9 @@ final class Capture: ObservableObject, Identifiable {
         self.convertedToTask = snapshot.convertedToTask ?? false
         self.isCompleted = self.isTask && (snapshot.isCompleted ?? false)
         self.isMinimized = snapshot.isMinimized ?? false
+        self.isPinned = snapshot.isPinned ?? false
+        self.projectName = snapshot.projectName
+        self.deletedAt = snapshot.deletedAt
         self.reminderAt = snapshot.reminderAt
         self.reminderTimeZoneID = snapshot.reminderTimeZoneID
         self.reminderRevision = snapshot.reminderRevision
@@ -260,6 +268,10 @@ struct CaptureSnapshot: Codable {
     let isCompleted: Bool?
     // Optional for existing version 3 records; the capture stays searchable.
     let isMinimized: Bool?
+    // Missing before schema 7: existing archives stay active and unfiled.
+    let isPinned: Bool?
+    let projectName: String?
+    let deletedAt: Date?
     let reminderAt: Date?
     let reminderTimeZoneID: String?
     let reminderRevision: Int
@@ -268,7 +280,7 @@ struct CaptureSnapshot: Codable {
     let updatedAt: Date
 
     init(_ capture: Capture) {
-        schemaVersion = 6
+        schemaVersion = 7
         id = capture.id
         capturedAt = capture.capturedAt
         captureDay = capture.captureDay
@@ -301,6 +313,9 @@ struct CaptureSnapshot: Codable {
         convertedToTask = capture.convertedToTask
         isCompleted = capture.isCompleted
         isMinimized = capture.isMinimized
+        isPinned = capture.isPinned
+        projectName = capture.projectName
+        deletedAt = capture.deletedAt
         reminderAt = capture.reminderAt
         reminderTimeZoneID = capture.reminderTimeZoneID
         reminderRevision = capture.reminderRevision
@@ -411,10 +426,11 @@ enum CaptureSearch {
     }
 
     static func groups(captures: [Capture], query: String, filter: CaptureFilter,
-                       scope: CaptureSearchScope = .all) -> [SearchGroup] {
+                       scope: CaptureSearchScope = .all,
+                       includeContext: Bool = true) -> [SearchGroup] {
         let words = normalized(query).split(whereSeparator: { $0.isWhitespace }).map(String.init)
         guard !words.isEmpty else { return [] }
-        let days = Dictionary(grouping: captures.filter { scope.includes(captureDay: $0.captureDay) },
+        let days = Dictionary(grouping: captures.filter { $0.deletedAt == nil && scope.includes(captureDay: $0.captureDay) },
                               by: \.captureDay)
         return days.keys.sorted(by: >).compactMap { day in
             let items = ordered(days[day]!)
@@ -426,7 +442,7 @@ enum CaptureSearch {
                                            item.kind.rawValue, item.isTask ? "task" : "", item.captureDay,
                                            item.sourceApplicationName ?? "",
                                            item.sourceApplicationBundleIdentifier ?? "",
-                                           item.captureOrigin.displayName,
+                                           item.captureOrigin.displayName, item.projectName ?? "",
                                            item.captureOrigin == .automaticClipboard ? "copied clipboard" : "",
                                            item.captureOrigin == .automaticScreenshot ? "screenshot screen capture" : ""].joined(separator: " "))
                 let indexed = item.normalizedIndexedTextForSearch
@@ -434,9 +450,11 @@ enum CaptureSearch {
             })
             guard !hits.isEmpty else { return nil }
             var included = hits
-            for index in hits {
-                if index > 0 { included.insert(index - 1) }
-                if index + 1 < items.count { included.insert(index + 1) }
+            if includeContext {
+                for index in hits {
+                    if index > 0 { included.insert(index - 1) }
+                    if index + 1 < items.count { included.insert(index + 1) }
+                }
             }
             return SearchGroup(day: day, entries: included.sorted().map {
                 let isMatch = hits.contains($0)

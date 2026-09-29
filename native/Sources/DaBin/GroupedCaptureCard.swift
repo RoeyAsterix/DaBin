@@ -31,41 +31,26 @@ struct GroupedCaptureCard: View {
                     .strokeBorder(Palette.line.opacity(0.75), lineWidth: 0.5))
             }
 
-            if !group.isMinimized && !primary.comment.isEmpty {
-                Text(primary.comment).font(.system(size: compact ? 10 : 12))
+            if !primary.comment.isEmpty {
+                Text(primary.comment).font(.system(size: compact ? 11 : 12))
                     .foregroundStyle(Palette.muted).lineLimit(2)
             }
 
-            HStack(spacing: compact ? 2 : 18) {
-                if compact {
-                    batchIcon(symbol: primary.comment.isEmpty ? "text.bubble" : "text.bubble.fill",
-                              label: "Comment on this batch") {
-                        state.openCapture(primary.id, focus: "comment")
-                    }
-                    batchIcon(symbol: primary.reminderAt == nil ? "bell" : "bell.fill",
-                              label: "Reminder for this batch") {
-                        state.openCapture(primary.id, focus: "reminder")
-                    }
-                } else {
-                    Button { state.openCapture(primary.id, focus: "comment") } label: {
-                        Label("Comment", systemImage: primary.comment.isEmpty ? "text.bubble" : "text.bubble.fill")
-                    }.accessibilityLabel("Comment on this batch")
-                    Button { state.openCapture(primary.id, focus: "reminder") } label: {
-                        Label("Reminder", systemImage: primary.reminderAt == nil ? "bell" : "bell.fill")
-                    }.accessibilityLabel("Reminder for this batch")
-                }
+            HStack {
+                Button(group.isMinimized ? "Show items" : "Collapse") { state.toggleMinimized(group.captures) }
                 Spacer(minLength: 0)
-                batchIcon(symbol: group.isMinimized ? "chevron.down" : "chevron.up",
-                          label: group.isMinimized ? "Expand batch" : "Minimize batch") {
-                    state.toggleMinimized(group.captures)
-                }
-                batchIcon(symbol: "trash", label: "Remove batch") { confirmsRemoval = true }
-            }
-            .font(.system(size: 12)).buttonStyle(.plain).foregroundStyle(accent)
+                Menu {
+                    Button(primary.comment.isEmpty ? "Add note" : "Edit note") { state.openCapture(primary.id, focus: "comment") }
+                    Button(primary.reminderAt == nil ? "Add reminder" : "Edit reminder") { state.openCapture(primary.id, focus: "reminder") }
+                    Divider()
+                    Button("Move batch to Recently Deleted", role: .destructive) { confirmsRemoval = true }
+                } label: { Text("More") }
+                .menuStyle(.borderlessButton).fixedSize().accessibilityLabel("More batch actions")
+            }.font(.system(size: 11)).buttonStyle(.plain).foregroundStyle(accent)
 
-            if !group.isMinimized, let reminder = primary.reminderAt {
+            if let reminder = primary.reminderAt {
                 Text("Remind \(reminder.formatted(date: .abbreviated, time: .shortened))")
-                    .font(.system(size: compact ? 9 : 11)).foregroundStyle(Palette.muted)
+                    .font(.system(size: 11)).foregroundStyle(Palette.muted)
             }
         }
         .padding(compact ? 9 : 11)
@@ -74,13 +59,13 @@ struct GroupedCaptureCard: View {
         .overlay(RoundedRectangle(cornerRadius: 12, style: .continuous)
             .strokeBorder(accent.opacity(0.24), lineWidth: 0.75))
         .padding(.vertical, compact ? 0 : 6)
-        .alert("Remove this batch?", isPresented: $confirmsRemoval) {
+        .alert("Move this batch to Recently Deleted?", isPresented: $confirmsRemoval) {
             Button("Cancel", role: .cancel) { }
-            Button("Remove \(group.captures.count) items", role: .destructive) {
+            Button("Move \(group.captures.count) items", role: .destructive) {
                 Task { await state.removeCaptures(group.captures) }
             }
         } message: {
-            Text("This removes all items in this caption card, their saved copies, comment and reminder. Files at their original locations are kept. This cannot be undone.")
+            Text("You can restore these captures from Recently Deleted. Files at their original locations are kept.")
         }
         .accessibilityElement(children: .contain)
         .accessibilityLabel("Batch of \(group.captures.count) captured items")

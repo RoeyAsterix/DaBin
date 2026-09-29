@@ -5,6 +5,12 @@ import AppKit
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
     private var application: ApplicationCoordinator?
+    private let reopenDailyOverride: (() -> Void)?
+
+    init(reopenDaily: (() -> Void)? = nil) {
+        reopenDailyOverride = reopenDaily
+        super.init()
+    }
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         if ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil { return }
@@ -59,7 +65,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
-        if !flag, application?.corners.board.isVisible != true { application?.corners.openDaily() }
+        // A floating panel can remain "visible" to AppKit while it is occluded,
+        // transparent, or on another display. An explicit reopen must always
+        // restore Daily and bring it forward.
+        if let reopenDailyOverride { reopenDailyOverride() }
+        else { application?.corners.openDaily() }
         return false
     }
 }

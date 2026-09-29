@@ -14,6 +14,8 @@ final class RobotCharacterView: NSView {
     private let reduceMotionProvider: ReduceMotionProvider
     private var ambientTask: Task<Void, Never>?
     private var islandMotionActive = false
+    private var islandResting = false
+    private var islandStageEnabled = false
     private var islandCompletionTask: Task<Void, Never>?
 
     private let artLayer = CALayer()
@@ -22,6 +24,12 @@ final class RobotCharacterView: NSView {
     private let shellLayer = CALayer()
     private let feetLayer = CAShapeLayer()
     private let islandGripLayer = CAShapeLayer()
+    // Stage-space hands keep their contact with the hardware edge while the
+    // body rotates independently. Arm paths join those hands to moving shoulders.
+    private let hangingArms = [CAShapeLayer(), CAShapeLayer()]
+    private let hangingArmHighlights = [CAShapeLayer(), CAShapeLayer()]
+    private let hangingHands = [CAShapeLayer(), CAShapeLayer()]
+    private var islandRigLayers: [CALayer] { hangingArms + hangingArmHighlights + hangingHands }
     private let faceLayer = CALayer()
     private let faceScreenLayer = CAShapeLayer()
     private let leftEyeLayer = CAShapeLayer()
@@ -79,7 +87,7 @@ final class RobotCharacterView: NSView {
 
     private func updateLayerContentsScale() {
         let backing = window?.backingScaleFactor ?? NSScreen.main?.backingScaleFactor ?? 2
-        let artScale = max(1, min(bounds.width / Self.designSize.width, bounds.height / Self.designSize.height))
+        let artScale = max(1, artworkScale)
         let scale = backing * artScale
         func apply(_ layer: CALayer) {
             layer.contentsScale = scale
@@ -88,13 +96,28 @@ final class RobotCharacterView: NSView {
         if let layer { apply(layer) }
     }
 
+    func configureIslandStage(_ enabled: Bool) {
+        guard islandStageEnabled != enabled else { return }
+        islandStageEnabled = enabled
+        layer?.masksToBounds = enabled
+        needsLayout = true
+        layoutSubtreeIfNeeded()
+    }
+
+    private var artworkScale: CGFloat {
+        islandStageEnabled
+            ? min(1.35, bounds.height / 112, bounds.width / 174)
+            : min(bounds.width / Self.designSize.width, bounds.height / Self.designSize.height)
+    }
+
     override func layout() {
         super.layout()
         updateLayerContentsScale()
-        let scale = min(bounds.width / Self.designSize.width, bounds.height / Self.designSize.height)
+        let scale = artworkScale
         withoutActions {
             artLayer.bounds = CGRect(origin: .zero, size: Self.designSize)
-            artLayer.position = CGPoint(x: bounds.midX, y: bounds.midY)
+            artLayer.position = CGPoint(x: bounds.midX,
+                                        y: islandStageEnabled ? bounds.maxY - Self.designSize.height * scale / 2 : bounds.midY)
             artLayer.setAffineTransform(CGAffineTransform(scaleX: scale, y: scale))
         }
     }
@@ -105,6 +128,7 @@ final class RobotCharacterView: NSView {
         // A drag, save, hide or opening still interrupts immediately.
         if islandMotionActive, case .hover = event {
             motionState.send(event)
+            if islandResting { updateIslandGaze() }
             return
         }
         cancelIslandCompletion()
@@ -114,6 +138,7 @@ final class RobotCharacterView: NSView {
         }
         currentAutoCaptureReaction = nil
         islandMotionActive = false
+        islandResting = false
         let previous = motionState
         let previousMood = previous.mood
         motionState.send(event)
@@ -142,6 +167,7 @@ final class RobotCharacterView: NSView {
         // Do not replace its coherent timeline with the generic mood renderer.
         guard currentAutoCaptureReaction == nil else { return }
         let reduceMotion = reduceMotionProvider()
+        if islandMotionActive && !reduceMotion { return }
         if reduceMotion {
             cancelIslandCompletion()
             islandMotionActive = false
@@ -162,6 +188,7 @@ final class RobotCharacterView: NSView {
         motionState.send(.hide)
         stopAmbientMotion()
         removeAllAnimations()
+        resetAutomaticCelebrationLayers()
         applyHiddenPose()
     }
 
@@ -208,6 +235,7 @@ final class RobotCharacterView: NSView {
         configureIntakeCard()
         configureLid()
         configureAutomaticCelebrationLayers()
+        configureIslandRig()
     }
 
     private func configureContainer(_ layer: CALayer, anchor: CGPoint) {
@@ -464,6 +492,7 @@ final class RobotCharacterView: NSView {
     func playAutoCaptureCelebration(_ performance: AutoCaptureRobotPerformance) {
         cancelIslandCompletion()
         islandMotionActive = false
+        configureIslandStage(performance.entrance == .top)
         stopAmbientMotion()
         removeAllAnimations()
         resetAutomaticCelebrationLayers()
@@ -478,7 +507,7 @@ final class RobotCharacterView: NSView {
         configureAutomaticProp(for: performance.reaction)
         withoutActions {
             artLayer.opacity = 1
-            artLayer.masksToBounds = performance.entrance == .top
+            artLayer.masksToBounds = false
             mouthLayer.path = automaticMouthPath(for: performance.reaction)
         }
 
@@ -506,6 +535,16 @@ final class RobotCharacterView: NSView {
               let eating = phase(.eating(performance.reaction), in: performance),
               let reaction = reactionPhase(in: performance),
               let exit = phase(.exit, in: performance) else { return }
+
+        if performance.entrance == .top {
+            prepareIslandRig()
+            animateIslandFrames(IslandRobotChoreography.capture(performance), duration: performance.totalDuration)
+            addAutomaticPropTimeline(reaction: performance.reaction, phase: eating,
+                                     totalDuration: performance.totalDuration, performance: performance)
+            addAutomaticMouthTimeline(eating: eating, reaction: reaction, performance: performance)
+            addAutomaticSuccessBadgeTimeline(reaction: reaction, exit: exit, performance: performance)
+            return
+        }
 
         let hidden = automaticHiddenPose(for: performance.entrance)
         let peek = automaticPeekPose(for: performance.entrance,
@@ -850,101 +889,33 @@ final class RobotCharacterView: NSView {
         }
     }
 
-    /// Occasional idle invitation: only the eyes/upper face cross the island lip.
-    /// Callers own scheduling and panel lifetime; this method schedules no task.
+    /// A brief upside-down look around the physical island edge.
     @discardableResult
     func playIslandPeek() -> TimeInterval {
-        cancelIslandCompletion()
-        stopAmbientMotion()
-        removeAllAnimations()
-        resetAutomaticCelebrationLayers()
-        currentAutoCaptureReaction = nil
-        islandMotionActive = true
-        motionState.send(.hide)
-        motionState.send(.reveal(.top))
-        let reduced = reduceMotionProvider()
-        let duration = reduced ? 0.38 : 1.10
-        let performance = AutoCaptureRobotPerformance(reaction: .quickBite, variation: .standard,
-                                                      entrance: .top, reduceMotion: reduced,
-                                                      phases: [], totalDuration: duration)
-        let peek = RobotPartTransform(translation: CGPoint(x: 0, y: -35.5))
-        withoutActions {
-            artLayer.masksToBounds = true
-            for part in [shellLayer, lidLayer, leftArmLayer, rightArmLayer, mouthLayer] { part.opacity = 0 }
-            bodyLayer.transform = transform(peek)
-            faceScreenLayer.opacity = 0.25
+        beginIslandMotion()
+        let duration: TimeInterval = reduceMotionProvider() ? 0.38 : 2.2
+        if reduceMotionProvider() {
+            // Callers normally suppress idle invitations in reduced motion.
+            withoutActions { artLayer.opacity = 0 }
+        } else {
+            animateIslandFrames(IslandRobotChoreography.peek(duration: duration), duration: duration)
         }
-        if !reduced {
-            addAutomaticTransformTrack([
-                AutomaticPoseFrame(time: 0, pose: automaticHiddenPose(for: .top)),
-                AutomaticPoseFrame(time: 0.22, pose: peek),
-                AutomaticPoseFrame(time: 0.82, pose: peek),
-                AutomaticPoseFrame(time: duration, pose: automaticHiddenPose(for: .top))
-            ], to: bodyLayer, key: "robot.island.peek-body", performance: performance)
-            for eye in [leftEyeLayer, rightEyeLayer] {
-                addAutomaticTransformTrack([
-                    AutomaticPoseFrame(time: 0, pose: .identity),
-                    AutomaticPoseFrame(time: 0.29, pose: RobotPartTransform(translation: CGPoint(x: -1.6, y: 0))),
-                    AutomaticPoseFrame(time: 0.59, pose: RobotPartTransform(translation: CGPoint(x: 1.6, y: 0))),
-                    AutomaticPoseFrame(time: 0.82, pose: .identity),
-                    AutomaticPoseFrame(time: duration, pose: .identity)
-                ], to: eye, key: "robot.island.peek-look", performance: performance)
-            }
-        }
-        addAutomaticOpacityTrack([
-            AutomaticOpacityFrame(time: 0, opacity: 0),
-            AutomaticOpacityFrame(time: duration * 0.18, opacity: 1),
-            AutomaticOpacityFrame(time: duration * 0.76, opacity: 1),
-            AutomaticOpacityFrame(time: duration, opacity: 0)
-        ], to: artLayer, key: "robot.island.peek-fade", performance: performance)
         return duration
     }
 
-    /// A head-first physical entrance, ending in a stable full robot pose.
-    /// The existing app controller can then hand that pose to the body expansion.
+    /// Hands hook over the edge, then lower the robot into a supported hang.
     @discardableResult
     func playIslandClimb() -> TimeInterval {
-        cancelIslandCompletion()
-        stopAmbientMotion()
-        removeAllAnimations()
-        resetAutomaticCelebrationLayers()
-        currentAutoCaptureReaction = nil
-        islandMotionActive = true
-        motionState.send(.hide)
-        motionState.send(.reveal(.top))
+        beginIslandMotion()
         let reduced = reduceMotionProvider()
-        let duration = reduced ? 0.20 : 0.68
-        let anticipation = AutoCaptureRobotPerformancePhase(kind: .anticipation, startTime: 0,
-                                                            duration: reduced ? 0.05 : 0.16,
-                                                            timingCurve: .easeInOut, effects: [.eyeMovement])
-        let entrance = AutoCaptureRobotPerformancePhase(kind: .entrance, startTime: anticipation.endTime,
-                                                        duration: duration - anticipation.endTime,
-                                                        timingCurve: .spring(response: 0.3, dampingFraction: 0.78),
-                                                        effects: [.bodyTravel, .squashAndStretch])
-        let performance = AutoCaptureRobotPerformance(reaction: .quickBite, variation: .standard,
-                                                      entrance: .top, reduceMotion: reduced,
-                                                      phases: [anticipation, entrance], totalDuration: duration)
-        withoutActions {
-            artLayer.masksToBounds = true
-            mouthLayer.path = mouthPath(for: .idle)
-        }
+        let duration: TimeInterval = reduced ? 0.20 : 1.1
         if reduced {
-            addAutomaticOpacityTrack([AutomaticOpacityFrame(time: 0, opacity: 0),
-                                      AutomaticOpacityFrame(time: duration, opacity: 1)],
-                                     to: artLayer, key: "robot.island.climb-fade", performance: performance)
+            let final = IslandRobotChoreography.reveal(duration: 1).last!
+            applyIslandFrame(final)
+            withoutActions { artLayer.opacity = 0 }
+            animateOpacity(artLayer, to: 1, duration: duration, key: "robot.island.climb-fade")
         } else {
-            addAutomaticTransformTrack([
-                AutomaticPoseFrame(time: 0, pose: automaticHiddenPose(for: .top)),
-                AutomaticPoseFrame(time: anticipation.endTime, pose: automaticPeekPose(for: .top, offset: 0)),
-                AutomaticPoseFrame(time: phaseTime(entrance, 0.35),
-                                   pose: RobotPartTransform(translation: CGPoint(x: 1, y: -19), scaleX: 0.96, scaleY: 1.03)),
-                AutomaticPoseFrame(time: phaseTime(entrance, 0.51),
-                                   pose: RobotPartTransform(translation: CGPoint(x: -1, y: -15), rotationDegrees: -3)),
-                AutomaticPoseFrame(time: phaseTime(entrance, 0.79), pose: automaticEntranceOvershoot(for: .top, offset: 0)),
-                AutomaticPoseFrame(time: duration, pose: .identity)
-            ], to: bodyLayer, key: "robot.island.climb-body", performance: performance)
-            addIslandClimbingDetails(anticipation: anticipation, entrance: entrance,
-                                     exit: nil, performance: performance)
+            animateIslandFrames(IslandRobotChoreography.reveal(duration: duration), duration: duration)
         }
         islandCompletionTask = Task { @MainActor [weak self] in
             do { try await Task.sleep(for: .seconds(duration)) }
@@ -952,12 +923,152 @@ final class RobotCharacterView: NSView {
             guard let self, !Task.isCancelled, self.islandMotionActive,
                   self.motionState.isVisible else { return }
             self.islandCompletionTask = nil
-            self.islandMotionActive = false
-            let reduced = self.reduceMotionProvider()
-            self.applyMood(self.mood, previous: .idle, event: nil, reduceMotion: reduced)
-            self.updateAmbientMotion(reduceMotion: reduced)
+            self.islandResting = true
+            self.updateIslandGaze()
         }
         return duration
+    }
+
+    private func beginIslandMotion() {
+        cancelIslandCompletion()
+        stopAmbientMotion()
+        removeAllAnimations()
+        resetAutomaticCelebrationLayers()
+        configureIslandStage(true)
+        currentAutoCaptureReaction = nil
+        islandMotionActive = true
+        islandResting = false
+        motionState.send(.hide)
+        motionState.send(.reveal(.top))
+        prepareIslandRig()
+        withoutActions { mouthLayer.path = mouthPath(for: .idle) }
+    }
+
+    private func updateIslandGaze() {
+        let pointer = motionState.pointer
+        let pose = RobotPartTransform(translation: CGPoint(x: pointer.x * 1.8, y: pointer.y * 1.2))
+        for eye in [leftEyeLayer, rightEyeLayer] {
+            animateTransform(eye, to: transform(pose), duration: reduceMotionProvider() ? 0 : 0.15,
+                             key: "robot.island.pointer-gaze")
+        }
+    }
+
+    private func configureIslandRig() {
+        for index in 0..<2 {
+            let arm = hangingArms[index]
+            arm.fillColor = nil
+            arm.strokeColor = Self.color(0x483556)
+            arm.lineWidth = 5.2
+            arm.lineCap = .round
+            let highlight = hangingArmHighlights[index]
+            highlight.fillColor = nil
+            highlight.strokeColor = Self.color(0xB99CCF)
+            highlight.lineWidth = 3.2
+            highlight.lineCap = .round
+            artLayer.insertSublayer(arm, below: bodyLayer)
+            artLayer.insertSublayer(highlight, below: bodyLayer)
+            let hand = hangingHands[index]
+            let fingers = CGMutablePath()
+            fingers.addRoundedRect(in: CGRect(x: -3.6, y: -2, width: 7.2, height: 7),
+                                   cornerWidth: 2.2, cornerHeight: 2.2)
+            for x in [-1.2, 1.2] as [CGFloat] {
+                fingers.move(to: CGPoint(x: x, y: -0.5))
+                fingers.addLine(to: CGPoint(x: x, y: 1.8))
+            }
+            hand.path = fingers
+            hand.fillColor = Self.color(0xCEB6DE)
+            hand.strokeColor = Self.color(0x483556)
+            hand.lineWidth = 1.1
+            artLayer.addSublayer(hand)
+        }
+        for part in islandRigLayers { part.opacity = 0 }
+    }
+
+    private func prepareIslandRig() {
+        withoutActions {
+            artLayer.opacity = 1
+            artLayer.masksToBounds = false
+            configureContainer(bodyLayer, anchor: CGPoint(x: 32, y: 0))
+            configureContainer(feetLayer, anchor: CGPoint(x: 32, y: 70))
+            bodyLayer.transform = CATransform3DIdentity
+            leftArmLayer.opacity = 0
+            rightArmLayer.opacity = 0
+            shadowLayer.opacity = 0
+            islandGripLayer.opacity = 0
+            // The paper finishes inside a moving mouth, including during a swing.
+            for part in [autoTokenLayer, autoSuccessBadgeLayer, autoSuccessCheckLayer] {
+                bodyLayer.addSublayer(part)
+            }
+        }
+    }
+
+    private func islandArmPath(_ frame: IslandRobotFrame, index: Int) -> CGPath {
+        let shoulder = IslandRobotChoreography.worldPoint(CGPoint(x: index == 0 ? 14 : 50, y: 43),
+                                                         body: frame.body)
+        let hand = index == 0 ? frame.leftHand : frame.rightHand
+        let side: CGFloat = index == 0 ? -1 : 1
+        let bend = min(10, max(3, abs(shoulder.y - hand.y) * 0.14))
+        let path = CGMutablePath()
+        path.move(to: shoulder)
+        path.addCurve(to: hand,
+                      control1: CGPoint(x: shoulder.x + side * bend, y: shoulder.y - 8),
+                      control2: CGPoint(x: hand.x + side * bend, y: hand.y + 12))
+        return path
+    }
+
+    private func applyIslandFrame(_ frame: IslandRobotFrame) {
+        withoutActions {
+            bodyLayer.transform = transform(frame.body)
+            feetLayer.transform = transform(frame.feet)
+            leftEyeLayer.transform = transform(RobotPartTransform(translation: frame.gaze, scaleY: frame.leftEyeScaleY))
+            rightEyeLayer.transform = transform(RobotPartTransform(translation: frame.gaze, scaleY: frame.rightEyeScaleY))
+            for index in 0..<2 {
+                let opacity = index == 0 ? frame.leftHandOpacity : frame.rightHandOpacity
+                let path = islandArmPath(frame, index: index)
+                hangingArms[index].path = path
+                hangingArmHighlights[index].path = path
+                hangingHands[index].position = index == 0 ? frame.leftHand : frame.rightHand
+                for part in [hangingArms[index], hangingArmHighlights[index], hangingHands[index]] {
+                    part.opacity = opacity
+                }
+            }
+        }
+    }
+
+    private func animateIslandFrames(_ frames: [IslandRobotFrame], duration: TimeInterval) {
+        guard let final = frames.last, duration > 0 else { return }
+        applyIslandFrame(final)
+        // One clock and linear interpolation of densely sampled poses keep the
+        // stage-space arms attached to the body-space shoulders on every frame.
+        let begin = CACurrentMediaTime()
+        func track(_ target: CALayer, _ property: String, _ values: [Any], _ suffix: String) {
+            let animation = CAKeyframeAnimation(keyPath: property)
+            animation.values = values
+            animation.keyTimes = frames.map { NSNumber(value: $0.time / duration) }
+            animation.duration = duration
+            animation.beginTime = target.convertTime(begin, from: nil)
+            animation.calculationMode = .linear
+            target.add(animation, forKey: "robot.island.\(suffix)")
+        }
+        track(bodyLayer, "transform", frames.map { NSValue(caTransform3D: transform($0.body)) }, "body")
+        track(feetLayer, "transform", frames.map { NSValue(caTransform3D: transform($0.feet)) }, "feet")
+        for index in 0..<2 {
+            let eye = index == 0 ? leftEyeLayer : rightEyeLayer
+            track(eye, "transform", frames.map {
+                NSValue(caTransform3D: transform(RobotPartTransform(translation: $0.gaze,
+                    scaleY: index == 0 ? $0.leftEyeScaleY : $0.rightEyeScaleY)))
+            }, "eye-\(index)")
+            let paths = frames.map { islandArmPath($0, index: index) }
+            track(hangingArms[index], "path", paths, "arm-\(index)")
+            track(hangingArmHighlights[index], "path", paths, "arm-highlight-\(index)")
+            track(hangingHands[index], "position", frames.map {
+                NSValue(point: index == 0 ? $0.leftHand : $0.rightHand)
+            }, "hand-\(index)")
+            for (partIndex, part) in [hangingArms[index], hangingArmHighlights[index], hangingHands[index]].enumerated() {
+                track(part, "opacity", frames.map { index == 0 ? $0.leftHandOpacity : $0.rightHandOpacity },
+                      "visibility-\(index)-\(partIndex)")
+            }
+        }
     }
 
     private func cancelIslandCompletion() {
@@ -1102,7 +1213,14 @@ final class RobotCharacterView: NSView {
     }
 
     private func resetAutomaticCelebrationLayers() {
+        islandResting = false
         withoutActions {
+            configureContainer(bodyLayer, anchor: CGPoint(x: 32, y: 69))
+            feetLayer.transform = CATransform3DIdentity
+            for part in islandRigLayers { part.opacity = 0 }
+            for part in [autoTokenLayer, autoSuccessBadgeLayer, autoSuccessCheckLayer] {
+                artLayer.addSublayer(part)
+            }
             artLayer.opacity = 1
             bodyLayer.transform = CATransform3DIdentity
             for part in [shellLayer, feetLayer, lidLayer, leftArmLayer, rightArmLayer,
@@ -1463,6 +1581,7 @@ final class RobotCharacterView: NSView {
     // MARK: - Animation helpers
 
     private func applyHiddenPose() {
+        resetAutomaticCelebrationLayers()
         let descriptor = RobotMotionDescriptor.make(for: .hide(motionState.entrance), reduceMotion: true)
         withoutActions {
             artLayer.opacity = 1
@@ -1489,7 +1608,7 @@ final class RobotCharacterView: NSView {
                       leftEyeLayer, rightEyeLayer, mouthLayer, lidLayer, leftArmLayer,
                       rightArmLayer, intakeLayer, autoPropLayer, autoPropDetailLayer,
                       autoSuccessBadgeLayer, autoSuccessCheckLayer, autoFlashLayer,
-                      autoConfettiLayer, autoTokenLayer, autoCountLayer, islandGripLayer, feetLayer] + autoConfettiPieces {
+                      autoConfettiLayer, autoTokenLayer, autoCountLayer, islandGripLayer, feetLayer] + autoConfettiPieces + islandRigLayers {
             layer.removeAllAnimations()
         }
     }
@@ -1498,7 +1617,7 @@ final class RobotCharacterView: NSView {
         for layer in [shadowLayer, bodyLayer, faceLayer, leftEyeLayer, rightEyeLayer,
                       mouthLayer, lidLayer, leftArmLayer, rightArmLayer, intakeLayer,
                       autoPropLayer, autoPropDetailLayer, autoSuccessBadgeLayer,
-                      autoSuccessCheckLayer, autoFlashLayer, autoConfettiLayer, autoTokenLayer, autoCountLayer, islandGripLayer, feetLayer] + autoConfettiPieces {
+                      autoSuccessCheckLayer, autoFlashLayer, autoConfettiLayer, autoTokenLayer, autoCountLayer, islandGripLayer, feetLayer] + autoConfettiPieces + islandRigLayers {
             for key in layer.animationKeys() ?? [] where key.hasPrefix(prefix) {
                 layer.removeAnimation(forKey: key)
             }

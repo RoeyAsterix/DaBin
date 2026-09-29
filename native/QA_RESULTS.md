@@ -1,4 +1,60 @@
-# DaBin QA cycle — 24 September 2026
+# DaBin QA results
+
+## 29 September 2026 — 0.4.0 (48) installed and GUI blockers resolved
+
+The guarded installer updated the local app, retained its previous bundle, and preserved a private prelaunch archive/preferences backup. All 165 archive files were unchanged before first launch; a subsequent read-only comparison preserved existing fields in 29 capture payloads apart from schema metadata, and all 13 attachment originals remained byte-identical. Strict signature, ARM64, executable hash and all 96 build inputs match the installed build receipt. Live Settings inspection confirms **0.4.0 (48)** and **Get updates**.
+
+The four previously unresolved GUI suites now pass **425 checks** across two focused runs. Window focus, Daily capture routing and robot transition checks passed in the unlocked session. Header inspection required a test-only public accessibility initialization correction; no assertions were removed. This is focused verification, not a new complete-suite run. Historical failures below remain recorded, and their earlier installation blockers are now resolved. No public installer or 0.4.0 TestFlight release is claimed.
+
+[Installation, data-preservation checks and GUI regression evidence](../docs/qa/local-update-2026-09-29/README.md).
+
+## 29 September 2026 — playful physical island, 0.4.0 (48)
+
+Added planted hands, one-handed snack swings, slip-and-catch, ledge shuffles,
+upside-down idle peeks and a hands-last pull-up retreat. The larger animation
+stage has a stable central interaction area and click-through margins; board
+expansion begins at the body. Display changes preserve only unfinished feedback.
+
+Standalone ARM64 and Xcode Release builds passed. The actual native animation
+preview is 14.4 seconds / 431 verified frames. All eight targeted motion,
+choreography, presenter, drop, lifecycle and quick-access suites passed. Two
+window suites retain hover-focus and actual-visibility failures while the Mac
+is locked; GUI verification is not green. The guarded installer refused to
+replace the running app, so this candidate is **not installed or published**.
+
+[Video, review, build and regression evidence](../docs/qa/island-playground-2026-09-29/README.md).
+
+## 29 September 2026 — 0.4.0 work-inbox candidate
+
+The native UI now has Today, Library and Follow-ups, global search, explicit Add/More actions, pins/projects, independent capture channels, global shortcuts, Quiet mode, recoverable deletion and local archive backup/restore.
+
+Both optimized standalone and unsigned Xcode Release builds succeed. All 33 non-focus suites pass; the complete run is **36/40 suites passing**, with four live focus/accessibility/visibility checks still unresolved while the Mac is locked. The full GUI suite is **not green**. Twenty-six isolated light/dark native renders were produced and reviewed. The build and regression inputs match.
+
+The guarded installer refused to replace a running DaBin process. The candidate has **not been installed or published**, and the user's live archive was not opened by the new build. [Current evidence, failures and remaining steps](../docs/qa/work-inbox-2026-09-29/README.md).
+
+## Full QA and reliable macOS reopen — installed correction
+
+A live relaunch audit found that DaBin ignored macOS reopen events whenever AppKit
+still described its floating panel as visible. An occluded, transparent or
+off-display panel can retain that flag, making the app appear not to relaunch.
+Every explicit reopen now restores Daily through the existing controller. The
+lifecycle suite covers both values of AppKit's visible-window signal.
+
+The exact corrected source passed **36/36 optimized Release suites**, including
+**54 application lifecycle checks**, 214 native window checks on two displays, 27
+robot transition checks, 31 robot-frame checks and 956 capture-reaction checks.
+The final native visual pass produced **62/62 valid production-view renders**.
+Standalone ARM64 and Xcode Release builds passed, as did all **26 Store source
+packaging checks** and deterministic project/whitespace validation.
+
+The corrected standalone build was installed locally with a backup. Its strict
+signature, ARM64 architecture and source fingerprint were verified; all 99 existing
+archive files were byte-identical before and after installation. A real macOS reopen
+event reused the running process and exposed the full accessible Daily interface.
+[Evidence and distribution limits](../docs/qa/full-cycle-reopen-2026-09-24/README.md).
+
+Apple Distribution signing and App Store Connect validation remain external release
+gates. The installed standalone build is locally ad-hoc signed.
 
 ## Robot island and application transformation — source update
 

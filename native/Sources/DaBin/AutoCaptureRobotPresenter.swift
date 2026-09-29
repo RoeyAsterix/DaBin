@@ -25,7 +25,14 @@ struct AutoCaptureRobotScreen: Equatable {
 
 enum AutoCaptureRobotGeometry {
     static let panelSize = CGSize(width: 104, height: 122)
+    static let islandPanelSize = CGSize(width: 232, height: 150)
     static let edgeInset: CGFloat = 8
+
+    static func cameraIsland(on screen: AutoCaptureRobotScreen) -> CGRect? {
+        guard let island = screen.cameraIslandRect?.standardized.intersection(screen.frame.standardized),
+              !island.isNull, !island.isEmpty else { return nil }
+        return island
+    }
 
     static func primaryScreen(in screens: [AutoCaptureRobotScreen],
                               mainDisplayID: CGDirectDisplayID) -> AutoCaptureRobotScreen? {
@@ -37,17 +44,17 @@ enum AutoCaptureRobotGeometry {
     /// including a built-in display with only a menu-bar safe area, uses the
     /// unobtrusive top-right fallback.
     static func panelFrame(on screen: AutoCaptureRobotScreen,
-                           size requestedSize: CGSize = panelSize,
+                           size requestedSize: CGSize? = nil,
                            inset requestedInset: CGFloat = edgeInset) -> CGRect {
         let display = screen.frame.standardized
         let visible = screen.visibleFrame.standardized.intersection(display)
         guard !visible.isNull, !visible.isEmpty else { return .zero }
 
-        let size = CGSize(width: min(max(0, requestedSize.width), visible.width),
-                          height: min(max(0, requestedSize.height), visible.height))
+        let validIsland = cameraIsland(on: screen)
+        let preferredSize = requestedSize ?? (validIsland == nil ? panelSize : islandPanelSize)
+        let size = CGSize(width: min(max(0, preferredSize.width), visible.width),
+                          height: min(max(0, preferredSize.height), visible.height))
         let inset = max(0, requestedInset)
-        let island = screen.cameraIslandRect?.standardized.intersection(display)
-        let validIsland = island.flatMap { $0.isNull || $0.isEmpty ? nil : $0 }
 
         let topLimit: CGFloat
         if let validIsland {
@@ -132,7 +139,7 @@ private final class AutoCaptureRobotPanel: NSPanel {
 @MainActor
 private final class AutoCaptureRobotContentView: NSView {
     private let character: RobotCharacterView
-    private let islandLip = CALayer()
+    private var islandWidth: CGFloat?
     private(set) var badgeText: String?
 
     init(frame frameRect: CGRect,
@@ -144,17 +151,6 @@ private final class AutoCaptureRobotContentView: NSView {
         layer?.masksToBounds = true
         addSubview(character)
 
-        islandLip.backgroundColor = NSColor(calibratedWhite: 0.055, alpha: 0.98).cgColor
-        islandLip.borderColor = NSColor(calibratedWhite: 1, alpha: 0.12).cgColor
-        islandLip.borderWidth = 0.7
-        islandLip.cornerRadius = 6
-        islandLip.shadowColor = NSColor.black.cgColor
-        islandLip.shadowOpacity = 0.32
-        islandLip.shadowRadius = 3
-        islandLip.shadowOffset = CGSize(width: 0, height: -1)
-        islandLip.zPosition = 50
-        islandLip.isHidden = true
-        layer?.addSublayer(islandLip)
         setAccessibilityElement(false)
     }
 
@@ -162,13 +158,18 @@ private final class AutoCaptureRobotContentView: NSView {
 
     override func layout() {
         super.layout()
-        character.frame = CGRect(x: 8, y: 5, width: max(0, bounds.width - 16),
-                                 height: max(0, bounds.height - 13))
-        islandLip.frame = CGRect(x: bounds.midX - 29, y: bounds.maxY - 9, width: 58, height: 12)
+        character.frame = islandWidth == nil
+            ? CGRect(x: 8, y: 5, width: max(0, bounds.width - 16), height: max(0, bounds.height - 13))
+            : bounds
     }
 
-    func begin(_ performance: AutoCaptureRobotPerformance, count: Int, showIslandLip: Bool) {
-        islandLip.isHidden = !showIslandLip
+    func begin(_ performance: AutoCaptureRobotPerformance, count: Int, islandWidth: CGFloat?) {
+        self.islandWidth = islandWidth.flatMap { $0.isFinite && $0 > 0 ? $0 : nil }
+        character.configureIslandStage(self.islandWidth != nil)
+        needsLayout = true
+        layoutSubtreeIfNeeded()
+        // The real housing is the occluder. The stage ends at its underside;
+        // drawing a smaller imitation lip would detach the robot from it.
         character.playAutoCaptureCelebration(performance)
         // Starting the renderer resets transient token layers. Apply the exact
         // aggregate after that reset so the visible paper stack is never ×1.
@@ -180,11 +181,8 @@ private final class AutoCaptureRobotContentView: NSView {
         badgeText = count > 1 ? "×\(count)" : nil
     }
 
-    func updateIslandLip(_ visible: Bool) { islandLip.isHidden = !visible }
-
     func hideCharacter() {
         badgeText = nil
-        islandLip.isHidden = true
         character.updateAutoCaptureCount(0)
         character.stopMotion()
     }
@@ -212,6 +210,7 @@ final class AutoCaptureRobotPresenter {
     private let content: AutoCaptureRobotContentView
     private let primaryScreenProvider: PrimaryScreenProvider
     private let reduceMotionProvider: ReduceMotionProvider
+    private let currentDateProvider: () -> Date
     private let dismissDelayOverride: TimeInterval?
     private var reactionDeck: AutoCaptureRobotReactionDeck
     private var performanceTask: Task<Void, Never>?
@@ -220,6 +219,7 @@ final class AutoCaptureRobotPresenter {
     private var performanceToken: UInt64 = 0
     private var updateDeadline: Date?
     private var consumptionDeadline: Date?
+    private var performanceScreen: AutoCaptureRobotScreen?
     private var displayObserver: NSObjectProtocol?
     private var reportedPresentation = false
     private var isShutDown = false
@@ -231,10 +231,12 @@ final class AutoCaptureRobotPresenter {
          reduceMotion: @escaping ReduceMotionProvider = {
              NSWorkspace.shared.accessibilityDisplayShouldReduceMotion
          },
-         reactionDeck: AutoCaptureRobotReactionDeck = AutoCaptureRobotReactionDeck()) {
+         reactionDeck: AutoCaptureRobotReactionDeck = AutoCaptureRobotReactionDeck(),
+         currentDate: @escaping () -> Date = { Date() }) {
         dismissDelayOverride = dismissDelay.map { max(0, $0) }
         primaryScreenProvider = primaryScreen
         reduceMotionProvider = reduceMotion
+        currentDateProvider = currentDate
         self.reactionDeck = reactionDeck
 
         let frame = CGRect(origin: .zero, size: AutoCaptureRobotGeometry.panelSize)
@@ -279,14 +281,15 @@ final class AutoCaptureRobotPresenter {
             return true
         }
 
+        if state.isVisible, primaryScreenProvider() != performanceScreen {
+            displayConfigurationChanged()
+        }
+
         if state.isVisible {
-            if let deadline = updateDeadline, Date() <= deadline {
+            if let deadline = updateDeadline, currentDateProvider() <= deadline {
                 guard state.present(additionalCount: additionalCaptureCount) != nil else { return false }
                 _ = lifecycle.send(.captureSaved(count: additionalCaptureCount))
                 content.updateCount(state.visibleCount)
-                if let screen = primaryScreenProvider() {
-                    content.updateIslandLip(screen.cameraIslandRect != nil)
-                }
             } else {
                 // The current robot is already retreating. Keep one exact
                 // integer for the next performance instead of overlapping it.
@@ -353,11 +356,14 @@ final class AutoCaptureRobotPresenter {
         }
 
         if state.isVisible {
-            panel.setFrame(AutoCaptureRobotGeometry.panelFrame(on: screen), display: true)
-            content.updateIslandLip(screen.cameraIslandRect != nil)
-            panel.orderFrontRegardless()
-            reportPresentation(true)
-        } else if !isSuspended {
+            guard performanceScreen != screen else { return }
+            // Attachment geometry and the entrance form one plan. Replaying a
+            // completed eating cue would duplicate saved-capture feedback, but
+            // an unfinished cue must survive a new display or island layout.
+            if !activeCaptureWasConsumed { addPending(state.visibleCount) }
+            stopActivePresentation(clearPending: false, closePanel: false)
+        }
+        if !isSuspended {
             _ = startPendingPerformanceIfPossible(on: screen)
         }
     }
@@ -400,14 +406,16 @@ final class AutoCaptureRobotPresenter {
         lifecycle = RobotLifecycle()
         _ = lifecycle.send(.captureSaved(count: count))
 
-        let entrance: RobotEntrance = screen.cameraIslandRect == nil ? .right : .top
+        let island = AutoCaptureRobotGeometry.cameraIsland(on: screen)
+        let entrance: RobotEntrance = island == nil ? .right : .top
         let performance = reactionDeck.nextPerformance(entrance: entrance,
                                                        reduceMotion: reduceMotionProvider(),
                                                        captureCount: count)
         currentPerformance = performance
+        performanceScreen = screen
         performanceStartCount += 1
         let delay = dismissDelayOverride ?? performance.totalDuration
-        let now = Date()
+        let now = currentDateProvider()
         let updateDuration = dismissDelayOverride == nil
             ? updateWindow(in: performance)
             : min(updateWindow(in: performance), delay * 0.65)
@@ -415,7 +423,7 @@ final class AutoCaptureRobotPresenter {
         consumptionDeadline = now.addingTimeInterval(min(delay, consumptionTime(in: performance)))
 
         panel.setFrame(frame, display: true)
-        content.begin(performance, count: count, showIslandLip: screen.cameraIslandRect != nil)
+        content.begin(performance, count: count, islandWidth: island?.width)
         panel.alphaValue = 1
         panel.orderFrontRegardless()
         reportPresentation(true)
@@ -457,6 +465,7 @@ final class AutoCaptureRobotPresenter {
         _ = state.dismissNow()
         _ = lifecycle.send(.interrupt(toward: .hidden))
         currentPerformance = nil
+        performanceScreen = nil
         updateDeadline = nil
         consumptionDeadline = nil
 
@@ -485,6 +494,7 @@ final class AutoCaptureRobotPresenter {
         _ = state.dismissNow()
         _ = lifecycle.send(.interrupt(toward: .hidden))
         currentPerformance = nil
+        performanceScreen = nil
         updateDeadline = nil
         consumptionDeadline = nil
         if clearPending { pendingCaptureCount = 0 }
@@ -518,7 +528,7 @@ final class AutoCaptureRobotPresenter {
     private var activeCaptureWasConsumed: Bool {
         guard state.isVisible else { return true }
         guard let consumptionDeadline else { return false }
-        return Date() >= consumptionDeadline
+        return currentDateProvider() >= consumptionDeadline
     }
 
     private func validPrimaryScreen() -> AutoCaptureRobotScreen? {

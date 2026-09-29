@@ -62,6 +62,14 @@ private final class ApplicationLifecycleTests: NSObject, NSApplicationDelegate {
     }
     private func run() async throws {
         let frontmost = NSWorkspace.shared.frontmostApplication?.processIdentifier
+        var reopenRequests = 0
+        let appDelegate = AppDelegate { reopenRequests += 1 }
+        try expect(!appDelegate.applicationShouldHandleReopen(NSApp, hasVisibleWindows: true),
+                   "A reopen event is handled without asking AppKit to create another window")
+        try expect(!appDelegate.applicationShouldHandleReopen(NSApp, hasVisibleWindows: false),
+                   "A reopen event handles a fully hidden window through the same path")
+        try expect(reopenRequests == 2,
+                   "Every explicit reopen restores Daily even when AppKit reports a visible panel")
         let root = FileManager.default.temporaryDirectory.appendingPathComponent("DaBinSessionQA-\(UUID())")
         defer { try? FileManager.default.removeItem(at: root) }
         let suite = "DaBinSessionQA.\(UUID())"
@@ -168,7 +176,7 @@ private final class ApplicationLifecycleTests: NSObject, NSApplicationDelegate {
         try expect(statusDaily == 1 && statusSettings == 1 && statusQuit == 1,
                    "Status-menu commands invoke their intended actions once")
 
-        coordinator!.autoCapture.settings.setEnabled(true)
+        coordinator!.autoCapture.settings.setClipboardEnabled(true)
         coordinator!.autoCapture.settings.setStatus(.monitoring)
         try await wait("Status item updates live when Auto Capture is enabled") {
             statusBar.presentation.indicator == .enabled

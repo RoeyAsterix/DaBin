@@ -6,8 +6,8 @@ struct BoardView: View {
     @ObservedObject var state: AppState
     @StateObject private var theme: ThemeSettings
     @StateObject private var dayExportController: DayExportActionController
-    @StateObject private var tooltipController: TimelineTooltipController
-    @State private var showWeekCalendar = false
+    @State private var showCalendar = false
+    @FocusState private var searchFocused: Bool
 
     init(state: AppState, theme: ThemeSettings? = nil,
          dayExportController: DayExportActionController? = nil,
@@ -15,10 +15,11 @@ struct BoardView: View {
         self.state = state
         _theme = StateObject(wrappedValue: theme ?? ThemeSettings())
         _dayExportController = StateObject(wrappedValue: dayExportController ?? .live())
-        _tooltipController = StateObject(wrappedValue: tooltipController ?? TimelineTooltipController())
     }
 
     private var accent: Color { theme.accent }
+    private var isTimeline: Bool { state.route == .daily || state.route == .weekly }
+    private var isPrimary: Bool { isTimeline || state.route == .library || state.route == .reminders }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -26,316 +27,233 @@ struct BoardView: View {
             if let message = state.store.error.map({ AppStatusMessage(text: $0, severity: .error) }) ?? state.status {
                 statusBanner(message)
             }
-            switch state.route {
-            case .daily: DailyScreen(state: state)
-            case .weekly: WeeklyScreen(state: state)
-            case .search: SearchScreen(state: state)
-            case .newTask: NewTaskScreen(state: state, draft: state.newTaskDraft)
-            case .detail:
-                if let capture = state.selectedCapture, let draft = state.selectedDraft {
-                    DetailScreen(state: state, capture: capture, draft: draft)
-                        .id(capture.id)
-                } else { EmptyMessage(symbol: "tray", title: "Capture unavailable", message: "Return to Daily to browse your captures.") }
-            case .reminders: RemindersScreen(state: state)
-            case .settings: SettingsScreen(state: state, theme: theme)
-            }
+            if state.canUndoRemoval { undoBanner }
+            routeContent.frame(maxWidth: .infinity, maxHeight: .infinity)
+            BoardCaptureStatus(state: state, service: state.autoCapture, settings: state.autoCapture.settings)
         }
-        .foregroundStyle(Palette.foreground)
-        .tint(accent)
-        .environment(\.daBinAccent, accent)
+        .foregroundStyle(Palette.foreground).tint(accent).environment(\.daBinAccent, accent)
         .background(Palette.background.opacity(ThemeSettings.effectiveBoardOpacity(
-            preferred: theme.boardOpacity,
-            reduceTransparency: reduceTransparency
-        )))
+            preferred: theme.boardOpacity, reduceTransparency: reduceTransparency)))
         .preferredColorScheme(theme.darkModeEnabled ? .dark : .light)
         .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
         .overlay(RoundedRectangle(cornerRadius: 24, style: .continuous).strokeBorder(Palette.line, lineWidth: 1))
         .overlay {
             if state.route == .daily && state.isDailyDropTargeted {
-                RoundedRectangle(cornerRadius: 24, style: .continuous)
-                    .fill(accent.opacity(0.06))
+                RoundedRectangle(cornerRadius: 24, style: .continuous).fill(accent.opacity(0.06))
                     .overlay(RoundedRectangle(cornerRadius: 24, style: .continuous).strokeBorder(accent, lineWidth: 2))
-                    .allowsHitTesting(false)
-                    .accessibilityHidden(true)
+                    .allowsHitTesting(false).accessibilityHidden(true)
             }
         }
-        .alert("Remove this capture?", isPresented: Binding(
-            get: { state.pendingRemoval != nil },
-            set: { if !$0 { state.pendingRemoval = nil } }
+        .alert("Move this capture to Recently Deleted?", isPresented: Binding(
+            get: { state.pendingRemoval != nil }, set: { if !$0 { state.pendingRemoval = nil } }
         ), presenting: state.pendingRemoval) { capture in
             Button("Cancel", role: .cancel) { state.pendingRemoval = nil }
-            Button("Remove", role: .destructive) {
+            Button("Move to Recently Deleted", role: .destructive) {
                 state.pendingRemoval = nil
                 Task { await state.removeCapture(capture) }
             }
         } message: { _ in
-            Text("This removes the capture, its comments, reminder and saved copies from DaBin. Files at their original locations are kept. This cannot be undone.")
+            Text("You can restore it from Recently Deleted. Files at their original locations are kept.")
         }
-        .onExitCommand { state.onDismiss?() }
+        .onExitCommand {
+            if searchFocused { searchFocused = false } else { state.onDismiss?() }
+        }
+        .onChange(of: state.route) { _, route in searchFocused = route == .search }
+        .onChange(of: state.globalSearchFocusRequest) { _, _ in searchFocused = true }
+        .onChange(of: dayExportController.feedback) { _, feedback in
+            guard let feedback else { return }
+            if case .failed = feedback { state.reportFailure(feedback.message) }
+            else { state.status = AppStatusMessage(text: feedback.message, severity: .success) }
+        }
         .onChange(of: state.status) { _, message in
             if let message { AccessibilityAnnouncement.post(message.text) }
         }
         .background {
             Group {
-                Button("Search captures") {
-                    state.performSearchCommand()
-                }.keyboardShortcut("k", modifiers: .command)
-                Button("Open Daily") { state.openDaily() }.keyboardShortcut("d", modifiers: [.command, .shift])
+                Button("Search all captures") { state.performSearchCommand(); searchFocused = true }
+                    .keyboardShortcut("k", modifiers: .command)
+                Button("Open Today") { state.openDaily() }
+                    .keyboardShortcut("d", modifiers: [.command, .shift])
             }.frame(width: 0, height: 0).opacity(0).accessibilityHidden(true)
         }
     }
 
-    private var title: String {
+    @ViewBuilder private var routeContent: some View {
         switch state.route {
-        case .daily: return "Daily"
-        case .weekly: return "Week"
-        case .search: return "Search"
-        case .newTask: return "New task"
-        case .detail: return state.selectedCapture?.isTask == true ? "Task" : "Capture"
-        case .reminders: return "Reminders"
-        case .settings: return "Settings"
-        }
-    }
-
-    @ViewBuilder
-    private var header: some View {
-        if state.route == .daily || state.route == .weekly {
-            timelineHeader
-        } else {
-            routeHeader
-        }
-    }
-
-    private var routeHeader: some View {
-        HStack(spacing: 8) {
-            SmallIcon(symbol: "chevron.left", label: "Back") { state.back() }
-            HStack(spacing: 0) {
-                Text(title).font(.system(size: 23, weight: .semibold, design: .rounded))
-                    .accessibilityAddTraits(.isHeader)
-                Spacer(minLength: 0)
-            }
-            .frame(height: 30)
-            .overlay {
-                WindowDragHandle(onDragStarted: { state.onBoardDragStarted?() })
-                    .accessibilityHidden(true)
-            }
-            SmallIcon(symbol: "xmark", label: "Hide DaBin") { state.onDismiss?() }
-        }
-        .padding(.horizontal, 16).padding(.top, 13).padding(.bottom, 10)
-    }
-
-    private var timelineHeader: some View {
-        VStack(spacing: 0) {
-            timelineNavigationRow
-                .frame(height: TimelineIconRowMetrics.controlHeight)
-                .padding(.horizontal, TimelineNavigationMetrics.horizontalPadding)
-                .padding(.top, 5)
-                .zIndex(2)
-            timelinePrimaryActions
-                .frame(height: 34)
-            FilterBar(selection: $state.filter)
-        }
-        .fixedSize(horizontal: false, vertical: true)
-        .environment(\.timelineTooltipController, tooltipController)
-        .overlay(alignment: .topLeading) {
-            GeometryReader { proxy in
-                if let tooltip = tooltipController.visible {
-                    TimelineHoverTooltip(text: tooltip.text)
-                        .position(x: tooltip.anchorX(in: proxy.size.width),
-                                  y: tooltipY(tooltip, headerHeight: proxy.size.height))
-                }
-            }
-            .allowsHitTesting(false)
-            .accessibilityHidden(true)
-        }
-        .animation(.easeOut(duration: 0.12), value: tooltipController.visible)
-        .zIndex(10)
-        .onDisappear { tooltipController.dismiss() }
-    }
-
-    private func tooltipY(_ tooltip: TimelineTooltipDescriptor,
-                          headerHeight: CGFloat) -> CGFloat {
-        switch tooltip.row {
-        case .navigation:
-            return 52
-        case .primary:
-            // Point directly back to the primary icon and temporarily cover
-            // the aligned filter beneath it instead of looking attached to it.
-            return headerHeight - (TimelineIconRowMetrics.controlHeight + 4) + 15
-        case .filters:
-            return headerHeight + 15
-        }
-    }
-
-    private var timelineNavigationRow: some View {
-        HStack(spacing: 2) {
-            DaBinLogo(variant: .compact)
-                .frame(width: TimelineNavigationMetrics.logoWidth, height: 30, alignment: .leading)
-            .overlay {
-                WindowDragHandle(onDragStarted: { state.onBoardDragStarted?() })
-                    .accessibilityHidden(true)
-            }
-            .layoutPriority(3)
-
-            SmallIcon(symbol: "chevron.left", label: previousDateLabel,
-                      size: TimelineNavigationMetrics.navigationButtonWidth) {
-                moveTimeline(-1)
-            }
-            timelineDateButton
-            SmallIcon(symbol: "chevron.right", label: nextDateLabel,
-                      size: TimelineNavigationMetrics.navigationButtonWidth) {
-                moveTimeline(1)
-            }
-            .disabled(Calendar.current.isDateInToday(timelineExportDate))
-
-            TimelineModeControl(state: state)
-                .layoutPriority(2)
-            AutoCaptureHeaderButton(
-                service: state.autoCapture,
-                weekly: state.route == .weekly,
-                statusText: autoCaptureStatusText
-            ) {
-                state.toggleAutoCaptureFromHeader()
-            }
-            .layoutPriority(2)
-            Spacer(minLength: 2)
-            SmallIcon(symbol: "xmark", label: "Hide DaBin",
-                      size: TimelineNavigationMetrics.closeButtonWidth) { state.onDismiss?() }
-                .accessibilityIdentifier("window-close")
-        }
-    }
-
-    @ViewBuilder
-    private var timelineDateButton: some View {
-        if state.route == .weekly {
-            Button { showWeekCalendar.toggle() } label: {
-                HStack(spacing: 4) {
-                    Text(weeklyRangeLabel)
-                    Image(systemName: "chevron.down")
-                        .symbolRenderingMode(.monochrome)
-                        .font(.system(size: 8.8, weight: .semibold))
-                }
-                .font(.system(size: 12, weight: .medium))
-                .lineLimit(1)
-                .minimumScaleFactor(0.72)
-                .frame(width: TimelineNavigationMetrics.weeklyDateWidth, height: 30)
-                .contentShape(Rectangle())
-            }
-            .buttonStyle(.plain)
-            .help("Choose the last day of the week")
-            .accessibilityLabel("Choose week, \(weeklyRangeLabel)")
-            .accessibilityIdentifier("timeline-date")
-            .popover(isPresented: $showWeekCalendar, arrowEdge: .bottom) {
-                DatePicker("Week ending", selection: Binding(
-                    get: { state.weekEndingDay },
-                    set: { state.setWeekEndingDay($0) }
-                ),
-                           in: ...Date(), displayedComponents: .date)
-                    .datePickerStyle(.graphical)
-                    .padding(12)
-                    .frame(width: 280)
-                    .onChange(of: state.weekEndingDay) { _, _ in showWeekCalendar = false }
-                    .onExitCommand { showWeekCalendar = false }
-            }
-        } else {
-            Button { state.openWeekly() } label: {
-                Text(state.selectedDay, format: .dateTime.day().month(.abbreviated))
-                    .font(.system(size: 12, weight: .medium))
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.8)
-                    .frame(width: TimelineNavigationMetrics.dailyDateWidth, height: 30)
-                    .contentShape(Rectangle())
-            }
-            .buttonStyle(.plain)
-            .help("Open the last seven days")
-            .accessibilityLabel("Open weekly view ending \(state.selectedDay.formatted(date: .complete, time: .omitted))")
-            .accessibilityIdentifier("timeline-date")
-        }
-    }
-
-    private var timelinePrimaryActions: some View {
-        HStack(spacing: TimelineIconRowMetrics.spacing(itemCount: TimelinePrimaryAction.allCases.count)) {
-            AccentIconButton(symbol: TimelinePrimaryAction.add.symbol,
-                             label: TimelinePrimaryAction.add.label,
-                             tooltip: primaryTooltip(.add, index: 0),
-                             accessibilityIdentifier: "timeline-action-add") {
-                state.openNewTask()
-            }
-            if state.route == .weekly {
-                WeeklySearchButton(state: state, isPresented: $state.weeklySearchActionsPresented)
+        case .daily: DailyScreen(state: state)
+        case .weekly: WeeklyScreen(state: state)
+        case .library: LibraryScreen(state: state)
+        case .search: SearchScreen(state: state)
+        case .newTask: NewTaskScreen(state: state, draft: state.newTaskDraft)
+        case .newNote: NewNoteScreen(state: state)
+        case .detail:
+            if let capture = state.selectedCapture, let draft = state.selectedDraft {
+                DetailScreen(state: state, capture: capture, draft: draft).id(capture.id)
             } else {
-                AccentIconButton(symbol: TimelinePrimaryAction.search.symbol,
-                                 label: TimelinePrimaryAction.search.label,
-                                 tooltip: primaryTooltip(.search, index: 1),
-                                 accessibilityIdentifier: "timeline-action-search") {
-                    state.openSearch()
+                EmptyMessage(symbol: "tray", title: "Capture unavailable", message: "Open Library to browse your saved captures.")
+            }
+        case .reminders: RemindersScreen(state: state)
+        case .settings: SettingsScreen(state: state, theme: theme)
+        case .trash: TrashScreen(state: state)
+        }
+    }
+
+    private var header: some View {
+        VStack(spacing: 10) {
+            HStack(spacing: 8) {
+                DaBinLogo(variant: .compact).frame(width: 68, height: 28, alignment: .leading)
+                    .overlay { WindowDragHandle(onDragStarted: { state.onBoardDragStarted?() }).accessibilityHidden(true) }
+                Spacer(minLength: 0)
+                addMenu
+                moreMenu
+                SmallIcon(symbol: "xmark", label: "Hide DaBin", size: 28) { state.onDismiss?() }
+                    .accessibilityIdentifier("window-close")
+            }
+            HStack(spacing: 7) {
+                Image(systemName: "magnifyingglass").foregroundStyle(Palette.muted).accessibilityHidden(true)
+                TextField("Search all captures", text: Binding(
+                    get: { state.route == .search ? state.query : "" },
+                    set: { state.updateGlobalSearch($0) }))
+                    .textFieldStyle(.plain).font(.system(size: 13)).focused($searchFocused)
+                    .accessibilityLabel("Search all captures across all dates").accessibilityIdentifier("global-search")
+                    .onSubmit { state.performSearchCommand() }
+                if state.route == .search && !state.query.isEmpty {
+                    Button { state.updateGlobalSearch("") } label: { Image(systemName: "xmark.circle.fill") }
+                        .buttonStyle(.plain).foregroundStyle(Palette.muted)
+                        .help("Clear search").accessibilityLabel("Clear search")
+                }
+            }.padding(9).background(Palette.surface, in: RoundedRectangle(cornerRadius: 10))
+                .overlay(RoundedRectangle(cornerRadius: 10).strokeBorder(Palette.line))
+            HStack(spacing: 4) {
+                navigationButton("Today", symbol: "sun.max", selected: isTimeline) { state.openDaily() }
+                navigationButton("Library", symbol: "square.stack", selected: state.route == .library) { state.openLibrary() }
+                navigationButton("Follow-ups", symbol: "checkmark.circle", selected: state.route == .reminders) { state.showReminders() }
+            }.accessibilityElement(children: .contain).accessibilityLabel("Main views")
+            if isTimeline { timelineControls }
+            else if !isPrimary {
+                HStack(spacing: 8) {
+                    Button { state.back() } label: { Label("Back", systemImage: "chevron.left") }
+                        .buttonStyle(.plain).foregroundStyle(accent)
+                    Text(routeTitle).font(.system(size: 14, weight: .semibold)).accessibilityAddTraits(.isHeader)
+                    Spacer(minLength: 0)
+                }.font(.system(size: 12))
+            }
+        }.padding(.horizontal, 14).padding(.top, 10).padding(.bottom, 10)
+            .overlay(alignment: .bottom) { Rectangle().fill(Palette.line).frame(height: 1) }
+    }
+
+    private func navigationButton(_ title: String, symbol: String, selected: Bool, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Label(title, systemImage: symbol).font(.system(size: 12, weight: selected ? .semibold : .medium))
+                .lineLimit(1).frame(maxWidth: .infinity).padding(.vertical, 8)
+                .background(selected ? accent.opacity(0.13) : Color.clear, in: RoundedRectangle(cornerRadius: 8))
+                .contentShape(Rectangle())
+        }.buttonStyle(.plain).foregroundStyle(selected ? accent : Palette.muted)
+            .accessibilityAddTraits(selected ? [.isSelected] : [])
+            .accessibilityIdentifier("primary-\(title.lowercased())")
+    }
+
+    private var addMenu: some View {
+        Menu {
+            Button("Paste clipboard", systemImage: "doc.on.clipboard") { state.pasteClipboard() }
+            Button("New note", systemImage: "square.and.pencil") { state.openNewNote() }
+            Button("Import files…", systemImage: "folder.badge.plus") { state.importFiles() }
+            Divider()
+            Button("New task", systemImage: "checkmark.circle") { state.openNewTask() }
+        } label: { Label("Add", systemImage: "plus").font(.system(size: 12, weight: .semibold)) }
+        .menuStyle(.borderlessButton).fixedSize().padding(.horizontal, 9).padding(.vertical, 6)
+        .background(accent.opacity(0.13), in: RoundedRectangle(cornerRadius: 8))
+        .accessibilityLabel("Add capture").accessibilityIdentifier("timeline-action-add").disabled(state.isImporting)
+    }
+
+    private var moreMenu: some View {
+        Menu {
+            Button("Settings…", systemImage: "gearshape") { state.showSettings() }
+            Menu("Export") {
+                Button("Copy selected day") { dayExportController.copy(dayDocument) }.disabled(dayDocument.isEmpty)
+                Button("Export selected day…") { reportExport(dayExportController.save(dayDocument)) }.disabled(dayDocument.isEmpty)
+                Button("Copy selected week") { dayExportController.copy(weekDocument) }.disabled(weekDocument.isEmpty)
+                Button("Export selected week…") { reportExport(dayExportController.save(weekDocument)) }.disabled(weekDocument.isEmpty)
+            }
+            Divider()
+            Button("Recently Deleted", systemImage: "trash") { state.showTrash() }
+            Button("Back up archive…", systemImage: "externaldrive") { state.exportArchiveBackup() }.disabled(state.isArchiveOperationRunning)
+            Button("Restore archive backup…", systemImage: "arrow.counterclockwise") { state.restoreArchiveBackup() }.disabled(state.isArchiveOperationRunning)
+        } label: { Text("More").font(.system(size: 12)) }
+        .menuStyle(.borderlessButton).fixedSize().padding(.horizontal, 5)
+        .accessibilityLabel("More options").accessibilityIdentifier("board-more")
+    }
+
+    private var dayDocument: DayExportDocument { DayExportDocument.make(captures: state.store.captures, selectedDate: state.selectedDay) }
+    private var weekDocument: WeekExportDocument { WeekExportDocument.make(captures: state.store.captures, weekEndingDate: state.weekEndingDay) }
+    private func reportExport(_ result: DayExportSaveOutcome) {
+        if case .failed(let message) = result { state.reportFailure(message) }
+    }
+
+    private var timelineControls: some View {
+        VStack(spacing: 7) {
+            HStack(spacing: 8) {
+                Text("Timeline").font(.system(size: 11)).foregroundStyle(Palette.muted)
+                Picker("Timeline", selection: Binding(get: { state.timelineMode }, set: { state.selectTimelineMode($0) })) {
+                    Text("Day").tag(BoardTimelineMode.daily)
+                    Text("Week").tag(BoardTimelineMode.weekly)
+                }.pickerStyle(.segmented).labelsHidden().frame(width: 125)
+                Spacer(minLength: 0)
+                CaptureFilterMenu(selection: $state.filter)
+            }
+            HStack(spacing: 6) {
+                SmallIcon(symbol: "chevron.left", label: state.route == .weekly ? "Previous week" : "Previous day", size: 26) { moveTimeline(-1) }
+                Button { showCalendar.toggle() } label: {
+                    Label(timelineDateLabel, systemImage: "calendar").font(.system(size: 12, weight: .medium))
+                        .lineLimit(1).frame(maxWidth: .infinity)
+                }.buttonStyle(.plain).accessibilityLabel("Choose date, \(timelineDateLabel)").accessibilityIdentifier("timeline-date")
+                    .popover(isPresented: $showCalendar, arrowEdge: .bottom) {
+                        DatePicker(state.route == .weekly ? "Week ending" : "Day", selection: Binding(
+                            get: { state.route == .weekly ? state.weekEndingDay : state.selectedDay },
+                            set: { date in
+                                if state.route == .weekly { state.setWeekEndingDay(date) } else { state.selectWeeklyDay(date) }
+                                showCalendar = false
+                            }), in: ...Date(), displayedComponents: .date)
+                            .datePickerStyle(.graphical).padding(12).frame(width: 280)
+                    }
+                SmallIcon(symbol: "chevron.right", label: state.route == .weekly ? "Next week" : "Next day", size: 26) { moveTimeline(1) }
+                    .disabled(Calendar.current.isDateInToday(state.route == .weekly ? state.weekEndingDay : state.selectedDay))
+                if !Calendar.current.isDateInToday(state.route == .weekly ? state.weekEndingDay : state.selectedDay) {
+                    Button("Today") {
+                        if state.route == .weekly { state.showCurrentWeek() } else { state.openDaily() }
+                    }.buttonStyle(.plain).font(.system(size: 11)).foregroundStyle(accent)
                 }
             }
-            TimelineExportButton(state: state, controller: dayExportController)
-            AccentIconButton(symbol: TimelinePrimaryAction.notifications.symbol,
-                             label: TimelinePrimaryAction.notifications.label,
-                             tooltip: primaryTooltip(.notifications, index: 3),
-                             accessibilityIdentifier: "timeline-action-notifications") {
-                state.showReminders()
-            }
-            AccentIconButton(symbol: TimelinePrimaryAction.settings.symbol,
-                             label: TimelinePrimaryAction.settings.label,
-                             tooltip: primaryTooltip(.settings, index: 4),
-                             accessibilityIdentifier: "timeline-action-settings") {
-                state.showSettings()
-            }
         }
-        .frame(width: TimelineIconRowMetrics.rowWidth,
-               height: TimelineIconRowMetrics.controlHeight)
-        .frame(maxWidth: .infinity)
-        .accessibilityElement(children: .contain)
-        .accessibilityLabel("Primary actions")
     }
 
-    private func primaryTooltip(_ action: TimelinePrimaryAction, index: Int) -> TimelineTooltipDescriptor {
-        TimelineTooltipDescriptor(id: "primary-tooltip-\(action.rawValue)",
-                                  text: action.tooltipLabel,
-                                  index: index,
-                                  itemCount: TimelinePrimaryAction.allCases.count)
+    private var timelineDateLabel: String {
+        if state.route == .weekly, let first = state.weeklyDays.first {
+            return "\(first.formatted(.dateTime.month(.abbreviated).day()))–\(state.weekEndingDay.formatted(.dateTime.month(.abbreviated).day()))"
+        }
+        return state.selectedDay.formatted(.dateTime.weekday(.abbreviated).month(.abbreviated).day())
     }
-
-    private var timelineExportDate: Date {
-        state.route == .weekly ? state.weekEndingDay : state.selectedDay
-    }
-
-    private var weeklyRangeLabel: String {
-        guard let first = state.weeklyDays.first else { return "Last 7 days" }
-        let start = first.formatted(.dateTime.month(.abbreviated).day())
-        let end = state.weekEndingDay.formatted(.dateTime.month(.abbreviated).day())
-        return "\(start)–\(end)"
-    }
-
-    private var previousDateLabel: String {
-        state.route == .weekly ? "Previous seven days" : "Previous day"
-    }
-
-    private var nextDateLabel: String {
-        state.route == .weekly ? "Next seven days" : "Next day"
-    }
-
     private func moveTimeline(_ amount: Int) {
-        if state.route == .weekly { state.moveWeek(amount) }
-        else { state.moveDay(amount) }
+        if state.route == .weekly { state.moveWeek(amount) } else { state.moveDay(amount) }
     }
-
-    private var autoCaptureStatusText: String {
-        switch state.autoCapture.settings.status {
-        case .disabled: return "Auto Capture off"
-        case .paused: return "Auto Capture paused"
-        case .ready: return "Auto Capture ready"
-        case .monitoring: return "Auto Capture enabled"
-        case .permissionRequired: return "Auto Capture needs a screenshot folder"
-        case .permissionRevoked: return "Auto Capture permission needs attention"
-        case .sourceApplicationExcluded(let name): return "Auto Capture is skipping \(name)"
-        case .failed: return "Auto Capture needs attention"
+    private var routeTitle: String {
+        switch state.route {
+        case .search: return "All captures"
+        case .newTask: return "New task"
+        case .newNote: return "New note"
+        case .detail: return state.selectedCapture?.isTask == true ? "Task" : "Capture"
+        case .settings: return "Settings"
+        case .trash: return "Recently Deleted"
+        default: return "DaBin"
         }
     }
-
+    private var undoBanner: some View {
+        HStack {
+            Text("Moved to Recently Deleted").font(.system(size: 12))
+            Spacer(minLength: 4)
+            Button("Undo") { Task { await state.undoLastRemoval() } }.buttonStyle(.plain).foregroundStyle(accent)
+        }.padding(9).background(Palette.soft).accessibilityElement(children: .contain)
+    }
     private func statusBanner(_ message: AppStatusMessage) -> some View {
         HStack(alignment: .top, spacing: 8) {
             Image(systemName: message.symbol).foregroundStyle(message.severity == .error ? Palette.task : accent)
@@ -344,6 +262,45 @@ struct BoardView: View {
             Button { state.status = nil; state.store.error = nil } label: { Image(systemName: "xmark").font(.system(size: 10)) }
                 .buttonStyle(.plain).help("Dismiss message").accessibilityLabel("Dismiss message")
         }.padding(10).background(Palette.soft, in: RoundedRectangle(cornerRadius: 11))
-            .padding(.horizontal, 16).padding(.bottom, 8)
+            .padding(.horizontal, 14).padding(.vertical, 6)
+    }
+}
+
+@MainActor
+struct CaptureFilterMenu: View {
+    @Binding var selection: CaptureFilter
+    var body: some View {
+        Menu {
+            Picker("Capture type", selection: $selection) {
+                ForEach(CaptureFilter.allCases) { filter in Text(filter.title).tag(filter) }
+            }
+        } label: {
+            Label(selection == .all ? "Filters" : selection.title, systemImage: "line.3.horizontal.decrease").font(.system(size: 11))
+        }.menuStyle(.borderlessButton).fixedSize()
+            .accessibilityLabel("Filters, \(selection == .all ? "all capture types" : selection.title)")
+    }
+}
+
+@MainActor
+private struct BoardCaptureStatus: View {
+    @ObservedObject var state: AppState
+    @ObservedObject var service: AutoCaptureService
+    @ObservedObject var settings: AutoCaptureSettings
+    @Environment(\.daBinAccent) private var accent
+    var body: some View {
+        HStack(spacing: 7) {
+            Image(systemName: settings.isPaused || !settings.isEnabled ? "pause.circle" : "circle.fill")
+                .font(.system(size: 8)).foregroundStyle(accent).accessibilityHidden(true)
+            Text(service.overallStatusText).font(.system(size: 11)).foregroundStyle(Palette.muted)
+                .lineLimit(2).fixedSize(horizontal: false, vertical: true)
+            Spacer(minLength: 0)
+            if settings.isEnabled {
+                Button(settings.isPaused ? "Resume" : "Pause") { state.autoCapture.setPaused(!settings.isPaused) }
+                    .buttonStyle(.plain).font(.system(size: 11)).foregroundStyle(accent)
+            } else {
+                Button("Set up") { state.showSettings() }.buttonStyle(.plain).font(.system(size: 11)).foregroundStyle(accent)
+            }
+        }.padding(.horizontal, 16).padding(.vertical, 9)
+            .overlay(alignment: .top) { Rectangle().fill(Palette.line).frame(height: 1) }.accessibilityElement(children: .contain)
     }
 }

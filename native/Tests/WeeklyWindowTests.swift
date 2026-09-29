@@ -192,7 +192,7 @@ private final class WeeklyWindowNotificationClient: ReminderNotificationClient {
             state.moveWeek(-1)
             settle()
             expect(state.weeklyVisibleDays.isEmpty && controller.board.frame.width == compact.width
-                   && controller.board.frame.height == 340 && state.weeklyExpansionDirection == expectedDirection,
+                   && controller.board.frame.height == 430 && state.weeklyExpansionDirection == expectedDirection,
                    "Browsing an empty week removes its date columns and restores a compact panel")
             state.moveWeek(1)
             settle()

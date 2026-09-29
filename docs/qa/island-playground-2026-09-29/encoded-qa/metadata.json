@@ -1,0 +1,174 @@
+{
+  "audioTrackCount" : 0,
+  "decode" : [
+    {
+      "lastPresentationSeconds" : 14.333333333333334,
+      "sampleBuffers" : 431,
+      "status" : "completed",
+      "timestampsMonotonic" : true,
+      "type" : "vide"
+    }
+  ],
+  "durationSeconds" : 14.367000000000001,
+  "exportable" : true,
+  "fileBytes" : 439472,
+  "frames" : [
+    {
+      "actualSeconds" : 0.59999999999999998,
+      "height" : 600,
+      "path" : "frame-01-000.600s.png",
+      "requestedSeconds" : 0.59999999999999998,
+      "width" : 900
+    },
+    {
+      "actualSeconds" : 1.3,
+      "height" : 600,
+      "path" : "frame-02-001.333s.png",
+      "requestedSeconds" : 1.3333330000000001,
+      "width" : 900
+    },
+    {
+      "actualSeconds" : 1.7666666666666666,
+      "height" : 600,
+      "path" : "frame-03-001.767s.png",
+      "requestedSeconds" : 1.766667,
+      "width" : 900
+    },
+    {
+      "actualSeconds" : 2.5,
+      "height" : 600,
+      "path" : "frame-04-002.500s.png",
+      "requestedSeconds" : 2.5,
+      "width" : 900
+    },
+    {
+      "actualSeconds" : 3.1666666666666665,
+      "height" : 600,
+      "path" : "frame-05-003.167s.png",
+      "requestedSeconds" : 3.1666669999999999,
+      "width" : 900
+    },
+    {
+      "actualSeconds" : 4.5,
+      "height" : 600,
+      "path" : "frame-06-004.500s.png",
+      "requestedSeconds" : 4.5,
+      "width" : 900
+    },
+    {
+      "actualSeconds" : 5.3666666666666663,
+      "height" : 600,
+      "path" : "frame-07-005.367s.png",
+      "requestedSeconds" : 5.3666669999999996,
+      "width" : 900
+    },
+    {
+      "actualSeconds" : 5.666666666666667,
+      "height" : 600,
+      "path" : "frame-08-005.667s.png",
+      "requestedSeconds" : 5.6666670000000003,
+      "width" : 900
+    },
+    {
+      "actualSeconds" : 6.4000000000000004,
+      "height" : 600,
+      "path" : "frame-09-006.400s.png",
+      "requestedSeconds" : 6.4000000000000004,
+      "width" : 900
+    },
+    {
+      "actualSeconds" : 7.0666666666666664,
+      "height" : 600,
+      "path" : "frame-10-007.067s.png",
+      "requestedSeconds" : 7.0666669999999998,
+      "width" : 900
+    },
+    {
+      "actualSeconds" : 8.4000000000000004,
+      "height" : 600,
+      "path" : "frame-11-008.400s.png",
+      "requestedSeconds" : 8.4000000000000004,
+      "width" : 900
+    },
+    {
+      "actualSeconds" : 9.4000000000000004,
+      "height" : 600,
+      "path" : "frame-12-009.433s.png",
+      "requestedSeconds" : 9.4333329999999993,
+      "width" : 900
+    },
+    {
+      "actualSeconds" : 9.5999999999999996,
+      "height" : 600,
+      "path" : "frame-13-009.633s.png",
+      "requestedSeconds" : 9.6333330000000004,
+      "width" : 900
+    },
+    {
+      "actualSeconds" : 10.4,
+      "height" : 600,
+      "path" : "frame-14-010.433s.png",
+      "requestedSeconds" : 10.433332999999999,
+      "width" : 900
+    },
+    {
+      "actualSeconds" : 11.1,
+      "height" : 600,
+      "path" : "frame-15-011.133s.png",
+      "requestedSeconds" : 11.133333,
+      "width" : 900
+    },
+    {
+      "actualSeconds" : 12.300000000000001,
+      "height" : 600,
+      "path" : "frame-16-012.300s.png",
+      "requestedSeconds" : 12.300000000000001,
+      "width" : 900
+    },
+    {
+      "actualSeconds" : 12.699999999999999,
+      "height" : 600,
+      "path" : "frame-17-012.733s.png",
+      "requestedSeconds" : 12.733333,
+      "width" : 900
+    },
+    {
+      "actualSeconds" : 13.199999999999999,
+      "height" : 600,
+      "path" : "frame-18-013.200s.png",
+      "requestedSeconds" : 13.199999999999999,
+      "width" : 900
+    },
+    {
+      "actualSeconds" : 13.6,
+      "height" : 600,
+      "path" : "frame-19-013.633s.png",
+      "requestedSeconds" : 13.633333,
+      "width" : 900
+    },
+    {
+      "actualSeconds" : 13.9,
+      "height" : 600,
+      "path" : "frame-20-013.933s.png",
+      "requestedSeconds" : 13.933332999999999,
+      "width" : 900
+    }
+  ],
+  "input" : "\/Users\/roeylibfeld\/Documents\/KARI Creatives\/DaBin\/native\/build\/island-preview\/run.IzehKm\/DaBin-Island-Playground.mp4",
+  "playable" : true,
+  "tracks" : [
+    {
+      "codecs" : [
+        "avc1"
+      ],
+      "durationSeconds" : 14.367000000000001,
+      "estimatedDataRate" : 241480.09375,
+      "fps" : 30,
+      "height" : 600,
+      "id" : 1,
+      "type" : "vide",
+      "width" : 900
+    }
+  ],
+  "videoTrackCount" : 1
+}

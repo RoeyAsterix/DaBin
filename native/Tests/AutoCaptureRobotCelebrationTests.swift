@@ -107,8 +107,8 @@ private struct AutoCaptureRobotCelebrationTests {
                 try expect(performance.phases.map(\.kind) == [
                     .anticipation, .entrance, .eating(reaction), .reaction(reaction), .exit
                 ], "\(reaction.rawValue) follows anticipation, entrance, eating, reaction and exit")
-                try expect((1.8...2.6).contains(performance.totalDuration),
-                           "\(reaction.rawValue) remains inside the requested duration at scale \(scale)")
+                try expect((3.4...4.0).contains(performance.totalDuration),
+                           "\(reaction.rawValue) gives island contacts time to read at scale \(scale)")
                 try expect(performance.phases.allSatisfy { $0.duration > 0 },
                            "Every normal phase has positive duration")
                 for (index, phase) in performance.phases.enumerated() {
@@ -225,7 +225,7 @@ private struct AutoCaptureRobotCelebrationTests {
             guard let layer else { return [] }
             return [layer] + (layer.sublayers ?? []).flatMap { allLayers($0) }
         }
-        let character = RobotCharacterView(frame: NSRect(x: 0, y: 0, width: 64, height: 78), reduceMotion: { false })
+        let character = RobotCharacterView(frame: NSRect(x: 0, y: 0, width: 216, height: 150), reduceMotion: { false })
         character.layoutSubtreeIfNeeded()
         character.playAutoCaptureCelebration(stack)
         let started = character.autoCaptureCelebrationStartCount
@@ -236,9 +236,81 @@ private struct AutoCaptureRobotCelebrationTests {
         try expect(layers.contains { $0.animation(forKey: "robot.auto-success.eating-token") != nil }
                    && layers.contains { $0.animation(forKey: "robot.auto-success.chewing-mouth") != nil },
                    "The renderer schedules both token folding and a chewing mouth")
-        try expect(layers.contains { $0.animation(forKey: "robot.auto-success.feet-emergence") != nil }
-                   && layers.contains { $0.animation(forKey: "robot.auto-success.island-grip") != nil },
-                   "Island emergence stages the feet and gripping hands independently")
+        guard let body = layers.first(where: { $0.animation(forKey: "robot.island.body") != nil }),
+              let bodyTrack = body.animation(forKey: "robot.island.body") as? CAKeyframeAnimation,
+              let leftHand = layers.first(where: { $0.animation(forKey: "robot.island.hand-0") != nil }),
+              let rightHand = layers.first(where: { $0.animation(forKey: "robot.island.hand-1") != nil }),
+              let leftTrack = leftHand.animation(forKey: "robot.island.hand-0") as? CAKeyframeAnimation,
+              let rightTrack = rightHand.animation(forKey: "robot.island.hand-1") as? CAKeyframeAnimation,
+              let leftArm = layers.first(where: { $0.animation(forKey: "robot.island.arm-0") != nil }),
+              let rightArm = layers.first(where: { $0.animation(forKey: "robot.island.arm-1") != nil }),
+              let leftArmTrack = leftArm.animation(forKey: "robot.island.arm-0") as? CAKeyframeAnimation,
+              let rightArmTrack = rightArm.animation(forKey: "robot.island.arm-1") as? CAKeyframeAnimation,
+              let feet = layers.first(where: { $0.animation(forKey: "robot.island.feet") != nil }),
+              let token = layers.first(where: { $0.animation(forKey: "robot.auto-success.eating-token") != nil }),
+              let art = body.superlayer,
+              let times = bodyTrack.keyTimes,
+              let bodyValues = bodyTrack.values as? [NSValue],
+              let leftValues = leftTrack.values as? [NSValue],
+              let rightValues = rightTrack.values as? [NSValue],
+              let leftPaths = leftArmTrack.values as? [CGPath],
+              let rightPaths = rightArmTrack.values as? [CGPath] else {
+            throw NSError(domain: "DaBinAutoCaptureRobotCelebrationTests", code: 2,
+                          userInfo: [NSLocalizedDescriptionKey: "The renderer did not create the complete island rig"])
+        }
+        try expect(body.anchorPoint == CGPoint(x: 0.5, y: 0)
+                   && body.position == CGPoint(x: 32, y: 0),
+                   "The rendered torso pivots at the island edge")
+        try expect(leftHand.superlayer === art && rightHand.superlayer === art
+                   && leftArm.superlayer === art && rightArm.superlayer === art,
+                   "Supporting hands and arms live outside the moving torso")
+        try expect(character.layer?.masksToBounds == true && !art.masksToBounds,
+                   "The physical stage clips behind the edge without cropping horizontal swings to the art box")
+        try expect(token.superlayer === body && token.position == CGPoint(x: 32, y: 45),
+                   "The paper follows the body and finishes at its moving mouth")
+        try expect(feet.opacity == 1 && feet.superlayer?.opacity == 1
+                   && [feet, feet.superlayer!].allSatisfy { layer in
+                       (layer.animationKeys() ?? []).allSatisfy {
+                           (layer.animation(forKey: $0) as? CAPropertyAnimation)?.keyPath != "opacity"
+                       }
+                   }
+                   && !layers.contains { $0.animation(forKey: "robot.auto-success.feet-emergence") != nil
+                       || $0.animation(forKey: "robot.auto-success.torso-emergence") != nil },
+                   "Torso and feet emerge through edge occlusion rather than opacity tricks")
+        let synchronized: [(CALayer, CAKeyframeAnimation)] = [
+            (body, bodyTrack), (leftHand, leftTrack), (rightHand, rightTrack),
+            (leftArm, leftArmTrack), (rightArm, rightArmTrack)
+        ]
+        let sharedBegin = body.convertTime(bodyTrack.beginTime, to: nil)
+        for (layer, animation) in synchronized {
+            try expect(animation.keyTimes == times && near(animation.duration, stack.totalDuration)
+                       && animation.calculationMode == .linear
+                       && near(layer.convertTime(animation.beginTime, to: nil), sharedBegin),
+                       "Contact and body tracks share one clock and identical sample boundaries")
+        }
+        try expect([bodyValues.count, leftValues.count, rightValues.count, leftPaths.count, rightPaths.count]
+            .allSatisfy { $0 == times.count }, "Every torso sample has matching hand positions and arm paths")
+        let eating = stack.phases.first { $0.kind == .eating(stack.reaction) }!
+        let planned = IslandRobotChoreography.capture(stack)
+        for index in times.indices {
+            let matrix = bodyValues[index].caTransform3DValue
+            let leftPoint = leftValues[index].pointValue
+            let rightPoint = rightValues[index].pointValue
+            let seconds = times[index].doubleValue * stack.totalDuration
+            if seconds >= eating.startTime && seconds <= eating.endTime {
+                try expect(nearPoint(leftPoint, IslandRobotChoreography.leftGrip),
+                           "The rendered support hand stays planted during the snack swing")
+            }
+            for (side, path, hand) in [(0, leftPaths[index], leftPoint), (1, rightPaths[index], rightPoint)] {
+                let local = CGPoint(x: side == 0 ? 14 : 50, y: 43)
+                let shoulder = transformedPoint(local, matrix: matrix)
+                let endpoints = pathEndpoints(path)
+                try expect(nearPoint(endpoints.start, shoulder) && nearPoint(endpoints.end, hand),
+                           "Each rendered arm joins its transformed shoulder to its world-space hand")
+                try expect(nearPoint(shoulder, IslandRobotChoreography.worldPoint(local, body: planned[index].body)),
+                           "Actual layer transforms use the choreography's scale/rotation/translation order")
+            }
+        }
         try expect(layers.compactMap { $0 as? CATextLayer }.contains { $0.string as? String == "×37" },
                    "The generic token renders the accurate uncapped capture count")
         character.stopMotion()
@@ -247,39 +319,80 @@ private struct AutoCaptureRobotCelebrationTests {
         try expect(character.playIslandPeek() > 0.9 && !character.hasActiveAmbientMotion,
                    "An idle peek runs once without continuous ambient work")
         character.stopMotion()
-        try expect(character.playIslandClimb() <= 0.7 && character.mood == .idle,
-                   "The physical climb finishes in a stable robot pose for app expansion")
+        let climbDuration = character.playIslandClimb()
+        try expect((0.9...1.3).contains(climbDuration) && character.mood == .idle,
+                   "The climb leaves time to see the hands hook and the body lower")
         character.send(.hover(true, pointer: CGPoint(x: -0.4, y: 0.2)))
         character.send(.hover(true, pointer: CGPoint(x: 0.8, y: -0.6)))
         try expect(allLayers(character.layer).contains {
-            $0.animation(forKey: "robot.island.climb-body") != nil
+            $0.animation(forKey: "robot.island.body") != nil
         }, "Pointer entry and movement leave the physical climb running")
         try expect(character.motionState.pointer == CGPoint(x: 0.8, y: -0.6),
                    "Hover during the climb retains the most recent pointer position")
-        try await Task.sleep(for: .seconds(0.73))
-        try expect(character.mood == .curious(pointer: CGPoint(x: 0.8, y: -0.6))
-                   && character.hasActiveAmbientMotion,
-                   "Completed climb settles into the latest curious pose and resumes visible ambient motion")
+        try await Task.sleep(for: .seconds(climbDuration + 0.08))
+        character.send(.hover(true, pointer: CGPoint(x: 0.5, y: -0.4)))
+        try expect(character.mood == .curious(pointer: CGPoint(x: 0.5, y: -0.4))
+                   && !character.hasActiveAmbientMotion && body.anchorPoint == CGPoint(x: 0.5, y: 0)
+                   && leftHand.opacity == 1 && rightHand.opacity == 1
+                   && nearPoint(leftHand.position, IslandRobotChoreography.leftGrip)
+                   && nearPoint(rightHand.position, IslandRobotChoreography.rightGrip),
+                   "Hover after the climb updates gaze while preserving the supported hanging rig")
+        try expect(allLayers(character.layer).contains { $0.animation(forKey: "robot.island.pointer-gaze") != nil }
+                   && !allLayers(character.layer).contains { $0.animation(forKey: "robot.body.pose") != nil },
+                   "Resting hover moves the eyes without replacing the anchored torso")
         _ = character.playIslandClimb()
         character.send(.acceptedDrag(true))
         try expect(character.mood == .hungry && !allLayers(character.layer).contains {
-            $0.animation(forKey: "robot.island.climb-body") != nil
+            $0.animation(forKey: "robot.island.body") != nil
         }, "A real drag interrupts the climb immediately to preserve the capture target")
         character.stopMotion()
-        try await Task.sleep(for: .seconds(0.73))
+        try await Task.sleep(for: .seconds(climbDuration + 0.08))
         try expect(character.mood == .hidden && !character.hasActiveAmbientMotion,
                    "A cancelled climb completion cannot restart motion or reveal the hidden robot")
         let reducedCharacter = RobotCharacterView(frame: .zero, reduceMotion: { true })
         reducedCharacter.playAutoCaptureCelebration(.make(reaction: .stackedCapture, entrance: .top, reduceMotion: true))
-        try expect(!allLayers(reducedCharacter.layer).contains {
-            $0.animation(forKey: "robot.auto-success.eating-token") != nil
-                || $0.animation(forKey: "robot.auto-success.gripping-arm-0") != nil
-        }, "Reduce Motion schedules neither climbing nor moving capture paper")
+        try expect(allLayers(reducedCharacter.layer).flatMap { layer in
+            (layer.animationKeys() ?? []).compactMap { layer.animation(forKey: $0) as? CAPropertyAnimation }
+        }.allSatisfy { $0.keyPath == "opacity" },
+                   "Reduced confirmation animates only opacity, with no body, hand, or paper travel")
         reducedCharacter.stopMotion()
         try expect(reducedCharacter.playIslandClimb() <= 0.2,
                    "Reduce Motion substitutes a brief static fade for the climb")
+        try expect(!allLayers(reducedCharacter.layer).contains { layer in
+            (layer.animationKeys() ?? []).contains { key in
+                let path = (layer.animation(forKey: key) as? CAPropertyAnimation)?.keyPath
+                return path == "transform" || path == "path" || path == "position"
+            }
+        }, "Reduced reveal does not schedule movement of any rig part")
         reducedCharacter.stopMotion()
 
         print("PASS: \(checks) auto-capture celebration rotation and performance checks")
+    }
+
+    private static func nearPoint(_ first: CGPoint, _ second: CGPoint) -> Bool {
+        near(Double(first.x), Double(second.x)) && near(Double(first.y), Double(second.y))
+    }
+
+    private static func transformedPoint(_ point: CGPoint, matrix: CATransform3D) -> CGPoint {
+        let localX = point.x - 32
+        return CGPoint(x: 32 + localX * matrix.m11 + point.y * matrix.m21 + matrix.m41,
+                       y: localX * matrix.m12 + point.y * matrix.m22 + matrix.m42)
+    }
+
+    private static func pathEndpoints(_ path: CGPath) -> (start: CGPoint, end: CGPoint) {
+        var start = CGPoint(x: CGFloat.nan, y: CGFloat.nan)
+        var end = start
+        path.applyWithBlock { pointer in
+            let element = pointer.pointee
+            switch element.type {
+            case .moveToPoint: start = element.points[0]; end = start
+            case .addLineToPoint: end = element.points[0]
+            case .addQuadCurveToPoint: end = element.points[1]
+            case .addCurveToPoint: end = element.points[2]
+            case .closeSubpath: break
+            @unknown default: break
+            }
+        }
+        return (start, end)
     }
 }

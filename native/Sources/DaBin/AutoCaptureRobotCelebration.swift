@@ -207,18 +207,19 @@ struct AutoCaptureRobotPerformance: Equatable, Sendable {
         }
 
         let scale = variation.timingScale
+        let island = entrance == .top
         let phases = timeline([
-            (.anticipation, 0.23 * scale, .easeInOut, [.eyeMovement]),
-            (.entrance, 0.50 * scale,
+            (.anticipation, (island ? 0.32 : 0.23) * scale, .easeInOut, [.eyeMovement]),
+            (.entrance, (island ? 0.78 : 0.50) * scale,
              .spring(response: 0.34 * scale, dampingFraction: 0.72),
              [.bodyTravel, .squashAndStretch, .overshoot]),
-            (.eating(reaction), reaction.eatingDuration * scale,
+            (.eating(reaction), (reaction.eatingDuration + (island ? 0.36 : 0)) * scale,
              .spring(response: 0.30 * scale, dampingFraction: 0.78),
              [.eyeMovement, .squashAndStretch, .captureToken, .eating]),
-            (.reaction(reaction), reaction.baseDuration * scale,
+            (.reaction(reaction), (island ? 0.44 : reaction.baseDuration) * scale,
              .spring(response: 0.38 * scale, dampingFraction: 0.76),
              [.eyeMovement, .squashAndStretch, .overshoot, .successCue]),
-            (.exit, 0.40 * scale,
+            (.exit, (island ? 0.88 : 0.40) * scale,
              .spring(response: 0.31 * scale, dampingFraction: 0.78),
              [.bodyTravel, .squashAndStretch, .overshoot])
         ])

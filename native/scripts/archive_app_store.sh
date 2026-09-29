@@ -42,10 +42,11 @@ xcrun xcodebuild \
   -project DaBin.xcodeproj -scheme DaBin -configuration Release \
   -destination 'generic/platform=macOS' \
   -archivePath "$archive_path" \
+  -allowProvisioningUpdates \
   DEVELOPMENT_TEAM="$DABIN_DEVELOPMENT_TEAM" \
   CODE_SIGN_STYLE=Automatic ARCHS=arm64 ONLY_ACTIVE_ARCH=NO \
   INFOPLIST_FILE="$archive_info" \
   archive
 python3 scripts/app_store_preflight.py --archive-app "$archive_path/Products/Applications/DaBin.app"
 echo "Archive prepared: $archive_path"
-echo "Use Xcode Organizer to validate and distribute with your App Store signing profile. No upload has been performed."
+echo "Use Xcode Organizer to validate and upload this build to App Store Connect for TestFlight. No upload has been performed."

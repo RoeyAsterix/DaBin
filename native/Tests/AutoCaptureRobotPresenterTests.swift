@@ -62,6 +62,30 @@ private struct AutoCaptureRobotPresenterTests {
                    "A real camera island centers the robot and meets its lower edge")
         try expect(builtInWithIsland.visibleFrame.contains(islandFrame),
                    "The camera-island presentation remains in the usable display")
+        try expect(islandFrame.size == AutoCaptureRobotGeometry.islandPanelSize
+                   && builtInFrame.size == AutoCaptureRobotGeometry.panelSize,
+                   "A physical island receives a wider motion stage without enlarging fallback popups")
+        let explicitIslandFrame = AutoCaptureRobotGeometry.panelFrame(
+            on: builtInWithIsland, size: CGSize(width: 88, height: 96))
+        try expect(explicitIslandFrame.size == CGSize(width: 88, height: 96)
+                   && near(explicitIslandFrame.midX, islandRect.midX)
+                   && near(explicitIslandFrame.maxY, islandRect.minY),
+                   "An explicitly requested stage size remains authoritative and island-attached")
+
+        let narrowIslandScreen = AutoCaptureRobotScreen(
+            displayID: 8, frame: CGRect(x: -120, y: 20, width: 180, height: 120),
+            visibleFrame: CGRect(x: -120, y: 20, width: 180, height: 88),
+            safeAreaTop: 32, isBuiltIn: true,
+            cameraIslandRect: CGRect(x: -64, y: 108, width: 68, height: 32))
+        try expect(AutoCaptureRobotGeometry.panelFrame(on: narrowIslandScreen) == narrowIslandScreen.visibleFrame,
+                   "A narrow island display clips the entire motion stage to usable display bounds")
+        let invalidIslandScreen = AutoCaptureRobotScreen(
+            displayID: 7, frame: builtIn.frame, visibleFrame: builtIn.visibleFrame,
+            safeAreaTop: builtIn.safeAreaTop, isBuiltIn: true,
+            cameraIslandRect: CGRect(x: 2000, y: 1000, width: 132, height: 32))
+        try expect(AutoCaptureRobotGeometry.cameraIsland(on: invalidIslandScreen) == nil
+                   && AutoCaptureRobotGeometry.panelFrame(on: invalidIslandScreen) == builtInFrame,
+                   "An island outside the display cannot create an attached stage")
 
         let externalFrame = AutoCaptureRobotGeometry.panelFrame(on: external)
         try expect(near(externalFrame.maxX, external.visibleFrame.maxX - 8),
@@ -125,6 +149,10 @@ private struct AutoCaptureRobotPresenterTests {
                    "One success starts one performance and does not show a redundant ×1 badge")
         try expect(ObjectIdentifier(presenter.panel) == panelIdentity && presenter.panel.isVisible,
                    "Presentation reuses the one panel instead of creating a window")
+        try expect(presenter.panel.frame == islandFrame
+                   && presenter.panel.contentView?.subviews.first?.frame == presenter.panel.contentView?.bounds
+                   && presenter.panel.contentView?.layer?.masksToBounds == true,
+                   "Island artwork gets the full clipped stage and can travel sideways without a fake housing")
         try expect(presenter.present(additionalCaptureCount: 2)
                    && presenter.state.visibleCount == 3
                    && presenter.performanceStartCount == 1
@@ -267,6 +295,68 @@ private struct AutoCaptureRobotPresenterTests {
                    && changingPresenter.currentPerformance?.entrance == .right,
                    "A replacement display repositions and resumes without a stranded window")
         changingPresenter.shutdown()
+
+        var relocationScreen: AutoCaptureRobotScreen? = builtInWithIsland
+        var relocationDate = Date(timeIntervalSinceReferenceDate: 100)
+        let relocationPresenter = AutoCaptureRobotPresenter(
+            dismissDelay: 60,
+            primaryScreen: { relocationScreen },
+            reduceMotion: { true },
+            reactionDeck: AutoCaptureRobotReactionDeck(seed: 105),
+            currentDate: { relocationDate }
+        )
+        let relocationPanelIdentity = ObjectIdentifier(relocationPresenter.panel)
+        try expect(relocationPresenter.present(additionalCaptureCount: 3),
+                   "A geometry-change scenario starts an attached capture cue")
+        let initialRelocationPerformance = relocationPresenter.currentPerformance
+        relocationPresenter.displayConfigurationChanged()
+        try expect(relocationPresenter.performanceStartCount == 1
+                   && relocationPresenter.currentPerformance == initialRelocationPerformance,
+                   "An unchanged display notification leaves the active plan and burst untouched")
+
+        // The reduced check finishes at .52 seconds and stops accepting count
+        // updates at .44. Advance only the cue clock, keeping task completion
+        // out of this deterministic ownership/geometry test.
+        relocationDate.addTimeInterval(0.48)
+        try expect(relocationPresenter.present(additionalCaptureCount: 4)
+                   && relocationPresenter.pendingCaptureCount == 4,
+                   "Late captures queue while an unconsumed cue is still in flight")
+        relocationScreen = external
+        relocationPresenter.displayConfigurationChanged()
+        try expect(relocationPresenter.state.visibleCount == 7
+                   && relocationPresenter.pendingCaptureCount == 0
+                   && relocationPresenter.performanceStartCount == 2
+                   && relocationPresenter.currentPerformance?.entrance == .right
+                   && relocationPresenter.panel.frame == externalFrame
+                   && ObjectIdentifier(relocationPresenter.panel) == relocationPanelIdentity,
+                   "A valid island-to-external change replans unfinished and pending counts in the same passive panel")
+        try expect(relocationPresenter.panel.contentView?.subviews.first?.frame
+                   == CGRect(x: 8, y: 5, width: 88, height: 109),
+                   "Leaving the island restores compact inset artwork rather than a leftover wide stage")
+
+        relocationDate.addTimeInterval(1)
+        try expect(relocationPresenter.present(additionalCaptureCount: 2)
+                   && relocationPresenter.pendingCaptureCount == 2,
+                   "A consumed cue accepts later saves only into its pending queue")
+        relocationScreen = builtInWithIsland
+        relocationPresenter.displayConfigurationChanged()
+        try expect(relocationPresenter.state.visibleCount == 2
+                   && relocationPresenter.pendingCaptureCount == 0
+                   && relocationPresenter.performanceStartCount == 3
+                   && relocationPresenter.currentPerformance?.entrance == .top
+                   && relocationPresenter.panel.frame == islandFrame,
+                   "Returning to an island presents only pending saves and never replays a consumed cue")
+
+        relocationDate.addTimeInterval(1)
+        relocationScreen = external
+        relocationPresenter.displayConfigurationChanged()
+        try expect(!relocationPresenter.panel.isVisible
+                   && !relocationPresenter.state.isVisible
+                   && relocationPresenter.currentPerformance == nil
+                   && relocationPresenter.pendingCaptureCount == 0
+                   && relocationPresenter.performanceStartCount == 3,
+                   "Moving a consumed performance with no pending saves hides it without inventing another success")
+        relocationPresenter.shutdown()
 
         let coordinated = AutoCaptureRobotPresenter(dismissDelay: 0.3, primaryScreen: { external }, reduceMotion: { false })
         _ = coordinated.present(additionalCaptureCount: 2)
