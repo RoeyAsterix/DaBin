@@ -76,10 +76,24 @@ import Foundation
         state.back()
         try expect(state.route == .weekly && state.filter == .files, "Global search restores the weekly Activity filter")
         state.filter = .media
-        state.openSearch(day: yesterday); state.back()
+        state.openSearch(day: yesterday)
+        state.searchProject = "Website launch"; state.searchSource = "Notes"
+        state.searchScrollID = reference.id
+        let submitFocus = state.globalSearchFocusRequest
+        state.submitSearch()
+        try expect(state.route == .search && state.searchScope == .day(CaptureCalendar.dayString(yesterday))
+            && state.filter == .media && state.searchProject == "Website launch" && state.searchSource == "Notes"
+            && state.query == "Website launch" && state.searchScrollID == reference.id
+            && state.globalSearchFocusRequest == submitFocus + 1,
+            "Submitting a live search preserves its date, project, app, type, query and position")
+        state.back()
         try expect(state.route == .weekly && state.filter == .media, "Day-scoped search restores the current weekly filter")
         state.filter = .links
-        state.openSearch(week: state.weeklyDays); state.back()
+        state.openSearch(week: state.weeklyDays)
+        let scope = state.searchScope
+        state.submitSearch()
+        try expect(state.searchScope == scope && state.filter == .links, "Return also preserves an explicitly scoped week search")
+        state.back()
         try expect(state.route == .weekly && state.filter == .links, "Week-scoped search restores the current weekly filter")
         state.snoozeFollowUp(reference)
         await reminders.reconcile()

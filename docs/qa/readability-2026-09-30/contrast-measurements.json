@@ -1,0 +1,435 @@
+{
+  "method": "WCAG relative sRGB luminance, source design colors; no pixel-antialiasing sampling, no formal compliance claim",
+  "sourceHashes": {
+    "ThemeSettings.swift": "4201ea8ef5a06c254ae7600e980d51f8aaa605fd79871221d67d120375549a8d",
+    "BoardComponents.swift": "42be10419953441ed5064570084e14279a5d47176ff98b27869a278f2aa5635a"
+  },
+  "solidPalette": [
+    {
+      "mode": "light",
+      "color": "foreground",
+      "ratios": {
+        "background": 14.285245961965085,
+        "surface": 14.610971692080877,
+        "soft": 13.018772715178738
+      }
+    },
+    {
+      "mode": "light",
+      "color": "muted",
+      "ratios": {
+        "background": 6.467277348318179,
+        "surface": 6.614741287108666,
+        "soft": 5.893914190063842
+      }
+    },
+    {
+      "mode": "light",
+      "color": "task",
+      "ratios": {
+        "background": 5.558022412333536,
+        "surface": 5.684753930508128,
+        "soft": 5.065270190285619
+      }
+    },
+    {
+      "mode": "light",
+      "color": "completed",
+      "ratios": {
+        "background": 5.580266087162413,
+        "surface": 5.7075047955697364,
+        "soft": 5.085541829130237
+      }
+    },
+    {
+      "mode": "dark",
+      "color": "foreground",
+      "ratios": {
+        "background": 14.129144639480515,
+        "surface": 12.983803500031918,
+        "soft": 11.797450364972955
+      }
+    },
+    {
+      "mode": "dark",
+      "color": "muted",
+      "ratios": {
+        "background": 7.056885561943619,
+        "surface": 6.484838098582665,
+        "soft": 5.892306949402499
+      }
+    },
+    {
+      "mode": "dark",
+      "color": "task",
+      "ratios": {
+        "background": 7.292869646093798,
+        "surface": 6.7016927671363,
+        "soft": 6.08934722259116
+      }
+    },
+    {
+      "mode": "dark",
+      "color": "completed",
+      "ratios": {
+        "background": 8.908719371312039,
+        "surface": 8.186557976824291,
+        "soft": 7.438537666664515
+      }
+    }
+  ],
+  "accentStates": [
+    {
+      "mode": "light",
+      "choice": "blue",
+      "storedHex": "386A9A",
+      "beforeHex": "386A9A",
+      "afterHex": "33618D",
+      "beforeSelectedBoard13Percent": 4.655059250104165,
+      "afterSelectedBoard13Percent": 5.238144398258037,
+      "beforeConservativeFocusSoft16Percent": 4.099576814558521,
+      "afterConservativeFocusSoft16Percent": 4.600000370460388
+    },
+    {
+      "mode": "light",
+      "choice": "teal",
+      "storedHex": "287875",
+      "beforeHex": "287875",
+      "afterHex": "236866",
+      "beforeSelectedBoard13Percent": 4.286390193114175,
+      "afterSelectedBoard13Percent": 5.241126120490303,
+      "beforeConservativeFocusSoft16Percent": 3.7801531206728534,
+      "afterConservativeFocusSoft16Percent": 4.600000045549269
+    },
+    {
+      "mode": "light",
+      "choice": "green",
+      "storedHex": "47763E",
+      "beforeHex": "47763E",
+      "afterHex": "3F6837",
+      "beforeSelectedBoard13Percent": 4.405857818825653,
+      "afterSelectedBoard13Percent": 5.236832228358909,
+      "beforeConservativeFocusSoft16Percent": 3.886391842440735,
+      "afterConservativeFocusSoft16Percent": 4.60000016491576
+    },
+    {
+      "mode": "light",
+      "choice": "rose",
+      "storedHex": "A34D73",
+      "beforeHex": "A34D73",
+      "afterHex": "914566",
+      "beforeSelectedBoard13Percent": 4.447669711626421,
+      "afterSelectedBoard13Percent": 5.243165356406631,
+      "beforeConservativeFocusSoft16Percent": 3.917192603165136,
+      "afterConservativeFocusSoft16Percent": 4.600000184455453
+    },
+    {
+      "mode": "light",
+      "choice": "amber",
+      "storedHex": "956515",
+      "beforeHex": "956515",
+      "afterHex": "7F5612",
+      "beforeSelectedBoard13Percent": 4.179170192274361,
+      "afterSelectedBoard13Percent": 5.239529132150689,
+      "beforeConservativeFocusSoft16Percent": 3.6891305174955646,
+      "afterConservativeFocusSoft16Percent": 4.60000031773741
+    },
+    {
+      "mode": "light",
+      "choice": "purple",
+      "storedHex": "6D5387",
+      "beforeHex": "6D5387",
+      "afterHex": "6D5387",
+      "beforeSelectedBoard13Percent": 5.273025990659804,
+      "afterSelectedBoard13Percent": 5.273025990659804,
+      "beforeConservativeFocusSoft16Percent": 4.633149140095631,
+      "afterConservativeFocusSoft16Percent": 4.633149140095631
+    },
+    {
+      "mode": "light",
+      "choice": "custom-000000",
+      "storedHex": "000000",
+      "beforeHex": "000000",
+      "afterHex": "000000",
+      "beforeSelectedBoard13Percent": 15.24811255711693,
+      "afterSelectedBoard13Percent": 15.24811255711693,
+      "beforeConservativeFocusSoft16Percent": 12.949738237907761,
+      "afterConservativeFocusSoft16Percent": 12.949738237907761
+    },
+    {
+      "mode": "light",
+      "choice": "custom-FFFFFF",
+      "storedHex": "FFFFFF",
+      "beforeHex": "6F6F6F",
+      "afterHex": "5F5F5F",
+      "beforeSelectedBoard13Percent": 4.195540567446161,
+      "afterSelectedBoard13Percent": 5.231852623704492,
+      "beforeConservativeFocusSoft16Percent": 3.7093260379887836,
+      "afterConservativeFocusSoft16Percent": 4.600000532150807
+    },
+    {
+      "mode": "light",
+      "choice": "custom-FF0000",
+      "storedHex": "FF0000",
+      "beforeHex": "E00000",
+      "afterHex": "B70000",
+      "beforeSelectedBoard13Percent": 3.9047051836185984,
+      "afterSelectedBoard13Percent": 5.326191485128424,
+      "beforeConservativeFocusSoft16Percent": 3.3862696310139544,
+      "afterConservativeFocusSoft16Percent": 4.600000200552941
+    },
+    {
+      "mode": "light",
+      "choice": "custom-00FF00",
+      "storedHex": "00FF00",
+      "beforeHex": "008100",
+      "afterHex": "006D00",
+      "beforeSelectedBoard13Percent": 4.111199592235675,
+      "afterSelectedBoard13Percent": 5.260037497533603,
+      "beforeConservativeFocusSoft16Percent": 3.614521051874937,
+      "afterConservativeFocusSoft16Percent": 4.600000334573584
+    },
+    {
+      "mode": "light",
+      "choice": "custom-0000FF",
+      "storedHex": "0000FF",
+      "beforeHex": "0000FF",
+      "afterHex": "0000FF",
+      "beforeSelectedBoard13Percent": 6.398139170175575,
+      "afterSelectedBoard13Percent": 6.398139170175575,
+      "beforeConservativeFocusSoft16Percent": 5.482234380818274,
+      "afterConservativeFocusSoft16Percent": 5.482234380818274
+    },
+    {
+      "mode": "light",
+      "choice": "custom-FFFF00",
+      "storedHex": "FFFF00",
+      "beforeHex": "737300",
+      "afterHex": "626200",
+      "beforeSelectedBoard13Percent": 4.1753397236199525,
+      "afterSelectedBoard13Percent": 5.238760762345279,
+      "beforeConservativeFocusSoft16Percent": 3.6864585991585943,
+      "afterConservativeFocusSoft16Percent": 4.600000423955031
+    },
+    {
+      "mode": "light",
+      "choice": "custom-888888",
+      "storedHex": "888888",
+      "beforeHex": "6F6F6F",
+      "afterHex": "5F5F5F",
+      "beforeSelectedBoard13Percent": 4.195539996333814,
+      "afterSelectedBoard13Percent": 5.2318523239084795,
+      "beforeConservativeFocusSoft16Percent": 3.7093255459697723,
+      "afterConservativeFocusSoft16Percent": 4.600000275067808
+    },
+    {
+      "mode": "light",
+      "choice": "custom-F0F0FA",
+      "storedHex": "F0F0FA",
+      "beforeHex": "6E6E73",
+      "afterHex": "5E5E62",
+      "beforeSelectedBoard13Percent": 4.195516450156307,
+      "afterSelectedBoard13Percent": 5.231839694513564,
+      "beforeConservativeFocusSoft16Percent": 3.709315375748548,
+      "afterConservativeFocusSoft16Percent": 4.600000508426351
+    },
+    {
+      "mode": "dark",
+      "choice": "blue",
+      "storedHex": "386A9A",
+      "beforeHex": "7195B7",
+      "afterHex": "95AFC9",
+      "beforeSelectedBoard13Percent": 4.466212630603903,
+      "afterSelectedBoard13Percent": 5.891771726785294,
+      "beforeConservativeFocusSoft16Percent": 3.5499256023048904,
+      "afterConservativeFocusSoft16Percent": 4.6000000950836695
+    },
+    {
+      "mode": "dark",
+      "choice": "teal",
+      "storedHex": "287875",
+      "beforeHex": "609B99",
+      "afterHex": "88B4B3",
+      "beforeSelectedBoard13Percent": 4.473811615374883,
+      "afterSelectedBoard13Percent": 5.888466618765482,
+      "beforeConservativeFocusSoft16Percent": 3.5588982618455676,
+      "afterConservativeFocusSoft16Percent": 4.600000222754003
+    },
+    {
+      "mode": "dark",
+      "choice": "green",
+      "storedHex": "47763E",
+      "beforeHex": "789A71",
+      "afterHex": "99B394",
+      "beforeSelectedBoard13Percent": 4.468938986031279,
+      "afterSelectedBoard13Percent": 5.891360243954049,
+      "beforeConservativeFocusSoft16Percent": 3.552125005215165,
+      "afterConservativeFocusSoft16Percent": 4.6000003315481
+    },
+    {
+      "mode": "dark",
+      "choice": "rose",
+      "storedHex": "A34D73",
+      "beforeHex": "BD7F9B",
+      "afterHex": "CEA0B4",
+      "beforeSelectedBoard13Percent": 4.472688602859487,
+      "afterSelectedBoard13Percent": 5.895318477781529,
+      "beforeConservativeFocusSoft16Percent": 3.5530481869216657,
+      "afterConservativeFocusSoft16Percent": 4.6000001724055295
+    },
+    {
+      "mode": "dark",
+      "choice": "amber",
+      "storedHex": "956515",
+      "beforeHex": "B08C50",
+      "afterHex": "C3A97C",
+      "beforeSelectedBoard13Percent": 4.474381148273165,
+      "afterSelectedBoard13Percent": 5.8936918638672156,
+      "beforeConservativeFocusSoft16Percent": 3.5551043101868776,
+      "afterConservativeFocusSoft16Percent": 4.60000001803427
+    },
+    {
+      "mode": "dark",
+      "choice": "purple",
+      "storedHex": "6D5387",
+      "beforeHex": "AB92C6",
+      "afterHex": "B9A4CF",
+      "beforeSelectedBoard13Percent": 5.013146355922077,
+      "afterSelectedBoard13Percent": 5.895848708814426,
+      "beforeConservativeFocusSoft16Percent": 3.9525254054215777,
+      "afterConservativeFocusSoft16Percent": 4.600000125045741
+    },
+    {
+      "mode": "dark",
+      "choice": "custom-000000",
+      "storedHex": "000000",
+      "beforeHex": "919191",
+      "afterHex": "ACACAC",
+      "beforeSelectedBoard13Percent": 4.460208797410748,
+      "afterSelectedBoard13Percent": 5.89557632878664,
+      "beforeConservativeFocusSoft16Percent": 3.5414954073665523,
+      "afterConservativeFocusSoft16Percent": 4.600000485841939
+    },
+    {
+      "mode": "dark",
+      "choice": "custom-FFFFFF",
+      "storedHex": "FFFFFF",
+      "beforeHex": "FFFFFF",
+      "afterHex": "FFFFFF",
+      "beforeSelectedBoard13Percent": 11.370803223985904,
+      "afterSelectedBoard13Percent": 11.370803223985904,
+      "beforeConservativeFocusSoft16Percent": 8.453453746709195,
+      "afterConservativeFocusSoft16Percent": 8.453453746709195
+    },
+    {
+      "mode": "dark",
+      "choice": "custom-FF0000",
+      "storedHex": "FF0000",
+      "beforeHex": "FF5555",
+      "afterHex": "FF8888",
+      "beforeSelectedBoard13Percent": 4.585107983547205,
+      "afterSelectedBoard13Percent": 5.8752330525338134,
+      "beforeConservativeFocusSoft16Percent": 3.6735363315080782,
+      "afterConservativeFocusSoft16Percent": 4.600000156497583
+    },
+    {
+      "mode": "dark",
+      "choice": "custom-00FF00",
+      "storedHex": "00FF00",
+      "beforeHex": "00FF00",
+      "afterHex": "00FF00",
+      "beforeSelectedBoard13Percent": 9.248441419540706,
+      "afterSelectedBoard13Percent": 9.248441419540706,
+      "beforeConservativeFocusSoft16Percent": 7.122393766304195,
+      "afterConservativeFocusSoft16Percent": 7.122393766304195
+    },
+    {
+      "mode": "dark",
+      "choice": "custom-0000FF",
+      "storedHex": "0000FF",
+      "beforeHex": "8383FF",
+      "afterHex": "A3A3FF",
+      "beforeSelectedBoard13Percent": 4.479085162669786,
+      "afterSelectedBoard13Percent": 5.889977558599039,
+      "beforeConservativeFocusSoft16Percent": 3.5637288613995115,
+      "afterConservativeFocusSoft16Percent": 4.600000323604512
+    },
+    {
+      "mode": "dark",
+      "choice": "custom-FFFF00",
+      "storedHex": "FFFF00",
+      "beforeHex": "FFFF00",
+      "afterHex": "FFFF00",
+      "beforeSelectedBoard13Percent": 10.89447573455592,
+      "afterSelectedBoard13Percent": 10.89447573455592,
+      "beforeConservativeFocusSoft16Percent": 8.161620727307358,
+      "afterConservativeFocusSoft16Percent": 8.161620727307358
+    },
+    {
+      "mode": "dark",
+      "choice": "custom-888888",
+      "storedHex": "888888",
+      "beforeHex": "919191",
+      "afterHex": "ACACAC",
+      "beforeSelectedBoard13Percent": 4.460208747616943,
+      "afterSelectedBoard13Percent": 5.895575925846141,
+      "beforeConservativeFocusSoft16Percent": 3.5414953701998453,
+      "afterConservativeFocusSoft16Percent": 4.600000192085767
+    },
+    {
+      "mode": "dark",
+      "choice": "custom-F0F0FA",
+      "storedHex": "F0F0FA",
+      "beforeHex": "F0F0FA",
+      "afterHex": "F0F0FA",
+      "beforeSelectedBoard13Percent": 10.330228970630174,
+      "afterSelectedBoard13Percent": 10.330228970630174,
+      "beforeConservativeFocusSoft16Percent": 7.739560128619659,
+      "afterConservativeFocusSoft16Percent": 7.739560128619659
+    }
+  ],
+  "transparencyStress": [
+    {
+      "mode": "light",
+      "boardOpacity": 0.35,
+      "desktop": "black",
+      "mutedContrast": 1.070115792928349,
+      "primaryContrast": 2.0641224763483037
+    },
+    {
+      "mode": "light",
+      "boardOpacity": 0.75,
+      "desktop": "black",
+      "mutedContrast": 3.5309983478892883,
+      "primaryContrast": 7.799445914285416
+    },
+    {
+      "mode": "light",
+      "boardOpacity": 1,
+      "desktop": "black",
+      "mutedContrast": 6.467277348318179,
+      "primaryContrast": 14.285245961965085
+    },
+    {
+      "mode": "dark",
+      "boardOpacity": 0.35,
+      "desktop": "white",
+      "mutedContrast": 1.1031864730182726,
+      "primaryContrast": 1.8149048794369476
+    },
+    {
+      "mode": "dark",
+      "boardOpacity": 0.75,
+      "desktop": "white",
+      "mutedContrast": 3.0982135523416603,
+      "primaryContrast": 6.203176602594281
+    },
+    {
+      "mode": "dark",
+      "boardOpacity": 1,
+      "desktop": "white",
+      "mutedContrast": 7.056885561943619,
+      "primaryContrast": 14.129144639480515
+    }
+  ]
+}

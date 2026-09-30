@@ -31,7 +31,7 @@ struct WeeklySearchButton: View {
 
 @MainActor
 struct WeeklySearchPopover: View {
-    private enum Choice: Hashable { case day, week }
+    private enum Choice: String, Hashable { case day, week, all }
 
     @Environment(\.daBinAccent) private var accent
     @ObservedObject var state: AppState
@@ -66,6 +66,12 @@ struct WeeklySearchPopover: View {
                 let days = state.weeklyDays
                 isPresented = false
                 state.openSearch(week: days)
+            }
+            scopeButton(title: "Search All Captures", symbol: "magnifyingglass",
+                        choice: .all, shortcut: "k", shortcutLabel: "⌘K",
+                        hint: "Search all dates and projects") {
+                isPresented = false
+                state.performSearchCommand()
             }
         }
         .padding(12)
@@ -108,6 +114,7 @@ struct WeeklySearchPopover: View {
         .buddyHelp(title)
         .accessibilityLabel(title)
         .accessibilityHint(hint)
+        .accessibilityIdentifier("weekly-search-\(choice.rawValue)")
     }
 }
 

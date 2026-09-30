@@ -46,18 +46,19 @@ struct WorkspaceItemCard: View {
                         .lineLimit(capture.isMinimized ? 1 : 3)
                     if !capture.isMinimized, capture.kind == .text,
                        let content = capture.originalText, content.count > capture.title.count {
-                        Text(content).font(.system(size: 12)).foregroundStyle(Palette.muted).lineLimit(4)
+                        Text(content).font(.system(size: 13)).foregroundStyle(Palette.muted).lineLimit(4)
                     }
                 }.frame(maxWidth: .infinity, alignment: .leading).multilineTextAlignment(.leading).contentShape(Rectangle())
             }.buttonStyle(.plain).accessibilityLabel("Open \(alias ?? capture.title)")
                 .accessibilityIdentifier("workspace-item-\(capture.id.uuidString)")
             HStack(spacing: 5) {
                 if let project = capture.projectName {
-                    Label(project, systemImage: "folder").font(.system(size: 10)).foregroundStyle(accent).lineLimit(1)
+                    Label(project, systemImage: "folder").font(.system(size: 11)).foregroundStyle(accent).lineLimit(1)
+                        .buddyHelp(project)
                 }
                 Spacer(minLength: 0)
                 Text("\(prettyDay(capture.captureDay, includeWeekday: false)) · \(captureClock(capture))")
-                    .font(.system(size: 10)).foregroundStyle(Palette.muted).lineLimit(1)
+                    .font(.system(size: 11)).foregroundStyle(Palette.muted).lineLimit(1).fixedSize()
             }
             HStack(spacing: 4) {
                 if capture.isTask { TaskStatusButton(state: state, capture: capture) }

@@ -6,7 +6,7 @@ Three labeled views organize the work: **Inbox** for quick notes, tasks, pastes 
 
 Tasks keep their original content and attachments. A planned workday is separate from a deadline or reminder. Choose a priority, estimate effort, reorder today’s plan, add checklist steps, set a repeat rule, complete work or reschedule it. Project scratchpads and unfinished composer/detail drafts recover locally after restart.
 
-The persistent **Search all captures** field searches the full archive from every view. Results show matches first; **Show nearby captures** adds optional same-day context. Icon filters narrow by content type; their hover labels can be disabled in Settings. In Activity, the **Timeline** Day/Week control and calendar preserve date browsing. **Add** offers Paste clipboard, New note, Import files and New task. Preview-first cards expose copy, comment, reminder, task and more actions as icons. The gear opens Settings directly. **More** holds day/week text exports, Recently Deleted and archive backup/restore.
+The **Search** toolbar icon opens a focused search field. In Weekly view it first offers **Search Day**, **Search Week**, or **Search All Captures**; **⌘K** always searches the full archive. The compact header keeps its tools and navigation in two rows. Results show matches first; **Show nearby captures** adds optional same-day context. Icon filters narrow by content type; their hover labels can be disabled in Settings. In Activity, the **Timeline** Day/Week control and calendar preserve date browsing. **Add** offers Paste clipboard, New note, Import files and New task. Preview-first cards expose copy, comment, reminder, task and more actions as icons. The gear opens Settings directly. **More** holds day/week text exports, Recently Deleted and archive backup/restore.
 
 Removed captures go to **Recently Deleted**, with Undo for the latest removal and a separate confirmation for permanent deletion. A local `.dabinbackup` directory package includes capture metadata, saved originals, readable records, saved local edits and deleted captures. Restore verifies the package and adds missing captures; it rejects conflicts instead of overwriting existing data. Workspace notes, shelf references and snippet names are included. Device preferences and unfinished drafts are kept separately on this Mac.
 
@@ -14,7 +14,7 @@ Inbox opens once on first launch; reopening resumes the current work. Afterwards
 
 DaBin recognizes text in saved screenshots, images, PDFs and supported text documents entirely on the Mac. Search can find that content even when the filename or caption does not contain the query, and shows the matching recognized line. Capture details expose the searchable text and Settings can rebuild the local index. This is local text search, not semantic search. There is no cloud sync, and no recognized content is sent to an external AI or OCR service.
 
-The working version is **0.4.2, build 51**, a local candidate. See its [release notes](docs/RELEASE_NOTES_0.4.2.md); this does not identify it as the current public GitHub release or an Apple-approved build.
+The working version is **0.4.2, build 53**, a local candidate. See its [release notes](docs/RELEASE_NOTES_0.4.2.md); this does not identify it as the current public GitHub release or an Apple-approved build.
 
 ## A little desktop buddy
 

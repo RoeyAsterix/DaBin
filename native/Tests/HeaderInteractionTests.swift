@@ -54,6 +54,19 @@ private struct HeaderAccessibilityNode {
         }
         return .zero
     }
+    /// Native popup cells expose their rendered symbol through AXFrame. Their
+    /// actual clickable region belongs to the backing NSPopUpButton view.
+    func interactionFrame() -> NSRect {
+        if let cell = object as? NSCell, let view = cell.controlView, let window = view.window {
+            return window.convertToScreen(view.convert(view.bounds, to: nil))
+        }
+        return accessibilityFrame()
+    }
+    func supportsAccessiblePress() -> Bool {
+        object.responds(to: NSSelectorFromString("accessibilityPerformPress"))
+            || ((value("accessibilityActionNames") as? [String])?.contains("AXPress") == true
+                && object.responds(to: NSSelectorFromString("accessibilityPerformAction:")))
+    }
     func accessibilityPerformPress() -> Bool {
         let selector = NSSelectorFromString("accessibilityPerformPress")
         if object.responds(to: selector) {
@@ -172,8 +185,9 @@ private enum HeaderInteractionTests {
         let hosting = NSHostingView(rootView: BoardView(state: state, theme: theme)
             .frame(width: size.width, height: size.height))
         hosting.frame = NSRect(origin: .zero, size: size)
-        let window = NSWindow(contentRect: NSRect(x: 80, y: 80, width: size.width, height: size.height),
-                              styleMask: [.borderless], backing: .buffered, defer: false)
+        let window = DaBinPanel(contentRect: NSRect(x: 80, y: 80, width: size.width, height: size.height),
+                                styleMask: [.borderless, .nonactivatingPanel], backing: .buffered, defer: false)
+        window.becomesKeyOnlyIfNeeded = false
         window.isReleasedWhenClosed = false
         window.contentView = hosting
         application.activate(ignoringOtherApps: true)
@@ -203,29 +217,67 @@ private enum HeaderInteractionTests {
                    "Own-process accessibility activation succeeds (AX error \(accessibilityActivation.rawValue))")
         settle()
 
-        for id in ["primary-inbox", "primary-today", "primary-workspace", "global-search", "timeline-action-add", "board-more", "board-settings", "timeline-auto-capture", "window-expand", "window-close"] {
+        for id in ["primary-inbox", "primary-today", "primary-workspace", "board-search", "timeline-action-add", "board-more", "board-settings", "timeline-auto-capture", "window-expand", "window-close"] {
             let control = try element(hosting, identifier: id)
             let frame = control.accessibilityFrame()
             try expect(frame.width > 0 && frame.height > 0, "\(id) has an accessible visible target")
             try expect(frame.minX >= window.frame.minX - 1 && frame.maxX <= window.frame.maxX + 1,
                        "\(id) fits the compact 380-point window")
         }
-        // Measure the actual visible control envelope at two window sizes. A
+        // Measure the actual visible control envelope at three window sizes. A
         // flexible drag handle previously absorbed hundreds of vertical points
         // before the feed; checking only intrinsic view sizes missed that bug.
-        for layoutSize in [size, NSSize(width: 760, height: 760)] {
+        // Keep search one action away without reserving an unused field row.
+        let toolbarIDs = ["timeline-auto-capture", "timeline-action-add", "board-search", "board-settings", "board-more", "window-expand", "window-close"]
+        let menuIDs: Set<String> = ["timeline-action-add", "board-more"]
+        let primaryIDs = ["primary-inbox", "primary-today", "primary-workspace"]
+        for layoutSize in [NSSize(width: 380, height: 430), size, NSSize(width: 760, height: 760)] {
             hosting.rootView = BoardView(state: state, theme: theme)
                 .frame(width: layoutSize.width, height: layoutSize.height)
             window.setContentSize(layoutSize)
             hosting.frame = NSRect(origin: .zero, size: layoutSize)
             settle()
-            let headerIDs = ["timeline-auto-capture", "timeline-action-add", "board-settings", "board-more", "window-expand", "window-close", "global-search", "primary-inbox", "primary-today", "primary-workspace"]
-            let headerFrames = try headerIDs.map { try element(hosting, identifier: $0).accessibilityFrame() }
-            let envelope = headerFrames.reduce(NSRect.null) { $0.union($1) }
-            try expect(envelope.height <= 140, "Header stays compact at \(Int(layoutSize.width)) points (actual \(envelope.height))")
-            try expect(headerFrames.allSatisfy { $0.minX >= window.frame.minX - 1 && $0.maxX <= window.frame.maxX + 1 },
-                       "All header controls fit at \(Int(layoutSize.width)) points")
+            for route in [BoardRoute.inbox, .reminders, .library] {
+                switch route {
+                case .inbox: state.openInbox()
+                case .reminders: state.showReminders()
+                default: state.openLibrary()
+                }
+                settle()
+                // AX frames describe the visible controls. Native popup backing
+                // views also contain an invisible left inset, which must not be
+                // confused with an overlap between rendered header controls.
+                let toolbarFrames = try toolbarIDs.map { try element(hosting, identifier: $0).accessibilityFrame() }
+                let navigationFrames = try primaryIDs.map { try element(hosting, identifier: $0).accessibilityFrame() }
+                let headerFrames = toolbarFrames + navigationFrames
+                let envelope = headerFrames.reduce(NSRect.null) { $0.union($1) }
+                let layoutDescription = "\(route) at \(Int(layoutSize.width))×\(Int(layoutSize.height))"
+                try expect(envelope.height <= 74, "Two-row header stays compact for \(layoutDescription) (actual \(envelope.height))")
+                try expect(headerFrames.allSatisfy { $0.minX >= window.frame.minX - 1 && $0.maxX <= window.frame.maxX + 1 },
+                           "All header controls fit for \(layoutDescription)")
+                // Native borderless menu cells keep their preexisting intrinsic
+                // symbol-sized hosts. Check the minimum target on icon Buttons
+                // and the menu's real native bounds/action separately.
+                let iconFrames = zip(toolbarIDs, toolbarFrames).filter { !menuIDs.contains($0.0) }.map(\.1)
+                try expect(iconFrames.allSatisfy { $0.width >= 28 && $0.height >= 28 },
+                           "Compaction preserves icon button hit targets for \(layoutDescription)")
+                for id in menuIDs {
+                    let menu = try element(hosting, identifier: id)
+                    let frame = menu.interactionFrame()
+                    try expect(frame.width > 0 && frame.height > 0 && menu.supportsAccessiblePress(),
+                               "\(id) remains a visible native menu with an accessible press action for \(layoutDescription)")
+                }
+                try expect(toolbarFrames.allSatisfy { abs($0.midY - toolbarFrames[0].midY) < 1 },
+                           "Toolbar controls stay on one aligned row for \(layoutDescription)")
+                try expect(navigationFrames.allSatisfy { abs($0.midY - navigationFrames[0].midY) < 1 },
+                           "Primary navigation stays on one aligned row for \(layoutDescription)")
+                try expect(zip(toolbarFrames, toolbarFrames.dropFirst()).allSatisfy { $0.0.maxX <= $0.1.minX + 1 },
+                           "Toolbar actions never overlap for \(layoutDescription)")
+                try expect(!elements(in: hosting).contains { $0.accessibilityIdentifier() == "global-search" },
+                           "An inactive search field does not reserve a third header row for \(layoutDescription)")
+            }
         }
+        state.openInbox()
         hosting.rootView = BoardView(state: state, theme: theme).frame(width: size.width, height: size.height)
         window.setContentSize(size); hosting.frame = NSRect(origin: .zero, size: size); settle()
         try expect(state.route == .inbox, "Initial route is the capture Inbox")
@@ -247,11 +299,40 @@ private enum HeaderInteractionTests {
         try expect(expansions == 1 && dismissals == 0, "Expand remains independent of Close")
         try press(hosting, identifier: "board-settings")
         try expect(state.route == .settings, "Gear opens Settings directly")
+        let settingsHeaderFrames = try (toolbarIDs + ["board-back"]).map { try element(hosting, identifier: $0).accessibilityFrame() }
+        try expect(settingsHeaderFrames.reduce(NSRect.null) { $0.union($1) }.height <= 74,
+                   "Settings uses a compact toolbar and Back row")
+        try expect(!elements(in: hosting).contains { $0.accessibilityIdentifier() == "primary-inbox" },
+                   "Settings does not reserve an unrelated primary navigation row")
+        try press(hosting, identifier: "board-back")
+        try expect(state.route == .daily, "Settings Back preserves the Activity route")
         state.openDaily(); settle()
         let add = try element(hosting, identifier: "timeline-action-add")
         try expect(add.accessibilityLabel() == "Add capture", "Add describes capture choices instead of pretending to create only tasks")
-        let search = try element(hosting, identifier: "global-search")
-        try expect(search.accessibilityLabel() == "Search all captures across all dates", "Persistent search states its archive scope")
+        let search = try element(hosting, identifier: "board-search")
+        try expect(search.accessibilityLabel() == "Search all captures", "Compact search action has an accessible label")
+        state.filter = .text
+        application.activate(ignoringOtherApps: true)
+        window.makeKeyAndOrderFront(nil)
+        settle()
+        try press(hosting, identifier: "board-search")
+        try expect(state.route == .search && state.searchScope == .all && state.filter == .all,
+                   "Search icon opens archive search and clears the Activity filter")
+        let searchField = try element(hosting, identifier: "global-search")
+        try expect(searchField.accessibilityLabel() == "Search captures, All dates", "Active search field states its actual archive scope")
+        try expect(window.canBecomeKey, "Search is tested in a key-eligible production panel")
+        if window.isKeyWindow {
+            try expect((window.firstResponder as? NSTextView)?.isFieldEditor == true,
+                       "Search icon focuses text entry immediately")
+        } else {
+            print("NOT VERIFIED: macOS did not activate the standalone test process; immediate search typing requires live installed-app verification.")
+        }
+        let searchHeaderFrames = try (toolbarIDs + ["board-back", "global-search"]).map { try element(hosting, identifier: $0).accessibilityFrame() }
+        try expect(searchHeaderFrames.reduce(NSRect.null) { $0.union($1) }.height <= 74,
+                   "Active search uses two compact header rows")
+        try press(hosting, identifier: "board-back")
+        try expect(state.route == .daily && state.filter == .text, "Search Back restores Activity and its selected filter")
+        state.filter = .all
         try press(hosting, identifier: "primary-workspace")
         try expect(state.route == .library, "Workspace tab opens the organized collection")
         try press(hosting, identifier: "primary-today")
@@ -270,6 +351,31 @@ private enum HeaderInteractionTests {
         state.openWeekly(); settle()
         let weeklyLabel = try element(hosting, identifier: "timeline-date").accessibilityLabel() ?? ""
         try expect(weeklyLabel.hasPrefix("Choose date"), "Week uses the same date-picker control as Day")
+        let weekSearchLabel = try element(hosting, identifier: "board-search").accessibilityLabel()
+        try expect(weekSearchLabel == "Search a day or week", "Weekly search exposes its reachable scope choices")
+        try press(hosting, identifier: "board-search")
+        let scopeWindow = application.windows.first { candidate in
+            guard candidate.isVisible, let content = candidate.contentView else { return false }
+            return elements(in: content).contains { $0.accessibilityIdentifier() == "weekly-search-week" }
+        }
+        try expect(scopeWindow != nil, "Weekly Search opens the day/week action popover")
+        if let content = scopeWindow?.contentView {
+            _ = try element(content, identifier: "weekly-search-day")
+            _ = try element(content, identifier: "weekly-search-all")
+            try press(content, identifier: "weekly-search-week")
+        }
+        try expect(state.route == .search && state.searchScope != .all,
+                   "Search Week opens a bounded search through the actual header")
+        let scopedLabel = try element(hosting, identifier: "global-search").accessibilityLabel() ?? ""
+        try expect(scopedLabel.contains(state.searchScopeTitle), "Scoped search announces its selected date range")
+        state.query = "no-match-\(UUID())"; state.filter = .files; state.searchProject = "Missing project"; settle()
+        try press(hosting, identifier: "search-clear-filters")
+        try expect(state.filter == .all && state.searchProject == nil && state.searchScope != .all,
+                   "Clear search filters preserves the intentionally selected week")
+        try press(hosting, identifier: "search-all-dates")
+        try expect(state.searchScope == .all && !state.query.isEmpty, "Search all dates preserves the user's query")
+        state.query = ""; state.back(); settle()
+        try expect(state.route == .weekly, "Search returns to the originating week")
         state.filter = .files
         key(application, window: window, code: 40, text: "k", modifiers: .command)
         try expect(state.route == .search && state.searchScope == .all && state.filter == .all,

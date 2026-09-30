@@ -144,20 +144,26 @@ final class ThemeSettings: ObservableObject {
         }
     }
 
-    /// Accents also appear on slightly tinted cards, so use the least favorable solid surface.
+    /// Text accents also sit on selection/focus fills. Check the foreground
+    /// against that blended fill, not just the underlying solid surface: a
+    /// color that barely passes on an unselected card can disappear on focus.
     nonisolated static func resolvedAccentColor(for hex: String, dark: Bool) -> NSColor {
         let normalized = normalizedHex(hex) ?? defaultHex
-        if normalized == defaultHex { return RGB(hex: dark ? "AB92C6" : defaultHex).color }
-        let source = RGB(hex: normalized)
+        let source = RGB(hex: normalized == defaultHex && dark ? "AB92C6" : normalized)
         let background = RGB(hex: dark ? "2D2A30" : "F3F1F5")
-        guard source.contrast(with: background) < 4.5 else { return source.color }
+        func readable(_ candidate: RGB) -> Bool {
+            let selectedBackground = background.mixed(with: candidate, amount: 0.16)
+            // Leave a small margin above 4.5 for display-color conversion.
+            return candidate.contrast(with: selectedBackground) >= 4.6
+        }
+        guard !readable(source) else { return source.color }
         let destination = RGB(hex: dark ? "FFFFFF" : "000000")
         var lower = 0.0
         var upper = 1.0
         // Mix only as much white or black as needed; this retains the chosen hue.
         for _ in 0..<24 {
             let midpoint = (lower + upper) / 2
-            if source.mixed(with: destination, amount: midpoint).contrast(with: background) >= 4.5 {
+            if readable(source.mixed(with: destination, amount: midpoint)) {
                 upper = midpoint
             } else {
                 lower = midpoint

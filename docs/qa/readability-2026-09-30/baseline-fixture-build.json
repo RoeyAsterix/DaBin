@@ -1,0 +1,8 @@
+{
+  "application": "/private/tmp/DaBin-Review-Readability-Baseline-20260930/DaBin Readability QA.app",
+  "bundleID": "com.dabin.qa.readability.20260930",
+  "sourceSHA256": "c483237f2db4785d2232de2854958b4ac2a5ef693febf92804097df84d39b505",
+  "moduleSHA256": "60a29f6611fe8f7ac7b66fe1c1ec79cfc8fba3b4f552d8dc843ddbef2c62733d",
+  "archive": "/private/tmp/DaBin-Readability-Live-20260930/Archive",
+  "safety": "Synthetic root, dedicated preference suite, private pasteboard, fake reminders and screenshot observer, disabled update transport; no production monitors, status item, global shortcuts, or personal archive."
+}

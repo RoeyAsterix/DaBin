@@ -3,6 +3,7 @@ import SwiftUI
 @MainActor
 struct BoardView: View {
     @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
+    @Environment(\.colorSchemeContrast) private var colorSchemeContrast
     @ObservedObject var state: AppState
     @StateObject private var theme: ThemeSettings
     @StateObject private var dayExportController: DayExportActionController
@@ -37,7 +38,7 @@ struct BoardView: View {
         .foregroundStyle(Palette.foreground).tint(accent).environment(\.daBinAccent, accent)
         .environment(\.daBinTooltipsEnabled, theme.showTooltips)
         .background(Palette.background.opacity(ThemeSettings.effectiveBoardOpacity(
-            preferred: theme.boardOpacity, reduceTransparency: reduceTransparency)))
+            preferred: theme.boardOpacity, reduceTransparency: reduceTransparency || colorSchemeContrast == .increased)))
         .preferredColorScheme(theme.darkModeEnabled ? .dark : .light)
         .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
         .overlay(RoundedRectangle(cornerRadius: 24, style: .continuous).strokeBorder(Palette.line, lineWidth: 1))
@@ -105,7 +106,7 @@ struct BoardView: View {
     }
 
     private var header: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: 4) {
             HStack(spacing: 3) {
                 DaBinLogo(variant: .compact).frame(width: 68, height: 28, alignment: .leading)
                     .overlay { WindowDragHandle(onDragStarted: { state.onBoardDragStarted?() }).accessibilityHidden(true) }
@@ -121,6 +122,13 @@ struct BoardView: View {
                     }
                     .accessibilityHidden(true)
                 addMenu
+                BuddyIconButton(symbol: "magnifyingglass", title: state.route == .weekly ? "Search a day or week" : "Search all captures", isActive: state.route == .search) {
+                    if state.route == .weekly { state.weeklySearchActionsPresented.toggle() }
+                    else { state.performSearchCommand(); searchFocused = true }
+                }.accessibilityIdentifier("board-search")
+                    .popover(isPresented: $state.weeklySearchActionsPresented, arrowEdge: .bottom) {
+                        WeeklySearchPopover(state: state, isPresented: $state.weeklySearchActionsPresented)
+                    }
                 BuddyIconButton(symbol: "gearshape", title: "Settings") { state.showSettings() }
                     .accessibilityIdentifier("board-settings")
                 moreMenu
@@ -130,43 +138,69 @@ struct BoardView: View {
                 SmallIcon(symbol: "xmark", label: "Hide DaBin", size: 28) { state.onDismiss?() }
                     .accessibilityIdentifier("window-close")
             }
-            HStack(spacing: 7) {
+            if state.route == .search {
+                HStack(spacing: 6) {
+                    backButton
+                    searchField
+                }
+            } else if isPrimary {
+                HStack(spacing: 4) {
+                    navigationButton("Inbox", symbol: "tray", selected: state.route == .inbox || isTimeline) { state.openInbox() }
+                    navigationButton("Today", symbol: "sun.max", selected: state.route == .reminders) { state.showReminders() }
+                    navigationButton("Workspace", symbol: "square.stack", selected: state.route == .library) { state.openLibrary() }
+                }.accessibilityElement(children: .contain).accessibilityLabel("Main views")
+            } else {
+                HStack(spacing: 8) {
+                    backButton
+                    Text(routeTitle).font(.system(size: 14, weight: .semibold)).accessibilityAddTraits(.isHeader)
+                    Spacer(minLength: 0)
+                }.frame(minHeight: 28)
+            }
+            if isTimeline { timelineControls }
+        }.padding(.horizontal, 12).padding(.vertical, 6)
+            .fixedSize(horizontal: false, vertical: true)
+            .background(Palette.background)
+            .overlay(alignment: .bottom) { Rectangle().fill(Palette.line).frame(height: 1) }
+    }
+
+    private var backButton: some View {
+        Button { state.back() } label: {
+            Label("Back", systemImage: "chevron.left")
+                .font(.system(size: 12)).frame(minHeight: 28).contentShape(Rectangle())
+        }.buttonStyle(.plain).foregroundStyle(accent)
+            .buddyHelp("Return to previous view").accessibilityIdentifier("board-back")
+    }
+
+    private var searchField: some View {
+        HStack(spacing: 7) {
                 Image(systemName: "magnifyingglass").foregroundStyle(Palette.muted).accessibilityHidden(true)
                 TextField("Search all captures", text: Binding(
                     get: { state.route == .search ? state.query : "" },
                     set: { state.updateGlobalSearch($0) }))
                     .textFieldStyle(.plain).font(.system(size: 13)).focused($searchFocused)
-                    .accessibilityLabel("Search all captures across all dates").accessibilityIdentifier("global-search")
-                    .onSubmit { state.performSearchCommand() }
+                    .accessibilityLabel("Search captures, \(state.searchScopeTitle)").accessibilityIdentifier("global-search")
+                    .onSubmit { state.submitSearch() }
+                    .task {
+                        // The compact field is mounted on demand. Request focus
+                        // after its native editor exists, not during navigation.
+                        searchFocused = false
+                        await Task.yield()
+                        guard !Task.isCancelled, state.route == .search else { return }
+                        searchFocused = true
+                    }
                 if state.route == .search && !state.query.isEmpty {
                     Button { state.updateGlobalSearch("") } label: { Image(systemName: "xmark.circle.fill") }
                         .buttonStyle(.plain).foregroundStyle(Palette.muted)
                         .buddyHelp("Clear search").accessibilityLabel("Clear search")
                 }
-            }.padding(9).background(Palette.surface, in: RoundedRectangle(cornerRadius: 10))
+            }.padding(7).background(Palette.surface, in: RoundedRectangle(cornerRadius: 10))
                 .overlay(RoundedRectangle(cornerRadius: 10).strokeBorder(Palette.line))
-            HStack(spacing: 4) {
-                navigationButton("Inbox", symbol: "tray", selected: state.route == .inbox || isTimeline) { state.openInbox() }
-                navigationButton("Today", symbol: "sun.max", selected: state.route == .reminders) { state.showReminders() }
-                navigationButton("Workspace", symbol: "square.stack", selected: state.route == .library) { state.openLibrary() }
-            }.accessibilityElement(children: .contain).accessibilityLabel("Main views")
-            if isTimeline { timelineControls }
-            else if !isPrimary {
-                HStack(spacing: 8) {
-                    Button { state.back() } label: { Label("Back", systemImage: "chevron.left") }
-                        .buttonStyle(.plain).foregroundStyle(accent)
-                    Text(routeTitle).font(.system(size: 14, weight: .semibold)).accessibilityAddTraits(.isHeader)
-                    Spacer(minLength: 0)
-                }.font(.system(size: 12))
-            }
-        }.padding(.horizontal, 14).padding(.top, 10).padding(.bottom, 10)
-            .overlay(alignment: .bottom) { Rectangle().fill(Palette.line).frame(height: 1) }
     }
 
     private func navigationButton(_ title: String, symbol: String, selected: Bool, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             Label(title, systemImage: symbol).font(.system(size: 12, weight: selected ? .semibold : .medium))
-                .lineLimit(1).frame(maxWidth: .infinity).padding(.vertical, 6)
+                .lineLimit(1).frame(maxWidth: .infinity).padding(.vertical, 5)
                 .background(selected ? accent.opacity(0.13) : Color.clear, in: RoundedRectangle(cornerRadius: 8))
                 .contentShape(Rectangle())
         }.buttonStyle(.plain).foregroundStyle(selected ? accent : Palette.muted)
@@ -191,8 +225,8 @@ struct BoardView: View {
         Menu {
             Button("Activity by date", systemImage: "calendar") { state.openDaily() }
             Menu {
-                Button("Copy selected day", systemImage: "doc.on.doc") { dayExportController.copy(dayDocument) }.disabled(dayDocument.isEmpty)
-                Button("Export selected day…", systemImage: "doc.badge.arrow.up") { reportExport(dayExportController.save(dayDocument)) }.disabled(dayDocument.isEmpty)
+                Button("Copy day · \(exportDay.formatted(.dateTime.month(.abbreviated).day()))", systemImage: "doc.on.doc") { dayExportController.copy(dayDocument) }.disabled(dayDocument.isEmpty)
+                Button("Export day · \(exportDay.formatted(.dateTime.month(.abbreviated).day()))…", systemImage: "doc.badge.arrow.up") { reportExport(dayExportController.save(dayDocument)) }.disabled(dayDocument.isEmpty)
                 Button("Copy selected week", systemImage: "doc.on.doc.fill") { dayExportController.copy(weekDocument) }.disabled(weekDocument.isEmpty)
                 Button("Export selected week…", systemImage: "square.and.arrow.up") { reportExport(dayExportController.save(weekDocument)) }.disabled(weekDocument.isEmpty)
             } label: { Label("Export", systemImage: "square.and.arrow.up") }
@@ -205,14 +239,15 @@ struct BoardView: View {
         .accessibilityLabel("More options").accessibilityIdentifier("board-more")
     }
 
-    private var dayDocument: DayExportDocument { DayExportDocument.make(captures: state.store.captures, selectedDate: state.selectedDay) }
+    private var exportDay: Date { state.route == .weekly ? state.weeklyActionDay : state.selectedDay }
+    private var dayDocument: DayExportDocument { DayExportDocument.make(captures: state.store.captures, selectedDate: exportDay) }
     private var weekDocument: WeekExportDocument { WeekExportDocument.make(captures: state.store.captures, weekEndingDate: state.weekEndingDay) }
     private func reportExport(_ result: DayExportSaveOutcome) {
         if case .failed(let message) = result { state.reportFailure(message) }
     }
 
     private var timelineControls: some View {
-        VStack(spacing: 7) {
+        VStack(spacing: 4) {
             HStack(spacing: 6) {
                 SmallIcon(symbol: "chevron.left", label: state.route == .weekly ? "Previous week" : "Previous day", size: 26) { moveTimeline(-1) }
                 Button { showCalendar.toggle() } label: {
@@ -322,6 +357,7 @@ private struct BoardCaptureStatus: View {
                 Button("Set up") { state.showSettings() }.buttonStyle(.plain).font(.system(size: 11)).foregroundStyle(accent)
             }
         }.padding(.horizontal, 16).padding(.vertical, 9)
+            .background(Palette.background)
             .overlay(alignment: .top) { Rectangle().fill(Palette.line).frame(height: 1) }.accessibilityElement(children: .contain)
     }
 }

@@ -12,7 +12,10 @@ struct NewNoteScreen: View {
                 .overlay(RoundedRectangle(cornerRadius: 11).strokeBorder(Palette.line))
                 .focused($textFocused).accessibilityLabel("New note text")
             HStack {
-                Text("Saved to today").font(.system(size: 11)).foregroundStyle(Palette.muted)
+                Label(state.newNoteProject ?? "Inbox", systemImage: state.newNoteProject == nil ? "tray" : "folder")
+                    .font(.system(size: 11)).foregroundStyle(Palette.muted).lineLimit(2)
+                    .accessibilityLabel("Save note to \(state.newNoteProject ?? "Inbox")")
+                    .buddyHelp("Save note to \(state.newNoteProject ?? "Inbox")")
                 Spacer(minLength: 0)
                 Button("Cancel") { state.cancelNewNote() }
                 Button("Save note") { state.saveNewNote() }.buttonStyle(.borderedProminent)

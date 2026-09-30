@@ -37,7 +37,10 @@ struct NewTaskScreen: View {
                 }.padding(.horizontal, 16).padding(.bottom, 14)
             }
             HStack(spacing: 10) {
-                Text(state.libraryProject ?? "Saved to Inbox").font(.system(size: 11)).foregroundStyle(Palette.muted).lineLimit(1)
+                Label(state.newTaskProject ?? "Inbox", systemImage: state.newTaskProject == nil ? "tray" : "folder")
+                    .font(.system(size: 11)).foregroundStyle(Palette.muted).lineLimit(2)
+                    .accessibilityLabel("Save task to \(state.newTaskProject ?? "Inbox")")
+                    .buddyHelp("Save task to \(state.newTaskProject ?? "Inbox")")
                 Spacer(minLength: 0)
                 Button("Cancel") { state.cancelNewTask() }.buttonStyle(.bordered)
                 Button("Add task") { state.saveNewTask() }.buttonStyle(.borderedProminent)

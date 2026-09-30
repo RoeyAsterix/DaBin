@@ -6,6 +6,7 @@ import UniformTypeIdentifiers
 struct SettingsScreen: View {
     @Environment(\.daBinAccent) private var accent
     @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
+    @Environment(\.colorSchemeContrast) private var colorSchemeContrast
     @ObservedObject var state: AppState
     @ObservedObject var theme: ThemeSettings
     @ObservedObject private var updates: SoftwareUpdateService
@@ -135,11 +136,19 @@ struct SettingsScreen: View {
                         }
                         .controlSize(.small)
                         .accessibilityValue("\(Int((theme.boardOpacity * 100).rounded())) percent opaque")
-                        if reduceTransparency {
-                            Text("macOS Reduce Transparency is on, so DaBin is using a solid background.")
+                        if reduceTransparency || colorSchemeContrast == .increased {
+                            Text("macOS accessibility contrast or transparency settings are using a solid background. Your opacity preference is kept.")
                                 .font(.system(size: 11))
                                 .foregroundStyle(Palette.muted)
                                 .fixedSize(horizontal: false, vertical: true)
+                        }
+                        Text("Lower opacity lets the desktop show through and can make text harder to read. Cards and navigation stay solid.")
+                            .font(.system(size: 12)).foregroundStyle(Palette.muted)
+                            .fixedSize(horizontal: false, vertical: true)
+                        if theme.boardOpacity < 1 {
+                            Button("Use solid background", systemImage: "circle.fill") { theme.setBoardOpacity(1) }
+                                .buttonStyle(.plain).font(.system(size: 12)).foregroundStyle(accent)
+                                .accessibilityIdentifier("settings-solid-background")
                         }
                     }
                 }

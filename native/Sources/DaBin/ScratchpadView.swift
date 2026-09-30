@@ -19,10 +19,12 @@ struct ScratchpadView: View {
             HStack(spacing: 8) {
                 Label(project.map { "\($0) notes" } ?? "Scratchpad", systemImage: "note.text")
                     .font(.system(size: 14, weight: .semibold)).lineLimit(2)
+                    .buddyHelp(project.map { "\($0) notes" } ?? "Scratchpad")
                 Spacer(minLength: 0)
                 Label(pending ? "Not saved" : "Autosaved", systemImage: pending ? "exclamationmark.circle" : "checkmark.circle")
-                    .font(.system(size: 11)).foregroundStyle(pending ? Palette.task : Palette.muted)
+                    .font(.system(size: 11)).foregroundStyle(pending ? Palette.task : Palette.muted).fixedSize()
                     .accessibilityLabel(pending ? "Scratchpad has unsaved changes" : "Scratchpad saved locally")
+                    .accessibilityIdentifier("workspace-scratchpad-save-status")
             }
             HStack(spacing: 10) {
                 if pending {

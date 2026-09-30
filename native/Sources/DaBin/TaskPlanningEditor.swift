@@ -8,6 +8,10 @@ struct TaskPlanningEditor: View {
     @Environment(\.daBinAccent) private var accent
     @State private var checklistText = ""
     @State private var detailsExpanded: Bool
+    private var trimmedChecklistText: String { checklistText.trimmingCharacters(in: .whitespacesAndNewlines) }
+    private var canAddChecklistItem: Bool {
+        !trimmedChecklistText.isEmpty && trimmedChecklistText.count <= 500 && planning.checklist.count < 100
+    }
 
     init(planning: Binding<TaskPlanning>) {
         _planning = planning
@@ -100,8 +104,20 @@ struct TaskPlanningEditor: View {
                     .accessibilityIdentifier("task-checklist-new")
                 Button(action: addChecklistItem) { Image(systemName: "plus.circle.fill") }
                     .buttonStyle(.plain).foregroundStyle(accent)
-                    .disabled(checklistText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || planning.checklist.count >= 100)
+                    .disabled(!canAddChecklistItem)
                     .accessibilityLabel("Add checklist step").buddyHelp("Add step")
+                    .accessibilityIdentifier("task-checklist-add")
+            }
+            if trimmedChecklistText.count > 500 {
+                Text("Keep this step within 500 characters (\(trimmedChecklistText.count)/500).")
+                    .font(.system(size: 11)).foregroundStyle(Palette.task)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .accessibilityIdentifier("task-checklist-input-error")
+            } else if planning.checklist.count >= 100 {
+                Text("This checklist has 100 steps. Remove a step before adding another.")
+                    .font(.system(size: 11)).foregroundStyle(Palette.muted)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .accessibilityIdentifier("task-checklist-input-error")
             }
             if !planning.isValid {
                 Text("Use an estimate of 1–10,080 minutes and checklist steps of 1–500 characters.")
@@ -144,9 +160,8 @@ struct TaskPlanningEditor: View {
         Binding(get: { planning.effortMinutes ?? 30 }, set: { planning.effortMinutes = $0 })
     }
     private func addChecklistItem() {
-        let text = checklistText.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !text.isEmpty, text.count <= 500, planning.checklist.count < 100 else { return }
-        planning.checklist.append(TaskChecklistItem(text: text))
+        guard canAddChecklistItem else { return }
+        planning.checklist.append(TaskChecklistItem(text: trimmedChecklistText))
         checklistText = ""
     }
 }

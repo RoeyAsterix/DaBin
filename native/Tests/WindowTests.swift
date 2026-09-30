@@ -319,7 +319,7 @@ private final class WindowNotificationClient: ReminderNotificationClient {
         }
         let handles = controller.board.contentView.map(dragSurfaces(in:)) ?? []
         guard let logoHandle = handles.first(where: { abs($0.bounds.width - 68) <= 0.5 }),
-              let flexibleHandle = handles.max(by: { $0.bounds.width < $1.bounds.width }) else {
+              let flexibleHandle = handles.filter({ $0 !== logoHandle }).max(by: { $0.bounds.width < $1.bounds.width }) else {
             throw NSError(domain: "DaBinWindowTests", code: 2,
                           userInfo: [NSLocalizedDescriptionKey: "Logo and flexible native header drag surfaces are mounted"])
         }

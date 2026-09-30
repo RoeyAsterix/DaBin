@@ -27,6 +27,17 @@ struct ThemeSettingsTests {
         return (values.max()! + 0.05) / (values.min()! + 0.05)
     }
 
+    private static func composite(_ foreground: NSColor, over background: NSColor, opacity: Double) -> NSColor {
+        let foreground = foreground.usingColorSpace(.sRGB)!
+        let background = background.usingColorSpace(.sRGB)!
+        func blend(_ first: CGFloat, _ second: CGFloat) -> CGFloat {
+            first * CGFloat(opacity) + second * CGFloat(1 - opacity)
+        }
+        return NSColor(srgbRed: blend(foreground.redComponent, background.redComponent),
+                       green: blend(foreground.greenComponent, background.greenComponent),
+                       blue: blend(foreground.blueComponent, background.blueComponent), alpha: 1)
+    }
+
     private static func hex(_ color: NSColor) -> String {
         let rgb = color.usingColorSpace(.sRGB)!
         return String(format: "%02X%02X%02X", Int((rgb.redComponent * 255).rounded()),
@@ -48,7 +59,7 @@ struct ThemeSettingsTests {
 
         let settings = ThemeSettings(defaults: defaults, systemDarkMode: false)
         try expect(settings.boardOpacity == ThemeSettings.defaultBoardOpacity,
-                   "A new profile starts with the 75 percent board opacity")
+                   "A new profile starts with a solid, readable board background")
         try expect(!settings.darkModeEnabled, "A new profile follows the supplied light system appearance")
         try expect(settings.selectedHex == "6D5387", "A new profile starts with the original purple")
         try expect(defaults.persistentDomain(forName: suiteName) == nil,
@@ -76,7 +87,7 @@ struct ThemeSettingsTests {
                    "Background opacity survives settings reinitialization")
         settings.setBoardOpacity(0.1)
         try expect(settings.boardOpacity == ThemeSettings.minimumBoardOpacity,
-                   "Background opacity stays above the readable minimum")
+                   "Background opacity stays within the supported preference range")
         settings.setBoardOpacity(2)
         try expect(settings.boardOpacity == ThemeSettings.maximumBoardOpacity,
                    "Background opacity stays at or below fully opaque")
@@ -137,7 +148,8 @@ struct ThemeSettingsTests {
                    "Appearance changes store only their dedicated preferences")
 
         try expect(hex(ThemeSettings.resolvedAccentColor(for: ThemeSettings.defaultHex, dark: false)) == "6D5387", "Light default accent matches the original app")
-        try expect(hex(ThemeSettings.resolvedAccentColor(for: ThemeSettings.defaultHex, dark: true)) == "AB92C6", "Dark default accent matches the original app")
+        try expect(hex(ThemeSettings.resolvedAccentColor(for: ThemeSettings.defaultHex, dark: true)) == "B9A4CF",
+                   "Dark default accent preserves its purple hue with readable selected-state contrast")
         let choices = ThemePreset.allCases.map(\.hex) + ["000000", "FFFFFF", "FF0000", "00FF00", "0000FF", "FFFF00", "888888", "F0F0FA"]
         for choice in choices {
             let adaptive = ThemeSettings.accentNSColor(for: choice)
@@ -148,13 +160,37 @@ struct ThemeSettingsTests {
                     let background = NSColor(ThemeSettings.color(for: surface))
                     try expect(contrast(color, background) >= 4.5 - 0.000001,
                                "\(choice) remains readable against \(surface)")
+                    for opacity in [0.10, 0.13, 0.14, 0.16] {
+                        let selectedBackground = composite(color, over: background, opacity: opacity)
+                        try expect(contrast(color, selectedBackground) >= 4.5,
+                                   "\(choice) text remains readable on the \(opacity) selected/focused fill over \(surface)")
+                    }
+                    // Pressed icon controls use a stronger fill and fade as a
+                    // complete group. They still need recognizable symbols.
+                    let pressedFill = composite(color, over: background, opacity: 0.20)
+                    let pressedForeground = composite(color, over: background, opacity: 0.90)
+                    let fadedPressedFill = composite(pressedFill, over: background, opacity: 0.90)
+                    try expect(contrast(pressedForeground, fadedPressedFill) >= 3,
+                               "\(choice) pressed icons remain recognizable over \(surface)")
                 }
                 try expect(hex(resolved(adaptive, dark: dark)) == hex(color),
                            "\(choice) dynamic accent resolves correctly in \(dark ? "dark" : "light") appearance")
             }
         }
-        try expect(hex(resolved(ThemeSettings.accentNSColor(for: "invalid"), dark: true)) == "AB92C6",
+        try expect(hex(resolved(ThemeSettings.accentNSColor(for: "invalid"), dark: true)) == "B9A4CF",
                    "Invalid helper input also resolves to the safe default")
+
+        for dark in [false, true] {
+            let colors: [(String, Color)] = [("primary", Palette.foreground), ("secondary", Palette.muted),
+                                            ("task", Palette.task), ("completed", Palette.completed)]
+            let surfaces: [(String, Color)] = [("board", Palette.background), ("card", Palette.surface), ("soft", Palette.soft)]
+            for (name, color) in colors {
+                for (surfaceName, surface) in surfaces {
+                    try expect(contrast(resolved(NSColor(color), dark: dark), resolved(NSColor(surface), dark: dark)) >= 4.5,
+                               "\(name) text is readable on the solid \(surfaceName) in \(dark ? "dark" : "light") appearance")
+                }
+            }
+        }
 
         let robotSuiteName = "DaBin.RobotPlacementSettingsTests.\(UUID().uuidString)"
         let robotDefaults = UserDefaults(suiteName: robotSuiteName)!

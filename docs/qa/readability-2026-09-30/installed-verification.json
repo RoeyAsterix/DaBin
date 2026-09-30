@@ -1,0 +1,18 @@
+{
+  "version": "0.4.2",
+  "build": "53",
+  "bundleID": "com.dabin.mac",
+  "installedExecutableSHA256": "29dd47c9faeaee5a126a21acc970cccd831d873083b6163186a588770b3dfdfe",
+  "matchesBuild": true,
+  "buildSourceMismatches": [],
+  "qaSourceMismatches": [],
+  "strictSignatureValid": true,
+  "liveChecks": {
+    "immediateSearchTyping": true,
+    "returnKeptQuery": true,
+    "clearAndBackToInbox": true,
+    "autoCaptureRemainsPaused": true
+  },
+  "archiveModifiedByInstaller": false,
+  "previousAppBackup": "~/Applications/.DaBinBackups/20260930-143908-ef441bf1.app"
+}

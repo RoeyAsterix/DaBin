@@ -1,6 +1,6 @@
 # DaBin 0.4.2 — connected daily work
 
-Build 51 is a local development candidate. Publication, TestFlight delivery and Apple approval are separate steps.
+Build 53 is a local development candidate. It compacts the shared header into two rows, opens search from the toolbar or ⌘K, and keeps detail navigation in one Back/title row. Build 53 improves selected-control contrast, long-project layouts, checklist feedback, scoped search, draft destinations and project scroll restoration. The connected-workflow review below was originally verified in build 51. Publication, TestFlight delivery and Apple approval are separate steps.
 
 - Inbox makes paste, file import, quick notes and task creation visible. Activity retains the date-based capture history.
 - Today separates planned work, deadlines and reminders; adds priorities, effort, ordering, checklists, repeat rules and completed-task review.

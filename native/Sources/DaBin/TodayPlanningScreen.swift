@@ -6,6 +6,9 @@ struct TodayPlanningScreen: View {
     @Environment(\.daBinAccent) private var accent
     @State private var scope = "today"
     private var todayKey: String { CaptureCalendar.dayString(Date()) }
+    private var projects: [String] {
+        Set(state.projectNames + state.workspace.projectNames).sorted { $0.localizedStandardCompare($1) == .orderedAscending }
+    }
     private var active: [Capture] {
         state.store.captures.filter { $0.parentTaskID == nil && (state.libraryProject == nil || $0.projectName == state.libraryProject) }
     }
@@ -37,17 +40,26 @@ struct TodayPlanningScreen: View {
                 HStack {
                     Text("Make room for what matters").font(.system(size: 14, weight: .semibold))
                     Spacer(minLength: 0)
-                    Button { state.openNewTask(); state.newTaskDraft.planning.plannedDay = todayKey } label: { Image(systemName: "plus.circle") }
-                        .buttonStyle(.plain).foregroundStyle(accent).accessibilityLabel("Add task for today")
+                    BuddyIconButton(symbol: "plus.circle", title: "Add task for today") {
+                        state.openNewTask(); state.newTaskDraft.planning.plannedDay = todayKey
+                    }.accessibilityIdentifier("today-add-task")
                 }
                 HStack {
                     Menu {
-                        Button("All projects") { state.libraryProject = nil }
-                        ForEach(state.projectNames, id: \.self) { project in Button(project) { state.libraryProject = project } }
-                    } label: { Label(state.libraryProject ?? "All projects", systemImage: "folder") }
-                        .menuStyle(.borderlessButton).fixedSize().font(.system(size: 11))
+                        Button("All projects", systemImage: "square.stack.3d.up") { state.libraryProject = nil }
+                        ForEach(projects, id: \.self) { project in Button(project, systemImage: "folder") { state.libraryProject = project } }
+                    } label: {
+                        Label(state.libraryProject ?? "All projects", systemImage: "folder")
+                            .lineLimit(1).truncationMode(.tail)
+                    }
+                        .menuStyle(.borderlessButton).font(.system(size: 12))
+                        .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+                        .accessibilityLabel("Project, \(state.libraryProject ?? "all projects")")
+                        .accessibilityIdentifier("today-project-picker")
+                        .buddyHelp(state.libraryProject ?? "Show tasks from all projects")
                     Spacer(minLength: 0)
                     Text("\(planned.count) planned\(effortLabel)").font(.system(size: 11)).foregroundStyle(Palette.muted)
+                        .fixedSize().accessibilityIdentifier("today-plan-summary")
                 }
                 Picker("Task view", selection: $scope) {
                     Text("Today").tag("today")
@@ -94,27 +106,30 @@ struct TodayPlanningScreen: View {
                             if plan.priority != .none { Label(plan.priority.title, systemImage: plan.priority.symbol) }
                             if let due = plan.deadline { Label(due.formatted(date: .abbreviated, time: .omitted), systemImage: "flag") }
                             if let day = plan.plannedDay, day != todayKey { Label(prettyDay(day), systemImage: "calendar") }
-                        }.font(.system(size: 10)).foregroundStyle(Palette.muted)
+                        }.font(.system(size: 11)).foregroundStyle(Palette.muted)
                     }
                     if !capture.isCompleted {
                         HStack(spacing: 12) {
                             if capture.isTask {
                                 Button { plan(capture, offset: capture.taskPlanning?.plannedDay == todayKey ? 1 : 0) } label: {
                                     Label(capture.taskPlanning?.plannedDay == todayKey ? "Tomorrow" : "Today", systemImage: "calendar.badge.clock")
+                                        .frame(minHeight: 28).contentShape(Rectangle())
                                 }
-                                Button { state.openCapture(capture.id, focus: "task") } label: { Label("Plan", systemImage: "slider.horizontal.3") }
+                                Button { state.openCapture(capture.id, focus: "task") } label: {
+                                    Label("Plan", systemImage: "slider.horizontal.3").frame(minHeight: 28).contentShape(Rectangle())
+                                }
                             } else {
                                 Button("Done") { state.completeFollowUp(capture) }
                                 Button("Tomorrow") { state.snoozeFollowUp(capture) }
                             }
                             Spacer(minLength: 0)
                             if reorderable, let index = items.firstIndex(where: { $0.id == capture.id }) {
-                                Button { move(index, by: -1) } label: { Image(systemName: "arrow.up") }
-                                    .disabled(index == 0).accessibilityLabel("Move task up: \(capture.title)")
-                                Button { move(index, by: 1) } label: { Image(systemName: "arrow.down") }
-                                    .disabled(index == items.count - 1).accessibilityLabel("Move task down: \(capture.title)")
+                                BuddyIconButton(symbol: "arrow.up", title: "Move task up: \(capture.title)") { move(index, by: -1) }
+                                    .disabled(index == 0).accessibilityIdentifier("today-move-up-\(capture.id.uuidString)")
+                                BuddyIconButton(symbol: "arrow.down", title: "Move task down: \(capture.title)") { move(index, by: 1) }
+                                    .disabled(index == items.count - 1).accessibilityIdentifier("today-move-down-\(capture.id.uuidString)")
                             }
-                        }.buttonStyle(.plain).font(.system(size: 11)).foregroundStyle(accent)
+                        }.buttonStyle(.plain).font(.system(size: 12)).foregroundStyle(accent)
                     }
                 }.padding(10).background(Palette.surface, in: RoundedRectangle(cornerRadius: 13))
                     .overlay(RoundedRectangle(cornerRadius: 13).strokeBorder(Palette.line, lineWidth: 0.7))

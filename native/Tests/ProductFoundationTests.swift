@@ -198,6 +198,67 @@ import Foundation
         try expect(navigation.route == .settings, "An auxiliary page opened while browsing does not replace the original search return page")
         navigation.back()
         try expect(navigation.route == .library, "Search restores the original auxiliary return slot after result navigation replaces it")
+        // Composer destinations belong to the draft, not the last project
+        // visited elsewhere. Use an independent synthetic archive for recovery.
+        let composerStore = try CaptureStore(root: root.appendingPathComponent("ComposerDestinations"))
+        let composerPreviews = PreviewService(store: composerStore, defaults: preferences)
+        defer { composerPreviews.shutdown() }
+        let composerReminders = ReminderService(store: composerStore, client: FoundationNotifications())
+        let composer = AppState(store: composerStore, previews: composerPreviews, reminders: composerReminders)
+        composer.libraryProject = "Client Amber"; composer.openLibrary(); composer.openInbox()
+        composer.openNewTask(); composer.newTaskDraft.text = "An unassigned Inbox task"
+        try expect(composer.newTaskProject == nil, "Inbox task composer ignores a remembered Workspace project")
+        composer.saveNewTask()
+        try expect(composerStore.captures.first?.projectName == nil && composer.route == .inbox,
+            "Inbox task stays discoverable in Inbox after save")
+        composer.openNewNote(); composer.newNoteText = "An unassigned Inbox note"
+        try expect(composer.newNoteProject == nil, "Inbox note composer ignores a remembered Workspace project")
+        composer.saveNewNote()
+        try expect(composerStore.captures.first { $0.originalText == "An unassigned Inbox note" }?.projectName == nil,
+            "Inbox note saves without a hidden client assignment")
+        composer.openLibrary(); composer.openNewNote(); composer.newNoteText = "Amber draft"
+        composer.back(); composer.libraryProject = "Client Blue"; composer.openNewNote()
+        try expect(composer.newNoteProject == "Client Amber", "Returning to an unfinished note cannot retarget its project")
+        composer.newNoteText = ""; composer.openNewNote()
+        try expect(composer.newNoteProject == "Client Amber", "An empty intermediate edit or repeated New note action keeps the open draft's destination")
+        composer.newNoteText = "Amber draft"
+        try expect(composer.newNoteProject == "Client Amber", "Replacing an entire note after browsing another project cannot retarget it")
+        composer.openNewTask(); composer.newTaskDraft.text = "Blue draft"
+        try expect(composer.newTaskProject == "Client Blue", "A separate task composer freezes its own project")
+        composer.openInbox(); composer.openNewTask()
+        try expect(composer.newTaskProject == "Client Blue", "Returning to an unfinished task from Inbox preserves its destination")
+        composer.persistDrafts()
+        let recoveredComposer = AppState(store: composerStore, previews: composerPreviews, reminders: composerReminders)
+        try expect(recoveredComposer.newNoteProject == "Client Amber" && recoveredComposer.newTaskProject == "Client Blue",
+            "Restart restores independent note and task destinations")
+        recoveredComposer.libraryProject = "Client Green"
+        recoveredComposer.openNewNote(); recoveredComposer.saveNewNote()
+        recoveredComposer.openNewTask(); recoveredComposer.saveNewTask()
+        try expect(composerStore.captures.first { $0.originalText == "Amber draft" }?.projectName == "Client Amber"
+            && composerStore.captures.first { $0.originalText == "Blue draft" }?.projectName == "Client Blue",
+            "Recovered drafts save to their original projects after navigation changes")
+        recoveredComposer.showReminders(); recoveredComposer.openNewNote()
+        recoveredComposer.newNoteText = "Cancel this project note"; recoveredComposer.cancelNewNote()
+        recoveredComposer.openInbox(); recoveredComposer.openNewNote()
+        try expect(recoveredComposer.newNoteProject == nil, "Cancel clears a note's former destination before a fresh Inbox composer")
+        recoveredComposer.showReminders(); recoveredComposer.openNewTask()
+        try expect(recoveredComposer.newTaskProject == "Client Green", "Today uses its visible selected project for a fresh task")
+        recoveredComposer.newTaskDraft.text = "Canceled"; recoveredComposer.cancelNewTask()
+        recoveredComposer.openInbox(); recoveredComposer.openNewTask()
+        try expect(recoveredComposer.newTaskProject == nil, "Cancel clears the old task destination before an Inbox composer")
+        recoveredComposer.newTaskDraft.text = "Inbox recovery"
+        recoveredComposer.newNoteText = "Inbox inline recovery"
+        recoveredComposer.persistDrafts()
+        let recoveredInbox = AppState(store: composerStore, previews: composerPreviews, reminders: composerReminders)
+        try expect(recoveredInbox.newNoteProject == nil && recoveredInbox.newTaskProject == nil
+            && recoveredInbox.libraryProject == "Client Green",
+            "Explicit Inbox destinations remain unassigned after restart despite a saved selected project")
+        var legacyDraft = DraftArchiveSnapshot()
+        legacyDraft.note = "Legacy note"; legacyDraft.task.text = "Legacy task"
+        try DraftArchive(root: composerStore.root).save(legacyDraft)
+        let migratedComposer = AppState(store: composerStore, previews: composerPreviews, reminders: composerReminders)
+        try expect(migratedComposer.newNoteProject == "Client Green" && migratedComposer.newTaskProject == "Client Green",
+            "Version-one drafts without destination metadata preserve their former selected-project behavior")
         let broken = root.appendingPathComponent("CorruptDrafts")
         try FileManager.default.createDirectory(at: broken, withIntermediateDirectories: true)
         let corruptData = Data("invalid preserved data".utf8)

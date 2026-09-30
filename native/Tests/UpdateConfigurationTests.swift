@@ -257,7 +257,7 @@ private enum UpdateConfigurationTests {
                     && privacy.contains("does not check or download updates silently"),
                    "The bundled privacy policy explains GitHub contact and user control")
         try expect(info["CFBundleShortVersionString"] as? String == "0.4.2"
-                    && info["CFBundleVersion"] as? String == "51",
+                    && info["CFBundleVersion"] as? String == "53",
                    "The release version and monotonically increasing build are configured")
         try expect(info["ITSAppUsesNonExemptEncryption"] as? Bool == false,
                    "The Store build declares that its OS networking and file hashes use no non-exempt encryption")

@@ -12,6 +12,11 @@ struct LibraryScreen: View {
     @State private var targeted = false
     @State private var exporting = false
 
+    private struct ScrollContext: Equatable {
+        let project: String?
+        let mode: WorkspaceMode
+    }
+
     init(state: AppState) {
         self.state = state
         _workspace = ObservedObject(wrappedValue: state.workspace)
@@ -71,6 +76,7 @@ struct LibraryScreen: View {
                 }.menuStyle(.borderlessButton).frame(maxWidth: .infinity, alignment: .leading)
                     .accessibilityLabel("Project, \(state.libraryProject ?? "all projects")")
                     .accessibilityIdentifier("workspace-project-picker")
+                    .buddyHelp(state.libraryProject ?? "Show captures from all projects")
                 if workspace.mode != .scratchpad {
                     Text("\(items.count) \(items.count == 1 ? "item" : "items")")
                         .font(.system(size: 11)).foregroundStyle(Palette.muted).fixedSize()
@@ -195,9 +201,17 @@ struct LibraryScreen: View {
                             }
                         }.padding(.horizontal, 16).padding(.bottom, 14)
                     }
+                }.id("workspace-list-top")
+            }.task(id: ScrollContext(project: state.libraryProject, mode: workspace.mode)) {
+                // Restore only when navigating. Background copies must not pull
+                // the user back to the selected card while they browse elsewhere.
+                await Task.yield()
+                guard !Task.isCancelled else { return }
+                if let selected = workspace.selectedCaptureID, items.contains(where: { $0.id == selected }) {
+                    proxy.scrollTo(selected, anchor: .center)
+                } else {
+                    proxy.scrollTo("workspace-list-top", anchor: .top)
                 }
-            }.onAppear {
-                if let selected = workspace.selectedCaptureID, items.contains(where: { $0.id == selected }) { proxy.scrollTo(selected, anchor: .center) }
             }
         }.frame(maxWidth: .infinity, maxHeight: .infinity)
     }

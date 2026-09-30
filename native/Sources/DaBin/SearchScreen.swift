@@ -3,6 +3,10 @@ import SwiftUI
 @MainActor
 struct SearchScreen: View {
     @ObservedObject var state: AppState
+    @Environment(\.daBinAccent) private var accent
+
+    private var hasRefinements: Bool { state.filter != .all || state.searchProject != nil || state.searchSource != nil }
+    private var projectNames: [String] { Array(Set(state.projectNames + state.workspace.projectNames)).sorted() }
 
     private var matchCount: Int { state.searchGroups.reduce(0) { $0 + $1.entries.filter(\.isMatch).count } }
     private var noteMatches: [WorkspaceScratchpad] {
@@ -18,25 +22,31 @@ struct SearchScreen: View {
     var body: some View {
         VStack(spacing: 0) {
             HStack(spacing: 8) {
-                Text(state.query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? "All dates · all projects" : "\(matchCount + noteMatches.count) matches · \(state.searchScopeTitle)")
-                    .font(.system(size: 11)).foregroundStyle(Palette.muted)
-                    .accessibilityLabel("\(matchCount + noteMatches.count) matches, \(state.searchScopeTitle)")
+                Text(state.query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? state.searchScopeTitle : "\(matchCount + noteMatches.count) matches · \(state.searchScopeTitle)")
+                    .font(.system(size: 12)).foregroundStyle(Palette.muted)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .accessibilityIdentifier("search-scope-summary")
                 Spacer(minLength: 0)
                 CaptureFilterMenu(selection: $state.filter)
             }.padding(.horizontal, 16).padding(.top, 10)
-            HStack(spacing: 12) {
+            HStack(spacing: 8) {
                 Menu {
                     Button("All projects") { state.searchProject = nil }
-                    ForEach(state.projectNames, id: \.self) { project in Button(project) { state.searchProject = project } }
-                } label: { Label(state.searchProject ?? "All projects", systemImage: "folder") }
+                    ForEach(projectNames, id: \.self) { project in Button(project) { state.searchProject = project } }
+                } label: { Label(state.searchProject ?? "All projects", systemImage: "folder").lineLimit(1).truncationMode(.middle) }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .buddyHelp(state.searchProject ?? "Search all projects")
+                    .accessibilityLabel("Search project: \(state.searchProject ?? "All projects")")
                 Menu {
                     Button("All apps") { state.searchSource = nil }
                     ForEach(Array(Set(state.store.captures.compactMap(\.sourceApplicationName))).sorted(), id: \.self) { source in
                         Button(source) { state.searchSource = source }
                     }
-                } label: { Label(state.searchSource ?? "All apps", systemImage: "app.dashed") }
-                Spacer(minLength: 0)
-            }.menuStyle(.borderlessButton).fixedSize(horizontal: false, vertical: true).font(.system(size: 11))
+                } label: { Label(state.searchSource ?? "All apps", systemImage: "app.dashed").lineLimit(1).truncationMode(.middle) }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .buddyHelp(state.searchSource ?? "Search all source apps")
+                    .accessibilityLabel("Search source: \(state.searchSource ?? "All apps")")
+            }.menuStyle(.borderlessButton).fixedSize(horizontal: false, vertical: true).font(.system(size: 12))
                 .padding(.horizontal, 16).padding(.top, 8)
             Toggle("Show nearby captures", isOn: $state.showSearchContext)
                 .toggleStyle(.checkbox).font(.system(size: 11)).frame(maxWidth: .infinity, alignment: .leading)
@@ -51,9 +61,20 @@ struct SearchScreen: View {
                     .padding(.horizontal, 16).padding(.bottom, 7).accessibilityElement(children: .combine)
             }
             if state.query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                EmptyMessage(symbol: "magnifyingglass", title: "Find something you saved", message: "Search words, links, filenames, notes, recognized text or a date across your entire archive.")
+                EmptyMessage(symbol: "magnifyingglass", title: "Find something you saved", message: "Search words, links, filenames, notes or recognized text. The date, project and app filters above define where to look.")
             } else if state.searchGroups.isEmpty && noteMatches.isEmpty {
-                EmptyMessage(symbol: "magnifyingglass", title: "No matching captures", message: state.contentIndex?.isBusy == true ? "Results update as saved captures become searchable." : "Try another word or clear the type filter.")
+                VStack(spacing: 8) {
+                    EmptyMessage(symbol: "magnifyingglass", title: "No matching captures", message: state.contentIndex?.isBusy == true ? "Results update as saved captures become searchable." : "Try another word, or broaden the date, project, app or type filters.")
+                    if hasRefinements {
+                        Button("Clear search filters", systemImage: "line.3.horizontal.decrease.circle") {
+                            state.filter = .all; state.searchProject = nil; state.searchSource = nil
+                        }.accessibilityIdentifier("search-clear-filters")
+                    }
+                    if state.searchScope != .all {
+                        Button("Search all dates", systemImage: "calendar") { state.searchAllDates() }
+                            .accessibilityIdentifier("search-all-dates")
+                    }
+                }.buttonStyle(.plain).font(.system(size: 12)).foregroundStyle(accent).padding(.bottom, 14)
             } else {
                 ScrollView {
                     LazyVStack(alignment: .leading, spacing: 0) {

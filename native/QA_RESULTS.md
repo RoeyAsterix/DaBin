@@ -1,5 +1,14 @@
 # DaBin QA results
 
+## Readability and usability — 0.4.2 (53), 30 September 2026
+
+The final full ARM64 Release run passes **50/50 suites**, with no source changes during execution. Fixed narrow long-project layouts, selected-accent contrast, search scope reset/recovery, composer destinations, project scroll restoration and checklist feedback. Added solid navigation/status surfaces and an opacity reset. Verification includes 66 native renders per build, live scoped-search interactions, 621 theme checks, 170 header checks, 162 Workspace checks, 243 window checks across two connected screens, and 19 connected workflows. Build, deterministic project validation, 26 static packaging checks, strict signature and installed input/executable hashes pass. Build 53 is installed and running; immediate search typing, Return, clearing and Back were verified in that app. [Full report, before/after and limitations](../docs/qa/readability-2026-09-30/README.md).
+
+## Compact header — 0.4.2 (52), 30 September 2026
+
+Reduced the primary header to two rows and roughly 55 fewer vertical points. ProductFoundation (49 checks), UpdateConfiguration (27), WorkspaceWindow (130), and the final HeaderInteraction (159) pass across the recorded focused runs. Final Release build, input hashes, installed executable, 36 native renders, deterministic project inventory and whitespace validation pass. The standalone test runner could not acquire keyboard focus; immediate Search focus/typing, clearing and Back were verified in the installed app through native interaction. [Evidence and before/after images](../docs/qa/compact-header-2026-09-30/README.md). This is targeted layout verification, not another full QA cycle.
+
+
 ## 30 September 2026 — 0.4.2 (51) product review, installed locally
 
 The full optimized ARM64 run passed **50/50 suites**. A subsequent real App Sandbox ZIP export exposed a permission failure in sibling staging; the single-file production fix uses Foundation's replacement directory. The final affected **3/3 suites** passed (188 checks), including source-matched connected workflows and native Workspace layout. Final Release compilation with warnings as errors, deterministic project validation, whitespace checks, and all 26 source-packaging checks passed.

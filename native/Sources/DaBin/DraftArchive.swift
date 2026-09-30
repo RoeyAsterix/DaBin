@@ -1,5 +1,10 @@
 import Foundation
 
+/// An explicit nil project means Inbox; a missing envelope is a legacy draft.
+struct ComposerDestination: Codable, Equatable {
+    var projectName: String?
+}
+
 struct ComposerSnapshot: Codable {
     var text = ""
     var planning = TaskPlanning()
@@ -8,6 +13,7 @@ struct ComposerSnapshot: Codable {
     var countdownHours = 0
     var countdownMinutes = 30
     var reminderDate = Date().addingTimeInterval(3600)
+    var destination: ComposerDestination?
 }
 struct DetailDraftSnapshot: Codable {
     let captureID: UUID
@@ -22,6 +28,7 @@ struct DetailDraftSnapshot: Codable {
 struct DraftArchiveSnapshot: Codable {
     var version = 1
     var note = ""
+    var noteDestination: ComposerDestination?
     var task = ComposerSnapshot()
     var details: [DetailDraftSnapshot] = []
 }

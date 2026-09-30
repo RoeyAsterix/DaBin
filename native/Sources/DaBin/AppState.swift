@@ -53,6 +53,7 @@ final class NewTaskDraft: ObservableObject {
     @Published var countdownMinutes = 30
     @Published var reminderDate = Date().addingTimeInterval(3600)
     @Published var message: String?
+    @Published var destination: ComposerDestination?
 
     var hasChanges: Bool { !text.isEmpty || reminderEnabled || planning != TaskPlanning() }
 
@@ -65,6 +66,7 @@ final class NewTaskDraft: ObservableObject {
         countdownMinutes = 30
         reminderDate = Date().addingTimeInterval(3600)
         message = nil
+        destination = nil
     }
 }
 
@@ -154,7 +156,18 @@ final class AppState: ObservableObject {
     @Published private(set) var draftPersistenceError: String?
     private let manualInput: InputService
     let newTaskDraft = NewTaskDraft()
-    @Published var newNoteText = ""
+    @Published var newNoteText = "" {
+        didSet {
+            // Replacing all text briefly yields an empty value. Keep the
+            // draft's destination until it is saved or explicitly canceled.
+            if !newNoteText.isEmpty && newNoteDestination == nil {
+                newNoteDestination = ComposerDestination(projectName: composerProjectContext)
+            }
+        }
+    }
+    @Published private var newNoteDestination: ComposerDestination?
+    var newNoteProject: String? { newNoteDestination?.projectName }
+    var newTaskProject: String? { newTaskDraft.destination?.projectName }
     @Published var libraryProject: String? {
         didSet { if workspace.selectedProject != libraryProject { workspace.selectedProject = libraryProject } }
     }
@@ -306,10 +319,12 @@ final class AppState: ObservableObject {
     func persistDrafts() {
         var snapshot = DraftArchiveSnapshot()
         snapshot.note = newNoteText
+        snapshot.noteDestination = newNoteDestination
         snapshot.task = ComposerSnapshot(text: newTaskDraft.text, planning: newTaskDraft.planning,
             reminderEnabled: newTaskDraft.reminderEnabled, reminderMode: newTaskDraft.reminderMode.rawValue,
             countdownHours: newTaskDraft.countdownHours, countdownMinutes: newTaskDraft.countdownMinutes,
-            reminderDate: newTaskDraft.reminderDate)
+            reminderDate: newTaskDraft.reminderDate,
+            destination: newTaskDraft.destination ?? ComposerDestination(projectName: composerProjectContext))
         snapshot.details = drafts.compactMap { id, draft in
             guard draft.hasChanges else { return nil }
             return DetailDraftSnapshot(captureID: id, comment: draft.comment, planning: draft.planning,
@@ -322,7 +337,11 @@ final class AppState: ObservableObject {
 
     private func restoreDrafts() {
         guard let snapshot = draftArchive.load() else { draftPersistenceError = draftArchive.recoveryError; return }
+        // Older recovery files followed the selected Workspace project. Keep
+        // that destination on migration and disclose it in the composer.
+        newNoteDestination = snapshot.noteDestination ?? ComposerDestination(projectName: libraryProject)
         newNoteText = snapshot.note
+        newTaskDraft.destination = snapshot.task.destination ?? ComposerDestination(projectName: libraryProject)
         newTaskDraft.text = snapshot.task.text
         newTaskDraft.planning = snapshot.task.planning
         newTaskDraft.reminderEnabled = snapshot.task.reminderEnabled
@@ -582,6 +601,18 @@ final class AppState: ObservableObject {
         globalSearchFocusRequest &+= 1
     }
 
+    /// Results are live. Return keeps deliberate refinements; only the global
+    /// Search command starts a new archive-wide search.
+    func submitSearch() {
+        guard route == .search else { return }
+        globalSearchFocusRequest &+= 1
+    }
+
+    func searchAllDates() {
+        searchScope = .all
+        searchScrollID = nil
+    }
+
     func updateGlobalSearch(_ text: String) {
         // SwiftUI can write a field's empty display value when it mounts or
         // loses focus. Navigating between views must not initiate a search.
@@ -641,7 +672,15 @@ final class AppState: ObservableObject {
         return true
     }
 
+    private var composerProjectContext: String? {
+        let chain = returnRouteChain(from: route)
+        return chain.contains(.library) || chain.contains(.reminders) ? libraryProject : nil
+    }
+
     func openNewTask() {
+        if !newTaskDraft.hasChanges || newTaskDraft.destination == nil {
+            newTaskDraft.destination = ComposerDestination(projectName: composerProjectContext)
+        }
         if !returnRouteChain(from: route).contains(where: { $0 == .newTask || $0 == .newNote }) { creationReturnRoute = route }
         status = nil
         newTaskDraft.message = nil
@@ -649,15 +688,22 @@ final class AppState: ObservableObject {
     }
 
     func openNewNote() {
+        if newNoteDestination == nil || (newNoteText.isEmpty && !returnRouteChain(from: route).contains(.newNote)) {
+            newNoteDestination = ComposerDestination(projectName: composerProjectContext)
+        }
         if !returnRouteChain(from: route).contains(where: { $0 == .newTask || $0 == .newNote }) { creationReturnRoute = route }
         status = nil
         route = .newNote
     }
-    func cancelNewNote() { newNoteText = ""; route = creationReturnRoute }
+    func clearNewNoteDraft() {
+        newNoteText = ""
+        newNoteDestination = nil
+    }
+    func cancelNewNote() { clearNewNoteDraft(); route = creationReturnRoute }
     func saveNewNote() {
         do {
-            let saved = try store.createNote(text: newNoteText, projectName: libraryProject)
-            newNoteText = ""
+            let saved = try store.createNote(text: newNoteText, projectName: newNoteProject)
+            clearNewNoteDraft()
             route = creationReturnRoute
             didCapture([saved])
         } catch { reportFailure("Could not save the note: \(error.localizedDescription)") }
@@ -792,12 +838,13 @@ final class AppState: ObservableObject {
             return
         }
         do {
+            let project = newTaskProject
             let capture = try store.createTask(text: newTaskDraft.text, reminderAt: reminder,
                 reminderTimeZoneID: reminder == nil ? nil : TimeZone.current.identifier,
-                planning: newTaskDraft.planning, projectName: libraryProject)
+                planning: newTaskDraft.planning, projectName: project)
             newTaskDraft.reset()
             route = creationReturnRoute
-            status = AppStatusMessage(text: libraryProject.map { "Task saved in \($0)." } ?? "Task saved to Inbox.", severity: .success)
+            status = AppStatusMessage(text: project.map { "Task saved in \($0)." } ?? "Task saved to Inbox.", severity: .success)
             dailyScrollID = feedID(for: capture, on: selectedDay)
             if reminder != nil {
                 Task { await saveReminderAndReport(for: capture) }

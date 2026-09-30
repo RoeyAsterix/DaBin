@@ -1,0 +1,10 @@
+{
+  "version": "0.4.2",
+  "build": "52",
+  "executableSHA256": "e0ad91ae9a05b3edf248aca9390af969f3ef5ca427072efb070e79deda634d48",
+  "matchesBuildReceipt": true,
+  "searchButtonImmediatelyFocused": true,
+  "typedSearchVerified": true,
+  "backRestoredInbox": true,
+  "personalContentInEvidence": false
+}

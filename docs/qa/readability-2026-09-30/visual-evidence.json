@@ -1,0 +1,66 @@
+{
+  "fixtureOnly": true,
+  "baselineProductionBuild": "0.4.2 (52)",
+  "finalProductionBuild": "0.4.2 (53)",
+  "renderCountPerBuild": 66,
+  "contentSizes": [
+    [
+      380,
+      430
+    ],
+    [
+      380,
+      680
+    ],
+    [
+      760,
+      680
+    ]
+  ],
+  "themes": [
+    "light",
+    "dark"
+  ],
+  "images": [
+    {
+      "file": "before-today-long-light.png",
+      "source": "/private/tmp/DaBin-Review-Readability-Baseline-20260930/renders/native-today-long-light-380-minimum.png",
+      "sha256": "1e2bdfd12f53535209514d6f02d3d3d042d78c2c3d689bcabf5b65d850a1ed77"
+    },
+    {
+      "file": "after-today-long-light.png",
+      "source": "/private/tmp/DaBin-Review-Readability-Final-20260930/renders/native-today-long-light-380-minimum.png",
+      "sha256": "abadc7e6da69917ce715bbef5cdcacce3344c050dc30c90b083a6177de270cbc"
+    },
+    {
+      "file": "after-today-long-dark.png",
+      "source": "/private/tmp/DaBin-Review-Readability-Final-20260930/renders/native-today-long-dark-380-minimum.png",
+      "sha256": "4e8ca35d5e7275efd9af493b59bfd7e6db227e836ed2dda066d0d7fdfd8e3c87"
+    },
+    {
+      "file": "after-workspace-minimum.png",
+      "source": "/private/tmp/DaBin-Review-Readability-Final-20260930/renders/native-library-light-380-minimum.png",
+      "sha256": "f6f81c63f38ee376738d5f8d0e21e101a7a8da9b60017a7876b4bbb2a9e04ac3"
+    },
+    {
+      "file": "after-clipboard-expanded.png",
+      "source": "/private/tmp/DaBin-Review-Readability-Final-20260930/renders/native-clipboard-dark-760.png",
+      "sha256": "e6357f03e5dda437f83b3c95e514fbbf1b1e8fdd866b56af3bb6bf7c9280d93b"
+    },
+    {
+      "file": "after-scoped-search.png",
+      "source": "/private/tmp/DaBin-Review-Readability-Final-20260930/renders/native-scoped-search-dark-380-minimum.png",
+      "sha256": "a569c18edbba8627b3dd02c0c9e58f6e093077de9d87954a2771ab9c47a91923"
+    },
+    {
+      "file": "after-note-destination.png",
+      "source": "/private/tmp/DaBin-Review-Readability-Final-20260930/renders/native-new-note-dark-380-minimum.png",
+      "sha256": "bb419a4d053b9e07e00dd1345c77b5e4911e847f23f88b2a7b48e3f32ad1a71a"
+    },
+    {
+      "file": "after-scratchpad.png",
+      "source": "/private/tmp/DaBin-Review-Readability-Final-20260930/renders/native-scratchpad-light-380-minimum.png",
+      "sha256": "b8e77bdbb023b2822c5293ed6969b2bc0765c2c2dd4207f9d0c20b15d3052a4f"
+    }
+  ]
+}

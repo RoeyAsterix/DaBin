@@ -42,8 +42,14 @@ struct InboxScreen: View {
                     Spacer(minLength: 0)
                     CaptureFilterMenu(selection: $state.filter)
                 }.buttonStyle(.plain).font(.system(size: 12)).foregroundStyle(accent)
-                Text("Drop items here. Everything stays on this Mac.")
-                    .font(.system(size: 11)).foregroundStyle(Palette.muted)
+                if let project = state.newNoteProject, !state.newNoteText.isEmpty {
+                    Label("Draft for \(project)", systemImage: "folder")
+                        .font(.system(size: 11)).foregroundStyle(Palette.muted).lineLimit(1)
+                        .buddyHelp("This unfinished draft will be saved to \(project)")
+                } else {
+                    Text("Drop items here. Everything stays on this Mac.")
+                        .font(.system(size: 11)).foregroundStyle(Palette.muted)
+                }
             }.padding(14)
             if items.isEmpty {
                 EmptyMessage(symbol: "tray", title: state.filter == .all ? "Room for your next idea" : "No matching items",
@@ -76,12 +82,14 @@ struct InboxScreen: View {
     }
     private func saveQuick(asTask: Bool) {
         let text = state.newNoteText
+        let project = state.newNoteProject
         guard !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
         do {
-            if asTask { _ = try state.store.createTask(text: text, reminderAt: nil) }
-            else { let capture = try state.store.createNote(text: text); state.didCapture([capture]) }
-            state.newNoteText = ""
-            state.status = AppStatusMessage(text: asTask ? "Task added to Inbox." : "Note saved to Inbox.", severity: .success)
+            if asTask { _ = try state.store.createTask(text: text, reminderAt: nil, projectName: project) }
+            else { let capture = try state.store.createNote(text: text, projectName: project); state.didCapture([capture]) }
+            state.clearNewNoteDraft()
+            let destination = project ?? "Inbox"
+            state.status = AppStatusMessage(text: asTask ? "Task added to \(destination)." : "Note saved to \(destination).", severity: .success)
         } catch { state.reportFailure(error.localizedDescription) }
     }
     private func keep(_ item: Capture) {
