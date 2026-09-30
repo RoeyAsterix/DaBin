@@ -19,7 +19,7 @@ struct BoardView: View {
 
     private var accent: Color { theme.accent }
     private var isTimeline: Bool { state.route == .daily || state.route == .weekly }
-    private var isPrimary: Bool { isTimeline || state.route == .library || state.route == .reminders }
+    private var isPrimary: Bool { isTimeline || state.route == .inbox || state.route == .library || state.route == .reminders }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -28,6 +28,9 @@ struct BoardView: View {
                 statusBanner(message)
             }
             if state.canUndoRemoval { undoBanner }
+            if let error = state.draftPersistenceError {
+                Text(error).font(.system(size: 11)).foregroundStyle(Palette.task).padding(8)
+            }
             routeContent.frame(maxWidth: .infinity, maxHeight: .infinity)
             BoardCaptureStatus(state: state, service: state.autoCapture, settings: state.autoCapture.settings)
         }
@@ -39,7 +42,8 @@ struct BoardView: View {
         .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
         .overlay(RoundedRectangle(cornerRadius: 24, style: .continuous).strokeBorder(Palette.line, lineWidth: 1))
         .overlay {
-            if state.route == .daily && state.isDailyDropTargeted {
+            if state.isDailyDropTargeted && (state.route == .daily || state.route == .inbox
+                || (state.route == .detail && state.selectedCapture?.isTask == true)) {
                 RoundedRectangle(cornerRadius: 24, style: .continuous).fill(accent.opacity(0.06))
                     .overlay(RoundedRectangle(cornerRadius: 24, style: .continuous).strokeBorder(accent, lineWidth: 2))
                     .allowsHitTesting(false).accessibilityHidden(true)
@@ -73,7 +77,7 @@ struct BoardView: View {
             Group {
                 Button("Search all captures") { state.performSearchCommand(); searchFocused = true }
                     .keyboardShortcut("k", modifiers: .command)
-                Button("Open Today") { state.openDaily() }
+                Button("Open Today") { state.showReminders() }
                     .keyboardShortcut("d", modifiers: [.command, .shift])
             }.frame(width: 0, height: 0).opacity(0).accessibilityHidden(true)
         }
@@ -81,6 +85,7 @@ struct BoardView: View {
 
     @ViewBuilder private var routeContent: some View {
         switch state.route {
+        case .inbox: InboxScreen(state: state)
         case .daily: DailyScreen(state: state)
         case .weekly: WeeklyScreen(state: state)
         case .library: LibraryScreen(state: state)
@@ -93,7 +98,7 @@ struct BoardView: View {
             } else {
                 EmptyMessage(symbol: "tray", title: "Capture unavailable", message: "Open Library to browse your saved captures.")
             }
-        case .reminders: RemindersScreen(state: state)
+        case .reminders: TodayPlanningScreen(state: state)
         case .settings: SettingsScreen(state: state, theme: theme)
         case .trash: TrashScreen(state: state)
         }
@@ -106,7 +111,15 @@ struct BoardView: View {
                     .overlay { WindowDragHandle(onDragStarted: { state.onBoardDragStarted?() }).accessibilityHidden(true) }
                 AutoCaptureHeaderButton(service: state.autoCapture, weekly: state.route == .weekly,
                     statusText: state.autoCapture.overallStatusText, isVisible: state.isBoardVisible) { state.toggleAutoCaptureFromHeader() }
-                Spacer(minLength: 0)
+                WindowDragHandle(onDragStarted: { state.onBoardDragStarted?() })
+                    .frame(maxWidth: .infinity).frame(height: 28)
+                    .overlay {
+                        Image(systemName: "line.3.horizontal")
+                            .font(.system(size: 13, weight: .semibold))
+                            .foregroundStyle(Palette.muted.opacity(0.58))
+                            .allowsHitTesting(false)
+                    }
+                    .accessibilityHidden(true)
                 addMenu
                 BuddyIconButton(symbol: "gearshape", title: "Settings") { state.showSettings() }
                     .accessibilityIdentifier("board-settings")
@@ -133,9 +146,9 @@ struct BoardView: View {
             }.padding(9).background(Palette.surface, in: RoundedRectangle(cornerRadius: 10))
                 .overlay(RoundedRectangle(cornerRadius: 10).strokeBorder(Palette.line))
             HStack(spacing: 4) {
-                navigationButton("Today", symbol: "sun.max", selected: isTimeline) { state.openDaily() }
-                navigationButton("Library", symbol: "square.stack", selected: state.route == .library) { state.openLibrary() }
-                navigationButton("Follow-ups", symbol: "checkmark.circle", selected: state.route == .reminders) { state.showReminders() }
+                navigationButton("Inbox", symbol: "tray", selected: state.route == .inbox || isTimeline) { state.openInbox() }
+                navigationButton("Today", symbol: "sun.max", selected: state.route == .reminders) { state.showReminders() }
+                navigationButton("Workspace", symbol: "square.stack", selected: state.route == .library) { state.openLibrary() }
             }.accessibilityElement(children: .contain).accessibilityLabel("Main views")
             if isTimeline { timelineControls }
             else if !isPrimary {
@@ -176,6 +189,7 @@ struct BoardView: View {
 
     private var moreMenu: some View {
         Menu {
+            Button("Activity by date", systemImage: "calendar") { state.openDaily() }
             Menu {
                 Button("Copy selected day", systemImage: "doc.on.doc") { dayExportController.copy(dayDocument) }.disabled(dayDocument.isEmpty)
                 Button("Export selected day…", systemImage: "doc.badge.arrow.up") { reportExport(dayExportController.save(dayDocument)) }.disabled(dayDocument.isEmpty)

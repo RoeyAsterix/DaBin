@@ -1,0 +1,13 @@
+{
+  "version": "0.4.2",
+  "build": "51",
+  "installedApplication": "/Users/roeylibfeld/Applications/DaBin.app",
+  "cleanQuitVerified": true,
+  "unchangedOriginalFiles": 7,
+  "existingCaptureRecordsPreserved": 19,
+  "comparison": "All pre-existing readable capture fields preserved except schemaVersion; all owned originals byte-identical.",
+  "draftRecoveredAndFlushed": true,
+  "installedExecutableMatchesBuild": true,
+  "executableSha256": "4652f9af2ca8a5c851672c944305a46560c9988f0950914927efb1656561774d",
+  "originalVerification": "Originals resolved by each receipt attachmentRelativePath, including dated archive layout."
+}

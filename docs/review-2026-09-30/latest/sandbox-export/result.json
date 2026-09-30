@@ -1,0 +1,18 @@
+{
+  "scope": "Isolated ad-hoc-signed App Sandbox probe using the production ShelfExport implementation and a real NSSavePanel file grant. Synthetic data only.",
+  "originalFailure": {
+    "domain": "NSCocoaErrorDomain",
+    "code": 513,
+    "cause": "Creating an unselected hidden sibling staging directory was denied.",
+    "destinationAbsent": true
+  },
+  "fixedResult": {
+    "securityScopeStarted": true,
+    "zipBytes": 446,
+    "sha256": "a26ea6239291c06916760245dd2bf713eda0b4bee6f7f38c999d1a02034338e6",
+    "crcValid": true,
+    "unicodeContentMatches": true
+  },
+  "sourceSha256": "67589f74ba21c927ca0358ea37110e802ddd7fa16a1bba29faf4ca0c01b0b8b3",
+  "reference": "https://developer.apple.com/documentation/foundation/filemanager/searchpathdirectory/itemreplacementdirectory"
+}

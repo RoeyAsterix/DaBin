@@ -1,6 +1,6 @@
 # DaBin 0.4.1 — desktop buddy
 
-Version 0.4.1, build 49. Local development candidate; these notes do not claim a public GitHub or TestFlight release.
+Version 0.4.1, build 50. Local development candidate; these notes do not claim a public GitHub or TestFlight release.
 
 ## Changes
 
@@ -12,6 +12,7 @@ Version 0.4.1, build 49. Local development candidate; these notes do not claim a
 - Auto Capture next to the logo, direct Settings gear, and icon-labeled submenus.
 - Local application icons and expandable source locations. Native tasks say “Created in DaBin.” External paste destinations are not inferred; website favicons are not fetched.
 - Thin robot frame, remembered edge/corner resizing, current-display Expand/Restore, and a 0.55-second manual island reveal.
+- A visible flexible header grip moves the compact board without requiring the small logo target; the logo remains draggable too.
 - Correct light/dark appearance through the nested native robot frame. Continuous header motion stops when hidden and with Reduce Motion.
 
 ## Archive compatibility

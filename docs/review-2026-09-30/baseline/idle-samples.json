@@ -1,0 +1,22 @@
+{
+  "pid": 9801,
+  "method": "ps samples over9seconds while synthetic board visible and stationary; %CPU is ps recent/lifetime-derived estimate, not isolated benchmark; RSS KiB includes SwiftUI/native runtime",
+  "samples": [
+    {
+      "elapsed": 0.0,
+      "ps": "9801   0.0 140048   0:07.36"
+    },
+    {
+      "elapsed": 3.009,
+      "ps": "9801   0.0 140048   0:07.36"
+    },
+    {
+      "elapsed": 6.017,
+      "ps": "9801   0.0 140048   0:07.36"
+    },
+    {
+      "elapsed": 9.026,
+      "ps": "9801   0.0 140048   0:07.36"
+    }
+  ]
+}

@@ -84,14 +84,28 @@ import CoreData
     func saveSnapshots(_ snapshots: [CaptureSnapshot]) throws {
         do {
             let encoder = JSONEncoder()
+            // Fetch before inserting. A fetch after each insertion asks Core
+            // Data to scan an ever-growing pending-insert set and makes a large
+            // import quadratic. Small batches retain a single scoped lookup.
+            let ids = Array(Set(snapshots.map(\.id)))
+            var existing: [UUID: NSManagedObject] = [:]
+            for start in stride(from: 0, to: ids.count, by: 500) {
+                let request = NSFetchRequest<NSManagedObject>(entityName: "CaptureRecord")
+                request.predicate = NSPredicate(format: "captureID IN %@", ids[start..<min(start + 500, ids.count)].map { $0 as NSUUID })
+                for record in try context.fetch(request) {
+                    guard let id = record.value(forKey: "captureID") as? UUID else {
+                        throw CaptureStoreError.invalidOriginal("A saved metadata record has no identity.")
+                    }
+                    existing[id] = record
+                }
+            }
             for snapshot in snapshots {
                 try validate(snapshot, recordID: snapshot.id)
                 let data = try encoder.encode(snapshot)
-                let request = NSFetchRequest<NSManagedObject>(entityName: "CaptureRecord")
-                request.predicate = NSPredicate(format: "captureID == %@", snapshot.id as NSUUID)
-                request.fetchLimit = 1
-                let record = try context.fetch(request).first
+                let record = existing[snapshot.id]
                     ?? NSEntityDescription.insertNewObject(forEntityName: "CaptureRecord", into: context)
+                // Repeated identities keep the prior API's last-payload-wins behavior.
+                existing[snapshot.id] = record
                 record.setValue(snapshot.id, forKey: "captureID")
                 record.setValue(data, forKey: "payload")
             }
@@ -138,10 +152,11 @@ import CoreData
             && (["idle", "indexing"].contains(indexState) ? indexVersion == 0 : indexVersion == ContentIndexService.currentVersion)
             && (!indexCanRetry || indexState == "unavailable")
         )
-        guard [1, 2, 3, 4, 5, 6, 7, 8].contains(snapshot.schemaVersion), CaptureKind(rawValue: snapshot.kindRaw) != nil,
+        guard (1...9).contains(snapshot.schemaVersion), CaptureKind(rawValue: snapshot.kindRaw) != nil,
               recordID == snapshot.id,
               snapshot.captureOriginRaw.map({ CaptureOrigin(rawValue: $0) != nil }) ?? true,
-              (!origin.isAutomatic || snapshot.automaticActionID != nil), indexValid else {
+              (!origin.isAutomatic || snapshot.automaticActionID != nil), indexValid,
+              snapshot.taskPlanning?.isValid ?? true else {
             throw CaptureStoreError.invalidOriginal("The metadata schema or identity is unsupported. The store was preserved.")
         }
     }

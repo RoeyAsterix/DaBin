@@ -60,6 +60,7 @@ struct CaptureActionTests {
         try expect(state.dailyCaptures.contains { $0.id == capture.id }, "Minimized capture remains in Daily")
         state.query = "searchable detail"
         try expect(!state.searchGroups.isEmpty, "Hidden body remains searchable")
+        let detailOrigin = state.route
         state.openCapture(capture.id)
         try expect(state.selectedCapture === capture && state.route == .detail, "A minimized capture opens full detail")
         state.toggleMinimized(capture)
@@ -71,7 +72,7 @@ struct CaptureActionTests {
         state.selectedDraft?.comment = "An unsaved edit to discard with this capture"
         try expect(state.hasUnsavedDrafts, "Deletion fixture has an unsaved draft")
         await state.removeCapture(capture)
-        try expect(state.route == .daily && state.selectedCapture == nil && state.selectedDraft == nil, "Removing open detail returns to its origin")
+        try expect(state.route == detailOrigin && state.selectedCapture == nil && state.selectedDraft == nil, "Removing open detail returns to its origin")
         try expect(!state.hasUnsavedDrafts, "Removed capture leaves no orphan unsaved draft")
         try expect(state.removingCaptureID == nil && state.pendingRemoval == nil, "Removal finishes UI progress state")
         try expect(!store.captures.contains { $0.id == capture.id } && state.searchGroups.isEmpty, "Removal clears board and contextual search")
@@ -84,6 +85,7 @@ struct CaptureActionTests {
         state.requestRemoval(capture)
         try expect(state.pendingRemoval == nil, "Deleted objects cannot reopen confirmation")
 
+        state.openDaily()
         let failed = try store.capture(text: "Retain capture after database failure")[0]
         previews.process([failed])
         store.failureInjector = { stage in
@@ -95,6 +97,8 @@ struct CaptureActionTests {
         try expect(state.status?.severity == .error && state.removingCaptureID == nil, "Failed removal reports actionable error and clears busy state")
         try expect(failed.previewState == "ready", "Failed removal restores preview processing")
         store.failureInjector = nil
+        state.back()
+        try expect(state.route == .daily, "A detail explicitly opened from Daily returns to Daily")
 
         let raced = try store.createTask(text: "Delete during delayed notification scheduling", reminderAt: Date().addingTimeInterval(7200))
         client.pauseAdd = true

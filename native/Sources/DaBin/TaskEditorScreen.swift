@@ -22,6 +22,7 @@ struct NewTaskScreen: View {
                             .focused($textFocused).accessibilityLabel("Task text")
                             .onChange(of: draft.text) { _, _ in draft.message = nil }
                     }
+                    TaskPlanningEditor(planning: $draft.planning)
                     ReminderClockEditor(enabled: $draft.reminderEnabled, mode: $draft.reminderMode,
                         date: $draft.reminderDate, hours: $draft.countdownHours, minutes: $draft.countdownMinutes)
                         .onChange(of: draft.reminderEnabled) { _, _ in draft.message = nil }
@@ -36,7 +37,7 @@ struct NewTaskScreen: View {
                 }.padding(.horizontal, 16).padding(.bottom, 14)
             }
             HStack(spacing: 10) {
-                Text("Saved to today").font(.system(size: 11)).foregroundStyle(Palette.muted)
+                Text(state.libraryProject ?? "Saved to Inbox").font(.system(size: 11)).foregroundStyle(Palette.muted).lineLimit(1)
                 Spacer(minLength: 0)
                 Button("Cancel") { state.cancelNewTask() }.buttonStyle(.bordered)
                 Button("Add task") { state.saveNewTask() }.buttonStyle(.borderedProminent)

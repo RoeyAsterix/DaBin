@@ -95,6 +95,8 @@ struct SettingsScreen: View {
                         .fixedSize(horizontal: false, vertical: true)
                 }
                 Divider()
+                ClipboardRetentionSettings(service: state.clipboardRetention, store: state.store)
+                Divider()
                 quickAccessSection
                 Divider()
                 VStack(alignment: .leading, spacing: 12) {

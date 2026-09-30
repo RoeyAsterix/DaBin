@@ -1,0 +1,25 @@
+{
+  "archiveLoadMS" : 60993.118208367378,
+  "environment" : "Version 26.6.2 (Build 25G83)",
+  "matchesPerQuery" : 100,
+  "metadataSaveMS" : 319633.2414583303,
+  "records" : 10000,
+  "scope" : "Production CaptureSearch.groups over 10,000 in-memory text records; production repository save and store load. No thumbnails, OCR, GPU, automation latency, network, or private archive. One local run, not a broad performance guarantee.",
+  "searchMaxMS" : 155.59141687117517,
+  "searchMedianMS" : 127.15677090454847,
+  "searchSamplesMS" : [
+    155.59141687117517,
+    135.36837510764599,
+    117.02108336612582,
+    121.41329166479409,
+    122.16070829890668,
+    124.67125011608005,
+    136.16541656665504,
+    136.01666665636003,
+    138.843750115484,
+    129.64229169301689,
+    123.28979163430631,
+    122.57579178549349
+  ],
+  "syntheticOnly" : true
+}

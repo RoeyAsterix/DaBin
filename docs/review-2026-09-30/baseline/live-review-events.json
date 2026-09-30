@@ -1,0 +1,657 @@
+{
+  "bundleID" : "com.dabin.qa.uxreview.baseline.20260930",
+  "captureCount" : 9,
+  "events" : [
+    {
+      "at" : "2026-09-30T05:07:31Z",
+      "event" : "route",
+      "route" : "daily"
+    },
+    {
+      "at" : "2026-09-30T05:07:31Z",
+      "count" : 7,
+      "event" : "capture-count"
+    },
+    {
+      "archive" : "\/tmp\/DaBin-Review-Live-20260930\/Archive",
+      "at" : "2026-09-30T05:07:31Z",
+      "bundleID" : "com.dabin.qa.uxreview.baseline.20260930",
+      "event" : "ready"
+    },
+    {
+      "at" : "2026-09-30T05:07:59Z",
+      "event" : "input",
+      "keyCode" : 0,
+      "type" : 1,
+      "x" : 30,
+      "y" : 716
+    },
+    {
+      "at" : "2026-09-30T05:08:51Z",
+      "event" : "input",
+      "keyCode" : 0,
+      "type" : 1,
+      "x" : 211,
+      "y" : 502
+    },
+    {
+      "at" : "2026-09-30T05:08:51Z",
+      "event" : "input",
+      "keyCode" : 37,
+      "type" : 10,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:08:52Z",
+      "event" : "route",
+      "route" : "search"
+    },
+    {
+      "at" : "2026-09-30T05:08:52Z",
+      "event" : "input",
+      "keyCode" : 0,
+      "type" : 10,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:08:52Z",
+      "event" : "input",
+      "keyCode" : 32,
+      "type" : 10,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:08:52Z",
+      "event" : "input",
+      "keyCode" : 45,
+      "type" : 10,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:08:52Z",
+      "event" : "input",
+      "keyCode" : 8,
+      "type" : 10,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:08:52Z",
+      "event" : "input",
+      "keyCode" : 4,
+      "type" : 10,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:08:58Z",
+      "event" : "route",
+      "route" : "daily"
+    },
+    {
+      "at" : "2026-09-30T05:09:06Z",
+      "event" : "route",
+      "route" : "newNote"
+    },
+    {
+      "at" : "2026-09-30T05:09:11Z",
+      "event" : "input",
+      "keyCode" : 15,
+      "type" : 10,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:09:11Z",
+      "event" : "input",
+      "keyCode" : 14,
+      "type" : 10,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:09:11Z",
+      "event" : "input",
+      "keyCode" : 9,
+      "type" : 10,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:09:11Z",
+      "event" : "input",
+      "keyCode" : 34,
+      "type" : 10,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:09:11Z",
+      "event" : "input",
+      "keyCode" : 14,
+      "type" : 10,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:09:11Z",
+      "event" : "input",
+      "keyCode" : 13,
+      "type" : 10,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:09:11Z",
+      "event" : "input",
+      "keyCode" : 49,
+      "type" : 10,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:09:11Z",
+      "event" : "input",
+      "keyCode" : 3,
+      "type" : 10,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:09:11Z",
+      "event" : "input",
+      "keyCode" : 34,
+      "type" : 10,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:09:11Z",
+      "event" : "input",
+      "keyCode" : 7,
+      "type" : 10,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:09:11Z",
+      "event" : "input",
+      "keyCode" : 17,
+      "type" : 10,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:09:11Z",
+      "event" : "input",
+      "keyCode" : 32,
+      "type" : 10,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:09:11Z",
+      "event" : "input",
+      "keyCode" : 15,
+      "type" : 10,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:09:11Z",
+      "event" : "input",
+      "keyCode" : 14,
+      "type" : 10,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:09:11Z",
+      "event" : "input",
+      "keyCode" : 41,
+      "type" : 10,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:09:11Z",
+      "event" : "input",
+      "keyCode" : 49,
+      "type" : 10,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:09:11Z",
+      "event" : "input",
+      "keyCode" : 15,
+      "type" : 10,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:09:11Z",
+      "event" : "input",
+      "keyCode" : 14,
+      "type" : 10,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:09:11Z",
+      "event" : "input",
+      "keyCode" : 46,
+      "type" : 10,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:09:11Z",
+      "event" : "input",
+      "keyCode" : 14,
+      "type" : 10,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:09:11Z",
+      "event" : "input",
+      "keyCode" : 46,
+      "type" : 10,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:09:11Z",
+      "event" : "input",
+      "keyCode" : 11,
+      "type" : 10,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:09:11Z",
+      "event" : "input",
+      "keyCode" : 14,
+      "type" : 10,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:09:11Z",
+      "event" : "input",
+      "keyCode" : 15,
+      "type" : 10,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:09:11Z",
+      "event" : "input",
+      "keyCode" : 49,
+      "type" : 10,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:09:11Z",
+      "event" : "input",
+      "keyCode" : 17,
+      "type" : 10,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:09:11Z",
+      "event" : "input",
+      "keyCode" : 4,
+      "type" : 10,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:09:11Z",
+      "event" : "input",
+      "keyCode" : 14,
+      "type" : 10,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:09:11Z",
+      "event" : "input",
+      "keyCode" : 49,
+      "type" : 10,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:09:11Z",
+      "event" : "input",
+      "keyCode" : 9,
+      "type" : 10,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:09:11Z",
+      "event" : "input",
+      "keyCode" : 34,
+      "type" : 10,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:09:11Z",
+      "event" : "input",
+      "keyCode" : 31,
+      "type" : 10,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:09:11Z",
+      "event" : "input",
+      "keyCode" : 37,
+      "type" : 10,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:09:11Z",
+      "event" : "input",
+      "keyCode" : 14,
+      "type" : 10,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:09:11Z",
+      "event" : "input",
+      "keyCode" : 17,
+      "type" : 10,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:09:11Z",
+      "event" : "input",
+      "keyCode" : 49,
+      "type" : 10,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:09:11Z",
+      "event" : "input",
+      "keyCode" : 13,
+      "type" : 10,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:09:11Z",
+      "event" : "input",
+      "keyCode" : 14,
+      "type" : 10,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:09:11Z",
+      "event" : "input",
+      "keyCode" : 37,
+      "type" : 10,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:09:11Z",
+      "event" : "input",
+      "keyCode" : 8,
+      "type" : 10,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:09:11Z",
+      "event" : "input",
+      "keyCode" : 31,
+      "type" : 10,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:09:11Z",
+      "event" : "input",
+      "keyCode" : 46,
+      "type" : 10,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:09:11Z",
+      "event" : "input",
+      "keyCode" : 14,
+      "type" : 10,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:09:11Z",
+      "event" : "input",
+      "keyCode" : 49,
+      "type" : 10,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:09:11Z",
+      "event" : "input",
+      "keyCode" : 1,
+      "type" : 10,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:09:11Z",
+      "event" : "input",
+      "keyCode" : 8,
+      "type" : 10,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:09:11Z",
+      "event" : "input",
+      "keyCode" : 15,
+      "type" : 10,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:09:11Z",
+      "event" : "input",
+      "keyCode" : 14,
+      "type" : 10,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:09:11Z",
+      "event" : "input",
+      "keyCode" : 14,
+      "type" : 10,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:09:11Z",
+      "event" : "input",
+      "keyCode" : 45,
+      "type" : 10,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:09:11Z",
+      "event" : "input",
+      "keyCode" : 47,
+      "type" : 10,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:09:17Z",
+      "count" : 8,
+      "event" : "capture-count"
+    },
+    {
+      "at" : "2026-09-30T05:09:17Z",
+      "count" : 8,
+      "event" : "capture-count"
+    },
+    {
+      "at" : "2026-09-30T05:09:17Z",
+      "event" : "route",
+      "route" : "daily"
+    },
+    {
+      "at" : "2026-09-30T05:09:23Z",
+      "event" : "route",
+      "route" : "detail"
+    },
+    {
+      "at" : "2026-09-30T05:09:33Z",
+      "event" : "paste-fixture"
+    },
+    {
+      "at" : "2026-09-30T05:09:33Z",
+      "count" : 9,
+      "event" : "capture-count"
+    },
+    {
+      "at" : "2026-09-30T05:09:33Z",
+      "count" : 9,
+      "event" : "capture-count"
+    },
+    {
+      "at" : "2026-09-30T05:10:25Z",
+      "event" : "resize",
+      "height" : 760,
+      "width" : 760
+    },
+    {
+      "at" : "2026-09-30T05:10:36Z",
+      "event" : "route",
+      "route" : "library"
+    },
+    {
+      "at" : "2026-09-30T05:10:41Z",
+      "event" : "input",
+      "keyCode" : 0,
+      "type" : 1,
+      "x" : 401,
+      "y" : 502
+    },
+    {
+      "at" : "2026-09-30T05:10:41Z",
+      "event" : "input",
+      "keyCode" : 37,
+      "type" : 10,
+      "x" : 0,
+      "y" : 842
+    },
+    {
+      "at" : "2026-09-30T05:10:41Z",
+      "event" : "route",
+      "route" : "search"
+    },
+    {
+      "at" : "2026-09-30T05:10:42Z",
+      "event" : "input",
+      "keyCode" : 0,
+      "type" : 10,
+      "x" : 0,
+      "y" : 842
+    },
+    {
+      "at" : "2026-09-30T05:10:42Z",
+      "event" : "input",
+      "keyCode" : 32,
+      "type" : 10,
+      "x" : 0,
+      "y" : 842
+    },
+    {
+      "at" : "2026-09-30T05:10:42Z",
+      "event" : "input",
+      "keyCode" : 45,
+      "type" : 10,
+      "x" : 0,
+      "y" : 842
+    },
+    {
+      "at" : "2026-09-30T05:10:42Z",
+      "event" : "input",
+      "keyCode" : 8,
+      "type" : 10,
+      "x" : 0,
+      "y" : 842
+    },
+    {
+      "at" : "2026-09-30T05:10:42Z",
+      "event" : "input",
+      "keyCode" : 4,
+      "type" : 10,
+      "x" : 0,
+      "y" : 842
+    },
+    {
+      "at" : "2026-09-30T05:10:48Z",
+      "event" : "route",
+      "route" : "library"
+    },
+    {
+      "at" : "2026-09-30T05:11:18Z",
+      "event" : "hide"
+    },
+    {
+      "at" : "2026-09-30T05:11:31Z",
+      "event" : "snapshot",
+      "file" : "live-1-library-780x810.png"
+    },
+    {
+      "at" : "2026-09-30T05:11:31Z",
+      "event" : "resize",
+      "height" : 650,
+      "width" : 380
+    },
+    {
+      "at" : "2026-09-30T05:12:23Z",
+      "event" : "input",
+      "keyCode" : 0,
+      "type" : 1,
+      "x" : 397,
+      "y" : 4
+    },
+    {
+      "at" : "2026-09-30T05:13:57Z",
+      "event" : "input",
+      "keyCode" : 0,
+      "type" : 1,
+      "x" : 30,
+      "y" : 453
+    },
+    {
+      "at" : "2026-09-30T05:13:57Z",
+      "event" : "quit"
+    }
+  ],
+  "fixtureOnly" : true,
+  "root" : "\/private\/tmp\/DaBin-Review-Live-20260930"
+}

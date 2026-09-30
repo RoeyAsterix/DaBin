@@ -1,0 +1,8 @@
+{
+  "application": "/private/tmp/DaBin-Review-Latest-20260930/DaBin UX Review Latest.app",
+  "bundleID": "com.dabin.qa.uxreview.latest.20260930",
+  "sourceSHA256": "dda3559691b4b36356ee6a810eb7f1c0da8978c742c8c1f3f02b7d97e379ece1",
+  "moduleSHA256": "8a6d1102b162a3730b6b66fa664e9fb2addf7ed0b65364702107fb37a163f1c6",
+  "archive": "/private/tmp/DaBin-Review-Latest-Live-20260930/Archive",
+  "safety": "Synthetic root, dedicated preference suite, private pasteboard, fake reminders and screenshot observer, disabled update transport; no production monitors, status item, global shortcuts, or personal archive."
+}

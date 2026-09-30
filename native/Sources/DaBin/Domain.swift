@@ -123,6 +123,8 @@ final class Capture: ObservableObject, Identifiable {
     /// Optional organization never changes the original capture or its receipt date.
     @Published var isPinned = false
     @Published var projectName: String?
+    /// Work scheduling is editable metadata, independent of the immutable receipt and notification time.
+    @Published private(set) var taskPlanning: TaskPlanning?
     /// A soft-deleted record keeps its originals until explicitly removed forever.
     @Published var deletedAt: Date?
     @Published var reminderAt: Date?
@@ -190,6 +192,7 @@ final class Capture: ObservableObject, Identifiable {
     // Store-coordinated task conversion leaves immutable receipt/content fields intact.
     func setConvertedToTask(_ value: Bool) { convertedToTask = value }
     func setParentTaskID(_ value: UUID?) { parentTaskID = value }
+    func setTaskPlanning(_ value: TaskPlanning?) { taskPlanning = value }
 
     convenience init(snapshot: CaptureSnapshot) {
         self.init(id: snapshot.id, capturedAt: snapshot.capturedAt,
@@ -221,6 +224,7 @@ final class Capture: ObservableObject, Identifiable {
         self.isMinimized = snapshot.isMinimized ?? false
         self.isPinned = snapshot.isPinned ?? false
         self.projectName = snapshot.projectName
+        self.taskPlanning = snapshot.taskPlanning
         self.deletedAt = snapshot.deletedAt
         self.reminderAt = snapshot.reminderAt
         self.reminderTimeZoneID = snapshot.reminderTimeZoneID
@@ -278,6 +282,8 @@ struct CaptureSnapshot: Codable {
     // Missing before schema 7: existing archives stay active and unfiled.
     let isPinned: Bool?
     let projectName: String?
+    /// Missing before schema 9. Existing tasks retain their original reminder and carryover behavior.
+    let taskPlanning: TaskPlanning?
     let deletedAt: Date?
     let reminderAt: Date?
     let reminderTimeZoneID: String?
@@ -287,7 +293,7 @@ struct CaptureSnapshot: Codable {
     let updatedAt: Date
 
     init(_ capture: Capture) {
-        schemaVersion = 8
+        schemaVersion = 9
         id = capture.id
         capturedAt = capture.capturedAt
         captureDay = capture.captureDay
@@ -323,6 +329,7 @@ struct CaptureSnapshot: Codable {
         isMinimized = capture.isMinimized
         isPinned = capture.isPinned
         projectName = capture.projectName
+        taskPlanning = capture.taskPlanning
         deletedAt = capture.deletedAt
         reminderAt = capture.reminderAt
         reminderTimeZoneID = capture.reminderTimeZoneID
@@ -435,7 +442,7 @@ enum CaptureSearch {
 
     static func groups(captures: [Capture], query: String, filter: CaptureFilter,
                        scope: CaptureSearchScope = .all,
-                       includeContext: Bool = true) -> [SearchGroup] {
+                       includeContext: Bool = true, additionalText: [UUID: String] = [:]) -> [SearchGroup] {
         let words = normalized(query).split(whereSeparator: { $0.isWhitespace }).map(String.init)
         guard !words.isEmpty else { return [] }
         let days = Dictionary(grouping: captures.filter { $0.deletedAt == nil && scope.includes(captureDay: $0.captureDay) },
@@ -452,7 +459,9 @@ enum CaptureSearch {
                                            item.sourceApplicationBundleIdentifier ?? "",
                                            item.captureOrigin.displayName, item.projectName ?? "",
                                            item.captureOrigin == .automaticClipboard ? "copied clipboard" : "",
-                                           item.captureOrigin == .automaticScreenshot ? "screenshot screen capture" : ""].joined(separator: " "))
+                                           item.captureOrigin == .automaticScreenshot ? "screenshot screen capture" : "",
+                                           additionalText[item.id] ?? "",
+                                           item.taskPlanning?.checklist.map(\.text).joined(separator: " ") ?? ""].joined(separator: " "))
                 let indexed = item.normalizedIndexedTextForSearch
                 return words.allSatisfy { metadata.contains($0) || indexed.contains($0) }
             })

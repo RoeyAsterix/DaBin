@@ -344,6 +344,7 @@ final class CornerController: NSObject {
     private var boardIsResizing = false
     private var userBoardSize: CGSize?
     private var frameBeforeExpansion: NSRect?
+    private var workingApplication: NSRunningApplication?
     private var applyingBoardFrame = false
     private var lastAppliedBoardFrame: NSRect?
     private var lastLayoutRoute: BoardRoute?
@@ -683,12 +684,14 @@ final class CornerController: NSObject {
         lastInteraction = Date()
     }
 
-    func openDaily() { state.openDaily(); showBoard() }
+    // Opening the buddy resumes the current work; the Activity command is the
+    // explicit way to reset to today's receipt timeline.
+    func openDaily() { showBoard() }
     func openSearch() { state.performSearchCommand(); showBoard(immediate: true) }
 
     func celebrateTaskCompletion() {
         guard !isShutDown else { return }
-        if board.isVisible {
+        if board.isVisible && !NSApp.isHidden && board.occlusionState.contains(.visible) {
             appFrame.celebrateTaskCompletion(reduceMotion: robotReduceMotion())
         }
     }
@@ -703,15 +706,15 @@ final class CornerController: NSObject {
         if let previous = frameBeforeExpansion {
             target = BoardResizeGeometry.fitted(previous, visible: screen.visibleFrame)
             frameBeforeExpansion = nil
+            userBoardSize = target.size
+            boardTopLeft = NSPoint(x: target.minX, y: target.maxY)
         } else {
             frameBeforeExpansion = board.frame
             target = screen.visibleFrame
         }
-        userBoardSize = target.size
         setBoardFrame(target)
-        boardTopLeft = NSPoint(x: target.minX, y: target.maxY)
-        persistBoardSize()
-        rememberBoardPosition()
+        // Expansion is a temporary presentation. Keep the normal geometry on
+        // disk so a relaunch or a display change always has a usable restore.
     }
 
     private func beginBoardResize() {
@@ -746,7 +749,6 @@ final class CornerController: NSObject {
            !screen.frame.contains(NSPoint(x: topLeft.x + 20, y: topLeft.y - 20)) {
             boardTopLeft = nil
         }
-        state.openDaily()
         showBoard()
     }
 
@@ -766,6 +768,10 @@ final class CornerController: NSObject {
             return
         }
         let wasVisible = board.isVisible
+        if !wasVisible, let frontmost = NSWorkspace.shared.frontmostApplication,
+           frontmost.processIdentifier != ProcessInfo.processInfo.processIdentifier {
+            workingApplication = frontmost
+        }
         if activeTarget == .cameraIsland, CornerGeometry.cameraIslandRect(on: screen) == nil {
             activeTarget = .corner(.topRight)
         }
@@ -859,6 +865,7 @@ final class CornerController: NSObject {
             appFrame.setVisible(false)
             state.isBoardVisible = false
             onDidCloseBoard?()
+            restoreWorkingApplication()
         } else {
             updateBoardVisibility()
         }
@@ -867,6 +874,13 @@ final class CornerController: NSObject {
     func captureAnimationWillAppear() {
         cancelIdlePeek()
         hideRobot()
+    }
+
+    private func restoreWorkingApplication() {
+        defer { workingApplication = nil }
+        guard let previous = workingApplication, !previous.isTerminated,
+              NSWorkspace.shared.frontmostApplication?.processIdentifier == ProcessInfo.processInfo.processIdentifier else { return }
+        previous.activate(options: [])
     }
 
     private func showIdlePeek(now: Date) {
@@ -907,6 +921,7 @@ final class CornerController: NSObject {
     private var contentHeight: CGFloat {
         let extra: CGFloat = state.status != nil || state.store.error != nil ? 45 : 0
         switch state.route {
+        case .inbox: return 590 + extra
         case .weekly: return state.weeklyVisibleDays.isEmpty ? 380 + extra : 560
         case .daily: return max(380, CornerGeometry.dailyPanelHeight(for: state))
         case .library: return 620
@@ -970,7 +985,9 @@ final class CornerController: NSObject {
         let previousRoute = lastLayoutRoute
         let previousFilter = lastLayoutFilter
         let frame: NSRect
-        if let userBoardSize {
+        if frameBeforeExpansion != nil {
+            frame = screen.visibleFrame
+        } else if let userBoardSize {
             let origin = boardTopLeft ?? NSPoint(x: board.frame.minX, y: board.frame.maxY)
             frame = BoardResizeGeometry.fitted(NSRect(x: origin.x, y: origin.y - userBoardSize.height,
                                                      width: userBoardSize.width, height: userBoardSize.height),
@@ -1063,6 +1080,17 @@ final class CornerController: NSObject {
     private func beginBoardDrag() {
         if robotTransitionTarget != nil { settleRobotTransition(open: true) }
         stopBoardAnimation()
+        if let previous = frameBeforeExpansion, let screen = boardScreen() {
+            let pointer = NSEvent.mouseLocation
+            let fraction = min(1, max(0, (pointer.x - board.frame.minX) / max(1, board.frame.width)))
+            var restored = previous
+            restored.origin = NSPoint(x: pointer.x - previous.width * fraction,
+                                     y: pointer.y - previous.height + 42)
+            restored = BoardResizeGeometry.fitted(restored, visible: screen.visibleFrame)
+            frameBeforeExpansion = nil
+            userBoardSize = restored.size
+            setBoardFrame(restored)
+        }
         boardDragStartFrame = board.frame
         boardDragTimer?.invalidate()
         // Keep layout updates paused until the pointer is released, including
@@ -1104,6 +1132,7 @@ final class CornerController: NSObject {
     }
 
     private func rememberBoardPosition() {
+        guard frameBeforeExpansion == nil else { return }
         let point: NSPoint
         if userBoardSize == nil, lastLayoutRoute == .weekly, let direction = weeklyDirection {
             let visible = NSScreen.screens.first { $0.frame.contains(NSPoint(x: board.frame.midX, y: board.frame.maxY - 20)) }
@@ -1169,6 +1198,7 @@ final class CornerController: NSObject {
             state.pasteAttachments(to: task, from: pasteboard)
             return
         }
+        if state.route == .inbox { state.pasteClipboard(from: pasteboard); return }
         guard state.route == .daily else { return }
         let navigationRevision = state.captureNavigationRevision
         input.receive(pasteboard, completion: { [weak self] captures, _ in
@@ -1250,6 +1280,8 @@ final class CornerController: NSObject {
     @objc private func updateBoardVisibility() {
         let visible = board.isVisible && !NSApp.isHidden && board.occlusionState.contains(.visible)
         if state.isBoardVisible != visible { state.isBoardVisible = visible }
-        if robotTransitionTarget == nil { appFrame.setVisible(visible) }
+        // Occlusion pauses decoration work, never the content itself. Hiding a
+        // transparent window's content on occlusion can keep it occluded forever.
+        if robotTransitionTarget == nil { appFrame.setVisible(board.isVisible && !NSApp.isHidden) }
     }
 }

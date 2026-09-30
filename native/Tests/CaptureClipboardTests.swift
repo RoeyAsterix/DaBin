@@ -132,10 +132,15 @@ struct CaptureClipboardTests {
         let state = AppState(store: store, previews: PreviewService(store: store),
                              reminders: ReminderService(store: store, client: ClipboardReminderClient()),
                              captureClipboard: stateClipboard)
+        let copyOrigin = state.route
+        let selectionBeforeCopy = state.selectedCapture?.id
         try expect(state.copyCapturesToClipboard([task]), "App state reports a successful card copy")
         try expect(state.status == nil, "Successful card copy does not resize the board with a banner")
-        try expect(state.route == .daily && state.selectedCapture == nil,
+        try expect(state.route == copyOrigin && state.selectedCapture?.id == selectionBeforeCopy,
                    "Copying a card leaves navigation and selection unchanged")
+        state.openDaily()
+        try expect(state.copyCapturesToClipboard([task]) && state.route == .daily && state.selectedCapture?.id == selectionBeforeCopy,
+                   "Copying from explicit Daily navigation also preserves its route and selection")
         try expect(CaptureCopyButton.accessibilityIdentifier(for: [task]) == "capture-copy-\(task.id.uuidString)",
                    "A single card copy control has a stable accessibility identifier")
         try expect(CaptureCopyButton.accessibilityLabel(for: [task], copied: false) == "Copy Copy this task to clipboard",

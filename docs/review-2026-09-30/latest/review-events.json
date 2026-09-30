@@ -1,0 +1,1489 @@
+{
+  "bundleID" : "com.dabin.qa.uxreview.latest.20260930",
+  "captureCount" : 9,
+  "events" : [
+    {
+      "at" : "2026-09-30T05:42:44Z",
+      "event" : "route",
+      "route" : "inbox",
+      "uptime" : 1514760.9255686251
+    },
+    {
+      "at" : "2026-09-30T05:42:44Z",
+      "count" : 7,
+      "event" : "capture-count",
+      "uptime" : 1514760.9268704585
+    },
+    {
+      "at" : "2026-09-30T05:42:44Z",
+      "count" : 8,
+      "event" : "capture-count",
+      "uptime" : 1514761.0305874168
+    },
+    {
+      "at" : "2026-09-30T05:42:44Z",
+      "count" : 8,
+      "event" : "capture-count",
+      "uptime" : 1514761.0317481251
+    },
+    {
+      "archive" : "\/tmp\/DaBin-Review-Latest-Live-20260930\/Archive",
+      "at" : "2026-09-30T05:42:44Z",
+      "bundleID" : "com.dabin.qa.uxreview.latest.20260930",
+      "event" : "ready",
+      "uptime" : 1514761.0330785834
+    },
+    {
+      "at" : "2026-09-30T05:42:44Z",
+      "event" : "route",
+      "route" : "reminders",
+      "uptime" : 1514761.7064989167
+    },
+    {
+      "at" : "2026-09-30T05:42:45Z",
+      "event" : "route",
+      "route" : "library",
+      "uptime" : 1514761.9813611251
+    },
+    {
+      "at" : "2026-09-30T05:42:45Z",
+      "event" : "route",
+      "route" : "inbox",
+      "uptime" : 1514762.8497260001
+    },
+    {
+      "at" : "2026-09-30T05:42:46Z",
+      "event" : "route",
+      "route" : "reminders",
+      "uptime" : 1514763.0902871666
+    },
+    {
+      "at" : "2026-09-30T05:42:46Z",
+      "event" : "route",
+      "route" : "library",
+      "uptime" : 1514763.345839625
+    },
+    {
+      "at" : "2026-09-30T05:42:47Z",
+      "event" : "route",
+      "route" : "inbox",
+      "uptime" : 1514764.3288393752
+    },
+    {
+      "at" : "2026-09-30T05:42:47Z",
+      "event" : "route",
+      "route" : "reminders",
+      "uptime" : 1514764.5935073751
+    },
+    {
+      "at" : "2026-09-30T05:42:47Z",
+      "event" : "route",
+      "route" : "library",
+      "uptime" : 1514764.846013125
+    },
+    {
+      "at" : "2026-09-30T05:42:48Z",
+      "event" : "route",
+      "route" : "inbox",
+      "uptime" : 1514765.6309583334
+    },
+    {
+      "at" : "2026-09-30T05:42:48Z",
+      "event" : "route",
+      "route" : "reminders",
+      "uptime" : 1514765.8493392917
+    },
+    {
+      "at" : "2026-09-30T05:42:49Z",
+      "event" : "route",
+      "route" : "library",
+      "uptime" : 1514766.0758883334
+    },
+    {
+      "at" : "2026-09-30T05:42:50Z",
+      "event" : "quit",
+      "uptime" : 1514766.93073825
+    },
+    {
+      "at" : "2026-09-30T05:44:55Z",
+      "event" : "route",
+      "route" : "inbox",
+      "uptime" : 1514892.5179975
+    },
+    {
+      "at" : "2026-09-30T05:44:55Z",
+      "count" : 8,
+      "event" : "capture-count",
+      "uptime" : 1514892.5196269585
+    },
+    {
+      "archive" : "\/tmp\/DaBin-Review-Latest-Live-20260930\/Archive",
+      "at" : "2026-09-30T05:44:55Z",
+      "bundleID" : "com.dabin.qa.uxreview.latest.20260930",
+      "event" : "ready",
+      "uptime" : 1514892.5974484584
+    },
+    {
+      "at" : "2026-09-30T05:44:56Z",
+      "event" : "route",
+      "route" : "reminders",
+      "uptime" : 1514893.0392757084
+    },
+    {
+      "at" : "2026-09-30T05:44:56Z",
+      "event" : "route",
+      "route" : "library",
+      "uptime" : 1514893.23554275
+    },
+    {
+      "at" : "2026-09-30T05:44:57Z",
+      "event" : "route",
+      "route" : "inbox",
+      "uptime" : 1514893.9492394584
+    },
+    {
+      "at" : "2026-09-30T05:44:57Z",
+      "event" : "route",
+      "route" : "reminders",
+      "uptime" : 1514894.1848486667
+    },
+    {
+      "at" : "2026-09-30T05:44:57Z",
+      "event" : "route",
+      "route" : "library",
+      "uptime" : 1514894.4395272918
+    },
+    {
+      "at" : "2026-09-30T05:44:58Z",
+      "event" : "route",
+      "route" : "inbox",
+      "uptime" : 1514895.2785008333
+    },
+    {
+      "at" : "2026-09-30T05:44:58Z",
+      "event" : "route",
+      "route" : "reminders",
+      "uptime" : 1514895.5684939167
+    },
+    {
+      "at" : "2026-09-30T05:44:59Z",
+      "event" : "route",
+      "route" : "library",
+      "uptime" : 1514895.8715872501
+    },
+    {
+      "at" : "2026-09-30T05:45:00Z",
+      "event" : "route",
+      "route" : "inbox",
+      "uptime" : 1514896.9106205418
+    },
+    {
+      "at" : "2026-09-30T05:45:00Z",
+      "event" : "route",
+      "route" : "reminders",
+      "uptime" : 1514897.1483422085
+    },
+    {
+      "at" : "2026-09-30T05:45:00Z",
+      "event" : "route",
+      "route" : "library",
+      "uptime" : 1514897.3639555001
+    },
+    {
+      "at" : "2026-09-30T05:45:01Z",
+      "event" : "route",
+      "route" : "inbox",
+      "uptime" : 1514898.1033639167
+    },
+    {
+      "at" : "2026-09-30T05:45:01Z",
+      "event" : "route",
+      "route" : "reminders",
+      "uptime" : 1514898.3305913333
+    },
+    {
+      "at" : "2026-09-30T05:45:01Z",
+      "event" : "route",
+      "route" : "library",
+      "uptime" : 1514898.565370125
+    },
+    {
+      "at" : "2026-09-30T05:45:02Z",
+      "event" : "route",
+      "route" : "inbox",
+      "uptime" : 1514899.3842699167
+    },
+    {
+      "at" : "2026-09-30T05:45:02Z",
+      "event" : "route",
+      "route" : "reminders",
+      "uptime" : 1514899.6265939584
+    },
+    {
+      "at" : "2026-09-30T05:45:03Z",
+      "event" : "route",
+      "route" : "library",
+      "uptime" : 1514899.8987835418
+    },
+    {
+      "at" : "2026-09-30T05:45:03Z",
+      "event" : "quit",
+      "uptime" : 1514900.8074686667
+    },
+    {
+      "at" : "2026-09-30T05:48:32Z",
+      "event" : "route",
+      "route" : "inbox",
+      "uptime" : 1515108.9419245
+    },
+    {
+      "at" : "2026-09-30T05:48:32Z",
+      "count" : 8,
+      "event" : "capture-count",
+      "uptime" : 1515108.9426595001
+    },
+    {
+      "archive" : "\/tmp\/DaBin-Review-Latest-Live-20260930\/Archive",
+      "at" : "2026-09-30T05:48:32Z",
+      "bundleID" : "com.dabin.qa.uxreview.latest.20260930",
+      "event" : "ready",
+      "uptime" : 1515108.9683965417
+    },
+    {
+      "at" : "2026-09-30T05:48:32Z",
+      "event" : "launch-layout",
+      "measurement" : "Delegate setup + synchronous layout, excludes process bootstrap and GPU presentation",
+      "seconds" : 0.55107299983501434,
+      "uptime" : 1515109.0934311668
+    },
+    {
+      "at" : "2026-09-30T05:48:53Z",
+      "event" : "input",
+      "keyCode" : 0,
+      "type" : 1,
+      "uptime" : 1515130.0345059168,
+      "x" : 185.5,
+      "y" : 478
+    },
+    {
+      "at" : "2026-09-30T05:48:53Z",
+      "event" : "input",
+      "keyCode" : 15,
+      "type" : 10,
+      "uptime" : 1515130.1165707917,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:48:53Z",
+      "event" : "input",
+      "keyCode" : 14,
+      "type" : 10,
+      "uptime" : 1515130.1489196252,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:48:53Z",
+      "event" : "input",
+      "keyCode" : 9,
+      "type" : 10,
+      "uptime" : 1515130.1738514584,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:48:53Z",
+      "event" : "input",
+      "keyCode" : 34,
+      "type" : 10,
+      "uptime" : 1515130.1963870001,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:48:53Z",
+      "event" : "input",
+      "keyCode" : 14,
+      "type" : 10,
+      "uptime" : 1515130.2029764168,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:48:53Z",
+      "event" : "input",
+      "keyCode" : 13,
+      "type" : 10,
+      "uptime" : 1515130.2186547918,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:48:53Z",
+      "event" : "input",
+      "keyCode" : 41,
+      "type" : 10,
+      "uptime" : 1515130.224859375,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:48:53Z",
+      "event" : "input",
+      "keyCode" : 49,
+      "type" : 10,
+      "uptime" : 1515130.2264565418,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:48:53Z",
+      "event" : "input",
+      "keyCode" : 35,
+      "type" : 10,
+      "uptime" : 1515130.2328508333,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:48:53Z",
+      "event" : "input",
+      "keyCode" : 15,
+      "type" : 10,
+      "uptime" : 1515130.2383857917,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:48:53Z",
+      "event" : "input",
+      "keyCode" : 14,
+      "type" : 10,
+      "uptime" : 1515130.2426914584,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:48:53Z",
+      "event" : "input",
+      "keyCode" : 35,
+      "type" : 10,
+      "uptime" : 1515130.2788847918,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:48:53Z",
+      "event" : "input",
+      "keyCode" : 0,
+      "type" : 10,
+      "uptime" : 1515130.3182638334,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:48:53Z",
+      "event" : "input",
+      "keyCode" : 15,
+      "type" : 10,
+      "uptime" : 1515130.3324678335,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:48:53Z",
+      "event" : "input",
+      "keyCode" : 14,
+      "type" : 10,
+      "uptime" : 1515130.363173,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:48:53Z",
+      "event" : "input",
+      "keyCode" : 49,
+      "type" : 10,
+      "uptime" : 1515130.3647840417,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:48:53Z",
+      "event" : "input",
+      "keyCode" : 0,
+      "type" : 10,
+      "uptime" : 1515130.3876936252,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:48:53Z",
+      "event" : "input",
+      "keyCode" : 49,
+      "type" : 10,
+      "uptime" : 1515130.4238816251,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:48:53Z",
+      "event" : "input",
+      "keyCode" : 3,
+      "type" : 10,
+      "uptime" : 1515130.43868525,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:48:53Z",
+      "event" : "input",
+      "keyCode" : 15,
+      "type" : 10,
+      "uptime" : 1515130.4569466251,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:48:53Z",
+      "event" : "input",
+      "keyCode" : 34,
+      "type" : 10,
+      "uptime" : 1515130.4881452085,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:48:53Z",
+      "event" : "input",
+      "keyCode" : 14,
+      "type" : 10,
+      "uptime" : 1515130.4946417918,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:48:53Z",
+      "event" : "input",
+      "keyCode" : 45,
+      "type" : 10,
+      "uptime" : 1515130.4961863752,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:48:53Z",
+      "event" : "input",
+      "keyCode" : 2,
+      "type" : 10,
+      "uptime" : 1515130.5026736667,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:48:53Z",
+      "event" : "input",
+      "keyCode" : 37,
+      "type" : 10,
+      "uptime" : 1515130.519009375,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:48:53Z",
+      "event" : "input",
+      "keyCode" : 16,
+      "type" : 10,
+      "uptime" : 1515130.5280246667,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:48:53Z",
+      "event" : "input",
+      "keyCode" : 49,
+      "type" : 10,
+      "uptime" : 1515130.5296451668,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:48:53Z",
+      "event" : "input",
+      "keyCode" : 3,
+      "type" : 10,
+      "uptime" : 1515130.5352476251,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:48:53Z",
+      "event" : "input",
+      "keyCode" : 34,
+      "type" : 10,
+      "uptime" : 1515130.5513668335,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:48:53Z",
+      "event" : "input",
+      "keyCode" : 15,
+      "type" : 10,
+      "uptime" : 1515130.5571938751,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:48:53Z",
+      "event" : "input",
+      "keyCode" : 1,
+      "type" : 10,
+      "uptime" : 1515130.5724853335,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:48:53Z",
+      "event" : "input",
+      "keyCode" : 17,
+      "type" : 10,
+      "uptime" : 1515130.5784104585,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:48:53Z",
+      "event" : "input",
+      "keyCode" : 27,
+      "type" : 10,
+      "uptime" : 1515130.5799612084,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:48:53Z",
+      "event" : "input",
+      "keyCode" : 15,
+      "type" : 10,
+      "uptime" : 1515130.5852855418,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:48:53Z",
+      "event" : "input",
+      "keyCode" : 32,
+      "type" : 10,
+      "uptime" : 1515130.6012103751,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:48:53Z",
+      "event" : "input",
+      "keyCode" : 45,
+      "type" : 10,
+      "uptime" : 1515130.6073654168,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:48:53Z",
+      "event" : "input",
+      "keyCode" : 49,
+      "type" : 10,
+      "uptime" : 1515130.6440189583,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:48:53Z",
+      "event" : "input",
+      "keyCode" : 5,
+      "type" : 10,
+      "uptime" : 1515130.6496095001,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:48:53Z",
+      "event" : "input",
+      "keyCode" : 32,
+      "type" : 10,
+      "uptime" : 1515130.6512029169,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:48:53Z",
+      "event" : "input",
+      "keyCode" : 34,
+      "type" : 10,
+      "uptime" : 1515130.6559543752,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:48:53Z",
+      "event" : "input",
+      "keyCode" : 2,
+      "type" : 10,
+      "uptime" : 1515130.6711229167,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:48:53Z",
+      "event" : "input",
+      "keyCode" : 14,
+      "type" : 10,
+      "uptime" : 1515130.6770548334,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:48:53Z",
+      "event" : "input",
+      "keyCode" : 36,
+      "type" : 10,
+      "uptime" : 1515130.7156230002,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:48:53Z",
+      "count" : 9,
+      "event" : "capture-count",
+      "uptime" : 1515130.7294225835
+    },
+    {
+      "at" : "2026-09-30T05:48:53Z",
+      "count" : 9,
+      "event" : "capture-count",
+      "uptime" : 1515130.7300722501
+    },
+    {
+      "at" : "2026-09-30T05:49:05Z",
+      "event" : "route",
+      "route" : "detail",
+      "uptime" : 1515142.2241622501
+    },
+    {
+      "at" : "2026-09-30T05:49:20Z",
+      "event" : "route",
+      "route" : "reminders",
+      "uptime" : 1515157.8583074585
+    },
+    {
+      "at" : "2026-09-30T05:50:07Z",
+      "event" : "snapshot",
+      "file" : "live-1790747407183-reminders-400x700.png",
+      "uptime" : 1515204.0458392501
+    },
+    {
+      "at" : "2026-09-30T05:50:08Z",
+      "event" : "route",
+      "route" : "library",
+      "uptime" : 1515204.9961980002
+    },
+    {
+      "at" : "2026-09-30T05:50:21Z",
+      "event" : "input",
+      "keyCode" : 0,
+      "type" : 1,
+      "uptime" : 1515218.2052180835,
+      "x" : 191.5,
+      "y" : 195
+    },
+    {
+      "at" : "2026-09-30T05:50:21Z",
+      "event" : "input",
+      "keyCode" : 15,
+      "type" : 10,
+      "uptime" : 1515218.317452,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:50:21Z",
+      "event" : "input",
+      "keyCode" : 14,
+      "type" : 10,
+      "uptime" : 1515218.3397513751,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:50:21Z",
+      "event" : "input",
+      "keyCode" : 9,
+      "type" : 10,
+      "uptime" : 1515218.3981491667,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:50:21Z",
+      "event" : "input",
+      "keyCode" : 34,
+      "type" : 10,
+      "uptime" : 1515218.4363222502,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:50:21Z",
+      "event" : "input",
+      "keyCode" : 14,
+      "type" : 10,
+      "uptime" : 1515218.4864921668,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:50:21Z",
+      "event" : "input",
+      "keyCode" : 13,
+      "type" : 10,
+      "uptime" : 1515218.5035855002,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:50:21Z",
+      "event" : "input",
+      "keyCode" : 49,
+      "type" : 10,
+      "uptime" : 1515218.5751777501,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:50:21Z",
+      "event" : "input",
+      "keyCode" : 35,
+      "type" : 10,
+      "uptime" : 1515218.5807559167,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:50:21Z",
+      "event" : "input",
+      "keyCode" : 14,
+      "type" : 10,
+      "uptime" : 1515218.5878671668,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:50:21Z",
+      "event" : "input",
+      "keyCode" : 15,
+      "type" : 10,
+      "uptime" : 1515218.6126783751,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:50:21Z",
+      "event" : "input",
+      "keyCode" : 1,
+      "type" : 10,
+      "uptime" : 1515218.6214175418,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:50:21Z",
+      "event" : "input",
+      "keyCode" : 34,
+      "type" : 10,
+      "uptime" : 1515218.6488350418,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:50:21Z",
+      "event" : "input",
+      "keyCode" : 1,
+      "type" : 10,
+      "uptime" : 1515218.6633820834,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:50:21Z",
+      "event" : "input",
+      "keyCode" : 17,
+      "type" : 10,
+      "uptime" : 1515218.6869020001,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:50:21Z",
+      "event" : "input",
+      "keyCode" : 14,
+      "type" : 10,
+      "uptime" : 1515218.6949643334,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:50:21Z",
+      "event" : "input",
+      "keyCode" : 45,
+      "type" : 10,
+      "uptime" : 1515218.7068860417,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:50:21Z",
+      "event" : "input",
+      "keyCode" : 8,
+      "type" : 10,
+      "uptime" : 1515218.7255836667,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:50:21Z",
+      "event" : "input",
+      "keyCode" : 14,
+      "type" : 10,
+      "uptime" : 1515218.7321856667,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:50:21Z",
+      "event" : "input",
+      "keyCode" : 41,
+      "type" : 10,
+      "uptime" : 1515218.7568892085,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:50:21Z",
+      "event" : "input",
+      "keyCode" : 49,
+      "type" : 10,
+      "uptime" : 1515218.7711009167,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:50:21Z",
+      "event" : "input",
+      "keyCode" : 40,
+      "type" : 10,
+      "uptime" : 1515218.7940360834,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:50:21Z",
+      "event" : "input",
+      "keyCode" : 14,
+      "type" : 10,
+      "uptime" : 1515218.8119258333,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:50:21Z",
+      "event" : "input",
+      "keyCode" : 14,
+      "type" : 10,
+      "uptime" : 1515218.8383855834,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:50:21Z",
+      "event" : "input",
+      "keyCode" : 35,
+      "type" : 10,
+      "uptime" : 1515218.8448458335,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:50:21Z",
+      "event" : "input",
+      "keyCode" : 49,
+      "type" : 10,
+      "uptime" : 1515218.8549172501,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:50:22Z",
+      "event" : "input",
+      "keyCode" : 46,
+      "type" : 10,
+      "uptime" : 1515218.8970377501,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:50:22Z",
+      "event" : "input",
+      "keyCode" : 16,
+      "type" : 10,
+      "uptime" : 1515218.9036685,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:50:22Z",
+      "event" : "input",
+      "keyCode" : 49,
+      "type" : 10,
+      "uptime" : 1515218.9315757917,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:50:22Z",
+      "event" : "input",
+      "keyCode" : 45,
+      "type" : 10,
+      "uptime" : 1515218.9378297918,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:50:22Z",
+      "event" : "input",
+      "keyCode" : 14,
+      "type" : 10,
+      "uptime" : 1515218.9714460834,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:50:22Z",
+      "event" : "input",
+      "keyCode" : 7,
+      "type" : 10,
+      "uptime" : 1515218.9772425417,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:50:22Z",
+      "event" : "input",
+      "keyCode" : 17,
+      "type" : 10,
+      "uptime" : 1515218.9891532084,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:50:22Z",
+      "event" : "input",
+      "keyCode" : 49,
+      "type" : 10,
+      "uptime" : 1515219.0103209584,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:50:22Z",
+      "event" : "input",
+      "keyCode" : 34,
+      "type" : 10,
+      "uptime" : 1515219.0163142502,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:50:22Z",
+      "event" : "input",
+      "keyCode" : 2,
+      "type" : 10,
+      "uptime" : 1515219.0392642501,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:50:22Z",
+      "event" : "input",
+      "keyCode" : 14,
+      "type" : 10,
+      "uptime" : 1515219.0447239585,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:50:22Z",
+      "event" : "input",
+      "keyCode" : 0,
+      "type" : 10,
+      "uptime" : 1515219.0561470001,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:50:22Z",
+      "event" : "input",
+      "keyCode" : 49,
+      "type" : 10,
+      "uptime" : 1515219.0775011668,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:50:22Z",
+      "event" : "input",
+      "keyCode" : 4,
+      "type" : 10,
+      "uptime" : 1515219.0840087917,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:50:22Z",
+      "event" : "input",
+      "keyCode" : 14,
+      "type" : 10,
+      "uptime" : 1515219.1146745002,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:50:22Z",
+      "event" : "input",
+      "keyCode" : 15,
+      "type" : 10,
+      "uptime" : 1515219.1221719168,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:50:22Z",
+      "event" : "input",
+      "keyCode" : 14,
+      "type" : 10,
+      "uptime" : 1515219.1456350833,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:50:22Z",
+      "event" : "input",
+      "keyCode" : 47,
+      "type" : 10,
+      "uptime" : 1515219.1530499584,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:50:23Z",
+      "event" : "route",
+      "route" : "inbox",
+      "uptime" : 1515219.9620189585
+    },
+    {
+      "at" : "2026-09-30T05:50:24Z",
+      "event" : "route",
+      "route" : "library",
+      "uptime" : 1515221.2545800002
+    },
+    {
+      "at" : "2026-09-30T05:50:37Z",
+      "event" : "quit",
+      "uptime" : 1515234.1048998751
+    },
+    {
+      "at" : "2026-09-30T05:52:43Z",
+      "event" : "route",
+      "route" : "inbox",
+      "uptime" : 1515360.2881492085
+    },
+    {
+      "at" : "2026-09-30T05:52:43Z",
+      "count" : 9,
+      "event" : "capture-count",
+      "uptime" : 1515360.2904510417
+    },
+    {
+      "archive" : "\/tmp\/DaBin-Review-Latest-Live-20260930\/Archive",
+      "at" : "2026-09-30T05:52:43Z",
+      "bundleID" : "com.dabin.qa.uxreview.latest.20260930",
+      "event" : "ready",
+      "uptime" : 1515360.3898762085
+    },
+    {
+      "at" : "2026-09-30T05:52:44Z",
+      "event" : "launch-layout",
+      "measurement" : "Delegate setup + synchronous layout, excludes process bootstrap and GPU presentation",
+      "seconds" : 1.4068344999104738,
+      "uptime" : 1515360.9100146252
+    },
+    {
+      "at" : "2026-09-30T05:52:55Z",
+      "event" : "route",
+      "route" : "library",
+      "uptime" : 1515372.2307512085
+    },
+    {
+      "at" : "2026-09-30T05:53:15Z",
+      "event" : "input",
+      "keyCode" : 0,
+      "type" : 1,
+      "uptime" : 1515392.3071672085,
+      "x" : 211,
+      "y" : 599
+    },
+    {
+      "at" : "2026-09-30T05:53:15Z",
+      "event" : "input",
+      "keyCode" : 37,
+      "type" : 10,
+      "uptime" : 1515392.3373770418,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:53:15Z",
+      "event" : "route",
+      "route" : "search",
+      "uptime" : 1515392.3541425418
+    },
+    {
+      "at" : "2026-09-30T05:53:15Z",
+      "event" : "input",
+      "keyCode" : 0,
+      "type" : 10,
+      "uptime" : 1515392.5065215419,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:53:15Z",
+      "event" : "input",
+      "keyCode" : 32,
+      "type" : 10,
+      "uptime" : 1515392.5291590418,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:53:15Z",
+      "event" : "input",
+      "keyCode" : 45,
+      "type" : 10,
+      "uptime" : 1515392.5472190001,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:53:15Z",
+      "event" : "input",
+      "keyCode" : 8,
+      "type" : 10,
+      "uptime" : 1515392.5907335002,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:53:15Z",
+      "event" : "input",
+      "keyCode" : 4,
+      "type" : 10,
+      "uptime" : 1515392.6135375418,
+      "x" : 0,
+      "y" : 732
+    },
+    {
+      "at" : "2026-09-30T05:53:22Z",
+      "event" : "route",
+      "route" : "library",
+      "uptime" : 1515398.9523852083
+    },
+    {
+      "at" : "2026-09-30T05:53:30Z",
+      "event" : "snapshot",
+      "file" : "live-1790747610609-library-400x700.png",
+      "uptime" : 1515407.4724248333
+    },
+    {
+      "at" : "2026-09-30T05:53:30Z",
+      "event" : "hide",
+      "uptime" : 1515407.533713625
+    },
+    {
+      "at" : "2026-09-30T05:53:36Z",
+      "event" : "reopen-layout",
+      "measurement" : "Delegate setup + synchronous layout, excludes process bootstrap and GPU presentation",
+      "seconds" : 0.1076384165789932,
+      "uptime" : 1515413.4676207085
+    },
+    {
+      "at" : "2026-09-30T05:54:17Z",
+      "event" : "quit",
+      "uptime" : 1515453.9082184585
+    },
+    {
+      "at" : "2026-09-30T05:58:14Z",
+      "event" : "route",
+      "route" : "inbox",
+      "uptime" : 1515691.5762286251
+    },
+    {
+      "at" : "2026-09-30T05:58:14Z",
+      "count" : 9,
+      "event" : "capture-count",
+      "uptime" : 1515691.5788995002
+    },
+    {
+      "archive" : "\/tmp\/DaBin-Review-Latest-Live-20260930\/Archive",
+      "at" : "2026-09-30T05:58:14Z",
+      "bundleID" : "com.dabin.qa.uxreview.latest.20260930",
+      "event" : "ready",
+      "uptime" : 1515691.6361343334
+    },
+    {
+      "at" : "2026-09-30T05:58:15Z",
+      "event" : "route",
+      "route" : "reminders",
+      "uptime" : 1515692.0283379168
+    },
+    {
+      "at" : "2026-09-30T05:58:15Z",
+      "event" : "route",
+      "route" : "library",
+      "uptime" : 1515692.2128904585
+    },
+    {
+      "at" : "2026-09-30T05:58:16Z",
+      "event" : "route",
+      "route" : "inbox",
+      "uptime" : 1515692.9315214169
+    },
+    {
+      "at" : "2026-09-30T05:58:16Z",
+      "event" : "route",
+      "route" : "reminders",
+      "uptime" : 1515693.1154830835
+    },
+    {
+      "at" : "2026-09-30T05:58:16Z",
+      "event" : "route",
+      "route" : "library",
+      "uptime" : 1515693.3179625
+    },
+    {
+      "at" : "2026-09-30T05:58:17Z",
+      "event" : "route",
+      "route" : "inbox",
+      "uptime" : 1515694.0705565417
+    },
+    {
+      "at" : "2026-09-30T05:58:17Z",
+      "event" : "route",
+      "route" : "reminders",
+      "uptime" : 1515694.2661964167
+    },
+    {
+      "at" : "2026-09-30T05:58:17Z",
+      "event" : "route",
+      "route" : "library",
+      "uptime" : 1515694.4813330001
+    },
+    {
+      "at" : "2026-09-30T05:58:18Z",
+      "event" : "route",
+      "route" : "inbox",
+      "uptime" : 1515695.3989252918
+    },
+    {
+      "at" : "2026-09-30T05:58:18Z",
+      "event" : "route",
+      "route" : "reminders",
+      "uptime" : 1515695.5729060418
+    },
+    {
+      "at" : "2026-09-30T05:58:18Z",
+      "event" : "route",
+      "route" : "library",
+      "uptime" : 1515695.7932447917
+    },
+    {
+      "at" : "2026-09-30T05:58:19Z",
+      "event" : "route",
+      "route" : "inbox",
+      "uptime" : 1515696.4878235417
+    },
+    {
+      "at" : "2026-09-30T05:58:19Z",
+      "event" : "route",
+      "route" : "reminders",
+      "uptime" : 1515696.66945525
+    },
+    {
+      "at" : "2026-09-30T05:58:20Z",
+      "event" : "route",
+      "route" : "library",
+      "uptime" : 1515696.8755900001
+    },
+    {
+      "at" : "2026-09-30T05:58:20Z",
+      "event" : "route",
+      "route" : "inbox",
+      "uptime" : 1515697.6031652084
+    },
+    {
+      "at" : "2026-09-30T05:58:20Z",
+      "event" : "route",
+      "route" : "reminders",
+      "uptime" : 1515697.8432607085
+    },
+    {
+      "at" : "2026-09-30T05:58:21Z",
+      "event" : "route",
+      "route" : "library",
+      "uptime" : 1515698.0702864167
+    },
+    {
+      "at" : "2026-09-30T05:58:22Z",
+      "event" : "quit",
+      "uptime" : 1515698.8764928752
+    },
+    {
+      "at" : "2026-09-30T06:09:34Z",
+      "event" : "route",
+      "route" : "inbox",
+      "uptime" : 1516371.3098374584
+    },
+    {
+      "at" : "2026-09-30T06:09:34Z",
+      "count" : 9,
+      "event" : "capture-count",
+      "uptime" : 1516371.3115014168
+    },
+    {
+      "archive" : "\/tmp\/DaBin-Review-Latest-Live-20260930\/Archive",
+      "at" : "2026-09-30T06:09:34Z",
+      "bundleID" : "com.dabin.qa.uxreview.latest.20260930",
+      "event" : "ready",
+      "uptime" : 1516371.3344866668
+    },
+    {
+      "at" : "2026-09-30T06:09:34Z",
+      "event" : "route",
+      "route" : "reminders",
+      "uptime" : 1516371.6766422917
+    },
+    {
+      "at" : "2026-09-30T06:09:34Z",
+      "event" : "route",
+      "route" : "library",
+      "uptime" : 1516371.8428493335
+    },
+    {
+      "at" : "2026-09-30T06:09:35Z",
+      "event" : "route",
+      "route" : "inbox",
+      "uptime" : 1516372.5126315001
+    },
+    {
+      "at" : "2026-09-30T06:09:35Z",
+      "event" : "route",
+      "route" : "reminders",
+      "uptime" : 1516372.6857393335
+    },
+    {
+      "at" : "2026-09-30T06:09:36Z",
+      "event" : "route",
+      "route" : "library",
+      "uptime" : 1516372.8939456251
+    },
+    {
+      "at" : "2026-09-30T06:09:36Z",
+      "event" : "route",
+      "route" : "inbox",
+      "uptime" : 1516373.5895816251
+    },
+    {
+      "at" : "2026-09-30T06:09:36Z",
+      "event" : "route",
+      "route" : "reminders",
+      "uptime" : 1516373.7708846251
+    },
+    {
+      "at" : "2026-09-30T06:09:37Z",
+      "event" : "route",
+      "route" : "library",
+      "uptime" : 1516373.9554509167
+    },
+    {
+      "at" : "2026-09-30T06:09:37Z",
+      "event" : "route",
+      "route" : "inbox",
+      "uptime" : 1516374.7620400002
+    },
+    {
+      "at" : "2026-09-30T06:09:38Z",
+      "event" : "route",
+      "route" : "reminders",
+      "uptime" : 1516374.931997125
+    },
+    {
+      "at" : "2026-09-30T06:09:38Z",
+      "event" : "route",
+      "route" : "library",
+      "uptime" : 1516375.1014109168
+    },
+    {
+      "at" : "2026-09-30T06:09:38Z",
+      "event" : "route",
+      "route" : "inbox",
+      "uptime" : 1516375.8060159583
+    },
+    {
+      "at" : "2026-09-30T06:09:39Z",
+      "event" : "route",
+      "route" : "reminders",
+      "uptime" : 1516375.9803942917
+    },
+    {
+      "at" : "2026-09-30T06:09:39Z",
+      "event" : "route",
+      "route" : "library",
+      "uptime" : 1516376.1607155418
+    },
+    {
+      "at" : "2026-09-30T06:09:40Z",
+      "event" : "route",
+      "route" : "inbox",
+      "uptime" : 1516376.9084825835
+    },
+    {
+      "at" : "2026-09-30T06:09:40Z",
+      "event" : "route",
+      "route" : "reminders",
+      "uptime" : 1516377.0987073751
+    },
+    {
+      "at" : "2026-09-30T06:09:40Z",
+      "event" : "route",
+      "route" : "library",
+      "uptime" : 1516377.3466974169
+    },
+    {
+      "at" : "2026-09-30T06:09:41Z",
+      "event" : "quit",
+      "uptime" : 1516378.1378738335
+    }
+  ],
+  "fixtureOnly" : true,
+  "root" : "\/private\/tmp\/DaBin-Review-Latest-Live-20260930"
+}

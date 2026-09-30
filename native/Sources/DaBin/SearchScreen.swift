@@ -5,16 +5,39 @@ struct SearchScreen: View {
     @ObservedObject var state: AppState
 
     private var matchCount: Int { state.searchGroups.reduce(0) { $0 + $1.entries.filter(\.isMatch).count } }
+    private var noteMatches: [WorkspaceScratchpad] {
+        let words = CaptureSearch.normalized(state.query).split(whereSeparator: { $0.isWhitespace }).map(String.init)
+        guard !words.isEmpty, state.searchSource == nil, state.filter == .all || state.filter == .text else { return [] }
+        return state.workspace.snapshot.scratchpads.values.filter { note in
+            (state.searchProject == nil || state.searchProject == note.projectName)
+            && state.searchScope.includes(captureDay: CaptureCalendar.dayString(note.updatedAt))
+            && words.allSatisfy { CaptureSearch.normalized(note.text + " " + (note.projectName ?? "")).contains($0) }
+        }.sorted { $0.updatedAt > $1.updatedAt }
+    }
 
     var body: some View {
         VStack(spacing: 0) {
             HStack(spacing: 8) {
-                Text(state.query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? "All dates · all projects" : "\(matchCount) \(matchCount == 1 ? "match" : "matches") · all dates")
+                Text(state.query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? "All dates · all projects" : "\(matchCount + noteMatches.count) matches · \(state.searchScopeTitle)")
                     .font(.system(size: 11)).foregroundStyle(Palette.muted)
-                    .accessibilityLabel("\(matchCount) search matches across all dates and projects")
+                    .accessibilityLabel("\(matchCount + noteMatches.count) matches, \(state.searchScopeTitle)")
                 Spacer(minLength: 0)
                 CaptureFilterMenu(selection: $state.filter)
             }.padding(.horizontal, 16).padding(.top, 10)
+            HStack(spacing: 12) {
+                Menu {
+                    Button("All projects") { state.searchProject = nil }
+                    ForEach(state.projectNames, id: \.self) { project in Button(project) { state.searchProject = project } }
+                } label: { Label(state.searchProject ?? "All projects", systemImage: "folder") }
+                Menu {
+                    Button("All apps") { state.searchSource = nil }
+                    ForEach(Array(Set(state.store.captures.compactMap(\.sourceApplicationName))).sorted(), id: \.self) { source in
+                        Button(source) { state.searchSource = source }
+                    }
+                } label: { Label(state.searchSource ?? "All apps", systemImage: "app.dashed") }
+                Spacer(minLength: 0)
+            }.menuStyle(.borderlessButton).fixedSize(horizontal: false, vertical: true).font(.system(size: 11))
+                .padding(.horizontal, 16).padding(.top, 8)
             Toggle("Show nearby captures", isOn: $state.showSearchContext)
                 .toggleStyle(.checkbox).font(.system(size: 11)).frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal, 16).padding(.vertical, 8)
@@ -29,11 +52,24 @@ struct SearchScreen: View {
             }
             if state.query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                 EmptyMessage(symbol: "magnifyingglass", title: "Find something you saved", message: "Search words, links, filenames, notes, recognized text or a date across your entire archive.")
-            } else if state.searchGroups.isEmpty {
+            } else if state.searchGroups.isEmpty && noteMatches.isEmpty {
                 EmptyMessage(symbol: "magnifyingglass", title: "No matching captures", message: state.contentIndex?.isBusy == true ? "Results update as saved captures become searchable." : "Try another word or clear the type filter.")
             } else {
                 ScrollView {
                     LazyVStack(alignment: .leading, spacing: 0) {
+                        ForEach(noteMatches, id: \.projectName) { note in
+                            Button {
+                                state.libraryProject = note.projectName
+                                state.workspace.mode = .scratchpad
+                                state.openLibrary()
+                            } label: {
+                                VStack(alignment: .leading, spacing: 6) {
+                                    Label("Scratchpad · \(note.projectName ?? "Inbox")", systemImage: "note.text")
+                                        .font(.system(size: 13, weight: .semibold))
+                                    Text(note.text).font(.system(size: 12)).lineLimit(3).foregroundStyle(Palette.muted)
+                                }.frame(maxWidth: .infinity, alignment: .leading).padding(.vertical, 12)
+                            }.buttonStyle(.plain)
+                        }
                         ForEach(state.searchGroups) { group in
                             Text(prettyDay(group.day)).font(.system(size: 12, weight: .medium))
                                 .foregroundStyle(Palette.muted).padding(.top, 12).accessibilityAddTraits(.isHeader)

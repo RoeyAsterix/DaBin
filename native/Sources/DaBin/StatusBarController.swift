@@ -93,7 +93,7 @@ final class StatusBarController: NSObject {
         let item = statusBar.statusItem(withLength: NSStatusItem.squareLength)
         item.isVisible = true
         let menu = NSMenu(title: "DaBin")
-        add("Open Daily", #selector(openDaily), to: menu)
+        add("Open DaBin", #selector(openDaily), to: menu)
         menu.addItem(.separator())
         let status = menu.addItem(withTitle: presentation.statusTitle, action: nil, keyEquivalent: "")
         status.isEnabled = false

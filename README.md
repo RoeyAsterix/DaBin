@@ -1,18 +1,20 @@
 # DaBin
 
-DaBin is a private work inbox for Apple Silicon Macs: save what matters, find it again, and resume the work attached to it. Paste or drop text, links, images, videos, PDFs and files, or use **Add → New note**. The purple robot remains a quick capture target, while three labeled views make the archive easier to use: **Today**, **Library** and **Follow-ups**.
+DaBin is a private desktop buddy for Apple Silicon Macs. Capture something quickly, keep it connected to a client or project, take the next action, and find it again later.
 
-Captures stay on this Mac in a dated archive. **Today** shows what was received on the selected day, with automatic batches collapsed. **Library** covers all dates; pin useful captures or optionally assign a project. A project's pinned references, next actions and recent captures help you pick up where you left off. **Follow-ups** brings unfinished tasks and reminders together, with Complete and Snooze actions. Notes, source content and original capture dates stay attached.
+Three labeled views organize the work: **Inbox** for quick notes, tasks, pastes and files; **Today** for deliberate workday planning; and **Workspace** for project resources, clipboard history, named snippets, a collection shelf and autosaving notes. Organization is optional. **Activity** in Inbox keeps the original daily/weekly capture history.
 
-The persistent **Search all captures** field searches the full archive from every view. Results show matches first; **Show nearby captures** adds optional same-day context. Icon filters narrow by content type; their hover labels can be disabled in Settings. The **Timeline** Day/Week control and calendar preserve date browsing. **Add** offers Paste clipboard, New note, Import files and New task. Preview-first cards expose copy, comment, reminder, task and more actions as icons. The gear opens Settings directly. **More** holds day/week text exports, Recently Deleted and archive backup/restore.
+Tasks keep their original content and attachments. A planned workday is separate from a deadline or reminder. Choose a priority, estimate effort, reorder today’s plan, add checklist steps, set a repeat rule, complete work or reschedule it. Project scratchpads and unfinished composer/detail drafts recover locally after restart.
 
-Removed captures go to **Recently Deleted**, with Undo for the latest removal and a separate confirmation for permanent deletion. A local `.dabinbackup` directory package includes capture metadata, saved originals, readable records, saved local edits and deleted captures. Restore verifies the package and adds missing captures; it rejects conflicts instead of overwriting existing data. Preferences are not part of the backup.
+The persistent **Search all captures** field searches the full archive from every view. Results show matches first; **Show nearby captures** adds optional same-day context. Icon filters narrow by content type; their hover labels can be disabled in Settings. In Activity, the **Timeline** Day/Week control and calendar preserve date browsing. **Add** offers Paste clipboard, New note, Import files and New task. Preview-first cards expose copy, comment, reminder, task and more actions as icons. The gear opens Settings directly. **More** holds day/week text exports, Recently Deleted and archive backup/restore.
 
-Today opens once on first launch. Afterwards, use the robot, menu bar or global shortcuts: **⌃⌥Space** searches and **⌃⌥V** saves the current clipboard. Settings offers an alternate chord and lets you disable global shortcuts. **Quiet mode** opens the board promptly and suppresses automatic capture celebrations. The board supports dark mode and theme colors; new preferences default to an opaque background, while existing transparency choices are retained. The robot still follows macOS Reduce Motion.
+Removed captures go to **Recently Deleted**, with Undo for the latest removal and a separate confirmation for permanent deletion. A local `.dabinbackup` directory package includes capture metadata, saved originals, readable records, saved local edits and deleted captures. Restore verifies the package and adds missing captures; it rejects conflicts instead of overwriting existing data. Workspace notes, shelf references and snippet names are included. Device preferences and unfinished drafts are kept separately on this Mac.
+
+Inbox opens once on first launch; reopening resumes the current work. Afterwards, use the robot, menu bar or global shortcuts: **⌃⌥Space** searches and **⌃⌥V** saves the current clipboard. Settings offers an alternate chord and lets you disable global shortcuts. **Quiet mode** opens the board promptly and suppresses automatic capture celebrations. The board supports dark mode and theme colors; new preferences default to an opaque background, while existing transparency choices are retained. The robot still follows macOS Reduce Motion.
 
 DaBin recognizes text in saved screenshots, images, PDFs and supported text documents entirely on the Mac. Search can find that content even when the filename or caption does not contain the query, and shows the matching recognized line. Capture details expose the searchable text and Settings can rebuild the local index. This is local text search, not semantic search. There is no cloud sync, and no recognized content is sent to an external AI or OCR service.
 
-The working version is **0.4.1, build 49**, a local candidate. See its [release notes](docs/RELEASE_NOTES_0.4.1.md); this does not identify it as the current public GitHub release or an Apple-approved build.
+The working version is **0.4.2, build 51**, a local candidate. See its [release notes](docs/RELEASE_NOTES_0.4.2.md); this does not identify it as the current public GitHub release or an Apple-approved build.
 
 ## A little desktop buddy
 
@@ -47,7 +49,8 @@ These permanent links follow the newest public GitHub release. The current files
 ## Start here
 
 - [Native app guide](native/README.md)
-- [0.4.1 desktop buddy candidate notes](docs/RELEASE_NOTES_0.4.1.md)
+- [0.4.2 connected-workflow candidate notes](docs/RELEASE_NOTES_0.4.2.md)
+- [Product review, evidence and roadmap](docs/review-2026-09-30/README.md)
 - [0.4.0 local candidate notes](docs/RELEASE_NOTES_0.4.0.md)
 - [0.3.18 release notes](docs/RELEASE_NOTES_0.3.18.md)
 - [0.3.17 release notes](docs/RELEASE_NOTES_0.3.17.md)

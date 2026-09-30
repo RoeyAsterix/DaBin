@@ -3,7 +3,7 @@ import Combine
 import Foundation
 
 enum BoardRoute: Equatable {
-    case daily, weekly, library, search, detail, reminders, settings, newTask, newNote, trash
+    case inbox, daily, weekly, library, search, detail, reminders, settings, newTask, newNote, trash
 }
 
 enum BoardTimelineMode: Hashable {
@@ -33,9 +33,20 @@ struct AppStatusMessage: Equatable {
     }
 }
 
+private struct SearchCacheKey: Equatable {
+    let query: String
+    let filter: CaptureFilter
+    let scope: CaptureSearchScope
+    let context: Bool
+    let project: String?
+    let source: String?
+    let revision: UInt
+}
+
 @MainActor
 final class NewTaskDraft: ObservableObject {
     @Published var text = ""
+    @Published var planning = TaskPlanning()
     @Published var reminderEnabled = false
     @Published var reminderMode: ReminderScheduleMode = .date
     @Published var countdownHours = 0
@@ -43,10 +54,11 @@ final class NewTaskDraft: ObservableObject {
     @Published var reminderDate = Date().addingTimeInterval(3600)
     @Published var message: String?
 
-    var hasChanges: Bool { !text.isEmpty || reminderEnabled }
+    var hasChanges: Bool { !text.isEmpty || reminderEnabled || planning != TaskPlanning() }
 
     func reset() {
         text = ""
+        planning = TaskPlanning()
         reminderEnabled = false
         reminderMode = .date
         countdownHours = 0
@@ -67,10 +79,14 @@ final class CaptureDraft: ObservableObject {
     @Published var reminderDate: Date
     @Published var message: String?
     @Published var hasError = false
+    @Published var planning: TaskPlanning
+    private var savedPlanning: TaskPlanning
     private var savedComment: String
     private var savedReminder: Date?
 
     init(capture: Capture) {
+        planning = capture.taskPlanning ?? TaskPlanning()
+        savedPlanning = capture.taskPlanning ?? TaskPlanning()
         comment = capture.comment
         reminderEnabled = capture.reminderAt != nil
         reminderDate = capture.reminderAt ?? Date().addingTimeInterval(3600)
@@ -79,7 +95,7 @@ final class CaptureDraft: ObservableObject {
     }
 
     var reminder: Date? { reminderEnabled ? reminderDate : nil }
-    var hasChanges: Bool { comment != savedComment || reminderChanged }
+    var hasChanges: Bool { comment != savedComment || reminderChanged || planning != savedPlanning }
     var reminderChanged: Bool { (reminderEnabled && reminderMode == .countdown) || reminder != savedReminder }
 
     func resolvedReminder(at now: Date = Date()) throws -> Date? {
@@ -89,10 +105,24 @@ final class CaptureDraft: ObservableObject {
     }
 
     func didSave() {
+        savedPlanning = planning
         savedComment = comment
         savedReminder = reminder
         message = "Changes saved."
         hasError = false
+    }
+
+    func adoptSavedPlanning(from capture: Capture) {
+        let committed = capture.taskPlanning ?? TaskPlanning()
+        if planning == savedPlanning { planning = committed }
+        else {
+            // Completing from the card owns lifecycle fields only. Keep the
+            // user's unfinished deadline/checklist/priority edits in the draft.
+            planning.completedAt = committed.completedAt
+            planning.previousOccurrenceID = committed.previousOccurrenceID
+            planning.nextOccurrenceID = committed.nextOccurrenceID
+        }
+        savedPlanning = committed
     }
 
     /// A newer Complete/Snooze action owns the reminder, while an unfinished
@@ -118,10 +148,16 @@ final class AppState: ObservableObject {
     let autoCapture: AutoCaptureService
     let captureClipboard: CaptureClipboardService
     let quickAccessSettings: QuickAccessSettings
+    let workspace: WorkspaceStore
+    let clipboardRetention: ClipboardRetentionService
+    private let draftArchive: DraftArchive
+    @Published private(set) var draftPersistenceError: String?
     private let manualInput: InputService
     let newTaskDraft = NewTaskDraft()
     @Published var newNoteText = ""
-    @Published var libraryProject: String?
+    @Published var libraryProject: String? {
+        didSet { if workspace.selectedProject != libraryProject { workspace.selectedProject = libraryProject } }
+    }
     @Published var libraryPinnedOnly = false
     @Published var showSearchContext = false
     @Published var globalSearchFocusRequest = 0
@@ -129,7 +165,7 @@ final class AppState: ObservableObject {
     @Published private var isFileImporting = false
     var isImporting: Bool { isFileImporting || manualInput.isBusy }
     @Published private var undoRemovalIDs: [UUID] = []
-    @Published var route: BoardRoute = .daily {
+    @Published var route: BoardRoute = .inbox {
         didSet {
             if route != oldValue { captureNavigationRevision &+= 1 }
             if route != .daily { isDailyDropTargeted = false }
@@ -145,6 +181,8 @@ final class AppState: ObservableObject {
         didSet { if filter != oldValue { captureNavigationRevision &+= 1 } }
     }
     @Published var query = ""
+    @Published var searchProject: String?
+    @Published var searchSource: String?
     @Published private(set) var searchScope: CaptureSearchScope = .all
     @Published var weeklySearchActionsPresented = false
     @Published private(set) var autoCaptureSetupRequested = false
@@ -168,10 +206,25 @@ final class AppState: ObservableObject {
     var onBoardDragStarted: (() -> Void)?
     private var origin: BoardRoute = .daily
     private var searchReturnRoute: BoardRoute = .daily
+    private var searchReturnFilter: CaptureFilter = .all
+    private var searchReturnCreationRoute: BoardRoute = .inbox
+    private var searchReturnAuxiliaryRoute: BoardRoute = .inbox
+    private struct SearchDetailContext {
+        let captureID: UUID
+        let origin: BoardRoute
+        let attachmentReturnTaskID: UUID?
+        let focus: String?
+    }
+    private var searchDetailContext: SearchDetailContext?
+    private var creationReturnRoute: BoardRoute = .inbox
+    private var auxiliaryReturnRoute: BoardRoute = .inbox
     private var drafts: [UUID: CaptureDraft] = [:]
     private var subscriptions = Set<AnyCancellable>()
     private var reminderServiceFeedback: (captureID: UUID, message: String?)?
     private var currentDayKey = CaptureCalendar.dayString(Date())
+    private var searchRevision: UInt = 0
+    private var searchCacheKey: SearchCacheKey?
+    private var searchCache: [SearchGroup] = []
 
     init(store: CaptureStore, previews: PreviewService, contentIndex: ContentIndexService? = nil,
          reminders: ReminderService,
@@ -190,9 +243,27 @@ final class AppState: ObservableObject {
             settings: AutoCaptureSettings(defaults: nil), input: InputService(store: store))
         self.captureClipboard = captureClipboard ?? CaptureClipboardService()
         self.quickAccessSettings = quickAccessSettings ?? QuickAccessSettings(defaults: nil)
+        self.workspace = WorkspaceStore(root: store.root)
+        self.clipboardRetention = ClipboardRetentionService(store: store, workspace: self.workspace)
+        self.draftArchive = DraftArchive(root: store.root)
+        self.libraryProject = self.workspace.selectedProject
         self.manualInput = manualInput ?? InputService(store: store)
+        self.clipboardRetention.onWillTrash = { [weak previews, weak contentIndex] capture in
+            await previews?.cancel(for: capture.id)
+            await contentIndex?.cancel(for: capture.id)
+        }
+        restoreDrafts()
+        $newNoteText.dropFirst().debounce(for: .milliseconds(150), scheduler: RunLoop.main)
+            .sink { [weak self] _ in self?.persistDrafts() }.store(in: &subscriptions)
+        newTaskDraft.objectWillChange.debounce(for: .milliseconds(150), scheduler: RunLoop.main)
+            .sink { [weak self] _ in self?.persistDrafts() }.store(in: &subscriptions)
         self.manualInput.onBusy = { [weak self] _ in self?.objectWillChange.send() }
         store.objectWillChange.sink { [weak self] _ in
+            self?.searchRevision &+= 1
+            self?.objectWillChange.send()
+        }.store(in: &subscriptions)
+        workspace.objectWillChange.sink { [weak self] _ in
+            self?.searchRevision &+= 1
             self?.objectWillChange.send()
         }.store(in: &subscriptions)
         contentIndex?.objectWillChange.sink { [weak self] _ in
@@ -227,9 +298,55 @@ final class AppState: ObservableObject {
             .receive(on: RunLoop.main)
             .sink { [weak self] _ in self?.refreshCurrentDay() }
             .store(in: &subscriptions)
+        Task { [weak self] in _ = await self?.clipboardRetention.cleanup() }
     }
 
     var dayKey: String { CaptureCalendar.dayString(selectedDay) }
+
+    func persistDrafts() {
+        var snapshot = DraftArchiveSnapshot()
+        snapshot.note = newNoteText
+        snapshot.task = ComposerSnapshot(text: newTaskDraft.text, planning: newTaskDraft.planning,
+            reminderEnabled: newTaskDraft.reminderEnabled, reminderMode: newTaskDraft.reminderMode.rawValue,
+            countdownHours: newTaskDraft.countdownHours, countdownMinutes: newTaskDraft.countdownMinutes,
+            reminderDate: newTaskDraft.reminderDate)
+        snapshot.details = drafts.compactMap { id, draft in
+            guard draft.hasChanges else { return nil }
+            return DetailDraftSnapshot(captureID: id, comment: draft.comment, planning: draft.planning,
+                reminderEnabled: draft.reminderEnabled, reminderMode: draft.reminderMode.rawValue,
+                countdownHours: draft.countdownHours, countdownMinutes: draft.countdownMinutes, reminderDate: draft.reminderDate)
+        }
+        do { try draftArchive.save(snapshot); draftPersistenceError = nil }
+        catch { draftPersistenceError = "Drafts are still in memory. \(error.localizedDescription)" }
+    }
+
+    private func restoreDrafts() {
+        guard let snapshot = draftArchive.load() else { draftPersistenceError = draftArchive.recoveryError; return }
+        newNoteText = snapshot.note
+        newTaskDraft.text = snapshot.task.text
+        newTaskDraft.planning = snapshot.task.planning
+        newTaskDraft.reminderEnabled = snapshot.task.reminderEnabled
+        newTaskDraft.reminderMode = ReminderScheduleMode(rawValue: snapshot.task.reminderMode) ?? .date
+        newTaskDraft.countdownHours = snapshot.task.countdownHours
+        newTaskDraft.countdownMinutes = snapshot.task.countdownMinutes
+        newTaskDraft.reminderDate = snapshot.task.reminderDate
+        for saved in snapshot.details {
+            guard let capture = store.captures.first(where: { $0.id == saved.captureID }) else { continue }
+            let draft = CaptureDraft(capture: capture)
+            draft.comment = saved.comment; draft.planning = saved.planning
+            draft.reminderEnabled = saved.reminderEnabled
+            draft.reminderMode = ReminderScheduleMode(rawValue: saved.reminderMode) ?? .date
+            draft.countdownHours = saved.countdownHours; draft.countdownMinutes = saved.countdownMinutes
+            draft.reminderDate = saved.reminderDate
+            drafts[saved.captureID] = draft
+            observeDraft(draft)
+        }
+    }
+
+    private func observeDraft(_ draft: CaptureDraft) {
+        draft.objectWillChange.debounce(for: .milliseconds(150), scheduler: RunLoop.main)
+            .sink { [weak self] _ in self?.persistDrafts() }.store(in: &subscriptions)
+    }
     var dailyCaptures: [Capture] { captures(for: selectedDay) }
     var weeklyDays: [Date] {
         let calendar = Calendar.current
@@ -284,8 +401,20 @@ final class AppState: ObservableObject {
         currentDayKey = nextDay
     }
     var searchGroups: [SearchGroup] {
-        CaptureSearch.groups(captures: store.captures, query: query, filter: filter,
-                             scope: searchScope, includeContext: showSearchContext)
+        let key = SearchCacheKey(query: query, filter: filter, scope: searchScope, context: showSearchContext,
+                                 project: searchProject, source: searchSource, revision: searchRevision)
+        if searchCacheKey == key { return searchCache }
+        let groups = CaptureSearch.groups(captures: store.captures.filter {
+            (searchProject == nil || $0.projectName == searchProject)
+            && (searchSource == nil || $0.sourceApplicationName == searchSource)
+        }, query: query, filter: filter,
+                             scope: searchScope, includeContext: showSearchContext,
+                             additionalText: Dictionary(workspace.snapshot.snippetNames.compactMap {
+                                 guard let id = UUID(uuidString: $0.key) else { return nil }; return (id, $0.value)
+                             }, uniquingKeysWith: { first, _ in first }))
+        searchCacheKey = key
+        searchCache = groups
+        return groups
     }
     var searchScopeTitle: String {
         switch searchScope {
@@ -310,7 +439,7 @@ final class AppState: ObservableObject {
             ?? weekEndingDay
     }
     var hasUnsavedDrafts: Bool {
-        !newNoteText.isEmpty || newTaskDraft.hasChanges || drafts.values.contains(where: \.hasChanges)
+        workspace.hasUnsavedChanges || !newNoteText.isEmpty || newTaskDraft.hasChanges || drafts.values.contains(where: \.hasChanges)
     }
 
     /// The primary Today view shows receipt history. Outstanding work has its
@@ -322,7 +451,7 @@ final class AppState: ObservableObject {
     }
     var todayTimelineCaptures: [Capture] { receiptCaptures(for: selectedDay).filter { filter.includes($0) } }
     var projectNames: [String] {
-        Set(store.captures.compactMap(\.projectName)).sorted { $0.localizedStandardCompare($1) == .orderedAscending }
+        Set(store.captures.compactMap(\.projectName) + workspace.projectNames).sorted { $0.localizedStandardCompare($1) == .orderedAscending }
     }
     var libraryCaptures: [Capture] {
         store.captures.filter {
@@ -343,8 +472,12 @@ final class AppState: ObservableObject {
     }
     var canUndoRemoval: Bool { store.trashedCaptures.contains { undoRemovalIDs.contains($0.id) } }
 
-    func openLibrary() { filter = .all; route = .library }
-    func showTrash() { route = .trash }
+    func openLibrary() { route = .library }
+    func openInbox() { route = .inbox }
+    func showTrash() {
+        if !returnRouteChain(from: route).contains(where: { $0 == .settings || $0 == .trash }) { auxiliaryReturnRoute = route }
+        route = .trash
+    }
 
     func openDaily() {
         refreshCurrentDay()
@@ -401,11 +534,41 @@ final class AppState: ObservableObject {
         route = .weekly
     }
 
+    /// Follow existing return slots without looping if an older route was
+    /// already replaced. Search remains one session across temporary pages.
+    private func returnRouteChain(from start: BoardRoute) -> [BoardRoute] {
+        var visited: [BoardRoute] = []
+        var current = start
+        while !visited.contains(current) {
+            visited.append(current)
+            switch current {
+            case .detail: current = origin
+            case .settings, .trash: current = auxiliaryReturnRoute
+            case .newTask, .newNote: current = creationReturnRoute
+            default: return visited
+            }
+        }
+        return visited
+    }
+
     func openSearch() {
-        if route != .search {
-            searchReturnRoute = [.daily, .weekly, .library, .reminders].contains(route) ? route : .daily
+        // Returning to Search from a result is part of the same search session.
+        // Keep the original working context instead of creating a detail/search loop.
+        // This also applies to composers and auxiliary pages over that result.
+        let returnChain = returnRouteChain(from: route)
+        if !returnChain.contains(.search) {
+            searchReturnRoute = route
+            searchReturnFilter = filter
+            searchReturnCreationRoute = creationReturnRoute
+            searchReturnAuxiliaryRoute = auxiliaryReturnRoute
+            searchDetailContext = returnChain.contains(.detail) ? selectedCapture.map {
+                SearchDetailContext(captureID: $0.id, origin: origin,
+                    attachmentReturnTaskID: attachmentReturnTaskID, focus: detailFocus)
+            } : nil
         }
         searchScope = .all
+        searchProject = nil
+        searchSource = nil
         filter = .all
         weeklySearchActionsPresented = false
         searchScrollID = nil
@@ -428,22 +591,39 @@ final class AppState: ObservableObject {
     }
 
     func openSearch(day: Date) {
+        if route != .search {
+            searchReturnFilter = filter
+            searchReturnCreationRoute = creationReturnRoute
+            searchReturnAuxiliaryRoute = auxiliaryReturnRoute
+        }
+        searchProject = nil; searchSource = nil
         weeklySearchActionsPresented = false
         searchScope = .day(CaptureCalendar.dayString(day))
         searchReturnRoute = .weekly
+        searchDetailContext = nil
         searchScrollID = nil
         route = .search
     }
 
     func openSearch(week days: [Date]) {
+        if route != .search {
+            searchReturnFilter = filter
+            searchReturnCreationRoute = creationReturnRoute
+            searchReturnAuxiliaryRoute = auxiliaryReturnRoute
+        }
+        searchProject = nil; searchSource = nil
         weeklySearchActionsPresented = false
         searchScope = .week(Set(days.map { CaptureCalendar.dayString($0) }))
         searchReturnRoute = .weekly
+        searchDetailContext = nil
         searchScrollID = nil
         route = .search
     }
     func showReminders() { route = .reminders }
-    func showSettings() { route = .settings }
+    func showSettings() {
+        if !returnRouteChain(from: route).contains(where: { $0 == .settings || $0 == .trash }) { auxiliaryReturnRoute = route }
+        route = .settings
+    }
 
     func toggleAutoCaptureFromHeader() {
         let settings = autoCapture.settings
@@ -451,7 +631,7 @@ final class AppState: ObservableObject {
             autoCapture.setPaused(!settings.isPaused)
         } else {
             autoCaptureSetupRequested = true
-            route = .settings
+            showSettings()
         }
     }
 
@@ -462,19 +642,24 @@ final class AppState: ObservableObject {
     }
 
     func openNewTask() {
+        if !returnRouteChain(from: route).contains(where: { $0 == .newTask || $0 == .newNote }) { creationReturnRoute = route }
         status = nil
         newTaskDraft.message = nil
         route = .newTask
     }
 
-    func openNewNote() { status = nil; route = .newNote }
-    func cancelNewNote() { newNoteText = ""; route = .daily }
+    func openNewNote() {
+        if !returnRouteChain(from: route).contains(where: { $0 == .newTask || $0 == .newNote }) { creationReturnRoute = route }
+        status = nil
+        route = .newNote
+    }
+    func cancelNewNote() { newNoteText = ""; route = creationReturnRoute }
     func saveNewNote() {
         do {
-            let saved = try store.capture(text: newNoteText)
+            let saved = try store.createNote(text: newNoteText, projectName: libraryProject)
             newNoteText = ""
-            openDaily()
-            didCapture(saved)
+            route = creationReturnRoute
+            didCapture([saved])
         } catch { reportFailure("Could not save the note: \(error.localizedDescription)") }
     }
 
@@ -483,7 +668,7 @@ final class AppState: ObservableObject {
         let navigation = captureNavigationRevision
         manualInput.receive(pasteboard, completion: { [weak self] captures, failures in
             guard let self else { return }
-            if !captures.isEmpty, self.captureNavigationRevision == navigation { self.openDaily() }
+            if !captures.isEmpty, self.captureNavigationRevision == navigation, self.route != .inbox { self.openDaily() }
             self.reportCaptureResult(captures, errors: failures)
         })
     }
@@ -507,7 +692,7 @@ final class AppState: ObservableObject {
                 catch { failures.append("\(url.lastPathComponent): \(error.localizedDescription)") }
             }
             isFileImporting = false
-            if !saved.isEmpty, captureNavigationRevision == navigation { openDaily() }
+            if !saved.isEmpty, captureNavigationRevision == navigation, route != .inbox { openDaily() }
             reportCaptureResult(saved, errors: failures)
         }
     }
@@ -588,7 +773,7 @@ final class AppState: ObservableObject {
 
     func cancelNewTask() {
         newTaskDraft.reset()
-        route = .daily
+        route = creationReturnRoute
     }
 
     func saveNewTask() {
@@ -608,9 +793,11 @@ final class AppState: ObservableObject {
         }
         do {
             let capture = try store.createTask(text: newTaskDraft.text, reminderAt: reminder,
-                reminderTimeZoneID: reminder == nil ? nil : TimeZone.current.identifier)
+                reminderTimeZoneID: reminder == nil ? nil : TimeZone.current.identifier,
+                planning: newTaskDraft.planning, projectName: libraryProject)
             newTaskDraft.reset()
-            openDaily()
+            route = creationReturnRoute
+            status = AppStatusMessage(text: libraryProject.map { "Task saved in \($0)." } ?? "Task saved to Inbox.", severity: .success)
             dailyScrollID = feedID(for: capture, on: selectedDay)
             if reminder != nil {
                 Task { await saveReminderAndReport(for: capture) }
@@ -640,12 +827,14 @@ final class AppState: ObservableObject {
     func toggleTaskCompletion(_ capture: Capture) {
         guard capture.isTask else { return }
         do {
-            try store.setTaskCompleted(capture, completed: !capture.isCompleted)
+            let successor = try store.setTaskCompleted(capture, completed: !capture.isCompleted)
+            drafts[capture.id]?.adoptSavedPlanning(from: capture)
             if capture.isCompleted { clearReminderFeedback(for: capture); onTaskCompleted?() }
             objectWillChange.send()
             Task {
                 if capture.isCompleted { await reminders.clearForCapture(capture.id) }
                 else { await saveReminderAndReport(for: capture) }
+                if let successor, successor.reminderAt != nil { await saveReminderAndReport(for: successor) }
             }
         } catch {
             reportFailure("Could not update the task: \(error.localizedDescription)")
@@ -815,6 +1004,7 @@ final class AppState: ObservableObject {
     }
 
     func exportArchiveBackup() {
+        guard !workspace.hasUnsavedChanges else { reportFailure("Save or retry the scratchpad before backing up."); return }
         guard !isArchiveOperationRunning, !isImporting, removingCaptureID == nil else { return }
         let picker = NSSavePanel()
         picker.title = "Back up your DaBin archive"
@@ -832,6 +1022,7 @@ final class AppState: ObservableObject {
     }
 
     func restoreArchiveBackup() {
+        guard !workspace.hasUnsavedChanges else { reportFailure("Save or retry the scratchpad before restoring a backup."); return }
         guard !isArchiveOperationRunning, !isImporting, removingCaptureID == nil else { return }
         let picker = NSOpenPanel()
         picker.title = "Restore a DaBin backup"
@@ -846,6 +1037,7 @@ final class AppState: ObservableObject {
         defer { isArchiveOperationRunning = false }
         do {
             let result = try store.restoreBackup(from: url)
+            try workspace.reload()
             previews.process(store.captures)
             contentIndex?.process(store.captures)
             Task { await reminders.reconcile() }
@@ -862,9 +1054,14 @@ final class AppState: ObservableObject {
         if route == .detail, let current = selectedCapture, current.isTask, capture.parentTaskID == current.id {
             attachmentReturnTaskID = current.id
         } else { attachmentReturnTaskID = nil }
-        if route != .detail { origin = route }
+        if route == .search || !returnRouteChain(from: route).contains(.detail) { origin = route }
         selectedCapture = capture
-        if drafts[id] == nil { drafts[id] = CaptureDraft(capture: capture) }
+        workspace.selectedCaptureID = id
+        if drafts[id] == nil {
+            let draft = CaptureDraft(capture: capture)
+            drafts[id] = draft
+            observeDraft(draft)
+        }
         selectedDraft = drafts[id]
         detailFocus = focus
         route = .detail
@@ -880,7 +1077,28 @@ final class AppState: ObservableObject {
             attachmentReturnTaskID = nil
             route = origin
         } else if route == .search {
-            route = searchReturnRoute
+            filter = searchReturnFilter
+            creationReturnRoute = searchReturnCreationRoute
+            auxiliaryReturnRoute = searchReturnAuxiliaryRoute
+            if let context = searchDetailContext,
+               let capture = store.captures.first(where: { $0.id == context.captureID }) {
+                selectedCapture = capture
+                workspace.selectedCaptureID = capture.id
+                selectedDraft = drafts[capture.id]
+                origin = context.origin
+                attachmentReturnTaskID = context.attachmentReturnTaskID
+                detailFocus = context.focus
+                searchDetailContext = nil
+                route = searchReturnRoute
+                return
+            }
+            // The previous task may have been removed while browsing results.
+            route = searchReturnRoute == .detail ? (searchDetailContext?.origin ?? .inbox) : searchReturnRoute
+            searchDetailContext = nil
+        } else if route == .newTask || route == .newNote {
+            route = creationReturnRoute
+        } else if route == .settings || route == .trash {
+            route = auxiliaryReturnRoute
         } else {
             route = .daily
         }
@@ -926,6 +1144,7 @@ final class AppState: ObservableObject {
         previews.process(captures)
         contentIndex?.process(captures)
         objectWillChange.send()
+        Task { [weak self] in _ = await self?.clipboardRetention.cleanup() }
     }
 
     func retryContentIndex(_ capture: Capture) {
@@ -999,7 +1218,8 @@ final class AppState: ObservableObject {
         let changedReminder = draft.reminderChanged
         do {
             try store.update(capture, comment: draft.comment, reminderAt: resolvedReminder,
-                             reminderTimeZoneID: resolvedReminder == nil ? nil : (changedReminder ? TimeZone.current.identifier : capture.reminderTimeZoneID))
+                             reminderTimeZoneID: resolvedReminder == nil ? nil : (changedReminder ? TimeZone.current.identifier : capture.reminderTimeZoneID),
+                             planning: capture.isTask ? draft.planning : nil)
             draft.adoptSavedReminder(from: capture)
             draft.didSave()
             if changedReminder {

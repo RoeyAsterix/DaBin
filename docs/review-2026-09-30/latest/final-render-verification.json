@@ -1,0 +1,305 @@
+{
+  "moduleCache": "b5942dd2565c206ad19945c5b2c849a71432e993ed3e6bdf1c5de91e06135b11",
+  "moduleSHA256": "8a6d1102b162a3730b6b66fa664e9fb2addf7ed0b65364702107fb37a163f1c6",
+  "method": "Native production views in isolated offscreen wrapper, fictional persisted records; no user archive, window focus, network or GPU timing assertion.",
+  "renderCount": 36,
+  "files": [
+    {
+      "file": "native-clipboard-dark-380-minimum.png",
+      "pixels": [
+        400,
+        480
+      ],
+      "sha256": "ba4064fe454a37bf3ff8f65c45491dc6141e5c9abe3a09402d4c39c65c8f1adb"
+    },
+    {
+      "file": "native-clipboard-dark-380.png",
+      "pixels": [
+        400,
+        730
+      ],
+      "sha256": "aeec46a9b4b0e31aa9371864ccd8ade2e5a6e684cce511935ff2445866b49956"
+    },
+    {
+      "file": "native-clipboard-dark-760.png",
+      "pixels": [
+        780,
+        730
+      ],
+      "sha256": "60c473b1a6ef865cb77a95ac100e7988b1305d792234e724c106f983dd85bdd7"
+    },
+    {
+      "file": "native-clipboard-light-380-minimum.png",
+      "pixels": [
+        400,
+        480
+      ],
+      "sha256": "217f68387596629a2bc247f22d80e42113a3952612f30ff3fbcceebd8634cbd7"
+    },
+    {
+      "file": "native-clipboard-light-380.png",
+      "pixels": [
+        400,
+        730
+      ],
+      "sha256": "dfa828d1540611c3df3e402873e623d3b7730369d6610540738a3c69501e2222"
+    },
+    {
+      "file": "native-clipboard-light-760.png",
+      "pixels": [
+        780,
+        730
+      ],
+      "sha256": "08de111aed85a8d005f95d181bc6126cc784be485d6198096bf3c3c41c71bbba"
+    },
+    {
+      "file": "native-inbox-dark-380-minimum.png",
+      "pixels": [
+        400,
+        480
+      ],
+      "sha256": "9429b3ded7eab78c45df09d73ce6ce1c938fa2c466562ee110947a6ac9bdee79"
+    },
+    {
+      "file": "native-inbox-dark-380.png",
+      "pixels": [
+        400,
+        730
+      ],
+      "sha256": "0690aadbecca20e2f6b700daaccf81be3df25322c7eee8632187bf56bc9d867e"
+    },
+    {
+      "file": "native-inbox-dark-760.png",
+      "pixels": [
+        780,
+        730
+      ],
+      "sha256": "ef57410a02aa888511fa456389add0aeb15441ccb8516153b519448a3f157eaf"
+    },
+    {
+      "file": "native-inbox-light-380-minimum.png",
+      "pixels": [
+        400,
+        480
+      ],
+      "sha256": "c49d119a1c07a08d1d4c478a8618e5c33de4fef92786634478f30e43d77c99bc"
+    },
+    {
+      "file": "native-inbox-light-380.png",
+      "pixels": [
+        400,
+        730
+      ],
+      "sha256": "d7d62a2ffcf55e0995035cb5f5a4e72db8c0c4ff1e06eed17618f60a94e11e72"
+    },
+    {
+      "file": "native-inbox-light-760.png",
+      "pixels": [
+        780,
+        730
+      ],
+      "sha256": "1ee5098b99107aba94fd0242f8f7dd4f86bbc5c8c6f7b03afa13666c70e7f20f"
+    },
+    {
+      "file": "native-library-dark-380-minimum.png",
+      "pixels": [
+        400,
+        480
+      ],
+      "sha256": "306bfa3c0bee029ac8e4c1ebfd06d3830a1011f31aaf26b657dab4386c04204e"
+    },
+    {
+      "file": "native-library-dark-380.png",
+      "pixels": [
+        400,
+        730
+      ],
+      "sha256": "e535e2c520b5b5fcee0b89291487ae6af1d4fe341c9fdb3bcb3cfe0d6866a827"
+    },
+    {
+      "file": "native-library-dark-760.png",
+      "pixels": [
+        780,
+        730
+      ],
+      "sha256": "3c2dbd1cc80055336bdf28341626b2e2ea7c4a0781ad5d454a914efdd0d5eb6e"
+    },
+    {
+      "file": "native-library-light-380-minimum.png",
+      "pixels": [
+        400,
+        480
+      ],
+      "sha256": "5424739c09c8ac9a724e2afd458f21d7b33b5578d9998a1869df93515ac5e69f"
+    },
+    {
+      "file": "native-library-light-380.png",
+      "pixels": [
+        400,
+        730
+      ],
+      "sha256": "6642d83d7bc2a68a8476da12ec808a415814bcaffd4051a94a36b548704350e8"
+    },
+    {
+      "file": "native-library-light-760.png",
+      "pixels": [
+        780,
+        730
+      ],
+      "sha256": "5cb049c6b91e11baa2ff269fac342e1268982d8f3b0f5f51969bc3d83a9a8625"
+    },
+    {
+      "file": "native-scratchpad-dark-380-minimum.png",
+      "pixels": [
+        400,
+        480
+      ],
+      "sha256": "2c855babe9734fe55b83295b50dbbbcd5f4392f5ed2177fec7eb89ce4bc46074"
+    },
+    {
+      "file": "native-scratchpad-dark-380.png",
+      "pixels": [
+        400,
+        730
+      ],
+      "sha256": "a0614bf8e21461eea87084a799a8ac6c26616546909b4e70b3bcdffbc33bbfe0"
+    },
+    {
+      "file": "native-scratchpad-dark-760.png",
+      "pixels": [
+        780,
+        730
+      ],
+      "sha256": "783a0182dab37c10a35dc410ca4e2b13c4fc2dcabf5c509d5e2ab2b4812f6594"
+    },
+    {
+      "file": "native-scratchpad-light-380-minimum.png",
+      "pixels": [
+        400,
+        480
+      ],
+      "sha256": "9483e5ed6e3c3a9457d9e431c22c8c2ce8ba57148c9bab94f6eb281bbcbf2ecf"
+    },
+    {
+      "file": "native-scratchpad-light-380.png",
+      "pixels": [
+        400,
+        730
+      ],
+      "sha256": "92805d1e209324afe65bf3b3426bea10a7006c5be346025221a7461f6dfa9998"
+    },
+    {
+      "file": "native-scratchpad-light-760.png",
+      "pixels": [
+        780,
+        730
+      ],
+      "sha256": "747a66097ca7e18450bb5dd4d9d99acf4d8d8677c4cae243629377d450dfc379"
+    },
+    {
+      "file": "native-shelf-dark-380-minimum.png",
+      "pixels": [
+        400,
+        480
+      ],
+      "sha256": "10d2ead4c3d058e378c153c2f398b1034244939381b769496b9709440ce1c95f"
+    },
+    {
+      "file": "native-shelf-dark-380.png",
+      "pixels": [
+        400,
+        730
+      ],
+      "sha256": "3abcce4e5292f2f2ddaaeecb076aefde1bbc7c00666e096250f9b24f6468b5e6"
+    },
+    {
+      "file": "native-shelf-dark-760.png",
+      "pixels": [
+        780,
+        730
+      ],
+      "sha256": "60d8aa8ec52601c586e9ec048a527c560e62633039b65354f9e6164b563854fd"
+    },
+    {
+      "file": "native-shelf-light-380-minimum.png",
+      "pixels": [
+        400,
+        480
+      ],
+      "sha256": "d302bb42e064b93dd8fd57417b4fdeccd855ae7a96bee9210bf0c3e3e1a63c80"
+    },
+    {
+      "file": "native-shelf-light-380.png",
+      "pixels": [
+        400,
+        730
+      ],
+      "sha256": "84c1f066c36d366a901711c4bb767b803d131754939eb31e5c729d982ec143e9"
+    },
+    {
+      "file": "native-shelf-light-760.png",
+      "pixels": [
+        780,
+        730
+      ],
+      "sha256": "82891e1d402fea76364796d1d4923e3c081ab51b7720cbc4433184723b389daa"
+    },
+    {
+      "file": "native-today-dark-380-minimum.png",
+      "pixels": [
+        400,
+        480
+      ],
+      "sha256": "8f0e70e92bbae08f32125c9e0212f782fd6df2a218da96e094c41e9389c7b278"
+    },
+    {
+      "file": "native-today-dark-380.png",
+      "pixels": [
+        400,
+        730
+      ],
+      "sha256": "9eabd134fbae608e5a20d5bd06275364adfd652e10d1199578536b8953ca5de0"
+    },
+    {
+      "file": "native-today-dark-760.png",
+      "pixels": [
+        780,
+        730
+      ],
+      "sha256": "42435e37fed3354673f5d01f03059b559177ca7bfc5d2fa28e5a97bdad874e7b"
+    },
+    {
+      "file": "native-today-light-380-minimum.png",
+      "pixels": [
+        400,
+        480
+      ],
+      "sha256": "e9be46e80660dd106a1afe19710237933d0ca9660021e19ce1991c9df6488368"
+    },
+    {
+      "file": "native-today-light-380.png",
+      "pixels": [
+        400,
+        730
+      ],
+      "sha256": "3ca4eefb8e408de8ccab81872de5c6e617a371802b9db2deeaf087c60dad11de"
+    },
+    {
+      "file": "native-today-light-760.png",
+      "pixels": [
+        780,
+        730
+      ],
+      "sha256": "f85676e05d1e1057afd0a7c755109019c6211f0e6199698c15fc4796bcf0588a"
+    }
+  ],
+  "visuallyReviewedFinal": [
+    "native-library-light-760.png",
+    "native-library-light-380-minimum.png",
+    "native-scratchpad-light-380-minimum.png",
+    "native-shelf-dark-380-minimum.png",
+    "native-inbox-light-380.png"
+  ],
+  "result": "Final compact controls and initial Notes actions fit. Mixed-height Library cards align at the top. Missing source icons use capture-kind symbols without inventing app provenance. Shelf toolbar and content share a scroller. Native interaction suites cover control actions and scrolling; completed results are reported separately by the QA runner.",
+  "subsequentNonVisualChange": "ShelfExport.swift sandbox-safe publication; all UI source files unchanged after these renders."
+}

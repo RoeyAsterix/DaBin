@@ -303,6 +303,7 @@ import Foundation
         try expect(controller.board.responds(to: #selector(DailyCapturePanel.paste(_:))), "Controller installs a native Paste responder")
         let wired = try unwrap(controller.board.captureHostingView, "Controller installs Daily capture hosting")
         controller.openDaily()
+        try expect(controller.board.makeFirstResponder(wired), "Controller background receives focus before a board capture gesture")
         state.selectedDay = Calendar.current.date(byAdding: .day, value: -7, to: Date())!
         state.filter = .files
         _ = wired.draggingEntered(textDrag)

@@ -22,6 +22,8 @@ final class ApplicationCoordinator {
     let statusBar: StatusBarController
     let shortcuts: GlobalShortcutService
     private var quietSubscription: AnyCancellable?
+    private var startupDerivativeTask: Task<Void, Never>?
+    private(set) var pendingStartupDerivativeCount = 0
     private let lifecycle: ReminderLifecycle
     private let applicationEvents: NotificationCenter
     private let workspaceEvents: NotificationCenter
@@ -31,7 +33,7 @@ final class ApplicationCoordinator {
     nonisolated static let firstLaunchDailyPresentedKey = "DaBin.launch.didPresentDaily.v1"
 
     convenience init() throws {
-        try self.init(store: CaptureStore())
+        try self.init(store: CaptureStore(repairArchiveOnOpen: false))
     }
 
     init(store: CaptureStore, defaults: UserDefaults = .standard,
@@ -140,9 +142,33 @@ final class ApplicationCoordinator {
         corners.start(pointerPosition: pointerPosition)
         autoCapture.start()
         lifecycle.start(applicationEvents: applicationEvents, workspaceEvents: workspaceEvents)
-        previews.process(store.captures)
-        contentIndex.process(store.captures)
         if showDaily { corners.openDaily() }
+        prepareStartupDerivatives()
+        store.startArchiveRepair()
+    }
+
+    /// Showing saved metadata does not wait for thousands of derivative checks.
+    /// Normal capture/save paths still process their changed records immediately.
+    private func prepareStartupDerivatives() {
+        let ids = store.captures.map(\.id)
+        pendingStartupDerivativeCount = ids.count
+        guard !ids.isEmpty else { return }
+        startupDerivativeTask = Task { @MainActor [weak self] in
+            var offset = 0
+            while offset < ids.count {
+                do { try await Task.sleep(for: .milliseconds(20)) }
+                catch { return }
+                guard !Task.isCancelled, let self, self.isStarted, !self.isStopped else { return }
+                let end = min(ids.count, offset + 8)
+                let batchIDs = Set(ids[offset..<end])
+                let current = self.store.captures.filter { batchIDs.contains($0.id) }
+                self.previews.process(current)
+                self.contentIndex.process(current)
+                offset = end
+                self.pendingStartupDerivativeCount = ids.count - offset
+            }
+            self?.startupDerivativeTask = nil
+        }
     }
 
     /// A stopped session cannot reopen UI through stale notification callbacks
@@ -151,6 +177,10 @@ final class ApplicationCoordinator {
         guard !isStopped else { return }
         isStopped = true
         isStarted = false
+        startupDerivativeTask?.cancel()
+        startupDerivativeTask = nil
+        pendingStartupDerivativeCount = 0
+        store.cancelArchiveRepair()
         lifecycle.stop()
         autoCapture.shutdown()
         shortcuts.stop()

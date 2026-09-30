@@ -15,8 +15,13 @@ import UniformTypeIdentifiers
     var removalFailureInjector: ((RemovalCheckpoint) throws -> Void)?
     var backupFailureInjector: ((ArchiveRestoreCheckpoint) throws -> Void)?
     private var pendingRemovalIDs: Set<UUID> = []
+    private var archiveRepairTask: Task<Void, Never>?
+    private var archiveRepairGeneration: UInt = 0
+    private var archiveRepairIDs: [UUID] = []
+    private var pendingArchiveRepairIDs: Set<UUID> = []
+    var pendingArchiveRepairCount: Int { pendingArchiveRepairIDs.count }
 
-    init(root requestedRoot: URL? = nil) throws {
+    init(root requestedRoot: URL? = nil, repairArchiveOnOpen: Bool = true) throws {
         let manager = FileManager.default
         let base = try requestedRoot ?? manager.url(for: .applicationSupportDirectory, in: .userDomainMask,
                                                     appropriateFor: nil, create: true).appendingPathComponent("DaBin", isDirectory: true)
@@ -36,7 +41,54 @@ import UniformTypeIdentifiers
         try recoverInterruptedImports()
         try refresh()
         migrateLegacyOriginals()
-        synchronizeArchive(captures + trashedCaptures)
+        if repairArchiveOnOpen {
+            synchronizeArchive(captures + trashedCaptures)
+        } else {
+            let records = captures + trashedCaptures
+            archiveRepairIDs = records.reversed().map(\.id)
+            pendingArchiveRepairIDs = Set(archiveRepairIDs)
+        }
+    }
+
+    /// Metadata and original files are ready before this maintenance begins.
+    /// Each short slice uses the current record so UI edits, trash, and deletion
+    /// cannot be overwritten by a stale launch snapshot.
+    func startArchiveRepair() {
+        guard archiveRepairTask == nil, !pendingArchiveRepairIDs.isEmpty else { return }
+        archiveRepairGeneration &+= 1
+        let generation = archiveRepairGeneration
+        archiveRepairTask = Task { @MainActor [weak self] in
+            while !Task.isCancelled {
+                // Let the first window present, then leave time for interaction
+                // between individual folders instead of blocking on the archive.
+                do { try await Task.sleep(for: .milliseconds(20)) }
+                catch { break }
+                guard !Task.isCancelled, let self, self.archiveRepairGeneration == generation else { break }
+                guard self.repairNextArchiveFolder() else { break }
+            }
+            guard let self, self.archiveRepairGeneration == generation else { return }
+            self.archiveRepairTask = nil
+        }
+    }
+
+    func cancelArchiveRepair() {
+        archiveRepairGeneration &+= 1
+        archiveRepairTask?.cancel()
+        archiveRepairTask = nil
+    }
+
+    /// Tests and explicit maintenance can wait without blocking the main actor.
+    func waitForArchiveRepair() async { await archiveRepairTask?.value }
+
+    private func repairNextArchiveFolder() -> Bool {
+        while let id = archiveRepairIDs.popLast() {
+            guard pendingArchiveRepairIDs.remove(id) != nil else { continue }
+            guard !pendingRemovalIDs.contains(id),
+                  let capture = captures.first(where: { $0.id == id }) ?? trashedCaptures.first(where: { $0.id == id }) else { continue }
+            synchronizeArchive([capture])
+            return true
+        }
+        return false
     }
 
     func capture(text: String, at: Date = Date(), timeZone: TimeZone = .current,
@@ -88,17 +140,34 @@ import UniformTypeIdentifiers
         }
     }
 
+    /// Authored notes remain one exact text original even when every line is a URL.
+    func createNote(text: String, at: Date = Date(), projectName: String? = nil) throws -> Capture {
+        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { throw CaptureStoreError.emptyInput }
+        let note = Capture(capturedAt: at, kind: .text, originalText: text, title: String(trimmed.prefix(100)))
+        note.projectName = normalizedProjectName(projectName)
+        try failureInjector?(.beforeMetadataSave)
+        try persist(note)
+        captures.append(note)
+        captures.sort { $0.capturedAt == $1.capturedAt ? $0.id.uuidString < $1.id.uuidString : $0.capturedAt > $1.capturedAt }
+        return note
+    }
+
     func createTask(text: String, reminderAt: Date? = nil, reminderTimeZoneID: String? = nil,
-                    at: Date = Date(), timeZone: TimeZone = .current) throws -> Capture {
+                    at: Date = Date(), timeZone: TimeZone = .current, planning: TaskPlanning? = nil,
+                    projectName: String? = nil) throws -> Capture {
         let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { throw CaptureStoreError.emptyInput }
         if let reminderAt, reminderAt <= Date() { throw CaptureStoreError.reminderNotFuture }
+        guard planning?.isValid ?? true else { throw CaptureStoreError.invalidOriginal("Check the task dates, estimate, and checklist before saving.") }
         let task = Capture(capturedAt: at, timeZone: timeZone, kind: .task,
                            originalText: trimmed, title: String(trimmed.prefix(100)))
         task.reminderAt = reminderAt
         task.reminderTimeZoneID = reminderAt == nil ? nil : (reminderTimeZoneID ?? timeZone.identifier)
         task.reminderRevision = reminderAt == nil ? 0 : 1
         task.notificationState = reminderAt == nil ? "none" : "pending"
+        task.projectName = normalizedProjectName(projectName)
+        if let planning { task.setTaskPlanning(normalizedPlanning(planning, for: task)) }
         // The task and desired reminder are committed together before becoming visible.
         try failureInjector?(.beforeMetadataSave)
         try persist(task)
@@ -131,23 +200,156 @@ import UniformTypeIdentifiers
         }
     }
 
-    func setTaskCompleted(_ capture: Capture, completed: Bool) throws {
-        guard capture.isTask, capture.isCompleted != completed else { return }
-        guard captures.contains(where: { $0 === capture }) else {
-            throw CaptureStoreError.invalidOriginal("This task is not in the current archive.")
-        }
-        let old = (capture.isCompleted, capture.reminderRevision, capture.notificationState, capture.updatedAt)
+    @discardableResult
+    func setTaskCompleted(_ capture: Capture, completed: Bool, at now: Date = Date()) throws -> Capture? {
+        guard capture.isTask, capture.isCompleted != completed else { return nil }
+        try requireCurrent(capture)
+        let old = (capture.isCompleted, capture.reminderRevision, capture.notificationState, capture.updatedAt, capture.taskPlanning)
+        let successor = completed ? recurrenceSuccessor(for: capture, at: now) : nil
+        var planning = capture.taskPlanning ?? TaskPlanning()
+        planning.completedAt = completed ? now : nil
+        if let successor { planning.nextOccurrenceID = successor.id }
+        capture.setTaskPlanning(planning)
         capture.isCompleted = completed
         // Invalidate an in-flight schedule even when its reminder date is unchanged.
         capture.reminderRevision += 1
         capture.notificationState = completed ? "completed" : (capture.reminderAt == nil ? "none" : "pending")
-        capture.updatedAt = Date()
-        do { try failureInjector?(.beforeMetadataSave); try persist(capture); objectWillChange.send() }
+        capture.updatedAt = now
+        do {
+            try failureInjector?(.beforeMetadataSave)
+            let changed = [capture] + (successor.map { [$0] } ?? [])
+            // Completion and its next occurrence are one transaction. A failed
+            // write can never leave a completed routine without its next task.
+            try repository.save(changed)
+            if let successor {
+                captures.append(successor)
+                captures.sort { $0.capturedAt == $1.capturedAt ? $0.id.uuidString < $1.id.uuidString : $0.capturedAt > $1.capturedAt }
+            }
+            synchronizeArchive(changed)
+            objectWillChange.send()
+            return successor
+        }
         catch {
             capture.isCompleted = old.0; capture.reminderRevision = old.1
             capture.notificationState = old.2; capture.updatedAt = old.3
+            capture.setTaskPlanning(old.4)
             throw error
         }
+    }
+
+    /// Change the work plan without changing receipt dates, originals, or reminders.
+    func setTaskPlanning(_ capture: Capture, planning: TaskPlanning) throws {
+        try requireCurrent(capture)
+        guard capture.isTask, planning.isValid else {
+            throw CaptureStoreError.invalidOriginal("Check the task dates, estimate, and checklist before saving.")
+        }
+        var value = normalizedPlanning(planning, for: capture)
+        // Completion history and occurrence identity are store-owned, not editable fields.
+        value.completedAt = capture.taskPlanning?.completedAt
+        value.previousOccurrenceID = capture.taskPlanning?.previousOccurrenceID
+        value.nextOccurrenceID = capture.taskPlanning?.nextOccurrenceID
+        guard capture.taskPlanning != value else { return }
+        let old = (capture.taskPlanning, capture.updatedAt)
+        capture.setTaskPlanning(value)
+        capture.updatedAt = Date()
+        do { try failureInjector?(.beforeMetadataSave); try persist(capture); objectWillChange.send() }
+        catch { capture.setTaskPlanning(old.0); capture.updatedAt = old.1; throw error }
+    }
+
+    func planTask(_ capture: Capture, on day: String?) throws {
+        var planning = capture.taskPlanning ?? TaskPlanning()
+        planning.plannedDay = day
+        planning.order = nil
+        try setTaskPlanning(capture, planning: planning)
+    }
+
+    /// A project-filtered reorder preserves the positions of other projects.
+    func reorderTasks(_ tasks: [Capture], on day: String) throws {
+        guard TaskPlanningPolicy.date(for: day) != nil,
+              Set(tasks.map(\.id)).count == tasks.count else {
+            throw CaptureStoreError.invalidOriginal("The task order could not be saved.")
+        }
+        for task in tasks {
+            try requireCurrent(task)
+            guard TaskPlanningPolicy.isPlanned(task, for: day) else {
+                throw CaptureStoreError.invalidOriginal("Only open tasks planned for this day can be reordered.")
+            }
+        }
+        guard !tasks.isEmpty else { return }
+        let ids = Set(tasks.map(\.id))
+        var ordered = tasks.makeIterator()
+        let all = TaskPlanningPolicy.sorted(captures.filter { TaskPlanningPolicy.isPlanned($0, for: day) })
+            .map { ids.contains($0.id) ? ordered.next()! : $0 }
+        let previous = all.map { ($0, $0.taskPlanning, $0.updatedAt) }
+        for (index, task) in all.enumerated() {
+            var planning = task.taskPlanning ?? TaskPlanning()
+            planning.order = index
+            task.setTaskPlanning(planning)
+            task.updatedAt = Date()
+        }
+        do {
+            try failureInjector?(.beforeMetadataSave)
+            try repository.save(all)
+            synchronizeArchive(all)
+            objectWillChange.send()
+        } catch {
+            for (task, planning, updatedAt) in previous { task.setTaskPlanning(planning); task.updatedAt = updatedAt }
+            throw error
+        }
+    }
+
+    private func recurrenceSuccessor(for capture: Capture, at now: Date) -> Capture? {
+        guard let previous = capture.taskPlanning, previous.recurrence != .none,
+              previous.nextOccurrenceID == nil else { return nil }
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(identifier: capture.captureTimeZoneID) ?? .current
+        let plannedDate = previous.plannedDay.flatMap { TaskPlanningPolicy.date(for: $0, calendar: calendar) }
+        let currentAnchor = plannedDate
+            ?? previous.deadline ?? capture.reminderAt ?? capture.capturedAt
+        let anchor = previous.recurrenceAnchor ?? currentAnchor
+        // A completed occurrence represents its entire planned day. An afternoon
+        // cadence must not recreate that same day when the user finishes at noon.
+        let occurrenceEnd = plannedDate.flatMap {
+            calendar.date(byAdding: .day, value: 1, to: calendar.startOfDay(for: $0))?.addingTimeInterval(-0.001)
+        } ?? currentAnchor
+        guard let nextDate = previous.recurrence.nextDate(after: anchor, notBefore: max(now, occurrenceEnd), calendar: calendar) else { return nil }
+        let dayOffset = calendar.dateComponents([.day], from: calendar.startOfDay(for: currentAnchor),
+                                                to: calendar.startOfDay(for: nextDate)).day ?? 1
+        func shifted(_ date: Date?) -> Date? { date.flatMap { calendar.date(byAdding: .day, value: dayOffset, to: $0) } }
+        var next = previous
+        next.plannedDay = CaptureCalendar.dayString(nextDate, timeZone: calendar.timeZone)
+        next.deadline = shifted(previous.deadline)
+        next.order = nil
+        next.completedAt = nil
+        next.previousOccurrenceID = capture.id
+        next.nextOccurrenceID = nil
+        next.recurrenceAnchor = anchor
+        next.checklist = previous.checklist.map { TaskChecklistItem(text: $0.text) }
+        let successor = Capture(capturedAt: now, timeZone: calendar.timeZone, kind: .task,
+                                originalText: capture.originalText ?? capture.title, title: capture.title)
+        successor.comment = capture.comment
+        successor.projectName = capture.projectName
+        successor.setTaskPlanning(next)
+        let reminder = shifted(capture.reminderAt)
+        successor.reminderAt = reminder.flatMap { $0 > now ? $0 : nil }
+        successor.reminderTimeZoneID = successor.reminderAt == nil ? nil : capture.reminderTimeZoneID
+        successor.reminderRevision = successor.reminderAt == nil ? 0 : 1
+        successor.notificationState = successor.reminderAt == nil ? "none" : "pending"
+        return successor
+    }
+
+    private func normalizedPlanning(_ planning: TaskPlanning, for capture: Capture) -> TaskPlanning {
+        var value = planning
+        if value.recurrence == .none { value.recurrenceAnchor = nil }
+        else if capture.taskPlanning?.recurrence != value.recurrence
+            || capture.taskPlanning?.plannedDay != value.plannedDay
+            || capture.taskPlanning?.recurrenceAnchor == nil {
+            var calendar = Calendar(identifier: .gregorian)
+            calendar.timeZone = TimeZone(identifier: capture.captureTimeZoneID) ?? .current
+            value.recurrenceAnchor = value.plannedDay.flatMap { TaskPlanningPolicy.date(for: $0, calendar: calendar) }
+                ?? value.deadline ?? capture.reminderAt ?? capture.capturedAt
+        } else { value.recurrenceAnchor = capture.taskPlanning?.recurrenceAnchor }
+        return value
     }
 
     func setMinimized(_ capture: Capture, minimized: Bool) throws {
@@ -166,8 +368,7 @@ import UniformTypeIdentifiers
 
     func setOrganization(_ capture: Capture, pinned: Bool, projectName: String?) throws {
         try requireCurrent(capture)
-        let trimmed = projectName?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
-        let project = trimmed.isEmpty ? nil : String(trimmed.prefix(120))
+        let project = normalizedProjectName(projectName)
         guard capture.isPinned != pinned || capture.projectName != project else { return }
         let old = (capture.isPinned, capture.projectName, capture.updatedAt)
         capture.isPinned = pinned
@@ -183,6 +384,11 @@ import UniformTypeIdentifiers
             capture.updatedAt = old.2
             throw error
         }
+    }
+
+    private func normalizedProjectName(_ name: String?) -> String? {
+        let trimmed = name?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        return trimmed.isEmpty ? nil : String(trimmed.prefix(120))
     }
 
     /// A logical snapshot and verified owned files, never a copy of live SQLite.
@@ -457,10 +663,14 @@ import UniformTypeIdentifiers
         }
     }
 
-    func update(_ capture: Capture, comment: String, reminderAt: Date?, reminderTimeZoneID: String?) throws {
+    func update(_ capture: Capture, comment: String, reminderAt: Date?, reminderTimeZoneID: String?,
+                planning: TaskPlanning? = nil) throws {
         try requireCurrent(capture)
+        guard planning == nil || (capture.isTask && planning!.isValid) else {
+            throw CaptureStoreError.invalidOriginal("Check the task dates, estimate, and checklist before saving.")
+        }
         let old = (capture.comment, capture.reminderAt, capture.reminderTimeZoneID,
-                   capture.reminderRevision, capture.notificationState, capture.updatedAt)
+                   capture.reminderRevision, capture.notificationState, capture.updatedAt, capture.taskPlanning)
         let zone = reminderAt == nil ? nil : reminderTimeZoneID
         if capture.reminderAt != reminderAt || capture.reminderTimeZoneID != zone {
             capture.reminderRevision += 1
@@ -469,11 +679,19 @@ import UniformTypeIdentifiers
         capture.comment = comment
         capture.reminderAt = reminderAt
         capture.reminderTimeZoneID = zone
+        if var planning {
+            planning = normalizedPlanning(planning, for: capture)
+            planning.completedAt = capture.taskPlanning?.completedAt
+            planning.previousOccurrenceID = capture.taskPlanning?.previousOccurrenceID
+            planning.nextOccurrenceID = capture.taskPlanning?.nextOccurrenceID
+            capture.setTaskPlanning(planning)
+        }
         capture.updatedAt = Date()
-        do { try persist(capture); objectWillChange.send() }
+        do { try failureInjector?(.beforeMetadataSave); try persist(capture); objectWillChange.send() }
         catch {
             capture.comment = old.0; capture.reminderAt = old.1; capture.reminderTimeZoneID = old.2
             capture.reminderRevision = old.3; capture.notificationState = old.4; capture.updatedAt = old.5
+            capture.setTaskPlanning(old.6)
             throw error
         }
     }
@@ -573,6 +791,27 @@ import UniformTypeIdentifiers
         [capture] + attachments(for: capture, includingTrashed: includingTrashed)
     }
 
+    /// Attach an existing receipt without recopying its file or changing source history.
+    /// Moving an existing task attachment requires explicit detachment first.
+    func attachCapture(_ capture: Capture, to task: Capture) throws {
+        try requireCurrent(capture)
+        try requireAttachmentParent(task)
+        guard !capture.isTask, capture.id != task.id, capture.parentTaskID == nil else {
+            throw CaptureStoreError.invalidOriginal("Choose an independent capture to attach to this task.")
+        }
+        let previous = (capture.parentTaskID, capture.projectName, capture.updatedAt)
+        capture.setParentTaskID(task.id)
+        if capture.projectName == nil { capture.projectName = task.projectName }
+        capture.updatedAt = Date()
+        do { try failureInjector?(.beforeMetadataSave); try persist(capture); objectWillChange.send() }
+        catch {
+            capture.setParentTaskID(previous.0)
+            capture.projectName = previous.1
+            capture.updatedAt = previous.2
+            throw error
+        }
+    }
+
     private func requireAttachmentParent(_ task: Capture?) throws {
         guard let task else { return }
         try requireCurrent(task)
@@ -653,7 +892,11 @@ import UniformTypeIdentifiers
 
     private func synchronizeArchive(_ records: [Capture]) {
         for capture in records {
-            do { try archive.synchronize(capture); archiveFailures.removeValue(forKey: capture.id) }
+            do {
+                try archive.synchronize(capture)
+                archiveFailures.removeValue(forKey: capture.id)
+                pendingArchiveRepairIDs.remove(capture.id)
+            }
             catch { archiveFailures[capture.id] = error.localizedDescription }
         }
         if let previous = lastArchiveWarning, let current = error {

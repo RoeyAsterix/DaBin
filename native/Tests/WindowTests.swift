@@ -269,10 +269,11 @@ private final class WindowNotificationClient: ReminderNotificationClient {
             try expect(!RobotView.isPasteShortcut(shortcut(flags, time: 6)), "Unrelated modifier combination does not paste")
         }
         controller.robot.onPaste = pasteHandler
-        // openDaily is the exact handler wired to RobotView's double-click action.
+        // The Activity action selects Daily. Opening the buddy then resumes it.
+        state.openDaily()
         controller.openDaily()
         try expect(controller.board.isVisible && !controller.bin.isVisible, "Double-click handler opens Daily and hides robot")
-        try expect(state.route == .daily, "Double-click handler selects the Daily route")
+        try expect(state.route == .daily, "Opening the buddy preserves the explicitly selected Daily route")
         try expect(screen.visibleFrame.contains(controller.board.frame), "Daily panel is constrained to its active visible screen")
         controller.pollPointer(at: away, now: clock.addingTimeInterval(30))
         try expect(controller.board.isVisible && !controller.bin.isVisible, "Daily remains usable after pointer leaves its corner")
@@ -311,16 +312,22 @@ private final class WindowNotificationClient: ReminderNotificationClient {
         // synthesizing OS mouse events or changing the user's window preferences.
         controller.openDaily()
         RunLoop.main.run(until: Date().addingTimeInterval(0.12))
-        func dragSurface(in view: NSView) -> WindowDragHandleView? {
-            if let handle = view as? WindowDragHandleView { return handle }
-            for child in view.subviews { if let handle = dragSurface(in: child) { return handle } }
-            return nil
+        func dragSurfaces(in view: NSView) -> [WindowDragHandleView] {
+            var result = view as? WindowDragHandleView == nil ? [] : [view as! WindowDragHandleView]
+            for child in view.subviews { result.append(contentsOf: dragSurfaces(in: child)) }
+            return result
         }
-        guard let handle = controller.board.contentView.flatMap({ dragSurface(in: $0) }) else {
-            throw NSError(domain: "DaBinWindowTests", code: 2, userInfo: [NSLocalizedDescriptionKey: "Native header drag surface is mounted"])
+        let handles = controller.board.contentView.map(dragSurfaces(in:)) ?? []
+        guard let logoHandle = handles.first(where: { abs($0.bounds.width - 68) <= 0.5 }),
+              let flexibleHandle = handles.max(by: { $0.bounds.width < $1.bounds.width }) else {
+            throw NSError(domain: "DaBinWindowTests", code: 2,
+                          userInfo: [NSLocalizedDescriptionKey: "Logo and flexible native header drag surfaces are mounted"])
         }
-        try expect(handle.bounds.width == 68 && handle.bounds.height == 28,
+        try expect(logoHandle.bounds.width == 68 && logoHandle.bounds.height == 28,
                    "The labeled header keeps the complete 68-by-28 logo available for native dragging")
+        try expect(handles.count >= 2 && flexibleHandle !== logoHandle
+                   && flexibleHandle.bounds.width >= 28 && flexibleHandle.bounds.height >= 28,
+                   "The blank first-row header area exposes a separate visible drag grip")
         func dragEvent(_ type: NSEvent.EventType, point: NSPoint) -> NSEvent {
             NSEvent.mouseEvent(with: type, location: point, modifierFlags: [], timestamp: 10,
                               windowNumber: controller.board.windowNumber, context: nil,
@@ -329,8 +336,8 @@ private final class WindowNotificationClient: ReminderNotificationClient {
         let chosenTopLeft = NSPoint(x: screen.visibleFrame.minX + 40, y: screen.visibleFrame.maxY - 35)
         let initialFrame = controller.board.frame
         let pointer = NSPoint(x: 50, y: initialFrame.height - 30)
-        handle.mouseDown(with: dragEvent(.leftMouseDown, point: pointer))
-        handle.mouseDragged(with: dragEvent(.leftMouseDragged,
+        flexibleHandle.mouseDown(with: dragEvent(.leftMouseDown, point: pointer))
+        flexibleHandle.mouseDragged(with: dragEvent(.leftMouseDragged,
             point: NSPoint(x: pointer.x + chosenTopLeft.x - initialFrame.minX,
                           y: pointer.y + chosenTopLeft.y - initialFrame.maxY)))
         let draggedFrame = controller.board.frame
@@ -340,19 +347,27 @@ private final class WindowNotificationClient: ReminderNotificationClient {
         controller.finishBoardDragIfReleased(pressedMouseButtons: 1)
         controller.showBoard()
         try expect(controller.board.frame == draggedFrame, "Content changes cannot snap the board during a native drag")
-        handle.mouseUp(with: dragEvent(.leftMouseUp, point: pointer))
+        flexibleHandle.mouseUp(with: dragEvent(.leftMouseUp, point: pointer))
         controller.finishBoardDragIfReleased(pressedMouseButtons: 0)
         let expectedSettings = CornerGeometry.movedPanelFrame(topLeft: chosenTopLeft, visible: screen.visibleFrame, preferredHeight: 670)
         try expect(controller.board.frame == expectedSettings, "Release keeps the chosen position and applies pending height changes")
         try expect(placementDefaults.array(forKey: CornerController.boardPlacementKey) as? [Double] == [Double(chosenTopLeft.x), Double(chosenTopLeft.y)], "Manual board position is saved separately from captures")
         state.openNewTask()
-        RunLoop.main.run(until: Date().addingTimeInterval(0.12))
+        let taskComposerResizeDeadline = Date().addingTimeInterval(1.5)
+        while controller.board.frame.height != 490 && Date() < taskComposerResizeDeadline {
+            RunLoop.main.run(until: Date().addingTimeInterval(0.02))
+        }
         try expect(controller.board.frame.minX == chosenTopLeft.x && controller.board.frame.maxY == chosenTopLeft.y, "Task composer preserves the moved header position")
-        try expect(controller.board.frame.height == 490, "Moved task composer reserves 440 points of content plus its outer frame")
+        try expect(controller.board.frame.height == 490, "Moved task composer reserves 440 points of content plus its outer frame; actual=\(controller.board.frame)")
         state.newTaskDraft.reminderEnabled = true
-        RunLoop.main.run(until: Date().addingTimeInterval(0.12))
+        // The native resize follows a debounced model notification; wait for
+        // that observable endpoint rather than assuming a fixed busy-run delay.
+        let reminderResizeDeadline = Date().addingTimeInterval(1.5)
+        while controller.board.frame.height != 550 && Date() < reminderResizeDeadline {
+            RunLoop.main.run(until: Date().addingTimeInterval(0.02))
+        }
         try expect(controller.board.frame.height == 550 && controller.board.frame.maxY == chosenTopLeft.y,
-                   "Live reminder expansion resizes below the moved header without jumping to a corner")
+                   "Live reminder expansion resizes below the moved header without jumping to a corner; actual=\(controller.board.frame)")
         state.cancelNewTask()
         controller.dismiss()
         controller.openDaily()
@@ -361,7 +376,9 @@ private final class WindowNotificationClient: ReminderNotificationClient {
 
         let reopenedState = AppState(store: store, previews: previews, reminders: reminders)
         let reopened = CornerController(state: reopenedState, input: InputService(store: store), placementDefaults: placementDefaults, animateRobotTransitions: false)
+        let reopenedOrigin = reopenedState.route
         reopened.openDaily()
+        try expect(reopenedState.route == reopenedOrigin, "A new controller opens the current view without resetting navigation")
         try expect(reopened.board.frame.minX == chosenTopLeft.x && reopened.board.frame.maxY == chosenTopLeft.y, "A new controller restores placement from local preferences")
         if screens.count > 1 {
             let otherScreen = screens[1]
@@ -399,12 +416,86 @@ private final class WindowNotificationClient: ReminderNotificationClient {
                    presentedToUser ? "A visible task completion celebrates in the existing frame"
                        : "An occluded task completion does not animate behind another surface or the lock screen")
         try expect(NSApp.keyWindow === keyWindow, "Task completion always preserves keyboard focus")
+        let savedSizeBeforeExpansion = placementDefaults.array(forKey: CornerController.boardSizeKey) as? [Double]
+        let savedPositionBeforeExpansion = placementDefaults.array(forKey: CornerController.boardPlacementKey) as? [Double]
         reopened.toggleExpandedWindow()
         try expect(reopened.board.frame == resizeScreen.visibleFrame,
                    "Expand fills the safe area on the interaction display without a new Space")
+        try expect(placementDefaults.array(forKey: CornerController.boardSizeKey) as? [Double] == savedSizeBeforeExpansion
+                   && placementDefaults.array(forKey: CornerController.boardPlacementKey) as? [Double] == savedPositionBeforeExpansion,
+                   "Expansion never replaces the saved normal size or position with maximized geometry")
+        reopenedState.openLibrary()
+        reopenedState.libraryProject = "Window movement fixture"
+        reopenedState.filter = .files
+        reopened.showBoard(immediate: true)
+        RunLoop.main.run(until: Date().addingTimeInterval(0.12))
+        try expect(reopened.board.frame == resizeScreen.visibleFrame,
+                   "Changing routes and content filters keeps the expanded safe-area frame")
+        reopenedState.performSearchCommand()
+        reopenedState.query = "resume this client"
+        reopenedState.searchProject = "Window movement fixture"
+        reopenedState.filter = .text
+        reopened.showBoard(immediate: true)
+        RunLoop.main.run(until: Date().addingTimeInterval(0.12))
+        try expect(reopened.board.frame == resizeScreen.visibleFrame
+                   && placementDefaults.array(forKey: CornerController.boardSizeKey) as? [Double] == savedSizeBeforeExpansion
+                   && placementDefaults.array(forKey: CornerController.boardPlacementKey) as? [Double] == savedPositionBeforeExpansion,
+                   "Expanded search updates preserve both the expanded frame and normal persisted geometry")
         reopened.toggleExpandedWindow()
         try expect(reopened.board.frame == userFrame,
-                   "The second expand action restores the exact user frame")
+                   "The second expand action restores the exact user frame even after route and filter changes")
+        try expect(reopenedState.route == .search && reopenedState.query == "resume this client"
+                   && reopenedState.searchProject == "Window movement fixture" && reopenedState.filter == .text,
+                   "Expanding and restoring keeps the search, project and content filter")
+
+        // Dragging a maximized board should restore normal dimensions under the
+        // pointer before moving. These events are sent only to our own header.
+        reopened.toggleExpandedWindow()
+        RunLoop.main.run(until: Date().addingTimeInterval(0.12))
+        let expandedHandles = reopened.board.contentView.map(dragSurfaces(in:)) ?? []
+        guard let expandedHandle = expandedHandles.max(by: { $0.bounds.width < $1.bounds.width }) else {
+            throw NSError(domain: "DaBinWindowTests", code: 3,
+                          userInfo: [NSLocalizedDescriptionKey: "Expanded board keeps its native header drag surface"])
+        }
+        func reopenedDragEvent(_ type: NSEvent.EventType, screenPoint: NSPoint) -> NSEvent {
+            NSEvent.mouseEvent(with: type, location: reopened.board.convertPoint(fromScreen: screenPoint),
+                              modifierFlags: [], timestamp: 20, windowNumber: reopened.board.windowNumber,
+                              context: nil, eventNumber: 2, clickCount: 1, pressure: 1)!
+        }
+        let dragPointer = NSEvent.mouseLocation
+        expandedHandle.mouseDown(with: reopenedDragEvent(.leftMouseDown, screenPoint: dragPointer))
+        let normalDragStart = reopened.board.frame
+        try expect(normalDragStart.size == userFrame.size && normalDragStart != resizeScreen.visibleFrame,
+                   "Starting a header drag restores the expanded board to its normal movable dimensions")
+        let requestedMoved = NSRect(x: resizeScreen.visibleFrame.minX + 65,
+                                   y: resizeScreen.visibleFrame.maxY - userFrame.height - 70,
+                                   width: userFrame.width, height: userFrame.height)
+        let expectedMoved = BoardResizeGeometry.fitted(requestedMoved, visible: resizeScreen.visibleFrame)
+        let destinationPointer = NSPoint(x: dragPointer.x + expectedMoved.minX - normalDragStart.minX,
+                                        y: dragPointer.y + expectedMoved.minY - normalDragStart.minY)
+        expandedHandle.mouseDragged(with: reopenedDragEvent(.leftMouseDragged, screenPoint: destinationPointer))
+        try expect(reopened.board.frame == expectedMoved,
+                   "An expanded-window header drag moves the real normal-sized panel to a new location")
+        expandedHandle.mouseUp(with: reopenedDragEvent(.leftMouseUp, screenPoint: destinationPointer))
+        reopened.finishBoardDragIfReleased(pressedMouseButtons: 0)
+        RunLoop.main.run(until: Date().addingTimeInterval(0.12))
+        try expect(reopened.board.frame == expectedMoved
+                   && placementDefaults.array(forKey: CornerController.boardPlacementKey) as? [Double]
+                       == [Double(expectedMoved.minX), Double(expectedMoved.maxY)]
+                   && placementDefaults.array(forKey: CornerController.boardSizeKey) as? [Double]
+                       == [Double(userFrame.width), Double(userFrame.height)],
+                   "Releasing an expanded-window drag persists the new normal position without snapping or saving full-screen size")
+        reopened.dismiss()
+        reopened.openDaily()
+        try expect(reopened.board.frame == expectedMoved && reopenedState.route == .search
+                   && reopenedState.query == "resume this client" && reopenedState.searchProject == "Window movement fixture"
+                   && reopenedState.libraryProject == "Window movement fixture" && reopenedState.filter == .text,
+                   "Reopening the buddy restores the moved window and the complete interrupted search/project context")
+        reopened.dismiss()
+        reopened.robot.onDaily?()
+        try expect(reopened.board.frame == expectedMoved && reopenedState.route == .search
+                   && reopenedState.query == "resume this client" && reopenedState.filter == .text,
+                   "The actual robot open callback also resumes context instead of resetting to a corner or Daily")
         reopened.dismiss()
         let completedCelebrations = reopened.appFrame.taskCelebrationCount
         reopened.celebrateTaskCompletion()

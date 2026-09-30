@@ -33,8 +33,9 @@ final class WindowDragHandleView: NSView {
 
     override func mouseDown(with event: NSEvent) {
         guard event.type == .leftMouseDown, let window else { return }
-        dragOrigin = (window.convertPoint(toScreen: event.locationInWindow), window.frame.origin)
+        let pointer = window.convertPoint(toScreen: event.locationInWindow)
         onDragStarted?()
+        dragOrigin = (pointer, window.frame.origin)
     }
 
     override func mouseDragged(with event: NSEvent) {

@@ -33,6 +33,7 @@ private final class WeeklyWindowNotificationClient: ReminderNotificationClient {
                              reminders: ReminderService(store: store, client: WeeklyWindowNotificationClient()))
         let controller = CornerController(state: state, input: InputService(store: store), placementDefaults: defaults, animateRobotTransitions: false)
         defer { controller.dismiss(); previews.cancelNetwork() }
+        state.openDaily()
         controller.openDaily()
         state.selectedDay = Calendar.current.date(byAdding: .day, value: -30, to: Date())!
         settle()
@@ -165,6 +166,7 @@ private final class WeeklyWindowNotificationClient: ReminderNotificationClient {
             defaults.set(saved, forKey: CornerController.boardPlacementKey)
             let state = AppState(store: store, previews: previews, reminders: reminders)
             let controller = CornerController(state: state, input: InputService(store: store), placementDefaults: defaults, animateRobotTransitions: false)
+            state.openDaily()
             controller.openDaily()
             settle()
             let compact = controller.board.frame

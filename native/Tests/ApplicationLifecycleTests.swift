@@ -127,10 +127,10 @@ private final class ApplicationLifecycleTests: NSObject, NSApplicationDelegate {
                                    checkForUpdates: { updateChecks += 1 }, showSettings: { settings += 1 })
         menu.install()
         let appMenu = NSApp.mainMenu!.items[0].submenu!
-        let open = appMenu.items.first { $0.title == "Open Daily" }!
+        let open = appMenu.items.first { $0.title == "Open DaBin" }!
         let checkUpdates = appMenu.items.first { $0.title == "Check for Updates…" }!
         let preference = appMenu.items.first { $0.title == "Settings…" }!
-        try expect(NSApp.sendAction(open.action!, to: open.target, from: open), "Native Open Daily command dispatches")
+        try expect(NSApp.sendAction(open.action!, to: open.target, from: open), "Native Open DaBin command dispatches")
         try expect(NSApp.sendAction(checkUpdates.action!, to: checkUpdates.target, from: checkUpdates),
                    "Native Check for Updates command dispatches")
         try expect(NSApp.sendAction(preference.action!, to: preference.target, from: preference), "Native Settings command dispatches")
@@ -162,11 +162,11 @@ private final class ApplicationLifecycleTests: NSObject, NSApplicationDelegate {
                    "The menu presents a noninteractive Auto Capture status row")
         try expect(statusBar.pauseMenuItem?.isHidden == true,
                    "Pause and Resume stay absent while Auto Capture is disabled")
-        try expect(statusMenu.items.map(\.title).contains("Open Daily")
+        try expect(statusMenu.items.map(\.title).contains("Open DaBin")
                    && statusMenu.items.map(\.title).contains("Settings…")
                    && statusMenu.items.map(\.title).contains("Quit DaBin"),
                    "The status menu exposes Daily, Settings and complete Quit actions")
-        let statusOpen = statusMenu.items.first { $0.title == "Open Daily" }!
+        let statusOpen = statusMenu.items.first { $0.title == "Open DaBin" }!
         let statusSettingsItem = statusMenu.items.first { $0.title == "Settings…" }!
         let statusQuitItem = statusMenu.items.first { $0.title == "Quit DaBin" }!
         try expect(NSApp.sendAction(statusOpen.action!, to: statusOpen.target, from: statusOpen)
@@ -248,8 +248,37 @@ private final class ApplicationLifecycleTests: NSObject, NSApplicationDelegate {
         coordinator = nil
         try await wait("Application and panel owner are released after shutdown") { weakCoordinator.value == nil && weakCorners.value == nil }
         try await wait("Presentation state is released after native view teardown") { weakState.value == nil }
+        try await startupDerivatives(root: root.appendingPathComponent("StartupDerivatives"), defaults: defaults)
         try expect(NSWorkspace.shared.frontmostApplication?.processIdentifier == frontmost,
                    "Native lifecycle QA never changes the foreground application")
         print("PASS: \(checks) application lifecycle checks; isolated preferences, events, pointer samples and fake notifications, no focus or personal data.")
+    }
+
+    @MainActor private func startupDerivatives(root: URL, defaults: UserDefaults) async throws {
+        try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
+        let records = (0..<40).map { index in
+            Capture(kind: .text, originalText: "Synthetic startup text \(index)", title: "Startup text \(index)")
+        }
+        try CaptureRepository(root: root).save(records)
+        let store = try CaptureStore(root: root, repairArchiveOnOpen: false)
+        let coordinator = ApplicationCoordinator(store: store, defaults: defaults,
+            notificationClient: SessionReminderClient(), applicationEvents: NotificationCenter(), workspaceEvents: NotificationCenter())
+        coordinator.start(installMenu: false, installStatusItem: false,
+                          pointerPosition: { NSPoint(x: -100_000, y: -100_000) })
+        try expect(coordinator.pendingStartupDerivativeCount == 40 && store.captures.allSatisfy { $0.previewState == "idle" },
+                   "Application start returns ready metadata before bulk preview writes")
+        try await wait("Startup derivative checks progress in bounded batches") { coordinator.pendingStartupDerivativeCount < 40 }
+        coordinator.shutdown()
+        let readyBeforeWait = store.captures.filter { $0.previewState == "ready" }.count
+        try await Task.sleep(for: .milliseconds(100))
+        try expect(coordinator.pendingStartupDerivativeCount == 0 && store.captures.filter { $0.previewState == "ready" }.count == readyBeforeWait,
+                   "Shutdown cancels future derivative batches instead of continuing archive writes")
+        let restarted = ApplicationCoordinator(store: store, defaults: defaults,
+            notificationClient: SessionReminderClient(), applicationEvents: NotificationCenter(), workspaceEvents: NotificationCenter())
+        restarted.start(installMenu: false, installStatusItem: false,
+                        pointerPosition: { NSPoint(x: -100_000, y: -100_000) })
+        try await wait("New session finishes remaining derivative work") { restarted.pendingStartupDerivativeCount == 0 }
+        try expect(store.captures.allSatisfy { $0.previewState == "ready" }, "Interrupted startup previews recover on the next session")
+        restarted.shutdown()
     }
 }

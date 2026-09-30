@@ -49,6 +49,11 @@ struct DetailScreen: View {
                         }
                         if capture.isTask {
                             DisclosureGroup(isExpanded: $taskExpanded) {
+                                TaskPlanningEditor(planning: $draft.planning).padding(.top, 8)
+                                if let previous = capture.taskPlanning?.previousOccurrenceID {
+                                    Button("Previous occurrence", systemImage: "arrow.counterclockwise") { state.openCapture(previous) }
+                                        .buttonStyle(.plain).font(.system(size: 12))
+                                }
                                 TaskAttachmentsView(state: state, task: capture).padding(.top, 8)
                             } label: {
                                 Label(capture.isCompleted ? "Nicely done" : "Task workspace", systemImage: capture.isCompleted ? "checkmark.seal.fill" : "checklist")
@@ -112,7 +117,7 @@ struct DetailScreen: View {
                     if let message = draft.message {
                         Text(message).foregroundStyle(draft.hasError ? Color.red : Palette.muted)
                     } else {
-                        Text(draft.hasChanges ? "Draft kept until you save" : "Captured day stays the same").foregroundStyle(Palette.muted)
+                        Text(draft.hasChanges ? "Draft kept locally · Save to apply" : "Captured day stays the same").foregroundStyle(Palette.muted)
                     }
                 }.font(.system(size: 11)).fixedSize(horizontal: false, vertical: true)
                 Spacer(minLength: 0)

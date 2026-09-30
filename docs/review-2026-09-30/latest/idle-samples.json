@@ -1,0 +1,22 @@
+{
+  "pid": 21031,
+  "method": "4 ps samples over9seconds while synthetic Workspace Media view visible and stationary; %CPU is recent/lifetime-derived estimate, not isolated benchmark; RSS KiB includes SwiftUI/native runtime",
+  "samples": [
+    {
+      "elapsed": 0.0,
+      "ps": "21031   0.0 147072   0:02.50"
+    },
+    {
+      "elapsed": 3.013,
+      "ps": "21031   0.0 147072   0:02.50"
+    },
+    {
+      "elapsed": 6.022,
+      "ps": "21031   0.0 147072   0:02.50"
+    },
+    {
+      "elapsed": 9.034,
+      "ps": "21031   0.0 147072   0:02.50"
+    }
+  ]
+}

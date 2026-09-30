@@ -50,16 +50,18 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             alert.addButton(withTitle: "Quit anyway")
             if alert.runModal() == .alertFirstButtonReturn { return .terminateCancel }
         }
-        guard application?.state.hasUnsavedDrafts == true else { return .terminateNow }
+        application?.state.persistDrafts()
+        guard application?.state.draftPersistenceError != nil || application?.state.workspace.hasUnsavedChanges == true else { return .terminateNow }
         let alert = NSAlert()
-        alert.messageText = "Keep editing your unsaved changes?"
-        alert.informativeText = "Your saved captures are safe. Any unfinished new task, comment or reminder edits will be lost if you quit."
+        alert.messageText = "Some drafts could not be saved locally"
+        alert.informativeText = "Keep DaBin open to retry saving. Quitting now can lose the drafts still held in memory. Your previously saved captures are safe."
         alert.addButton(withTitle: "Keep editing")
         alert.addButton(withTitle: "Quit without edits")
         return alert.runModal() == .alertFirstButtonReturn ? .terminateCancel : .terminateNow
     }
 
     func applicationWillTerminate(_ notification: Notification) {
+        application?.state.persistDrafts()
         application?.shutdown()
         application = nil
     }

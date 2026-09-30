@@ -168,7 +168,8 @@ private enum HeaderInteractionTests {
         var dismissals = 0
         state.onDismiss = { dismissals += 1 }
         let size = NSSize(width: 380, height: 560)
-        let hosting = NSHostingView(rootView: BoardView(state: state, theme: ThemeSettings(defaults: defaults))
+        let theme = ThemeSettings(defaults: defaults)
+        let hosting = NSHostingView(rootView: BoardView(state: state, theme: theme)
             .frame(width: size.width, height: size.height))
         hosting.frame = NSRect(origin: .zero, size: size)
         let window = NSWindow(contentRect: NSRect(x: 80, y: 80, width: size.width, height: size.height),
@@ -202,13 +203,34 @@ private enum HeaderInteractionTests {
                    "Own-process accessibility activation succeeds (AX error \(accessibilityActivation.rawValue))")
         settle()
 
-        for id in ["primary-today", "primary-library", "primary-follow-ups", "global-search", "timeline-action-add", "board-more", "board-settings", "timeline-auto-capture", "window-expand", "timeline-date", "window-close"] {
+        for id in ["primary-inbox", "primary-today", "primary-workspace", "global-search", "timeline-action-add", "board-more", "board-settings", "timeline-auto-capture", "window-expand", "window-close"] {
             let control = try element(hosting, identifier: id)
             let frame = control.accessibilityFrame()
             try expect(frame.width > 0 && frame.height > 0, "\(id) has an accessible visible target")
             try expect(frame.minX >= window.frame.minX - 1 && frame.maxX <= window.frame.maxX + 1,
                        "\(id) fits the compact 380-point window")
         }
+        // Measure the actual visible control envelope at two window sizes. A
+        // flexible drag handle previously absorbed hundreds of vertical points
+        // before the feed; checking only intrinsic view sizes missed that bug.
+        for layoutSize in [size, NSSize(width: 760, height: 760)] {
+            hosting.rootView = BoardView(state: state, theme: theme)
+                .frame(width: layoutSize.width, height: layoutSize.height)
+            window.setContentSize(layoutSize)
+            hosting.frame = NSRect(origin: .zero, size: layoutSize)
+            settle()
+            let headerIDs = ["timeline-auto-capture", "timeline-action-add", "board-settings", "board-more", "window-expand", "window-close", "global-search", "primary-inbox", "primary-today", "primary-workspace"]
+            let headerFrames = try headerIDs.map { try element(hosting, identifier: $0).accessibilityFrame() }
+            let envelope = headerFrames.reduce(NSRect.null) { $0.union($1) }
+            try expect(envelope.height <= 140, "Header stays compact at \(Int(layoutSize.width)) points (actual \(envelope.height))")
+            try expect(headerFrames.allSatisfy { $0.minX >= window.frame.minX - 1 && $0.maxX <= window.frame.maxX + 1 },
+                       "All header controls fit at \(Int(layoutSize.width)) points")
+        }
+        hosting.rootView = BoardView(state: state, theme: theme).frame(width: size.width, height: size.height)
+        window.setContentSize(size); hosting.frame = NSRect(origin: .zero, size: size); settle()
+        try expect(state.route == .inbox, "Initial route is the capture Inbox")
+        try press(hosting, identifier: "inbox-activity")
+        try expect(state.route == .daily, "Inbox Activity opens the calendar without changing primary navigation")
         var filterFrames: [NSRect] = []
         for filter in CaptureFilter.allCases {
             let icon = try element(hosting, identifier: "capture-filter-\(filter.rawValue)")
@@ -230,12 +252,14 @@ private enum HeaderInteractionTests {
         try expect(add.accessibilityLabel() == "Add capture", "Add describes capture choices instead of pretending to create only tasks")
         let search = try element(hosting, identifier: "global-search")
         try expect(search.accessibilityLabel() == "Search all captures across all dates", "Persistent search states its archive scope")
-        try press(hosting, identifier: "primary-library")
-        try expect(state.route == .library, "Library tab opens the archive")
-        try press(hosting, identifier: "primary-follow-ups")
-        try expect(state.route == .reminders, "Follow-ups tab opens the action queue")
+        try press(hosting, identifier: "primary-workspace")
+        try expect(state.route == .library, "Workspace tab opens the organized collection")
         try press(hosting, identifier: "primary-today")
-        try expect(state.route == .daily && Calendar.current.isDateInToday(state.selectedDay), "Today returns to the current receipt day")
+        try expect(state.route == .reminders, "Today tab opens task planning")
+        try press(hosting, identifier: "primary-inbox")
+        try expect(state.route == .inbox, "Inbox tab returns to capture and triage")
+        try press(hosting, identifier: "inbox-activity")
+        try expect(state.route == .daily && Calendar.current.isDateInToday(state.selectedDay), "Activity starts at the current receipt day")
 
         let existingWindows = Set(application.windows.filter(\.isVisible).map(\.windowNumber))
         try press(hosting, identifier: "timeline-date")
@@ -256,6 +280,8 @@ private enum HeaderInteractionTests {
         state.updateGlobalSearch("Earlier")
         try expect(state.searchGroups.flatMap(\.entries).contains(where: { $0.capture.id == older.id && $0.isMatch }),
                    "Global search finds captures outside today")
+        state.back(); settle()
+        try expect(state.route == .weekly && state.filter == .files, "Back restores the Week view and its previous filter")
         state.openDaily(); settle()
         if let setup = elements(in: hosting).first(where: { $0.accessibilityLabel() == "Set up" }) {
             try expect(setup.accessibilityPerformPress(), "Capture setup exposes a labeled action")

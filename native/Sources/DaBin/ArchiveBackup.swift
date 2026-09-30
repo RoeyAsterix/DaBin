@@ -22,7 +22,8 @@ enum ArchiveBackupError: LocalizedError {
 
 /// Versioned directory package. Only capture-scoped originals, readable records,
 /// saved local edits and previews accompany the committed metadata snapshot.
-/// Preferences, live SQLite, credentials and transient import jobs are excluded.
+/// Workspace notes and references are included. Live SQLite, credentials and
+/// transient import jobs are excluded.
 @MainActor enum ArchiveBackup {
     struct FileRecord: Codable {
         let captureID: UUID
@@ -35,6 +36,8 @@ enum ArchiveBackupError: LocalizedError {
         let createdAt: Date
         let captures: [CaptureSnapshot]
         let files: [FileRecord]
+        /// Optional for archives created before workspace notes, shelf, and snippets.
+        let workspace: WorkspaceSnapshot?
     }
     struct RestoreOutcome {
         let addedSnapshots: [CaptureSnapshot]
@@ -49,6 +52,13 @@ enum ArchiveBackupError: LocalizedError {
         let relative: String
         var identity: FileIdentity?
         let verification: OriginalVerification?
+    }
+    private struct WorkspaceRestore {
+        let original: Data?
+        let originalIdentity: FileIdentity?
+        let replacement: Data
+        var installedIdentity: FileIdentity?
+        var wasWritten = false
     }
     private static let files = FileManager.default
     private static let manifestName = "Manifest.json"
@@ -66,6 +76,8 @@ enum ArchiveBackupError: LocalizedError {
         try files.createDirectory(at: staging, withIntermediateDirectories: false)
         defer { try? files.removeItem(at: staging) }
         let sourceArchive = DailyArchive(root: archiveRoot)
+        _ = try sourceArchive.safeURL(WorkspaceStore.filename)
+        let workspace = try WorkspaceStore.readSnapshot(at: archiveRoot)
         let package = DailyArchive(root: staging)
         var records: [FileRecord] = []
         let ordered = snapshots.sorted { $0.id.uuidString < $1.id.uuidString }
@@ -103,7 +115,7 @@ enum ArchiveBackupError: LocalizedError {
                                           byteCount: verification.byteCount, sha256: verification.sha256))
             }
         }
-        let manifest = Manifest(version: 1, createdAt: Date(), captures: ordered, files: records)
+        let manifest = Manifest(version: 1, createdAt: Date(), captures: ordered, files: records, workspace: workspace)
         let data = try encoded(manifest)
         try data.write(to: staging.appendingPathComponent(manifestName), options: .withoutOverwriting)
         try Data((digest(data) + "\n").utf8).write(to: staging.appendingPathComponent(checksumName), options: .withoutOverwriting)
@@ -132,6 +144,20 @@ enum ArchiveBackupError: LocalizedError {
         for snapshot in manifest.captures { try validateCapture(snapshot) }
         let captureMap = Dictionary(uniqueKeysWithValues: manifest.captures.map { ($0.id, $0) })
         let current = Dictionary(uniqueKeysWithValues: existing.map { ($0.id, $0) })
+        let destination = DailyArchive(root: archiveRoot)
+        // Validate all authored-text conflicts before creating any capture files.
+        var workspaceRestore: WorkspaceRestore?
+        if let incoming = manifest.workspace {
+            let workspaceURL = try destination.safeURL(WorkspaceStore.filename)
+            let saved = try WorkspaceStore.readSnapshot(at: archiveRoot)
+            let merged = try WorkspaceSnapshot.merging(incoming, into: saved ?? WorkspaceSnapshot())
+            if merged != saved {
+                let original = saved == nil ? nil : try Data(contentsOf: workspaceURL)
+                workspaceRestore = WorkspaceRestore(original: original,
+                    originalIdentity: saved == nil ? nil : try identity(of: workspaceURL),
+                    replacement: try encoded(merged))
+            }
+        }
         var fileMap: [String: FileRecord] = [:]
         for record in manifest.files {
             guard let snapshot = captureMap[record.captureID],
@@ -172,7 +198,6 @@ enum ArchiveBackupError: LocalizedError {
             } else { added.append(snapshot) }
         }
         let addedIDs = Set(added.map(\.id))
-        let destination = DailyArchive(root: archiveRoot)
         var toCopy: [(FileRecord, URL, URL)] = []
         for record in manifest.files {
             let target = try destination.safeURL(record.relativePath)
@@ -189,7 +214,7 @@ enum ArchiveBackupError: LocalizedError {
                 throw ArchiveBackupError.conflict("An existing capture's original is missing.")
             }
         }
-        guard !added.isEmpty else { return RestoreOutcome(addedSnapshots: [], existingCount: unchanged) }
+        guard !added.isEmpty || workspaceRestore != nil else { return RestoreOutcome(addedSnapshots: [], existingCount: unchanged) }
         var createdFiles: [CreatedPath] = []
         var stagingFiles: [CreatedPath] = []
         var createdDirectories: [CreatedPath] = []
@@ -217,6 +242,22 @@ enum ArchiveBackupError: LocalizedError {
                 createdFiles.append(CreatedPath(relative: record.relativePath, identity: copiedIdentity, verification: expected))
                 try checkpoint(.afterFileCopy)
             }
+            if var workspace = workspaceRestore {
+                let url = try destination.safeURL(WorkspaceStore.filename)
+                if let original = workspace.original, let expected = workspace.originalIdentity {
+                    guard try identity(of: url) == expected, try Data(contentsOf: url) == original else {
+                        throw ArchiveBackupError.conflict("Workspace notes changed during restore. Try again.")
+                    }
+                } else if entryExists(url) {
+                    throw ArchiveBackupError.conflict("Workspace notes appeared during restore. Try again.")
+                }
+                try workspace.replacement.write(to: url, options: .atomic)
+                workspace.wasWritten = true
+                workspaceRestore = workspace
+                workspace.installedIdentity = try identity(of: destination.safeURL(WorkspaceStore.filename))
+                workspaceRestore = workspace
+                try files.setAttributes([.posixPermissions: 0o600], ofItemAtPath: url.path)
+            }
             try checkpoint(.beforeMetadataSave)
             try commit(added)
         } catch {
@@ -224,7 +265,8 @@ enum ArchiveBackupError: LocalizedError {
             // unsuccessful restores leave the current archive authoritative.
             let filesCleaned = cleanup(Array(stagingFiles.reversed()) + Array(createdFiles.reversed()), archive: destination)
             let directoriesCleaned = cleanup(Array(createdDirectories.reversed()), archive: destination)
-            if !filesCleaned || !directoriesCleaned {
+            let workspaceCleaned = rollbackWorkspace(workspaceRestore, archive: destination)
+            if !filesCleaned || !directoriesCleaned || !workspaceCleaned {
                 throw ArchiveBackupError.rollbackIncomplete(error.localizedDescription)
             }
             throw error
@@ -257,6 +299,25 @@ enum ArchiveBackupError: LocalizedError {
            thumbnail != "Previews/\(snapshot.id.uuidString)/thumbnail.png" {
             throw ArchiveBackupError.invalid("A thumbnail path is not owned by its capture.")
         }
+    }
+
+    /// Restore only the exact workspace bytes installed by this attempt. An
+    /// external editor's changes are preserved and reported as incomplete rollback.
+    private static func rollbackWorkspace(_ workspace: WorkspaceRestore?, archive: DailyArchive) -> Bool {
+        guard let workspace, workspace.wasWritten else { return true }
+        do {
+            let url = try archive.safeURL(WorkspaceStore.filename)
+            guard let installed = workspace.installedIdentity,
+                  try identity(of: url) == installed,
+                  try Data(contentsOf: url) == workspace.replacement else { return false }
+            if let original = workspace.original {
+                try original.write(to: archive.safeURL(WorkspaceStore.filename), options: .atomic)
+                try files.setAttributes([.posixPermissions: 0o600], ofItemAtPath: url.path)
+            } else {
+                try files.removeItem(at: archive.safeURL(WorkspaceStore.filename))
+            }
+            return true
+        } catch { return false }
     }
 
     private static func ownedScopes(_ snapshot: CaptureSnapshot) throws -> [String] {

@@ -173,7 +173,14 @@ private struct AutoCaptureRobotPresenterTests {
         try expect(presenter.panel.ignoresMouseEvents && presenter.panel.sharingType == .none,
                    "The visible burst remains click-through and excluded from capture")
 
-        try await Task.sleep(for: .milliseconds(300))
+        // Completion includes a second scheduled fade task. Under concurrent
+        // compiler/IO load its main-actor turn can arrive after a fixed sleep.
+        // Assert the endpoint with a bounded deadline; motion timing itself is
+        // covered by the deterministic choreography tests.
+        let completionDeadline = Date().addingTimeInterval(2)
+        while (presenter.state.isVisible || presenter.panel.isVisible), Date() < completionDeadline {
+            try await Task.sleep(for: .milliseconds(20))
+        }
         try expect(!presenter.state.isVisible && !presenter.panel.isVisible,
                    "The one performance completes, fades out and orders out the panel")
         try expect(presentationChanges == [true, false],

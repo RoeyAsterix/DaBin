@@ -34,7 +34,7 @@ final class ApplicationMenu: NSObject {
         appMenu.addItem(withTitle: "About DaBin", action: #selector(NSApplication.orderFrontStandardAboutPanel(_:)), keyEquivalent: "")
         add("Check for Updates…", #selector(checkForUpdates), key: "", to: appMenu)
         appMenu.addItem(.separator())
-        add("Open Daily", #selector(openDaily), key: "o", to: appMenu)
+        add("Open DaBin", #selector(openDaily), key: "o", to: appMenu)
         add("Focus robot for paste", #selector(focusRobot), key: "v", modifiers: [.command, .shift], to: appMenu)
         add("Search", #selector(openSearch), key: "k", to: appMenu)
         autoCaptureItem = add("Auto Capture Off", #selector(toggleAutoCapturePause), key: "", to: appMenu)

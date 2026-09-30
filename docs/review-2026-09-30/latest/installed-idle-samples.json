@@ -1,0 +1,29 @@
+{
+  "scope": "Installed DaBin 0.4.2(51), existing personal archive, Inbox visible, Auto Capture still paused. Four process samples over nine seconds. No capture content inspected or recorded. ps percentage is a process observation, not a power benchmark.",
+  "samples": [
+    {
+      "elapsedSeconds": 0.0,
+      "cpuPercent": 0.6,
+      "rssKiB": 105520,
+      "cumulativeCPU": "0:01.00"
+    },
+    {
+      "elapsedSeconds": 3.008,
+      "cpuPercent": 0.6,
+      "rssKiB": 105520,
+      "cumulativeCPU": "0:01.02"
+    },
+    {
+      "elapsedSeconds": 6.017,
+      "cpuPercent": 0.4,
+      "rssKiB": 105536,
+      "cumulativeCPU": "0:01.04"
+    },
+    {
+      "elapsedSeconds": 9.027,
+      "cpuPercent": 0.5,
+      "rssKiB": 105536,
+      "cumulativeCPU": "0:01.07"
+    }
+  ]
+}

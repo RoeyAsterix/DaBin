@@ -32,9 +32,11 @@ import Foundation
         let earlier = try store.capture(text: "Unrelated material", at: yesterday.addingTimeInterval(-10))[0]
         let reference = try store.capture(text: "Reference with searchable typography", at: yesterday)[0]
         let task = try store.createTask(text: "Review proposal", at: yesterday.addingTimeInterval(10))
+        try expect(state.route == .inbox, "DaBin starts in the capture Inbox")
+        state.openNewNote()
         state.newNoteText = "A thought from today"
         state.saveNewNote()
-        try expect(state.newNoteText.isEmpty && state.route == .daily, "New note saves and clears its draft")
+        try expect(state.newNoteText.isEmpty && state.route == .inbox, "New note saves, clears its draft and returns to Inbox")
         try expect(state.todayTimelineCaptures.count == 1 && !state.todayTimelineCaptures.contains(where: { $0.id == task.id }), "Today avoids carrying yesterday's tasks into receipt history")
         try expect(state.followUpCaptures.map(\.id) == [task.id], "Undated tasks remain available in Follow-ups")
         state.assignProject(reference, name: "  Website launch  ")
@@ -46,6 +48,20 @@ import Foundation
         try expect(state.projectNames == ["Website launch"] && state.libraryCaptures.first?.id == reference.id, "Projects trim names and pins lead the collection")
         state.libraryPinnedOnly = true
         try expect(state.libraryCaptures.map(\.id) == [reference.id], "Pin filter only returns pinned project captures")
+        state.filter = .text
+        state.performSearchCommand(); state.updateGlobalSearch("typography")
+        state.performSearchCommand()
+        state.back()
+        try expect(state.route == .library && state.filter == .text && state.libraryPinnedOnly && state.libraryProject == "Website launch",
+                   "Leaving a repeated global search restores the Workspace project, pin and type context")
+        try expect(state.libraryCaptures.map(\.id) == [reference.id], "Returning from search restores the same collection")
+        state.openInbox(); state.openLibrary()
+        try expect(state.libraryProject == "Website launch" && state.libraryPinnedOnly && state.filter == .text,
+                   "Primary navigation preserves the Workspace selection")
+        state.showReminders()
+        try expect(state.route == .reminders, "Today opens the planning surface")
+        state.openInbox()
+        try expect(state.route == .inbox, "Inbox remains available independently of the Activity calendar")
         state.route = .weekly; state.filter = .files
         state.performSearchCommand(); state.query = "typography"
         try expect(state.route == .search && state.searchScope == .all && state.filter == .all && !state.weeklySearchActionsPresented, "Weekly/global search opens the whole archive without a scope prompt")
@@ -57,6 +73,14 @@ import Foundation
         try expect(state.globalSearchFocusRequest == focus + 1, "Search command refocuses an already-open search")
         state.query = "Website launch"
         try expect(state.searchGroups.flatMap(\.entries).filter(\.isMatch).count == 2, "Project names are searchable")
+        state.back()
+        try expect(state.route == .weekly && state.filter == .files, "Global search restores the weekly Activity filter")
+        state.filter = .media
+        state.openSearch(day: yesterday); state.back()
+        try expect(state.route == .weekly && state.filter == .media, "Day-scoped search restores the current weekly filter")
+        state.filter = .links
+        state.openSearch(week: state.weeklyDays); state.back()
+        try expect(state.route == .weekly && state.filter == .links, "Week-scoped search restores the current weekly filter")
         state.snoozeFollowUp(reference)
         await reminders.reconcile()
         let identifier = ReminderService.identifier(reference.id)

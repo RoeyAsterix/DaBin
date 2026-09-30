@@ -10,7 +10,9 @@ import AppKit
         static let top = Edge(rawValue: 8)
     }
 
-    static let minimumContentSize = CGSize(width: 380, height: 280)
+    // At 280pt the persistent controls could leave only one line of results.
+    // Keep a useful list/preview area at the smallest supported size.
+    static let minimumContentSize = CGSize(width: 380, height: 430)
     static var minimumSize: CGSize { RobotAppFrameView.outerSize(forContentSize: minimumContentSize) }
 
     static func edge(at point: CGPoint, in bounds: CGRect, thickness: CGFloat = 6) -> Edge {

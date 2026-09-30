@@ -183,10 +183,10 @@ final class InputService {
         if batch.remaining == 0 { complete(batch) }
     }
 
-    /// SwiftUI task-card drops use item providers instead of an NSPasteboard.
+    /// SwiftUI task-card and collection-shelf drops use item providers instead of an NSPasteboard.
     /// Materialize each original inside the provider callback, then reuse the
     /// verified import pipeline. Provider temporary paths are never provenance.
-    func receiveProviders(_ providers: [NSItemProvider], attachingTo task: Capture,
+    func receiveProviders(_ providers: [NSItemProvider], attachingTo task: Capture? = nil,
                           at receivedAt: Date = Date(), timeZone: TimeZone = .current,
                           completion: (([Capture], [String]) -> Void)? = nil) {
         guard !providers.isEmpty else { completion?([], ["There are no items to attach."]); return }

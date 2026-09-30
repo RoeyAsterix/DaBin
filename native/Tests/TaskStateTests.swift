@@ -536,6 +536,7 @@ struct TaskStateTests {
         let reminders = ReminderService(store: store, client: client)
         let state = AppState(store: store, previews: PreviewService(store: store), reminders: reminders)
 
+        let creationOrigin = state.route
         state.openNewTask()
         try expect(state.route == .newTask && !state.hasUnsavedDrafts, "Plus opens an empty task draft")
         state.newTaskDraft.text = "  \n "
@@ -552,16 +553,21 @@ struct TaskStateTests {
         state.back()
         try expect(state.hasUnsavedDrafts && state.newTaskDraft.text == "Review the studio brief", "Leaving the form retains its unfinished draft")
         state.openNewTask()
-        state.selectedDay = Date().addingTimeInterval(-86400)
+        let browsedDay = Date().addingTimeInterval(-86400)
+        state.selectedDay = browsedDay
         state.filter = .media
         state.saveNewTask()
-        try expect(store.captures.count == 1 && state.route == .daily, "Saving adds exactly one task and returns to Daily")
-        guard let capture = state.dailyCaptures.first else { throw NSError(domain: "DaBinTaskTests", code: 2) }
+        try expect(store.captures.count == 1 && state.route == creationOrigin, "Saving adds exactly one task and returns to the originating view")
+        guard let capture = store.captures.first else { throw NSError(domain: "DaBinTaskTests", code: 2) }
         let originalStamp = capture.capturedAt
         try expect(capture.kind == .task && !capture.isCompleted, "New task starts incomplete")
-        try expect(state.filter == .all && capture.captureDay == CaptureCalendar.dayString(Date()), "Task created while browsing history appears on today's All board")
+        try expect(state.filter == .media && state.selectedDay == browsedDay && capture.captureDay == CaptureCalendar.dayString(Date()),
+                   "Task creation records today's receipt while preserving the browsed date and filter")
         try expect(!state.hasUnsavedDrafts && state.newTaskDraft.text.isEmpty, "Saved draft clears only after persistence")
         try expect(capture.reminderAt == reminder, "Task and reminder are saved together")
+        state.openDaily()
+        try expect(state.route == .daily && state.filter == .all && state.dailyCaptures.contains { $0.id == capture.id },
+                   "Explicit Daily navigation shows the new task on today's All board")
         await reminders.reconcile()
         try expect(client.requests.count == 1, "New task reminder is scheduled through the existing service")
 

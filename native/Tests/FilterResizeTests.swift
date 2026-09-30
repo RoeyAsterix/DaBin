@@ -143,6 +143,7 @@ private final class FilterResizeNotificationClient: ReminderNotificationClient {
         // the robot first appears at a bottom corner, then opens a full Daily.
         let corner = NSPoint(x: screen.frame.maxX - 1, y: screen.frame.minY + 1)
         controller.pollPointer(at: corner, now: now, pressedMouseButtons: 0)
+        state.openDaily()
         controller.openDaily()
         settle()
         let initial = controller.board.frame
@@ -214,6 +215,7 @@ private final class FilterResizeNotificationClient: ReminderNotificationClient {
         expect(!controller.board.isVisible, "Dismissed filter panel stays hidden")
         expect(defaults.object(forKey: CornerController.boardPlacementKey) == nil, "Dismissal does not persist an animation frame")
 
+        state.openDaily()
         controller.openDaily()
         settle()
         state.query = "fixture"
@@ -234,6 +236,7 @@ private final class FilterResizeNotificationClient: ReminderNotificationClient {
         let searchGrowth = sample(controller.board) { state.filter = .all }
         expectTransition(searchGrowth, from: searchBeforeGrowth, to: searchFull, reducedMotion: reducedMotion, label: "Search growth")
 
+        state.openDaily()
         controller.openDaily()
         settle()
         state.filter = .tasks

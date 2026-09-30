@@ -181,7 +181,7 @@ struct LocalContentSearchTests {
         let store = try CaptureStore(root: scratch)
         let service = ContentIndexService(store: store)
         try expect(service.needsIndex(restored), "An eligible schema 5 capture is eligible for local indexing")
-        try expect(CaptureSnapshot(current).schemaVersion == 8, "New snapshots include the local index and archive organization schema")
+        try expect(CaptureSnapshot(current).schemaVersion == 9, "New snapshots include the local index and archive organization schema")
         try expect(!ContentIndexService.isEligible(.text) && !ContentIndexService.isEligible(.link)
                    && !ContentIndexService.isEligible(.video) && !ContentIndexService.isEligible(.file)
                    && !ContentIndexService.isEligible(.task),

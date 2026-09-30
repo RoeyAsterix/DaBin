@@ -71,7 +71,7 @@ struct CaptureSourceIcon: View {
                 Image(nsImage: image).resizable().scaledToFit()
             } else {
                 Image(systemName: application != nil ? "app" : website != nil ? "globe"
-                      : capture.sourceFilePath != nil ? "folder" : "questionmark.circle")
+                      : capture.sourceFilePath != nil ? "folder" : kindSymbol(capture.kind))
                     .font(.system(size: max(10, size * 0.82), weight: .medium))
                     .foregroundStyle(accent)
             }

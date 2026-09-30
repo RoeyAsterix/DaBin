@@ -1,5 +1,13 @@
 # DaBin QA results
 
+## 30 September 2026 — 0.4.2 (51) product review, installed locally
+
+The full optimized ARM64 run passed **50/50 suites**. A subsequent real App Sandbox ZIP export exposed a permission failure in sibling staging; the single-file production fix uses Foundation's replacement directory. The final affected **3/3 suites** passed (188 checks), including source-matched connected workflows and native Workspace layout. Final Release compilation with warnings as errors, deterministic project validation, whitespace checks, and all 26 source-packaging checks passed.
+
+The installed executable matches the final build receipt and passes strict signature validation. Live Settings shows **0.4.2 (51)**. Clean quit/restart, preserved draft, expansion/restoration and reopen context were verified. Nineteen existing readable capture records retained their prior fields except schema version; seven referenced originals remained byte-identical. The previous app, archive and preferences were backed up. No synthetic captures were added to personal history.
+
+The review includes 40 baseline and 36 final native renders, real isolated workflows, minimum-size and two-display native checks, and 10,000-record measurements. This is expert evaluation, not recruited-user feedback; VoiceOver, physical display disconnection and distribution approval remain unverified. [Completed product review and exact evidence](../docs/review-2026-09-30/REVIEW-RESULT.md).
+
 ## 29 September 2026 — 0.4.0 (48) installed and GUI blockers resolved
 
 The guarded installer updated the local app, retained its previous bundle, and preserved a private prelaunch archive/preferences backup. All 165 archive files were unchanged before first launch; a subsequent read-only comparison preserved existing fields in 29 capture payloads apart from schema metadata, and all 13 attachment originals remained byte-identical. Strict signature, ARM64, executable hash and all 96 build inputs match the installed build receipt. Live Settings inspection confirms **0.4.0 (48)** and **Get updates**.
