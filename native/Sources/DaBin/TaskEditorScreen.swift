@@ -22,19 +22,13 @@ struct NewTaskScreen: View {
                             .focused($textFocused).accessibilityLabel("Task text")
                             .onChange(of: draft.text) { _, _ in draft.message = nil }
                     }
-                    VStack(alignment: .leading, spacing: 8) {
-                        Toggle("Reminder", isOn: $draft.reminderEnabled)
-                            .toggleStyle(.switch).controlSize(.small)
-                            .font(.system(size: 13, weight: .medium))
-                            .onChange(of: draft.reminderEnabled) { _, _ in draft.message = nil }
-                        if draft.reminderEnabled {
-                            DatePicker("Remind me", selection: $draft.reminderDate, displayedComponents: [.date, .hourAndMinute])
-                                .labelsHidden().datePickerStyle(.field).accessibilityLabel("Task reminder date and time")
-                                .onChange(of: draft.reminderDate) { _, _ in draft.message = nil }
-                            Text("\(TimeZone.current.identifier) · \(draft.reminderDate.formatted(.dateTime.timeZone(.iso8601(.long))))")
-                                .font(.system(size: 11)).foregroundStyle(Palette.muted)
-                        }
-                    }
+                    ReminderClockEditor(enabled: $draft.reminderEnabled, mode: $draft.reminderMode,
+                        date: $draft.reminderDate, hours: $draft.countdownHours, minutes: $draft.countdownMinutes)
+                        .onChange(of: draft.reminderEnabled) { _, _ in draft.message = nil }
+                        .onChange(of: draft.reminderMode) { _, _ in draft.message = nil }
+                        .onChange(of: draft.reminderDate) { _, _ in draft.message = nil }
+                        .onChange(of: draft.countdownHours) { _, _ in draft.message = nil }
+                        .onChange(of: draft.countdownMinutes) { _, _ in draft.message = nil }
                     if let message = draft.message {
                         Text(message).font(.system(size: 12)).foregroundStyle(Palette.task)
                             .fixedSize(horizontal: false, vertical: true)

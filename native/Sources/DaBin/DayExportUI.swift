@@ -381,7 +381,7 @@ private struct DayExportPopover: View {
         .keyboardShortcut(shortcut, modifiers: shortcutModifiers)
         .focused($focusedChoice, equals: choice)
         .disabled(document.isEmpty)
-        .help(title)
+        .buddyHelp(title)
         .accessibilityLabel(title)
         .accessibilityHint(document.isEmpty ? "Nothing to export" :
             (choice == .copy ? "Copies this day as plain text" : "Saves this day as a UTF-8 text file"))
@@ -559,7 +559,7 @@ struct WeeklyExportPopover: View {
         .keyboardShortcut(shortcut, modifiers: shortcutModifiers)
         .focused($focusedChoice, equals: choice)
         .disabled(disabled)
-        .help(title)
+        .buddyHelp(title)
         .accessibilityLabel(title)
         .accessibilityHint(disabled ? "Nothing to download" : hint)
     }

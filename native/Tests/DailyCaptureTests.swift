@@ -361,6 +361,69 @@ import Foundation
         state.route = .daily
         _ = wired.draggingUpdated(textDrag)
         try expect(state.isDailyDropTargeted, "Returning to Daily during a drag restores targeting feedback")
+
+        // The same native host routes task workspace inputs into that task,
+        // while ordinary capture details and active editors stay protected.
+        let task = try store.createTask(text: "Fictional task with native inputs")
+        state.openCapture(task.id, focus: "task")
+        let taskDraft = try unwrap(state.selectedDraft, "Task has an editable draft")
+        taskDraft.comment = "Keep this unfinished task comment"
+        try expect(controller.board.makeFirstResponder(wired), "Task workspace accepts the native host responder")
+        try expect(wired.canPasteCapture && controller.board.validateUserInterfaceItem(pasteMenu),
+                   "Task detail enables native paste when no text editor owns focus")
+        let attachmentBoard = try board([item("Private native task attachment")])
+        defer { attachmentBoard.releaseGlobally() }
+        let attachmentDrag = DailyDropFixture(attachmentBoard)
+        attachmentDrag.draggingDestinationWindow = controller.board
+        try expect(wired.draggingEntered(attachmentDrag) == .copy
+                   && wired.prepareForDragOperation(attachmentDrag) && wired.performDragOperation(attachmentDrag),
+                   "Native task-detail drop is accepted through production controller wiring")
+        wired.concludeDragOperation(attachmentDrag)
+        try await wait("Task-detail drop attaches to the existing task") {
+            !state.isImporting && store.attachments(for: task).count == 1
+        }
+        try expect(store.attachments(for: task).first?.originalText == "Private native task attachment"
+                   && state.route == .detail && state.selectedCapture === task && state.selectedDraft === taskDraft,
+                   "Controller task drop creates an owned attachment without navigating away or replacing its draft")
+
+        // Swap only the clipboard source; retain the real host shortcut gate and
+        // AppState task import path without consulting NSPasteboard.general.
+        let productionPaste = wired.onPaste
+        wired.onPaste = { state.pasteAttachments(to: task, from: attachmentBoard) }
+        let taskPasteEvent = shortcut(.command, time: 100, window: controller.board)
+        try expect(wired.handlePasteShortcut(taskPasteEvent), "Task detail handles Command V as an attachment action")
+        try expect(wired.handlePasteShortcut(taskPasteEvent), "Task detail consumes duplicate native event delivery")
+        try await wait("Task-detail paste saves exactly one more attachment") {
+            !state.isImporting && store.attachments(for: task).count == 2
+        }
+        try expect(taskDraft.comment == "Keep this unfinished task comment" && taskDraft.hasChanges,
+                   "Native task paste leaves unfinished task comments intact")
+
+        let taskEditor = DailyEditorProbe(frame: NSRect(x: 20, y: 20, width: 150, height: 50))
+        taskEditor.isEditable = true
+        taskEditor.string = "Only edit this task comment"
+        wired.addSubview(taskEditor)
+        try expect(controller.board.makeFirstResponder(taskEditor), "Task text editor becomes the first responder")
+        try expect(!wired.handlePasteShortcut(shortcut(.command, time: 101, window: controller.board))
+                   && !wired.handlePasteShortcut(shortcut(.control, time: 102, window: controller.board)),
+                   "Task detail preserves normal Command V and Control V while editing text")
+        try expect(!controller.board.validateUserInterfaceItem(pasteMenu)
+                   && wired.draggingEntered(attachmentDrag).isEmpty && !wired.performDragOperation(attachmentDrag),
+                   "An editable task field retains its own paste and drop handling")
+        try expect(store.attachments(for: task).count == 2 && taskEditor.string == "Only edit this task comment",
+                   "Protecting the task editor neither imports an attachment nor changes its text")
+        controller.board.makeFirstResponder(wired)
+        taskEditor.removeFromSuperview()
+
+        state.openCapture(textCapture.id)
+        try expect(!wired.canPasteCapture && !controller.board.validateUserInterfaceItem(pasteMenu)
+                   && !wired.handlePasteShortcut(shortcut(.command, time: 103, window: controller.board)),
+                   "Ordinary capture details cannot turn a native paste into a task attachment")
+        try expect(wired.draggingEntered(attachmentDrag).isEmpty
+                   && !wired.prepareForDragOperation(attachmentDrag) && !wired.performDragOperation(attachmentDrag),
+                   "Ordinary capture details remain protected from board-wide drops")
+        try expect(store.attachments(for: task).count == 2, "Rejected detail inputs leave the task unchanged")
+        wired.onPaste = productionPaste
         controller.dismiss()
         try expect(!state.isDailyDropTargeted, "Dismissing Daily clears stale drop feedback")
         try expect(notifications.permissionRequests == 0 && notifications.additions == 0,

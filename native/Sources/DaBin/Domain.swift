@@ -100,6 +100,8 @@ final class Capture: ObservableObject, Identifiable {
     private(set) var automaticActionID: UUID?
     private(set) var sourceApplicationName: String?
     private(set) var sourceApplicationBundleIdentifier: String?
+    /// A task attachment remains an independently archived receipt with immutable content.
+    @Published private(set) var parentTaskID: UUID?
     @Published var title: String
     @Published var previewDescription: String
     @Published var thumbnailRelativePath: String?
@@ -146,8 +148,9 @@ final class Capture: ObservableObject, Identifiable {
          contentType: String? = nil, byteCount: Int64? = nil, title: String,
          captureDay: String? = nil, captureTimeZoneID: String? = nil,
          captureUTCOffsetSeconds: Int? = nil, sourceFilePath: String? = nil, sourceURL: String? = nil,
-         receipt: CaptureReceiptContext = .manual) {
+         receipt: CaptureReceiptContext = .manual, parentTaskID: UUID? = nil) {
         self.id = id
+        self.parentTaskID = parentTaskID
         self.capturedAt = capturedAt
         self.captureDay = captureDay ?? CaptureCalendar.dayString(capturedAt, timeZone: timeZone)
         self.captureTimeZoneID = captureTimeZoneID ?? timeZone.identifier
@@ -186,6 +189,7 @@ final class Capture: ObservableObject, Identifiable {
 
     // Store-coordinated task conversion leaves immutable receipt/content fields intact.
     func setConvertedToTask(_ value: Bool) { convertedToTask = value }
+    func setParentTaskID(_ value: UUID?) { parentTaskID = value }
 
     convenience init(snapshot: CaptureSnapshot) {
         self.init(id: snapshot.id, capturedAt: snapshot.capturedAt,
@@ -200,7 +204,8 @@ final class Capture: ObservableObject, Identifiable {
                     origin: CaptureOrigin(rawValue: snapshot.captureOriginRaw ?? "") ?? .manual,
                     automaticActionID: snapshot.automaticActionID,
                     sourceApplicationName: snapshot.sourceApplicationName,
-                    sourceApplicationBundleIdentifier: snapshot.sourceApplicationBundleIdentifier))
+                    sourceApplicationBundleIdentifier: snapshot.sourceApplicationBundleIdentifier),
+                  parentTaskID: snapshot.parentTaskID)
         self.previewDescription = snapshot.previewDescription
         self.thumbnailRelativePath = snapshot.thumbnailRelativePath
         self.previewState = snapshot.previewState
@@ -249,6 +254,8 @@ struct CaptureSnapshot: Codable {
     let automaticActionID: UUID?
     let sourceApplicationName: String?
     let sourceApplicationBundleIdentifier: String?
+    /// Missing before schema 8: legacy captures have no parent task.
+    let parentTaskID: UUID?
     let title: String
     let previewDescription: String
     let thumbnailRelativePath: String?
@@ -280,7 +287,7 @@ struct CaptureSnapshot: Codable {
     let updatedAt: Date
 
     init(_ capture: Capture) {
-        schemaVersion = 7
+        schemaVersion = 8
         id = capture.id
         capturedAt = capture.capturedAt
         captureDay = capture.captureDay
@@ -299,6 +306,7 @@ struct CaptureSnapshot: Codable {
         automaticActionID = capture.automaticActionID
         sourceApplicationName = capture.sourceApplicationName
         sourceApplicationBundleIdentifier = capture.sourceApplicationBundleIdentifier
+        parentTaskID = capture.parentTaskID
         title = capture.title
         previewDescription = capture.previewDescription
         thumbnailRelativePath = capture.thumbnailRelativePath

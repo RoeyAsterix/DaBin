@@ -1,4 +1,5 @@
 import SwiftUI
+import UniformTypeIdentifiers
 
 @MainActor
 struct CaptureRow: View {
@@ -14,93 +15,128 @@ struct CaptureRow: View {
     var showsDate = false
     @State private var copied = false
     @State private var copyGeneration = 0
+    @State private var dropTargeted = false
+
+    private var taskColor: Color { capture.isCompleted ? Palette.completed : accent }
+    private var attachments: [Capture] { state.store.attachments(for: capture) }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            if let isMatch {
-                Text(isMatch ? "Match" : "Nearby capture").font(.system(size: 11, weight: .medium))
-                    .foregroundStyle(isMatch ? accent : Palette.muted)
-            }
-            Button { state.openCapture(capture.id) } label: {
-                HStack(alignment: .top, spacing: 10) {
-                    if !capture.isMinimized && capture.kind != .text && capture.kind != .task {
-                        CaptureThumbnail(store: state.store, capture: capture)
-                            .frame(width: 48, height: 52).clipped().clipShape(RoundedRectangle(cornerRadius: 8))
+        VStack(alignment: .leading, spacing: 10) {
+            HStack(spacing: 7) {
+                CaptureSourceIcon(capture: capture)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(showsDate ? "\(prettyDay(capture.captureDay, includeWeekday: false)) · \(captureClock(capture))" : captureClock(capture))
+                        .font(.system(size: 12, weight: .medium)).monospacedDigit()
+                    if !capture.isTask {
+                        Text(captureLinkHost(capture) ?? captureTypeLabel(capture.kind))
+                            .font(.system(size: 10)).lineLimit(1)
                     }
-                    VStack(alignment: .leading, spacing: 4) {
-                        HStack(alignment: .firstTextBaseline, spacing: 5) {
-                            if capture.isPinned {
-                                Image(systemName: "pin.fill").font(.system(size: 10)).foregroundStyle(accent)
-                                    .accessibilityLabel("Pinned")
-                            }
-                            Text(capture.title.isEmpty ? "Untitled capture" : capture.title)
-                                .strikethrough(capture.isTask && capture.isCompleted, color: Palette.muted)
-                                .font(.system(size: 14, weight: .medium)).lineLimit(capture.isMinimized ? 1 : 3)
-                                .multilineTextAlignment(.leading).frame(maxWidth: .infinity, alignment: .leading)
-                        }
-                        if !capture.isMinimized && !capture.previewDescription.isEmpty {
-                            Text(capture.previewDescription).font(.system(size: 12)).foregroundStyle(Palette.muted)
-                                .lineLimit(2).multilineTextAlignment(.leading)
-                        }
-                        if let indexedTextMatch {
-                            Label(indexedTextMatch, systemImage: "text.viewfinder")
-                                .font(.system(size: 11)).foregroundStyle(Palette.muted).lineLimit(2)
-                                .multilineTextAlignment(.leading)
-                                .accessibilityLabel("Matched recognized text: \(indexedTextMatch)")
-                        }
-                    }
-                }.contentShape(Rectangle())
-            }.buttonStyle(.plain)
-                .accessibilityLabel("Open \(capture.title), \(capture.isTask ? "task" : captureTypeLabel(capture.kind)), saved \(prettyDay(capture.captureDay)) at \(captureClock(capture))")
-
-            if !capture.comment.isEmpty {
-                Label(capture.comment, systemImage: "text.bubble")
-                    .font(.system(size: 12)).foregroundStyle(Palette.muted).lineLimit(2)
-            }
-            if let reminder = capture.reminderAt {
-                Label("\(capture.isTask && capture.isCompleted ? "Paused" : "Remind") \(reminder.formatted(date: .abbreviated, time: .shortened))", systemImage: "bell")
-                    .font(.system(size: 11)).foregroundStyle(Palette.muted).lineLimit(2)
-            }
-            if let project = capture.projectName {
-                Label(project, systemImage: "folder").font(.system(size: 11)).foregroundStyle(accent).lineLimit(1)
-            }
-            HStack(spacing: 9) {
-                Text(metadata).font(.system(size: 11)).foregroundStyle(Palette.muted).lineLimit(1)
+                }.foregroundStyle(Palette.muted)
+                if capture.isPinned { Image(systemName: "pin.fill").font(.system(size: 10)).foregroundStyle(accent).accessibilityLabel("Pinned") }
                 Spacer(minLength: 0)
+                if capture.isTask { TaskStatusButton(state: state, capture: capture) }
                 if showsCopyButton {
-                    Button {
-                        guard state.copyCapturesToClipboard([capture]) else { return }
-                        copied = true
-                        copyGeneration &+= 1
-                        let generation = copyGeneration
-                        Task { @MainActor in
-                            try? await Task.sleep(for: .seconds(1.25))
-                            guard generation == copyGeneration else { return }
-                            copied = false
-                        }
-                    } label: {
-                        Label(copied ? "Copied" : "Copy", systemImage: copied ? "checkmark" : "doc.on.doc")
-                    }.buttonStyle(.plain).font(.system(size: 11)).foregroundStyle(accent)
-                        .accessibilityLabel("Copy \(capture.title)")
+                    BuddyIconButton(symbol: copied ? "checkmark" : "doc.on.doc", title: copied ? "Copied" : "Copy \(capture.title)") { copy() }
                         .accessibilityIdentifier(CaptureCopyButton.accessibilityIdentifier(for: [capture]))
                 }
-                CaptureControls(state: state, capture: capture)
+            }
+            if let isMatch {
+                Label(isMatch ? "Match" : "Nearby capture", systemImage: isMatch ? "magnifyingglass" : "clock")
+                    .font(.system(size: 11, weight: .medium)).foregroundStyle(isMatch ? accent : Palette.muted)
+            }
+            Button { state.openCapture(capture.id) } label: {
+                VStack(alignment: .leading, spacing: 10) {
+                    if !capture.isMinimized, ![CaptureKind.text, .task].contains(capture.kind) {
+                        CaptureThumbnail(store: state.store, capture: capture)
+                            .frame(height: capture.kind == .link ? 132 : 172)
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                    }
+                    Text(capture.title.isEmpty ? "Untitled capture" : capture.title)
+                        .font(.system(size: 16, weight: .semibold))
+                        .strikethrough(capture.isTask && capture.isCompleted, color: Palette.muted)
+                        .foregroundStyle(capture.isCompleted ? Palette.muted : Palette.foreground)
+                        .lineLimit(capture.isMinimized ? 1 : 4).frame(maxWidth: .infinity, alignment: .leading)
+                    if !capture.isMinimized, !capture.previewDescription.isEmpty {
+                        Text(capture.previewDescription).font(.system(size: 13)).foregroundStyle(Palette.muted).lineLimit(3)
+                    }
+                    if let indexedTextMatch {
+                        Label(indexedTextMatch, systemImage: "text.viewfinder")
+                            .font(.system(size: 11)).foregroundStyle(Palette.muted).lineLimit(2)
+                            .accessibilityLabel("Matched recognized text: \(indexedTextMatch)")
+                    }
+                }.multilineTextAlignment(.leading).contentShape(Rectangle())
+            }.buttonStyle(.plain)
+                .accessibilityLabel("Open \(capture.title), \(capture.isTask ? "task" : captureTypeLabel(capture.kind)), saved \(prettyDay(capture.captureDay)) at \(captureClock(capture))")
+            if !capture.isMinimized {
+                if !capture.comment.isEmpty {
+                    Label(capture.comment, systemImage: "text.bubble")
+                        .font(.system(size: 12)).foregroundStyle(Palette.muted).lineLimit(2)
+                }
+                if let reminder = capture.reminderAt {
+                    Label(reminder.formatted(date: .abbreviated, time: .shortened), systemImage: capture.isCompleted ? "bell.slash" : "clock")
+                        .font(.system(size: 11, weight: .medium)).foregroundStyle(taskColor).lineLimit(1)
+                }
+                if !attachments.isEmpty {
+                    Label("\(attachments.count) attachments", systemImage: "paperclip")
+                        .font(.system(size: 11)).foregroundStyle(Palette.muted)
+                }
+                if let project = capture.projectName {
+                    Label(project, systemImage: "folder").font(.system(size: 11)).foregroundStyle(accent).lineLimit(1)
+                }
+                if let parentID = capture.parentTaskID {
+                    Button { state.openCapture(parentID, focus: "task") } label: { Label("Task attachment", systemImage: "arrow.turn.up.left") }
+                        .buttonStyle(.plain).font(.system(size: 11)).foregroundStyle(accent)
+                }
+                HStack(spacing: 2) {
+                    BuddyIconButton(symbol: "text.bubble", title: "Comment") { state.openCapture(capture.id, focus: "comment") }
+                    BuddyIconButton(symbol: "clock", title: "Reminder") { state.openCapture(capture.id, focus: "reminder") }
+                    if capture.isTask {
+                        BuddyIconButton(symbol: "paperclip", title: "Add task attachments") { state.openCapture(capture.id, focus: "task") }
+                    } else {
+                        CaptureTaskConversionButton(state: state, capture: capture)
+                    }
+                    Spacer(minLength: 0)
+                    BuddyIconButton(symbol: "chevron.up", title: "Minimize capture") { state.toggleMinimized(capture) }
+                    CaptureControls(state: state, capture: capture)
+                }
+            } else {
+                HStack {
+                    Spacer(minLength: 0)
+                    BuddyIconButton(symbol: "chevron.down", title: "Expand capture") { state.toggleMinimized(capture) }
+                    CaptureControls(state: state, capture: capture)
+                }
             }
         }
-        .padding(.vertical, capture.isMinimized ? 9 : 12).padding(.horizontal, embeddedInCard ? 0 : 11)
+        .padding(embeddedInCard ? 4 : 13)
         .background {
-            if !embeddedInCard { RoundedRectangle(cornerRadius: 12).fill(Palette.surface) }
+            if !embeddedInCard {
+                RoundedRectangle(cornerRadius: 16).fill(Palette.surface)
+                if capture.isTask { RoundedRectangle(cornerRadius: 16).fill(taskColor.opacity(capture.isCompleted ? 0.035 : 0.055)) }
+            }
         }
         .overlay {
-            if !embeddedInCard { RoundedRectangle(cornerRadius: 12).strokeBorder(Palette.line, lineWidth: 0.75) }
+            if !embeddedInCard {
+                RoundedRectangle(cornerRadius: 16).strokeBorder(dropTargeted ? accent : capture.isTask ? taskColor.opacity(0.40) : Palette.line, lineWidth: dropTargeted ? 1.5 : 0.7)
+            }
         }
-        .padding(.vertical, embeddedInCard ? 0 : 5)
+        .padding(.vertical, embeddedInCard ? 0 : 6)
         .contextMenu { CaptureActionMenuItems(state: state, capture: capture) }
+        .onDrop(of: TaskAttachmentTypes.identifiers, isTargeted: $dropTargeted) { providers in
+            guard capture.isTask else { return false }
+            return state.receiveTaskAttachments(providers, to: capture)
+        }
     }
 
-    private var metadata: String {
-        let kind = capture.isTask ? (capture.isCompleted ? "Completed" : "Task") : (captureLinkHost(capture) ?? captureTypeLabel(capture.kind))
-        return showsDate ? "\(prettyDay(capture.captureDay, includeWeekday: false)) · \(kind)" : "\(captureClock(capture)) · \(kind)"
+    private func copy() {
+        guard state.copyCapturesToClipboard([capture]) else { return }
+        copied = true
+        copyGeneration &+= 1
+        let generation = copyGeneration
+        Task { @MainActor in
+            try? await Task.sleep(for: .seconds(1.25))
+            guard generation == copyGeneration else { return }
+            copied = false
+        }
     }
 }
 
@@ -112,8 +148,8 @@ struct CaptureControls: View {
 
     var body: some View {
         Menu { CaptureActionMenuItems(state: state, capture: capture) } label: {
-            Text("More").font(.system(size: 11))
-        }.menuStyle(.borderlessButton).fixedSize().foregroundStyle(accent)
+            Image(systemName: "ellipsis").font(.system(size: 16, weight: .semibold)).frame(width: 28, height: 32)
+        }.menuStyle(.borderlessButton).menuIndicator(.hidden).fixedSize().foregroundStyle(accent).buddyHelp("More capture actions")
             .accessibilityLabel("More actions for \(capture.title)")
             .disabled(state.removingCaptureID == capture.id)
     }
@@ -146,9 +182,7 @@ struct CaptureTaskConversionButton: View {
     @ObservedObject var state: AppState
     @ObservedObject var capture: Capture
     var body: some View {
-        Button { state.convertToTask(capture) } label: {
-            Label("Turn into task", systemImage: "checkmark.circle").font(.system(size: 12, weight: .medium))
-        }.buttonStyle(.plain).foregroundStyle(accent)
+        BuddyIconButton(symbol: "checkmark.circle", title: "Turn into task") { state.convertToTask(capture) }
             .accessibilityLabel("Turn \(capture.title) into a task")
             .accessibilityHint("Keeps the captured content, note and reminder")
             .accessibilityIdentifier("capture-convert-to-task-\(capture.id.uuidString)")
@@ -182,7 +216,7 @@ struct TaskStatusButton: View {
                 .font(.system(size: 11, weight: .semibold)).foregroundStyle(color)
                 .padding(.horizontal, 8).padding(.vertical, 5).background(color.opacity(0.1), in: Capsule())
                 .contentShape(Capsule())
-        }.buttonStyle(.plain).help(capture.isCompleted ? "Mark incomplete" : "Mark completed")
+        }.buttonStyle(.plain).buddyHelp(capture.isCompleted ? "Mark incomplete" : "Mark completed")
             .accessibilityLabel("\(label): \(capture.title)")
             .accessibilityHint(capture.isCompleted ? "Mark this task incomplete" : "Mark this task completed")
             .accessibilityValue(label).accessibilityIdentifier("capture-task-status-\(capture.id.uuidString)")

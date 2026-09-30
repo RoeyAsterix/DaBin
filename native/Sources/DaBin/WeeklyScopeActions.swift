@@ -105,7 +105,7 @@ struct WeeklySearchPopover: View {
         .buttonStyle(.plain)
         .keyboardShortcut(shortcut, modifiers: .command)
         .focused($focusedChoice, equals: choice)
-        .help(title)
+        .buddyHelp(title)
         .accessibilityLabel(title)
         .accessibilityHint(hint)
     }
@@ -126,7 +126,7 @@ struct WeeklyDayPicker: View {
         .pickerStyle(.menu)
         .controlSize(.small)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .help("Choose the day used by day actions")
+        .buddyHelp("Choose the day used by day actions")
         .accessibilityLabel("Day for weekly actions")
         .accessibilityValue(selection.formatted(date: .complete, time: .omitted))
     }

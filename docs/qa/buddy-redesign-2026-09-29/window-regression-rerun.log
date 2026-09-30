@@ -1,0 +1,3 @@
+PASSED WindowTests: PASS: 160 window checks across 1 real screen(s); no cursor synthesis, clipboard access, network or notification permission.
+PASSED WeeklyWindowTests
+QA passed: 2/2 requested suites passed. Report: native/build/qa/runs/20260929T210358105330Z/report.json

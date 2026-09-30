@@ -32,6 +32,7 @@ struct BoardView: View {
             BoardCaptureStatus(state: state, service: state.autoCapture, settings: state.autoCapture.settings)
         }
         .foregroundStyle(Palette.foreground).tint(accent).environment(\.daBinAccent, accent)
+        .environment(\.daBinTooltipsEnabled, theme.showTooltips)
         .background(Palette.background.opacity(ThemeSettings.effectiveBoardOpacity(
             preferred: theme.boardOpacity, reduceTransparency: reduceTransparency)))
         .preferredColorScheme(theme.darkModeEnabled ? .dark : .light)
@@ -99,13 +100,20 @@ struct BoardView: View {
     }
 
     private var header: some View {
-        VStack(spacing: 10) {
-            HStack(spacing: 8) {
+        VStack(spacing: 8) {
+            HStack(spacing: 3) {
                 DaBinLogo(variant: .compact).frame(width: 68, height: 28, alignment: .leading)
                     .overlay { WindowDragHandle(onDragStarted: { state.onBoardDragStarted?() }).accessibilityHidden(true) }
+                AutoCaptureHeaderButton(service: state.autoCapture, weekly: state.route == .weekly,
+                    statusText: state.autoCapture.overallStatusText, isVisible: state.isBoardVisible) { state.toggleAutoCaptureFromHeader() }
                 Spacer(minLength: 0)
                 addMenu
+                BuddyIconButton(symbol: "gearshape", title: "Settings") { state.showSettings() }
+                    .accessibilityIdentifier("board-settings")
                 moreMenu
+                BuddyIconButton(symbol: "arrow.up.left.and.arrow.down.right", title: "Expand or restore window") {
+                    state.onToggleExpandedWindow?()
+                }.accessibilityIdentifier("window-expand")
                 SmallIcon(symbol: "xmark", label: "Hide DaBin", size: 28) { state.onDismiss?() }
                     .accessibilityIdentifier("window-close")
             }
@@ -120,7 +128,7 @@ struct BoardView: View {
                 if state.route == .search && !state.query.isEmpty {
                     Button { state.updateGlobalSearch("") } label: { Image(systemName: "xmark.circle.fill") }
                         .buttonStyle(.plain).foregroundStyle(Palette.muted)
-                        .help("Clear search").accessibilityLabel("Clear search")
+                        .buddyHelp("Clear search").accessibilityLabel("Clear search")
                 }
             }.padding(9).background(Palette.surface, in: RoundedRectangle(cornerRadius: 10))
                 .overlay(RoundedRectangle(cornerRadius: 10).strokeBorder(Palette.line))
@@ -145,7 +153,7 @@ struct BoardView: View {
     private func navigationButton(_ title: String, symbol: String, selected: Bool, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             Label(title, systemImage: symbol).font(.system(size: 12, weight: selected ? .semibold : .medium))
-                .lineLimit(1).frame(maxWidth: .infinity).padding(.vertical, 8)
+                .lineLimit(1).frame(maxWidth: .infinity).padding(.vertical, 6)
                 .background(selected ? accent.opacity(0.13) : Color.clear, in: RoundedRectangle(cornerRadius: 8))
                 .contentShape(Rectangle())
         }.buttonStyle(.plain).foregroundStyle(selected ? accent : Palette.muted)
@@ -160,27 +168,26 @@ struct BoardView: View {
             Button("Import files…", systemImage: "folder.badge.plus") { state.importFiles() }
             Divider()
             Button("New task", systemImage: "checkmark.circle") { state.openNewTask() }
-        } label: { Label("Add", systemImage: "plus").font(.system(size: 12, weight: .semibold)) }
-        .menuStyle(.borderlessButton).fixedSize().padding(.horizontal, 9).padding(.vertical, 6)
+        } label: { Image(systemName: "plus").font(.system(size: 16, weight: .semibold)).frame(width: 28, height: 32) }
+        .menuStyle(.borderlessButton).menuIndicator(.hidden).fixedSize().buddyHelp("Add capture")
         .background(accent.opacity(0.13), in: RoundedRectangle(cornerRadius: 8))
         .accessibilityLabel("Add capture").accessibilityIdentifier("timeline-action-add").disabled(state.isImporting)
     }
 
     private var moreMenu: some View {
         Menu {
-            Button("Settings…", systemImage: "gearshape") { state.showSettings() }
-            Menu("Export") {
-                Button("Copy selected day") { dayExportController.copy(dayDocument) }.disabled(dayDocument.isEmpty)
-                Button("Export selected day…") { reportExport(dayExportController.save(dayDocument)) }.disabled(dayDocument.isEmpty)
-                Button("Copy selected week") { dayExportController.copy(weekDocument) }.disabled(weekDocument.isEmpty)
-                Button("Export selected week…") { reportExport(dayExportController.save(weekDocument)) }.disabled(weekDocument.isEmpty)
-            }
+            Menu {
+                Button("Copy selected day", systemImage: "doc.on.doc") { dayExportController.copy(dayDocument) }.disabled(dayDocument.isEmpty)
+                Button("Export selected day…", systemImage: "doc.badge.arrow.up") { reportExport(dayExportController.save(dayDocument)) }.disabled(dayDocument.isEmpty)
+                Button("Copy selected week", systemImage: "doc.on.doc.fill") { dayExportController.copy(weekDocument) }.disabled(weekDocument.isEmpty)
+                Button("Export selected week…", systemImage: "square.and.arrow.up") { reportExport(dayExportController.save(weekDocument)) }.disabled(weekDocument.isEmpty)
+            } label: { Label("Export", systemImage: "square.and.arrow.up") }
             Divider()
             Button("Recently Deleted", systemImage: "trash") { state.showTrash() }
             Button("Back up archive…", systemImage: "externaldrive") { state.exportArchiveBackup() }.disabled(state.isArchiveOperationRunning)
             Button("Restore archive backup…", systemImage: "arrow.counterclockwise") { state.restoreArchiveBackup() }.disabled(state.isArchiveOperationRunning)
-        } label: { Text("More").font(.system(size: 12)) }
-        .menuStyle(.borderlessButton).fixedSize().padding(.horizontal, 5)
+        } label: { Image(systemName: "ellipsis.circle").font(.system(size: 16, weight: .semibold)).frame(width: 28, height: 32) }
+        .menuStyle(.borderlessButton).menuIndicator(.hidden).fixedSize().foregroundStyle(accent).buddyHelp("More options")
         .accessibilityLabel("More options").accessibilityIdentifier("board-more")
     }
 
@@ -192,15 +199,6 @@ struct BoardView: View {
 
     private var timelineControls: some View {
         VStack(spacing: 7) {
-            HStack(spacing: 8) {
-                Text("Timeline").font(.system(size: 11)).foregroundStyle(Palette.muted)
-                Picker("Timeline", selection: Binding(get: { state.timelineMode }, set: { state.selectTimelineMode($0) })) {
-                    Text("Day").tag(BoardTimelineMode.daily)
-                    Text("Week").tag(BoardTimelineMode.weekly)
-                }.pickerStyle(.segmented).labelsHidden().frame(width: 125)
-                Spacer(minLength: 0)
-                CaptureFilterMenu(selection: $state.filter)
-            }
             HStack(spacing: 6) {
                 SmallIcon(symbol: "chevron.left", label: state.route == .weekly ? "Previous week" : "Previous day", size: 26) { moveTimeline(-1) }
                 Button { showCalendar.toggle() } label: {
@@ -218,12 +216,21 @@ struct BoardView: View {
                     }
                 SmallIcon(symbol: "chevron.right", label: state.route == .weekly ? "Next week" : "Next day", size: 26) { moveTimeline(1) }
                     .disabled(Calendar.current.isDateInToday(state.route == .weekly ? state.weekEndingDay : state.selectedDay))
+                ForEach([BoardTimelineMode.daily, .weekly], id: \.self) { mode in
+                    BuddyIconButton(symbol: mode == .daily ? "1.calendar" : "7.calendar",
+                        title: mode == .daily ? "Daily view" : "Weekly view",
+                        isActive: state.timelineMode == mode) { state.selectTimelineMode(mode) }
+                        .accessibilityIdentifier(mode == .daily ? "timeline-mode-daily" : "timeline-mode-weekly")
+                }
                 if !Calendar.current.isDateInToday(state.route == .weekly ? state.weekEndingDay : state.selectedDay) {
-                    Button("Today") {
+                    Button {
                         if state.route == .weekly { state.showCurrentWeek() } else { state.openDaily() }
-                    }.buttonStyle(.plain).font(.system(size: 11)).foregroundStyle(accent)
+                    } label: { Image(systemName: "arrow.uturn.backward").frame(width: 22, height: 28) }
+                    .buttonStyle(.plain).font(.system(size: 11)).foregroundStyle(accent)
+                        .accessibilityLabel("Return to today").buddyHelp("Return to today")
                 }
             }
+            CaptureFilterStrip(selection: $state.filter)
         }
     }
 
@@ -260,7 +267,7 @@ struct BoardView: View {
             Text(message.text).font(.system(size: 12)).fixedSize(horizontal: false, vertical: true)
             Spacer(minLength: 0)
             Button { state.status = nil; state.store.error = nil } label: { Image(systemName: "xmark").font(.system(size: 10)) }
-                .buttonStyle(.plain).help("Dismiss message").accessibilityLabel("Dismiss message")
+                .buttonStyle(.plain).buddyHelp("Dismiss message").accessibilityLabel("Dismiss message")
         }.padding(10).background(Palette.soft, in: RoundedRectangle(cornerRadius: 11))
             .padding(.horizontal, 14).padding(.vertical, 6)
     }
@@ -272,7 +279,7 @@ struct CaptureFilterMenu: View {
     var body: some View {
         Menu {
             Picker("Capture type", selection: $selection) {
-                ForEach(CaptureFilter.allCases) { filter in Text(filter.title).tag(filter) }
+                ForEach(CaptureFilter.allCases) { filter in Label(filter.title, systemImage: filter.buddySymbol).tag(filter) }
             }
         } label: {
             Label(selection == .all ? "Filters" : selection.title, systemImage: "line.3.horizontal.decrease").font(.system(size: 11))

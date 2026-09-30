@@ -95,8 +95,8 @@ final class InputService {
         return type
     }
 
-    private enum Payload {
-        case file(URL, CaptureSource?)
+    private enum Payload: Sendable {
+        case file(URL, CaptureSource?, originalName: String? = nil)
         case text(String, CaptureSource)
         case bytes(Data, String, CaptureSource)
         case failure(String)
@@ -123,10 +123,10 @@ final class InputService {
         return .unknown
     }
 
-    func paste() { receive(.general) }
+    func paste(attachingTo task: Capture? = nil) { receive(.general, attachingTo: task) }
 
     func receive(_ pasteboard: NSPasteboard, at receivedAt: Date = Date(), timeZone zone: TimeZone = .current,
-                 receipt: CaptureReceiptContext = .manual,
+                 receipt: CaptureReceiptContext = .manual, attachingTo task: Capture? = nil,
                  fileURLTransfer suppliedFileURLTransfer: InputFileURLTransfer? = nil,
                  commitGuard: @escaping () -> Bool = { true },
                  completion: (([Capture], [String]) -> Void)? = nil) {
@@ -167,7 +167,7 @@ final class InputService {
             }
         }
         if items.isEmpty, receivers.isEmpty { payloads.append(.failure("The clipboard has no readable content to capture.")) }
-        let batch = InputBatch(date: receivedAt, zone: zone, receipt: receipt,
+        let batch = InputBatch(date: receivedAt, zone: zone, receipt: receipt, parentTask: task,
                                fileURLTransfer: fileURLTransfer, commitGuard: commitGuard,
                                remaining: (payloads.isEmpty ? 0 : 1) + receivers.count,
                                completion: completion)
@@ -181,6 +181,124 @@ final class InputService {
         for receiver in receivers { receivePromise(receiver, batch: batch) }
         // A malformed pasteboard must still terminate its busy state.
         if batch.remaining == 0 { complete(batch) }
+    }
+
+    /// SwiftUI task-card drops use item providers instead of an NSPasteboard.
+    /// Materialize each original inside the provider callback, then reuse the
+    /// verified import pipeline. Provider temporary paths are never provenance.
+    func receiveProviders(_ providers: [NSItemProvider], attachingTo task: Capture,
+                          at receivedAt: Date = Date(), timeZone: TimeZone = .current,
+                          completion: (([Capture], [String]) -> Void)? = nil) {
+        guard !providers.isEmpty else { completion?([], ["There are no items to attach."]); return }
+        let batch = InputBatch(date: receivedAt, zone: timeZone, parentTask: task,
+                               fileURLTransfer: InputFileURLTransfer(retaining: []), remaining: 1,
+                               completion: completion)
+        setBusy(1)
+        Task { @MainActor in
+            for provider in providers {
+                let materialized = await providerPayload(provider)
+                await importPayloads([materialized.payload], into: batch)
+                if let directory = materialized.temporaryDirectory { try? FileManager.default.removeItem(at: directory) }
+            }
+            finishUnit(batch)
+        }
+    }
+
+    /// Some drag sources never resolve a promise. Bound the operation and
+    /// safely discard late materializations without importing after timeout.
+    // The continuation is exclusively consumed under lock by timeout/provider callbacks.
+    private final class ProviderResultGate: @unchecked Sendable {
+        private let lock = NSLock()
+        private var continuation: CheckedContinuation<(payload: Payload, temporaryDirectory: URL?), Never>?
+        init(_ continuation: CheckedContinuation<(payload: Payload, temporaryDirectory: URL?), Never>, timeout: TimeInterval) {
+            self.continuation = continuation
+            DispatchQueue.global(qos: .utility).asyncAfter(deadline: .now() + max(0.01, timeout)) { [self] in
+                finish((.failure("The source did not provide this attachment in time. Please try again."), nil))
+            }
+        }
+        func finish(_ result: (payload: Payload, temporaryDirectory: URL?)) {
+            lock.lock()
+            let active = continuation
+            continuation = nil
+            lock.unlock()
+            if let active { active.resume(returning: result) }
+            else if let directory = result.temporaryDirectory { try? FileManager.default.removeItem(at: directory) }
+        }
+    }
+
+    private func providerPayload(_ provider: NSItemProvider) async -> (payload: Payload, temporaryDirectory: URL?) {
+        if provider.hasItemConformingToTypeIdentifier(UTType.fileURL.identifier) {
+            return await withCheckedContinuation { continuation in
+            let response = ProviderResultGate(continuation, timeout: promiseTimeout)
+                let temporaryRoot = stagingRoot
+                provider.loadItem(forTypeIdentifier: UTType.fileURL.identifier, options: nil) { item, error in
+                    if let error { response.finish((.failure(error.localizedDescription), nil)); return }
+                    let url = (item as? URL) ?? (item as? Data).flatMap { URL(dataRepresentation: $0, relativeTo: nil) }
+                    guard let url, url.isFileURL else {
+                        response.finish((.failure("The dragged file did not provide a readable URL."), nil)); return
+                    }
+                    let access = url.startAccessingSecurityScopedResource()
+                    defer { if access { url.stopAccessingSecurityScopedResource() } }
+                    let directory = temporaryRoot.appendingPathComponent("DaBin-TaskDrop-\(UUID().uuidString)", isDirectory: true)
+                    do {
+                        try OriginalFileStorage.validateRegularFile(url)
+                        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+                        let owned = directory.appendingPathComponent(CaptureClassifier.storageFilename(url.lastPathComponent))
+                        try FileManager.default.copyItem(at: url, to: owned)
+                        response.finish((.file(owned, CaptureSource(filePath: url.standardizedFileURL.path), originalName: url.lastPathComponent), directory))
+                    } catch { response.finish((.failure(error.localizedDescription), directory)) }
+                }
+            }
+        }
+        // URL and text providers carry semantic content; ordinary file/image/PDF
+        // providers use their native original representation before broad text.
+        let type = provider.registeredTypeIdentifiers.first { identifier in
+            guard let type = UTType(identifier) else { return false }
+            return type.conforms(to: .data) && !type.conforms(to: .url)
+                && (!type.conforms(to: .plainText) || provider.suggestedName != nil)
+                && type.preferredFilenameExtension != nil
+        }
+        if let type {
+            return await withCheckedContinuation { continuation in
+                let response = ProviderResultGate(continuation, timeout: promiseTimeout)
+                let temporaryRoot = stagingRoot
+                let suppliedName = provider.suggestedName
+                provider.loadFileRepresentation(forTypeIdentifier: type) { url, error in
+                    guard let url, error == nil else {
+                        response.finish((.failure(error?.localizedDescription ?? "The dragged file could not be read."), nil)); return
+                    }
+                    let directory = temporaryRoot.appendingPathComponent("DaBin-TaskDrop-\(UUID().uuidString)", isDirectory: true)
+                    do {
+                        try OriginalFileStorage.validateRegularFile(url)
+                        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+                        var filename = suppliedName ?? url.lastPathComponent
+                        if (filename as NSString).pathExtension.isEmpty, let ext = UTType(type)?.preferredFilenameExtension {
+                            filename += "." + ext
+                        }
+                        let owned = directory.appendingPathComponent(CaptureClassifier.storageFilename(filename))
+                        try FileManager.default.copyItem(at: url, to: owned)
+                        response.finish((.file(owned, .unknown, originalName: filename), directory))
+                    } catch { response.finish((.failure(error.localizedDescription), directory)) }
+                }
+            }
+        }
+        let textType = provider.hasItemConformingToTypeIdentifier(UTType.url.identifier)
+            ? UTType.url.identifier : UTType.plainText.identifier
+        guard provider.hasItemConformingToTypeIdentifier(textType) else {
+            return (.failure("This item did not provide a readable file, image, link or text representation."), nil)
+        }
+        return await withCheckedContinuation { continuation in
+                let response = ProviderResultGate(continuation, timeout: promiseTimeout)
+            provider.loadItem(forTypeIdentifier: textType, options: nil) { item, error in
+                if let error { response.finish((.failure(error.localizedDescription), nil)); return }
+                let value = (item as? String) ?? (item as? URL)?.absoluteString
+                    ?? (item as? Data).flatMap { String(data: $0, encoding: .utf8) }
+                guard let value else {
+                    response.finish((.failure("The dragged text could not be read."), nil)); return
+                }
+                response.finish((.text(value, .unknown), nil))
+            }
+        }
     }
 
     private func setBusy(_ delta: Int) {
@@ -207,9 +325,9 @@ final class InputService {
         for payload in payloads {
             do {
                 switch payload {
-                case .text(let text, let source): batch.captures += try store.capture(text: text, at: batch.date, timeZone: batch.zone, source: source, receipt: batch.receipt, commitGuard: batch.commitGuard)
-                case .file(let url, let source): batch.captures.append(try await store.importFile(url, at: batch.date, timeZone: batch.zone, source: source, receipt: batch.receipt, commitGuard: batch.commitGuard))
-                case .bytes(let data, let filename, let source): batch.captures.append(try await store.importData(data, filename: filename, at: batch.date, timeZone: batch.zone, source: source, receipt: batch.receipt, commitGuard: batch.commitGuard))
+                case .text(let text, let source): batch.captures += try store.capture(text: text, at: batch.date, timeZone: batch.zone, source: source, receipt: batch.receipt, parentTask: batch.parentTask, commitGuard: batch.commitGuard)
+                case .file(let url, let source, let originalName): batch.captures.append(try await store.importFile(url, at: batch.date, timeZone: batch.zone, originalName: originalName, source: source, receipt: batch.receipt, parentTask: batch.parentTask, commitGuard: batch.commitGuard))
+                case .bytes(let data, let filename, let source): batch.captures.append(try await store.importData(data, filename: filename, at: batch.date, timeZone: batch.zone, source: source, receipt: batch.receipt, parentTask: batch.parentTask, commitGuard: batch.commitGuard))
                 case .failure(let reason): batch.failures.append(reason)
                 }
             } catch { batch.failures.append(error.localizedDescription) }
@@ -262,7 +380,7 @@ final class InputService {
         let target: InputBatch
         if batch.reported {
             // A timed-out source may finish later. Report only new captures, never past successes.
-            target = InputBatch(date: batch.date, zone: batch.zone, receipt: batch.receipt,
+            target = InputBatch(date: batch.date, zone: batch.zone, receipt: batch.receipt, parentTask: batch.parentTask,
                                 fileURLTransfer: batch.fileURLTransfer,
                                 commitGuard: batch.commitGuard,
                                 remaining: 1, completion: batch.completion)
@@ -301,6 +419,7 @@ final class InputService {
     let date: Date
     let zone: TimeZone
     let receipt: CaptureReceiptContext
+    let parentTask: Capture?
     /// Retains the NSURL readers, and therefore Finder's sandbox transfer grant,
     /// through all asynchronous file imports in this batch.
     let fileURLTransfer: InputFileURLTransfer
@@ -310,11 +429,11 @@ final class InputService {
     var failures: [String] = []
     var reported = false
     let completion: (([Capture], [String]) -> Void)?
-    init(date: Date, zone: TimeZone, receipt: CaptureReceiptContext = .manual,
+    init(date: Date, zone: TimeZone, receipt: CaptureReceiptContext = .manual, parentTask: Capture? = nil,
          fileURLTransfer: InputFileURLTransfer,
          commitGuard: @escaping () -> Bool = { true }, remaining: Int,
          completion: (([Capture], [String]) -> Void)? = nil) {
-        self.date = date; self.zone = zone; self.receipt = receipt
+        self.date = date; self.zone = zone; self.receipt = receipt; self.parentTask = parentTask
         self.fileURLTransfer = fileURLTransfer; self.commitGuard = commitGuard; self.remaining = remaining
         self.completion = completion
     }

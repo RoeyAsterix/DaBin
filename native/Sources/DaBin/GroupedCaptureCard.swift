@@ -40,12 +40,12 @@ struct GroupedCaptureCard: View {
                 Button(group.isMinimized ? "Show items" : "Collapse") { state.toggleMinimized(group.captures) }
                 Spacer(minLength: 0)
                 Menu {
-                    Button(primary.comment.isEmpty ? "Add note" : "Edit note") { state.openCapture(primary.id, focus: "comment") }
-                    Button(primary.reminderAt == nil ? "Add reminder" : "Edit reminder") { state.openCapture(primary.id, focus: "reminder") }
+                    Button(primary.comment.isEmpty ? "Add note" : "Edit note", systemImage: "text.bubble") { state.openCapture(primary.id, focus: "comment") }
+                    Button(primary.reminderAt == nil ? "Add reminder" : "Edit reminder", systemImage: "clock") { state.openCapture(primary.id, focus: "reminder") }
                     Divider()
-                    Button("Move batch to Recently Deleted", role: .destructive) { confirmsRemoval = true }
-                } label: { Text("More") }
-                .menuStyle(.borderlessButton).fixedSize().accessibilityLabel("More batch actions")
+                    Button("Move batch to Recently Deleted", systemImage: "trash", role: .destructive) { confirmsRemoval = true }
+                } label: { Image(systemName: "ellipsis").frame(width: 28, height: 28) }
+                .menuStyle(.borderlessButton).menuIndicator(.hidden).fixedSize().accessibilityLabel("More batch actions").buddyHelp("More batch actions")
             }.font(.system(size: 11)).buttonStyle(.plain).foregroundStyle(accent)
 
             if let reminder = primary.reminderAt {
@@ -140,7 +140,7 @@ struct GroupedCaptureCard: View {
                 .background(accent.opacity(0.11), in: RoundedRectangle(cornerRadius: 7, style: .continuous))
                 .contentShape(Rectangle())
         }
-        .help(label).accessibilityLabel(label)
+        .buddyHelp(label).accessibilityLabel(label)
         .disabled(state.removingCaptureID != nil)
     }
 }
@@ -154,10 +154,16 @@ private struct GroupedCaptureItem: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 5) {
             Button { state.openCapture(capture.id) } label: {
+                VStack(alignment: .leading, spacing: 8) {
+                    if !compact {
+                        CaptureThumbnail(store: state.store, capture: capture)
+                            .frame(height: 132).clipShape(RoundedRectangle(cornerRadius: 10))
+                    }
                 HStack(spacing: compact ? 7 : 10) {
-                    CaptureThumbnail(store: state.store, capture: capture)
-                        .frame(width: compact ? 36 : 44, height: compact ? 38 : 46)
-                        .clipped().clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                    if compact {
+                        CaptureThumbnail(store: state.store, capture: capture)
+                            .frame(width: 44, height: 48).clipShape(RoundedRectangle(cornerRadius: 8))
+                    }
                     VStack(alignment: .leading, spacing: 3) {
                         Text(capture.title.isEmpty ? "Untitled item" : capture.title)
                             .font(.system(size: compact ? 11 : 13, weight: .medium)).lineLimit(compact ? 2 : 1)
@@ -172,6 +178,7 @@ private struct GroupedCaptureItem: View {
                         .foregroundStyle(Palette.muted).accessibilityHidden(true)
                 }
                 .contentShape(Rectangle())
+                }
             }
             .buttonStyle(.plain)
             .accessibilityLabel("Open \(capture.title), \(capture.isTask ? "Task" : captureTypeLabel(capture.kind))")

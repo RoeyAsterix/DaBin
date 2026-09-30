@@ -335,10 +335,15 @@ final class CornerController: NSObject {
     private var message: NSPopover?
     private var layoutSubscription: AnyCancellable?
     private var placementSubscription: AnyCancellable?
+    private var appearanceSubscription: AnyCancellable?
+    private let appearanceSettings: ThemeSettings
     private let placementDefaults: UserDefaults?
     private var boardTopLeft: NSPoint?
     private var boardDragStartFrame: NSRect?
     private var boardDragTimer: Timer?
+    private var boardIsResizing = false
+    private var userBoardSize: CGSize?
+    private var frameBeforeExpansion: NSRect?
     private var applyingBoardFrame = false
     private var lastAppliedBoardFrame: NSRect?
     private var lastLayoutRoute: BoardRoute?
@@ -350,6 +355,7 @@ final class CornerController: NSObject {
     private var boardAnimationKind: BoardFrameAnimationKind?
     static let filterResizeDuration: TimeInterval = 0.38
     static let boardPlacementKey = "DaBin.boardTopLeft.v1"
+    static let boardSizeKey = "DaBin.boardUserSize.v1"
 
     init(state: AppState, input: InputService, placementDefaults: UserDefaults? = .standard,
          theme: ThemeSettings? = nil, animateRobotTransitions: Bool = true,
@@ -359,12 +365,19 @@ final class CornerController: NSObject {
         let motionPreference = { robotReduceMotion() || state.quickAccessSettings.quietMode }
         self.robotReduceMotion = motionPreference
         robot = RobotView(frame: NSRect(x: 0, y: 0, width: 72, height: 88), reduceMotion: motionPreference)
-        captureHostingView = DailyCaptureHostingView(state: state, theme: theme)
+        let appearanceSettings = theme ?? ThemeSettings()
+        self.appearanceSettings = appearanceSettings
+        captureHostingView = DailyCaptureHostingView(state: state, theme: appearanceSettings)
         appFrame = RobotAppFrameView(contentView: captureHostingView)
         self.placementDefaults = placementDefaults
         if let point = placementDefaults?.array(forKey: Self.boardPlacementKey) as? [Double],
            point.count == 2, point.allSatisfy({ $0.isFinite }) {
             boardTopLeft = NSPoint(x: point[0], y: point[1])
+        }
+        if let size = placementDefaults?.array(forKey: Self.boardSizeKey) as? [Double],
+           size.count == 2, size.allSatisfy({ $0.isFinite && $0 > 0 }) {
+            userBoardSize = CGSize(width: max(BoardResizeGeometry.minimumSize.width, size[0]),
+                                   height: max(BoardResizeGeometry.minimumSize.height, size[1]))
         }
         bin = DaBinPanel(contentRect: NSRect(x: 0, y: 0, width: 72, height: 88), styleMask: [.borderless, .nonactivatingPanel], backing: .buffered, defer: false)
         board = DailyCapturePanel(contentRect: NSRect(x: 0, y: 0, width: 380, height: 500), styleMask: [.borderless, .nonactivatingPanel], backing: .buffered, defer: false)
@@ -378,6 +391,19 @@ final class CornerController: NSObject {
         board.captureHostingView = hosting
         board.contentView = appFrame
         appFrame.autoresizingMask = [.width, .height]
+        board.minSize = BoardResizeGeometry.minimumSize
+        appFrame.onResizeStarted = { [weak self] in self?.beginBoardResize() }
+        appFrame.onResize = { [weak self] frame in self?.resizeBoardFromUser(to: frame) }
+        appFrame.onResizeEnded = { [weak self] in self?.finishBoardResize() }
+        appFrame.onToggleExpanded = { [weak self] in self?.toggleExpandedWindow() }
+        // A hosting view nested in the robot frame is not the window root.
+        // SwiftUI's preferredColorScheme alone does not update the AppKit
+        // appearance in this arrangement, including native text/date controls.
+        appearanceSubscription = appearanceSettings.$darkModeEnabled.sink { [weak self] dark in
+            guard let self else { return }
+            Self.applyBoardAppearance(darkMode: dark, to: self.board,
+                                      frame: self.appFrame, hosting: self.captureHostingView)
+        }
         hosting.onPaste = { [weak self] in self?.receiveOnDaily(.general) }
         hosting.onDrop = { [weak self] pasteboard in self?.receiveOnDaily(pasteboard) }
         hosting.onDragState = { [weak state] active in
@@ -427,6 +453,14 @@ final class CornerController: NSObject {
         }
     }
 
+    static func applyBoardAppearance(darkMode: Bool, to window: NSWindow,
+                                     frame: RobotAppFrameView, hosting: NSView) {
+        let appearance = NSAppearance(named: darkMode ? .darkAqua : .aqua)
+        window.appearance = appearance
+        frame.appearance = appearance
+        hosting.appearance = appearance
+    }
+
     private func configure(_ panel: NSPanel, shadow: Bool) {
         panel.isOpaque = false
         panel.backgroundColor = .clear
@@ -465,10 +499,13 @@ final class CornerController: NSObject {
         robotLifecycle.send(.interrupt(toward: .hidden))
         appFrame.cancelTransition(open: false)
         appFrame.setVisible(false)
+        appFrame.onResizeStarted = nil; appFrame.onResize = nil
+        appFrame.onResizeEnded = nil; appFrame.onToggleExpanded = nil
         onWillOpenBoard = nil; onDidCloseBoard = nil
         onRobotInteractionBegan = nil; onRobotInteractionEnded = nil
         layoutSubscription?.cancel(); layoutSubscription = nil
         placementSubscription?.cancel(); placementSubscription = nil
+        appearanceSubscription?.cancel(); appearanceSubscription = nil
         if let escapeMonitor { NSEvent.removeMonitor(escapeMonitor) }
         escapeMonitor = nil
         NotificationCenter.default.removeObserver(self)
@@ -649,6 +686,60 @@ final class CornerController: NSObject {
     func openDaily() { state.openDaily(); showBoard() }
     func openSearch() { state.performSearchCommand(); showBoard(immediate: true) }
 
+    func celebrateTaskCompletion() {
+        guard !isShutDown else { return }
+        if board.isVisible {
+            appFrame.celebrateTaskCompletion(reduceMotion: robotReduceMotion())
+        }
+    }
+
+    /// Expands within the current display's safe area, preserving the current
+    /// Space. The second invocation restores the user's exact prior geometry.
+    func toggleExpandedWindow() {
+        guard board.isVisible, let screen = boardScreen(), !isShutDown else { return }
+        if robotTransitionTarget != nil { settleRobotTransition(open: true) }
+        stopBoardAnimation()
+        let target: NSRect
+        if let previous = frameBeforeExpansion {
+            target = BoardResizeGeometry.fitted(previous, visible: screen.visibleFrame)
+            frameBeforeExpansion = nil
+        } else {
+            frameBeforeExpansion = board.frame
+            target = screen.visibleFrame
+        }
+        userBoardSize = target.size
+        setBoardFrame(target)
+        boardTopLeft = NSPoint(x: target.minX, y: target.maxY)
+        persistBoardSize()
+        rememberBoardPosition()
+    }
+
+    private func beginBoardResize() {
+        if robotTransitionTarget != nil { settleRobotTransition(open: true) }
+        stopBoardAnimation()
+        boardIsResizing = true
+        frameBeforeExpansion = nil
+    }
+
+    func resizeBoardFromUser(to frame: NSRect) {
+        guard !isShutDown, board.isVisible, let screen = boardScreen() else { return }
+        let fitted = BoardResizeGeometry.fitted(frame, visible: screen.visibleFrame)
+        userBoardSize = fitted.size
+        boardTopLeft = NSPoint(x: fitted.minX, y: fitted.maxY)
+        setBoardFrame(fitted)
+    }
+
+    func finishBoardResize() {
+        boardIsResizing = false
+        persistBoardSize()
+        rememberBoardPosition()
+    }
+
+    private func persistBoardSize() {
+        guard let size = userBoardSize else { return }
+        placementDefaults?.set([Double(size.width), Double(size.height)], forKey: Self.boardSizeKey)
+    }
+
     private func openFromRobot() {
         // An explicit interaction wins over a position saved on another display.
         if let screen = activeScreen, let topLeft = boardTopLeft,
@@ -818,15 +909,15 @@ final class CornerController: NSObject {
         switch state.route {
         case .weekly: return state.weeklyVisibleDays.isEmpty ? 380 + extra : 560
         case .daily: return max(380, CornerGeometry.dailyPanelHeight(for: state))
-        case .library: return 560
+        case .library: return 620
         case .trash: return 500
         case .newNote: return 420 + extra
         case .search:
             let entries = state.searchGroups.reduce(0) { $0 + $1.entries.count }
             return entries == 0 ? 380 + extra : min(560, max(480, 220 + CGFloat(entries) * 170 + extra))
-        case .detail: return 500
+        case .detail: return 620
         case .newTask: return (state.newTaskDraft.reminderEnabled ? 500 : 440) + extra
-        case .settings: return 500
+        case .settings: return 620
         case .reminders:
             let count = state.followUpCaptures.count
             return count == 0 ? 380 + extra : min(560, max(450, 220 + CGFloat(count) * 170 + extra))
@@ -834,7 +925,8 @@ final class CornerController: NSObject {
     }
 
     private func resizeBoard() {
-        guard board.isVisible, robotTransitionTarget == nil, boardDragStartFrame == nil, let screen = boardScreen() else { return }
+        guard board.isVisible, robotTransitionTarget == nil, boardDragStartFrame == nil,
+              !boardIsResizing, let screen = boardScreen() else { return }
         activeScreen = screen
         layoutBoard(on: screen)
     }
@@ -878,7 +970,12 @@ final class CornerController: NSObject {
         let previousRoute = lastLayoutRoute
         let previousFilter = lastLayoutFilter
         let frame: NSRect
-        if state.route == .weekly {
+        if let userBoardSize {
+            let origin = boardTopLeft ?? NSPoint(x: board.frame.minX, y: board.frame.maxY)
+            frame = BoardResizeGeometry.fitted(NSRect(x: origin.x, y: origin.y - userBoardSize.height,
+                                                     width: userBoardSize.width, height: userBoardSize.height),
+                                              visible: screen.visibleFrame)
+        } else if state.route == .weekly {
             if weeklyDirection == nil || previousRoute == .daily {
                 // A rapid re-open uses the intended compact endpoint rather
                 // than adopting an intermediate animation frame as placement.
@@ -1008,7 +1105,7 @@ final class CornerController: NSObject {
 
     private func rememberBoardPosition() {
         let point: NSPoint
-        if lastLayoutRoute == .weekly, let direction = weeklyDirection {
+        if userBoardSize == nil, lastLayoutRoute == .weekly, let direction = weeklyDirection {
             let visible = NSScreen.screens.first { $0.frame.contains(NSPoint(x: board.frame.midX, y: board.frame.maxY - 20)) }
                 ?? boardScreen()
             let compactWidth = visible.map { CornerGeometry.panelFrame(robot: .zero, visible: $0.visibleFrame,
@@ -1068,6 +1165,10 @@ final class CornerController: NSObject {
     }
 
     private func receiveOnDaily(_ pasteboard: NSPasteboard) {
+        if state.route == .detail, let task = state.selectedCapture, task.isTask {
+            state.pasteAttachments(to: task, from: pasteboard)
+            return
+        }
         guard state.route == .daily else { return }
         let navigationRevision = state.captureNavigationRevision
         input.receive(pasteboard, completion: { [weak self] captures, _ in

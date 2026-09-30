@@ -22,6 +22,12 @@ private struct IslandRobotChoreographyTests {
     }
 
     static func main() throws {
+        let manualReveal = IslandRobotChoreography.reveal(duration: RobotManualEntranceTiming.islandDuration)
+        try expect(RobotManualEntranceTiming.islandDuration == 0.55 && RobotManualEntranceTiming.reducedDuration == 0.10,
+                   "Manual island entry and its reduced fade take half their former time")
+        try expect(manualReveal.first?.body.translation.y == -94 && manualReveal.last?.body == .identity
+                   && manualReveal.last?.time == 0.55,
+                   "The faster pointer reveal still traverses the complete climb and resolves at a stable hang")
         let pivot = IslandRobotChoreography.bodyPivot
         try expect(pivot == CGPoint(x: 32, y: 0), "The body rotates at the island edge")
         let identityPoint = CGPoint(x: 14, y: 43)

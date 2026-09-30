@@ -49,7 +49,9 @@ private final class WindowNotificationClient: ReminderNotificationClient {
         let state = AppState(store: store, previews: previews, reminders: reminders,
                              robotPlacement: robotPlacement)
         let input = InputService(store: store, stagingRoot: root.appendingPathComponent("Promises"))
-        let controller = CornerController(state: state, input: input, placementDefaults: placementDefaults, animateRobotTransitions: false)
+        let theme = ThemeSettings(defaults: placementDefaults, systemDarkMode: false)
+        let controller = CornerController(state: state, input: input, placementDefaults: placementDefaults,
+                                          theme: theme, animateRobotTransitions: false)
         defer {
             controller.dismiss()
             controller.bin.orderOut(nil)
@@ -57,6 +59,14 @@ private final class WindowNotificationClient: ReminderNotificationClient {
             previews.cancelNetwork()
         }
         let ownedWindows = [controller.bin, controller.board]
+        try expect(controller.board.appearance?.name == .aqua
+                   && controller.captureHostingView.effectiveAppearance.bestMatch(from: [.aqua, .darkAqua]) == .aqua,
+                   "The nested robot-frame host adopts the explicit light theme before presentation")
+        theme.setDarkMode(true)
+        try expect(controller.board.appearance?.name == .darkAqua
+                   && controller.captureHostingView.effectiveAppearance.bestMatch(from: [.aqua, .darkAqua]) == .darkAqua,
+                   "Changing theme updates both native window and nested hosting view immediately")
+        theme.setDarkMode(false)
         try expect(ownedWindows.filter(\.isVisible).isEmpty, "At launch both DaBin panels are hidden")
         try expect(application.windows.filter(\.isVisible).isEmpty, "Test process has zero visible windows at launch")
         try expect(controller.bin.backgroundColor == .clear && !controller.bin.isOpaque, "Robot panel has no opaque background")
@@ -332,7 +342,7 @@ private final class WindowNotificationClient: ReminderNotificationClient {
         try expect(controller.board.frame == draggedFrame, "Content changes cannot snap the board during a native drag")
         handle.mouseUp(with: dragEvent(.leftMouseUp, point: pointer))
         controller.finishBoardDragIfReleased(pressedMouseButtons: 0)
-        let expectedSettings = CornerGeometry.movedPanelFrame(topLeft: chosenTopLeft, visible: screen.visibleFrame, preferredHeight: 550)
+        let expectedSettings = CornerGeometry.movedPanelFrame(topLeft: chosenTopLeft, visible: screen.visibleFrame, preferredHeight: 670)
         try expect(controller.board.frame == expectedSettings, "Release keeps the chosen position and applies pending height changes")
         try expect(placementDefaults.array(forKey: CornerController.boardPlacementKey) as? [Double] == [Double(chosenTopLeft.x), Double(chosenTopLeft.y)], "Manual board position is saved separately from captures")
         state.openNewTask()
@@ -365,6 +375,41 @@ private final class WindowNotificationClient: ReminderNotificationClient {
             try expect(reopened.board.frame.minX == otherPoint.x && reopened.board.frame.maxY == otherPoint.y, "Second-display placement preserves the header anchor")
         }
         reopened.dismiss()
+        reopened.openDaily()
+        let resizeScreen = reopened.board.screen ?? screen
+        let chosenSize = NSSize(width: min(740, resizeScreen.visibleFrame.width), height: min(650, resizeScreen.visibleFrame.height))
+        reopened.resizeBoardFromUser(to: NSRect(x: resizeScreen.visibleFrame.minX + 20,
+            y: resizeScreen.visibleFrame.maxY - chosenSize.height, width: chosenSize.width, height: chosenSize.height))
+        reopened.finishBoardResize()
+        let userFrame = reopened.board.frame
+        reopenedState.showSettings()
+        reopened.showBoard(immediate: true)
+        try expect(reopened.board.frame == userFrame,
+                   "A manually stretched board keeps its chosen dimensions across routes")
+        try expect(placementDefaults.array(forKey: CornerController.boardSizeKey) as? [Double]
+                   == [Double(chosenSize.width), Double(chosenSize.height)],
+                   "User-resized dimensions persist separately from the archive")
+        RunLoop.main.run(until: Date().addingTimeInterval(0.05))
+        let keyWindow = NSApp.keyWindow
+        let presentedToUser = reopened.board.isVisible && !NSApp.isHidden
+            && reopened.board.occlusionState.contains(.visible)
+        let previousCelebrations = reopened.appFrame.taskCelebrationCount
+        reopened.celebrateTaskCompletion()
+        try expect(reopened.appFrame.taskCelebrationCount == previousCelebrations + (presentedToUser ? 1 : 0),
+                   presentedToUser ? "A visible task completion celebrates in the existing frame"
+                       : "An occluded task completion does not animate behind another surface or the lock screen")
+        try expect(NSApp.keyWindow === keyWindow, "Task completion always preserves keyboard focus")
+        reopened.toggleExpandedWindow()
+        try expect(reopened.board.frame == resizeScreen.visibleFrame,
+                   "Expand fills the safe area on the interaction display without a new Space")
+        reopened.toggleExpandedWindow()
+        try expect(reopened.board.frame == userFrame,
+                   "The second expand action restores the exact user frame")
+        reopened.dismiss()
+        let completedCelebrations = reopened.appFrame.taskCelebrationCount
+        reopened.celebrateTaskCompletion()
+        try expect(!reopened.board.isVisible && reopened.appFrame.taskCelebrationCount == completedCelebrations,
+                   "A hidden completion never brings the board back")
         let recoveredPosition = CornerGeometry.movedPanelFrame(topLeft: NSPoint(x: -9000, y: 9000), visible: screen.visibleFrame, preferredHeight: 500)
         try expect(screen.visibleFrame.contains(recoveredPosition), "Removed-display saved coordinates recover onto an available screen")
         let smallMoved = CornerGeometry.movedPanelFrame(topLeft: NSPoint(x: 9000, y: -9000), visible: tinyVisible, preferredHeight: 500)

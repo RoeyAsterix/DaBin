@@ -27,7 +27,7 @@ struct FittedPDFPreview: View {
                     }
                     .disabled(model.pageIndex == 0)
                     .accessibilityLabel("Previous PDF page")
-                    .help("Previous page")
+                    .buddyHelp("Previous page")
 
                     Text("\(model.pageIndex + 1) / \(model.pageCount)")
                         .font(.system(size: 10, weight: .medium).monospacedDigit())
@@ -40,7 +40,7 @@ struct FittedPDFPreview: View {
                     }
                     .disabled(model.pageIndex + 1 >= model.pageCount)
                     .accessibilityLabel("Next PDF page")
-                    .help("Next page")
+                    .buddyHelp("Next page")
                 }
                 .font(.system(size: 11, weight: .medium))
                 .buttonStyle(.plain)

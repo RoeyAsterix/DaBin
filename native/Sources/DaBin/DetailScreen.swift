@@ -11,78 +11,100 @@ struct DetailScreen: View {
     @State private var copiedSearchableText = false
     @State private var projectDraft = ""
     @State private var showingProjectEditor = false
+    @State private var taskExpanded = true
+    @State private var infoExpanded = false
+    @State private var noteExpanded = false
+    @State private var reminderExpanded = false
 
     var body: some View {
         VStack(spacing: 0) {
             ScrollViewReader { proxy in
                 ScrollView {
-                    VStack(alignment: .leading, spacing: 16) {
-                        VStack(alignment: .leading, spacing: 5) {
-                            Text(capture.title).font(.system(size: 20, weight: .semibold)).textSelection(.enabled).fixedSize(horizontal: false, vertical: true)
-                            Button { state.showCaptureDay(capture) } label: {
-                                Text("\(prettyDay(capture.captureDay)) · \(captureClock(capture))")
-                            }.font(.system(size: 12)).buttonStyle(.plain).foregroundStyle(accent).help("Show original capture day")
-                        }
-                        if capture.isTask {
-                            TaskStatusButton(state: state, capture: capture)
-                        } else {
-                            CaptureTaskConversionButton(state: state, capture: capture)
-                        }
-                        organization.id("project")
-                        DetailPreview(store: state.store, capture: capture)
-                        if let error = capture.previewError, !error.isEmpty {
-                            Label(error, systemImage: "info.circle")
-                                .font(.system(size: 12)).foregroundStyle(Palette.muted)
-                                .fixedSize(horizontal: false, vertical: true)
-                        }
-                        if let text = capture.originalText, !text.isEmpty, capture.kind == .text || capture.kind == .task {
-                            if capture.kind == .text || text != capture.title {
-                                Text(text).font(.system(size: 14)).lineSpacing(4).textSelection(.enabled).fixedSize(horizontal: false, vertical: true)
+                    VStack(alignment: .leading, spacing: 14) {
+                        HStack(alignment: .top, spacing: 8) {
+                            VStack(alignment: .leading, spacing: 6) {
+                                Text(capture.title).font(.system(size: 21, weight: .semibold))
+                                    .textSelection(.enabled).fixedSize(horizontal: false, vertical: true)
+                                Button { state.showCaptureDay(capture) } label: {
+                                    Label("\(prettyDay(capture.captureDay)) · \(captureClock(capture))", systemImage: "calendar")
+                                }.font(.system(size: 11)).buttonStyle(.plain).foregroundStyle(Palette.muted).buddyHelp("Show original capture day")
                             }
-                            Button { state.copyCapturesToClipboard([capture]) } label: { Label("Copy text", systemImage: "doc.on.doc") }
-                                .buttonStyle(.plain).font(.system(size: 12)).foregroundStyle(accent)
+                            Spacer(minLength: 0)
+                            if capture.isTask { TaskStatusButton(state: state, capture: capture) }
+                        }
+                        actionRail
+                        DetailPreview(store: state.store, capture: capture)
+                        if let text = capture.originalText, !text.isEmpty, capture.kind == .text || capture.kind == .task {
+                            if text != capture.title {
+                                Text(text).font(.system(size: 15)).lineSpacing(5).textSelection(.enabled)
+                                    .frame(maxWidth: .infinity, alignment: .leading).fixedSize(horizontal: false, vertical: true)
+                            }
                         } else if !capture.previewDescription.isEmpty {
                             Text(capture.previewDescription).font(.system(size: 13)).foregroundStyle(Palette.muted).textSelection(.enabled)
                         }
-                        if ContentIndexService.isEligible(capture.kind) {
-                            searchableText
+                        CaptureSourceView(capture: capture)
+                        if let parent = capture.parentTaskID {
+                            Button { state.openCapture(parent, focus: "task") } label: { Label("Back to task", systemImage: "arrow.turn.up.left") }
+                                .buttonStyle(.plain).foregroundStyle(accent).font(.system(size: 12))
                         }
-                        if capture.kind != .task {
-                            original
-                            CaptureSourceView(capture: capture)
+                        if capture.isTask {
+                            DisclosureGroup(isExpanded: $taskExpanded) {
+                                TaskAttachmentsView(state: state, task: capture).padding(.top, 8)
+                            } label: {
+                                Label(capture.isCompleted ? "Nicely done" : "Task workspace", systemImage: capture.isCompleted ? "checkmark.seal.fill" : "checklist")
+                                    .font(.system(size: 13, weight: .semibold))
+                                    .foregroundStyle(capture.isCompleted ? Palette.completed : accent)
+                            }.id("task").accessibilityIdentifier("task-workspace")
                         }
-                        Button { state.showArchiveFolder(for: capture) } label: {
-                            Label("Show saved folder", systemImage: "folder")
-                        }.buttonStyle(.plain).font(.system(size: 12)).foregroundStyle(accent)
-                        commentField.id("comment")
-                        reminderField.id("reminder")
+                        if showingProjectEditor || capture.projectName != nil { organization.id("project") }
+                        DisclosureGroup(isExpanded: $noteExpanded) { commentField.padding(.top, 8) } label: {
+                            Label(capture.comment.isEmpty ? "Comment" : "Comment · saved", systemImage: "text.bubble")
+                                .font(.system(size: 12, weight: .medium))
+                        }.id("comment")
+                        DisclosureGroup(isExpanded: $reminderExpanded) { reminderField.padding(.top, 8) } label: {
+                            Label(capture.reminderAt?.formatted(date: .abbreviated, time: .shortened) ?? "Reminder", systemImage: "clock")
+                                .font(.system(size: 12, weight: .medium))
+                        }.id("reminder")
+                        DisclosureGroup(isExpanded: $infoExpanded) {
+                            VStack(alignment: .leading, spacing: 12) {
+                                if let error = capture.previewError, !error.isEmpty {
+                                    Label(error, systemImage: "info.circle").font(.system(size: 12)).foregroundStyle(Palette.muted)
+                                }
+                                if ContentIndexService.isEligible(capture.kind) { searchableText }
+                                if capture.kind != .task { original }
+                            }.padding(.top, 8)
+                        } label: {
+                            Label("File & recognized text", systemImage: "doc.text.magnifyingglass").font(.system(size: 12))
+                        }
                         if let serviceStatus = state.reminders.status {
                             Text(serviceStatus).font(.system(size: 12)).foregroundStyle(Palette.muted).fixedSize(horizontal: false, vertical: true)
                         }
-                        if let reminder = capture.reminderAt, !(capture.isTask && capture.isCompleted) {
-                            if reminder <= Date() {
-                                Text("This reminder time has passed. Choose a future time and save to receive another reminder.")
-                                    .font(.system(size: 12)).foregroundStyle(Palette.muted)
-                                    .fixedSize(horizontal: false, vertical: true)
-                            } else if !["scheduled", "delivered"].contains(capture.notificationState) {
-                                Button("Retry notification") {
-                                    if reminder > Date() { state.retryReminder(capture) }
-                                    else {
-                                        draft.message = "Choose a future time and save to receive another reminder."
-                                        draft.hasError = false
-                                    }
-                                }
+                        if let reminder = capture.reminderAt, !(capture.isTask && capture.isCompleted), reminder > Date(), !["scheduled", "delivered"].contains(capture.notificationState) {
+                            Button("Retry notification", systemImage: "bell.badge") { state.retryReminder(capture) }
                                 .buttonStyle(.plain).font(.system(size: 12)).foregroundStyle(accent)
-                            }
                         }
-                    }.padding(.horizontal, 16).padding(.bottom, 18)
+                    }.padding(16).frame(maxWidth: 860).frame(maxWidth: .infinity)
                 }.onAppear {
                     projectDraft = capture.projectName ?? ""
+                    noteExpanded = !capture.comment.isEmpty || draft.hasChanges
+                    reminderExpanded = draft.reminderEnabled
                     if let target = state.detailFocus {
+                        noteExpanded = noteExpanded || target == "comment"
+                        reminderExpanded = reminderExpanded || target == "reminder"
                         if target == "project" { showingProjectEditor = true }
                         proxy.scrollTo(target, anchor: .top)
                         focusedField = target
                     }
+                }.onChange(of: state.detailFocus) { _, target in
+                    guard let target else { return }
+                    if target == "comment" { noteExpanded = true }
+                    if target == "reminder" { reminderExpanded = true }
+                    if target == "task" { taskExpanded = true }
+                    if target == "project" { showingProjectEditor = true }
+                    proxy.scrollTo(target, anchor: .top)
+                    focusedField = target
+                }.onChange(of: capture.isTask) { _, isTask in
+                    if isTask { taskExpanded = true }
                 }
             }
             HStack(spacing: 10) {
@@ -100,6 +122,21 @@ struct DetailScreen: View {
         }
     }
 
+    private var actionRail: some View {
+        HStack(spacing: 4) {
+            BuddyIconButton(symbol: "doc.on.doc", title: "Copy capture") { state.copyCapturesToClipboard([capture]) }
+            BuddyIconButton(symbol: capture.isPinned ? "pin.fill" : "pin", title: capture.isPinned ? "Unpin" : "Pin", isActive: capture.isPinned) { state.togglePinned(capture) }
+            BuddyIconButton(symbol: "folder.badge.plus", title: "Set project") { showingProjectEditor.toggle() }
+            if !capture.isTask { CaptureTaskConversionButton(state: state, capture: capture) }
+            if capture.kind != .text && capture.kind != .task {
+                BuddyIconButton(symbol: "arrow.up.forward.square", title: "Open original") { state.openOriginal(capture) }
+            }
+            BuddyIconButton(symbol: "folder", title: "Show saved folder") { state.showArchiveFolder(for: capture) }
+            Spacer(minLength: 0)
+            BuddyIconButton(symbol: "trash", title: "Move to Recently Deleted") { state.requestRemoval(capture) }
+        }.accessibilityElement(children: .contain).accessibilityLabel("Capture actions")
+    }
+
     private var organization: some View {
         VStack(alignment: .leading, spacing: 9) {
             HStack(spacing: 14) {
@@ -107,12 +144,12 @@ struct DetailScreen: View {
                     Label(capture.isPinned ? "Pinned" : "Pin", systemImage: capture.isPinned ? "pin.fill" : "pin")
                 }.buttonStyle(.plain).foregroundStyle(accent)
                 Menu {
-                    Button("No project") { state.assignProject(capture, name: nil); projectDraft = "" }
+                    Button("No project", systemImage: "folder.badge.minus") { state.assignProject(capture, name: nil); projectDraft = "" }
                     ForEach(state.projectNames, id: \.self) { project in
-                        Button(project) { state.assignProject(capture, name: project); projectDraft = project }
+                        Button(project, systemImage: "folder") { state.assignProject(capture, name: project); projectDraft = project }
                     }
                     Divider()
-                    Button("Create project…") { showingProjectEditor = true; projectDraft = ""; focusedField = "project" }
+                    Button("Create project…", systemImage: "folder.badge.plus") { showingProjectEditor = true; projectDraft = ""; focusedField = "project" }
                 } label: { Label(capture.projectName ?? "Add to project", systemImage: "folder").lineLimit(1) }
                     .menuStyle(.borderlessButton).fixedSize(horizontal: false, vertical: true)
                 Spacer(minLength: 0)
@@ -159,7 +196,7 @@ struct DetailScreen: View {
                           systemImage: copiedSearchableText ? "checkmark" : "doc.on.doc")
                 }
                 .buttonStyle(.plain).font(.system(size: 11, weight: .medium)).foregroundStyle(accent)
-                .help("Copy all recognized text to the clipboard")
+                .buddyHelp("Copy all recognized text to the clipboard")
                 if let message = capture.contentIndexError {
                     Text(message).font(.system(size: 11)).foregroundStyle(Palette.muted)
                 }
@@ -178,7 +215,7 @@ struct DetailScreen: View {
                 if state.contentIndex != nil, capture.contentIndexCanRetry {
                     Button("Try text recognition again") { state.retryContentIndex(capture) }
                         .buttonStyle(.plain).font(.system(size: 12)).foregroundStyle(accent)
-                        .help("Retry local text recognition")
+                        .buddyHelp("Retry local text recognition")
                 }
             }
         default:
@@ -227,7 +264,7 @@ struct DetailScreen: View {
 
     private var commentField: some View {
         VStack(alignment: .leading, spacing: 7) {
-            Text("Note").font(.system(size: 13, weight: .medium))
+            EmptyView()
             TextEditor(text: $draft.comment).font(.system(size: 13)).scrollContentBackground(.hidden)
                 .padding(7).frame(minHeight: 76, maxHeight: 108).background(Palette.surface)
                 .clipShape(RoundedRectangle(cornerRadius: 11))
@@ -239,21 +276,20 @@ struct DetailScreen: View {
 
     private var reminderField: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Toggle("Reminder", isOn: $draft.reminderEnabled).toggleStyle(.switch).controlSize(.small)
-                .font(.system(size: 13, weight: .medium)).focused($focusedField, equals: "reminder")
-                .onChange(of: draft.reminderEnabled) { _, _ in draft.message = nil }
-            if draft.reminderEnabled {
-                DatePicker("Remind me", selection: $draft.reminderDate, displayedComponents: [.date, .hourAndMinute])
-                    .labelsHidden().datePickerStyle(.field).accessibilityLabel("Reminder date and time")
-                    .onChange(of: draft.reminderDate) { _, _ in draft.message = nil }
-                Text("\(TimeZone.current.identifier) · \(draft.reminderDate.formatted(.dateTime.timeZone(.iso8601(.long))))")
+            ReminderClockEditor(enabled: $draft.reminderEnabled, mode: $draft.reminderMode,
+                date: $draft.reminderDate, hours: $draft.countdownHours, minutes: $draft.countdownMinutes)
+                        .onChange(of: draft.reminderEnabled) { _, _ in draft.message = nil }
+                        .onChange(of: draft.reminderMode) { _, _ in draft.message = nil }
+                        .onChange(of: draft.reminderDate) { _, _ in draft.message = nil }
+                        .onChange(of: draft.countdownHours) { _, _ in draft.message = nil }
+                        .onChange(of: draft.countdownMinutes) { _, _ in draft.message = nil }
+            if capture.isTask && capture.isCompleted && draft.reminderEnabled {
+                Label("Reminder is paused while completed", systemImage: "bell.slash")
                     .font(.system(size: 11)).foregroundStyle(Palette.muted)
-                if capture.isTask && capture.isCompleted {
-                    Text("Reminder is paused while this task is completed.")
-                        .font(.system(size: 11)).foregroundStyle(Palette.muted)
-                }
-                Button("Clear reminder") { draft.reminderEnabled = false; draft.message = "Reminder will be cleared when you save." }
-                    .font(.system(size: 12)).buttonStyle(.plain).foregroundStyle(accent)
+            }
+            if let due = capture.reminderAt, due <= Date(), !capture.isCompleted {
+                Text("This reminder has passed. Choose a new time to be reminded again.")
+                    .font(.system(size: 11)).foregroundStyle(Palette.muted)
             }
         }
     }

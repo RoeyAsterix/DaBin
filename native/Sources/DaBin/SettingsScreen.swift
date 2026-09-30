@@ -86,7 +86,7 @@ struct SettingsScreen: View {
                             autoCapture.setPaused(!autoCaptureSettings.isPaused)
                         }
                         .buttonStyle(.plain).font(.system(size: 12, weight: .medium)).foregroundStyle(accent)
-                        .help("Pause or resume your selected capture sources together")
+                        .buddyHelp("Pause or resume your selected capture sources together")
                     }
                     Button("Excluded applications…") { showExcludedApplications = true }
                         .buttonStyle(.plain).font(.system(size: 12)).foregroundStyle(accent)
@@ -106,6 +106,14 @@ struct SettingsScreen: View {
                     .toggleStyle(.switch).controlSize(.small)
                     .font(.system(size: 13))
                     .accessibilityHint("Switches DaBin between dark and light appearance")
+                    Toggle("Show tooltips", isOn: Binding(
+                        get: { theme.showTooltips },
+                        set: { theme.setShowTooltips($0) }
+                    ))
+                    .toggleStyle(.switch).controlSize(.small)
+                    .font(.system(size: 13))
+                    .accessibilityIdentifier("settings-show-tooltips")
+                    .accessibilityHint("Shows names when hovering over icons; accessibility labels are always available")
                     VStack(alignment: .leading, spacing: 7) {
                         HStack {
                             Text("Transparency").font(.system(size: 13))
@@ -153,7 +161,7 @@ struct SettingsScreen: View {
                                     .contentShape(Circle())
                             }
                             .buttonStyle(.plain)
-                            .help(preset.name)
+                            .buddyHelp(preset.name)
                             .accessibilityLabel("\(preset.name) theme")
                             .accessibilityValue(selected ? "Selected" : "Not selected")
                             .accessibilityAddTraits(selected ? .isSelected : [])
@@ -167,7 +175,7 @@ struct SettingsScreen: View {
                         Button("Reset") { theme.select(.purple) }
                             .font(.system(size: 12)).buttonStyle(.plain).foregroundStyle(accent)
                             .disabled(theme.selectedHex == ThemeSettings.defaultHex)
-                            .help("Reset theme color to Purple")
+                            .buddyHelp("Reset theme color to Purple")
                     }
                 }
                 Divider()
@@ -272,7 +280,7 @@ struct SettingsScreen: View {
                 Label("Rebuild text search", systemImage: "arrow.clockwise")
             }
             .disabled(index.isBusy)
-            .help(index.isBusy ? "Local text search is already running" : "Recognize text in saved images and documents again")
+            .buddyHelp(index.isBusy ? "Local text search is already running" : "Recognize text in saved images and documents again")
         }
     }
 
@@ -458,7 +466,7 @@ struct SettingsSoftwareUpdateSection: View {
                     .font(.system(size: 11, weight: .medium))
                     .foregroundStyle(accent)
                     .accessibilityLabel(Self.releaseAccessibilityLabel)
-                    .help("Open the latest DaBin release on GitHub")
+                    .buddyHelp("Open the latest DaBin release on GitHub")
                 }
             }
         }
@@ -485,7 +493,7 @@ struct SettingsSoftwareUpdateSection: View {
         .disabled(!updates.canCheck)
         .accessibilityLabel(Self.checkAccessibilityLabel)
         .accessibilityHint("Checks DaBin’s official GitHub release feed")
-        .help("Check GitHub for a newer DaBin release")
+        .buddyHelp("Check GitHub for a newer DaBin release")
 
         if updates.canInstall {
             Button("Download & install") { updates.downloadAndInstall() }
@@ -493,7 +501,7 @@ struct SettingsSoftwareUpdateSection: View {
                 .controlSize(.small)
                 .accessibilityLabel(Self.installAccessibilityLabel)
                 .accessibilityHint("Downloads, verifies, and opens the DaBin updater")
-                .help("Download and install this verified DaBin update")
+                .buddyHelp("Download and install this verified DaBin update")
         }
 
         if updates.isBusy {
@@ -536,7 +544,7 @@ struct SettingsQuitSection: View {
             .accessibilityLabel(Self.accessibilityLabel)
             .accessibilityHint(Self.accessibilityHint)
             .accessibilityIdentifier("settings-quit-dabin")
-            .help("Quit DaBin completely")
+            .buddyHelp("Quit DaBin completely")
         }
     }
 }
@@ -621,7 +629,7 @@ private struct ExcludedApplicationsSheet: View {
                                 } label: {
                                     Image(systemName: "minus.circle").frame(width: 26, height: 26)
                                 }
-                                .buttonStyle(.plain).help("Remove exclusion")
+                                .buttonStyle(.plain).buddyHelp("Remove exclusion")
                                 .accessibilityLabel("Remove \(applicationName(for: identifier)) from excluded applications")
                             }
                         }

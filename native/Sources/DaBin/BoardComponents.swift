@@ -327,6 +327,7 @@ struct AccentIconButton: View {
         .buttonStyle(AccentIconButtonStyle(accent: accent, selected: selected,
                                            emphasized: emphasized,
                                            hovered: hovered, focused: focused))
+        .buddyHelp(label)
         .focused($focused)
         .onHover { isHovering in
             hovered = isHovering
@@ -406,7 +407,7 @@ struct SmallIcon: View {
                 .frame(width: size, height: 30)
                 .contentShape(Rectangle())
         }
-            .buttonStyle(.plain).foregroundStyle(tint).help(label).accessibilityLabel(label)
+            .buttonStyle(.plain).foregroundStyle(tint).buddyHelp(label).accessibilityLabel(label)
     }
 }
 
@@ -467,25 +468,27 @@ struct AutoCaptureHeaderButton: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     let weekly: Bool
     let statusText: String
+    let isVisible: Bool
     let action: () -> Void
     @State private var tiltPhase = false
 
-    init(service: AutoCaptureService, weekly: Bool, statusText: String,
+    init(service: AutoCaptureService, weekly: Bool, statusText: String, isVisible: Bool = true,
          action: @escaping () -> Void) {
         self.service = service
         settings = service.settings
         self.weekly = weekly
         self.statusText = statusText
+        self.isVisible = isVisible
         self.action = action
     }
 
     private var isOn: Bool { settings.isEnabled && !settings.isPaused }
-    private var tiltAnimationActive: Bool { isOn && !reduceMotion }
+    private var tiltAnimationActive: Bool { isOn && !reduceMotion && isVisible }
 
     var body: some View {
         AccentIconButton(
-            symbol: "bolt.fill",
-            label: isOn ? "Turn Auto Capture off" : "Turn Auto Capture on",
+            symbol: "sparkles.rectangle.stack",
+            label: isOn ? "Pause Auto Capture" : (settings.isEnabled ? "Resume Auto Capture" : "Set up Auto Capture"),
             tooltip: TimelineTooltipDescriptor(
                 id: "timeline-auto-capture-tooltip",
                 text: statusText,
@@ -502,7 +505,7 @@ struct AutoCaptureHeaderButton: View {
             accessibilityIdentifier: "timeline-auto-capture",
             action: action
         )
-        .help(statusText)
+        .buddyHelp(statusText)
         .accessibilityValue(statusText)
         .task(id: tiltAnimationActive) {
             tiltPhase = false

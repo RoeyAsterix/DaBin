@@ -80,6 +80,37 @@ struct RobotAppFrameTests {
         try expect(content.superview?.frame == resized && content.frame.size == resized.size,
                    "Resizing recomputes the inset once without cumulative drift")
 
+        frame.onResize = { _ in }
+        let edgePoint = CGPoint(x: frame.frame.minX + 2, y: frame.frame.midY)
+        try expect(frame.hitTest(edgePoint) === frame,
+                   "The six-point outer edge is a resize handle without covering content")
+        try expect(frame.hitTest(controlPoint) === control,
+                   "Enabling resize handles leaves actual content controls clickable")
+        frame.onResize = nil
+        frame.celebrateTaskCompletion(reduceMotion: true)
+        try expect(frame.taskCelebrationCount == 1 && !frame.hasActiveEyeMotion,
+                   "A saved completion acknowledges happiness without eye motion under Reduce Motion")
+
+        let resizingDisplay = CGRect(x: -1440, y: 24, width: 1440, height: 876)
+        let original = CGRect(x: -1300, y: 300, width: 500, height: 550)
+        let wider = BoardResizeGeometry.resized(original, edge: .right,
+            delta: CGPoint(x: 250, y: 0), visible: resizingDisplay)
+        try expect(wider.width == 750 && wider.minX == original.minX && wider.maxY == original.maxY,
+                   "Right-edge resize preserves the user's left and top anchors on a negative-coordinate display")
+        let smaller = BoardResizeGeometry.resized(original, edge: [.left, .bottom],
+            delta: CGPoint(x: 900, y: 900), visible: resizingDisplay)
+        try expect(smaller.size == BoardResizeGeometry.minimumSize && smaller.maxX == original.maxX && smaller.maxY == original.maxY,
+                   "Corner dragging stops at the usable minimum and keeps opposite edges anchored")
+        let larger = BoardResizeGeometry.resized(original, edge: [.right, .top],
+            delta: CGPoint(x: 9_000, y: 9_000), visible: resizingDisplay)
+        try expect(resizingDisplay.contains(larger) && larger.maxY == resizingDisplay.maxY,
+                   "The menu bar and screen safe area remain clear when stretching beyond a display")
+        let tinyDisplay = CGRect(x: 0, y: 0, width: 300, height: 250)
+        try expect(BoardResizeGeometry.fitted(original, visible: tinyDisplay) == tinyDisplay,
+                   "Disconnecting to a display smaller than the minimum safely fits its actual area")
+        try expect(BoardResizeGeometry.edge(at: CGPoint(x: 200, y: 200), in: original) == [],
+                   "Off-window coordinates cannot start a resize")
+
         let display = CGRect(x: 100, y: 50, width: 1_200, height: 800)
         let eye = CGPoint(x: display.midX, y: display.midY)
         try expect(RobotAppFrameGaze.offset(pointer: eye, eyeCenter: eye, displayFrame: display) == .zero,
@@ -103,6 +134,9 @@ struct RobotAppFrameTests {
                    "Absent pointers and invalid displays settle safely at center")
 
         frame.setVisible(false)
+        frame.celebrateTaskCompletion(reduceMotion: false)
+        try expect(frame.taskCelebrationCount == 1,
+                   "Completing a task never reveals or animates a hidden window")
         try expect(frame.isHidden && !frame.isFrameVisible && content.isHidden,
                    "Hiding the frame also hides the live content and stops its interactive surface")
         try expect(frame.hitTest(controlPoint) == nil,

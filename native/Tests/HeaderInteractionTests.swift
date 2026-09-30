@@ -163,6 +163,8 @@ private enum HeaderInteractionTests {
         let state = AppState(store: store, previews: previews,
                              reminders: ReminderService(store: store, client: HeaderReminderClient()),
                              autoCapture: autoCapture)
+        var expansions = 0
+        state.onToggleExpandedWindow = { expansions += 1 }
         var dismissals = 0
         state.onDismiss = { dismissals += 1 }
         let size = NSSize(width: 380, height: 560)
@@ -200,13 +202,30 @@ private enum HeaderInteractionTests {
                    "Own-process accessibility activation succeeds (AX error \(accessibilityActivation.rawValue))")
         settle()
 
-        for id in ["primary-today", "primary-library", "primary-follow-ups", "global-search", "timeline-action-add", "board-more", "timeline-date", "window-close"] {
+        for id in ["primary-today", "primary-library", "primary-follow-ups", "global-search", "timeline-action-add", "board-more", "board-settings", "timeline-auto-capture", "window-expand", "timeline-date", "window-close"] {
             let control = try element(hosting, identifier: id)
             let frame = control.accessibilityFrame()
             try expect(frame.width > 0 && frame.height > 0, "\(id) has an accessible visible target")
             try expect(frame.minX >= window.frame.minX - 1 && frame.maxX <= window.frame.maxX + 1,
                        "\(id) fits the compact 380-point window")
         }
+        var filterFrames: [NSRect] = []
+        for filter in CaptureFilter.allCases {
+            let icon = try element(hosting, identifier: "capture-filter-\(filter.rawValue)")
+            let frame = icon.accessibilityFrame()
+            filterFrames.append(frame)
+            try expect(frame.width >= 30 && frame.height >= 30, "Icon filter has a usable hit target")
+            try expect(!(icon.accessibilityLabel() ?? "").isEmpty, "Icon filter retains an accessible label")
+        }
+        try expect(filterFrames.allSatisfy { abs($0.midY - filterFrames[0].midY) < 1 }, "All filter icons align on one row")
+        try press(hosting, identifier: "capture-filter-text")
+        try expect(state.filter == .text, "Text icon filters copied text")
+        try press(hosting, identifier: "capture-filter-all")
+        try press(hosting, identifier: "window-expand")
+        try expect(expansions == 1 && dismissals == 0, "Expand remains independent of Close")
+        try press(hosting, identifier: "board-settings")
+        try expect(state.route == .settings, "Gear opens Settings directly")
+        state.openDaily(); settle()
         let add = try element(hosting, identifier: "timeline-action-add")
         try expect(add.accessibilityLabel() == "Add capture", "Add describes capture choices instead of pretending to create only tasks")
         let search = try element(hosting, identifier: "global-search")

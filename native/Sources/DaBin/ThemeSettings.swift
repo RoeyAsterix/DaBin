@@ -40,14 +40,17 @@ final class ThemeSettings: ObservableObject {
     nonisolated static let maximumBoardOpacity = 1.0
     nonisolated static let boardOpacityKey = "DaBin.boardOpacity.v1"
     nonisolated static let darkModeKey = "DaBin.darkMode.v1"
+    nonisolated static let showTooltipsKey = "DaBin.showTooltips.v1"
 
     @Published private(set) var selectedHex: String
     @Published private(set) var boardOpacity: Double
     @Published private(set) var darkModeEnabled: Bool
+    @Published private(set) var showTooltips: Bool
     private let defaults: UserDefaults
 
     init(defaults: UserDefaults = .standard, systemDarkMode: Bool? = nil) {
         self.defaults = defaults
+        showTooltips = defaults.object(forKey: Self.showTooltipsKey) as? Bool ?? true
         selectedHex = Self.normalizedHex(defaults.string(forKey: Self.defaultsKey) ?? "") ?? Self.defaultHex
         if let saved = defaults.object(forKey: Self.boardOpacityKey) as? NSNumber,
            saved.doubleValue.isFinite,
@@ -86,6 +89,11 @@ final class ThemeSettings: ObservableObject {
     func setDarkMode(_ enabled: Bool) {
         if darkModeEnabled != enabled { darkModeEnabled = enabled }
         defaults.set(enabled, forKey: Self.darkModeKey)
+    }
+
+    func setShowTooltips(_ enabled: Bool) {
+        if showTooltips != enabled { showTooltips = enabled }
+        defaults.set(enabled, forKey: Self.showTooltipsKey)
     }
 
     /// Stores an opaque sRGB choice even when the color picker supplies a different color space.

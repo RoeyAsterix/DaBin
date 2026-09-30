@@ -30,6 +30,12 @@ public final class RobotAppFrameView: NSView {
     public let contentView: NSView
     public private(set) var isTransitioning = false
     public private(set) var isFrameVisible = false
+    var onResizeStarted: (() -> Void)?
+    var onResize: ((CGRect) -> Void)?
+    var onResizeEnded: (() -> Void)?
+    var onToggleExpanded: (() -> Void)?
+    private var resizeGesture: (edge: BoardResizeGeometry.Edge, pointer: CGPoint, frame: CGRect)?
+    private(set) var taskCelebrationCount = 0
     var hasActiveEyeMotion: Bool {
         [leftEyeLayer, rightEyeLayer, leftPupilLayer, rightPupilLayer]
             .contains { !($0.animationKeys() ?? []).isEmpty }
@@ -57,6 +63,8 @@ public final class RobotAppFrameView: NSView {
 
     private let headLayer = CALayer()
     private let headShellLayer = CAGradientLayer()
+    private let lidLayer = CAGradientLayer()
+    private let lidHandleLayer = CAShapeLayer()
     private let faceScreenLayer = CAShapeLayer()
     private let leftEyeLayer = CALayer()
     private let rightEyeLayer = CALayer()
@@ -127,16 +135,82 @@ public final class RobotAppFrameView: NSView {
         }
     }
 
-    /// Only the hosted application surface participates in hit testing. Robot
-    /// chrome is made entirely of layers and remains click-through.
+    /// Content keeps its own hit testing; only the outer six-point resize rail
+    /// is interactive. Character artwork never covers or intercepts controls.
     public override func hitTest(_ point: NSPoint) -> NSView? {
         guard !isHidden, !contentView.isHidden else { return nil }
         // AppKit passes `point` in the receiver's superview coordinates. The
         // hosted view's hitTest in turn expects content-container coordinates.
         let localPoint = superview.map { convert(point, from: $0) } ?? point
         let containerPoint = contentContainer.convert(localPoint, from: self)
+        if !isTransitioning, onResize != nil,
+           !BoardResizeGeometry.edge(at: localPoint, in: bounds).isEmpty { return self }
         guard contentView.frame.contains(containerPoint) else { return nil }
         return contentView.hitTest(containerPoint)
+    }
+
+    public override func acceptsFirstMouse(for event: NSEvent?) -> Bool { true }
+
+    public override func resetCursorRects() {
+        guard onResize != nil, !isTransitioning else { return }
+        addCursorRect(CGRect(x: 0, y: 0, width: 6, height: bounds.height), cursor: .resizeLeftRight)
+        addCursorRect(CGRect(x: bounds.maxX - 6, y: 0, width: 6, height: bounds.height), cursor: .resizeLeftRight)
+        addCursorRect(CGRect(x: 0, y: 0, width: bounds.width, height: 6), cursor: .resizeUpDown)
+        addCursorRect(CGRect(x: 0, y: bounds.maxY - 6, width: bounds.width, height: 6), cursor: .resizeUpDown)
+    }
+
+    public override func mouseDown(with event: NSEvent) {
+        guard let window, !isTransitioning else { return }
+        let edge = BoardResizeGeometry.edge(at: convert(event.locationInWindow, from: nil), in: bounds)
+        guard !edge.isEmpty else { return }
+        if event.clickCount == 2 { onToggleExpanded?(); return }
+        resizeGesture = (edge, window.convertPoint(toScreen: event.locationInWindow), window.frame)
+        onResizeStarted?()
+    }
+
+    public override func mouseDragged(with event: NSEvent) {
+        guard let gesture = resizeGesture, let window, let screen = window.screen else { return }
+        let pointer = window.convertPoint(toScreen: event.locationInWindow)
+        onResize?(BoardResizeGeometry.resized(gesture.frame, edge: gesture.edge,
+            delta: CGPoint(x: pointer.x - gesture.pointer.x, y: pointer.y - gesture.pointer.y),
+            visible: screen.visibleFrame))
+    }
+
+    public override func mouseUp(with event: NSEvent) {
+        guard resizeGesture != nil else { return }
+        resizeGesture = nil
+        onResizeEnded?()
+    }
+
+    /// Feedback is local to the already-visible robot; it creates no window,
+    /// focus change or sound. The coordinator calls this only after persistence.
+    func celebrateTaskCompletion(reduceMotion: Bool) {
+        guard phase == .open, isFrameVisible, !isHidden else { return }
+        taskCelebrationCount += 1
+        let smile = CGMutablePath()
+        smile.move(to: CGPoint(x: headLayer.bounds.midX - 5, y: 10))
+        smile.addCurve(to: CGPoint(x: headLayer.bounds.midX + 5, y: 10),
+                       control1: CGPoint(x: headLayer.bounds.midX - 3, y: 4),
+                       control2: CGPoint(x: headLayer.bounds.midX + 3, y: 4))
+        let grin = CAKeyframeAnimation(keyPath: "path")
+        grin.values = [mouthLayer.path as Any, smile, smile, mouthLayer.path as Any]
+        grin.keyTimes = [0, 0.15, 0.82, 1]
+        grin.duration = reduceMotion ? 0.7 : 1.1
+        mouthLayer.add(grin, forKey: "robotFrame.taskSmile")
+        guard !reduceMotion else { return }
+        let bounce = CAKeyframeAnimation(keyPath: "transform.translation.y")
+        bounce.values = [0, 2, -1, 1, 0]
+        bounce.keyTimes = [0, 0.25, 0.5, 0.75, 1]
+        bounce.duration = 0.65
+        bounce.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
+        headLayer.add(bounce, forKey: "robotFrame.taskHappy")
+        for eye in [leftEyeLayer, rightEyeLayer] {
+            let blink = CAKeyframeAnimation(keyPath: "transform.scale.y")
+            blink.values = [1, 0.2, 0.2, 1]
+            blink.keyTimes = [0, 0.15, 0.7, 1]
+            blink.duration = 0.8
+            eye.add(blink, forKey: "robotFrame.taskHappy")
+        }
     }
 
     public func setVisible(_ visible: Bool) {
@@ -442,8 +516,8 @@ public final class RobotAppFrameView: NSView {
         rightTorsoLayer.mask = rightTorsoMask
 
         frameOutlineLayer.fillColor = nil
-        frameOutlineLayer.strokeColor = Self.color(0x433451, alpha: 0.84)
-        frameOutlineLayer.lineWidth = 1.25
+        frameOutlineLayer.strokeColor = Self.color(0xBCA3D1, alpha: 0.45)
+        frameOutlineLayer.lineWidth = 0.7
         frameOutlineLayer.zPosition = 21
         root.addSublayer(frameOutlineLayer)
 
@@ -467,7 +541,7 @@ public final class RobotAppFrameView: NSView {
         for arm in [leftArmLayer, rightArmLayer] {
             arm.fillColor = nil
             arm.strokeColor = Self.color(0x59466E)
-            arm.lineWidth = 4
+            arm.lineWidth = 2.5
             arm.lineCap = .round
             arm.lineJoin = .round
             arm.zPosition = 23
@@ -489,6 +563,16 @@ public final class RobotAppFrameView: NSView {
         headShellLayer.borderWidth = 1.2
         headShellLayer.borderColor = Self.color(0x433451)
         headLayer.addSublayer(headShellLayer)
+
+        lidLayer.colors = [Self.color(0xD8C3E5), Self.color(0x8C6FA3)]
+        lidLayer.startPoint = CGPoint(x: 0, y: 1)
+        lidLayer.endPoint = CGPoint(x: 1, y: 0)
+        lidLayer.cornerRadius = 2.5
+        headLayer.addSublayer(lidLayer)
+        lidHandleLayer.fillColor = nil
+        lidHandleLayer.strokeColor = Self.color(0xB69BCC)
+        lidHandleLayer.lineWidth = 1.7
+        headLayer.addSublayer(lidHandleLayer)
 
         faceScreenLayer.fillColor = Self.color(0x292338)
         faceScreenLayer.strokeColor = Self.color(0xB49CC7)
@@ -545,10 +629,7 @@ public final class RobotAppFrameView: NSView {
 
     private func layoutTorso() {
         let content = Self.contentRect(in: bounds)
-        let torso = CGRect(x: bounds.minX + 2,
-                           y: max(bounds.minY + 7, content.minY - 7),
-                           width: max(0, bounds.width - 4),
-                           height: max(0, content.height + 14))
+        let torso = content.insetBy(dx: -2.25, dy: -2.25)
         let split = torso.midX
         leftTorsoLayer.frame = CGRect(x: torso.minX, y: torso.minY,
                                      width: split - torso.minX + 0.5, height: torso.height)
@@ -595,20 +676,24 @@ public final class RobotAppFrameView: NSView {
     }
 
     private func layoutHead() {
-        let width = min(78, max(54, bounds.width * 0.22))
-        let height: CGFloat = 29
+        let width: CGFloat = 48
+        let height: CGFloat = 26
         let rect = CGRect(x: bounds.midX - width / 2,
-                          y: bounds.maxY - height - 2,
+                          y: bounds.maxY - height - 4,
                           width: width, height: height)
         headLayer.frame = rect
-        headShellLayer.frame = headLayer.bounds
-        faceScreenLayer.path = CGPath(roundedRect: headLayer.bounds.insetBy(dx: 8, dy: 5),
-                                      cornerWidth: 7, cornerHeight: 7, transform: nil)
+        headShellLayer.frame = headLayer.bounds.insetBy(dx: 2, dy: 2)
+        headShellLayer.cornerRadius = 6
+        lidLayer.frame = CGRect(x: 0, y: height - 4, width: width, height: 5)
+        lidHandleLayer.path = CGPath(roundedRect: CGRect(x: width / 2 - 7, y: height, width: 14, height: 3),
+                                    cornerWidth: 1.5, cornerHeight: 1.5, transform: nil)
+        faceScreenLayer.path = CGPath(roundedRect: CGRect(x: 7, y: 5, width: width - 14, height: 16),
+                                      cornerWidth: 4, cornerHeight: 4, transform: nil)
 
         let eyeY = headLayer.bounds.midY + 1
-        let leftCenter = CGPoint(x: headLayer.bounds.midX - 11, y: eyeY)
-        let rightCenter = CGPoint(x: headLayer.bounds.midX + 11, y: eyeY)
-        leftEyeLayer.bounds = CGRect(x: 0, y: 0, width: 9, height: 7)
+        let leftCenter = CGPoint(x: headLayer.bounds.midX - 8, y: eyeY)
+        let rightCenter = CGPoint(x: headLayer.bounds.midX + 8, y: eyeY)
+        leftEyeLayer.bounds = CGRect(x: 0, y: 0, width: 6, height: 5)
         rightEyeLayer.bounds = leftEyeLayer.bounds
         leftEyeLayer.position = leftCenter
         rightEyeLayer.position = rightCenter

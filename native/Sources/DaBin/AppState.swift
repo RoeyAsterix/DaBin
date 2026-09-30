@@ -37,6 +37,9 @@ struct AppStatusMessage: Equatable {
 final class NewTaskDraft: ObservableObject {
     @Published var text = ""
     @Published var reminderEnabled = false
+    @Published var reminderMode: ReminderScheduleMode = .date
+    @Published var countdownHours = 0
+    @Published var countdownMinutes = 30
     @Published var reminderDate = Date().addingTimeInterval(3600)
     @Published var message: String?
 
@@ -45,6 +48,9 @@ final class NewTaskDraft: ObservableObject {
     func reset() {
         text = ""
         reminderEnabled = false
+        reminderMode = .date
+        countdownHours = 0
+        countdownMinutes = 30
         reminderDate = Date().addingTimeInterval(3600)
         message = nil
     }
@@ -55,6 +61,9 @@ final class NewTaskDraft: ObservableObject {
 final class CaptureDraft: ObservableObject {
     @Published var comment: String
     @Published var reminderEnabled: Bool
+    @Published var reminderMode: ReminderScheduleMode = .date
+    @Published var countdownHours = 0
+    @Published var countdownMinutes = 30
     @Published var reminderDate: Date
     @Published var message: String?
     @Published var hasError = false
@@ -70,8 +79,14 @@ final class CaptureDraft: ObservableObject {
     }
 
     var reminder: Date? { reminderEnabled ? reminderDate : nil }
-    var hasChanges: Bool { comment != savedComment || reminder != savedReminder }
-    var reminderChanged: Bool { reminder != savedReminder }
+    var hasChanges: Bool { comment != savedComment || reminderChanged }
+    var reminderChanged: Bool { (reminderEnabled && reminderMode == .countdown) || reminder != savedReminder }
+
+    func resolvedReminder(at now: Date = Date()) throws -> Date? {
+        guard reminderEnabled else { return nil }
+        return try ReminderSchedule.resolve(mode: reminderMode, date: reminderDate,
+            hours: countdownHours, minutes: countdownMinutes, now: now)
+    }
 
     func didSave() {
         savedComment = comment
@@ -84,6 +99,7 @@ final class CaptureDraft: ObservableObject {
     /// comment remains the user's draft until they save or discard it.
     func adoptSavedReminder(from capture: Capture) {
         reminderEnabled = capture.reminderAt != nil
+        reminderMode = .date
         if let date = capture.reminderAt { reminderDate = date }
         savedReminder = capture.reminderAt
         message = nil
@@ -145,7 +161,10 @@ final class AppState: ObservableObject {
     @Published var isBoardVisible = false
     @Published var isDailyDropTargeted = false
     private(set) var captureNavigationRevision: UInt = 0
+    private var attachmentReturnTaskID: UUID?
     var onDismiss: (() -> Void)?
+    var onTaskCompleted: (() -> Void)?
+    var onToggleExpandedWindow: (() -> Void)?
     var onBoardDragStarted: (() -> Void)?
     private var origin: BoardRoute = .daily
     private var searchReturnRoute: BoardRoute = .daily
@@ -307,7 +326,7 @@ final class AppState: ObservableObject {
     }
     var libraryCaptures: [Capture] {
         store.captures.filter {
-            (libraryProject == nil || $0.projectName == libraryProject)
+            $0.parentTaskID == nil && (libraryProject == nil || $0.projectName == libraryProject)
                 && (!libraryPinnedOnly || $0.isPinned) && filter.includes($0)
         }.sorted {
             if $0.isPinned != $1.isPinned { return $0.isPinned }
@@ -493,6 +512,53 @@ final class AppState: ObservableObject {
         }
     }
 
+    @discardableResult
+    func receiveTaskAttachments(_ providers: [NSItemProvider], to task: Capture) -> Bool {
+        guard task.isTask, !isImporting, !isArchiveOperationRunning, !providers.isEmpty else { return false }
+        manualInput.receiveProviders(providers, attachingTo: task) { [weak self] captures, failures in
+            self?.finishTaskAttachments(captures, failures: failures)
+        }
+        return true
+    }
+
+    func pasteAttachments(to task: Capture, from pasteboard: NSPasteboard = .general) {
+        guard task.isTask, !isImporting, !isArchiveOperationRunning else { return }
+        manualInput.receive(pasteboard, attachingTo: task, completion: { [weak self] captures, failures in
+            self?.finishTaskAttachments(captures, failures: failures)
+        })
+    }
+
+    func importTaskAttachments(to task: Capture) {
+        guard task.isTask, !isImporting, !isArchiveOperationRunning else { return }
+        let picker = NSOpenPanel()
+        picker.title = "Add files to task"
+        picker.prompt = "Attach"
+        picker.canChooseDirectories = false
+        picker.allowsMultipleSelection = true
+        guard picker.runModal() == .OK else { return }
+        let urls = picker.urls
+        isFileImporting = true
+        Task {
+            var saved: [Capture] = [], failures: [String] = []
+            for url in urls {
+                do { saved.append(try await store.importFile(url, parentTask: task)) }
+                catch { failures.append(error.localizedDescription) }
+            }
+            isFileImporting = false
+            finishTaskAttachments(saved, failures: failures)
+        }
+    }
+
+    private func finishTaskAttachments(_ captures: [Capture], failures: [String]) {
+        previews.process(captures)
+        contentIndex?.process(captures)
+        captureLayoutRevision &+= 1
+        if !failures.isEmpty { reportFailure(failures.joined(separator: "\n")) }
+        else if !captures.isEmpty {
+            status = AppStatusMessage(text: "Added \(captures.count) \(captures.count == 1 ? "item" : "items") to task.", severity: .success)
+        }
+    }
+
     func togglePinned(_ capture: Capture) {
         do { try store.setOrganization(capture, pinned: !capture.isPinned, projectName: capture.projectName) }
         catch { reportFailure("Could not update the pin: \(error.localizedDescription)") }
@@ -530,7 +596,12 @@ final class AppState: ObservableObject {
             newTaskDraft.message = "Give your task a name."
             return
         }
-        let reminder = newTaskDraft.reminderEnabled ? newTaskDraft.reminderDate : nil
+        let reminder: Date?
+        do {
+            reminder = newTaskDraft.reminderEnabled ? try ReminderSchedule.resolve(
+                mode: newTaskDraft.reminderMode, date: newTaskDraft.reminderDate,
+                hours: newTaskDraft.countdownHours, minutes: newTaskDraft.countdownMinutes, now: Date()) : nil
+        } catch { newTaskDraft.message = error.localizedDescription; return }
         if let reminder, reminder <= Date() {
             newTaskDraft.message = "Choose a reminder time in the future."
             return
@@ -560,6 +631,7 @@ final class AppState: ObservableObject {
             // Keep the converted card as the return-to-Daily scroll target.
             dailyScrollID = feedID(for: capture, on: selectedDay)
             status = AppStatusMessage(text: "Turned into a task.", severity: .success)
+            openCapture(capture.id, focus: "task")
         } catch {
             reportFailure("Couldn’t turn this capture into a task: \(error.localizedDescription)")
         }
@@ -569,7 +641,7 @@ final class AppState: ObservableObject {
         guard capture.isTask else { return }
         do {
             try store.setTaskCompleted(capture, completed: !capture.isCompleted)
-            if capture.isCompleted { clearReminderFeedback(for: capture) }
+            if capture.isCompleted { clearReminderFeedback(for: capture); onTaskCompleted?() }
             objectWillChange.send()
             Task {
                 if capture.isCompleted { await reminders.clearForCapture(capture.id) }
@@ -647,31 +719,34 @@ final class AppState: ObservableObject {
         guard removingCaptureID == nil, store.captures.contains(where: { $0 === capture }) else { return }
         removingCaptureID = capture.id
         defer { removingCaptureID = nil }
-        await contentIndex?.cancel(for: capture.id)
-        await previews.cancel(for: capture.id)
+        let family = store.captureFamily(for: capture)
+        let familyIDs = Set(family.map(\.id))
+        for item in family {
+            await contentIndex?.cancel(for: item.id)
+            await previews.cancel(for: item.id)
+        }
         do {
             try store.moveToTrash(capture)
             undoRemovalIDs = [capture.id]
             captureLayoutRevision &+= 1
-            drafts.removeValue(forKey: capture.id)
-            clearReminderFeedback(for: capture)
-            if pendingRemoval?.id == capture.id { pendingRemoval = nil }
+            for item in family { drafts.removeValue(forKey: item.id); clearReminderFeedback(for: item) }
+            if let pendingID = pendingRemoval?.id, familyIDs.contains(pendingID) { pendingRemoval = nil }
             // Removing an action can dissolve a four-action summary, so a prior
             // feed anchor may no longer exist.
             dailyScrollID = nil
-            if searchScrollID == capture.id { searchScrollID = nil }
-            if selectedCapture?.id == capture.id {
+            if let scrollID = searchScrollID, familyIDs.contains(scrollID) { searchScrollID = nil }
+            if let selectedID = selectedCapture?.id, familyIDs.contains(selectedID) {
                 selectedCapture = nil
                 selectedDraft = nil
                 detailFocus = nil
                 if route == .detail { route = origin }
             }
             status = AppStatusMessage(text: "Moved to Recently Deleted. You can undo this.", severity: .success)
-            await reminders.clearForCapture(capture.id)
+            for item in family { await reminders.clearForCapture(item.id) }
         } catch {
             reportFailure("Could not remove this capture: \(error.localizedDescription)")
-            previews.process([capture])
-            contentIndex?.process([capture])
+            previews.process(family)
+            contentIndex?.process(family)
         }
     }
 
@@ -701,10 +776,13 @@ final class AppState: ObservableObject {
             }
             undoRemovalIDs.removeAll { $0 == capture.id }
             captureLayoutRevision &+= 1
-            previews.process([restored])
-            contentIndex?.process([restored])
-            if let due = restored.reminderAt, due > Date(), !(restored.isTask && restored.isCompleted) {
-                await reminders.saveReminder(for: restored)
+            let family = store.captureFamily(for: restored)
+            previews.process(family)
+            contentIndex?.process(family)
+            for item in family {
+                if let due = item.reminderAt, due > Date(), !(item.isTask && item.isCompleted) {
+                    await reminders.saveReminder(for: item)
+                }
             }
             status = AppStatusMessage(text: "Capture restored to its original date and project.", severity: .success)
         } catch { reportFailure("Could not restore this capture: \(error.localizedDescription)") }
@@ -722,14 +800,17 @@ final class AppState: ObservableObject {
               store.trashedCaptures.contains(where: { $0 === capture }) else { return }
         removingCaptureID = capture.id
         defer { removingCaptureID = nil }
-        await contentIndex?.cancel(for: capture.id)
-        await previews.cancel(for: capture.id)
+        let family = store.captureFamily(for: capture, includingTrashed: true)
+        for item in family {
+            await contentIndex?.cancel(for: item.id)
+            await previews.cancel(for: item.id)
+        }
         do {
             let result = try store.permanentlyRemove(capture)
             undoRemovalIDs.removeAll { $0 == capture.id }
             status = AppStatusMessage(text: result.warning ?? "Capture permanently deleted.",
                                      severity: result.cleanupPending ? .warning : .success)
-            await reminders.clearForCapture(capture.id)
+            for item in family { await reminders.clearForCapture(item.id) }
         } catch { reportFailure("Could not permanently remove this capture: \(error.localizedDescription)") }
     }
 
@@ -778,6 +859,9 @@ final class AppState: ObservableObject {
             reportFailure("This capture could not be found.")
             return
         }
+        if route == .detail, let current = selectedCapture, current.isTask, capture.parentTaskID == current.id {
+            attachmentReturnTaskID = current.id
+        } else { attachmentReturnTaskID = nil }
         if route != .detail { origin = route }
         selectedCapture = capture
         if drafts[id] == nil { drafts[id] = CaptureDraft(capture: capture) }
@@ -788,6 +872,12 @@ final class AppState: ObservableObject {
 
     func back() {
         if route == .detail {
+            if let parentID = attachmentReturnTaskID, store.captures.contains(where: { $0.id == parentID }) {
+                attachmentReturnTaskID = nil
+                openCapture(parentID, focus: "task")
+                return
+            }
+            attachmentReturnTaskID = nil
             route = origin
         } else if route == .search {
             route = searchReturnRoute
@@ -898,15 +988,19 @@ final class AppState: ObservableObject {
 
     func saveDetail() {
         guard let capture = selectedCapture, let draft = selectedDraft else { return }
-        if draft.reminderChanged, let reminder = draft.reminder, reminder <= Date() {
+        let resolvedReminder: Date?
+        do { resolvedReminder = draft.reminderChanged ? try draft.resolvedReminder() : draft.reminder }
+        catch { draft.message = error.localizedDescription; draft.hasError = true; return }
+        if draft.reminderChanged, let reminder = resolvedReminder, reminder <= Date() {
             draft.message = "Choose a reminder time in the future."
             draft.hasError = true
             return
         }
         let changedReminder = draft.reminderChanged
         do {
-            try store.update(capture, comment: draft.comment, reminderAt: draft.reminder,
-                             reminderTimeZoneID: draft.reminder == nil ? nil : (changedReminder ? TimeZone.current.identifier : capture.reminderTimeZoneID))
+            try store.update(capture, comment: draft.comment, reminderAt: resolvedReminder,
+                             reminderTimeZoneID: resolvedReminder == nil ? nil : (changedReminder ? TimeZone.current.identifier : capture.reminderTimeZoneID))
+            draft.adoptSavedReminder(from: capture)
             draft.didSave()
             if changedReminder {
                 if capture.reminderAt == nil { clearReminderFeedback(for: capture) }

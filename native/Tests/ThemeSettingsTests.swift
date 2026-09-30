@@ -54,6 +54,21 @@ struct ThemeSettingsTests {
         try expect(defaults.persistentDomain(forName: suiteName) == nil,
                    "Reading an unset preference does not create any persisted settings")
 
+        try expect(settings.showTooltips,
+                   "Tooltips start enabled without requiring a stored preference")
+        settings.setShowTooltips(false)
+        try expect(!settings.showTooltips && !defaults.bool(forKey: ThemeSettings.showTooltipsKey),
+                   "Turning tooltips off updates the live and stored preference")
+        try expect(!ThemeSettings(defaults: defaults, systemDarkMode: false).showTooltips,
+                   "A disabled tooltip preference survives relaunch")
+        settings.setShowTooltips(true)
+        try expect(settings.showTooltips && ThemeSettings(defaults: defaults, systemDarkMode: false).showTooltips,
+                   "Tooltips can be enabled again without changing the theme")
+        defaults.set("invalid preference", forKey: ThemeSettings.showTooltipsKey)
+        try expect(ThemeSettings(defaults: defaults, systemDarkMode: false).showTooltips,
+                   "Malformed tooltip data falls back to enabled")
+        settings.setShowTooltips(true)
+
         settings.setBoardOpacity(0.55)
         try expect(settings.boardOpacity == 0.55 && defaults.double(forKey: ThemeSettings.boardOpacityKey) == 0.55,
                    "Transparency control updates the live board and stored opacity")
@@ -117,8 +132,9 @@ struct ThemeSettingsTests {
         settings.setColor(NSColor(deviceWhite: 0.5, alpha: 1))
         try expect(ThemeSettings.normalizedHex(settings.selectedHex) != nil, "Grayscale color spaces can be stored")
         try expect(Set(defaults.persistentDomain(forName: suiteName)!.keys)
-                   == [ThemeSettings.defaultsKey, ThemeSettings.boardOpacityKey, ThemeSettings.darkModeKey, "unrelated"],
-                   "Appearance changes store only their three dedicated preferences")
+                   == [ThemeSettings.defaultsKey, ThemeSettings.boardOpacityKey, ThemeSettings.darkModeKey,
+                       ThemeSettings.showTooltipsKey, "unrelated"],
+                   "Appearance changes store only their dedicated preferences")
 
         try expect(hex(ThemeSettings.resolvedAccentColor(for: ThemeSettings.defaultHex, dark: false)) == "6D5387", "Light default accent matches the original app")
         try expect(hex(ThemeSettings.resolvedAccentColor(for: ThemeSettings.defaultHex, dark: true)) == "AB92C6", "Dark default accent matches the original app")

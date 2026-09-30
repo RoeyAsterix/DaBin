@@ -6,6 +6,7 @@
 - [Latest unsigned Apple Silicon test package](https://github.com/RoeyAsterix/DaBin/releases/latest/download/DaBin-Latest-AppleSilicon.zip) — not a notarized public installer
 - [Quick guide PDF](DaBin-Quick-Guide.pdf)
 - [Native app guide](../native/README.md)
+- [DaBin 0.4.1 local candidate notes](RELEASE_NOTES_0.4.1.md)
 - [DaBin 0.4.0 local candidate notes](RELEASE_NOTES_0.4.0.md)
 - [59-second walkthrough archive (0.3.19 interface)](walkthrough/README.md)
 - [DaBin 0.3.18 release notes](RELEASE_NOTES_0.3.18.md)

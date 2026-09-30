@@ -37,7 +37,7 @@ struct RemindersScreen: View {
                     HStack(spacing: 16) {
                         Button { state.completeFollowUp(capture) } label: { Label("Complete", systemImage: "checkmark.circle") }
                         Button { state.snoozeFollowUp(capture) } label: { Label("Snooze", systemImage: "clock.arrow.circlepath") }
-                            .help("Remind me tomorrow")
+                            .buddyHelp("Remind me tomorrow")
                         Spacer(minLength: 0)
                     }.buttonStyle(.plain).font(.system(size: 12)).foregroundStyle(accent).padding(.bottom, 10)
                 }.padding(.horizontal, 11).background(Palette.surface, in: RoundedRectangle(cornerRadius: 12))

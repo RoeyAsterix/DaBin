@@ -117,7 +117,7 @@ private struct WeeklyDayColumn: View {
                         .background(Palette.background.opacity(0.8), in: Capsule())
                 }.frame(maxWidth: .infinity, alignment: .leading).padding(11)
                     .contentShape(Rectangle())
-            }.buttonStyle(.plain).help("Open \(day.formatted(date: .complete, time: .omitted))")
+            }.buttonStyle(.plain).buddyHelp("Open \(day.formatted(date: .complete, time: .omitted))")
                 .accessibilityLabel("\(day.formatted(date: .complete, time: .omitted)), \(captures.count) captures, open Daily")
             Rectangle().fill(Palette.line).frame(height: 0.5)
             if captures.isEmpty {
@@ -211,11 +211,11 @@ private struct WeeklyCaptureCard: View {
                 Button { state.openCapture(capture.id, focus: "comment") } label: {
                     Image(systemName: capture.comment.isEmpty ? "text.bubble" : "text.bubble.fill")
                         .frame(width: 28, height: 26).contentShape(Rectangle())
-                }.help("Comment").accessibilityLabel("Comment on \(capture.title)")
+                }.buddyHelp("Comment").accessibilityLabel("Comment on \(capture.title)")
                 Button { state.openCapture(capture.id, focus: "reminder") } label: {
                     Image(systemName: capture.reminderAt == nil ? "bell" : "bell.fill")
                         .frame(width: 28, height: 26).contentShape(Rectangle())
-                }.help("Reminder").accessibilityLabel("Reminder for \(capture.title)")
+                }.buddyHelp("Reminder").accessibilityLabel("Reminder for \(capture.title)")
                 Spacer(minLength: 0)
                 if !capture.isMinimized, let reminder = capture.reminderAt {
                     Text("\(capture.isTask && capture.isCompleted ? "Paused " : "")\(reminder.formatted(.dateTime.month(.abbreviated).day().hour().minute()))")

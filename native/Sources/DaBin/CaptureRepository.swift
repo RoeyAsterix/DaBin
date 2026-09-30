@@ -43,7 +43,7 @@ import CoreData
 
     func load() throws -> [CaptureSnapshot] {
         let request = NSFetchRequest<NSManagedObject>(entityName: "CaptureRecord")
-        return try context.fetch(request).map { record in
+        let snapshots = try context.fetch(request).map { record in
             guard let data = record.value(forKey: "payload") as? Data else {
                 throw CaptureStoreError.invalidOriginal("A saved metadata record is unreadable.")
             }
@@ -51,6 +51,8 @@ import CoreData
             try validate(snapshot, recordID: record.value(forKey: "captureID") as? UUID)
             return snapshot
         }
+        try validateRelationships(snapshots)
+        return snapshots
     }
 
     /// Upsert the supplied captures as one transaction, preserving every unrelated record.
@@ -58,16 +60,19 @@ import CoreData
         try saveSnapshots(captures.map(CaptureSnapshot.init))
     }
 
-    /// Delete exactly one indexed capture in a single metadata transaction.
-    func remove(id: UUID) throws {
+    /// Delete a task and its attached receipts in one metadata transaction.
+    func remove(id: UUID) throws { try remove(ids: [id]) }
+
+    func remove(ids: Set<UUID>) throws {
+        guard !ids.isEmpty else { return }
         do {
             let request = NSFetchRequest<NSManagedObject>(entityName: "CaptureRecord")
-            request.predicate = NSPredicate(format: "captureID == %@", id as NSUUID)
+            request.predicate = NSPredicate(format: "captureID IN %@", ids.map { $0 as NSUUID })
             let records = try context.fetch(request)
-            guard records.count == 1 else {
+            guard records.count == ids.count else {
                 throw CaptureStoreError.invalidOriginal("This capture is no longer in the archive.")
             }
-            context.delete(records[0])
+            records.forEach(context.delete)
             try context.save()
         } catch {
             context.rollback()
@@ -104,6 +109,20 @@ import CoreData
             throw CaptureStoreError.invalidOriginal("The backup contains duplicate capture identities.")
         }
         for snapshot in snapshots { try validate(snapshot, recordID: snapshot.id) }
+        try validateRelationships(snapshots)
+    }
+
+    private func validateRelationships(_ snapshots: [CaptureSnapshot]) throws {
+        let byID = Dictionary(uniqueKeysWithValues: snapshots.map { ($0.id, $0) })
+        for snapshot in snapshots {
+            guard let parentID = snapshot.parentTaskID else { continue }
+            guard parentID != snapshot.id, let parent = byID[parentID],
+                  parent.parentTaskID == nil,
+                  parent.kindRaw == CaptureKind.task.rawValue || parent.convertedToTask == true,
+                  snapshot.deletedAt != nil || parent.deletedAt == nil else {
+                throw CaptureStoreError.invalidOriginal("A task attachment has an invalid parent. The archive was preserved.")
+            }
+        }
     }
 
     private func validate(_ snapshot: CaptureSnapshot, recordID: UUID?) throws {
@@ -119,7 +138,7 @@ import CoreData
             && (["idle", "indexing"].contains(indexState) ? indexVersion == 0 : indexVersion == ContentIndexService.currentVersion)
             && (!indexCanRetry || indexState == "unavailable")
         )
-        guard [1, 2, 3, 4, 5, 6, 7].contains(snapshot.schemaVersion), CaptureKind(rawValue: snapshot.kindRaw) != nil,
+        guard [1, 2, 3, 4, 5, 6, 7, 8].contains(snapshot.schemaVersion), CaptureKind(rawValue: snapshot.kindRaw) != nil,
               recordID == snapshot.id,
               snapshot.captureOriginRaw.map({ CaptureOrigin(rawValue: $0) != nil }) ?? true,
               (!origin.isAutomatic || snapshot.automaticActionID != nil), indexValid else {

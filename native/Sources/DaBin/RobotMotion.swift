@@ -1,6 +1,13 @@
 import CoreGraphics
 import Foundation
 
+enum RobotManualEntranceTiming {
+    /// Pointer-triggered island reveals are intentionally quicker than the
+    /// automatic saved-capture performance, which retains its own timing.
+    static let islandDuration: TimeInterval = 0.55
+    static let reducedDuration: TimeInterval = 0.10
+}
+
 /// The edge the robot travels through when it appears or retreats.
 /// `top` is used by the optional position below a MacBook camera housing.
 enum RobotEntrance: String, CaseIterable, Equatable {

@@ -18,7 +18,7 @@ struct SearchScreen: View {
             Toggle("Show nearby captures", isOn: $state.showSearchContext)
                 .toggleStyle(.checkbox).font(.system(size: 11)).frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal, 16).padding(.vertical, 8)
-                .help("Include captures saved immediately around each match")
+                .buddyHelp("Include captures saved immediately around each match")
             if let index = state.contentIndex, index.isBusy {
                 HStack(spacing: 7) {
                     ProgressView().controlSize(.small)

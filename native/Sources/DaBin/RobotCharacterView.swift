@@ -908,7 +908,7 @@ final class RobotCharacterView: NSView {
     func playIslandClimb() -> TimeInterval {
         beginIslandMotion()
         let reduced = reduceMotionProvider()
-        let duration: TimeInterval = reduced ? 0.20 : 1.1
+        let duration = reduced ? RobotManualEntranceTiming.reducedDuration : RobotManualEntranceTiming.islandDuration
         if reduced {
             let final = IslandRobotChoreography.reveal(duration: 1).last!
             applyIslandFrame(final)

@@ -12,6 +12,11 @@ struct CaptureThumbnail: View {
             if let url = store.previewURL(for: capture),
                let image = NSImage(contentsOf: url) {
                 FittedPreviewImage(image: image)
+            } else if [.text, .task].contains(capture.kind), let text = capture.originalText, !text.isEmpty {
+                Text(text).font(.system(size: 12, weight: .medium)).lineSpacing(3)
+                    .foregroundStyle(Palette.foreground).multilineTextAlignment(.leading)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+                    .padding(12).clipped()
             } else {
                 VStack(spacing: 5) {
                     Image(systemName: kindSymbol(capture.kind)).font(.system(size: 22, weight: .light))
@@ -47,21 +52,21 @@ struct DetailPreview: View {
             switch capture.kind {
             case .image:
                 if let image = NSImage(contentsOf: url) {
-                    FittedPreviewImage(image: image).frame(height: 230)
+                    FittedPreviewImage(image: image).frame(height: 310)
                         .background(Palette.soft).clipShape(RoundedRectangle(cornerRadius: 11)).accessibilityLabel(capture.title)
                 }
-            case .video: NativeVideo(url: url).frame(height: 205).clipShape(RoundedRectangle(cornerRadius: 11))
-            case .pdf: FittedPDFPreview(url: url).frame(height: 230).clipShape(RoundedRectangle(cornerRadius: 11))
+            case .video: NativeVideo(url: url).frame(height: 280).clipShape(RoundedRectangle(cornerRadius: 11))
+            case .pdf: FittedPDFPreview(url: url).frame(height: 310).clipShape(RoundedRectangle(cornerRadius: 11))
             case .document, .ai, .file:
                 // Quick Look's embedded viewer has no public fit control. Its
                 // cached page thumbnail gives compact previews a full-page fit;
                 // Open original remains available for the complete document.
-                CaptureThumbnail(store: store, capture: capture).frame(height: 190)
+                CaptureThumbnail(store: store, capture: capture).frame(height: 280)
                     .clipShape(RoundedRectangle(cornerRadius: 11))
             default: EmptyView()
             }
         } else if capture.thumbnailRelativePath != nil {
-            CaptureThumbnail(store: store, capture: capture).frame(height: 165).clipShape(RoundedRectangle(cornerRadius: 11))
+            CaptureThumbnail(store: store, capture: capture).frame(height: 250).clipShape(RoundedRectangle(cornerRadius: 11))
         }
     }
 }

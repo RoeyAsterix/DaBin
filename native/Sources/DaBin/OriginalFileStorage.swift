@@ -34,6 +34,7 @@ struct ImportJournal: Codable, Sendable {
     let originalFilename: String
     let sourceFilePath: String?
     let sourceURL: String?
+    var parentTaskID: UUID? = nil
     var captureOriginRaw: String? = nil
     var automaticActionID: UUID? = nil
     var sourceApplicationName: String? = nil

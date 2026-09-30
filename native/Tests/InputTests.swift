@@ -1,5 +1,6 @@
 import AppKit
 import Foundation
+import UniformTypeIdentifiers
 
 private enum FixtureError: Error { case unavailable }
 
@@ -363,6 +364,73 @@ private final class PromiseFixture: InputFilePromise {
             try expect(!FileManager.default.fileExists(atPath: promise.destination!.path) && log.durableAtSuccess, "Late completion cleans all staging after durable import")
             try await Task.sleep(for: .milliseconds(160))
             try expect(log.results.count == 2, "No duplicate timeout or success callback")
+        }
+        do {
+            let store = try CaptureStore(root: root.appendingPathComponent("task-paste"))
+            let task = try store.createTask(text: "Collect research")
+            let input = InputService(store: store)
+            let log = InputRecorder(input)
+            let pb = try board([item("One attachment"), item("https://example.invalid/task")]); defer { pb.releaseGlobally() }
+            input.receive(pb, at: stamp, timeZone: zone, attachingTo: task)
+            try await wait("Task paste completes") { log.results.count == 1 }
+            try expect(log.results[0].1.isEmpty && log.results[0].0.count == 2
+                       && log.results[0].0.allSatisfy { $0.parentTaskID == task.id },
+                       "Explicit task paste attaches every semantic clipboard item before success")
+            try expect(store.attachments(for: task).count == 2 && !input.isBusy,
+                       "Task paste has one balanced busy lifecycle")
+        }
+        do {
+            let store = try CaptureStore(root: root.appendingPathComponent("task-providers"))
+            let task = try store.createTask(text: "Drop references here")
+            let input = InputService(store: store, promiseTimeout: 1, stagingRoot: root)
+            let log = InputRecorder(input)
+            let text = NSItemProvider(object: "Task reference words" as NSString)
+            let file = root.appendingPathComponent("Task reference.pdf")
+            try Data("fictional PDF bytes".utf8).write(to: file)
+            let provider = NSItemProvider()
+            provider.suggestedName = "Task reference.pdf"
+            provider.registerFileRepresentation(forTypeIdentifier: UTType.pdf.identifier, fileOptions: [], visibility: .all) { completion in
+                completion(file, false, nil)
+                return nil
+            }
+            input.receiveProviders([text, provider], attachingTo: task, at: stamp, timeZone: zone)
+            try await wait("Task provider drop completes") { log.results.count == 1 }
+            try expect(log.results[0].1.isEmpty && log.results[0].0.count == 2,
+                       "SwiftUI providers import both real text and a promised file")
+            try expect(log.results[0].0.allSatisfy { $0.parentTaskID == task.id && $0.capturedAt == stamp },
+                       "Provider drop keeps task relationship and one immutable drop timestamp")
+            let savedFile = store.attachments(for: task).first { $0.kind == .pdf }!
+            try expect(savedFile.sourceFilePath == nil && savedFile.originalFilename == "Task reference.pdf",
+                       "Provider temporary file paths are never presented as source provenance")
+            try expect(try Data(contentsOf: store.managedURL(for: savedFile)!) == Data("fictional PDF bytes".utf8),
+                       "Provider bytes survive after the source callback returns")
+        }
+        do {
+            let store = try CaptureStore(root: root.appendingPathComponent("provider-timeout"))
+            let task = try store.createTask(text: "No unbounded drops")
+            let input = InputService(store: store, promiseTimeout: 0.05, stagingRoot: root)
+            let log = InputRecorder(input)
+            let never = NSItemProvider()
+            never.registerFileRepresentation(forTypeIdentifier: UTType.pdf.identifier, fileOptions: [], visibility: .all) { _ in nil }
+            input.receiveProviders([never], attachingTo: task)
+            try await wait("A stalled item provider times out") { log.results.count == 1 }
+            try expect(log.results[0].0.isEmpty && log.results[0].1.count == 1 && !input.isBusy,
+                       "A stalled provider reports failure and clears busy without a phantom attachment")
+        }
+        do {
+            let store = try CaptureStore(root: root.appendingPathComponent("task-promise-removed"))
+            let task = try store.createTask(text: "Removed while waiting")
+            let promise = PromiseFixture(["late.pdf"])
+            let input = InputService(store: store, promiseTimeout: 0.05, stagingRoot: root, promiseReader: { _ in [promise] })
+            let log = InputRecorder(input)
+            let pb = try board([]); defer { pb.releaseGlobally() }
+            input.receive(pb, attachingTo: task)
+            try await wait("Task promise wait times out") { log.results.count == 1 }
+            try store.moveToTrash(task)
+            promise.deliver(0)
+            try await wait("Late promise is resolved after task removal") { log.results.count == 2 }
+            try expect(log.results[1].0.isEmpty && log.results[1].1.count == 1 && store.captures.isEmpty,
+                       "Late callbacks cannot create orphan attachments to a removed task")
         }
         print("PASS: \(checks) input lifecycle checks (private named pasteboards; general clipboard untouched)")
     }

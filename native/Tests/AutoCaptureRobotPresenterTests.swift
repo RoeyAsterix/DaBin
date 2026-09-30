@@ -18,6 +18,14 @@ private struct AutoCaptureRobotPresenterTests {
         abs(first - second) < 0.01
     }
 
+    /// Synthetic displays exercise placement policy independently of hardware.
+    /// AppKit may apply the host screen's menu-bar constraint when ordering a
+    /// real panel, so compare against that native result instead of assuming
+    /// an injected synthetic screen also changes the computer's screens.
+    private static func hasNativeFrame(_ panel: NSPanel, requested: CGRect) -> Bool {
+        panel.frame == panel.constrainFrameRect(requested, to: panel.screen)
+    }
+
     static func main() async throws {
         let external = AutoCaptureRobotScreen(
             displayID: 19,
@@ -149,10 +157,10 @@ private struct AutoCaptureRobotPresenterTests {
                    "One success starts one performance and does not show a redundant ×1 badge")
         try expect(ObjectIdentifier(presenter.panel) == panelIdentity && presenter.panel.isVisible,
                    "Presentation reuses the one panel instead of creating a window")
-        try expect(presenter.panel.frame == islandFrame
+        try expect(hasNativeFrame(presenter.panel, requested: islandFrame)
                    && presenter.panel.contentView?.subviews.first?.frame == presenter.panel.contentView?.bounds
                    && presenter.panel.contentView?.layer?.masksToBounds == true,
-                   "Island artwork gets the full clipped stage and can travel sideways without a fake housing")
+                   "Island artwork gets the full clipped stage after native screen constraints, without a fake housing")
         try expect(presenter.present(additionalCaptureCount: 2)
                    && presenter.state.visibleCount == 3
                    && presenter.performanceStartCount == 1
@@ -194,7 +202,7 @@ private struct AutoCaptureRobotPresenterTests {
         try expect(externalPresenter.present(additionalCaptureCount: 1)
                    && externalPresenter.currentPerformance?.entrance == .right,
                    "An external hardware primary display uses the right-edge entrance")
-        try expect(externalPresenter.panel.frame == externalFrame,
+        try expect(hasNativeFrame(externalPresenter.panel, requested: externalFrame),
                    "The external popup uses the tested top-right safe-area frame")
         externalPresenter.shutdown()
 
@@ -290,7 +298,7 @@ private struct AutoCaptureRobotPresenterTests {
         changingScreen = external
         changingPresenter.displayConfigurationChanged()
         try expect(changingPresenter.panel.isVisible
-                   && changingPresenter.panel.frame == externalFrame
+                   && hasNativeFrame(changingPresenter.panel, requested: externalFrame)
                    && changingPresenter.state.visibleCount == 5
                    && changingPresenter.currentPerformance?.entrance == .right,
                    "A replacement display repositions and resumes without a stranded window")
@@ -327,7 +335,7 @@ private struct AutoCaptureRobotPresenterTests {
                    && relocationPresenter.pendingCaptureCount == 0
                    && relocationPresenter.performanceStartCount == 2
                    && relocationPresenter.currentPerformance?.entrance == .right
-                   && relocationPresenter.panel.frame == externalFrame
+                   && hasNativeFrame(relocationPresenter.panel, requested: externalFrame)
                    && ObjectIdentifier(relocationPresenter.panel) == relocationPanelIdentity,
                    "A valid island-to-external change replans unfinished and pending counts in the same passive panel")
         try expect(relocationPresenter.panel.contentView?.subviews.first?.frame
@@ -344,7 +352,7 @@ private struct AutoCaptureRobotPresenterTests {
                    && relocationPresenter.pendingCaptureCount == 0
                    && relocationPresenter.performanceStartCount == 3
                    && relocationPresenter.currentPerformance?.entrance == .top
-                   && relocationPresenter.panel.frame == islandFrame,
+                   && hasNativeFrame(relocationPresenter.panel, requested: islandFrame),
                    "Returning to an island presents only pending saves and never replays a consumed cue")
 
         relocationDate.addTimeInterval(1)

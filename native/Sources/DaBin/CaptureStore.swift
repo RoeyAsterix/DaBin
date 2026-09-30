@@ -41,8 +41,9 @@ import UniformTypeIdentifiers
 
     func capture(text: String, at: Date = Date(), timeZone: TimeZone = .current,
                  source: CaptureSource = .unknown,
-                 receipt: CaptureReceiptContext = .manual,
+                 receipt: CaptureReceiptContext = .manual, parentTask: Capture? = nil,
                  commitGuard: () -> Bool = { true }) throws -> [Capture] {
+        try requireAttachmentParent(parentTask)
         let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { throw CaptureStoreError.emptyInput }
         let nonemptyLines = text.components(separatedBy: .newlines).filter {
@@ -56,10 +57,13 @@ import UniformTypeIdentifiers
             let title = kind == .link ? (URL(string: value)?.host ?? value) : String(value.prefix(100))
             return Capture(capturedAt: at, timeZone: timeZone, kind: kind,
                            originalURL: kind == .link ? value : nil, originalText: original, title: title,
-                           sourceFilePath: source.filePath, sourceURL: source.url, receipt: receipt)
+                           sourceFilePath: source.filePath, sourceURL: source.url, receipt: receipt,
+                           parentTaskID: parentTask?.id)
         }
         // URL-only multiline pastes commit as one transaction. Mixed prose remains one exact text original.
         guard commitGuard() else { throw CaptureStoreError.captureCancelled }
+        try requireAttachmentParent(parentTask)
+        try failureInjector?(.beforeMetadataSave)
         try repository.save(newCaptures)
         captures.append(contentsOf: newCaptures)
         try refresh()
@@ -69,7 +73,7 @@ import UniformTypeIdentifiers
 
     func importFile(_ source: URL, at: Date = Date(), timeZone: TimeZone = .current,
                     originalName: String? = nil, source provenance: CaptureSource? = nil,
-                    receipt: CaptureReceiptContext = .manual,
+                    receipt: CaptureReceiptContext = .manual, parentTask: Capture? = nil,
                     commitGuard: @escaping () -> Bool = { true }) async throws -> Capture {
         let access = source.startAccessingSecurityScopedResource()
         defer { if access { source.stopAccessingSecurityScopedResource() } }
@@ -79,7 +83,7 @@ import UniformTypeIdentifiers
         let type = (try? source.resourceValues(forKeys: [.contentTypeKey]).contentType) ?? UTType(filenameExtension: source.pathExtension)
         let origin = provenance ?? CaptureSource(filePath: source.standardizedFileURL.path)
         return try await importOriginal(filename: filename, contentType: type, at: at, timeZone: timeZone,
-                                        source: origin, receipt: receipt, commitGuard: commitGuard) { destination in
+                                        source: origin, receipt: receipt, parentTask: parentTask, commitGuard: commitGuard) { destination in
             try FileManager.default.copyItem(at: source, to: destination)
         }
     }
@@ -108,7 +112,9 @@ import UniformTypeIdentifiers
     func convertToTask(_ capture: Capture) throws {
         try requireCurrent(capture)
         guard !capture.isTask else { return }
-        let previous = (capture.convertedToTask, capture.isCompleted, capture.updatedAt)
+        let previous = (capture.convertedToTask, capture.isCompleted, capture.updatedAt, capture.parentTaskID)
+        // Promoting an attached item makes it independently actionable; nesting tasks is not supported.
+        capture.setParentTaskID(nil)
         capture.setConvertedToTask(true)
         capture.isCompleted = false
         capture.updatedAt = Date()
@@ -120,6 +126,7 @@ import UniformTypeIdentifiers
             capture.setConvertedToTask(previous.0)
             capture.isCompleted = previous.1
             capture.updatedAt = previous.2
+            capture.setParentTaskID(previous.3)
             throw error
         }
     }
@@ -224,51 +231,73 @@ import UniformTypeIdentifiers
     /// visible object after commit so a delayed service cannot mutate the trash.
     func moveToTrash(_ capture: Capture) throws {
         try requireCurrent(capture)
-        let old = (capture.deletedAt, capture.reminderRevision, capture.notificationState, capture.updatedAt)
-        capture.deletedAt = Date()
-        capture.reminderRevision += 1
-        capture.notificationState = "trashed"
-        capture.updatedAt = Date()
+        let family = captureFamily(for: capture)
+        let before = family.map(CaptureSnapshot.init)
+        let timestamp = Date()
+        for member in family {
+            member.deletedAt = timestamp
+            member.reminderRevision += 1
+            member.notificationState = "trashed"
+            member.updatedAt = timestamp
+        }
         do {
             try failureInjector?(.beforeMetadataSave)
-            try repository.save([capture])
+            try repository.save(family)
         } catch {
-            capture.deletedAt = old.0
-            capture.reminderRevision = old.1
-            capture.notificationState = old.2
-            capture.updatedAt = old.3
+            rollbackTrashState(family, snapshots: before)
             throw error
         }
-        let retained = Capture(snapshot: CaptureSnapshot(capture))
-        captures.removeAll { $0.id == capture.id }
-        trashedCaptures.append(retained)
+        let ids = Set(family.map(\.id))
+        let retained = family.map { Capture(snapshot: CaptureSnapshot($0)) }
+        captures.removeAll { ids.contains($0.id) }
+        trashedCaptures.append(contentsOf: retained)
         trashedCaptures.sort { ($0.deletedAt ?? .distantPast) > ($1.deletedAt ?? .distantPast) }
-        synchronizeArchive([retained])
+        synchronizeArchive(retained)
     }
 
     func restoreFromTrash(_ capture: Capture) throws {
         try requireTrashed(capture)
-        let old = (capture.deletedAt, capture.reminderRevision, capture.notificationState, capture.updatedAt)
-        capture.deletedAt = nil
-        capture.reminderRevision += 1
-        capture.notificationState = capture.isTask && capture.isCompleted ? "completed"
-            : (capture.reminderAt == nil ? "none" : "pending")
-        capture.updatedAt = Date()
+        if let parentID = capture.parentTaskID {
+            guard let parent = captures.first(where: { $0.id == parentID }) else {
+                throw CaptureStoreError.invalidOriginal("Restore the task before restoring its attachment.")
+            }
+            try requireAttachmentParent(parent)
+        }
+        // Only restore children trashed together with this task. Earlier individual
+        // removals remain in Recently Deleted until the user restores them.
+        let family = [capture] + trashedCaptures.filter {
+            $0.parentTaskID == capture.id && $0.deletedAt == capture.deletedAt
+        }
+        let before = family.map(CaptureSnapshot.init)
+        for member in family {
+            member.deletedAt = nil
+            member.reminderRevision += 1
+            member.notificationState = member.isTask && member.isCompleted ? "completed"
+                : (member.reminderAt == nil ? "none" : "pending")
+            member.updatedAt = Date()
+        }
         do {
             try failureInjector?(.beforeMetadataSave)
-            try repository.save([capture])
+            try repository.save(family)
         } catch {
-            capture.deletedAt = old.0
-            capture.reminderRevision = old.1
-            capture.notificationState = old.2
-            capture.updatedAt = old.3
+            rollbackTrashState(family, snapshots: before)
             throw error
         }
-        let restored = Capture(snapshot: CaptureSnapshot(capture))
-        trashedCaptures.removeAll { $0.id == capture.id }
-        captures.append(restored)
+        let ids = Set(family.map(\.id))
+        let restored = family.map { Capture(snapshot: CaptureSnapshot($0)) }
+        trashedCaptures.removeAll { ids.contains($0.id) }
+        captures.append(contentsOf: restored)
         captures.sort { $0.capturedAt == $1.capturedAt ? $0.id.uuidString < $1.id.uuidString : $0.capturedAt > $1.capturedAt }
-        synchronizeArchive([restored])
+        synchronizeArchive(restored)
+    }
+
+    private func rollbackTrashState(_ family: [Capture], snapshots: [CaptureSnapshot]) {
+        for (member, previous) in zip(family, snapshots) {
+            member.deletedAt = previous.deletedAt
+            member.reminderRevision = previous.reminderRevision
+            member.notificationState = previous.notificationState
+            member.updatedAt = previous.updatedAt
+        }
     }
 
     /// Destructive deletion is available only for an explicitly selected trash
@@ -279,51 +308,65 @@ import UniformTypeIdentifiers
     }
 
     private func removeOwnedCapture(_ capture: Capture) throws -> CaptureRemovalResult {
-        let journal = CaptureRemovalJournal(capture)
-        let paths = try journal.ownedPaths()
-        // Reject unsafe path components before modifying metadata or journal state.
-        for path in paths { try validateRemovalPath(path) }
+        let family = captureFamily(for: capture, includingTrashed: true)
+        let journals = family.map(CaptureRemovalJournal.init)
+        let ids = Set(family.map(\.id))
         try archive.ensureDirectory("Deletions")
-        let journalURL = try safeURL("Deletions/\(capture.id.uuidString).json")
-        guard !FileManager.default.fileExists(atPath: journalURL.path) else {
-            throw CaptureStoreError.invalidOriginal("An earlier removal needs recovery. Reopen DaBin before trying again.")
-        }
-        let temporaryJournal = try safeURL("Deletions/.\(capture.id.uuidString)-\(UUID().uuidString).pending")
+        var prepared: [(CaptureRemovalJournal, URL)] = []
         do {
-            try JSONEncoder().encode(journal).write(to: temporaryJournal, options: .atomic)
-            try FileManager.default.moveItem(at: temporaryJournal, to: journalURL)
+            // Every deletion intent is durable before the one metadata transaction.
+            // A crash during preparation retains the entire task and all originals.
+            for journal in journals {
+                for path in try journal.ownedPaths() { try validateRemovalPath(path) }
+                let journalURL = try safeURL("Deletions/\(journal.id.uuidString).json")
+                guard !FileManager.default.fileExists(atPath: journalURL.path) else {
+                    throw CaptureStoreError.invalidOriginal("An earlier removal needs recovery. Reopen DaBin before trying again.")
+                }
+                let temporary = try safeURL("Deletions/.\(journal.id.uuidString)-\(UUID().uuidString).pending")
+                do {
+                    try JSONEncoder().encode(journal).write(to: temporary, options: .atomic)
+                    try FileManager.default.moveItem(at: temporary, to: journalURL)
+                } catch {
+                    try? FileManager.default.removeItem(at: temporary)
+                    throw error
+                }
+                prepared.append((journal, journalURL))
+                pendingRemovalIDs.insert(journal.id)
+            }
         } catch {
-            try? FileManager.default.removeItem(at: temporaryJournal)
+            for (journal, url) in prepared {
+                if (try? FileManager.default.removeItem(at: url)) != nil { pendingRemovalIDs.remove(journal.id) }
+            }
             throw error
         }
-        pendingRemovalIDs.insert(capture.id)
         var committed = false
         do {
             try removalFailureInjector?(.afterJournal)
             try removalFailureInjector?(.beforeMetadataDelete)
-            try repository.remove(id: capture.id)
+            try repository.remove(ids: ids)
             committed = true
-            captures.removeAll { $0.id == capture.id }
-            trashedCaptures.removeAll { $0.id == capture.id }
-            archiveFailures.removeValue(forKey: capture.id)
+            captures.removeAll { ids.contains($0.id) }
+            trashedCaptures.removeAll { ids.contains($0.id) }
+            ids.forEach { archiveFailures.removeValue(forKey: $0) }
             synchronizeArchive([])
             try removalFailureInjector?(.afterMetadataDelete)
         } catch {
-            // Simulated abrupt exit leaves intent for next-launch recovery.
             if case CaptureStoreError.injectedInterruption = error { throw error }
             if !committed {
-                do {
-                    try FileManager.default.removeItem(at: journalURL)
-                    pendingRemovalIDs.remove(capture.id)
-                } catch {
-                    self.error = "The capture was kept. Removal preparation will be cleared when DaBin reopens."
+                for (journal, url) in prepared {
+                    do {
+                        try FileManager.default.removeItem(at: url)
+                        pendingRemovalIDs.remove(journal.id)
+                    } catch {
+                        self.error = "The capture was kept. Removal preparation will be cleared when DaBin reopens."
+                    }
                 }
                 throw error
             }
         }
         do {
             try removalFailureInjector?(.beforeFileCleanup)
-            try finishRemoval(journal, journalURL: journalURL)
+            for (journal, url) in prepared { try finishRemoval(journal, journalURL: url) }
             try removalFailureInjector?(.afterFileCleanup)
             return CaptureRemovalResult(warning: nil)
         } catch {
@@ -336,25 +379,27 @@ import UniformTypeIdentifiers
 
     func importData(_ data: Data, filename: String, at: Date = Date(), timeZone: TimeZone = .current,
                     source: CaptureSource = .unknown,
-                    receipt: CaptureReceiptContext = .manual,
+                    receipt: CaptureReceiptContext = .manual, parentTask: Capture? = nil,
                     commitGuard: @escaping () -> Bool = { true }) async throws -> Capture {
         try await importOriginal(filename: filename,
                                  contentType: UTType(filenameExtension: (filename as NSString).pathExtension),
                                  at: at, timeZone: timeZone, source: source, receipt: receipt,
-                                 commitGuard: commitGuard) { destination in
+                                 parentTask: parentTask, commitGuard: commitGuard) { destination in
             try data.write(to: destination, options: [.atomic])
         }
     }
 
     private func importOriginal(filename: String, contentType: UTType?, at: Date, timeZone: TimeZone,
-                                source: CaptureSource, receipt: CaptureReceiptContext,
+                                source: CaptureSource, receipt: CaptureReceiptContext, parentTask: Capture?,
                                 commitGuard: @escaping () -> Bool,
                                 copy: @escaping @Sendable (URL) throws -> Void) async throws -> Capture {
+        try requireAttachmentParent(parentTask)
         let id = UUID()
         let safeName = CaptureClassifier.storageFilename(filename)
         var journal = ImportJournal(id: id, capturedAt: at, captureDay: CaptureCalendar.dayString(at, timeZone: timeZone),
                                     timeZoneID: timeZone.identifier, utcOffset: timeZone.secondsFromGMT(for: at),
                                     originalFilename: filename, sourceFilePath: source.filePath, sourceURL: source.url,
+                                    parentTaskID: parentTask?.id,
                                     captureOriginRaw: receipt.origin.rawValue,
                                     automaticActionID: receipt.origin.isAutomatic ? receipt.automaticActionID : nil,
                                     sourceApplicationName: receipt.sourceApplicationName,
@@ -387,6 +432,7 @@ import UniformTypeIdentifiers
             try writeJournal(journal, at: journalURL)
             try failureInjector?(.afterMove)
             guard commitGuard() else { throw CaptureStoreError.captureCancelled }
+            try requireAttachmentParent(parentTask)
             let capture = model(for: journal)
             inserted = capture
             try failureInjector?(.beforeMetadataSave)
@@ -451,6 +497,12 @@ import UniformTypeIdentifiers
               !trashedCaptures.contains(where: { $0.id == capture.id }) else {
             throw CaptureStoreError.invalidOriginal("This capture is being removed.")
         }
+        if let parentID = capture.parentTaskID {
+            guard let parent = captures.first(where: { $0.id == parentID }) else {
+                throw CaptureStoreError.invalidOriginal("The task is no longer available for this attachment.")
+            }
+            try requireAttachmentParent(parent)
+        }
         try repository.save([capture])
         // Metadata is already durable. A folder-write failure is retryable and
         // must not turn a successful capture into a misleading failed save.
@@ -508,6 +560,26 @@ import UniformTypeIdentifiers
     }
 
     private func safeURL(_ relative: String) throws -> URL { try archive.safeURL(relative) }
+
+    /// Excludes the task's original: that content stays on the task itself.
+    func attachments(for task: Capture, includingTrashed: Bool = false) -> [Capture] {
+        let records = includingTrashed ? captures + trashedCaptures : captures
+        return records.filter { $0.parentTaskID == task.id }
+            .sorted { $0.capturedAt == $1.capturedAt ? $0.id.uuidString < $1.id.uuidString : $0.capturedAt < $1.capturedAt }
+    }
+
+    /// Callers cancel preview/index/reminder jobs for these records before removing a task.
+    func captureFamily(for capture: Capture, includingTrashed: Bool = false) -> [Capture] {
+        [capture] + attachments(for: capture, includingTrashed: includingTrashed)
+    }
+
+    private func requireAttachmentParent(_ task: Capture?) throws {
+        guard let task else { return }
+        try requireCurrent(task)
+        guard task.isTask, task.parentTaskID == nil else {
+            throw CaptureStoreError.invalidOriginal("Choose an existing task before adding attachments.")
+        }
+    }
 
     private func requireCurrent(_ capture: Capture) throws {
         guard capture.deletedAt == nil, captures.contains(where: { $0 === capture }), !pendingRemovalIDs.contains(capture.id) else {
@@ -651,7 +723,8 @@ import UniformTypeIdentifiers
                     origin: CaptureOrigin(rawValue: journal.captureOriginRaw ?? "") ?? .manual,
                     automaticActionID: journal.automaticActionID,
                     sourceApplicationName: journal.sourceApplicationName,
-                    sourceApplicationBundleIdentifier: journal.sourceApplicationBundleIdentifier))
+                    sourceApplicationBundleIdentifier: journal.sourceApplicationBundleIdentifier),
+                parentTaskID: journal.parentTaskID)
     }
 
     private func cleanupCompleted(_ journal: ImportJournal, journalURL: URL) {

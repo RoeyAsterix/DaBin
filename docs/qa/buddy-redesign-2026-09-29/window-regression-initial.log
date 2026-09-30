@@ -1,0 +1,8 @@
+FAILED WindowTests: FAIL: 2 of 159 window checks failed across 1 real screen(s). All independent checks were attempted.
+FAILED WeeklyWindowTests
+PASSED FilterResizeTests
+PASSED RobotDropTests: PASS: 92 robot drop checks (private pasteboards, isolated archive, native destination callbacks and corner panels)
+PASSED DailyCaptureTests: PASS: 155 Daily capture checks (private pasteboards, local archive, native drop callbacks, shortcut/editor routing and controller integration)
+PASSED HeaderInteractionTests: PASS: 63 native labeled-header accessibility and interaction checks
+PASSED RobotWindowTransitionTests
+QA failed: 5/7 requested suites passed. Report: native/build/qa/runs/20260929T205845219307Z/report.json

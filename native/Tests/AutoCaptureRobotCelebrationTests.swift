@@ -320,8 +320,12 @@ private struct AutoCaptureRobotCelebrationTests {
                    "An idle peek runs once without continuous ambient work")
         character.stopMotion()
         let climbDuration = character.playIslandClimb()
-        try expect((0.9...1.3).contains(climbDuration) && character.mood == .idle,
-                   "The climb leaves time to see the hands hook and the body lower")
+        try expect(climbDuration == RobotManualEntranceTiming.islandDuration
+                   && climbDuration == 0.55 && character.mood == .idle,
+                   "The manual pointer climb takes half the former time and still settles at idle")
+        let automaticAfterManual = AutoCaptureRobotPerformance.make(reaction: .quickBite, entrance: .top, reduceMotion: false)
+        try expect((3.4...4.0).contains(automaticAfterManual.totalDuration),
+                   "Faster pointer entry does not accelerate automatic capture eating and celebration")
         character.send(.hover(true, pointer: CGPoint(x: -0.4, y: 0.2)))
         character.send(.hover(true, pointer: CGPoint(x: 0.8, y: -0.6)))
         try expect(allLayers(character.layer).contains {

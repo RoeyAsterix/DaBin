@@ -79,7 +79,7 @@ struct HourlyCaptureCard: View {
             }
             .buttonStyle(.plain)
             .foregroundStyle(accent)
-            .help("Collapse actions")
+            .buddyHelp("Collapse actions")
             .accessibilityLabel("Collapse actions")
             .accessibilityHint("Returns to the hourly summary without deleting any action")
         }

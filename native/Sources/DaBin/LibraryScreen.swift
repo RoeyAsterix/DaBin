@@ -21,20 +21,21 @@ struct LibraryScreen: View {
                 HStack {
                     Text("Library").font(.system(size: 16, weight: .semibold)).accessibilityAddTraits(.isHeader)
                     Spacer(minLength: 0)
-                    CaptureFilterMenu(selection: $state.filter)
+
                 }
+                CaptureFilterStrip(selection: $state.filter)
                 HStack(spacing: 9) {
                     Menu {
-                        Button("All projects") { state.libraryProject = nil }
+                        Button("All projects", systemImage: "square.stack.3d.up") { state.libraryProject = nil }
                         ForEach(state.projectNames, id: \.self) { project in
-                            Button(project) { state.libraryProject = project }
+                            Button(project, systemImage: "folder") { state.libraryProject = project }
                         }
                     } label: {
                         Label(state.libraryProject ?? "All projects", systemImage: "folder")
                             .lineLimit(1).font(.system(size: 12))
                     }.menuStyle(.borderlessButton).frame(maxWidth: .infinity, alignment: .leading)
                         .accessibilityLabel("Project filter, \(state.libraryProject ?? "all projects")")
-                    Toggle("Pinned", isOn: $state.libraryPinnedOnly).toggleStyle(.checkbox).font(.system(size: 12))
+                    BuddyIconButton(symbol: "pin", title: "Show pinned captures", isActive: state.libraryPinnedOnly) { state.libraryPinnedOnly.toggle() }
                 }
             }.padding(.horizontal, 16).padding(.vertical, 12)
             if items.isEmpty {
@@ -47,8 +48,10 @@ struct LibraryScreen: View {
                             librarySection("Next actions", items: nextActions)
                             librarySection("Recent captures", items: recent)
                         } else {
-                            ForEach(items) { capture in
-                                CaptureRow(state: state, capture: capture, featured: false, showsDate: true)
+                            LazyVGrid(columns: [GridItem(.adaptive(minimum: 290), spacing: 14)], alignment: .leading, spacing: 4) {
+                                ForEach(items) { capture in
+                                    CaptureRow(state: state, capture: capture, featured: false, showsDate: true)
+                                }
                             }
                         }
                     }.padding(.horizontal, 16).padding(.bottom, 10)

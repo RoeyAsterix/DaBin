@@ -88,7 +88,7 @@ struct PrivacyPolicySheet: View {
                     } label: {
                         Label("Show DaBin data folder", systemImage: "folder")
                     }.buttonStyle(.plain).foregroundStyle(accent)
-                        .help("Reveal the complete local data folder in Finder")
+                        .buddyHelp("Reveal the complete local data folder in Finder")
                     if let url = PrivacyInformation.configuredURL(for: PrivacyInformation.policyURLKey) {
                         Link("Privacy policy online", destination: url).foregroundStyle(accent)
                     }

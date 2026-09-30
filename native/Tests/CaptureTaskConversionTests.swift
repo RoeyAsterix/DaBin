@@ -60,6 +60,8 @@ struct CaptureTaskConversionTests {
     @MainActor static func main() async throws {
         let root = FileManager.default.temporaryDirectory.appendingPathComponent("DaBinConversionQA-\(UUID())")
         defer { try? FileManager.default.removeItem(at: root) }
+        try await taskAttachments(root.appendingPathComponent("attachments"))
+        try reminderSchedules()
         try await preserveOriginals(root.appendingPathComponent("originals"))
         try legacyPayloads()
         try rollbackAndIdentity(root.appendingPathComponent("transactions"))
@@ -211,8 +213,8 @@ struct CaptureTaskConversionTests {
         try expect(app.route == .detail && app.selectedCapture === capture && app.selectedDraft === draft,
                    "Conversion keeps the open detail and its original draft object")
         try expect(draft.comment == "Unsaved comment stays in editor" && draft.reminderDate == savedReminder.addingTimeInterval(3_600)
-                   && draft.hasChanges && app.detailFocus == "comment",
-                   "Conversion preserves unsaved comment and reminder edits and editor focus")
+                   && draft.hasChanges && app.detailFocus == "task",
+                   "Conversion preserves unsaved edits and opens the task section")
         try expect(capture.comment == "Saved context" && capture.reminderAt == savedReminder,
                    "Task conversion does not silently commit unrelated editor drafts")
         try expect(app.captureLayoutRevision > layout && app.captureNavigationRevision == navigation
@@ -227,8 +229,10 @@ struct CaptureTaskConversionTests {
             app.route = route
             let oldDay = app.selectedDay
             app.convertToTask(item)
-            try expect(item.isTask && app.route == route && app.selectedDay == oldDay,
-                       "Page conversion preserves the active \(route) page and selected date")
+            try expect(item.isTask && app.route == .detail && app.detailFocus == "task" && app.selectedDay == oldDay,
+                       "Page conversion opens the task section while preserving the selected date")
+            app.back()
+            try expect(app.route == route, "Task detail Back restores its original \(route) page")
         }
         let failed = try store.capture(text: "Keep unsaved details after failure")[0]
         app.openCapture(failed.id)
@@ -416,4 +420,116 @@ struct CaptureTaskConversionTests {
                    && Set(mixedFeed.flatMap(\.captures).map(\.id)) == Set(mixedCaptures.map(\.id)),
                    "Mixed-action promotion preserves every file and other action exactly once")
     }
+    @MainActor private static func reminderSchedules() throws {
+        let now = date("2026-03-08 01:30")
+        let countdown = try ReminderSchedule.countdownDate(hours: 1, minutes: 25, from: now)
+        try expect(countdown.timeIntervalSince(now) == 5_100, "Countdown uses elapsed time across calendar/DST boundaries")
+        try expect(try ReminderSchedule.resolve(mode: .date, date: countdown, hours: 0, minutes: 0, now: now) == countdown,
+                   "Date mode preserves the exact chosen absolute date")
+        try expect(try ReminderSchedule.resolve(mode: .countdown, date: now, hours: 1, minutes: 25, now: now) == countdown,
+                   "Countdown mode ignores the stale date picker value")
+        for pair in [(0, 0), (-1, 5), (100, 0), (1, -1), (0, 60)] {
+            try rejected({ _ = try ReminderSchedule.countdownDate(hours: pair.0, minutes: pair.1, from: now) },
+                         "Invalid countdown \(pair) is rejected")
+        }
+        try rejected({ _ = try ReminderSchedule.resolve(mode: .date, date: now, hours: 1, minutes: 0, now: now) },
+                     "A reminder must be later than the save instant")
+        let delayed = now.addingTimeInterval(30)
+        try expect(try ReminderSchedule.countdownDate(hours: 0, minutes: 1, from: delayed) == delayed.addingTimeInterval(60),
+                   "A countdown begins at Save, not when its draft opened")
+    }
+
+    @MainActor private static func taskAttachments(_ root: URL) async throws {
+        let store = try CaptureStore(root: root.appendingPathComponent("source"))
+        let stamp = date("2024-01-02 09:00")
+        let original = try await store.importData(Data("original brief".utf8), filename: "brief.pdf", at: stamp)
+        let originalID = original.id
+        try store.convertToTask(original)
+        let receipt = CaptureReceiptContext.automatic(.automaticClipboard,
+            sourceApplicationName: "Fixture Editor", sourceApplicationBundleIdentifier: "com.dabin.fixture.editor")
+        let child = try await store.importData(Data("research".utf8), filename: "research.txt",
+            at: stamp.addingTimeInterval(60), source: .init(filePath: "/Fictional/research.txt"), receipt: receipt, parentTask: original)
+        let notes = try store.capture(text: "https://example.invalid/a\nhttps://example.invalid/b",
+            at: stamp.addingTimeInterval(120), parentTask: original)
+        try expect(store.attachments(for: original).count == 3 && child.parentTaskID == originalID,
+                   "Files and pasted links attach to the persisted task")
+        try expect(original.kind == .pdf && (try Data(contentsOf: store.managedURL(for: original)!)) == Data("original brief".utf8),
+                   "Task attachments never replace the converted task's original")
+        try expect(child.sourceApplicationBundleIdentifier == "com.dabin.fixture.editor"
+                   && child.sourceFilePath == "/Fictional/research.txt" && child.captureDay == "2024-01-02",
+                   "Attached content retains source identity and immutable receipt date")
+        let reopened = try CaptureStore(root: store.root)
+        let reopenedTask = reopened.captures.first { $0.id == originalID }!
+        try expect(reopened.attachments(for: reopenedTask).map(\.id) == store.attachments(for: original).map(\.id),
+                   "Task attachment identity and order survive relaunch")
+        let export = DayExportDocument.make(captures: store.captures, selectedDate: stamp, now: date("2024-01-03 10:00"))
+        try expect(export.text.contains("brief.pdf") && export.text.contains("research.txt")
+                   && export.text.contains("https://example.invalid/a") && export.text.contains("https://example.invalid/b"),
+                   "Day export includes originals and every attached action")
+        let repository = try CaptureRepository(root: store.root)
+        var invalidChild = try JSONSerialization.jsonObject(with: JSONEncoder().encode(CaptureSnapshot(child))) as! [String: Any]
+        invalidChild["parentTaskID"] = UUID().uuidString
+        let orphan = try JSONDecoder().decode(CaptureSnapshot.self, from: JSONSerialization.data(withJSONObject: invalidChild))
+        try rejected({ try repository.validateSnapshots([CaptureSnapshot(original), orphan]) },
+                     "Backup validation rejects an attachment with a missing parent before touching files")
+        var legacy = try JSONSerialization.jsonObject(with: JSONEncoder().encode(CaptureSnapshot(original))) as! [String: Any]
+        legacy["schemaVersion"] = 7
+        legacy.removeValue(forKey: "parentTaskID")
+        let old = try JSONDecoder().decode(CaptureSnapshot.self, from: JSONSerialization.data(withJSONObject: legacy))
+        try expect(Capture(snapshot: old).parentTaskID == nil && Capture(snapshot: old).isTask,
+                   "Schema 7 archives decode as standalone tasks without losing conversion state")
+        let backup = root.appendingPathComponent("Task.dabinbackup")
+        try store.exportBackup(to: backup)
+        let restored = try CaptureStore(root: root.appendingPathComponent("restored"))
+        _ = try restored.restoreBackup(from: backup)
+        let restoredTask = restored.captures.first { $0.id == originalID }!
+        try expect(restored.attachments(for: restoredTask).count == 3,
+                   "Verified backup restoration preserves task relationships")
+        let restoredFile = restored.captures.first { $0.id == child.id }!
+        try expect(try Data(contentsOf: restored.managedURL(for: restoredFile)!) == Data("research".utf8),
+                   "Backup restores the exact attached original bytes")
+
+        // A failed new receipt leaves no unlinked action or partial metadata.
+        let before = store.captures.count
+        store.failureInjector = { if $0 == .beforeMetadataSave { throw CaptureStoreError.importVerificationFailed } }
+        var importFailed = false
+        do { _ = try await store.importData(Data("failure".utf8), filename: "failure.txt", parentTask: original) }
+        catch { importFailed = true }
+        try expect(importFailed && store.captures.count == before && (try CaptureStore(root: store.root)).captures.count == before,
+                   "Failed attachment import does not expose an orphan capture")
+        try rejected({ try store.moveToTrash(original) }, "A task-family trash failure is surfaced")
+        try expect(store.captureFamily(for: original).allSatisfy { $0.deletedAt == nil }
+                   && store.trashedCaptures.isEmpty, "Failed task-family trash restores every in-memory record")
+        store.failureInjector = nil
+
+        // Individually removed children remain in trash after the task is restored.
+        try store.moveToTrash(notes[0])
+        try store.moveToTrash(original)
+        try expect(store.captures.isEmpty && store.trashedCaptures.count == 4,
+                   "Trashing a task removes its active attachments in the same transaction")
+        let trashedTask = store.trashedCaptures.first { $0.id == originalID }!
+        try rejected({ _ = try store.capture(text: "late paste", parentTask: original) },
+                     "An attachment cannot commit after its task was removed")
+        try store.restoreFromTrash(trashedTask)
+        let activeTask = store.captures.first { $0.id == originalID }!
+        try expect(store.attachments(for: activeTask).count == 2 && store.trashedCaptures.map(\.id) == [notes[0].id],
+                   "Task restore recovers its family without restoring previously removed attachments")
+        let individual = store.trashedCaptures[0]
+        try store.restoreFromTrash(individual)
+        let promoted = store.captures.first { $0.id == notes[0].id }!
+        try store.convertToTask(promoted)
+        try expect(promoted.isTask && promoted.parentTaskID == nil && store.attachments(for: activeTask).count == 2,
+                   "Converting an attachment into its own task safely detaches it")
+        try store.moveToTrash(activeTask)
+        let deletingTask = store.trashedCaptures.first { $0.id == originalID }!
+        let familyFiles = store.captureFamily(for: deletingTask, includingTrashed: true).compactMap(store.managedURL(for:))
+        store.removalFailureInjector = { if $0 == .afterMetadataDelete { throw CaptureStoreError.injectedInterruption } }
+        try rejected({ _ = try store.permanentlyRemove(deletingTask) }, "Interrupted family deletion retains cleanup journals")
+        let recovered = try CaptureStore(root: store.root)
+        try expect(recovered.captures.map(\.id) == [promoted.id] && recovered.trashedCaptures.isEmpty,
+                   "Recovery removes the entire deleted task family, preserving the independent promoted task")
+        try expect(familyFiles.allSatisfy { !FileManager.default.fileExists(atPath: $0.path) },
+                   "Recovery cleans all deleted family originals without leaving attachment orphans")
+    }
+
 }

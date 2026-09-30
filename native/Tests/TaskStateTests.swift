@@ -1,3 +1,4 @@
+import AppKit
 import Foundation
 
 @MainActor
@@ -42,6 +43,151 @@ struct TaskStateTests {
         let deadline = Date().addingTimeInterval(3)
         while !condition() && Date() < deadline { try await Task.sleep(for: .milliseconds(10)) }
         guard condition() else { throw NSError(domain: "DaBinTaskTests", code: 3, userInfo: [NSLocalizedDescriptionKey: "Timed out waiting for reminder feedback"]) }
+    }
+
+    @MainActor private static func checkBuddyTaskIntegration(root: URL) async throws {
+        let store = try CaptureStore(root: root)
+        let client = TaskNotificationClient()
+        let input = InputService(store: store)
+        let previews = PreviewService(store: store)
+        let state = AppState(store: store, previews: previews,
+                             reminders: ReminderService(store: store, client: client), manualInput: input)
+        defer { previews.cancelNetwork() }
+
+        let task = try store.createTask(text: "Prepare the fictional launch checklist")
+        var celebrations = 0
+        var completionWasPersisted = false
+        state.onTaskCompleted = {
+            celebrations += 1
+            completionWasPersisted = (try? CaptureStore(root: root))?.captures
+                .first(where: { $0.id == task.id })?.isCompleted == true
+        }
+        state.toggleTaskCompletion(task)
+        try expect(celebrations == 1 && completionWasPersisted,
+                   "Robot happiness follows a successfully persisted incomplete-to-complete transition")
+        state.completeFollowUp(task)
+        try expect(celebrations == 1, "Completing an already-completed follow-up never repeats happiness")
+        state.toggleTaskCompletion(task)
+        try expect(!task.isCompleted && celebrations == 1, "Reopening a task never celebrates completion")
+        store.failureInjector = { if $0 == .beforeMetadataSave { throw CaptureStoreError.importVerificationFailed } }
+        state.toggleTaskCompletion(task)
+        try expect(!task.isCompleted && celebrations == 1 && state.status?.severity == .error,
+                   "A failed completion rolls back the task and never calls the robot celebration")
+        store.failureInjector = nil
+
+        state.openCapture(task.id)
+        let draft = state.selectedDraft!
+        draft.reminderEnabled = true
+        draft.reminderMode = .countdown
+        draft.countdownHours = 0
+        draft.countdownMinutes = 0
+        state.saveDetail()
+        try expect(task.reminderAt == nil && draft.hasError && draft.hasChanges,
+                   "An empty countdown leaves the task unchanged and preserves the editable draft")
+        draft.countdownHours = 1
+        draft.countdownMinutes = 7
+        let startedSave = Date()
+        state.saveDetail()
+        let endedSave = Date()
+        guard let absoluteReminder = task.reminderAt else {
+            throw NSError(domain: "DaBinTaskTests", code: 8,
+                          userInfo: [NSLocalizedDescriptionKey: "Countdown did not persist a reminder"])
+        }
+        try expect(absoluteReminder >= startedSave.addingTimeInterval(4_020)
+                   && absoluteReminder <= endedSave.addingTimeInterval(4_020),
+                   "Hour-minute countdown starts at Save, using the exact chosen duration")
+        try expect(draft.reminderMode == .date && draft.reminderDate == absoluteReminder && !draft.hasChanges,
+                   "After Save the countdown becomes a clean absolute-date draft")
+        let revision = task.reminderRevision
+        draft.comment = "Add the final review link"
+        state.saveDetail()
+        try expect(task.reminderAt == absoluteReminder && task.reminderRevision == revision
+                   && task.comment == "Add the final review link",
+                   "Editing a comment does not restart a saved countdown or reschedule its notification")
+        let reopened = try CaptureStore(root: root)
+        try expect(reopened.captures.first(where: { $0.id == task.id })?.reminderAt == absoluteReminder,
+                   "Reopening the archive retains the absolute countdown deadline")
+
+        let overdue = try store.capture(text: "An earlier reminder with new context")[0]
+        let overdueDate = Date().addingTimeInterval(-3_600)
+        try store.update(overdue, comment: "Before", reminderAt: overdueDate, reminderTimeZoneID: "Europe/London")
+        let overdueRevision = overdue.reminderRevision
+        state.openCapture(overdue.id)
+        state.selectedDraft!.comment = "Keep this new context after the reminder elapsed"
+        state.saveDetail()
+        try expect(overdue.comment == "Keep this new context after the reminder elapsed"
+                   && overdue.reminderAt == overdueDate && overdue.reminderRevision == overdueRevision
+                   && overdue.reminderTimeZoneID == "Europe/London" && !state.selectedDraft!.hasError,
+                   "An unchanged overdue reminder never prevents saving a comment or changes its date/time zone")
+
+        state.openNewTask()
+        state.newTaskDraft.text = "Countdown from the task composer"
+        state.newTaskDraft.reminderEnabled = true
+        state.newTaskDraft.reminderMode = .countdown
+        state.newTaskDraft.countdownHours = 0
+        state.newTaskDraft.countdownMinutes = 12
+        let newTaskStarted = Date()
+        state.saveNewTask()
+        let newTaskEnded = Date()
+        let countdownTask = store.captures.first { $0.title == "Countdown from the task composer" }
+        try expect(countdownTask?.reminderAt.map {
+            $0 >= newTaskStarted.addingTimeInterval(720) && $0 <= newTaskEnded.addingTimeInterval(720)
+        } == true && !state.newTaskDraft.hasChanges && state.newTaskDraft.reminderMode == .date,
+                   "New-task countdown persists once and clears the composer only after success")
+
+        state.openCapture(task.id)
+        let taskDraft = state.selectedDraft!
+        taskDraft.comment = "Keep this unfinished task note"
+        let pasteboard = NSPasteboard.withUniqueName()
+        defer { pasteboard.releaseGlobally() }
+        func setPasteboardText(_ text: String) throws {
+            pasteboard.clearContents()
+            let item = NSPasteboardItem()
+            item.setString(text, forType: .string)
+            try expect(pasteboard.writeObjects([item]), "Isolated task fixture writes a private pasteboard")
+        }
+        try setPasteboardText("Fictional attachment copied for the launch task")
+        let beforePaste = store.captures.count
+        state.pasteAttachments(to: task, from: pasteboard)
+        state.showSettings()
+        try await waitUntil { !state.isImporting }
+        let pasted = store.attachments(for: task)
+        try expect(store.captures.count == beforePaste + 1 && pasted.count == 1
+                   && pasted.first?.originalText == "Fictional attachment copied for the launch task",
+                   "Task paste saves the original text as one owned attachment (records: \(store.captures.count - beforePaste), attachments: \(pasted.count), feedback: \(state.status?.text ?? "none"))")
+        try expect(state.route == .settings && state.selectedDraft === taskDraft
+                   && taskDraft.comment == "Keep this unfinished task note" && taskDraft.hasChanges,
+                   "An attachment completing after navigation never jumps back or discards task edits")
+        try expect(celebrations == 1, "Adding an attachment is not a task-completion celebration")
+
+        let file = root.appendingPathComponent("Launch-notes.txt")
+        try Data("A fictional local file for the task".utf8).write(to: file)
+        pasteboard.clearContents()
+        try expect(pasteboard.writeObjects([file as NSURL]), "Isolated file fixture writes a private pasteboard")
+        state.openCapture(task.id)
+        state.pasteAttachments(to: task, from: pasteboard)
+        try await waitUntil { !state.isImporting }
+        try expect(store.attachments(for: task).count == 2 && state.route == .detail
+                   && state.selectedCapture === task && state.selectedDraft === taskDraft,
+                   "Pasted files append inside the task workspace and retain its current draft")
+        let attachment = store.attachments(for: task).first!
+        state.openCapture(attachment.id)
+        try expect(state.route == .detail && state.selectedCapture === attachment,
+                   "Selecting a task attachment opens that attachment's actual details")
+        state.back()
+        try expect(state.route == .detail && state.selectedCapture === task && state.selectedDraft === taskDraft
+                   && state.detailFocus == "task" && taskDraft.comment == "Keep this unfinished task note",
+                   "Back from an attachment restores its parent workspace and unfinished task draft")
+        let failedCount = store.captures.count
+        store.failureInjector = { if $0 == .beforeMetadataSave { throw CaptureStoreError.importVerificationFailed } }
+        try setPasteboardText("This attachment must fail")
+        state.pasteAttachments(to: task, from: pasteboard)
+        try await waitUntil { !state.isImporting }
+        try expect(store.captures.count == failedCount && state.status?.severity == .error
+                   && state.route == .detail && celebrations == 1,
+                   "Failed task attachment reports failure without a false card, navigation, or celebration")
+        store.failureInjector = nil
+        await state.reminders.reconcile()
     }
 
     @MainActor private static func checkCarryover(root: URL) async throws {
@@ -524,6 +670,7 @@ struct TaskStateTests {
                    "Completing a task preserves unrelated capture error feedback")
         try await checkCarryover(root: root.appendingPathComponent("Carryover"))
         try checkReminderDay(root: root.appendingPathComponent("ReminderDay"))
+        try await checkBuddyTaskIntegration(root: root.appendingPathComponent("BuddyTasks"))
         print("PASS: \(checks) task workflow checks; isolated store and fake notifications.")
     }
 }

@@ -70,6 +70,8 @@ final class ApplicationCoordinator {
         self.theme = theme
         self.robotPlacement = robotPlacement
         self.corners = corners
+        state.onTaskCompleted = { [weak corners] in corners?.celebrateTaskCompletion() }
+        state.onToggleExpandedWindow = { [weak corners] in corners?.toggleExpandedWindow() }
         lifecycle = ReminderLifecycle { await reminders.reconcile() }
         corners.onWillOpenBoard = { [weak autoCaptureRobot] in autoCaptureRobot?.suspendForBoard() }
         corners.onDidCloseBoard = { [weak autoCaptureRobot] in autoCaptureRobot?.resumeAfterBoard() }

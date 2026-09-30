@@ -4,7 +4,7 @@ DaBin is a private work inbox for Apple Silicon Macs: save what matters, find it
 
 Captures stay on this Mac in a dated archive. **Today** shows what was received on the selected day, with automatic batches collapsed. **Library** covers all dates; pin useful captures or optionally assign a project. A project's pinned references, next actions and recent captures help you pick up where you left off. **Follow-ups** brings unfinished tasks and reminders together, with Complete and Snooze actions. Notes, source content and original capture dates stay attached.
 
-The persistent **Search all captures** field searches the full archive from every view. Results show matches first; **Show nearby captures** adds optional same-day context. **Filters** narrows by content type. The **Timeline** Day/Week control and calendar preserve date browsing. **Add** offers Paste clipboard, New note, Import files and New task. Compact cards expose Copy and More; secondary actions appear when needed. **More** holds Settings, day/week text exports, Recently Deleted and archive backup/restore.
+The persistent **Search all captures** field searches the full archive from every view. Results show matches first; **Show nearby captures** adds optional same-day context. Icon filters narrow by content type; their hover labels can be disabled in Settings. The **Timeline** Day/Week control and calendar preserve date browsing. **Add** offers Paste clipboard, New note, Import files and New task. Preview-first cards expose copy, comment, reminder, task and more actions as icons. The gear opens Settings directly. **More** holds day/week text exports, Recently Deleted and archive backup/restore.
 
 Removed captures go to **Recently Deleted**, with Undo for the latest removal and a separate confirmation for permanent deletion. A local `.dabinbackup` directory package includes capture metadata, saved originals, readable records, saved local edits and deleted captures. Restore verifies the package and adds missing captures; it rejects conflicts instead of overwriting existing data. Preferences are not part of the backup.
 
@@ -12,7 +12,15 @@ Today opens once on first launch. Afterwards, use the robot, menu bar or global 
 
 DaBin recognizes text in saved screenshots, images, PDFs and supported text documents entirely on the Mac. Search can find that content even when the filename or caption does not contain the query, and shows the matching recognized line. Capture details expose the searchable text and Settings can rebuild the local index. This is local text search, not semantic search. There is no cloud sync, and no recognized content is sent to an external AI or OCR service.
 
-The working version is **0.4.0, build 48**, a local candidate. See its [release notes](docs/RELEASE_NOTES_0.4.0.md); this does not identify it as the current public GitHub release or an Apple-approved build.
+The working version is **0.4.1, build 49**, a local candidate. See its [release notes](docs/RELEASE_NOTES_0.4.1.md); this does not identify it as the current public GitHub release or an Apple-approved build.
+
+## A little desktop buddy
+
+Captures have larger fitted previews and a compact action rail. Turning a capture into a task opens its workspace, where you can drop or paste more files and text, set a date/time reminder or an hours:minutes countdown, and mark it complete. A successful completion makes the visible robot happy. Countdown time starts when you save; it does not restart when reopened.
+
+Library uses icon filters and responsive columns. Source badges use locally installed app icons when the saved source is available; website locations have a domain/globe fallback. DaBin shows its own verified storage destination and does not claim to monitor pastes into other apps.
+
+Auto Capture is beside the logo. The robot's full-view shell is thinner; drag its edges or corners to resize it, or use Expand/Restore to fill the current display's safe area. Manual island reveal takes 0.55 seconds. Native window appearance follows the light/dark preference, and hover tooltips can be turned off without removing accessibility labels.
 
 ## Optional Auto Capture
 
@@ -39,6 +47,7 @@ These permanent links follow the newest public GitHub release. The current files
 ## Start here
 
 - [Native app guide](native/README.md)
+- [0.4.1 desktop buddy candidate notes](docs/RELEASE_NOTES_0.4.1.md)
 - [0.4.0 local candidate notes](docs/RELEASE_NOTES_0.4.0.md)
 - [0.3.18 release notes](docs/RELEASE_NOTES_0.3.18.md)
 - [0.3.17 release notes](docs/RELEASE_NOTES_0.3.17.md)

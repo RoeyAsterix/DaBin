@@ -77,6 +77,20 @@ private final class NativeRenderTests: NSObject, NSApplicationDelegate {
         }
         renderTheme = ThemeSettings(defaults: themeDefaults)
         defer { themeDefaults.removePersistentDomain(forName: themeSuite) }
+        // This review route uses injected preferences throughout and never temporarily
+        // writes even an unrelated user's standard preference.
+        if arguments.contains("--buddy-redesign") {
+            try await renderBuddyRedesign(root: root, output: output)
+            try JSONSerialization.data(withJSONObject: [
+                "description": "Production buddy cards, Library filters, source badges, task attachments, clock editors and robot frame at compact and wide sizes.",
+                "fixturePrivacy": "Fictional isolated archive and injected preferences; no standard-default mutation, clipboard access, network, permissions or notifications.",
+                "limitations": "Offscreen native-view snapshots, not end-to-end mouse tests. PDFKit tile capture is excluded from these image-based layout fixtures.",
+                "screenshots": records
+            ], options: [.prettyPrinted, .sortedKeys]).write(to: output.appendingPathComponent("buddy-redesign-renders.json"), options: .atomic)
+            print("PASS: \(records.count) buddy redesign production renders in light and dark appearance")
+            return
+        }
+
         let preference = UserDefaults.standard.object(forKey: PreviewService.linkPreviewPreference)
         UserDefaults.standard.set(false, forKey: PreviewService.linkPreviewPreference)
         defer {
@@ -1473,6 +1487,162 @@ private final class NativeRenderTests: NSObject, NSApplicationDelegate {
             try await snapshot(state, name: "release-new-task", mode: mode, output: output, height: 370)
             state.cancelNewTask()
         }
+    }
+
+    private func renderBuddyRedesign(root: URL, output: URL) async throws {
+        let suite = "DaBin.BuddyReview.Render.\(UUID().uuidString)"
+        let defaults = UserDefaults(suiteName: suite)!
+        defer { defaults.removePersistentDomain(forName: suite) }
+        defaults.set(false, forKey: PreviewService.linkPreviewPreference)
+        let store = try CaptureStore(root: root.appendingPathComponent("BuddyReview"))
+        let stamp = Date().addingTimeInterval(-3600)
+        let receipt = CaptureReceiptContext.automatic(.automaticClipboard,
+            sourceApplicationName: "Safari", sourceApplicationBundleIdentifier: "com.apple.Safari")
+        let note = try store.capture(text: "A calm space for good ideas\nOne place for references, plans and the next little step.",
+            at: stamp.addingTimeInterval(-180), source: CaptureSource(url: "https://example.invalid/launch-notes"), receipt: receipt)[0]
+        try store.setOrganization(note, pinned: true, projectName: "Launch studio")
+        let image = try await store.importData(Self.fixturePNG(), filename: "Launch moodboard.png", at: stamp,
+            source: CaptureSource(filePath: "/Users/demo/Launch studio/Launch moodboard.png"),
+            receipt: .automatic(.automaticClipboard, sourceApplicationName: "Preview", sourceApplicationBundleIdentifier: "com.apple.Preview"))
+        image.title = "Launch moodboard"
+        image.previewDescription = "Soft violet, warm paper and a little personality."
+        let imagePreview = "Previews/\(image.id.uuidString)/thumbnail.png"
+        image.thumbnailRelativePath = imagePreview
+        let imageURL = store.root.appendingPathComponent(imagePreview)
+        try FileManager.default.createDirectory(at: imageURL.deletingLastPathComponent(), withIntermediateDirectories: true)
+        try Self.fixturePNG().write(to: imageURL)
+        image.previewState = "ready"
+        let link = try store.capture(text: "https://example.invalid/launch-inspiration", at: stamp.addingTimeInterval(-240),
+            source: CaptureSource(url: "https://example.invalid/launch-inspiration"), receipt: receipt)[0]
+        link.title = "A fresh start for the studio"
+        link.previewDescription = "A useful launch reference saved for later."
+        link.previewState = "ready"
+        let task = try store.createTask(text: "Make the launch feel welcoming", at: stamp.addingTimeInterval(-60))
+        try store.update(task, comment: "Use the violet sketch and keep the first step simple.", reminderAt: nil, reminderTimeZoneID: nil)
+        let attached = try await store.importData(Self.fixturePNG(), filename: "Welcome sketch.png", at: stamp.addingTimeInterval(30), parentTask: task)
+        attached.thumbnailRelativePath = "Previews/\(attached.id.uuidString)/thumbnail.png"
+        let attachmentURL = store.root.appendingPathComponent(attached.thumbnailRelativePath!)
+        try FileManager.default.createDirectory(at: attachmentURL.deletingLastPathComponent(), withIntermediateDirectories: true)
+        try Self.fixturePNG().write(to: attachmentURL)
+        attached.previewState = "ready"
+        _ = try store.capture(text: "Launch checklist: welcome, capture, find it again.", at: stamp.addingTimeInterval(45), parentTask: task)
+        let completed = try store.createTask(text: "Gather the first three references", at: stamp.addingTimeInterval(-120))
+        try store.setTaskCompleted(completed, completed: true)
+        try store.save()
+        guard store.attachments(for: task).count == 2 else { throw RenderError.message("Expected two explicitly related task attachments") }
+        let settings = AutoCaptureSettings(defaults: defaults)
+        let automatic = AutoCaptureService(settings: settings, input: InputService(store: store),
+            pasteboardProvider: { fatalError("Buddy render must not read the clipboard") }, sourceApplicationProvider: { nil })
+        defer { automatic.shutdown() }
+        let state = AppState(store: store, previews: PreviewService(store: store, defaults: defaults),
+            reminders: ReminderService(store: store, client: RenderNotificationClient()), autoCapture: automatic)
+        renderTheme.setBoardOpacity(1)
+        for mode in ["light", "dark"] {
+            for width: CGFloat in [380, 720] {
+                state.openDaily()
+                state.filter = .all
+                state.status = nil
+                try await snapshot(state, name: "buddy-daily", mode: mode, output: output, height: 680, width: width)
+                state.openLibrary()
+                state.filter = .media
+                try await snapshot(state, name: "buddy-library-media", mode: mode, output: output, height: 620, width: width)
+                state.filter = .tasks
+                try await snapshot(state, name: "buddy-library-tasks", mode: mode, output: output, height: 680, width: width)
+                state.openCapture(image.id)
+                try await snapshot(state, name: "buddy-image-detail", mode: mode, output: output, height: 740, width: width)
+                state.openCapture(task.id)
+                try await snapshot(state, name: "buddy-task-attachments", mode: mode, output: output, height: 740, width: width)
+                state.selectedDraft?.reminderEnabled = true
+                state.selectedDraft?.reminderMode = .countdown
+                state.selectedDraft?.countdownHours = 1
+                state.selectedDraft?.countdownMinutes = 25
+                state.detailFocus = "reminder"
+                try await snapshot(state, name: "buddy-task-countdown", mode: mode, output: output, scrollToBottom: true, height: 680, width: width)
+                state.selectedDraft?.reminderMode = .date
+                state.selectedDraft?.reminderDate = Date().addingTimeInterval(86_400)
+                try await snapshot(state, name: "buddy-task-date", mode: mode, output: output, scrollToBottom: true, height: 680, width: width)
+                state.openCapture(completed.id)
+                try await snapshot(state, name: "buddy-task-completed", mode: mode, output: output, height: 640, width: width)
+                state.openDaily()
+                state.filter = .all
+                state.status = nil
+                try await snapshotBuddyComponent(BoardView(state: state, theme: renderTheme), name: "buddy-robot-frame", mode: mode,
+                    output: output, width: width, height: 620, robotFrame: true)
+            }
+            try await snapshotBuddyComponent(CaptureSourceView(capture: note).padding(16), name: "buddy-source-safari", mode: mode,
+                output: output, width: 348, height: 156)
+            try await snapshotBuddyComponent(CaptureSourceView(capture: image).padding(16), name: "buddy-source-preview", mode: mode,
+                output: output, width: 348, height: 156)
+        }
+    }
+
+    private func snapshotBuddyComponent<Content: View>(_ content: Content, name: String, mode: String,
+        output: URL, width: CGFloat, height: CGFloat, robotFrame: Bool = false) async throws {
+        renderTheme.setDarkMode(mode == "dark")
+        let contentSize = CGSize(width: width, height: height)
+        let hosting = NSHostingView(rootView: content.environment(\.daBinAccent, renderTheme.accent)
+            .environment(\.daBinTooltipsEnabled, renderTheme.showTooltips)
+            .preferredColorScheme(mode == "dark" ? .dark : .light)
+            .frame(width: width, height: height))
+        hosting.frame = CGRect(origin: .zero, size: contentSize)
+        hosting.wantsLayer = true
+        let view: NSView
+        let size: CGSize
+        if robotFrame {
+            let frame = RobotAppFrameView(contentView: hosting)
+            size = RobotAppFrameView.outerSize(forContentSize: contentSize)
+            frame.frame = CGRect(origin: .zero, size: size)
+            frame.setVisible(true)
+            view = frame
+        } else {
+            size = contentSize
+            view = hosting
+        }
+        let window = NSWindow(contentRect: CGRect(x: -10000, y: -10000, width: size.width, height: size.height),
+            styleMask: [.borderless], backing: .buffered, defer: false)
+        window.isReleasedWhenClosed = false
+        window.isOpaque = false
+        window.backgroundColor = .clear
+        window.contentView = view
+        if let frame = view as? RobotAppFrameView {
+            // Exercise the production AppKit bridge. A SwiftUI-only preferred
+            // color scheme does not reach an NSHostingView inside the robot.
+            CornerController.applyBoardAppearance(darkMode: mode == "dark", to: window,
+                                                   frame: frame, hosting: hosting)
+        }
+        retainedWindows.append(window)
+        defer {
+            (view as? RobotAppFrameView)?.setVisible(false)
+            window.orderOut(nil)
+            window.contentView = nil
+            window.close()
+            retainedWindows.removeAll { $0 === window }
+        }
+        window.orderFront(nil)
+        try await Task.sleep(for: .milliseconds(300))
+        view.layoutSubtreeIfNeeded()
+        view.displayIfNeeded()
+        if robotFrame {
+            let expected: NSAppearance.Name = mode == "dark" ? .darkAqua : .aqua
+            guard hosting.effectiveAppearance.bestMatch(from: [.aqua, .darkAqua]) == expected,
+                  window.effectiveAppearance.bestMatch(from: [.aqua, .darkAqua]) == expected else {
+                throw RenderError.message("Robot frame does not honor the \(mode) theme")
+            }
+        }
+        guard let bitmap = NSBitmapImageRep(bitmapDataPlanes: nil, pixelsWide: Int(size.width), pixelsHigh: Int(size.height),
+            bitsPerSample: 8, samplesPerPixel: 4, hasAlpha: true, isPlanar: false, colorSpaceName: .deviceRGB,
+            bytesPerRow: 0, bitsPerPixel: 0) else { throw RenderError.message("Could not allocate buddy component bitmap") }
+        bitmap.size = size
+        view.cacheDisplay(in: view.bounds, to: bitmap)
+        guard let png = bitmap.representation(using: .png, properties: [:]) else { throw RenderError.message("Could not encode buddy component") }
+        let filename = "native-view-\(name)-\(mode)-\(Int(size.width))x\(Int(size.height)).png"
+        try png.write(to: output.appendingPathComponent(filename), options: .atomic)
+        records.append(["file": filename, "appearance": mode, "pixelWidth": Int(size.width), "pixelHeight": Int(size.height),
+            "renderMethod": "Offscreen production NSView.cacheDisplay at native one pixel per point; no resampling", "robotFrame": robotFrame,
+            "themeDarkPreference": renderTheme.darkModeEnabled,
+            "hostingAppearance": hosting.effectiveAppearance.name.rawValue,
+            "frameAppearance": view.effectiveAppearance.name.rawValue,
+            "windowAppearance": window.effectiveAppearance.name.rawValue])
     }
 
     private func renderSimplerUI(root: URL, output: URL) async throws {

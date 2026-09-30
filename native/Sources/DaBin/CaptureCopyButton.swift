@@ -42,7 +42,7 @@ struct CaptureCopyButton: View {
         }
         .buttonStyle(.plain)
         .foregroundStyle(accent)
-        .help(copied ? "Copied" : "Copy to clipboard")
+        .buddyHelp(copied ? "Copied" : "Copy to clipboard")
         .accessibilityLabel(Self.accessibilityLabel(for: captures, copied: copied))
         .accessibilityHint("Copies the captured content from DaBin's local archive")
         .accessibilityValue(copied ? "Copied" : "Ready")

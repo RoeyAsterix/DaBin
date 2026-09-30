@@ -2,7 +2,7 @@
 
 A native, private work inbox: save something, find it again, and resume the work attached to it. **Today**, **Library** and **Follow-ups** organize the main window. Today opens once on first launch; after dismissal, DaBin keeps a compact menu bar status visible. Reach a screen corner to reveal the metallic purple robot, drop onto its body, or hover and press **Control-V** or **⌘V**. Double-click to browse Today. New preferences use an opaque board; existing installations retain their saved transparency choice.
 
-**0.4.0, build 48** is a local candidate. Its [release notes](../docs/RELEASE_NOTES_0.4.0.md) describe the implemented changes, without claiming publication, TestFlight delivery or Apple acceptance.
+**0.4.1, build 49** is a local candidate. Its [release notes](../docs/RELEASE_NOTES_0.4.1.md) describe the implemented changes, without claiming publication, TestFlight delivery or Apple acceptance.
 
 ## Run
 
@@ -90,7 +90,7 @@ Desktop/Documents synchronization on this Mac reattaches Finder metadata to app 
 
 ## Mac App Store preparation
 
-See [APP_STORE_READINESS.md](APP_STORE_READINESS.md) for the audit and release gates; its September 24 environment notes describe the earlier setup. The source includes a bundled privacy policy, privacy manifest, Productivity category, export-compliance declaration, Store-only compile boundary, safe archive location check, and recursive quarantine gate. Apple Developer Team `8QG4967CSU` and Bundle ID `com.dabin.mac` are stored in `Config/AppStoreSigning.json` and applied to the generated Release target. [Earlier local evidence](../docs/qa/app-store-preflight-2026-09-24/README.md) and [1440 × 900 screenshot drafts](../docs/app-store/screenshots/1440x900/README.md) are tracked. Full Xcode is now installed, and the prior **0.3.19 (46)** build was uploaded to App Store Connect for TestFlight. That upload does not establish distribution or acceptance of **0.4.0 (48)**. A new Store candidate still requires its own signed archive, validation, upload, current metadata and applicable beta review. `python3 scripts/app_store_preflight.py --static-only` checks source packaging.
+See [APP_STORE_READINESS.md](APP_STORE_READINESS.md) for the audit and release gates; its September 24 environment notes describe the earlier setup. The source includes a bundled privacy policy, privacy manifest, Productivity category, export-compliance declaration, Store-only compile boundary, safe archive location check, and recursive quarantine gate. Apple Developer Team `8QG4967CSU` and Bundle ID `com.dabin.mac` are stored in `Config/AppStoreSigning.json` and applied to the generated Release target. [Earlier local evidence](../docs/qa/app-store-preflight-2026-09-24/README.md) and [1440 × 900 screenshot drafts](../docs/app-store/screenshots/1440x900/README.md) are tracked. Full Xcode is now installed, and the prior **0.3.19 (46)** build was uploaded to App Store Connect for TestFlight. That upload does not establish distribution or acceptance of **0.4.1 (49)**. A new Store candidate still requires its own signed archive, validation, upload, current metadata and applicable beta review. `python3 scripts/app_store_preflight.py --static-only` checks source packaging.
 
 A standalone download containing only the application and the PDF guide can be created after building with:
 

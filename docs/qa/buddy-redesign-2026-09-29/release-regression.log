@@ -1,0 +1,36 @@
+Compiling Release test module (74 production sources)…
+PASSED QuickAccessTests: PASS: 10 quick access checks
+PASSED WorkInboxTests: PASS: 20 work inbox checks
+PASSED ManualCaptureLifecycleTests: PASS: 20 manual capture lifecycle checks (private named pasteboards)
+PASSED ArchiveRecoveryTests: PASS: 61 recoverable-trash and archive backup/restore assertions
+PASSED ThemeSettingsTests: PASS: 177 theme settings checks
+PASSED PrivacyInformationTests: PASS: 27 privacy information checks
+PASSED DomainTests: PASS: 207 assertions; 10 search fixtures; managed-copy reopen, immutable dates, import compensation and interruption recovery.
+PASSED ArchiveLayoutTests: PASS: 50 archive layout, provenance, exact-content, edit preservation, and path safety checks
+PASSED ArchiveStoreTests: PASS: 81 archive-store integration assertions; dated originals, readable records, updates, migration, legacy/current recovery, and retryable mirror failure.
+PASSED CaptureRemovalTests: PASS: 76 capture removal/minimize checks
+PASSED ServiceTests: PASS: 61 service checks (isolated store, fake notifications, no network).
+PASSED QAStorageScopedSaveTests: PASS: 22 scoped-storage assertions; touched-record saves, no-op previews, transaction rollback, reminder retry, retained archive warnings, and 1,000-record benchmark.
+PASSED QALifecycleTests: PASS: 22 lifecycle/cache checks; isolated event centers, store and fake notifications, no network.
+PASSED ApplicationLifecycleTests: PASS: 54 application lifecycle checks; isolated preferences, events, pointer samples and fake notifications, no focus or personal data.
+PASSED PreviewLifecycleTests: PASS: 130 preview cancellation/shutdown checks; isolated callbacks, preferences and archive only
+PASSED TaskStateTests: PASS: 130 task workflow checks; isolated store and fake notifications.
+PASSED CaptureActionTests: PASS: 30 capture action checks; confirmation, minimize, search, draft cleanup and delayed reminder deletion in an isolated archive.
+PASSED CaptureClipboardTests: PASS: 26 capture clipboard checks; text, links, tasks, files, batches, native types and failures.
+PASSED CaptureTaskConversionTests: PASS: 173 capture-to-task checks; originals, legacy data, persistence, atomic failure, drafts, routes, filters, carryover, reminders and receipt exports.
+PASSED LocalContentSearchTests: PASS: 90 local content-search checks; schema compatibility, persistence, OCR snippets, filters, scopes, task conversion, queueing, cancellation, shutdown, removal, retry, native Vision/PDF/text extraction and privacy boundaries.
+PASSED HourlyGroupingTests: PASS: 26 hourly grouping checks; action identity, fourth-action threshold, filters, fixed local hours, stable IDs and accessible collapse.
+PASSED DayExportTests: PASS: 36 day/week export checks; deterministic content, fixed date scopes, cutoff, grouping and UTF-8 identity.
+PASSED DayExportUITests: PASS: 30 export UI checks; day/week copy and download, ordered header actions, popover presentation, feedback, cancellation, failure and exact bytes.
+PASSED WeeklyStateTests: PASS: 138 weekly state checks; isolated store, local calendar, fake notifications.
+PASSED InputTests: PASS: 130 input lifecycle checks (private named pasteboards; general clipboard untouched)
+PASSED AutoCaptureServiceTests: PASS: 74 auto-capture service checks
+PASSED AutoCaptureRobotPresenterTests: PASS: 67 automatic-capture robot presenter checks
+PASSED AutoCaptureRobotCelebrationTests: PASS: 1552 auto-capture celebration rotation and performance checks
+PASSED SoftwareUpdateTests: PASS: 34 software update checks; no external network, installed app or user archive used.
+PASSED UpdateConfigurationTests: PASS: 27 update-channel configuration checks
+PASSED RobotMotionTests: PASS: 40 robot motion and personality checks
+PASSED IslandRobotChoreographyTests: PASS: 38483 island choreography contact, timing, and envelope checks
+PASSED RobotLifecycleTests: PASS: 38 robot lifecycle checks
+PASSED RobotAppFrameTests: PASS: 40 robot application frame geometry, gaze and lifecycle checks
+QA passed: 34/34 requested suites passed. Report: native/build/qa/runs/20260929T205116376768Z/report.json
