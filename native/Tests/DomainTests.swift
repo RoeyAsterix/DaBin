@@ -272,7 +272,7 @@ private struct Fixtures: Decodable { let entries: [FixtureEntry]; let cases: [Fi
         let taskStamp = (task.id, task.capturedAt, task.captureDay, task.captureTimeZoneID, task.captureUTCOffsetSeconds)
         try expect(task.isTask && !task.isCompleted && task.originalText == "Send studio brief" && task.title == "Send studio brief", "Explicit task keeps trimmed task text and defaults to open")
         try expect(task.reminderAt == taskReminder && task.reminderTimeZoneID == "Asia/Jerusalem" && task.reminderRevision == 1, "Task and initial reminder commit together")
-        try expect(CaptureSnapshot(task).schemaVersion == 9, "Capture snapshots use schema 9")
+        try expect(CaptureSnapshot(task).schemaVersion == 10, "Capture snapshots use schema 10")
         try expect(CaptureFilter.all.includes(.task) && !CaptureFilter.text.includes(.task) && !CaptureFilter.files.includes(.task) && !CaptureFilter.links.includes(.task) && !CaptureFilter.media.includes(.task), "Tasks appear in All without changing text/file/link/media filters")
         try expect(CaptureSearch.groups(captures: [task], query: "studio brief", filter: .all).first?.entries.first?.id == task.id, "Task text is searchable")
         try taskStore.setTaskCompleted(task, completed: true)
@@ -335,7 +335,7 @@ private struct Fixtures: Decodable { let entries: [FixtureEntry]; let cases: [Fi
         try expect(attachment.byteCount == Int64(payload.count), "Verified attachment byte count")
         let managed = store!.managedURL(for: attachment)!
         try expect(attachment.sourceFilePath != managed.path, "Managed copy never replaces original source path")
-        try expect(managed.path.hasPrefix(store!.root.appendingPathComponent("Archive").path + "/"), "Managed path contained")
+        try expect(managed.path.hasPrefix(store!.root.appendingPathComponent("Unfiled").path + "/"), "Managed path contained")
         try expect(!managed.lastPathComponent.contains("/"), "Sanitized storage leaf")
         let duplicate = try await store!.importFile(source)
         try expect(duplicate.id != attachment.id && duplicate.attachmentRelativePath != attachment.attachmentRelativePath, "Equal filenames never overwrite")

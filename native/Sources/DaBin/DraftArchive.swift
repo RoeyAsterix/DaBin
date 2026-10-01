@@ -17,8 +17,11 @@ struct ComposerSnapshot: Codable {
 }
 struct DetailDraftSnapshot: Codable {
     let captureID: UUID
+    var title: String?
     let comment: String
     let planning: TaskPlanning
+    /// Baseline for three-way recovery after an immediate timing save.
+    var committedPlanning: TaskPlanning?
     let reminderEnabled: Bool
     let reminderMode: String
     let countdownHours: Int
@@ -48,7 +51,8 @@ struct DraftArchiveSnapshot: Codable {
             let data = try Data(contentsOf: url)
             guard data.count <= 32_000_000 else { throw WorkspaceError.invalidArchive }
             let snapshot = try JSONDecoder().decode(DraftArchiveSnapshot.self, from: data)
-            guard snapshot.version == 1, snapshot.details.count <= 10_000 else { throw WorkspaceError.invalidArchive }
+            guard snapshot.version == 1, snapshot.details.count <= 10_000,
+                  snapshot.details.allSatisfy({ ($0.title?.count ?? 0) <= 2_000 }) else { throw WorkspaceError.invalidArchive }
             return snapshot
         } catch { recoveryError = "Draft recovery needs attention. The original Drafts.json was kept. \(error.localizedDescription)"; return nil }
     }

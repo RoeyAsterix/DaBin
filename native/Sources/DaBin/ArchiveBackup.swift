@@ -93,6 +93,10 @@ enum ArchiveBackupError: LocalizedError {
                 }
             }
             if let original = snapshot.attachmentRelativePath {
+                if ProjectFileArchive.ownsOriginal(original, id: snapshot.id, day: snapshot.captureDay,
+                    kind: CaptureKind(rawValue: snapshot.kindRaw) ?? .file, filename: snapshot.originalFilename ?? "") {
+                    paths.insert(original)
+                }
                 guard paths.contains(original) else { throw ArchiveBackupError.invalid("A saved original is missing for \(snapshot.title).") }
             }
             for path in paths.sorted() {
@@ -161,7 +165,8 @@ enum ArchiveBackupError: LocalizedError {
         var fileMap: [String: FileRecord] = [:]
         for record in manifest.files {
             guard let snapshot = captureMap[record.captureID],
-                  try ownedScopes(snapshot).contains(where: { record.relativePath.hasPrefix($0 + "/") }),
+                  (try ownedScopes(snapshot).contains(where: { record.relativePath.hasPrefix($0 + "/") })
+                    || record.relativePath == snapshot.attachmentRelativePath),
                   fileMap[record.relativePath] == nil,
                   record.byteCount >= 0, record.sha256.count == 64,
                   record.sha256.allSatisfy({ $0.isHexDigit }) else {
@@ -291,7 +296,9 @@ enum ArchiveBackupError: LocalizedError {
             let dated = try DailyArchive.originalRelativePath(id: snapshot.id, capturedAt: snapshot.capturedAt,
                 captureDay: snapshot.captureDay, utcOffset: snapshot.captureUTCOffsetSeconds, filename: filename)
             let legacy = "Originals/\(snapshot.id.uuidString)/\(CaptureClassifier.storageFilename(filename))"
-            guard path == dated || path == legacy else { throw ArchiveBackupError.invalid("An attachment path is not owned by its capture.") }
+            guard path == dated || path == legacy || ProjectFileArchive.ownsOriginal(path, id: snapshot.id,
+                day: snapshot.captureDay, kind: CaptureKind(rawValue: snapshot.kindRaw) ?? .file, filename: filename)
+            else { throw ArchiveBackupError.invalid("An attachment path is not owned by its capture.") }
         } else if !["text", "link", "task"].contains(snapshot.kindRaw) {
             throw ArchiveBackupError.invalid("A file capture has no saved original.")
         }

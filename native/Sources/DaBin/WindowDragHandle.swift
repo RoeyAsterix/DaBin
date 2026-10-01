@@ -6,10 +6,11 @@ import SwiftUI
 @MainActor
 struct WindowDragHandle: NSViewRepresentable {
     var onDragStarted: (() -> Void)? = nil
+    var onDragEnded: ((CGPoint) -> Void)? = nil
 
     func makeNSView(context: Context) -> WindowDragHandleView {
         let view = WindowDragHandleView()
-        view.toolTip = "Drag to move DaBin"
+        view.toolTip = "Drag to move DaBin between screens"
         view.setAccessibilityElement(false)
         updateNSView(view, context: context)
         return view
@@ -17,13 +18,15 @@ struct WindowDragHandle: NSViewRepresentable {
 
     func updateNSView(_ nsView: WindowDragHandleView, context: Context) {
         nsView.onDragStarted = onDragStarted
+        nsView.onDragEnded = onDragEnded
     }
 }
 
 @MainActor
 final class WindowDragHandleView: NSView {
     var onDragStarted: (() -> Void)?
-    private var dragOrigin: (pointer: NSPoint, window: NSPoint)?
+    var onDragEnded: ((CGPoint) -> Void)?
+    private var dragSession: WindowDragSession?
 
     override func acceptsFirstMouse(for event: NSEvent?) -> Bool { true }
 
@@ -35,17 +38,30 @@ final class WindowDragHandleView: NSView {
         guard event.type == .leftMouseDown, let window else { return }
         let pointer = window.convertPoint(toScreen: event.locationInWindow)
         onDragStarted?()
-        dragOrigin = (pointer, window.frame.origin)
+        dragSession = WindowDragSession(pointer: pointer, origin: window.frame.origin)
     }
 
     override func mouseDragged(with event: NSEvent) {
-        guard let window, let origin = dragOrigin else { return }
+        guard let window, let dragSession else { return }
         let pointer = window.convertPoint(toScreen: event.locationInWindow)
-        window.setFrameOrigin(NSPoint(x: origin.window.x + pointer.x - origin.pointer.x,
-                                     y: origin.window.y + pointer.y - origin.pointer.y))
+        window.setFrameOrigin(dragSession.origin(at: pointer))
     }
 
     override func mouseUp(with event: NSEvent) {
-        dragOrigin = nil
+        guard dragSession != nil else { return }
+        dragSession = nil
+        if let window { onDragEnded?(window.convertPoint(toScreen: event.locationInWindow)) }
+    }
+
+    func cancelWindowInteraction() { dragSession = nil }
+}
+
+/// Global display coordinates allow one uninterrupted drag across monitors.
+struct WindowDragSession {
+    let pointer: CGPoint
+    let origin: CGPoint
+
+    func origin(at current: CGPoint) -> CGPoint {
+        CGPoint(x: origin.x + current.x - pointer.x, y: origin.y + current.y - pointer.y)
     }
 }

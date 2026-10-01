@@ -6,7 +6,7 @@ enum WorkspaceMode: String, CaseIterable, Codable, Identifiable {
     var id: String { rawValue }
     var title: String {
         switch self {
-        case .collection: return "Library"
+        case .collection: return "Explorer"
         case .clipboard: return "Clipboard"
         case .shelf: return "Shelf"
         case .scratchpad: return "Notes"
@@ -14,7 +14,7 @@ enum WorkspaceMode: String, CaseIterable, Codable, Identifiable {
     }
     var symbol: String {
         switch self {
-        case .collection: return "square.stack"
+        case .collection: return "folder"
         case .clipboard: return "doc.on.clipboard"
         case .shelf: return "tray.full"
         case .scratchpad: return "note.text"
@@ -86,14 +86,20 @@ struct WorkspaceSnapshot: Codable, Equatable {
     var dateFilter: WorkspaceDateFilter = .anytime
     var originFilter: WorkspaceOriginFilter = .all
     var snippetsOnly = false
+    // Optional fields keep older workspace archives readable.
+    var explorerUnfiledOnly: Bool?
+    var explorerGrouping: ExplorerGrouping?
+    var explorerQuery: String?
+    var explorerShowsDailyFiles: Bool?
 
     static func projectKey(_ name: String?) -> String { name.map { "project:" + $0 } ?? "inbox:" }
 
     func validated() throws -> WorkspaceSnapshot {
         guard schemaVersion == 1, scratchpads.count <= 5_000,
-              (selectedProject?.count ?? 0) <= 120, (sourceApplication?.count ?? 0) <= 250,
+              (selectedProject?.count ?? 0) <= 180, (sourceApplication?.count ?? 0) <= 250,
+              (explorerQuery?.count ?? 0) <= 2_000,
               (projectSelections?.count ?? 0) <= 5_001,
-              projectSelections?.keys.allSatisfy({ $0 == "inbox:" || ($0.hasPrefix("project:") && $0.count <= 128) }) != false,
+              projectSelections?.keys.allSatisfy({ $0 == "inbox:" || ($0.hasPrefix("project:") && $0.count <= 188) }) != false,
               shelfCaptureIDs.count <= 100_000, snippetNames.count <= 100_000,
               Set(snippetNames.keys.compactMap(UUID.init(uuidString:))).count == snippetNames.count,
               processedInboxIDs.count <= 500_000,
@@ -101,7 +107,7 @@ struct WorkspaceSnapshot: Codable, Equatable {
               Set(processedInboxIDs).count == processedInboxIDs.count,
               scratchpads.allSatisfy({ key, value in
                   key == Self.projectKey(value.projectName) && value.text.utf8.count <= 1_000_000
-                    && (value.projectName?.count ?? 0) <= 120
+                    && (value.projectName?.count ?? 0) <= 180
                     && value.updatedAt.timeIntervalSinceReferenceDate.isFinite
               }), snippetNames.allSatisfy({ UUID(uuidString: $0.key) != nil && !$0.value.isEmpty && $0.value.count <= 120 }) else {
             throw WorkspaceError.invalidArchive
@@ -207,6 +213,22 @@ final class WorkspaceStore: ObservableObject {
         get { snapshot.snippetsOnly }
         set { updatePreference { $0.snippetsOnly = newValue } }
     }
+    var explorerUnfiledOnly: Bool {
+        get { snapshot.explorerUnfiledOnly ?? false }
+        set { updatePreference { $0.explorerUnfiledOnly = newValue } }
+    }
+    var explorerGrouping: ExplorerGrouping {
+        get { snapshot.explorerGrouping ?? .type }
+        set { updatePreference { $0.explorerGrouping = newValue } }
+    }
+    var explorerQuery: String {
+        get { snapshot.explorerQuery ?? "" }
+        set { updatePreference { $0.explorerQuery = String(newValue.prefix(2_000)) } }
+    }
+    var explorerShowsDailyFiles: Bool {
+        get { snapshot.explorerShowsDailyFiles ?? false }
+        set { updatePreference { $0.explorerShowsDailyFiles = newValue } }
+    }
     var shelfCaptureIDs: Set<UUID> { Set(snapshot.shelfCaptureIDs) }
     var processedInboxIDs: Set<UUID> { Set(snapshot.processedInboxIDs) }
     var projectNames: [String] { snapshot.scratchpads.values.compactMap(\.projectName).sorted() }
@@ -220,7 +242,7 @@ final class WorkspaceStore: ObservableObject {
     func snippetName(for captureID: UUID) -> String? { snapshot.snippetNames[captureID.uuidString] }
 
     func setScratchpad(text: String, project: String?) throws {
-        let name = project.map { String($0.prefix(120)) }
+        let name = project.map { String($0.prefix(180)) }
         var next = snapshot
         let key = WorkspaceSnapshot.projectKey(name)
         pendingScratchpads[key] = text

@@ -57,7 +57,7 @@ import Foundation
         try expect(feedback.isTask && feedback.id == originalReceipt.0 && feedback.capturedAt == originalReceipt.1
             && feedback.captureDay == originalReceipt.2 && feedback.originalText == feedbackText
             && feedback.sourceApplicationName == "Mail" && feedback.projectName == "Client Amber"
-            && state.selectedCapture?.id == feedback.id, "Client feedback becomes an actionable task without losing its receipt, source or project")
+            && state.route == .inbox && state.selectedCapture == nil, "Client feedback becomes an actionable task in place without losing its receipt, source or project")
         let externalBrief = root.appendingPathComponent("Client Amber brief — שלום.txt")
         let briefBytes = Data("An exact client brief with 日本語 and line breaks.\nSecond line.".utf8)
         try briefBytes.write(to: externalBrief)

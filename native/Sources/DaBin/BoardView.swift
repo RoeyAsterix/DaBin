@@ -40,13 +40,13 @@ struct BoardView: View {
         .background(Palette.background.opacity(ThemeSettings.effectiveBoardOpacity(
             preferred: theme.boardOpacity, reduceTransparency: reduceTransparency || colorSchemeContrast == .increased)))
         .preferredColorScheme(theme.darkModeEnabled ? .dark : .light)
-        .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
-        .overlay(RoundedRectangle(cornerRadius: 24, style: .continuous).strokeBorder(Palette.line, lineWidth: 1))
+        .clipShape(RoundedRectangle(cornerRadius: 21, style: .continuous))
+        .overlay(RoundedRectangle(cornerRadius: 21, style: .continuous).strokeBorder(Palette.line, lineWidth: 1))
         .overlay {
             if state.isDailyDropTargeted && (state.route == .daily || state.route == .inbox
                 || (state.route == .detail && state.selectedCapture?.isTask == true)) {
-                RoundedRectangle(cornerRadius: 24, style: .continuous).fill(accent.opacity(0.06))
-                    .overlay(RoundedRectangle(cornerRadius: 24, style: .continuous).strokeBorder(accent, lineWidth: 2))
+                RoundedRectangle(cornerRadius: 21, style: .continuous).fill(accent.opacity(0.06))
+                    .overlay(RoundedRectangle(cornerRadius: 21, style: .continuous).strokeBorder(accent, lineWidth: 2))
                     .allowsHitTesting(false).accessibilityHidden(true)
             }
         }
@@ -108,18 +108,19 @@ struct BoardView: View {
     private var header: some View {
         VStack(spacing: 4) {
             HStack(spacing: 3) {
-                DaBinLogo(variant: .compact).frame(width: 68, height: 28, alignment: .leading)
-                    .overlay { WindowDragHandle(onDragStarted: { state.onBoardDragStarted?() }).accessibilityHidden(true) }
+                if state.route == .library {
+                    ExplorerProjectPicker(state: state, workspace: state.workspace, onCreate: {})
+                        .frame(minWidth: 124, idealWidth: 160, maxWidth: 240).layoutPriority(1)
+                } else {
+                    DaBinLogo(variant: .compact).frame(width: 68, height: 28, alignment: .leading)
+                        .overlay { WindowDragHandle(onDragStarted: { state.onBoardDragStarted?() },
+                                                    onDragEnded: { state.onBoardDragEnded?($0) }).accessibilityHidden(true) }
+                }
                 AutoCaptureHeaderButton(service: state.autoCapture, weekly: state.route == .weekly,
                     statusText: state.autoCapture.overallStatusText, isVisible: state.isBoardVisible) { state.toggleAutoCaptureFromHeader() }
-                WindowDragHandle(onDragStarted: { state.onBoardDragStarted?() })
-                    .frame(maxWidth: .infinity).frame(height: 28)
-                    .overlay {
-                        Image(systemName: "line.3.horizontal")
-                            .font(.system(size: 13, weight: .semibold))
-                            .foregroundStyle(Palette.muted.opacity(0.58))
-                            .allowsHitTesting(false)
-                    }
+                WindowDragHandle(onDragStarted: { state.onBoardDragStarted?() },
+                                 onDragEnded: { state.onBoardDragEnded?($0) })
+                    .frame(minWidth: 0, maxWidth: .infinity).frame(height: 28).layoutPriority(-1)
                     .accessibilityHidden(true)
                 addMenu
                 BuddyIconButton(symbol: "magnifyingglass", title: state.route == .weekly ? "Search a day or week" : "Search all captures", isActive: state.route == .search) {
@@ -145,9 +146,10 @@ struct BoardView: View {
                 }
             } else if isPrimary {
                 HStack(spacing: 4) {
-                    navigationButton("Inbox", symbol: "tray", selected: state.route == .inbox || isTimeline) { state.openInbox() }
+                    navigationButton("Inbox", symbol: "tray", selected: state.route == .inbox) { state.openInbox() }
                     navigationButton("Today", symbol: "sun.max", selected: state.route == .reminders) { state.showReminders() }
-                    navigationButton("Workspace", symbol: "square.stack", selected: state.route == .library) { state.openLibrary() }
+                    navigationButton("Workspace", symbol: "folder", selected: state.route == .library) { state.openLibrary() }
+                    navigationButton("Activity", symbol: "clock.arrow.circlepath", selected: isTimeline) { state.openDaily() }
                 }.accessibilityElement(children: .contain).accessibilityLabel("Main views")
             } else {
                 HStack(spacing: 8) {
@@ -159,7 +161,7 @@ struct BoardView: View {
             if isTimeline { timelineControls }
         }.padding(.horizontal, 12).padding(.vertical, 6)
             .fixedSize(horizontal: false, vertical: true)
-            .background(Palette.background)
+            .background(Palette.surface)
             .overlay(alignment: .bottom) { Rectangle().fill(Palette.line).frame(height: 1) }
     }
 
@@ -200,10 +202,11 @@ struct BoardView: View {
     private func navigationButton(_ title: String, symbol: String, selected: Bool, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             Label(title, systemImage: symbol).font(.system(size: 12, weight: selected ? .semibold : .medium))
-                .lineLimit(1).frame(maxWidth: .infinity).padding(.vertical, 5)
-                .background(selected ? accent.opacity(0.13) : Color.clear, in: RoundedRectangle(cornerRadius: 8))
+                .lineLimit(1).fixedSize(horizontal: true, vertical: false)
+                .frame(maxWidth: .infinity).frame(minHeight: 32)
+                .overlay(alignment: .bottom) { if selected { Capsule().fill(accent).frame(height: 2).padding(.horizontal, 5) } }
                 .contentShape(Rectangle())
-        }.buttonStyle(.plain).foregroundStyle(selected ? accent : Palette.muted)
+        }.buttonStyle(.plain).foregroundStyle(selected ? Palette.foreground : Palette.muted)
             .accessibilityAddTraits(selected ? [.isSelected] : [])
             .accessibilityIdentifier("primary-\(title.lowercased())")
     }

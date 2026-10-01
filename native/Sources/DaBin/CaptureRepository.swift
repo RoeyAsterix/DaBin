@@ -152,11 +152,12 @@ import CoreData
             && (["idle", "indexing"].contains(indexState) ? indexVersion == 0 : indexVersion == ContentIndexService.currentVersion)
             && (!indexCanRetry || indexState == "unavailable")
         )
-        guard (1...9).contains(snapshot.schemaVersion), CaptureKind(rawValue: snapshot.kindRaw) != nil,
+        guard (1...10).contains(snapshot.schemaVersion), CaptureKind(rawValue: snapshot.kindRaw) != nil,
               recordID == snapshot.id,
               snapshot.captureOriginRaw.map({ CaptureOrigin(rawValue: $0) != nil }) ?? true,
               (!origin.isAutomatic || snapshot.automaticActionID != nil), indexValid,
-              snapshot.taskPlanning?.isValid ?? true else {
+              snapshot.taskPlanning?.isValid ?? true,
+              CapturePasteHistory.isValid(snapshot.pasteHistory ?? []) else {
             throw CaptureStoreError.invalidOriginal("The metadata schema or identity is unsupported. The store was preserved.")
         }
     }

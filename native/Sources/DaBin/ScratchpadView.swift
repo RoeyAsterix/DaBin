@@ -14,15 +14,16 @@ struct ScratchpadView: View {
     private var pending: Bool { workspace.pendingScratchpads[WorkspaceSnapshot.projectKey(project)] != nil }
 
     var body: some View {
+        GeometryReader { geometry in
         ScrollView {
         VStack(alignment: .leading, spacing: 12) {
             HStack(spacing: 8) {
                 Label(project.map { "\($0) notes" } ?? "Scratchpad", systemImage: "note.text")
-                    .font(.system(size: 14, weight: .semibold)).lineLimit(2)
+                    .font(.system(size: 18, weight: .semibold, design: .rounded)).lineLimit(2)
                     .buddyHelp(project.map { "\($0) notes" } ?? "Scratchpad")
                 Spacer(minLength: 0)
                 Label(pending ? "Not saved" : "Autosaved", systemImage: pending ? "exclamationmark.circle" : "checkmark.circle")
-                    .font(.system(size: 11)).foregroundStyle(pending ? Palette.task : Palette.muted).fixedSize()
+                    .font(.system(size: 12)).foregroundStyle(pending ? Palette.task : Palette.muted).fixedSize()
                     .accessibilityLabel(pending ? "Scratchpad has unsaved changes" : "Scratchpad saved locally")
                     .accessibilityIdentifier("workspace-scratchpad-save-status")
             }
@@ -39,27 +40,29 @@ struct ScratchpadView: View {
                         .disabled(text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                 }
                 Spacer(minLength: 0)
-            }.font(.system(size: 12)).tint(accent)
+            }.font(.system(size: 13)).tint(accent)
             Text("A place to think. Your notes stay on this Mac after you close DaBin.")
-                .font(.system(size: 12)).foregroundStyle(Palette.muted).fixedSize(horizontal: false, vertical: true)
+                .font(.system(size: 14)).foregroundStyle(Palette.muted).fixedSize(horizontal: false, vertical: true)
             TextEditor(text: Binding(get: { text }, set: { value in
                 do { try workspace.setScratchpad(text: value, project: project); message = nil }
                 catch { message = error.localizedDescription }
             }))
-            .font(.system(size: 14)).scrollContentBackground(.hidden)
-            .padding(10).frame(height: 220)
-            .background(Palette.surface, in: RoundedRectangle(cornerRadius: 14))
-            .overlay(RoundedRectangle(cornerRadius: 14).strokeBorder(Palette.line))
+            .font(.system(size: 14)).lineSpacing(4).scrollContentBackground(.hidden)
+            .padding(12).frame(height: max(220, geometry.size.height - 220))
+            .background(Palette.surface, in: RoundedRectangle(cornerRadius: 12))
+            .overlay(RoundedRectangle(cornerRadius: 12).strokeBorder(Palette.line, lineWidth: 0.75))
             .accessibilityLabel("Autosaving scratchpad")
             .accessibilityIdentifier("workspace-scratchpad")
             if let message {
-                Text(message).font(.system(size: 12)).foregroundStyle(pending ? Palette.task : Palette.muted)
+                Text(message).font(.system(size: 13)).foregroundStyle(pending ? Palette.task : Palette.muted)
                     .fixedSize(horizontal: false, vertical: true)
             }
             Text("Save note adds a copy to your library. Make task keeps the original text and opens its next actions.")
-                .font(.system(size: 11)).foregroundStyle(Palette.muted).fixedSize(horizontal: false, vertical: true)
-        }.padding(.horizontal, 16).padding(.bottom, 16)
+                .font(.system(size: 12)).foregroundStyle(Palette.muted).fixedSize(horizontal: false, vertical: true)
+        }.frame(maxWidth: 740).padding(.horizontal, 16).padding(.bottom, 16)
+            .frame(maxWidth: .infinity, alignment: .top)
             .onChange(of: project) { _, _ in message = nil; savedCaptureID = nil; savedText = nil }
+        }
         }
     }
 
@@ -77,7 +80,7 @@ struct ScratchpadView: View {
             }
             if asTask {
                 if capture.isTask { state.openCapture(capture.id, focus: "task") }
-                else { state.convertToTask(capture) }
+                else { state.convertToTask(capture, openDetails: true) }
             } else {
                 message = "Saved in \(project ?? "your library"). Your scratchpad is still here."
                 workspace.selectedCaptureID = capture.id

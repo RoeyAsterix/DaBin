@@ -22,7 +22,9 @@ final class DailyCaptureHostingView: NSHostingView<BoardView> {
     @MainActor required dynamic init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
 
     private var acceptsCapture: Bool {
-        state?.route == .daily || state?.route == .inbox || (state?.route == .detail && state?.selectedCapture?.isTask == true)
+        state?.route == .daily || state?.route == .inbox
+            || (state?.route == .library && state?.workspace.mode == .collection)
+            || (state?.route == .detail && state?.selectedCapture?.isTask == true)
     }
     private var isEditingText: Bool {
         if let text = window?.firstResponder as? NSTextView { return text.isEditable }

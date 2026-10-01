@@ -47,12 +47,12 @@ struct HourlyCaptureCard: View {
                 .accessibilityHint("Displays every automatic action saved during this hour")
             }
         }
-        .padding(compact ? 9 : 11)
-        .background(Palette.soft.opacity(compact ? 0.62 : 0.5),
-                    in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .padding(compact ? 4 : 16)
+        .background(Palette.surface,
+                    in: RoundedRectangle(cornerRadius: 14, style: .continuous))
         .overlay {
-            RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .strokeBorder(accent.opacity(0.3), lineWidth: 0.75)
+            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                .strokeBorder(Palette.line, lineWidth: 0.7)
         }
         .padding(.vertical, compact ? 0 : 6)
         .accessibilityElement(children: .contain)
@@ -72,7 +72,7 @@ struct HourlyCaptureCard: View {
             Button(action: toggleExpansion) {
                 Image(systemName: "minus")
                     .font(.system(size: 11, weight: .semibold))
-                    .frame(width: 28, height: 26)
+                    .frame(width: 32, height: 32)
                     .background(accent.opacity(0.11),
                                 in: RoundedRectangle(cornerRadius: 7, style: .continuous))
                     .contentShape(Rectangle())
@@ -109,7 +109,7 @@ struct HourlyCaptureCard: View {
                     .foregroundStyle(Palette.muted)
                 CaptureCopyButton(state: state, captures: action.captures, compact: true)
             }
-            .padding(.horizontal, compact ? 7 : 9)
+            .padding(.horizontal, compact ? 2 : 9)
             .padding(.top, compact ? 6 : 8)
 
             ForEach(action.cards) { card in
@@ -119,7 +119,7 @@ struct HourlyCaptureCard: View {
                 } else {
                     CaptureRow(state: state, capture: card.primary, featured: false,
                                showsCopyButton: false, embeddedInCard: true)
-                        .padding(.horizontal, compact ? 7 : 9)
+                        .padding(.horizontal, compact ? 2 : 9)
                 }
             }
         }

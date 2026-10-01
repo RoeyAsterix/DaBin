@@ -10,6 +10,8 @@ enum TaskAttachmentTypes {
 struct TaskAttachmentsView: View {
     @ObservedObject var state: AppState
     @ObservedObject var task: Capture
+    var minimumCardWidth: CGFloat = 125
+    var thumbnailHeight: CGFloat = 100
     @Environment(\.daBinAccent) private var accent
     @State private var targeted = false
     private var attachments: [Capture] { state.store.attachments(for: task) }
@@ -30,12 +32,12 @@ struct TaskAttachmentsView: View {
                     .font(.system(size: 12)).foregroundStyle(Palette.muted).padding(.vertical, 12)
                     .frame(maxWidth: .infinity).multilineTextAlignment(.center)
             } else {
-                LazyVGrid(columns: [GridItem(.adaptive(minimum: 125), spacing: 10)], alignment: .leading, spacing: 10) {
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: minimumCardWidth), spacing: 10)], alignment: .leading, spacing: 10) {
                     ForEach(attachments) { item in
                         VStack(alignment: .leading, spacing: 4) {
                             Button { state.openCapture(item.id) } label: {
                                 VStack(alignment: .leading, spacing: 7) {
-                                    CaptureThumbnail(store: state.store, capture: item).frame(height: 100)
+                                    CaptureThumbnail(store: state.store, capture: item).frame(height: thumbnailHeight)
                                         .clipShape(RoundedRectangle(cornerRadius: 9))
                                     Text(item.title).font(.system(size: 12, weight: .medium)).lineLimit(2)
                                 }.frame(maxWidth: .infinity, alignment: .leading).contentShape(Rectangle())
@@ -44,6 +46,7 @@ struct TaskAttachmentsView: View {
                                 CaptureSourceIcon(capture: item, size: 14)
                                 Text(captureClock(item)).font(.system(size: 10)).foregroundStyle(Palette.muted)
                                 Spacer(minLength: 0)
+                                CaptureTrashButton(state: state, capture: item)
                                 CaptureControls(state: state, capture: item)
                             }
                         }

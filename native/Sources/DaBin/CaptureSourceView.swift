@@ -16,12 +16,26 @@ enum CaptureSourcePresentation {
         guard let identifier, !identifier.isEmpty else { return nil }
         return identifier.split(separator: ".").last.map(String.init) ?? identifier
     }
+
+    /// Legacy link receipts also put the link target in sourceURL. That is
+    /// useful location data but does not prove which product it came from.
+    static func originWebsite(for capture: Capture) -> String? {
+        guard capture.sourceURL != capture.originalURL else { return nil }
+        return websiteHost(capture.sourceURL)
+    }
+
+    static func origin(for capture: Capture) -> CaptureApplicationIdentity {
+        if let application = CaptureApplicationIdentity.resolve(name: capture.sourceApplicationName,
+                                                                 identifier: capture.sourceApplicationBundleIdentifier) { return application }
+        if let website = originWebsite(for: capture) { return .init(name: website, bundleIdentifier: nil) }
+        return .init(name: "Unknown source", bundleIdentifier: nil)
+    }
 }
 
 /// App icons are read from installed bundles and retained in memory only.
 /// No site, favicon service, or network request is used to display provenance.
 @MainActor
-private final class CaptureApplicationIconCache {
+final class CaptureApplicationIconCache {
     static let shared = CaptureApplicationIconCache()
     private let images = NSCache<NSString, NSImage>()
     private var unavailable: Set<String> = []
@@ -57,7 +71,7 @@ struct CaptureSourceIcon: View {
         CaptureSourcePresentation.applicationName(name: capture.sourceApplicationName,
                                                    identifier: capture.sourceApplicationBundleIdentifier)
     }
-    private var website: String? { CaptureSourcePresentation.websiteHost(capture.sourceURL) }
+    private var website: String? { CaptureSourcePresentation.originWebsite(for: capture) }
     private var title: String {
         if let application { return "Captured from \(application)" }
         if let website { return "Captured from \(website)" }
@@ -71,7 +85,7 @@ struct CaptureSourceIcon: View {
                 Image(nsImage: image).resizable().scaledToFit()
             } else {
                 Image(systemName: application != nil ? "app" : website != nil ? "globe"
-                      : capture.sourceFilePath != nil ? "folder" : kindSymbol(capture.kind))
+                      : capture.sourceFilePath != nil ? "folder" : "app")
                     .font(.system(size: max(10, size * 0.82), weight: .medium))
                     .foregroundStyle(accent)
             }
@@ -95,11 +109,14 @@ struct CaptureSourceView: View {
     @State private var copyGeneration = 0
 
     private var location: String? { capture.sourceFilePath ?? capture.sourceURL }
+    private var locationName: String {
+        capture.sourceFilePath == nil && capture.sourceURL == capture.originalURL ? "Captured link" : "Source location"
+    }
     private var application: String? {
         CaptureSourcePresentation.applicationName(name: capture.sourceApplicationName,
                                                    identifier: capture.sourceApplicationBundleIdentifier)
     }
-    private var website: String? { CaptureSourcePresentation.websiteHost(capture.sourceURL) }
+    private var website: String? { CaptureSourcePresentation.originWebsite(for: capture) }
     private var sourceName: String { application ?? website ?? (capture.sourceFilePath != nil ? "File" : "Unknown source") }
 
     private var isCreatedTask: Bool {
@@ -134,15 +151,15 @@ struct CaptureSourceView: View {
             if let location {
                 HStack(spacing: 5) {
                     Button { showLocation.toggle() } label: {
-                        Label("Source location", systemImage: showLocation ? "chevron.down" : "chevron.right")
+                        Label(locationName, systemImage: showLocation ? "chevron.down" : "chevron.right")
                             .font(.system(size: 11, weight: .medium))
                     }
                     .buttonStyle(.plain).foregroundStyle(accent)
-                    .accessibilityLabel(showLocation ? "Hide source location" : "Show source location")
+                    .accessibilityLabel("\(showLocation ? "Hide" : "Show") \(locationName.lowercased())")
                     .accessibilityValue(showLocation ? "Expanded" : "Collapsed")
                     Spacer(minLength: 0)
                     BuddyIconButton(symbol: copied ? "checkmark" : "doc.on.doc",
-                                    title: copied ? "Source location copied" : "Copy source location") {
+                                    title: copied ? "\(locationName) copied" : "Copy \(locationName.lowercased())") {
                         copyLocation(location)
                     }
                 }
@@ -150,11 +167,11 @@ struct CaptureSourceView: View {
                     Text(location).font(.system(size: 11, design: .monospaced))
                         .foregroundStyle(Palette.muted).textSelection(.enabled)
                         .fixedSize(horizontal: false, vertical: true)
-                        .accessibilityLabel("Source location: \(location)")
+                        .accessibilityLabel("\(locationName): \(location)")
                 }
             }
             if copyFailed {
-                Label("Source location could not be copied.", systemImage: "exclamationmark.circle")
+                Label("\(locationName) could not be copied.", systemImage: "exclamationmark.circle")
                     .font(.system(size: 11)).foregroundStyle(Palette.task)
             }
         }
@@ -196,12 +213,12 @@ struct CaptureSourceView: View {
         guard pasteboard.setString(location, forType: .string) else {
             copied = false
             copyFailed = true
-            AccessibilityAnnouncement.post("Source location could not be copied.")
+            AccessibilityAnnouncement.post("\(locationName) could not be copied.")
             return
         }
         copyFailed = false
         copied = true
-        AccessibilityAnnouncement.post("Source location copied")
+        AccessibilityAnnouncement.post("\(locationName) copied")
         copyGeneration &+= 1
         let generation = copyGeneration
         Task { @MainActor in

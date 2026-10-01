@@ -1,5 +1,29 @@
 # DaBin QA results
 
+## Visible caption trash — 0.4.5 (58), 1 October 2026
+
+Small trash controls are directly available on capture/task cards, including minimized cards, Explorer, weekly cards and attachments. All **6/6 focused suites** pass, including native confirmation, cancellation, selected-record deletion and Undo checks. ARM64 Release build, deterministic project, whitespace, strict signature and source/executable matching pass. **0.4.5 (58) is installed and running locally**, with visible trash controls verified through accessibility. A private backup verified 228 files; all 40 original records and 16 original attachments are preserved, with one expected focus timer expiry. [Evidence and scope](../docs/qa/capture-trash-2026-10-01/README.md).
+
+## Corner resizing and display movement — 0.4.5 (57), 1 October 2026
+
+The final targeted ARM64 Release run passes **9/9 suites**, including 37 new native mouse-handler checks and 83 frame/geometry checks. All four visible corners resize both dimensions with stable opposite anchors, and partial cross-display release follows the pointer on two attached screens. Existing weekly/filter/header/Workspace/robot-transition checks pass. A compact-filter movement regression found during QA was corrected. Release build, deterministic project, static packaging, strict signature and installed source/executable checks pass.
+
+**0.4.5 (57) is installed and open locally.** The private backup verified 228 files; all 40 original captures retain their content and user metadata, and 16 attachment originals are byte-identical. One preview completed normally on launch. [Detailed verification and platform limitations](../docs/qa/window-resize-2026-10-01/README.md). No GitHub or TestFlight publication was performed.
+
+## Open Design redesign — 0.4.4 (56), 30 September 2026
+
+The final optimized ARM64 run passes **57/57 suites** with no source changes during execution, including 79 task timing/recovery checks, 66 provenance/export checks, 14 project-policy checks and 47 native redesign interactions. Forty production-view renders cover both themes and compact/expanded layouts. Native keyboard interactions, project creation/cancellation, task conversion, timing editors and manual paste history pass. Release compilation with warnings as errors, deterministic project validation, source packaging checks and strict signature verification pass.
+
+**0.4.4 (56) is installed and running locally.** All 108 shared QA/build inputs and the installed executable match the final Release build. Settings and Explorer were checked in the running app. A verified private backup preceded installation; all 26 existing captures retain their identities and fields except schema metadata, and 13 attachment originals remain byte-identical. [Full evidence, before/after renders, changed files and platform limitations](../docs/qa/open-design-2026-09-30/README.md). This build has not been published to GitHub or TestFlight.
+
+## Explorer — 0.4.3 (55), 30 September 2026
+
+The final optimized ARM64 run passes **53/53 suites**, including the new archive (56 checks), transfer (69) and query (16) suites and 209 native workspace checks. Twenty production Explorer renders cover five sizes, two themes and both browsing modes. Release compilation, generated-project validation and strict signature verification pass. **0.4.3 (55) is installed and running locally** with a matching release executable. All 20 pre-existing capture identities and eight managed attachment originals are preserved after migration; a verified private backup was taken before launch. Full evidence, scoped live verification, performance measurements and remaining limitations are in the [Explorer QA report](../docs/qa/explorer-2026-09-30/README.md). This change has not been published to GitHub or TestFlight.
+
+## Responsive capture detail — 30 September 2026, build 54
+
+Focused QA: **3/3 suites, 522 checks** (WorkspaceWindow 193, CaptureTaskConversion 173, DailyCapture 156). Twenty-four responsive renders and twenty-four preview-fit renders pass. All sixteen image/document fit samples retain their corner markers; PDF raster samples are layout-only. Native editing state survives compact/wide/short resize; Save stays reachable. Release build, generated-project check and strict code-signature verification pass. Installed and relaunched **0.4.2 (54)** with matching executable hash and original capture reopened. This was a focused cycle, not a new 50-suite full run. See [complete evidence and limitations](../docs/qa/responsive-detail-2026-09-30/README.md).
+
 ## Readability and usability — 0.4.2 (53), 30 September 2026
 
 The final full ARM64 Release run passes **50/50 suites**, with no source changes during execution. Fixed narrow long-project layouts, selected-accent contrast, search scope reset/recovery, composer destinations, project scroll restoration and checklist feedback. Added solid navigation/status surfaces and an opacity reset. Verification includes 66 native renders per build, live scoped-search interactions, 621 theme checks, 170 header checks, 162 Workspace checks, 243 window checks across two connected screens, and 19 connected workflows. Build, deterministic project validation, 26 static packaging checks, strict signature and installed input/executable hashes pass. Build 53 is installed and running; immediate search typing, Return, clearing and Back were verified in that app. [Full report, before/after and limitations](../docs/qa/readability-2026-09-30/README.md).

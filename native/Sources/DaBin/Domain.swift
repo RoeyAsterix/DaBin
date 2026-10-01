@@ -125,6 +125,7 @@ final class Capture: ObservableObject, Identifiable {
     @Published var projectName: String?
     /// Work scheduling is editable metadata, independent of the immutable receipt and notification time.
     @Published private(set) var taskPlanning: TaskPlanning?
+    @Published private(set) var pasteHistory: [CapturePasteEvent] = []
     /// A soft-deleted record keeps its originals until explicitly removed forever.
     @Published var deletedAt: Date?
     @Published var reminderAt: Date?
@@ -187,12 +188,17 @@ final class Capture: ObservableObject, Identifiable {
     }
 
     // Repository-coordinated relocation changes only managed storage, never provenance.
-    func relocateManagedAttachment(to relativePath: String) { attachmentRelativePath = relativePath }
+    func relocateManagedAttachment(to relativePath: String) {
+        guard attachmentRelativePath != relativePath else { return }
+        objectWillChange.send()
+        attachmentRelativePath = relativePath
+    }
 
     // Store-coordinated task conversion leaves immutable receipt/content fields intact.
     func setConvertedToTask(_ value: Bool) { convertedToTask = value }
     func setParentTaskID(_ value: UUID?) { parentTaskID = value }
     func setTaskPlanning(_ value: TaskPlanning?) { taskPlanning = value }
+    func setPasteHistory(_ value: [CapturePasteEvent]) { pasteHistory = value }
 
     convenience init(snapshot: CaptureSnapshot) {
         self.init(id: snapshot.id, capturedAt: snapshot.capturedAt,
@@ -225,6 +231,7 @@ final class Capture: ObservableObject, Identifiable {
         self.isPinned = snapshot.isPinned ?? false
         self.projectName = snapshot.projectName
         self.taskPlanning = snapshot.taskPlanning
+        self.pasteHistory = snapshot.pasteHistory ?? []
         self.deletedAt = snapshot.deletedAt
         self.reminderAt = snapshot.reminderAt
         self.reminderTimeZoneID = snapshot.reminderTimeZoneID
@@ -284,6 +291,8 @@ struct CaptureSnapshot: Codable {
     let projectName: String?
     /// Missing before schema 9. Existing tasks retain their original reminder and carryover behavior.
     let taskPlanning: TaskPlanning?
+    /// Additive in schema 10; old records have no recorded destinations.
+    let pasteHistory: [CapturePasteEvent]?
     let deletedAt: Date?
     let reminderAt: Date?
     let reminderTimeZoneID: String?
@@ -293,7 +302,7 @@ struct CaptureSnapshot: Codable {
     let updatedAt: Date
 
     init(_ capture: Capture) {
-        schemaVersion = 9
+        schemaVersion = 10
         id = capture.id
         capturedAt = capture.capturedAt
         captureDay = capture.captureDay
@@ -330,6 +339,7 @@ struct CaptureSnapshot: Codable {
         isPinned = capture.isPinned
         projectName = capture.projectName
         taskPlanning = capture.taskPlanning
+        pasteHistory = capture.pasteHistory
         deletedAt = capture.deletedAt
         reminderAt = capture.reminderAt
         reminderTimeZoneID = capture.reminderTimeZoneID

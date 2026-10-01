@@ -4,24 +4,29 @@ import SwiftUI
 struct NewNoteScreen: View {
     @ObservedObject var state: AppState
     @FocusState private var textFocused: Bool
+    @Environment(\.daBinAccent) private var accent
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Catch a thought").font(.system(size: 13, weight: .medium))
-            TextEditor(text: $state.newNoteText).font(.system(size: 14)).scrollContentBackground(.hidden)
-                .padding(9).background(Palette.surface, in: RoundedRectangle(cornerRadius: 11))
-                .overlay(RoundedRectangle(cornerRadius: 11).strokeBorder(Palette.line))
+            Text("Catch a thought").font(.system(size: 20, weight: .semibold, design: .rounded))
+                .accessibilityAddTraits(.isHeader)
+            TextEditor(text: $state.newNoteText).font(.system(size: 14)).lineSpacing(4).scrollContentBackground(.hidden)
+                .padding(12).frame(minHeight: 80).background(Palette.surface, in: RoundedRectangle(cornerRadius: 12))
+                .overlay(RoundedRectangle(cornerRadius: 12).strokeBorder(Palette.line, lineWidth: 0.75))
                 .focused($textFocused).accessibilityLabel("New note text")
+                .accessibilityIdentifier("new-note-text")
             HStack {
                 Label(state.newNoteProject ?? "Inbox", systemImage: state.newNoteProject == nil ? "tray" : "folder")
-                    .font(.system(size: 11)).foregroundStyle(Palette.muted).lineLimit(2)
+                    .font(.system(size: 12)).foregroundStyle(Palette.muted).lineLimit(2)
                     .accessibilityLabel("Save note to \(state.newNoteProject ?? "Inbox")")
                     .buddyHelp("Save note to \(state.newNoteProject ?? "Inbox")")
                 Spacer(minLength: 0)
-                Button("Cancel") { state.cancelNewNote() }
+                Button("Cancel") { state.cancelNewNote() }.buttonStyle(.bordered)
                 Button("Save note") { state.saveNewNote() }.buttonStyle(.borderedProminent)
+                    .tint(accent).accessibilityIdentifier("new-note-save")
                     .disabled(state.newNoteText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                     .keyboardShortcut(.return, modifiers: .command)
             }
-        }.padding(16).onAppear { textFocused = true }
+        }.frame(maxWidth: 860).padding(16).frame(maxWidth: .infinity)
+            .onAppear { textFocused = true }
     }
 }

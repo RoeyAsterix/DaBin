@@ -56,6 +56,9 @@ struct TaskChecklistItem: Codable, Equatable, Identifiable, Sendable {
 
 struct TaskPlanning: Codable, Equatable, Sendable {
     var plannedDay: String?
+    /// A local wall-clock label paired with plannedDay, independent of reminders.
+    var plannedTime: String?
+    var focusSession: TaskFocusSession?
     var deadline: Date?
     var priority: TaskPriority = .none
     var effortMinutes: Int?
@@ -70,6 +73,8 @@ struct TaskPlanning: Codable, Equatable, Sendable {
 
     var isValid: Bool {
         (plannedDay.map { TaskPlanningPolicy.date(for: $0) != nil } ?? true)
+        && (plannedTime.map { plannedDay != nil && TaskPlanningPolicy.isValidLocalTime($0) } ?? true)
+        && (focusSession.map { $0.isValid && effortMinutes != nil } ?? true)
         && (deadline.map { $0.timeIntervalSinceReferenceDate.isFinite } ?? true)
         && (effortMinutes.map { (1...10_080).contains($0) } ?? true)
         && (order.map { (0...1_000_000).contains($0) } ?? true)
@@ -82,6 +87,23 @@ struct TaskPlanning: Codable, Equatable, Sendable {
 }
 
 enum TaskPlanningPolicy {
+    static func isValidLocalTime(_ value: String) -> Bool {
+        let parts = value.split(separator: ":", omittingEmptySubsequences: false)
+        guard value.utf8.count == 5, parts.count == 2,
+              parts.allSatisfy({ $0.count == 2 && $0.utf8.allSatisfy { (48...57).contains($0) } }),
+              let hour = Int(parts[0]), let minute = Int(parts[1]) else { return false }
+        return (0...23).contains(hour) && (0...59).contains(minute)
+    }
+
+    /// Planned time is a floating local label. DST gaps advance to the next valid
+    /// local time and repeated hours select the first occurrence. No OS alarm is made.
+    static func scheduledDate(day: String, time: String, calendar: Calendar = .current) -> Date? {
+        guard isValidLocalTime(time), let date = date(for: day, calendar: calendar) else { return nil }
+        let parts = time.split(separator: ":").compactMap { Int($0) }
+        return calendar.date(bySettingHour: parts[0], minute: parts[1], second: 0, of: date,
+            matchingPolicy: .nextTime, repeatedTimePolicy: .first, direction: .forward)
+    }
+
     /// Strict parsing avoids accepting normalized invalid dates such as February 31.
     static func date(for day: String, calendar: Calendar = .current) -> Date? {
         let pieces = day.split(separator: "-", omittingEmptySubsequences: false)

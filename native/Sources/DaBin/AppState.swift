@@ -73,6 +73,8 @@ final class NewTaskDraft: ObservableObject {
 /// Drafts live outside the view hierarchy, so closing the panel never loses an edit.
 @MainActor
 final class CaptureDraft: ObservableObject {
+    @Published var title: String
+    private var savedTitle: String
     @Published var comment: String
     @Published var reminderEnabled: Bool
     @Published var reminderMode: ReminderScheduleMode = .date
@@ -87,6 +89,7 @@ final class CaptureDraft: ObservableObject {
     private var savedReminder: Date?
 
     init(capture: Capture) {
+        title = capture.title; savedTitle = capture.title
         planning = capture.taskPlanning ?? TaskPlanning()
         savedPlanning = capture.taskPlanning ?? TaskPlanning()
         comment = capture.comment
@@ -96,8 +99,9 @@ final class CaptureDraft: ObservableObject {
         savedReminder = capture.reminderAt
     }
 
+    var committedPlanningForRecovery: TaskPlanning { savedPlanning }
     var reminder: Date? { reminderEnabled ? reminderDate : nil }
-    var hasChanges: Bool { comment != savedComment || reminderChanged || planning != savedPlanning }
+    var hasChanges: Bool { title != savedTitle || comment != savedComment || reminderChanged || planning != savedPlanning }
     var reminderChanged: Bool { (reminderEnabled && reminderMode == .countdown) || reminder != savedReminder }
 
     func resolvedReminder(at now: Date = Date()) throws -> Date? {
@@ -107,6 +111,7 @@ final class CaptureDraft: ObservableObject {
     }
 
     func didSave() {
+        savedTitle = title
         savedPlanning = planning
         savedComment = comment
         savedReminder = reminder
@@ -123,8 +128,50 @@ final class CaptureDraft: ObservableObject {
             planning.completedAt = committed.completedAt
             planning.previousOccurrenceID = committed.previousOccurrenceID
             planning.nextOccurrenceID = committed.nextOccurrenceID
+            planning.focusSession = committed.focusSession
+            planning.order = committed.order
         }
         savedPlanning = committed
+    }
+
+    /// A crash can leave Drafts.json older than a successful immediate action.
+    /// Compare its committed baseline with live metadata before recovering edits.
+    /// Legacy recovery files omit the baseline and retain their pending work plan.
+    func restorePlanning(_ recovered: TaskPlanning, baseline: TaskPlanning?, from capture: Capture) {
+        let committed = capture.taskPlanning ?? TaskPlanning()
+        planning = recovered
+        if let baseline {
+            if baseline.plannedDay != committed.plannedDay || baseline.plannedTime != committed.plannedTime {
+                planning.plannedDay = committed.plannedDay
+                planning.plannedTime = committed.plannedTime
+            }
+            if baseline.effortMinutes != committed.effortMinutes { planning.effortMinutes = committed.effortMinutes }
+        }
+        planning.focusSession = committed.focusSession
+        planning.order = committed.order
+        planning.recurrenceAnchor = committed.recurrenceAnchor
+        planning.completedAt = committed.completedAt
+        planning.previousOccurrenceID = committed.previousOccurrenceID
+        planning.nextOccurrenceID = committed.nextOccurrenceID
+        savedPlanning = committed
+    }
+
+    /// Immediate timing actions own only their fields. Pending notes, priority,
+    /// deadline, repeat and checklist edits remain in this recoverable draft.
+    func adoptImmediateTiming(from capture: Capture, schedule: Bool, duration: Bool) {
+        let committed = capture.taskPlanning ?? TaskPlanning()
+        planning.focusSession = committed.focusSession
+        savedPlanning.focusSession = committed.focusSession
+        if schedule {
+            planning.plannedDay = committed.plannedDay; planning.plannedTime = committed.plannedTime
+            planning.order = committed.order; planning.recurrenceAnchor = committed.recurrenceAnchor
+            savedPlanning.plannedDay = committed.plannedDay; savedPlanning.plannedTime = committed.plannedTime
+            savedPlanning.order = committed.order; savedPlanning.recurrenceAnchor = committed.recurrenceAnchor
+        }
+        if duration {
+            planning.effortMinutes = committed.effortMinutes
+            savedPlanning.effortMinutes = committed.effortMinutes
+        }
     }
 
     /// A newer Complete/Snooze action owns the reminder, while an unfinished
@@ -151,7 +198,20 @@ final class AppState: ObservableObject {
     let captureClipboard: CaptureClipboardService
     let quickAccessSettings: QuickAccessSettings
     let workspace: WorkspaceStore
+    lazy var explorerInput: ExplorerCaptureController = {
+        let input = ExplorerCaptureController(state: self, input: manualInput)
+        input.onResult = { [weak self] captures, project in
+            guard let self, self.route == .library, self.workspace.mode == .collection,
+                  self.libraryProject == project, let first = captures.first else { return }
+            self.workspace.selectedCaptureID = first.id
+        }
+        input.objectWillChange.sink { [weak self] _ in self?.objectWillChange.send() }.store(in: &subscriptions)
+        return input
+    }()
     let clipboardRetention: ClipboardRetentionService
+    let focusSessions: TaskFocusCoordinator
+    @Published private(set) var lastConvertedCaptureID: UUID?
+    private var lastConversionParentID: UUID?
     private let draftArchive: DraftArchive
     @Published private(set) var draftPersistenceError: String?
     private let manualInput: InputService
@@ -176,7 +236,7 @@ final class AppState: ObservableObject {
     @Published var globalSearchFocusRequest = 0
     @Published private(set) var isArchiveOperationRunning = false
     @Published private var isFileImporting = false
-    var isImporting: Bool { isFileImporting || manualInput.isBusy }
+    var isImporting: Bool { isFileImporting || manualInput.isBusy || explorerInput.isBusy }
     @Published private var undoRemovalIDs: [UUID] = []
     @Published var route: BoardRoute = .inbox {
         didSet {
@@ -217,6 +277,7 @@ final class AppState: ObservableObject {
     var onTaskCompleted: (() -> Void)?
     var onToggleExpandedWindow: (() -> Void)?
     var onBoardDragStarted: (() -> Void)?
+    var onBoardDragEnded: ((CGPoint) -> Void)?
     private var origin: BoardRoute = .daily
     private var searchReturnRoute: BoardRoute = .daily
     private var searchReturnFilter: CaptureFilter = .all
@@ -258,6 +319,7 @@ final class AppState: ObservableObject {
         self.quickAccessSettings = quickAccessSettings ?? QuickAccessSettings(defaults: nil)
         self.workspace = WorkspaceStore(root: store.root)
         self.clipboardRetention = ClipboardRetentionService(store: store, workspace: self.workspace)
+        self.focusSessions = TaskFocusCoordinator(store: store)
         self.draftArchive = DraftArchive(root: store.root)
         self.libraryProject = self.workspace.selectedProject
         self.manualInput = manualInput ?? InputService(store: store)
@@ -265,6 +327,14 @@ final class AppState: ObservableObject {
             await previews?.cancel(for: capture.id)
             await contentIndex?.cancel(for: capture.id)
         }
+        focusSessions.onExpired = { [weak self] captures in
+            guard let self else { return }
+            for capture in captures { self.drafts[capture.id]?.adoptImmediateTiming(from: capture, schedule: false, duration: false) }
+            if self.isBoardVisible {
+                self.status = AppStatusMessage(text: captures.count == 1 ? "Time’s up. Your task stays open." : "\(captures.count) focus sessions finished. Tasks stay open.", severity: .success)
+            }
+        }
+        focusSessions.onFailure = { [weak self] message in self?.reportFailure(message) }
         restoreDrafts()
         $newNoteText.dropFirst().debounce(for: .milliseconds(150), scheduler: RunLoop.main)
             .sink { [weak self] _ in self?.persistDrafts() }.store(in: &subscriptions)
@@ -327,8 +397,8 @@ final class AppState: ObservableObject {
             destination: newTaskDraft.destination ?? ComposerDestination(projectName: composerProjectContext))
         snapshot.details = drafts.compactMap { id, draft in
             guard draft.hasChanges else { return nil }
-            return DetailDraftSnapshot(captureID: id, comment: draft.comment, planning: draft.planning,
-                reminderEnabled: draft.reminderEnabled, reminderMode: draft.reminderMode.rawValue,
+            return DetailDraftSnapshot(captureID: id, title: draft.title, comment: draft.comment, planning: draft.planning,
+                committedPlanning: draft.committedPlanningForRecovery, reminderEnabled: draft.reminderEnabled, reminderMode: draft.reminderMode.rawValue,
                 countdownHours: draft.countdownHours, countdownMinutes: draft.countdownMinutes, reminderDate: draft.reminderDate)
         }
         do { try draftArchive.save(snapshot); draftPersistenceError = nil }
@@ -352,7 +422,9 @@ final class AppState: ObservableObject {
         for saved in snapshot.details {
             guard let capture = store.captures.first(where: { $0.id == saved.captureID }) else { continue }
             let draft = CaptureDraft(capture: capture)
-            draft.comment = saved.comment; draft.planning = saved.planning
+            draft.title = saved.title ?? capture.title
+            draft.comment = saved.comment
+            draft.restorePlanning(saved.planning, baseline: saved.committedPlanning, from: capture)
             draft.reminderEnabled = saved.reminderEnabled
             draft.reminderMode = ReminderScheduleMode(rawValue: saved.reminderMode) ?? .date
             draft.countdownHours = saved.countdownHours; draft.countdownMinutes = saved.countdownMinutes
@@ -711,6 +783,10 @@ final class AppState: ObservableObject {
 
     func pasteClipboard(from pasteboard: NSPasteboard = .general) {
         guard !isImporting, !isArchiveOperationRunning else { return }
+        if route == .library, workspace.mode == .collection {
+            explorerInput.paste(project: libraryProject, from: pasteboard)
+            return
+        }
         let navigation = captureNavigationRevision
         manualInput.receive(pasteboard, completion: { [weak self] captures, failures in
             guard let self else { return }
@@ -721,6 +797,10 @@ final class AppState: ObservableObject {
 
     func importFiles() {
         guard !isImporting, !isArchiveOperationRunning else { return }
+        if route == .library, workspace.mode == .collection {
+            explorerInput.chooseFiles(project: libraryProject)
+            return
+        }
         let picker = NSOpenPanel()
         picker.title = "Add files to DaBin"
         picker.prompt = "Add files"
@@ -746,6 +826,9 @@ final class AppState: ObservableObject {
     @discardableResult
     func receiveTaskAttachments(_ providers: [NSItemProvider], to task: Capture) -> Bool {
         guard task.isTask, !isImporting, !isArchiveOperationRunning, !providers.isEmpty else { return false }
+        if providers.contains(where: ExplorerTransfer.containsInternalReference) {
+            return explorerInput.receive(providers, attachingTo: task)
+        }
         manualInput.receiveProviders(providers, attachingTo: task) { [weak self] captures, failures in
             self?.finishTaskAttachments(captures, failures: failures)
         }
@@ -854,21 +937,88 @@ final class AppState: ObservableObject {
         }
     }
 
-    func convertToTask(_ capture: Capture) {
+    func convertToTask(_ capture: Capture, openDetails: Bool = false) {
         guard removingCaptureID != capture.id else { return }
         do {
             let wasTask = capture.isTask
+            let previousParent = capture.parentTaskID
             try store.convertToTask(capture)
             guard !wasTask else { return }
             captureLayoutRevision &+= 1
             // Conversion can split a file batch or an automatic-hour summary.
             // Keep the converted card as the return-to-Daily scroll target.
             dailyScrollID = feedID(for: capture, on: selectedDay)
-            status = AppStatusMessage(text: "Turned into a task.", severity: .success)
-            openCapture(capture.id, focus: "task")
+            lastConvertedCaptureID = capture.id
+            lastConversionParentID = previousParent
+            status = AppStatusMessage(text: "Turned into a task. You can undo this.", severity: .success)
+            if openDetails { openCapture(capture.id, focus: "task") }
+            else if route == .detail && selectedCapture?.id == capture.id { detailFocus = "task" }
         } catch {
             reportFailure("Couldn’t turn this capture into a task: \(error.localizedDescription)")
         }
+    }
+
+    var canUndoTaskConversion: Bool {
+        guard let id = lastConvertedCaptureID, let capture = store.captures.first(where: { $0.id == id }) else { return false }
+        return capture.convertedToTask && !capture.isCompleted && (capture.taskPlanning == nil || capture.taskPlanning == TaskPlanning())
+            && store.attachments(for: capture).isEmpty
+    }
+
+    func undoTaskConversion() {
+        guard let id = lastConvertedCaptureID, let capture = store.captures.first(where: { $0.id == id }) else { return }
+        // An unfinished task draft is work too; do not silently discard it.
+        guard (drafts[id]?.planning == nil || drafts[id]?.planning == TaskPlanning()),
+              (drafts[id]?.title == nil || drafts[id]?.title == capture.title) else {
+            reportFailure("Save or discard task edits before undoing the conversion."); return
+        }
+        do {
+            try store.undoTaskConversion(capture, previousParentID: lastConversionParentID)
+            lastConvertedCaptureID = nil; lastConversionParentID = nil
+            captureLayoutRevision &+= 1
+            status = AppStatusMessage(text: "Kept as a capture.", severity: .success)
+        } catch { reportFailure(error.localizedDescription) }
+    }
+
+    @discardableResult
+    func configureTaskFocus(_ capture: Capture, hours: Int, minutes: Int, start: Bool = false, at now: Date = Date()) -> Bool {
+        guard let duration = TaskFocusSession.duration(hours: hours, minutes: minutes) else {
+            reportFailure("Choose a duration from 1 minute to 168 hours. Minutes must be 0–59."); return false
+        }
+        let session = TaskFocusSession(remainingSeconds: TimeInterval(duration * 60),
+            endAt: start ? now.addingTimeInterval(TimeInterval(duration * 60)) : nil)
+        return commitTaskFocus(capture, session: session, duration: duration)
+    }
+
+    @discardableResult
+    func toggleTaskFocus(_ capture: Capture, at now: Date = Date()) -> Bool {
+        guard let duration = capture.taskPlanning?.effortMinutes, !capture.isCompleted else { return false }
+        let session = capture.taskPlanning?.focusSession ?? TaskFocusSession(remainingSeconds: TimeInterval(duration * 60))
+        return commitTaskFocus(capture, session: session.isRunning && session.remaining(at: now) > 0
+            ? session.paused(at: now) : session.started(at: now, durationMinutes: duration))
+    }
+
+    @discardableResult
+    func resetTaskFocus(_ capture: Capture) -> Bool {
+        guard let duration = capture.taskPlanning?.effortMinutes else { return false }
+        return commitTaskFocus(capture, session: TaskFocusSession(remainingSeconds: TimeInterval(duration * 60)))
+    }
+
+    @discardableResult
+    private func commitTaskFocus(_ capture: Capture, session: TaskFocusSession, duration: Int? = nil) -> Bool {
+        do {
+            try store.setTaskFocus(capture, session: session, durationMinutes: duration)
+            drafts[capture.id]?.adoptImmediateTiming(from: capture, schedule: false, duration: duration != nil)
+            return true
+        } catch { reportFailure("Could not save the focus session: \(error.localizedDescription)"); return false }
+    }
+
+    @discardableResult
+    func scheduleTask(_ capture: Capture, day: String?, time: String? = nil) -> Bool {
+        do {
+            try store.planTask(capture, on: day, time: time)
+            drafts[capture.id]?.adoptImmediateTiming(from: capture, schedule: true, duration: false)
+            return true
+        } catch { reportFailure("Could not save the work schedule: \(error.localizedDescription)"); return false }
     }
 
     func toggleTaskCompletion(_ capture: Capture) {
@@ -1266,8 +1416,10 @@ final class AppState: ObservableObject {
         do {
             try store.update(capture, comment: draft.comment, reminderAt: resolvedReminder,
                              reminderTimeZoneID: resolvedReminder == nil ? nil : (changedReminder ? TimeZone.current.identifier : capture.reminderTimeZoneID),
-                             planning: capture.isTask ? draft.planning : nil)
+                             planning: capture.isTask ? draft.planning : nil, title: capture.isTask ? draft.title : nil)
             draft.adoptSavedReminder(from: capture)
+            draft.title = capture.title
+            draft.adoptSavedPlanning(from: capture)
             draft.didSave()
             if changedReminder {
                 if capture.reminderAt == nil { clearReminderFeedback(for: capture) }

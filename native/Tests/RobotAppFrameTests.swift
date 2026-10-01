@@ -86,7 +86,56 @@ struct RobotAppFrameTests {
                    "The six-point outer edge is a resize handle without covering content")
         try expect(frame.hitTest(controlPoint) === control,
                    "Enabling resize handles leaves actual content controls clickable")
+
+        // The card corners are inset from the transparent native window. They
+        // must be discoverable resize targets without requiring a six-pixel
+        // hunt at the invisible outer edge.
+        let contentCorners: [(CGPoint, BoardResizeGeometry.Edge)] = [
+            (CGPoint(x: resized.minX, y: resized.maxY), [.left, .top]),
+            (CGPoint(x: resized.maxX, y: resized.maxY), [.right, .top]),
+            (CGPoint(x: resized.minX, y: resized.minY), [.left, .bottom]),
+            (CGPoint(x: resized.maxX, y: resized.minY), [.right, .bottom])
+        ]
+        for (point, expected) in contentCorners {
+            try expect(BoardResizeGeometry.interactionEdge(at: point, in: frame.bounds) == expected,
+                       "Each visible card corner selects both of its resize axes: \(expected.rawValue)")
+            try expect(frame.hitTest(frame.convert(point, to: stage)) === frame,
+                       "Each visible corner routes native hits to the resize handler: \(expected.rawValue)")
+            let inward = CGPoint(x: point.x + (expected.contains(.left) ? 8 : -8),
+                                 y: point.y + (expected.contains(.bottom) ? 8 : -8))
+            try expect(BoardResizeGeometry.interactionEdge(at: inward, in: frame.bounds) == expected,
+                       "Corner targets extend into the rounded card instead of existing only in transparent chrome")
+        }
+        let cornerRegions = BoardResizeGeometry.cornerRegions(in: frame.bounds)
+        try expect(cornerRegions.count == 4 && cornerRegions.allSatisfy { frame.bounds.contains($0.rect) },
+                   "All four enlarged resize regions remain inside the native frame")
+        let offsetBounds = CGRect(x: -20, y: 35, width: 400, height: 550)
+        let offsetContent = RobotAppFrameView.contentRect(in: offsetBounds)
+        try expect(BoardResizeGeometry.interactionEdge(
+            at: CGPoint(x: offsetContent.minX, y: offsetContent.maxY), in: offsetBounds) == [.left, .top],
+                   "Visible corner detection preserves nonzero bounds origins")
+        try expect(BoardResizeGeometry.interactionEdge(at: CGPoint(x: -1, y: frame.bounds.midY), in: frame.bounds).isEmpty,
+                   "Enlarged corner targets never accept points outside the native frame")
+
+        frame.onDragStarted = { }
+        let dragBand = BoardResizeGeometry.dragRegion(in: frame.bounds)
+        let chromePoint = CGPoint(x: dragBand.midX, y: dragBand.midY)
+        try expect(frame.bounds.contains(dragBand) && dragBand.minY >= resized.maxY,
+                   "The draggable chrome band reserves its space above application content")
+        try expect(frame.hitTest(frame.convert(chromePoint, to: stage)) === frame,
+                   "Configured robot chrome provides a full-width native drag surface")
+        let headerControl = NSButton(title: "Header control", target: nil, action: nil)
+        headerControl.frame = CGRect(x: content.bounds.maxX - 66, y: content.bounds.maxY - 40,
+                                     width: 48, height: 28)
+        content.addSubview(headerControl)
+        let headerControlPoint = headerControl.convert(
+            CGPoint(x: headerControl.bounds.midX, y: headerControl.bounds.midY), to: stage)
+        try expect(frame.hitTest(headerControlPoint) === headerControl && frame.hitTest(controlPoint) === control,
+                   "Top chrome dragging and larger corner targets preserve header and content controls")
+        frame.onDragStarted = nil
         frame.onResize = nil
+        try expect(frame.hitTest(frame.convert(chromePoint, to: stage)) == nil,
+                   "Decorative chrome is click-through when no drag or resize handler is configured")
         frame.celebrateTaskCompletion(reduceMotion: true)
         try expect(frame.taskCelebrationCount == 1 && !frame.hasActiveEyeMotion,
                    "A saved completion acknowledges happiness without eye motion under Reduce Motion")
@@ -110,6 +159,54 @@ struct RobotAppFrameTests {
                    "Disconnecting to a display smaller than the minimum safely fits its actual area")
         try expect(BoardResizeGeometry.edge(at: CGPoint(x: 200, y: 200), in: original) == [],
                    "Off-window coordinates cannot start a resize")
+
+        let spaciousDisplay = CGRect(x: -1600, y: -1000, width: 3000, height: 2400)
+        for (_, corner) in contentCorners {
+            let delta = CGPoint(x: corner.contains(.left) ? -60 : 60,
+                                y: corner.contains(.bottom) ? -45 : 45)
+            let grown = BoardResizeGeometry.resized(original, edge: corner, delta: delta, visible: spaciousDisplay)
+            try expect(grown.width == original.width + 60 && grown.height == original.height + 45,
+                       "Each corner changes width and height together: \(corner.rawValue)")
+            try expect((corner.contains(.left) ? grown.maxX == original.maxX : grown.minX == original.minX)
+                       && (corner.contains(.bottom) ? grown.maxY == original.maxY : grown.minY == original.minY),
+                       "Each corner preserves its opposite corner on either coordinate axis: \(corner.rawValue)")
+            let shrunk = BoardResizeGeometry.resized(original, edge: corner,
+                delta: CGPoint(x: -delta.x * 100, y: -delta.y * 100), visible: spaciousDisplay)
+            try expect(shrunk.size == BoardResizeGeometry.minimumSize,
+                       "Every corner stops shrinking at the usable content minimum: \(corner.rawValue)")
+            try expect((corner.contains(.left) ? shrunk.maxX == original.maxX : shrunk.minX == original.minX)
+                       && (corner.contains(.bottom) ? shrunk.maxY == original.maxY : shrunk.minY == original.minY),
+                       "Hitting minimum size never moves a corner's fixed opposite anchor: \(corner.rawValue)")
+        }
+        try expect(BoardResizeGeometry.resized(original, edge: [.left, .top],
+            delta: CGPoint(x: CGFloat.infinity, y: CGFloat.nan), visible: resizingDisplay) == original,
+                   "An interrupted gesture with nonfinite pointer data retains a valid original frame")
+
+        let leftDisplay = CGRect(x: -1440, y: 0, width: 1440, height: 900)
+        let rightDisplay = CGRect(x: 0, y: 0, width: 1920, height: 1080)
+        let straddling = CGRect(x: -900, y: 240, width: 1000, height: 550)
+        try expect(BoardResizeGeometry.destinationDisplay(for: straddling,
+            pointer: CGPoint(x: 30, y: 700), displays: [leftDisplay, rightDisplay]) == 1,
+                   "The released pointer chooses the new display while most of a wide window remains on the old one")
+        try expect(BoardResizeGeometry.destinationDisplay(for: straddling,
+            pointer: CGPoint(x: -20, y: 700), displays: [leftDisplay, rightDisplay]) == 0,
+                   "Dragging back chooses a display with negative desktop coordinates")
+        try expect(BoardResizeGeometry.destinationDisplay(for: straddling,
+            pointer: nil, displays: [leftDisplay, rightDisplay]) == 0,
+                   "A release without a pointer uses the display with the largest real window overlap")
+        let upperDisplay = CGRect(x: 120, y: 1200, width: 1600, height: 900)
+        try expect(BoardResizeGeometry.destinationDisplay(for: CGRect(x: 100, y: 750, width: 700, height: 550),
+            pointer: CGPoint(x: 400, y: 1220), displays: [rightDisplay, upperDisplay]) == 1,
+                   "Pointer destination selection works with vertically stacked displays and a desktop gap")
+        try expect(BoardResizeGeometry.destinationDisplay(for: CGRect(x: 100, y: 750, width: 700, height: 550),
+            pointer: CGPoint(x: 400, y: 1130), displays: [rightDisplay, upperDisplay]) == 0,
+                   "A release in the gap falls back to overlap rather than a disconnected or arbitrary screen")
+        try expect(BoardResizeGeometry.destinationDisplay(for: straddling,
+            pointer: CGPoint(x: -20, y: 700), displays: [rightDisplay]) == 0,
+                   "After disconnection the remaining overlapping display remains a valid destination")
+        try expect(BoardResizeGeometry.destinationDisplay(for: original, pointer: nil, displays: []) == nil
+                   && BoardResizeGeometry.destinationDisplay(for: original, pointer: nil, displays: [rightDisplay]) == nil,
+                   "No available or overlapping display leaves recovery to the controller's explicit fallback")
 
         let display = CGRect(x: 100, y: 50, width: 1_200, height: 800)
         let eye = CGPoint(x: display.midX, y: display.midY)

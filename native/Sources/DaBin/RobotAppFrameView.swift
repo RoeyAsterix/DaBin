@@ -34,7 +34,10 @@ public final class RobotAppFrameView: NSView {
     var onResize: ((CGRect) -> Void)?
     var onResizeEnded: (() -> Void)?
     var onToggleExpanded: (() -> Void)?
-    private var resizeGesture: (edge: BoardResizeGeometry.Edge, pointer: CGPoint, frame: CGRect)?
+    var onDragStarted: (() -> Void)?
+    var onDragEnded: ((CGPoint) -> Void)?
+    private var dragSession: WindowDragSession?
+    private var resizeGesture: (edge: BoardResizeGeometry.Edge, pointer: CGPoint, frame: CGRect, visible: CGRect)?
     private(set) var taskCelebrationCount = 0
     var hasActiveEyeMotion: Bool {
         [leftEyeLayer, rightEyeLayer, leftPupilLayer, rightPupilLayer]
@@ -133,10 +136,11 @@ public final class RobotAppFrameView: NSView {
             layoutLegs()
             layoutOutlineAndSeam()
         }
+        window?.invalidateCursorRects(for: self)
     }
 
-    /// Content keeps its own hit testing; only the outer six-point resize rail
-    /// is interactive. Character artwork never covers or intercepts controls.
+    /// Visible corners resize; the reserved top chrome moves the window.
+    /// All controls inside the application keep their own hit testing.
     public override func hitTest(_ point: NSPoint) -> NSView? {
         guard !isHidden, !contentView.isHidden else { return nil }
         // AppKit passes `point` in the receiver's superview coordinates. The
@@ -144,7 +148,9 @@ public final class RobotAppFrameView: NSView {
         let localPoint = superview.map { convert(point, from: $0) } ?? point
         let containerPoint = contentContainer.convert(localPoint, from: self)
         if !isTransitioning, onResize != nil,
-           !BoardResizeGeometry.edge(at: localPoint, in: bounds).isEmpty { return self }
+           !BoardResizeGeometry.interactionEdge(at: localPoint, in: bounds).isEmpty { return self }
+        if !isTransitioning, onDragStarted != nil,
+           BoardResizeGeometry.dragRegion(in: bounds).contains(localPoint) { return self }
         guard contentView.frame.contains(containerPoint) else { return nil }
         return contentView.hitTest(containerPoint)
     }
@@ -152,34 +158,92 @@ public final class RobotAppFrameView: NSView {
     public override func acceptsFirstMouse(for event: NSEvent?) -> Bool { true }
 
     public override func resetCursorRects() {
-        guard onResize != nil, !isTransitioning else { return }
+        guard !isTransitioning else { return }
+        if onDragStarted != nil {
+            addCursorRect(BoardResizeGeometry.dragRegion(in: bounds), cursor: .openHand)
+        }
+        guard onResize != nil else { return }
         addCursorRect(CGRect(x: 0, y: 0, width: 6, height: bounds.height), cursor: .resizeLeftRight)
         addCursorRect(CGRect(x: bounds.maxX - 6, y: 0, width: 6, height: bounds.height), cursor: .resizeLeftRight)
         addCursorRect(CGRect(x: 0, y: 0, width: bounds.width, height: 6), cursor: .resizeUpDown)
         addCursorRect(CGRect(x: 0, y: bounds.maxY - 6, width: bounds.width, height: 6), cursor: .resizeUpDown)
+        for region in BoardResizeGeometry.cornerRegions(in: bounds) {
+            addCursorRect(region.rect, cursor: Self.cornerCursor(region.edge))
+        }
+    }
+
+    private static func cornerCursor(_ edge: BoardResizeGeometry.Edge) -> NSCursor {
+        if #available(macOS 15.0, *) {
+            let position: NSCursor.FrameResizePosition
+            if edge.contains(.top) { position = edge.contains(.left) ? .topLeft : .topRight }
+            else { position = edge.contains(.left) ? .bottomLeft : .bottomRight }
+            return NSCursor.frameResize(position: position, directions: .all)
+        }
+        return edge.contains(.top) == edge.contains(.left) ? descendingCursor : ascendingCursor
+    }
+
+    private static let ascendingCursor = diagonalCursor(ascending: true)
+    private static let descendingCursor = diagonalCursor(ascending: false)
+
+    private static func diagonalCursor(ascending: Bool) -> NSCursor {
+        let image = NSImage(size: NSSize(width: 24, height: 24), flipped: false) { _ in
+            let path = NSBezierPath()
+            func point(_ x: CGFloat, _ y: CGFloat) -> NSPoint { NSPoint(x: x, y: ascending ? y : 24 - y) }
+            path.move(to: point(5, 5)); path.line(to: point(19, 19))
+            path.move(to: point(5, 11)); path.line(to: point(5, 5)); path.line(to: point(11, 5))
+            path.move(to: point(13, 19)); path.line(to: point(19, 19)); path.line(to: point(19, 13))
+            path.lineCapStyle = .round; path.lineJoinStyle = .round
+            NSColor.white.setStroke(); path.lineWidth = 3.5; path.stroke()
+            NSColor.black.setStroke(); path.lineWidth = 1.5; path.stroke()
+            return true
+        }
+        return NSCursor(image: image, hotSpot: NSPoint(x: 12, y: 12))
     }
 
     public override func mouseDown(with event: NSEvent) {
-        guard let window, !isTransitioning else { return }
-        let edge = BoardResizeGeometry.edge(at: convert(event.locationInWindow, from: nil), in: bounds)
-        guard !edge.isEmpty else { return }
+        guard event.type == .leftMouseDown, let window, !isTransitioning else { return }
+        let localPoint = convert(event.locationInWindow, from: nil)
+        let edge = BoardResizeGeometry.interactionEdge(at: localPoint, in: bounds)
+        if edge.isEmpty {
+            guard onDragStarted != nil, BoardResizeGeometry.dragRegion(in: bounds).contains(localPoint) else { return }
+            if event.clickCount == 2 { onToggleExpanded?(); return }
+            let pointer = window.convertPoint(toScreen: event.locationInWindow)
+            onDragStarted?()
+            dragSession = WindowDragSession(pointer: pointer, origin: window.frame.origin)
+            return
+        }
+        guard onResize != nil, let screen = window.screen else { return }
         if event.clickCount == 2 { onToggleExpanded?(); return }
-        resizeGesture = (edge, window.convertPoint(toScreen: event.locationInWindow), window.frame)
         onResizeStarted?()
+        resizeGesture = (edge, window.convertPoint(toScreen: event.locationInWindow), window.frame, screen.visibleFrame)
     }
 
     public override func mouseDragged(with event: NSEvent) {
-        guard let gesture = resizeGesture, let window, let screen = window.screen else { return }
+        guard let window else { return }
         let pointer = window.convertPoint(toScreen: event.locationInWindow)
+        if let dragSession {
+            window.setFrameOrigin(dragSession.origin(at: pointer))
+            return
+        }
+        guard let gesture = resizeGesture else { return }
         onResize?(BoardResizeGeometry.resized(gesture.frame, edge: gesture.edge,
             delta: CGPoint(x: pointer.x - gesture.pointer.x, y: pointer.y - gesture.pointer.y),
-            visible: screen.visibleFrame))
+            visible: gesture.visible))
     }
 
     public override func mouseUp(with event: NSEvent) {
-        guard resizeGesture != nil else { return }
+        if resizeGesture != nil {
+            resizeGesture = nil
+            onResizeEnded?()
+        } else if dragSession != nil {
+            dragSession = nil
+            if let window { onDragEnded?(window.convertPoint(toScreen: event.locationInWindow)) }
+        }
+    }
+
+    func cancelWindowInteraction() {
         resizeGesture = nil
-        onResizeEnded?()
+        dragSession = nil
     }
 
     /// Feedback is local to the already-visible robot; it creates no window,

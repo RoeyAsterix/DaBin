@@ -229,8 +229,9 @@ struct CaptureTaskConversionTests {
             app.route = route
             let oldDay = app.selectedDay
             app.convertToTask(item)
-            try expect(item.isTask && app.route == .detail && app.detailFocus == "task" && app.selectedDay == oldDay,
-                       "Page conversion opens the task section while preserving the selected date")
+            try expect(item.isTask && app.route == route && app.selectedDay == oldDay,
+                       "Page conversion transforms the card in place while preserving the selected date")
+            app.openCapture(item.id, focus: "task")
             app.back()
             try expect(app.route == route, "Task detail Back restores its original \(route) page")
         }

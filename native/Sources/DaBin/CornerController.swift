@@ -397,6 +397,10 @@ final class CornerController: NSObject {
         appFrame.onResize = { [weak self] frame in self?.resizeBoardFromUser(to: frame) }
         appFrame.onResizeEnded = { [weak self] in self?.finishBoardResize() }
         appFrame.onToggleExpanded = { [weak self] in self?.toggleExpandedWindow() }
+        appFrame.onDragStarted = { [weak self] in self?.beginBoardDrag() }
+        appFrame.onDragEnded = { [weak self] point in
+            self?.finishBoardDragIfReleased(pressedMouseButtons: 0, pointer: point)
+        }
         // A hosting view nested in the robot frame is not the window root.
         // SwiftUI's preferredColorScheme alone does not update the AppKit
         // appearance in this arrangement, including native text/date controls.
@@ -429,6 +433,9 @@ final class CornerController: NSObject {
         state.onDismiss = { [weak self] in self?.dismiss() }
         board.onRequestClose = { [weak self] in self?.dismiss() }
         state.onBoardDragStarted = { [weak self] in self?.beginBoardDrag() }
+        state.onBoardDragEnded = { [weak self] point in
+            self?.finishBoardDragIfReleased(pressedMouseButtons: 0, pointer: point)
+        }
         layoutSubscription = state.objectWillChange.debounce(for: .milliseconds(40), scheduler: RunLoop.main).sink { [weak self] _ in
             MainActor.assumeIsolated { self?.resizeBoard() }
         }
@@ -502,6 +509,8 @@ final class CornerController: NSObject {
         appFrame.setVisible(false)
         appFrame.onResizeStarted = nil; appFrame.onResize = nil
         appFrame.onResizeEnded = nil; appFrame.onToggleExpanded = nil
+        appFrame.onDragStarted = nil; appFrame.onDragEnded = nil
+        appFrame.cancelWindowInteraction()
         onWillOpenBoard = nil; onDidCloseBoard = nil
         onRobotInteractionBegan = nil; onRobotInteractionEnded = nil
         layoutSubscription?.cancel(); layoutSubscription = nil
@@ -518,7 +527,7 @@ final class CornerController: NSObject {
         robot.onDragState = nil; robot.onHoverChange = nil; robot.onFocus = nil
         robot.stopFeedback()
         input.onBusy = nil; input.onResult = nil
-        state.onDismiss = nil; state.onBoardDragStarted = nil
+        state.onDismiss = nil; state.onBoardDragStarted = nil; state.onBoardDragEnded = nil
         state.reminders.onOpenCapture = nil
         board.orderOut(nil); bin.orderOut(nil)
         state.isBoardVisible = false; state.isDailyDropTargeted = false
@@ -1077,11 +1086,11 @@ final class CornerController: NSObject {
         boardAnimationKind = nil
     }
 
-    private func beginBoardDrag() {
+    func beginBoardDrag(pointer: CGPoint? = nil) {
         if robotTransitionTarget != nil { settleRobotTransition(open: true) }
         stopBoardAnimation()
         if let previous = frameBeforeExpansion, let screen = boardScreen() {
-            let pointer = NSEvent.mouseLocation
+            let pointer = pointer ?? NSEvent.mouseLocation
             let fraction = min(1, max(0, (pointer.x - board.frame.minX) / max(1, board.frame.width)))
             var restored = previous
             restored.origin = NSPoint(x: pointer.x - previous.width * fraction,
@@ -1098,20 +1107,34 @@ final class CornerController: NSObject {
         let timer = Timer(timeInterval: 0.05, repeats: true) { [weak self] timer in
             MainActor.assumeIsolated {
                 guard let self else { timer.invalidate(); return }
-                self.finishBoardDragIfReleased()
+                self.finishBoardDragIfReleased(pointer: NSEvent.mouseLocation)
             }
         }
         RunLoop.main.add(timer, forMode: .common)
         boardDragTimer = timer
     }
 
-    func finishBoardDragIfReleased(pressedMouseButtons: Int = NSEvent.pressedMouseButtons) {
+    func finishBoardDragIfReleased(pressedMouseButtons: Int = NSEvent.pressedMouseButtons,
+                                   pointer: CGPoint? = nil) {
         guard pressedMouseButtons & 1 == 0 else { return }
         guard let initial = boardDragStartFrame else { return }
         boardDragTimer?.invalidate()
         boardDragTimer = nil
         boardDragStartFrame = nil
-        if board.frame.origin != initial.origin { rememberBoardPosition() }
+        if board.frame.origin != initial.origin {
+            let screens = NSScreen.screens
+            if let index = BoardResizeGeometry.destinationDisplay(for: board.frame, pointer: pointer,
+                                                                  displays: screens.map(\.frame)) {
+                let destination = screens[index]
+                activeScreen = destination
+                // Fit only after release, so crossing the display boundary is
+                // continuous and a partly overlapping window stays where held.
+                // Automatic empty/filter layouts can legitimately be shorter
+                // than the manual resize minimum. Moving must keep their size.
+                setBoardFrame(BoardResizeGeometry.fitted(board.frame, visible: destination.visibleFrame, minimum: .zero))
+            }
+            rememberBoardPosition()
+        }
         if state.route == .daily || state.route == .search, let screen = boardScreen() {
             let compactWidth = CornerGeometry.panelFrame(robot: .zero, visible: screen.visibleFrame,
                                                          corner: .bottomLeft).width
@@ -1154,6 +1177,7 @@ final class CornerController: NSObject {
 
     func dismiss() {
         guard !isShutDown else { return }
+        cancelBoardInteraction()
         stopBoardAnimation()
         cancelIdlePeek()
         captureHostingView.clearDropTarget()
@@ -1198,7 +1222,9 @@ final class CornerController: NSObject {
             state.pasteAttachments(to: task, from: pasteboard)
             return
         }
-        if state.route == .inbox { state.pasteClipboard(from: pasteboard); return }
+        if state.route == .inbox || (state.route == .library && state.workspace.mode == .collection) {
+            state.pasteClipboard(from: pasteboard); return
+        }
         guard state.route == .daily else { return }
         let navigationRevision = state.captureNavigationRevision
         input.receive(pasteboard, completion: { [weak self] captures, _ in
@@ -1232,6 +1258,7 @@ final class CornerController: NSObject {
     }
 
     @objc private func screensChanged() {
+        cancelBoardInteraction()
         stopBoardAnimation()
         cancelIdlePeek()
         let intendedOpen = robotLifecycle.isOpening || robotLifecycle.isAppVisible || restoreBoardAfterDisplayLoss
@@ -1260,6 +1287,19 @@ final class CornerController: NSObject {
             updateBoardVisibility()
         } else { hideRobot() }
         restoreBoardAfterDisplayLoss = false
+    }
+
+    private func cancelBoardInteraction() {
+        appFrame.cancelWindowInteraction()
+        func cancelHeaderDrags(in view: NSView) {
+            (view as? WindowDragHandleView)?.cancelWindowInteraction()
+            view.subviews.forEach { cancelHeaderDrags(in: $0) }
+        }
+        cancelHeaderDrags(in: captureHostingView)
+        boardDragTimer?.invalidate()
+        boardDragTimer = nil
+        boardDragStartFrame = nil
+        if boardIsResizing { finishBoardResize() }
     }
 
     private func robotHomeChanged() {

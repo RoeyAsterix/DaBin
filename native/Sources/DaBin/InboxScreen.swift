@@ -15,7 +15,7 @@ struct InboxScreen: View {
         VStack(spacing: 0) {
             VStack(alignment: .leading, spacing: 9) {
                 HStack {
-                    Text("Capture now. Organize later.").font(.system(size: 13, weight: .semibold))
+                    Text("Capture now. Organize later.").font(.system(size: 14, weight: .medium))
                     Spacer(minLength: 0)
                     Button { state.openDaily() } label: { Label("Activity", systemImage: "calendar") }
                         .buttonStyle(.plain).font(.system(size: 11)).foregroundStyle(accent)
@@ -23,7 +23,7 @@ struct InboxScreen: View {
                 }
                 HStack(spacing: 8) {
                     TextField("A thought or a next step…", text: $state.newNoteText, axis: .vertical)
-                        .lineLimit(1...3).textFieldStyle(.plain).font(.system(size: 13))
+                        .lineLimit(1...3).textFieldStyle(.plain).font(.system(size: 14))
                         .accessibilityLabel("Quick capture text").accessibilityIdentifier("inbox-quick-text")
                         .onSubmit { saveQuick(asTask: false) }
                     Menu {
@@ -33,8 +33,8 @@ struct InboxScreen: View {
                         .menuStyle(.borderlessButton).menuIndicator(.hidden).fixedSize()
                         .disabled(state.newNoteText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                         .accessibilityLabel("Save quick capture").buddyHelp("Save note or task")
-                }.padding(10).background(Palette.surface, in: RoundedRectangle(cornerRadius: 11))
-                    .overlay(RoundedRectangle(cornerRadius: 11).strokeBorder(Palette.line))
+                }.padding(12).background(Palette.surface, in: RoundedRectangle(cornerRadius: 8))
+                    .overlay(RoundedRectangle(cornerRadius: 8).strokeBorder(Palette.line, lineWidth: 0.7))
                 HStack(spacing: 13) {
                     Button { state.pasteClipboard() } label: { Label("Paste", systemImage: "doc.on.clipboard") }
                     Button { state.importFiles() } label: { Label("Files", systemImage: "folder.badge.plus") }
@@ -59,21 +59,8 @@ struct InboxScreen: View {
                     LazyVStack(alignment: .leading, spacing: 9) {
                         Text("\(items.count) to organize").font(.system(size: 11)).foregroundStyle(Palette.muted)
                         ForEach(items) { item in
-                            VStack(alignment: .leading, spacing: 3) {
-                                CaptureRow(state: state, capture: item, featured: false, embeddedInCard: true, showsDate: true)
-                                HStack {
-                                    Button { state.openCapture(item.id, focus: "project") } label: { Label("Project", systemImage: "folder.badge.plus") }
-                                    if item.isTask {
-                                        Button { planToday(item) } label: { Label("Today", systemImage: "sun.max") }
-                                    } else {
-                                        Button { state.convertToTask(item) } label: { Label("Make task", systemImage: "checkmark.circle") }
-                                    }
-                                    Spacer(minLength: 0)
-                                    Button { keep(item) } label: { Image(systemName: "checkmark") }
-                                        .accessibilityLabel("Keep in Workspace: \(item.title)").buddyHelp("Done organizing — keep in Workspace")
-                                }.buttonStyle(.plain).font(.system(size: 11)).foregroundStyle(accent).padding(.bottom, 9)
-                            }.padding(.horizontal, 10).background(Palette.surface, in: RoundedRectangle(cornerRadius: 13))
-                                .overlay(RoundedRectangle(cornerRadius: 13).strokeBorder(Palette.line, lineWidth: 0.7))
+                            CaptureRow(state: state, capture: item, featured: false, showsDate: true)
+
                         }
                     }.padding(.horizontal, 14).padding(.bottom, 14).frame(maxWidth: 860).frame(maxWidth: .infinity)
                 }
@@ -91,13 +78,5 @@ struct InboxScreen: View {
             let destination = project ?? "Inbox"
             state.status = AppStatusMessage(text: asTask ? "Task added to \(destination)." : "Note saved to \(destination).", severity: .success)
         } catch { state.reportFailure(error.localizedDescription) }
-    }
-    private func keep(_ item: Capture) {
-        do { try state.workspace.markInboxProcessed([item.id], processed: true) }
-        catch { state.reportFailure(error.localizedDescription) }
-    }
-    private func planToday(_ item: Capture) {
-        do { try state.store.planTask(item, on: CaptureCalendar.dayString(Date())) }
-        catch { state.reportFailure(error.localizedDescription) }
     }
 }

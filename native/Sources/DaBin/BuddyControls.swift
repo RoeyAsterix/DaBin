@@ -47,7 +47,7 @@ struct BuddyIconButton: View {
                 .font(.system(size: 16, weight: .semibold))
                 .symbolRenderingMode(.monochrome)
                 .frame(width: 32, height: 32)
-                .contentShape(Circle())
+                .contentShape(RoundedRectangle(cornerRadius: 8))
                 .accessibilityHidden(true)
         }
         .buttonStyle(BuddyIconButtonStyle(accent: accent, isActive: isActive,
@@ -70,14 +70,14 @@ private struct BuddyIconButtonStyle: ButtonStyle {
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .foregroundStyle(accent.opacity(enabled ? 1 : 0.38))
+            .foregroundStyle((isActive ? accent : Palette.muted).opacity(enabled ? 1 : 0.38))
             .background {
-                Circle().fill(accent.opacity(!enabled ? 0 : configuration.isPressed ? 0.19
-                                            : isActive ? 0.13 : hovered ? 0.07 : 0))
+                RoundedRectangle(cornerRadius: 8).fill(!enabled ? Color.clear : configuration.isPressed ? Palette.line
+                                            : isActive || hovered ? Palette.soft : Color.clear)
             }
             .overlay {
                 if focused {
-                    Circle().strokeBorder(accent.opacity(0.85), lineWidth: 1.5)
+                    RoundedRectangle(cornerRadius: 8).strokeBorder(accent.opacity(0.85), lineWidth: 1.5)
                 }
             }
     }

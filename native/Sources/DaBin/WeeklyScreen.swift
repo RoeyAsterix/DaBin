@@ -26,7 +26,7 @@ struct WeeklyScreen: View {
                     let days = state.weeklyVisibleDays
                     let gaps = CGFloat(max(0, days.count - 1)) * 8
                     let available = max(0, geometry.size.width - 32 - gaps)
-                    let columnWidth = min(194, max(170, available / CGFloat(max(1, days.count))))
+                    let columnWidth = min(680, max(170, available / CGFloat(max(1, days.count))))
                     ScrollViewReader { proxy in
                         ScrollView(.horizontal) {
                             HStack(alignment: .top, spacing: 8) {
@@ -157,77 +157,92 @@ private struct WeeklyDayColumn: View {
 @MainActor
 private struct WeeklyCaptureCard: View {
     @Environment(\.daBinAccent) private var accent
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @ObservedObject var state: AppState
     @ObservedObject var capture: Capture
     let taskAtTop: Bool
 
-    private var showsPreview: Bool { capture.kind != .text && capture.kind != .task }
+    private var showsPreview: Bool { !capture.isTask && capture.kind != .text && capture.kind != .task }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 10) {
             if taskAtTop {
                 Text("Created \(prettyDay(capture.captureDay, includeWeekday: false))")
-                    .font(.system(size: 10)).foregroundStyle(accent)
+                    .font(.system(size: 11)).foregroundStyle(accent)
                     .fixedSize(horizontal: false, vertical: true)
             }
-            HStack(alignment: .top, spacing: 5) {
+            HStack(spacing: 3) {
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(captureClock(capture)).font(.system(size: 12)).monospacedDigit()
+                    Text(captureTypeLabel(capture.kind)).font(.system(size: 10)).lineLimit(1)
+                }.foregroundStyle(Palette.muted)
+                Spacer(minLength: 0)
+                CaptureCopyButton(state: state, captures: [capture], compact: true)
+                CaptureTrashButton(state: state, capture: capture)
                 CaptureControls(state: state, capture: capture)
-                Spacer(minLength: 0)
-                VStack(alignment: .trailing, spacing: 4) {
-                    HStack(spacing: 3) {
-                        Text(captureClock(capture)).font(.system(size: 12.65)).monospacedDigit().foregroundStyle(Palette.muted)
-                        CaptureCopyButton(state: state, captures: [capture], compact: true)
-                    }
-                    if capture.isTask {
-                        TaskStatusButton(state: state, capture: capture)
-                    } else {
-                        Text(captureTypeLabel(capture.kind)).font(.system(size: 11)).foregroundStyle(Palette.muted)
-                    }
-                }.fixedSize(horizontal: true, vertical: false)
             }
-            Button { state.openCapture(capture.id) } label: {
-                VStack(alignment: .leading, spacing: 7) {
-                    if showsPreview && !capture.isMinimized {
-                        CaptureThumbnail(store: state.store, capture: capture)
-                            .frame(height: 82).clipped().clipShape(RoundedRectangle(cornerRadius: 7))
-                    }
-                    if !capture.isMinimized, let host = captureLinkHost(capture) {
-                        Text(host).font(.system(size: 10)).foregroundStyle(Palette.muted).lineLimit(1)
-                    }
-                    Text(capture.title.isEmpty ? "Untitled capture" : capture.title)
-                        .font(.system(size: 16.1, weight: .medium)).lineLimit(capture.isMinimized ? 2 : 4)
-                        .strikethrough(capture.isTask && capture.isCompleted, color: Palette.muted)
-                        .multilineTextAlignment(.leading).frame(maxWidth: .infinity, alignment: .leading)
-                    if !capture.isMinimized && !capture.previewDescription.isEmpty {
-                        Text(capture.previewDescription).font(.system(size: 11)).foregroundStyle(Palette.muted)
-                            .lineLimit(2).multilineTextAlignment(.leading)
-                    }
-                }.contentShape(Rectangle())
-            }.buttonStyle(.plain).accessibilityLabel("Open \(capture.title), captured at \(captureClock(capture))")
-            if !capture.isMinimized && !capture.comment.isEmpty {
-                Text(capture.comment).font(.system(size: 11)).foregroundStyle(Palette.muted).lineLimit(2)
+            if !capture.isMinimized { CaptureTrailView(state: state, capture: capture) }
+            HStack(alignment: .top, spacing: 5) {
+                if capture.isTask { TaskStatusButton(state: state, capture: capture) }
+                Button { state.openCapture(capture.id) } label: {
+                    VStack(alignment: .leading, spacing: 8) {
+                        if showsPreview && !capture.isMinimized {
+                            CaptureThumbnail(store: state.store, capture: capture)
+                                .frame(height: 104).clipShape(RoundedRectangle(cornerRadius: 8))
+                        }
+                        if capture.isTask {
+                            Text(capture.isCompleted ? "COMPLETED" : "TASK")
+                                .font(.system(size: 10, weight: .medium)).tracking(0.5).foregroundStyle(Palette.muted)
+                        }
+                        if !capture.isMinimized, let host = captureLinkHost(capture) {
+                            Text(host).font(.system(size: 10)).foregroundStyle(Palette.muted).lineLimit(1)
+                        }
+                        Text(capture.title.isEmpty ? "Untitled capture" : capture.title)
+                            .font(.system(size: 16, weight: .semibold)).lineLimit(capture.isMinimized ? 2 : 4)
+                            .foregroundStyle(capture.isCompleted ? Palette.muted : Palette.foreground)
+                            .strikethrough(capture.isTask && capture.isCompleted, color: Palette.muted)
+                            .multilineTextAlignment(.leading).frame(maxWidth: .infinity, alignment: .leading)
+                        if !capture.isMinimized, !capture.isTask, !capture.previewDescription.isEmpty {
+                            Text(capture.previewDescription).font(.system(size: 12)).foregroundStyle(Palette.muted)
+                                .lineLimit(2).multilineTextAlignment(.leading)
+                        }
+                    }.contentShape(Rectangle())
+                }.buttonStyle(.plain).accessibilityLabel("Open \(capture.title), captured at \(captureClock(capture))")
             }
-            HStack(spacing: 0) {
-                Button { state.openCapture(capture.id, focus: "comment") } label: {
-                    Image(systemName: capture.comment.isEmpty ? "text.bubble" : "text.bubble.fill")
-                        .frame(width: 28, height: 26).contentShape(Rectangle())
-                }.buddyHelp("Comment").accessibilityLabel("Comment on \(capture.title)")
-                Button { state.openCapture(capture.id, focus: "reminder") } label: {
-                    Image(systemName: capture.reminderAt == nil ? "bell" : "bell.fill")
-                        .frame(width: 28, height: 26).contentShape(Rectangle())
-                }.buddyHelp("Reminder").accessibilityLabel("Reminder for \(capture.title)")
-                Spacer(minLength: 0)
-                if !capture.isMinimized, let reminder = capture.reminderAt {
-                    Text("\(capture.isTask && capture.isCompleted ? "Paused " : "")\(reminder.formatted(.dateTime.month(.abbreviated).day().hour().minute()))")
-                        .font(.system(size: 10)).foregroundStyle(Palette.muted).multilineTextAlignment(.trailing)
+            if !capture.isMinimized {
+                if !capture.comment.isEmpty {
+                    Text(capture.comment).font(.system(size: 12)).foregroundStyle(Palette.muted).lineLimit(2)
                 }
-            }.font(.system(size: 12)).foregroundStyle(accent).buttonStyle(.plain)
+                if capture.isTask { TaskFocusControls(state: state, capture: capture) }
+                CaptureConversionUndo(state: state, capture: capture)
+                CaptureProjectPickerButton(state: state, capture: capture)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                HStack(spacing: 0) {
+                    if !capture.isTask {
+                        CaptureTaskConversionButton(state: state, capture: capture)
+                        CaptureKeepButton(state: state, capture: capture)
+                    }
+                    BuddyIconButton(symbol: capture.comment.isEmpty ? "text.bubble" : "text.bubble.fill", title: "Comment on \(capture.title)") {
+                        state.openCapture(capture.id, focus: "comment")
+                    }
+                    BuddyIconButton(symbol: capture.reminderAt == nil ? "bell" : "bell.fill", title: "Reminder for \(capture.title)") {
+                        state.openCapture(capture.id, focus: "reminder")
+                    }
+                    Spacer(minLength: 0)
+                }.padding(.top, 6).overlay(alignment: .top) { Rectangle().fill(Palette.line).frame(height: 0.7) }
+                if let reminder = capture.reminderAt {
+                    Label("\(capture.isTask && capture.isCompleted ? "Paused · " : "")\(reminder.formatted(.dateTime.month(.abbreviated).day().hour().minute()))", systemImage: "bell")
+                        .font(.system(size: 11)).foregroundStyle(Palette.muted).fixedSize(horizontal: false, vertical: true)
+                }
+            }
         }.padding(10).frame(maxWidth: .infinity, alignment: .leading)
-            .background(Palette.surface, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
-            .overlay(RoundedRectangle(cornerRadius: 10, style: .continuous)
-                .strokeBorder(taskAtTop ? accent.opacity(0.7) : Palette.line.opacity(0.7), lineWidth: taskAtTop ? 1 : 0.5))
+            .background(Palette.surface, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+            .overlay(RoundedRectangle(cornerRadius: 14, style: .continuous)
+                .strokeBorder(taskAtTop ? accent.opacity(0.55) : Palette.line, lineWidth: 0.7))
             .contextMenu {
                 CaptureTaskConversionMenu(state: state, capture: capture)
+                Button(capture.isMinimized ? "Expand capture" : "Minimize capture", systemImage: capture.isMinimized ? "chevron.down" : "chevron.up") { state.toggleMinimized(capture) }
             }
+            .animation(reduceMotion ? nil : .easeOut(duration: 0.18), value: capture.isTask)
     }
 }

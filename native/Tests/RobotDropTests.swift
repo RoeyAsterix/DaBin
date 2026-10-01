@@ -127,7 +127,7 @@ import Foundation
         try expect(fileCapture.kind == .pdf && fileCapture.originalFilename == source.lastPathComponent, "Dropped PDF keeps its filename and type")
         try expect(fileCapture.sourceFilePath == source.standardizedFileURL.path, "Dropped file records its explicit source path")
         let managed = try unwrap(store.managedURL(for: fileCapture), "Managed original exists")
-        try expect(managed != source && managed.path.hasPrefix(store.root.path + "/Archive/"), "Dropped file is copied into dated local archive")
+        try expect(managed != source && managed.path.hasPrefix(store.root.path + "/Unfiled/"), "Dropped file is copied into project and date folders")
         try expect(try Data(contentsOf: managed) == original, "Archived file retains exact bytes")
         try expect(try Data(contentsOf: source) == original, "Source file retains exact bytes")
         try expect(try source.resourceValues(forKeys: [.contentModificationDateKey]).contentModificationDate == sourceDate, "Copy does not change source modification date")

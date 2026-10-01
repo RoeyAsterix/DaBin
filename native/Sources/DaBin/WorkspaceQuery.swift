@@ -15,6 +15,7 @@ enum WorkspaceQuery {
         return captures.filter { capture in
             guard capture.deletedAt == nil, capture.parentTaskID == nil,
                   project == nil || capture.projectName == project,
+                  !workspace.explorerUnfiledOnly || project != nil || capture.projectName == nil,
                   filter.includes(capture), !pinnedOnly || capture.isPinned,
                   workspace.sourceApplication == nil || sourceName(capture) == workspace.sourceApplication,
                   workspace.dateFilter.includes(capture.captureDay, now: now),

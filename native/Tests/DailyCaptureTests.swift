@@ -160,7 +160,7 @@ import Foundation
         try expect(fileCapture.kind == .pdf && fileCapture.originalFilename == source.lastPathComponent, "Daily file keeps its filename and kind")
         try expect(fileCapture.sourceFilePath == source.standardizedFileURL.path, "Daily file retains explicit source path")
         let managed = try unwrap(store.managedURL(for: fileCapture), "Daily file has an archived original")
-        try expect(managed != source && managed.path.hasPrefix(store.root.path + "/Archive/"), "Daily drop copies file into local dated archive")
+        try expect(managed != source && managed.path.hasPrefix(store.root.path + "/Unfiled/"), "Daily drop copies file into local project and date folders")
         try expect(try Data(contentsOf: managed) == original, "Daily archived file retains source bytes")
         try expect(try Data(contentsOf: source) == original, "Daily drop leaves original file intact")
         try expect(try source.resourceValues(forKeys: [.contentModificationDateKey]).contentModificationDate == modified,

@@ -13,9 +13,9 @@ struct NewTaskScreen: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 16) {
                     VStack(alignment: .leading, spacing: 7) {
-                        Text("What needs doing?").font(.system(size: 13, weight: .medium))
+                        Label("What needs doing?", systemImage: "checkmark.square").font(.system(size: 14, weight: .semibold))
                         TextEditor(text: $draft.text)
-                            .font(.system(size: 14)).scrollContentBackground(.hidden)
+                            .font(.system(size: 20, weight: .medium, design: .rounded)).scrollContentBackground(.hidden)
                             .padding(8).frame(height: 116).background(Palette.surface)
                             .clipShape(RoundedRectangle(cornerRadius: 11))
                             .overlay(RoundedRectangle(cornerRadius: 11).stroke(Palette.line))
@@ -44,7 +44,7 @@ struct NewTaskScreen: View {
                 Spacer(minLength: 0)
                 Button("Cancel") { state.cancelNewTask() }.buttonStyle(.bordered)
                 Button("Add task") { state.saveNewTask() }.buttonStyle(.borderedProminent)
-                    .disabled(isEmpty).keyboardShortcut(.return, modifiers: .command)
+                    .disabled(isEmpty || !draft.planning.isValid).keyboardShortcut(.return, modifiers: .command)
             }.controlSize(.regular).padding(13)
                 .overlay(alignment: .top) { Rectangle().fill(Palette.line).frame(height: 1) }
         }.onAppear { textFocused = true }

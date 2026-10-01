@@ -77,8 +77,39 @@ private final class NativeRenderTests: NSObject, NSApplicationDelegate {
         }
         renderTheme = ThemeSettings(defaults: themeDefaults)
         defer { themeDefaults.removePersistentDomain(forName: themeSuite) }
+        if arguments.contains("--open-design") {
+            try await renderBuddyRedesign(root: root, output: output, openDesignOnly: true)
+            try JSONSerialization.data(withJSONObject: [
+                "description": "Native Open Design implementation including Explorer, in-place task conversion, focus, projects and provenance.",
+                "fixturePrivacy": "Fictional isolated archive with injected preferences; no user clipboard, network or notifications.",
+                "screenshots": records
+            ], options: [.prettyPrinted, .sortedKeys]).write(to: output.appendingPathComponent("open-design-renders.json"), options: .atomic)
+            print("PASS: \(records.count) Open Design production renders")
+            return
+        }
+        if arguments.contains("--explorer") {
+            try await renderBuddyRedesign(root: root, output: output, explorerOnly: true)
+            try JSONSerialization.data(withJSONObject: [
+                "description": "Production Explorer at compact, expanded and wide short sizes in both appearances.",
+                "fixturePrivacy": "Fictional isolated local archive; no user clipboard, network or notifications.",
+                "screenshots": records
+            ], options: [.prettyPrinted, .sortedKeys]).write(to: output.appendingPathComponent("explorer-renders.json"), options: .atomic)
+            print("PASS: \(records.count) Explorer production renders")
+            return
+        }
         // This review route uses injected preferences throughout and never temporarily
         // writes even an unrelated user's standard preference.
+        if arguments.contains("--responsive-detail") {
+            try await renderBuddyRedesign(root: root, output: output, responsiveOnly: true)
+            try JSONSerialization.data(withJSONObject: [
+                "description": "Responsive capture detail at compact, medium, expanded and wide-short sizes, in both appearances.",
+                "fixturePrivacy": "Fictional isolated archive and injected preferences; no user clipboard, network or notification access.",
+                "limitations": "Native view layout renders; not a substitute for real PDF playback or native focus verification.",
+                "screenshots": records
+            ], options: [.prettyPrinted, .sortedKeys]).write(to: output.appendingPathComponent("responsive-detail-renders.json"), options: .atomic)
+            print("PASS: \(records.count) responsive detail production renders")
+            return
+        }
         if arguments.contains("--buddy-redesign") {
             try await renderBuddyRedesign(root: root, output: output)
             try JSONSerialization.data(withJSONObject: [
@@ -1489,7 +1520,7 @@ private final class NativeRenderTests: NSObject, NSApplicationDelegate {
         }
     }
 
-    private func renderBuddyRedesign(root: URL, output: URL) async throws {
+    private func renderBuddyRedesign(root: URL, output: URL, responsiveOnly: Bool = false, explorerOnly: Bool = false, openDesignOnly: Bool = false) async throws {
         let suite = "DaBin.BuddyReview.Render.\(UUID().uuidString)"
         let defaults = UserDefaults(suiteName: suite)!
         defer { defaults.removePersistentDomain(forName: suite) }
@@ -1537,6 +1568,81 @@ private final class NativeRenderTests: NSObject, NSApplicationDelegate {
         let state = AppState(store: store, previews: PreviewService(store: store, defaults: defaults),
             reminders: ReminderService(store: store, client: RenderNotificationClient()), autoCapture: automatic)
         renderTheme.setBoardOpacity(1)
+        if openDesignOnly {
+            state.isBoardVisible = true
+            try store.recordPasteDestination(for: image, applicationName: "Notes", applicationBundleIdentifier: "com.apple.Notes", at: stamp.addingTimeInterval(60))
+            try store.recordPasteDestination(for: image, applicationName: "Mail", applicationBundleIdentifier: "com.apple.mail", at: stamp.addingTimeInterval(120))
+            try store.recordPasteDestination(for: image, applicationName: "Client portal", at: stamp.addingTimeInterval(180))
+            try store.recordPasteDestination(for: image, applicationName: "Design review", at: stamp.addingTimeInterval(240))
+            _ = state.configureTaskFocus(task, hours: 0, minutes: 25)
+            _ = state.scheduleTask(task, day: CaptureCalendar.dayString(Date()), time: "14:30")
+            for mode in ["light", "dark"] {
+                for size in [CGSize(width: 380, height: 430), CGSize(width: 380, height: 680), CGSize(width: 1000, height: 760)] {
+                    state.openInbox(); state.status = nil
+                    try await snapshot(state, name: "redesign-inbox", mode: mode, output: output, height: size.height, width: size.width)
+                    state.showReminders(); state.status = nil
+                    try await snapshot(state, name: "redesign-today", mode: mode, output: output, height: size.height, width: size.width)
+                    state.openLibrary(); state.filter = .all; state.libraryProject = nil
+                    state.workspace.selectedCaptureID = image.id
+                    try await snapshot(state, name: "redesign-explorer", mode: mode, output: output, height: size.height, width: size.width)
+                    state.openCapture(task.id); state.detailFocus = nil
+                    try await snapshot(state, name: "redesign-task", mode: mode, output: output, height: size.height, width: size.width)
+                    state.openCapture(image.id); state.detailFocus = nil
+                    try await snapshot(state, name: "redesign-image", mode: mode, output: output, height: size.height, width: size.width)
+                }
+                state.openInbox(); state.convertToTask(image); state.status = nil
+                try await snapshotBuddyComponent(CaptureRow(state: state, capture: image, featured: false), name: "redesign-converted-card", mode: mode, output: output, width: 348, height: 480)
+                if state.canUndoTaskConversion { state.undoTaskConversion() }
+                try await snapshotBuddyComponent(ProjectPickerPanel(state: state, selectedProject: nil, allowsAll: true,
+                    allSelected: true, onSelect: { _, _ in }, onDismiss: {}), name: "redesign-project-picker", mode: mode, output: output, width: 320, height: 376)
+                try await snapshotBuddyComponent(ProjectPickerPanel(state: state, selectedProject: nil, startCreating: true,
+                    onSelect: { _, _ in }, onDismiss: {}), name: "redesign-project-create", mode: mode, output: output, width: 320, height: 180)
+                state.showSettings(); state.status = nil
+                try await snapshot(state, name: "redesign-settings", mode: mode, output: output, height: 680, width: 380)
+                state.openWeekly(); state.status = nil
+                try await snapshot(state, name: "redesign-weekly", mode: mode, output: output, height: 680, width: 760)
+            }
+            return
+        }
+        if explorerOnly {
+            state.openLibrary(); state.filter = .all
+            for capture in [image, link, task, completed] {
+                try store.setOrganization(capture, pinned: capture.isPinned, projectName: "Launch studio")
+            }
+            state.libraryProject = "Launch studio"
+            state.workspace.selectedCaptureID = image.id
+            for mode in ["light", "dark"] {
+                for size in [CGSize(width: 380, height: 430), CGSize(width: 380, height: 680),
+                             CGSize(width: 800, height: 680), CGSize(width: 1200, height: 900), CGSize(width: 1200, height: 430)] {
+                    state.status = nil
+                    state.workspace.explorerShowsDailyFiles = false
+                    try await snapshot(state, name: "explorer-files", mode: mode, output: output, height: size.height, width: size.width)
+                    state.workspace.explorerShowsDailyFiles = true
+                    try await snapshot(state, name: "explorer-daily-files", mode: mode, output: output, height: size.height, width: size.width)
+                }
+            }
+            return
+        }
+        if responsiveOnly {
+            for mode in ["light", "dark"] {
+                for size in [CGSize(width: 380, height: 430), CGSize(width: 760, height: 680),
+                             CGSize(width: 1200, height: 900), CGSize(width: 1200, height: 430)] {
+                    state.openCapture(image.id)
+                    state.detailFocus = nil
+                    state.status = nil
+                    try await snapshot(state, name: "responsive-image", mode: mode, output: output,
+                                       height: size.height, width: size.width)
+                    state.openCapture(task.id)
+                    state.detailFocus = nil
+                    try await snapshot(state, name: "responsive-task", mode: mode, output: output,
+                                       height: size.height, width: size.width)
+                    state.detailFocus = "comment"
+                    try await snapshot(state, name: "responsive-comment", mode: mode, output: output,
+                                       scrollToBottom: true, height: size.height, width: size.width)
+                }
+            }
+            return
+        }
         for mode in ["light", "dark"] {
             for width: CGFloat in [380, 720] {
                 state.openDaily()

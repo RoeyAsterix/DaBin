@@ -462,7 +462,10 @@ private final class WindowNotificationClient: ReminderNotificationClient {
                               modifierFlags: [], timestamp: 20, windowNumber: reopened.board.windowNumber,
                               context: nil, eventNumber: 2, clickCount: 1, pressure: 1)!
         }
-        let dragPointer = NSEvent.mouseLocation
+        // Inject the event's actual header location; the physical cursor may
+        // belong to a different display while this isolated suite is running.
+        let dragPointer = NSPoint(x: reopened.board.frame.midX, y: reopened.board.frame.maxY - 42)
+        expandedHandle.onDragStarted = { reopened.beginBoardDrag(pointer: dragPointer) }
         expandedHandle.mouseDown(with: reopenedDragEvent(.leftMouseDown, screenPoint: dragPointer))
         let normalDragStart = reopened.board.frame
         try expect(normalDragStart.size == userFrame.size && normalDragStart != resizeScreen.visibleFrame,

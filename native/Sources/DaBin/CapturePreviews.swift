@@ -47,27 +47,33 @@ private struct FittedPreviewImage: View {
 struct DetailPreview: View {
     let store: CaptureStore
     @ObservedObject var capture: Capture
+    var height: CGFloat? = nil
     var body: some View {
-        if let url = store.managedURL(for: capture), FileManager.default.fileExists(atPath: url.path) {
-            switch capture.kind {
-            case .image:
-                if let image = NSImage(contentsOf: url) {
-                    FittedPreviewImage(image: image).frame(height: 310)
-                        .background(Palette.soft).clipShape(RoundedRectangle(cornerRadius: 11)).accessibilityLabel(capture.title)
+        Group {
+            if let url = store.managedURL(for: capture), FileManager.default.fileExists(atPath: url.path) {
+                switch capture.kind {
+                case .image:
+                    if let image = NSImage(contentsOf: url) {
+                        FittedPreviewImage(image: image).frame(height: height ?? 310)
+                            .background(Palette.soft).clipShape(RoundedRectangle(cornerRadius: 11)).accessibilityLabel(capture.title)
+                    }
+                case .video: NativeVideo(url: url).frame(height: height ?? 280).clipShape(RoundedRectangle(cornerRadius: 11))
+                case .pdf: FittedPDFPreview(url: url).frame(height: height ?? 310).clipShape(RoundedRectangle(cornerRadius: 11))
+                case .document, .ai, .file:
+                    // Quick Look's embedded viewer has no public fit control. Its
+                    // cached page thumbnail gives compact previews a full-page fit;
+                    // Open original remains available for the complete document.
+                    CaptureThumbnail(store: store, capture: capture).frame(height: height ?? 280)
+                        .clipShape(RoundedRectangle(cornerRadius: 11))
+                default: EmptyView()
                 }
-            case .video: NativeVideo(url: url).frame(height: 280).clipShape(RoundedRectangle(cornerRadius: 11))
-            case .pdf: FittedPDFPreview(url: url).frame(height: 310).clipShape(RoundedRectangle(cornerRadius: 11))
-            case .document, .ai, .file:
-                // Quick Look's embedded viewer has no public fit control. Its
-                // cached page thumbnail gives compact previews a full-page fit;
-                // Open original remains available for the complete document.
-                CaptureThumbnail(store: store, capture: capture).frame(height: 280)
-                    .clipShape(RoundedRectangle(cornerRadius: 11))
-            default: EmptyView()
+            } else if capture.thumbnailRelativePath != nil {
+                CaptureThumbnail(store: store, capture: capture).frame(height: height ?? 250).clipShape(RoundedRectangle(cornerRadius: 11))
             }
-        } else if capture.thumbnailRelativePath != nil {
-            CaptureThumbnail(store: store, capture: capture).frame(height: 250).clipShape(RoundedRectangle(cornerRadius: 11))
         }
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel("Capture preview")
+        .accessibilityIdentifier("detail-preview")
     }
 }
 

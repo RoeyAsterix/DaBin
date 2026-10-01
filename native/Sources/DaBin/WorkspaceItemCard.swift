@@ -17,64 +17,67 @@ struct WorkspaceItemCard: View {
     private var isSelected: Bool { workspace.selectedCaptureID == capture.id }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 9) {
-            HStack(spacing: 6) {
-                CaptureSourceIcon(capture: capture, size: 15)
-                Text(WorkspaceQuery.sourceName(capture) ?? captureLinkHost(capture) ?? captureTypeLabel(capture.kind))
-                    .font(.system(size: 11)).foregroundStyle(Palette.muted).lineLimit(1)
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(alignment: .top, spacing: 4) {
+                CaptureTrailView(state: state, capture: capture)
                 Spacer(minLength: 0)
                 if capture.isPinned { Image(systemName: "pin.fill").font(.system(size: 10)).foregroundStyle(accent).accessibilityLabel("Pinned") }
                 BuddyIconButton(symbol: copied ? "checkmark" : "doc.on.doc", title: copied ? "Copied" : "Copy \(capture.title)") { copy() }
+                CaptureTrashButton(state: state, capture: capture)
             }
-            Button {
-                workspace.selectedCaptureID = capture.id
-                state.openCapture(capture.id)
-            } label: {
-                VStack(alignment: .leading, spacing: 8) {
-                    if !capture.isMinimized, ![CaptureKind.text, .task].contains(capture.kind) {
-                        CaptureThumbnail(store: state.store, capture: capture)
-                            .frame(height: workspace.mode == .clipboard ? 108 : 150)
-                            .clipShape(RoundedRectangle(cornerRadius: 10))
-                    }
-                    if let alias {
-                        Label(alias, systemImage: "text.badge.star")
-                            .font(.system(size: 12, weight: .semibold)).foregroundStyle(accent).lineLimit(2)
-                    }
-                    Text(capture.title.isEmpty ? "Untitled capture" : capture.title)
-                        .font(.system(size: 15, weight: .semibold)).foregroundStyle(Palette.foreground)
-                        .strikethrough(capture.isTask && capture.isCompleted)
-                        .lineLimit(capture.isMinimized ? 1 : 3)
-                    if !capture.isMinimized, capture.kind == .text,
-                       let content = capture.originalText, content.count > capture.title.count {
-                        Text(content).font(.system(size: 13)).foregroundStyle(Palette.muted).lineLimit(4)
-                    }
-                }.frame(maxWidth: .infinity, alignment: .leading).multilineTextAlignment(.leading).contentShape(Rectangle())
-            }.buttonStyle(.plain).accessibilityLabel("Open \(alias ?? capture.title)")
-                .accessibilityIdentifier("workspace-item-\(capture.id.uuidString)")
             HStack(spacing: 5) {
-                if let project = capture.projectName {
-                    Label(project, systemImage: "folder").font(.system(size: 11)).foregroundStyle(accent).lineLimit(1)
-                        .buddyHelp(project)
-                }
+                Text(captureTypeLabel(capture.kind)).lineLimit(1)
                 Spacer(minLength: 0)
-                Text("\(prettyDay(capture.captureDay, includeWeekday: false)) · \(captureClock(capture))")
-                    .font(.system(size: 11)).foregroundStyle(Palette.muted).lineLimit(1).fixedSize()
-            }
-            HStack(spacing: 4) {
+                Text("\(prettyDay(capture.captureDay, includeWeekday: false)) · \(captureClock(capture))").monospacedDigit().lineLimit(1)
+            }.font(.system(size: 11)).foregroundStyle(Palette.muted)
+            HStack(alignment: .top, spacing: 8) {
                 if capture.isTask { TaskStatusButton(state: state, capture: capture) }
-                else {
-                    Button("Task", systemImage: "checkmark.circle") { state.convertToTask(capture) }
-                        .buttonStyle(.plain).font(.system(size: 11, weight: .medium)).foregroundStyle(accent)
-                        .accessibilityLabel("Turn \(capture.title) into a task")
-                }
+                Button {
+                    workspace.selectedCaptureID = capture.id
+                    state.openCapture(capture.id)
+                } label: {
+                    VStack(alignment: .leading, spacing: 12) {
+                        if !capture.isMinimized, !capture.isTask, ![CaptureKind.text, .task].contains(capture.kind) {
+                            CaptureThumbnail(store: state.store, capture: capture)
+                                .frame(height: workspace.mode == .clipboard ? 164 : 208)
+                                .clipShape(RoundedRectangle(cornerRadius: 8))
+                        }
+                        if let alias {
+                            Label(alias, systemImage: "text.badge.star")
+                                .font(.system(size: 12, weight: .semibold)).foregroundStyle(accent).lineLimit(2)
+                        }
+                        if capture.isTask {
+                            Text(capture.isCompleted ? "COMPLETED" : "TASK")
+                                .font(.system(size: 10, weight: .medium)).tracking(0.7).foregroundStyle(Palette.muted)
+                        }
+                        Text(capture.title.isEmpty ? "Untitled capture" : capture.title)
+                            .font(.system(size: 16, weight: .semibold)).foregroundStyle(capture.isCompleted ? Palette.muted : Palette.foreground)
+                            .strikethrough(capture.isTask && capture.isCompleted)
+                            .lineLimit(capture.isMinimized ? 1 : 4)
+                        if !capture.isMinimized, !capture.isTask, capture.kind == .text,
+                           let content = capture.originalText, content.count > capture.title.count {
+                            Text(content).font(.system(size: 14)).foregroundStyle(Palette.muted).lineSpacing(3).lineLimit(4)
+                        }
+                    }.frame(maxWidth: .infinity, alignment: .leading).multilineTextAlignment(.leading).contentShape(Rectangle())
+                }.buttonStyle(.plain).accessibilityLabel("Open \(alias ?? capture.title)")
+                    .accessibilityIdentifier("workspace-item-\(capture.id.uuidString)")
+            }
+            if capture.isTask, !capture.isMinimized { TaskFocusControls(state: state, capture: capture) }
+            CaptureConversionUndo(state: state, capture: capture)
+            HStack(spacing: 4) {
+                CaptureProjectPickerButton(state: state, capture: capture)
                 Spacer(minLength: 0)
+                if !capture.isTask {
+                    CaptureTaskConversionButton(state: state, capture: capture)
+                    CaptureKeepButton(state: state, capture: capture)
+                }
                 BuddyIconButton(symbol: onShelf ? "tray.full.fill" : "tray.and.arrow.down", title: onShelf ? "Remove from shelf; keep capture" : "Add to shelf", isActive: onShelf) { toggleShelf() }
                 Menu { itemActions } label: {
-                    Image(systemName: "ellipsis").font(.system(size: 16, weight: .medium)).frame(width: 25, height: 28)
-                }.menuStyle(.borderlessButton).fixedSize().foregroundStyle(accent)
+                    Image(systemName: "ellipsis").font(.system(size: 16, weight: .medium)).frame(width: 32, height: 32)
+                }.menuStyle(.borderlessButton).menuIndicator(.hidden).fixedSize().foregroundStyle(Palette.muted)
                     .accessibilityLabel("Actions for \(capture.title)").buddyHelp("Item actions")
-            }
-        }.padding(12)
+            }.padding(.top, 8).overlay(alignment: .top) { Rectangle().fill(Palette.line).frame(height: 0.7) }
+        }.padding(16)
             .background(Palette.surface, in: RoundedRectangle(cornerRadius: 14))
             .overlay(RoundedRectangle(cornerRadius: 14).strokeBorder(isSelected ? accent.opacity(0.55) : Palette.line, lineWidth: isSelected ? 1 : 0.7))
             .contextMenu { itemActions }
@@ -139,6 +142,9 @@ struct WorkspaceItemCard: View {
             }
         }
         Divider()
+        Button(capture.isMinimized ? "Expand capture" : "Minimize capture", systemImage: capture.isMinimized ? "chevron.down" : "chevron.up") { state.toggleMinimized(capture) }
+        Button("Comment", systemImage: "text.bubble") { state.openCapture(capture.id, focus: "comment") }
+        Button("Reminder", systemImage: "bell") { state.openCapture(capture.id, focus: "reminder") }
         Button("Move to Recently Deleted…", systemImage: "trash", role: .destructive) { state.requestRemoval(capture) }
     }
 

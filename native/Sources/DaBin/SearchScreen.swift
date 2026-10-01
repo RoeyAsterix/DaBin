@@ -23,7 +23,7 @@ struct SearchScreen: View {
         VStack(spacing: 0) {
             HStack(spacing: 8) {
                 Text(state.query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? state.searchScopeTitle : "\(matchCount + noteMatches.count) matches · \(state.searchScopeTitle)")
-                    .font(.system(size: 12)).foregroundStyle(Palette.muted)
+                    .font(.system(size: 13)).foregroundStyle(Palette.muted)
                     .fixedSize(horizontal: false, vertical: true)
                     .accessibilityIdentifier("search-scope-summary")
                 Spacer(minLength: 0)
@@ -34,6 +34,9 @@ struct SearchScreen: View {
                     Button("All projects") { state.searchProject = nil }
                     ForEach(projectNames, id: \.self) { project in Button(project) { state.searchProject = project } }
                 } label: { Label(state.searchProject ?? "All projects", systemImage: "folder").lineLimit(1).truncationMode(.middle) }
+                    .padding(.horizontal, 9).frame(minHeight: 32)
+                    .background(Palette.surface, in: RoundedRectangle(cornerRadius: 8))
+                    .overlay(RoundedRectangle(cornerRadius: 8).strokeBorder(Palette.line, lineWidth: 0.75))
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .buddyHelp(state.searchProject ?? "Search all projects")
                     .accessibilityLabel("Search project: \(state.searchProject ?? "All projects")")
@@ -43,13 +46,16 @@ struct SearchScreen: View {
                         Button(source) { state.searchSource = source }
                     }
                 } label: { Label(state.searchSource ?? "All apps", systemImage: "app.dashed").lineLimit(1).truncationMode(.middle) }
+                    .padding(.horizontal, 9).frame(minHeight: 32)
+                    .background(Palette.surface, in: RoundedRectangle(cornerRadius: 8))
+                    .overlay(RoundedRectangle(cornerRadius: 8).strokeBorder(Palette.line, lineWidth: 0.75))
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .buddyHelp(state.searchSource ?? "Search all source apps")
                     .accessibilityLabel("Search source: \(state.searchSource ?? "All apps")")
-            }.menuStyle(.borderlessButton).fixedSize(horizontal: false, vertical: true).font(.system(size: 12))
+            }.menuStyle(.borderlessButton).fixedSize(horizontal: false, vertical: true).font(.system(size: 13))
                 .padding(.horizontal, 16).padding(.top, 8)
             Toggle("Show nearby captures", isOn: $state.showSearchContext)
-                .toggleStyle(.checkbox).font(.system(size: 11)).frame(maxWidth: .infinity, alignment: .leading)
+                .toggleStyle(.checkbox).font(.system(size: 12)).frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal, 16).padding(.vertical, 8)
                 .buddyHelp("Include captures saved immediately around each match")
             if let index = state.contentIndex, index.isBusy {
@@ -57,7 +63,7 @@ struct SearchScreen: View {
                     ProgressView().controlSize(.small)
                     Text("Making \(index.pendingCount) captures searchable…")
                     Spacer(minLength: 0)
-                }.font(.system(size: 11)).foregroundStyle(Palette.muted)
+                }.font(.system(size: 12)).foregroundStyle(Palette.muted)
                     .padding(.horizontal, 16).padding(.bottom, 7).accessibilityElement(children: .combine)
             }
             if state.query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
@@ -74,10 +80,10 @@ struct SearchScreen: View {
                         Button("Search all dates", systemImage: "calendar") { state.searchAllDates() }
                             .accessibilityIdentifier("search-all-dates")
                     }
-                }.buttonStyle(.plain).font(.system(size: 12)).foregroundStyle(accent).padding(.bottom, 14)
+                }.buttonStyle(.plain).font(.system(size: 13)).foregroundStyle(accent).padding(.bottom, 14)
             } else {
                 ScrollView {
-                    LazyVStack(alignment: .leading, spacing: 0) {
+                    LazyVStack(alignment: .leading, spacing: 10) {
                         ForEach(noteMatches, id: \.projectName) { note in
                             Button {
                                 state.libraryProject = note.projectName
@@ -86,13 +92,16 @@ struct SearchScreen: View {
                             } label: {
                                 VStack(alignment: .leading, spacing: 6) {
                                     Label("Scratchpad · \(note.projectName ?? "Inbox")", systemImage: "note.text")
-                                        .font(.system(size: 13, weight: .semibold))
-                                    Text(note.text).font(.system(size: 12)).lineLimit(3).foregroundStyle(Palette.muted)
-                                }.frame(maxWidth: .infinity, alignment: .leading).padding(.vertical, 12)
+                                        .font(.system(size: 14, weight: .semibold, design: .rounded))
+                                    Text(note.text).font(.system(size: 14)).lineSpacing(3).lineLimit(3).foregroundStyle(Palette.muted)
+                                }.frame(maxWidth: .infinity, alignment: .leading).padding(12)
+                                    .background(Palette.surface, in: RoundedRectangle(cornerRadius: 12))
+                                    .overlay(RoundedRectangle(cornerRadius: 12).strokeBorder(Palette.line, lineWidth: 0.75))
                             }.buttonStyle(.plain)
+                                .accessibilityLabel("Open \(note.projectName ?? "Inbox") scratchpad: \(note.text.prefix(80))")
                         }
                         ForEach(state.searchGroups) { group in
-                            Text(prettyDay(group.day)).font(.system(size: 12, weight: .medium))
+                            Text(prettyDay(group.day)).font(.system(size: 14, weight: .semibold, design: .rounded))
                                 .foregroundStyle(Palette.muted).padding(.top, 12).accessibilityAddTraits(.isHeader)
                             ForEach(group.entries) { entry in
                                 CaptureRow(state: state, capture: entry.capture, featured: false,

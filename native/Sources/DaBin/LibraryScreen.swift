@@ -7,8 +7,6 @@ struct LibraryScreen: View {
     @ObservedObject private var workspace: WorkspaceStore
     @StateObject private var shelfCapture: ShelfCaptureController
     @Environment(\.daBinAccent) private var accent
-    @State private var showingProjectName = false
-    @State private var newProjectName = ""
     @State private var targeted = false
     @State private var exporting = false
 
@@ -31,7 +29,8 @@ struct LibraryScreen: View {
     private var applications: [String] { Set(state.store.captures.compactMap(WorkspaceQuery.sourceName)).sorted() }
     private var shelfItems: [Capture] {
         state.store.captures.filter { workspace.shelfCaptureIDs.contains($0.id)
-            && (state.libraryProject == nil || $0.projectName == state.libraryProject) }
+            && (state.libraryProject == nil || $0.projectName == state.libraryProject)
+            && (!workspace.explorerUnfiledOnly || state.libraryProject != nil || $0.projectName == nil) }
             .sorted { $0.capturedAt < $1.capturedAt }
     }
     private var hasMetadataFilters: Bool {
@@ -48,41 +47,16 @@ struct LibraryScreen: View {
             }
             if workspace.mode == .scratchpad {
                 ScratchpadView(state: state, workspace: workspace)
+            } else if workspace.mode == .collection {
+                ExplorerScreen(state: state)
             } else {
                 itemList
             }
         }
-        .alert("New project", isPresented: $showingProjectName) {
-            TextField("Client or project name", text: $newProjectName)
-            Button("Cancel", role: .cancel) { newProjectName = "" }
-            Button("Create") { createProject() }
-                .disabled(newProjectName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
-        } message: { Text("Keep related captures, tasks and notes together. You can file items later.") }
     }
 
     private var controls: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            HStack(spacing: 8) {
-                Menu {
-                    Button("All projects", systemImage: "square.stack.3d.up") { state.libraryProject = nil }
-                    ForEach(projects, id: \.self) { project in
-                        Button(project, systemImage: "folder") { state.libraryProject = project }
-                    }
-                    Divider()
-                    Button("New project…", systemImage: "folder.badge.plus") { showingProjectName = true }
-                } label: {
-                    Label(state.libraryProject ?? "All projects", systemImage: "folder")
-                        .font(.system(size: 14, weight: .semibold)).lineLimit(1)
-                }.menuStyle(.borderlessButton).frame(maxWidth: .infinity, alignment: .leading)
-                    .accessibilityLabel("Project, \(state.libraryProject ?? "all projects")")
-                    .accessibilityIdentifier("workspace-project-picker")
-                    .buddyHelp(state.libraryProject ?? "Show captures from all projects")
-                if workspace.mode != .scratchpad {
-                    Text("\(items.count) \(items.count == 1 ? "item" : "items")")
-                        .font(.system(size: 11)).foregroundStyle(Palette.muted).fixedSize()
-                }
-                BuddyIconButton(symbol: "folder.badge.plus", title: "Create project") { showingProjectName = true }
-            }
+        VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 4) {
                 ForEach(WorkspaceMode.allCases) { mode in
                     Button { workspace.mode = mode } label: {
@@ -92,14 +66,15 @@ struct LibraryScreen: View {
                         }.frame(maxWidth: .infinity, minHeight: 32)
                             .contentShape(RoundedRectangle(cornerRadius: 10))
                     }.buttonStyle(.plain)
-                        .foregroundStyle(workspace.mode == mode ? accent : Palette.muted)
-                        .background(workspace.mode == mode ? accent.opacity(0.1) : .clear, in: RoundedRectangle(cornerRadius: 10))
-                        .overlay(RoundedRectangle(cornerRadius: 10).strokeBorder(workspace.mode == mode ? accent.opacity(0.28) : .clear))
+                        .foregroundStyle(workspace.mode == mode ? Palette.foreground : Palette.muted)
+                        .background(workspace.mode == mode ? Palette.surface : .clear, in: RoundedRectangle(cornerRadius: 7))
+                        .overlay(RoundedRectangle(cornerRadius: 7).strokeBorder(workspace.mode == mode ? Palette.line : .clear, lineWidth: 0.6))
                         .accessibilityLabel(mode.title).accessibilityIdentifier("workspace-mode-\(mode.rawValue)")
                         .accessibilityAddTraits(workspace.mode == mode ? .isSelected : [])
                         .buddyHelp(mode == .scratchpad ? "Autosaving notes for this project" : "Open \(mode.title)")
                 }
             }
+            .padding(3).background(Palette.soft, in: RoundedRectangle(cornerRadius: 9))
             if workspace.mode != .scratchpad {
                 HStack(spacing: 4) {
                     ForEach(CaptureFilter.allCases) { filter in
@@ -237,15 +212,6 @@ struct LibraryScreen: View {
     }
 
     private func clearFilters() { workspace.dateFilter = .anytime; workspace.sourceApplication = nil; workspace.originFilter = .all }
-    private func createProject() {
-        let name = String(newProjectName.trimmingCharacters(in: .whitespacesAndNewlines).prefix(120))
-        guard !name.isEmpty else { return }
-        do {
-            if !projects.contains(name) { try workspace.setScratchpad(text: "", project: name) }
-            state.libraryProject = name
-            newProjectName = ""
-        } catch { state.reportFailure(error.localizedDescription) }
-    }
     private func exportShelf() {
         do {
             let entries = try ShelfExport.entries(for: shelfItems, store: state.store)

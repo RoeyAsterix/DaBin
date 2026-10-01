@@ -59,7 +59,7 @@ import CryptoKit
         try store!.moveToTrash(file)
         try expect(store!.captures.isEmpty && store!.trashedCaptures.count == 1, "Trash leaves active captures")
         try expect(file.reminderRevision > oldRevision && file.deletedAt != nil, "Trash invalidates delayed notification schedules")
-        try expect(try contents(original) == bytes, "Trash preserves saved original bytes")
+        try expect(try contents(store!.managedURL(for: store!.trashedCaptures[0])!) == bytes, "Trash preserves saved original bytes in its owned recovery folder")
         try rejected({ try store!.save(captures: [file]) }, "Stale service saves cannot revive trash")
         try rejected({ try store!.setOrganization(file, pinned: false, projectName: nil) }, "Stale organization edit is rejected")
         file.comment = "late stale worker mutation"
@@ -87,8 +87,8 @@ import CryptoKit
         try rejected({ try store!.setOrganization(restored, pinned: false, projectName: "Different") }, "Organization failure throws")
         try expect(restored.isPinned && restored.projectName == project, "Organization failure rolls back")
         store!.failureInjector = nil
-        try store!.setOrganization(restored, pinned: true, projectName: String(repeating: "x", count: 150))
-        try expect(restored.projectName?.count == 120, "Project names are bounded")
+        try store!.setOrganization(restored, pinned: true, projectName: String(repeating: "x", count: 200))
+        try expect(restored.projectName?.count == 180, "Project names are bounded to the shared 180-character policy")
         try store!.moveToTrash(restored)
         _ = try store!.permanentlyRemove(store!.trashedCaptures[0])
         try expect(store!.trashedCaptures.isEmpty && !files.fileExists(atPath: original.path), "Explicit permanent removal cleans trash originals")

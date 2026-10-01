@@ -13,14 +13,14 @@ import subprocess
 import time
 from project_inventory import ROOT, TARGET, sources, resources, hashes, fingerprint
 
-NONFOCUS = ["QuickAccessTests", "ProductFoundationTests", "ConnectedWorkflowTests", "WorkInboxTests", "WorkspaceTests", "ManualCaptureLifecycleTests", "ArchiveRecoveryTests", "ArchiveBackupTests", "ThemeSettingsTests", "PrivacyInformationTests", "DomainTests", "ArchiveLayoutTests",
+NONFOCUS = ["ProjectFileArchiveTests", "ExplorerTransferTests", "ExplorerQueryTests", "CaptureProvenanceTests", "TaskFocusTests", "ProjectPickerTests", "QuickAccessTests", "ProductFoundationTests", "ConnectedWorkflowTests", "WorkInboxTests", "WorkspaceTests", "ManualCaptureLifecycleTests", "ArchiveRecoveryTests", "ArchiveBackupTests", "ThemeSettingsTests", "PrivacyInformationTests", "DomainTests", "ArchiveLayoutTests",
             "ArchiveStoreTests", "DeferredArchiveRepairTests", "RepositoryBatchTests", "CaptureRemovalTests", "ServiceTests", "QAStorageScopedSaveTests",
             "QALifecycleTests", "ApplicationLifecycleTests", "PreviewLifecycleTests", "TaskStateTests", "TaskPlanningTests", "CaptureActionTests",
             "CaptureClipboardTests", "ClipboardRetentionTests", "CaptureTaskConversionTests",
             "LocalContentSearchTests",
             "HourlyGroupingTests", "DayExportTests", "DayExportUITests", "WeeklyStateTests", "InputTests", "AutoCaptureServiceTests", "AutoCaptureRobotPresenterTests", "AutoCaptureRobotCelebrationTests",
             "SoftwareUpdateTests", "UpdateConfigurationTests", "RobotMotionTests", "IslandRobotChoreographyTests", "RobotLifecycleTests", "RobotAppFrameTests"]
-WINDOW = ["WindowTests", "WeeklyWindowTests", "FilterResizeTests", "RobotDropTests", "DailyCaptureTests", "HeaderInteractionTests", "WorkspaceWindowTests", "RobotWindowTransitionTests"]
+WINDOW = ["RedesignInteractionTests", "WindowResizeInteractionTests", "WindowTests", "WeeklyWindowTests", "FilterResizeTests", "RobotDropTests", "DailyCaptureTests", "HeaderInteractionTests", "WorkspaceWindowTests", "RobotWindowTransitionTests"]
 MODULE = "DaBinTestCore"
 
 

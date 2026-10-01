@@ -37,14 +37,20 @@ struct GroupedCaptureCard: View {
             }
 
             HStack {
-                Button(group.isMinimized ? "Show items" : "Collapse") { state.toggleMinimized(group.captures) }
+                Button { state.toggleMinimized(group.captures) } label: {
+                    Label(group.isMinimized ? "Show items" : "Collapse", systemImage: group.isMinimized ? "chevron.down" : "minus")
+                        .frame(minHeight: 32)
+                }.accessibilityLabel(group.isMinimized ? "Expand batch items" : "Collapse batch items")
                 Spacer(minLength: 0)
+                BuddyIconButton(symbol: "trash", title: "Move batch to Recently Deleted") { confirmsRemoval = true }
+                    .accessibilityIdentifier("capture-trash-batch-\(primary.id.uuidString)")
+                    .disabled(state.removingCaptureID != nil || state.isArchiveOperationRunning)
                 Menu {
                     Button(primary.comment.isEmpty ? "Add note" : "Edit note", systemImage: "text.bubble") { state.openCapture(primary.id, focus: "comment") }
                     Button(primary.reminderAt == nil ? "Add reminder" : "Edit reminder", systemImage: "clock") { state.openCapture(primary.id, focus: "reminder") }
                     Divider()
                     Button("Move batch to Recently Deleted", systemImage: "trash", role: .destructive) { confirmsRemoval = true }
-                } label: { Image(systemName: "ellipsis").frame(width: 28, height: 28) }
+                } label: { Image(systemName: "ellipsis").frame(width: 32, height: 32) }
                 .menuStyle(.borderlessButton).menuIndicator(.hidden).fixedSize().accessibilityLabel("More batch actions").buddyHelp("More batch actions")
             }.font(.system(size: 11)).buttonStyle(.plain).foregroundStyle(accent)
 
@@ -53,11 +59,11 @@ struct GroupedCaptureCard: View {
                     .font(.system(size: 11)).foregroundStyle(Palette.muted)
             }
         }
-        .padding(compact ? 9 : 11)
-        .background(Palette.soft.opacity(compact ? 0.58 : 0.46),
-                    in: RoundedRectangle(cornerRadius: 12, style: .continuous))
-        .overlay(RoundedRectangle(cornerRadius: 12, style: .continuous)
-            .strokeBorder(accent.opacity(0.24), lineWidth: 0.75))
+        .padding(compact ? 6 : 16)
+        .background(Palette.surface,
+                    in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+        .overlay(RoundedRectangle(cornerRadius: 14, style: .continuous)
+            .strokeBorder(Palette.line, lineWidth: 0.7))
         .padding(.vertical, compact ? 0 : 6)
         .alert("Move this batch to Recently Deleted?", isPresented: $confirmsRemoval) {
             Button("Cancel", role: .cancel) { }
@@ -101,7 +107,7 @@ struct GroupedCaptureCard: View {
             HStack(alignment: .top, spacing: 9) {
                 batchSymbol(size: 15, width: 22)
                 VStack(alignment: .leading, spacing: 3) {
-                    Text(title).font(.system(size: 15, weight: .semibold))
+                    Text(title).font(.system(size: 16, weight: .semibold))
                     if group.isMinimized {
                         Text(group.captures.map(\.title).joined(separator: " · "))
                             .font(.system(size: 10)).foregroundStyle(Palette.muted).lineLimit(1)
@@ -152,6 +158,11 @@ private struct GroupedCaptureItem: View {
     let compact: Bool
 
     var body: some View {
+        if compact { compactContent }
+        else { CaptureRow(state: state, capture: capture, featured: false, embeddedInCard: true).padding(8) }
+    }
+
+    private var compactContent: some View {
         VStack(alignment: .leading, spacing: 5) {
             Button { state.openCapture(capture.id) } label: {
                 VStack(alignment: .leading, spacing: 8) {
@@ -183,11 +194,22 @@ private struct GroupedCaptureItem: View {
             .buttonStyle(.plain)
             .accessibilityLabel("Open \(capture.title), \(capture.isTask ? "Task" : captureTypeLabel(capture.kind))")
             if capture.isTask {
-                TaskStatusButton(state: state, capture: capture)
-                    .padding(.leading, compact ? 43 : 54)
+                HStack {
+                    TaskStatusButton(state: state, capture: capture)
+                    Spacer(minLength: 0)
+                    CaptureTrashButton(state: state, capture: capture)
+                }
+                TaskFocusControls(state: state, capture: capture)
+            } else {
+                HStack(spacing: 2) {
+                    CaptureTaskConversionButton(state: state, capture: capture)
+                    Spacer(minLength: 0)
+                    CaptureCopyButton(state: state, captures: [capture], compact: true)
+                    CaptureTrashButton(state: state, capture: capture)
+                }
             }
         }
-        .padding(.horizontal, compact ? 7 : 9).padding(.vertical, compact ? 6 : 7)
+        .padding(.horizontal, compact ? 1 : 9).padding(.vertical, compact ? 6 : 7)
         .contextMenu {
             CaptureTaskConversionMenu(state: state, capture: capture)
         }

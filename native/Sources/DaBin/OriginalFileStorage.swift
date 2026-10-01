@@ -68,9 +68,15 @@ enum OriginalFileStorage {
         defer { try? handle.close() }
         var hasher = SHA256()
         var size: Int64 = 0
-        while let data = try handle.read(upToCount: 1_048_576), !data.isEmpty {
+        while try autoreleasepool(invoking: {
+            // FileHandle may return an autoreleased Foundation buffer. Release
+            // each chunk before the next read, including when several complete
+            // integrity checks run in one main-actor project move.
+            guard let data = try handle.read(upToCount: 1_048_576), !data.isEmpty else { return false }
             hasher.update(data: data)
             size += Int64(data.count)
+            return true
+        }) {
         }
         return OriginalVerification(byteCount: size, sha256: hasher.finalize().map { String(format: "%02x", $0) }.joined())
     }

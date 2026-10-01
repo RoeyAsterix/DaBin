@@ -217,7 +217,7 @@ private enum HeaderInteractionTests {
                    "Own-process accessibility activation succeeds (AX error \(accessibilityActivation.rawValue))")
         settle()
 
-        for id in ["primary-inbox", "primary-today", "primary-workspace", "board-search", "timeline-action-add", "board-more", "board-settings", "timeline-auto-capture", "window-expand", "window-close"] {
+        for id in ["primary-inbox", "primary-today", "primary-workspace", "primary-activity", "board-search", "timeline-action-add", "board-more", "board-settings", "timeline-auto-capture", "window-expand", "window-close"] {
             let control = try element(hosting, identifier: id)
             let frame = control.accessibilityFrame()
             try expect(frame.width > 0 && frame.height > 0, "\(id) has an accessible visible target")
@@ -230,7 +230,7 @@ private enum HeaderInteractionTests {
         // Keep search one action away without reserving an unused field row.
         let toolbarIDs = ["timeline-auto-capture", "timeline-action-add", "board-search", "board-settings", "board-more", "window-expand", "window-close"]
         let menuIDs: Set<String> = ["timeline-action-add", "board-more"]
-        let primaryIDs = ["primary-inbox", "primary-today", "primary-workspace"]
+        let primaryIDs = ["primary-inbox", "primary-today", "primary-workspace", "primary-activity"]
         for layoutSize in [NSSize(width: 380, height: 430), size, NSSize(width: 760, height: 760)] {
             hosting.rootView = BoardView(state: state, theme: theme)
                 .frame(width: layoutSize.width, height: layoutSize.height)
@@ -281,7 +281,7 @@ private enum HeaderInteractionTests {
         hosting.rootView = BoardView(state: state, theme: theme).frame(width: size.width, height: size.height)
         window.setContentSize(size); hosting.frame = NSRect(origin: .zero, size: size); settle()
         try expect(state.route == .inbox, "Initial route is the capture Inbox")
-        try press(hosting, identifier: "inbox-activity")
+        try press(hosting, identifier: "primary-activity")
         try expect(state.route == .daily, "Inbox Activity opens the calendar without changing primary navigation")
         var filterFrames: [NSRect] = []
         for filter in CaptureFilter.allCases {
@@ -339,7 +339,7 @@ private enum HeaderInteractionTests {
         try expect(state.route == .reminders, "Today tab opens task planning")
         try press(hosting, identifier: "primary-inbox")
         try expect(state.route == .inbox, "Inbox tab returns to capture and triage")
-        try press(hosting, identifier: "inbox-activity")
+        try press(hosting, identifier: "primary-activity")
         try expect(state.route == .daily && Calendar.current.isDateInToday(state.selectedDay), "Activity starts at the current receipt day")
 
         let existingWindows = Set(application.windows.filter(\.isVisible).map(\.windowNumber))

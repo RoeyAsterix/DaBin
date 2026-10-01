@@ -131,15 +131,14 @@ struct TodayPlanningScreen: View {
                             }
                         }.buttonStyle(.plain).font(.system(size: 12)).foregroundStyle(accent)
                     }
-                }.padding(10).background(Palette.surface, in: RoundedRectangle(cornerRadius: 13))
-                    .overlay(RoundedRectangle(cornerRadius: 13).strokeBorder(Palette.line, lineWidth: 0.7))
+                }.padding(16).background(Palette.surface, in: RoundedRectangle(cornerRadius: 14))
+                    .overlay(RoundedRectangle(cornerRadius: 14).strokeBorder(Palette.line, lineWidth: 0.7))
             }
         }
     }
     private func plan(_ task: Capture, offset: Int) {
         guard let day = Calendar.current.date(byAdding: .day, value: offset, to: Date()) else { return }
-        do { try state.store.planTask(task, on: CaptureCalendar.dayString(day)) }
-        catch { state.reportFailure(error.localizedDescription) }
+        state.scheduleTask(task, day: CaptureCalendar.dayString(day), time: task.taskPlanning?.plannedTime)
     }
     private func move(_ index: Int, by delta: Int) {
         var ordered = planned

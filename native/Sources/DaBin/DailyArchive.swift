@@ -246,13 +246,30 @@ import CryptoKit
                      "- Captured instant: \(iso.string(from: capture.capturedAt))", "- ID: \(capture.id.uuidString)"]
         if capture.isTask { lines.append("- Status: \(capture.isCompleted ? "Completed" : "Task")") }
         lines.append("- Capture origin: \(capture.captureOrigin.displayName)")
+        if let plan = capture.taskPlanning {
+            if let day = plan.plannedDay { lines.append("- Planned day: \(day)") }
+            if let time = plan.plannedTime { lines.append("- Planned local time: \(time)") }
+            if let minutes = plan.effortMinutes { lines.append("- Focus duration: \(minutes) minutes") }
+            if let focus = plan.focusSession {
+                lines.append("- Focus remaining at last transition: \(TaskFocusSession.clock(focus.remainingSeconds))")
+                if let end = focus.endAt { lines.append("- Focus ends: \(iso.string(from: end))") }
+            }
+        }
+        for event in capture.pasteHistory.sorted(by: { $0.recordedAt < $1.recordedAt }) {
+            lines.append("- Paste destination: \(singleLine(event.applicationName)) · \(iso.string(from: event.recordedAt)) · \(event.evidence.title)")
+        }
         if let actionID = capture.automaticActionID { lines.append("- Automatic action ID: \(actionID.uuidString)") }
         if let application = capture.sourceApplicationName { lines.append("- Source application: \(singleLine(application))") }
         if let bundle = capture.sourceApplicationBundleIdentifier { lines.append("- Source application bundle: \(singleLine(bundle))") }
         if let original = capture.originalFilename { lines.append("- Original filename: \(singleLine(original))") }
         if let path = capture.attachmentRelativePath { lines.append("- Local original: \(singleLine(path))") }
         if let path = capture.sourceFilePath { lines.append("- Source path: \(singleLine(path))") }
-        if let url = capture.sourceURL { lines.append("- Source URL: \(singleLine(url))") }
+        if let url = capture.sourceURL {
+            // Older link receipts also store their target as sourceURL. Keep
+            // those bytes without claiming that the target was the origin.
+            let label = url == capture.originalURL ? "Captured link" : "Source URL"
+            lines.append("- \(label): \(singleLine(url))")
+        }
         if capture.sourceFilePath == nil && capture.sourceURL == nil { lines.append("- Source location: Not supplied") }
         if let reminder = capture.reminderAt {
             lines.append("- Reminder: \(iso.string(from: reminder))")

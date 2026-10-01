@@ -1,6 +1,25 @@
 import AppKit
 import SwiftUI
 
+/// Size from the visible viewport, never from the unbounded scroll content.
+/// Resizing changes metrics without replacing editors, playback, or PDF state.
+struct DetailLayout {
+    let viewport: CGSize
+    var horizontalInset: CGFloat { min(24, max(16, 16 + (viewport.width - 380) * 0.025)) }
+    var contentWidth: CGFloat { max(0, viewport.width - horizontalInset * 2) }
+    // Reserve the title/action area in short windows; enlarging the viewport
+    // then gives that space back to the fitted media instead of a fixed box.
+    var previewHeight: CGFloat { max(100, min(viewport.height - 170, contentWidth * 0.85)) }
+    var commentHeight: CGFloat { min(260, max(108, viewport.height * 0.25)) }
+    var titleSize: CGFloat { min(28, max(21, 21 + (viewport.width - 380) / 110)) }
+    var bodySize: CGFloat { min(17, max(15, 15 + (viewport.width - 380) / 360)) }
+    var usesTaskColumns: Bool { contentWidth >= 860 }
+    var sectionSpacing: CGFloat { usesTaskColumns ? 20 : 14 }
+    private var taskColumnWidth: CGFloat { usesTaskColumns ? (contentWidth - sectionSpacing) / 2 : contentWidth }
+    var attachmentMinimumWidth: CGFloat { min(220, max(125, taskColumnWidth * 0.3)) }
+    var attachmentHeight: CGFloat { min(200, max(100, taskColumnWidth * 0.28)) }
+}
+
 @MainActor
 struct DetailScreen: View {
     @Environment(\.daBinAccent) private var accent
@@ -9,107 +28,127 @@ struct DetailScreen: View {
     @ObservedObject var draft: CaptureDraft
     @FocusState private var focusedField: String?
     @State private var copiedSearchableText = false
-    @State private var projectDraft = ""
     @State private var showingProjectEditor = false
     @State private var taskExpanded = true
     @State private var infoExpanded = false
     @State private var noteExpanded = false
     @State private var reminderExpanded = false
+    @State private var originalExpanded = false
+    @State private var sourceExpanded = false
 
     var body: some View {
         VStack(spacing: 0) {
-            ScrollViewReader { proxy in
-                ScrollView {
-                    VStack(alignment: .leading, spacing: 14) {
-                        HStack(alignment: .top, spacing: 8) {
-                            VStack(alignment: .leading, spacing: 6) {
-                                Text(capture.title).font(.system(size: 21, weight: .semibold))
-                                    .textSelection(.enabled).fixedSize(horizontal: false, vertical: true)
-                                Button { state.showCaptureDay(capture) } label: {
-                                    Label("\(prettyDay(capture.captureDay)) · \(captureClock(capture))", systemImage: "calendar")
-                                }.font(.system(size: 11)).buttonStyle(.plain).foregroundStyle(Palette.muted).buddyHelp("Show original capture day")
+            GeometryReader { geometry in
+                let layout = DetailLayout(viewport: geometry.size)
+                ScrollViewReader { proxy in
+                    ScrollView {
+                        VStack(alignment: .leading, spacing: layout.sectionSpacing) {
+                            HStack(alignment: .top, spacing: 8) {
+                                if capture.isTask { TaskStatusButton(state: state, capture: capture) }
+                                VStack(alignment: .leading, spacing: 8) {
+                                    if capture.isTask {
+                                        Text(capture.isCompleted ? "COMPLETED" : "TASK")
+                                            .font(.system(size: 10, weight: .medium)).tracking(0.8).foregroundStyle(Palette.muted)
+                                    }
+                                    if capture.isTask {
+                                        TextField("Task title", text: $draft.title, axis: .vertical)
+                                            .textFieldStyle(.plain).font(.system(size: layout.titleSize, weight: .semibold, design: .rounded))
+                                            .lineLimit(1...6).fixedSize(horizontal: false, vertical: true)
+                                            .accessibilityLabel("Task title").accessibilityIdentifier("detail-title")
+                                            .focused($focusedField, equals: "title")
+                                            .onChange(of: draft.title) { _, _ in draft.message = nil }
+                                    } else {
+                                        Text(capture.title).font(.system(size: layout.titleSize, weight: .semibold, design: .rounded))
+                                            .accessibilityIdentifier("detail-title")
+                                            .textSelection(.enabled).fixedSize(horizontal: false, vertical: true)
+                                    }
+                                    Button { state.showCaptureDay(capture) } label: {
+                                        Label("\(prettyDay(capture.captureDay)) · \(captureClock(capture))", systemImage: "calendar")
+                                    }.font(.system(size: 11)).buttonStyle(.plain).foregroundStyle(Palette.muted).buddyHelp("Show original capture day")
+                                }.frame(maxWidth: .infinity, alignment: .leading)
                             }
-                            Spacer(minLength: 0)
-                            if capture.isTask { TaskStatusButton(state: state, capture: capture) }
-                        }
-                        actionRail
-                        DetailPreview(store: state.store, capture: capture)
-                        if let text = capture.originalText, !text.isEmpty, capture.kind == .text || capture.kind == .task {
-                            if text != capture.title {
-                                Text(text).font(.system(size: 15)).lineSpacing(5).textSelection(.enabled)
-                                    .frame(maxWidth: .infinity, alignment: .leading).fixedSize(horizontal: false, vertical: true)
-                            }
-                        } else if !capture.previewDescription.isEmpty {
-                            Text(capture.previewDescription).font(.system(size: 13)).foregroundStyle(Palette.muted).textSelection(.enabled)
-                        }
-                        CaptureSourceView(capture: capture)
-                        if let parent = capture.parentTaskID {
-                            Button { state.openCapture(parent, focus: "task") } label: { Label("Back to task", systemImage: "arrow.turn.up.left") }
-                                .buttonStyle(.plain).foregroundStyle(accent).font(.system(size: 12))
-                        }
-                        if capture.isTask {
-                            DisclosureGroup(isExpanded: $taskExpanded) {
-                                TaskPlanningEditor(planning: $draft.planning).padding(.top, 8)
-                                if let previous = capture.taskPlanning?.previousOccurrenceID {
-                                    Button("Previous occurrence", systemImage: "arrow.counterclockwise") { state.openCapture(previous) }
-                                        .buttonStyle(.plain).font(.system(size: 12))
+                            CaptureTrailView(state: state, capture: capture, compact: false)
+                            actionRail
+                            CaptureConversionUndo(state: state, capture: capture)
+                            if capture.isTask {
+                                TaskFocusControls(state: state, capture: capture, compact: false)
+                                DisclosureGroup(isExpanded: $taskExpanded) {
+                                    taskWorkspace(layout: layout).padding(.top, 12)
+                                } label: {
+                                    Label(capture.isCompleted ? "Nicely done" : "Task workspace", systemImage: capture.isCompleted ? "checkmark.seal.fill" : "checklist")
+                                        .font(.system(size: 13, weight: .semibold)).foregroundStyle(Palette.foreground)
+                                }.id("task").accessibilityIdentifier("task-workspace")
+                                DisclosureGroup(isExpanded: $originalExpanded) {
+                                    originalContent(layout: layout).padding(.top, 12)
+                                } label: {
+                                    Label("Original capture · \(captureTypeLabel(capture.kind))", systemImage: "doc.text")
+                                        .font(.system(size: 12, weight: .medium))
                                 }
-                                TaskAttachmentsView(state: state, task: capture).padding(.top, 8)
+                            } else {
+                                originalContent(layout: layout)
+                            }
+                            DisclosureGroup(isExpanded: $sourceExpanded) {
+                                CaptureSourceView(capture: capture).padding(.top, 8)
                             } label: {
-                                Label(capture.isCompleted ? "Nicely done" : "Task workspace", systemImage: capture.isCompleted ? "checkmark.seal.fill" : "checklist")
-                                    .font(.system(size: 13, weight: .semibold))
-                                    .foregroundStyle(capture.isCompleted ? Palette.completed : accent)
-                            }.id("task").accessibilityIdentifier("task-workspace")
+                                Label("Source details", systemImage: "arrow.triangle.branch")
+                                    .font(.system(size: 12, weight: .medium))
+                            }
+                            if let parent = capture.parentTaskID {
+                                Button { state.openCapture(parent, focus: "task") } label: { Label("Back to task", systemImage: "arrow.turn.up.left") }
+                                    .buttonStyle(.plain).foregroundStyle(accent).font(.system(size: 12))
+                            }
+                            if showingProjectEditor { organization.id("project") }
+                            DisclosureGroup(isExpanded: $noteExpanded) { commentField(height: layout.commentHeight).padding(.top, 8) } label: {
+                                Label(capture.comment.isEmpty ? "Comment" : "Comment · saved", systemImage: "text.bubble")
+                                    .font(.system(size: 12, weight: .medium))
+                            }.id("comment")
+                            DisclosureGroup(isExpanded: $reminderExpanded) { reminderField.padding(.top, 8) } label: {
+                                Label(capture.reminderAt?.formatted(date: .abbreviated, time: .shortened) ?? "Reminder", systemImage: "clock")
+                                    .font(.system(size: 12, weight: .medium))
+                            }.id("reminder")
+                            DisclosureGroup(isExpanded: $infoExpanded) {
+                                VStack(alignment: .leading, spacing: 12) {
+                                    if let error = capture.previewError, !error.isEmpty {
+                                        Label(error, systemImage: "info.circle").font(.system(size: 12)).foregroundStyle(Palette.muted)
+                                    }
+                                    if ContentIndexService.isEligible(capture.kind) { searchableText }
+                                    if capture.kind != .task { original }
+                                }.padding(.top, 8)
+                            } label: {
+                                Label("File & recognized text", systemImage: "doc.text.magnifyingglass").font(.system(size: 12))
+                            }
+                            if let serviceStatus = state.reminders.status {
+                                Text(serviceStatus).font(.system(size: 12)).foregroundStyle(Palette.muted).fixedSize(horizontal: false, vertical: true)
+                            }
+                            if let reminder = capture.reminderAt, !(capture.isTask && capture.isCompleted), reminder > Date(), !["scheduled", "delivered"].contains(capture.notificationState) {
+                                Button("Retry notification", systemImage: "bell.badge") { state.retryReminder(capture) }
+                                    .buttonStyle(.plain).font(.system(size: 12)).foregroundStyle(accent)
+                            }
+                        }.padding(.horizontal, layout.horizontalInset).padding(.vertical, 16)
+                            .frame(width: max(0, geometry.size.width), alignment: .leading)
+                            .accessibilityElement(children: .contain)
+                            .accessibilityIdentifier("detail-content")
+                    }.onAppear {
+                        noteExpanded = !capture.comment.isEmpty || draft.hasChanges
+                        reminderExpanded = draft.reminderEnabled
+                        if let target = state.detailFocus {
+                            noteExpanded = noteExpanded || target == "comment"
+                            reminderExpanded = reminderExpanded || target == "reminder"
+                            if target == "project" { showingProjectEditor = true }
+                            proxy.scrollTo(target, anchor: .top)
+                            focusedField = target
                         }
-                        if showingProjectEditor || capture.projectName != nil { organization.id("project") }
-                        DisclosureGroup(isExpanded: $noteExpanded) { commentField.padding(.top, 8) } label: {
-                            Label(capture.comment.isEmpty ? "Comment" : "Comment · saved", systemImage: "text.bubble")
-                                .font(.system(size: 12, weight: .medium))
-                        }.id("comment")
-                        DisclosureGroup(isExpanded: $reminderExpanded) { reminderField.padding(.top, 8) } label: {
-                            Label(capture.reminderAt?.formatted(date: .abbreviated, time: .shortened) ?? "Reminder", systemImage: "clock")
-                                .font(.system(size: 12, weight: .medium))
-                        }.id("reminder")
-                        DisclosureGroup(isExpanded: $infoExpanded) {
-                            VStack(alignment: .leading, spacing: 12) {
-                                if let error = capture.previewError, !error.isEmpty {
-                                    Label(error, systemImage: "info.circle").font(.system(size: 12)).foregroundStyle(Palette.muted)
-                                }
-                                if ContentIndexService.isEligible(capture.kind) { searchableText }
-                                if capture.kind != .task { original }
-                            }.padding(.top, 8)
-                        } label: {
-                            Label("File & recognized text", systemImage: "doc.text.magnifyingglass").font(.system(size: 12))
-                        }
-                        if let serviceStatus = state.reminders.status {
-                            Text(serviceStatus).font(.system(size: 12)).foregroundStyle(Palette.muted).fixedSize(horizontal: false, vertical: true)
-                        }
-                        if let reminder = capture.reminderAt, !(capture.isTask && capture.isCompleted), reminder > Date(), !["scheduled", "delivered"].contains(capture.notificationState) {
-                            Button("Retry notification", systemImage: "bell.badge") { state.retryReminder(capture) }
-                                .buttonStyle(.plain).font(.system(size: 12)).foregroundStyle(accent)
-                        }
-                    }.padding(16).frame(maxWidth: 860).frame(maxWidth: .infinity)
-                }.onAppear {
-                    projectDraft = capture.projectName ?? ""
-                    noteExpanded = !capture.comment.isEmpty || draft.hasChanges
-                    reminderExpanded = draft.reminderEnabled
-                    if let target = state.detailFocus {
-                        noteExpanded = noteExpanded || target == "comment"
-                        reminderExpanded = reminderExpanded || target == "reminder"
+                    }.onChange(of: state.detailFocus) { _, target in
+                        guard let target else { return }
+                        if target == "comment" { noteExpanded = true }
+                        if target == "reminder" { reminderExpanded = true }
+                        if target == "task" { taskExpanded = true }
                         if target == "project" { showingProjectEditor = true }
                         proxy.scrollTo(target, anchor: .top)
                         focusedField = target
+                    }.onChange(of: capture.isTask) { _, isTask in
+                        if isTask { taskExpanded = true }
                     }
-                }.onChange(of: state.detailFocus) { _, target in
-                    guard let target else { return }
-                    if target == "comment" { noteExpanded = true }
-                    if target == "reminder" { reminderExpanded = true }
-                    if target == "task" { taskExpanded = true }
-                    if target == "project" { showingProjectEditor = true }
-                    proxy.scrollTo(target, anchor: .top)
-                    focusedField = target
-                }.onChange(of: capture.isTask) { _, isTask in
-                    if isTask { taskExpanded = true }
                 }
             }
             HStack(spacing: 10) {
@@ -123,59 +162,66 @@ struct DetailScreen: View {
                 Spacer(minLength: 0)
                 Button("Save changes") { state.saveDetail() }.buttonStyle(.borderedProminent)
                     .controlSize(.regular).disabled(!draft.hasChanges).keyboardShortcut("s", modifiers: .command)
+                    .accessibilityIdentifier("detail-save")
             }.padding(13).overlay(alignment: .top) { Rectangle().fill(Palette.line).frame(height: 1) }
+        }
+    }
+
+    private func originalContent(layout: DetailLayout) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            DetailPreview(store: state.store, capture: capture, height: layout.previewHeight)
+            if let text = capture.originalText, !text.isEmpty, capture.kind == .text || capture.kind == .task {
+                if capture.isTask || text != capture.title {
+                    Text(text).font(.system(size: layout.bodySize)).lineSpacing(5).textSelection(.enabled)
+                        .frame(maxWidth: .infinity, alignment: .leading).fixedSize(horizontal: false, vertical: true)
+                }
+            } else if !capture.previewDescription.isEmpty {
+                Text(capture.previewDescription).font(.system(size: 14)).foregroundStyle(Palette.muted).textSelection(.enabled)
+            }
+        }
+    }
+
+    private func taskWorkspace(layout: DetailLayout) -> some View {
+        let arrangement = layout.usesTaskColumns
+            ? AnyLayout(HStackLayout(alignment: .top, spacing: layout.sectionSpacing))
+            : AnyLayout(VStackLayout(alignment: .leading, spacing: 8))
+        return arrangement {
+            VStack(alignment: .leading, spacing: 8) {
+                TaskPlanningEditor(planning: $draft.planning, showsSchedule: false)
+                if let previous = capture.taskPlanning?.previousOccurrenceID {
+                    Button("Previous occurrence", systemImage: "arrow.counterclockwise") { state.openCapture(previous) }
+                        .buttonStyle(.plain).font(.system(size: 12))
+                }
+            }.frame(maxWidth: .infinity, alignment: .topLeading)
+            TaskAttachmentsView(state: state, task: capture,
+                minimumCardWidth: layout.attachmentMinimumWidth, thumbnailHeight: layout.attachmentHeight)
+                .frame(maxWidth: .infinity, alignment: .topLeading)
         }
     }
 
     private var actionRail: some View {
         HStack(spacing: 4) {
+            CaptureProjectPickerButton(state: state, capture: capture)
+                .frame(maxWidth: .infinity, alignment: .leading)
             BuddyIconButton(symbol: "doc.on.doc", title: "Copy capture") { state.copyCapturesToClipboard([capture]) }
-            BuddyIconButton(symbol: capture.isPinned ? "pin.fill" : "pin", title: capture.isPinned ? "Unpin" : "Pin", isActive: capture.isPinned) { state.togglePinned(capture) }
-            BuddyIconButton(symbol: "folder.badge.plus", title: "Set project") { showingProjectEditor.toggle() }
             if !capture.isTask { CaptureTaskConversionButton(state: state, capture: capture) }
+            BuddyIconButton(symbol: capture.isPinned ? "pin.fill" : "pin", title: capture.isPinned ? "Unpin" : "Pin", isActive: capture.isPinned) { state.togglePinned(capture) }
             if capture.kind != .text && capture.kind != .task {
                 BuddyIconButton(symbol: "arrow.up.forward.square", title: "Open original") { state.openOriginal(capture) }
             }
             BuddyIconButton(symbol: "folder", title: "Show saved folder") { state.showArchiveFolder(for: capture) }
-            Spacer(minLength: 0)
-            BuddyIconButton(symbol: "trash", title: "Move to Recently Deleted") { state.requestRemoval(capture) }
+            CaptureTrashButton(state: state, capture: capture)
         }.accessibilityElement(children: .contain).accessibilityLabel("Capture actions")
     }
 
     private var organization: some View {
-        VStack(alignment: .leading, spacing: 9) {
-            HStack(spacing: 14) {
-                Button { state.togglePinned(capture) } label: {
-                    Label(capture.isPinned ? "Pinned" : "Pin", systemImage: capture.isPinned ? "pin.fill" : "pin")
-                }.buttonStyle(.plain).foregroundStyle(accent)
-                Menu {
-                    Button("No project", systemImage: "folder.badge.minus") { state.assignProject(capture, name: nil); projectDraft = "" }
-                    ForEach(state.projectNames, id: \.self) { project in
-                        Button(project, systemImage: "folder") { state.assignProject(capture, name: project); projectDraft = project }
-                    }
-                    Divider()
-                    Button("Create project…", systemImage: "folder.badge.plus") { showingProjectEditor = true; projectDraft = ""; focusedField = "project" }
-                } label: { Label(capture.projectName ?? "Add to project", systemImage: "folder").lineLimit(1) }
-                    .menuStyle(.borderlessButton).fixedSize(horizontal: false, vertical: true)
-                Spacer(minLength: 0)
-            }.font(.system(size: 12))
-            if showingProjectEditor {
-                HStack(spacing: 8) {
-                    TextField("Project name", text: $projectDraft).textFieldStyle(.roundedBorder)
-                        .focused($focusedField, equals: "project").accessibilityLabel("Project name")
-                        .onSubmit { saveProject() }
-                    Button("Add") { saveProject() }.disabled(projectDraft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
-                    Button("Cancel") { showingProjectEditor = false }.buttonStyle(.plain)
-                }.font(.system(size: 12))
+        HStack(spacing: 12) {
+            CaptureProjectPickerButton(state: state, capture: capture)
+            Spacer(minLength: 0)
+            BuddyIconButton(symbol: capture.isPinned ? "pin.fill" : "pin", title: capture.isPinned ? "Unpin" : "Pin", isActive: capture.isPinned) {
+                state.togglePinned(capture)
             }
-        }
-    }
-
-    private func saveProject() {
-        let name = projectDraft.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !name.isEmpty else { return }
-        state.assignProject(capture, name: name)
-        showingProjectEditor = false
+        }.accessibilityElement(children: .contain).accessibilityLabel("Project and pin")
     }
 
     @ViewBuilder
@@ -267,11 +313,12 @@ struct DetailScreen: View {
             .overlay(alignment: .bottom) { Rectangle().fill(Palette.line).frame(height: 1) }
     }
 
-    private var commentField: some View {
+    private func commentField(height: CGFloat) -> some View {
         VStack(alignment: .leading, spacing: 7) {
             EmptyView()
             TextEditor(text: $draft.comment).font(.system(size: 13)).scrollContentBackground(.hidden)
-                .padding(7).frame(minHeight: 76, maxHeight: 108).background(Palette.surface)
+                .padding(7).frame(height: height).background(Palette.surface)
+                .accessibilityIdentifier("detail-comment-editor")
                 .clipShape(RoundedRectangle(cornerRadius: 11))
                 .overlay(RoundedRectangle(cornerRadius: 11).stroke(Palette.line))
                 .focused($focusedField, equals: "comment").accessibilityLabel("Capture note")

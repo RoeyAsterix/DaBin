@@ -9,6 +9,7 @@ import UniformTypeIdentifiers
     let root: URL
     private let repository: CaptureRepository
     private let archive: DailyArchive
+    private let projectArchive: ProjectFileArchive
     private var lastArchiveWarning: String?
     private var archiveFailures: [UUID: String] = [:]
     var failureInjector: ((ImportCheckpoint) throws -> Void)?
@@ -36,11 +37,11 @@ import UniformTypeIdentifiers
         }
         self.repository = try CaptureRepository(root: self.root)
         self.archive = DailyArchive(root: self.root)
+        self.projectArchive = ProjectFileArchive(root: self.root)
         try refresh()
         try recoverPendingRemovals()
         try recoverInterruptedImports()
         try refresh()
-        migrateLegacyOriginals()
         if repairArchiveOnOpen {
             synchronizeArchive(captures + trashedCaptures)
         } else {
@@ -208,6 +209,7 @@ import UniformTypeIdentifiers
         let successor = completed ? recurrenceSuccessor(for: capture, at: now) : nil
         var planning = capture.taskPlanning ?? TaskPlanning()
         planning.completedAt = completed ? now : nil
+        if completed { planning.focusSession = planning.focusSession?.paused(at: now) }
         if let successor { planning.nextOccurrenceID = successor.id }
         capture.setTaskPlanning(planning)
         capture.isCompleted = completed
@@ -248,6 +250,8 @@ import UniformTypeIdentifiers
         value.completedAt = capture.taskPlanning?.completedAt
         value.previousOccurrenceID = capture.taskPlanning?.previousOccurrenceID
         value.nextOccurrenceID = capture.taskPlanning?.nextOccurrenceID
+        // A stale form may not restart or overwrite a separately committed timer.
+        value.focusSession = capture.taskPlanning?.focusSession
         guard capture.taskPlanning != value else { return }
         let old = (capture.taskPlanning, capture.updatedAt)
         capture.setTaskPlanning(value)
@@ -256,11 +260,48 @@ import UniformTypeIdentifiers
         catch { capture.setTaskPlanning(old.0); capture.updatedAt = old.1; throw error }
     }
 
-    func planTask(_ capture: Capture, on day: String?) throws {
+    func planTask(_ capture: Capture, on day: String?, time: String? = nil) throws {
         var planning = capture.taskPlanning ?? TaskPlanning()
         planning.plannedDay = day
+        planning.plannedTime = day == nil ? nil : time
         planning.order = nil
         try setTaskPlanning(capture, planning: planning)
+    }
+
+    /// Timer mutations are independent transactions and never touch reminders.
+    func setTaskFocus(_ capture: Capture, session: TaskFocusSession?, durationMinutes: Int? = nil) throws {
+        try requireCurrent(capture)
+        var planning = capture.taskPlanning ?? TaskPlanning()
+        if let durationMinutes { planning.effortMinutes = durationMinutes }
+        planning.focusSession = session
+        guard capture.isTask, planning.isValid,
+              !capture.isCompleted || session?.isRunning != true else {
+            throw CaptureStoreError.invalidOriginal("Choose a duration from 1 minute to 168 hours for an open task.")
+        }
+        guard planning != capture.taskPlanning else { return }
+        let old = (capture.taskPlanning, capture.updatedAt)
+        capture.setTaskPlanning(planning); capture.updatedAt = Date()
+        do { try failureInjector?(.beforeMetadataSave); try persist(capture); objectWillChange.send() }
+        catch { capture.setTaskPlanning(old.0); capture.updatedAt = old.1; throw error }
+    }
+
+    /// Only reverses the promotion flag and its former attachment relationship.
+    /// Later annotations, project choices and provenance remain untouched.
+    func undoTaskConversion(_ capture: Capture, previousParentID: UUID?) throws {
+        try requireCurrent(capture)
+        guard capture.convertedToTask, capture.kind != .task, !capture.isCompleted,
+              (capture.taskPlanning == nil || capture.taskPlanning == TaskPlanning()), attachments(for: capture).isEmpty else {
+            throw CaptureStoreError.invalidOriginal("This task has new planning or attachments. Keep it as a task to preserve that work.")
+        }
+        if let id = previousParentID {
+            guard captures.contains(where: { $0.id == id && $0.isTask }) else {
+                throw CaptureStoreError.invalidOriginal("The original parent task is unavailable.")
+            }
+        }
+        let old = (capture.updatedAt, capture.parentTaskID, capture.taskPlanning)
+        capture.setConvertedToTask(false); capture.setParentTaskID(previousParentID); capture.setTaskPlanning(nil); capture.updatedAt = Date()
+        do { try failureInjector?(.beforeMetadataSave); try persist(capture); objectWillChange.send() }
+        catch { capture.setConvertedToTask(true); capture.setParentTaskID(old.1); capture.setTaskPlanning(old.2); capture.updatedAt = old.0; throw error }
     }
 
     /// A project-filtered reorder preserves the positions of other projects.
@@ -321,12 +362,21 @@ import UniformTypeIdentifiers
         next.deadline = shifted(previous.deadline)
         next.order = nil
         next.completedAt = nil
+        next.focusSession = nil
         next.previousOccurrenceID = capture.id
         next.nextOccurrenceID = nil
         next.recurrenceAnchor = anchor
         next.checklist = previous.checklist.map { TaskChecklistItem(text: $0.text) }
+        // The next occurrence reuses known content provenance, but is a new
+        // manual task, never another automatic capture or a duplicated file.
+        let receipt = CaptureReceiptContext(origin: .manual, automaticActionID: nil,
+            sourceApplicationName: capture.sourceApplicationName,
+            sourceApplicationBundleIdentifier: capture.sourceApplicationBundleIdentifier)
         let successor = Capture(capturedAt: now, timeZone: calendar.timeZone, kind: .task,
-                                originalText: capture.originalText ?? capture.title, title: capture.title)
+                                originalURL: capture.originalURL,
+                                originalText: capture.originalText ?? capture.title, title: capture.title,
+                                sourceFilePath: capture.sourceFilePath, sourceURL: capture.sourceURL,
+                                receipt: receipt)
         successor.comment = capture.comment
         successor.projectName = capture.projectName
         successor.setTaskPlanning(next)
@@ -387,14 +437,21 @@ import UniformTypeIdentifiers
     }
 
     private func normalizedProjectName(_ name: String?) -> String? {
-        let trimmed = name?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
-        return trimmed.isEmpty ? nil : String(trimmed.prefix(120))
+        let trimmed = name?.trimmingCharacters(in: .whitespacesAndNewlines).precomposedStringWithCanonicalMapping ?? ""
+        return trimmed.isEmpty ? nil : String(trimmed.prefix(180))
     }
 
     /// A logical snapshot and verified owned files, never a copy of live SQLite.
     func exportBackup(to destination: URL) throws {
         let scoped = destination.startAccessingSecurityScopedResource()
         defer { if scoped { destination.stopAccessingSecurityScopedResource() } }
+        try requireStableArchiveForBackup()
+        // External edits to the readable daily file may not have triggered an
+        // app save yet. Preserve them into owned recovery sidecars first.
+        synchronizeArchive(captures + trashedCaptures)
+        guard archiveFailures.isEmpty else {
+            throw ArchiveBackupError.invalid("Some project documents could not be refreshed safely. Resolve the archive warning before creating a backup.")
+        }
         try requireStableArchiveForBackup()
         let snapshots = try repository.load()
         try repository.validateSnapshots(snapshots)
@@ -420,7 +477,11 @@ import UniformTypeIdentifiers
 
     private func requireStableArchiveForBackup() throws {
         let imports = try FileManager.default.contentsOfDirectory(at: safeURL("Imports"), includingPropertiesForKeys: nil)
-        guard pendingRemovalIDs.isEmpty, !imports.contains(where: { $0.pathExtension == "json" }) else {
+        let moves = try safeURL("ExplorerMoves")
+        let pendingMoves = FileManager.default.fileExists(atPath: moves.path)
+            ? try FileManager.default.contentsOfDirectory(at: moves, includingPropertiesForKeys: nil) : []
+        guard pendingRemovalIDs.isEmpty, !imports.contains(where: { $0.pathExtension == "json" }),
+              !pendingMoves.contains(where: { $0.pathExtension == "json" }) else {
             throw ArchiveBackupError.busy
         }
     }
@@ -515,7 +576,12 @@ import UniformTypeIdentifiers
 
     private func removeOwnedCapture(_ capture: Capture) throws -> CaptureRemovalResult {
         let family = captureFamily(for: capture, includingTrashed: true)
-        let journals = family.map(CaptureRemovalJournal.init)
+        for member in family {
+            if FileManager.default.fileExists(atPath: try safeURL("ExplorerMoves/\(member.id.uuidString).json").path) {
+                throw CaptureStoreError.invalidOriginal("A project file move needs recovery before this item can be removed. Retry Explorer synchronization first.")
+            }
+        }
+        let journals = family.map { CaptureRemovalJournal($0, projectName: explorerProject(for: $0)) }
         let ids = Set(family.map(\.id))
         try archive.ensureDirectory("Deletions")
         var prepared: [(CaptureRemovalJournal, URL)] = []
@@ -554,7 +620,7 @@ import UniformTypeIdentifiers
             captures.removeAll { ids.contains($0.id) }
             trashedCaptures.removeAll { ids.contains($0.id) }
             ids.forEach { archiveFailures.removeValue(forKey: $0) }
-            synchronizeArchive([])
+            synchronizeArchive([], removed: family)
             try removalFailureInjector?(.afterMetadataDelete)
         } catch {
             if case CaptureStoreError.injectedInterruption = error { throw error }
@@ -610,7 +676,9 @@ import UniformTypeIdentifiers
                                     automaticActionID: receipt.origin.isAutomatic ? receipt.automaticActionID : nil,
                                     sourceApplicationName: receipt.sourceApplicationName,
                                     sourceApplicationBundleIdentifier: receipt.sourceApplicationBundleIdentifier,
-                                    relativePath: try DailyArchive.originalRelativePath(id: id, capturedAt: at, captureDay: CaptureCalendar.dayString(at, timeZone: timeZone), utcOffset: timeZone.secondsFromGMT(for: at), filename: safeName),
+                                    relativePath: try ProjectFileArchive.originalRelativePath(id: id, project: parentTask?.projectName,
+                                        day: CaptureCalendar.dayString(at, timeZone: timeZone),
+                                        kind: CaptureClassifier.fileKind(filename: filename, contentType: contentType), filename: filename),
                                     stagingRelativePath: "Staging/\(id.uuidString)/\(safeName)",
                                     kind: CaptureClassifier.fileKind(filename: filename, contentType: contentType),
                                     contentType: contentType?.identifier, phase: "receiving")
@@ -664,19 +732,24 @@ import UniformTypeIdentifiers
     }
 
     func update(_ capture: Capture, comment: String, reminderAt: Date?, reminderTimeZoneID: String?,
-                planning: TaskPlanning? = nil) throws {
+                planning: TaskPlanning? = nil, title: String? = nil) throws {
         try requireCurrent(capture)
+        let editedTitle = title?.trimmingCharacters(in: .whitespacesAndNewlines)
+        if let editedTitle, (!capture.isTask || editedTitle.isEmpty || editedTitle.count > 2000) {
+            throw CaptureStoreError.invalidOriginal("Use a task title of 1–2,000 characters.")
+        }
         guard planning == nil || (capture.isTask && planning!.isValid) else {
             throw CaptureStoreError.invalidOriginal("Check the task dates, estimate, and checklist before saving.")
         }
         let old = (capture.comment, capture.reminderAt, capture.reminderTimeZoneID,
-                   capture.reminderRevision, capture.notificationState, capture.updatedAt, capture.taskPlanning)
+                   capture.reminderRevision, capture.notificationState, capture.updatedAt, capture.taskPlanning, capture.title)
         let zone = reminderAt == nil ? nil : reminderTimeZoneID
         if capture.reminderAt != reminderAt || capture.reminderTimeZoneID != zone {
             capture.reminderRevision += 1
             capture.notificationState = capture.isTask && capture.isCompleted ? "completed" : (reminderAt == nil ? "none" : "pending")
         }
         capture.comment = comment
+        if let editedTitle { capture.title = editedTitle }
         capture.reminderAt = reminderAt
         capture.reminderTimeZoneID = zone
         if var planning {
@@ -684,6 +757,9 @@ import UniformTypeIdentifiers
             planning.completedAt = capture.taskPlanning?.completedAt
             planning.previousOccurrenceID = capture.taskPlanning?.previousOccurrenceID
             planning.nextOccurrenceID = capture.taskPlanning?.nextOccurrenceID
+            planning.focusSession = capture.taskPlanning?.focusSession
+            // Manual ordering is owned by Today, not by an older detail draft.
+            planning.order = planning.plannedDay == capture.taskPlanning?.plannedDay ? capture.taskPlanning?.order : nil
             capture.setTaskPlanning(planning)
         }
         capture.updatedAt = Date()
@@ -692,6 +768,7 @@ import UniformTypeIdentifiers
             capture.comment = old.0; capture.reminderAt = old.1; capture.reminderTimeZoneID = old.2
             capture.reminderRevision = old.3; capture.notificationState = old.4; capture.updatedAt = old.5
             capture.setTaskPlanning(old.6)
+            capture.title = old.7
             throw error
         }
     }
@@ -738,6 +815,19 @@ import UniformTypeIdentifiers
 
     var archiveRoot: URL { root.appendingPathComponent("Archive", isDirectory: true) }
 
+    var explorerRootURL: URL { root }
+    func explorerFolderURL(project: String?) throws -> URL { try projectArchive.folderURL(project: project) }
+    func explorerDayURL(project: String?, day: String) throws -> URL { try projectArchive.dayURL(project: project, day: day) }
+    func explorerFileURL(for capture: Capture) -> URL? { managedURL(for: capture) }
+    func explorerProject(for capture: Capture) -> String? {
+        projectArchive.effectiveProject(for: capture, records: captures + trashedCaptures)
+    }
+    func explorerDocuments(project: String? = nil, unfiledOnly: Bool = false) throws -> [ProjectArchiveDay] {
+        try projectArchive.documents(records: captures, project: project, unfiledOnly: unfiledOnly)
+    }
+    /// Explicit maintenance retries failed moves without changing source files.
+    func synchronizeExplorer() { synchronizeArchive(captures + trashedCaptures) }
+
     func prepareArchiveFolder(for capture: Capture? = nil) throws -> URL {
         if let capture {
             try requireCurrent(capture)
@@ -758,7 +848,7 @@ import UniformTypeIdentifiers
         guard let relative = capture.attachmentRelativePath,
               isOwnedOriginalPath(relative, id: capture.id, capturedAt: capture.capturedAt,
                   captureDay: capture.captureDay, utcOffset: capture.captureUTCOffsetSeconds,
-                  filename: capture.originalFilename ?? ""),
+                  filename: capture.originalFilename ?? "", kind: capture.kind),
               let url = try? safeURL(relative), (try? OriginalFileStorage.validateRegularFile(url)) != nil else { return nil }
         return url
     }
@@ -770,11 +860,13 @@ import UniformTypeIdentifiers
     }
 
     private func isOwnedOriginalPath(_ relative: String, id: UUID, capturedAt: Date,
-                                    captureDay: String, utcOffset: Int, filename: String) -> Bool {
+                                    captureDay: String, utcOffset: Int, filename: String, kind: CaptureKind? = nil) -> Bool {
         let legacy = "Originals/\(id.uuidString)/\(CaptureClassifier.storageFilename(filename))"
         let current = try? DailyArchive.originalRelativePath(id: id, capturedAt: capturedAt,
             captureDay: captureDay, utcOffset: utcOffset, filename: filename)
-        return relative == legacy || relative == current
+        return relative == legacy || relative == current || kind.map {
+            ProjectFileArchive.ownsOriginal(relative, id: id, day: captureDay, kind: $0, filename: filename)
+        } == true
     }
 
     private func safeURL(_ relative: String) throws -> URL { try archive.safeURL(relative) }
@@ -862,6 +954,14 @@ import UniformTypeIdentifiers
     }
 
     private func finishRemoval(_ journal: CaptureRemovalJournal, journalURL: URL) throws {
+        // A committed removal may have been interrupted before refreshing its
+        // shared daily document. Retain the journal until that view is current.
+        let removed = Capture(id: journal.id, capturedAt: journal.capturedAt,
+            timeZone: TimeZone(secondsFromGMT: journal.utcOffset) ?? .gmt,
+            kind: journal.kindRaw.flatMap(CaptureKind.init(rawValue:)) ?? .text, title: "Removed capture",
+            captureDay: journal.captureDay, captureUTCOffsetSeconds: journal.utcOffset)
+        removed.projectName = journal.projectName
+        try projectArchive.synchronize([removed], records: captures + trashedCaptures, removingIDs: [journal.id]) { _ in }
         var firstFailure: Error?
         for relative in try journal.ownedPaths() {
             do {
@@ -882,7 +982,8 @@ import UniformTypeIdentifiers
         let url = try safeURL(relative)
         var directory: ObjCBool = false
         guard FileManager.default.fileExists(atPath: url.path, isDirectory: &directory) else { return }
-        if relative.hasPrefix("Imports/") {
+        if relative.hasPrefix("Imports/") || relative.hasPrefix("ExplorerMoves/")
+            || relative.hasPrefix("Projects/") || relative.hasPrefix("Unfiled/") || relative.hasPrefix(".Recently Deleted/") {
             try OriginalFileStorage.validateRegularFile(url)
         } else if !directory.boolValue {
             // A file obstructing an owned folder is not a normal DaBin object.
@@ -890,14 +991,25 @@ import UniformTypeIdentifiers
         }
     }
 
-    private func synchronizeArchive(_ records: [Capture]) {
-        for capture in records {
+    private func synchronizeArchive(_ records: [Capture], removed: [Capture] = []) {
+        let changedIDs = Set(records.map(\.id))
+        let children = (captures + trashedCaptures).filter { $0.parentTaskID.map(changedIDs.contains) == true }
+        let changed = Array(Dictionary((records + children).map { ($0.id, $0) }, uniquingKeysWith: { _, latest in latest }).values)
+        let all = Array(Dictionary((captures + trashedCaptures + changed).map { ($0.id, $0) }, uniquingKeysWith: { _, latest in latest }).values)
+        let explorerFailures = projectArchive.synchronizeResults(changed + removed, records: all, removingIDs: Set(removed.map(\.id))) {
+            try self.repository.save([$0])
+        }
+        for capture in changed {
             do {
+                if let explorerFailure = explorerFailures[capture.id] { throw CaptureStoreError.invalidOriginal(explorerFailure) }
                 try archive.synchronize(capture)
                 archiveFailures.removeValue(forKey: capture.id)
                 pendingArchiveRepairIDs.remove(capture.id)
             }
             catch { archiveFailures[capture.id] = error.localizedDescription }
+        }
+        if let explorerFailure = removed.compactMap({ explorerFailures[$0.id] }).first {
+            error = "The capture was removed. Its daily document could not be refreshed. \(explorerFailure)"
         }
         if let previous = lastArchiveWarning, let current = error {
             let remaining = current.replacingOccurrences(of: previous, with: "").trimmingCharacters(in: .whitespacesAndNewlines)
@@ -908,44 +1020,6 @@ import UniformTypeIdentifiers
             let warning = "Saved locally. \(archiveFailures.count) capture folder(s) could not be refreshed and will be retried when DaBin opens. \(first)"
             lastArchiveWarning = warning
             error = [error, warning].compactMap { $0 }.joined(separator: "\n")
-        }
-    }
-
-    private func migrateLegacyOriginals() {
-        for capture in captures + trashedCaptures {
-            guard let previous = capture.attachmentRelativePath, previous.hasPrefix("Originals/") else { continue }
-            do {
-                guard let source = managedURL(for: capture) else { throw CaptureStoreError.importVerificationFailed }
-                let relative = try DailyArchive.originalRelativePath(id: capture.id, capturedAt: capture.capturedAt,
-                    captureDay: capture.captureDay, utcOffset: capture.captureUTCOffsetSeconds,
-                    filename: capture.originalFilename ?? source.lastPathComponent)
-                let destination = try safeURL(relative)
-                let verification = try OriginalFileStorage.verify(source)
-                try archive.ensureDirectory((relative as NSString).deletingLastPathComponent)
-                if !FileManager.default.fileExists(atPath: destination.path) {
-                    // Copy before committing the new path. Original bytes stay in
-                    // place as a safety copy, including across interrupted upgrades.
-                    let temporaryDirectory = "MigrationStaging/\(capture.id.uuidString)"
-                    try archive.ensureDirectory(temporaryDirectory)
-                    let temporary = try safeURL(temporaryDirectory + "/" + UUID().uuidString + ".original")
-                    try FileManager.default.copyItem(at: source, to: temporary)
-                    let copied = try OriginalFileStorage.verify(temporary)
-                    guard copied.byteCount == verification.byteCount, copied.sha256 == verification.sha256 else {
-                        throw CaptureStoreError.importVerificationFailed
-                    }
-                    try FileManager.default.moveItem(at: temporary, to: destination)
-                }
-                let installed = try OriginalFileStorage.verify(destination)
-                guard installed.byteCount == verification.byteCount, installed.sha256 == verification.sha256 else {
-                    throw CaptureStoreError.invalidOriginal("A dated-folder destination conflicts with the original; both were preserved.")
-                }
-                capture.relocateManagedAttachment(to: relative)
-                do { try repository.save([capture]) }
-                catch { capture.relocateManagedAttachment(to: previous); throw error }
-            } catch {
-                let warning = "An original could not be organized into its date folder. Its existing copy was preserved. \(error.localizedDescription)"
-                self.error = [self.error, warning].compactMap { $0 }.joined(separator: "\n")
-            }
         }
     }
 
@@ -977,7 +1051,10 @@ import UniformTypeIdentifiers
 
     private func compensateOwnedImport(_ journal: ImportJournal, journalURL: URL) {
         var cleanupFailed = false
-        for relative in ["Staging/\(journal.id.uuidString)", (journal.relativePath as NSString).deletingLastPathComponent] {
+        let imported = ProjectFileArchive.ownsOriginal(journal.relativePath, id: journal.id, day: journal.captureDay,
+            kind: journal.kind, filename: journal.originalFilename)
+            ? journal.relativePath : (journal.relativePath as NSString).deletingLastPathComponent
+        for relative in ["Staging/\(journal.id.uuidString)", imported] {
             do {
                 let url = try safeURL(relative)
                 if FileManager.default.fileExists(atPath: url.path) { try FileManager.default.removeItem(at: url) }
@@ -1003,15 +1080,22 @@ import UniformTypeIdentifiers
                 // Treat journal paths as untrusted persisted input; IDs bind ownership and filenames.
                 guard journalURL.lastPathComponent == "\(journal.id.uuidString).json",
                       isOwnedOriginalPath(journal.relativePath, id: journal.id, capturedAt: journal.capturedAt,
-                          captureDay: journal.captureDay, utcOffset: journal.utcOffset, filename: journal.originalFilename),
+                          captureDay: journal.captureDay, utcOffset: journal.utcOffset, filename: journal.originalFilename, kind: journal.kind),
                       journal.stagingRelativePath == "Staging/\(journal.id.uuidString)/\(CaptureClassifier.storageFilename(journal.originalFilename))" else {
                     throw CaptureStoreError.invalidManagedPath
                 }
                 let original = try safeURL(journal.relativePath)
                 let staging = try safeURL(journal.stagingRelativePath)
                 if let capture = (captures + trashedCaptures).first(where: { $0.id == journal.id }) {
-                    guard capture.attachmentRelativePath == journal.relativePath,
-                          managedURL(for: capture) != nil else { throw CaptureStoreError.importVerificationFailed }
+                    guard let managed = managedURL(for: capture) else { throw CaptureStoreError.importVerificationFailed }
+                    // Explorer may have committed its verified project path
+                    // before interruption left this older import receipt behind.
+                    if capture.attachmentRelativePath != journal.relativePath {
+                        let verification = try OriginalFileStorage.verify(managed)
+                        guard verification.byteCount == journal.byteCount, verification.sha256 == journal.sha256 else {
+                            throw CaptureStoreError.importVerificationFailed
+                        }
+                    }
                     cleanupCompleted(journal, journalURL: journalURL)
                     continue
                 }

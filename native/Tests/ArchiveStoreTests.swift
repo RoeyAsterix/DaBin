@@ -87,9 +87,8 @@ import CryptoKit
 
         let original = Data("{\"the-user-original\":true}\n".utf8)
         let file = try await store!.importData(original, filename: "Capture.json", at: receipt, timeZone: zone, source: source)
-        let fileFolder = try folder(store!, file)
-        guard let managed = store!.managedURL(for: file) else { throw CaptureStoreError.importVerificationFailed }
-        try expect(managed == fileFolder.appendingPathComponent("Original/Capture.json"), "An original named Capture.json is isolated from its metadata")
+                guard let managed = store!.managedURL(for: file) else { throw CaptureStoreError.importVerificationFailed }
+        try expect(managed.path.contains("/Unfiled/2026/09 September/") && managed.lastPathComponent == ProjectFileArchive.filename(id: file.id, original: "Capture.json"), "An original named Capture.json is isolated from private metadata")
         try expect(try bytes(managed) == original && readable(store!, file).id == file.id, "Original and generated record retain independent valid content")
         let duplicate = try await store!.importData(original, filename: "Capture.json", at: receipt, timeZone: zone)
         try expect(file.id != duplicate.id && store!.managedURL(for: duplicate) != managed, "Identical filenames and receipt times never overwrite each other")
@@ -137,8 +136,7 @@ import CryptoKit
                              attachmentRelativePath: relative, originalFilename: "saved.pdf", byteCount: Int64(original.count),
                              title: "Saved PDF", sourceFilePath: "/Users/example/Legacy/saved.pdf")
         legacy.comment = "Retain this legacy comment"
-        let datedRelative = try DailyArchive.originalRelativePath(id: id, capturedAt: receipt, captureDay: legacy.captureDay,
-                                                                 utcOffset: legacy.captureUTCOffsetSeconds, filename: "saved.pdf")
+        let datedRelative = try ProjectFileArchive.originalRelativePath(id: id, project: nil, day: legacy.captureDay, kind: .pdf, filename: "saved.pdf")
         let datedURL = root.appendingPathComponent(datedRelative)
         let conflict = Data("a distinct edited destination\n".utf8)
         if conflictingDestination {
@@ -149,14 +147,13 @@ import CryptoKit
         var migrated: CaptureStore? = try CaptureStore(root: root)
         let capture = migrated!.captures[0]
         try expect(migrated!.captures.count == 1 && capture.id == id, "Legacy migration retains capture identity")
-        try expect(try hash(bytes(legacyURL)) == hash(original), "Legacy safety original remains byte-identical")
+        try expect(conflictingDestination ? (try bytes(legacyURL) == original) : !files.fileExists(atPath: legacyURL.path), "Verified migration removes only the unchanged former copy; conflicts preserve it")
         try expect(capture.captureDay == "2027-01-01" && capture.capturedAt == receipt && capture.sourceFilePath == legacy.sourceFilePath && capture.comment == legacy.comment,
                    "Migration preserves day, instant, provenance, and comments")
         if conflictingDestination {
             try expect(capture.attachmentRelativePath == relative && migrated!.managedURL(for: capture) == legacyURL,
                        "Conflicting destination never commits a false attachment relocation")
             try expect(try bytes(datedURL) == conflict && migrated!.error != nil, "Conflicting destination is preserved and surfaced")
-            try expect(try readable(migrated!, capture).attachmentRelativePath == relative, "Readable metadata continues to reference the usable legacy original")
         } else {
             try expect(capture.attachmentRelativePath == datedRelative && migrated!.managedURL(for: capture) == datedURL,
                        "Legacy record commits its verified dated attachment path")
@@ -167,7 +164,7 @@ import CryptoKit
         let reopened = try CaptureStore(root: root)
         try expect(reopened.captures.count == 1 && reopened.captures[0].attachmentRelativePath == (conflictingDestination ? relative : datedRelative),
                    "Migration and conflicts remain idempotent across relaunch")
-        try expect(try bytes(legacyURL) == original, "Repeated migration never removes the retained original")
+        try expect(conflictingDestination ? (try bytes(legacyURL) == original) : !files.fileExists(atPath: legacyURL.path), "Repeated migration preserves conflicts and does not recreate old copies")
         if conflictingDestination { try expect(try bytes(datedURL) == conflict, "Repeated conflict handling never replaces the edited destination") }
     }
 
@@ -207,7 +204,7 @@ import CryptoKit
                 var recovered: CaptureStore? = try CaptureStore(root: root)
                 try expect(recovered!.captures.count == 1 && recovered!.captures[0].id.uuidString == id, "\(legacyLayout ? "Legacy" : "Dated") \(checkpoint) recovery commits one identity")
                 let capture = recovered!.captures[0]
-                try expect(capture.captureDay == "2026-09-22" && capture.attachmentRelativePath?.hasPrefix("Archive/2026/") == true,
+                try expect(capture.captureDay == "2026-09-22" && capture.attachmentRelativePath?.hasPrefix("Unfiled/2026/") == true,
                            "Recovered import uses its immutable receipt day in dated storage")
                 try expect(try bytes(recovered!.managedURL(for: capture)!) == original, "Journal recovery verifies and retains original bytes")
                 try expect(capture.sourceFilePath == (legacyLayout ? nil : "/Users/example/receipt.txt"), "Journal recovery preserves known provenance without inventing missing history")

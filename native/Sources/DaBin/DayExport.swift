@@ -86,6 +86,18 @@ private enum CaptureTextExport {
         if capture.isTask {
             append("Status", capture.isCompleted ? "Completed" : "Task", to: &lines, indent: indent)
         }
+        if let plan = capture.taskPlanning {
+            if let day = plan.plannedDay { append("Planned day", day, to: &lines, indent: indent) }
+            if let time = plan.plannedTime { append("Planned local time", time, to: &lines, indent: indent) }
+            if let minutes = plan.effortMinutes { append("Focus duration", "\(minutes) minutes", to: &lines, indent: indent) }
+            if let focus = plan.focusSession {
+                append("Focus remaining at last transition", TaskFocusSession.clock(focus.remainingSeconds), to: &lines, indent: indent)
+                if let end = focus.endAt { append("Focus ends", ISO8601DateFormatter().string(from: end), to: &lines, indent: indent) }
+            }
+        }
+        for event in capture.pasteHistory.sorted(by: { $0.recordedAt < $1.recordedAt }) {
+            append("Paste destination", "\(event.applicationName) · \(ISO8601DateFormatter().string(from: event.recordedAt)) · \(event.evidence.title)", to: &lines, indent: indent)
+        }
         if let filename = capture.originalFilename {
             append("File", filename, to: &lines, indent: indent)
         }
