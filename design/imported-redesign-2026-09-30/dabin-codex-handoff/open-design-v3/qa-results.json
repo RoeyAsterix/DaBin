@@ -1,0 +1,1807 @@
+[
+  {
+    "check": "Syntax: model.js",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Syntax: provenance.js",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Syntax: views.js",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Syntax: project-picker.js",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Syntax: responsive.js",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Syntax: task-ui.js",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Syntax: settings.js",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Syntax: interactions.js",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Syntax: events.js",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Screen markup: inbox",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: inbox \u2192 new-task.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: inbox \u2192 capture-detail.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: inbox \u2192 capture-detail.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: inbox \u2192 capture-detail.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: inbox \u2192 task-detail.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: inbox \u2192 capture-detail.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: inbox \u2192 capture-detail.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: inbox \u2192 capture-detail.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: inbox \u2192 capture-detail.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Screen markup: today",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: today \u2192 new-task.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: today \u2192 task-detail.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: today \u2192 task-detail.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: today \u2192 capture-detail.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Screen markup: workspace",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: workspace \u2192 workspace.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: workspace \u2192 clipboard.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: workspace \u2192 shelf.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: workspace \u2192 notes.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: workspace \u2192 capture-detail.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: workspace \u2192 capture-detail.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: workspace \u2192 capture-detail.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: workspace \u2192 task-detail.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: workspace \u2192 capture-detail.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: workspace \u2192 capture-detail.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: workspace \u2192 capture-detail.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: workspace \u2192 capture-detail.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: workspace \u2192 capture-detail.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: workspace \u2192 capture-detail.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: workspace \u2192 task-detail.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: workspace \u2192 task-detail.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: workspace \u2192 task-detail.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: workspace \u2192 capture-detail.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: workspace \u2192 reminder.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: workspace \u2192 capture-detail.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: workspace \u2192 capture-detail.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: workspace \u2192 capture-detail.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: workspace \u2192 capture-detail.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Screen markup: clipboard",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: clipboard \u2192 workspace.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: clipboard \u2192 clipboard.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: clipboard \u2192 shelf.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: clipboard \u2192 notes.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: clipboard \u2192 capture-detail.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: clipboard \u2192 capture-detail.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: clipboard \u2192 capture-detail.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: clipboard \u2192 capture-detail.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: clipboard \u2192 capture-detail.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: clipboard \u2192 reminder.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: clipboard \u2192 capture-detail.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: clipboard \u2192 capture-detail.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: clipboard \u2192 capture-detail.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: clipboard \u2192 capture-detail.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Screen markup: shelf",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: shelf \u2192 workspace.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: shelf \u2192 clipboard.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: shelf \u2192 shelf.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: shelf \u2192 notes.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: shelf \u2192 capture-detail.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: shelf \u2192 capture-detail.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: shelf \u2192 capture-detail.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: shelf \u2192 task-detail.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Screen markup: notes",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: notes \u2192 workspace.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: notes \u2192 clipboard.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: notes \u2192 shelf.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: notes \u2192 notes.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Screen markup: activity",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: activity \u2192 activity.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: activity \u2192 weekly.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: activity \u2192 export.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: activity \u2192 task-detail.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: activity \u2192 task-detail.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: activity \u2192 task-detail.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: activity \u2192 capture-detail.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: activity \u2192 capture-detail.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: activity \u2192 capture-detail.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: activity \u2192 capture-detail.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: activity \u2192 capture-detail.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: activity \u2192 capture-detail.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: activity \u2192 capture-detail.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: activity \u2192 capture-detail.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: activity \u2192 capture-detail.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: activity \u2192 reminder.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: activity \u2192 capture-detail.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: activity \u2192 capture-detail.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: activity \u2192 capture-detail.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: activity \u2192 capture-detail.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Screen markup: weekly",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: weekly \u2192 activity.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: weekly \u2192 weekly.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: weekly \u2192 export.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: weekly \u2192 task-detail.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: weekly \u2192 capture-detail.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: weekly \u2192 task-detail.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: weekly \u2192 task-detail.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: weekly \u2192 task-detail.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: weekly \u2192 capture-detail.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: weekly \u2192 capture-detail.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: weekly \u2192 capture-detail.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: weekly \u2192 capture-detail.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: weekly \u2192 capture-detail.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: weekly \u2192 capture-detail.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: weekly \u2192 capture-detail.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: weekly \u2192 capture-detail.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: weekly \u2192 capture-detail.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: weekly \u2192 capture-detail.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: weekly \u2192 capture-detail.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: weekly \u2192 capture-detail.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: weekly \u2192 capture-detail.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: weekly \u2192 reminder.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Screen markup: search",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Screen markup: capture-detail",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: capture-detail \u2192 reminder.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Screen markup: task-detail",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: task-detail \u2192 reminder.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: task-detail \u2192 capture-detail.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Screen markup: new-note",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Screen markup: new-task",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Screen markup: reminder",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: reminder \u2192 task-detail.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Screen markup: export",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Screen markup: settings",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: settings \u2192 robot.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: settings \u2192 recently-deleted.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: settings \u2192 backup.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Screen markup: recently-deleted",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Screen markup: backup",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Screen markup: robot",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: robot \u2192 capture-detail.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Linked route: robot \u2192 inbox.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Balanced task markup: inbox",
+    "passed": true,
+    "detail": "[]"
+  },
+  {
+    "check": "Named fields remain inside form: inbox",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Balanced task markup: today",
+    "passed": true,
+    "detail": "[]"
+  },
+  {
+    "check": "Named fields remain inside form: today",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Balanced task markup: task-detail",
+    "passed": true,
+    "detail": "[]"
+  },
+  {
+    "check": "Named fields remain inside form: task-detail",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Balanced task markup: new-task",
+    "passed": true,
+    "detail": "[]"
+  },
+  {
+    "check": "Named fields remain inside form: new-task",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Both monitoring channels start off",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Converted media remains in Media and Tasks",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Conversion keeps receipt and content",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Recurring completion creates only one next",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Monthly recurrence retains month-end anchor",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Next recurrence has no copied attachments",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Reminder timestamp survives rerender",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Trash and restore preserve receipt",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Kept automatic copies survive retention",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Pinned automatic copies survive retention",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Save failure rolls state back",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Day export ignores active filter",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Week export includes earlier original receipts",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Scratchpad conversion leaves text",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Named snippet search preserves content",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Search without source filter finds scratchpad",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Source-app refinement excludes scratchpad",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Shelf membership removal keeps capture",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Raw user text is escaped",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Checklist retains mixed-language content",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Capture conversion transforms in place without navigating",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Converted task retains image, source, receipt, ID and media filter",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Task cards expose completion, timer, playback and calendar",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Task editor uses no select menus",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Focus starts with persistent end timestamp",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Countdown derives remaining time after background delay",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Pause freezes exact remaining seconds",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Resume continues remaining duration",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Timer survives persisted state reload",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Timer expiry does not complete task or overwrite reminder",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Finished timer can restart at full duration",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Completion stops focus; recurrence receives no timer",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Schedule writes workday/time and preserves receipt",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Schedule updates retained draft without losing title",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Failed timer save retains prior running timestamp",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Failed conversion retains capture state",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Task formatting includes hours and minutes",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Duration form saves hours and minutes as a new timed session",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Invalid duration retains original timer",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Schedule form persists optional time",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Undo conversion returns the original media card",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Converted task source details retain file group",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Existing captures do not gain invented paste destinations",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Known source apps render locally preserved marks",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Unknown source stays unknown instead of claiming DaBin",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Native bundle identifiers resolve real app identity",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Manual destination receipts persist with explicit attribution",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Repeated pastes retain both receipts but one destination logo",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Capture conversion keeps the exact paste history",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Conversion undo keeps the paste history",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Task detail exposes the trail outside collapsed attachments",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Failed destination save rolls back its receipt",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Destination names and markup are escaped",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Invalid receipt kinds never masquerade as confirmed pastes",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Confirmed receipts cannot be removed as manual entries",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "User-recorded receipt removal preserves the other events",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Recurrence starts with no pastes from the previous occurrence",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Empty app names do not write receipts",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Unknown destination uses a neutral mark rather than a fake logo",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Long trails collapse to three app marks and an overflow count",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Local app mark: mail",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Local app mark: notes",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Local app mark: finder",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Local app mark: safari",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Local app mark: chrome",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Local app mark: slack",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Clipboard copy does not create paste events",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Robot capture clears shared Inbox draft after persistence",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Failed robot save preserves shared Inbox draft",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Shelf ZIP verifies CRC and includes full project despite Links filter",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Shelf ZIP retains SVG file bytes",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Accent text contrast: #6D5387 light",
+    "passed": true,
+    "detail": "5.78"
+  },
+  {
+    "check": "Primary button contrast: #6D5387 light",
+    "passed": true,
+    "detail": "6.49"
+  },
+  {
+    "check": "Accent text contrast: #386A9A light",
+    "passed": true,
+    "detail": "5.06"
+  },
+  {
+    "check": "Primary button contrast: #386A9A light",
+    "passed": true,
+    "detail": "5.68"
+  },
+  {
+    "check": "Accent text contrast: #287875 light",
+    "passed": true,
+    "detail": "4.64"
+  },
+  {
+    "check": "Primary button contrast: #287875 light",
+    "passed": true,
+    "detail": "5.21"
+  },
+  {
+    "check": "Accent text contrast: #47763E light",
+    "passed": true,
+    "detail": "4.76"
+  },
+  {
+    "check": "Primary button contrast: #47763E light",
+    "passed": true,
+    "detail": "5.35"
+  },
+  {
+    "check": "Accent text contrast: #A34D73 light",
+    "passed": true,
+    "detail": "4.84"
+  },
+  {
+    "check": "Primary button contrast: #A34D73 light",
+    "passed": true,
+    "detail": "5.43"
+  },
+  {
+    "check": "Accent text contrast: #956515 light",
+    "passed": true,
+    "detail": "4.81"
+  },
+  {
+    "check": "Primary button contrast: #956515 light",
+    "passed": true,
+    "detail": "5.4"
+  },
+  {
+    "check": "Accent text contrast: #000000 light",
+    "passed": true,
+    "detail": "18.71"
+  },
+  {
+    "check": "Primary button contrast: #000000 light",
+    "passed": true,
+    "detail": "21.0"
+  },
+  {
+    "check": "Accent text contrast: #ffffff light",
+    "passed": true,
+    "detail": "4.68"
+  },
+  {
+    "check": "Primary button contrast: #ffffff light",
+    "passed": true,
+    "detail": "5.25"
+  },
+  {
+    "check": "Accent text contrast: #00ff00 light",
+    "passed": true,
+    "detail": "4.64"
+  },
+  {
+    "check": "Primary button contrast: #00ff00 light",
+    "passed": true,
+    "detail": "5.2"
+  },
+  {
+    "check": "Accent text contrast: #ffff00 light",
+    "passed": true,
+    "detail": "4.6"
+  },
+  {
+    "check": "Primary button contrast: #ffff00 light",
+    "passed": true,
+    "detail": "5.17"
+  },
+  {
+    "check": "Accent text contrast: #6D5387 dark",
+    "passed": true,
+    "detail": "5.16"
+  },
+  {
+    "check": "Primary button contrast: #6D5387 dark",
+    "passed": true,
+    "detail": "6.17"
+  },
+  {
+    "check": "Accent text contrast: #386A9A dark",
+    "passed": true,
+    "detail": "4.68"
+  },
+  {
+    "check": "Primary button contrast: #386A9A dark",
+    "passed": true,
+    "detail": "5.6"
+  },
+  {
+    "check": "Accent text contrast: #287875 dark",
+    "passed": true,
+    "detail": "4.65"
+  },
+  {
+    "check": "Primary button contrast: #287875 dark",
+    "passed": true,
+    "detail": "5.57"
+  },
+  {
+    "check": "Accent text contrast: #47763E dark",
+    "passed": true,
+    "detail": "4.6"
+  },
+  {
+    "check": "Primary button contrast: #47763E dark",
+    "passed": true,
+    "detail": "5.51"
+  },
+  {
+    "check": "Accent text contrast: #A34D73 dark",
+    "passed": true,
+    "detail": "4.72"
+  },
+  {
+    "check": "Primary button contrast: #A34D73 dark",
+    "passed": true,
+    "detail": "5.65"
+  },
+  {
+    "check": "Accent text contrast: #956515 dark",
+    "passed": true,
+    "detail": "4.74"
+  },
+  {
+    "check": "Primary button contrast: #956515 dark",
+    "passed": true,
+    "detail": "5.68"
+  },
+  {
+    "check": "Accent text contrast: #000000 dark",
+    "passed": true,
+    "detail": "4.84"
+  },
+  {
+    "check": "Primary button contrast: #000000 dark",
+    "passed": true,
+    "detail": "5.8"
+  },
+  {
+    "check": "Accent text contrast: #ffffff dark",
+    "passed": true,
+    "detail": "14.14"
+  },
+  {
+    "check": "Primary button contrast: #ffffff dark",
+    "passed": true,
+    "detail": "16.93"
+  },
+  {
+    "check": "Accent text contrast: #00ff00 dark",
+    "passed": true,
+    "detail": "10.3"
+  },
+  {
+    "check": "Primary button contrast: #00ff00 dark",
+    "passed": true,
+    "detail": "12.34"
+  },
+  {
+    "check": "Accent text contrast: #ffff00 dark",
+    "passed": true,
+    "detail": "13.17"
+  },
+  {
+    "check": "Primary button contrast: #ffff00 dark",
+    "passed": true,
+    "detail": "15.77"
+  },
+  {
+    "check": "Viewport geometry 360\u00d7640: window stays reachable",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Viewport geometry 360\u00d7640: top project panel stays reachable",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Viewport geometry 360\u00d7640: bottom project panel stays reachable",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Viewport geometry 390\u00d7844: window stays reachable",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Viewport geometry 390\u00d7844: top project panel stays reachable",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Viewport geometry 390\u00d7844: bottom project panel stays reachable",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Viewport geometry 400\u00d7480: window stays reachable",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Viewport geometry 400\u00d7480: top project panel stays reachable",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Viewport geometry 400\u00d7480: bottom project panel stays reachable",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Viewport geometry 430\u00d7360: window stays reachable",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Viewport geometry 430\u00d7360: top project panel stays reachable",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Viewport geometry 430\u00d7360: bottom project panel stays reachable",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Viewport geometry 600\u00d7480: window stays reachable",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Viewport geometry 600\u00d7480: top project panel stays reachable",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Viewport geometry 600\u00d7480: bottom project panel stays reachable",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Viewport geometry 768\u00d71024: window stays reachable",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Viewport geometry 768\u00d71024: top project panel stays reachable",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Viewport geometry 768\u00d71024: bottom project panel stays reachable",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Viewport geometry 1024\u00d7768: window stays reachable",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Viewport geometry 1024\u00d7768: top project panel stays reachable",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Viewport geometry 1024\u00d7768: bottom project panel stays reachable",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Viewport geometry 1440\u00d7900: window stays reachable",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Viewport geometry 1440\u00d7900: top project panel stays reachable",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Viewport geometry 1440\u00d7900: bottom project panel stays reachable",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Viewport geometry 1920\u00d71080: window stays reachable",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Viewport geometry 1920\u00d71080: top project panel stays reachable",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Viewport geometry 1920\u00d71080: bottom project panel stays reachable",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Panel flips above low trigger instead of obscuring it",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Keyboard viewport offset bounds",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Project heading uses selected project",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Project search is case insensitive",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "No-result search returns no options",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Empty project names rejected",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Duplicate project names rejected",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "All projects cannot be confused with a named project",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Long project names rejected",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Long valid heading safely escapes markup",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Unknown project selection is rejected without changing state",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Create project selects and saves it",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Stored project selection survives reload",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Failed project save keeps current selection",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Same project cannot be created twice",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Shared build matches source: inbox",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Project picker and responsive layer included: inbox",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Shared build matches source: today",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Project picker and responsive layer included: today",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Shared build matches source: workspace",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Project picker and responsive layer included: workspace",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Shared build matches source: clipboard",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Project picker and responsive layer included: clipboard",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Shared build matches source: shelf",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Project picker and responsive layer included: shelf",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Shared build matches source: notes",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Project picker and responsive layer included: notes",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Shared build matches source: activity",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Project picker and responsive layer included: activity",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Shared build matches source: weekly",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Project picker and responsive layer included: weekly",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Shared build matches source: search",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Project picker and responsive layer included: search",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Shared build matches source: capture-detail",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Project picker and responsive layer included: capture-detail",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Shared build matches source: task-detail",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Project picker and responsive layer included: task-detail",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Shared build matches source: new-note",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Project picker and responsive layer included: new-note",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Shared build matches source: new-task",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Project picker and responsive layer included: new-task",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Shared build matches source: reminder",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Project picker and responsive layer included: reminder",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Shared build matches source: export",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Project picker and responsive layer included: export",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Shared build matches source: settings",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Project picker and responsive layer included: settings",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Shared build matches source: recently-deleted",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Project picker and responsive layer included: recently-deleted",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Shared build matches source: backup",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Project picker and responsive layer included: backup",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Shared build matches source: robot",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Project picker and responsive layer included: robot",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Document structure: design-review.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Document structure: activity.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Document structure: weekly.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Document structure: shelf.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Document structure: index.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Document structure: reminder.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Document structure: task-detail.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Document structure: clipboard.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Document structure: robot.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Document structure: notes.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Document structure: new-note.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Document structure: today.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Document structure: recently-deleted.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Document structure: inbox.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Document structure: new-task.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Document structure: backup.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Document structure: capture-detail.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Document structure: search.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Document structure: settings.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Document structure: export.html",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "check": "Document structure: workspace.html",
+    "passed": true,
+    "detail": ""
+  }
+]

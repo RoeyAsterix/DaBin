@@ -1,0 +1,47 @@
+/* A readable, compact origin → usage trail; app marks are local original assets. */
+.content-trail{display:flex;align-items:center;gap:2px;min-width:0;max-width:100%;}
+.trail-path{display:inline-flex;align-items:center;gap:5px;min-width:0;min-height:34px;padding:1px 3px;border:0;border-radius:7px;background:transparent;color:var(--muted);text-align:left;cursor:pointer;}
+.trail-path:hover,.trail-add:hover{background:var(--soft);color:var(--fg);}
+.app-mark{display:inline-grid;place-items:center;width:28px;height:28px;flex:0 0 28px;vertical-align:middle;}
+.app-mark img{display:block;width:100%;height:100%;object-fit:contain;}
+.app-mark-unknown{border:1px solid var(--border);border-radius:7px;color:var(--muted);background:var(--surface);}
+.app-mark-unknown .icon{width:16px;height:16px;}
+.trail-direction{display:flex;align-items:center;padding:0 2px;}
+.trail-direction .icon{width:14px;height:14px;}
+.trail-destinations{display:flex;align-items:center;gap:2px;min-width:0;}
+.trail-empty{font-size:11px;white-space:nowrap;letter-spacing:.01em;}
+.trail-overflow{font-size:11px;min-width:24px;padding-left:3px;font-variant-numeric:tabular-nums;}
+.trail-add{display:grid;place-items:center;flex:0 0 32px;width:32px;height:32px;border:0;border-radius:7px;background:transparent;color:var(--muted);cursor:pointer;}
+.trail-add .icon{width:14px;height:14px;}
+.card-top>.content-trail{flex:0 1 auto;}
+.card-top{flex-wrap:wrap;row-gap:2px;}
+.card-top>time{margin-left:auto;white-space:nowrap;}
+.task-card>.content-trail{margin:10px 0 7px 41px;}
+.task-card-context{margin-top:5px;margin-bottom:13px;}
+.trail-detail{margin:8px 0 16px;padding:8px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+.trail-robot{padding:5px 0 4px;}
+.recent-capture-group{border:1px solid var(--border);border-radius:12px;padding:0 10px 3px;}
+.recent-capture-group>.recent-capture{border:0;padding:10px 0 5px;margin:0;}
+.trail-origin{display:flex;align-items:center;gap:10px;margin:20px 0;padding:14px;background:var(--soft);border-radius:10px;}
+.trail-caption{font-size:10px;letter-spacing:.08em;color:var(--muted);margin-right:3px;}
+.trail-origin>div,.paste-receipt>.grow{min-width:0;display:flex;flex-direction:column;gap:3px;}
+.trail-origin strong,.paste-receipt strong{font-size:14px;font-weight:600;overflow-wrap:anywhere;}
+.trail-origin>div>span,.paste-receipt .grow>span,.paste-receipt small{font-size:11px;letter-spacing:.01em;color:var(--muted);}
+.trail-history-head{display:flex;align-items:center;gap:9px;}
+.trail-history-head h3,.paste-picker h3{font-size:14px;}
+.paste-history{max-height:225px;overflow:auto;margin:5px 0 15px;}
+.paste-receipt{display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--border);}
+.paste-receipt:last-child{border-bottom:0;}
+.trail-no-history{font-size:13px;color:var(--muted);padding:13px 0;}
+.trail-record-button{display:flex;align-items:center;justify-content:center;gap:6px;min-height:40px;width:100%;border:1px solid var(--border);border-radius:9px;background:var(--surface);color:var(--fg);cursor:pointer;}
+.paste-picker{border-top:1px solid var(--border);padding-top:16px;}
+.paste-picker>p{font-size:12px;color:var(--muted);margin:5px 0 12px;max-width:44ch;line-height:1.5;}
+.paste-app-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;}
+.paste-app-choice{display:flex;align-items:center;justify-content:center;flex-direction:column;gap:5px;min-height:70px;padding:8px 3px;border:1px solid transparent;border-radius:9px;background:transparent;color:var(--fg);font-size:11px;letter-spacing:.02em;cursor:pointer;}
+.paste-app-choice:hover{border-color:var(--border);background:var(--soft);}
+.paste-app-choice .app-mark{width:32px;height:32px;flex-basis:32px;}
+.paste-custom{display:flex;gap:7px;margin-top:14px;}
+.paste-custom input{min-width:0;flex:1;}
+.content-trail button:focus-visible,.paste-app-choice:focus-visible,.trail-record-button:focus-visible{outline:2px solid var(--fg);outline-offset:2px;}
+@container (max-width:380px){.task-card>.content-trail{margin-left:0;}.card-top{gap:3px;}.trail-path{gap:3px;}}
+@media(pointer:coarse){.trail-path{min-height:44px;}.trail-add{width:44px;height:44px;flex-basis:44px;}.trail-record-button{min-height:44px;}}

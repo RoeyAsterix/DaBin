@@ -1,0 +1,1012 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Today · DaBin</title><style>
+/* Source palette: build 53 Palette / ThemeSettings. Native points map to CSS px at 1x. */
+:root{--bg:oklch(99.239% .00283 308.429);--surface:oklch(100% 0 0);--fg:oklch(28.126% .01892 303.38);--muted:oklch(47.957% .02523 306.469);--border:oklch(91.077% .00867 308.355);--accent:oklch(49.05% .08612 306.445);--soft:#f3f1f5;--success:#287447;--danger:#a93640;--warn:#875917;--metal:#9d86b0;--font-display:'SF Pro Rounded','Avenir Next',-apple-system,sans-serif;--font-body:'SF Pro Text',-apple-system,BlinkMacSystemFont,sans-serif;--font-mono:'SF Mono',ui-monospace,Menlo,monospace;--radius:12px;--space:8px;--body-opacity:1;color-scheme:light}
+:root[data-theme=dark]{--bg:#1d1c21;--surface:#252328;--fg:#ebeaed;--muted:#a9a6ae;--border:#3c3940;--soft:#2d2a30;--accent:#ab92c6;--success:#7ccd99;--danger:#f28d99;--warn:#dfb371;color-scheme:dark}
+*{box-sizing:border-box}body{margin:0;background:var(--soft);color:var(--fg);font:14px/1.5 var(--font-body);-webkit-font-smoothing:antialiased}button,input,select,textarea{font:inherit;color:inherit}button,a,input,select,textarea{-webkit-tap-highlight-color:transparent}button,a{touch-action:manipulation}button{cursor:pointer}button:disabled{opacity:.48;cursor:not-allowed}a{color:inherit;text-decoration:none}button{border:0;background:none}h1,h2,h3,p{margin:0}h1,h2,h3{font-family:var(--font-display);font-weight:600}h1{font-size:30px;letter-spacing:-.025em;line-height:1.2}h2{font-size:18px;letter-spacing:-.015em}h3{font-size:14px;line-height:1.4}p{max-width:65ch}svg.icon{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.65;stroke-linecap:round;stroke-linejoin:round;flex:none}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:3px}button:hover,a.btn:hover{background:var(--soft)}input,select,textarea{min-width:0;border:1px solid var(--border);border-radius:8px;background:var(--surface);padding:8px 10px}textarea{resize:vertical;width:100%;line-height:1.65}input[type=checkbox]{accent-color:var(--accent);width:17px;height:17px}input[type=range]{accent-color:var(--accent)}label.field{display:grid;gap:5px;font-size:12px;color:var(--muted)}label.field input,label.field select,label.field textarea{font-size:14px;color:var(--fg)}kbd,.mono,time{font-family:var(--font-mono);font-variant-numeric:tabular-nums}.muted,.meta{color:var(--muted)}.meta{font-size:12px;letter-spacing:.015em}.eyebrow{font-size:11px;letter-spacing:.09em;text-transform:uppercase}.row{display:flex;align-items:center;gap:10px}.between{justify-content:space-between}.wrap{flex-wrap:wrap}.grow{flex:1;min-width:0}.stack{display:grid;gap:16px}.gap8{gap:8px}.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:34px;padding:7px 12px;border:1px solid var(--border);border-radius:8px;background:var(--surface);font-size:12px;font-weight:550;letter-spacing:.02em;white-space:nowrap}.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent,#fff)}.btn.primary:hover{filter:brightness(.95)}.btn.quiet{background:transparent;border-color:transparent}.btn.danger{color:var(--danger)}.icon-btn{display:inline-grid;place-items:center;width:32px;height:32px;border-radius:7px;flex:none}.tag{display:inline-flex;align-items:center;gap:5px;font-size:11px;letter-spacing:.015em;padding:3px 7px;border:1px solid var(--border);border-radius:5px;color:var(--muted);background:var(--surface)}.tag.task{color:var(--fg)}.tag.success{color:var(--success)}.tag.warn{color:var(--warn)}.tag svg{width:13px;height:13px}.dot{width:6px;height:6px;border-radius:50%;background:var(--muted)}.dot.on{background:var(--success)}.dot.pause{background:var(--warn)}.rule{height:1px;background:var(--border);margin:18px 0}
+/* Frame: 10pt sides, 32pt head, 18pt feet. Decoration cannot intercept content. */
+.frame{position:relative;width:min(1120px,calc(100% - 64px));height:min(890px,calc(100dvh - 72px));min-height:480px;margin:36px auto;padding:32px 10px 18px;container-type:inline-size}.frame.expanded{width:calc(100% - 28px);height:calc(100dvh - 28px);margin:14px auto}.body-rim{height:100%;padding:2px;border-radius:19px;background:linear-gradient(140deg,#cbbbda,#826497 34%,#c4b4d2 66%,#765d90);box-shadow:0 18px 45px #23162b16}.app{height:100%;display:flex;flex-direction:column;border-radius:17px;overflow:hidden;background:var(--bg);position:relative}.robot-head{position:absolute;top:2px;left:calc(50% - 24px);width:48px;height:32px;border:1px solid #604875;border-radius:8px;background:linear-gradient(130deg,#d1c0e0,#8c70a4);box-shadow:inset 0 1px #f1eaf7;z-index:1;pointer-events:none}.robot-head:before{content:'';position:absolute;inset:6px 5px 5px;border-radius:6px;background:#302738;box-shadow:inset 0 1px 3px #0006}.robot-head .eye{position:absolute;top:12px;width:5px;height:6px;background:#d7f4ef;border-radius:3px;z-index:1}.robot-head .eye:first-child{left:13px}.robot-head .eye:nth-child(2){right:13px}.robot-head .smile{position:absolute;width:8px;height:4px;border-bottom:1px solid #aad5cd;bottom:8px;left:19px;border-radius:50%}.hands:before,.hands:after{content:'';position:absolute;top:47%;width:7px;height:28px;border:2px solid #977baa;border-radius:7px;pointer-events:none}.hands:before{left:4px}.hands:after{right:4px}.feet:before,.feet:after{content:'';position:absolute;bottom:8px;width:23px;height:7px;border-radius:4px;background:#8b709e;pointer-events:none}.feet:before{left:calc(50% - 35px)}.feet:after{right:calc(50% - 35px)}.resize-handle{position:absolute;bottom:20px;right:13px;width:16px;height:16px;cursor:nwse-resize;z-index:3;opacity:.45;touch-action:none}.headbar{display:flex;align-items:center;gap:10px;padding:12px 20px 9px;min-height:54px;background:var(--surface)}.wordmark{display:flex;align-items:center;gap:5px;font:600 20px var(--font-display);letter-spacing:-.04em}.wordmark img{width:22px;height:27px;object-fit:contain}.autostate{display:flex;gap:6px;align-items:center;font-size:11px;color:var(--muted);padding:5px 8px;border-radius:20px;border:1px solid var(--border)}.head-spacer{flex:1;cursor:grab;min-width:5px;height:24px}.search-trigger{display:flex;align-items:center;gap:9px;color:var(--muted);background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:6px 10px;font-size:12px;width:180px}.search-trigger kbd{margin-left:auto;font-size:10px}.primary-nav{display:flex;gap:4px;border-bottom:1px solid var(--border);padding:0 20px 10px;background:var(--surface)}.primary-nav a{display:flex;align-items:center;justify-content:center;gap:7px;padding:8px 15px;font-size:12px;font-weight:550;letter-spacing:.02em;border-radius:7px;color:var(--muted)}.primary-nav a.active{color:var(--accent);background:var(--soft)}.primary-nav a:hover{background:var(--soft)}.primary-nav a svg{width:16px;height:16px}.main{flex:1;min-height:0;overflow:auto;overscroll-behavior:contain;padding:26px 28px 32px;background:color-mix(in srgb,var(--bg) calc(var(--body-opacity)*100%),transparent)}.page-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:22px}.page-head p{font-size:13px;color:var(--muted);margin-top:5px}.project-select{max-width:220px;font-size:12px;background:var(--surface)}.page-title-row{display:flex;align-items:center;gap:10px}.count{font:12px var(--font-mono);padding:3px 7px;background:var(--soft);border-radius:6px;color:var(--muted)}.footer{display:flex;align-items:center;gap:8px;justify-content:space-between;border-top:1px solid var(--border);background:var(--surface);padding:7px 20px;font-size:11px;color:var(--muted);min-height:34px}.footer svg{width:13px;height:13px}.footer button{font-size:11px}.tabs{display:flex;align-items:center;gap:4px;border-bottom:1px solid var(--border);margin-bottom:18px;padding-bottom:10px;flex-wrap:wrap}.tabs a,.tabs button{font-size:12px;padding:6px 11px;border-radius:6px;color:var(--muted)}.tabs .active{background:var(--soft);color:var(--fg);font-weight:600}.filters{display:flex;align-items:center;gap:4px;margin:18px 0;flex-wrap:wrap;min-height:32px}.filters button{padding:5px 10px;border-radius:20px;font-size:12px;color:var(--muted);border:1px solid transparent}.filters button.active{border-color:var(--border);background:var(--surface);color:var(--fg);font-weight:600}.filters .end{margin-left:auto}.composer{border:1px solid var(--border);background:var(--surface);border-radius:12px;overflow:hidden}.composer textarea{padding:15px 16px 5px;min-height:70px;border:0;background:none;resize:none;outline:none;box-shadow:none}.composer .row{padding:5px 10px 10px}.composer .destination{font-size:11px;color:var(--muted);margin-left:6px}.composer .primary{margin-left:auto}.section-label{display:flex;justify-content:space-between;align-items:center;margin:20px 0 10px;font-size:11px;color:var(--muted);letter-spacing:.065em;text-transform:uppercase}.card-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.card{display:flex;flex-direction:column;border:1px solid var(--border);background:var(--surface);border-radius:12px;overflow:hidden;min-width:0;transition:border-color .16s}.card:hover{border-color:color-mix(in srgb,var(--muted) 45%,var(--border))}.card-top{display:flex;gap:7px;align-items:center;padding:11px 14px 3px;font-size:11px;color:var(--muted)}.source-mark{display:grid;place-items:center;width:21px;height:21px;background:var(--soft);border-radius:5px;font-size:10px;font-weight:600}.card-top time{margin-left:auto;font-size:10px}.card-top .icon-btn{width:27px;height:27px}.card-top .icon{width:16px;height:16px}.card-body{display:block;padding:10px 16px 14px;flex:1;min-height:94px}.card-body h3{font-size:15px;font-weight:600;letter-spacing:-.012em;overflow-wrap:anywhere}.card-body p{margin-top:7px;font-size:13px;color:var(--muted);line-height:1.6;white-space:pre-line;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}.card-footer{display:flex;align-items:center;gap:8px;min-height:39px;padding:7px 13px;border-top:1px solid var(--border);font-size:11px;color:var(--muted)}.card-footer .icon{width:13px;height:13px}.card-footer .end{margin-left:auto}.card-footer button{font-size:11px;display:flex;gap:4px;align-items:center;padding:3px;border-radius:4px}.card-preview{display:block;background:var(--soft);height:174px;margin:10px 14px 0;border-radius:7px;overflow:hidden}.card-preview img{width:100%;height:100%;object-fit:contain}.file-preview{display:flex;align-items:center;gap:14px;background:var(--soft);border-radius:8px;padding:17px;margin:10px 14px 0}.file-preview .icon{width:33px;height:38px;color:var(--muted)}.file-preview strong{display:block;font-size:12px;overflow-wrap:anywhere}.file-preview span{font-size:11px;color:var(--muted)}.file-stack{display:grid;gap:7px;margin:9px 14px}.file-line{display:flex;align-items:center;gap:10px;padding:8px;background:var(--soft);border-radius:6px;font-size:12px;overflow-wrap:anywhere}.file-line .icon{width:16px}.task-row{display:flex;align-items:flex-start;gap:12px;padding:16px;border:1px solid var(--border);border-radius:10px;background:var(--surface);margin-bottom:9px}.complete-control{margin-top:2px;width:20px;height:20px;border:1.5px solid var(--muted);border-radius:6px;display:grid;place-items:center;flex:none;padding:0}.complete-control.done{border-color:var(--success);color:var(--success)}.complete-control svg{width:14px;height:14px}.task-row h3{font-size:14px}.task-row .meta{margin-top:5px}.task-row.completed h3{text-decoration:line-through;color:var(--muted)}.task-row .time-estimate{font:11px var(--font-mono);white-space:nowrap;padding-top:3px}.task-row .task-actions{display:flex;gap:2px}.panel{padding:20px;border:1px solid var(--border);background:var(--surface);border-radius:12px}.panel>h2{margin-bottom:15px}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.detail-grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(300px,.9fr);gap:18px}.detail-preview{min-height:200px;background:var(--soft);border-radius:8px;display:grid;place-items:center;margin-bottom:17px;padding:20px;white-space:pre-line;overflow-wrap:anywhere}.detail-preview img{width:100%;max-height:290px;object-fit:contain}.detail-text{font-size:16px;line-height:1.65}.detail-meta{display:grid;gap:10px;font-size:12px}.detail-meta div{display:flex;gap:16px;justify-content:space-between}.detail-meta span{color:var(--muted);white-space:nowrap}.detail-meta strong{font-weight:400;text-align:right;overflow-wrap:anywhere}.checklist{display:grid;gap:7px}.checklist label{display:flex;gap:9px;align-items:flex-start;font-size:13px}.checklist input[type=text]{flex:1;padding:5px 7px;border-color:transparent}.checklist input[type=text]:hover{border-color:var(--border)}.note-area{min-height:310px;line-height:1.85;border:none;background:transparent;padding:8px 0;resize:none}.note-top{border-bottom:1px solid var(--border);padding-bottom:14px;margin-bottom:12px}.note-paper{max-width:740px;margin:0 auto}.date-nav{display:flex;align-items:center;gap:5px}.date-nav input{max-width:146px;font-size:12px;text-align:center}.weekly{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(260px,1fr);gap:14px;overflow:auto;align-items:start;padding-bottom:14px}.day-column{min-width:0}.day-column h2{font-size:14px;margin:5px 0 13px}.day-column .card{margin-bottom:10px}.day-column .card-preview{height:130px}.hour-group{border:1px solid var(--border);background:var(--surface);border-radius:11px;padding:12px;margin-bottom:14px}.hour-group summary{cursor:pointer;display:flex;align-items:center;gap:9px;font-size:12px}.hour-group[open] summary{margin-bottom:14px}.empty{padding:55px 15px;text-align:center;display:grid;justify-items:center;gap:12px}.empty img{width:48px;height:60px;opacity:.8}.empty p{color:var(--muted);font-size:13px;max-width:38ch}.setting-row{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:15px 0;border-bottom:1px solid var(--border)}.setting-row:last-child{border-bottom:0}.setting-row strong{font-size:13px;font-weight:550;display:block}.setting-row p{font-size:12px;color:var(--muted);margin-top:3px;max-width:48ch}.setting-row select{font-size:12px;max-width:180px}.switch{width:34px;height:20px;appearance:none;background:var(--border);border:1px solid var(--muted);border-radius:20px;position:relative;flex:none;cursor:pointer}.switch:before{content:'';position:absolute;width:14px;height:14px;left:2px;top:2px;border-radius:50%;background:var(--surface);box-shadow:0 1px 2px #0003;transition:transform .15s}.switch[aria-checked=true]{background:var(--accent);border-color:var(--accent)}.switch[aria-checked=true]:before{transform:translateX(14px);background:var(--on-accent,#fff)}.settings-layout{display:grid;grid-template-columns:1fr 1fr;gap:16px}.settings-layout .panel{align-self:start}.settings-layout .wide{grid-column:1/-1}.swatches{display:flex;gap:7px}.swatch{width:25px;height:25px;border-radius:50%;border:3px solid var(--surface);outline:1px solid var(--border)}.swatch[aria-pressed=true]{outline:2px solid var(--fg)}.notice{padding:12px 14px;background:var(--soft);border-radius:8px;font-size:12px;color:var(--muted);display:flex;align-items:flex-start;gap:9px}.notice.error{color:var(--danger)}.notice .icon{width:16px;height:16px}.search-box{display:flex;align-items:center;gap:10px;border:1px solid var(--border);border-radius:10px;padding:6px 12px;background:var(--surface)}.search-box input{border:0;flex:1;outline:none;font-size:16px}.search-result{display:flex;gap:13px;padding:16px 0;border-bottom:1px solid var(--border)}.search-result h3{margin:3px 0 5px}.search-result p{color:var(--muted);font-size:13px}.search-result mark{background:var(--soft);color:var(--fg);font-weight:600}.search-result .icon{margin-top:4px}.search-refine{display:flex;gap:7px;flex-wrap:wrap;margin:14px 0}.search-refine select{font-size:12px;max-width:180px}.back{display:inline-flex;gap:6px;align-items:center;color:var(--muted);font-size:12px;margin-bottom:16px}.back svg{width:14px;height:14px}.details-actions{position:sticky;bottom:-32px;padding:15px 0;background:var(--bg);border-top:1px solid var(--border);margin-top:20px}.reminder-clock{font:46px var(--font-mono);letter-spacing:-.035em;text-align:center;padding:18px}.reminder-clock input{width:105px;font:inherit;text-align:center}.drop-zone{border:1px dashed var(--muted);border-radius:9px;padding:20px;text-align:center;color:var(--muted);font-size:12px}.native-label{font-size:11px;letter-spacing:.03em;color:var(--muted);padding:8px;border:1px dashed var(--border);border-radius:6px}.modal{border:1px solid var(--border);border-radius:15px;background:var(--surface);color:var(--fg);width:min(460px,calc(100% - 28px));padding:23px;box-shadow:0 20px 80px #0003}.modal::backdrop{background:#15101d65;backdrop-filter:blur(3px)}.modal h2{margin-bottom:12px}.modal p{font-size:13px;color:var(--muted);margin-bottom:16px}.modal .actions{display:flex;justify-content:flex-end;gap:8px;margin-top:20px}.modal .stack{gap:11px}.menu-list{display:grid;gap:3px}.menu-list button,.menu-list a{text-align:left;display:flex;align-items:center;gap:10px;padding:11px;border-radius:7px;font-size:13px}.menu-list kbd{margin-left:auto;font-size:11px;color:var(--muted)}.toast{position:fixed;bottom:42px;left:50%;transform:translateX(-50%) translateY(15px);background:var(--fg);color:var(--surface);padding:11px 18px;border-radius:9px;font-size:12px;max-width:min(520px,calc(100% - 34px));box-shadow:0 4px 18px #0002;z-index:99;opacity:0;pointer-events:none;transition:.2s}.toast.visible{opacity:1;transform:translateX(-50%) translateY(0);pointer-events:auto}.toast a,.toast button{color:inherit;text-decoration:underline;margin-left:9px}.hidden-state{display:grid;place-items:center;min-height:100dvh}.hidden-state .robot-entry{padding:18px;background:var(--surface);border:1px solid var(--border);border-radius:16px;display:grid;justify-items:center;gap:8px}.robot-entry img{width:64px;height:78px}.robot-stage{position:relative;min-height:340px;display:grid;place-items:center;background:var(--soft);border:1px solid var(--border);border-radius:12px;overflow:hidden}.robot-stage img{width:96px;height:117px;z-index:1}.robot-stage .token{position:absolute;left:50%;top:52px;border:1px solid var(--muted);border-radius:5px;padding:3px 7px;background:var(--surface);font:12px var(--font-mono);opacity:0}.robot-stage.play .token{animation:token-eat 1.8s ease-in-out}.robot-stage.play img{animation:robot-eat 1.8s ease-in-out}.robot-stage .state-caption{position:absolute;bottom:22px;font-size:12px}.simulation-bar{font-size:11px;color:var(--muted);text-align:center;padding:10px}.drag-over:after{content:'Drop to save in DaBin';position:absolute;inset:6px;background:color-mix(in srgb,var(--surface) 94%,transparent);border:2px dashed var(--accent);border-radius:13px;display:grid;place-items:center;font-size:20px;color:var(--accent);z-index:10;pointer-events:none}.saved-reaction .robot-head{animation:happy .65s ease-in-out}.high-contrast{--border:var(--muted)}.reduce-motion *{animation-duration:.001ms!important;transition-duration:.001ms!important;scroll-behavior:auto!important}.sr-only{position:absolute;clip:rect(0,0,0,0);width:1px;height:1px;overflow:hidden}.context-item{opacity:.65;border-left:2px solid var(--border);padding-left:10px}.attachment-list{display:grid;gap:8px}.attachment-list a{padding:10px;display:flex;gap:8px;align-items:center;border:1px solid var(--border);border-radius:7px;font-size:12px}.attachment-list a span{overflow-wrap:anywhere}.actions-inline{display:flex;gap:5px;flex-wrap:wrap}.small-link{text-decoration:underline;font-size:12px;text-underline-offset:3px}.file-list{font-size:12px;padding:0;list-style:none;display:grid;gap:7px}
+@keyframes happy{25%{transform:translateY(2px)}60%{transform:translateY(-2px)}}@keyframes token-eat{0%{opacity:0;transform:translate(-50%,-30px) rotate(-8deg)}20%{opacity:1}65%{opacity:1;transform:translate(-50%,72px) rotate(8deg) scale(.8)}85%,100%{opacity:0;transform:translate(-50%,90px) scale(.1)}}@keyframes robot-eat{40%{transform:rotate(-4deg)}65%{transform:scale(1.06,.94)}85%{transform:scale(.98,1.02)}}
+/* Compact is a list with bounded chrome; expanded gains card columns and detail panes. */
+@container (max-width:700px){.headbar{padding:9px 13px;gap:7px}.search-trigger{width:32px;border:0;padding:5px}.search-trigger span,.search-trigger kbd{display:none}.primary-nav{padding:0 9px 8px;gap:1px}.primary-nav a{flex:1;padding:7px 4px;font-size:11px;gap:5px}.main{padding:20px 16px 25px}.page-head{margin-bottom:16px}.page-head p{font-size:12px}.page-head h1{font-size:26px}.page-head .project-select{max-width:137px}.card-grid,.settings-layout,.detail-grid{grid-template-columns:1fr}.settings-layout .wide{grid-column:auto}.filters{gap:0;margin:13px 0}.filters button{font-size:11px;padding:5px 8px}.footer{padding:7px 12px}.footer .shortcut-help{display:none}.card-preview{height:185px}.card-body{min-height:75px}.detail-grid{gap:14px}.page-head.activity-head{flex-wrap:wrap}.autostate{font-size:10px;padding:4px 6px}.autostate .label-extra{display:none}.headbar>.add-label{display:none}.wordmark{font-size:18px}.wordmark img{width:19px}.task-row{padding:12px;gap:9px}.task-row .task-actions{flex-direction:column}.details-actions{bottom:-25px}.search-refine select{flex:1;max-width:none}.page-head .meta{font-size:11px}}
+@media(max-width:600px){.frame{width:100%;height:100dvh;min-height:480px;margin:0}.body-rim{box-shadow:none}.frame.expanded{width:100%;height:100dvh;margin:0}.main{padding:18px 14px 24px}.headbar{gap:4px}.headbar .expand-button{display:none}.headbar .btn{padding:6px 8px}.autostate{border:0}.autostate .label-extra{display:none}.form-grid{gap:10px}.page-head{gap:10px}.footer{font-size:10px}.project-select{max-width:130px}.frame{min-width:0}.primary-nav a{font-size:11px}}
+@media(pointer:coarse){.icon-btn,.btn,.filters button,.primary-nav a,.tabs a,.tabs button{min-height:44px}.icon-btn{min-width:38px}.headbar{flex-wrap:wrap}.autostate{min-height:32px}.primary-nav{padding-bottom:5px}.headbar .wordmark{font-size:18px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.001ms!important;transition-duration:.001ms!important;scroll-behavior:auto!important}}
+/* Short compact panels spend their height on saved content. */
+@media(max-height:560px){.main{padding-top:14px}.page-head{margin-bottom:12px}.page-head p{display:none}.page-head h1{font-size:23px}.composer textarea{min-height:38px;height:38px;padding:9px 13px 2px}.composer .row{padding:3px 8px 8px}.filters{margin:10px 0}.section-label{margin:12px 0 8px}.headbar{padding-top:7px;padding-bottom:6px}.primary-nav{padding-bottom:6px}.card-body{min-height:60px}.card-top{padding-top:7px}.page-head.activity-head{gap:9px}}
+input:not([type=checkbox]):not([type=range]):not([type=color]),select,textarea:not(.note-area){border-color:color-mix(in srgb,var(--muted) 68%,var(--surface))}.composer textarea{border:0}.search-box input{border:0}.checklist input[type=text]{border-color:transparent}
+
+/* Visual refinement: restrained chrome, generous previews, progressive disclosure. */
+body{background:color-mix(in srgb,var(--soft) 78%,var(--border));}
+.frame{width:min(980px,calc(100% - 72px));height:min(820px,calc(100dvh - 48px));margin:24px auto;}
+.body-rim{padding:1px;border-radius:22px;box-shadow:0 22px 60px #23162b12,0 2px 5px #23162b08;}
+.app{border-radius:21px;}
+.robot-head{width:46px;height:28px;left:calc(50% - 23px);top:5px;}
+.robot-head .eye{top:10px;height:5px;}
+.robot-head .smile{bottom:7px;}
+.hands:before,.hands:after{width:6px;height:22px;border-width:1.5px;}
+.headbar{padding:16px 24px 10px;gap:10px;min-height:58px;}
+.wordmark{font-size:21px;letter-spacing:-.04em;gap:7px;}
+.wordmark img{width:23px;height:28px;}
+.autostate{border:0;padding:4px 6px;font-size:11px;}
+.search-trigger{width:148px;background:var(--soft);border:0;min-height:32px;}
+.headbar>.icon-btn{color:var(--muted);width:30px;height:30px;}
+.primary-nav{padding:0 24px;gap:24px;min-height:48px;align-items:stretch;}
+.primary-nav a{position:relative;padding:11px 0 14px;border-radius:0;font-size:12px;gap:7px;}
+.primary-nav a.active{color:var(--fg);background:transparent;}
+.primary-nav a.active:after{content:'';position:absolute;bottom:-1px;height:2px;left:0;right:0;background:var(--accent);border-radius:2px;}
+.primary-nav a:hover{background:transparent;color:var(--fg);}
+.primary-nav a svg{width:16px;height:16px;}
+.main{padding:28px;}
+.page-head{margin-bottom:22px;align-items:center;}
+.page-head h1{font-size:28px;letter-spacing:-.035em;font-weight:600;}
+.page-title-row{gap:11px;}
+.count{font-size:11px;padding:3px 7px;min-width:23px;text-align:center;border-radius:7px;background:var(--soft);}
+.project-select{font-size:12px;max-width:190px;border-color:var(--border)!important;background:var(--surface);border-radius:8px;padding:8px 28px 8px 11px;}
+.composer{display:flex;align-items:center;gap:4px;padding:4px 6px 4px 0;border:1px solid var(--border);border-radius:13px;}
+.composer:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 9%,transparent);}
+.composer textarea{padding:13px 16px;min-height:46px;height:46px;flex:1;line-height:1.5;font-size:14px;}
+.composer .row{padding:0;gap:7px;}
+.composer .icon-btn{color:var(--muted);}
+.composer .btn{min-height:34px;padding:7px 12px;}
+.capture-shortcut{font-size:11px;color:var(--muted);margin-right:8px;}
+.draft-status{margin-top:7px;}
+.filters{margin:20px 0 16px;gap:5px;}
+.filters button{font-size:12px;min-height:30px;padding:5px 11px;border-radius:7px;}
+.filters button.active{background:var(--soft);border-color:transparent;}
+.filters .end{padding:5px;}
+.card-grid{gap:16px;align-items:start;}
+.card{border-radius:14px;transition:border-color .16s,box-shadow .16s;}
+.card:hover{border-color:color-mix(in srgb,var(--muted) 36%,var(--border));box-shadow:0 3px 12px #23162b06;}
+.card-top{padding:13px 15px 0;gap:7px;font-size:11px;}
+.source-mark{width:22px;height:22px;border-radius:6px;background:var(--soft);}
+.card-top .icon{width:14px;height:14px;}
+.card-top time{font-size:10px;}
+.card-body{padding:16px 18px 18px;min-height:110px;}
+.card-body h3{font-size:16px;line-height:1.35;letter-spacing:-.02em;}
+.card-body p{font-size:13px;line-height:1.55;-webkit-line-clamp:2;margin-top:10px;}
+.card-preview{height:208px;margin:12px 12px 0;border-radius:8px;background:var(--soft);}
+.card-media .card-body{min-height:0;padding:15px 18px;}
+.card-footer{border-top:1px solid color-mix(in srgb,var(--border) 70%,transparent);padding:8px 15px;min-height:41px;}
+.card-footer .tag{border:0;padding:2px 0;background:none;}
+.card-footer .end{font-weight:550;color:var(--fg);}
+.file-stack{margin:13px 14px 0;gap:5px;}
+.file-line{padding:11px;border-radius:7px;}
+.file-preview{margin:13px 14px 0;padding:20px 15px;}
+.card-files .card-body{min-height:0;padding-top:14px;padding-bottom:15px;}
+.card-files .card-body p{display:none;}
+.card-links .card-body p{font-family:var(--font-mono);font-size:11px;overflow-wrap:anywhere;}
+.is-minimized .card-body{min-height:0;padding:12px 18px;}
+.task-row{border-width:0 0 1px;border-radius:0;background:transparent;padding:19px 2px;margin:0;align-items:center;gap:14px;}
+.task-row:hover{background:color-mix(in srgb,var(--soft) 55%,transparent);}
+.task-row h3{font-size:15px;line-height:1.4;letter-spacing:-.015em;}
+.task-row .meta{font-size:11px;margin-top:6px;gap:6px;}
+.task-row .time-estimate{color:var(--muted);}
+.complete-control{width:21px;height:21px;border-radius:50%;border-color:color-mix(in srgb,var(--muted) 55%,var(--surface));}
+.complete-control.done{background:color-mix(in srgb,var(--success) 8%,var(--surface));}
+.tabs{gap:3px;padding:5px;background:var(--soft);border:0;border-radius:9px;margin-bottom:22px;width:fit-content;max-width:100%;}
+.tabs a,.tabs button{border-radius:6px;padding:7px 13px;font-size:12px;}
+.tabs .active{background:var(--surface);color:var(--fg);box-shadow:0 1px 3px #23162b0c;}
+.tabs:has(.grow){width:100%;background:transparent;border-bottom:1px solid var(--border);border-radius:0;padding:0 0 13px;}
+.tabs:has(.grow) .active{background:var(--soft);box-shadow:none;}
+.section-label{margin:22px 0 6px;font-size:10px;letter-spacing:.08em;}
+.panel{border-radius:13px;padding:22px;}
+.panel>h2{font-size:17px;margin-bottom:19px;}
+.setting-row{padding:17px 0;}
+.setting-row p{font-size:11px;line-height:1.5;max-width:37ch;}
+.settings-layout{gap:18px;}
+.footer{min-height:34px;padding:5px 23px;font-size:10px;color:var(--muted);}
+.footer-menu{display:grid;place-items:center;width:28px;height:24px;border-radius:6px;}
+.footer-menu .icon{width:18px;}
+.detail-preview{border-radius:10px;min-height:230px;}
+.detail-meta{font-size:11px;}
+.details-actions{bottom:-28px;}
+.note-paper{padding:6px 4px;}
+.note-area{font-size:15px;line-height:1.85;}
+.note-top h2{font-size:17px;}
+.empty{padding:48px 16px;gap:11px;}
+.empty h2{font-size:20px;}
+.empty img{width:45px;height:55px;}
+.modal{padding:24px;border-radius:18px;}
+.modal h2{font-size:20px;}
+.menu-list button,.menu-list a{padding:11px 10px;}
+.notice{font-size:11px;line-height:1.6;}
+/* The entry surface is a compact capture tool. Motion controls live in More. */
+.buddy-frame{width:416px;height:min(684px,calc(100dvh - 40px));min-height:480px;margin:20px auto;padding:12px 0 12px;}
+.buddy-frame .body-rim{background:var(--border);border-radius:24px;box-shadow:0 24px 64px #23162b1a,0 2px 5px #23162b09;}
+.buddy-frame .app{border-radius:23px;}
+.buddy-frame>.robot-head,.buddy-frame>.hands,.buddy-frame>.feet,.buddy-frame>.resize-handle{display:none;}
+.buddy-frame .headbar{padding:20px 22px 10px;gap:6px;background:var(--bg);}
+.buddy-frame .wordmark img{display:none;}
+.buddy-frame .wordmark{font-size:22px;}
+.buddy-frame .autostate{font-size:10px;gap:5px;}
+.buddy-frame .head-spacer{min-width:24px;}
+.buddy-frame .search-trigger,.buddy-frame .headbar>[data-action=add],.buddy-frame .expand-button,.buddy-frame .primary-nav{display:none;}
+.buddy-frame .main{padding:0 24px;}
+.buddy-frame .footer{border-top:0;background:var(--bg);padding:10px 24px 14px;}
+.buddy-capture{display:flex;flex-direction:column;min-height:100%;}
+.buddy-capture .robot-stage{min-height:248px;flex:1;display:flex;flex-direction:column;justify-content:center;gap:0;background:none;border:0;border-radius:0;overflow:visible;}
+.buddy-robot{display:grid;place-items:center;position:relative;padding:0;width:114px;height:138px;border-radius:30px;transition:transform .2s;}
+.buddy-robot:hover{background:transparent;transform:translateY(-4px);}
+.buddy-robot:active{transform:translateY(1px) scale(.98);}
+.buddy-capture .robot-stage img{width:112px;height:136px;filter:drop-shadow(0 9px 9px #44305414);}
+.buddy-capture .robot-stage h1{font-size:28px;letter-spacing:-.035em;line-height:1.2;margin-top:8px;}
+.buddy-capture .robot-stage .state-caption{position:static;font-size:12px;color:var(--muted);margin-top:7px;text-align:center;}
+.buddy-capture .robot-stage .token{top:18px;z-index:2;}
+.buddy-composer{display:block;padding:0;border-radius:14px;background:var(--surface);flex:none;margin-top:8px;}
+.buddy-composer textarea{height:64px;min-height:64px;padding:15px 16px 6px;}
+.buddy-composer .row{padding:0 10px 10px;}
+.paste-button{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);padding:6px 5px;border-radius:6px;}
+.paste-button .icon{width:14px;height:14px;}
+.buddy-composer .primary{margin-left:auto;}
+.recent-capture{display:flex;align-items:center;gap:11px;margin:18px 0;padding:0 1px;min-height:42px;}
+.recent-icon{display:grid;place-items:center;width:34px;height:38px;background:var(--soft);border-radius:8px;color:var(--muted);}
+.recent-label{display:block;font-size:9px;letter-spacing:.09em;color:var(--muted);margin-bottom:3px;}
+.recent-capture strong{display:block;max-width:245px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;font-size:12px;font-weight:500;}
+.recent-capture>.icon{width:14px;color:var(--muted);}
+.open-inbox{display:flex;align-items:center;justify-content:space-between;padding:16px 0;border-top:1px solid var(--border);font-size:13px;font-weight:550;}
+.open-inbox>span{display:flex;align-items:center;gap:8px;}
+.open-inbox>.icon{width:16px;}
+.saved-reaction .buddy-robot{animation:happy .65s ease-in-out;}
+.buddy-frame .drag-over:after{content:'Drop to save';inset:8px;}
+@container(max-width:700px){
+ .headbar{padding:12px 15px 8px;gap:5px;}
+ .search-trigger{width:30px;background:none;}
+ .search-trigger span,.search-trigger kbd{display:none;}
+ .primary-nav{gap:0;padding:0 14px;min-height:45px;}
+ .primary-nav a{flex:1;font-size:11px;padding:10px 5px 13px;gap:5px;}
+ .primary-nav a.active:after{left:8px;right:8px;}
+ .main{padding:22px 18px;}
+ .page-head{margin-bottom:18px;}
+ .page-head h1{font-size:26px;}
+ .page-head .project-select{max-width:150px;font-size:11px;}
+ .composer{display:block;padding:0;}
+ .composer textarea{height:45px;min-height:45px;padding:12px 14px 3px;}
+ .composer .row{padding:0 9px 9px;}
+ .capture-shortcut{margin-left:auto;margin-right:0;}
+ .composer .primary{margin-left:5px;}
+ .filters{gap:2px;flex-wrap:nowrap;margin:17px 0 14px;}
+ .filters button{font-size:11px;padding:5px 8px;}
+ .card-grid,.settings-layout,.detail-grid{grid-template-columns:1fr;gap:14px;}
+ .card-body{min-height:0;padding:15px 16px 17px;}
+ .card-preview{height:200px;}
+ .card-footer{padding:7px 13px;}
+ .tabs{margin-bottom:18px;}
+ .tabs a,.tabs button{padding:6px 10px;}
+ .task-row{padding:17px 0;gap:11px;}
+ .footer{padding:5px 16px;}
+ .panel{padding:18px;}
+ .details-actions{bottom:-22px;}
+ .buddy-composer textarea{height:64px;min-height:64px;padding:15px 16px 6px;}
+ .buddy-composer .row{padding:0 10px 10px;}
+ .buddy-composer .primary{margin-left:auto;}
+}
+@media(max-width:600px){
+ .frame,.frame.expanded{width:100%;height:100dvh;min-height:0;margin:0;padding:30px 7px 15px;}
+ .buddy-frame{padding:0;}
+ .buddy-frame .body-rim,.buddy-frame .app{border-radius:0;box-shadow:none;}
+ .buddy-frame .body-rim{padding:0;}
+ .buddy-frame .headbar{padding-top:20px;}
+ .buddy-capture .robot-stage{max-height:360px;min-height:220px;}
+ .buddy-capture{justify-content:center;}
+ .buddy-frame .footer{padding-bottom:16px;}
+}
+@media(max-height:620px){
+ .buddy-capture .robot-stage{min-height:175px;}
+ .buddy-robot{width:80px;height:96px;}
+ .buddy-capture .robot-stage img{width:80px;height:98px;}
+ .buddy-capture .robot-stage h1{font-size:24px;margin-top:0;}
+ .buddy-composer textarea{min-height:46px;height:46px;}
+ .recent-capture{margin:12px 0;}
+ .buddy-frame .headbar{padding-top:13px;}
+ .buddy-frame .footer{padding-top:5px;padding-bottom:8px;}
+ .main{padding-top:15px;}
+ .page-head{margin-bottom:14px;}
+}
+@media(pointer:coarse){
+ .headbar>.icon-btn,.footer-menu,.paste-button,.btn,.icon-btn{min-width:40px;min-height:44px;}
+ .filters button{min-height:44px;}
+ .primary-nav a{min-height:44px;}
+ .buddy-frame .headbar{flex-wrap:nowrap;}
+ .buddy-frame .autostate{padding:4px;min-height:32px;}
+ .capture-shortcut{display:none;}
+}
+
+/* Task hierarchy: check → title → time. Icon actions retain names and focus states. */
+.task-card{container-type:inline-size;border:1px solid var(--border);border-radius:14px;background:var(--surface);padding:16px;margin:0 0 12px;min-width:0;transition:border-color .18s,background .18s;}
+.card-grid>.task-card{margin:0;align-self:stretch;display:flex;flex-direction:column;}
+.task-card:hover{border-color:color-mix(in srgb,var(--muted) 50%,var(--border));}
+.task-card-heading{display:flex;align-items:flex-start;gap:10px;}
+.task-check{width:34px;height:38px;flex:none;display:grid;place-items:center;border-radius:8px;padding:0;}
+.task-check>span{border:1.5px solid var(--muted);width:21px;height:21px;border-radius:6px;display:grid;place-items:center;transition:background .15s;}
+.task-check .icon{width:15px;height:15px;}
+.task-check[aria-pressed=true]>span{background:var(--fg);border-color:var(--fg);color:var(--surface);}
+.task-card-title{flex:1;min-width:0;padding-top:1px;}
+.task-kicker{display:block;color:var(--muted);font-size:10px;font-weight:550;line-height:1.4;letter-spacing:.08em;text-transform:uppercase;margin-bottom:5px;}
+.task-card-title h3{font-size:16px;line-height:1.45;letter-spacing:-.015em;overflow-wrap:anywhere;}
+.task-card-heading>.icon-btn{color:var(--muted);width:28px;min-width:28px;height:30px;}
+.task-card-context{display:flex;flex-wrap:wrap;gap:5px 14px;margin:9px 0 19px 44px;font-size:11px;color:var(--muted);}
+.task-card-context:empty{margin-bottom:12px;}
+.task-card-context>span{display:inline-flex;align-items:center;gap:5px;min-width:0;overflow-wrap:anywhere;}
+.task-card-context .icon{width:12px;height:12px;}
+.task-card-controls{display:flex;gap:9px;align-items:center;justify-content:space-between;border-top:1px solid var(--border);padding-top:12px;margin-top:auto;}
+.task-focus-control{display:flex;align-items:center;gap:2px;border:1px solid var(--border);border-radius:9px;background:var(--soft);padding:2px;min-width:0;}
+.task-duration{display:flex;align-items:center;gap:7px;padding:5px 7px;font-size:12px;border-radius:6px;min-height:30px;white-space:nowrap;}
+.task-duration .icon{width:15px;height:15px;color:var(--muted);}
+.task-duration span{font-family:var(--font-mono);font-variant-numeric:tabular-nums;letter-spacing:-.015em;}
+.focus-play{display:grid;place-items:center;width:30px;height:30px;flex:none;background:var(--fg);color:var(--surface);border-radius:7px;}
+.focus-play:hover{background:var(--fg);opacity:.8;}
+.focus-play .icon{width:14px;height:14px;}
+.task-focus-control[data-running=true]{border-color:var(--muted);}
+.task-focus-control[data-running=true] .focus-play{background:var(--surface);color:var(--fg);}
+.task-schedule{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);min-height:34px;border-radius:7px;padding:5px 7px;min-width:0;}
+.task-schedule .icon{width:16px;height:16px;}
+.task-schedule span{overflow-wrap:anywhere;}
+.is-done .task-card-title h3{text-decoration:line-through;color:var(--muted);}
+.is-done .task-card-controls{opacity:.7;}
+.capture-project{display:flex;align-items:center;gap:6px;min-width:0;max-width:45%;}
+.capture-project span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.card-footer{gap:3px;}
+.card-footer .icon-btn{width:32px;height:32px;min-width:32px;border-radius:7px;display:grid;place-items:center;}
+.card-footer .icon-btn .icon{width:17px;height:17px;}
+.card-footer .capture-project .icon{width:14px;height:14px;}
+.task-detail-top{display:flex;justify-content:space-between;align-items:center;margin:-8px 0 24px;}
+.task-detail-top .back{margin:0;min-height:34px;}
+.task-detail-top>.row{gap:4px;}
+.task-editor{max-width:800px;margin:0 auto;}
+.task-heading{display:flex;align-items:flex-start;gap:12px;}
+.task-heading>.task-check{height:50px;margin-top:12px;}
+.task-heading>.task-check>span{width:26px;height:26px;border-radius:7px;}
+.task-title-input{border:0;background:transparent;border-radius:5px;font:600 clamp(21px,3cqi,28px)/1.35 var(--font-display);letter-spacing:-.025em;padding:0 0 5px;width:100%;resize:none;field-sizing:content;min-height:38px;}
+.project-trigger{display:inline-flex;align-items:center;gap:6px;background:transparent;border:0;padding:6px 8px;font-size:12px;color:var(--muted);border-radius:7px;max-width:200px;}
+.project-trigger .icon{width:14px;height:14px;}
+.project-trigger span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.task-property-row{display:flex;align-items:center;flex-wrap:wrap;gap:12px;margin:12px 0 26px 46px;}
+.property-chip{display:flex;align-items:center;gap:6px;border:1px solid var(--border);background:var(--surface);border-radius:7px;padding:6px 9px;font-size:11px;max-width:100%;min-width:0;overflow-wrap:anywhere;}
+.property-chip .icon{width:14px;height:14px;}
+.priority-control{display:flex;gap:2px;}
+.priority-control button{display:grid;place-items:center;width:30px;height:30px;border:1px solid transparent;border-radius:6px;color:var(--muted);}
+.priority-control button[aria-pressed=true]{background:var(--soft);border-color:var(--muted);color:var(--fg);}
+.priority-control .icon{width:14px;height:14px;}
+.priority-bars{display:flex;align-items:flex-end;gap:2px;height:14px;}
+.priority-bars i{display:block;width:3px;height:5px;background:var(--border);border-radius:1px;}
+.priority-bars i:nth-child(2){height:9px;}.priority-bars i:nth-child(3){height:13px;}
+.priority-bars .filled{background:currentColor;}
+.task-planning-grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:14px;margin-bottom:28px;}
+.focus-panel,.schedule-panel{border:1px solid var(--border);border-radius:14px;padding:20px;background:var(--surface);min-width:0;}
+.focus-panel{background:var(--soft);}
+.focus-panel h2,.schedule-panel h2,.new-task-timing h2{display:flex;gap:7px;align-items:center;font:550 12px/1.4 var(--font-body);letter-spacing:0;}
+.focus-panel h2 .icon,.schedule-panel h2 .icon,.new-task-timing h2 .icon{width:15px;height:15px;color:var(--muted);}
+.focus-panel>.row .icon-btn{height:25px;width:25px;}
+.focus-panel .focus-digits{display:block;text-align:center;font:400 clamp(28px,5.2cqi,42px)/1.2 var(--font-mono);font-variant-numeric:tabular-nums;letter-spacing:-.055em;margin:18px 0 6px;white-space:nowrap;}
+.timer-units{display:flex;justify-content:center;gap:24px;font:9px/1.4 var(--font-body);letter-spacing:.08em;color:var(--muted);}
+.focus-panel-footer{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:21px;}
+.focus-panel .btn.primary{background:var(--fg);color:var(--surface);border-color:var(--fg);}
+.text-control{display:inline-flex;align-items:center;gap:5px;font-size:12px;color:var(--muted);border-radius:6px;padding:5px 0;min-height:30px;}
+.text-control:hover{color:var(--fg);background:transparent;text-decoration:underline;text-underline-offset:3px;}
+.text-control .icon{width:15px;height:15px;}
+.timer-status{display:block;font-size:11px;color:var(--muted);margin-top:10px;min-height:16px;}
+.schedule-panel{display:flex;flex-direction:column;}
+.schedule-date{text-align:left;padding:17px 0;border-radius:7px;flex:1;}
+.schedule-date:hover{background:transparent;}
+.schedule-date strong{display:block;font:550 26px/1.2 var(--font-display);letter-spacing:-.02em;}
+.schedule-date span{display:block;font-size:12px;color:var(--muted);margin-top:7px;}
+.schedule-date b{display:inline-block;font:400 18px var(--font-mono);margin-top:9px;}
+.quick-days{display:flex;gap:5px;align-items:center;}
+.quick-days>button:not(.icon-btn){border:1px solid var(--border);border-radius:7px;padding:6px 9px;font-size:11px;min-height:32px;}
+.task-steps{padding:0 2px 17px;}
+.task-steps h2{font:550 13px var(--font-body);}
+.task-steps .checklist{margin:14px 0 5px;}
+.task-steps .checklist label{align-items:center;gap:8px;}
+.task-steps .checklist input[type=text]{width:100%;}
+.task-steps .checklist input[type=checkbox]{flex:none;}
+.task-steps .text-control{margin-left:2px;}
+.task-fold{border-top:1px solid var(--border);padding:15px 2px;}
+.task-fold>summary{display:flex;align-items:center;gap:9px;cursor:pointer;list-style:none;font-size:12px;font-weight:550;min-height:25px;}
+.task-fold>summary::-webkit-details-marker{display:none;}
+.task-fold>summary>.icon{width:16px;height:16px;color:var(--muted);}
+.task-fold>summary>.icon:last-child{margin-left:auto;width:14px;transition:transform .18s;}
+.task-fold[open]>summary>.icon:last-child{transform:rotate(45deg);}
+.task-fold[open]>summary{margin-bottom:16px;}
+.task-fold .actions-inline{margin-top:12px;}
+.task-original{padding:16px;background:var(--soft);border-radius:9px;margin-bottom:12px;}
+.task-original img{display:block;width:100%;max-height:220px;object-fit:contain;margin-bottom:12px;}
+.task-original p{white-space:pre-line;font-size:13px;line-height:1.6;margin-bottom:10px;overflow-wrap:anywhere;}
+.task-original>.meta{font-size:10px;}
+.repeat-options{display:flex;flex-wrap:wrap;gap:5px;margin:10px 0 18px;}
+.repeat-options button{border:1px solid var(--border);border-radius:7px;padding:6px 10px;font-size:12px;min-height:32px;}
+.repeat-options button[aria-pressed=true]{background:var(--soft);border-color:var(--muted);}
+.task-savebar{display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);background:var(--bg);padding:13px 0;position:sticky;bottom:-28px;margin-top:12px;z-index:2;}
+.timing-form{padding-top:6px;}
+.timing-form .timing-task-name{margin-bottom:18px;overflow-wrap:anywhere;font-size:13px;}
+.duration-fields{display:flex;justify-content:center;gap:10px;align-items:flex-start;padding:8px 0 12px;}
+.duration-fields label{display:flex;flex-direction:column;text-align:center;gap:7px;font-size:11px;color:var(--muted);}
+.duration-fields input{width:100px;text-align:center;font:400 36px/1.2 var(--font-mono);letter-spacing:-.03em;background:var(--soft);padding:13px 3px;border-radius:12px;color:var(--fg);}
+.duration-colon{font:30px/1 var(--font-mono);padding-top:18px;color:var(--muted);}
+.duration-presets{display:flex;justify-content:center;gap:8px;margin:5px 0 17px;}
+.duration-presets button{padding:7px 13px;border:1px solid var(--border);border-radius:7px;font:12px var(--font-mono);min-height:32px;}
+.schedule-fields{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:20px 0;}
+.schedule-fields .field{align-content:start;position:relative;}
+.schedule-fields .field>input{width:100%;}
+.schedule-fields .optional{position:absolute;right:0;top:0;}
+.optional{font-size:10px;font-weight:400;color:var(--muted);}
+.project-options{display:grid;gap:5px;padding-top:8px;}
+.project-options button{display:flex;gap:12px;align-items:center;padding:12px;border:1px solid transparent;border-radius:9px;text-align:left;font-size:13px;}
+.project-options button span{flex:1;overflow-wrap:anywhere;}
+.project-options button[aria-pressed=true]{background:var(--soft);border-color:var(--border);}
+.new-task-timing{border-top:1px solid var(--border);padding-top:20px;}
+.new-task-timing>.duration-fields{justify-content:flex-start;}
+.new-task-timing>.duration-presets{justify-content:flex-start;margin-bottom:0;}
+.new-task-timing>h2{margin-bottom:12px;}
+.task-arrived{animation:task-arrive .36s ease-out;}
+@keyframes task-arrive{from{opacity:.35;transform:translateY(7px)}to{opacity:1;transform:none}}
+@container(max-width:700px){
+ .task-planning-grid{gap:10px;}
+ .focus-panel,.schedule-panel{padding:15px;}
+ .focus-panel .focus-digits{font-size:clamp(26px,5.5cqi,38px);}
+ .timer-units{gap:12px;font-size:8px;}
+ .schedule-date strong{font-size:22px;}
+ .task-savebar{bottom:-22px;}
+}
+@container(max-width:520px){
+ .task-planning-grid{grid-template-columns:1fr;gap:12px;}
+ .focus-panel{padding:16px 20px;}
+ .focus-panel .focus-digits{font-size:40px;margin:15px 0 6px;}
+ .timer-units{gap:26px;font-size:9px;}
+ .focus-panel-footer{margin-top:15px;}
+ .schedule-panel{display:grid;grid-template-columns:1fr auto;gap:0 6px;}
+ .schedule-panel>h2{grid-column:1/-1;}
+ .schedule-date{padding:15px 0 5px;}
+ .schedule-date span{max-width:24ch;}
+ .quick-days{flex-wrap:wrap;}
+ .schedule-panel .quick-days{align-content:center;max-width:106px;justify-content:flex-end;}
+ .task-property-row{margin-left:0;justify-content:space-between;gap:8px;}
+ .task-title-input{font-size:22px;}
+ .task-heading{gap:7px;}
+ .task-detail-top{margin-bottom:16px;}
+}
+@container(max-width:300px){
+ .task-card-controls{gap:7px;}
+ .task-duration{font-size:11px;padding:5px;gap:4px;}
+ .task-schedule{padding:5px 0;font-size:11px;gap:4px;}
+ .task-card-context{margin-left:0;}
+}
+@media(pointer:coarse){
+ .task-check,.focus-play,.task-schedule,.task-duration,.priority-control button,.repeat-options button,.quick-days>button:not(.icon-btn),.duration-presets button,.text-control,.property-chip{min-height:44px;}
+ .task-check,.focus-play,.priority-control button{min-width:44px;}
+ .task-fold>summary{min-height:44px;}
+ .card-footer .icon-btn{min-width:44px;min-height:44px;}
+ .task-card-controls{flex-wrap:wrap;}
+}
+@media(prefers-reduced-motion:reduce){.task-arrived{animation:none;}}
+@media(max-height:620px){
+ .task-detail-top{margin:-6px 0 8px;}
+ .task-heading>.task-check{height:36px;margin-top:8px;}
+ .task-title-input{font-size:20px;min-height:30px;}
+ .task-property-row{margin-top:7px;margin-bottom:14px;}
+ .task-planning-grid{margin-bottom:18px;}
+ .focus-panel{padding:12px 16px;}
+ .focus-panel .focus-digits{font-size:32px;margin-top:8px;}
+ .focus-panel-footer{margin-top:10px;}
+ .timer-status{position:absolute;clip:rect(0,0,0,0);width:1px;height:1px;overflow:hidden;}
+}
+
+/* A readable, compact origin → usage trail; app marks are local original assets. */
+.content-trail{display:flex;align-items:center;gap:2px;min-width:0;max-width:100%;}
+.trail-path{display:inline-flex;align-items:center;gap:5px;min-width:0;min-height:34px;padding:1px 3px;border:0;border-radius:7px;background:transparent;color:var(--muted);text-align:left;cursor:pointer;}
+.trail-path:hover,.trail-add:hover{background:var(--soft);color:var(--fg);}
+.app-mark{display:inline-grid;place-items:center;width:28px;height:28px;flex:0 0 28px;vertical-align:middle;}
+.app-mark img{display:block;width:100%;height:100%;object-fit:contain;}
+.app-mark-unknown{border:1px solid var(--border);border-radius:7px;color:var(--muted);background:var(--surface);}
+.app-mark-unknown .icon{width:16px;height:16px;}
+.trail-direction{display:flex;align-items:center;padding:0 2px;}
+.trail-direction .icon{width:14px;height:14px;}
+.trail-destinations{display:flex;align-items:center;gap:2px;min-width:0;}
+.trail-empty{font-size:11px;white-space:nowrap;letter-spacing:.01em;}
+.trail-overflow{font-size:11px;min-width:24px;padding-left:3px;font-variant-numeric:tabular-nums;}
+.trail-add{display:grid;place-items:center;flex:0 0 32px;width:32px;height:32px;border:0;border-radius:7px;background:transparent;color:var(--muted);cursor:pointer;}
+.trail-add .icon{width:14px;height:14px;}
+.card-top>.content-trail{flex:0 1 auto;}
+.card-top{flex-wrap:wrap;row-gap:2px;}
+.card-top>time{margin-left:auto;white-space:nowrap;}
+.task-card>.content-trail{margin:10px 0 7px 41px;}
+.task-card-context{margin-top:5px;margin-bottom:13px;}
+.trail-detail{margin:8px 0 16px;padding:8px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+.trail-robot{padding:5px 0 4px;}
+.recent-capture-group{border:1px solid var(--border);border-radius:12px;padding:0 10px 3px;}
+.recent-capture-group>.recent-capture{border:0;padding:10px 0 5px;margin:0;}
+.trail-origin{display:flex;align-items:center;gap:10px;margin:20px 0;padding:14px;background:var(--soft);border-radius:10px;}
+.trail-caption{font-size:10px;letter-spacing:.08em;color:var(--muted);margin-right:3px;}
+.trail-origin>div,.paste-receipt>.grow{min-width:0;display:flex;flex-direction:column;gap:3px;}
+.trail-origin strong,.paste-receipt strong{font-size:14px;font-weight:600;overflow-wrap:anywhere;}
+.trail-origin>div>span,.paste-receipt .grow>span,.paste-receipt small{font-size:11px;letter-spacing:.01em;color:var(--muted);}
+.trail-history-head{display:flex;align-items:center;gap:9px;}
+.trail-history-head h3,.paste-picker h3{font-size:14px;}
+.paste-history{max-height:225px;overflow:auto;margin:5px 0 15px;}
+.paste-receipt{display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--border);}
+.paste-receipt:last-child{border-bottom:0;}
+.trail-no-history{font-size:13px;color:var(--muted);padding:13px 0;}
+.trail-record-button{display:flex;align-items:center;justify-content:center;gap:6px;min-height:40px;width:100%;border:1px solid var(--border);border-radius:9px;background:var(--surface);color:var(--fg);cursor:pointer;}
+.paste-picker{border-top:1px solid var(--border);padding-top:16px;}
+.paste-picker>p{font-size:12px;color:var(--muted);margin:5px 0 12px;max-width:44ch;line-height:1.5;}
+.paste-app-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;}
+.paste-app-choice{display:flex;align-items:center;justify-content:center;flex-direction:column;gap:5px;min-height:70px;padding:8px 3px;border:1px solid transparent;border-radius:9px;background:transparent;color:var(--fg);font-size:11px;letter-spacing:.02em;cursor:pointer;}
+.paste-app-choice:hover{border-color:var(--border);background:var(--soft);}
+.paste-app-choice .app-mark{width:32px;height:32px;flex-basis:32px;}
+.paste-custom{display:flex;gap:7px;margin-top:14px;}
+.paste-custom input{min-width:0;flex:1;}
+.content-trail button:focus-visible,.paste-app-choice:focus-visible,.trail-record-button:focus-visible{outline:2px solid var(--fg);outline-offset:2px;}
+@container (max-width:380px){.task-card>.content-trail{margin-left:0;}.card-top{gap:3px;}.trail-path{gap:3px;}}
+@media(pointer:coarse){.trail-path{min-height:44px;}.trail-add{width:44px;height:44px;flex-basis:44px;}.trail-record-button{min-height:44px;}}
+
+/* Project switcher — scoped to the marked header and its own popover. */
+.project-heading{display:inline-flex;align-items:center;gap:8px;min-width:0;max-width:260px;min-height:36px;padding:3px 5px 3px 0;border-radius:9px;text-align:left;flex:0 1 auto;}
+.project-heading .project-heading-name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font:600 18px/1.2 var(--font-display);letter-spacing:-.02em;}
+.project-heading .project-heading-mark{display:grid;place-items:center;width:29px;height:29px;flex:none;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--muted);}
+.project-heading>.icon{width:12px;height:12px;color:var(--muted);}
+.project-heading[aria-expanded=true]{background:var(--soft);}
+#project-switcher{position:fixed;inset:auto;margin:0;width:min(332px,calc(100vw - 24px));max-height:calc(100dvh - 24px);padding:8px;border:1px solid var(--border);border-radius:16px;background:var(--surface);color:var(--fg);box-shadow:0 16px 48px #1d142b26,0 3px 10px #1d142b0d;overflow:auto;overscroll-behavior:contain;}
+#project-switcher .ps-search{display:flex;align-items:center;gap:8px;padding:3px 8px 9px;border-bottom:1px solid var(--border);color:var(--muted);}
+#project-switcher .ps-search input{width:100%;min-height:36px;padding:6px 0;border:0;border-radius:4px;background:transparent;font-size:13px;}
+#project-switcher .ps-list{max-height:min(280px,42dvh);overflow-y:auto;padding:6px 0;}
+#project-switcher .ps-option{display:flex;align-items:center;gap:10px;width:100%;min-height:46px;padding:7px 9px;border-radius:9px;text-align:left;}
+#project-switcher .ps-option[aria-pressed=true]{background:var(--soft);}
+#project-switcher .ps-monogram{display:grid;place-items:center;flex:none;width:30px;height:30px;border:1px solid var(--border);border-radius:8px;background:var(--bg);font:550 12px var(--font-display);color:var(--muted);}
+#project-switcher .ps-name{flex:1;min-width:0;font-size:13px;font-weight:550;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+#project-switcher .ps-check{width:16px;height:16px;flex:none;}
+#project-switcher .ps-check>.icon{width:16px;height:16px;}
+#project-switcher .ps-footer{border-top:1px solid var(--border);padding-top:6px;}
+#project-switcher .ps-new{display:flex;align-items:center;gap:10px;width:100%;min-height:42px;padding:8px 10px;border-radius:8px;font-size:13px;font-weight:550;text-align:left;}
+#project-switcher .ps-create{padding:5px;}
+#project-switcher .ps-create label{display:block;font-size:12px;margin-bottom:6px;}
+#project-switcher .ps-create-row{display:flex;gap:6px;}
+#project-switcher .ps-create-row input{width:100%;min-width:0;font-size:13px;}
+#project-switcher .ps-create-row button{flex:none;width:36px;border-radius:8px;display:grid;place-items:center;}
+#project-switcher .ps-create-row button[type=submit]{background:var(--accent);color:var(--on-accent);}
+#project-switcher .ps-error{font-size:12px;line-height:1.4;color:var(--danger);margin-top:7px;}
+#project-switcher .ps-error:empty{display:none;}
+#project-switcher .ps-empty{padding:22px 12px;text-align:center;font-size:13px;color:var(--muted);}
+#project-switcher [hidden]{display:none;}
+@media(pointer:coarse){.project-heading{min-height:44px;}#project-switcher .ps-create-row button{width:44px;min-height:44px;}}
+
+/* Responsive repairs: content scrolls; chrome and floating panels stay reachable. */
+.frame{min-height:0;max-width:100vw;max-height:100dvh;}
+.headbar,.page-head,.page-title-row,.form-grid>*,.schedule-fields>*,.card-grid>*,.setting-row>*{min-width:0;}
+.headbar>.icon-btn,.headbar>.search-trigger{flex-shrink:0;}
+.headbar .project-heading{flex-shrink:1;}
+.head-spacer{min-width:0;}
+.project-heading>.icon,.project-trigger>.icon{flex-shrink:0;}
+.project-trigger{min-width:0;}
+.project-trigger>span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.page-title-row h1{overflow-wrap:anywhere;}
+.filters{max-width:100%;overflow-x:auto;overscroll-behavior-x:contain;}
+.filters>button{flex-shrink:0;}
+.search-box input{min-width:0;}
+.recent-capture strong{max-width:100%;}
+.modal{container-type:inline-size;max-height:calc(100dvh - 24px);overflow-y:auto;overscroll-behavior:contain;}
+.modal .actions,.details-actions .row{flex-wrap:wrap;}
+.setting-row select{min-width:0;}
+.task-card-controls{flex-wrap:wrap;}
+#move-handle,#resize-handle{touch-action:none;}
+#project-switcher .ps-search input{min-width:0;}
+#project-switcher .ps-option:focus-visible,#project-switcher .ps-new:focus-visible{outline:2px solid var(--fg);outline-offset:-2px;}
+@container(max-width:460px){
+ .headbar{gap:4px;}
+ .headbar .autostate>span:not(.dot){display:none;}
+ .headbar .autostate{flex:none;min-width:22px;}
+ .headbar .expand-button{display:none;}
+ .headbar .project-heading-mark{width:25px;height:25px;}
+ .headbar .project-heading-name{font-size:16px;}
+ .headbar .project-heading{gap:5px;}
+ .form-grid,.schedule-fields{grid-template-columns:minmax(0,1fr);}
+ .page-head .project-select{max-width:45%;}
+ .setting-row{gap:10px;}
+ .setting-row select{max-width:42%;}
+ .activity-head{flex-wrap:wrap;}
+}
+@media(max-height:520px) and (min-width:601px){
+ .frame,.frame.expanded{height:calc(100dvh - 16px);margin:8px auto;}
+}
+@media(pointer:coarse){
+ .headbar>.icon-btn,.icon-btn,.footer-menu,.paste-button{min-width:44px;min-height:44px;}
+ .headbar>.search-trigger,.headbar>.autostate,.project-trigger,.project-heading{min-height:44px;}
+ .headbar>.search-trigger{min-width:44px;}
+ .headbar>.autostate{min-width:44px;}
+ #project-switcher .ps-new{min-height:44px;}
+}
+
+</style></head><body data-page="today"><script>
+/* DaBin design fixture. Isolated browser storage; no native archive access. */
+const KEY='dabin:open-design-v3:fixture:1', TODAY='2026-09-30', ASSETS='open-design-v3/assets/';
+const icons={inbox:'M3 4h18v15H3z M3 12h5l2 3h4l2-3h5',sun:'M12 3v2 M12 19v2 M3 12h2 M19 12h2 M5.6 5.6l1.4 1.4 M17 17l1.4 1.4 M5.6 18.4L7 17 M17 7l1.4-1.4 M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0',folder:'M3 6h6l2 2h10v12H3z M3 6V4h7l2 2h7v2',history:'M4 7V3 M4 7h4 M4 7a9 9 0 1 1-1 8 M12 7v5l3 2',search:'M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0 M15 15l6 6',plus:'M12 5v14 M5 12h14',gear:'M10 3h4l1 3 3-1 3 3-1 3 1 3-3 3-3-1-1 3h-4l-1-3-3 1-3-3 1-3-1-3 3-3 3 1z M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0',x:'M6 6l12 12 M18 6L6 18',expand:'M4 9V4h5 M15 4h5v5 M20 15v5h-5 M9 20H4v-5',copy:'M8 8h12v13H8z M16 8V3H3v13h5',text:'M4 5h16 M4 10h16 M4 15h10 M4 20h7',link:'M10 13l4-4 M9 7l3-3a5 5 0 0 1 7 7l-3 3 M15 17l-3 3a5 5 0 0 1-7-7l3-3',file:'M5 3h9l5 5v13H5z M14 3v6h5 M8 13h8 M8 17h6',image:'M3 4h18v16H3z M3 16l6-6 5 5 3-3 4 4 M17 8h.01',check:'M5 12l4 4L19 6',task:'M9 4h11 M9 12h11 M9 20h11 M3 4h1 M3 12h1 M3 20h1',arrow:'M5 12h14 M14 7l5 5-5 5',back:'M19 12H5 M10 7l-5 5 5 5',down:'M6 9l6 6 6-6',more:'M5 12h.01 M12 12h.01 M19 12h.01',clock:'M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0 M12 7v5l3 2',clip:'M9 12l6-6a3 3 0 0 1 4 4l-9 9a5 5 0 0 1-7-7l9-9 M6 15l9-9',pin:'M8 3h8 M9 3v5l-4 6h14l-4-6V3 M12 14v7',shelf:'M3 5h18v14H3z M3 14h18 M8 5v9 M15 5v9',note:'M4 3h16v18H4z M8 7h8 M8 11h8 M8 15h6',shield:'M12 3l8 3v6c0 4-4 7-8 9-4-2-8-5-8-9V6z M8 12l3 3 5-6',trash:'M3 6h18 M9 6V3h6v3 M5 6l1 15h12l1-15 M10 10v7 M14 10v7',download:'M12 3v12 M7 10l5 5 5-5 M4 16v5h16v-5',upload:'M12 16V4 M7 9l5-5 5 5 M4 16v5h16v-5',play:'M8 4l13 8-13 8z',pause:'M8 4v16 M16 4v16',filter:'M3 5h18 M7 12h10 M10 19h4',calendar:'M3 5h18v16H3z M7 3v5 M17 3v5 M3 11h18',bell:'M5 17h14l-2-3V9a5 5 0 0 0-10 0v5z M10 21h4',refresh:'M20 8V3 M20 8h-5 M4 16v5 M4 16h5 M20 8a8 8 0 0 0-14-3 M4 16a8 8 0 0 0 14 3',minus:'M5 12h14',grip:'M9 5h.01 M15 5h.01 M9 12h.01 M15 12h.01 M9 19h.01 M15 19h.01',external:'M14 3h7v7 M21 3l-11 11 M10 3H3v18h18v-7',info:'M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0 M12 11v6 M12 7h.01'};
+const ic=n=>`<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="${icons[n]||icons.file}"/></svg>`;
+const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fixture=()=>({version:1,project:'all',projects:['Northstar Studio','Mori / 森','Personal'],filter:'All',date:TODAY,scope:'Day',query:'',source:'all',origin:'all',dateFilter:'all',pinned:false,clipboardTab:'Recent',todayTab:'Today',drafts:{},notes:{'Northstar Studio':{text:'Northstar — next conversation\n\nThe quieter direction is working. Let the product do more of the talking.\n\nTo discuss\n• A little more space around the headline\n• One strong image, fewer small details\n• Check the final English, Hebrew and Japanese copy\n\nשומרים על הדברים החשובים.\n大切なもののための余白。',updated:TODAY},unfiled:{text:'A place for the things I haven’t found a home for yet.',updated:TODAY}},settings:{dark:false,accent:'#6D5387',opacity:100,tooltips:true,quiet:false,reduceMotion:false,reduceTransparency:false,contrast:false,clipboard:false,screenshots:false,paused:false,folder:'',exclusions:['DaBin','1Password','Keychain Access'],retention:'Never',linkPreviews:false,home:'Top right',globalSearch:'⌃⌥Space',globalCapture:'⌃⌥V'},items:[
+{id:'feedback',type:'Text',title:'A little more breathing room',text:'The quieter direction feels right. Keep the headline, make the product image a little larger, and give the final call to action more room.',source:'Mail',date:TODAY,time:'14:32',project:'Northstar Studio',inbox:true,comment:'Bring this into the next design review.',origin:'manual'},
+{id:'study',type:'Media',title:'Northstar · visual direction 02',text:'Make room for what matters. A quieter direction. A clearer beginning.',source:'Finder',date:TODAY,time:'14:18',project:'Northstar Studio',image:ASSETS+'northstar-study.svg',filename:'Northstar_direction-02_EN-HE-日本語.svg',inbox:true,shelf:true,origin:'manual'},
+{id:'review',type:'Text',title:'Prepare the Northstar review',text:'Review the headline, image credits and final attachments before the client meeting.',source:'Notes',date:'2026-09-29',time:'16:40',project:'Northstar Studio',inbox:true,task:true,planned:TODAY,priority:'High',effort:45,deadline:'2026-10-01T16:00',repeat:'None',order:0,checklist:[{text:'Check English, Hebrew and Japanese copy',done:false},{text:'Confirm the exported filenames',done:true}],attachments:['brief'],comment:'Keep the original feedback beside the work plan.',origin:'manual'},
+{id:'batch',type:'Files',title:'Everything for the next review',text:'Two files, kept together.',source:'Finder',date:TODAY,time:'13:54',project:'Northstar Studio',inbox:true,members:['brief','copy'],origin:'manual'},
+{id:'brief',type:'Files',title:'Northstar — client feedback',text:'The quieter direction feels right. Keep the headline, make the product image a little larger, and give the final call to action more room.',filename:'Northstar_client-feedback.txt',url:ASSETS+'client-feedback.txt',source:'Finder',date:TODAY,time:'13:54',project:'Northstar Studio',parent:'review',origin:'manual',indexed:'The quieter direction feels right. Keep the headline, make the product image a little larger.'},
+{id:'copy',type:'Text',title:'Review copy · EN / HE / 日本語',text:'Make room for what matters.\nמקום לדברים החשובים.\n大切なもののための余白。',source:'Notes',date:TODAY,time:'13:54',project:'Northstar Studio',origin:'manual'},
+{id:'link',type:'Links',title:'A reference worth coming back to',text:'https://developer.apple.com/design/human-interface-guidelines',url:'https://developer.apple.com/design/human-interface-guidelines',source:'Safari',date:TODAY,time:'11:42',project:'Northstar Studio',inbox:true,shelf:true,origin:'manual'},
+{id:'snippet',type:'Text',title:'A warm sign-off',text:'Thanks for the thoughtful feedback. I’ll bring an updated direction to our next review.',source:'Mail',date:'2026-09-28',time:'10:12',project:'Northstar Studio',snippet:'Client sign-off',pinned:true,origin:'clipboard'},
+{id:'mori',type:'Text',title:'Collect packaging references',text:'Look for quieter type and a simple, reusable structure.',source:'Safari',date:'2026-09-28',time:'09:20',project:'Mori / 森',task:true,planned:'2026-10-01',effort:30,priority:'Medium',checklist:[],origin:'manual'},
+{id:'invoice',type:'Text',title:'Send the monthly studio summary',text:'Summarize the work and send it with the invoice.',source:'Notes',date:'2026-09-27',time:'15:10',project:'Northstar Studio',task:true,planned:TODAY,effort:20,priority:'Low',repeat:'Monthly',checklist:[{text:'Check the project summary',done:false}],attachments:[],order:1,origin:'manual'},
+{id:'done',type:'Media',title:'Save the approved visual direction',text:'The first direction is saved with the project.',image:ASSETS+'northstar-study.svg',source:'Finder',date:'2026-09-29',time:'12:20',project:'Northstar Studio',task:true,completed:true,planned:'2026-09-29',shelf:true,origin:'manual'},
+{id:'followup',type:'Text',title:'Ask about the photo credits',text:'Check that the final image credits are approved.',date:TODAY,time:'09:00',project:'Northstar Studio',reminder:'2026-09-30T09:00:00',origin:'manual'},
+{id:'trash-example',type:'Text',title:'Earlier headline idea',text:'A little space for something new.',date:'2026-09-26',time:'11:13',project:null,deleted:'2026-09-29',origin:'manual'},
+...['A softer introduction','Keep the useful parts','Reference for the review','One image is enough'].map((title,i)=>({id:'auto'+i,type:'Text',title,text:title,source:'Notes',date:TODAY,time:'10:'+String(12+i*9),origin:'clipboard',auto:true,inbox:false}))]});
+let state;try{state=JSON.parse(localStorage.getItem(KEY))||fixture()}catch{state=fixture()}
+const PAGE=document.body.dataset.page, $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)], param=new URLSearchParams(location.search);
+let currentId=param.get('id')||(['task-detail','reminder'].includes(PAGE)?'review':'feedback'), busy=false,lastFocus,toastTimer;
+const item=id=>state.items.find(x=>x.id===id), current=()=>item(currentId), alive=()=>state.items.filter(x=>!x.deleted), projectItems=()=>alive().filter(x=>state.project==='all'||(x.project||'unfiled')===state.project), dayAdd=(d,n)=>{let x=new Date(d+'T12:00:00');x.setDate(x.getDate()+n);return x.toISOString().slice(0,10)}, dayLabel=d=>new Date(d+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'}), fullDay=d=>new Date(d+'T12:00:00').toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
+function save(){try{localStorage.setItem(KEY,JSON.stringify(state));return true}catch{toast('Couldn’t save. Browser storage is full or unavailable. Your edits are still on screen.',true);return false}}
+function change(fn,paint=true){const old=JSON.stringify(state);fn();if(!save()){state=JSON.parse(old);return false}if(paint)render();return true}
+function toast(text,error=false,extra=''){let t=$('#toast');t.innerHTML=esc(text)+extra;t.classList.add('visible');t.setAttribute('role',error?'alert':'status');clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('visible'),6500)}
+function go(page,params=''){saveContext();location.href=page+'.html'+params}
+function saveContext(){try{sessionStorage.setItem('dabin:context:'+PAGE,JSON.stringify({scroll:$('.main')?.scrollTop||0}));if(!['capture-detail','task-detail','reminder','export','new-note','new-task','settings'].includes(PAGE))sessionStorage.setItem('dabin:return',location.href);sessionStorage.setItem('dabin:last',location.href)}catch{}}
+function back(){saveContext();let target;try{target=sessionStorage.getItem('dabin:return')}catch{}location.href=target&&target!==location.href?target:'inbox.html'}
+function matches(x){return (state.filter==='All'||state.filter==='Tasks'&&x.task||state.filter===x.type)&&(!state.pinned||x.pinned)&&(state.source==='all'||x.source===state.source)&&(state.origin==='all'||x.origin===state.origin)&&(state.dateFilter==='all'||x.date===(state.dateFilter==='Today'?TODAY:dayAdd(TODAY,-1)))}
+function safeURL(v){try{const u=new URL(v,location.href);return ['http:','https:','file:'].includes(u.protocol)?u.href:'#'}catch{return '#'}}
+function taskRoute(x){return (x.task?'task-detail':'capture-detail')+'.html?id='+encodeURIComponent(x.id)}
+function autoLabel(){let s=state.settings;return !s.clipboard&&!s.screenshots?'Auto capture off':s.paused?'Auto capture paused':s.screenshots&&!s.folder?'Folder access needed':'Auto capture on'}
+function applyTheme(){const s=state.settings,root=document.documentElement;root.dataset.theme=s.dark?'dark':'light';root.style.setProperty('--body-opacity',s.reduceTransparency?1:s.opacity/100);let c=s.accent;const rgb=h=>[1,3,5].map(i=>parseInt(h.slice(i,i+2),16)/255),lum=a=>a.map(v=>v<=.04045?v/12.92:((v+.055)/1.055)**2.4).reduce((a,v,i)=>a+v*[.2126,.7152,.0722][i],0),bg=rgb(s.dark?'#2d2a30':'#f3f1f5');let a=rgb(c);if(s.dark&&c.toLowerCase()==='#6d5387')a=rgb('#ab92c6');for(let k=0;k<100;k++){let l1=lum(a),l2=lum(bg);if((Math.max(l1,l2)+.05)/(Math.min(l1,l2)+.05)>=4.6)break;a=a.map(v=>s.dark?v+(1-v)*.04:v*.96)}a=a.map(v=>Math.round(v*255)/255);root.style.setProperty('--accent',`rgb(${a.map(v=>Math.round(v*255)).join(',')})`);const whiteContrast=1.05/(lum(a)+.05),darkContrast=(lum(a)+.05)/(lum(rgb('#1d1c21'))+.05);root.style.setProperty('--on-accent',darkContrast>whiteContrast?'#1d1c21':'#ffffff');root.classList.toggle('reduce-motion',s.reduceMotion);root.classList.toggle('high-contrast',s.contrast);}
+function openDialog(title,body,actions=''){lastFocus=document.activeElement;let d=$('#dialog');d.innerHTML=`<div class="row between"><h2>${esc(title)}</h2><button class="icon-btn" data-action="close-dialog" aria-label="Close dialog">${ic('x')}</button></div>${body}${actions?'<div class="actions">'+actions+'</div>':''}`;d.showModal();setTimeout(()=>$('input,textarea,select,button',d)?.focus(),0)}
+function closeDialog(){$('#dialog').close();lastFocus?.focus()}
+function button(text,action,cls='',id=''){return `<button type="button" class="btn ${cls}" data-action="${action}"${id?' data-id="'+esc(id)+'"':''}>${text}</button>`}
+function native(title,body){openDialog(title,`<div class="native-label">Native interaction · browser simulation</div><p style="margin-top:14px">${body}</p><p>The prototype does not access the native archive, system permissions or other applications.</p>`,button('Got it','close-dialog','primary'))}
+function download(name,content,type='text/plain;charset=utf-8'){let u=URL.createObjectURL(new Blob([content],{type})),a=document.createElement('a');a.href=u;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(u),3000)}
+async function copyText(text){try{await navigator.clipboard.writeText(text);toast('Copied to clipboard');return true}catch{openDialog('Copy content',`<p>Clipboard access is unavailable here. Select and copy the content below.</p><textarea rows="7" readonly>${esc(text)}</textarea>`,button('Close','close-dialog'));$('textarea',$('#dialog')).select();return false}}
+function createCapture(text,task=false){text=text.trim();if(!text)return false;const now=new Date(),x={id:'capture-'+Date.now(),title:text.split('\n')[0].slice(0,180),text,type:/^https?:\/\/\S+$/.test(text)?'Links':'Text',url:/^https?:\/\/\S+$/.test(text)?text:undefined,date:TODAY,time:now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}),project:state.project==='all'||state.project==='unfiled'?null:state.project,inbox:true,origin:'manual',task,checklist:[],attachments:[]};if(!change(()=>{state.items.unshift(x);delete state.drafts[PAGE==='robot'?'inbox':PAGE]},false))return false;return x}
+function celebrate(){if(!state.settings.quiet){$('.frame')?.classList.add('saved-reaction');setTimeout(()=>$('.frame')?.classList.remove('saved-reaction'),750)}}
+function trash(id){let x=item(id);if(!x)return;change(()=>{x.deleted=new Date().toISOString();(x.attachments||[]).forEach(i=>{if(item(i))item(i).deleted=x.deleted});state.lastDeleted=id});toast('Moved to Recently Deleted',false,'<button data-action="undo">Undo</button>')}
+function restore(id){let x=item(id);change(()=>{delete x.deleted;(x.attachments||[]).forEach(i=>{if(item(i))delete item(i).deleted})});toast('Capture restored. Past reminders need a new time.')}
+function recurrenceDate(x){const base=x.recurrenceAnchor||x.planned||TODAY, b=new Date(base+'T12:00:00'), now=new Date(TODAY+'T12:00:00');let next=new Date(b);if(x.repeat==='Monthly'){for(let n=1;n<1200;n++){const y=b.getFullYear(),m=b.getMonth()+n,d=Math.min(b.getDate(),new Date(y,m+1,0).getDate());next=new Date(y,m,d,12);if(next>now)break}}else{do{next.setDate(next.getDate()+(x.repeat==='Weekly'?7:1))}while(next<=now||x.repeat==='Weekdays'&&[0,6].includes(next.getDay()))}return next.toISOString().slice(0,10)}
+function toggleComplete(id){const x=item(id);if(!x)return;change(()=>{x.completed=!x.completed;if(x.completed){pauseFocus(x);x.completedAt=new Date().toISOString();if(x.repeat&&x.repeat!=='None'&&!x.next){const next={...x,id:'next-'+Date.now(),date:TODAY,time:new Date().toTimeString().slice(0,5),planned:recurrenceDate(x),recurrenceAnchor:x.recurrenceAnchor||x.planned||TODAY,completed:false,completedAt:null,attachments:[],checklist:(x.checklist||[]).map(s=>({...s,done:false})),previous:x.id,next:null,reminder:null,countdownEnd:null,focus:undefined,pasteHistory:[]};state.items.unshift(next);x.next=next.id}}});if(x.completed)celebrate();toast(x.completed?'Task completed'+(x.next?' · next occurrence planned':''):'Task reopened')}
+function exportText(scope=state.scope){const end=state.date,start=scope==='Week'?dayAdd(end,-6):end;return alive().filter(x=>x.date>=start&&x.date<=end&&!(x.date===TODAY&&x.time>new Date().toTimeString().slice(0,5))).sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time)).map(x=>`${x.date} ${x.time} · ${x.type}${x.source?' · '+x.source:''}\n${x.title}\n${x.text||x.indexed||'[No text preview available]'}\n`).join('\n')}
+
+/* Content provenance: local app marks, preserved origin, explicit paste receipts.
+   Copying is not a paste receipt. Browser destinations are always user-recorded. */
+icons.app='M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z M8 8h8v8H8z';
+const trailApps = [
+  {id:'mail',name:'Mail',bundle:'com.apple.mail'},
+  {id:'notes',name:'Notes',bundle:'com.apple.Notes'},
+  {id:'finder',name:'Finder',bundle:'com.apple.finder'},
+  {id:'safari',name:'Safari',bundle:'com.apple.Safari'},
+  {id:'chrome',name:'Chrome',bundle:'com.google.Chrome'},
+  {id:'slack',name:'Slack',bundle:'com.tinyspeck.slackmacgap'},
+  {id:'dabin',name:'DaBin'}
+];
+function trailIdentity(value,label='') {
+  const v=String(value||'').trim(),key=v.toLowerCase()==='google chrome'?'chrome':v.toLowerCase();
+  const found=trailApps.find(a=>[a.id,a.name,a.bundle||''].some(s=>s.toLowerCase()===key&&key));
+  return found||{id:'unknown',name:String(label||v||'Unknown source').slice(0,100)};
+}
+function captureOrigin(x) {
+  // A product identity is accepted only when supplied by the capture adapter.
+  return trailIdentity(x.sourceProduct||x.sourceApplicationBundleIdentifier||x.sourceApplicationName||x.source);
+}
+function appMark(app) {
+  const src=app.id==='dabin'?ASSETS+'original-robot.svg':trailApps.some(a=>a.id===app.id)?ASSETS+'app-icons/'+app.id+'.png':null;
+  return `<span class="app-mark${src?'':' app-mark-unknown'}" aria-hidden="true">${src?'<img src="'+src+'" alt="" width="28" height="28" loading="lazy">':ic('app')}</span>`;
+}
+function pasteReceipts(x) {
+  return (Array.isArray(x.pasteHistory)?x.pasteHistory:[]).filter(p=>p&&['manual','confirmed'].includes(p.kind)&&typeof p.app==='string'&&p.app.trim()).slice().sort((a,b)=>(Date.parse(b.at)||0)-(Date.parse(a.at)||0));
+}
+function pasteDestinations(x) {
+  const destinations=[];
+  for(const p of pasteReceipts(x)) {
+    const app=trailIdentity(p.app,p.label),key=app.id==='unknown'?app.name.toLowerCase():app.id;
+    const found=destinations.find(d=>d.key===key);
+    if(found)found.count++;else destinations.push({key,app,count:1});
+  }
+  return destinations;
+}
+function trailSummary(x) {
+  const from=captureOrigin(x).name,dest=pasteDestinations(x);
+  return 'From '+from+'. '+(dest.length?'Pasted to '+dest.map(d=>d.app.name+(d.count>1?' ('+d.count+' times)':'')).join(', ')+'.':'No paste destinations recorded.')+' Open content trail.';
+}
+function contentTrail(x,mode='card') {
+  const from=captureOrigin(x),dest=pasteDestinations(x),summary=trailSummary(x);
+  return `<div class="content-trail trail-${mode}" data-od-id="trail-${esc(x.id)}">
+    <button type="button" class="trail-path" data-action="content-trail" data-id="${esc(x.id)}" aria-label="${esc(summary)}" title="${esc(summary)}">
+      ${appMark(from)}<span class="trail-direction">${ic('arrow')}</span>
+      <span class="trail-destinations">${dest.length?dest.slice(0,3).map(d=>appMark(d.app)).join('')+(dest.length>3?'<span class="trail-overflow">+'+(dest.length-3)+'</span>':''):'<span class="trail-empty">No pastes</span>'}</span>
+    </button>
+    <button type="button" class="trail-add" data-action="paste-picker" data-id="${esc(x.id)}" aria-label="Record a paste destination for ${esc(x.title)}" title="Record a paste destination">${ic('plus')}</button>
+  </div>`;
+}
+function receiptTime(at) {
+  const d=new Date(at);
+  return Number.isFinite(d.getTime())?d.toLocaleString('en-US',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}):'Time unavailable';
+}
+function trailDialog(x,picker=false) {
+  const origin=captureOrigin(x),history=pasteReceipts(x);
+  const body=`<div class="trail-origin"><span class="trail-caption">FROM</span>${appMark(origin)}<div><strong>${esc(origin.name)}</strong><span>${esc(dayLabel(x.date))} · ${esc(x.time||'')}</span></div></div>
+    <div class="trail-history-head"><h3>Pasted to</h3>${history.length?'<span class="count">'+history.length+'</span>':''}</div>
+    <div class="paste-history" role="list">${history.length?history.map(p=>`<div class="paste-receipt" role="listitem">${appMark(trailIdentity(p.app,p.label))}<div class="grow"><strong>${esc(trailIdentity(p.app,p.label).name)}</strong><span>${p.kind==='manual'?'Recorded by you':'Confirmed paste'} · ${esc(receiptTime(p.at))}</span>${p.context?'<small>'+esc(p.context)+'</small>':''}</div>${p.kind==='manual'?'<button type="button" class="icon-btn" data-action="paste-remove" data-id="'+esc(x.id)+'" data-value="'+esc(p.id)+'" aria-label="Remove recorded paste to '+esc(trailIdentity(p.app,p.label).name)+'">'+ic('x')+'</button>':''}</div>`).join(''):'<p class="trail-no-history">No paste destinations recorded.</p>'}</div>
+    ${picker?`<form id="paste-record-form" data-capture-id="${esc(x.id)}" class="paste-picker"><h3>Record a paste</h3><p>Choose where you pasted. This adds a record; it doesn’t paste content.</p><div class="paste-app-grid">${trailApps.map(app=>'<button type="button" class="paste-app-choice" data-action="paste-record" data-id="'+esc(x.id)+'" data-value="'+app.id+'">'+appMark(app)+'<span>'+esc(app.name)+'</span></button>').join('')}</div><label class="sr-only" for="paste-app-name">Another app or product</label><div class="paste-custom"><input id="paste-app-name" name="application" placeholder="Another app or product…" required maxlength="100" autocomplete="off"><button type="submit" class="btn">Add</button></div></form>`:'<button type="button" class="trail-record-button" data-action="paste-picker" data-id="'+esc(x.id)+'">'+ic('plus')+' Record a paste</button>'}`;
+  openDialog('Content trail',body);
+  const form=$('#paste-record-form');
+  form?.addEventListener('submit',e=>{e.preventDefault();const name=form.elements.application.value.trim();if(name)commitManualPaste(x.id,name)});
+}
+function recordManualPaste(id,value) {
+  const x=item(id),app=trailIdentity(value);
+  if(!x||x.deleted||!String(value||'').trim()||String(value).trim().length>100)return false;
+  const receipt={id:'paste-'+(typeof crypto!=='undefined'&&crypto.randomUUID?crypto.randomUUID():Date.now()+'-'+Math.random().toString(36).slice(2)),app:app.id==='unknown'?app.name:app.id,at:new Date().toISOString(),kind:'manual'};
+  return change(()=>{if(!Array.isArray(x.pasteHistory))x.pasteHistory=[];x.pasteHistory.push(receipt)},false);
+}
+function removeManualPaste(id,receiptId) {
+  const x=item(id);if(!x||!pasteReceipts(x).some(p=>p.id===receiptId&&p.kind==='manual'))return false;
+  return change(()=>{x.pasteHistory=x.pasteHistory.filter(p=>p.id!==receiptId||p.kind!=='manual')},false);
+}
+function refreshTrailDialog(id) {
+  closeDialog();render();
+  document.querySelectorAll('[data-action="content-trail"]').forEach(el=>{if(el.dataset.id===id)el.focus()});
+  trailDialog(item(id));
+}
+function commitManualPaste(id,value) {
+  if(!recordManualPaste(id,value))return;
+  refreshTrailDialog(id);toast('Paste destination recorded');
+}
+function handleTrailAction(a) {
+  const action=a.dataset.action,id=a.dataset.id,x=item(id);
+  if(!['content-trail','paste-picker','paste-record','paste-remove'].includes(action))return false;
+  if(!x||x.deleted)return true;
+  if(action==='content-trail'||action==='paste-picker') {
+    if($('#detail-form'))detailDraft();
+    trailDialog(x,action==='paste-picker');
+  }else if(action==='paste-record')commitManualPaste(id,a.dataset.value);
+  else if(removeManualPaste(id,a.dataset.value))refreshTrailDialog(id);
+  return true;
+}
+
+/* Shared components; each route is emitted as its own standalone HTML screen. */
+const titles={inbox:'Inbox',today:'Today',workspace:'Library',clipboard:'Clipboard',shelf:'Shelf',notes:'Notes',activity:'Activity',weekly:'Activity',search:'Search','capture-detail':'Capture','task-detail':'Task','new-note':'New note','new-task':'New task',settings:'Settings','recently-deleted':'Recently Deleted',export:'Export',backup:'Backup & restore',reminder:'Reminder',robot:'Robot & entry'};
+function projectSelect(){return `<button type="button" class="project-select project-trigger" data-action="project-picker" aria-label="Choose project">${ic('folder')}<span>${esc(state.project==='all'?'All projects':state.project==='unfiled'?'Unfiled':state.project)}</span></button>`}
+function workspaceTabs(){return '<nav class="tabs" aria-label="Workspace collections">'+[['workspace','Library'],['clipboard','Clipboard'],['shelf','Shelf'],['notes','Notes']].map(([p,t])=>`<a href="${p}.html" class="${PAGE===p?'active':''}" ${PAGE===p?'aria-current="page"':''}>${t}</a>`).join('')+'</nav>'}
+function filters(){return `<div class="filters" role="group" aria-label="Content filters">${['All','Text','Links','Files','Media','Tasks'].map(t=>`<button data-action="filter" data-value="${t}" class="${state.filter===t?'active':''}" aria-pressed="${state.filter===t}" title="${t==='Text'?'Copy/paste text':t}">${t==='Text'?'Text':t}</button>`).join('')}<button class="end icon-btn" data-action="refine" aria-label="Refine by date, app and origin">${ic('filter')}</button></div>`}
+function pageHead(title,description='',right=projectSelect(),count=''){return `<div class="page-head"><div class="page-title-row"><h1>${esc(title)}</h1>${count!==''?'<span class="count">'+count+'</span>':''}</div>${right}</div>`}
+function empty(title='All clear.',text='Save your next thought here.'){return `<div class="empty"><img src="${ASSETS}original-robot.svg" alt=""><h2>${title}</h2><p>${text}</p>${button('Add a capture','add')}</div>`}
+function card(x){if(x.task)return taskCard(x);return `<article class="card card-${x.type.toLowerCase()} ${x.minimized?'is-minimized':''}" data-od-id="capture-${x.id}" data-capture="${x.id}"><div class="card-top">${contentTrail(x)}${x.pinned?ic('pin'):''}<time>${x.date===TODAY?x.time:dayLabel(x.date)}</time><button class="icon-btn" data-action="copy" data-id="${x.id}" aria-label="Copy ${esc(x.title)}">${ic('copy')}</button></div>${!x.minimized&&x.image?`<a class="card-preview" href="${taskRoute(x)}"><img src="${esc(x.image)}" alt="${esc(x.title)}"></a>`:''}${!x.minimized&&x.members?`<div class="file-stack">${x.members.map(id=>item(id)).filter(Boolean).map(f=>`<a href="${taskRoute(f)}" class="file-line">${ic('file')}<span>${esc(f.filename||f.title)}</span></a>`).join('')}</div>`:''}${!x.minimized&&x.type==='Files'&&!x.members?`<a href="${taskRoute(x)}" class="file-preview">${ic('file')}<div><strong>${esc(x.filename||x.title)}</strong><span>File</span></div></a>`:''}<a class="card-body" href="${taskRoute(x)}"><h3>${esc(x.title)}</h3>${!x.minimized&&!x.image&&!x.members?'<p dir="auto">'+esc(x.text)+'</p>':''}</a><div class="card-footer"><button type="button" class="capture-project" data-action="task-project" data-id="${x.id}" title="File to project" aria-label="File ${esc(x.title)} to a project">${ic('folder')}<span>${esc(x.project||'Unfiled')}</span></button><span class="end"></span>${x.reminder?'<a class="icon-btn" href="reminder.html?id='+x.id+'" aria-label="Edit reminder">'+ic('bell')+'</a>':''}${iconAction('taskbox','Turn into task','convert',x.id)}${x.inbox?iconAction('shelf','Keep in Workspace','keep',x.id):''}${iconAction('more','More actions for '+x.title,'card-menu',x.id)}</div></article>`}
+function cards(xs){return xs.length?'<div class="card-grid">'+xs.map(card).join('')+'</div>':empty('Nothing in this view.','Try another filter, or save something new.')}
+function taskRow(x){return taskCard(x)}
+function inboxView(){const xs=projectItems().filter(x=>x.inbox&&!x.parent&&matches(x));return pageHead('Inbox','',projectSelect(),xs.length)+`<form id="quick-capture" class="composer" data-od-id="quick-capture"><label class="sr-only" for="quick-text">Quick capture</label><textarea id="quick-text" placeholder="Save a thought or link…" rows="1">${esc(state.drafts.inbox?.text||'')}</textarea><div class="row"><button type="button" class="icon-btn" data-action="import" aria-label="Import files">${ic('clip')}</button><a class="icon-btn" href="new-task.html" aria-label="New task" title="New task">${ic('taskbox')}</a><button type="button" class="icon-btn" data-action="paste" aria-label="Paste clipboard" title="Paste clipboard">${ic('copy')}</button><kbd class="capture-shortcut">⌘ ↵</kbd><button class="btn primary" type="submit">Save ${ic('arrow')}</button></div></form>${state.drafts.inbox?'<div class="meta draft-status">Draft restored</div>':''}${filters()}${cards(xs)}`}
+function todayView(){const all=projectItems().filter(x=>x.task&&!x.parent),tab=state.todayTab;let xs=all.filter(x=>tab==='Completed'?x.completed:!x.completed&&(tab==='Upcoming'?x.planned>TODAY:x.planned===TODAY));xs.sort((a,b)=>(a.order??99)-(b.order??99));const unplanned=all.filter(x=>!x.planned&&!x.completed),unfinished=all.filter(x=>!x.completed&&x.planned&&x.planned<TODAY),rem=projectItems().filter(x=>!x.task&&x.reminder&&x.reminder.slice(0,10)<=TODAY);return pageHead('Today','',projectSelect(),dayLabel(TODAY))+`<div class="tabs">${['Today','Upcoming','Completed'].map(t=>`<button data-action="today-tab" data-value="${t}" class="${tab===t?'active':''}">${t}</button>`).join('')}<span class="grow"></span><a class="btn quiet" href="new-task.html">${ic('plus')} New task</a></div><div class="section-label"><span>${tab==='Today'?'Planned':tab}</span><span>${xs.length} tasks · ${durationLabel(xs.reduce((s,x)=>s+(Number(x.effort)||0),0))}</span></div>${xs.length?xs.map(taskRow).join(''):empty('Nothing planned here.','Choose a task from Inbox or create one when you’re ready.')}${tab==='Today'&&unfinished.length?'<div class="section-label">Still open</div>'+unfinished.map(taskRow).join(''):''}${tab==='Today'&&unplanned.length?'<div class="section-label">Unplanned</div>'+unplanned.map(taskRow).join(''):''}${tab==='Today'&&rem.length?'<div class="section-label">Reminders</div>'+rem.map(x=>`<div class="task-row">${ic('bell')}<a class="grow" href="${taskRoute(x)}">${esc(x.title)}</a>${button('Done','reminder-done','',x.id)}${button('Tomorrow','reminder-tomorrow','',x.id)}</div>`).join(''):''}`}
+function workspaceView(){let xs=projectItems().filter(x=>!x.parent&&matches(x));if(PAGE==='shelf')xs=xs.filter(x=>x.shelf);if(PAGE==='clipboard')xs=xs.filter(x=>state.clipboardTab==='Snippets'?x.snippet:state.clipboardTab==='Pinned'?x.pinned:(x.origin==='clipboard'||['Text','Links'].includes(x.type)&&!x.task));return pageHead(titles[PAGE],PAGE==='shelf'?'The materials you want within reach.':PAGE==='clipboard'?'Find a good copy. Use it again.':'Everything you’ve kept, in one place.')+workspaceTabs()+`${PAGE==='clipboard'?`<div class="row"><div class="tabs" style="border:0;margin:0;padding:0">${['Recent','Pinned','Snippets'].map(t=>`<button data-action="clipboard-tab" data-value="${t}" class="${state.clipboardTab===t?'active':''}">${t}</button>`).join('')}</div></div>`:''}${PAGE==='shelf'?`<div class="row between"><span class="meta">${xs.length} items in this view</span><div class="row">${button(ic('plus')+' Add from Library','shelf-add')}${button(ic('download')+' Export shelf','shelf-export')}</div></div>`:''}${filters()}${cards(xs)}`}
+function notesView(){let key=state.project==='all'?'unfiled':state.project,n=state.notes[key]||{text:''};return pageHead('Notes','A scratchpad for the project on your mind.')+workspaceTabs()+`<div class="note-paper" data-od-id="scratchpad"><div class="note-top row between"><h2>${key==='unfiled'?'Unfiled notes':esc(key)}</h2><span class="meta" id="note-status">${ic('check')} Saved</span></div><label class="sr-only" for="scratchpad">Project scratchpad</label><textarea class="note-area" id="scratchpad" placeholder="Start writing…">${esc(n.text)}</textarea><div class="row between rule"></div><div class="row between wrap"><span class="meta">Your scratchpad stays here after saving.</span><div class="row">${button('Save as note','note-convert')}${button('Make task','note-task','primary')}</div></div></div>`}
+function dateHeader(){return `<div class="page-head activity-head"><div><h1>Activity</h1><p>Your captures stay on the day they arrived.</p></div><div class="date-nav"><button class="icon-btn" data-action="date-prev" aria-label="Previous ${PAGE==='weekly'?'week':'day'}">${ic('back')}</button><input type="date" aria-label="Selected date" value="${state.date}" data-change="date"><button class="icon-btn" data-action="date-next" aria-label="Next ${PAGE==='weekly'?'week':'day'}">${ic('arrow')}</button>${button('Today','date-today','quiet')}</div></div><div class="tabs"><a href="activity.html" class="${PAGE==='activity'?'active':''}">Day</a><a href="weekly.html" class="${PAGE==='weekly'?'active':''}">Week</a><span class="grow"></span>${button(ic('search')+' Search '+(PAGE==='weekly'?'week':'day'),'scope-search','quiet')}<a class="btn quiet" href="export.html?scope=${PAGE==='weekly'?'Week':'Day'}">${ic('download')} Export</a></div>`}
+function activityView(){let xs=projectItems().filter(x=>!x.parent&&matches(x));if(PAGE==='weekly'){let days=Array.from({length:7},(_,i)=>dayAdd(state.date,i-6)).filter(d=>xs.some(x=>x.date===d));return dateHeader()+filters()+`<div class="section-label">${dayLabel(dayAdd(state.date,-6))} — ${dayLabel(state.date)} · 7 days</div>${days.length?'<div class="weekly">'+days.map(d=>`<section class="day-column"><h2><button data-action="open-day" data-value="${d}">${fullDay(d)} ${ic('arrow')}</button></h2>${xs.filter(x=>x.date===d).sort((a,b)=>b.time.localeCompare(a.time)).map(card).join('')}</section>`).join('')+'</div>':empty('A quiet week.','No captures in this seven-day range.')}`}
+xs=xs.filter(x=>x.date===state.date).sort((a,b)=>b.time.localeCompare(a.time));let groups={};xs.filter(x=>x.auto&&!x.task).forEach(x=>(groups[x.time.slice(0,2)]??=[]).push(x));let grouped=new Set(),content='';Object.entries(groups).forEach(([hour,g])=>{if(g.length>=4){g.forEach(x=>grouped.add(x.id));content+=`<details class="hour-group" data-od-id="hour-${hour}"><summary aria-label="Expand or collapse ${g.length} automatic actions">${ic('history')}<strong>${hour}:00–${hour}:59</strong><span>${g.length} saved actions</span><span class="grow"></span><span title="Collapse actions">${ic('minus')}</span></summary><div class="card-grid">${g.map(card).join('')}</div></details>`}});const carry=projectItems().filter(x=>x.task&&!x.completed&&x.date<state.date&&(!x.reminder||x.reminder.slice(0,10)<=state.date)&&matches(x));return dateHeader()+filters()+`<div class="section-label"><span>${fullDay(state.date)}</span><span>${xs.length} captures</span></div>${carry.length?'<div class="section-label">Still open · original capture date preserved</div>'+carry.map(x=>`<div class="meta">Captured ${dayLabel(x.date)}</div>${taskRow(x)}`).join(''):''}${cards(xs.filter(x=>!grouped.has(x.id)))}${content}`}
+function searchView(){return pageHead('Search','Search saved content, recognized text, snippets and notes.','<button class="btn quiet" data-action="back">'+ic('back')+' Back</button>')+`<form id="search-form"><div class="search-box">${ic('search')}<input id="search-input" aria-label="Search saved content" type="search" value="${esc(state.query)}" placeholder="A phrase, a file, a half-remembered thought…" autocomplete="off"><kbd class="meta">↵</kbd></div></form><div class="search-refine"><select data-change="scope" aria-label="Search date scope">${['All','Day','Week'].map(t=>`<option ${state.scope===t?'selected':''}>${t}</option>`).join('')}</select>${projectSelect()}<select data-change="source" aria-label="Source application"><option value="all">All apps</option>${['Finder','Mail','Safari','Notes'].map(a=>`<option ${state.source===a?'selected':''}>${a}</option>`).join('')}</select><label class="row meta"><input type="checkbox" id="nearby" ${state.nearby?'checked':''}> Nearby context</label></div>${filters()}<div id="search-results"></div>`}
+function searchResults(){let q=state.query.trim().toLocaleLowerCase(),words=q.split(/\s+/).filter(Boolean),start=state.scope==='Week'?dayAdd(state.date,-6):state.date;const inScope=d=>state.scope==='All'||d>=start&&d<=state.date;let xs=projectItems().filter(x=>matches(x)&&inScope(x.date)&&words.every(w=>[x.title,x.text,x.indexed,x.filename,x.snippet,x.project].join(' ').toLocaleLowerCase().includes(w)));let ns=state.source==='all'&&['All','Text'].includes(state.filter)?Object.entries(state.notes).filter(([p,n])=>(state.project==='all'||state.project===p)&&inScope(n.updated)&&words.every(w=>n.text.toLocaleLowerCase().includes(w))):[];$('#search-results').innerHTML=`<div class="section-label"><span>${xs.length+ns.length} results${state.scope!=='All'?' · '+state.scope.toLowerCase()+' ending '+dayLabel(state.date):''}</span><span>Local text search</span></div>${!xs.length&&!ns.length?`<div class="empty"><h2>No matches yet.</h2><p>Keep your search and try a wider view.</p><div class="row">${button('Clear refinements','clear-refinements')}${button('Search all dates','all-dates')}</div></div>`:xs.map(x=>`<a class="search-result" href="${taskRoute(x)}">${ic(x.type==='Media'?'image':x.type==='Links'?'link':'text')}<div><span class="meta">${esc(x.source||'Source unavailable')} · ${dayLabel(x.date)}${x.snippet?' · Snippet: '+esc(x.snippet):''}</span><h3>${esc(x.title)}</h3><p dir="auto">${esc((x.indexed||x.text||'No text preview').slice(0,220))}</p>${x.indexed?'<span class="meta">Recognized text</span>':''}</div></a>`).join('')+ns.map(([p,n])=>`<a class="search-result" href="notes.html?project=${encodeURIComponent(p)}">${ic('note')}<div><span class="meta">Scratchpad · updated ${dayLabel(n.updated)}</span><h3>${esc(p==='unfiled'?'Unfiled notes':p)}</h3><p>${esc(n.text.slice(0,200))}</p></div></a>`).join('')}${state.nearby&&xs.length?'<div class="section-label">Nearby context · not search matches</div>'+projectItems().filter(x=>xs.some(y=>y.date===x.date)&&!xs.some(y=>y.id===x.id)).slice(0,2).map(x=>'<div class="context-item"><a class="search-result" href="'+taskRoute(x)+'">'+esc(x.title)+'</a></div>').join(''):''}`}
+function detailView(){const x=current();if(!x||x.deleted)return empty('This capture isn’t here.','It may be in Recently Deleted.');if(x.task)return taskDetailView(x);let draft=state.drafts[x.id],v=draft?{...x,...draft}:x,task=PAGE==='task-detail';return `<button class="back" data-action="${x.parent?'parent':'back'}" data-id="${esc(x.parent||'')}">${ic('back')}${x.parent?'Back to parent task':'Back'}</button>`+pageHead(task?'A clear next step.':'Saved for later.',`Captured ${dayLabel(x.date)} at ${x.time} · ${esc(x.type)}`,`<button class="btn" data-action="card-menu" data-id="${x.id}">${ic('more')} Actions</button>`)+`${draft?'<div class="notice">Recovered unsaved edits · Save changes to commit.</div><br>':''}<form id="detail-form"><div class="detail-grid"><div class="stack"><div class="panel"><div class="row between" style="margin-bottom:15px"><span class="tag ${x.completed?'success':''}">${ic(task?'task':x.type==='Media'?'image':'text')}${task?(x.completed?'Completed':'Task'):x.type}</span>${button(ic('copy')+' Copy','copy','',x.id)}</div><label class="field">Title<input name="title" value="${esc(v.title)}" required maxlength="500"></label><div style="height:14px"></div><div class="detail-preview">${x.image?'<img src="'+esc(x.image)+'" alt="'+esc(x.title)+'">':'<div class="detail-text" dir="auto">'+esc(x.text||'Preview unavailable. Your saved file is retained.')+'</div>'}</div>${x.members?'<div class="attachment-list">'+x.members.map(id=>item(id)).filter(Boolean).map(f=>'<a href="'+taskRoute(f)+'">'+ic('file')+esc(f.title)+'</a>').join('') :''}${contentTrail(x,'detail')}<div class="detail-meta"><div><span>Received</span><strong>${esc(x.date)} · ${x.time}</strong></div><div><span>Source</span><strong>${esc(x.source||'Unavailable')}</strong></div><div><span>Original location</span><strong>Not supplied</strong></div><div><span>Saved copy</span><strong>${x.filename?esc(x.filename):'Local capture'}</strong></div></div><div class="actions-inline" style="margin-top:15px">${x.url?`<a class="btn" href="${safeURL(x.url)}" target="_blank" rel="noopener">${ic('external')} Open original</a>`:''}${button('File location','file-location','',x.id)}${button('Copy plain text','copy-plain','',x.id)}</div></div><div class="panel"><h2>Comment</h2><textarea name="comment" rows="3" placeholder="Keep the useful context with this capture…">${esc(v.comment||'')}</textarea><p class="meta" style="margin-top:8px">Saved with “Save changes”.</p></div>${x.indexed||x.type==='Media'||x.type==='Files'?`<div class="panel"><div class="row between"><h2>Recognized text</h2>${button('Index status','index-status','',x.id)}</div><p class="meta" style="margin:10px 0">${x.indexed?'Local text available':'No recognized text in this fixture.'}</p>${x.indexed?'<p>'+esc(x.indexed)+'</p>'+button('Copy text','copy-index','',x.id):''}</div>`:''}</div><div class="stack"><div class="panel"><h2>${task?'Work plan':'Organize'}</h2><div class="form-grid"><label class="field">Project<select name="project"><option value="">Unfiled</option>${state.projects.map(p=>'<option '+(v.project===p?'selected':'')+'>'+esc(p)+'</option>').join('')}</select></label><label class="row"><input name="pinned" type="checkbox" ${v.pinned?'checked':''}> Pin capture</label></div>${task?`<div class="rule"></div><div class="form-grid"><label class="field">Workday<input type="date" name="planned" value="${v.planned||''}"></label><label class="field">Priority<select name="priority">${['None','Low','Medium','High'].map(p=>'<option '+(v.priority===p?'selected':'')+'>'+p+'</option>').join('')}</select></label><label class="field">Effort · minutes<input type="number" min="1" max="10080" name="effort" value="${v.effort||''}" placeholder="Optional"></label><label class="field">Repeat<select name="repeat">${['None','Daily','Weekdays','Weekly','Monthly'].map(p=>'<option '+(v.repeat===p?'selected':'')+'>'+p+'</option>').join('')}</select></label><label class="field" style="grid-column:1/-1">Deadline · finish by<input type="datetime-local" name="deadline" value="${v.deadline||''}"></label></div><p class="meta" style="margin-top:12px">A workday is when you plan to work. A deadline never schedules a notification.</p><div class="rule"></div><div class="row between"><h3>Reminder</h3><a class="btn" href="reminder.html?id=${x.id}">${ic('bell')}${x.reminder?'Edit reminder':'Add reminder'}</a></div>${x.reminder?'<p class="meta" style="margin-top:8px">'+new Date(x.reminder).toLocaleString()+'</p>':''}<div class="rule"></div><div class="row between"><h3>Checklist</h3><span class="meta">${(v.checklist||[]).filter(s=>s.done).length}/${(v.checklist||[]).length}</span></div><div class="checklist" style="margin-top:12px">${(v.checklist||[]).map((s,i)=>`<label><input type="checkbox" data-check="${i}" ${s.done?'checked':''}><input type="text" data-step="${i}" maxlength="500" value="${esc(s.text)}" aria-label="Checklist step ${i+1}"><button type="button" class="icon-btn" data-action="remove-step" data-value="${i}" aria-label="Remove checklist step ${i+1}">${ic('x')}</button></label>`).join('')}</div><button type="button" class="btn quiet" data-action="add-step" style="margin-top:8px">${ic('plus')} Add a step</button>${x.previous?`<div class="rule"></div><a class="small-link" href="task-detail.html?id=${x.previous}">Previous occurrence & attachments</a>`:''}${x.next?`<div class="rule"></div><a class="small-link" href="task-detail.html?id=${x.next}">Next occurrence</a>`:''}`:`<div class="rule"></div><div class="stack">${button(ic('task')+' Turn into task','convert','',x.id)}<a class="btn" href="reminder.html?id=${x.id}">${ic('bell')} ${x.reminder?'Edit reminder':'Add reminder'}</a>${button(ic('shelf')+(x.shelf?' Remove from shelf; keep capture':' Keep on shelf'),'shelf-toggle','',x.id)}</div>`}</div>${task?`<div class="panel"><div class="row between"><h2>Attachments</h2><span class="count">${(x.attachments||[]).length}</span></div><div class="attachment-list">${(x.attachments||[]).map(id=>item(id)).filter(Boolean).map(f=>'<a href="capture-detail.html?id='+f.id+'">'+ic(f.type==='Media'?'image':'file')+'<span>'+esc(f.title)+'</span>'+ic('arrow')+'</a>').join('')}</div><div class="row wrap" style="margin-top:13px">${button(ic('plus')+' Saved item','attach-existing','',x.id)}${button(ic('clip')+' Import','attach-import','',x.id)}${button('Paste','attach-paste','',x.id)}</div><p class="meta" style="margin-top:10px">Drop files here to attach them to this task.</p></div>`:''}</div></div><div class="row between details-actions"><span class="meta">${draft?'Unsaved changes':'Original content and receipt date stay intact'}</span><div class="row">${task?button(x.completed?'Reopen task':'Complete task','complete','',x.id):''}<button class="btn primary" type="submit">Save changes</button></div></div></form>`}
+function newView(){const task=PAGE==='new-task',d=state.drafts[PAGE]||{};return '<button class="back" data-action="back">'+ic('back')+' Back</button>'+pageHead(task?'New task':'New note','Save to Inbox'+(state.project!=='all'?' · '+esc(state.project):''),'')+`${state.drafts[PAGE]?'<div class="notice">Your unfinished draft is restored.</div><br>':''}<form id="new-form" class="panel stack" style="max-width:780px"><label class="field">${task?'What needs doing?':'Title'}<input name="title" id="new-title" required maxlength="500" value="${esc(d.title||'')}" placeholder="${task?'Give the next step a name':'A useful name for later'}"></label><label class="field">${task?'Context':'Note'}<textarea name="text" rows="${task?2:7}" placeholder="Keep the details here…">${esc(d.text||'')}</textarea></label>${task?`<div class="form-grid"><label class="field">Workday<input type="date" name="planned" value="${d.planned||''}"></label><label class="field">Time <span class="optional">Optional</span><input type="time" name="scheduledTime" value="${esc(d.scheduledTime||'')}"></label></div><div class="new-task-timing"><h2>${ic('clock')} Focus timer <span class="optional">Optional</span></h2>${durationFields(Number(d.hours||0)*60+Number(d.minutes||d.effort||0))}${durationPresets()}</div>`:''}<div class="row between"><span class="meta">${task?'⌘ Return to save':'Draft kept until saved or discarded'}</span><div class="row">${button('Discard draft','discard-draft')}<button class="btn primary" type="submit">Save ${task?'task':'note'}</button></div></div></form>`}
+function reminderView(){const x=current();if(!x)return empty();return `<a class="back" href="${taskRoute(x)}">${ic('back')} Back to ${x.task?'task':'capture'}</a>`+pageHead('A nudge at the right time.',esc(x.title),'')+`<form id="reminder-form" class="panel stack" style="max-width:560px;margin:auto"><div class="tabs"><button type="button" data-action="reminder-mode" data-value="date" class="${!state.timerMode?'active':''}">Date & time</button><button type="button" data-action="reminder-mode" data-value="timer" class="${state.timerMode?'active':''}">Countdown</button></div>${state.timerMode?`<div><div class="reminder-clock"><input name="hours" aria-label="Countdown hours" type="number" min="0" max="99" value="0"> : <input name="minutes" aria-label="Countdown minutes" type="number" min="0" max="59" value="30"></div><div class="meta" style="text-align:center">Hours : minutes · starts when you save</div></div>`:`<label class="field">Remind me on<input type="datetime-local" name="when" required value="${x.reminder?x.reminder.slice(0,16):TODAY+'T17:00'}"></label>`}${x.reminder?'<div class="notice">Currently scheduled for '+new Date(x.reminder).toLocaleString()+'. Opening this screen does not restart the timer.</div>':''}<div class="notice">${ic('bell')} A reminder is separate from your workday and deadline.</div><div class="row between">${button('Notification status','notification')}<button type="submit" class="btn primary">Save reminder</button></div>${x.reminder?button('Remove reminder','remove-reminder','danger',x.id):''}</form>`}
+function exportView(){let scope=param.get('scope')||state.scope;if(scope==='All')scope='Day';const text=exportText(scope);return pageHead('Take your captures with you.',scope==='Week'?dayLabel(dayAdd(state.date,-6))+' — '+dayLabel(state.date):fullDay(state.date),'')+`<div class="panel stack"><div class="row between"><h2>Complete ${scope.toLowerCase()} · plain text</h2><span class="tag">UTF-8</span></div><p class="meta">Includes every original receipt in this ${scope.toLowerCase()}, regardless of your active filters. Carried tasks are not duplicated.</p><textarea rows="13" id="export-content" aria-label="Export preview" readonly>${esc(text)}</textarea><div class="row wrap"><button class="btn" data-action="export-copy" ${!text?'disabled':''}>${ic('copy')} Copy</button><button class="btn primary" data-action="export-file" data-value="${scope}" ${!text?'disabled':''}>${ic('download')} Export text file</button>${button('Native save states','export-spec','quiet')}</div></div>`}
+
+/* Header project picker: local UI, existing shared project state. */
+let projectSwitcherTrigger=0;
+function selectedProjectLabel(){return state.project==='all'?'All projects':state.project==='unfiled'?'Unfiled':state.project}
+function projectHeading(){return `<button type="button" class="project-heading" data-action="project-picker" aria-label="Switch project: ${esc(selectedProjectLabel())}" aria-haspopup="dialog" aria-expanded="false" aria-controls="project-switcher"><span class="project-heading-mark">${ic('folder')}</span><span class="project-heading-name">${esc(selectedProjectLabel())}</span>${ic('down')}</button>`}
+function projectSwitcherMarkup(){return `<div id="project-switcher" popover="auto" role="dialog" aria-label="Projects"><label class="ps-search">${ic('search')}<input type="search" id="project-switcher-search" placeholder="Find a project…" aria-label="Find a project" aria-controls="project-switcher-list" autocomplete="off"></label><div class="ps-list" id="project-switcher-list" role="group" aria-label="Choose a project"></div><div class="ps-footer"><button type="button" class="ps-new" id="project-switcher-new">${ic('plus')}New project</button><form class="ps-create" id="project-switcher-create" hidden><label for="project-switcher-name">New project</label><div class="ps-create-row"><input id="project-switcher-name" placeholder="Project name" autocomplete="off" maxlength="180" aria-describedby="project-switcher-error"><button type="submit" aria-label="Create project" title="Create project">${ic('check')}</button><button type="button" id="project-switcher-cancel" aria-label="Cancel new project" title="Cancel">${ic('x')}</button></div><p class="ps-error" id="project-switcher-error" role="alert"></p></form></div></div>`}
+function matchingProjects(query=''){const q=query.trim().toLocaleLowerCase();return ['all','unfiled',...state.projects].map(value=>({value,name:value==='all'?'All projects':value==='unfiled'?'Unfiled':value})).filter(p=>p.name.toLocaleLowerCase().includes(q))}
+function paintProjectChoices(){const rows=matchingProjects($('#project-switcher-search').value);$('#project-switcher-list').innerHTML=rows.length?rows.map(p=>`<button type="button" class="ps-option" data-project-value="${esc(p.value)}" aria-pressed="${state.project===p.value}"><span class="ps-monogram">${p.value==='all'?ic('inbox'):p.value==='unfiled'?ic('folder'):esc(Array.from(p.name)[0]?.toLocaleUpperCase()||'')}</span><span class="ps-name">${esc(p.name)}</span><span class="ps-check">${state.project===p.value?ic('check'):''}</span></button>`).join(''):'<p class="ps-empty" role="status">No matching projects</p>'}
+function positionProjectSwitcher(){
+ const panel=$('#project-switcher');if(!panel?.matches(':popover-open'))return;
+ const trigger=$$('[data-action="project-picker"]')[projectSwitcherTrigger]||$('.project-heading');if(!trigger)return;
+ const viewport=viewportRect();panel.style.width=Math.min(332,Math.max(0,viewport.width-24))+'px';panel.style.maxHeight=Math.max(0,viewport.height-24)+'px';
+ const r=projectPanelRect(trigger.getBoundingClientRect(),{width:panel.offsetWidth,height:panel.offsetHeight},viewport);
+ panel.style.left=r.left+'px';panel.style.top=r.top+'px';
+}
+function openProjectSwitcher(trigger){const panel=$('#project-switcher');if(panel.matches(':popover-open')){panel.hidePopover();return}projectSwitcherTrigger=Math.max(0,$$('[data-action="project-picker"]').indexOf(trigger));$('#project-switcher-search').value='';$('#project-switcher-create').hidden=true;$('#project-switcher-new').hidden=false;paintProjectChoices();panel.showPopover();$$('[data-action="project-picker"]').forEach(b=>b.setAttribute('aria-expanded','true'));positionProjectSwitcher();$('#project-switcher-search').focus()}
+function projectNameError(name){if(!name)return 'Enter a project name.';if(name.length>180)return 'Keep the name under 180 characters.';if(['all','all projects','unfiled','__new'].includes(name.toLocaleLowerCase())||state.projects.some(p=>p.toLocaleLowerCase()===name.toLocaleLowerCase()))return 'That name is already in use.';return ''}
+function commitProjectSelection(name,create=false){if((create&&projectNameError(name))||(!create&&!['all','unfiled',...state.projects].includes(name)))return false;if(!change(()=>{if(create)state.projects.push(name);state.project=name},false))return false;$('#project-switcher').hidePopover();render();($$('[data-action="project-picker"]')[projectSwitcherTrigger]||$('.project-heading'))?.focus();return true}
+function bindProjectSwitcher(){const panel=$('#project-switcher'),search=$('#project-switcher-search'),form=$('#project-switcher-create');
+ search.addEventListener('input',()=>{paintProjectChoices();positionProjectSwitcher()});
+ panel.addEventListener('toggle',()=>{const open=panel.matches(':popover-open');$$('[data-action="project-picker"]').forEach(b=>b.setAttribute('aria-expanded',String(open)))});
+ panel.addEventListener('click',e=>{const row=e.target.closest('[data-project-value]');if(row)commitProjectSelection(row.dataset.projectValue)});
+ $('#project-switcher-new').addEventListener('click',()=>{form.hidden=false;$('#project-switcher-new').hidden=true;$('#project-switcher-name').value=search.value.trim();$('#project-switcher-name').removeAttribute('aria-invalid');$('#project-switcher-error').textContent='';positionProjectSwitcher();$('#project-switcher-name').focus()});
+ $('#project-switcher-cancel').addEventListener('click',()=>{form.hidden=true;$('#project-switcher-new').hidden=false;positionProjectSwitcher();$('#project-switcher-new').focus()});
+ $('#project-switcher-name').addEventListener('input',e=>{e.target.removeAttribute('aria-invalid');$('#project-switcher-error').textContent=''});
+ form.addEventListener('submit',e=>{e.preventDefault();e.stopPropagation();const input=$('#project-switcher-name'),name=input.value.trim().normalize('NFC'),error=projectNameError(name);if(error){$('#project-switcher-error').textContent=error;input.setAttribute('aria-invalid','true');input.focus();positionProjectSwitcher();return}if(!commitProjectSelection(name,true))$('#project-switcher-error').textContent='Could not save. Try again.'});
+ panel.addEventListener('keydown',e=>{if(e.key==='Tab'){const controls=$$('input,button',panel).filter(el=>!el.closest('[hidden]')&&!el.disabled),first=controls[0],last=controls.at(-1);if(e.shiftKey&&e.target===first){e.preventDefault();last?.focus()}else if(!e.shiftKey&&e.target===last){e.preventDefault();first?.focus()}return}if(!['ArrowDown','ArrowUp','Enter'].includes(e.key)||e.target.closest('form'))return;const rows=$$('.ps-option',panel),index=rows.indexOf(document.activeElement);if(e.key==='Enter'&&e.target===search){e.preventDefault();rows[0]?.click()}else if(e.key!=='Enter'){e.preventDefault();const next=index<0?(e.key==='ArrowDown'?0:rows.length-1):(index+(e.key==='ArrowDown'?1:-1)+rows.length)%rows.length;rows[next]?.focus()}});
+}
+
+/* Geometry helpers are shared by dragging, resizing and anchored project UI. */
+function viewportRect(){const v=window.visualViewport;return {left:v?.offsetLeft||0,top:v?.offsetTop||0,width:v?.width||window.innerWidth,height:v?.height||window.innerHeight}}
+function fitWindowRect(rect,viewport){
+ const width=Math.min(Math.max(1,rect.width),viewport.width),height=Math.min(Math.max(1,rect.height),viewport.height);
+ return {width,height,left:Math.max(viewport.left,Math.min(rect.left,viewport.left+viewport.width-width)),top:Math.max(viewport.top,Math.min(rect.top,viewport.top+viewport.height-height))};
+}
+function projectPanelRect(anchor,size,viewport){
+ const gap=12,width=Math.min(size.width,viewport.width-gap*2),height=Math.min(size.height,viewport.height-gap*2);
+ const bottom=viewport.top+viewport.height-gap,above=anchor.top-height-8;
+ const top=anchor.bottom+8+height<=bottom?anchor.bottom+8:above>=viewport.top+gap?above:bottom-height;
+ return {width,height,left:Math.max(viewport.left+gap,Math.min(anchor.left,viewport.left+viewport.width-width-gap)),top:Math.max(viewport.top+gap,top)};
+}
+function setFrameRect(frame,rect){Object.assign(frame.style,{position:'fixed',margin:'0',left:rect.left+'px',top:rect.top+'px',width:rect.width+'px',height:rect.height+'px'})}
+function keepFrameInViewport(){
+ const frame=$('#frame');if(!frame||!frame.getAttribute('style'))return;
+ setFrameRect(frame,fitWindowRect(frame.getBoundingClientRect(),viewportRect()));
+}
+
+let frameRestoreStyle=null;
+function toggleFrameExpansion(){const frame=$('#frame');if(!frame)return;
+ if(frame.classList.contains('expanded')){frame.classList.remove('expanded');if(frameRestoreStyle)frame.setAttribute('style',frameRestoreStyle);else frame.removeAttribute('style');keepFrameInViewport()}
+ else{frameRestoreStyle=frame.getAttribute('style');frame.removeAttribute('style');frame.classList.add('expanded')}
+ positionProjectSwitcher();
+}
+
+/* Task surfaces. Capture identity/receipt stays intact; focus is independent of reminders. */
+Object.assign(icons,{
+  taskbox:'M9 3h10a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9 M2 4l3 3 5-5 M8 13h8 M8 17h5',
+  flag:'M5 21V3 M5 4c5-4 8 4 14 0v10c-6 4-9-4-14 0',
+  reset:'M4 8V3 M4 8h5 M4 8a9 9 0 1 1-1 8',
+  stop:'M6 6h12v12H6z'
+});
+const taskFields=['task','planned','scheduledTime','priority','effort','repeat','deadline','checklist','attachments','focus','completed','completedAt'];
+let convertedSnapshot=null,taskEditor=null;
+function iconAction(icon,label,action,id='',extra=''){
+  return `<button type="button" class="icon-btn" data-action="${action}" data-id="${esc(id)}" aria-label="${esc(label)}" title="${esc(label)}" ${extra}>${ic(icon)}</button>`;
+}
+function durationLabel(minutes){const n=Math.max(0,Math.round(Number(minutes)||0));return n>=60?Math.floor(n/60)+'h'+(n%60?' '+n%60+'m':''):n+'m'}
+function focusRemaining(x,now=Date.now()){
+  if(x.focus?.endAt)return Math.max(0,Math.ceil((x.focus.endAt-now)/1000));
+  return Math.max(0,Number(x.focus?.remaining??(Number(x.effort)||0)*60));
+}
+function focusClock(x){const seconds=focusRemaining(x);return [Math.floor(seconds/3600),Math.floor(seconds/60)%60,seconds%60].map(n=>String(n).padStart(2,'0')).join(':')}
+function focusStatus(x){return x.completed?'Completed':x.focus?.endAt?(focusRemaining(x)?'Focusing':'Time’s up'):x.focus?.remaining===0?'Time’s up':x.focus?'Paused':'Ready when you are'}
+function pauseFocus(x){if(x.focus?.endAt)x.focus={remaining:focusRemaining(x)}}
+function planLabel(x){return !x.planned?'Schedule':(x.planned===TODAY?'Today':x.planned===dayAdd(TODAY,1)?'Tomorrow':dayLabel(x.planned))+(x.scheduledTime?' · '+x.scheduledTime:'')}
+function durationFields(minutes=0){const n=Number(minutes)||0;return `<div class="duration-fields"><label><input name="hours" aria-label="Timer hours" type="number" inputmode="numeric" min="0" max="168" step="1" value="${Math.floor(n/60)}"><span>hours</span></label><span class="duration-colon" aria-hidden="true">:</span><label><input name="minutes" aria-label="Timer minutes" type="number" inputmode="numeric" min="0" max="59" step="1" value="${n%60}"><span>minutes</span></label></div>`}
+function durationPresets(){return `<div class="duration-presets" role="group" aria-label="Quick duration">${[15,30,45,60].map(n=>`<button type="button" data-action="duration-preset" data-value="${n}">${durationLabel(n)}</button>`).join('')}</div>`}
+function taskCard(x){
+  const running=!!x.focus?.endAt&&!x.completed,finished=x.focus?.remaining===0,steps=x.checklist||[];
+  return `<article class="task-card ${x.completed?'is-done':''}" data-task-id="${esc(x.id)}" data-capture="${esc(x.id)}" data-od-id="task-${esc(x.id)}">
+    <div class="task-card-heading">
+      <button type="button" class="task-check" data-action="complete" data-id="${esc(x.id)}" aria-label="${x.completed?'Reopen':'Complete'} ${esc(x.title)}" aria-pressed="${!!x.completed}"><span>${x.completed?ic('check'):''}</span></button>
+      <a class="task-card-title" href="${taskRoute(x)}"><span class="task-kicker">${x.completed?'Completed':'Task'}${x.priority==='High'?' · High priority':''}</span><h3>${esc(x.title)}</h3></a>
+      ${iconAction('more','More options for '+x.title,'task-menu',x.id)}
+    </div>
+    ${contentTrail(x,'task')}
+    <div class="task-card-context">${x.project?'<span>'+ic('folder')+esc(x.project)+'</span>':''}${steps.length?'<span>'+ic('taskbox')+steps.filter(s=>s.done).length+'/'+steps.length+'</span>':''}${x.deadline?'<span>'+ic('flag')+'Due '+dayLabel(x.deadline.slice(0,10))+'</span>':''}${x.attachments?.length?'<span>'+ic('clip')+x.attachments.length+'</span>':''}</div>
+    <div class="task-card-controls">
+      <div class="task-focus-control" data-running="${running}"><button type="button" class="task-duration" data-action="task-duration" data-id="${esc(x.id)}" aria-label="Set timer for ${esc(x.title)}">${ic('clock')}<span data-timer-clock="${esc(x.id)}">${x.focus?focusClock(x):x.effort?String(Math.floor(x.effort/60)).padStart(2,'0')+'h '+String(x.effort%60).padStart(2,'0')+'m':'Set timer'}</span></button>${!x.completed?`<button type="button" class="focus-play" data-action="timer-toggle" data-id="${esc(x.id)}" data-timer-button="${esc(x.id)}" aria-label="${running?'Pause':finished?'Restart':'Start'} timer for ${esc(x.title)}" title="${running?'Pause':'Start'} timer">${ic(running?'pause':'play')}</button>`:''}</div>
+      <button type="button" class="task-schedule" data-action="task-schedule" data-id="${esc(x.id)}" aria-label="Schedule ${esc(x.title)}">${ic('calendar')}<span>${esc(planLabel(x))}</span></button>
+    </div>
+    <span class="sr-only" data-timer-status="${esc(x.id)}">${focusStatus(x)}</span>
+  </article>`;
+}
+function taskDetailView(x){
+  const draft=state.drafts[x.id],v=draft?{...x,...draft}:x,steps=v.checklist||[];
+  return `<div class="task-detail-top"><button class="back" data-action="back">${ic('back')} Back</button><div class="row">${iconAction('pin',x.pinned?'Unpin task':'Pin task','pin',x.id)}<a class="icon-btn" href="reminder.html?id=${esc(x.id)}" aria-label="${x.reminder?'Edit':'Add'} reminder" title="${x.reminder?'Edit':'Add'} reminder">${ic('bell')}</a>${iconAction('more','More task actions','card-menu',x.id)}</div></div>
+  <form id="detail-form" class="task-editor" data-od-id="task-editor">
+    <div class="task-heading"><button type="button" class="task-check" data-action="complete" data-id="${esc(x.id)}" aria-label="${x.completed?'Reopen':'Complete'} ${esc(x.title)}" aria-pressed="${!!x.completed}"><span>${x.completed?ic('check'):''}</span></button><div class="grow"><span class="task-kicker">${x.completed?'Completed':'Task'}</span><label class="sr-only" for="task-title">Task title</label><textarea class="task-title-input" id="task-title" name="title" rows="2" required maxlength="500">${esc(v.title)}</textarea></div></div>
+    <div class="task-property-row"><button type="button" class="property-chip" data-action="task-project" data-id="${esc(x.id)}">${ic('folder')}${esc(v.project||'Add project')}</button><input type="hidden" name="project" value="${esc(v.project||'')}"><input type="checkbox" name="pinned" ${x.pinned?'checked':''} hidden><div class="priority-control" role="group" aria-label="Priority">${['None','Low','Medium','High'].map((p,i)=>`<button type="button" data-action="task-priority" data-value="${p}" aria-pressed="${(v.priority||'None')===p}" aria-label="${p==='None'?'No priority':p+' priority'}" title="${p==='None'?'No priority':p+' priority'}">${i?'<span class="priority-bars" aria-hidden="true">'+Array.from({length:3},(_,j)=>'<i class="'+(j<i?'filled':'')+'"></i>').join('')+'</span>':ic('flag')}</button>`).join('')}</div><input type="hidden" name="priority" value="${esc(v.priority||'None')}"></div>
+    ${contentTrail(x,'detail')}
+    <div class="task-planning-grid">
+      <section class="focus-panel"><div class="row between"><h2>${ic('clock')} Focus timer</h2>${iconAction('reset','Reset timer','timer-reset',x.id)}</div><output class="focus-digits" data-timer-clock="${esc(x.id)}">${focusClock(x)}</output><div class="timer-units">HOURS <span>MINUTES</span> SECONDS</div><div class="focus-panel-footer"><button type="button" class="text-control" data-action="task-duration" data-id="${esc(x.id)}">${x.effort?durationLabel(x.effort)+' session':'Set duration'}</button><button type="button" class="btn primary" data-action="timer-toggle" data-id="${esc(x.id)}" data-timer-button="${esc(x.id)}" data-expanded="true" ${x.completed?'disabled':''}>${ic(x.focus?.endAt?'pause':'play')} ${x.focus?.endAt?'Pause':'Start'}</button></div><span class="timer-status" data-timer-status="${esc(x.id)}">${focusStatus(x)}</span></section>
+      <section class="schedule-panel"><h2>${ic('calendar')} Schedule</h2><button type="button" class="schedule-date" data-action="task-schedule" data-id="${esc(x.id)}"><strong>${!v.planned?'Pick a day':v.planned===TODAY?'Today':v.planned===dayAdd(TODAY,1)?'Tomorrow':dayLabel(v.planned)}</strong><span>${v.planned?fullDay(v.planned):'When do you want to work?'}</span>${v.scheduledTime?'<b>'+esc(v.scheduledTime)+'</b>':''}</button><div class="quick-days"><button type="button" data-action="task-quick-day" data-id="${esc(x.id)}" data-value="${TODAY}">Today</button><button type="button" data-action="task-quick-day" data-id="${esc(x.id)}" data-value="${dayAdd(TODAY,1)}">Tomorrow</button>${iconAction('calendar','Choose date and time','task-schedule',x.id)}</div></section>
+    </div>
+    <input type="hidden" name="planned" value="${esc(v.planned||'')}"><input type="hidden" name="scheduledTime" value="${esc(v.scheduledTime||'')}"><input type="hidden" name="effort" value="${v.effort||''}">
+    <section class="task-steps"><div class="row between"><h2>Steps</h2><span class="meta">${steps.filter(s=>s.done).length}/${steps.length}</span></div><div class="checklist">${steps.map((s,i)=>`<label><input type="checkbox" data-check="${i}" ${s.done?'checked':''}><input type="text" data-step="${i}" maxlength="500" value="${esc(s.text)}" aria-label="Checklist step ${i+1}">${iconAction('x','Remove checklist step '+(i+1),'remove-step','',`data-value="${i}"`)}</label>`).join('')}</div><button type="button" class="text-control" data-action="add-step">${ic('plus')} Add a step</button></section>
+    <details class="task-fold" ${draft?.comment?'open':''}><summary>${ic('note')} Notes ${v.comment?'<span class="count">1</span>':''}${ic('plus')}</summary><textarea name="comment" rows="3" placeholder="Add context…">${esc(v.comment||'')}</textarea></details>
+    <details class="task-fold"><summary>${ic('clip')} Original capture & attachments <span class="count">${(x.attachments||[]).length}</span>${ic('plus')}</summary><div class="task-original">${x.image?'<img src="'+esc(x.image)+'" alt="'+esc(x.title)+'">':''}<p dir="auto">${esc(x.text||'Saved file')}</p><span class="meta">${esc(x.source||'DaBin')} · ${dayLabel(x.date)} · ${x.time}</span><div class="actions-inline">${button(ic('copy')+' Copy','copy','',x.id)}${x.url?'<a class="btn" href="'+safeURL(x.url)+'" target="_blank" rel="noopener">'+ic('external')+' Open</a>':''}${button(ic('folder')+' File location','file-location','',x.id)}${x.indexed?button('Recognized text','index-status','',x.id):''}</div></div>${x.indexed?'<div class="task-original"><h3>Recognized text</h3><p>'+esc(x.indexed)+'</p>'+button('Copy text','copy-index','',x.id)+'</div>':''}<div class="attachment-list">${[...new Set([...(x.attachments||[]),...(x.members||[])])].map(id=>item(id)).filter(Boolean).map(f=>'<a href="capture-detail.html?id='+esc(f.id)+'">'+ic(f.type==='Media'?'image':'file')+esc(f.title)+'</a>').join('')}</div><div class="actions-inline">${button(ic('plus')+' Saved item','attach-existing','',x.id)}${button(ic('clip')+' Import','attach-import','',x.id)}${button(ic('copy')+' Paste','attach-paste','',x.id)}</div></details>
+    <details class="task-fold"><summary>${ic('refresh')} Repeat & deadline${ic('plus')}</summary><label class="field">Repeat</label><div class="repeat-options" role="group" aria-label="Repeat">${['None','Daily','Weekdays','Weekly','Monthly'].map(p=>`<button type="button" data-action="task-repeat" data-value="${p}" aria-pressed="${(v.repeat||'None')===p}">${p}</button>`).join('')}</div><input type="hidden" name="repeat" value="${esc(v.repeat||'None')}"><label class="field">Finish by<input type="datetime-local" name="deadline" value="${esc(v.deadline||'')}"></label></details>
+    ${x.previous?'<a class="small-link" href="task-detail.html?id='+esc(x.previous)+'">Previous occurrence</a>':''}${x.next?'<a class="small-link" href="task-detail.html?id='+esc(x.next)+'">Next occurrence</a>':''}
+    <div class="task-savebar"><span class="meta" id="task-save-state">${draft?'Unsaved changes':'Saved'}</span><button class="btn primary" type="submit">Save changes</button></div>
+  </form>`;
+}
+function openTaskDuration(id,startAfter=false){const x=item(id);taskEditor={id,kind:'duration',startAfter};openDialog('Focus timer',`<form id="task-duration-form" class="timing-form"><p class="timing-task-name">${esc(x.title)}</p>${durationFields(x.effort)}${durationPresets()}<div class="actions"><button type="button" class="btn" data-action="close-dialog">Cancel</button><button class="btn primary" type="submit">${startAfter?'Start timer':'Set timer'}</button></div></form>`)}
+function openTaskSchedule(id){const x=item(id),v={...x,...state.drafts[id]};taskEditor={id,kind:'schedule'};openDialog('Schedule task',`<form id="task-schedule-form" class="timing-form"><p class="timing-task-name">${esc(x.title)}</p><div class="quick-days"><button type="button" data-action="schedule-preset" data-value="${TODAY}">Today</button><button type="button" data-action="schedule-preset" data-value="${dayAdd(TODAY,1)}">Tomorrow</button></div><div class="schedule-fields"><label class="field">Day<input type="date" name="planned" required value="${v.planned||TODAY}"></label><label class="field">Time <span class="optional">Optional</span><input type="time" name="scheduledTime" value="${esc(v.scheduledTime||'')}"></label></div><div class="actions">${v.planned?button('Clear','task-clear-schedule','',id):button('Cancel','close-dialog')}<button class="btn primary" type="submit">Schedule</button></div></form>`)}
+function updateTaskPlan(id,patch){return change(()=>{Object.assign(item(id),patch);if(state.drafts[id])Object.assign(state.drafts[id],patch)},false)}
+function refreshTaskUI(id){const modal=$('#dialog');if(modal?.open)closeDialog();render();const card=$$('[data-task-id]').find(n=>n.dataset.taskId===id);card?.classList.add('task-arrived');card?.querySelector('.task-duration')?.focus({preventScroll:true})}
+function convertCapture(id){const x=item(id);if(!x||x.task){if(x)go('task-detail','?id='+encodeURIComponent(id));return}const snapshot=Object.fromEntries(taskFields.map(k=>[k,x[k]]));if(!change(()=>{x.task=true;x.checklist??=[];x.attachments??=[]},false))return;convertedSnapshot={id,snapshot};if(PAGE==='capture-detail'){go('task-detail','?id='+encodeURIComponent(id));return}refreshTaskUI(id);toast('Task created',false,'<button data-action="undo-task-conversion">Undo</button>')}
+function toggleFocus(id){const x=item(id);if(!x||x.completed)return;if(!x.effort){openTaskDuration(id,true);return}if(!change(()=>{if(x.focus?.endAt)pauseFocus(x);else{x.focus={remaining:focusRemaining(x)||x.effort*60,endAt:Date.now()+(focusRemaining(x)||x.effort*60)*1000}}},false))return;updateTaskTimers()}
+function updateTaskTimers(){
+  const ended=alive().filter(x=>x.focus?.endAt&&x.focus.endAt<=Date.now());
+  if(ended.length&&change(()=>ended.forEach(x=>x.focus={remaining:0}),false))toast(ended.length===1?'Timer finished · '+ended[0].title:'Focus timers finished');
+  $$('[data-timer-clock]').forEach(n=>{const x=item(n.dataset.timerClock);if(!x)return;n.textContent=n.closest('.focus-panel')||x.focus?focusClock(x):x.effort?String(Math.floor(x.effort/60)).padStart(2,'0')+'h '+String(x.effort%60).padStart(2,'0')+'m':'Set timer'});
+  $$('[data-timer-button]').forEach(n=>{const x=item(n.dataset.timerButton);if(!x)return;const running=!!x.focus?.endAt&&!x.completed,label=running?'Pause':x.focus?.remaining===0?'Restart':'Start';n.setAttribute('aria-label',label+' timer for '+x.title);n.title=label+' timer';n.innerHTML=ic(running?'pause':'play')+(n.dataset.expanded?' '+label:'');n.disabled=!!x.completed;n.closest('.task-focus-control')?.setAttribute('data-running',String(running))});
+  $$('[data-timer-status]').forEach(n=>{const x=item(n.dataset.timerStatus);if(x)n.textContent=focusStatus(x)});
+}
+function chooseTaskProject(id){const x={...item(id),...state.drafts[id]};openDialog('Project',`<div class="project-options">${['',...state.projects].map(p=>`<button type="button" data-action="task-project-select" data-id="${esc(id)}" data-value="${esc(p)}" aria-pressed="${(x.project||'')===p}">${ic('folder')}<span>${esc(p||'Unfiled')}</span>${(x.project||'')===p?ic('check'):''}</button>`).join('')}</div>`)}
+async function handleTaskAction(a){const act=a.dataset.action,id=a.dataset.id||currentId,val=a.dataset.value;
+  switch(act){
+    case 'project-picker':openProjectSwitcher(a);return true;
+    case 'project-pick':if(change(()=>state.project=val,false)){closeDialog();render()}return true;
+    case 'project-new':closeDialog();askName('New project','','new-project-save');return true;
+    case 'task-duration':openTaskDuration(id);return true;
+    case 'task-schedule':openTaskSchedule(id);return true;
+    case 'timer-toggle':toggleFocus(id);return true;
+    case 'timer-reset':if(change(()=>{delete item(id).focus},false))updateTaskTimers();return true;
+    case 'duration-preset':{const f=a.closest('form');f.elements.hours.value=Math.floor(Number(val)/60);f.elements.minutes.value=Number(val)%60;f.dispatchEvent(new Event('input',{bubbles:true}));return true}
+    case 'schedule-preset':a.closest('form').elements.planned.value=val;return true;
+    case 'task-quick-day':case 'task-clear-schedule':{if(updateTaskPlan(id,{planned:act==='task-clear-schedule'?null:val,scheduledTime:act==='task-clear-schedule'?null:item(id).scheduledTime})){refreshTaskUI(id);toast(act==='task-clear-schedule'?'Schedule cleared':'Scheduled')}return true}
+    case 'task-project':chooseTaskProject(id);return true;
+    case 'task-project-select':if(updateTaskPlan(id,{project:val||null})){refreshTaskUI(id);toast('Project saved')}return true;
+    case 'task-priority':case 'task-repeat':{const f=$('#detail-form'),field=act==='task-priority'?'priority':'repeat';f.elements[field].value=val;a.parentElement.querySelectorAll('button').forEach(n=>n.setAttribute('aria-pressed',String(n===a)));detailDraft();return true}
+    case 'undo-task-conversion':{if(!convertedSnapshot)return true;const {id:convertedId,snapshot}=convertedSnapshot;if(change(()=>{const x=item(convertedId);taskFields.forEach(k=>{if(snapshot[k]===undefined)delete x[k];else x[k]=snapshot[k]})})){convertedSnapshot=null;toast('Capture restored')}return true}
+  }
+  return false;
+}
+function submitTaskTiming(e){const f=e.target;if(!['task-duration-form','task-schedule-form'].includes(f.id))return;e.preventDefault();const id=taskEditor.id;
+  if(f.id==='task-duration-form'){
+    const h=Number(f.elements.hours.value),m=Number(f.elements.minutes.value),total=h*60+m;
+    if(!Number.isInteger(h)||!Number.isInteger(m)||h<0||m<0||m>59||total<=0||total>10080){toast('Choose 1 minute to 168 hours.',true);return}
+    const startAfter=taskEditor.startAfter,patch={effort:total,focus:startAfter?{remaining:total*60,endAt:Date.now()+total*60000}:undefined};
+    if(updateTaskPlan(id,patch)){refreshTaskUI(id);toast(startAfter?'Timer started':'Timer set')}
+  }else if(f.elements.planned.value){if(updateTaskPlan(id,{planned:f.elements.planned.value,scheduledTime:f.elements.scheduledTime.value||null})){refreshTaskUI(id);toast('Task scheduled')}}
+}
+
+function settingToggle(key,title,desc){return `<div class="setting-row"><div><strong>${title}</strong>${desc?'<p>'+desc+'</p>':''}</div><button class="switch" role="switch" aria-label="${title}" aria-checked="${!!state.settings[key]}" data-action="setting-toggle" data-value="${key}"></button></div>`}
+function settingSelect(key,title,values,desc=''){return `<div class="setting-row"><div><strong>${title}</strong>${desc?'<p>'+desc+'</p>':''}</div><select data-setting="${key}" aria-label="${title}">${values.map(v=>'<option '+(state.settings[key]===v?'selected':'')+'>'+v+'</option>').join('')}</select></div>`}
+function settingsView(){return pageHead('Settings','Small adjustments. The same DaBin.',button(ic('back')+' Back','back','quiet'))+`<div class="settings-layout"><section class="panel" data-od-id="settings-appearance"><h2>Appearance</h2>${settingToggle('dark','Dark appearance','')}<div class="setting-row"><div><strong>Accent</strong><p>Your chosen color, adjusted for readability.</p></div><div class="swatches">${[['Purple','#6D5387'],['Blue','#386A9A'],['Teal','#287875'],['Green','#47763E'],['Rose','#A34D73'],['Amber','#956515']].map(([n,c])=>`<button class="swatch" style="background:${c}" aria-label="${n} accent" aria-pressed="${state.settings.accent===c}" data-action="accent" data-value="${c}"></button>`).join('')}</div></div><div class="row between"><label class="row meta">Custom <input type="color" data-setting="accent" value="${state.settings.accent}" aria-label="Custom accent color" style="width:48px;height:30px;padding:2px"></label>${button('Reset purple','accent','quiet','#6D5387')}</div><div class="setting-row"><div><strong>Body opacity</strong><p>Navigation and cards remain opaque.</p></div><label class="row"><input type="range" min="35" max="100" step="5" data-setting="opacity" value="${state.settings.opacity}" aria-label="Body opacity" style="width:95px"><span class="mono meta">${state.settings.opacity}%</span></label></div>${button('Reset to solid','solid','quiet')}${settingToggle('tooltips','Hover help','')}</section><section class="panel" data-od-id="settings-capture"><h2>Auto capture</h2><div class="notice">${ic('shield')} Optional sources. Existing content is never imported when enabling or resuming.</div>${settingToggle('clipboard','Clipboard','Capture new copies. Best-effort app exclusions apply.')}${settingToggle('screenshots','Screenshots','Only new images in your chosen, authorized folder.')}<div class="setting-row"><div><strong>Screenshot folder</strong><p>${esc(state.settings.folder||'No folder selected')}</p></div>${button('Choose folder','choose-folder')}</div><div class="row wrap">${button(state.settings.paused?'Resume':'Pause','pause')}${button('Excluded apps','exclusions')}${button('Source status','capture-status')}</div><p class="meta" style="margin-top:13px">Native monitoring is simulated here. The browser does not monitor your clipboard or folders.</p></section><section class="panel"><h2>Robot & access</h2>${settingSelect('home','Robot home',['Top right','Top left','Bottom right','Bottom left','Island'],'Compatible island; external displays fall back to top right.')}${settingToggle('quiet','Quiet mode','Keep confirmation short and still.')}${settingSelect('globalSearch','Global search',['⌃⌥Space','⌃⌥⇧Space','Disabled'])}${settingSelect('globalCapture','Save clipboard',['⌃⌥V','⌃⌥⇧V','Disabled'])}<div class="row wrap" style="margin-top:12px"><a class="btn" href="robot.html">Robot</a>${button('Shortcut status','shortcut-status')}</div></section><section class="panel"><h2>Accessibility</h2>${settingToggle('reduceMotion','Reduce Motion','')}${settingToggle('reduceTransparency','Reduce Transparency','')}${settingToggle('contrast','Increase Contrast','')}${button('Notifications','notification','quiet')}</section><section class="panel"><h2>History & recovery</h2>${settingSelect('retention','Keep automatic copies',['Never','7 days','30 days','90 days'],'Tasks, reminders, projects, pins, snippets, shelf and kept work are protected.')}<div class="row wrap" style="margin-top:14px">${button('Clear unfiled copies','clear-history')}<a class="btn" href="recently-deleted.html">Recently Deleted</a><a class="btn" href="backup.html">Backup & restore</a></div><div class="rule"></div><div class="row wrap">${button('Open local archive','archive')}${button('Rebuild text index','rebuild-index')}</div></section><section class="panel"><h2>Privacy & updates</h2>${settingToggle('linkPreviews','Manual link previews','Optional website requests. Automatic links never fetch previews.')}<div class="setting-row"><div><strong>DaBin 0.4.2 (53)</strong><p>Reference baseline · release availability not checked.</p></div>${button('Get updates','updates')}</div><div class="row wrap">${button('Privacy','privacy')}${button('Support','support')}${button('Store-build behavior','store-updates')}</div></section><div class="panel wide row between"><div><h3>Quit DaBin</h3><p class="meta">Closing the window hides DaBin. Quitting ends the session.</p></div>${button('Quit DaBin','quit','danger')}</div></div>`}
+function trashView(){const xs=state.items.filter(x=>x.deleted&&!x.parent);return pageHead('Recently Deleted','Restore a capture with its original content and date.',button(ic('back')+' Back','back','quiet'))+`<div class="notice">${ic('shield')} Imported source files are never removed from their original location.</div><div style="height:16px"></div>${xs.length?xs.map(x=>`<article class="task-row"><div class="grow"><h3>${esc(x.title)}</h3><p class="meta">${esc(x.type)}${x.task?' · Task family':''} · captured ${dayLabel(x.date)}</p></div>${button('Restore','restore','',x.id)}${button(ic('trash'),'permanent','danger',x.id)}</article>`).join(''):empty('Nothing to recover.','Removed captures appear here before permanent deletion.')}`}
+function backupView(){return pageHead('Backup & restore','Local backup and additive restore.',button(ic('back')+' Settings','settings','quiet'))+`<div class="panel stack" style="max-width:720px"><h2>Your archive stays yours.</h2><p class="muted">The native backup includes captures, managed files, projects, shelf items, snippets, notes and Recently Deleted.</p><div class="notice">${ic('shield')} Browser fixture export is separate from the native .dabinbackup format.</div><div class="row wrap">${button(ic('download')+' Export fixture backup','backup-export','primary')}${button(ic('upload')+' Restore fixture backup','backup-import')}</div><div class="rule"></div><h2>Native backup & restore</h2><p class="meta">Select a local package. DaBin verifies its manifest and checksums before an additive restore. Existing identical records are skipped. Conflicts are reviewed before any write.</p><div class="row wrap">${button('Backup states','backup-states')}${button('Conflict & recovery','backup-conflicts')}</div><input type="file" id="backup-file" accept=".json" hidden></div>`}
+const reactions=['Quick Bite and Satisfied Blink','Oversized Bite and Recoil','Capture Noodle Slurp','Nibble the Corners','Toss and Mouth Catch','Oversized Swallow','Chase the Escaping Capture','Suspicious Inspection','Stacked Capture Snack','Digital Hiccups'];
+function robotView(){const recent=alive().filter(x=>!x.parent).slice(0,1),count=alive().filter(x=>x.inbox&&!x.parent).length;return `<div class="buddy-capture" data-od-id="robot-capture"><div class="robot-stage" id="robot-stage"><span class="token" id="capture-token">1</span><button class="buddy-robot" id="robot-intake" aria-label="Paste clipboard; double-click to open Inbox" title="Click to paste · double-click for Inbox"><img src="${ASSETS}original-robot.svg" alt="DaBin metallic purple robot" id="motion-robot"></button><h1>Drop it here.</h1><p class="state-caption" id="robot-state" aria-live="polite">Text, links, files.</p></div><form id="quick-capture" class="composer buddy-composer" data-od-id="quick-capture"><label class="sr-only" for="quick-text">Quick capture</label><textarea id="quick-text" placeholder="Or save a thought…" rows="2">${esc(state.drafts.inbox?.text||'')}</textarea><div class="row"><button type="button" class="icon-btn" data-action="import" aria-label="Import files">${ic('clip')}</button><button type="button" class="paste-button" data-action="paste">${ic('copy')} Paste</button><button type="submit" class="btn primary" aria-label="Save capture">Save ${ic('arrow')}</button></div></form>${recent.map(x=>`<div class="recent-capture-group"><a class="recent-capture" href="${taskRoute(x)}"><span class="recent-icon">${ic(x.task?'taskbox':x.type==='Media'?'image':x.type==='Links'?'link':'file')}</span><span class="grow"><span class="recent-label">LAST SAVED</span><strong>${esc(x.title)}</strong></span>${ic('arrow')}</a>${contentTrail(x,'robot')}</div>`).join('')}<a class="open-inbox" href="inbox.html"><span>Open Inbox <span class="count">${count}</span></span>${ic('arrow')}</a></div>`}
+function render(){const oldFrame=$('#frame'),frameStyle=oldFrame?.getAttribute('style'),wasExpanded=oldFrame?.classList.contains('expanded');const priorScroll=$('.main')?.scrollTop||0;applyTheme();if(param.has('project')&&PAGE==='notes'&&!window.projectApplied){state.project=param.get('project');window.projectApplied=true;save()};const mainPage=['workspace','clipboard','shelf','notes'].includes(PAGE)?'workspace':['activity','weekly'].includes(PAGE)?'activity':['today','task-detail','new-task'].includes(PAGE)?'today':'inbox';document.title=titles[PAGE]+' · DaBin';document.body.innerHTML=`<div class="frame ${PAGE==='robot'?'buddy-frame':''}" id="frame"><div class="robot-head" aria-hidden="true"><i class="eye"></i><i class="eye"></i><i class="smile"></i></div><div class="hands" aria-hidden="true"></div><div class="body-rim"><div class="app" id="app"><header class="headbar">${(PAGE==='robot'||mainPage==='workspace')?projectHeading():`<a class="wordmark" href="inbox.html" aria-label="DaBin Inbox"><img src="${ASSETS}original-robot.svg" alt="">DaBin</a>`}<button class="autostate" data-action="auto-menu" aria-label="${autoLabel()}"><span class="dot ${state.settings.paused?'pause':state.settings.clipboard||state.settings.screenshots?'on':''}"></span><span><span class="label-extra">Auto </span>${state.settings.paused?'paused':state.settings.clipboard||state.settings.screenshots?'on':'off'}</span></button><div class="head-spacer" title="Move window" id="move-handle"></div><button class="search-trigger" data-action="search" aria-label="Search captures">${ic('search')}<span>Search</span><kbd>⌘ K</kbd></button><button class="icon-btn" data-action="add" aria-label="Add capture">${ic('plus')}</button><a href="settings.html" class="icon-btn" aria-label="Settings">${ic('gear')}</a><button class="icon-btn expand-button" data-action="expand" aria-label="Expand or restore window">${ic('expand')}</button><button class="icon-btn" data-action="hide" aria-label="Hide DaBin">${ic('x')}</button></header><nav class="primary-nav" aria-label="Main navigation">${[['inbox','Inbox','inbox'],['today','Today','sun'],['workspace','Workspace','folder'],['activity','Activity','history']].map(([p,t,i])=>`<a href="${p}.html" class="${mainPage===p?'active':''}" ${mainPage===p?'aria-current="page"':''}>${ic(i)}<span>${t}</span></a>`).join('')}</nav><main class="main" id="main" data-od-id="${PAGE}">${view()}</main><footer class="footer"><span class="row gap8">${ic('shield')}On this Mac</span><button class="footer-menu" data-action="${PAGE==='robot'?'robot-more':'status-menu'}" aria-label="More options">${ic('more')}</button></footer></div></div><div class="feet" aria-hidden="true"></div><div class="resize-handle" id="resize-handle" aria-hidden="true">◢</div></div>${projectSwitcherMarkup()}<dialog class="modal" id="dialog" aria-label="DaBin dialog"></dialog><div class="toast" id="toast" aria-live="polite"></div><input type="file" id="file-input" multiple hidden>`;if(PAGE==='search'){searchResults();setTimeout(()=>$('#search-input').focus(),0)}if(['new-note','new-task'].includes(PAGE))setTimeout(()=>$('#new-title').focus(),0);if(frameStyle)$('#frame').setAttribute('style',frameStyle);if(wasExpanded)$('#frame').classList.add('expanded');attachHandlers();updateTaskTimers();$('.main').scrollTop=priorScroll;if(!state.settings.tooltips)$$('[title]').forEach(x=>x.removeAttribute('title'));$$('.icon-btn[aria-label]').forEach(x=>{if(state.settings.tooltips)x.title=x.getAttribute('aria-label')});}
+function view(){if(PAGE==='inbox')return inboxView();if(PAGE==='today')return todayView();if(['workspace','clipboard','shelf'].includes(PAGE))return workspaceView();if(PAGE==='notes')return notesView();if(['activity','weekly'].includes(PAGE))return activityView();if(PAGE==='search')return searchView();if(['capture-detail','task-detail'].includes(PAGE))return detailView();if(['new-note','new-task'].includes(PAGE))return newView();if(PAGE==='reminder')return reminderView();if(PAGE==='export')return exportView();if(PAGE==='settings')return settingsView();if(PAGE==='recently-deleted')return trashView();if(PAGE==='backup')return backupView();if(PAGE==='robot')return robotView();return inboxView()}
+
+/* Event delegation and explicit save boundaries. Native-only controls identify simulations. */
+let pendingImportParent=null,notesTimer;
+const menuEntry=(label,action,id='',icon='')=>`<button data-action="${action}" data-id="${esc(id)}">${icon?ic(icon):''}${label}</button>`;
+const localSpecs={
+'file-location':['Saved file location','The native detail displays the actual managed destination, with Copy saved path, Reveal file and Open folder. Original source location is shown only when supplied. A missing managed file produces a recoverable error; it never points at a guessed path. The browser fixture has no native archive path.'],
+'index-status':['Local recognized text','Native states: waiting → indexing → text available, no text found, or failed. Retry processes the same managed original locally with Vision/PDFKit. Copy text remains disabled until text exists. Large documents retain explicit source limits; no remote AI is used.'],
+'notification':['Notification delivery','Native states: not requested → request on first reminder → allowed or denied. Denied shows Open System Settings and Retry status; a scheduling failure retains the reminder with an error. Completion cancels the active notification. Browser fixture times persist, but no system notification is scheduled.'],
+'choose-folder':['Choose screenshot folder','The native folder picker stores a security-scoped bookmark. Cancel preserves the old folder; authorization failure exposes Choose again. Enabling starts a fresh baseline and never imports old images. Clipboard capture remains independent. No folder access is granted by this browser simulation.'],
+'capture-status':['Capture source status','Each source has Off, Active, Paused, Excluded, Permission needed/revoked and Failed states. Pause immediately stops new intake, retains existing records, and resumes with a fresh baseline. Only persisted successful actions may trigger robot confirmation.'],
+'shortcut-status':['Global shortcut registration','Native choices are the two displayed combinations or Disabled. A registration conflict shows the conflicting combination, offers the alternate, and retains the previous working registration. DaBin does not monitor general typing. Browser keyboard shortcuts operate only while this document is focused.'],
+'archive':['Local archive','Open the native archive folder: year → numbered named month → numbered named day with weekday → unique capture folder. Core Data metadata is authoritative. Managed imports are copies; source originals are unchanged. Missing folder or access errors offer Retry without creating an alternate archive.'],
+'rebuild-index':['Rebuild local text index','Native sequence: confirm scope → queued/progress → complete with indexed/failed counts. Retry failed originals individually. Save and capture remain available with bounded indexing concurrency. Cancel stops queued work and retains existing searchable text.'],
+'updates':['Get updates · direct build','Installed baseline: 0.4.2 (53). A user-initiated check may return current, available, unavailable or failed. Available releases show release details before download; verify the package, back up, then install. Verification or backup failure blocks installation. No release availability has been checked here.'],
+'store-updates':['Updates · App Store build','Show installed version and “Managed by the App Store”. Open the App Store application page only when its configured destination is available. The direct downloader and update helper are excluded from this build. This prototype does not assert App Store availability.'],
+'privacy':['Private by design','Native DaBin stores captures and recognized text locally. No account, analytics, ads, cloud sync or remote OCR. Manual link previews and explicit update checks are disclosed network requests. Source attribution and sensitive-app exclusion are best effort. DaBin does not automatically observe where content is later pasted. The content trail stores destinations you explicitly record; copying alone never records a paste.'],
+'support':['Support','Native Settings opens the configured support and privacy destinations from PrivacyInformation.swift. No support message is sent from this prototype. Include version, reproduction steps and a redacted diagnostic description; never attach live clipboard content automatically.'],
+'export-spec':['Native export states','Copy and Save Text use the identical UTF-8 payload. Save panel cancellation is neutral. Clipboard failure retains the existing clipboard; disk failure retains the payload and offers Retry or Copy. An empty scope disables both actions. Exports ignore type filters and carried-task duplicates.'],
+'backup-states':['Native verified backup','Idle → local destination picker → busy progress → checksum verification → verified success. Cancel leaves no accepted partial package. Unavailable destination, interrupted write or corrupt manifest shows a specific error and preserves the working archive. Pending unsaved edits must save before backup starts.'],
+'backup-conflicts':['Native additive restore','Read and verify every entry before mutation. Identical records are skipped; new records are added. Conflicting capture or scratchpad content blocks restore for review without overwriting authored work. A corrupt or unavailable package cannot be partially applied. The recovery journal retains a stable pre-operation state.'],
+'placement-states':['Native robot placement','Resting is hidden. Entering the chosen corner or compatible island reveals a stable intake target on the interacted display. A display change clamps to its safe area; missing island or external display falls back to top right. Opening wins over capture animations. Decorative parts never intercept content clicks, change Spaces or steal focus.']};
+function menu(title,html){openDialog(title,'<div class="menu-list">'+html+'</div>')}
+function detailDraft(){const f=$('#detail-form'),x=current();if(!f||!x)return;const v={title:f.elements.title.value,comment:f.elements.comment.value,project:f.elements.project.value||null,pinned:f.elements.pinned.checked};if(f.elements.planned){Object.assign(v,{planned:f.elements.planned.value||null,scheduledTime:f.elements.scheduledTime?.value||null,priority:f.elements.priority.value,effort:f.elements.effort.value?Number(f.elements.effort.value):null,deadline:f.elements.deadline.value||null,repeat:f.elements.repeat.value,checklist:$$('[data-step]',f).map(n=>({text:n.value,done:$('[data-check="'+n.dataset.step+'"]',f).checked}))})}state.drafts[x.id]=v;save();if($('#task-save-state'))$('#task-save-state').textContent='Unsaved changes';return v}
+function askName(title,value,action,id=''){openDialog(title,`<label class="field">Name<input id="name-value" value="${esc(value)}" required maxlength="180"></label>`,button('Cancel','close-dialog')+button('Save',action,'primary',id))}
+async function intakeFiles(files,parent=null){if(busy)return;const list=Array.from(files);if(!list.length)return;busy=true;toast('Saving files…');const added=[];try{for(const f of list){if(f.size>8*1024*1024)throw Error('This browser fixture accepts files up to 8 MB. Native file intake is specified separately.');const data=await new Promise((res,rej)=>{let r=new FileReader();r.onload=()=>res(r.result);r.onerror=()=>rej(Error('Could not read '+f.name));r.readAsDataURL(f)});const isImage=f.type.startsWith('image/'),type=isImage?'Media':f.type.startsWith('video/')?'Media':'Files';added.push({id:'file-'+crypto.randomUUID(),title:f.name,filename:f.name,type,text:f.type.startsWith('text/')?await f.text():'',image:isImage?data:undefined,data,mime:f.type,date:TODAY,time:new Date().toTimeString().slice(0,5),project:state.project==='all'||state.project==='unfiled'?null:state.project,inbox:!parent,parent,origin:'manual',shelf:PAGE==='shelf'})}const ok=change(()=>{state.items.unshift(...added);if(parent){item(parent).attachments??=[];item(parent).attachments.push(...added.map(x=>x.id))}else if(added.length>1){const b={id:'batch-'+Date.now(),title:added.length+' files, kept together',type:'Files',date:TODAY,time:new Date().toTimeString().slice(0,5),project:added[0].project,inbox:true,members:added.map(x=>x.id),origin:'manual'};added.forEach(x=>x.inbox=false);state.items.unshift(b)}});if(ok){toast(added.length+' file'+(added.length>1?'s':'')+' saved');celebrate()}}catch(e){toast(e.message,true)}finally{busy=false}}
+async function pasteCapture(parent=null){try{const t=await navigator.clipboard.readText();if(!t.trim()){toast('No readable text. Paste into the capture field or import a file.',true);return}const x=createCapture(t);if(x&&parent)change(()=>{x.parent=parent;x.inbox=false;item(parent).attachments??=[];item(parent).attachments.push(x.id)});else render();if(x){toast('Capture saved');celebrate()}}catch{openDialog('Paste into DaBin','<p>Clipboard access needs a user gesture or permission. Paste your content here to save it.</p><textarea id="manual-paste" rows="5" placeholder="Paste text or a link…"></textarea>',button('Cancel','close-dialog')+button('Save capture','manual-paste-save','primary',parent||''))}}
+async function handleAction(a){const act=a.dataset.action,id=a.dataset.id||currentId,val=a.dataset.value;if(handleTrailAction(a))return;if(await handleTaskAction(a))return;if(act==='close-dialog'){closeDialog();return}if(localSpecs[act]){native(...localSpecs[act]);return}switch(act){
+case 'add':menu('Add to DaBin',menuEntry('Paste clipboard','paste','','copy')+'<a href="new-note.html">'+ic('note')+'New note</a>'+menuEntry('Import files','import','','clip')+'<a href="new-task.html">'+ic('task')+'New task</a>');break;
+case 'paste':if($('#dialog').open)closeDialog();await pasteCapture();break;
+case 'manual-paste-save':{const t=$('#manual-paste').value,x=createCapture(t);if(!x){toast('Add some text first.',true);break}if(a.dataset.id)change(()=>{x.parent=a.dataset.id;x.inbox=false;item(a.dataset.id).attachments??=[];item(a.dataset.id).attachments.push(x.id)},false);closeDialog();render();toast('Capture saved');celebrate();break}
+case 'import':case 'attach-import':pendingImportParent=act==='attach-import'?id:null;if($('#dialog').open)closeDialog();$('#file-input').click();break;
+case 'search':state.scope='All';go('search');break;
+case 'settings':go('settings');break;
+case 'back':back();break;
+case 'parent':go('task-detail','?id='+id);break;
+case 'expand':toggleFrameExpansion();break;
+case 'hide':saveContext();document.body.innerHTML=`<div class="hidden-state"><div class="robot-entry"><img src="${ASSETS}original-robot.svg" alt="DaBin"><p class="meta">Window hidden · browser simulation</p><button class="btn" id="reopen">Open DaBin</button><a class="small-link" href="index.html">Back to design handoff</a></div></div>`;$('#reopen').onclick=render;break;
+case 'quit':native('Quit DaBin','The native command saves recoverable drafts and terminates all capture services, timers and windows without waiting for animation. Browser documents cannot terminate the native app; close this tab to end this fixture session.');break;
+case 'filter':change(()=>state.filter=val);break;
+case 'today-tab':change(()=>state.todayTab=val);break;
+case 'clipboard-tab':change(()=>state.clipboardTab=val);break;
+case 'copy':{const x=item(id);if(x.members||x.type==='Files'&&!x.text||x.image){native('Copy original content','The native clipboard action copies '+(x.members?'the complete group of original file payloads atomically':'the saved original payload')+'. If any member is unavailable, retain the previous clipboard and report failure. Browser image/file clipboard equivalence is not claimed.');break}await copyText(x.text||x.url||x.title);break}
+case 'copy-plain':await copyText(item(id).text||item(id).indexed||item(id).url||'');break;
+case 'copy-index':await copyText(item(id).indexed||'');break;
+case 'keep':if(change(()=>{item(id).inbox=false;item(id).kept=true})){toast('Kept in Workspace');celebrate()}break;
+case 'card-menu':{let x=item(id);menu(x.title,`<a href="${taskRoute(x)}">${ic('external')} Open detail</a>`+menuEntry('Copy as plain text','copy-plain',id,'copy')+menuEntry(x.task?'Open work plan':'Turn into task','convert',id,'task')+menuEntry('Plan for Today','plan-today',id,'sun')+menuEntry('File to project','file-project',id,'folder')+menuEntry(x.pinned?'Unpin':'Pin','pin',id,'pin')+menuEntry(x.shelf?'Remove from shelf; keep capture':'Keep on shelf','shelf-toggle',id,'shelf')+menuEntry(x.snippet?'Rename snippet':'Name snippet','snippet',id,'text')+(x.snippet?menuEntry('Remove snippet alias','remove-snippet',id):'')+menuEntry(x.minimized?'Expand preview':'Minimize preview','minimize',id,'minus')+menuEntry('Move to Recently Deleted','trash-confirm',id,'trash'));break}
+case 'task-menu':menu('Plan task',menuEntry('Work on Today','plan-today',id,'sun')+menuEntry('Move to Tomorrow','plan-tomorrow',id,'calendar')+menuEntry('Remove planned workday','unplan',id,'inbox')+menuEntry('Move to Recently Deleted','trash-confirm',id,'trash')+menuEntry('Move earlier','order-up',id)+menuEntry('Move later','order-down',id)+`<a href="task-detail.html?id=${id}">${ic('task')} Work plan & details</a>`);break;
+case 'plan-today':case 'plan-tomorrow':case 'unplan':change(()=>{let x=item(id);x.task=true;x.planned=act==='unplan'?null:act==='plan-today'?TODAY:dayAdd(TODAY,1);x.checklist??=[];x.attachments??=[]});toast(act==='unplan'?'Workday cleared':'Task planned');break;
+case 'order-up':case 'order-down':{let xs=projectItems().filter(x=>x.task&&!x.completed&&x.planned===item(id).planned).sort((a,b)=>(a.order??99)-(b.order??99));const i=xs.findIndex(x=>x.id===id),j=Math.max(0,Math.min(xs.length-1,i+(act==='order-up'?-1:1)));[xs[i],xs[j]]=[xs[j],xs[i]];change(()=>xs.forEach((x,i)=>x.order=i));break}
+case 'convert':convertCapture(id);break;
+case 'pin':change(()=>item(id).pinned=!item(id).pinned);break;
+case 'minimize':change(()=>item(id).minimized=!item(id).minimized);break;
+case 'shelf-toggle':{let was=item(id).shelf;change(()=>item(id).shelf=!was);toast(was?'Removed from shelf. Capture kept in Library.':'Added to shelf');break}
+case 'file-project':openDialog('File to project',`<label class="field">Project<select id="file-project"><option value="">Unfiled</option>${state.projects.map(p=>'<option '+(item(id).project===p?'selected':'')+'>'+esc(p)+'</option>').join('')}</select></label>`,button('Cancel','close-dialog')+button('Save project','file-project-save','primary',id));break;
+case 'file-project-save':{let p=$('#file-project').value;change(()=>item(id).project=p||null);toast('Project saved');break}
+case 'snippet':askName('Name reusable snippet',item(id).snippet||'','save-snippet',id);break;
+case 'save-snippet':{let n=$('#name-value').value.trim();if(!n){toast('A snippet needs a name.',true);break}change(()=>item(id).snippet=n);toast('Snippet alias saved. Original content retained.');break}
+case 'remove-snippet':change(()=>delete item(id).snippet);toast('Alias removed. Capture kept.');break;
+case 'new-project-save':{let n=$('#name-value').value.trim();if(!n||state.projects.includes(n)){toast('Use a new, nonempty project name.',true);break}change(()=>{state.projects.push(n);state.project=n});break}
+case 'complete':toggleComplete(id);break;
+case 'trash-confirm':openDialog('Move to Recently Deleted?',`<p>${esc(item(id).title)}${item(id).task?' and its attached captures':''} can be restored. Original external files stay untouched.</p>`,button('Cancel','close-dialog')+button('Move to Recently Deleted','trash','danger',id));break;
+case 'trash':trash(id);if(['task-detail','capture-detail'].includes(PAGE))go('recently-deleted');break;
+case 'undo':if(state.lastDeleted)restore(state.lastDeleted);break;
+case 'restore':restore(id);break;
+case 'permanent':openDialog('Permanently delete this capture?',`<p>This removes the saved record and its managed copies from this browser fixture. It cannot be undone. External originals are untouched.</p>`,button('Keep capture','close-dialog')+button('Delete permanently','permanent-confirm','danger',id));break;
+case 'permanent-confirm':change(()=>{const family=new Set([id,...(item(id).attachments||[])]);state.items=state.items.filter(x=>!family.has(x.id));state.items.forEach(x=>{if(x.members)x.members=x.members.filter(i=>!family.has(i))})});toast('Permanently deleted');break;
+case 'add-step':{let d=detailDraft();if(d.checklist.length>=100){toast('A checklist can contain up to 100 steps.',true);break}d.checklist.push({text:'',done:false});save();render();$$('[data-step]').at(-1)?.focus();break}
+case 'remove-step':{let d=detailDraft();d.checklist.splice(Number(val),1);save();render();break}
+case 'attach-existing':case 'shelf-add':{let candidates=alive().filter(x=>!x.task&&!x.parent&&(!current()?.attachments?.includes(x.id)));menu(act==='shelf-add'?'Add an existing capture':'Attach saved capture',candidates.map(x=>menuEntry(esc(x.title),act==='shelf-add'?'shelf-existing-save':'attach-existing-save',x.id)).join(''));break}
+case 'shelf-existing-save':change(()=>item(id).shelf=true);toast('Added to shelf');break;
+case 'attach-existing-save':change(()=>{current().attachments??=[];current().attachments.push(id);item(id).parent=currentId});toast('Capture attached');break;
+case 'attach-paste':await pasteCapture(id);break;
+case 'note-convert':case 'note-task':{let key=state.project==='all'?'unfiled':state.project,t=state.notes[key]?.text;if(!t?.trim()){toast('Write something first.',true);break}let x=createCapture(t,act==='note-task');if(x){render();toast(act==='note-task'?'Task created. Scratchpad retained.':'Note saved. Scratchpad retained.')}break}
+case 'discard-draft':openDialog('Discard this draft?','<p>The unsaved draft will be removed. Saved captures are unaffected.</p>',button('Keep writing','close-dialog')+button('Discard','discard-confirm','danger'));break;
+case 'discard-confirm':delete state.drafts[PAGE];save();go('inbox');break;
+case 'reminder-mode':change(()=>state.timerMode=val==='timer');break;
+case 'remove-reminder':case 'reminder-done':change(()=>{delete item(id).reminder;delete item(id).countdownEnd});toast('Reminder cleared');break;
+case 'reminder-tomorrow':change(()=>item(id).reminder=dayAdd(TODAY,1)+'T09:00:00');toast('Reminder moved to tomorrow');break;
+case 'date-prev':case 'date-next':change(()=>state.date=dayAdd(state.date,(act==='date-prev'?-1:1)*(PAGE==='weekly'?7:1)));break;
+case 'date-today':change(()=>state.date=TODAY);break;
+case 'open-day':state.date=val;go('activity');break;
+case 'scope-search':state.scope=PAGE==='weekly'?'Week':'Day';go('search');break;
+case 'clear-refinements':change(()=>{state.filter='All';state.project='all';state.source='all';state.origin='all';state.dateFilter='all';state.pinned=false});break;
+case 'all-dates':change(()=>state.scope='All');break;
+case 'refine':openDialog('Refine this view',`<div class="stack"><label class="field">Source app<select id="ref-source"><option value="all">All apps</option>${['Mail','Notes','Finder','Safari'].map(v=>'<option '+(state.source===v?'selected':'')+'>'+v+'</option>').join('')}</select></label><label class="field">Date<select id="ref-date">${[['all','All dates'],['Today','Today'],['Yesterday','Yesterday']].map(([v,l])=>'<option value="'+v+'" '+(state.dateFilter===v?'selected':'')+'>'+l+'</option>').join('')}</select></label><label class="field">Origin<select id="ref-origin">${[['all','All origins'],['manual','Manual captures'],['clipboard','Automatic clipboard']].map(([v,l])=>'<option value="'+v+'" '+(state.origin===v?'selected':'')+'>'+l+'</option>').join('')}</select></label><label class="row"><input type="checkbox" id="ref-pinned" ${state.pinned?'checked':''}>Pinned only</label></div>`,button('Clear','clear-refinements')+button('Apply','refine-save','primary'));break;
+case 'refine-save':{const source=$('#ref-source').value,date=$('#ref-date').value,origin=$('#ref-origin').value,pinned=$('#ref-pinned').checked;change(()=>{state.source=source;state.dateFilter=date;state.origin=origin;state.pinned=pinned});break}
+case 'export-copy':await copyText($('#export-content').value);break;
+case 'export-file':download(val==='Week'?`DaBin-${dayAdd(state.date,-6)}-to-${state.date}.txt`:`DaBin-${state.date}.txt`,$('#export-content').value);toast('Text file prepared');break;
+case 'shelf-export':exportShelf();break;
+case 'auto-menu':menu(autoLabel(),'<a href="settings.html">'+ic('gear')+'Capture settings</a>'+((state.settings.clipboard||state.settings.screenshots)?menuEntry(state.settings.paused?'Resume new captures':'Pause new captures','pause','','pause'):'')+menuEntry('Source status & privacy','capture-status','','shield'));break;
+case 'pause':change(()=>state.settings.paused=!state.settings.paused);toast(state.settings.paused?'New capture paused; existing captures kept.':'Resumed with a fresh baseline. Native monitoring remains simulated.');break;
+case 'setting-toggle':change(()=>state.settings[val]=!state.settings[val]);if(['clipboard','screenshots'].includes(val)&&state.settings[val])toast('Preference saved. Native source monitoring is simulated in this browser.');break;
+case 'accent':change(()=>state.settings.accent=val||a.dataset.id);break;
+case 'solid':change(()=>state.settings.opacity=100);break;
+case 'exclusions':openDialog('Excluded apps',`<p>Best-effort detection. DaBin always excludes itself.</p><div class="stack">${state.settings.exclusions.map(n=>'<div class="row between"><span>'+esc(n)+'</span>'+(n==='DaBin'?'<span class="tag">Always excluded</span>':button('Remove','exclude-remove','',''+n))+'</div>').join('')}</div><div class="row" style="margin-top:15px"><input id="exclude-name" placeholder="Application name" aria-label="Excluded application"><button class="btn" data-action="exclude-add">Add</button></div>`,button('Restore defaults','exclude-reset')+button('Done','close-dialog'));break;
+case 'exclude-add':{let n=$('#exclude-name').value.trim();if(n&&!state.settings.exclusions.includes(n))change(()=>state.settings.exclusions.push(n));toast('Exclusion saved');break}
+case 'exclude-remove':if(a.dataset.id!=='DaBin')change(()=>state.settings.exclusions=state.settings.exclusions.filter(x=>x!==a.dataset.id));break;
+case 'exclude-reset':change(()=>state.settings.exclusions=['DaBin','1Password','Keychain Access']);break;
+case 'clear-history':{let xs=retentionCandidates();openDialog('Clear unfiled automatic copies?',`<p>${xs.length} eligible copies will move to Recently Deleted. Tasks, attachments, reminders, projects, pins, snippets, shelf and kept work are protected.</p>`,button('Cancel','close-dialog')+button('Move '+xs.length+' copies','clear-history-confirm','danger'));break}
+case 'clear-history-confirm':change(()=>retentionCandidates().forEach(x=>x.deleted=new Date().toISOString()));toast('Eligible copies moved to Recently Deleted');break;
+case 'backup-export':download('DaBin-design-fixture.json',JSON.stringify({format:'dabin-design-fixture-v1',state},null,2),'application/json');toast('Fixture backup prepared. Native backup remains a separate workflow.');break;
+case 'backup-import':$('#backup-file').click();break;
+case 'backup-apply':if(window.pendingRestore){change(()=>{const p=window.pendingRestore;state.items.push(...p.items.filter(x=>!item(x.id)));state.projects=[...new Set([...state.projects,...p.projects])];Object.assign(state.notes,p.notes)});window.pendingRestore=null;toast('Fixture restored additively')}break;
+case 'robot-more':menu('DaBin',menuEntry('Motion preview','robot-study','','play')+menuEntry('Hide robot','robot-hide','','minus')+menuEntry('Reveal robot','robot-reveal','','sun')+menuEntry('Menu bar','status-menu')+menuEntry('Application menu','app-menu')+menuEntry('Placement','placement-states'));break;
+case 'robot-study':openDialog('Motion preview',`<p>Preview only · no capture is saved.</p><div class="stack"><label class="field">Reaction<select id="reaction">${reactions.map((r,i)=>'<option value="'+i+'">'+r+'</option>').join('')}</select></label><label class="field">Capture count<input type="number" id="burst" min="1" max="99" value="1"></label><a class="small-link" href="open-design-v3/specs/ROBOT_MOTION.md">Motion specification</a></div>`,button('Shuffle','robot-shuffle')+button('Play','robot-play','primary'));break;
+case 'robot-reveal':$('#motion-robot').style.opacity=1;$('#robot-state').textContent='Ready to capture';break;
+case 'robot-hide':$('#motion-robot').style.opacity=0;$('#robot-state').textContent='Robot hidden';break;
+case 'robot-play':playRobot(Number($('#reaction').value));break;
+case 'robot-shuffle':{const previous=window.lastReactions||[],choices=reactions.map((_,i)=>i).filter(i=>!previous.includes(i)),i=choices[Math.floor(Math.random()*choices.length)];$('#reaction').value=i;window.lastReactions=[i,...previous].slice(0,3);playRobot(i);break}
+case 'status-menu':menu('Menu bar · native simulation','<a href="inbox.html">Open DaBin</a>'+menuEntry(autoLabel(),'capture-status')+menuEntry('Pause / Resume','pause')+'<a href="settings.html">Settings… <kbd>⌘ ,</kbd></a>'+menuEntry('Quit DaBin','quit'));break;
+case 'app-menu':menu('Application menu · native simulation',menuEntry('About DaBin 0.4.2 (53)','updates')+menuEntry('Get updates…','updates')+'<a href="inbox.html">Open DaBin <kbd>⌘ O</kbd></a>'+'<a href="robot.html">Focus robot for paste <kbd>⌘ ⇧ V</kbd></a>'+'<a href="search.html">Search <kbd>⌘ K</kbd></a>'+menuEntry(autoLabel(),'capture-status')+'<a href="settings.html">Settings <kbd>⌘ ,</kbd></a>'+menuEntry('Hide DaBin','hide')+menuEntry('Quit DaBin','quit'));break;
+}}
+function retentionCandidates(){return alive().filter(x=>x.auto&&!x.task&&!x.parent&&!x.reminder&&!x.project&&!x.pinned&&!x.snippet&&!x.shelf&&!x.inbox&&!x.kept&&!state.items.some(t=>t.attachments?.includes(x.id)))}
+function playRobot(i){const stage=$('#robot-stage'),r=$('#motion-robot'),count=Math.max(1,Math.min(99,Number($('#burst')?.value)||1));if(!stage||!r)return;if($('#dialog')?.open)closeDialog();stage.classList.remove('play');void stage.offsetWidth;r.style.opacity=1;$('#capture-token').textContent=count;$('#robot-state').textContent='Motion preview · '+reactions[i];if(state.settings.reduceMotion||state.settings.quiet){toast('Static saved confirmation · '+count+' actions');return}stage.classList.add('play');const k=[[[0,0,1],[0,2,1.03],[0,0,1]],[[0,0,1],[-9,0,1.1],[5,-8,.98],[0,0,1]],[[0,0,1],[0,-4,.9],[0,2,1.1],[0,0,1]],[[0,0,1],[-5,2,.99],[5,2,.99],[-5,2,.99],[0,0,1]],[[0,0,1],[-7,-5,1],[6,-10,1],[0,0,1]],[[0,0,1],[0,5,1.17],[0,-4,.94],[0,0,1]],[[0,0,1],[-10,0,1],[10,0,1],[0,0,1]],[[0,0,1],[-12,-2,1],[0,0,1]],[[0,0,1],[0,4,1.04],[0,-4,1.07],[0,0,1]],[[0,0,1],[3,-5,1],[-3,3,1],[3,-4,1],[0,0,1]]][i];r.animate(k.map(([rot,y,s])=>({transform:`translateY(${y}px) rotate(${rot}deg) scale(${s})`})),{duration:1800+i*60,easing:'ease-in-out'});}
+
+function attachHandlers(){
+bindProjectSwitcher();
+let robotClick;
+$('#robot-intake')?.addEventListener('click',()=>{clearTimeout(robotClick);robotClick=setTimeout(()=>pasteCapture(),260)});
+$('#robot-intake')?.addEventListener('dblclick',()=>{clearTimeout(robotClick);go('inbox')});
+$('#quick-text')?.addEventListener('keydown',e=>{if((e.metaKey||e.ctrlKey)&&e.key==='Enter'){e.preventDefault();$('#quick-capture').requestSubmit()}});
+
+$('#quick-capture')?.addEventListener('submit',e=>{e.preventDefault();const x=createCapture($('#quick-text').value);if(x){render();toast('Saved to Inbox');celebrate()}else if(!$('#quick-text').value.trim())toast('Add a thought, a link or a file first.',true)});
+$('#quick-text')?.addEventListener('input',e=>{state.drafts.inbox={text:e.target.value};save()});
+$('#scratchpad')?.addEventListener('input',e=>{const key=state.project==='all'?'unfiled':state.project;state.notes[key]={text:e.target.value,updated:TODAY};$('#note-status').textContent='Saving…';clearTimeout(notesTimer);notesTimer=setTimeout(()=>{const ok=save();if($('#note-status'))$('#note-status').innerHTML=ok?'Saved locally':'Not saved · <button data-action="retry-note">Retry</button>'},250)});
+$('#search-form')?.addEventListener('submit',e=>{e.preventDefault();state.query=$('#search-input').value;save();searchResults()});
+$('#search-input')?.addEventListener('input',e=>{state.query=e.target.value;save();searchResults()});
+$('#nearby')?.addEventListener('change',e=>{state.nearby=e.target.checked;save();searchResults()});
+$('#detail-form')?.addEventListener('input',detailDraft);
+$('#detail-form')?.addEventListener('submit',e=>{e.preventDefault();let d=detailDraft();if(d.checklist?.some(x=>!x.text.trim()||x.text.length>500)){toast('Each checklist step needs 1–500 characters.',true);return}if(change(()=>{Object.assign(current(),d);delete state.drafts[currentId]})){toast('Changes saved');celebrate()}});
+$('#new-form')?.addEventListener('input',e=>{let f=e.currentTarget;if(f.elements.planned)f.elements.planned.setCustomValidity('');state.drafts[PAGE]=Object.fromEntries(new FormData(f));save()});
+$('#new-form')?.addEventListener('submit',e=>{e.preventDefault();let f=e.currentTarget,d=Object.fromEntries(new FormData(f));if(PAGE==='new-task'&&(Number(d.hours||0)*60+Number(d.minutes||0)>10080)){toast('Use a duration up to 168 hours.',true);return}if(d.scheduledTime&&!d.planned){f.elements.planned.setCustomValidity('Choose a day for this time.');f.elements.planned.reportValidity();return}let x=createCapture(d.text||d.title,PAGE==='new-task');if(!x)return;const ok=change(()=>{x.title=d.title.trim();x.planned=d.planned||null;x.effort=(Number(d.hours||0)*60+Number(d.minutes||0))||null;x.scheduledTime=d.scheduledTime||null;delete state.drafts[PAGE]},false);if(ok)go(x.task?'task-detail':'capture-detail','?id='+x.id)});
+$('#reminder-form')?.addEventListener('submit',e=>{e.preventDefault();const f=e.currentTarget;let when;if(state.timerMode){let h=Number(f.elements.hours.value),m=Number(f.elements.minutes.value);if(h<0||h>99||m<0||m>59||h*60+m<=0){toast('Use 0–99 hours, 0–59 minutes, and a nonzero duration.',true);return}when=new Date(Date.now()+(h*60+m)*60000).toISOString()}else when=f.elements.when.value;if(!when||!Number.isFinite(new Date(when).getTime())){toast('Choose a valid date and time.',true);return}if(new Date(when)<=new Date()){toast('Choose a future reminder time.',true);return}if(change(()=>{current().reminder=when;if(state.timerMode)current().countdownEnd=when},false)){go(current().task?'task-detail':'capture-detail','?id='+currentId)}});
+$('#file-input')?.addEventListener('change',e=>intakeFiles(e.target.files,pendingImportParent));
+$('#backup-file')?.addEventListener('change',async e=>{try{const f=e.target.files[0];if(!f)return;const d=JSON.parse(await f.text());if(d.format!=='dabin-design-fixture-v1'||!Array.isArray(d.state?.items)||!Array.isArray(d.state?.projects)||!d.state?.notes)throw Error('This is not a DaBin design fixture backup. Native packages must be restored in DaBin.');if(Object.keys(state.drafts).length)throw Error('Save or discard unfinished drafts before restoring.');const p=d.state;for(const x of p.items){if(!x.id||!x.title||!x.date||!x.type)throw Error('The backup contains an invalid capture.');if(item(x.id)&&JSON.stringify(item(x.id))!==JSON.stringify(x))throw Error('Conflicting capture: '+x.title+'. Nothing was overwritten.')}for(const [k,n]of Object.entries(p.notes)){if(state.notes[k]&&state.notes[k].text!==n.text)throw Error('Conflicting scratchpad: '+k+'. Nothing was overwritten.')}window.pendingRestore=p;openDialog('Review additive restore',`<p>${p.items.filter(x=>!item(x.id)).length} new captures. Identical records are skipped. No conflicts were found in the fixture.</p>`,button('Cancel','close-dialog')+button('Restore fixture','backup-apply','primary'))}catch(err){toast(err.message,true)}});
+$('#dialog')?.addEventListener('click',e=>{if(e.target===$('#dialog'))closeDialog()});$('#dialog')?.addEventListener('cancel',()=>setTimeout(()=>lastFocus?.focus(),0));
+const app=$('#app');app?.addEventListener('dragover',e=>{e.preventDefault();app.classList.add('drag-over')});app?.addEventListener('dragleave',e=>{if(!app.contains(e.relatedTarget))app.classList.remove('drag-over')});app?.addEventListener('drop',e=>{e.preventDefault();app.classList.remove('drag-over');let parent=PAGE==='task-detail'?currentId:null;if(e.dataTransfer.files.length)intakeFiles(e.dataTransfer.files,parent);else{let t=e.dataTransfer.getData('text/plain');if(t){let x=createCapture(t);if(x&&parent)change(()=>{x.parent=parent;current().attachments??=[];current().attachments.push(x.id)});else render();toast('Capture saved');celebrate()}else toast('No readable content. Try importing the original file.',true)}});
+let handle=$('#resize-handle');handle?.addEventListener('pointerdown',e=>{e.preventDefault();const frame=$('#frame'),rect=frame.getBoundingClientRect(),start={x:e.clientX,y:e.clientY,...{left:rect.left,top:rect.top,width:rect.width,height:rect.height}};handle.setPointerCapture(e.pointerId);handle.onpointermove=m=>{const viewport=viewportRect();setFrameRect(frame,fitWindowRect({left:start.left,top:start.top,width:Math.max(Math.min(400,viewport.width),Math.min(viewport.left+viewport.width-start.left,start.width+m.clientX-start.x)),height:Math.max(Math.min(480,viewport.height),Math.min(viewport.top+viewport.height-start.top,start.height+m.clientY-start.y))},viewport));positionProjectSwitcher()};handle.onpointerup=handle.onpointercancel=()=>handle.onpointermove=null});
+$('#move-handle')?.addEventListener('pointerdown',e=>{e.preventDefault();const el=e.currentTarget,frame=$('#frame'),rect=frame.getBoundingClientRect(),start={x:e.clientX,y:e.clientY,left:rect.left,top:rect.top,width:rect.width,height:rect.height};el.setPointerCapture(e.pointerId);el.onpointermove=m=>{setFrameRect(frame,fitWindowRect({left:start.left+m.clientX-start.x,top:start.top+m.clientY-start.y,width:start.width,height:start.height},viewportRect()));positionProjectSwitcher()};el.onpointerup=el.onpointercancel=()=>el.onpointermove=null});
+}
+document.addEventListener('submit',submitTaskTiming);
+setInterval(updateTaskTimers,1000);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)updateTaskTimers()});
+document.addEventListener('click',e=>{const a=e.target.closest('[data-action]');if(a){e.preventDefault();if(a.dataset.action==='retry-note'){const ok=save();$('#note-status').textContent=ok?'Saved locally':'Not saved. Copy your notes to retain them.';return}handleAction(a).catch(err=>toast('Action could not finish: '+err.message,true))}const link=e.target.closest('a[href]');if(link&&!link.target)saveContext()});
+document.addEventListener('change',e=>{const el=e.target;if(el.dataset.change){const k=el.dataset.change;if(k==='project'&&el.value==='__new'){askName('Create a project','','new-project-save');return}change(()=>state[k]=el.value)}if(el.dataset.setting){const k=el.dataset.setting;change(()=>state.settings[k]=k==='opacity'?Number(el.value):el.value)}});
+document.addEventListener('paste',e=>{if(e.target.matches('input,textarea,[contenteditable=true]'))return;if(!['inbox','activity','task-detail','robot','shelf'].includes(PAGE))return;e.preventDefault();if(e.clipboardData.files.length){intakeFiles(e.clipboardData.files,PAGE==='task-detail'?currentId:null);return}const text=e.clipboardData.getData('text/plain');if(text){let x=createCapture(text);if(x&&PAGE==='task-detail')change(()=>{x.parent=currentId;x.inbox=false;current().attachments??=[];current().attachments.push(x.id)});else if(x)render();if(x){toast('Capture saved');celebrate()}}});
+document.addEventListener('keydown',e=>{const edit=e.target.matches('input,textarea,[contenteditable=true]');if(e.metaKey&&e.key.toLowerCase()==='k'){e.preventDefault();state.scope='All';go('search')}else if(e.metaKey&&e.key===','){e.preventDefault();go('settings')}else if(e.metaKey&&e.shiftKey&&e.key.toLowerCase()==='d'){e.preventDefault();go('today')}else if(e.metaKey&&e.key.toLowerCase()==='s'&&$('#detail-form')){e.preventDefault();$('#detail-form').requestSubmit()}else if(e.metaKey&&e.key==='Enter'&&$('#new-form')){e.preventDefault();$('#new-form').requestSubmit()}else if(e.key==='Escape'&&!$('#dialog')?.open&&!edit){if(['capture-detail','task-detail','search','reminder'].includes(PAGE))back();else handleAction({dataset:{action:'hide'}})}});
+window.addEventListener('pagehide',()=>{clearTimeout(notesTimer);save();saveContext()});
+/* Minimal store-only ZIP writer: no external library, complete shelf independent of filters. */
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('#project-switcher')?.matches(':popover-open')){e.preventDefault();e.stopImmediatePropagation();$('#project-switcher').hidePopover();($$('[data-action="project-picker"]')[projectSwitcherTrigger]||$('.project-heading'))?.focus()}},true);
+window.addEventListener('resize',()=>{keepFrameInViewport();positionProjectSwitcher()});
+window.visualViewport?.addEventListener('resize',()=>{keepFrameInViewport();positionProjectSwitcher()});
+window.visualViewport?.addEventListener('scroll',positionProjectSwitcher);
+document.addEventListener('scroll',positionProjectSwitcher,true);
+
+function crc32(bytes){let c=0xffffffff;for(const b of bytes){c^=b;for(let i=0;i<8;i++)c=(c>>>1)^((c&1)?0xedb88320:0)}return(c^0xffffffff)>>>0}
+async function exportShelf(){const xs=projectItems().filter(x=>x.shelf),enc=new TextEncoder();if(!xs.length){toast('This project shelf is empty.',true);return}try{let parts=[],central=[],offset=0,used=new Set();for(const x of xs){let filename=x.filename||x.title+'.txt',bytes;if(x.data){bytes=new Uint8Array(await(await fetch(x.data)).arrayBuffer())}else if(x.image||x.url&&x.url.startsWith(ASSETS)){const r=await fetch(x.image||x.url);if(!r.ok)throw Error('Missing managed file: '+x.title);bytes=new Uint8Array(await r.arrayBuffer())}else bytes=enc.encode(x.text||x.url||x.title);filename=filename.replace(/[\/\\:*?"<>|]/g,'_');if(used.has(filename))filename=x.id+'-'+filename;used.add(filename);let name=enc.encode(filename),crc=crc32(bytes),head=new Uint8Array(30+name.length),v=new DataView(head.buffer);v.setUint32(0,0x04034b50,true);v.setUint16(4,20,true);v.setUint16(6,0x800,true);v.setUint32(14,crc,true);v.setUint32(18,bytes.length,true);v.setUint32(22,bytes.length,true);v.setUint16(26,name.length,true);head.set(name,30);parts.push(head,bytes);let dir=new Uint8Array(46+name.length),d=new DataView(dir.buffer);d.setUint32(0,0x02014b50,true);d.setUint16(4,20,true);d.setUint16(6,20,true);d.setUint16(8,0x800,true);d.setUint32(16,crc,true);d.setUint32(20,bytes.length,true);d.setUint32(24,bytes.length,true);d.setUint16(28,name.length,true);d.setUint32(42,offset,true);dir.set(name,46);central.push(dir);offset+=head.length+bytes.length}const size=central.reduce((s,x)=>s+x.length,0),end=new Uint8Array(22),v=new DataView(end.buffer);v.setUint32(0,0x06054b50,true);v.setUint16(8,xs.length,true);v.setUint16(10,xs.length,true);v.setUint32(12,size,true);v.setUint32(16,offset,true);let blob=new Blob([...parts,...central,end],{type:'application/zip'}),u=URL.createObjectURL(blob),a=document.createElement('a');a.href=u;a.download='DaBin-Shelf-'+(state.project==='all'?'All-projects':state.project.replace(/[\/\\]/g,'-'))+'.zip';a.click();setTimeout(()=>URL.revokeObjectURL(u),3000);toast('Complete project shelf ZIP prepared · '+xs.length+' items')}catch(err){toast('Shelf export failed: '+err.message,true)}}
+
+render();try{const ctx=JSON.parse(sessionStorage.getItem('dabin:context:'+PAGE));if(ctx&&$('.main'))$('.main').scrollTop=ctx.scroll}catch{}
+
+</script></body></html>

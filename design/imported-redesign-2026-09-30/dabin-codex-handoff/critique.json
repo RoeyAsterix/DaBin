@@ -1,0 +1,27 @@
+{
+  "kind": "critique-panel",
+  "scope": "handoff documentation only; rendered product review pending",
+  "score": 4.4,
+  "axes": {
+    "philosophy": {
+      "score": 5,
+      "notes": "Transfers the established macOS design and preserves product scope."
+    },
+    "hierarchy": {
+      "score": 4,
+      "notes": "Start guide, pasteable prompt, detailed contract and acceptance checklist have separate roles."
+    },
+    "execution": {
+      "score": 4,
+      "notes": "Portable reference rebuild and checksum inventory included; native/visual gates remain explicit."
+    },
+    "specificity": {
+      "score": 5,
+      "notes": "Current task, timer, project and provenance semantics map to named native owners."
+    },
+    "restraint": {
+      "score": 4,
+      "notes": "Reuses current artifacts without introducing another redesign or unrelated features."
+    }
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "date": "2026-09-30",
+  "scope": "handoff packaging and reference-code checks",
+  "checks": [
+    {
+      "check": "19 product screens present",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "check": "Rebuilt product screens match current workspace byte-for-byte",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "check": "Preserved source",
+      "passed": true,
+      "detail": "235 files compared"
+    },
+    {
+      "check": "Preserved open-design-v3/assets",
+      "passed": true,
+      "detail": "17 files compared"
+    },
+    {
+      "check": "All 80 feature-preservation rows included",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "check": "Relocated reference behavior/build checks",
+      "passed": true,
+      "detail": "361 passed; no rendered/native claim"
+    },
+    {
+      "check": "Entry, screen and handoff document local links resolve",
+      "passed": true,
+      "detail": []
+    },
+    {
+      "check": "No obsolete nested download archive link",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "check": "Frozen native project and test runner included",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "check": "Final inventory generated before packaging",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "check": "ZIP CRC and archived bytes match final inventory",
+      "passed": true,
+      "detail": "Required below; packaging aborts on mismatch"
+    }
+  ]
+}

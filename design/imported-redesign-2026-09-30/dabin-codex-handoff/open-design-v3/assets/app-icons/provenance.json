@@ -1,0 +1,44 @@
+[
+  {
+    "id": "mail",
+    "source": "/System/Applications/Mail.app/Contents/Resources/ApplicationIcon.icns",
+    "bundleIdentifier": "com.apple.mail",
+    "original": "mail.icns",
+    "preview": "mail.png"
+  },
+  {
+    "id": "notes",
+    "source": "/System/Applications/Notes.app/Contents/Resources/AppIcon.icns",
+    "bundleIdentifier": "com.apple.Notes",
+    "original": "notes.icns",
+    "preview": "notes.png"
+  },
+  {
+    "id": "finder",
+    "source": "/System/Library/CoreServices/Finder.app/Contents/Resources/Finder.icns",
+    "bundleIdentifier": "com.apple.finder",
+    "original": "finder.icns",
+    "preview": "finder.png"
+  },
+  {
+    "id": "safari",
+    "source": "/Applications/Safari.app/Contents/Resources/AppIcon.icns",
+    "bundleIdentifier": "com.apple.Safari",
+    "original": "safari.icns",
+    "preview": "safari.png"
+  },
+  {
+    "id": "chrome",
+    "source": "/Applications/Google Chrome.app/Contents/Resources/app.icns",
+    "bundleIdentifier": "com.google.Chrome",
+    "original": "chrome.icns",
+    "preview": "chrome.png"
+  },
+  {
+    "id": "slack",
+    "source": "/Applications/Slack.app/Contents/Resources/electron.icns",
+    "bundleIdentifier": "com.tinyspeck.slackmacgap",
+    "original": "slack.icns",
+    "preview": "slack.png"
+  }
+]

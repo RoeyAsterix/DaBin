@@ -1,0 +1,45 @@
+/* Responsive repairs: content scrolls; chrome and floating panels stay reachable. */
+.frame{min-height:0;max-width:100vw;max-height:100dvh;}
+.headbar,.page-head,.page-title-row,.form-grid>*,.schedule-fields>*,.card-grid>*,.setting-row>*{min-width:0;}
+.headbar>.icon-btn,.headbar>.search-trigger{flex-shrink:0;}
+.headbar .project-heading{flex-shrink:1;}
+.head-spacer{min-width:0;}
+.project-heading>.icon,.project-trigger>.icon{flex-shrink:0;}
+.project-trigger{min-width:0;}
+.project-trigger>span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.page-title-row h1{overflow-wrap:anywhere;}
+.filters{max-width:100%;overflow-x:auto;overscroll-behavior-x:contain;}
+.filters>button{flex-shrink:0;}
+.search-box input{min-width:0;}
+.recent-capture strong{max-width:100%;}
+.modal{container-type:inline-size;max-height:calc(100dvh - 24px);overflow-y:auto;overscroll-behavior:contain;}
+.modal .actions,.details-actions .row{flex-wrap:wrap;}
+.setting-row select{min-width:0;}
+.task-card-controls{flex-wrap:wrap;}
+#move-handle,#resize-handle{touch-action:none;}
+#project-switcher .ps-search input{min-width:0;}
+#project-switcher .ps-option:focus-visible,#project-switcher .ps-new:focus-visible{outline:2px solid var(--fg);outline-offset:-2px;}
+@container(max-width:460px){
+ .headbar{gap:4px;}
+ .headbar .autostate>span:not(.dot){display:none;}
+ .headbar .autostate{flex:none;min-width:22px;}
+ .headbar .expand-button{display:none;}
+ .headbar .project-heading-mark{width:25px;height:25px;}
+ .headbar .project-heading-name{font-size:16px;}
+ .headbar .project-heading{gap:5px;}
+ .form-grid,.schedule-fields{grid-template-columns:minmax(0,1fr);}
+ .page-head .project-select{max-width:45%;}
+ .setting-row{gap:10px;}
+ .setting-row select{max-width:42%;}
+ .activity-head{flex-wrap:wrap;}
+}
+@media(max-height:520px) and (min-width:601px){
+ .frame,.frame.expanded{height:calc(100dvh - 16px);margin:8px auto;}
+}
+@media(pointer:coarse){
+ .headbar>.icon-btn,.icon-btn,.footer-menu,.paste-button{min-width:44px;min-height:44px;}
+ .headbar>.search-trigger,.headbar>.autostate,.project-trigger,.project-heading{min-height:44px;}
+ .headbar>.search-trigger{min-width:44px;}
+ .headbar>.autostate{min-width:44px;}
+ #project-switcher .ps-new{min-height:44px;}
+}

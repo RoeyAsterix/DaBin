@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="380" height="680" viewBox="0 0 380 680" role="img" aria-label="DaBin Explorer compact concept. Fictional project and data. Not an app screenshot.">
+<title>DaBin Explorer compact concept. Fictional project and data. Not an app screenshot.</title>
+<style>text{font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif} .muted{fill:#787180}</style>
+<rect x="0" y="0" width="380" height="680" rx="0" fill="#F4F1F7"/>
+<rect x="8" y="8" width="364" height="637" rx="18" fill="#FFFFFF" stroke="#E8E2ED"/>
+<rect x="23" y="26" width="20" height="24" rx="5" fill="#DED0ED"/>
+<rect x="25" y="22" width="16" height="5" rx="2" fill="#A084BE"/>
+<rect x="27" y="33" width="12" height="7" rx="3" fill="#665078"/>
+<text x="51" y="45" fill="#302A3C" font-size="21" font-weight="700">DaBin</text>
+<g transform="translate(315,27) scale(0.75)" stroke="#787180" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="12" cy="12" r="3"/><path d="m10 3 4 0 1 3 3 1 3 3 0 4-3 1-1 3-3 3h-4l-1-3-3-1-3-3v-4l3-1 1-3z"/></g>
+<g transform="translate(344,27) scale(0.75)" stroke="#787180" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="m6 6 12 12M6 18 18 6"/></g>
+<path d="M24 61H356" stroke="#E8E2ED"/>
+<rect x="24" y="77" width="79" height="28" rx="8" fill="#ECE4F5"/>
+<text x="34" y="95" fill="#8260AB" font-size="11" font-weight="600">Explorer</text>
+<rect x="107" y="77" width="81" height="28" rx="8" fill="#F7F5F9"/>
+<text x="117" y="95" fill="#787180" font-size="11" font-weight="400">Clipboard</text>
+<rect x="192" y="77" width="61" height="28" rx="8" fill="#F7F5F9"/>
+<text x="202" y="95" fill="#787180" font-size="11" font-weight="400">Shelf</text>
+<rect x="257" y="77" width="64" height="28" rx="8" fill="#F7F5F9"/>
+<text x="267" y="95" fill="#787180" font-size="11" font-weight="400">Notes</text>
+<g transform="translate(24,122) scale(0.8333333333333334)" stroke="#8260AB" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M3 6h6l2 2h10v11H3z"/></g>
+<text x="52" y="138" fill="#302A3C" font-size="15" font-weight="600">Northstar</text>
+<g transform="translate(145,121) scale(0.75)" stroke="#8260AB" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="m7 10 5 5 5-5"/></g>
+<rect x="193" y="118" width="78" height="28" rx="8" fill="#ECE4F5"/>
+<text x="203" y="136" fill="#8260AB" font-size="11" font-weight="600">By type</text>
+<rect x="275" y="118" width="78" height="28" rx="8" fill="#F7F5F9"/>
+<text x="285" y="136" fill="#787180" font-size="11" font-weight="400">By date</text>
+<rect x="24" y="158" width="278" height="32" rx="9" fill="#F7F5F9" stroke="#E8E2ED"/>
+<g transform="translate(33,166) scale(0.7083333333333334)" stroke="#787180" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none"><circle cx="10" cy="10" r="6"/><path d="m15 15 5 5"/></g>
+<text x="59" y="179" fill="#787180" font-size="12" font-weight="400">Search this project</text>
+<rect x="311" y="158" width="42" height="32" rx="9" fill="#ECE4F5"/>
+<g transform="translate(322,164) scale(0.8333333333333334)" stroke="#8260AB" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M12 4v16M4 12h16"/></g>
+<rect x="24" y="203" width="36" height="32" rx="10" fill="#ECE4F5"/>
+<g transform="translate(32,209) scale(0.8333333333333334)" stroke="#8260AB" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></g>
+<g transform="translate(87,209) scale(0.8333333333333334)" stroke="#8260AB" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M4 6h16M4 10h13M4 14h16M4 18h10"/></g>
+<g transform="translate(142,209) scale(0.8333333333333334)" stroke="#8260AB" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="m10 14 4-4M9 16l-1 1a3 3 0 0 1-4-4l4-4a3 3 0 0 1 4 0m3-1 1-1a3 3 0 0 1 4 4l-4 4a3 3 0 0 1-4 0"/></g>
+<g transform="translate(197,209) scale(0.8333333333333334)" stroke="#8260AB" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M6 3h8l4 4v14H6zM14 3v5h4M9 12h6M9 16h6"/></g>
+<g transform="translate(252,209) scale(0.8333333333333334)" stroke="#8260AB" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="8" cy="9" r="1.5"/><path d="m5 18 5-5 3 3 3-5 4 7"/></g>
+<g transform="translate(307,209) scale(0.8333333333333334)" stroke="#8260AB" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="m5 12 4 4L19 6"/></g>
+<text x="24" y="261" fill="#787180" font-size="12" font-weight="600">Files</text>
+<rect x="24" y="272" width="332" height="66" rx="10" fill="#FFFFFF" stroke="#E8E2ED"/>
+<rect x="34" y="285" width="38" height="38" rx="8" fill="#F6F2FA"/>
+<g transform="translate(43,294) scale(0.8333333333333334)" stroke="#8260AB" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M6 3h8l4 4v14H6zM14 3v5h4M9 12h6M9 16h6"/></g>
+<text x="83" y="298" fill="#302A3C" font-size="13" font-weight="600">Proposal.pdf</text>
+<text x="83" y="319" fill="#787180" font-size="11" font-weight="400">PDF · 30 Sep, 09:14</text>
+<rect x="24" y="345" width="332" height="66" rx="10" fill="#FFFFFF" stroke="#E8E2ED"/>
+<rect x="34" y="358" width="38" height="38" rx="8" fill="#F6F2FA"/>
+<g transform="translate(43,367) scale(0.8333333333333334)" stroke="#8260AB" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M6 3h8l4 4v14H6zM14 3v5h4M9 12h6M9 16h6"/></g>
+<text x="83" y="371" fill="#302A3C" font-size="13" font-weight="600">Brand guide.pdf</text>
+<text x="83" y="392" fill="#787180" font-size="11" font-weight="400">PDF · 29 Sep, 16:20</text>
+<text x="24" y="438" fill="#787180" font-size="12" font-weight="600">Media</text>
+<rect x="24" y="449" width="332" height="66" rx="10" fill="#FFFFFF" stroke="#E8E2ED"/>
+<rect x="34" y="462" width="38" height="38" rx="8" fill="#F6F2FA"/>
+<g transform="translate(43,471) scale(0.8333333333333334)" stroke="#8260AB" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="8" cy="9" r="1.5"/><path d="m5 18 5-5 3 3 3-5 4 7"/></g>
+<text x="83" y="475" fill="#302A3C" font-size="13" font-weight="600">Landing reference.png</text>
+<text x="83" y="496" fill="#787180" font-size="11" font-weight="400">Image · Follow up tomorrow</text>
+<g transform="translate(329,459) scale(0.5833333333333334)" stroke="#A64D58" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="m5 12 4 4L19 6"/></g>
+<text x="24" y="542" fill="#787180" font-size="12" font-weight="600">Daily documents</text>
+<rect x="24" y="553" width="332" height="66" rx="10" fill="#FFFFFF" stroke="#E8E2ED"/>
+<rect x="34" y="566" width="38" height="38" rx="8" fill="#F6F2FA"/>
+<g transform="translate(43,575) scale(0.8333333333333334)" stroke="#8260AB" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M7 3v4M17 3v4M7 14h3M14 14h3M7 18h3"/></g>
+<text x="83" y="579" fill="#302A3C" font-size="13" font-weight="600">30 September 2026</text>
+<text x="83" y="600" fill="#787180" font-size="11" font-weight="400">Captures and links · 5 entries</text>
+<text x="24" y="666" fill="#787180" font-size="10" font-weight="400">CONCEPT · Fictional content · No permanent sidebar</text>
+</svg>

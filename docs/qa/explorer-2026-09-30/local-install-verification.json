@@ -1,0 +1,32 @@
+{
+  "verified_at": "2026-09-30T19:17:09.249976+00:00",
+  "version": "0.4.3",
+  "build": "55",
+  "installed_matches_release_executable": true,
+  "codesign_deep_strict": "passed",
+  "existing_records_preserved": 20,
+  "records_at_initial_post_launch_check": 20,
+  "current_records": 26,
+  "new_records_since_launch": 6,
+  "managed_attachment_byte_matches": 8,
+  "changed_metadata_fields": [
+    "attachmentRelativePath",
+    "isPinned",
+    "schemaVersion"
+  ],
+  "isPinned_change": "missing optional field normalized to false; values preserved",
+  "daily_documents_at_initial_post_launch_check": 5,
+  "unfinished_move_journals": 0,
+  "private_backup_verified": true,
+  "live_ui": [
+    "Workspace opens Explorer",
+    "project selector and content filters available",
+    "capture list and local count visible",
+    "paste, file import, daily-files, ZIP and Finder controls accessible",
+    "Auto Capture remained paused at first launch"
+  ],
+  "limitations": [
+    "Live daily-files toggle follow-up was interrupted when the window became unavailable; isolated native interaction suite verifies that route.",
+    "Third-party destination drag gestures not exercised in the installed user session."
+  ]
+}

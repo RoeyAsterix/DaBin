@@ -2,7 +2,7 @@
 
 DaBin is a private desktop buddy for Apple Silicon Macs. Capture something quickly, keep it connected to a client or project, take the next action, and find it again later.
 
-Three labeled views organize the work: **Inbox** for quick notes, tasks, pastes and files; **Today** for deliberate workday planning; and **Workspace** for project resources, clipboard history, named snippets, a collection shelf and autosaving notes. Organization is optional. **Activity** in Inbox keeps the original daily/weekly capture history.
+Four labeled views organize the work: **Inbox** for quick notes, tasks, pastes and files; **Today** for deliberate workday planning; and **Workspace** for project resources, clipboard history, named snippets, a collection shelf and autosaving notes. Organization is optional. **Activity** keeps the original daily/weekly capture history.
 
 Tasks keep their original content and attachments. A planned workday is separate from a deadline or reminder. Choose a priority, estimate effort, reorder today’s plan, add checklist steps, set a repeat rule, complete work or reschedule it. Project scratchpads and unfinished composer/detail drafts recover locally after restart.
 
@@ -14,13 +14,13 @@ Inbox opens once on first launch; reopening resumes the current work. Afterwards
 
 DaBin recognizes text in saved screenshots, images, PDFs and supported text documents entirely on the Mac. Search can find that content even when the filename or caption does not contain the query, and shows the matching recognized line. Capture details expose the searchable text and Settings can rebuild the local index. This is local text search, not semantic search. There is no cloud sync, and no recognized content is sent to an external AI or OCR service.
 
-The working version is **0.4.2, build 53**, a local candidate. See its [release notes](docs/RELEASE_NOTES_0.4.2.md); this does not identify it as the current public GitHub release or an Apple-approved build.
+The working version is **0.4.5, build 58**, a local candidate with visible-corner resizing and cross-display window dragging, preserving the Open Design implementation across the native app and Explorer. It adds searchable project selection, in-place task conversion, independent focus timers and manually recorded paste history. Explorer retains real project folders, type/date browsing, a wide preview pane, native copy/drag transfers and complete dated Markdown files. See its [release notes](docs/RELEASE_NOTES_0.4.5.md); this does not identify it as the current public GitHub release or an Apple-approved build.
 
 ## A little desktop buddy
 
-Captures have larger fitted previews and a compact action rail. Turning a capture into a task opens its workspace, where you can drop or paste more files and text, set a date/time reminder or an hours:minutes countdown, and mark it complete. A successful completion makes the visible robot happy. Countdown time starts when you save; it does not restart when reopened.
+Captures have larger fitted previews and a compact action rail. Turning a capture into a task transforms its card in place. Open its details to edit its title, attach more files or text, add a checklist and set reminders. A separate focus timer supports duration, pause, resume and reset; expiry leaves the task incomplete. Work scheduling has an optional local time and stays separate from deadlines and notification reminders. A successful completion makes the visible robot happy. Countdown time starts when you save; it does not restart when reopened.
 
-Library uses icon filters and responsive columns. Source badges use locally installed app icons when the saved source is available; website locations have a domain/globe fallback. DaBin shows its own verified storage destination and does not claim to monitor pastes into other apps.
+Explorer uses icon filters, compact rows and an expanded preview pane. Source badges use locally installed app icons when the saved source is available; website locations have a domain/globe fallback. DaBin shows its own verified storage destination. The source trail lets you manually record where you pasted an item; those events are labeled “Recorded by you.” Copying an item or switching applications never invents a paste event. App logos are loaded from local installed applications.
 
 Auto Capture is beside the logo. The robot's full-view shell is thinner; drag its edges or corners to resize it, or use Expand/Restore to fill the current display's safe area. Manual island reveal takes 0.55 seconds. Native window appearance follows the light/dark preference, and hover tooltips can be turned off without removing accessibility labels.
 
@@ -49,6 +49,11 @@ These permanent links follow the newest public GitHub release. The current files
 ## Start here
 
 - [Native app guide](native/README.md)
+- [0.4.5 Window resizing and display movement](docs/RELEASE_NOTES_0.4.5.md)
+- [0.4.4 Open Design implementation notes](docs/RELEASE_NOTES_0.4.4.md)
+- [Open Design QA and screenshots](docs/qa/open-design-2026-09-30/README.md)
+- [0.4.3 Explorer candidate notes](docs/RELEASE_NOTES_0.4.3.md)
+- [Explorer Open Design handoff](design/explorer-handoff-2026-09-30/README.md)
 - [0.4.2 connected-workflow candidate notes](docs/RELEASE_NOTES_0.4.2.md)
 - [Product review, evidence and roadmap](docs/review-2026-09-30/README.md)
 - [0.4.0 local candidate notes](docs/RELEASE_NOTES_0.4.0.md)

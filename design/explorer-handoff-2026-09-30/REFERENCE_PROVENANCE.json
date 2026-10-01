@@ -1,0 +1,103 @@
+{
+  "references": [
+    {
+      "file": "reference/BASELINE_FEATURES.csv",
+      "source": "design/open-design-handoff-2026-09-30/FEATURES.csv",
+      "sha256": "a60de6608b158f2613aa04c0365a221dd3079dc6d263bbd11fdb10f34de4ade4",
+      "context": "Build 53 feature preservation matrix; not a claim of new Explorer QA"
+    },
+    {
+      "file": "reference/library-compact-build53.png",
+      "source": "design/open-design-handoff-2026-09-30/reference-screens/current-build53/native-library-light-380-minimum.png",
+      "sha256": "f6f81c63f38ee376738d5f8d0e21e101a7a8da9b60017a7876b4bbb2a9e04ac3",
+      "context": "Synthetic native view render"
+    },
+    {
+      "file": "reference/library-expanded-build53.png",
+      "source": "design/open-design-handoff-2026-09-30/reference-screens/current-build53/native-library-dark-760.png",
+      "sha256": "9208125f296f401f90a92f1ab8363caf15eabeff334a9268184293fa5cffaaf1",
+      "context": "Synthetic native view render"
+    },
+    {
+      "file": "reference/responsive-detail-expanded-build54.png",
+      "source": "docs/qa/responsive-detail-2026-09-30/image-expanded-light.png",
+      "sha256": "d37fdc98161a755c1925b473a85441cf48aff4e7322521bb08da78674b89b7f1",
+      "context": "Synthetic native view render"
+    },
+    {
+      "file": "reference/performance-64mib.json",
+      "source": "/private/tmp/DaBin-Explorer-Perf-20260930/report-fixed.json",
+      "sha256": "8be475de2e10037af92a3471947e4cefcfb6514f2651a3fa34ef8790118ef740",
+      "context": "Synthetic 64 MiB file, Release local warm-cache benchmark, no user data; not a live UI test"
+    },
+    {
+      "file": "reference/performance-resources.txt",
+      "source": "/private/tmp/DaBin-Explorer-Perf-20260930/resources-fixed.txt",
+      "sha256": "f29e987c74030ebf05cd8df1ae44f0045ea83ac94d1bd7ec9b869263bb6d9557",
+      "context": "Synthetic 64 MiB file, Release local warm-cache benchmark, no user data; not a live UI test"
+    },
+    {
+      "file": "reference/qa-full-53-suites.json",
+      "source": "native/build/qa/runs/20260930T190345664390Z/report.json",
+      "sha256": "2f9e280513dbd9d0d22484362ebafa4ff8e4ae81c5d1a443a66968354a17d8a8",
+      "context": "Verified native Release QA or build receipt; source/runtime evidence, not public distribution approval"
+    },
+    {
+      "file": "reference/build-receipt-0.4.3-55.json",
+      "source": "native/build/build-receipt.json",
+      "sha256": "044fb1643ff047f79ef941cd2a3b22d9e4ac88c50d1b34c5c32902d734356f92",
+      "context": "Verified native Release QA or build receipt; source/runtime evidence, not public distribution approval"
+    },
+    {
+      "file": "reference/explorer-compact-build55.png",
+      "source": "docs/qa/explorer-2026-09-30/native-view-explorer-files-light-380x430.png",
+      "sha256": "4231a7305ba5f70c833c32f83a6b11b4d0572a2079f17bd71ac5ec88e86526dd",
+      "context": "Synthetic native fixture render; not a live desktop screenshot"
+    },
+    {
+      "file": "reference/explorer-expanded-build55.png",
+      "source": "docs/qa/explorer-2026-09-30/native-view-explorer-files-dark-1200x900.png",
+      "sha256": "602ca9418eaf67a0b0a373caccdedf99fa2e76e82a21fd62015b40be2c8c9577",
+      "context": "Synthetic native fixture render; not a live desktop screenshot"
+    },
+    {
+      "file": "reference/explorer-daily-files-build55.png",
+      "source": "docs/qa/explorer-2026-09-30/native-view-explorer-daily-files-light-800x680.png",
+      "sha256": "cd403eeb24413a7af18a2cf89375c070b914227bd6a19bfeb435980589398d13",
+      "context": "Synthetic native fixture render; not a live desktop screenshot"
+    },
+    {
+      "file": "reference/explorer-interaction-compact-build55.png",
+      "source": "docs/qa/explorer-2026-09-30/explorer-compact.png",
+      "sha256": "1a82ad919a1f2bf568bc26b8c20e4d97bef637ad6a723ae788ec7969a08c5f41",
+      "context": "Synthetic native fixture render; not a live desktop screenshot"
+    },
+    {
+      "file": "reference/explorer-interaction-daily-preview-build55.png",
+      "source": "docs/qa/explorer-2026-09-30/explorer-expanded-daily.png",
+      "sha256": "cf5cf9101f79039a938cc37b6f3b570fa89d55d141d4a0616c4f36719a45ea29",
+      "context": "Synthetic native fixture render; not a live desktop screenshot"
+    },
+    {
+      "file": "reference/explorer-renders-build55.json",
+      "source": "docs/qa/explorer-2026-09-30/explorer-renders.json",
+      "sha256": "ced330c882f3a4f774f9980e7efc91ad9fa5f0781c9d7475b0cce7349dfe1000",
+      "context": "Final native render receipt"
+    },
+    {
+      "file": "reference/local-install-verification-build55.json",
+      "source": "docs/qa/explorer-2026-09-30/local-install-verification.json",
+      "sha256": "59d9f6cbf4d1957786d480d0194bf772536cc14704220b956f1fcc8685159c04",
+      "context": "Aggregate local installation verification only; no archive records, file content or private backup included"
+    },
+    {
+      "file": "reference/ENGINEERING_QA_SUMMARY.md",
+      "source": "docs/qa/explorer-2026-09-30/README.md",
+      "sha256": "9159a787495ff37bbd35d6d197d9b6b6108a5024dadbe9a307b76b988e7211b6",
+      "source_sha256": "8ea70a8e1db10e6889cd68370b6aaf531dbb9960a0c8a2a186b0efdffe38c10c",
+      "context": "Final engineering summary, local links adapted to package filenames and preview bound stated exactly as 64,000 bytes"
+    }
+  ],
+  "private_archive_content_included": false,
+  "wireframes": "Original low-fidelity SVG concepts with fictional data"
+}

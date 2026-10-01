@@ -1,0 +1,10 @@
+{
+  "version": "0.4.2",
+  "build": "54",
+  "installed_executable_sha256": "937c1b44162ca446388628157f6f53c003d2f1401edb3085e785870418876ece",
+  "matches_verified_build": true,
+  "ui_version_verified": true,
+  "current_capture_reopened": true,
+  "auto_capture_remained_paused": true,
+  "archive_modified_by_installer": false
+}

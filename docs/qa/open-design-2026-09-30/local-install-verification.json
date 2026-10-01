@@ -1,0 +1,28 @@
+{
+  "verifiedAtUTC": "2026-09-30T20:33:01.357531+00:00",
+  "version": "0.4.4",
+  "buildNumber": "56",
+  "installedPath": "/Users/roeylibfeld/Applications/DaBin.app",
+  "runningFromInstalledPath": true,
+  "installedExecutableMatchesRelease": true,
+  "strictSignatureVerified": true,
+  "desktopShortcutPointsToInstalledApp": true,
+  "privatePreUpdateBackupVerifiedFiles": 161,
+  "originalCaptureCount": 26,
+  "currentCaptureCount": 26,
+  "allOriginalCaptureIDsPreserved": true,
+  "changedExistingFieldsExceptSchema": {},
+  "originalAttachmentCount": 13,
+  "byteIdenticalOriginalAttachments": 13,
+  "allOriginalAttachmentsPreserved": true,
+  "sharedQABuildInputs": 108,
+  "qaBuildInputMismatches": [],
+  "currentBuildInputMismatches": [],
+  "liveUI": [
+    "Settings displays DaBin 0.4.4 (56)",
+    "Existing capture/theme/retention/island preferences retained",
+    "Workspace opens Explorer with search, paste, files, daily files, ZIP and Finder controls",
+    "Project popover receives search focus; Escape dismisses it"
+  ],
+  "privateContentIncluded": false
+}

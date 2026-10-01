@@ -1,0 +1,25 @@
+{
+  "fixtureBytes" : 67108864,
+  "scope" : "Synthetic single 64 MiB .bin file. Release module, local filesystem, warm cache; concurrent QA running. Moves are synchronous on main actor; no live UI or user data involved.",
+  "sourceUnchanged" : true,
+  "trials" : [
+    {
+      "importSeconds" : 0.064742083428427577,
+      "projectMoveSeconds" : 0.19919562502764165,
+      "reopenSeconds" : 0.0045132082886993885,
+      "secondProjectMoveSeconds" : 0.20183958322741091
+    },
+    {
+      "importSeconds" : 0.038570750039070845,
+      "projectMoveSeconds" : 0.20167499990202487,
+      "reopenSeconds" : 0.0050635833758860826,
+      "secondProjectMoveSeconds" : 0.19715462508611381
+    },
+    {
+      "importSeconds" : 0.040280666667968035,
+      "projectMoveSeconds" : 0.19437770848162472,
+      "reopenSeconds" : 0.0049727084115147591,
+      "secondProjectMoveSeconds" : 0.19597666687332094
+    }
+  ]
+}

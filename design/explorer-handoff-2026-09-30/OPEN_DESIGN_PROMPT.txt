@@ -1,0 +1,11 @@
+Design DaBin Explorer, the project file-management feature in the existing native macOS app. Read BRIEF.md, INTERACTIONS.md, ACCEPTANCE.md, IMPLEMENTATION_STATUS.md, SOURCE_MAP.md, and reference/BASELINE_FEATURES.csv before working.
+
+Workspace Library becomes Explorer. Preserve Clipboard, Shelf, Notes, Inbox, Today, Activity, search, tasks, reminders, local storage/recovery, settings, updates, and the robot. No existing feature may be silently removed. Work within the native SwiftUI/AppKit architecture and the established purple robot identity, theme colors, compact controls, and accessibility behavior.
+
+Create a calm compact view with project selection, Unfiled, Type/Date grouping, recognizable rows, and a route to complete item details. At larger sizes use the space for a file list and large fitted preview, preserving selection and context. No permanent sidebar or oversized dashboard. Show actual saved-file paths, copy/paste and outgoing drag affordances, daily project documents, tasks, and recovery states clearly.
+
+Daily documents are generated readable files of saved captures for each project and receipt date. Edits in DaBin update them; external changes must be preserved. Metadata stays out of ordinary browsing. Source originals are distinct from managed copies and are not moved/deleted by DaBin filing. Use the current code and implementation status to avoid presenting a proposed control as implemented.
+
+Deliver: a clickable design with compact/expanded/light/dark and important empty/error/drag states; component and responsive specifications; keyboard/accessibility behavior; a completed feature-preservation map; and a native implementation handoff. The wireframe SVGs are provisional concepts containing fictional material, not real screenshots or final visual direction. Improve them while preserving their product intent.
+
+Use fictional client names and files only. Do not request or upload the user's archive, clipboard history, signing credentials, or unrelated project content. Do not invent source attribution, external paste destinations, cloud sync, or AI behavior. Separate current functionality, implemented additions, and proposed follow-up polish.

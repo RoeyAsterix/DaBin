@@ -1,0 +1,13 @@
+Redesign DaBin using the attached DaBin Open Design handoff package.
+
+Read OPEN_DESIGN_HANDOFF.md, then design/open-design-handoff-2026-09-30/BRIEF.md and the linked matrix, screen checklist, acceptance plan, and source map. Baseline: native macOS DaBin 0.4.2 (53), commit b3f8507a77107474f923d9e4af5fc8ad4efe4a00.
+
+The requirement is a substantial UX/UI redesign WITHOUT REMOVING ANY FEATURES. Retain the DaBin identity, metallic purple robot, minimal desktop presence, native compact/expanded experience, and every implemented capture, clipboard, file, task, project, note, search, history, reminder, export, privacy, recovery, and settings workflow.
+
+Focus on intuitive navigation, compact headers, readable preview-led cards, consistent icons, clear task design, an elegant thin robot body frame, responsive layout, and friendly restrained motion. No permanent sidebar. Preserve local data and existing behavior. Older briefs excluding tasks, composers or grouped file cards are obsolete.
+
+Compare two or three focused directions, select the strongest with reasons, then build a complete clickable prototype in an isolated open-design-v3 workspace with fictional data. Provide all required screens/states, light/dark and theme variants, compact and expanded layouts, keyboard/accessibility behavior, motion and Reduce Motion specifications, and editable component/token assets.
+
+Fill every FEATURES.csv row with the new location and evidence. Moving a feature is allowed; dropping it or leaving an unreachable placeholder is not. Native interactions that cannot be demonstrated in a browser need explicit simulation labels and complete implementation specifications.
+
+Run the acceptance scenarios and report results honestly. Deliver the prototype, editable designs/assets, completed feature matrix, old-to-new navigation map, source-file implementation map, actual-scale before/after images, interaction counts, QA report and remaining native verification. A single static mockup is not sufficient. Do not install, publish, alter production data, or add cloud/AI services during this design assignment.

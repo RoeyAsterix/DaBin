@@ -1,0 +1,152 @@
+[
+  {
+    "file": "reference-screens/current-build53/native-inbox-light-380-minimum.png",
+    "version": "0.4.2 (53)",
+    "kind": "synthetic native view QA render",
+    "sha256": "58b656bb35b53acd13142f96e31b192fad150b234e988a0de94d9ca930fccfd6"
+  },
+  {
+    "file": "reference-screens/current-build53/native-inbox-dark-760.png",
+    "version": "0.4.2 (53)",
+    "kind": "synthetic native view QA render",
+    "sha256": "9eb1ebbb611f8828829e6f52de8c2dcbbee75cf26a4258bf00bcbaace34da188"
+  },
+  {
+    "file": "reference-screens/current-build53/native-today-long-light-380-minimum.png",
+    "version": "0.4.2 (53)",
+    "kind": "synthetic native view QA render",
+    "sha256": "abadc7e6da69917ce715bbef5cdcacce3344c050dc30c90b083a6177de270cbc"
+  },
+  {
+    "file": "reference-screens/current-build53/native-today-long-dark-760.png",
+    "version": "0.4.2 (53)",
+    "kind": "synthetic native view QA render",
+    "sha256": "1802d3dc96e9fc2e32f588fda699449986d745d1ccb0dd1352202ef42bd87486"
+  },
+  {
+    "file": "reference-screens/current-build53/native-library-light-380-minimum.png",
+    "version": "0.4.2 (53)",
+    "kind": "synthetic native view QA render",
+    "sha256": "f6f81c63f38ee376738d5f8d0e21e101a7a8da9b60017a7876b4bbb2a9e04ac3"
+  },
+  {
+    "file": "reference-screens/current-build53/native-library-dark-760.png",
+    "version": "0.4.2 (53)",
+    "kind": "synthetic native view QA render",
+    "sha256": "9208125f296f401f90a92f1ab8363caf15eabeff334a9268184293fa5cffaaf1"
+  },
+  {
+    "file": "reference-screens/current-build53/native-clipboard-light-380-minimum.png",
+    "version": "0.4.2 (53)",
+    "kind": "synthetic native view QA render",
+    "sha256": "69bcc7527c8079a3d29f4fe201418b5c0a98f4f8229a2d69db63350abb8c174e"
+  },
+  {
+    "file": "reference-screens/current-build53/native-clipboard-dark-760.png",
+    "version": "0.4.2 (53)",
+    "kind": "synthetic native view QA render",
+    "sha256": "e6357f03e5dda437f83b3c95e514fbbf1b1e8fdd866b56af3bb6bf7c9280d93b"
+  },
+  {
+    "file": "reference-screens/current-build53/native-shelf-light-380-minimum.png",
+    "version": "0.4.2 (53)",
+    "kind": "synthetic native view QA render",
+    "sha256": "3a722d840463ee9d1c4132b663101647c64d2e72bcdaf3ed67aa5de751538ec5"
+  },
+  {
+    "file": "reference-screens/current-build53/native-shelf-dark-760.png",
+    "version": "0.4.2 (53)",
+    "kind": "synthetic native view QA render",
+    "sha256": "6031b4a609b7cba41d378246263cd045cdf05777615a567f1abdb23de57a72a3"
+  },
+  {
+    "file": "reference-screens/current-build53/native-scratchpad-light-380-minimum.png",
+    "version": "0.4.2 (53)",
+    "kind": "synthetic native view QA render",
+    "sha256": "b8e77bdbb023b2822c5293ed6969b2bc0765c2c2dd4207f9d0c20b15d3052a4f"
+  },
+  {
+    "file": "reference-screens/current-build53/native-scratchpad-dark-760.png",
+    "version": "0.4.2 (53)",
+    "kind": "synthetic native view QA render",
+    "sha256": "e9990d037c3d1edabb9f49abbbfa6d7f682188febe7d97aa727c068012a480e9"
+  },
+  {
+    "file": "reference-screens/current-build53/native-new-note-light-380-minimum.png",
+    "version": "0.4.2 (53)",
+    "kind": "synthetic native view QA render",
+    "sha256": "3075ea6b7ef27c643cf03191a223a4ee072158c1dadfa38908bd75d469f3c92f"
+  },
+  {
+    "file": "reference-screens/current-build53/native-new-note-dark-760.png",
+    "version": "0.4.2 (53)",
+    "kind": "synthetic native view QA render",
+    "sha256": "edaf20e6289c1cbe4cf13810802a2c4f094ce6999027441c39f7824a975c5a51"
+  },
+  {
+    "file": "reference-screens/current-build53/native-task-detail-light-380-minimum.png",
+    "version": "0.4.2 (53)",
+    "kind": "synthetic native view QA render",
+    "sha256": "975ec0270ef150d4b271ae1fef9fd2514c203cf1fd37096524bc71fa65f3622c"
+  },
+  {
+    "file": "reference-screens/current-build53/native-task-detail-dark-760.png",
+    "version": "0.4.2 (53)",
+    "kind": "synthetic native view QA render",
+    "sha256": "0d71b2818d7df043d37599df1aa7dd5404b90857c21d8fd59fe210f70c56b15f"
+  },
+  {
+    "file": "reference-screens/current-build53/native-scoped-search-light-380-minimum.png",
+    "version": "0.4.2 (53)",
+    "kind": "synthetic native view QA render",
+    "sha256": "ade6c888eb41fe313d3286a0af33f12297a93aafbf937a5852b368f5a69f1273"
+  },
+  {
+    "file": "reference-screens/current-build53/native-scoped-search-dark-760.png",
+    "version": "0.4.2 (53)",
+    "kind": "synthetic native view QA render",
+    "sha256": "f3099f3f91b5553664bb1e24723dd4d63a4a5aaae17795f2fa94e507520a202f"
+  },
+  {
+    "file": "reference-screens/current-build53/native-settings-light-380-minimum.png",
+    "version": "0.4.2 (53)",
+    "kind": "synthetic native view QA render",
+    "sha256": "ef6cc868d0bb28a94cc66578170bcf78cb335d46725feb89c2f8c09876aa6d9f"
+  },
+  {
+    "file": "reference-screens/current-build53/native-settings-dark-760.png",
+    "version": "0.4.2 (53)",
+    "kind": "synthetic native view QA render",
+    "sha256": "fab9a767f3f8bbbfbca6568073b62aafd77f934a593675da15d0fafa6238e6dc"
+  },
+  {
+    "file": "reference-screens/historical-build50/native-view-buddy-daily-dark-380x680.png",
+    "version": "historical build 50",
+    "kind": "synthetic native view QA render; superseded header/navigation",
+    "sha256": "a2f3046836ac08340c59eb9699be6b66f1bdefd321bd08bdaf39930b54aae205"
+  },
+  {
+    "file": "reference-screens/historical-build50/native-view-buddy-task-countdown-dark-380x680.png",
+    "version": "historical build 50",
+    "kind": "synthetic native view QA render; superseded header/navigation",
+    "sha256": "8bf45b9f8a3dfe02f1657c263e60fedfeaa4e76fbee8fcebfaa64b8557645116"
+  },
+  {
+    "file": "reference-screens/historical-build50/native-view-buddy-task-attachments-light-720x740.png",
+    "version": "historical build 50",
+    "kind": "synthetic native view QA render; superseded header/navigation",
+    "sha256": "2c6d6d7329c0bd6753c5181c1b65b3a8ace3cb228b8244fafea61eb1adaec260"
+  },
+  {
+    "file": "reference-screens/historical-build50/native-view-buddy-image-detail-light-380x740.png",
+    "version": "historical build 50",
+    "kind": "synthetic native view QA render; superseded header/navigation",
+    "sha256": "63eaa083716109e02af0196d6d46c894f66b41dea2668dcaba866996c0dc887d"
+  },
+  {
+    "file": "reference-screens/historical-build50/native-view-buddy-robot-frame-dark-400x670.png",
+    "version": "historical build 50",
+    "kind": "synthetic native view QA render; superseded header/navigation",
+    "sha256": "0adad600252cedc4cc37a1a56bc6f5312509139227d39042ffb6492de96bb8bf"
+  }
+]

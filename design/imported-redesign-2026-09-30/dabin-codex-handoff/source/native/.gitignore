@@ -1,0 +1,5 @@
+build/ModuleCache/
+build/tests/
+build/*.dSYM/
+.DS_Store
+xcuserdata/

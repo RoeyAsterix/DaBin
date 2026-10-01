@@ -1,0 +1,30 @@
+{
+  "verifiedAtUTC": "2026-10-01T04:02:45.529523+00:00",
+  "version": "0.4.5",
+  "build": "57",
+  "runningInstalledPIDs": [
+    94561
+  ],
+  "installedExecutableMatchesBuild": true,
+  "strictSignatureVerified": true,
+  "privateBackupVerifiedFileCount": 228,
+  "originalCaptureCount": 40,
+  "currentCaptureCount": 40,
+  "allOriginalCapturePayloadsPreserved": false,
+  "originalAttachmentCount": 16,
+  "allOriginalAttachmentsByteIdentical": true,
+  "qaSuitesPassed": 9,
+  "qaSuitesFailed": 0,
+  "qaSourceChangedDuringRun": false,
+  "sharedQABuildInputCount": 108,
+  "qaBuildInputMismatches": [],
+  "currentBuildInputMismatches": [],
+  "desktopShortcutResolvesToUpdatedApp": true,
+  "allOriginalCaptureIDsPreserved": true,
+  "allOriginalCaptureContentAndUserMetadataPreserved": true,
+  "changedLifecycleFields": {
+    "previewState": 1
+  },
+  "previewLifecycleExplanation": "One existing preview changed from idle to ready during normal launch processing.",
+  "liveUpdatedWindowVerified": true
+}

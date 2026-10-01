@@ -1,0 +1,1615 @@
+{
+  "product": "DaBin",
+  "delivery": "Codex design and UX handoff",
+  "date": "2026-09-30",
+  "native_reference": "0.4.2 (53)",
+  "native_reference_commit": "b3f8507a77107474f923d9e4af5fc8ad4efe4a00",
+  "reference_checks": {
+    "passed": 361,
+    "failed": 0,
+    "rendered": false,
+    "native_redesign_verified": false
+  },
+  "files": [
+    {
+      "path": "ACCEPTANCE_CHECKLIST.md",
+      "bytes": 8508,
+      "sha256": "f27107c339327d3468b7a2fca155bce8e57bbce21d205fae73e4b5acf543cee4"
+    },
+    {
+      "path": "CODEX_PROMPT.md",
+      "bytes": 3836,
+      "sha256": "5a8e1055f376842f255e9f61d97d5fa27e998f966bb70f6390227dc384b9368c"
+    },
+    {
+      "path": "DESIGN_UX_HANDOFF.md",
+      "bytes": 18105,
+      "sha256": "09b16736206c03a1d36082e77ce00af3d32f050ba0a4ee96d5c7f1e65271286f"
+    },
+    {
+      "path": "HANDOFF_QA.md",
+      "bytes": 2379,
+      "sha256": "2e54cebd499aa8c8abe7c008bb28d7fee2e68560aa07f0c1fb9a1363a0df209a"
+    },
+    {
+      "path": "PACKAGE_CHECKS.json",
+      "bytes": 1467,
+      "sha256": "c6838d2228ae49ff5b21182142e6ccf8cac9f3ff1018489b907f9e4bb00f285c"
+    },
+    {
+      "path": "START_HERE.md",
+      "bytes": 3623,
+      "sha256": "f5d925ca1cbb5626dda6e6e74b2254679352b9e8a496de5028685229720d683f"
+    },
+    {
+      "path": "activity.html",
+      "bytes": 188050,
+      "sha256": "d7139947dd45344bebc189728cdd69d73f7396c28410d166f51ebc7dbe49bf77"
+    },
+    {
+      "path": "backup.html",
+      "bytes": 188046,
+      "sha256": "59a9eb189c4a77bf9dcc55c8bed6276f97d59c92f6d38336cca4144139a2e6dd"
+    },
+    {
+      "path": "brand-spec.md",
+      "bytes": 1283,
+      "sha256": "1ef4f7e32b2dcd1e9d57aced51aa9a01f8befdf4d2c70703a5b48bd25b5b268e"
+    },
+    {
+      "path": "capture-detail.html",
+      "bytes": 188062,
+      "sha256": "e1d44d8742310c9975da9ac7650d1d93d698e21f35332b52bbf65c82a5faa6b9"
+    },
+    {
+      "path": "clipboard.html",
+      "bytes": 188052,
+      "sha256": "6c362c7132ca5ae93862ec3e5dc554df96566cf53093146785d1fb17eb284692"
+    },
+    {
+      "path": "critique.json",
+      "bytes": 872,
+      "sha256": "837e959ddfba7027bf3f1e37af8bc6e6905dc66365027d7399ac970610bcc37b"
+    },
+    {
+      "path": "design-review.html",
+      "bytes": 7630,
+      "sha256": "b100ef634f1a61a2242ee4c4e57b43b8c1bd04cd497d2a62c9fb9aba661e05f9"
+    },
+    {
+      "path": "export.html",
+      "bytes": 188046,
+      "sha256": "b2e979e72c956b05e113ac2138b687b5112f085cda0f5c1e279e619c84e1355f"
+    },
+    {
+      "path": "inbox.html",
+      "bytes": 188044,
+      "sha256": "ea9b3e5828516382e6c0f0243b07ded427b8114c4d2501e43f6af8caa5a537ef"
+    },
+    {
+      "path": "index.html",
+      "bytes": 8462,
+      "sha256": "280e9ebf9576ad65937fdfc2b90ced9d148b8b88a89fa006152582186c34b637"
+    },
+    {
+      "path": "new-note.html",
+      "bytes": 188050,
+      "sha256": "aa37b77f5e3b2d22a604f74891c974f3bb958bce0adae9a9ed6899940b2c3d74"
+    },
+    {
+      "path": "new-task.html",
+      "bytes": 188050,
+      "sha256": "a0e134c14eb9b85f42b5ac14d0cfaa4359e868d3941c09866c6d6a212d8fd329"
+    },
+    {
+      "path": "notes.html",
+      "bytes": 188044,
+      "sha256": "34d040368a4c46fb410c53b206b3b6686f4900bb14ce4779d4dab0d44f2827e4"
+    },
+    {
+      "path": "open-design-v3/CHECKLIST.md",
+      "bytes": 1386,
+      "sha256": "58c2ae3f0e4a0842dc97719376f3ca36ad1899c0fa640f2e0469383479f08872"
+    },
+    {
+      "path": "open-design-v3/CONTENT_TRAIL.md",
+      "bytes": 3261,
+      "sha256": "2839649f11c4c514df44074f0e94c8245b69c4425e78d5d8d7325c03b7a58908"
+    },
+    {
+      "path": "open-design-v3/DESIGN.md",
+      "bytes": 7543,
+      "sha256": "6982daa2927a0bd891b49d0c212ac092f4f2a2f48030fffdbd7b3bc1e0de9d76"
+    },
+    {
+      "path": "open-design-v3/FEATURES.csv",
+      "bytes": 36700,
+      "sha256": "bbb9a2fbfdb5be1b8f0c36fa9de9ebefb21e06402758f75e26cf18fcca044101"
+    },
+    {
+      "path": "open-design-v3/IMPLEMENTATION_MAP.md",
+      "bytes": 11151,
+      "sha256": "d2006d4ce49624d00b61f0244a290848868b8a0e65d5fe664e41075746ebc61e"
+    },
+    {
+      "path": "open-design-v3/NAVIGATION_MAP.md",
+      "bytes": 3249,
+      "sha256": "1a3ad4a08de50aede52a8118b7e66644e3ce670e1d91654b604a93a9c8d82b4f"
+    },
+    {
+      "path": "open-design-v3/PLAN.md",
+      "bytes": 838,
+      "sha256": "5b6a1b7c82004d39e5e69ed8d444d62464da47a8424cfb0be7c22fbe6ca1038d"
+    },
+    {
+      "path": "open-design-v3/PROVENANCE_PLAN.md",
+      "bytes": 411,
+      "sha256": "3049b2525efab5c2c461635ff797af7f7343a607a4dd7934a04bc0f816b65692"
+    },
+    {
+      "path": "open-design-v3/QA_REPORT.md",
+      "bytes": 13260,
+      "sha256": "3d4a3d21e3daff21d6249b6dbad0462ac3dd59ccbdd93085c21a47d14852590c"
+    },
+    {
+      "path": "open-design-v3/README.md",
+      "bytes": 3080,
+      "sha256": "bdaffccd2447c747f7595a30907c4a768e2f1d06605219b06bfd82fbb26ef96f"
+    },
+    {
+      "path": "open-design-v3/REFINEMENT_PLAN.md",
+      "bytes": 589,
+      "sha256": "426c0e3857559b6641c93ad6ac8a838daed1cd6daea1c1996805b8a453d8744b"
+    },
+    {
+      "path": "open-design-v3/RESPONSIVE_PLAN.md",
+      "bytes": 377,
+      "sha256": "8c8a9a86137f64b2e37d734eef588aaf5cbbafe00e0f529bb2c6c8b44a33a18f"
+    },
+    {
+      "path": "open-design-v3/RESPONSIVE_QA.md",
+      "bytes": 2814,
+      "sha256": "f93ac3df80157480e714baca46d447ffe8e5a0b1e04d6a7d34b7311c121bdef7"
+    },
+    {
+      "path": "open-design-v3/TASK_UX.md",
+      "bytes": 3279,
+      "sha256": "ab90913ad1f954657bec669ed2fd0dc5c6b0c74283f0a3dea167378960059e0b"
+    },
+    {
+      "path": "open-design-v3/TASK_UX_PLAN.md",
+      "bytes": 598,
+      "sha256": "0a53c08666ffebc418ee9099c8c12b4bb9846f3e7bb78c1bb18f41fd346c2d6f"
+    },
+    {
+      "path": "open-design-v3/assets/app-icons/chrome.icns",
+      "bytes": 86270,
+      "sha256": "770c76bce29805a54ffd4fa28929f7f03a86d42d8cf281cadcff694e17483b95"
+    },
+    {
+      "path": "open-design-v3/assets/app-icons/chrome.png",
+      "bytes": 12477,
+      "sha256": "f32a3ad7d00da0e0778c177f706891d3d4a4510296dca79b9ac0b2798947e2b6"
+    },
+    {
+      "path": "open-design-v3/assets/app-icons/finder.icns",
+      "bytes": 46496,
+      "sha256": "b546ef6f51eb9bdcd868771ce6695239969263f0234e446d26cebcb7b857b793"
+    },
+    {
+      "path": "open-design-v3/assets/app-icons/finder.png",
+      "bytes": 8458,
+      "sha256": "ee73cf0f15622baca7468104e6f6a4616d27fe69f7c21e1cb2cbe6e2e771e23b"
+    },
+    {
+      "path": "open-design-v3/assets/app-icons/mail.icns",
+      "bytes": 44726,
+      "sha256": "f7172740527b2114840806ecbfd8df33d36756ac551d0b922e6bb96793b9d75e"
+    },
+    {
+      "path": "open-design-v3/assets/app-icons/mail.png",
+      "bytes": 7984,
+      "sha256": "917c0d8557344430486bc0d74a028b6b7c6466580e9cb419c5b43d1df44b22ec"
+    },
+    {
+      "path": "open-design-v3/assets/app-icons/notes.icns",
+      "bytes": 20864,
+      "sha256": "3936b1834b262e7b8ae651a58dd536cd9b14af4a5da40145a899407445d04190"
+    },
+    {
+      "path": "open-design-v3/assets/app-icons/notes.png",
+      "bytes": 4589,
+      "sha256": "db183c102d456e6f6fc11926520886885f5f05e33326b317aff494d48c39a8d8"
+    },
+    {
+      "path": "open-design-v3/assets/app-icons/provenance.json",
+      "bytes": 1269,
+      "sha256": "b84cc3b47616e9473a93454f9d372adbc2f9a0fe02226644c0a6bae7b940d14e"
+    },
+    {
+      "path": "open-design-v3/assets/app-icons/safari.icns",
+      "bytes": 65150,
+      "sha256": "3dd019e290d9402434ebecac8a1944168e27f3a9b0b53ad05150da2ea5066846"
+    },
+    {
+      "path": "open-design-v3/assets/app-icons/safari.png",
+      "bytes": 10767,
+      "sha256": "66694059349847f066c209958ca8af737f16ba4c71178d0ebff717f5d17b41dd"
+    },
+    {
+      "path": "open-design-v3/assets/app-icons/slack.icns",
+      "bytes": 377045,
+      "sha256": "3dbeaea1c9455ae24442925bb73aea43db2495a334a5cae9c87e2328a6bdbc3e"
+    },
+    {
+      "path": "open-design-v3/assets/app-icons/slack.png",
+      "bytes": 5942,
+      "sha256": "ff242a6d011604c96f11760ee89a91f60c8ea6d3126d9e5e8363f3863523a36c"
+    },
+    {
+      "path": "open-design-v3/assets/client-feedback.txt",
+      "bytes": 258,
+      "sha256": "465e000c7f6befaaae41089740c09d7a8d4b7f89d01564b07726904f418606e0"
+    },
+    {
+      "path": "open-design-v3/assets/logo-reference.png",
+      "bytes": 47204,
+      "sha256": "5997fb512c7399023d7e9f6fa0ba50119697ba1bd1607582c5d85ec481eb71f1"
+    },
+    {
+      "path": "open-design-v3/assets/northstar-study.svg",
+      "bytes": 944,
+      "sha256": "b288853946495af39173e6db01c68b8b85e0f7158c3f988b24cb35c2aa943549"
+    },
+    {
+      "path": "open-design-v3/assets/original-robot.svg",
+      "bytes": 1943,
+      "sha256": "20bd5c1de92dd5e79ef259430c441e2b9a1d3608812ae79e5b2999a64eaf8a7a"
+    },
+    {
+      "path": "open-design-v3/build.py",
+      "bytes": 1382,
+      "sha256": "6a6eb3b645dcc6f1d339b4281765a1f1d548ab9bd76d4c786ff79bfccfae26a8"
+    },
+    {
+      "path": "open-design-v3/events.js",
+      "bytes": 12655,
+      "sha256": "9717434da28e4ae2deda1a77a01d0fd1ef614059704ea9f61a75fee1689a4dc2"
+    },
+    {
+      "path": "open-design-v3/interactions.js",
+      "bytes": 26808,
+      "sha256": "03a5ce85522ede4ee801d6fc61b156054854eb72f10fd06a499e3b1bc5b3784e"
+    },
+    {
+      "path": "open-design-v3/model.js",
+      "bytes": 16212,
+      "sha256": "66a9e68ddacde8aabe721f9c76aec4143873f0a615d1ede3dbcc9bf749b37443"
+    },
+    {
+      "path": "open-design-v3/project-picker.css",
+      "bytes": 3310,
+      "sha256": "9ab7631252844cada1cf477ed5780e3fae975f198cb9e5b1967c001d8c23a518"
+    },
+    {
+      "path": "open-design-v3/project-picker.js",
+      "bytes": 6920,
+      "sha256": "3607a248588e3edc488375594d9853f82bee26c2a425f25d6b09313797cb08dd"
+    },
+    {
+      "path": "open-design-v3/provenance.css",
+      "bytes": 4263,
+      "sha256": "6c1a09cb3e27b67ea317bff8af8fb92f6776da1f734920796ea5235e87634db4"
+    },
+    {
+      "path": "open-design-v3/provenance.js",
+      "bytes": 7410,
+      "sha256": "3b2891550d9219f54f501eaa2bb801fbdf8c22f7402997e1314021d557828f12"
+    },
+    {
+      "path": "open-design-v3/qa/responsive_checks.py",
+      "bytes": 4072,
+      "sha256": "edbe337c137dd8913a1a92d16ba07021f36cbdd375bda841fd65784d60f73d28"
+    },
+    {
+      "path": "open-design-v3/qa-results.json",
+      "bytes": 38233,
+      "sha256": "c699228f9f27b7501664dcc983900c0af11dc4edfe393c83adef52c36190f104"
+    },
+    {
+      "path": "open-design-v3/refinement.css",
+      "bytes": 11967,
+      "sha256": "f8d322bae9d596eb9f0c5c169cebb0cc43002cfef4d2753a6a2a952310c50fd0"
+    },
+    {
+      "path": "open-design-v3/responsive.css",
+      "bytes": 2253,
+      "sha256": "1a550aea78fdb07116cee988f45bc14d2657d4a27463af08615f19d8e65c81cd"
+    },
+    {
+      "path": "open-design-v3/responsive.js",
+      "bytes": 1920,
+      "sha256": "dfc02ebeff86c0f0053e6711cff9d6215502d400384c3d9d63469ade012e32ae"
+    },
+    {
+      "path": "open-design-v3/screen-index.json",
+      "bytes": 421,
+      "sha256": "5dbb913e1f0a0de4b55b0ba5cc9fa3f4b4fc7e782ff421e76204c2205b0e03a3"
+    },
+    {
+      "path": "open-design-v3/settings.js",
+      "bytes": 13137,
+      "sha256": "c036b5b09562609824a873aed8f466f2c818b36088d486113ff9afbb2b00b258"
+    },
+    {
+      "path": "open-design-v3/specs/FEATURE_CONTRACTS.md",
+      "bytes": 62429,
+      "sha256": "17b8baa8ebef6d50c530eb8d45ebc722f261fa213aa1478b08a53d25b5cf7f47"
+    },
+    {
+      "path": "open-design-v3/specs/ROBOT_MOTION.md",
+      "bytes": 6211,
+      "sha256": "3bb6954a3f3c5d6d96e9b3ec80fb54850841d4969933e695250795ee0e7c715b"
+    },
+    {
+      "path": "open-design-v3/task-ui.css",
+      "bytes": 13515,
+      "sha256": "3bb7d7d175c77357dc90472d7037d1ff7469b8cad5a1078766cddb6b04ec4de9"
+    },
+    {
+      "path": "open-design-v3/task-ui.js",
+      "bytes": 18944,
+      "sha256": "91d3cbabfe22e9988048cdb1b42dcc72df92d59d56310f82408fe2f572ad64ff"
+    },
+    {
+      "path": "open-design-v3/tokens.css",
+      "bytes": 23097,
+      "sha256": "33a146618bd600cd4ada297d9abcc1c6609c541bb4317330a2166d7c202b3de1"
+    },
+    {
+      "path": "open-design-v3/verify.py",
+      "bytes": 20359,
+      "sha256": "592c30814ae25c0403650c550dc613ecd2329a32ad0de2e14296dd62ca75118f"
+    },
+    {
+      "path": "open-design-v3/views.js",
+      "bytes": 25382,
+      "sha256": "e59ad16f5aebe4811591e729260549adaaa357532835fcd2a5dd88549fe40533"
+    },
+    {
+      "path": "open-design-v3/write_specs.py",
+      "bytes": 26252,
+      "sha256": "1ad7657cbf99a56d062959b58ab6a0eb72c2a78605ad556b402a3090c5c43e53"
+    },
+    {
+      "path": "recently-deleted.html",
+      "bytes": 188066,
+      "sha256": "40e5e49e338245573ce920524e280c9225052bcd98f061e00c8c598bbe357612"
+    },
+    {
+      "path": "reminder.html",
+      "bytes": 188050,
+      "sha256": "6ab879bcf2a0288691e87a8756734fd3c3110331e5aaec7584518054ddbc3343"
+    },
+    {
+      "path": "robot.html",
+      "bytes": 188044,
+      "sha256": "c912ccbafe06d29a80b8f4e9e9d3684dd5fed1a6753e19fa80766f7f68bde67a"
+    },
+    {
+      "path": "search.html",
+      "bytes": 188046,
+      "sha256": "9449c1acd0a39e6381fdf1c7b52db5f0ca76c7208caf7f99ceb3fcce588c4537"
+    },
+    {
+      "path": "settings.html",
+      "bytes": 188050,
+      "sha256": "97156f7fe3806355621e9a212de5e34dcea8a314c61bdc190b432858f9fc25e9"
+    },
+    {
+      "path": "shelf.html",
+      "bytes": 188044,
+      "sha256": "1a9c91794f961a7f1bfb408bcdbdf972c6d6c639ced665fb638f1c9cbcb23b47"
+    },
+    {
+      "path": "source/MANIFEST.json",
+      "bytes": 43405,
+      "sha256": "0db142761ff0575f308062b6024b96b9670171beb8ba05e81972a3e4f4710126"
+    },
+    {
+      "path": "source/OPEN_DESIGN_HANDOFF.md",
+      "bytes": 848,
+      "sha256": "4f8710c8af782d23ac3bb185a6d295d6961ade6edcb0df77a4421cce7c192523"
+    },
+    {
+      "path": "source/README.txt",
+      "bytes": 740,
+      "sha256": "f46e5547443f37e7db00ca90b86ccb1470f53ec8c4e0f2336fb23b79982fa6c9"
+    },
+    {
+      "path": "source/START_HERE.txt",
+      "bytes": 2108,
+      "sha256": "03e95196b3e429ed8f822ece78391b64d94da59a36a92aaae3376cc5fcd5c1a4"
+    },
+    {
+      "path": "source/design/open-design-handoff-2026-09-30/ACCEPTANCE.md",
+      "bytes": 8846,
+      "sha256": "0468aa2487249e75fe5eea0636bb0c2c1b6cf152061e4f527b204bbc2bf82a91"
+    },
+    {
+      "path": "source/design/open-design-handoff-2026-09-30/BRIEF.md",
+      "bytes": 17477,
+      "sha256": "259ddfc8c9413f5dd1ded73f347004c0b5519b6217366869b2568405bdaf95c7"
+    },
+    {
+      "path": "source/design/open-design-handoff-2026-09-30/FEATURES.csv",
+      "bytes": 24546,
+      "sha256": "a60de6608b158f2613aa04c0365a221dd3079dc6d263bbd11fdb10f34de4ade4"
+    },
+    {
+      "path": "source/design/open-design-handoff-2026-09-30/OPEN_DESIGN_PROMPT.txt",
+      "bytes": 2108,
+      "sha256": "03e95196b3e429ed8f822ece78391b64d94da59a36a92aaae3376cc5fcd5c1a4"
+    },
+    {
+      "path": "source/design/open-design-handoff-2026-09-30/README.md",
+      "bytes": 2230,
+      "sha256": "b1b237050acf3beb66233dca7073bbb332594591630ae6953d9ad09a6de51d52"
+    },
+    {
+      "path": "source/design/open-design-handoff-2026-09-30/SCREENS_AND_STATES.md",
+      "bytes": 8413,
+      "sha256": "e3f278952c7985b07f9dff45ff76e2ef3d10ca0dab1d146571c3f067762bc63f"
+    },
+    {
+      "path": "source/design/open-design-handoff-2026-09-30/SCREEN_PROVENANCE.json",
+      "bytes": 6510,
+      "sha256": "d05387e9b85097fa554f8dbd87f62f5fc34a0560fcba62e9c61b4ac15e0cad0b"
+    },
+    {
+      "path": "source/design/open-design-handoff-2026-09-30/SOURCE_MAP.md",
+      "bytes": 6467,
+      "sha256": "8128f6b1cbcdaf3b195abca477ed35c44fad5c1ce54d125892ee3ec97fe49993"
+    },
+    {
+      "path": "source/design/open-design-handoff-2026-09-30/assets/logo-reference.png",
+      "bytes": 47204,
+      "sha256": "5997fb512c7399023d7e9f6fa0ba50119697ba1bd1607582c5d85ec481eb71f1"
+    },
+    {
+      "path": "source/design/open-design-handoff-2026-09-30/assets/original-robot.svg",
+      "bytes": 1943,
+      "sha256": "20bd5c1de92dd5e79ef259430c441e2b9a1d3608812ae79e5b2999a64eaf8a7a"
+    },
+    {
+      "path": "source/design/open-design-handoff-2026-09-30/build_package.py",
+      "bytes": 23252,
+      "sha256": "08e008d75a7a015c4702d3fa7224726a6f979241c898dc99266455628541545e"
+    },
+    {
+      "path": "source/design/open-design-handoff-2026-09-30/reference-screens/current-build53/native-clipboard-dark-760.png",
+      "bytes": 123111,
+      "sha256": "e6357f03e5dda437f83b3c95e514fbbf1b1e8fdd866b56af3bb6bf7c9280d93b"
+    },
+    {
+      "path": "source/design/open-design-handoff-2026-09-30/reference-screens/current-build53/native-clipboard-light-380-minimum.png",
+      "bytes": 67527,
+      "sha256": "69bcc7527c8079a3d29f4fe201418b5c0a98f4f8229a2d69db63350abb8c174e"
+    },
+    {
+      "path": "source/design/open-design-handoff-2026-09-30/reference-screens/current-build53/native-inbox-dark-760.png",
+      "bytes": 110429,
+      "sha256": "9eb1ebbb611f8828829e6f52de8c2dcbbee75cf26a4258bf00bcbaace34da188"
+    },
+    {
+      "path": "source/design/open-design-handoff-2026-09-30/reference-screens/current-build53/native-inbox-light-380-minimum.png",
+      "bytes": 68377,
+      "sha256": "58b656bb35b53acd13142f96e31b192fad150b234e988a0de94d9ca930fccfd6"
+    },
+    {
+      "path": "source/design/open-design-handoff-2026-09-30/reference-screens/current-build53/native-library-dark-760.png",
+      "bytes": 127936,
+      "sha256": "9208125f296f401f90a92f1ab8363caf15eabeff334a9268184293fa5cffaaf1"
+    },
+    {
+      "path": "source/design/open-design-handoff-2026-09-30/reference-screens/current-build53/native-library-light-380-minimum.png",
+      "bytes": 66995,
+      "sha256": "f6f81c63f38ee376738d5f8d0e21e101a7a8da9b60017a7876b4bbb2a9e04ac3"
+    },
+    {
+      "path": "source/design/open-design-handoff-2026-09-30/reference-screens/current-build53/native-new-note-dark-760.png",
+      "bytes": 61037,
+      "sha256": "edaf20e6289c1cbe4cf13810802a2c4f094ce6999027441c39f7824a975c5a51"
+    },
+    {
+      "path": "source/design/open-design-handoff-2026-09-30/reference-screens/current-build53/native-new-note-light-380-minimum.png",
+      "bytes": 47381,
+      "sha256": "3075ea6b7ef27c643cf03191a223a4ee072158c1dadfa38908bd75d469f3c92f"
+    },
+    {
+      "path": "source/design/open-design-handoff-2026-09-30/reference-screens/current-build53/native-scoped-search-dark-760.png",
+      "bytes": 84439,
+      "sha256": "f3099f3f91b5553664bb1e24723dd4d63a4a5aaae17795f2fa94e507520a202f"
+    },
+    {
+      "path": "source/design/open-design-handoff-2026-09-30/reference-screens/current-build53/native-scoped-search-light-380-minimum.png",
+      "bytes": 67282,
+      "sha256": "ade6c888eb41fe313d3286a0af33f12297a93aafbf937a5852b368f5a69f1273"
+    },
+    {
+      "path": "source/design/open-design-handoff-2026-09-30/reference-screens/current-build53/native-scratchpad-dark-760.png",
+      "bytes": 83029,
+      "sha256": "e9990d037c3d1edabb9f49abbbfa6d7f682188febe7d97aa727c068012a480e9"
+    },
+    {
+      "path": "source/design/open-design-handoff-2026-09-30/reference-screens/current-build53/native-scratchpad-light-380-minimum.png",
+      "bytes": 61383,
+      "sha256": "b8e77bdbb023b2822c5293ed6969b2bc0765c2c2dd4207f9d0c20b15d3052a4f"
+    },
+    {
+      "path": "source/design/open-design-handoff-2026-09-30/reference-screens/current-build53/native-settings-dark-760.png",
+      "bytes": 121046,
+      "sha256": "fab9a767f3f8bbbfbca6568073b62aafd77f934a593675da15d0fafa6238e6dc"
+    },
+    {
+      "path": "source/design/open-design-handoff-2026-09-30/reference-screens/current-build53/native-settings-light-380-minimum.png",
+      "bytes": 65294,
+      "sha256": "ef6cc868d0bb28a94cc66578170bcf78cb335d46725feb89c2f8c09876aa6d9f"
+    },
+    {
+      "path": "source/design/open-design-handoff-2026-09-30/reference-screens/current-build53/native-shelf-dark-760.png",
+      "bytes": 87400,
+      "sha256": "6031b4a609b7cba41d378246263cd045cdf05777615a567f1abdb23de57a72a3"
+    },
+    {
+      "path": "source/design/open-design-handoff-2026-09-30/reference-screens/current-build53/native-shelf-light-380-minimum.png",
+      "bytes": 61874,
+      "sha256": "3a722d840463ee9d1c4132b663101647c64d2e72bcdaf3ed67aa5de751538ec5"
+    },
+    {
+      "path": "source/design/open-design-handoff-2026-09-30/reference-screens/current-build53/native-task-detail-dark-760.png",
+      "bytes": 89585,
+      "sha256": "0d71b2818d7df043d37599df1aa7dd5404b90857c21d8fd59fe210f70c56b15f"
+    },
+    {
+      "path": "source/design/open-design-handoff-2026-09-30/reference-screens/current-build53/native-task-detail-light-380-minimum.png",
+      "bytes": 55030,
+      "sha256": "975ec0270ef150d4b271ae1fef9fd2514c203cf1fd37096524bc71fa65f3622c"
+    },
+    {
+      "path": "source/design/open-design-handoff-2026-09-30/reference-screens/current-build53/native-today-long-dark-760.png",
+      "bytes": 91109,
+      "sha256": "1802d3dc96e9fc2e32f588fda699449986d745d1ccb0dd1352202ef42bd87486"
+    },
+    {
+      "path": "source/design/open-design-handoff-2026-09-30/reference-screens/current-build53/native-today-long-light-380-minimum.png",
+      "bytes": 68165,
+      "sha256": "abadc7e6da69917ce715bbef5cdcacce3344c050dc30c90b083a6177de270cbc"
+    },
+    {
+      "path": "source/design/open-design-handoff-2026-09-30/reference-screens/historical-build50/native-view-buddy-daily-dark-380x680.png",
+      "bytes": 56774,
+      "sha256": "a2f3046836ac08340c59eb9699be6b66f1bdefd321bd08bdaf39930b54aae205"
+    },
+    {
+      "path": "source/design/open-design-handoff-2026-09-30/reference-screens/historical-build50/native-view-buddy-image-detail-light-380x740.png",
+      "bytes": 47212,
+      "sha256": "63eaa083716109e02af0196d6d46c894f66b41dea2668dcaba866996c0dc887d"
+    },
+    {
+      "path": "source/design/open-design-handoff-2026-09-30/reference-screens/historical-build50/native-view-buddy-robot-frame-dark-400x670.png",
+      "bytes": 70749,
+      "sha256": "0adad600252cedc4cc37a1a56bc6f5312509139227d39042ffb6492de96bb8bf"
+    },
+    {
+      "path": "source/design/open-design-handoff-2026-09-30/reference-screens/historical-build50/native-view-buddy-task-attachments-light-720x740.png",
+      "bytes": 73207,
+      "sha256": "2c6d6d7329c0bd6753c5181c1b65b3a8ace3cb228b8244fafea61eb1adaec260"
+    },
+    {
+      "path": "source/design/open-design-handoff-2026-09-30/reference-screens/historical-build50/native-view-buddy-task-countdown-dark-380x680.png",
+      "bytes": 58014,
+      "sha256": "8bf45b9f8a3dfe02f1657c263e60fedfeaa4e76fbee8fcebfaa64b8557645116"
+    },
+    {
+      "path": "source/native/.gitignore",
+      "bytes": 68,
+      "sha256": "c3123ce672153bdb7e61bf1c3baa5f41445ea4bbf278b81b52034d706d2557ee"
+    },
+    {
+      "path": "source/native/ARCHITECTURE.md",
+      "bytes": 21940,
+      "sha256": "9f7eda94c7fb79aa3906a49a209c1df5daad4d67a181226c158a32bbfa4c3ade"
+    },
+    {
+      "path": "source/native/Config/AppStoreSigning.json",
+      "bytes": 77,
+      "sha256": "a6072c1ad444175cf204f71d3f8d8d39e0d15bcd3d74d672a4a1924ac525ddf5"
+    },
+    {
+      "path": "source/native/DaBin.xcodeproj/project.pbxproj",
+      "bytes": 48727,
+      "sha256": "d7092804f7cfbcec8953f0a2c70f37ee466a843f26e326c9cdc946906bb0db6a"
+    },
+    {
+      "path": "source/native/DaBin.xcodeproj/xcshareddata/xcschemes/DaBin.xcscheme",
+      "bytes": 2251,
+      "sha256": "0922aad38e86918dc38f90b76d197e0405997d7dcd571bde62063ae96e4db283"
+    },
+    {
+      "path": "source/native/README.md",
+      "bytes": 31051,
+      "sha256": "a457a05d21265ee87efc3c7bf4dbd81792f0d3fcec361a1b23e04eb53de5b9b1"
+    },
+    {
+      "path": "source/native/Resources/AppIcon.icns",
+      "bytes": 531662,
+      "sha256": "9ba9c0e655b1b9956a016d9d1a547d5fa598522664d1d21d2caf292ef6a1dadd"
+    },
+    {
+      "path": "source/native/Resources/Assets.xcassets/AppIcon.appiconset/Contents.json",
+      "bytes": 1256,
+      "sha256": "023560f7a29a7bddd154ad3c5144fc77e5f96fa307512b5c1561bde8df6edf60"
+    },
+    {
+      "path": "source/native/Resources/Assets.xcassets/AppIcon.appiconset/icon_128x128.png",
+      "bytes": 10702,
+      "sha256": "d8fecc1e2018b8ec74c7eefb490a9d2ce0a6dd437f94d3b0213400a3216d8661"
+    },
+    {
+      "path": "source/native/Resources/Assets.xcassets/AppIcon.appiconset/icon_128x128@2x.png",
+      "bytes": 29595,
+      "sha256": "da8ef141c6683fde940dfd51bc8650628dcd0b9f5ed73c04448f94736f1965e3"
+    },
+    {
+      "path": "source/native/Resources/Assets.xcassets/AppIcon.appiconset/icon_16x16.png",
+      "bytes": 727,
+      "sha256": "21cb38653ce20e298bede7ccf80adc1c8ba36f403518375ed43dc77dd13caee2"
+    },
+    {
+      "path": "source/native/Resources/Assets.xcassets/AppIcon.appiconset/icon_16x16@2x.png",
+      "bytes": 1683,
+      "sha256": "6496c5db46085442ab9b892b7fd0ce6529a702c6da594bd16bbbbf94e0ad16a2"
+    },
+    {
+      "path": "source/native/Resources/Assets.xcassets/AppIcon.appiconset/icon_256x256.png",
+      "bytes": 29595,
+      "sha256": "da8ef141c6683fde940dfd51bc8650628dcd0b9f5ed73c04448f94736f1965e3"
+    },
+    {
+      "path": "source/native/Resources/Assets.xcassets/AppIcon.appiconset/icon_256x256@2x.png",
+      "bytes": 84324,
+      "sha256": "ab096acf94ba95d4ff7b6df845b604fd701485517f17cbdd0d118a6a6e9f4708"
+    },
+    {
+      "path": "source/native/Resources/Assets.xcassets/AppIcon.appiconset/icon_32x32.png",
+      "bytes": 1683,
+      "sha256": "6496c5db46085442ab9b892b7fd0ce6529a702c6da594bd16bbbbf94e0ad16a2"
+    },
+    {
+      "path": "source/native/Resources/Assets.xcassets/AppIcon.appiconset/icon_32x32@2x.png",
+      "bytes": 4386,
+      "sha256": "83740f8aa58b08af2356f3e110ab58ada92c038951bcb45e8b799df2ab55ff97"
+    },
+    {
+      "path": "source/native/Resources/Assets.xcassets/AppIcon.appiconset/icon_512x512.png",
+      "bytes": 84324,
+      "sha256": "ab096acf94ba95d4ff7b6df845b604fd701485517f17cbdd0d118a6a6e9f4708"
+    },
+    {
+      "path": "source/native/Resources/Assets.xcassets/AppIcon.appiconset/icon_512x512@2x.png",
+      "bytes": 280161,
+      "sha256": "44ad308890153268409b08ee22050d66557327c92cbd3f9bb8d0f071c03e72b5"
+    },
+    {
+      "path": "source/native/Resources/Assets.xcassets/Contents.json",
+      "bytes": 59,
+      "sha256": "a3393322cd7b4c1e0aa93bebe09abaa91ad891290d1225b0b5d10b5c6f216025"
+    },
+    {
+      "path": "source/native/Resources/DaBin.entitlements",
+      "bytes": 426,
+      "sha256": "10612525a986757263c6905a0c3bdd19bb214235b0d83e58cc8e4a756f8ff14a"
+    },
+    {
+      "path": "source/native/Resources/Info.plist",
+      "bytes": 1244,
+      "sha256": "3a00b1cf98cc69b8fbbcfd932a356a1488b08f8d66679f15f66152898a654b09"
+    },
+    {
+      "path": "source/native/Resources/PrivacyInfo.xcprivacy",
+      "bytes": 921,
+      "sha256": "af5172d57df7e72f04597a7abfeb263d9b3a9c7616336f95361978d58351f12c"
+    },
+    {
+      "path": "source/native/Resources/PrivacyPolicy.md",
+      "bytes": 11114,
+      "sha256": "f176ef00f475bf38eaec32eba6f0383d7d52ea3c11afaecfd6f373b82834c38c"
+    },
+    {
+      "path": "source/native/Resources/robot.svg",
+      "bytes": 1943,
+      "sha256": "20bd5c1de92dd5e79ef259430c441e2b9a1d3608812ae79e5b2999a64eaf8a7a"
+    },
+    {
+      "path": "source/native/Sources/DaBin/AccessibilityAnnouncement.swift",
+      "bytes": 608,
+      "sha256": "c9083061b9a5078cf27d3b9e343dde407c9773624807dc3393e5cbd84ed779d9"
+    },
+    {
+      "path": "source/native/Sources/DaBin/AppDelegate.swift",
+      "bytes": 3788,
+      "sha256": "e2ca8fe70692b6ce7e7ae71dc455490dbad1e727f23ce61f6666df2e0c77362d"
+    },
+    {
+      "path": "source/native/Sources/DaBin/AppState.swift",
+      "bytes": 60824,
+      "sha256": "da17b04a341deb83e0d267fde8bb624a41635d11d6b46cdb0703fe49adba3539"
+    },
+    {
+      "path": "source/native/Sources/DaBin/ApplicationCoordinator.swift",
+      "bytes": 9866,
+      "sha256": "b3cf839becf90283f5d800e92b554aa0f9fb36df556649fbd286febefd34aa8a"
+    },
+    {
+      "path": "source/native/Sources/DaBin/ApplicationMenu.swift",
+      "bytes": 5611,
+      "sha256": "a24f63065e79eea8eea4d58ebbbc95ecd9860b1f9eaece3b4bf529aac34c8dea"
+    },
+    {
+      "path": "source/native/Sources/DaBin/ArchiveBackup.swift",
+      "bytes": 25247,
+      "sha256": "027592dc9c40b02a7f539701c7ea90aef01fa58551acac337226489151ced48b"
+    },
+    {
+      "path": "source/native/Sources/DaBin/AutoCaptureFingerprint.swift",
+      "bytes": 4479,
+      "sha256": "0320a731330888a7ff57c8074fd8338cabf06a863d17af06d6dd099ba1a7a1cd"
+    },
+    {
+      "path": "source/native/Sources/DaBin/AutoCaptureRobotCelebration.swift",
+      "bytes": 17829,
+      "sha256": "a0389d611241abde2d57fb7c8a2218501c436806c5b175ee8b58ca6e5556b1e3"
+    },
+    {
+      "path": "source/native/Sources/DaBin/AutoCaptureRobotPresenter.swift",
+      "bytes": 25097,
+      "sha256": "8cad8bc055d3e1f996bf216ec421397b9585c7785765428fae8911753628ae58"
+    },
+    {
+      "path": "source/native/Sources/DaBin/AutoCaptureService.swift",
+      "bytes": 30542,
+      "sha256": "39e673f75afd0cecf027fe2899dc4e35cb369317b8ece758c3af18ad9b17ddb6"
+    },
+    {
+      "path": "source/native/Sources/DaBin/AutoCaptureSettings.swift",
+      "bytes": 10668,
+      "sha256": "f5e53774d1bf9421261feef5852e51a6954ba6a831172c46481c539c8cb2b2d0"
+    },
+    {
+      "path": "source/native/Sources/DaBin/BoardComponents.swift",
+      "bytes": 21198,
+      "sha256": "42be10419953441ed5064570084e14279a5d47176ff98b27869a278f2aa5635a"
+    },
+    {
+      "path": "source/native/Sources/DaBin/BoardResizeGeometry.swift",
+      "bytes": 2679,
+      "sha256": "98797b8fa3c8183cc07c6672c77af848663b03522b75ac8e5ad1a6726c2f09b0"
+    },
+    {
+      "path": "source/native/Sources/DaBin/BoardView.swift",
+      "bytes": 21976,
+      "sha256": "318c82431674b2c99c67bb00733c0fc9a231b5f6f37f921d182e7461618cdfc2"
+    },
+    {
+      "path": "source/native/Sources/DaBin/BoredRobotView.swift",
+      "bytes": 3987,
+      "sha256": "030e97ea615083dfc33b05af995a030cbaeece2b6fb428c6253274484bf2b001"
+    },
+    {
+      "path": "source/native/Sources/DaBin/BuddyControls.swift",
+      "bytes": 2714,
+      "sha256": "62f11c270302849445f24896dd7d713abf7f0bda30fe9dc922bf58449e13b215"
+    },
+    {
+      "path": "source/native/Sources/DaBin/CaptureCardGroup.swift",
+      "bytes": 1613,
+      "sha256": "c02ee506059dfb885dc7db6ff1f87afdaa7d9538d45aeca2bc223e359cd7d503"
+    },
+    {
+      "path": "source/native/Sources/DaBin/CaptureCards.swift",
+      "bytes": 12373,
+      "sha256": "a3c5800208caf4e69279e50ce704875d319b30e12c1669b7385c5106efa42433"
+    },
+    {
+      "path": "source/native/Sources/DaBin/CaptureClipboard.swift",
+      "bytes": 3927,
+      "sha256": "73c2a94f7f0abb99d6d50a7419f24433a31bb68685ae354a3c582914464783d5"
+    },
+    {
+      "path": "source/native/Sources/DaBin/CaptureCopyButton.swift",
+      "bytes": 2753,
+      "sha256": "6cae1098e5bcab7e5d5e2b3d5d106a647eec0a50102fc9c2e55d993827011879"
+    },
+    {
+      "path": "source/native/Sources/DaBin/CaptureFilterStrip.swift",
+      "bytes": 1107,
+      "sha256": "d28ebe000d8b327a9f34c3990a8477a01a23623de0229324a16dbc23b235d9b3"
+    },
+    {
+      "path": "source/native/Sources/DaBin/CapturePresentation.swift",
+      "bytes": 1941,
+      "sha256": "3e6b12e3b030788a5018da0fa17af7511575c62999b1f7f2dfe24fce4d9a0521"
+    },
+    {
+      "path": "source/native/Sources/DaBin/CapturePreviews.swift",
+      "bytes": 3497,
+      "sha256": "0c97543062830cd3ad8421db018c3b7a7d4f36b7acc56a0692e8a89ac5d4bf37"
+    },
+    {
+      "path": "source/native/Sources/DaBin/CaptureRemoval.swift",
+      "bytes": 1307,
+      "sha256": "18acded2a046cdd7323436fce797bf425a8529f0672bd6126944f5015fd55058"
+    },
+    {
+      "path": "source/native/Sources/DaBin/CaptureRepository.swift",
+      "bytes": 9120,
+      "sha256": "ab30c2bde0f82bb298228ec817810eba141012fefc053f1396ec66d4713929e4"
+    },
+    {
+      "path": "source/native/Sources/DaBin/CaptureSourceView.swift",
+      "bytes": 10003,
+      "sha256": "df59a7c2c71c5510356024604346bac9cf2da8892149821d7d55735d61007c8e"
+    },
+    {
+      "path": "source/native/Sources/DaBin/CaptureStore.swift",
+      "bytes": 58137,
+      "sha256": "c2dd98b13c6619cea88430c51e7963b4c6f257d1f43e5fef4f191f7eaf175f09"
+    },
+    {
+      "path": "source/native/Sources/DaBin/ClipboardRetentionService.swift",
+      "bytes": 7768,
+      "sha256": "3cafeb1c5456a8cf4683ad76c480cc9c992a6174032de751e0cc329092034e23"
+    },
+    {
+      "path": "source/native/Sources/DaBin/ClipboardRetentionSettings.swift",
+      "bytes": 3595,
+      "sha256": "06b8909eedd68281d5d0c1abafd6affa2fec20dfcf28719da50e3e935c4e82ae"
+    },
+    {
+      "path": "source/native/Sources/DaBin/ContentIndexService.swift",
+      "bytes": 19193,
+      "sha256": "a19b2924be84da5266c4a197f266461bb3447b138eafeccad918651872ac9a9b"
+    },
+    {
+      "path": "source/native/Sources/DaBin/CornerController.swift",
+      "bytes": 66164,
+      "sha256": "a28427243ea110d77eb2932b771559e66889cffa403e4b3307f0c0192e7defd6"
+    },
+    {
+      "path": "source/native/Sources/DaBin/DaBinLogo.swift",
+      "bytes": 4888,
+      "sha256": "443656366ed7172baa53a4f589861e9617ffcc0710e659ab58cb4f4dbbeada56"
+    },
+    {
+      "path": "source/native/Sources/DaBin/DaBinMain.swift",
+      "bytes": 1113,
+      "sha256": "0bdbdff249504ca21e983291a691b44765c9e97f2e652301229499002e8920a6"
+    },
+    {
+      "path": "source/native/Sources/DaBin/DailyArchive.swift",
+      "bytes": 16096,
+      "sha256": "8ade12d0b3667c3bcc2ea648c634447b97bab28942b79696bd59ff4e01794ad1"
+    },
+    {
+      "path": "source/native/Sources/DaBin/DailyCaptureView.swift",
+      "bytes": 6038,
+      "sha256": "3e15c893a2f6713085e7f2cfc9c206dbb2a4702f30517ab0e574d42f2406393e"
+    },
+    {
+      "path": "source/native/Sources/DaBin/DailyScreen.swift",
+      "bytes": 2836,
+      "sha256": "c9d401e5905c26dca63639bd4f0747c6b7b070ca15d0fc8f094fdebc09fecff0"
+    },
+    {
+      "path": "source/native/Sources/DaBin/DayExport.swift",
+      "bytes": 11044,
+      "sha256": "2710ba1c0b64f96286323d6f5c193d9cf630b34e3c97db1cbaf83d02a8887b56"
+    },
+    {
+      "path": "source/native/Sources/DaBin/DayExportUI.swift",
+      "bytes": 22343,
+      "sha256": "d5b299d11bbdcd0e3687d0d059b58c81c9b292e992c00d2a1e735fd1ee52fab3"
+    },
+    {
+      "path": "source/native/Sources/DaBin/DetailScreen.swift",
+      "bytes": 18507,
+      "sha256": "5a68b205d0943902d70eb14e311fc996bbb3a5ad697ea9a112a76c13f8d28b92"
+    },
+    {
+      "path": "source/native/Sources/DaBin/Domain.swift",
+      "bytes": 23777,
+      "sha256": "8222f37621b074e25337f7d6a28b0335b8ef9b1cf968bc076d8473ba3f210eeb"
+    },
+    {
+      "path": "source/native/Sources/DaBin/DraftArchive.swift",
+      "bytes": 2935,
+      "sha256": "1d5bcf81b79209bd616d6c451928dbe1468fa41a4d060b09b80199dcef8ddecf"
+    },
+    {
+      "path": "source/native/Sources/DaBin/FittedPDFPreview.swift",
+      "bytes": 4686,
+      "sha256": "8555cb558bd369af56a1033f93214bc36dd0024600569a8e529d6816ece86814"
+    },
+    {
+      "path": "source/native/Sources/DaBin/GroupedCaptureCard.swift",
+      "bytes": 9429,
+      "sha256": "d2101060bce718c09a254b0c43f203fac834012b74244fc7da758abd2a6288ea"
+    },
+    {
+      "path": "source/native/Sources/DaBin/HourlyCaptureCard.swift",
+      "bytes": 6569,
+      "sha256": "8efea2114c9e9c556acd569346d9b322bed934aef167bdcc1af420a5107ef10c"
+    },
+    {
+      "path": "source/native/Sources/DaBin/HourlyCaptureFeed.swift",
+      "bytes": 8896,
+      "sha256": "f05e1b270c58fe71fbccd0e22b4b88c958f4db079d8a119530163e73682dce08"
+    },
+    {
+      "path": "source/native/Sources/DaBin/InboxScreen.swift",
+      "bytes": 6822,
+      "sha256": "d69e548c43ff749bcc05040514ad1067b9cd8979c2f022e47d0ec9796dc7e938"
+    },
+    {
+      "path": "source/native/Sources/DaBin/InputService.swift",
+      "bytes": 25149,
+      "sha256": "d27971548adb7856569a7973f917e58c2e58dae42da2a76dcd4c948163f989b9"
+    },
+    {
+      "path": "source/native/Sources/DaBin/IslandRobotChoreography.swift",
+      "bytes": 17842,
+      "sha256": "169d408033ca94901c6dcf34d97097acd16f3a3481c24060621a31535b1ac68a"
+    },
+    {
+      "path": "source/native/Sources/DaBin/LibraryScreen.swift",
+      "bytes": 15920,
+      "sha256": "6ddddf12c3b6b24be72a101fd3dd6f612eb8308e4be6726bcf74e1274b5d557f"
+    },
+    {
+      "path": "source/native/Sources/DaBin/NewNoteScreen.swift",
+      "bytes": 1498,
+      "sha256": "5c1987f83bb0f6f7f0c0133a897b9692ef41197e2cce150a91bdfc52327cf281"
+    },
+    {
+      "path": "source/native/Sources/DaBin/OriginalFileStorage.swift",
+      "bytes": 3413,
+      "sha256": "db6a6c01e8bc53f53e0a10d350e5c6aadb35505d5a5ab684259e326d19348256"
+    },
+    {
+      "path": "source/native/Sources/DaBin/PreviewRequest.swift",
+      "bytes": 3269,
+      "sha256": "10ce1b308afd4000b3362585bae85bd1c643f900a8e7132bbefefb4049cec14e"
+    },
+    {
+      "path": "source/native/Sources/DaBin/PreviewService.swift",
+      "bytes": 22095,
+      "sha256": "9fdc470a83ed03aeaa1adfd62a9065ade23fbc6ab167a670d6d870bce5b0a4b4"
+    },
+    {
+      "path": "source/native/Sources/DaBin/PrivacyInformation.swift",
+      "bytes": 5206,
+      "sha256": "dff2aa728cb850ec87903b6cd32c83318eb29a30d4adedc0c3d5750fbf90a0c2"
+    },
+    {
+      "path": "source/native/Sources/DaBin/QuickAccess.swift",
+      "bytes": 6528,
+      "sha256": "579c3df267fbf3c7987e6050baa871b477a644d0c260ca247e8b55911e0bb4f6"
+    },
+    {
+      "path": "source/native/Sources/DaBin/ReminderClockEditor.swift",
+      "bytes": 4764,
+      "sha256": "1aadc2773e235bca0fa94c9677b2708689f01ce34dbd311f72eef1a448d47676"
+    },
+    {
+      "path": "source/native/Sources/DaBin/ReminderLifecycle.swift",
+      "bytes": 2104,
+      "sha256": "ad737601ca776d7b5a3b4fe2ea1e80b36d06ea006330f98907b8b9fd4f9141f2"
+    },
+    {
+      "path": "source/native/Sources/DaBin/ReminderSchedule.swift",
+      "bytes": 1379,
+      "sha256": "e73797fe946c24b4297b379e61a54a21ff9e41ccbd99992c699b99c55782eee6"
+    },
+    {
+      "path": "source/native/Sources/DaBin/ReminderService.swift",
+      "bytes": 11800,
+      "sha256": "bd318a28b356fb4a9b30dd985d3e34be66d0c82cc7dbf7eeb41726d9f03ee1ba"
+    },
+    {
+      "path": "source/native/Sources/DaBin/RemindersScreen.swift",
+      "bytes": 2610,
+      "sha256": "941ab83112c1e6e0580962133f6e3f9a6bef0b17863c32040477298eb8dfa97b"
+    },
+    {
+      "path": "source/native/Sources/DaBin/RobotAppFrameView.swift",
+      "bytes": 60154,
+      "sha256": "ad6e2e84ec9ba4c29a6935ce1d7f0ff833553ead8a5593e3b63114375ad3fe02"
+    },
+    {
+      "path": "source/native/Sources/DaBin/RobotCharacterView.swift",
+      "bytes": 90310,
+      "sha256": "758eda24b38a5064202330967697ba48da8781f4352ce085bfcb2a7e764b5d44"
+    },
+    {
+      "path": "source/native/Sources/DaBin/RobotLifecycle.swift",
+      "bytes": 9300,
+      "sha256": "22843ec1cb73d3d47ef002c0e861779bdb1c8fb05dbaa7f08f5731f334472e56"
+    },
+    {
+      "path": "source/native/Sources/DaBin/RobotMotion.swift",
+      "bytes": 9477,
+      "sha256": "f2321a5d2bbbd73cbfc9dca81cf1d763b59ff08b6fcee0f1d34f2f2f6c51ab37"
+    },
+    {
+      "path": "source/native/Sources/DaBin/RobotPlacementSettings.swift",
+      "bytes": 1195,
+      "sha256": "2893b97f04fa459405dc7f6459be5f229c349e6959257e29281e28d83e46500b"
+    },
+    {
+      "path": "source/native/Sources/DaBin/RobotView.swift",
+      "bytes": 11755,
+      "sha256": "b2d63e2d32a0489b93421619e8d66df2ddaac89dc0f6e3a1c02c9469eaf84bf5"
+    },
+    {
+      "path": "source/native/Sources/DaBin/ScratchpadView.swift",
+      "bytes": 4853,
+      "sha256": "fa140193e595e03c05f60b14ee244ac7adf14aee8851da805251f81bc58fd062"
+    },
+    {
+      "path": "source/native/Sources/DaBin/ScreenshotFolderMonitor.swift",
+      "bytes": 10238,
+      "sha256": "d2ca257fc01aa4c4e74275bd29e80636dd65fe119825c6d0f93abdeafea065c3"
+    },
+    {
+      "path": "source/native/Sources/DaBin/SearchScreen.swift",
+      "bytes": 7429,
+      "sha256": "f3de1ad395fef72e95dcd0c1d1d6ed12edad11e73657fca785dcf5c555fe5562"
+    },
+    {
+      "path": "source/native/Sources/DaBin/SettingsScreen.swift",
+      "bytes": 36614,
+      "sha256": "6fb2ed43f689a2b4249200ba3bfcb75e0990efe1cd8f33199c9864a5fc4c8d49"
+    },
+    {
+      "path": "source/native/Sources/DaBin/ShelfCaptureController.swift",
+      "bytes": 2902,
+      "sha256": "b6f191ed4b75be328e8c523122238a5711ea3df631e82e02cea6a45ddf8e84ee"
+    },
+    {
+      "path": "source/native/Sources/DaBin/ShelfExport.swift",
+      "bytes": 5687,
+      "sha256": "67589f74ba21c927ca0358ea37110e802ddd7fa16a1bba29faf4ca0c01b0b8b3"
+    },
+    {
+      "path": "source/native/Sources/DaBin/SoftwareUpdateService.swift",
+      "bytes": 21173,
+      "sha256": "3b088ea8deff38bf5085370c06e4c32e02d2d7933622eb0f0f9eae18f1dd6623"
+    },
+    {
+      "path": "source/native/Sources/DaBin/StatusBarController.swift",
+      "bytes": 6850,
+      "sha256": "89cfd556dfe02124a417446dbf252132d9b086245f74274428fe2408f3a37ef5"
+    },
+    {
+      "path": "source/native/Sources/DaBin/TaskAttachmentsView.swift",
+      "bytes": 3668,
+      "sha256": "49e0e5e58dd1621c1e1809a3abf9251540058c3781bfcb347bccadede0ec4577"
+    },
+    {
+      "path": "source/native/Sources/DaBin/TaskEditorScreen.swift",
+      "bytes": 3128,
+      "sha256": "f4d6f3f1de1af613651119a0be6c75d7628741567dcdc476646c248b7fd6bc01"
+    },
+    {
+      "path": "source/native/Sources/DaBin/TaskPlanning.swift",
+      "bytes": 6163,
+      "sha256": "66013a6381b4bdd21bd40b1ae4a52513e623b9741cd4385e4caf5c0fb0afbeae"
+    },
+    {
+      "path": "source/native/Sources/DaBin/TaskPlanningEditor.swift",
+      "bytes": 9225,
+      "sha256": "2d684f56c2aaafd32228c32057af1046b45a02a4a8f710556ad5000973b7e636"
+    },
+    {
+      "path": "source/native/Sources/DaBin/ThemeSettings.swift",
+      "bytes": 8578,
+      "sha256": "4201ea8ef5a06c254ae7600e980d51f8aaa605fd79871221d67d120375549a8d"
+    },
+    {
+      "path": "source/native/Sources/DaBin/TodayPlanningScreen.swift",
+      "bytes": 9715,
+      "sha256": "3f89ced94a8d85da76126c80a75484ac78634a58f8e7aab919cba9d57bc30e2d"
+    },
+    {
+      "path": "source/native/Sources/DaBin/TrashScreen.swift",
+      "bytes": 2852,
+      "sha256": "867409a9486b1d91618aaec197c3481f6e80154b22ff71be6c026f6466e4fb83"
+    },
+    {
+      "path": "source/native/Sources/DaBin/UpdateHandoff.swift",
+      "bytes": 5865,
+      "sha256": "aa8fadb66cc79ea16080dae270b1748b2b002ad36e3466e0bdb47b681654602a"
+    },
+    {
+      "path": "source/native/Sources/DaBin/WeeklyScopeActions.swift",
+      "bytes": 5717,
+      "sha256": "d103f1a48038030fda502797a6f83c9f38cd46c93118898d87a567dadae8b234"
+    },
+    {
+      "path": "source/native/Sources/DaBin/WeeklyScreen.swift",
+      "bytes": 13240,
+      "sha256": "eb5bdc49d1ae96e9999513e348031cd9b9970097bed55eb392f8c67e64366158"
+    },
+    {
+      "path": "source/native/Sources/DaBin/WindowDragHandle.swift",
+      "bytes": 1766,
+      "sha256": "dcca56e12e02c27d9236cb61d8074132fd806326a51928f3f16e66cf8444b881"
+    },
+    {
+      "path": "source/native/Sources/DaBin/WorkspaceClipboard.swift",
+      "bytes": 1049,
+      "sha256": "5a218b19565697b003e708d071fced032cefd6e8d6a11a5c99ab9c6364668f94"
+    },
+    {
+      "path": "source/native/Sources/DaBin/WorkspaceItemCard.swift",
+      "bytes": 10073,
+      "sha256": "6eada270fd30cf2421cfe294d6c1029324cf1db2167feefac5add8c8fb2d45f3"
+    },
+    {
+      "path": "source/native/Sources/DaBin/WorkspaceQuery.swift",
+      "bytes": 2894,
+      "sha256": "a2564a667db0ee59b5485a4d61f7364b8874dbf3f6c0b3ae8b6d8010c4a91fa3"
+    },
+    {
+      "path": "source/native/Sources/DaBin/WorkspaceStore.swift",
+      "bytes": 13794,
+      "sha256": "6cac96432acffed0505d5116e285f6e05e3df804a32e251306902c46ab35c8f0"
+    },
+    {
+      "path": "source/native/Tests/ApplicationLifecycleTests.swift",
+      "bytes": 19294,
+      "sha256": "05230c3b142c3ab121a279634885be35cbc1f1ca380864d20444efcd81b4abce"
+    },
+    {
+      "path": "source/native/Tests/ArchiveBackupTests.swift",
+      "bytes": 10645,
+      "sha256": "695fc5a2ce34d5782cf6c91ca1bae460a88d969d576f25663945908670f92891"
+    },
+    {
+      "path": "source/native/Tests/ArchiveLayoutTests.swift",
+      "bytes": 11225,
+      "sha256": "a0d0a33d4ef8649d8b84fa2958a46c65cf33bba322851204799547493fff339f"
+    },
+    {
+      "path": "source/native/Tests/ArchiveRecoveryTests.swift",
+      "bytes": 18198,
+      "sha256": "9420cf7666722dfcf6a009bc2d8502ead3a1df968133228c17df2d3d9ea09b25"
+    },
+    {
+      "path": "source/native/Tests/ArchiveStoreTests.swift",
+      "bytes": 20087,
+      "sha256": "2dd8f769ec70c892e3235e644e7a54fca325efdd447c0b890497b97514e3ff51"
+    },
+    {
+      "path": "source/native/Tests/AutoCaptureRobotCelebrationTests.swift",
+      "bytes": 25802,
+      "sha256": "957c4736785666e4a21a567013004be88a4bddbdc83753a63d4c5f0e0cbd569a"
+    },
+    {
+      "path": "source/native/Tests/AutoCaptureRobotPresenterTests.swift",
+      "bytes": 24353,
+      "sha256": "863083e153ce392e48d1bc122adbd540bf4ba132371aa9412323cc611c444d93"
+    },
+    {
+      "path": "source/native/Tests/AutoCaptureServiceTests.swift",
+      "bytes": 37036,
+      "sha256": "e00ae0cb119e337064ab97ea9005d7913f25fe89cda8df1a0fe5e0ee66d14645"
+    },
+    {
+      "path": "source/native/Tests/CaptureActionTests.swift",
+      "bytes": 8324,
+      "sha256": "ee3c90174253ec05eaccec3f5dab28977ce4f03925b940b52849b5c59013b37f"
+    },
+    {
+      "path": "source/native/Tests/CaptureClipboardTests.swift",
+      "bytes": 9251,
+      "sha256": "b2db468aab1d49ea59bcfafe3cfab96a09aa8c284cadad8fdd07a737217b7377"
+    },
+    {
+      "path": "source/native/Tests/CaptureRemovalTests.swift",
+      "bytes": 17214,
+      "sha256": "ac4818520099f4f05fccda8dba3cb25f504515200729c9a3728d2fa39ea4a7e6"
+    },
+    {
+      "path": "source/native/Tests/CaptureTaskConversionTests.swift",
+      "bytes": 38022,
+      "sha256": "a081d7fc275e55c3a11d8c202873457cc011f789831689aa6c8de19e6f32dce3"
+    },
+    {
+      "path": "source/native/Tests/ClipboardRetentionTests.swift",
+      "bytes": 12489,
+      "sha256": "3aa3dbbd8bd1d17f6acbe1dc88526c4a63b28c2e39cf16545477c68e3e6735c3"
+    },
+    {
+      "path": "source/native/Tests/ConnectedWorkflowTests.swift",
+      "bytes": 14983,
+      "sha256": "6ad0dfde3a2159124460210011a52feea442d5cd47e259a5be4e51d2192a9536"
+    },
+    {
+      "path": "source/native/Tests/DailyCaptureTests.swift",
+      "bytes": 32886,
+      "sha256": "52a76ddcc887e1c5c1beef1f0aacf999b45214747abe7357188da8bd4066258c"
+    },
+    {
+      "path": "source/native/Tests/DayExportTests.swift",
+      "bytes": 21561,
+      "sha256": "267df304e974f0addb63e5e071907228d93082b36b202a090f06ce86361ef106"
+    },
+    {
+      "path": "source/native/Tests/DayExportUITests.swift",
+      "bytes": 11595,
+      "sha256": "0b030d1a0b97553d937f90c3753a903601903914b2a434829151206666b7f435"
+    },
+    {
+      "path": "source/native/Tests/DeferredArchiveRepairTests.swift",
+      "bytes": 7751,
+      "sha256": "21b28ded7ea508a18b12a6d006d957e72675ef587660606c0472e8642593fa2c"
+    },
+    {
+      "path": "source/native/Tests/DomainTests.swift",
+      "bytes": 35885,
+      "sha256": "6dcf9e179ece3e71f81f19f21a3a9cbbf5df98329c1d7aeeb1202717b021e6e9"
+    },
+    {
+      "path": "source/native/Tests/FilterResizeTests.swift",
+      "bytes": 21372,
+      "sha256": "64072aed91e75fe9f1dc9831fbb376a71c7a28ca071146dc93b906f7ca38b59e"
+    },
+    {
+      "path": "source/native/Tests/HeaderInteractionTests.swift",
+      "bytes": 26043,
+      "sha256": "261650cb79163444c71d9a36eb2dec498c2c0ec6b19b61d11c7acb833e4aea70"
+    },
+    {
+      "path": "source/native/Tests/HourlyGroupingTests.swift",
+      "bytes": 11320,
+      "sha256": "d22d2821ea9b1746cb45bd430fd02ae9065de99bdedc016af30eff92f7e79852"
+    },
+    {
+      "path": "source/native/Tests/InputTests.swift",
+      "bytes": 30641,
+      "sha256": "95c1723d0abe6a76b8c3cacf3f0878c83264037e58539c7a84808267d8167795"
+    },
+    {
+      "path": "source/native/Tests/IslandPlaygroundRender.swift",
+      "bytes": 21173,
+      "sha256": "ff3afc2f684f3505adbd940d0dd0bcdafb6754b5f0226b0d4f062caf757726cb"
+    },
+    {
+      "path": "source/native/Tests/IslandRobotChoreographyTests.swift",
+      "bytes": 12946,
+      "sha256": "dc239954ee4f6d754a186a217fb394bc57e5c3f6dca50b1d660e2855b7d1e11c"
+    },
+    {
+      "path": "source/native/Tests/LocalContentSearchTests.swift",
+      "bytes": 41895,
+      "sha256": "494097d0414a05cfe766b2f275bb2f6243aba6f2a66c81d5d0a3d19c6d5155e5"
+    },
+    {
+      "path": "source/native/Tests/ManualCaptureLifecycleTests.swift",
+      "bytes": 8157,
+      "sha256": "df436b988b1ae297438cff5ed8526153ab3e92abd6f0e3ad79abac1d6a08776b"
+    },
+    {
+      "path": "source/native/Tests/MediaIntegrationTests.swift",
+      "bytes": 15527,
+      "sha256": "b55b25d088ceefd4ae4c14ce26c88b605cdaf0a108c41607d56cd78a880cf8d4"
+    },
+    {
+      "path": "source/native/Tests/NativeDropQAMain.swift",
+      "bytes": 11310,
+      "sha256": "e3b80c91ae76983c5f32c1b5c0fe96d1f337e2c42530e990025c0e822be6a44a"
+    },
+    {
+      "path": "source/native/Tests/NativeRenderTests.swift",
+      "bytes": 126371,
+      "sha256": "ecf091a9d18be278e804dd0117755f6495179a018801c56f47ea42fbc7ce551a"
+    },
+    {
+      "path": "source/native/Tests/PERSISTENCE_QA.md",
+      "bytes": 5495,
+      "sha256": "81ea9db97164fa15344f763e6ad7eef2919b0d3060f96e9a6ed3c945b842dbfb"
+    },
+    {
+      "path": "source/native/Tests/PreviewLifecycleTests.swift",
+      "bytes": 12135,
+      "sha256": "67bf53360d69e5c1663cf2147da9ebbd14766ac206a4325c284479ddc3c0d60c"
+    },
+    {
+      "path": "source/native/Tests/PrivacyInformationTests.swift",
+      "bytes": 7175,
+      "sha256": "0380a948d582e364446854363c6f94926c532670e8d5f2eec1f74a1ab44b4d2d"
+    },
+    {
+      "path": "source/native/Tests/PrivacyRenderTests.swift",
+      "bytes": 8121,
+      "sha256": "bfbcd5efb9774a0b877fb2f29e35040262d13fe98fceaa71a9d72c9e1c638475"
+    },
+    {
+      "path": "source/native/Tests/ProductFoundationTests.swift",
+      "bytes": 21265,
+      "sha256": "0d5a52702893abea6a361a0cc07ce0aea8304dc9dac329e4961f2ca635842bc2"
+    },
+    {
+      "path": "source/native/Tests/QALifecycleTests.swift",
+      "bytes": 8741,
+      "sha256": "3390ee15acbd3fcfe700c4dd2623aa335f85d93d5ec9bf1bb2dc02c6d1910290"
+    },
+    {
+      "path": "source/native/Tests/QAStorageScopedSaveTests.swift",
+      "bytes": 8901,
+      "sha256": "7eff6134e2ca0e1302e67913f5d1c4e22465789458bfed8976dd5687f81192f8"
+    },
+    {
+      "path": "source/native/Tests/QuickAccessTests.swift",
+      "bytes": 3432,
+      "sha256": "c2315662fe5c7f3acc7a79f9ccc55e30631229e975c15eb19e0ff5b389207a50"
+    },
+    {
+      "path": "source/native/Tests/RepositoryBatchTests.swift",
+      "bytes": 4509,
+      "sha256": "d4b518b16947bf229197c2d22ab2de75b531e2bf0c9714ffe787bf85348d007b"
+    },
+    {
+      "path": "source/native/Tests/RobotAppFrameTests.swift",
+      "bytes": 12590,
+      "sha256": "d11dcbcedafac10a3a42a3c218b5dfae8402857b20b446e3f382a890f40423aa"
+    },
+    {
+      "path": "source/native/Tests/RobotDropTests.swift",
+      "bytes": 22510,
+      "sha256": "308eb8f02562e451c9554c38c4589e49ca387591b3185aa1cfd10fbe22fba602"
+    },
+    {
+      "path": "source/native/Tests/RobotLifecycleTests.swift",
+      "bytes": 8842,
+      "sha256": "612fa7341e67b1f3683cc90002e573a033bfc800d07f1cf8eebcfa2c4b0646a6"
+    },
+    {
+      "path": "source/native/Tests/RobotMotionTests.swift",
+      "bytes": 7989,
+      "sha256": "1d2b347fa96166ded96940dafd3230f46658ff17722cd01c0cc51e32793b659e"
+    },
+    {
+      "path": "source/native/Tests/RobotWindowTransitionTests.swift",
+      "bytes": 10471,
+      "sha256": "12dbbc98f52058213cbf9440e43086c81eebdf06fca3b1c9bfd46af709c6d11c"
+    },
+    {
+      "path": "source/native/Tests/ServiceTests.swift",
+      "bytes": 21826,
+      "sha256": "56a669a9c41f6202f54a902fdca29f0d6059ee1d8a52315e4ecf7c60f6f6c182"
+    },
+    {
+      "path": "source/native/Tests/SoftwareUpdateTests.swift",
+      "bytes": 15559,
+      "sha256": "7795cf27a76b93dd57c0651cfdd22ee53d1590a87c732e16498bddcfb4781c7a"
+    },
+    {
+      "path": "source/native/Tests/TaskPlanningTests.swift",
+      "bytes": 12739,
+      "sha256": "6c34e34b0a19f2dfc76bca18ceb375aa2cc0eea315786ee7c7fd57b3a51831fb"
+    },
+    {
+      "path": "source/native/Tests/TaskStateTests.swift",
+      "bytes": 46582,
+      "sha256": "53d994cffd3a706bfb32ed4de0ac97375ffff154ed842e2b3897d9cd8022cb79"
+    },
+    {
+      "path": "source/native/Tests/ThemeSettingsTests.swift",
+      "bytes": 14680,
+      "sha256": "263c98fd245be1ca2a796e8390ab82aced9776daa7c53cf15037b73abaaebbb0"
+    },
+    {
+      "path": "source/native/Tests/UpdateConfigurationTests.swift",
+      "bytes": 17238,
+      "sha256": "ce968418373ddcc62b97a07c5bc0f9bb7fec515ad85b18978384dd6cab8dfc67"
+    },
+    {
+      "path": "source/native/Tests/WalkthroughRenderTests.swift",
+      "bytes": 23324,
+      "sha256": "48fe2096f09ddddbc90e7bcf814f13b1daeb7216229a5736c11ad4005bcda4ce"
+    },
+    {
+      "path": "source/native/Tests/WeeklyStateTests.swift",
+      "bytes": 26227,
+      "sha256": "a24d189c2dcd380709257474bf7ae6417a6b91629e0d9471be56843ad6bbccfe"
+    },
+    {
+      "path": "source/native/Tests/WeeklyWindowTests.swift",
+      "bytes": 16939,
+      "sha256": "97efe8ed5c50db18ffaf94342d6690edc6dae1c2a22927d625e11b3a692f09c3"
+    },
+    {
+      "path": "source/native/Tests/WindowTests.swift",
+      "bytes": 40278,
+      "sha256": "128be69860cdf08298469f58c48a551be0403b51cb6492c56f3afc33f079a5ce"
+    },
+    {
+      "path": "source/native/Tests/WorkInboxTests.swift",
+      "bytes": 9884,
+      "sha256": "b909859be05326746a18496ab0446bd940f3fd6bd0e494a08aec31f2d56b44a8"
+    },
+    {
+      "path": "source/native/Tests/WorkspaceTests.swift",
+      "bytes": 13789,
+      "sha256": "8d6059d4e4235ebe3104f818dbfeea14365fc934a580a84445f456cce4983b6e"
+    },
+    {
+      "path": "source/native/Tests/WorkspaceWindowTests.swift",
+      "bytes": 27101,
+      "sha256": "a5dd49db0acde7ab3130263d044de5fee63989989b9441372ee86192d1ac1133"
+    },
+    {
+      "path": "source/native/Tests/XcodeSmokeTests.swift",
+      "bytes": 2229,
+      "sha256": "4795c41388abd2376c788ca857a72d8ee3c5f15383d1a620567569bbce3c5341"
+    },
+    {
+      "path": "source/native/Tests/test_notarized_distribution.py",
+      "bytes": 23824,
+      "sha256": "97d7d76a353c1ce4a0315baf796fda3cb89e1303dc0844874dd614cf74fc4246"
+    },
+    {
+      "path": "source/native/UpdateTools/DaBinUpdater.swift",
+      "bytes": 25123,
+      "sha256": "76877e83c4772e3e9b92ca210884a93dd25ff6e44b5856bab8e09c94c68a0cd3"
+    },
+    {
+      "path": "source/native/UpdateTools/package_update.py",
+      "bytes": 13612,
+      "sha256": "9afd380a12d58e215b2273c206014d0fa1d2174c48b68a0c08515e095219ea75"
+    },
+    {
+      "path": "source/native/scripts/app_store_archive_location.py",
+      "bytes": 3141,
+      "sha256": "a1693632a2a03ba795d64db3f4b26036b8739f6284d616ab7d786baa63fd9570"
+    },
+    {
+      "path": "source/native/scripts/app_store_preflight.py",
+      "bytes": 12665,
+      "sha256": "09b5a611fdd5dbdf2411879983cfa5dcc363644319eb558f42d26a47a3a60f2f"
+    },
+    {
+      "path": "source/native/scripts/archive_app_store.sh",
+      "bytes": 2515,
+      "sha256": "5d4e83154e442273da63c4a345f140f945c695626c437981cb709d3fcab8f71d"
+    },
+    {
+      "path": "source/native/scripts/build.sh",
+      "bytes": 134,
+      "sha256": "ea9b087ea6a5e5dbf50bef040b41a41fad85f26e8875f51e4560e7dcae75fd8f"
+    },
+    {
+      "path": "source/native/scripts/build_app.py",
+      "bytes": 8835,
+      "sha256": "ee070fa1578d4bd8046f15616b6f30da4804abe33a1674bdcaa7a643ecab4119"
+    },
+    {
+      "path": "source/native/scripts/build_drop_qa.sh",
+      "bytes": 2009,
+      "sha256": "0238e5ff9728c2ad00899627a503174eb75bbf76a708a02c3e3480bf838abaaa"
+    },
+    {
+      "path": "source/native/scripts/generate_project.py",
+      "bytes": 10475,
+      "sha256": "8df59162c1aef5da1a3c98f4b6b2bb94735a4e6dae3d383669e540cbbaeebcc0"
+    },
+    {
+      "path": "source/native/scripts/install_app.py",
+      "bytes": 3047,
+      "sha256": "e6e144320b1289129f9ec88b1aa52c34707c87d0600843602a5f3f309507745f"
+    },
+    {
+      "path": "source/native/scripts/install_desktop.py",
+      "bytes": 441,
+      "sha256": "9c96ab61cc0db5efecdb6f1ef5c468315765b1b1f6a9b2cdd45bf8510f7ed453"
+    },
+    {
+      "path": "source/native/scripts/package_notarized_distribution.py",
+      "bytes": 35628,
+      "sha256": "adaa96185870472b49df49e715f634911ddf4f167bac53d3ef345c8e14c3a47a"
+    },
+    {
+      "path": "source/native/scripts/package_standalone.py",
+      "bytes": 8046,
+      "sha256": "5f89b79389d3713f6899629528fa08a7d2c26db40ad550f1ebc5045a61123657"
+    },
+    {
+      "path": "source/native/scripts/project_inventory.py",
+      "bytes": 2796,
+      "sha256": "61ff17ea4115057b458ecf27a255847fa374b5048a5dc857781625c4b461b5e8"
+    },
+    {
+      "path": "source/native/scripts/render_icon.swift",
+      "bytes": 1331,
+      "sha256": "ba6d964dea9c9257f6c6442d633a02eb6a51b183d71219d65a73d13f6da1c0fa"
+    },
+    {
+      "path": "source/native/scripts/render_island_playground.sh",
+      "bytes": 4548,
+      "sha256": "4f44888c554ed76e26b8816c39c71b05c4e5c916f1993e6c6cb35c4a816bd678"
+    },
+    {
+      "path": "source/native/scripts/render_privacy_qa.sh",
+      "bytes": 1343,
+      "sha256": "a1052ec10ba579a651691d387b1b8f7fcc32ba6f03cb6b670110c44b8b180bd2"
+    },
+    {
+      "path": "source/native/scripts/render_qa.sh",
+      "bytes": 664,
+      "sha256": "1ce66a27937ce9648d55f4f80206352d529f4ce51c170ac0c7257f6444180252"
+    },
+    {
+      "path": "source/native/scripts/render_walkthrough.sh",
+      "bytes": 719,
+      "sha256": "5ef63e758dff6482c4ceb302da1d1f3978b5f4bd98b4c54d9f64315a8794c6ff"
+    },
+    {
+      "path": "source/native/scripts/run_qa.py",
+      "bytes": 11748,
+      "sha256": "2d1cab9405d41e0570b1626b1c79d94ee7831de3832877f0f30dc84e1efbfe00"
+    },
+    {
+      "path": "source/native/scripts/stage_release_assets.py",
+      "bytes": 10143,
+      "sha256": "58228c453f6a5ee4f52081f07d2b7bd00e35ecbe55a55d158dac51883948e8e4"
+    },
+    {
+      "path": "source/native/scripts/test.sh",
+      "bytes": 131,
+      "sha256": "b87d3b8126077f31de30e6f29cf353e390583e0d55a5cda9de2abfcab5b6ba4e"
+    },
+    {
+      "path": "source/native/scripts/test_media_integration.sh",
+      "bytes": 703,
+      "sha256": "601f3f1d57a35e72bdbe8d9b41a0e6492950bed92987676c10fc24582cde0f06"
+    },
+    {
+      "path": "task-detail.html",
+      "bytes": 188056,
+      "sha256": "1fc81dcc06ce2a480038d7cde098c91d66fe6c9598e16ff4ec3924c530e7a0f5"
+    },
+    {
+      "path": "today.html",
+      "bytes": 188044,
+      "sha256": "3e4bbb65bb6106490d0beef86d531556637b7fe7ca8d843db659e30b381a4ac8"
+    },
+    {
+      "path": "verify_package.py",
+      "bytes": 757,
+      "sha256": "5af1b709f4268a475201a5d3545b0ae74011ed40633b0c0dade961de645a47df"
+    },
+    {
+      "path": "weekly.html",
+      "bytes": 188046,
+      "sha256": "ef31771350d17cd3c91ee33c68620b1e184b0d9599f0e2db32a06816ac7b8986"
+    },
+    {
+      "path": "workspace.html",
+      "bytes": 188052,
+      "sha256": "29082568d4a78a2152e6bbe761a1cdd0ee0b3b3c1e881de73d44c1f683918f31"
+    }
+  ]
+}

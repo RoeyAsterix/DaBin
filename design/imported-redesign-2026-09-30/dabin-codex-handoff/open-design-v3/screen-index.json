@@ -1,0 +1,26 @@
+{
+  "entry": "index.html",
+  "product_screens": [
+    "inbox",
+    "today",
+    "workspace",
+    "clipboard",
+    "shelf",
+    "notes",
+    "activity",
+    "weekly",
+    "search",
+    "capture-detail",
+    "task-detail",
+    "new-note",
+    "new-task",
+    "reminder",
+    "export",
+    "settings",
+    "recently-deleted",
+    "backup",
+    "robot"
+  ],
+  "fixture_date": "2026-09-30",
+  "native_baseline": "0.4.2 (53)"
+}

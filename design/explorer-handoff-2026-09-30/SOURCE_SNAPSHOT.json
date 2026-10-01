@@ -1,0 +1,590 @@
+{
+  "created_at": "2026-09-30T19:20:09.904002+00:00",
+  "version": "0.4.3",
+  "build": "55",
+  "source": "Current working tree, including uncommitted Explorer implementation",
+  "runtime_swift_file_count": 94,
+  "scope": "Runtime source and standalone local build inputs; no test/upload/installer pipeline",
+  "files": [
+    {
+      "file": "native/Resources/AppIcon.icns",
+      "bytes": 531662,
+      "sha256": "9ba9c0e655b1b9956a016d9d1a547d5fa598522664d1d21d2caf292ef6a1dadd"
+    },
+    {
+      "file": "native/Resources/Assets.xcassets/AppIcon.appiconset/Contents.json",
+      "bytes": 1256,
+      "sha256": "023560f7a29a7bddd154ad3c5144fc77e5f96fa307512b5c1561bde8df6edf60"
+    },
+    {
+      "file": "native/Resources/Assets.xcassets/AppIcon.appiconset/icon_128x128.png",
+      "bytes": 10702,
+      "sha256": "d8fecc1e2018b8ec74c7eefb490a9d2ce0a6dd437f94d3b0213400a3216d8661"
+    },
+    {
+      "file": "native/Resources/Assets.xcassets/AppIcon.appiconset/icon_128x128@2x.png",
+      "bytes": 29595,
+      "sha256": "da8ef141c6683fde940dfd51bc8650628dcd0b9f5ed73c04448f94736f1965e3"
+    },
+    {
+      "file": "native/Resources/Assets.xcassets/AppIcon.appiconset/icon_16x16.png",
+      "bytes": 727,
+      "sha256": "21cb38653ce20e298bede7ccf80adc1c8ba36f403518375ed43dc77dd13caee2"
+    },
+    {
+      "file": "native/Resources/Assets.xcassets/AppIcon.appiconset/icon_16x16@2x.png",
+      "bytes": 1683,
+      "sha256": "6496c5db46085442ab9b892b7fd0ce6529a702c6da594bd16bbbbf94e0ad16a2"
+    },
+    {
+      "file": "native/Resources/Assets.xcassets/AppIcon.appiconset/icon_256x256.png",
+      "bytes": 29595,
+      "sha256": "da8ef141c6683fde940dfd51bc8650628dcd0b9f5ed73c04448f94736f1965e3"
+    },
+    {
+      "file": "native/Resources/Assets.xcassets/AppIcon.appiconset/icon_256x256@2x.png",
+      "bytes": 84324,
+      "sha256": "ab096acf94ba95d4ff7b6df845b604fd701485517f17cbdd0d118a6a6e9f4708"
+    },
+    {
+      "file": "native/Resources/Assets.xcassets/AppIcon.appiconset/icon_32x32.png",
+      "bytes": 1683,
+      "sha256": "6496c5db46085442ab9b892b7fd0ce6529a702c6da594bd16bbbbf94e0ad16a2"
+    },
+    {
+      "file": "native/Resources/Assets.xcassets/AppIcon.appiconset/icon_32x32@2x.png",
+      "bytes": 4386,
+      "sha256": "83740f8aa58b08af2356f3e110ab58ada92c038951bcb45e8b799df2ab55ff97"
+    },
+    {
+      "file": "native/Resources/Assets.xcassets/AppIcon.appiconset/icon_512x512.png",
+      "bytes": 84324,
+      "sha256": "ab096acf94ba95d4ff7b6df845b604fd701485517f17cbdd0d118a6a6e9f4708"
+    },
+    {
+      "file": "native/Resources/Assets.xcassets/AppIcon.appiconset/icon_512x512@2x.png",
+      "bytes": 280161,
+      "sha256": "44ad308890153268409b08ee22050d66557327c92cbd3f9bb8d0f071c03e72b5"
+    },
+    {
+      "file": "native/Resources/Assets.xcassets/Contents.json",
+      "bytes": 59,
+      "sha256": "a3393322cd7b4c1e0aa93bebe09abaa91ad891290d1225b0b5d10b5c6f216025"
+    },
+    {
+      "file": "native/Resources/DaBin.entitlements",
+      "bytes": 426,
+      "sha256": "10612525a986757263c6905a0c3bdd19bb214235b0d83e58cc8e4a756f8ff14a"
+    },
+    {
+      "file": "native/Resources/Info.plist",
+      "bytes": 1244,
+      "sha256": "1b33286bb0f5935ff148dc19062a8085cb4270dfaa5327e31305d0d189f21c03"
+    },
+    {
+      "file": "native/Resources/PrivacyInfo.xcprivacy",
+      "bytes": 921,
+      "sha256": "af5172d57df7e72f04597a7abfeb263d9b3a9c7616336f95361978d58351f12c"
+    },
+    {
+      "file": "native/Resources/PrivacyPolicy.md",
+      "bytes": 11114,
+      "sha256": "f176ef00f475bf38eaec32eba6f0383d7d52ea3c11afaecfd6f373b82834c38c"
+    },
+    {
+      "file": "native/Resources/robot.svg",
+      "bytes": 1943,
+      "sha256": "20bd5c1de92dd5e79ef259430c441e2b9a1d3608812ae79e5b2999a64eaf8a7a"
+    },
+    {
+      "file": "native/Sources/DaBin/AccessibilityAnnouncement.swift",
+      "bytes": 608,
+      "sha256": "c9083061b9a5078cf27d3b9e343dde407c9773624807dc3393e5cbd84ed779d9"
+    },
+    {
+      "file": "native/Sources/DaBin/AppDelegate.swift",
+      "bytes": 3788,
+      "sha256": "e2ca8fe70692b6ce7e7ae71dc455490dbad1e727f23ce61f6666df2e0c77362d"
+    },
+    {
+      "file": "native/Sources/DaBin/AppState.swift",
+      "bytes": 61918,
+      "sha256": "8420edcabec0b3aa9263727cd53f525494eb18df8a21844261baa17d66ffd146"
+    },
+    {
+      "file": "native/Sources/DaBin/ApplicationCoordinator.swift",
+      "bytes": 9866,
+      "sha256": "b3cf839becf90283f5d800e92b554aa0f9fb36df556649fbd286febefd34aa8a"
+    },
+    {
+      "file": "native/Sources/DaBin/ApplicationMenu.swift",
+      "bytes": 5611,
+      "sha256": "a24f63065e79eea8eea4d58ebbbc95ecd9860b1f9eaece3b4bf529aac34c8dea"
+    },
+    {
+      "file": "native/Sources/DaBin/ArchiveBackup.swift",
+      "bytes": 25801,
+      "sha256": "f551d5b1710ec375902f32fa4cab14752a8bf9c7b1683e715f96da93c4555e69"
+    },
+    {
+      "file": "native/Sources/DaBin/AutoCaptureFingerprint.swift",
+      "bytes": 4479,
+      "sha256": "0320a731330888a7ff57c8074fd8338cabf06a863d17af06d6dd099ba1a7a1cd"
+    },
+    {
+      "file": "native/Sources/DaBin/AutoCaptureRobotCelebration.swift",
+      "bytes": 17829,
+      "sha256": "a0389d611241abde2d57fb7c8a2218501c436806c5b175ee8b58ca6e5556b1e3"
+    },
+    {
+      "file": "native/Sources/DaBin/AutoCaptureRobotPresenter.swift",
+      "bytes": 25097,
+      "sha256": "8cad8bc055d3e1f996bf216ec421397b9585c7785765428fae8911753628ae58"
+    },
+    {
+      "file": "native/Sources/DaBin/AutoCaptureService.swift",
+      "bytes": 30542,
+      "sha256": "39e673f75afd0cecf027fe2899dc4e35cb369317b8ece758c3af18ad9b17ddb6"
+    },
+    {
+      "file": "native/Sources/DaBin/AutoCaptureSettings.swift",
+      "bytes": 10668,
+      "sha256": "f5e53774d1bf9421261feef5852e51a6954ba6a831172c46481c539c8cb2b2d0"
+    },
+    {
+      "file": "native/Sources/DaBin/BoardComponents.swift",
+      "bytes": 21198,
+      "sha256": "42be10419953441ed5064570084e14279a5d47176ff98b27869a278f2aa5635a"
+    },
+    {
+      "file": "native/Sources/DaBin/BoardResizeGeometry.swift",
+      "bytes": 2679,
+      "sha256": "98797b8fa3c8183cc07c6672c77af848663b03522b75ac8e5ad1a6726c2f09b0"
+    },
+    {
+      "file": "native/Sources/DaBin/BoardView.swift",
+      "bytes": 21976,
+      "sha256": "318c82431674b2c99c67bb00733c0fc9a231b5f6f37f921d182e7461618cdfc2"
+    },
+    {
+      "file": "native/Sources/DaBin/BoredRobotView.swift",
+      "bytes": 3987,
+      "sha256": "030e97ea615083dfc33b05af995a030cbaeece2b6fb428c6253274484bf2b001"
+    },
+    {
+      "file": "native/Sources/DaBin/BuddyControls.swift",
+      "bytes": 2714,
+      "sha256": "62f11c270302849445f24896dd7d713abf7f0bda30fe9dc922bf58449e13b215"
+    },
+    {
+      "file": "native/Sources/DaBin/CaptureCardGroup.swift",
+      "bytes": 1613,
+      "sha256": "c02ee506059dfb885dc7db6ff1f87afdaa7d9538d45aeca2bc223e359cd7d503"
+    },
+    {
+      "file": "native/Sources/DaBin/CaptureCards.swift",
+      "bytes": 12373,
+      "sha256": "a3c5800208caf4e69279e50ce704875d319b30e12c1669b7385c5106efa42433"
+    },
+    {
+      "file": "native/Sources/DaBin/CaptureClipboard.swift",
+      "bytes": 3927,
+      "sha256": "73c2a94f7f0abb99d6d50a7419f24433a31bb68685ae354a3c582914464783d5"
+    },
+    {
+      "file": "native/Sources/DaBin/CaptureCopyButton.swift",
+      "bytes": 2753,
+      "sha256": "6cae1098e5bcab7e5d5e2b3d5d106a647eec0a50102fc9c2e55d993827011879"
+    },
+    {
+      "file": "native/Sources/DaBin/CaptureFilterStrip.swift",
+      "bytes": 1107,
+      "sha256": "d28ebe000d8b327a9f34c3990a8477a01a23623de0229324a16dbc23b235d9b3"
+    },
+    {
+      "file": "native/Sources/DaBin/CapturePresentation.swift",
+      "bytes": 1941,
+      "sha256": "3e6b12e3b030788a5018da0fa17af7511575c62999b1f7f2dfe24fce4d9a0521"
+    },
+    {
+      "file": "native/Sources/DaBin/CapturePreviews.swift",
+      "bytes": 3832,
+      "sha256": "179dafa005ef560cf5cfccd36e7f4b4dac6a494d24f2d85fba643a121f57bf4d"
+    },
+    {
+      "file": "native/Sources/DaBin/CaptureRemoval.swift",
+      "bytes": 2218,
+      "sha256": "8b60e54b541d7a722c236d7fd0e98b1a86062cb08a4a18667dc0e02ed809709f"
+    },
+    {
+      "file": "native/Sources/DaBin/CaptureRepository.swift",
+      "bytes": 9120,
+      "sha256": "ab30c2bde0f82bb298228ec817810eba141012fefc053f1396ec66d4713929e4"
+    },
+    {
+      "file": "native/Sources/DaBin/CaptureSourceView.swift",
+      "bytes": 10003,
+      "sha256": "df59a7c2c71c5510356024604346bac9cf2da8892149821d7d55735d61007c8e"
+    },
+    {
+      "file": "native/Sources/DaBin/CaptureStore.swift",
+      "bytes": 60490,
+      "sha256": "1fdd3458e7e0c43cc81d69d2fe35a105fc069c44ccefd7b9e6a8a92d0fa293be"
+    },
+    {
+      "file": "native/Sources/DaBin/ClipboardRetentionService.swift",
+      "bytes": 7768,
+      "sha256": "3cafeb1c5456a8cf4683ad76c480cc9c992a6174032de751e0cc329092034e23"
+    },
+    {
+      "file": "native/Sources/DaBin/ClipboardRetentionSettings.swift",
+      "bytes": 3595,
+      "sha256": "06b8909eedd68281d5d0c1abafd6affa2fec20dfcf28719da50e3e935c4e82ae"
+    },
+    {
+      "file": "native/Sources/DaBin/ContentIndexService.swift",
+      "bytes": 19193,
+      "sha256": "a19b2924be84da5266c4a197f266461bb3447b138eafeccad918651872ac9a9b"
+    },
+    {
+      "file": "native/Sources/DaBin/CornerController.swift",
+      "bytes": 66252,
+      "sha256": "7dd89c4fd1f5d257e13c19915fe3582788322a45b7559ec819cf3f93540043d6"
+    },
+    {
+      "file": "native/Sources/DaBin/DaBinLogo.swift",
+      "bytes": 4888,
+      "sha256": "443656366ed7172baa53a4f589861e9617ffcc0710e659ab58cb4f4dbbeada56"
+    },
+    {
+      "file": "native/Sources/DaBin/DaBinMain.swift",
+      "bytes": 1113,
+      "sha256": "0bdbdff249504ca21e983291a691b44765c9e97f2e652301229499002e8920a6"
+    },
+    {
+      "file": "native/Sources/DaBin/DailyArchive.swift",
+      "bytes": 16096,
+      "sha256": "8ade12d0b3667c3bcc2ea648c634447b97bab28942b79696bd59ff4e01794ad1"
+    },
+    {
+      "file": "native/Sources/DaBin/DailyCaptureView.swift",
+      "bytes": 6132,
+      "sha256": "b389a7c92a4c0f8ffbf9424d08bc87770b846963a6a5b66fb22c227f65891cc4"
+    },
+    {
+      "file": "native/Sources/DaBin/DailyScreen.swift",
+      "bytes": 2836,
+      "sha256": "c9d401e5905c26dca63639bd4f0747c6b7b070ca15d0fc8f094fdebc09fecff0"
+    },
+    {
+      "file": "native/Sources/DaBin/DayExport.swift",
+      "bytes": 11044,
+      "sha256": "2710ba1c0b64f96286323d6f5c193d9cf630b34e3c97db1cbaf83d02a8887b56"
+    },
+    {
+      "file": "native/Sources/DaBin/DayExportUI.swift",
+      "bytes": 22343,
+      "sha256": "d5b299d11bbdcd0e3687d0d059b58c81c9b292e992c00d2a1e735fd1ee52fab3"
+    },
+    {
+      "file": "native/Sources/DaBin/DetailScreen.swift",
+      "bytes": 21370,
+      "sha256": "6db65cac825d68c90a46810eab8d4b13fd06908567ef102a408f0a28d88f6bd3"
+    },
+    {
+      "file": "native/Sources/DaBin/Domain.swift",
+      "bytes": 23890,
+      "sha256": "ba0bc506a3580a104363a5691e557a49034e8a624e9043c5bb93cbc70f434dca"
+    },
+    {
+      "file": "native/Sources/DaBin/DraftArchive.swift",
+      "bytes": 2935,
+      "sha256": "1d5bcf81b79209bd616d6c451928dbe1468fa41a4d060b09b80199dcef8ddecf"
+    },
+    {
+      "file": "native/Sources/DaBin/ExplorerItems.swift",
+      "bytes": 14972,
+      "sha256": "a5c73e5b9c7b3d3f722c70a1689925832d1c27985158878be81ed271fa31cff7"
+    },
+    {
+      "file": "native/Sources/DaBin/ExplorerQuery.swift",
+      "bytes": 3720,
+      "sha256": "8aaa0fe2e7eab80c814be6151e2e06bb158ffc96547866f8eda09a7bc440b7fa"
+    },
+    {
+      "file": "native/Sources/DaBin/ExplorerScreen.swift",
+      "bytes": 19833,
+      "sha256": "f4fd7c454d9d81e07ff9d12d1ebc5b767386f81a5b006b2a69dcf6cd3cdacdf9"
+    },
+    {
+      "file": "native/Sources/DaBin/ExplorerTransfer.swift",
+      "bytes": 22864,
+      "sha256": "38a7fd5946748160b984237def58527812201236cb60a821c568cf8c4e3082e9"
+    },
+    {
+      "file": "native/Sources/DaBin/FittedPDFPreview.swift",
+      "bytes": 4686,
+      "sha256": "8555cb558bd369af56a1033f93214bc36dd0024600569a8e529d6816ece86814"
+    },
+    {
+      "file": "native/Sources/DaBin/GroupedCaptureCard.swift",
+      "bytes": 9429,
+      "sha256": "d2101060bce718c09a254b0c43f203fac834012b74244fc7da758abd2a6288ea"
+    },
+    {
+      "file": "native/Sources/DaBin/HourlyCaptureCard.swift",
+      "bytes": 6569,
+      "sha256": "8efea2114c9e9c556acd569346d9b322bed934aef167bdcc1af420a5107ef10c"
+    },
+    {
+      "file": "native/Sources/DaBin/HourlyCaptureFeed.swift",
+      "bytes": 8896,
+      "sha256": "f05e1b270c58fe71fbccd0e22b4b88c958f4db079d8a119530163e73682dce08"
+    },
+    {
+      "file": "native/Sources/DaBin/InboxScreen.swift",
+      "bytes": 6822,
+      "sha256": "d69e548c43ff749bcc05040514ad1067b9cd8979c2f022e47d0ec9796dc7e938"
+    },
+    {
+      "file": "native/Sources/DaBin/InputService.swift",
+      "bytes": 25149,
+      "sha256": "d27971548adb7856569a7973f917e58c2e58dae42da2a76dcd4c948163f989b9"
+    },
+    {
+      "file": "native/Sources/DaBin/IslandRobotChoreography.swift",
+      "bytes": 17842,
+      "sha256": "169d408033ca94901c6dcf34d97097acd16f3a3481c24060621a31535b1ac68a"
+    },
+    {
+      "file": "native/Sources/DaBin/LibraryScreen.swift",
+      "bytes": 16299,
+      "sha256": "329e42ef7c2a22ccdff3b88560f0ae429f8f4f9a874db498f2425ac12f1862af"
+    },
+    {
+      "file": "native/Sources/DaBin/NewNoteScreen.swift",
+      "bytes": 1498,
+      "sha256": "5c1987f83bb0f6f7f0c0133a897b9692ef41197e2cce150a91bdfc52327cf281"
+    },
+    {
+      "file": "native/Sources/DaBin/OriginalFileStorage.swift",
+      "bytes": 3748,
+      "sha256": "70167995146422f8f6823c33ab843fff6226b3e2c25d885f2f8e01132e512bdf"
+    },
+    {
+      "file": "native/Sources/DaBin/PreviewRequest.swift",
+      "bytes": 3269,
+      "sha256": "10ce1b308afd4000b3362585bae85bd1c643f900a8e7132bbefefb4049cec14e"
+    },
+    {
+      "file": "native/Sources/DaBin/PreviewService.swift",
+      "bytes": 22095,
+      "sha256": "9fdc470a83ed03aeaa1adfd62a9065ade23fbc6ab167a670d6d870bce5b0a4b4"
+    },
+    {
+      "file": "native/Sources/DaBin/PrivacyInformation.swift",
+      "bytes": 5206,
+      "sha256": "dff2aa728cb850ec87903b6cd32c83318eb29a30d4adedc0c3d5750fbf90a0c2"
+    },
+    {
+      "file": "native/Sources/DaBin/ProjectFileArchive.swift",
+      "bytes": 23687,
+      "sha256": "77cdc376322b84cd97d948320e40b3c7c781162e992c10a3b23727944071b2bd"
+    },
+    {
+      "file": "native/Sources/DaBin/QuickAccess.swift",
+      "bytes": 6528,
+      "sha256": "579c3df267fbf3c7987e6050baa871b477a644d0c260ca247e8b55911e0bb4f6"
+    },
+    {
+      "file": "native/Sources/DaBin/ReminderClockEditor.swift",
+      "bytes": 4764,
+      "sha256": "1aadc2773e235bca0fa94c9677b2708689f01ce34dbd311f72eef1a448d47676"
+    },
+    {
+      "file": "native/Sources/DaBin/ReminderLifecycle.swift",
+      "bytes": 2104,
+      "sha256": "ad737601ca776d7b5a3b4fe2ea1e80b36d06ea006330f98907b8b9fd4f9141f2"
+    },
+    {
+      "file": "native/Sources/DaBin/ReminderSchedule.swift",
+      "bytes": 1379,
+      "sha256": "e73797fe946c24b4297b379e61a54a21ff9e41ccbd99992c699b99c55782eee6"
+    },
+    {
+      "file": "native/Sources/DaBin/ReminderService.swift",
+      "bytes": 11800,
+      "sha256": "bd318a28b356fb4a9b30dd985d3e34be66d0c82cc7dbf7eeb41726d9f03ee1ba"
+    },
+    {
+      "file": "native/Sources/DaBin/RemindersScreen.swift",
+      "bytes": 2610,
+      "sha256": "941ab83112c1e6e0580962133f6e3f9a6bef0b17863c32040477298eb8dfa97b"
+    },
+    {
+      "file": "native/Sources/DaBin/RobotAppFrameView.swift",
+      "bytes": 60154,
+      "sha256": "ad6e2e84ec9ba4c29a6935ce1d7f0ff833553ead8a5593e3b63114375ad3fe02"
+    },
+    {
+      "file": "native/Sources/DaBin/RobotCharacterView.swift",
+      "bytes": 90310,
+      "sha256": "758eda24b38a5064202330967697ba48da8781f4352ce085bfcb2a7e764b5d44"
+    },
+    {
+      "file": "native/Sources/DaBin/RobotLifecycle.swift",
+      "bytes": 9300,
+      "sha256": "22843ec1cb73d3d47ef002c0e861779bdb1c8fb05dbaa7f08f5731f334472e56"
+    },
+    {
+      "file": "native/Sources/DaBin/RobotMotion.swift",
+      "bytes": 9477,
+      "sha256": "f2321a5d2bbbd73cbfc9dca81cf1d763b59ff08b6fcee0f1d34f2f2f6c51ab37"
+    },
+    {
+      "file": "native/Sources/DaBin/RobotPlacementSettings.swift",
+      "bytes": 1195,
+      "sha256": "2893b97f04fa459405dc7f6459be5f229c349e6959257e29281e28d83e46500b"
+    },
+    {
+      "file": "native/Sources/DaBin/RobotView.swift",
+      "bytes": 11755,
+      "sha256": "b2d63e2d32a0489b93421619e8d66df2ddaac89dc0f6e3a1c02c9469eaf84bf5"
+    },
+    {
+      "file": "native/Sources/DaBin/ScratchpadView.swift",
+      "bytes": 4853,
+      "sha256": "fa140193e595e03c05f60b14ee244ac7adf14aee8851da805251f81bc58fd062"
+    },
+    {
+      "file": "native/Sources/DaBin/ScreenshotFolderMonitor.swift",
+      "bytes": 10238,
+      "sha256": "d2ca257fc01aa4c4e74275bd29e80636dd65fe119825c6d0f93abdeafea065c3"
+    },
+    {
+      "file": "native/Sources/DaBin/SearchScreen.swift",
+      "bytes": 7429,
+      "sha256": "f3de1ad395fef72e95dcd0c1d1d6ed12edad11e73657fca785dcf5c555fe5562"
+    },
+    {
+      "file": "native/Sources/DaBin/SettingsScreen.swift",
+      "bytes": 36614,
+      "sha256": "6fb2ed43f689a2b4249200ba3bfcb75e0990efe1cd8f33199c9864a5fc4c8d49"
+    },
+    {
+      "file": "native/Sources/DaBin/ShelfCaptureController.swift",
+      "bytes": 2902,
+      "sha256": "b6f191ed4b75be328e8c523122238a5711ea3df631e82e02cea6a45ddf8e84ee"
+    },
+    {
+      "file": "native/Sources/DaBin/ShelfExport.swift",
+      "bytes": 5687,
+      "sha256": "67589f74ba21c927ca0358ea37110e802ddd7fa16a1bba29faf4ca0c01b0b8b3"
+    },
+    {
+      "file": "native/Sources/DaBin/SoftwareUpdateService.swift",
+      "bytes": 21173,
+      "sha256": "3b088ea8deff38bf5085370c06e4c32e02d2d7933622eb0f0f9eae18f1dd6623"
+    },
+    {
+      "file": "native/Sources/DaBin/StatusBarController.swift",
+      "bytes": 6850,
+      "sha256": "89cfd556dfe02124a417446dbf252132d9b086245f74274428fe2408f3a37ef5"
+    },
+    {
+      "file": "native/Sources/DaBin/TaskAttachmentsView.swift",
+      "bytes": 3772,
+      "sha256": "024922c06fd20dd5c0cea7e5a64516945b84163284fb0e154fc6bfe9874d7239"
+    },
+    {
+      "file": "native/Sources/DaBin/TaskEditorScreen.swift",
+      "bytes": 3128,
+      "sha256": "f4d6f3f1de1af613651119a0be6c75d7628741567dcdc476646c248b7fd6bc01"
+    },
+    {
+      "file": "native/Sources/DaBin/TaskPlanning.swift",
+      "bytes": 6163,
+      "sha256": "66013a6381b4bdd21bd40b1ae4a52513e623b9741cd4385e4caf5c0fb0afbeae"
+    },
+    {
+      "file": "native/Sources/DaBin/TaskPlanningEditor.swift",
+      "bytes": 9225,
+      "sha256": "2d684f56c2aaafd32228c32057af1046b45a02a4a8f710556ad5000973b7e636"
+    },
+    {
+      "file": "native/Sources/DaBin/ThemeSettings.swift",
+      "bytes": 8578,
+      "sha256": "4201ea8ef5a06c254ae7600e980d51f8aaa605fd79871221d67d120375549a8d"
+    },
+    {
+      "file": "native/Sources/DaBin/TodayPlanningScreen.swift",
+      "bytes": 9715,
+      "sha256": "3f89ced94a8d85da76126c80a75484ac78634a58f8e7aab919cba9d57bc30e2d"
+    },
+    {
+      "file": "native/Sources/DaBin/TrashScreen.swift",
+      "bytes": 2852,
+      "sha256": "867409a9486b1d91618aaec197c3481f6e80154b22ff71be6c026f6466e4fb83"
+    },
+    {
+      "file": "native/Sources/DaBin/UpdateHandoff.swift",
+      "bytes": 5865,
+      "sha256": "aa8fadb66cc79ea16080dae270b1748b2b002ad36e3466e0bdb47b681654602a"
+    },
+    {
+      "file": "native/Sources/DaBin/WeeklyScopeActions.swift",
+      "bytes": 5717,
+      "sha256": "d103f1a48038030fda502797a6f83c9f38cd46c93118898d87a567dadae8b234"
+    },
+    {
+      "file": "native/Sources/DaBin/WeeklyScreen.swift",
+      "bytes": 13240,
+      "sha256": "eb5bdc49d1ae96e9999513e348031cd9b9970097bed55eb392f8c67e64366158"
+    },
+    {
+      "file": "native/Sources/DaBin/WindowDragHandle.swift",
+      "bytes": 1766,
+      "sha256": "dcca56e12e02c27d9236cb61d8074132fd806326a51928f3f16e66cf8444b881"
+    },
+    {
+      "file": "native/Sources/DaBin/WorkspaceClipboard.swift",
+      "bytes": 1049,
+      "sha256": "5a218b19565697b003e708d071fced032cefd6e8d6a11a5c99ab9c6364668f94"
+    },
+    {
+      "file": "native/Sources/DaBin/WorkspaceItemCard.swift",
+      "bytes": 10073,
+      "sha256": "6eada270fd30cf2421cfe294d6c1029324cf1db2167feefac5add8c8fb2d45f3"
+    },
+    {
+      "file": "native/Sources/DaBin/WorkspaceQuery.swift",
+      "bytes": 2894,
+      "sha256": "a2564a667db0ee59b5485a4d61f7364b8874dbf3f6c0b3ae8b6d8010c4a91fa3"
+    },
+    {
+      "file": "native/Sources/DaBin/WorkspaceStore.swift",
+      "bytes": 14739,
+      "sha256": "d2370462d62993e3946983a7ddc783992dde85661775a47c9f1f3b3de6052c97"
+    },
+    {
+      "file": "native/UpdateTools/DaBinUpdater.swift",
+      "bytes": 25123,
+      "sha256": "76877e83c4772e3e9b92ca210884a93dd25ff6e44b5856bab8e09c94c68a0cd3"
+    },
+    {
+      "file": "native/scripts/build.sh",
+      "bytes": 134,
+      "sha256": "ea9b087ea6a5e5dbf50bef040b41a41fad85f26e8875f51e4560e7dcae75fd8f"
+    },
+    {
+      "file": "native/scripts/build_app.py",
+      "bytes": 8835,
+      "sha256": "ee070fa1578d4bd8046f15616b6f30da4804abe33a1674bdcaa7a643ecab4119"
+    },
+    {
+      "file": "native/scripts/project_inventory.py",
+      "bytes": 2796,
+      "sha256": "61ff17ea4115057b458ecf27a255847fa374b5048a5dc857781625c4b461b5e8"
+    }
+  ]
+}
