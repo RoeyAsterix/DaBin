@@ -12,7 +12,7 @@
     "The exact App Store distribution-signed binary must still be tested for sandbox access, folder permission revocation, notification permission behavior, clean installation, and current supported macOS versions.",
     "Final coordinated Release source QA passed 73 of 73 suites, including 37 privacy information checks. This is not exact App Store distribution-binary verification.",
     "The docs-only privacy renderer passed eleven assertions, but its bottom-scroll candidates failed visual QA and are withheld in rejected/. The top/date fixtures passed; exact signed live policy scrolling remains pending. This exporter limitation is not an established production bug.",
-    "The public privacy policy still contains the older wording. Publishing the updated policy was not authorized or performed.",
+    "At the original audit time the public privacy policy contained older wording, and publication had not been authorized/performed. A later authorized source push resolves policy parity; see publicationFollowUp, without changing the historical URL observations below.",
     "HTTP 200 for the support page does not prove that a real, maintained contact method is present."
   ],
   "verificationEvidence": {
@@ -130,6 +130,15 @@
       "authenticated": false,
       "maintainedContactMethodVerified": false
     }
+  },
+  "publicationFollowUp": {
+    "verifiedAtUTC": "2026-10-01T23:47:07.900847+00:00",
+    "localDate": "2026-10-02",
+    "sourceCommit": "650ecf664bdabce46120eac5b5a6617a575b1689",
+    "evidence": "../publication.json",
+    "status": "PUBLIC_POLICY_EXACT_SOURCE_MATCH",
+    "projectAndTaskSignDisclosurePublicCopyResolved": true,
+    "historicalURLChecksPreserved": true
   },
   "officialAppleSources": [
     {

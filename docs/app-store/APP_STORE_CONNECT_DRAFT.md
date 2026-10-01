@@ -2,6 +2,8 @@
 
 Updated 2 October 2026 for source 0.4.19 (74). This is a local submission draft, not an uploaded app or an Apple approval.
 
+The approved source and docs are now on GitHub `main` (`650ecf6`). The public privacy policy returned HTTP 200 and exactly matches the corrected local source. [Publication receipt](../qa/app-store-2026-10-02/publication.json). No binary release, App Store upload or submission was made.
+
 The canonical English fields are in [metadata-en-US.json](metadata-en-US.json). Run `native/scripts/validate_app_store_metadata.py` to check copy lengths and source version alignment. `--require-complete` deliberately fails while owner decisions and external verification remain pending.
 
 ## Product page draft
@@ -84,12 +86,12 @@ The existing [24 September drafts](screenshots/1440x900/README.md) are preserved
 
 1. Confirm the App Store Connect app record, app name, Bundle ID and version/build history. Local profile matching is not a check of the current Connect record.
 2. Confirm support/contact, legal copyright, review contact (name/email/international phone), price and territories. Remove every unresolved owner field before copying metadata into Connect.
-3. Publish the corrected 2 October privacy policy at the configured URL and verify the public content. The existing public policy was reachable but still described the older signs behavior during this audit. Nothing was pushed or published.
+3. **Policy publication resolved:** the corrected 2 October policy is published at the configured URL and verified byte-for-byte against the source. The original audit's older-policy observation is preserved; the separate publication receipt records the later authorized push. Recheck parity if the policy changes.
 4. Prepare the exact source-matched Xcode development archive, then export the Store-distribution-signed app/installer. Inspect the exported product's distribution signature, sandbox entitlements, Store provisioning profile, resources, quarantine metadata and absence of the direct updater/helper. Xcode Organizer/App Store Connect validation remains separate from local checks.
 5. Test the exact signed sandboxed candidate with a clean account on macOS 14 and current macOS: first launch/relaunch, capture/drag/paste, saved-file access, bookmark restoration/revocation, Auto Capture enable/pause/off and automatic-link network isolation.
 6. Test VoiceOver, keyboard navigation, reduced motion/transparency, multiple displays and optional camera-island placement. Confirm monitoring stays visibly indicated even when celebrations are quiet. Measure signed-build idle/active energy, CPU, memory and disk use; test IPv6-only and offline preview/capture behavior.
 7. Compare current screenshots with that exact app, and complete age-rating, privacy, encryption, accessibility and applicable EU trader/agreements/tax/banking information.
-8. Complete signed clean-install/update testing, upload processing and Apple review. TestFlight is recommended for project QA, not required by Apple before production review. Upload, submission, policy publication and account changes require a separate authorized step; none was performed here. [Apple's upload workflow](https://developer.apple.com/help/app-store-connect/manage-builds/upload-builds/).
+8. Complete signed clean-install/update testing, upload processing and Apple review. TestFlight is recommended for project QA, not required by Apple before production review. Source/documentation and privacy-policy publication were authorized and completed; binary publication, App Store upload/submission and account changes were not performed. These remain separately authorized steps. [Apple's upload workflow](https://developer.apple.com/help/app-store-connect/manage-builds/upload-builds/).
 
 ## Apple references checked 2 October 2026
 

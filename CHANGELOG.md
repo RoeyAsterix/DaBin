@@ -9,6 +9,7 @@
 - Shares resize geometry with cursor regions and preserves header button/project-picker click areas, central chrome dragging, minimum sizes and expand/restore behavior.
 - Keeps the original cancelable robot shrink/fade and four-subpath torso-fill choreography. Capture data and preferences are not part of this window-only change.
 - Prepares current App Store privacy resources, friendly listing/reviewer copy, native screenshot drafts and packaging checks. All 73 registered Release suites, 39 media checks, 77 offline Python tests and 51 unsigned Store packaging checks pass; signed distribution/runtime verification and owner declarations remain pending. [Preparation evidence](docs/qa/app-store-2026-10-02/README.md). This is not a binary release or Apple approval.
+- Publishes the approved source, guide/copy and QA docs to GitHub main; verifies the corrected public privacy policy by HTTP status and exact source hash. [Publication receipt](docs/qa/app-store-2026-10-02/publication.json). Downloads and the installed app are unchanged by this push.
 
 ## 0.4.18 (73) - 2026-10-02, local candidate
 

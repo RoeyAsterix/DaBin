@@ -40,7 +40,13 @@
       "distribution": 30,
       "metadata": 15,
       "storePackaging": 32,
-      "finalMetadataRerun": "metadata/final-regressions.log"
+      "finalMetadataRerun": "metadata/final-regressions.log",
+      "publicationRerun": {
+        "tests": 45,
+        "metadata": 15,
+        "mockedDistribution": 30,
+        "evidence": "metadata/publication-regressions.log"
+      }
     },
     "scopedPostPackagingUpdateConfiguration": {
       "status": "PASS",
@@ -62,7 +68,7 @@
       "status": "DRAFT_LIMITS_PASS_COMPLETENESS_EXPECTED_FAIL",
       "localPassingChecks": 13,
       "unresolvedCompletenessChecks": 12,
-      "metadataSHA256": "dea260bdaba15946b153cf776bf317a8ff17b890fbba6d4c5f62f000cba889b4",
+      "metadataSHA256": "ec057c704e0d507383b9e91423b8a3609dba1603d5135386d9e9654d8a5ff1e0",
       "draftEvidence": "metadata/draft-checks.json",
       "completenessEvidence": "metadata/submission-completeness.json"
     }
@@ -112,7 +118,6 @@
     "Owner authorization to use existing signing key; missing Mac Installer Distribution asset",
     "Exact Store-distribution app/installer export, Xcode/Connect validation and processing",
     "Connect app/name/Bundle ID/version history, legal/support/review contact, price/territories",
-    "Publish corrected public privacy policy and verify content parity",
     "Owner privacy/age/encryption/accessibility/regional/agreement/tax/banking declarations",
     "Signed Sandbox clean-install/update/runtime on macOS14 and current macOS",
     "File access/bookmark revocation, capture consent/indication/shutdown and privacy-policy scrolling",
@@ -125,10 +130,19 @@
     "submissionReady": false,
     "appStoreApproved": false,
     "uploaded": false,
-    "published": false,
+    "sourcePushed": true,
+    "privacyPolicyPublished": true,
+    "downloadableReleasePublished": false,
+    "appStorePublished": false,
     "installedAppChanged": false,
     "personalArchiveOrSettingsChanged": false,
     "keychainOrAccountPermissionsChanged": false,
     "kariMaterialUsed": false
+  },
+  "publication": {
+    "sourceCommit": "650ecf664bdabce46120eac5b5a6617a575b1689",
+    "branch": "main",
+    "evidence": "publication.json",
+    "publicPolicyExactMatch": true
   }
 }

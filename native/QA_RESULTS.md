@@ -6,6 +6,8 @@
 
 The preparation updates the privacy manifest for app-owned timestamps, the robot-sign disclosures and bundled-policy date, optional-manual-preview copy, provisioning safeguards, source-bound Store packaging checks and listing/reviewer drafts. The full functional test module enables direct updates; Store-only Xcode compilation and final signed Sandbox execution are distinct gates. Tests ran on ARM64 macOS 26.6.2 with Xcode/SDK 27 and target macOS 14; this does not prove macOS 14 runtime compatibility. No installed DaBin app, personal archive, real clipboard, system notification, account or public release was changed. [Current Store readiness and outstanding gates](APP_STORE_READINESS.md).
 
+Following the owner's authorization, approved source, guide and QA documents were pushed to GitHub main (`650ecf6`). Both public policy URLs returned HTTP 200, and the raw corrected policy exactly matches the source hash/bytes. [Publication receipt](../docs/qa/app-store-2026-10-02/publication.json). Earlier unpublished/pending-policy observations below are historical; no new binary download, installed-app replacement or App Store upload/submission is claimed.
+
 ## Continuous window corners and resize grips - 0.4.19 (74), 2 October 2026
 
 All **18 selected Release suites pass across two frozen-input reports**: the 17 valid passing suites in the [batch report](build/qa/runs/20261001T215857193709Z/report.json), excluding its failed close recording, plus the [final focused closing run](build/qa/runs/20261001T221215692673Z/report.json) with **400 checks**. The passing-suite and build inputs match current production. This is combined targeted coverage, not a claim that the earlier batch itself was all green.

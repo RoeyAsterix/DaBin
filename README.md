@@ -22,6 +22,8 @@ Unsaved-form errors, recovery controls, Undo and the click-to-dismiss task alarm
 
 The **2 October App Store preparation** adds source privacy/tooling changes without replacing that installed app. All 73 final registered Release suites pass on the preparation sources; Store signing, macOS 14 runtime QA and owner/Connect declarations remain separate gates. The installed-app receipt above predates these changes. [Current preparation status](native/APP_STORE_READINESS.md).
 
+Approved source, guide and QA documentation are pushed to `main`. The public privacy policy is verified byte-for-byte against the current source. [Publication receipt](docs/qa/app-store-2026-10-02/publication.json). No 0.4.19 binary release or App Store submission was made.
+
 The **Quiet Orbit** robot uses sharp metallic vector artwork, seven positions around a detected camera island, quiet idle behavior and small success/count feedback. Hover or drop still works directly on the robot. [Native UX/UI verification](docs/qa/quiet-orbit-2026-10-01/README.md).
 
 ## A little desktop buddy

@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "status": "SOURCE_DOCS_PUSHED_PUBLIC_POLICY_VERIFIED",
+  "authorization": "User requested: Push with all commits approved and update doc in git",
+  "repository": "https://github.com/RoeyAsterix/DaBin.git",
+  "branch": "main",
+  "sourceCommit": "650ecf664bdabce46120eac5b5a6617a575b1689",
+  "localDate": "2026-10-02",
+  "verifiedAtUTC": "2026-10-01T23:47:07.900847+00:00",
+  "privacyPolicy": {
+    "configuredURL": "https://github.com/RoeyAsterix/DaBin/blob/main/native/Resources/PrivacyPolicy.md",
+    "configuredHTTPStatus": 200,
+    "rawURL": "https://raw.githubusercontent.com/RoeyAsterix/DaBin/main/native/Resources/PrivacyPolicy.md",
+    "rawHTTPStatus": 200,
+    "authenticated": false,
+    "localBytes": 12633,
+    "publicBytes": 12633,
+    "localSHA256": "78ba4109f4caf2759ecfaedc0c2a15257772e40b4628b0092913db9590052bc7",
+    "publicSHA256": "78ba4109f4caf2759ecfaedc0c2a15257772e40b4628b0092913db9590052bc7",
+    "exactContentMatch": true,
+    "updatedLine": "Updated 2 October 2026",
+    "projectAndTaskSignDisclosuresPublished": true
+  },
+  "boundaries": {
+    "sourcePushed": true,
+    "documentationPushed": true,
+    "privacyPolicyPublished": true,
+    "downloadableReleasePublished": false,
+    "appStoreUploaded": false,
+    "appStoreSubmitted": false,
+    "appStorePublished": false,
+    "appStoreApproved": false,
+    "submissionReady": false,
+    "installedAppChanged": false,
+    "personalArchiveOrSettingsChanged": false,
+    "keychainOrAccountPermissionsChanged": false
+  },
+  "evidenceHandling": {
+    "generatedAppsAndCachesExcluded": true,
+    "privateKeysAndPersonalCapturesExcluded": true,
+    "fictionalGuideAndScreenshotFixturesReviewed": true,
+    "archiveLogPersonalSigningSubjectsRedacted": true,
+    "untouchedArchiveLogsPreservedLocally": "output/publication-private-originals/ (ignored)",
+    "machineLocalPathsAndPublicSigningIdentifiers": "Retained as historical diagnostic provenance; not credentials or distribution approval"
+  },
+  "remainingGates": "See native/APP_STORE_READINESS.md and summary.json. Policy publication alone does not resolve signed export, runtime testing, owner/Connect declarations or Apple review."
+}

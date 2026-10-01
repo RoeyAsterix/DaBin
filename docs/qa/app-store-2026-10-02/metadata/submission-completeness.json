@@ -120,7 +120,6 @@
   "pendingGates": [
     "Confirm app-name availability, Bundle ID ownership and App Store Connect app record",
     "Confirm legal publisher/copyright, real support URL/contact, price and territories",
-    "Publish the current privacy policy at the configured public URL and verify content/reachability",
     "Validate exact distribution-signed archive and upload processing in Xcode/App Store Connect",
     "Test the exact signed sandboxed candidate on macOS 14 and current macOS",
     "Verify clean-install/update, file permissions/bookmark revocation, Auto Capture network isolation and IPv6-only/offline preview behavior",
@@ -138,5 +137,6 @@
   },
   "boundary": "This offline check does not verify Apple approval, declarations, signing, screenshots, public URLs or owner identity.",
   "processExitCode": 1,
-  "checkedAtLocalDate": "2026-10-02"
+  "checkedAtLocalDate": "2026-10-02",
+  "checkedAtUTC": "2026-10-01T23:49:18Z"
 }
