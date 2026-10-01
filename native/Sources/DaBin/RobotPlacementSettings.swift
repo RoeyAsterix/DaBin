@@ -10,7 +10,7 @@ enum RobotHome: String, CaseIterable, Identifiable {
     var title: String {
         switch self {
         case .corners: return "Screen corners"
-        case .cameraIsland: return "Below camera island"
+        case .cameraIsland: return "Around camera island"
         }
     }
 }

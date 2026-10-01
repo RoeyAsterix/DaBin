@@ -87,8 +87,8 @@ struct RobotMotionTests {
                                           reduceMotion: { false })
         animated.layoutSubtreeIfNeeded()
         animated.send(.reveal(.left))
-        try expect(animated.mood == .idle && animated.hasActiveAmbientMotion,
-                   "Visible animated character schedules quiet blink and glance personality")
+        try expect(animated.mood == .idle && !animated.hasActiveAmbientMotion,
+                   "Quiet Orbit remains still without idle rendering timers")
         animated.send(.hover(true, pointer: CGPoint(x: 0.4, y: 0.2)))
         try expect(animated.mood == .curious(pointer: CGPoint(x: 0.4, y: 0.2)),
                    "Character view exposes its curious pointer state")

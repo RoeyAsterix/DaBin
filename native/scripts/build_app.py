@@ -130,7 +130,7 @@ def main():
         for resource in resources():
             copy_permissions(resource, resource_directory / resource.name)
         identity = os.environ.get("DABIN_SIGNING_IDENTITY", "-")
-        build_update_helper(app, sdk, identity, info["CFBundleShortVersionString"], info["CFBundleVersion"])
+        helper = build_update_helper(app, sdk, identity, info["CFBundleShortVersionString"], info["CFBundleVersion"])
         sign_arguments = ["codesign", "--force", "--sign", identity]
         if identity != "-":
             sign_arguments += ["--options", "runtime", "--timestamp"]
@@ -161,6 +161,8 @@ def main():
             "version": info["CFBundleShortVersionString"], "buildNumber": info["CFBundleVersion"],
             "sourceFingerprint": source_hash, "inputs": inventory,
             "executableSHA256": hashlib.sha256(executable.read_bytes()).hexdigest(),
+            "updaterExecutableSHA256": hashlib.sha256(
+                (helper / "Contents/MacOS/DaBinUpdate").read_bytes()).hexdigest(),
             "strictSignatureVerifiedOnCleanCopy": True,
             "distributionChannel": "github",
             "embeddedUpdateHelper": True,

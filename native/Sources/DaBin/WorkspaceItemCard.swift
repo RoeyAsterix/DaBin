@@ -65,11 +65,18 @@ struct WorkspaceItemCard: View {
             if capture.isTask, !capture.isMinimized { TaskFocusControls(state: state, capture: capture) }
             CaptureConversionUndo(state: state, capture: capture)
             HStack(spacing: 4) {
-                CaptureProjectPickerButton(state: state, capture: capture)
+                if capture.parentTaskID == nil {
+                    CaptureProjectPickerButton(state: state, capture: capture)
+                } else {
+                    Label(ExplorerQuery.project(of: capture, in: state.store.captures) ?? "Unfiled", systemImage: "folder")
+                        .font(.system(size: 12)).lineLimit(1).foregroundStyle(Palette.muted)
+                        .accessibilityLabel("Parent task project")
+                        .accessibilityValue(ExplorerQuery.project(of: capture, in: state.store.captures) ?? "Unfiled")
+                }
                 Spacer(minLength: 0)
                 if !capture.isTask {
                     CaptureTaskConversionButton(state: state, capture: capture)
-                    CaptureKeepButton(state: state, capture: capture)
+                    if capture.parentTaskID == nil { CaptureKeepButton(state: state, capture: capture) }
                 }
                 BuddyIconButton(symbol: onShelf ? "tray.full.fill" : "tray.and.arrow.down", title: onShelf ? "Remove from shelf; keep capture" : "Add to shelf", isActive: onShelf) { toggleShelf() }
                 Menu { itemActions } label: {
@@ -108,15 +115,15 @@ struct WorkspaceItemCard: View {
         }
         Button(capture.isPinned ? "Unpin" : "Pin", systemImage: capture.isPinned ? "pin.slash" : "pin") { state.togglePinned(capture) }
         Button(onShelf ? "Remove from shelf; keep capture" : "Add to shelf", systemImage: onShelf ? "tray" : "tray.and.arrow.down") { toggleShelf() }
-        Menu {
+        if capture.parentTaskID == nil { Menu {
             Button("No project", systemImage: "tray") { state.assignProject(capture, name: nil) }
             ForEach(Set(state.projectNames + workspace.projectNames).sorted(), id: \.self) { project in
                 Button(project, systemImage: "folder") { state.assignProject(capture, name: project) }
             }
-        } label: { Label("Move to project", systemImage: "folder") }
+        } label: { Label("Move to project", systemImage: "folder") } }
         if !capture.isTask {
             Button("Turn into task", systemImage: "checkmark.circle") { state.convertToTask(capture) }
-            Menu {
+            if capture.parentTaskID == nil { Menu {
                 ForEach(state.store.captures.filter { $0.isTask && !$0.isCompleted }) { task in
                     Button(task.title, systemImage: "paperclip") {
                         do {
@@ -128,6 +135,7 @@ struct WorkspaceItemCard: View {
                 }
             } label: { Label("Attach to task", systemImage: "paperclip") }
                 .disabled(!state.store.captures.contains { $0.isTask && !$0.isCompleted })
+            }
         }
         if hasFile {
             Divider()

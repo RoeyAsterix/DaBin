@@ -167,8 +167,7 @@ private final class WindowNotificationClient: ReminderNotificationClient {
         }
 
         if let islandScreen = screens.first(where: { CornerGeometry.cameraIslandRect(on: $0) != nil }),
-           let trigger = CornerGeometry.cameraIslandTriggerFrame(on: islandScreen),
-           let island = CornerGeometry.cameraIslandRect(on: islandScreen) {
+           let trigger = CornerGeometry.cameraIslandTriggerFrame(on: islandScreen) {
             robotPlacement.setHome(.cameraIsland)
             let islandAway = NSPoint(x: islandScreen.visibleFrame.minX + 40,
                                      y: islandScreen.visibleFrame.midY)
@@ -176,14 +175,14 @@ private final class WindowNotificationClient: ReminderNotificationClient {
             controller.pollPointer(at: NSPoint(x: trigger.midX, y: trigger.minY + 2),
                                    now: clock.addingTimeInterval(2))
             try expect(controller.bin.isVisible, "Camera-island preference reveals the robot from the top center")
-            try expect(controller.bin.frame == CornerGeometry.robotFrame(cameraIsland: island,
-                                                                          visible: islandScreen.visibleFrame),
+            try expect(controller.bin.frame == CornerGeometry.robotFrame(target: .cameraIsland, on: islandScreen),
                        "Live island reveal uses the detected cutout geometry")
             let transparentEdge = NSPoint(x: controller.bin.frame.minX + 3, y: controller.bin.frame.midY)
             controller.pollPointer(at: transparentEdge, now: clock.addingTimeInterval(2.1), pressedMouseButtons: 0)
             try expect(controller.bin.isVisible && controller.bin.ignoresMouseEvents && !controller.bin.isKeyWindow,
                        "The island animation margins pass clicks through and never take hover focus")
-            let islandBodyPoint = NSPoint(x: controller.bin.frame.midX, y: controller.bin.frame.maxY - 60)
+            let body = controller.robot.bodyBounds
+            let islandBodyPoint = NSPoint(x: controller.bin.frame.minX + body.midX, y: controller.bin.frame.minY + body.midY)
             controller.pollPointer(at: islandBodyPoint, now: clock.addingTimeInterval(2.2), pressedMouseButtons: 0)
             try expect(!controller.bin.ignoresMouseEvents && controller.bin.isKeyWindow,
                        "The central island robot remains an immediate hover-paste target")

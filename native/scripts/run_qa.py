@@ -19,7 +19,7 @@ NONFOCUS = ["ProjectFileArchiveTests", "ExplorerTransferTests", "ExplorerQueryTe
             "CaptureClipboardTests", "ClipboardRetentionTests", "CaptureTaskConversionTests",
             "LocalContentSearchTests",
             "HourlyGroupingTests", "DayExportTests", "DayExportUITests", "WeeklyStateTests", "InputTests", "AutoCaptureServiceTests", "AutoCaptureRobotPresenterTests", "AutoCaptureRobotCelebrationTests",
-            "SoftwareUpdateTests", "UpdateConfigurationTests", "RobotMotionTests", "IslandRobotChoreographyTests", "RobotLifecycleTests", "RobotAppFrameTests"]
+            "SoftwareUpdateTests", "UpdateConfigurationTests", "RobotMotionTests", "IslandRobotChoreographyTests", "RobotLifecycleTests", "RobotAppFrameTests", "QuietOrbitRenderTests"]
 WINDOW = ["RedesignInteractionTests", "WindowResizeInteractionTests", "WindowTests", "WeeklyWindowTests", "FilterResizeTests", "RobotDropTests", "DailyCaptureTests", "HeaderInteractionTests", "WorkspaceWindowTests", "RobotWindowTransitionTests"]
 MODULE = "DaBinTestCore"
 

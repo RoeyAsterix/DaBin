@@ -221,7 +221,7 @@ pill("LOCAL FIRST", W - 187, 24, 59, MINT, MINT_INK)
 
 text("Everything your day leaves behind, saved in one glance.", 32, 67, 23.5, BOLD, INK)
 paragraph(
-    "Drop it. Paste it. Find it later. DaBin turns the things you touch on your Mac into a private daily board.",
+    "Capture quickly. Keep it with a project. Take the next action. Find your work again, all on your Mac.",
     33,
     96,
     640,
@@ -238,9 +238,9 @@ rect(32, 124, W - 64, 58, WHITE, radius=12, stroke=LINE)
 text("START HERE", 45, 141, 8.2, BOLD, PURPLE)
 step(1, "Reveal", "Move to a corner, or choose the camera island home.", 129, 138, 192)
 rule(328, 135, 328, 171)
-step(2, "Feed DaBin", "Drop or paste into the robot or Daily window.", 343, 138, 192)
+step(2, "Feed DaBin", "Drop or paste into the robot or Inbox.", 343, 138, 192)
 rule(542, 135, 542, 171)
-step(3, "Open your day", "Double-click the robot, then browse Daily or Weekly.", 557, 138, 211)
+step(3, "Open your day", "Double-click the robot. Choose Inbox, Today or Workspace.", 557, 138, 211)
 
 text("EVERYTHING DABIN CAN DO", 32, 199, 8.2, BOLD, PURPLE)
 right("Newest captures appear first", W - 32, 199, 7.7, NORMAL, MUTED)
@@ -253,84 +253,46 @@ ROW_GAP = 10
 GRID_TOP = 216
 
 cards = [
-    (
-        "Capture anything",
-        "capture",
-        [
-            "Drag or paste text, links, media, PDFs, documents, or files onto the robot or Daily.",
-            "Hover the robot and press <b>Control-V</b> or <b>Command-V</b>; use <b>+</b> to create a task.",
-            "Items added together share one card; previews fit and originals stay untouched.",
-            "Stores time, type, source app, and source path when available.",
-        ],
-    ),
-    (
-        "Revisit your work",
-        "calendar",
-        [
-            "First launch opens Daily; later, use the robot or menu bar to return.",
-            "Daily has date navigation. Weekly ends on your selected date and hides empty days.",
-            "Filter by <b>All, Text, Links, Files, Media,</b> or <b>Tasks</b>. Notifications gathers reminders.",
-            "Move the board anywhere; DaBin remembers its position. Empty views show the bored robot.",
-        ],
-    ),
-    (
-        "Find anything",
-        "search",
-        [
-            "Search the archive, a selected day, or the displayed week.",
-            "Results open on the date with the same-day capture immediately before and after.",
-            "Local recognition reads screenshots, images, PDFs, and supported text documents.",
-            "Search also checks filenames, comments, and links. Copy recognized text or rebuild the index.",
-        ],
-    ),
-    (
-        "Work with each capture",
-        "card",
-        [
-            "Copy original text, links, tasks, or saved files from the card; grouped files copy together.",
-            "Add a comment or reminder, preview content, open the original, or reveal its saved folder.",
-            "View and copy source details when available.",
-            "Minimize, expand, or remove DaBin's saved card.",
-        ],
-    ),
-    (
-        "Tasks and reminders",
-        "task",
-        [
-            "Create a task with <b>+</b>, or turn any capture into one without losing its content or date.",
-            "Toggle red <b>Task</b> to green <b>Completed</b>.",
-            "Open tasks without reminders carry forward at the top with their original creation date.",
-            "Reminder tasks appear at the top only on their reminder day; macOS notifications are optional.",
-        ],
-    ),
-    (
-        "Copy or export",
-        "export",
-        [
-            "Daily offers Copy Day or Export Text File; Weekly copies or downloads a chosen day or full week.",
-            "Exports ignore filters, include every action, and sort chronologically.",
-            "Includes time, type, source, text, captions, and recognized text when available.",
-            "Copy and download output match; downloads use UTF-8 and clear date-based names.",
-        ],
-    ),
-    (
-        "Optional Auto Capture",
-        "auto",
-        [
-            "Off by default. Saves only future clipboard changes and chosen-folder screenshots; never existing content.",
-            "DaBin and common password managers are excluded by default. Pause or stop instantly; duplicates save once.",
-            "Four automatic saves in one local clock hour form an expandable summary; success triggers the robot and burst count.",
-        ],
-    ),
-    (
-        "Robot, settings and menu bar",
-        "settings",
-        [
-            "Corner or camera island home; the robot tracks, digests, and rotates through 12 success reactions.",
-            "Dark mode, theme color, 35-100% opacity, Reduce Motion, and Reduce Transparency.",
-            "Menu bar: Daily, status, pause or resume, Settings, and Quit. Direct builds add Get updates; Store builds update through Apple.",
-        ],
-    ),
+    ("Capture anything", "capture", [
+        "Drop or paste text, links, media, PDFs and files into the robot or Inbox. Items added together share a card.",
+        "Hover the robot: <b>Control-V</b> or <b>Command-V</b>. Add offers notes, tasks and file import.",
+        "DaBin copies files, fits previews and keeps time, type, source app and source path when available.",
+    ]),
+    ("Inbox: your day and week", "calendar", [
+        "First launch opens <b>Inbox</b>. To organize holds unfiled captures from every date.",
+        "<b>Day / Week</b> browses the calendar. Empty days stay hidden; newest captures come first.",
+        "Filter by All, Text, Links, Files, Media or Tasks. Move between displays; drag any corner to resize.",
+    ]),
+    ("Find and reuse", "search", [
+        "<b>Command-K</b> searches the full archive. Weekly offers Search Day and Search Week.",
+        "Find filenames, links, comments and content. Local recognition reads images, screenshots, PDFs and text documents.",
+        "Show nearby captures adds context. Copy cards or grouped files; inspect source and record paste destinations.",
+    ]),
+    ("Workspace and Explorer", "card", [
+        "Group optional project resources. Explorer follows real project, type and dated folders with readable daily records.",
+        "Preview, copy or drag files to other apps; open, reveal or copy paths. Gather a shelf and export a ZIP.",
+        "Search clipboard history, pin content and name snippets. Copy as plain text; keep autosaving project scratchpads.",
+    ]),
+    ("Tasks, reminders and focus", "task", [
+        "Turn any capture into a task. Add comments, files and checklist steps; keep the original content.",
+        "Set priority, effort and repeat rules. Plan separately from deadlines: reorder Today, reschedule or mark Completed.",
+        "Remind by date or countdown. Start, pause or reset a focus timer; finishing it does not complete the task.",
+    ]),
+    ("Copy or export", "export", [
+        "More copies or downloads a selected day or the full displayed week.",
+        "Exports ignore active filters, include every stored action and sort chronologically.",
+        "Copy and download match: date-named UTF-8 text with time, type, source, content, comments and recognized text.",
+    ]),
+    ("Optional Auto Capture", "auto", [
+        "<b>Off by default.</b> Choose Clipboard, Screenshots or both. Saves future changes, never existing contents.",
+        "DaBin and common password managers are excluded. Choose a screenshot folder; pause anytime.",
+        "Four automatic saves in one local clock hour form a summary. Ten eating reactions use a generic token and count.",
+    ]),
+    ("Keep control", "settings", [
+        "Set dark mode, theme, transparency, tooltips, shortcuts and Quiet mode. Reduce Motion is respected.",
+        "Quiet Orbit lives by the island or a corner. Minimize cards; trash is recoverable with Undo and Recently Deleted.",
+        "Back up or restore from More. Settings has clipboard retention, Get updates and Quit DaBin. Source files stay untouched.",
+    ]),
 ]
 
 for index, (title_value, kind, items) in enumerate(cards):
@@ -357,7 +319,7 @@ paragraph(
 )
 
 text("DaBin", 32, 574, 7.7, BOLD, PURPLE)
-right("Keys: Command-O Today  |  Command-K Search  |  Command-Shift-V robot  |  Esc hide  |  Command-Q quit", W - 32, 574, 7.4, NORMAL, MUTED)
+right("0.4.6 (61)  |  Control-Option-Space search  |  Control-Option-V capture  |  Esc hide  |  Command-Q quit", W - 32, 574, 7.4, NORMAL, MUTED)
 
 c.showPage()
 c.save()
@@ -374,37 +336,18 @@ extracted = page.extract_text()
 normalized = " ".join(extracted.split())
 
 required = [
-    "Capture anything",
-    "Daily",
-    "Weekly",
-    "All, Text, Links, Files, Media, or Tasks",
-    "Search the archive",
-    "Local recognition",
-    "same-day capture immediately before and after",
-    "Add a comment or reminder",
-    "source path",
-    "Minimize, expand, or remove",
-    "turn any capture into one",
-    "Completed",
-    "carry forward",
-    "Copy or export",
-    "full week",
-    "ignore filters",
-    "UTF-8",
-    "Auto Capture",
-    "Off by default",
-    "common password managers are excluded by default",
-    "Four automatic saves in one local clock hour",
-    "expandable summary",
-    "12 success reactions",
-    "dark mode",
-    "35-100% opacity",
-    "Get updates",
-    "Store builds update through Apple",
-    "APPLE SILICON",
-    "Readable Year / Month / Day folders",
-    "No account, analytics, ads, cloud sync, external AI, or automatic uploads",
+    "Capture anything", "Inbox", "Day", "Week", "All, Text, Links, Files, Media or Tasks",
+    "full archive", "Local recognition", "nearby captures", "source path", "comments",
+    "turn any capture into a task", "Completed", "reorder Today", "countdown", "focus timer",
+    "Workspace", "Explorer", "snippets", "scratchpads", "shelf", "ZIP", "Copy as plain text",
+    "Copy or export", "full displayed week", "ignore active filters", "UTF-8",
+    "Auto Capture", "Off by default", "common password managers are excluded",
+    "Four automatic saves in one local clock hour", "ten eating reactions", "generic token",
+    "dark mode", "transparency", "Quiet Orbit", "Recently Deleted", "Undo",
+    "Back up or restore", "clipboard retention", "Get updates", "APPLE SILICON",
+    "Readable Year / Month / Day folders", "No account, analytics, ads, cloud sync, external AI, or automatic uploads",
 ]
+
 for phrase in required:
     assert phrase.lower() in normalized.lower(), phrase
 assert "\ufffd" not in extracted

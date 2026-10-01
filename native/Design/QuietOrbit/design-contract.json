@@ -1,0 +1,190 @@
+{
+  "version": "2026-10-01-quiet-orbit-perimeter",
+  "scope": "Native robot appearance and island choreography only",
+  "canonical_preview": "preview/robot-orbit.html",
+  "source_status": "Current robot source preserved; native implementation pending",
+  "reference_geometry": {
+    "coordinate_system": "SVG x-right y-down; normalize to native hardware, not absolute screen pixels",
+    "view_box": [
+      0,
+      0,
+      400,
+      270
+    ],
+    "camera_bounds": [
+      128,
+      0,
+      144,
+      34
+    ],
+    "character_translate": [
+      128,
+      -10
+    ],
+    "character_scale": 0.36,
+    "mirror_left": "translateX(400px) scaleX(-1)",
+    "hardware_mask": "opaque, painted above robot",
+    "default_perch": "bottom",
+    "perches": [
+      {
+        "id": "upper-left",
+        "visible": [
+          -89.0,
+          -7.0
+        ],
+        "hidden": [
+          -48.0,
+          -22.0
+        ]
+      },
+      {
+        "id": "left",
+        "visible": [
+          -89.0,
+          5.0
+        ],
+        "hidden": [
+          -48.0,
+          -15.0
+        ]
+      },
+      {
+        "id": "lower-left",
+        "visible": [
+          -62.0,
+          23.0
+        ],
+        "hidden": [
+          -38.0,
+          -22.0
+        ]
+      },
+      {
+        "id": "bottom",
+        "visible": [
+          0.0,
+          23.0
+        ],
+        "hidden": [
+          0.0,
+          -25.0
+        ]
+      },
+      {
+        "id": "lower-right",
+        "visible": [
+          62.0,
+          23.0
+        ],
+        "hidden": [
+          38.0,
+          -22.0
+        ]
+      },
+      {
+        "id": "right",
+        "visible": [
+          89.0,
+          5.0
+        ],
+        "hidden": [
+          48.0,
+          -15.0
+        ]
+      },
+      {
+        "id": "upper-right",
+        "visible": [
+          89.0,
+          -7.0
+        ],
+        "hidden": [
+          48.0,
+          -22.0
+        ]
+      }
+    ]
+  },
+  "character": {
+    "material": "metallic purple and silver",
+    "features": [
+      "chamfered head and torso",
+      "dark visor",
+      "square pixel eyes",
+      "articulated connected arms",
+      "intake slot"
+    ],
+    "forbidden": [
+      "hoops",
+      "halos",
+      "idle bobbing",
+      "idle patrol",
+      "audio",
+      "large mascot"
+    ]
+  },
+  "reference_timing_ms": {
+    "initial_peek_hold": 1800,
+    "assembly_transition": 480,
+    "pointer_perch_dwell": 150,
+    "departure_grace": 420,
+    "hide_state_settle": 440,
+    "perch_hide_css": 320,
+    "perch_relocation": 550,
+    "perch_expression_hold": 1000,
+    "manual_intake": 800,
+    "manual_reaction": 1400,
+    "auto_peek": 500,
+    "auto_gulp": 700,
+    "auto_expression": 1300,
+    "sample_first_event_delay": 450,
+    "sample_delay_after_routine": 12000
+  },
+  "auto_reaction_order": [
+    "auto-proud",
+    "auto-hiccup",
+    "auto-sneak"
+  ],
+  "production_rules": {
+    "synthetic_events": false,
+    "success_trigger": "eligible saved native receipt only",
+    "receipt_count": "preserve native action semantics; grouped multi-file paste is one action in supplied snapshot",
+    "priority": [
+      "shutdown/display recovery",
+      "open app",
+      "manual capture/input",
+      "confirmed auto receipt presentation",
+      "playful gesture",
+      "idle"
+    ],
+    "quiet_bursts": "coalesce presentation without suppressing saves",
+    "input": "preserve live native paste, drop, focus and open commands",
+    "no_notch": "existing top-right fallback",
+    "idle": "still and tucked away",
+    "escape": "dismiss motion; do not change real auto-capture setting"
+  },
+  "reduced_motion": {
+    "travel": false,
+    "rotation": false,
+    "file_flight": false,
+    "preserve_confirmation": true,
+    "opacity_ms": [
+      120,
+      180
+    ]
+  },
+  "preview_bridge": {
+    "sample_opt_out": "data-auto-samples=\"off\" on .study",
+    "event": "dabin:auto-capture",
+    "detail": {
+      "count": 1
+    },
+    "requires_preview_auto_switch_enabled": true,
+    "native_bridge_implemented": false
+  },
+  "verification_limits": [
+    "No rendered layout validation in this package run",
+    "No native implementation/build performed",
+    "Real hardware, VoiceOver, panel input and display behavior require native verification"
+  ]
+}

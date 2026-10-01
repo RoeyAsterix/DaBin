@@ -45,7 +45,10 @@ import Foundation
         let visible = screen.visibleFrame
         let width = min(600, visible.width - 120)
         let height = min(560, visible.height - 120)
-        return CGRect(x: visible.midX - width / 2, y: visible.midY - height / 2,
+        // Borderless AppKit windows resolve their origins to whole logical
+        // points. Keep the fixture on that grid so exact opposite-anchor
+        // checks measure the gesture rather than native origin rounding.
+        return CGRect(x: floor(visible.midX - width / 2), y: floor(visible.midY - height / 2),
                       width: width, height: height)
     }
 
@@ -123,7 +126,7 @@ import Foundation
             frame.mouseDown(with: event(.leftMouseDown, at: start, in: board))
             frame.mouseDragged(with: event(.leftMouseDragged, at: finish, in: board))
             try expect(board.frame == expected && expected.width > initial.width && expected.height > initial.height,
-                       "Corner \(index) changes both dimensions through actual native drag events")
+                       "Corner \(index) changes both dimensions through actual native drag events; actual=\(board.frame), expected=\(expected), initial=\(initial), bounds=\(frame.bounds), start=\(start), finish=\(finish), screen=\(screen.visibleFrame)")
             try expect((corner.contains(.left) ? board.frame.maxX == initial.maxX : board.frame.minX == initial.minX)
                        && (corner.contains(.top) ? board.frame.minY == initial.minY : board.frame.maxY == initial.maxY),
                        "Corner \(index) retains its opposite anchor")

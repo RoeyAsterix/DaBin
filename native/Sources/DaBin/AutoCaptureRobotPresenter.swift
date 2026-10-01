@@ -51,6 +51,10 @@ enum AutoCaptureRobotGeometry {
         guard !visible.isNull, !visible.isEmpty else { return .zero }
 
         let validIsland = cameraIsland(on: screen)
+        if requestedSize == nil, let validIsland,
+           let layout = QuietOrbitLayout(cameraIsland: validIsland, displayFrame: display) {
+            return layout.panelFrame
+        }
         let preferredSize = requestedSize ?? (validIsland == nil ? panelSize : islandPanelSize)
         let size = CGSize(width: min(max(0, preferredSize.width), visible.width),
                           height: min(max(0, preferredSize.height), visible.height))
@@ -132,6 +136,11 @@ struct AutoCaptureRobotBurstState: Equatable {
 }
 
 private final class AutoCaptureRobotPanel: NSPanel {
+    var cameraStageDisplayFrame: CGRect?
+    override func constrainFrameRect(_ frameRect: NSRect, to screen: NSScreen?) -> NSRect {
+        guard let display = cameraStageDisplayFrame else { return super.constrainFrameRect(frameRect, to: screen) }
+        return frameRect.intersection(display)
+    }
     override var canBecomeKey: Bool { false }
     override var canBecomeMain: Bool { false }
 }
@@ -139,7 +148,11 @@ private final class AutoCaptureRobotPanel: NSPanel {
 @MainActor
 private final class AutoCaptureRobotContentView: NSView {
     private let character: RobotCharacterView
+    private let receiptBadge = NSTextField(labelWithString: "✓")
     private var islandWidth: CGFloat?
+    private var orbitLayout: QuietOrbitLayout?
+    private var orbitPerch: QuietOrbitPerch = .bottom
+    private let hardwareMask = CAShapeLayer()
     private(set) var badgeText: String?
 
     init(frame frameRect: CGRect,
@@ -150,6 +163,15 @@ private final class AutoCaptureRobotContentView: NSView {
         layer?.backgroundColor = NSColor.clear.cgColor
         layer?.masksToBounds = true
         addSubview(character)
+        receiptBadge.font = .monospacedDigitSystemFont(ofSize: 11, weight: .semibold)
+        receiptBadge.alignment = .center
+        receiptBadge.textColor = .white
+        receiptBadge.wantsLayer = true
+        receiptBadge.layer?.backgroundColor = NSColor(calibratedRed: 0.34, green: 0.24, blue: 0.46, alpha: 0.96).cgColor
+        receiptBadge.layer?.cornerRadius = 7
+        receiptBadge.isHidden = true
+        receiptBadge.setAccessibilityElement(false)
+        addSubview(receiptBadge)
 
         setAccessibilityElement(false)
     }
@@ -158,18 +180,39 @@ private final class AutoCaptureRobotContentView: NSView {
 
     override func layout() {
         super.layout()
+        if let orbitLayout {
+            character.frame = orbitLayout.robotFrame(for: orbitPerch, local: true)
+            hardwareMask.frame = bounds
+            let path = CGMutablePath()
+            path.addRect(bounds)
+            path.addRect(orbitLayout.cameraFrameInPanel)
+            hardwareMask.path = path
+            hardwareMask.fillRule = .evenOdd
+            layer?.mask = hardwareMask
+            layoutReceiptBadge()
+            return
+        }
+        layer?.mask = nil
         character.frame = islandWidth == nil
             ? CGRect(x: 8, y: 5, width: max(0, bounds.width - 16), height: max(0, bounds.height - 13))
             : bounds
+        layoutReceiptBadge()
     }
 
-    func begin(_ performance: AutoCaptureRobotPerformance, count: Int, islandWidth: CGFloat?) {
-        self.islandWidth = islandWidth.flatMap { $0.isFinite && $0 > 0 ? $0 : nil }
-        character.configureIslandStage(self.islandWidth != nil)
+    func begin(_ performance: AutoCaptureRobotPerformance, count: Int, orbitLayout: QuietOrbitLayout?) {
+        self.orbitLayout = orbitLayout
+        // Vary the home only between complete saved-capture performances.
+        // Never move a robot while it is eating a burst.
+        let perches = QuietOrbitPerch.allCases
+        let index = AutoCaptureRobotReaction.eatingReactions.firstIndex(of: performance.reaction) ?? 0
+        orbitPerch = perches[index % perches.count]
+        self.islandWidth = nil
+        character.configureQuietOrbit(true)
+        character.configureIslandStage(false)
+        character.layer?.setAffineTransform(CGAffineTransform(scaleX: orbitLayout != nil && orbitPerch.isMirrored ? -1 : 1, y: 1))
         needsLayout = true
         layoutSubtreeIfNeeded()
-        // The real housing is the occluder. The stage ends at its underside;
-        // drawing a smaller imitation lip would detach the robot from it.
+        // The measured housing is subtracted from the transparent stage.
         character.playAutoCaptureCelebration(performance)
         // Starting the renderer resets transient token layers. Apply the exact
         // aggregate after that reset so the visible paper stack is never ×1.
@@ -179,12 +222,34 @@ private final class AutoCaptureRobotContentView: NSView {
     func updateCount(_ count: Int) {
         character.updateAutoCaptureCount(count)
         badgeText = count > 1 ? "×\(count)" : nil
+        receiptBadge.stringValue = count > 1 ? "✓ ×\(count)" : "✓"
+        receiptBadge.isHidden = count <= 0 || orbitLayout == nil
+        layoutReceiptBadge()
     }
 
     func hideCharacter() {
+        receiptBadge.isHidden = true
         badgeText = nil
         character.updateAutoCaptureCount(0)
         character.stopMotion()
+    }
+
+    /// A native-size cue remains readable when the tiny head is partly hidden
+    /// by hardware. It shares the same passive, click-through panel.
+    private func layoutReceiptBadge() {
+        guard let orbitLayout else { return }
+        let artwork = orbitLayout.visibleRobotFrame(for: orbitPerch, local: true)
+        let width = min(bounds.width, max(18, ceil((receiptBadge.stringValue as NSString).size(
+            withAttributes: [.font: receiptBadge.font!]).width) + 8))
+        let x = orbitPerch.isMirrored || orbitPerch == .bottom
+            ? artwork.maxX + 4 : artwork.minX - width - 4
+        var frame = CGRect(x: min(max(2, x), max(2, bounds.width - width - 2)),
+                           y: min(max(2, artwork.minY + 3), max(2, bounds.height - 20)),
+                           width: width, height: 18)
+        if frame.intersects(orbitLayout.cameraFrameInPanel) {
+            frame.origin.y = max(2, orbitLayout.cameraFrameInPanel.minY - frame.height - 3)
+        }
+        receiptBadge.frame = frame
     }
 }
 
@@ -407,6 +472,7 @@ final class AutoCaptureRobotPresenter {
         _ = lifecycle.send(.captureSaved(count: count))
 
         let island = AutoCaptureRobotGeometry.cameraIsland(on: screen)
+        let orbit = island.flatMap { QuietOrbitLayout(cameraIsland: $0, displayFrame: screen.frame) }
         let entrance: RobotEntrance = island == nil ? .right : .top
         let performance = reactionDeck.nextPerformance(entrance: entrance,
                                                        reduceMotion: reduceMotionProvider(),
@@ -422,8 +488,9 @@ final class AutoCaptureRobotPresenter {
         updateDeadline = now.addingTimeInterval(min(delay, updateDuration))
         consumptionDeadline = now.addingTimeInterval(min(delay, consumptionTime(in: performance)))
 
+        (panel as? AutoCaptureRobotPanel)?.cameraStageDisplayFrame = orbit == nil ? nil : screen.frame
         panel.setFrame(frame, display: true)
-        content.begin(performance, count: count, islandWidth: island?.width)
+        content.begin(performance, count: count, orbitLayout: orbit)
         panel.alphaValue = 1
         panel.orderFrontRegardless()
         reportPresentation(true)

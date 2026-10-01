@@ -249,10 +249,10 @@ struct SettingsScreen: View {
                         ForEach(RobotHome.allCases) { home in Text(home.title).tag(home) }
                     }
                     .pickerStyle(.segmented)
-                    .accessibilityHint("Choose whether DaBin appears from screen corners or below a built-in camera island")
+                    .accessibilityHint("Choose whether DaBin appears from screen corners or around a built-in camera island")
                     Text(robotHomeDescription)
                         .font(.system(size: 14)).foregroundStyle(Palette.muted).fixedSize(horizontal: false, vertical: true)
-                    Text("Drop onto the robot, or hover over it and press ⌃V or ⌘V. Double-click opens Daily.")
+                    Text("Drop onto the robot, or hover over it and press ⌃V or ⌘V. Double-click opens DaBin.")
                         .font(.system(size: 14)).foregroundStyle(Palette.muted).fixedSize(horizontal: false, vertical: true)
                 }
                 Divider()
@@ -422,9 +422,9 @@ struct SettingsScreen: View {
             return "Reach any screen corner to reveal DaBin."
         case .cameraIsland:
             if NSScreen.screens.contains(where: { CornerGeometry.cameraIslandRect(on: $0) != nil }) {
-                return "Move the pointer to the built-in camera island and DaBin peeks out below it. Displays without an island keep their screen corners."
+                return "Approach the camera island to meet DaBin. He follows your approach around its edges, then quietly tucks away. Displays without an island use the top-right corner."
             }
-            return "No camera island is currently detected, so DaBin keeps using screen corners. Your choice stays ready for a compatible display."
+            return "No camera island is detected, so DaBin uses the top-right corner. Your choice stays ready for a compatible display."
         }
     }
 }

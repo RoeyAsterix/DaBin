@@ -28,10 +28,7 @@ struct LibraryScreen: View {
     private var projects: [String] { Set(state.projectNames + workspace.projectNames).sorted { $0.localizedStandardCompare($1) == .orderedAscending } }
     private var applications: [String] { Set(state.store.captures.compactMap(WorkspaceQuery.sourceName)).sorted() }
     private var shelfItems: [Capture] {
-        state.store.captures.filter { workspace.shelfCaptureIDs.contains($0.id)
-            && (state.libraryProject == nil || $0.projectName == state.libraryProject)
-            && (!workspace.explorerUnfiledOnly || state.libraryProject != nil || $0.projectName == nil) }
-            .sorted { $0.capturedAt < $1.capturedAt }
+        WorkspaceQuery.shelfItems(state.store.captures, workspace: workspace, project: state.libraryProject)
     }
     private var hasMetadataFilters: Bool {
         workspace.sourceApplication != nil || workspace.dateFilter != .anytime || workspace.originFilter != .all

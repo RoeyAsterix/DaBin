@@ -1,0 +1,16 @@
+{
+  "nativeSuites": 59,
+  "nativeStatus": "passed",
+  "pythonDistributionTests": 25,
+  "sourceBuildQACommonInputs": 109,
+  "commonInputsMatch": true,
+  "renderCount": 40,
+  "xcodeReleaseBuildSucceeded": true,
+  "guidePageCount": 1,
+  "publicReleasePublished": false,
+  "notaryProfile": "DaBin-notary",
+  "notaryProfileAvailable": false,
+  "developerIDIdentityInstalled": true,
+  "notarizationValidated": false,
+  "signedMigrationValidated": false
+}

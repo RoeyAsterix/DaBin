@@ -11,6 +11,86 @@ import Foundation
 }
 
 @main struct WorkInboxTests {
+    @MainActor private static func checkReminderRecovery() throws -> Int {
+        var checks = 0
+        func expect(_ value: Bool, _ message: String) throws {
+            checks += 1
+            if !value { throw NSError(domain: "WorkInboxTests", code: 2, userInfo: [NSLocalizedDescriptionKey: message]) }
+        }
+        let root = FileManager.default.temporaryDirectory.appendingPathComponent("DaBinReminderRecovery-\(UUID())")
+        defer { try? FileManager.default.removeItem(at: root) }
+        let suite = "DaBinReminderRecovery.\(UUID())"
+        let defaults = UserDefaults(suiteName: suite)!
+        defer { defaults.removePersistentDomain(forName: suite) }
+        let store = try CaptureStore(root: root)
+        let previews = PreviewService(store: store, defaults: defaults)
+        defer { previews.shutdown() }
+        func makeState() -> AppState {
+            AppState(store: store, previews: previews,
+                     reminders: ReminderService(store: store, client: InboxReminderClient()))
+        }
+        let sidecar = root.appendingPathComponent("Drafts.json")
+        for clear in [true, false] {
+            let capture = try store.capture(text: clear ? "Clear recovery fixture" : "Snooze recovery fixture")[0]
+            try store.update(capture, comment: "", reminderAt: Date().addingTimeInterval(3600), reminderTimeZoneID: TimeZone.current.identifier)
+            let editor = makeState()
+            editor.openCapture(capture.id)
+            editor.selectedDraft!.comment = "Keep the unfinished recovery comment"
+            editor.selectedDraft!.reminderMode = .countdown
+            editor.selectedDraft!.countdownMinutes = 12
+            editor.persistDrafts()
+            let before = try Data(contentsOf: sidecar)
+            if clear { editor.completeFollowUp(capture) } else { editor.snoozeFollowUp(capture) }
+            let committed = capture.reminderAt
+            try expect(try Data(contentsOf: sidecar) == before,
+                       "Reminder recovery fixture reproduces the unchanged sidecar before its debounced save")
+            try expect(clear ? committed == nil : committed != nil,
+                       "The immediate reminder action commits before recovery")
+            let recovered = makeState()
+            recovered.openCapture(capture.id)
+            let draft = recovered.selectedDraft!
+            try expect(draft.comment == "Keep the unfinished recovery comment" && draft.hasChanges,
+                       "Newer reminder revisions retain unrelated unfinished comments")
+            try expect(draft.reminder == committed && draft.reminderMode == .date && !draft.reminderChanged,
+                       "Recovery adopts the committed clear or snooze instead of reviving an older countdown")
+            recovered.saveDetail()
+            try expect(capture.reminderAt == committed && capture.comment == "Keep the unfinished recovery comment"
+                       && !draft.hasChanges && !draft.hasError,
+                       "Saving the recovered comment cannot replace the newer reminder")
+        }
+
+        let pending = try store.capture(text: "Pending reminder recovery fixture")[0]
+        let editor = makeState()
+        editor.openCapture(pending.id)
+        editor.selectedDraft!.comment = "Keep the intentional pending reminder"
+        editor.selectedDraft!.reminderEnabled = true
+        editor.selectedDraft!.reminderMode = .countdown
+        editor.selectedDraft!.countdownMinutes = 17
+        editor.persistDrafts()
+        let recovered = makeState()
+        recovered.openCapture(pending.id)
+        try expect(recovered.selectedDraft!.reminderEnabled && recovered.selectedDraft!.reminderMode == .countdown
+                   && recovered.selectedDraft!.countdownMinutes == 17 && recovered.selectedDraft!.reminderChanged,
+                   "An unchanged committed revision preserves the user's pending countdown")
+
+        var legacy = DraftArchiveSnapshot()
+        legacy.details = [DetailDraftSnapshot(captureID: pending.id, comment: "Legacy reminder draft", planning: TaskPlanning(),
+            reminderEnabled: true, reminderMode: "countdown", countdownHours: 0, countdownMinutes: 23, reminderDate: Date())]
+        try DraftArchive(root: root).save(legacy)
+        try store.update(pending, comment: "", reminderAt: Date().addingTimeInterval(7200), reminderTimeZoneID: TimeZone.current.identifier)
+        let legacyEditor = makeState()
+        legacyEditor.openCapture(pending.id)
+        try expect(legacyEditor.selectedDraft!.comment == "Legacy reminder draft"
+                   && legacyEditor.selectedDraft!.reminderMode == .countdown && legacyEditor.selectedDraft!.countdownMinutes == 23,
+                   "Legacy sidecars without a reminder baseline retain their pending reminder edits")
+        legacyEditor.persistDrafts()
+        let migrated = makeState()
+        migrated.openCapture(pending.id)
+        try expect(migrated.selectedDraft!.countdownMinutes == 23 && migrated.selectedDraft!.reminderChanged,
+                   "Adding the reminder revision baseline preserves legacy edits on the next restart")
+        return checks
+    }
+
     @MainActor static func main() async throws {
         var checks = 0
         func expect(_ value: Bool, _ message: String) throws {
@@ -128,6 +208,7 @@ import Foundation
         legacy.removeValue(forKey: "isPinned"); legacy.removeValue(forKey: "projectName"); legacy.removeValue(forKey: "deletedAt")
         let old = Capture(snapshot: try JSONDecoder().decode(CaptureSnapshot.self, from: JSONSerialization.data(withJSONObject: legacy)))
         try expect(!old.isPinned && old.projectName == nil && old.deletedAt == nil && old.originalText == restored.originalText, "Schema 6 defaults preserve old capture data")
+        checks += try checkReminderRecovery()
         print("PASS: \(checks) work inbox checks")
     }
 }

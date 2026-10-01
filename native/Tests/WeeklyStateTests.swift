@@ -148,6 +148,38 @@ struct WeeklyStateTests {
         try expect(state.dayKey <= todayKey, "A direct weekly day selection cannot open a future Daily date")
     }
 
+    @MainActor private static func checkInboxCalendarNavigation(_ state: AppState, capture: Capture) throws {
+        let selected = date("2024-01-03 12:00")
+        let expectedDays = ["2023-12-28", "2023-12-29", "2023-12-30", "2023-12-31", "2024-01-01", "2024-01-02", "2024-01-03"]
+        state.openInbox()
+        state.selectedDay = selected
+        state.filter = .text
+        state.dailyScrollID = .capture(.capture(capture.id))
+        state.newNoteText = "Unfinished note from Inbox"
+        state.newTaskDraft.text = "Unfinished task from Inbox"
+        state.selectTimelineMode(.weekly)
+        try expect(state.route == .weekly && state.selectedDay == selected && keys(state.weeklyDays) == expectedDays,
+                   "Inbox opens Week directly with exactly seven local dates ending on the selected day")
+        try expect(state.filter == .text && state.newNoteText == "Unfinished note from Inbox"
+                   && state.newTaskDraft.text == "Unfinished task from Inbox"
+                   && state.dailyScrollID == .capture(.capture(capture.id)),
+                   "Inbox to Week preserves its filter, note and task drafts, and Daily scroll anchor")
+        state.selectTimelineMode(.daily)
+        try expect(state.route == .daily && state.selectedDay == selected && state.filter == .text,
+                   "Day returns from Inbox's Week to the same date and filter")
+        state.openInbox()
+        state.selectTimelineMode(.daily)
+        try expect(state.route == .daily && state.selectedDay == selected && state.filter == .text
+                   && state.dailyScrollID == .capture(.capture(capture.id))
+                   && state.newNoteText == "Unfinished note from Inbox"
+                   && state.newTaskDraft.text == "Unfinished task from Inbox",
+                   "Inbox opens Day directly without resetting the date, filter, drafts or scroll anchor")
+        state.openInbox()
+        try expect(state.route == .inbox && state.selectedDay == selected && state.filter == .text,
+                   "Returning to Inbox triage retains the calendar date and filter")
+        state.clearNewNoteDraft()
+    }
+
     @MainActor private static func checkRollover(_ state: AppState) throws {
         state.refreshCurrentDay(at: date("2024-01-31 23:58"))
         state.selectedDay = date("2024-01-31 12:00")
@@ -378,6 +410,7 @@ struct WeeklyStateTests {
         try checkScopedSearchActions(state)
         try checkCalendar(state)
         try checkNavigation(state, capture: scheduled)
+        try checkInboxCalendarNavigation(state, capture: scheduled)
         try checkRollover(state)
         try checkEmptyWeek()
         try checkSparseWeek(root: root.appendingPathComponent("Sparse"))

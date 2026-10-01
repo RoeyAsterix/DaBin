@@ -66,11 +66,11 @@ private struct AutoCaptureRobotPresenterTests {
 
         let islandFrame = AutoCaptureRobotGeometry.panelFrame(on: builtInWithIsland)
         try expect(near(islandFrame.midX, islandRect.midX)
-                   && near(islandFrame.maxY, islandRect.minY),
-                   "A real camera island centers the robot and meets its lower edge")
-        try expect(builtInWithIsland.visibleFrame.contains(islandFrame),
+                   && near(islandFrame.maxY, builtIn.frame.maxY),
+                   "A camera stage reaches drawable pixels beside and below the real housing")
+        try expect(builtInWithIsland.frame.contains(islandFrame),
                    "The camera-island presentation remains in the usable display")
-        try expect(islandFrame.size == AutoCaptureRobotGeometry.islandPanelSize
+        try expect(islandFrame == QuietOrbitLayout(cameraIsland: islandRect, displayFrame: builtIn.frame)?.panelFrame
                    && builtInFrame.size == AutoCaptureRobotGeometry.panelSize,
                    "A physical island receives a wider motion stage without enlarging fallback popups")
         let explicitIslandFrame = AutoCaptureRobotGeometry.panelFrame(
@@ -85,7 +85,7 @@ private struct AutoCaptureRobotPresenterTests {
             visibleFrame: CGRect(x: -120, y: 20, width: 180, height: 88),
             safeAreaTop: 32, isBuiltIn: true,
             cameraIslandRect: CGRect(x: -64, y: 108, width: 68, height: 32))
-        try expect(AutoCaptureRobotGeometry.panelFrame(on: narrowIslandScreen) == narrowIslandScreen.visibleFrame,
+        try expect(narrowIslandScreen.frame.contains(AutoCaptureRobotGeometry.panelFrame(on: narrowIslandScreen)),
                    "A narrow island display clips the entire motion stage to usable display bounds")
         let invalidIslandScreen = AutoCaptureRobotScreen(
             displayID: 7, frame: builtIn.frame, visibleFrame: builtIn.visibleFrame,
@@ -158,7 +158,7 @@ private struct AutoCaptureRobotPresenterTests {
         try expect(ObjectIdentifier(presenter.panel) == panelIdentity && presenter.panel.isVisible,
                    "Presentation reuses the one panel instead of creating a window")
         try expect(hasNativeFrame(presenter.panel, requested: islandFrame)
-                   && presenter.panel.contentView?.subviews.first?.frame == presenter.panel.contentView?.bounds
+                   && presenter.panel.contentView?.subviews.first?.frame.size == QuietOrbitLayout(cameraIsland: islandRect, displayFrame: builtIn.frame)?.robotFrame(for: .bottom).size
                    && presenter.panel.contentView?.layer?.masksToBounds == true,
                    "Island artwork gets the full clipped stage after native screen constraints, without a fake housing")
         try expect(presenter.present(additionalCaptureCount: 2)
@@ -168,6 +168,13 @@ private struct AutoCaptureRobotPresenterTests {
                    && presenter.badgeText == "×3"
                    && ObjectIdentifier(presenter.panel) == panelIdentity,
                    "A rapid burst updates ×3 without restarting or changing the reaction")
+        let nativeBadge = presenter.panel.contentView?.subviews.compactMap { $0 as? NSTextField }.first
+        let cameraInPanel = QuietOrbitLayout(cameraIsland: islandRect, displayFrame: builtIn.frame)!.cameraFrameInPanel
+        try expect(nativeBadge?.stringValue == "✓ ×3" && nativeBadge?.isHidden == false
+                   && nativeBadge?.font?.pointSize == 11,
+                   "A native-size success cue keeps the exact burst count readable")
+        try expect(nativeBadge.map { !cameraInPanel.intersects($0.frame) } == true,
+                   "The camera cannot obscure the Reduce Motion success cue or burst count")
         try expect(!presenter.panel.isKeyWindow && !presenter.panel.isMainWindow,
                    "Ordering the passive panel never makes it key or main")
         try expect(presenter.panel.ignoresMouseEvents && presenter.panel.sharingType == .none,
@@ -329,10 +336,11 @@ private struct AutoCaptureRobotPresenterTests {
                    && relocationPresenter.currentPerformance == initialRelocationPerformance,
                    "An unchanged display notification leaves the active plan and burst untouched")
 
-        // The reduced check finishes at .52 seconds and stops accepting count
-        // updates at .44. Advance only the cue clock, keeping task completion
-        // out of this deterministic ownership/geometry test.
-        relocationDate.addTimeInterval(0.48)
+        // Advance into the final quarter of the authored success cue, after
+        // count updates close but before consumption. Derive this boundary
+        // from the plan so motion refinements cannot change the scenario.
+        let successPhase = initialRelocationPerformance!.phases.first { $0.kind == .successCheck }!
+        relocationDate.addTimeInterval(successPhase.endTime - successPhase.duration * 0.125)
         try expect(relocationPresenter.present(additionalCaptureCount: 4)
                    && relocationPresenter.pendingCaptureCount == 4,
                    "Late captures queue while an unconsumed cue is still in flight")

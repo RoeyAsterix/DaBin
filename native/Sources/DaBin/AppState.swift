@@ -87,6 +87,7 @@ final class CaptureDraft: ObservableObject {
     private var savedPlanning: TaskPlanning
     private var savedComment: String
     private var savedReminder: Date?
+    private(set) var committedReminderRevisionForRecovery: Int
 
     init(capture: Capture) {
         title = capture.title; savedTitle = capture.title
@@ -97,6 +98,7 @@ final class CaptureDraft: ObservableObject {
         reminderDate = capture.reminderAt ?? Date().addingTimeInterval(3600)
         savedComment = capture.comment
         savedReminder = capture.reminderAt
+        committedReminderRevisionForRecovery = capture.reminderRevision
     }
 
     var committedPlanningForRecovery: TaskPlanning { savedPlanning }
@@ -132,6 +134,7 @@ final class CaptureDraft: ObservableObject {
             planning.order = committed.order
         }
         savedPlanning = committed
+        committedReminderRevisionForRecovery = capture.reminderRevision
     }
 
     /// A crash can leave Drafts.json older than a successful immediate action.
@@ -181,6 +184,7 @@ final class CaptureDraft: ObservableObject {
         reminderMode = .date
         if let date = capture.reminderAt { reminderDate = date }
         savedReminder = capture.reminderAt
+        committedReminderRevisionForRecovery = capture.reminderRevision
         message = nil
         hasError = false
     }
@@ -398,7 +402,9 @@ final class AppState: ObservableObject {
         snapshot.details = drafts.compactMap { id, draft in
             guard draft.hasChanges else { return nil }
             return DetailDraftSnapshot(captureID: id, title: draft.title, comment: draft.comment, planning: draft.planning,
-                committedPlanning: draft.committedPlanningForRecovery, reminderEnabled: draft.reminderEnabled, reminderMode: draft.reminderMode.rawValue,
+                committedPlanning: draft.committedPlanningForRecovery,
+                committedReminderRevision: draft.committedReminderRevisionForRecovery,
+                reminderEnabled: draft.reminderEnabled, reminderMode: draft.reminderMode.rawValue,
                 countdownHours: draft.countdownHours, countdownMinutes: draft.countdownMinutes, reminderDate: draft.reminderDate)
         }
         do { try draftArchive.save(snapshot); draftPersistenceError = nil }
@@ -425,10 +431,15 @@ final class AppState: ObservableObject {
             draft.title = saved.title ?? capture.title
             draft.comment = saved.comment
             draft.restorePlanning(saved.planning, baseline: saved.committedPlanning, from: capture)
-            draft.reminderEnabled = saved.reminderEnabled
-            draft.reminderMode = ReminderScheduleMode(rawValue: saved.reminderMode) ?? .date
-            draft.countdownHours = saved.countdownHours; draft.countdownMinutes = saved.countdownMinutes
-            draft.reminderDate = saved.reminderDate
+            // Clear and Snooze commit before the debounced draft sidecar. A
+            // stale sidecar must not turn that successful action back into an
+            // unsaved reminder edit. Legacy drafts retain their pending values.
+            if saved.committedReminderRevision == nil || saved.committedReminderRevision == capture.reminderRevision {
+                draft.reminderEnabled = saved.reminderEnabled
+                draft.reminderMode = ReminderScheduleMode(rawValue: saved.reminderMode) ?? .date
+                draft.countdownHours = saved.countdownHours; draft.countdownMinutes = saved.countdownMinutes
+                draft.reminderDate = saved.reminderDate
+            }
             drafts[saved.captureID] = draft
             observeDraft(draft)
         }
@@ -585,11 +596,15 @@ final class AppState: ObservableObject {
 
     var timelineMode: BoardTimelineMode { route == .weekly ? .weekly : .daily }
 
+    /// Inbox owns capture triage and both calendar presentations. Keep the
+    /// routes distinct so search, detail return paths and window sizing survive.
+    var isInboxRoute: Bool { route == .inbox || route == .daily || route == .weekly }
+
     func selectTimelineMode(_ mode: BoardTimelineMode) {
         switch (route, mode) {
-        case (.daily, .weekly):
+        case (.inbox, .weekly), (.daily, .weekly):
             openWeekly()
-        case (.weekly, .daily):
+        case (.inbox, .daily), (.weekly, .daily):
             route = .daily
         default:
             break

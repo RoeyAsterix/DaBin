@@ -165,6 +165,54 @@ import UniformTypeIdentifiers
         try expect(try Data(contentsOf: racingDestination) == racingContent,
             "ZIP publication leaves a concurrently created destination unchanged")
 
+        let shelfParent = try store.createTask(text: "Shelf attachment parent", projectName: "Attachment project")
+        let shelfChild = try store.capture(text: "Explicit shelf attachment")[0]
+        try store.setOrganization(shelfChild, pinned: false, projectName: "Former attachment project")
+        try store.attachCapture(shelfChild, to: shelfParent)
+        let unselectedChild = try store.capture(text: "Attachment outside the shelf")[0]
+        try store.attachCapture(unselectedChild, to: shelfParent)
+        try reopened.setOnShelf([shelfChild.id], included: true)
+        reopened.mode = .shelf
+        func visibleShelf(_ project: String? = nil, query: String = "") -> [Capture] {
+            WorkspaceQuery.items(store.captures, workspace: reopened, project: project, filter: .all, query: query)
+        }
+        let selectedShelf = WorkspaceQuery.shelfItems(store.captures, workspace: reopened, project: "Attachment project")
+        try expect(visibleShelf("Attachment project").map(\.id) == [shelfChild.id]
+            && selectedShelf.map(\.id) == [shelfChild.id],
+            "Shelf and ZIP selection include explicitly shelved attachments under the parent project")
+        try expect(!visibleShelf().contains { $0.id == unselectedChild.id },
+            "Shelving one attachment does not include its parent or other attachments")
+        try expect(visibleShelf("Former attachment project").isEmpty
+            && visibleShelf(query: "Attachment project").map(\.id) == [shelfChild.id]
+            && visibleShelf(query: "Former").isEmpty,
+            "Shelf filters and search use the parent project instead of the child's former project")
+        let childEntries = try ShelfExport.entries(for: selectedShelf, store: store)
+        try expect(childEntries.count == 1 && childEntries[0].text == shelfChild.originalText,
+            "Shelf ZIP entries include the same attachment and preserve its original content")
+        try store.setOrganization(shelfParent, pinned: false, projectName: nil)
+        reopened.explorerUnfiledOnly = true
+        try expect(visibleShelf().contains { $0.id == shelfChild.id }
+            && WorkspaceQuery.shelfItems(store.captures, workspace: reopened, project: nil).contains { $0.id == shelfChild.id },
+            "An unfiled parent's shelved attachment remains visible and exportable as unfiled")
+        try store.setOrganization(shelfParent, pinned: false, projectName: "Another attachment project")
+        try expect(!visibleShelf().contains { $0.id == shelfChild.id }
+            && visibleShelf("Another attachment project").map(\.id) == [shelfChild.id],
+            "Changing the parent project moves shelf scope without copying or detaching the attachment")
+        reopened.explorerUnfiledOnly = false
+        reopened.mode = .clipboard
+        try expect(!WorkspaceQuery.items(store.captures, workspace: reopened, project: nil, filter: .all, query: "").contains { $0.id == shelfChild.id },
+            "Explicit attachment shelf membership does not change clipboard filtering")
+        reopened.mode = .shelf
+        try reopened.setOnShelf([shelfChild.id], included: false)
+        try expect(!visibleShelf().contains { $0.id == shelfChild.id }
+            && shelfChild.parentTaskID == shelfParent.id && store.captures.contains { $0.id == shelfChild.id },
+            "Removing a shelved attachment keeps its parent relationship and original capture")
+        try reopened.setOnShelf([shelfChild.id], included: true)
+        try store.moveToTrash(shelfChild)
+        try expect(!visibleShelf().contains { $0.id == shelfChild.id }
+            && !WorkspaceQuery.shelfItems(store.captures + store.trashedCaptures, workspace: reopened, project: nil).contains { $0.id == shelfChild.id },
+            "Stale shelf membership never displays or exports a trashed attachment")
+
         let badRoot = root.appendingPathComponent("bad")
         try files.createDirectory(at: badRoot, withIntermediateDirectories: true)
         let badURL = badRoot.appendingPathComponent(WorkspaceStore.filename)

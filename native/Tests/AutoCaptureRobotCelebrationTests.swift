@@ -107,8 +107,8 @@ private struct AutoCaptureRobotCelebrationTests {
                 try expect(performance.phases.map(\.kind) == [
                     .anticipation, .entrance, .eating(reaction), .reaction(reaction), .exit
                 ], "\(reaction.rawValue) follows anticipation, entrance, eating, reaction and exit")
-                try expect((3.4...4.0).contains(performance.totalDuration),
-                           "\(reaction.rawValue) gives island contacts time to read at scale \(scale)")
+                try expect((2.3...2.7).contains(performance.totalDuration),
+                           "\(reaction.rawValue) keeps the quiet island receipt brief at scale \(scale)")
                 try expect(performance.phases.allSatisfy { $0.duration > 0 },
                            "Every normal phase has positive duration")
                 for (index, phase) in performance.phases.enumerated() {
@@ -226,6 +226,9 @@ private struct AutoCaptureRobotCelebrationTests {
             return [layer] + (layer.sublayers ?? []).flatMap { allLayers($0) }
         }
         let character = RobotCharacterView(frame: NSRect(x: 0, y: 0, width: 216, height: 150), reduceMotion: { false })
+        // Retain regression coverage of the previous contact rig; the native
+        // Orbit renderer has separate actual-size presentation checks.
+        character.configureQuietOrbit(false)
         character.layoutSubtreeIfNeeded()
         character.playAutoCaptureCelebration(stack)
         let started = character.autoCaptureCelebrationStartCount
@@ -266,7 +269,7 @@ private struct AutoCaptureRobotCelebrationTests {
                    "Supporting hands and arms live outside the moving torso")
         try expect(character.layer?.masksToBounds == true && !art.masksToBounds,
                    "The physical stage clips behind the edge without cropping horizontal swings to the art box")
-        try expect(token.superlayer === body && token.position == CGPoint(x: 32, y: 45),
+        try expect(token.superlayer === body && token.position == CGPoint(x: 32, y: 42),
                    "The paper follows the body and finishes at its moving mouth")
         try expect(feet.opacity == 1 && feet.superlayer?.opacity == 1
                    && [feet, feet.superlayer!].allSatisfy { layer in
@@ -324,8 +327,8 @@ private struct AutoCaptureRobotCelebrationTests {
                    && climbDuration == 0.55 && character.mood == .idle,
                    "The manual pointer climb takes half the former time and still settles at idle")
         let automaticAfterManual = AutoCaptureRobotPerformance.make(reaction: .quickBite, entrance: .top, reduceMotion: false)
-        try expect((3.4...4.0).contains(automaticAfterManual.totalDuration),
-                   "Faster pointer entry does not accelerate automatic capture eating and celebration")
+        try expect((2.3...2.7).contains(automaticAfterManual.totalDuration),
+                   "Quiet Orbit uses its own brief saved-capture performance")
         character.send(.hover(true, pointer: CGPoint(x: -0.4, y: 0.2)))
         character.send(.hover(true, pointer: CGPoint(x: 0.8, y: -0.6)))
         try expect(allLayers(character.layer).contains {

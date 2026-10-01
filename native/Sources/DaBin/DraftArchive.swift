@@ -22,6 +22,8 @@ struct DetailDraftSnapshot: Codable {
     let planning: TaskPlanning
     /// Baseline for three-way recovery after an immediate timing save.
     var committedPlanning: TaskPlanning?
+    /// Missing in legacy drafts; a newer committed reminder owns recovery.
+    var committedReminderRevision: Int?
     let reminderEnabled: Bool
     let reminderMode: String
     let countdownHours: Int

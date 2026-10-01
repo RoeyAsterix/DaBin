@@ -1,0 +1,16 @@
+{
+  "version": "0.4.6",
+  "buildNumber": "61",
+  "runningInstalledExecutable": true,
+  "sourceFingerprint": "ee6c0e63f73f0e4bac60caef2866ba108af6e28dae0932af039020dd674985b5",
+  "mainExecutableSHA256": "0864c35476f794a050bc7b453b1746e00391fb3a4f84f68761b6497800652b96",
+  "updaterExecutableSHA256": "440c9361f522c69d5ce668a5649d7b71136335c3f074d378b1b6da74f89ab576",
+  "buildInputsMatchCurrentSource": true,
+  "installedBinariesMatchReceipt": true,
+  "bundledPrivacyTextMatchesSource": true,
+  "privateArchiveBackupVerified": true,
+  "captureRecordsPreserved": 40,
+  "originalAttachmentsPreserved": 16,
+  "localAdHocSigning": true,
+  "publicDistributionValidated": false
+}

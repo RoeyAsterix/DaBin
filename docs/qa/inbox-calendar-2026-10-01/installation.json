@@ -1,0 +1,21 @@
+{
+  "verifiedAtUTC": "2026-10-01T05:47:40.836702+00:00",
+  "version": "0.4.5",
+  "build": "59",
+  "installedPath": "/Users/roeylibfeld/Applications/DaBin.app",
+  "installedExecutableMatchesRelease": true,
+  "strictSignatureVerified": true,
+  "runningInstalledExecutable": true,
+  "buildInputsMatch": true,
+  "qaInputsMatch": true,
+  "qaPassedSuites": 6,
+  "qaSourceChangedDuringRun": false,
+  "originalRecordCount": 40,
+  "missingOriginalRecords": 0,
+  "changedOriginalRecords": 0,
+  "originalAttachmentsChecked": 16,
+  "changedOriginalAttachments": 0,
+  "privateBackupVerifiedFiles": 228,
+  "liveInboxWeekDayWeekVerified": true,
+  "leftOpenInWeek": true
+}

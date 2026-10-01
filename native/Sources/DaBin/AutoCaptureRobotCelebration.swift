@@ -196,9 +196,9 @@ struct AutoCaptureRobotPerformance: Equatable, Sendable {
                      reduceMotion: Bool) -> AutoCaptureRobotPerformance {
         if reduceMotion {
             let phases = timeline([
-                (.reducedPeek, 0.20, .easeOut, [.eyeMovement, .opacity]),
+                (.reducedPeek, 0.15, .easeOut, [.eyeMovement, .opacity]),
                 (.successCheck, 0.32, .easeInOut, [.successCue]),
-                (.fade, 0.22, .easeOut, [.opacity])
+                (.fade, 0.15, .easeOut, [.opacity])
             ])
             return AutoCaptureRobotPerformance(reaction: reaction, variation: variation,
                                                entrance: entrance, reduceMotion: true,
@@ -209,17 +209,17 @@ struct AutoCaptureRobotPerformance: Equatable, Sendable {
         let scale = variation.timingScale
         let island = entrance == .top
         let phases = timeline([
-            (.anticipation, (island ? 0.32 : 0.23) * scale, .easeInOut, [.eyeMovement]),
-            (.entrance, (island ? 0.78 : 0.50) * scale,
+            (.anticipation, (island ? 0.22 : 0.23) * scale, .easeInOut, [.eyeMovement]),
+            (.entrance, (island ? 0.48 : 0.50) * scale,
              .spring(response: 0.34 * scale, dampingFraction: 0.72),
              [.bodyTravel, .squashAndStretch, .overshoot]),
-            (.eating(reaction), (reaction.eatingDuration + (island ? 0.36 : 0)) * scale,
+            (.eating(reaction), (island ? 0.70 : reaction.eatingDuration) * scale,
              .spring(response: 0.30 * scale, dampingFraction: 0.78),
              [.eyeMovement, .squashAndStretch, .captureToken, .eating]),
-            (.reaction(reaction), (island ? 0.44 : reaction.baseDuration) * scale,
+            (.reaction(reaction), (island ? 0.66 : reaction.baseDuration) * scale,
              .spring(response: 0.38 * scale, dampingFraction: 0.76),
              [.eyeMovement, .squashAndStretch, .overshoot, .successCue]),
-            (.exit, (island ? 0.88 : 0.40) * scale,
+            (.exit, (island ? 0.44 : 0.40) * scale,
              .spring(response: 0.31 * scale, dampingFraction: 0.78),
              [.bodyTravel, .squashAndStretch, .overshoot])
         ])

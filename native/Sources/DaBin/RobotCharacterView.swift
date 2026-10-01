@@ -13,6 +13,7 @@ final class RobotCharacterView: NSView {
 
     private let reduceMotionProvider: ReduceMotionProvider
     private var ambientTask: Task<Void, Never>?
+    private var quietOrbitEnabled = true
     private var islandMotionActive = false
     private var islandResting = false
     private var islandStageEnabled = false
@@ -58,6 +59,18 @@ final class RobotCharacterView: NSView {
     private(set) var autoCaptureTokenCount = 1
 
     private static let designSize = CGSize(width: 64, height: 78)
+    /// The mechanical character is intentionally short; layout must use its
+    /// visible artwork rather than treating the animation canvas as its body.
+    static let quietOrbitArtworkBounds = CGRect(x: 5.96, y: 19.6, width: 56.7, height: 45.75)
+
+    /// Quiet Orbit has no idle animation timer. Pointer gaze, capture feedback,
+    /// and deliberate greeting tracks still use the existing event renderer.
+    func configureQuietOrbit(_ enabled: Bool) {
+        quietOrbitEnabled = enabled
+        if enabled { stopAmbientMotion() }
+        else { updateAmbientMotion(reduceMotion: reduceMotionProvider()) }
+        configureAutomaticCountBadge()
+    }
 
     init(frame frameRect: NSRect,
          reduceMotion: @escaping ReduceMotionProvider = {
@@ -91,6 +104,7 @@ final class RobotCharacterView: NSView {
         let scale = backing * artScale
         func apply(_ layer: CALayer) {
             layer.contentsScale = scale
+            if let mask = layer.mask { apply(mask) }
             for child in layer.sublayers ?? [] { apply(child) }
         }
         if let layer { apply(layer) }
@@ -215,8 +229,8 @@ final class RobotCharacterView: NSView {
         artLayer.addSublayer(islandGripLayer)
 
         configureShadow()
-        configureContainer(leftArmLayer, anchor: CGPoint(x: 13, y: 45))
-        configureContainer(rightArmLayer, anchor: CGPoint(x: 51, y: 45))
+        configureContainer(leftArmLayer, anchor: orbitPoint(153, 106))
+        configureContainer(rightArmLayer, anchor: orbitPoint(247, 106))
         configureContainer(shellLayer, anchor: CGPoint(x: 32, y: 66))
         configureContainer(faceLayer, anchor: CGPoint(x: 32, y: 40))
         configureContainer(intakeLayer, anchor: CGPoint(x: 32, y: 17))
@@ -252,109 +266,210 @@ final class RobotCharacterView: NSView {
         shadowLayer.opacity = 0.18
     }
 
-    private func configureArms() {
-        let left = CGMutablePath()
-        left.move(to: CGPoint(x: 14, y: 43))
-        left.addCurve(to: CGPoint(x: 12, y: 54), control1: CGPoint(x: 7, y: 42), control2: CGPoint(x: 5, y: 51))
-        leftArmLayer.path = left
-        styleArm(leftArmLayer)
+    // MARK: Quiet Orbit artwork
 
-        let right = CGMutablePath()
-        right.move(to: CGPoint(x: 50, y: 43))
-        right.addCurve(to: CGPoint(x: 52, y: 54), control1: CGPoint(x: 57, y: 42), control2: CGPoint(x: 59, y: 51))
-        rightArmLayer.path = right
-        styleArm(rightArmLayer)
+    // These points preserve the supplied SVG geometry while retaining the
+    // 64×78 animation canvas, so existing reaction tracks remain reusable.
+    private let orbitUnit: CGFloat = 0.42
+    private func orbitPoint(_ x: CGFloat, _ y: CGFloat) -> CGPoint {
+        CGPoint(x: 32 + (x - 200) * orbitUnit, y: 20 + (y - 57) * orbitUnit)
+    }
+    private func orbitRect(_ x: CGFloat, _ y: CGFloat, _ width: CGFloat, _ height: CGFloat) -> CGRect {
+        CGRect(origin: orbitPoint(x, y), size: CGSize(width: width * orbitUnit, height: height * orbitUnit))
+    }
+    private func orbitPolygon(_ points: [(CGFloat, CGFloat)], close: Bool = true) -> CGPath {
+        let path = CGMutablePath()
+        guard let first = points.first else { return path }
+        path.move(to: orbitPoint(first.0, first.1))
+        for point in points.dropFirst() { path.addLine(to: orbitPoint(point.0, point.1)) }
+        if close { path.closeSubpath() }
+        return path
+    }
+    private func orbitRoundRect(_ x: CGFloat, _ y: CGFloat, _ width: CGFloat, _ height: CGFloat,
+                                radius: CGFloat) -> CGPath {
+        CGPath(roundedRect: orbitRect(x, y, width, height), cornerWidth: radius * orbitUnit,
+               cornerHeight: radius * orbitUnit, transform: nil)
+    }
+    private var orbitMetal: [UInt32] { [0xEEE7F4, 0xC8B4DC, 0x977CAD, 0xBCA5D0, 0x6D5387] }
+    private var orbitSilver: [UInt32] { [0xF6F4F8, 0xD4CDDC, 0xA9A1B3, 0xE3DCE9, 0x85758F] }
+
+    @discardableResult
+    private func addOrbitGradient(_ path: CGPath, colors: [UInt32], to parent: CALayer,
+                                  stroke: CGFloat? = nil) -> CAGradientLayer {
+        let mask = CAShapeLayer()
+        mask.path = path
+        if let stroke {
+            mask.fillColor = nil
+            mask.strokeColor = Self.color(0xFFFFFF)
+            mask.lineWidth = stroke
+            mask.lineJoin = .round
+            mask.lineCap = .round
+        }
+        let gradient = CAGradientLayer()
+        gradient.frame = CGRect(origin: .zero, size: Self.designSize)
+        gradient.colors = colors.map { Self.color($0) }
+        gradient.locations = colors.indices.map { NSNumber(value: Double($0) / Double(max(1, colors.count - 1))) }
+        let bounds = path.boundingBoxOfPath
+        gradient.startPoint = CGPoint(x: bounds.minX / Self.designSize.width, y: bounds.minY / Self.designSize.height)
+        gradient.endPoint = CGPoint(x: bounds.maxX / Self.designSize.width, y: bounds.maxY / Self.designSize.height)
+        gradient.mask = mask
+        parent.addSublayer(gradient)
+        return gradient
     }
 
-    private func styleArm(_ layer: CAShapeLayer) {
-        layer.fillColor = nil
-        layer.strokeColor = Self.color(0x59466E)
-        layer.lineWidth = 4
-        layer.lineCap = .round
+    @discardableResult
+    private func addOrbitShape(_ path: CGPath, to parent: CALayer, fill: UInt32? = nil,
+                               stroke: UInt32? = nil, width: CGFloat = 1, alpha: CGFloat = 1) -> CAShapeLayer {
+        let shape = CAShapeLayer()
+        shape.path = path
+        shape.fillColor = fill.map { Self.color($0, alpha: alpha) }
+        shape.strokeColor = stroke.map { Self.color($0, alpha: alpha) }
+        shape.lineWidth = width
+        shape.lineJoin = .round
+        shape.lineCap = .round
+        parent.addSublayer(shape)
+        return shape
+    }
+
+    private func configureArms() {
+        configureOrbitArm(leftArmLayer, shoulder: (153, 106), elbow: (151, 90), hand: (151, 66),
+                          handOrigin: (139, 57))
+        configureOrbitArm(rightArmLayer, shoulder: (247, 106), elbow: (264, 113), hand: (259, 138),
+                          handOrigin: (247, 133))
+    }
+
+    private func configureOrbitArm(_ arm: CAShapeLayer, shoulder: (CGFloat, CGFloat),
+                                   elbow: (CGFloat, CGFloat), hand: (CGFloat, CGFloat),
+                                   handOrigin: (CGFloat, CGFloat)) {
+        let path = orbitPolygon([shoulder, elbow, hand], close: false)
+        arm.path = path
+        arm.fillColor = nil
+        arm.strokeColor = Self.color(0x554760)
+        arm.lineWidth = 11 * orbitUnit
+        arm.lineJoin = .round
+        arm.lineCap = .round
+        addOrbitGradient(path, colors: orbitSilver, to: arm, stroke: 7 * orbitUnit)
+        let joint = CGPath(ellipseIn: orbitRect(elbow.0 - 7, elbow.1 - 7, 14, 14), transform: nil)
+        addOrbitGradient(joint, colors: orbitMetal, to: arm)
+        addOrbitShape(joint, to: arm, stroke: 0x655373, width: orbitUnit)
+        addOrbitShape(orbitPolygon([(elbow.0 - 3, elbow.1), (elbow.0 + 3, elbow.1)], close: false),
+                      to: arm, stroke: 0x544260, width: 2 * orbitUnit)
+        let palm = orbitRoundRect(handOrigin.0, handOrigin.1, 25, 18, radius: 5)
+        addOrbitGradient(palm, colors: orbitSilver, to: arm)
+        addOrbitShape(palm, to: arm, stroke: 0x766285, width: orbitUnit)
+        let fingers = CGMutablePath()
+        for offset: CGFloat in [6, 12, 18] {
+            fingers.move(to: orbitPoint(handOrigin.0 + offset, handOrigin.1 + 1))
+            fingers.addLine(to: orbitPoint(handOrigin.0 + offset, handOrigin.1 + 10))
+        }
+        addOrbitShape(fingers, to: arm, stroke: 0x776487, width: 1.2 * orbitUnit)
+        addOrbitShape(orbitPolygon([(handOrigin.0 + 4, handOrigin.1 + 15),
+                                   (handOrigin.0 + 21, handOrigin.1 + 15)], close: false),
+                      to: arm, stroke: 0xF3EDF7, width: orbitUnit)
+        let servo = CGPath(ellipseIn: orbitRect(shoulder.0 - 8, shoulder.1 - 8, 16, 16), transform: nil)
+        addOrbitGradient(servo, colors: orbitSilver, to: arm)
+        addOrbitShape(servo, to: arm, stroke: 0x766285, width: orbitUnit)
+        addOrbitShape(CGPath(ellipseIn: orbitRect(shoulder.0 - 3, shoulder.1 - 3, 6, 6), transform: nil),
+                      to: arm, fill: 0x554760)
     }
 
     private func configureShell() {
-        let feet = feetLayer
+        let neck = orbitRoundRect(187, 117, 26, 18, radius: 1)
+        addOrbitShape(neck, to: shellLayer, fill: 0x554760, stroke: 0x9986AA, width: orbitUnit)
+        let neckRibs = CGMutablePath()
+        for y: CGFloat in [122, 127] {
+            neckRibs.move(to: orbitPoint(188, y)); neckRibs.addLine(to: orbitPoint(212, y))
+        }
+        addOrbitShape(neckRibs, to: shellLayer, stroke: 0xC4B7D0, width: 2 * orbitUnit)
+
         let feetPath = CGMutablePath()
-        feetPath.addRoundedRect(in: CGRect(x: 16, y: 62, width: 12, height: 9), cornerWidth: 2, cornerHeight: 2)
-        feetPath.addRoundedRect(in: CGRect(x: 36, y: 62, width: 12, height: 9), cornerWidth: 2, cornerHeight: 2)
-        feet.path = feetPath
-        feet.fillColor = Self.color(0x4A3A62)
-        shellLayer.addSublayer(feet)
+        feetPath.addPath(orbitRoundRect(170, 155, 19, 9, radius: 3))
+        feetPath.addPath(orbitRoundRect(211, 155, 19, 9, radius: 3))
+        feetLayer.path = feetPath
+        feetLayer.fillColor = Self.color(0xD4CDDC)
+        feetLayer.strokeColor = Self.color(0x766285)
+        feetLayer.lineWidth = orbitUnit
+        shellLayer.addSublayer(feetLayer)
+        addOrbitGradient(feetPath, colors: orbitSilver, to: feetLayer)
 
-        let shellPath = CGPath(roundedRect: CGRect(x: 12, y: 20, width: 40, height: 46),
-                               cornerWidth: 10, cornerHeight: 10, transform: nil)
-        let shellMask = CAShapeLayer()
-        shellMask.path = shellPath
-        let gradient = CAGradientLayer()
-        gradient.frame = CGRect(origin: .zero, size: Self.designSize)
-        gradient.colors = [Self.color(0xB89CCF), Self.color(0x765D94), Self.color(0x503E6E)]
-        gradient.locations = [0, 0.53, 1]
-        gradient.startPoint = CGPoint(x: 0.15, y: 0.12)
-        gradient.endPoint = CGPoint(x: 0.82, y: 0.9)
-        gradient.mask = shellMask
-        shellLayer.addSublayer(gradient)
-
-        let outline = CAShapeLayer()
-        outline.path = shellPath
-        outline.fillColor = nil
-        outline.strokeColor = Self.color(0x433451)
-        outline.lineWidth = 1.5
-        shellLayer.addSublayer(outline)
-
-        let highlight = CAShapeLayer()
-        let highlightPath = CGMutablePath()
-        highlightPath.move(to: CGPoint(x: 16, y: 25))
-        highlightPath.addLine(to: CGPoint(x: 16, y: 57))
-        highlightPath.addCurve(to: CGPoint(x: 20, y: 63), control1: CGPoint(x: 16, y: 60), control2: CGPoint(x: 18, y: 62))
-        highlight.path = highlightPath
-        highlight.fillColor = nil
-        highlight.strokeColor = Self.color(0xE2D1EF, alpha: 0.63)
-        highlight.lineWidth = 1.2
-        highlight.lineCap = .round
-        shellLayer.addSublayer(highlight)
-
-        let slot = CAShapeLayer()
-        slot.path = CGPath(roundedRect: CGRect(x: 23, y: 55, width: 18, height: 5),
-                           cornerWidth: 2.5, cornerHeight: 2.5, transform: nil)
-        slot.fillColor = Self.color(0x30263C)
-        slot.strokeColor = Self.color(0xB398C7)
-        slot.lineWidth = 0.8
-        shellLayer.addSublayer(slot)
+        let torso = orbitPolygon([(176, 129), (224, 129), (234, 138), (229, 159), (171, 159), (166, 138)])
+        addOrbitGradient(torso, colors: orbitMetal, to: shellLayer)
+        addOrbitShape(torso, to: shellLayer, stroke: 0x7A628D, width: orbitUnit)
+        addOrbitShape(orbitPolygon([(176, 132), (224, 132)], close: false), to: shellLayer,
+                      stroke: 0xEEE5F5, width: 1.5 * orbitUnit)
+        addOrbitShape(orbitRoundRect(183, 140, 34, 10, radius: 2), to: shellLayer,
+                      fill: 0x282230, stroke: 0x8E7A9F, width: orbitUnit)
+        addOrbitShape(orbitPolygon([(187, 148), (213, 148)], close: false), to: shellLayer,
+                      stroke: 0xB3E6D9, width: 1.5 * orbitUnit)
+        let screws = CGMutablePath()
+        for x: CGFloat in [175, 221] {
+            screws.move(to: orbitPoint(x, 152)); screws.addLine(to: orbitPoint(x + 4, 152))
+        }
+        addOrbitShape(screws, to: shellLayer, stroke: 0x544260, width: 1.5 * orbitUnit)
     }
 
     private func configureFace() {
-        faceScreenLayer.path = CGPath(roundedRect: CGRect(x: 18, y: 30, width: 28, height: 20),
-                                      cornerWidth: 6, cornerHeight: 6, transform: nil)
-        faceScreenLayer.fillColor = Self.color(0x292338)
-        faceScreenLayer.strokeColor = Self.color(0xB49CC7)
-        faceScreenLayer.lineWidth = 1
+        let head = orbitPolygon([(166, 57), (234, 57), (250, 71), (250, 112),
+                                 (237, 125), (163, 125), (150, 112), (150, 71)])
+        addOrbitGradient(head, colors: orbitMetal, to: faceLayer)
+        addOrbitShape(head, to: faceLayer, stroke: 0x7D6490, width: 1.2 * orbitUnit)
+        addOrbitShape(orbitPolygon([(158, 73), (169, 63), (231, 63), (242, 73)], close: false),
+                      to: faceLayer, stroke: 0xF2EAF9, width: 2 * orbitUnit)
+        let visor = orbitPolygon([(164, 75), (236, 75), (242, 82), (242, 107),
+                                  (234, 116), (166, 116), (158, 107), (158, 82)])
+        faceScreenLayer.path = visor
+        faceScreenLayer.fillColor = Self.color(0x1E1924)
+        faceScreenLayer.strokeColor = Self.color(0x8D759F)
+        faceScreenLayer.lineWidth = orbitUnit
         faceLayer.addSublayer(faceScreenLayer)
+        addOrbitGradient(visor, colors: [0x3E3449, 0x1E1924, 0x30253B], to: faceScreenLayer)
+        addOrbitShape(orbitPolygon([(169, 80), (229, 80)], close: false), to: faceLayer,
+                      stroke: 0xDFD2EA, width: 1.4 * orbitUnit, alpha: 0.18)
 
-        for (eye, center) in [(leftEyeLayer, CGPoint(x: 26, y: 39)),
-                              (rightEyeLayer, CGPoint(x: 38, y: 39))] {
+        for (eye, origin) in [(leftEyeLayer, CGPoint(x: 174, y: 88)),
+                              (rightEyeLayer, CGPoint(x: 213, y: 88))] {
+            let center = orbitPoint(origin.x + 6.5, origin.y + 7.5)
             configureContainer(eye, anchor: center)
-            eye.path = CGPath(roundedRect: CGRect(x: center.x - 2.8, y: center.y - 2.3, width: 5.6, height: 4.6),
-                              cornerWidth: 2.3, cornerHeight: 2.3, transform: nil)
-            eye.fillColor = Self.color(0xD7F4EF)
-            eye.shadowColor = Self.color(0xBCEBFF)
-            eye.shadowOpacity = 0.22
-            eye.shadowRadius = 2
+            eye.path = CGPath(rect: orbitRect(origin.x, origin.y, 13, 15), transform: nil)
+            eye.fillColor = Self.color(0xC8F1E5)
+            eye.shadowColor = Self.color(0xB3E6D9)
+            eye.shadowOpacity = 0.16
+            eye.shadowRadius = 0.8
             eye.shadowOffset = .zero
+            let scanlines = CGMutablePath()
+            for offset: CGFloat in [4, 8, 12] {
+                scanlines.move(to: orbitPoint(origin.x + 2, origin.y + offset))
+                scanlines.addLine(to: orbitPoint(origin.x + 11, origin.y + offset))
+            }
+            addOrbitShape(scanlines, to: eye, stroke: 0x233B35, width: 0.8 * orbitUnit, alpha: 0.18)
             faceLayer.addSublayer(eye)
         }
-
         mouthLayer.path = mouthPath(for: .idle)
         mouthLayer.fillColor = nil
-        mouthLayer.strokeColor = Self.color(0x96CEC9)
-        mouthLayer.lineWidth = 1.1
-        mouthLayer.lineCap = .round
+        mouthLayer.strokeColor = Self.color(0xA3C7BD)
+        mouthLayer.lineWidth = 1.8 * orbitUnit
+        mouthLayer.lineCap = .square
+        mouthLayer.lineJoin = .round
         faceLayer.addSublayer(mouthLayer)
+
+        addOrbitShape(orbitRoundRect(192, 66, 16, 3, radius: 1), to: faceLayer, fill: 0x5B486A)
+        addOrbitShape(orbitPolygon([(195, 67.5), (202, 67.5)], close: false), to: faceLayer,
+                      stroke: 0xC8F1E5, width: 1.2 * orbitUnit)
+        let seams = CGMutablePath()
+        for x: CGFloat in [155, 245] {
+            seams.move(to: orbitPoint(x, 84)); seams.addLine(to: orbitPoint(x, 101))
+        }
+        for x: CGFloat in [165, 232] {
+            seams.move(to: orbitPoint(x, 119)); seams.addLine(to: orbitPoint(x + 3, 119))
+        }
+        addOrbitShape(seams, to: faceLayer, stroke: 0x584664, width: 1.5 * orbitUnit)
     }
 
     private func configureIntakeCard() {
-        intakeLayer.path = CGPath(roundedRect: CGRect(x: 27.5, y: 2, width: 9, height: 12),
-                                  cornerWidth: 1.5, cornerHeight: 1.5, transform: nil)
+        // A generic paper icon passes into the physical torso slot. It never
+        // carries the user's clipboard text or screenshot pixels.
+        intakeLayer.path = CGPath(roundedRect: CGRect(x: 28, y: 39, width: 8, height: 11),
+                                  cornerWidth: 0.8, cornerHeight: 0.8, transform: nil)
         intakeLayer.fillColor = Self.color(0xFBF7FF)
         intakeLayer.strokeColor = Self.color(0x8E7AA7)
         intakeLayer.lineWidth = 0.8
@@ -362,53 +477,18 @@ final class RobotCharacterView: NSView {
     }
 
     private func configureLid() {
-        let lidPath = CGMutablePath()
-        lidPath.move(to: CGPoint(x: 14, y: 23))
-        lidPath.addLine(to: CGPoint(x: 14, y: 18))
-        lidPath.addCurve(to: CGPoint(x: 21, y: 11), control1: CGPoint(x: 14, y: 14), control2: CGPoint(x: 17, y: 11))
-        lidPath.addLine(to: CGPoint(x: 43, y: 11))
-        lidPath.addCurve(to: CGPoint(x: 50, y: 18), control1: CGPoint(x: 47, y: 11), control2: CGPoint(x: 50, y: 14))
-        lidPath.addLine(to: CGPoint(x: 50, y: 23))
-        lidPath.closeSubpath()
-
-        let mask = CAShapeLayer()
-        mask.path = lidPath
-        let gradient = CAGradientLayer()
-        gradient.frame = CGRect(origin: .zero, size: Self.designSize)
-        gradient.colors = [Self.color(0xC9B5DA), Self.color(0x6B537F)]
-        gradient.startPoint = CGPoint(x: 0.2, y: 0.1)
-        gradient.endPoint = CGPoint(x: 0.8, y: 0.9)
-        gradient.mask = mask
-        lidLayer.addSublayer(gradient)
-
-        let outline = CAShapeLayer()
-        outline.path = lidPath
-        outline.fillColor = nil
-        outline.strokeColor = Self.color(0x483556)
-        outline.lineWidth = 1.4
-        lidLayer.addSublayer(outline)
-
-        let shine = CAShapeLayer()
-        let shinePath = CGMutablePath()
-        shinePath.move(to: CGPoint(x: 18, y: 16))
-        shinePath.addLine(to: CGPoint(x: 46, y: 16))
-        shine.path = shinePath
-        shine.fillColor = nil
-        shine.strokeColor = Self.color(0xE9D9F1, alpha: 0.7)
-        shine.lineWidth = 1
-        shine.lineCap = .round
-        lidLayer.addSublayer(shine)
+        // The original bin-lid animation layer remains for compatibility with
+        // existing motion descriptors. Quiet Orbit's head is a complete,
+        // separate mechanical assembly in faceLayer; it has no floating lid.
     }
 
     private func configureAutomaticCelebrationLayers() {
         // A mouth-anchored token makes every scale/fold end inside the face.
         // The token contains only vector strokes; private captures never enter it.
-        autoTokenLayer.position = CGPoint(x: 32, y: 45)
+        autoTokenLayer.position = CGPoint(x: 32, y: 42)
         artLayer.addSublayer(autoTokenLayer)
-        autoCountLayer.frame = CGRect(x: -13, y: -19, width: 26, height: 10)
+        configureAutomaticCountBadge()
         autoCountLayer.alignmentMode = .center
-        autoCountLayer.font = NSFont.monospacedDigitSystemFont(ofSize: 7, weight: .bold)
-        autoCountLayer.fontSize = 7
         autoCountLayer.foregroundColor = Self.color(0xFFFFFF)
         autoCountLayer.backgroundColor = Self.color(0x51346F)
         autoCountLayer.cornerRadius = 4
@@ -484,6 +564,17 @@ final class RobotCharacterView: NSView {
         }
     }
 
+    private func configureAutomaticCountBadge() {
+        // The count stays readable even when the companion itself is tiny.
+        // Keep it in the same transient token rather than adding another popup.
+        let fontSize: CGFloat = quietOrbitEnabled ? 14 : 7
+        autoCountLayer.frame = quietOrbitEnabled
+            ? CGRect(x: -24, y: -27, width: 48, height: 19)
+            : CGRect(x: -13, y: -19, width: 26, height: 10)
+        autoCountLayer.font = NSFont.monospacedDigitSystemFont(ofSize: fontSize, weight: .semibold)
+        autoCountLayer.fontSize = fontSize
+    }
+
     // MARK: - Automatic capture celebration
 
     /// Plays one complete automatic-capture performance. The presenter owns the
@@ -492,7 +583,7 @@ final class RobotCharacterView: NSView {
     func playAutoCaptureCelebration(_ performance: AutoCaptureRobotPerformance) {
         cancelIslandCompletion()
         islandMotionActive = false
-        configureIslandStage(performance.entrance == .top)
+        configureIslandStage(performance.entrance == .top && !quietOrbitEnabled)
         stopAmbientMotion()
         removeAllAnimations()
         resetAutomaticCelebrationLayers()
@@ -536,7 +627,7 @@ final class RobotCharacterView: NSView {
               let reaction = reactionPhase(in: performance),
               let exit = phase(.exit, in: performance) else { return }
 
-        if performance.entrance == .top {
+        if performance.entrance == .top && !quietOrbitEnabled {
             prepareIslandRig()
             animateIslandFrames(IslandRobotChoreography.capture(performance), duration: performance.totalDuration)
             addAutomaticPropTimeline(reaction: performance.reaction, phase: eating,
@@ -546,6 +637,17 @@ final class RobotCharacterView: NSView {
             return
         }
 
+        if quietOrbitEnabled {
+            // The native panel controls which notch perch is visible. Local
+            // character travel stays small; opacity cleanly tucks the sprite
+            // away without a second stage-space climbing rig.
+            addAutomaticOpacityTrack([
+                AutomaticOpacityFrame(time: 0, opacity: 0),
+                AutomaticOpacityFrame(time: phaseTime(anticipation, 0.34), opacity: 1),
+                AutomaticOpacityFrame(time: reaction.endTime, opacity: 1),
+                AutomaticOpacityFrame(time: exit.endTime, opacity: 0)
+            ], to: artLayer, key: "robot.auto-success.orbit-visibility", performance: performance)
+        }
         let hidden = automaticHiddenPose(for: performance.entrance)
         let peek = automaticPeekPose(for: performance.entrance,
                                      offset: CGFloat(performance.variation.entranceOffset))
@@ -607,7 +709,7 @@ final class RobotCharacterView: NSView {
         addAutomaticPropTimeline(reaction: performance.reaction, phase: eating,
                                  totalDuration: performance.totalDuration, performance: performance)
         addAutomaticMouthTimeline(eating: eating, reaction: reaction, performance: performance)
-        if performance.entrance == .top {
+        if performance.entrance == .top && !quietOrbitEnabled {
             addIslandClimbingDetails(anticipation: anticipation, entrance: entrance,
                                     exit: exit, performance: performance)
         }
@@ -623,6 +725,7 @@ final class RobotCharacterView: NSView {
         // travels, rotates, spins, scales, bounces or schedules ambient work.
         let staticPeek: RobotPartTransform
         switch performance.entrance {
+        case _ where quietOrbitEnabled: staticPeek = .identity
         case .top: staticPeek = RobotPartTransform(translation: CGPoint(x: 0, y: -18))
         case .right: staticPeek = RobotPartTransform(translation: CGPoint(x: 12, y: 0))
         case .left: staticPeek = RobotPartTransform(translation: CGPoint(x: -12, y: 0))
@@ -654,6 +757,13 @@ final class RobotCharacterView: NSView {
     }
 
     private func automaticHiddenPose(for entrance: RobotEntrance) -> RobotPartTransform {
+        if quietOrbitEnabled {
+            switch entrance {
+            case .top: return RobotPartTransform(translation: CGPoint(x: 0, y: -12))
+            case .right: return RobotPartTransform(translation: CGPoint(x: 12, y: 0))
+            case .left: return RobotPartTransform(translation: CGPoint(x: -12, y: 0))
+            }
+        }
         switch entrance {
         case .top: return RobotPartTransform(translation: CGPoint(x: 0, y: -92))
         case .right: return RobotPartTransform(translation: CGPoint(x: 84, y: 0), rotationDegrees: 7)
@@ -662,6 +772,13 @@ final class RobotCharacterView: NSView {
     }
 
     private func automaticPeekPose(for entrance: RobotEntrance, offset: CGFloat) -> RobotPartTransform {
+        if quietOrbitEnabled {
+            switch entrance {
+            case .top: return RobotPartTransform(translation: CGPoint(x: offset * 0.4, y: -5))
+            case .right: return RobotPartTransform(translation: CGPoint(x: 5, y: offset * 0.4))
+            case .left: return RobotPartTransform(translation: CGPoint(x: -5, y: offset * 0.4))
+            }
+        }
         switch entrance {
         case .top:
             return RobotPartTransform(translation: CGPoint(x: offset, y: -37),
@@ -675,6 +792,13 @@ final class RobotCharacterView: NSView {
 
     private func automaticCompressedEntrancePose(for entrance: RobotEntrance,
                                                   offset: CGFloat) -> RobotPartTransform {
+        if quietOrbitEnabled {
+            switch entrance {
+            case .top: return RobotPartTransform(translation: CGPoint(x: offset * 0.4, y: -6), scaleX: 1.04, scaleY: 0.94)
+            case .right: return RobotPartTransform(translation: CGPoint(x: 6, y: offset * 0.4), scaleX: 0.94, scaleY: 1.04)
+            case .left: return RobotPartTransform(translation: CGPoint(x: -6, y: offset * 0.4), scaleX: 0.94, scaleY: 1.04)
+            }
+        }
         switch entrance {
         case .top:
             return RobotPartTransform(translation: CGPoint(x: offset, y: -43),
@@ -808,6 +932,7 @@ final class RobotCharacterView: NSView {
                                             reaction: AutoCaptureRobotPerformancePhase,
                                             exit: AutoCaptureRobotPerformancePhase,
                                             performance: AutoCaptureRobotPerformance) {
+        guard !quietOrbitEnabled else { return }
         addAutomaticOpacityTrack([
             AutomaticOpacityFrame(time: 0, opacity: 0),
             AutomaticOpacityFrame(time: anticipation.endTime, opacity: 0),
@@ -1108,13 +1233,13 @@ final class RobotCharacterView: NSView {
         // Matching curve topology keeps Core Animation interpolation smooth.
         func chewingPath(width: CGFloat, opening: CGFloat) -> CGPath {
             let path = CGMutablePath()
-            path.move(to: CGPoint(x: 32 - width / 2, y: 45))
-            path.addCurve(to: CGPoint(x: 32 + width / 2, y: 45),
-                          control1: CGPoint(x: 32 - width / 2, y: 45 - opening),
-                          control2: CGPoint(x: 32 + width / 2, y: 45 - opening))
-            path.addCurve(to: CGPoint(x: 32 - width / 2, y: 45),
-                          control1: CGPoint(x: 32 + width / 2, y: 45 + opening),
-                          control2: CGPoint(x: 32 - width / 2, y: 45 + opening))
+            path.move(to: CGPoint(x: 32 - width / 2, y: 42))
+            path.addCurve(to: CGPoint(x: 32 + width / 2, y: 42),
+                          control1: CGPoint(x: 32 - width / 2, y: 42 - opening),
+                          control2: CGPoint(x: 32 + width / 2, y: 42 - opening))
+            path.addCurve(to: CGPoint(x: 32 - width / 2, y: 42),
+                          control1: CGPoint(x: 32 + width / 2, y: 42 + opening),
+                          control2: CGPoint(x: 32 - width / 2, y: 42 + opening))
             path.closeSubpath()
             return path
         }
@@ -1373,7 +1498,7 @@ final class RobotCharacterView: NSView {
         setModelTransform(bodyLayer, CATransform3DIdentity)
         addKeyframes(values, keyTimes: [0, 0.72, 1], duration: descriptor.duration,
                      to: bodyLayer, keyPath: "transform", key: "robot.reveal")
-        animateOpacity(shadowLayer, to: Float(descriptor.shadowOpacity), duration: descriptor.duration, key: "robot.reveal.shadow")
+        animateOpacity(shadowLayer, to: quietOrbitEnabled ? 0 : Float(descriptor.shadowOpacity), duration: descriptor.duration, key: "robot.reveal.shadow")
     }
 
     private func applyMood(_ mood: RobotMood, previous: RobotMood, event: RobotMotionEvent?, reduceMotion: Bool) {
@@ -1412,7 +1537,7 @@ final class RobotCharacterView: NSView {
         animateTransform(rightEyeLayer, to: transform(eyeTransform), duration: duration, key: "robot.right-eye.gaze")
         animateTransform(shadowLayer, to: CATransform3DMakeScale(descriptor.shadowScale, 1, 1),
                          duration: duration, key: "robot.shadow.pose")
-        animateOpacity(shadowLayer, to: Float(descriptor.shadowOpacity), duration: duration, key: "robot.shadow.opacity")
+        animateOpacity(shadowLayer, to: quietOrbitEnabled ? 0 : Float(descriptor.shadowOpacity), duration: duration, key: "robot.shadow.opacity")
         if descriptor.intakeProgress == 0 { animateOpacity(intakeLayer, to: 0, duration: min(0.12, duration), key: "robot.intake.opacity") }
     }
 
@@ -1514,7 +1639,7 @@ final class RobotCharacterView: NSView {
 
     private func updateAmbientMotion(reduceMotion: Bool) {
         let descriptor = RobotMotionDescriptor.make(for: .mood(mood), reduceMotion: reduceMotion)
-        guard descriptor.allowsAmbientMotion, motionState.isVisible else {
+        guard !quietOrbitEnabled, descriptor.allowsAmbientMotion, motionState.isVisible else {
             stopAmbientMotion()
             return
         }
@@ -1710,22 +1835,29 @@ final class RobotCharacterView: NSView {
         let path = CGMutablePath()
         switch mood {
         case .hungry:
-            path.addEllipse(in: CGRect(x: 30, y: 43.2, width: 4, height: 4.5))
+            path.addRoundedRect(in: CGRect(x: 30.5, y: 39.7, width: 3, height: 3.8),
+                                cornerWidth: 0.45, cornerHeight: 0.45)
         case .delighted:
-            path.move(to: CGPoint(x: 28.5, y: 44))
-            path.addQuadCurve(to: CGPoint(x: 35.5, y: 44), control: CGPoint(x: 32, y: 49))
+            path.move(to: CGPoint(x: 28.8, y: 40.7))
+            path.addLine(to: CGPoint(x: 30.6, y: 43))
+            path.addLine(to: CGPoint(x: 33.4, y: 43))
+            path.addLine(to: CGPoint(x: 35.2, y: 40.7))
         case .partialSuccess:
-            path.move(to: CGPoint(x: 29, y: 46))
-            path.addQuadCurve(to: CGPoint(x: 35, y: 45), control: CGPoint(x: 32, y: 43.8))
+            path.move(to: CGPoint(x: 29.4, y: 42))
+            path.addLine(to: CGPoint(x: 32, y: 42.8))
+            path.addLine(to: CGPoint(x: 34.6, y: 41.4))
         case .puzzled:
-            path.move(to: CGPoint(x: 29, y: 45))
-            path.addQuadCurve(to: CGPoint(x: 35, y: 46), control: CGPoint(x: 32, y: 48))
+            path.move(to: CGPoint(x: 29.4, y: 42.8))
+            path.addLine(to: CGPoint(x: 32, y: 41.6))
+            path.addLine(to: CGPoint(x: 34.6, y: 42.8))
         case .digesting:
-            path.move(to: CGPoint(x: 29.5, y: 45))
-            path.addLine(to: CGPoint(x: 34.5, y: 45))
+            path.move(to: CGPoint(x: 29.5, y: 42))
+            path.addLine(to: CGPoint(x: 34.5, y: 42))
         default:
-            path.move(to: CGPoint(x: 29, y: 45))
-            path.addQuadCurve(to: CGPoint(x: 35, y: 45), control: CGPoint(x: 32, y: 47))
+            path.move(to: orbitPoint(194, 106))
+            path.addLine(to: orbitPoint(197, 109))
+            path.addLine(to: orbitPoint(203, 109))
+            path.addLine(to: orbitPoint(206, 106))
         }
         return path
     }

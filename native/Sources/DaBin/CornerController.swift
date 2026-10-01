@@ -194,6 +194,9 @@ enum CornerGeometry {
         case .cameraIsland:
             let island = cameraIslandRect(on: screen)
                 ?? NSRect(x: screen.frame.midX, y: screen.visibleFrame.maxY, width: 0, height: 0)
+            if let layout = QuietOrbitLayout(cameraIsland: island, displayFrame: screen.frame) {
+                return layout.panelFrame
+            }
             return robotFrame(cameraIsland: island, visible: screen.visibleFrame)
         }
     }
@@ -290,6 +293,18 @@ enum CornerGeometry {
 }
 
 class DaBinPanel: NSPanel {
+    /// The real camera stage may use drawable pixels beside the menu bar.
+    /// Ordinary app windows keep AppKit's normal visible-frame constraints.
+    var cameraStageDisplayFrame: NSRect?
+    override func constrainFrameRect(_ frameRect: NSRect, to screen: NSScreen?) -> NSRect {
+        guard let display = cameraStageDisplayFrame else { return super.constrainFrameRect(frameRect, to: screen) }
+        var frame = frameRect
+        frame.size.width = min(frame.width, display.width)
+        frame.size.height = min(frame.height, display.height)
+        frame.origin.x = min(max(frame.minX, display.minX), display.maxX - frame.width)
+        frame.origin.y = min(max(frame.minY, display.minY), display.maxY - frame.height)
+        return frame
+    }
     override var canBecomeKey: Bool { true }
     override var canBecomeMain: Bool { false }
 }
@@ -317,7 +332,7 @@ final class CornerController: NSObject {
     private var robotTransitionSource: NSRect?
     private var robotTransitionTask: Task<Void, Never>?
     private var idlePeekTask: Task<Void, Never>?
-    private var nextIdlePeek = Date().addingTimeInterval(55)
+    private var orbitDwell = QuietOrbitPerchDwell()
     private var idlePeeking = false
     private var timer: Timer?
     private(set) var isShutDown = false
@@ -419,6 +434,7 @@ final class CornerController: NSObject {
         robot.onDrop = { [weak self] pasteboard in self?.input.receive(pasteboard) }
         robot.onDragState = { [weak self] active in
             self?.dragActive = active
+            if active, let self { self.orbitDwell.reset(to: self.robot.orbitPerch) }
             self?.lastInteraction = Date()
             self?.updateHoverFocus(at: NSEvent.mouseLocation, pressedMouseButtons: NSEvent.pressedMouseButtons)
         }
@@ -428,6 +444,7 @@ final class CornerController: NSObject {
         robot.onFocus = { [weak self] in self?.keyboardHold = true; self?.focusPoint = NSEvent.mouseLocation; self?.lastInteraction = Date() }
         input.onBusy = { [weak self] busy in
             self?.saving = busy; self?.robot.isSaving = busy
+            if busy, let self { self.orbitDwell.reset(to: self.robot.orbitPerch) }
         }
         input.onResult = { [weak self] captures, errors in self?.received(captures, errors: errors) }
         state.onDismiss = { [weak self] in self?.dismiss() }
@@ -545,9 +562,6 @@ final class CornerController: NSObject {
             appFrame.updatePointer(screenPoint: screen.frame.contains(point) ? point : nil, displayFrame: screen.frame)
         }
         guard robotTransitionTarget == nil else { return }
-        if !board.isVisible, !bin.isVisible, !isCaptureRobotVisible(), now >= nextIdlePeek, pressedMouseButtons == 0 {
-            showIdlePeek(now: now)
-        }
         let target = NSScreen.screens.compactMap { screen -> (NSScreen, RobotRevealTarget)? in
             guard let target = CornerGeometry.revealTarget(at: point, on: screen,
                                                            home: state.robotPlacement.home) else { return nil }
@@ -564,12 +578,14 @@ final class CornerController: NSObject {
         if let (screen, target) = target, !suppressUntilExit,
            (!board.isVisible || draggingTowardCorner), !saving, !dragActive {
             keyboardHold = false
-            reveal(on: screen, target: target)
+            reveal(on: screen, target: target, pointer: point)
+            updateOrbitPerch(at: point, now: now)
             updateHoverFocus(at: point, pressedMouseButtons: pressedMouseButtons)
             lastInteraction = now
             return
         }
         guard bin.isVisible, !idlePeeking else { return }
+        updateOrbitPerch(at: point, now: now)
         updateHoverFocus(at: point, pressedMouseButtons: pressedMouseButtons)
         var corridor = bin.convertToScreen(robot.convert(robot.interactionBounds, to: nil)).insetBy(dx: -12, dy: -12)
         if let screen = activeScreen {
@@ -591,7 +607,7 @@ final class CornerController: NSObject {
         keyboardHold = false
         // The grace interval lets the pointer cross menu-bar / Dock insets onto the robot.
         if now > feedbackUntil, now.timeIntervalSince(lastInteraction) > 0.8 {
-            hideRobot()
+            hideRobot(animated: true)
         }
     }
 
@@ -599,7 +615,7 @@ final class CornerController: NSObject {
         updatePointerAcceptance(at: point)
         let localPoint = robot.convert(bin.convertPoint(fromScreen: point), from: nil)
         let hovering = bin.isVisible && !idlePeeking && !board.isVisible && !dragActive && pressedMouseButtons == 0
-            && robot.hoverBounds.contains(localPoint)
+            && robot.hoverBounds.contains(localPoint) && robot.containsInteraction(localPoint)
         if hovering {
             guard !hoverFocus else { return }
             hoverFocus = true
@@ -621,7 +637,7 @@ final class CornerController: NSObject {
             bin.ignoresMouseEvents = false
         } else {
             let localPoint = robot.convert(bin.convertPoint(fromScreen: point), from: nil)
-            bin.ignoresMouseEvents = !robot.interactionBounds.contains(localPoint)
+            bin.ignoresMouseEvents = !robot.containsInteraction(localPoint)
         }
     }
 
@@ -643,7 +659,7 @@ final class CornerController: NSObject {
         reveal(on: screen, target: .corner(corner), focus: focus)
     }
 
-    func reveal(on screen: NSScreen, target: RobotRevealTarget, focus: Bool = false) {
+    func reveal(on screen: NSScreen, target: RobotRevealTarget, focus: Bool = false, pointer: NSPoint? = nil) {
         guard !isShutDown, robotTransitionTarget == nil else { return }
         cancelIdlePeek()
         onRobotInteractionBegan?()
@@ -657,18 +673,25 @@ final class CornerController: NSObject {
             boardTopLeft = NSPoint(x: board.frame.minX, y: board.frame.maxY)
         }
         activeScreen = screen; activeTarget = target
-        if !bin.isVisible || changed {
+        if !bin.isVisible || changed || robot.isOrbitRetreating {
             let entering = !bin.isVisible
+            bin.cameraStageDisplayFrame = target == .cameraIsland ? screen.frame : nil
             bin.setFrame(frame, display: true)
             bin.alphaValue = 1
             bin.orderFrontRegardless()
-            if entering || changed {
+            if entering || changed || robot.isOrbitRetreating {
                 let entrance: RobotEntrance
                 switch target {
                 case .corner(let corner): entrance = corner.isRight ? .right : .left
                 case .cameraIsland: entrance = .top
                 }
-                if target == .cameraIsland { robot.climbFromIsland() }
+                if target == .cameraIsland,
+                   let island = CornerGeometry.cameraIslandRect(on: screen),
+                   let layout = QuietOrbitLayout(cameraIsland: island, displayFrame: screen.frame) {
+                    let perch = layout.perch(at: pointer ?? NSEvent.mouseLocation)
+                    orbitDwell = QuietOrbitPerchDwell(current: perch)
+                    robot.revealOrbit(in: layout, at: perch)
+                }
                 else { robot.present(from: entrance) }
             }
         }
@@ -679,6 +702,15 @@ final class CornerController: NSObject {
             NSApp.activate(ignoringOtherApps: true)
             bin.makeKeyAndOrderFront(nil)
             bin.makeFirstResponder(robot)
+        }
+    }
+
+    private func updateOrbitPerch(at point: NSPoint, now: Date) {
+        guard let layout = robot.orbitLayout, !saving, !dragActive,
+              !robot.isOrbitRetreating, now > feedbackUntil,
+              layout.panelFrame.contains(point) else { orbitDwell.cancel(); return }
+        if let perch = orbitDwell.observe(layout.perch(at: point), at: now.timeIntervalSinceReferenceDate) {
+            robot.relocateOrbit(to: perch)
         }
     }
 
@@ -892,27 +924,6 @@ final class CornerController: NSObject {
         previous.activate(options: [])
     }
 
-    private func showIdlePeek(now: Date) {
-        nextIdlePeek = now.addingTimeInterval(Double.random(in: 45...75))
-        guard animateRobotTransitions, state.robotPlacement.home == .cameraIsland,
-              !robotReduceMotion(),
-              let screen = NSScreen.screens.first(where: {
-                  ($0.deviceDescription[NSDeviceDescriptionKey("NSScreenNumber")] as? NSNumber)?.uint32Value == CGMainDisplayID()
-              }), CornerGeometry.cameraIslandRect(on: screen) != nil else { return }
-        activeScreen = screen; activeTarget = .cameraIsland
-        bin.setFrame(CornerGeometry.robotFrame(target: .cameraIsland, on: screen), display: false)
-        bin.ignoresMouseEvents = true
-        bin.orderFrontRegardless()
-        idlePeeking = true
-        robotLifecycle = RobotLifecycle(state: .peeking)
-        let duration = robot.peekFromIsland()
-        idlePeekTask = Task { @MainActor [weak self] in
-            try? await Task.sleep(for: .seconds(duration))
-            guard let self, !Task.isCancelled else { return }
-            self.cancelIdlePeek()
-        }
-    }
-
     private func cancelIdlePeek() {
         idlePeekTask?.cancel(); idlePeekTask = nil
         guard idlePeeking else { return }
@@ -986,7 +997,12 @@ final class CornerController: NSObject {
     }
 
     private func robotBodyFrame(on screen: NSScreen) -> NSRect {
-        CornerGeometry.robotBodyFrame(in: CornerGeometry.robotFrame(target: activeTarget, on: screen),
+        if activeTarget == .cameraIsland,
+           let island = CornerGeometry.cameraIslandRect(on: screen),
+           let layout = QuietOrbitLayout(cameraIsland: island, displayFrame: screen.frame) {
+            return layout.visibleRobotFrame(for: robot.orbitPerch)
+        }
+        return CornerGeometry.robotBodyFrame(in: CornerGeometry.robotFrame(target: activeTarget, on: screen),
                                      target: activeTarget)
     }
 
@@ -1198,9 +1214,22 @@ final class CornerController: NSObject {
         beginRobotTransition(source: source, destination: destination, opening: false)
     }
 
-    private func hideRobot() {
+    private func hideRobot(animated: Bool = false) {
         guard !saving && !dragActive else { return }
+        if animated, animateRobotTransitions, robot.orbitLayout != nil {
+            guard !robot.isOrbitRetreating else { return }
+            releaseHoverFocus()
+            bin.ignoresMouseEvents = true
+            robot.retreatOrbit { [weak self] in
+                guard let self else { return }
+                self.bin.orderOut(nil)
+                self.keyboardHold = false
+                self.onRobotInteractionEnded?()
+            }
+            return
+        }
         hoverFocus = false
+        orbitDwell.cancel()
         robot.hideCharacter()
         bin.orderOut(nil)
         keyboardHold = false
@@ -1208,6 +1237,7 @@ final class CornerController: NSObject {
     }
 
     private func received(_ captures: [Capture], errors: [String]) {
+        orbitDwell.reset(to: robot.orbitPerch)
         keyboardHold = false
         feedbackUntil = Date().addingTimeInterval(errors.isEmpty ? 1.3 : 4)
         robot.digest(success: !captures.isEmpty, partial: !errors.isEmpty)

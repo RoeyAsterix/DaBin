@@ -204,6 +204,64 @@ import Foundation
                    "Returning to corner mode restores compact artwork and the original full drop target")
         islandRobot.stopFeedback()
 
+        // Real native hit testing and destination callbacks around all seven
+        // Quiet Orbit poses, using a fictional camera and private pasteboard.
+        let orbitLayout = QuietOrbitLayout(cameraIsland: NSRect(x: 690, y: 950, width: 132, height: 32),
+                                           displayFrame: NSRect(x: 0, y: 0, width: 1512, height: 982))!
+        let orbitHost = NSView(frame: NSRect(origin: .zero, size: orbitLayout.panelFrame.size))
+        let orbitRobot = RobotView(frame: orbitHost.bounds, reduceMotion: { true })
+        orbitHost.addSubview(orbitRobot)
+        var orbitDrops = 0
+        orbitRobot.onDrop = { _ in orbitDrops += 1 }
+        for perch in QuietOrbitPerch.allCases {
+            orbitRobot.configureOrbit(orbitLayout, perch: perch)
+            let region = orbitLayout.interactionRegions(for: perch, local: true).first!
+            let targetPoint = NSPoint(x: region.midX, y: region.midY)
+            try expect(orbitRobot.containsInteraction(targetPoint)
+                       && orbitRobot.hitTest(targetPoint) === orbitRobot,
+                       "\(perch.rawValue) has a usable native drop/click destination")
+            let hardware = orbitLayout.cameraFrameInPanel
+            let hardwarePoint = NSPoint(x: hardware.midX, y: hardware.midY)
+            try expect(!orbitRobot.containsInteraction(hardwarePoint)
+                       && orbitRobot.hitTest(hardwarePoint) == nil,
+                       "\(perch.rawValue) never blocks the physical camera")
+            let transfer = DropFixture(textBoard)
+            transfer.draggingLocation = targetPoint
+            try expect(orbitRobot.draggingEntered(transfer) == .copy
+                       && orbitRobot.performDragOperation(transfer),
+                       "\(perch.rawValue) accepts supported native text drops")
+            orbitRobot.concludeDragOperation(transfer)
+        }
+        try expect(orbitDrops == QuietOrbitPerch.allCases.count,
+                   "Each Orbit drop reaches the handler exactly once")
+        orbitRobot.configureOrbit(orbitLayout, perch: .bottom)
+        let receiptBadge = try unwrap(orbitRobot.subviews.compactMap { $0 as? NSTextField }.first,
+                                     "Orbit receipt indicator exists")
+        let originalReceiptFrame = receiptBadge.frame
+        orbitRobot.relocateOrbit(to: .right)
+        try await Task.sleep(for: .milliseconds(200))
+        orbitRobot.digest(success: true)
+        try expect(orbitRobot.orbitPerch == .right && !receiptBadge.isHidden
+                   && receiptBadge.frame != originalReceiptFrame
+                   && receiptBadge.frame.intersects(orbitRobot.bodyBounds.insetBy(dx: -4, dy: -4)),
+                   "A capture receipt stays beside the robot after its perch changes")
+        orbitRobot.stopFeedback()
+        orbitRobot.configureOrbit(orbitLayout, perch: .bottom)
+        orbitRobot.relocateOrbit(to: .right)
+        orbitRobot.isSaving = true
+        try await Task.sleep(for: .milliseconds(200))
+        try expect(orbitRobot.orbitPerch == .bottom
+                   && orbitRobot.subviews.first?.frame == orbitLayout.robotFrame(for: .bottom, local: true),
+                   "A save interrupts relocation and preserves its usable destination")
+        orbitRobot.isSaving = false
+        var staleRetreatFired = false
+        orbitRobot.retreatOrbit { staleRetreatFired = true }
+        orbitRobot.revealOrbit(in: orbitLayout, at: .left)
+        try await Task.sleep(for: .milliseconds(200))
+        try expect(!staleRetreatFired && orbitRobot.isPresented && orbitRobot.orbitPerch == .left,
+                   "A new approach cancels an old retreat without hiding the robot")
+        orbitRobot.stopFeedback()
+
         // A first-open board has no saved placement yet. Revealing its robot at
         // another corner must not re-anchor the board when the import resizes it.
         if let initialScreen = NSScreen.main {

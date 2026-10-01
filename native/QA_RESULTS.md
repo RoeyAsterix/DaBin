@@ -1,5 +1,17 @@
 # DaBin QA results
 
+## Release review - 0.4.6 (61), 1 October 2026
+
+All **59/59 final Release suites** and **25 public-distribution Python tests** pass. The reviewed app fixes relocated capture feedback, stale reminder recovery, invisible shelved task attachments and pre-sign updater receipt binding. Standalone ARM64 and unsigned Xcode Release builds, 26 Store source packaging checks, deterministic project and whitespace checks pass; all 109 shared build/QA inputs match. Forty native fictional renders were produced, and the one-page guide was updated and rendered. **0.4.6 (61) is installed and running locally**, with all 40 records and 16 originals unchanged. **Public download publication remains pending Apple signing/notarization authentication**, and current public links still contain 0.3.18. [Evidence and limitations](../docs/qa/release-review-2026-10-01/README.md).
+
+## Quiet Orbit UX/UI — 0.4.5 (60), 1 October 2026
+
+All **15/15 targeted Release suites** pass. Seven native poses in both backgrounds, usable hardware-excluding drop targets, quiet idle, ten reactions, exact counts, interruption recovery, Reduce Motion, capture and Inbox calendar regressions are verified. ARM64 build, strict signature, deterministic project, whitespace and source/executable checks pass. **0.4.5 (60) is installed and running**; Settings confirms the version and preserved island preference. All 40 capture records and 16 attachment originals are unchanged. [Evidence, changed files and limitations](../docs/qa/quiet-orbit-2026-10-01/README.md).
+
+## Inbox Day / Week — 0.4.5 (59), 1 October 2026
+
+Inbox now exposes a labeled Day / Week toggle; To organize retains the original undated queue. All **6/6 focused suites** pass, including 199 native header interactions and 143 weekly state checks. A small accessible hit target found in the first run was corrected. Three fictional compact renders, ARM64 Release build, deterministic project, whitespace, signature and source/executable checks pass. **0.4.5 (59) is installed and open in Week** after live Inbox → Week → Day → Week verification. All 40 existing records and 16 attachment originals are unchanged. [Detailed evidence](../docs/qa/inbox-calendar-2026-10-01/README.md).
+
 ## Visible caption trash — 0.4.5 (58), 1 October 2026
 
 Small trash controls are directly available on capture/task cards, including minimized cards, Explorer, weekly cards and attachments. All **6/6 focused suites** pass, including native confirmation, cancellation, selected-record deletion and Undo checks. ARM64 Release build, deterministic project, whitespace, strict signature and source/executable matching pass. **0.4.5 (58) is installed and running locally**, with visible trash controls verified through accessibility. A private backup verified 228 files; all 40 original records and 16 original attachments are preserved, with one expected focus timer expiry. [Evidence and scope](../docs/qa/capture-trash-2026-10-01/README.md).

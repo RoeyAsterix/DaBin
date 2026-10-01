@@ -154,6 +154,20 @@ private enum HeaderInteractionTests {
         settle()
     }
 
+    @MainActor private static func snapshot(_ view: NSView, at url: URL) throws {
+        view.layoutSubtreeIfNeeded()
+        guard let bitmap = view.bitmapImageRepForCachingDisplay(in: view.bounds) else {
+            throw NSError(domain: "HeaderInteractionTests", code: 3,
+                          userInfo: [NSLocalizedDescriptionKey: "Cannot render the isolated Inbox fixture"])
+        }
+        view.cacheDisplay(in: view.bounds, to: bitmap)
+        guard let data = bitmap.representation(using: .png, properties: [:]) else {
+            throw NSError(domain: "HeaderInteractionTests", code: 4,
+                          userInfo: [NSLocalizedDescriptionKey: "Cannot encode the isolated Inbox fixture"])
+        }
+        try data.write(to: url, options: .atomic)
+    }
+
     @MainActor static func main() async throws {
         let application = NSApplication.shared
         application.setActivationPolicy(.accessory)
@@ -217,7 +231,7 @@ private enum HeaderInteractionTests {
                    "Own-process accessibility activation succeeds (AX error \(accessibilityActivation.rawValue))")
         settle()
 
-        for id in ["primary-inbox", "primary-today", "primary-workspace", "primary-activity", "board-search", "timeline-action-add", "board-more", "board-settings", "timeline-auto-capture", "window-expand", "window-close"] {
+        for id in ["primary-inbox", "primary-today", "primary-workspace", "inbox-organize", "timeline-mode-daily", "timeline-mode-weekly", "board-search", "timeline-action-add", "board-more", "board-settings", "timeline-auto-capture", "window-expand", "window-close"] {
             let control = try element(hosting, identifier: id)
             let frame = control.accessibilityFrame()
             try expect(frame.width > 0 && frame.height > 0, "\(id) has an accessible visible target")
@@ -230,7 +244,7 @@ private enum HeaderInteractionTests {
         // Keep search one action away without reserving an unused field row.
         let toolbarIDs = ["timeline-auto-capture", "timeline-action-add", "board-search", "board-settings", "board-more", "window-expand", "window-close"]
         let menuIDs: Set<String> = ["timeline-action-add", "board-more"]
-        let primaryIDs = ["primary-inbox", "primary-today", "primary-workspace", "primary-activity"]
+        let primaryIDs = ["primary-inbox", "primary-today", "primary-workspace"]
         for layoutSize in [NSSize(width: 380, height: 430), size, NSSize(width: 760, height: 760)] {
             hosting.rootView = BoardView(state: state, theme: theme)
                 .frame(width: layoutSize.width, height: layoutSize.height)
@@ -281,8 +295,55 @@ private enum HeaderInteractionTests {
         hosting.rootView = BoardView(state: state, theme: theme).frame(width: size.width, height: size.height)
         window.setContentSize(size); hosting.frame = NSRect(origin: .zero, size: size); settle()
         try expect(state.route == .inbox, "Initial route is the capture Inbox")
-        try press(hosting, identifier: "primary-activity")
-        try expect(state.route == .daily, "Inbox Activity opens the calendar without changing primary navigation")
+        let evidence = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
+            .appendingPathComponent("build/qa/inbox-calendar", isDirectory: true)
+        try FileManager.default.createDirectory(at: evidence, withIntermediateDirectories: true)
+        let inboxNavigationIDs = ["inbox-organize", "timeline-mode-daily", "timeline-mode-weekly"]
+        state.selectedDay = yesterday
+        state.filter = .text
+        state.newNoteText = "Unfinished Inbox calendar fixture"
+        for target in [BoardRoute.inbox, .weekly, .daily] {
+            if target == .weekly { try press(hosting, identifier: "timeline-mode-weekly") }
+            if target == .daily { try press(hosting, identifier: "timeline-mode-daily") }
+            try expect(state.route == target && state.selectedDay == yesterday && state.filter == .text
+                       && state.newNoteText == "Unfinished Inbox calendar fixture",
+                       "Inbox \(target) navigation preserves the selected date, filter and quick-capture draft")
+            try snapshot(hosting, at: evidence.appendingPathComponent("inbox-\(target)-380.png"))
+            let controls = try inboxNavigationIDs.map { try element(hosting, identifier: $0) }
+            let frames = controls.map { $0.accessibilityFrame() }.sorted { $0.minX < $1.minX }
+            let frameDiagnostic = zip(inboxNavigationIDs, controls).map {
+                "\($0.0): AX=\(NSStringFromRect($0.1.accessibilityFrame())), interaction=\(NSStringFromRect($0.1.interactionFrame()))"
+            }.joined(separator: "; ") + "; window=\(NSStringFromRect(window.frame)); screens=\(NSScreen.screens.map { NSStringFromRect($0.frame) })"
+            try expect(controls.allSatisfy { $0.supportsAccessiblePress() },
+                       "Inbox, Day and Week remain directly actionable on \(target)")
+            try expect(frames.allSatisfy { $0.width >= 28 && $0.height >= 28
+                && $0.minX >= window.frame.minX - 1 && $0.maxX <= window.frame.maxX + 1
+                && $0.minY >= window.frame.minY - 1 && $0.maxY <= window.frame.maxY + 1 },
+                       "Inbox subnavigation fits the compact 380-point \(target) view. \(frameDiagnostic)")
+            try expect(frames.allSatisfy { abs($0.midY - frames[0].midY) < 1 }
+                && zip(frames, frames.dropFirst()).allSatisfy { $0.0.maxX <= $0.1.minX + 1 },
+                       "Inbox subnavigation shares one row without overlapping on \(target)")
+            try expect(!elements(in: hosting).contains { $0.accessibilityIdentifier() == "primary-activity" },
+                       "Day and Week belong to Inbox without a separate Activity tab")
+            let dayLabel = try element(hosting, identifier: "timeline-mode-daily").accessibilityLabel()
+            let weekLabel = try element(hosting, identifier: "timeline-mode-weekly").accessibilityLabel()
+            try expect(dayLabel == "Daily view" && weekLabel == "Weekly view",
+                       "The labeled Day and Week controls retain their accessible names")
+            if target == .weekly {
+                let expected = (-6...0).map {
+                    CaptureCalendar.dayString(Calendar.current.date(byAdding: .day, value: $0, to: yesterday)!)
+                }
+                try expect(state.weeklyDays.map { CaptureCalendar.dayString($0) } == expected,
+                           "Week opened directly from Inbox covers the seven dates ending on the selected day")
+            }
+        }
+        try press(hosting, identifier: "inbox-organize")
+        try expect(state.route == .inbox && state.selectedDay == yesterday && state.filter == .text
+                   && state.newNoteText == "Unfinished Inbox calendar fixture",
+                   "To organize returns to Inbox triage without discarding calendar context or the draft")
+        state.clearNewNoteDraft()
+        try press(hosting, identifier: "timeline-mode-daily")
+        try expect(state.route == .daily, "Inbox Day opens the daily calendar directly")
         var filterFrames: [NSRect] = []
         for filter in CaptureFilter.allCases {
             let icon = try element(hosting, identifier: "capture-filter-\(filter.rawValue)")
@@ -339,8 +400,8 @@ private enum HeaderInteractionTests {
         try expect(state.route == .reminders, "Today tab opens task planning")
         try press(hosting, identifier: "primary-inbox")
         try expect(state.route == .inbox, "Inbox tab returns to capture and triage")
-        try press(hosting, identifier: "primary-activity")
-        try expect(state.route == .daily && Calendar.current.isDateInToday(state.selectedDay), "Activity starts at the current receipt day")
+        try press(hosting, identifier: "timeline-mode-daily")
+        try expect(state.route == .daily && Calendar.current.isDateInToday(state.selectedDay), "Inbox Day retains the current receipt day")
 
         let existingWindows = Set(application.windows.filter(\.isVisible).map(\.windowNumber))
         try press(hosting, identifier: "timeline-date")
@@ -399,5 +460,6 @@ private enum HeaderInteractionTests {
         try expect(dismissals == 1, "Hide remains independently accessible")
         try expect(Set(store.captures.map(\.id)) == Set([current.id, older.id]), "Header checks do not mutate captured data")
         print("PASS: \(checks) native labeled-header accessibility and interaction checks")
+        print("Inbox calendar fixture renders: \(evidence.path)")
     }
 }

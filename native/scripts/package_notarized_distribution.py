@@ -202,6 +202,9 @@ def validate_release_receipt(receipt: object, inventory: dict[str, str]) -> dict
     executable_sha = receipt.get("executableSHA256")
     if not isinstance(executable_sha, str) or SHA256_PATTERN.fullmatch(executable_sha) is None:
         raise DistributionError("The Release receipt has no valid executable SHA-256")
+    updater_sha = receipt.get("updaterExecutableSHA256")
+    if not isinstance(updater_sha, str) or SHA256_PATTERN.fullmatch(updater_sha) is None:
+        raise DistributionError("The Release receipt has no valid embedded updater executable SHA-256; rebuild DaBin")
     recorded_inputs = receipt.get("inputs")
     if not isinstance(recorded_inputs, dict) or recorded_inputs != inventory:
         raise DistributionError("The Release receipt inputs do not match the current source inventory")
@@ -265,8 +268,12 @@ def validate_app_shape(
     if not helper_executable.is_file() or helper_executable.is_symlink():
         raise DistributionError("The embedded updater has no normal executable")
     helper_sha = sha256(helper_executable)
-    if expected_helper_sha256 is not None and helper_sha != expected_helper_sha256:
-        raise DistributionError("The embedded updater executable changed during packaging")
+    if expected_helper_sha256 is None:
+        expected_helper_sha256 = receipt.get("updaterExecutableSHA256")
+    if not isinstance(expected_helper_sha256, str) or SHA256_PATTERN.fullmatch(expected_helper_sha256) is None:
+        raise DistributionError("The Release receipt has no valid embedded updater executable SHA-256; rebuild DaBin")
+    if helper_sha != expected_helper_sha256:
+        raise DistributionError("The embedded updater executable does not match the expected build SHA-256")
     helper_architectures = runner.require(
         ["lipo", "-archs", helper_executable], "Embedded updater architecture inspection"
     ).strip()

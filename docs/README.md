@@ -2,8 +2,11 @@
 
 ## User documentation
 
+The reviewed local candidate is **0.4.6 (61)**; its public installer is pending Apple signing and notarization. The permanent downloads below still contain public **0.3.18** until a verified release is published.
+
 - [Latest in-app update package](https://github.com/RoeyAsterix/DaBin/releases/latest/download/DaBin-Latest-Update.zip) — for an existing DaBin installation
 - [Latest unsigned Apple Silicon test package](https://github.com/RoeyAsterix/DaBin/releases/latest/download/DaBin-Latest-AppleSilicon.zip) — not a notarized public installer
+- [Reviewed 0.4.6 candidate notes](RELEASE_NOTES_0.4.6.md)
 - [Quick guide PDF](DaBin-Quick-Guide.pdf)
 - [Native app guide](../native/README.md)
 - [DaBin 0.4.1 local candidate notes](RELEASE_NOTES_0.4.1.md)

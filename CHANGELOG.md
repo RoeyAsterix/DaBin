@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.4.6 (61) - 2026-10-01, local candidate
+
+- Includes the pending Inbox Day / Week calendar and Quiet Orbit robot redesign.
+- Fixes relocated capture feedback, stale reminder draft recovery and invisible shelved task attachments.
+- Binds the embedded updater executable to the Release receipt before public signing.
+- Updates the guide and privacy wording; preserves visible trash, window resizing and Explorer.
+- Public testing release remains gated on Apple signing and notarization; see the [candidate notes](docs/RELEASE_NOTES_0.4.6.md).
+
 ## 0.3.18 — 2026-09-24
 
 - Moved a compact **Get updates** card to the top of Settings so the installed version, update status, and controls are visible immediately at the 380-point window size.

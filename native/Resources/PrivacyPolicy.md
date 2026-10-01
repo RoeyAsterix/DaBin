@@ -1,6 +1,6 @@
 # DaBin privacy & your data
 
-Updated 29 September 2026
+Updated 1 October 2026
 
 ## Your daily board stays on your Mac
 
@@ -16,7 +16,7 @@ Recognized text is stored with the capture in the same local archive and is used
 
 ## Manual capture
 
-With Auto Capture off, the clipboard is read only when you explicitly paste into DaBin. Hovering over the robot does not read it. DaBin reads your pointer position to reveal the robot at a screen corner or, if you select it on a compatible Mac, below the built-in camera island. Camera-island placement uses ordinary macOS screen safe-area geometry; it does not use the camera, record your screen or monitor what you type elsewhere.
+With Auto Capture off, the clipboard is read only when you explicitly paste into DaBin. Hovering over the robot does not read it. DaBin reads your pointer position to reveal the robot at a screen corner or, if you select it on a compatible Mac, around the built-in camera island. Camera-island placement uses ordinary macOS screen safe-area geometry; it does not use the camera, record your screen or monitor what you type elsewhere.
 
 Manual file captures are accessed through your paste, drop or Import files selection. Outside the screenshot location you separately authorize for Auto Capture, DaBin does not scan your folders. Theme, window position, robot-home, preview and Auto Capture preferences are stored locally. Optional global shortcuts register only the specific key combinations shown in Settings. The save-clipboard shortcut is an explicit paste action; shortcuts do not monitor general typing and do not require Accessibility permission.
 
@@ -32,7 +32,7 @@ DaBin saves a source application when macOS makes one reasonably identifiable at
 
 For a single image seen through both the screenshot folder and clipboard within a short interval, DaBin compares a normalized image fingerprint and suppresses the second channel's copy. Copying the same image again through one channel remains a new action. Automatic captures use the same local archive as manual captures. Their contents are not uploaded. Automatically captured links never fetch website previews, even if Fetch link previews is enabled for manually saved links.
 
-Successful automatic saves produce a brief, noninteractive robot confirmation unless Quiet mode is enabled. Four or more successful automatic actions in the same capture hour appear as an expandable hourly group in Today. The popup is shown after the triggering item has been saved and is excluded from screen capture while it is visible.
+Successful automatic saves produce a brief, noninteractive robot confirmation unless Quiet mode is enabled. Four or more successful automatic actions in the same capture hour appear as an expandable hourly group in Inbox's Day view. The popup begins after the triggering item has been saved, uses a generic token and never displays private capture contents. Its panel requests exclusion from window capture; macOS does not guarantee that every third-party screen recorder will honor that exclusion.
 
 ## Optional website previews
 
@@ -54,7 +54,7 @@ DaBin asks for notification permission when you first save a reminder. Notificat
 
 ## Keeping and removing your data
 
-Manual and automatic captures and saved previews stay on this Mac until you remove them. There is no automatic expiry or cloud copy. Pausing or disabling Auto Capture stops new monitoring but does not delete earlier captures. Marking a task Completed keeps its original record. Minimize only collapses a capture on the board; it keeps the saved content.
+By default, captures and saved previews stay on this Mac until you remove them. There is no cloud copy. If you enable clipboard retention in Settings, eligible inactive automatic clipboard captures move to Recently Deleted after the interval you choose. Pinned items, tasks and their attachments, project resources, reminders, named snippets and shelf items are protected. Editing or restoring an eligible capture restarts its retention interval. Clear unfiled copies uses the same recoverable removal; neither option deletes your original source files or empties Recently Deleted. Pausing or disabling Auto Capture stops new monitoring but does not delete earlier captures. Marking a task Completed keeps its original record. Minimize only collapses a capture on the board; it keeps the saved content.
 
 Choose Move to Recently Deleted on a capture and confirm to hide it from the active archive and cancel its notification. Its original, notes, recognized text, pins, project and saved copies remain available for Undo or Restore. Recently Deleted has no automatic expiry. Choose Delete permanently there and confirm to remove its record and DaBin's saved copies, including previews and recovery copies. Permanent deletion cannot be undone in DaBin. Source files in their original locations are kept. If DaBin cannot finish removing local copies, it shows a warning and retries when you open the app again.
 

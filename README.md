@@ -2,11 +2,11 @@
 
 DaBin is a private desktop buddy for Apple Silicon Macs. Capture something quickly, keep it connected to a client or project, take the next action, and find it again later.
 
-Four labeled views organize the work: **Inbox** for quick notes, tasks, pastes and files; **Today** for deliberate workday planning; and **Workspace** for project resources, clipboard history, named snippets, a collection shelf and autosaving notes. Organization is optional. **Activity** keeps the original daily/weekly capture history.
+Three labeled views organize the work: **Inbox** for quick captures and the **Day / Week** calendar, **Today** for deliberate workday planning, and **Workspace** for project resources, clipboard history, named snippets, a collection shelf and autosaving notes. Within Inbox, **To organize** keeps unfiled items from all dates, **Day** shows the selected date, and **Week** opens the seven-day capture history. Empty dates stay hidden in Week. Organization is optional.
 
 Tasks keep their original content and attachments. A planned workday is separate from a deadline or reminder. Choose a priority, estimate effort, reorder today’s plan, add checklist steps, set a repeat rule, complete work or reschedule it. Project scratchpads and unfinished composer/detail drafts recover locally after restart.
 
-The **Search** toolbar icon opens a focused search field. In Weekly view it first offers **Search Day**, **Search Week**, or **Search All Captures**; **⌘K** always searches the full archive. The compact header keeps its tools and navigation in two rows. Results show matches first; **Show nearby captures** adds optional same-day context. Icon filters narrow by content type; their hover labels can be disabled in Settings. In Activity, the **Timeline** Day/Week control and calendar preserve date browsing. **Add** offers Paste clipboard, New note, Import files and New task. Preview-first cards expose copy, comment, reminder, task and more actions as icons. The gear opens Settings directly. **More** holds day/week text exports, Recently Deleted and archive backup/restore.
+The **Search** toolbar icon opens a focused search field. In Weekly view it first offers **Search Day**, **Search Week**, or **Search All Captures**; **⌘K** always searches the full archive. The compact header keeps its tools and navigation in two rows. Results show matches first; **Show nearby captures** adds optional same-day context. Icon filters narrow by content type; their hover labels can be disabled in Settings. Under Inbox, the labeled **Day / Week** toggle and calendar preserve date browsing, selected filters and unfinished drafts. **Add** offers Paste clipboard, New note, Import files and New task. Preview-first cards expose copy, comment, reminder, task and more actions as icons. The gear opens Settings directly. **More** holds day/week text exports, Recently Deleted and archive backup/restore.
 
 Removed captures go to **Recently Deleted**, with Undo for the latest removal and a separate confirmation for permanent deletion. A local `.dabinbackup` directory package includes capture metadata, saved originals, readable records, saved local edits and deleted captures. Restore verifies the package and adds missing captures; it rejects conflicts instead of overwriting existing data. Workspace notes, shelf references and snippet names are included. Device preferences and unfinished drafts are kept separately on this Mac.
 
@@ -14,7 +14,9 @@ Inbox opens once on first launch; reopening resumes the current work. Afterwards
 
 DaBin recognizes text in saved screenshots, images, PDFs and supported text documents entirely on the Mac. Search can find that content even when the filename or caption does not contain the query, and shows the matching recognized line. Capture details expose the searchable text and Settings can rebuild the local index. This is local text search, not semantic search. There is no cloud sync, and no recognized content is sent to an external AI or OCR service.
 
-The working version is **0.4.5, build 58**, a local candidate with visible-corner resizing and cross-display window dragging, preserving the Open Design implementation across the native app and Explorer. It adds searchable project selection, in-place task conversion, independent focus timers and manually recorded paste history. Explorer retains real project folders, type/date browsing, a wide preview pane, native copy/drag transfers and complete dated Markdown files. See its [release notes](docs/RELEASE_NOTES_0.4.5.md); this does not identify it as the current public GitHub release or an Apple-approved build.
+The working version is **0.4.6, build 61**, a local candidate with visible-corner resizing and cross-display window dragging, preserving the Open Design implementation across the native app and Explorer. It adds searchable project selection, in-place task conversion, independent focus timers and manually recorded paste history. Explorer retains real project folders, type/date browsing, a wide preview pane, native copy/drag transfers and complete dated Markdown files. See its [reviewed candidate notes](docs/RELEASE_NOTES_0.4.6.md); this does not identify it as the current public GitHub release or an Apple-approved build.
+
+The **Quiet Orbit** robot uses sharp metallic vector artwork, seven positions around a detected camera island, quiet idle behavior and small success/count feedback. Hover or drop still works directly on the robot. [Native UX/UI verification](docs/qa/quiet-orbit-2026-10-01/README.md).
 
 ## A little desktop buddy
 
@@ -22,7 +24,7 @@ Captures have larger fitted previews and a compact action rail. Turning a captur
 
 Explorer uses icon filters, compact rows and an expanded preview pane. Source badges use locally installed app icons when the saved source is available; website locations have a domain/globe fallback. DaBin shows its own verified storage destination. The source trail lets you manually record where you pasted an item; those events are labeled “Recorded by you.” Copying an item or switching applications never invents a paste event. App logos are loaded from local installed applications.
 
-Auto Capture is beside the logo. The robot's full-view shell is thinner; drag its edges or corners to resize it, or use Expand/Restore to fill the current display's safe area. Manual island reveal takes 0.55 seconds. Native window appearance follows the light/dark preference, and hover tooltips can be turned off without removing accessibility labels.
+Auto Capture is beside the logo. The robot's full-view shell is thinner; drag its edges or corners to resize it, or use Expand/Restore to fill the current display's safe area. Quiet Orbit manual reveal takes about half a second. Native window appearance follows the light/dark preference, and hover tooltips can be turned off without removing accessibility labels.
 
 ## Optional Auto Capture
 
@@ -34,11 +36,13 @@ DaBin records a best-effort source application when macOS makes one reasonably i
 
 Automatic captures use the same local archive as manual captures. An automatically captured link never requests a website preview, even if previews are enabled for manually saved links. When Quiet mode is off, the confirmation begins only after an item has saved. Its native panel requests exclusion from window capture and never contains the captured image or clipboard text. macOS does not provide a universal pre-screenshot notification: third-party or system screen recorders can still include visible overlays depending on their capture API.
 
-Double-clicking the robot transforms its body into the existing DaBin view in about 1.15 seconds. The head, hands and feet have reserved space outside the cards and controls. The eyes follow the pointer gently while the view is visible. Closing reverses the transformation in 0.42 seconds. Reduce Motion uses a short fade and a static frame. These are native Core Animation layers; the app keeps its usual compact window, navigation, drag/drop and keyboard controls.
+Double-clicking the robot transforms its body into the existing DaBin view in about 1.15 seconds. The native robot frame reserves space outside cards and controls; Quiet Orbit keeps decorative movement small. The eyes follow the pointer gently while the view is visible. Closing reverses the transformation in 0.42 seconds. Reduce Motion uses a short fade and a static frame. These are native Core Animation layers; the app keeps its usual compact window, navigation, drag/drop and keyboard controls.
 
 ![DaBin robot and Daily board](design/robot-preview.png)
 
 ## Latest release files
+
+**Publication status:** the reviewed 0.4.6 (61) candidate is installed locally but has not been published. The current public release is 0.3.18. The links below currently contain that older release; they must not be described as the latest local candidate or a notarized testing installer. [Current review and publication gates](docs/qa/release-review-2026-10-01/README.md).
 
 - [In-app update package for an existing DaBin installation](https://github.com/RoeyAsterix/DaBin/releases/latest/download/DaBin-Latest-Update.zip)
 - [Unsigned Apple Silicon test package](https://github.com/RoeyAsterix/DaBin/releases/latest/download/DaBin-Latest-AppleSilicon.zip)
@@ -49,6 +53,7 @@ These permanent links follow the newest public GitHub release. The current files
 ## Start here
 
 - [Native app guide](native/README.md)
+- [0.4.6 Reviewed testing candidate](docs/RELEASE_NOTES_0.4.6.md)
 - [0.4.5 Window resizing and display movement](docs/RELEASE_NOTES_0.4.5.md)
 - [0.4.4 Open Design implementation notes](docs/RELEASE_NOTES_0.4.4.md)
 - [Open Design QA and screenshots](docs/qa/open-design-2026-09-30/README.md)

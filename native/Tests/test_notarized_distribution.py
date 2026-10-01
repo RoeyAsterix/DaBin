@@ -53,6 +53,7 @@ def receipt_fixture(inventory: dict[str, str] | None = None) -> dict:
         "version": "9.8.7",
         "buildNumber": "42",
         "executableSHA256": sha256_bytes(b"main executable"),
+        "updaterExecutableSHA256": sha256_bytes(b"helper executable"),
         "inputs": inventory,
         "sourceFingerprint": distribution.fingerprint(inventory),
         "embeddedUpdateHelper": True,
@@ -197,6 +198,8 @@ class ConfigurationTests(unittest.TestCase):
             "zero_build": {"buildNumber": "0"},
             "dotted_build": {"buildNumber": "42.1"},
             "bad_sha": {"executableSHA256": "not-a-sha"},
+            "bad_helper_sha": {"updaterExecutableSHA256": "not-a-sha"},
+            "missing_helper_sha": {"updaterExecutableSHA256": None},
             "missing_helper": {"embeddedUpdateHelper": False},
             "wrong_channel": {"distributionChannel": "store"},
         }
@@ -207,6 +210,12 @@ class ConfigurationTests(unittest.TestCase):
         with self.assertRaises(distribution.DistributionError):
             distribution.validate_release_receipt(valid, {"changed": "b" * 64})
 
+    def test_release_receipt_requires_embedded_updater_byte_binding(self):
+        receipt = receipt_fixture()
+        del receipt["updaterExecutableSHA256"]
+        with self.assertRaisesRegex(distribution.DistributionError, "updater executable SHA-256"):
+            distribution.validate_release_receipt(receipt, receipt["inputs"])
+
     def test_app_and_embedded_updater_match_receipt_and_arm64(self):
         receipt = receipt_fixture()
         with tempfile.TemporaryDirectory() as directory:
@@ -215,6 +224,41 @@ class ConfigurationTests(unittest.TestCase):
             _, helper_sha = distribution.validate_app_shape(runner, app, receipt)
             self.assertEqual(helper_sha, sha256_bytes(b"helper executable"))
             self.assertEqual(sum(call[:2] == ["lipo", "-archs"] for call in runner.calls), 2)
+
+    def test_app_validation_rejects_mutated_updater_or_wrong_receipt_hash(self):
+        receipt = receipt_fixture()
+        with tempfile.TemporaryDirectory() as directory:
+            app = app_fixture(Path(directory), receipt)
+            helper = app / "Contents/Helpers/DaBin Update.app/Contents/MacOS/DaBinUpdate"
+            helper.write_bytes(b"a different helper executable")
+            with self.assertRaisesRegex(distribution.DistributionError, "updater executable does not match"):
+                distribution.validate_app_shape(RecordingRunner(), app, receipt)
+        with tempfile.TemporaryDirectory() as directory:
+            app = app_fixture(Path(directory), receipt)
+            wrong_receipt = {**receipt, "updaterExecutableSHA256": "0" * 64}
+            with self.assertRaisesRegex(distribution.DistributionError, "updater executable does not match"):
+                distribution.validate_app_shape(RecordingRunner(), app, wrong_receipt)
+
+    def test_app_validation_refuses_missing_updater_hash_before_signing(self):
+        receipt = receipt_fixture()
+        with tempfile.TemporaryDirectory() as directory:
+            app = app_fixture(Path(directory), receipt)
+            del receipt["updaterExecutableSHA256"]
+            with self.assertRaisesRegex(distribution.DistributionError, "updater executable SHA-256"):
+                distribution.validate_app_shape(RecordingRunner(), app, receipt)
+
+    def test_post_sign_validation_uses_explicit_distribution_updater_hash(self):
+        receipt = receipt_fixture()
+        with tempfile.TemporaryDirectory() as directory:
+            app = app_fixture(Path(directory), receipt)
+            helper = app / "Contents/Helpers/DaBin Update.app/Contents/MacOS/DaBinUpdate"
+            helper.write_bytes(b"Developer ID signed helper executable")
+            signed_helper_sha = sha256_bytes(helper.read_bytes())
+            _, observed = distribution.validate_app_shape(
+                RecordingRunner(), app, receipt,
+                expected_helper_sha256=signed_helper_sha,
+            )
+            self.assertEqual(observed, signed_helper_sha)
 
     def test_app_validation_rejects_mutated_binary_wrong_arch_and_helper_identity(self):
         receipt = receipt_fixture()

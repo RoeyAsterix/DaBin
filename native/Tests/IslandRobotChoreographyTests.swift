@@ -22,6 +22,7 @@ private struct IslandRobotChoreographyTests {
     }
 
     static func main() throws {
+        try quietOrbitGeometry()
         let manualReveal = IslandRobotChoreography.reveal(duration: RobotManualEntranceTiming.islandDuration)
         try expect(RobotManualEntranceTiming.islandDuration == 0.55 && RobotManualEntranceTiming.reducedDuration == 0.10,
                    "Manual island entry and its reduced fade take half their former time")
@@ -50,7 +51,7 @@ private struct IslandRobotChoreographyTests {
                                                                reduceMotion: false)
             let frames = IslandRobotChoreography.capture(performance)
             try validate(frames, duration: performance.totalDuration, label: act.rawValue)
-            try expect((3.4...4.0).contains(performance.totalDuration),
+            try expect((2.3...2.7).contains(performance.totalDuration),
                        "Island performance leaves time to read its contacts")
             for phase in performance.phases {
                 try expect(frames.contains { abs($0.time - phase.startTime) < 0.000_001 }
@@ -163,9 +164,117 @@ private struct IslandRobotChoreographyTests {
         try expect(abs(fallback.totalDuration - 2.33) < 0.000_001,
                    "Side-screen fallback timing is unchanged")
         let reduced = AutoCaptureRobotPerformance.make(reaction: .quickBite, entrance: .top, reduceMotion: true)
-        try expect(abs(reduced.totalDuration - 0.74) < 0.000_001,
-                   "Reduced Motion keeps the existing short static confirmation")
+        try expect(abs(reduced.totalDuration - 0.62) < 0.000_001,
+                   "Reduced Motion uses two short fades around a static confirmation")
         print("PASS: \(checks) island choreography contact, timing, and envelope checks")
+    }
+
+    private static func quietOrbitGeometry() throws {
+        let display = CGRect(x: 0, y: 0, width: 1512, height: 982)
+        let camera = CGRect(x: 690, y: 950, width: 132, height: 32)
+        guard let layout = QuietOrbitLayout(cameraIsland: camera, displayFrame: display) else {
+            throw NSError(domain: "DaBinIslandRobotChoreographyTests", code: 1,
+                          userInfo: [NSLocalizedDescriptionKey: "A measured physical housing must produce an Orbit layout"])
+        }
+        try expect(QuietOrbitPerch.allCases.count == 7, "Orbit exposes all seven physical perches")
+        try expect(display.contains(layout.panelFrame) && near(layout.panelFrame.maxY, display.maxY),
+                   "The transparent stage reaches the physical screen top without leaving the display")
+        try expect(layout.panelFrame.minX < camera.minX && layout.panelFrame.maxX > camera.maxX
+                   && layout.panelFrame.minY < camera.minY,
+                   "The stage covers both sides and the underside, rather than only below the housing")
+        try expect(layout.cameraFrameInPanel.offsetBy(dx: layout.panelFrame.minX, dy: layout.panelFrame.minY) == camera,
+                   "The local hardware mask exactly maps back to the measured camera")
+        for perch in QuietOrbitPerch.allCases {
+            let art = layout.visibleRobotFrame(for: perch)
+            let canvas = layout.robotFrame(for: perch)
+            let local = layout.robotFrame(for: perch, local: true)
+            try expect(near(canvas.width / canvas.height, 64 / 78), "\(perch) preserves the vector canvas proportions")
+            try expect(near(art.width, 43.89) && near(art.height, 35.31, tolerance: 0.01),
+                       "\(perch) keeps the reference robot small in logical points")
+            try expect(local.offsetBy(dx: layout.panelFrame.minX, dy: layout.panelFrame.minY) == canvas,
+                       "\(perch) local and native screen positions agree")
+            let drawn = art.intersection(display)
+            try expect(layout.panelFrame.contains(drawn), "\(perch) visible art fits the transparent stage")
+            let tucked = layout.visibleRobotFrame(for: perch, hidden: true).intersection(display)
+            try expect(camera.contains(tucked), "\(perch) tucks completely behind hardware before relocation")
+            let regions = layout.interactionRegions(for: perch)
+            try expect(!regions.isEmpty && regions.allSatisfy { display.contains($0) },
+                       "\(perch) keeps its reachable target inside the physical screen")
+            try expect(regions.allSatisfy { $0.intersection(camera).isEmpty },
+                       "\(perch) never accepts mouse or drops over the physical camera")
+            let target = regions.reduce(CGRect.null) { $0.union($1) }
+            try expect(target.width >= 43.99 || target.height >= 43.99,
+                       "\(perch) supplies a generous logical hit target for tiny artwork")
+            try expect(!layout.containsInteraction(CGPoint(x: camera.midX, y: camera.midY), perch: perch),
+                       "\(perch) rejects input in the hardware mask")
+            for region in regions {
+                let point = CGPoint(x: region.midX, y: region.midY)
+                try expect(layout.containsInteraction(point, perch: perch), "\(perch) accepts the visible target")
+                try expect(layout.containsInteraction(CGPoint(x: point.x - layout.panelFrame.minX,
+                                                               y: point.y - layout.panelFrame.minY),
+                                                      perch: perch, local: true),
+                           "\(perch) local hit testing agrees with screen hit testing")
+            }
+        }
+        for (left, right) in [(QuietOrbitPerch.upperLeft, QuietOrbitPerch.upperRight),
+                              (.left, .right), (.lowerLeft, .lowerRight)] {
+            let first = layout.visibleRobotFrame(for: left)
+            let second = layout.visibleRobotFrame(for: right)
+            try expect(near(first.midX + second.midX, camera.midX * 2) && near(first.midY, second.midY),
+                       "Mirrored side artwork has symmetric housing attachment")
+            try expect(left.isMirrored && !right.isMirrored, "Only the left artwork flips its connected arms")
+        }
+        func point(_ x: CGFloat, _ y: CGFloat) -> CGPoint {
+            CGPoint(x: camera.midX + x * camera.width / 144,
+                    y: camera.maxY - y * camera.height / 34)
+        }
+        for (perch, pointer) in [(QuietOrbitPerch.bottom, point(0, 50)),
+                                  (.upperLeft, point(-90, 10)), (.upperRight, point(90, 10)),
+                                  (.left, point(-90, 30)), (.right, point(90, 30)),
+                                  (.lowerLeft, point(-60, 50)), (.lowerRight, point(60, 50))] {
+            try expect(layout.perch(at: pointer) == perch, "Pointer approach selects \(perch) using normalized thresholds")
+        }
+        try expect(layout.perch(at: CGPoint(x: CGFloat.nan, y: 50)) == .bottom,
+                   "Malformed pointer samples resolve to a safe default")
+        let negativeDisplay = display.offsetBy(dx: -1800, dy: -200)
+        let negativeCamera = camera.offsetBy(dx: -1800, dy: -200)
+        let negative = QuietOrbitLayout(cameraIsland: negativeCamera, displayFrame: negativeDisplay)!
+        try expect(negative.panelFrame == layout.panelFrame.offsetBy(dx: -1800, dy: -200),
+                   "An attached secondary display supports negative origins without moving the robot")
+        try expect(QuietOrbitLayout(cameraIsland: CGRect(x: 0, y: 0, width: 132, height: 32), displayFrame: display) == nil
+                   && QuietOrbitLayout(cameraIsland: .zero, displayFrame: display) == nil
+                   && QuietOrbitLayout(cameraIsland: CGRect(x: CGFloat.infinity, y: 950, width: 132, height: 32), displayFrame: display) == nil,
+                   "Missing, misplaced, or nonfinite hardware leaves the existing external fallback to the owner")
+        let small = QuietOrbitLayout(cameraIsland: CGRect(x: 56, y: 88, width: 68, height: 32),
+                                    displayFrame: CGRect(x: 0, y: 0, width: 180, height: 120))!
+        try expect(small.displayFrame.contains(small.panelFrame), "Small display stages stay inside real screen bounds")
+
+        var dwell = QuietOrbitPerchDwell()
+        try expect(dwell.observe(.left, at: 1) == nil && dwell.pending == .left,
+                   "Pointer entry requests a perch without immediately moving the robot")
+        try expect(dwell.commit(at: 1.149) == nil && dwell.current == .bottom,
+                   "The robot ignores approaches shorter than 150 milliseconds")
+        try expect(dwell.observe(.right, at: 1.14) == nil && dwell.pending == .right,
+                   "A newer pointer destination replaces the earlier request")
+        try expect(dwell.commit(at: 1.289) == nil && dwell.commit(at: 1.291) == .right,
+                   "Only the newest destination commits after its own dwell")
+        try expect(dwell.pending == nil && dwell.pendingSince == nil && dwell.current == .right,
+                   "A committed relocation leaves no stale destination")
+        _ = dwell.observe(.upperLeft, at: 2)
+        dwell.cancel()
+        try expect(dwell.commit(at: 3) == nil && dwell.current == .right,
+                   "Capture/open/display cancellation invalidates a queued relocation")
+        _ = dwell.observe(.left, at: 4)
+        try expect(dwell.observe(.right, at: 4.1) == nil && dwell.pending == nil,
+                   "Returning to the current perch cancels the pending destination")
+        _ = dwell.observe(.left, at: 5)
+        try expect(dwell.observe(.left, at: 4) == nil && dwell.pendingSince == 4,
+                   "An interrupted or reset clock restarts its dwell safely")
+        try expect(dwell.commit(at: .infinity) == nil && dwell.observe(.bottom, at: .nan) == nil,
+                   "Invalid clock samples cannot commit a relocation")
+        dwell.reset(to: .lowerRight)
+        try expect(dwell.current == .lowerRight && dwell.pending == nil,
+                   "Display recovery resets both the current pose and pending timer")
     }
 
     private static func validate(_ frames: [IslandRobotFrame], duration: Double, label: String) throws {

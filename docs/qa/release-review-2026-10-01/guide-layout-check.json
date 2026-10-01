@@ -1,0 +1,304 @@
+{
+  "page_count": 1,
+  "page_size": "A4 landscape",
+  "media_box": [
+    0.0,
+    0.0,
+    841.89,
+    595.28
+  ],
+  "word_count": 532,
+  "cards": [
+    {
+      "title": "Capture anything",
+      "bottom": 340.30000000000007,
+      "limit": 353
+    },
+    {
+      "title": "Inbox: your day and week",
+      "bottom": 331.30000000000007,
+      "limit": 353
+    },
+    {
+      "title": "Find and reuse",
+      "bottom": 340.30000000000007,
+      "limit": 353
+    },
+    {
+      "title": "Workspace and Explorer",
+      "bottom": 349.30000000000007,
+      "limit": 353
+    },
+    {
+      "title": "Tasks, reminders and focus",
+      "bottom": 504.30000000000007,
+      "limit": 508
+    },
+    {
+      "title": "Copy or export",
+      "bottom": 486.30000000000007,
+      "limit": 508
+    },
+    {
+      "title": "Optional Auto Capture",
+      "bottom": 504.30000000000007,
+      "limit": 508
+    },
+    {
+      "title": "Keep control",
+      "bottom": 504.30000000000007,
+      "limit": 508
+    }
+  ],
+  "paragraphs": [
+    {
+      "text": "Capture quickly. Keep it with a project. Take the next action. Find your work again, all on your Mac.",
+      "x": 33,
+      "top": 96,
+      "width": 640,
+      "height": 12
+    },
+    {
+      "text": "Move to a corner, or choose the camera island home.",
+      "x": 158,
+      "top": 156,
+      "width": 163,
+      "height": 18.4
+    },
+    {
+      "text": "Drop or paste into the robot or Inbox.",
+      "x": 372,
+      "top": 156,
+      "width": 163,
+      "height": 9.2
+    },
+    {
+      "text": "Double-click the robot. Choose Inbox, Today or Workspace.",
+      "x": 586,
+      "top": 156,
+      "width": 182,
+      "height": 18.4
+    },
+    {
+      "text": "Drop or paste text, links, media, PDFs and files into the robot or Inbox. Items added together share a card.",
+      "x": 54.0,
+      "top": 259,
+      "width": 153.97244094488192,
+      "height": 27.0
+    },
+    {
+      "text": "Hover the robot: <b>Control-V</b> or <b>Command-V</b>. Add offers notes, tasks and file import.",
+      "x": 54.0,
+      "top": 289.1,
+      "width": 153.97244094488192,
+      "height": 18.0
+    },
+    {
+      "text": "DaBin copies files, fits previews and keeps time, type, source app and source path when available.",
+      "x": 54.0,
+      "top": 310.20000000000005,
+      "width": 153.97244094488192,
+      "height": 27.0
+    },
+    {
+      "text": "First launch opens <b>Inbox</b>. To organize holds unfiled captures from every date.",
+      "x": 250.97244094488192,
+      "top": 259,
+      "width": 153.97244094488192,
+      "height": 18.0
+    },
+    {
+      "text": "<b>Day / Week</b> browses the calendar. Empty days stay hidden; newest captures come first.",
+      "x": 250.97244094488192,
+      "top": 280.1,
+      "width": 153.97244094488192,
+      "height": 18.0
+    },
+    {
+      "text": "Filter by All, Text, Links, Files, Media or Tasks. Move between displays; drag any corner to resize.",
+      "x": 250.97244094488192,
+      "top": 301.20000000000005,
+      "width": 153.97244094488192,
+      "height": 27.0
+    },
+    {
+      "text": "<b>Command-K</b> searches the full archive. Weekly offers Search Day and Search Week.",
+      "x": 447.94488188976385,
+      "top": 259,
+      "width": 153.97244094488192,
+      "height": 18.0
+    },
+    {
+      "text": "Find filenames, links, comments and content. Local recognition reads images, screenshots, PDFs and text documents.",
+      "x": 447.94488188976385,
+      "top": 280.1,
+      "width": 153.97244094488192,
+      "height": 27.0
+    },
+    {
+      "text": "Show nearby captures adds context. Copy cards or grouped files; inspect source and record paste destinations.",
+      "x": 447.94488188976385,
+      "top": 310.20000000000005,
+      "width": 153.97244094488192,
+      "height": 27.0
+    },
+    {
+      "text": "Group optional project resources. Explorer follows real project, type and dated folders with readable daily records.",
+      "x": 644.9173228346458,
+      "top": 259,
+      "width": 153.97244094488192,
+      "height": 27.0
+    },
+    {
+      "text": "Preview, copy or drag files to other apps; open, reveal or copy paths. Gather a shelf and export a ZIP.",
+      "x": 644.9173228346458,
+      "top": 289.1,
+      "width": 153.97244094488192,
+      "height": 27.0
+    },
+    {
+      "text": "Search clipboard history, pin content and name snippets. Copy as plain text; keep autosaving project scratchpads.",
+      "x": 644.9173228346458,
+      "top": 319.20000000000005,
+      "width": 153.97244094488192,
+      "height": 27.0
+    },
+    {
+      "text": "Turn any capture into a task. Add comments, files and checklist steps; keep the original content.",
+      "x": 54.0,
+      "top": 414,
+      "width": 153.97244094488192,
+      "height": 27.0
+    },
+    {
+      "text": "Set priority, effort and repeat rules. Plan separately from deadlines: reorder Today, reschedule or mark Completed.",
+      "x": 54.0,
+      "top": 444.1,
+      "width": 153.97244094488192,
+      "height": 27.0
+    },
+    {
+      "text": "Remind by date or countdown. Start, pause or reset a focus timer; finishing it does not complete the task.",
+      "x": 54.0,
+      "top": 474.20000000000005,
+      "width": 153.97244094488192,
+      "height": 27.0
+    },
+    {
+      "text": "More copies or downloads a selected day or the full displayed week.",
+      "x": 250.97244094488192,
+      "top": 414,
+      "width": 153.97244094488192,
+      "height": 18.0
+    },
+    {
+      "text": "Exports ignore active filters, include every stored action and sort chronologically.",
+      "x": 250.97244094488192,
+      "top": 435.1,
+      "width": 153.97244094488192,
+      "height": 18.0
+    },
+    {
+      "text": "Copy and download match: date-named UTF-8 text with time, type, source, content, comments and recognized text.",
+      "x": 250.97244094488192,
+      "top": 456.20000000000005,
+      "width": 153.97244094488192,
+      "height": 27.0
+    },
+    {
+      "text": "<b>Off by default.</b> Choose Clipboard, Screenshots or both. Saves future changes, never existing contents.",
+      "x": 447.94488188976385,
+      "top": 414,
+      "width": 153.97244094488192,
+      "height": 27.0
+    },
+    {
+      "text": "DaBin and common password managers are excluded. Choose a screenshot folder; pause anytime.",
+      "x": 447.94488188976385,
+      "top": 444.1,
+      "width": 153.97244094488192,
+      "height": 27.0
+    },
+    {
+      "text": "Four automatic saves in one local clock hour form a summary. Ten eating reactions use a generic token and count.",
+      "x": 447.94488188976385,
+      "top": 474.20000000000005,
+      "width": 153.97244094488192,
+      "height": 27.0
+    },
+    {
+      "text": "Set dark mode, theme, transparency, tooltips, shortcuts and Quiet mode. Reduce Motion is respected.",
+      "x": 644.9173228346458,
+      "top": 414,
+      "width": 153.97244094488192,
+      "height": 27.0
+    },
+    {
+      "text": "Quiet Orbit lives by the island or a corner. Minimize cards; trash is recoverable with Undo and Recently Deleted.",
+      "x": 644.9173228346458,
+      "top": 444.1,
+      "width": 153.97244094488192,
+      "height": 27.0
+    },
+    {
+      "text": "Back up or restore from More. Settings has clipboard retention, Get updates and Quit DaBin. Source files stay untouched.",
+      "x": 644.9173228346458,
+      "top": 474.20000000000005,
+      "width": 153.97244094488192,
+      "height": 27.0
+    },
+    {
+      "text": "Readable Year / Month / Day folders on this Mac. No account, analytics, ads, cloud sync, external AI, or automatic uploads. Link previews connect only when you enable them; Quit stops every background activity.",
+      "x": 71,
+      "top": 550,
+      "width": 724.8897637795277,
+      "height": 9.1
+    }
+  ],
+  "required_phrases": [
+    "Capture anything",
+    "Inbox",
+    "Day",
+    "Week",
+    "All, Text, Links, Files, Media or Tasks",
+    "full archive",
+    "Local recognition",
+    "nearby captures",
+    "source path",
+    "comments",
+    "turn any capture into a task",
+    "Completed",
+    "reorder Today",
+    "countdown",
+    "focus timer",
+    "Workspace",
+    "Explorer",
+    "snippets",
+    "scratchpads",
+    "shelf",
+    "ZIP",
+    "Copy as plain text",
+    "Copy or export",
+    "full displayed week",
+    "ignore active filters",
+    "UTF-8",
+    "Auto Capture",
+    "Off by default",
+    "common password managers are excluded",
+    "Four automatic saves in one local clock hour",
+    "ten eating reactions",
+    "generic token",
+    "dark mode",
+    "transparency",
+    "Quiet Orbit",
+    "Recently Deleted",
+    "Undo",
+    "Back up or restore",
+    "clipboard retention",
+    "Get updates",
+    "APPLE SILICON",
+    "Readable Year / Month / Day folders",
+    "No account, analytics, ads, cloud sync, external AI, or automatic uploads"
+  ],
+  "text": "macOS 14+\nAPPLE SILICON\nLOCAL FIRST\nEverything your day leaves behind, saved in one glance.\nCapture quickly. Keep it with a project. Take the next action. Find your work again, all on your Mac.\nSTART HERE\n1\nReveal\nMove to a corner, or choose the camera island\nhome.\n2\nFeed DaBin\nDrop or paste into the robot or Inbox.\n3\nOpen your day\nDouble-click the robot. Choose Inbox, Today or\nWorkspace.\nEVERYTHING DABIN CAN DO\nNewest captures appear first\nCAPTURE ANYTHING\nDrop or paste text, links, media, PDFs and\nfiles into the robot or Inbox. Items added\ntogether share a card.\nHover the robot: Control-V or Command-V.\nAdd offers notes, tasks and file import.\nDaBin copies files, fits previews and keeps\ntime, type, source app and source path when\navailable.\nINBOX: YOUR DAY AND WEEK\nFirst launch opens Inbox. To organize holds\nunfiled captures from every date.\nDay / Week browses the calendar. Empty\ndays stay hidden; newest captures come first.\nFilter by All, Text, Links, Files, Media or\nTasks. Move between displays; drag any\ncorner to resize.\nFIND AND REUSE\nCommand-K searches the full archive.\nWeekly offers Search Day and Search Week.\nFind filenames, links, comments and content.\nLocal recognition reads images, screenshots,\nPDFs and text documents.\nShow nearby captures adds context. Copy\ncards or grouped files; inspect source and\nrecord paste destinations.\nWORKSPACE AND EXPLORER\nGroup optional project resources. Explorer\nfollows real project, type and dated folders\nwith readable daily records.\nPreview, copy or drag files to other apps;\nopen, reveal or copy paths. Gather a shelf and\nexport a ZIP.\nSearch clipboard history, pin content and\nname snippets. Copy as plain text; keep\nautosaving project scratchpads.\nTASKS, REMINDERS AND FOCUS\nTurn any capture into a task. Add comments,\nfiles and checklist steps; keep the original\ncontent.\nSet priority, effort and repeat rules. Plan\nseparately from deadlines: reorder Today,\nreschedule or mark Completed.\nRemind by date or countdown. Start, pause or\nreset a focus timer; finishing it does not\ncomplete the task.\nCOPY OR EXPORT\nMore copies or downloads a selected day or\nthe full displayed week.\nExports ignore active filters, include every\nstored action and sort chronologically.\nCopy and download match: date-named\nUTF-8 text with time, type, source, content,\ncomments and recognized text.\nOPTIONAL AUTO CAPTURE\nOff by default. Choose Clipboard,\nScreenshots or both. Saves future changes,\nnever existing contents.\nDaBin and common password managers are\nexcluded. Choose a screenshot folder; pause\nanytime.\nFour automatic saves in one local clock hour\nform a summary. Ten eating reactions use a\ngeneric token and count.\nKEEP CONTROL\nSet dark mode, theme, transparency, tooltips,\nshortcuts and Quiet mode. Reduce Motion is\nrespected.\nQuiet Orbit lives by the island or a corner.\nMinimize cards; trash is recoverable with\nUndo and Recently Deleted.\nBack up or restore from More. Settings has\nclipboard retention, Get updates and Quit\nDaBin. Source files stay untouched.\nPRIVATE AND LOCAL\nReadable Year / Month / Day folders on this Mac. No account, analytics, ads, cloud sync, external AI, or automatic uploads. Link previews connect only when you enable them; Quit stops every background activity.\nDaBin\n0.4.6 (61)  |  Control-Option-Space search  |  Control-Option-V capture  |  Esc hide  |  Command-Q quit\n"
+}

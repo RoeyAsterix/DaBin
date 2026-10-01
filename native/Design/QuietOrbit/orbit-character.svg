@@ -1,0 +1,46 @@
+ <g class="orbit-lean">
+  <g class="robot" filter="url(#shadow)">
+   <!-- Each arm is a connected assembly rotating around a shoulder servo. -->
+   <g class="arm-left">
+    <path d="M155 106 151 90 151 66" fill="none" stroke="#554760" stroke-width="11" stroke-linejoin="round"/>
+    <path d="M155 104 151 90 151 66" fill="none" stroke="url(#silver)" stroke-width="7" stroke-linejoin="round"/>
+    <circle cx="151" cy="90" r="7" fill="url(#metal)" stroke="#655373"/><path d="M148 90h6" stroke="#544260" stroke-width="2"/>
+    <g class="hand"><rect x="139" y="57" width="25" height="18" rx="5" fill="url(#silver)" stroke="#766285"/><path d="M145 58v9m6-9v9m6-9v9" stroke="#776487" stroke-width="1.2"/><path d="M143 72h17" stroke="#f3edf7"/></g>
+   </g>
+   <g class="arm-right">
+    <path d="M245 106 264 113 259 138" fill="none" stroke="#554760" stroke-width="11" stroke-linejoin="round"/>
+    <path d="M245 104 264 113 259 138" fill="none" stroke="url(#silver)" stroke-width="7" stroke-linejoin="round"/>
+    <circle cx="264" cy="113" r="7" fill="url(#metal)" stroke="#655373"/><path d="M261 113h6" stroke="#544260" stroke-width="2"/>
+    <g class="hand"><rect x="247" y="133" width="25" height="18" rx="5" fill="url(#silver)" stroke="#766285"/><path d="M253 134v9m6-9v9m6-9v9" stroke="#776487" stroke-width="1.2"/><path d="M251 148h17" stroke="#f3edf7"/></g>
+   </g>
+   <!-- Separate head, neck, body and feet retain a mechanical silhouette. -->
+   <path d="M187 117h26v18h-26z" fill="#554760" stroke="#9986aa"/><path d="M188 122h24m-24 5h24" stroke="#c4b7d0" stroke-width="2"/>
+   <rect x="170" y="155" width="19" height="9" rx="3" fill="url(#silver)" stroke="#766285"/><rect x="211" y="155" width="19" height="9" rx="3" fill="url(#silver)" stroke="#766285"/>
+   <path d="M176 129h48l10 9-5 21h-58l-5-21Z" fill="url(#metal)" stroke="#7a628d"/>
+   <path d="M176 132h48" stroke="#eee5f5" stroke-width="1.5"/>
+   <rect class="intake" x="183" y="140" width="34" height="10" rx="2" fill="#282230" stroke="#8e7a9f"/>
+   <path class="intake-light" d="M187 148h26" stroke="#b3e6d9" stroke-width="1.5"/>
+   <path d="M175 152h4m42 0h4" stroke="#544260" stroke-width="1.5"/>
+   <circle cx="153" cy="106" r="8" fill="url(#silver)" stroke="#766285"/><circle cx="247" cy="106" r="8" fill="url(#silver)" stroke="#766285"/>
+   <circle cx="153" cy="106" r="3" fill="#554760"/><circle cx="247" cy="106" r="3" fill="#554760"/>
+   <g class="robot-head">
+    <path d="M166 57h68l16 14v41l-13 13h-74l-13-13V71Z" fill="url(#metal)" stroke="#7d6490" stroke-width="1.2"/>
+    <path d="M158 73 169 63h62l11 10" fill="none" stroke="#f2eaf9" stroke-width="2" stroke-linejoin="round"/>
+    <path d="M164 75h72l6 7v25l-8 9h-68l-8-9V82Z" fill="url(#glass)" stroke="#8d759f"/>
+    <path d="M169 80h60" stroke="#dfd2ea" stroke-opacity=".18" stroke-width="1.4"/>
+    <g class="face">
+     <g class="pupils" fill="#c8f1e5">
+      <g class="eye-open"><path d="M174 88h13v15h-13z"/><path class="eye-right" d="M213 88h13v15h-13z"/></g>
+      <g class="eye-happy" fill="none" stroke="#c8f1e5" stroke-width="3.5" stroke-linecap="square"><path d="m175 99 5-5 6 5m28 0 5-5 6 5"/></g>
+      <path class="wink-eye" d="M214 97h11" fill="none" stroke="#c8f1e5" stroke-width="3.5"/>
+      <path class="eye-detail" d="M176 92h9m-9 4h9m-9 4h9m30-8h9m-9 4h9m-9 4h9" stroke="#233b35" stroke-opacity=".18" stroke-width=".8"/>
+     </g>
+     <path class="smile" d="m194 106 3 3h6l3-3" fill="none" stroke="#a3c7bd" stroke-width="1.8" stroke-linejoin="round"/>
+     <rect class="robot-mouth-o" x="197" y="104" width="6" height="7" rx="1" fill="none" stroke="#a3c7bd" stroke-width="1.8"/>
+    </g>
+    <rect x="192" y="66" width="16" height="3" rx="1" fill="#5b486a"/><path d="M195 67.5h7" stroke="#c8f1e5" stroke-width="1.2"/>
+    <path d="M155 84v17m90-17v17" stroke="#584664" stroke-width="1.5"/>
+    <path d="M165 119h3m64 0h3" stroke="#614c74" stroke-width="1.3"/>
+   </g>
+  </g>
+ </g>

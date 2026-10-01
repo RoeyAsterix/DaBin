@@ -1,0 +1,24 @@
+{
+  "checksPassed" : 72,
+  "limitations" : "Synthetic132×32housing; physical menu-bar overlap and realhardware checks are separate.",
+  "privacy" : "No capture archive, clipboard content, or desktop screenshots were loaded.",
+  "renderedFiles" : [
+    "quiet-orbit-upper-left-light@2x.png",
+    "quiet-orbit-left-light@2x.png",
+    "quiet-orbit-lower-left-light@2x.png",
+    "quiet-orbit-bottom-light@2x.png",
+    "quiet-orbit-lower-right-light@2x.png",
+    "quiet-orbit-right-light@2x.png",
+    "quiet-orbit-upper-right-light@2x.png",
+    "quiet-orbit-upper-left-dark@2x.png",
+    "quiet-orbit-left-dark@2x.png",
+    "quiet-orbit-lower-left-dark@2x.png",
+    "quiet-orbit-bottom-dark@2x.png",
+    "quiet-orbit-lower-right-dark@2x.png",
+    "quiet-orbit-right-dark@2x.png",
+    "quiet-orbit-upper-right-dark@2x.png",
+    "quiet-orbit-perches-contact-sheet@2x.png"
+  ],
+  "renderMethod" : "Production RobotCharacterView in offscreen synthetic windows at2x",
+  "schemaVersion" : 1
+}

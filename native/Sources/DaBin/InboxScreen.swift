@@ -14,13 +14,7 @@ struct InboxScreen: View {
     var body: some View {
         VStack(spacing: 0) {
             VStack(alignment: .leading, spacing: 9) {
-                HStack {
-                    Text("Capture now. Organize later.").font(.system(size: 14, weight: .medium))
-                    Spacer(minLength: 0)
-                    Button { state.openDaily() } label: { Label("Activity", systemImage: "calendar") }
-                        .buttonStyle(.plain).font(.system(size: 11)).foregroundStyle(accent)
-                        .buddyHelp("Browse everything by date").accessibilityIdentifier("inbox-activity")
-                }
+                Text("Capture now. Organize later.").font(.system(size: 14, weight: .medium))
                 HStack(spacing: 8) {
                     TextField("A thought or a next step…", text: $state.newNoteText, axis: .vertical)
                         .lineLimit(1...3).textFieldStyle(.plain).font(.system(size: 14))
@@ -53,7 +47,7 @@ struct InboxScreen: View {
             }.padding(14)
             if items.isEmpty {
                 EmptyMessage(symbol: "tray", title: state.filter == .all ? "Room for your next idea" : "No matching items",
-                             message: "Paste, drop a file, or jot a note above. Filed items stay in Workspace and Activity.")
+                             message: "Paste, drop a file, or jot a note above. Day and Week show everything you captured by date.")
             } else {
                 ScrollView {
                     LazyVStack(alignment: .leading, spacing: 9) {

@@ -146,10 +146,9 @@ struct BoardView: View {
                 }
             } else if isPrimary {
                 HStack(spacing: 4) {
-                    navigationButton("Inbox", symbol: "tray", selected: state.route == .inbox) { state.openInbox() }
+                    navigationButton("Inbox", symbol: "tray", selected: state.isInboxRoute) { state.openInbox() }
                     navigationButton("Today", symbol: "sun.max", selected: state.route == .reminders) { state.showReminders() }
                     navigationButton("Workspace", symbol: "folder", selected: state.route == .library) { state.openLibrary() }
-                    navigationButton("Activity", symbol: "clock.arrow.circlepath", selected: isTimeline) { state.openDaily() }
                 }.accessibilityElement(children: .contain).accessibilityLabel("Main views")
             } else {
                 HStack(spacing: 8) {
@@ -158,7 +157,7 @@ struct BoardView: View {
                     Spacer(minLength: 0)
                 }.frame(minHeight: 28)
             }
-            if isTimeline { timelineControls }
+            if state.isInboxRoute { timelineControls }
         }.padding(.horizontal, 12).padding(.vertical, 6)
             .fixedSize(horizontal: false, vertical: true)
             .background(Palette.surface)
@@ -251,30 +250,38 @@ struct BoardView: View {
 
     private var timelineControls: some View {
         VStack(spacing: 4) {
-            HStack(spacing: 6) {
-                SmallIcon(symbol: "chevron.left", label: state.route == .weekly ? "Previous week" : "Previous day", size: 26) { moveTimeline(-1) }
-                Button { showCalendar.toggle() } label: {
-                    Label(timelineDateLabel, systemImage: "calendar").font(.system(size: 12, weight: .medium))
-                        .lineLimit(1).frame(maxWidth: .infinity)
-                }.buttonStyle(.plain).accessibilityLabel("Choose date, \(timelineDateLabel)").accessibilityIdentifier("timeline-date")
-                    .popover(isPresented: $showCalendar, arrowEdge: .bottom) {
-                        DatePicker(state.route == .weekly ? "Week ending" : "Day", selection: Binding(
-                            get: { state.route == .weekly ? state.weekEndingDay : state.selectedDay },
-                            set: { date in
-                                if state.route == .weekly { state.setWeekEndingDay(date) } else { state.selectWeeklyDay(date) }
-                                showCalendar = false
-                            }), in: ...Date(), displayedComponents: .date)
-                            .datePickerStyle(.graphical).padding(12).frame(width: 280)
-                    }
-                SmallIcon(symbol: "chevron.right", label: state.route == .weekly ? "Next week" : "Next day", size: 26) { moveTimeline(1) }
-                    .disabled(Calendar.current.isDateInToday(state.route == .weekly ? state.weekEndingDay : state.selectedDay))
-                ForEach([BoardTimelineMode.daily, .weekly], id: \.self) { mode in
-                    BuddyIconButton(symbol: mode == .daily ? "1.calendar" : "7.calendar",
-                        title: mode == .daily ? "Daily view" : "Weekly view",
-                        isActive: state.timelineMode == mode) { state.selectTimelineMode(mode) }
-                        .accessibilityIdentifier(mode == .daily ? "timeline-mode-daily" : "timeline-mode-weekly")
+            HStack(spacing: 4) {
+                if state.route == .inbox {
+                    Button { state.openInbox() } label: {
+                        Label("To organize", systemImage: "tray.full")
+                            .font(.system(size: 12, weight: .medium)).frame(minHeight: 30)
+                            .contentShape(Rectangle())
+                    }.buttonStyle(.plain).foregroundStyle(accent)
+                        .accessibilityAddTraits(.isSelected).accessibilityIdentifier("inbox-organize")
+                        .buddyHelp("Unfiled captures from all dates")
+                    Spacer(minLength: 0)
+                } else {
+                    SmallIcon(symbol: "chevron.left", label: state.route == .weekly ? "Previous week" : "Previous day", size: 26) { moveTimeline(-1) }
+                    Button { showCalendar.toggle() } label: {
+                        Label(timelineDateLabel, systemImage: "calendar").font(.system(size: 12, weight: .medium))
+                            .lineLimit(1).frame(maxWidth: .infinity)
+                    }.buttonStyle(.plain).accessibilityLabel("Choose date, \(timelineDateLabel)").accessibilityIdentifier("timeline-date")
+                        .popover(isPresented: $showCalendar, arrowEdge: .bottom) {
+                            DatePicker(state.route == .weekly ? "Week ending" : "Day", selection: Binding(
+                                get: { state.route == .weekly ? state.weekEndingDay : state.selectedDay },
+                                set: { date in
+                                    if state.route == .weekly { state.setWeekEndingDay(date) } else { state.selectWeeklyDay(date) }
+                                    showCalendar = false
+                                }), in: ...Date(), displayedComponents: .date)
+                                .datePickerStyle(.graphical).padding(12).frame(width: 280)
+                        }
+                    SmallIcon(symbol: "chevron.right", label: state.route == .weekly ? "Next week" : "Next day", size: 26) { moveTimeline(1) }
+                        .disabled(Calendar.current.isDateInToday(state.route == .weekly ? state.weekEndingDay : state.selectedDay))
+                    BuddyIconButton(symbol: "tray.full", title: "To organize") { state.openInbox() }
+                        .accessibilityIdentifier("inbox-organize")
                 }
-                if !Calendar.current.isDateInToday(state.route == .weekly ? state.weekEndingDay : state.selectedDay) {
+                timelineModeToggle
+                if isTimeline && !Calendar.current.isDateInToday(state.route == .weekly ? state.weekEndingDay : state.selectedDay) {
                     Button {
                         if state.route == .weekly { state.showCurrentWeek() } else { state.openDaily() }
                     } label: { Image(systemName: "arrow.uturn.backward").frame(width: 22, height: 28) }
@@ -282,8 +289,30 @@ struct BoardView: View {
                         .accessibilityLabel("Return to today").buddyHelp("Return to today")
                 }
             }
-            CaptureFilterStrip(selection: $state.filter)
+            if isTimeline { CaptureFilterStrip(selection: $state.filter) }
         }
+    }
+
+    private var timelineModeToggle: some View {
+        HStack(spacing: 2) {
+            ForEach([BoardTimelineMode.daily, .weekly], id: \.self) { mode in
+                let selected = isTimeline && state.timelineMode == mode
+                Button { state.selectTimelineMode(mode) } label: {
+                    Text(mode == .daily ? "Day" : "Week")
+                        .font(.system(size: 12, weight: .semibold))
+                        .frame(width: mode == .daily ? 44 : 50, height: 30)
+                        .contentShape(RoundedRectangle(cornerRadius: 7))
+                }.buttonStyle(.plain)
+                    .foregroundStyle(selected ? accent : Palette.muted)
+                    .background(selected ? accent.opacity(0.15) : Color.clear,
+                                in: RoundedRectangle(cornerRadius: 7))
+                    .accessibilityLabel(mode == .daily ? "Daily view" : "Weekly view")
+                    .accessibilityAddTraits(selected ? .isSelected : [])
+                    .accessibilityIdentifier(mode == .daily ? "timeline-mode-daily" : "timeline-mode-weekly")
+                    .buddyHelp(mode == .daily ? "Captures for the selected day" : "Browse the seven-day calendar")
+            }
+        }.padding(2).background(Palette.soft, in: RoundedRectangle(cornerRadius: 9))
+            .accessibilityElement(children: .contain).accessibilityLabel("Inbox calendar view")
     }
 
     private var timelineDateLabel: String {
