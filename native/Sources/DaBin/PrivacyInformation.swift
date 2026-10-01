@@ -51,6 +51,18 @@ enum PrivacyInformation {
             return Section(title: title, paragraphs: paragraphs)
         }
     }
+
+    /// Keep the visible policy date tied to the bundled document, including
+    /// isolated bundles and missing-resource fallbacks, not a second hardcoded date.
+    static func updatedLine(in document: String) -> String? {
+        document.components(separatedBy: .newlines)
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .first { line in
+                line.hasPrefix("Updated ")
+                    && !line.dropFirst("Updated ".count)
+                        .trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+            }
+    }
 }
 
 @MainActor
@@ -58,7 +70,15 @@ struct PrivacyPolicySheet: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.daBinAccent) private var accent
     let dataFolder: URL
-    private let sections = PrivacyInformation.sections(in: PrivacyInformation.document())
+    private let sections: [PrivacyInformation.Section]
+    private let updatedLine: String?
+
+    init(dataFolder: URL) {
+        self.dataFolder = dataFolder
+        let document = PrivacyInformation.document()
+        sections = PrivacyInformation.sections(in: document)
+        updatedLine = PrivacyInformation.updatedLine(in: document)
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -71,7 +91,7 @@ struct PrivacyPolicySheet: View {
             Divider()
             ScrollView {
                 VStack(alignment: .leading, spacing: 18) {
-                    Text("DaBin · Updated 24 September 2026")
+                    Text(updatedLine.map { "DaBin · \($0)" } ?? "DaBin")
                         .font(.system(size: 11)).foregroundStyle(.secondary)
                     ForEach(sections) { section in
                         VStack(alignment: .leading, spacing: 8) {

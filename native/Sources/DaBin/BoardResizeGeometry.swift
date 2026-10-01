@@ -14,31 +14,80 @@ import AppKit
     // Keep a useful list/preview area at the smallest supported size.
     static let minimumContentSize = CGSize(width: 380, height: 430)
     static var minimumSize: CGSize { RobotAppFrameView.outerSize(forContentSize: minimumContentSize) }
+    static let innerGrabWidth: CGFloat = 6
+    // Stop at the header's 12pt horizontal padding. The much larger outward
+    // chrome region adds reach without stealing the close/project controls.
+    static let cornerReach: CGFloat = 12
+    private static let outerTopGrabWidth: CGFloat = 8
 
     /// The visible card sits inside the robot's transparent chrome. Corners
     /// must be grabbable there, not only at the invisible outer window bounds.
     static func cornerRegions(in bounds: CGRect) -> [(rect: CGRect, edge: Edge)] {
-        let content = RobotAppFrameView.contentRect(in: bounds)
+        guard let content = validContent(in: bounds) else { return [] }
+        let reachX = min(cornerReach, content.width / 2)
+        let reachY = min(cornerReach, content.height / 2)
+        let leftWidth = content.minX + reachX - bounds.minX
+        let rightX = content.maxX - reachX
+        let topY = content.maxY - reachY
+        let bottomHeight = content.minY + reachY - bounds.minY
         return [
-            (CGPoint(x: content.minX, y: content.maxY), Edge([.left, .top])),
-            (CGPoint(x: content.maxX, y: content.maxY), Edge([.right, .top])),
-            (CGPoint(x: content.minX, y: content.minY), Edge([.left, .bottom])),
-            (CGPoint(x: content.maxX, y: content.minY), Edge([.right, .bottom]))
-        ].map { point, edge in
-            (CGRect(x: point.x - 12, y: point.y - 12, width: 24, height: 24).intersection(bounds), edge)
-        }
+            (CGRect(x: bounds.minX, y: topY, width: leftWidth, height: bounds.maxY - topY), [.left, .top]),
+            (CGRect(x: rightX, y: topY, width: bounds.maxX - rightX, height: bounds.maxY - topY), [.right, .top]),
+            (CGRect(x: bounds.minX, y: bounds.minY, width: leftWidth, height: bottomHeight), [.left, .bottom]),
+            (CGRect(x: rightX, y: bounds.minY, width: bounds.maxX - rightX, height: bottomHeight), [.right, .bottom])
+        ]
+    }
+
+    /// One shared geometry authority for native hit testing and cursor rects.
+    /// The card's shallow inside band is padding, not an overlaid control area.
+    static func edgeRegions(in bounds: CGRect) -> [(rect: CGRect, edge: Edge)] {
+        guard let content = validContent(in: bounds) else { return [] }
+        let grabX = min(innerGrabWidth, content.width / 2)
+        let grabY = min(innerGrabWidth, content.height / 2)
+        let rightX = content.maxX - grabX
+        let visibleTopY = content.maxY - grabY
+        let visibleTopMaxY = min(bounds.maxY, content.maxY + innerGrabWidth)
+        let outerTopY = max(bounds.minY, bounds.maxY - outerTopGrabWidth)
+        return [
+            (CGRect(x: bounds.minX, y: bounds.minY, width: content.minX + grabX - bounds.minX,
+                    height: bounds.height), .left),
+            (CGRect(x: rightX, y: bounds.minY, width: bounds.maxX - rightX,
+                    height: bounds.height), .right),
+            (CGRect(x: bounds.minX, y: bounds.minY, width: bounds.width,
+                    height: content.minY + grabY - bounds.minY), .bottom),
+            (CGRect(x: bounds.minX, y: visibleTopY, width: bounds.width,
+                    height: visibleTopMaxY - visibleTopY), .top),
+            (CGRect(x: bounds.minX, y: outerTopY, width: bounds.width,
+                    height: bounds.maxY - outerTopY), .top)
+        ]
     }
 
     static func interactionEdge(at point: CGPoint, in bounds: CGRect) -> Edge {
-        guard bounds.contains(point) else { return [] }
+        guard point.x.isFinite, point.y.isFinite, bounds.contains(point) else { return [] }
         return cornerRegions(in: bounds).first { $0.rect.contains(point) }?.edge
-            ?? edge(at: point, in: bounds)
+            ?? edgeRegions(in: bounds).first { $0.rect.contains(point) }?.edge
+            ?? []
     }
 
     static func dragRegion(in bounds: CGRect) -> CGRect {
+        guard let content = validContent(in: bounds) else { return .zero }
+        let reachX = min(cornerReach, content.width / 2)
+        let left = content.minX + reachX
+        let right = content.maxX - reachX
+        let bottom = min(bounds.maxY, content.maxY + innerGrabWidth)
+        let top = max(bottom, bounds.maxY - outerTopGrabWidth)
+        return CGRect(x: left, y: bottom, width: max(0, right - left), height: top - bottom)
+    }
+
+    private static func validContent(in bounds: CGRect) -> CGRect? {
+        guard !bounds.isNull, !bounds.isInfinite,
+              bounds.origin.x.isFinite, bounds.origin.y.isFinite,
+              bounds.width.isFinite, bounds.height.isFinite,
+              bounds.width > 0, bounds.height > 0,
+              bounds.minX.isFinite, bounds.maxX.isFinite,
+              bounds.minY.isFinite, bounds.maxY.isFinite else { return nil }
         let content = RobotAppFrameView.contentRect(in: bounds)
-        return CGRect(x: bounds.minX + 6, y: content.maxY,
-                      width: max(0, bounds.width - 12), height: max(0, bounds.maxY - content.maxY - 6))
+        return content.width > 0 && content.height > 0 ? content : nil
     }
 
     /// The display under the released pointer wins even when most of a wide

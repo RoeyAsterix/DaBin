@@ -1,0 +1,76 @@
+{
+  "schemaVersion": 1,
+  "verifiedAtUTC": "2026-10-01T21:03:28Z",
+  "localDate": "2026-10-02",
+  "version": "0.4.17",
+  "buildNumber": "72",
+  "configuration": "Release",
+  "architecture": "arm64",
+  "installedApp": "/Users/roeylibfeld/Applications/DaBin.app",
+  "previousAppBackup": "/Users/roeylibfeld/Applications/.DaBinBackups/20261002-000120-97aea784.app",
+  "previousVersion": "0.4.16 (71)",
+  "normalQuitUsed": true,
+  "forceQuitUsedForThisUpdate": false,
+  "previousProcessExitedBeforeInstall": true,
+  "runningPID": 75775,
+  "sourceBundleIncidentalFinderMetadataPresent": true,
+  "freshMetadataFreeCandidateStrictSignatureVerified": true,
+  "installerMetadataFreeStagingSignatureVerified": true,
+  "installedStrictCodeSignatureVerified": true,
+  "installedMainSHA256": "bff31702e15bde316ef9be9a40aa513c9a1aa634306d51626ac7412f31d2dcc2",
+  "installedHelperSHA256": "5b4b0f332306e7ea4806eb9fdb5b0b85b08a7f9b4f88f943d4296507f860dd7e",
+  "installedExecutablesMatchBuildReceipt": true,
+  "buildInputHashesMatchCurrentSources": true,
+  "selectedQASuitesPassed": 14,
+  "selectedQASuitesFailed": 0,
+  "qaInputsStillMatchCurrentSources": true,
+  "qaSourceChangedDuringRun": false,
+  "qaReports": [
+    {
+      "report": "native/build/qa/runs/20261001T204644023400Z/report.json",
+      "passedSuites": 13,
+      "sourceFingerprint": "1d291d492961657458eebd674724f86c773125ca81113163704fdeb57b013007"
+    },
+    {
+      "report": "native/build/qa/runs/20261001T205913022071Z/report.json",
+      "passedSuites": 1,
+      "sourceFingerprint": "666a567d0aba8b166c5aec912608b573edbc566f0968969c34192c5ad42d2632"
+    }
+  ],
+  "nativeExplorerCardPresentation": {
+    "checksPassed": 267,
+    "fixtureCount": 14,
+    "report": "native/build/qa/explorer-capture-cards/89957F52-B5D9-43F6-A73A-2A9573535D4A/explorer-capture-card-report.json",
+    "renderMethod": "Actual production ExplorerCaptureRow in native 2x offscreen NSHostingViews with isolated fictional captures",
+    "darkLandscapePreview": "native/build/qa/explorer-capture-cards/89957F52-B5D9-43F6-A73A-2A9573535D4A/landscape-320-dark@2x.png",
+    "lightPortraitPreview": "native/build/qa/explorer-capture-cards/89957F52-B5D9-43F6-A73A-2A9573535D4A/portrait-380-light@2x.png",
+    "completeImageCornersPreserved": true,
+    "visualTaskPreviewsPreserved": true,
+    "textOnlyCardsRemainCompact": true,
+    "headerActionsContainedAtNarrowWidths": true,
+    "adaptiveFooterControlsAreUnique": true,
+    "selectionCallbackExactlyOnce": true,
+    "fictionalCaptureSnapshotsAndFileBytesUnchanged": true,
+    "visualReview": "Large uncropped preview, readable compact metadata, reachable actions, inherited attachment badge and unchanged task controls; no material clipping",
+    "fixtureRepairs": "Readonly inherited SwiftUI group does not expose AXValue via in-process selectors on this SDK; real label/geometry and exact parent ownership checked separately. Editable picker values remain exact. Test-only diagnostic string repaired. No production repair."
+  },
+  "liveChecks": {
+    "settingsDisplaysInstalledVersion": "DaBin 0.4.17 (72)",
+    "showTooltipsPreferenceRemainsOn": true,
+    "autoCaptureRemainsPaused": true,
+    "explorerOpened": true,
+    "existingSelectionCopyAndTrashControlsAvailable": true,
+    "leftOpenInExplorer": true
+  },
+  "installerModifiedArchive": false,
+  "verificationEditedCapturesOrToggledCaptureThemePreferences": false,
+  "publicReleasePublished": false,
+  "limitations": [
+    "This is 14 selected Release suites across two final reports, not a new full distribution/notarization review.",
+    "The personal archive was not independently byte-inventoried; the guarded installer only replaces the app bundle.",
+    "Live checks used accessibility for version, retained settings and Explorer availability. Visual review used isolated fictional production cards rather than desktop screenshots.",
+    "Native rendering and cache regressions are not a new live FPS measurement.",
+    "Full-image fitting deliberately retains neutral margins for portrait and wide media rather than cropping important content.",
+    "The separate two-second-message request remains unidentified and was not changed."
+  ]
+}

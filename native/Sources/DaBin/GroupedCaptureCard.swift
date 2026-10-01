@@ -7,16 +7,30 @@ struct GroupedCaptureCard: View {
     let group: CaptureCardGroup
     var compact = false
     var showsCopyButton = true
+    var showsProject = true
     @State private var confirmsRemoval = false
 
     private var primary: Capture { group.primary }
-    private var title: String { "\(group.captures.count) items" }
+    private var title: String { "\(group.captures.count) captures" }
+    private var resolvedProjects: [String?] {
+        group.captures.map { ExplorerQuery.project(of: $0, in: state.store.captures) }
+    }
+    private var hasMixedProjects: Bool { Set(resolvedProjects).count > 1 }
+    private var resolvedProject: String? { hasMixedProjects ? nil : (resolvedProjects.first ?? nil) }
+    private var resolvedProjectColor: String? {
+        resolvedProject.map { state.workspace.projectColorHex(for: $0) ?? WorkspaceStore.defaultProjectColorHex }
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: compact ? 7 : 9) {
-            cardHeader
-
-            if !group.isMinimized {
+            if showsProject {
+                ProjectChipLabel(name: hasMixedProjects ? "Multiple projects" : resolvedProject,
+                                 colorHex: hasMixedProjects ? nil : resolvedProjectColor)
+            }
+            if group.isMinimized {
+                collapsedOverview
+            } else {
+                cardHeader
                 VStack(spacing: 0) {
                     ForEach(Array(group.captures.enumerated()), id: \.element.id) { index, capture in
                         GroupedCaptureItem(state: state, capture: capture, compact: compact)
@@ -37,10 +51,15 @@ struct GroupedCaptureCard: View {
             }
 
             HStack {
-                Button { state.toggleMinimized(group.captures) } label: {
-                    Label(group.isMinimized ? "Show items" : "Collapse", systemImage: group.isMinimized ? "chevron.down" : "minus")
-                        .frame(minHeight: 32)
-                }.accessibilityLabel(group.isMinimized ? "Expand batch items" : "Collapse batch items")
+                if group.isMinimized {
+                    if showsCopyButton {
+                        CaptureCopyButton(state: state, captures: group.captures, compact: compact)
+                    }
+                } else {
+                    Button { state.toggleMinimized(group.captures) } label: {
+                        Label("Collapse", systemImage: "minus").frame(minHeight: 32)
+                    }.accessibilityLabel("Collapse batch items")
+                }
                 Spacer(minLength: 0)
                 BuddyIconButton(symbol: "trash", title: "Move batch to Recently Deleted") { confirmsRemoval = true }
                     .accessibilityIdentifier("capture-trash-batch-\(primary.id.uuidString)")
@@ -48,8 +67,6 @@ struct GroupedCaptureCard: View {
                 Menu {
                     Button(primary.comment.isEmpty ? "Add note" : "Edit note", systemImage: "text.bubble") { state.openCapture(primary.id, focus: "comment") }
                     Button(primary.reminderAt == nil ? "Add reminder" : "Edit reminder", systemImage: "clock") { state.openCapture(primary.id, focus: "reminder") }
-                    Divider()
-                    Button("Move batch to Recently Deleted", systemImage: "trash", role: .destructive) { confirmsRemoval = true }
                 } label: { Image(systemName: "ellipsis").frame(width: 32, height: 32) }
                 .menuStyle(.borderlessButton).menuIndicator(.hidden).fixedSize().accessibilityLabel("More batch actions").buddyHelp("More batch actions")
             }.font(.system(size: 11)).buttonStyle(.plain).foregroundStyle(accent)
@@ -77,6 +94,39 @@ struct GroupedCaptureCard: View {
         .accessibilityLabel("Batch of \(group.captures.count) captured items")
     }
 
+    private var collapsedOverview: some View {
+        Button { state.toggleMinimized(group.captures) } label: {
+            VStack(alignment: .leading, spacing: compact ? 8 : 11) {
+                CollectionPreviewMosaic(store: state.store, captures: group.captures, compact: compact)
+                HStack(alignment: .center, spacing: 8) {
+                    VStack(alignment: .leading, spacing: compact ? 3 : 4) {
+                        Text(title)
+                            .font(.system(size: compact ? 13 : 16, weight: .semibold))
+                            .foregroundStyle(Palette.foreground)
+                            .accessibilityIdentifier("collection-batch-count")
+                        CaptureReceiptView(capture: primary, category: "Batch", fontSize: compact ? 10 : 11)
+                            .accessibilityIdentifier("collection-batch-time")
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    Image(systemName: "chevron.down")
+                        .font(.system(size: 11, weight: .semibold))
+                        .foregroundStyle(accent)
+                        .frame(width: compact ? 26 : 30, height: compact ? 26 : 30)
+                        .background(accent.opacity(0.09), in: RoundedRectangle(cornerRadius: 8))
+                        .accessibilityHidden(true)
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel("Expand batch items")
+        .accessibilityValue("\(title), \(captureReceiptText(primary))")
+        .accessibilityHint("Shows every saved item without changing the originals")
+        .accessibilityIdentifier("collection-batch-summary")
+        .buddyHelp("Open collection")
+    }
+
     @ViewBuilder
     private var cardHeader: some View {
         if compact {
@@ -97,36 +147,31 @@ struct GroupedCaptureCard: View {
                          ? group.captures.map(\.title).joined(separator: " · ")
                          : "Saved together")
                         .lineLimit(1)
-                    Spacer(minLength: 3)
-                    Text("\(captureClock(primary)) · Batch").monospacedDigit().fixedSize()
                 }
                 .font(.system(size: 9))
                 .foregroundStyle(Palette.muted)
+                CaptureReceiptView(capture: primary, category: "Batch", fontSize: 9)
             }
         } else {
-            HStack(alignment: .top, spacing: 9) {
-                batchSymbol(size: 15, width: 22)
-                VStack(alignment: .leading, spacing: 3) {
-                    Text(title).font(.system(size: 16, weight: .semibold))
-                    if group.isMinimized {
-                        Text(group.captures.map(\.title).joined(separator: " · "))
-                            .font(.system(size: 10)).foregroundStyle(Palette.muted).lineLimit(1)
-                    } else {
-                        Text("Saved together in one drop or paste")
-                            .font(.system(size: 11)).foregroundStyle(Palette.muted).lineLimit(1)
-                    }
-                }
-                Spacer(minLength: 5)
-                VStack(alignment: .trailing, spacing: 3) {
-                    HStack(spacing: 4) {
-                        Text(captureClock(primary)).font(.system(size: 12.65)).monospacedDigit()
-                            .foregroundStyle(Palette.muted)
-                        if showsCopyButton {
-                            CaptureCopyButton(state: state, captures: group.captures)
+            VStack(alignment: .leading, spacing: 5) {
+                HStack(alignment: .top, spacing: 9) {
+                    batchSymbol(size: 15, width: 22)
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text(title).font(.system(size: 16, weight: .semibold))
+                        if group.isMinimized {
+                            Text(group.captures.map(\.title).joined(separator: " · "))
+                                .font(.system(size: 10)).foregroundStyle(Palette.muted).lineLimit(1)
+                        } else {
+                            Text("Saved together in one drop or paste")
+                                .font(.system(size: 11)).foregroundStyle(Palette.muted).lineLimit(1)
                         }
                     }
-                    Text("Batch").font(.system(size: 10)).foregroundStyle(Palette.muted)
-                }.fixedSize()
+                    Spacer(minLength: 5)
+                    if showsCopyButton {
+                        CaptureCopyButton(state: state, captures: group.captures)
+                    }
+                }
+                CaptureReceiptView(capture: primary, category: "Batch")
             }
         }
     }
@@ -159,7 +204,10 @@ private struct GroupedCaptureItem: View {
 
     var body: some View {
         if compact { compactContent }
-        else { CaptureRow(state: state, capture: capture, featured: false, embeddedInCard: true).padding(8) }
+        else {
+            CaptureRow(state: state, capture: capture, featured: false,
+                       embeddedInCard: true, showsProject: false).padding(8)
+        }
     }
 
     private var compactContent: some View {
@@ -180,10 +228,9 @@ private struct GroupedCaptureItem: View {
                             .font(.system(size: compact ? 11 : 13, weight: .medium)).lineLimit(compact ? 2 : 1)
                             .strikethrough(capture.isTask && capture.isCompleted, color: Palette.muted)
                             .multilineTextAlignment(.leading).frame(maxWidth: .infinity, alignment: .leading)
-                        if !capture.isTask {
-                            Text(captureTypeLabel(capture.kind))
-                                .font(.system(size: compact ? 9 : 10)).foregroundStyle(Palette.muted)
-                        }
+                        CaptureReceiptView(capture: capture,
+                            category: capture.isTask ? (capture.isCompleted ? "Completed" : "Task") : captureTypeLabel(capture.kind),
+                            fontSize: compact ? 9 : 10)
                     }
                     Image(systemName: "chevron.right").font(.system(size: 9, weight: .semibold))
                         .foregroundStyle(Palette.muted).accessibilityHidden(true)

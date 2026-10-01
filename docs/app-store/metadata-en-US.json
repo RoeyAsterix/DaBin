@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 1,
+  "status": "DRAFT_NOT_FOR_UPLOAD",
+  "locale": "en-US",
+  "candidate": {
+    "bundleIdentifier": "com.dabin.mac",
+    "version": "0.4.19",
+    "build": "74",
+    "minimumMacOS": "14.0",
+    "architecture": "arm64"
+  },
+  "productPage": {
+    "name": "DaBin",
+    "subtitle": "Save, organize and focus",
+    "primaryCategory": "PRODUCTIVITY",
+    "promotionalText": "A little robot for the useful bits of your day. Save ideas, links and files, keep projects together, and give one task your attention - all on your Mac.",
+    "description": "DaBin is a little robot for the useful bits of your day. Keep ideas, links, images and files together on your Mac, then find them when you need them.\n\nSAVE NOW. SORT LATER.\nDrop something onto the robot or paste it into Inbox. Browse your captures by Day or Week, add a note, or turn a capture into a task. File previews let you open DaBin's saved copy.\n\nKEEP A PROJECT TOGETHER.\nChoose a project and give it a color. Matching card frames help you see what belongs together. Explorer puts previews first, while Notes, Clipboard and Shelf keep your thoughts, copied things and useful files close by. Search can also find text recognized locally in supported images, PDFs and documents.\n\nGIVE ONE TASK YOUR ATTENTION.\nPlan your day in Today, add checklist steps and reminders, or start a focus timer. When time is up, the robot holds an alarm clock and a sign with the task's first three words. Click the robot to send it home; your task stays open until you mark it done.\n\nCHOOSE WHAT TO CAPTURE.\nAuto Capture is optional and off by default. Turn on Clipboard, Screenshots, or both. It saves later clipboard changes and new images in a screenshot folder you choose, not existing content or a live screen recording. Check the visible destination to see which project will receive new automatic captures. The menu bar shows the capture state and lets you pause or resume it. Source-app exclusions are best effort, not a guarantee against saving sensitive copied content.\n\nYOUR THINGS STAY ON YOUR MAC.\nNo account, advertising, analytics or cloud sync. Captures and searchable text are kept locally. Website previews are optional and off by default; previews for manually saved links contact those websites. Automatic links never fetch website previews.\n\nMake DaBin comfortable with dark mode, theme colors and optional tooltips. Your saved captures can be exported, backed up or removed through Recently Deleted.\n\nRequires an Apple Silicon Mac running macOS 14 or later.",
+    "keywords": "clipboard,screenshots,notes,files,tasks,projects,focus,reminders,organizer,local,robot",
+    "privacyPolicyURL": "https://github.com/RoeyAsterix/DaBin/blob/main/native/Resources/PrivacyPolicy.md",
+    "supportURL": null,
+    "copyright": null,
+    "marketingURL": null
+  },
+  "review": {
+    "contactName": null,
+    "contactEmail": null,
+    "contactPhone": null,
+    "signInRequired": false,
+    "notes": "DaBin is a native menu bar utility with a floating robot and a capture/project board. No login, purchases or demo account are required.\n\nFIRST LAUNCH: Inbox opens once. Later use the DaBin menu bar item > Open DaBin, or move the pointer to a screen corner and double-click the robot. Camera-island placement is optional in Settings, with a corner fallback.\n\nMANUAL CAPTURE: Copy ordinary test text. Hover over the robot and press Command-V, or use Paste in Inbox. You can also drop a test file onto the robot or choose Files in Inbox. Open a card to add a note, select its project or inspect its saved file preview. Inbox > Day/Week browses capture dates; Today plans tasks; Projects > Explorer, Clipboard, Shelf and Notes organize related work.\n\nAUTO CAPTURE: Open Settings > Automatic capture. Clipboard and Screenshots have separate explicit opt-in switches, both off by default. The first activation presents a shared local-storage explanation; later channel changes use their own switches. Clipboard requires no folder. Screenshots require a folder selected in the macOS picker; use a dedicated temporary folder. Make a new clipboard change or add a new image after enabling. Existing contents are not imported. The persistent menu bar indicator/menu shows the state; Pause Auto Capture stops both selected channels. Off disables a channel. Capture only runs while the app runs.\n\nThe visible Destination determines the project for new automatic captures, or Unfiled. DaBin and common password managers are excluded by default, but source-app attribution is best effort. Auto Capture observes later clipboard changes and new image files in the authorized folder, not a universal screenshot feed or live screen recording.\n\nPRIVACY: Captures, OCR/search text, notes and tasks stay locally; exports are written to a location the user chooses. DaBin does not upload them, but the chosen location may be synced by another service. Optional website previews are off by default and only manually saved links are eligible. Automatically captured links never fetch website previews. The robot's automatic-save sign can show the selected project name. An expired focus timer shows an alarm clock and the first three task-title words; click it to dismiss without completing the task. These labels may be visible to people looking at the screen.\n\nREMINDERS: Notification permission is requested only when a reminder is saved. Denial does not prevent saving captures. Notification messages omit capture content.\n\nSTORE BUILD: This build does not contain DaBin's direct GitHub update installer/downloader. Updates are managed by the Mac App Store. It requires no camera, microphone, Contacts, Photos, calendar, location, Accessibility or Screen Recording permission.\n\nQUIT: Settings > Quit DaBin or the menu bar > Quit DaBin stops capture and closes the robot/board. The archive is retained. Requires Apple Silicon and macOS 14 or later."
+  },
+  "ownerDecisions": {
+    "legalRightsHolder": null,
+    "supportEmail": null,
+    "price": null,
+    "territories": null,
+    "releaseMethod": null,
+    "EUTraderStatus": null
+  },
+  "privacyDraft": {
+    "tracking": false,
+    "developerDataCollection": "Data Not Collected - owner must confirm against the exact signed build and current Apple questionnaire",
+    "thirdPartySDKs": "None found in the local source inventory",
+    "accounts": false,
+    "usesNonExemptEncryption": false,
+    "ageRating": "Owner must complete the current questionnaire; no numeric rating assigned locally",
+    "accessibilityLabels": "Do not declare features without evaluating the exact signed build against Apple's criteria"
+  },
+  "pendingGates": [
+    "Confirm app-name availability, Bundle ID ownership and App Store Connect app record",
+    "Confirm legal publisher/copyright, real support URL/contact, price and territories",
+    "Publish the current privacy policy at the configured public URL and verify content/reachability",
+    "Validate exact distribution-signed archive and upload processing in Xcode/App Store Connect",
+    "Test the exact signed sandboxed candidate on macOS 14 and current macOS",
+    "Verify clean-install/update, file permissions/bookmark revocation, Auto Capture network isolation and IPv6-only/offline preview behavior",
+    "Evaluate VoiceOver, keyboard operation, motion/transparency settings, multiple displays and signed-build idle/active energy, CPU, memory and disk behavior",
+    "Capture or compare current screenshots against the exact signed candidate before upload",
+    "Complete current age-rating, privacy, export-compliance and accessibility declarations",
+    "Complete applicable agreements, tax/banking and EU trader verification",
+    "Complete a signed clean-install/update QA route (TestFlight recommended, not mandatory), upload processing and Apple's App Review"
+  ]
+}

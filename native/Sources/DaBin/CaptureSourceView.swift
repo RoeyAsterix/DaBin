@@ -105,8 +105,9 @@ struct CaptureSourceView: View {
     @Environment(\.daBinAccent) private var accent
     @State private var showLocation = false
     @State private var copied = false
-    @State private var copyFailed = false
+    @StateObject private var copyFailure = TransientMessagePresentation<String>()
     @State private var copyGeneration = 0
+    @State private var copyTask: Task<Void, Never>?
 
     private var location: String? { capture.sourceFilePath ?? capture.sourceURL }
     private var locationName: String {
@@ -170,8 +171,8 @@ struct CaptureSourceView: View {
                         .accessibilityLabel("\(locationName): \(location)")
                 }
             }
-            if copyFailed {
-                Label("\(locationName) could not be copied.", systemImage: "exclamationmark.circle")
+            if let message = copyFailure.visibleMessage {
+                Label(message, systemImage: "exclamationmark.circle")
                     .font(.system(size: 11)).foregroundStyle(Palette.task)
             }
         }
@@ -180,6 +181,9 @@ struct CaptureSourceView: View {
         .background(Palette.soft.opacity(0.45), in: RoundedRectangle(cornerRadius: 12))
         .accessibilityElement(children: .contain)
         .accessibilityLabel("Capture origin and saved location")
+        .onChange(of: capture.id) { _, _ in clearCopyFeedback(); showLocation = false }
+        .onChange(of: location) { _, _ in clearCopyFeedback() }
+        .onDisappear { clearCopyFeedback() }
     }
 
     @ViewBuilder private var badges: some View {
@@ -208,23 +212,33 @@ struct CaptureSourceView: View {
     }
 
     private func copyLocation(_ location: String) {
+        clearCopyFeedback()
+        let generation = copyGeneration
         let pasteboard = NSPasteboard.general
         pasteboard.clearContents()
         guard pasteboard.setString(location, forType: .string) else {
-            copied = false
-            copyFailed = true
-            AccessibilityAnnouncement.post("\(locationName) could not be copied.")
+            let message = "\(locationName) could not be copied."
+            copyFailure.present(message)
+            AccessibilityAnnouncement.post(message)
             return
         }
-        copyFailed = false
         copied = true
         AccessibilityAnnouncement.post("\(locationName) copied")
-        copyGeneration &+= 1
-        let generation = copyGeneration
-        Task { @MainActor in
-            try? await Task.sleep(for: .seconds(1.4))
-            guard copyGeneration == generation else { return }
+        let captureID = capture.id
+        copyTask = Task { @MainActor in
+            do { try await Task.sleep(for: .seconds(1.4)) } catch { return }
+            guard !Task.isCancelled, copyGeneration == generation, capture.id == captureID,
+                  self.location == location else { return }
             copied = false
+            copyTask = nil
         }
+    }
+
+    private func clearCopyFeedback() {
+        copyGeneration &+= 1
+        copyTask?.cancel()
+        copyTask = nil
+        copied = false
+        copyFailure.dismiss()
     }
 }

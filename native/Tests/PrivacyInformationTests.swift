@@ -29,6 +29,16 @@ struct PrivacyInformationTests {
                    && automaticText.contains("does not import what was already on the clipboard")
                    && automaticText.contains("not uploaded"),
                    "The in-app policy explains Auto Capture opt-in, baseline and local-storage boundaries")
+        try expect(automaticText.contains("sign with that project name")
+                   && automaticText.contains("someone viewing your screen")
+                   && automaticText.contains("not guarantee"),
+                   "Automatic-save policy discloses local project labels without a capture-exclusion guarantee")
+        let reminders = sections.first { $0.title == "Reminders" }?.paragraphs.joined(separator: " ") ?? ""
+        try expect(reminders.contains("first three words of the task title")
+                   && reminders.contains("without marking the task completed")
+                   && reminders.contains("do not hide a waiting timer alarm")
+                   && reminders.contains("not a guarantee"),
+                   "Timer policy discloses visible task words, acknowledgment, quiet behavior and screen-capture limitations")
         let recognition = sections.first { $0.title == "Local text recognition and search" }
         let recognitionText = recognition?.paragraphs.joined(separator: " ") ?? ""
         try expect(recognitionText.contains("Apple frameworks on this Mac")
@@ -38,6 +48,16 @@ struct PrivacyInformationTests {
         try expect(PrivacyInformation.sections(in: "## First\n\nOne.\n\nTwo.").first?.paragraphs == ["One.", "Two."],
                    "A heading at the start of a fallback document is retained")
         try expect(PrivacyInformation.sections(in: "").isEmpty, "Empty documents produce no empty sections")
+        try expect(PrivacyInformation.updatedLine(in: "# DaBin\n\nUpdated 2 October 2026\n\n## Your data\nLocal.") == "Updated 2 October 2026",
+                   "The policy update line is derived from the loaded document")
+        try expect(PrivacyInformation.updatedLine(in: "# DaBin\r\n\r\n  Updated 1 October 2026  \r\n") == "Updated 1 October 2026",
+                   "Policy date extraction handles surrounding whitespace and Windows line endings")
+        try expect(PrivacyInformation.updatedLine(in: "## Your data\nNo date here.") == nil,
+                   "Undated fallback documents do not invent an update date")
+        try expect(PrivacyInformation.updatedLine(in: "Updated \n\nUpdated     \n") == nil,
+                   "Empty update labels are not presented as a policy date")
+        try expect(PrivacyInformation.updatedLine(in: "Text with Updated 24 September 2026 inside it.") == nil,
+                   "A date mentioned in body text is not treated as the policy header")
 
         for invalid: String? in [nil, "", " ", "http://example.com/privacy", "file:///tmp/policy", "javascript:alert(1)", "https://", "https://name:secret@example.com"] {
             try expect(PrivacyInformation.validatedURL(invalid) == nil, "Unsafe or absent external URLs are not offered")
@@ -71,6 +91,10 @@ struct PrivacyInformationTests {
                    "Support URL is read from the build's configuration")
         try expect(PrivacyInformation.configuredURL(for: "MissingKey", bundle: bundle) == nil, "Missing owner links never use an invented fallback")
         try expect(PrivacyInformation.document(bundle: bundle) == policy, "Bundled policy is loaded without network access")
+        try expect(PrivacyInformation.updatedLine(in: PrivacyInformation.document(bundle: bundle)) == "Updated 2 October 2026",
+                   "The isolated bundled policy exposes its current update date rather than the retired sheet date")
+        try expect(PrivacyInformation.updatedLine(in: PrivacyInformation.document(bundle: emptyBundle)) == nil,
+                   "A missing policy resource never claims the full policy's update date")
 
         let manifestData = try Data(contentsOf: root.appendingPathComponent("Resources/PrivacyInfo.xcprivacy"))
         let manifest = try PropertyListSerialization.propertyList(from: manifestData, options: [], format: nil) as! [String: Any]
@@ -80,6 +104,8 @@ struct PrivacyInformationTests {
         let reasons = Dictionary(uniqueKeysWithValues: APIs.map { ($0["NSPrivacyAccessedAPIType"] as! String, $0["NSPrivacyAccessedAPITypeReasons"] as! [String]) })
         try expect(reasons["NSPrivacyAccessedAPICategoryUserDefaults"] == ["CA92.1"], "Preference use has its app-only reason")
         try expect(reasons["NSPrivacyAccessedAPICategorySystemBootTime"] == ["35F9.1"], "Animation timer use has its elapsed-time reason")
+        try expect(reasons["NSPrivacyAccessedAPICategoryFileTimestamp"] == ["C617.1"],
+                   "Owned preview-cache file metadata declares its app-container reason without unrelated timestamp reasons")
         print("PASS: \(checks) privacy information checks")
     }
 }

@@ -43,6 +43,7 @@ final class TaskFocusCoordinator {
     private var timer: Timer?
     private var subscriptions = Set<AnyCancellable>()
     private var queued = false
+    private(set) var isShutDown = false
     var onExpired: (([Capture]) -> Void)?
     var onFailure: ((String) -> Void)?
 
@@ -61,16 +62,17 @@ final class TaskFocusCoordinator {
     deinit { timer?.invalidate() }
 
     private func queueRefresh() {
-        guard !queued else { return }
+        guard !isShutDown, !queued else { return }
         queued = true
         Task { @MainActor [weak self] in
-            guard let self else { return }
+            guard let self, !self.isShutDown else { return }
             self.queued = false
             self.reconcile()
         }
     }
 
     func reconcile(at now: Date = Date()) {
+        guard !isShutDown else { return }
         timer?.invalidate(); timer = nil
         guard let store else { return }
         var expired: [Capture] = []
@@ -79,9 +81,16 @@ final class TaskFocusCoordinator {
             guard let session = capture.taskPlanning?.focusSession, session.isRunning,
                   session.remaining(at: now) == 0 else { continue }
             do { try store.setTaskFocus(capture, session: session.paused(at: now)); expired.append(capture) }
-            catch { failed = true; onFailure?("The focus session ended, but its status could not be saved. DaBin will retry.") }
+            catch {
+                failed = true
+                onFailure?("The focus session ended, but its status could not be saved. DaBin will retry.")
+                guard !isShutDown else { return }
+            }
         }
-        if !expired.isEmpty { onExpired?(expired) }
+        if !expired.isEmpty {
+            onExpired?(expired)
+            guard !isShutDown else { return }
+        }
         let deadlines = store.captures.filter { $0.isTask && !$0.isCompleted }
             .compactMap { $0.taskPlanning?.focusSession?.endAt }.filter { $0 > now }
         let delay = deadlines.min().map { max(0.05, $0.timeIntervalSince(now)) }
@@ -92,5 +101,14 @@ final class TaskFocusCoordinator {
         next.tolerance = min(1, seconds * 0.05)
         timer = next
         RunLoop.main.add(next, forMode: .common)
+    }
+
+    func shutdown() {
+        guard !isShutDown else { return }
+        isShutDown = true
+        timer?.invalidate(); timer = nil
+        subscriptions.removeAll()
+        queued = false
+        onExpired = nil; onFailure = nil
     }
 }

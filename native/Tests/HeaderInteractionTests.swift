@@ -38,8 +38,12 @@ private struct HeaderAccessibilityNode {
         (value("accessibilityIdentifier") as? String) ?? (attribute("AXIdentifier") as? String)
     }
     func accessibilityLabel() -> String? {
-        (value("accessibilityLabel") as? String) ?? (attribute("AXTitle") as? String)
-            ?? (attribute("AXDescription") as? String)
+        for candidate in [value("accessibilityLabel") as? String,
+                          attribute("AXTitle") as? String,
+                          attribute("AXDescription") as? String] {
+            if let candidate, !candidate.isEmpty { return candidate }
+        }
+        return nil
     }
     func accessibilityFrame() -> NSRect {
         let selector = NSSelectorFromString("accessibilityFrame")
@@ -231,7 +235,7 @@ private enum HeaderInteractionTests {
                    "Own-process accessibility activation succeeds (AX error \(accessibilityActivation.rawValue))")
         settle()
 
-        for id in ["primary-inbox", "primary-today", "primary-workspace", "inbox-organize", "timeline-mode-daily", "timeline-mode-weekly", "board-search", "timeline-action-add", "board-more", "board-settings", "timeline-auto-capture", "window-expand", "window-close"] {
+        for id in ["primary-inbox", "primary-today", "primary-workspace", "inbox-organize", "timeline-mode-daily", "timeline-mode-weekly", "board-search", "timeline-action-add", "board-more", "board-settings", "timeline-auto-capture", "window-expand", "window-close", "auto-capture-status"] {
             let control = try element(hosting, identifier: id)
             let frame = control.accessibilityFrame()
             try expect(frame.width > 0 && frame.height > 0, "\(id) has an accessible visible target")
@@ -310,14 +314,24 @@ private enum HeaderInteractionTests {
                        "Inbox \(target) navigation preserves the selected date, filter and quick-capture draft")
             try snapshot(hosting, at: evidence.appendingPathComponent("inbox-\(target)-380.png"))
             let controls = try inboxNavigationIDs.map { try element(hosting, identifier: $0) }
-            let frames = controls.map { $0.accessibilityFrame() }.sorted { $0.minX < $1.minX }
+            let controlFrames = controls.map { $0.accessibilityFrame() }
+            let frames = controlFrames.sorted { $0.minX < $1.minX }
             let frameDiagnostic = zip(inboxNavigationIDs, controls).map {
                 "\($0.0): AX=\(NSStringFromRect($0.1.accessibilityFrame())), interaction=\(NSStringFromRect($0.1.interactionFrame()))"
             }.joined(separator: "; ") + "; window=\(NSStringFromRect(window.frame)); screens=\(NSScreen.screens.map { NSStringFromRect($0.frame) })"
-            try expect(controls.allSatisfy { $0.supportsAccessiblePress() },
-                       "Inbox, Day and Week remain directly actionable on \(target)")
-            try expect(frames.allSatisfy { $0.width >= 28 && $0.height >= 28
-                && $0.minX >= window.frame.minX - 1 && $0.maxX <= window.frame.maxX + 1
+            if target == .inbox {
+                _ = controls[0].accessibilityPerformPress()
+                settle()
+                try expect(state.route == .inbox
+                           && controls.dropFirst().allSatisfy { $0.supportsAccessiblePress() },
+                           "The selected To organize label cannot navigate while Day and Week remain actionable")
+            } else {
+                try expect(controls.allSatisfy { $0.supportsAccessiblePress() },
+                           "To organize, Day and Week remain directly actionable on \(target)")
+            }
+            try expect(controlFrames[0].width > 0 && controlFrames[0].height > 0
+                && controlFrames.dropFirst().allSatisfy { $0.width >= 28 && $0.height >= 28 }
+                && frames.allSatisfy { $0.minX >= window.frame.minX - 1 && $0.maxX <= window.frame.maxX + 1
                 && $0.minY >= window.frame.minY - 1 && $0.maxY <= window.frame.maxY + 1 },
                        "Inbox subnavigation fits the compact 380-point \(target) view. \(frameDiagnostic)")
             try expect(frames.allSatisfy { abs($0.midY - frames[0].midY) < 1 }
@@ -395,7 +409,10 @@ private enum HeaderInteractionTests {
         try expect(state.route == .daily && state.filter == .text, "Search Back restores Activity and its selected filter")
         state.filter = .all
         try press(hosting, identifier: "primary-workspace")
-        try expect(state.route == .library, "Workspace tab opens the organized collection")
+        try expect(state.route == .library, "Projects tab opens the organized collection")
+        let projectsTab = try element(hosting, identifier: "primary-workspace")
+        try expect(projectsTab.accessibilityLabel() == "Projects",
+                   "The primary organized collection is labeled Projects while retaining its stable identifier")
         try press(hosting, identifier: "primary-today")
         try expect(state.route == .reminders, "Today tab opens task planning")
         try press(hosting, identifier: "primary-inbox")
@@ -450,12 +467,12 @@ private enum HeaderInteractionTests {
         state.back(); settle()
         try expect(state.route == .weekly && state.filter == .files, "Back restores the Week view and its previous filter")
         state.openDaily(); settle()
-        if let setup = elements(in: hosting).first(where: { $0.accessibilityLabel() == "Set up" }) {
-            try expect(setup.accessibilityPerformPress(), "Capture setup exposes a labeled action")
-            settle()
-            try expect(state.route == .settings && !settings.isEnabled && !autoCapture.isRunning,
-                       "Setup opens Settings without implicitly enabling capture")
-        } else { try expect(false, "Disabled automatic capture has a visible Set up control") }
+        _ = try element(hosting, identifier: "auto-capture-status")
+        let destination = try element(hosting, identifier: "auto-capture-destination")
+        try expect(destination.accessibilityLabel() == "Auto Capture destination: Unfiled",
+                   "The footer reports its destination through visible, accessible text")
+        try expect(!elements(in: hosting).contains { $0.accessibilityLabel() == "Set up" },
+                   "The passive footer does not duplicate Settings navigation")
         try press(hosting, identifier: "window-close")
         try expect(dismissals == 1, "Hide remains independently accessible")
         try expect(Set(store.captures.map(\.id)) == Set([current.id, older.id]), "Header checks do not mutate captured data")

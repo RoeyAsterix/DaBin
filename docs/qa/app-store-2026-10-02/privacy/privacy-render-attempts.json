@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "initialVisualReview": {
+    "status": "BOTTOM_CAPTURES_REJECTED",
+    "reviewer": "main agent at original resolution",
+    "topResult": "Light/dark top views readable, correct Updated 2 October 2026 line.",
+    "bottomFailure": "Pinned Privacy heading and Done control partially outside the top of both PNGs, though the divider and bottom folder button remained visible.",
+    "rejectedSHA256": {
+      "DABIN__PRIVACY__LIGHT_BOTTOM.png": "dc23dfb1f7d2eba92417856ab5d22ac8a48735ca816d1c7dcf0d87d0f51a9a98",
+      "DABIN__PRIVACY__DARK_BOTTOM.png": "218baeed6c3eba502f5c19f0deaea8dc40e944f6e3ed11bbcc3ceeaceff75a2b"
+    },
+    "checks": "All eleven functional render checks passed; those checks alone did not prove visual quality."
+  },
+  "docsOnlyCorrection": {
+    "productionChanges": false,
+    "nativeWindowBackingScale": 1,
+    "swiftUIDisplayScale": 1,
+    "geometry": "Reassert 350x440 host/window geometry and allow four layout-settling turns before the bottom snapshot; flush native drawing.",
+    "pixelEditing": false,
+    "preservedCheckSemantics": 11,
+    "subagentReinspection": "The subagent preview appeared to show full controls, but final main-agent review still reported clipping. No all-four visual PASS is recorded.",
+    "mainAgentReinspection": "Both current bottom candidates VISUAL FAIL / WITHHELD: pinned heading/Done clipping remains in the offscreen fixture. No more renderer retries or production changes performed.",
+    "rejectedLocation": "rejected/",
+    "retention": "Both current failed candidates were recoverably moved, not deleted; current hashes and paths are recorded in privacy-render-provenance.json.",
+    "currentOutputs": "privacy-render-provenance.json"
+  },
+  "distributionVerification": "Still pending for the exact App Store distribution-signed sandbox candidate; this is source-matched offscreen evidence only."
+}

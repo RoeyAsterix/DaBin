@@ -31,13 +31,19 @@ final class ClipboardRetentionService: ObservableObject {
     @Published private(set) var period: ClipboardRetentionPeriod = .never
     @Published private(set) var isRunning = false
     @Published private(set) var error: String?
-    @Published private(set) var lastResult: ClipboardCleanupResult?
+    @Published private(set) var lastResult: ClipboardCleanupResult? {
+        didSet { feedback.present(lastResult?.error == nil ? lastResult?.message : nil) }
+    }
+    let feedback = TransientMessagePresentation<String>()
+    var visibleResultMessage: String? { feedback.visibleMessage }
+    private var feedbackSubscription: AnyCancellable?
     var onWillTrash: ((Capture) async -> Void)?
     var settingsFailureInjector: (() throws -> Void)?
 
     init(store: CaptureStore, workspace: WorkspaceStore) {
         self.store = store
         self.workspace = workspace
+        feedbackSubscription = feedback.objectWillChange.sink { [weak self] _ in self?.objectWillChange.send() }
         do {
             let url = try DailyArchive(root: store.root).safeURL(Self.filename)
             if FileManager.default.fileExists(atPath: url.path) {

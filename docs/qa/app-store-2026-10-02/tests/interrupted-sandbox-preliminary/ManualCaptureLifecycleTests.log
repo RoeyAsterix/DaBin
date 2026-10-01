@@ -1,0 +1,3 @@
+2026-10-02 01:43:27.959 ManualCaptureLifecycleTests[86555:21570901] IOPMScheduleUserActivityLevelNotification returned 0
+2026-10-02 01:43:27.960 ManualCaptureLifecycleTests[86555:21570901] IOPMScheduleUserActivityLevelNotification returned 0
+Swift/ErrorType.swift:254: Fatal error: Error raised at top level: Error Domain=ManualCaptureLifecycleTests Code=1 "The older late callback succeeds while the newer source remains pending" UserInfo={NSLocalizedDescription=The older late callback succeeds while the newer source remains pending}

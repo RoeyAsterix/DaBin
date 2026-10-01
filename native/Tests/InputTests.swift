@@ -244,6 +244,27 @@ private final class PromiseFixture: InputFilePromise {
             try expect(log.results[0].0.allSatisfy { $0.sourceFilePath == nil && $0.sourceURL == nil }, "Plain clipboard text does not fabricate a source")
         }
         do {
+            let storeRoot = root.appendingPathComponent("project-batch")
+            let store = try CaptureStore(root: storeRoot)
+            let input = InputService(store: store); let log = InputRecorder(input)
+            let text = item("Project-scoped text")
+            let image = NSPasteboardItem()
+            image.setData(Data(base64Encoded: "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+j8ocAAAAASUVORK5CYII=")!, forType: .png)
+            let pb = try board([text, image]); defer { pb.releaseGlobally() }
+            input.receive(pb, at: stamp, timeZone: zone, projectName: "Selected project")
+            try await wait("Project-scoped input completes") { log.results.count == 1 }
+            let captures = log.results[0].0
+            try expect(captures.count == 2 && captures.allSatisfy { $0.projectName == "Selected project" },
+                       "Input batches persist their selected project on every initial capture save")
+            let imported = captures.first { $0.attachmentRelativePath != nil }!
+            try expect(imported.attachmentRelativePath?.hasPrefix(ProjectFileArchive.projectRelativePath("Selected project") + "/") == true,
+                       "Project-scoped originals are born in the selected project folder")
+            let reopened = try CaptureStore(root: storeRoot)
+            try expect(reopened.captures.count == 2
+                       && reopened.captures.allSatisfy { $0.projectName == "Selected project" },
+                       "Initial project filing survives repository reopen")
+        }
+        do {
             let store = try CaptureStore(root: root.appendingPathComponent("web-source"))
             let input = InputService(store: store); let log = InputRecorder(input)
             let web = item("A quoted paragraph from a page")
@@ -367,21 +388,23 @@ private final class PromiseFixture: InputFilePromise {
         }
         do {
             let store = try CaptureStore(root: root.appendingPathComponent("task-paste"))
-            let task = try store.createTask(text: "Collect research")
+            let task = try store.createTask(text: "Collect research", projectName: "Parent project")
             let input = InputService(store: store)
             let log = InputRecorder(input)
             let pb = try board([item("One attachment"), item("https://example.invalid/task")]); defer { pb.releaseGlobally() }
-            input.receive(pb, at: stamp, timeZone: zone, attachingTo: task)
+            input.receive(pb, at: stamp, timeZone: zone, projectName: "Unrelated selected project", attachingTo: task)
             try await wait("Task paste completes") { log.results.count == 1 }
             try expect(log.results[0].1.isEmpty && log.results[0].0.count == 2
-                       && log.results[0].0.allSatisfy { $0.parentTaskID == task.id },
-                       "Explicit task paste attaches every semantic clipboard item before success")
+                       && log.results[0].0.allSatisfy {
+                           $0.parentTaskID == task.id && $0.projectName == "Parent project"
+                       },
+                       "Explicit task paste attaches every item and gives the parent project precedence")
             try expect(store.attachments(for: task).count == 2 && !input.isBusy,
                        "Task paste has one balanced busy lifecycle")
         }
         do {
             let store = try CaptureStore(root: root.appendingPathComponent("task-providers"))
-            let task = try store.createTask(text: "Drop references here")
+            let task = try store.createTask(text: "Drop references here", projectName: "Provider parent")
             let input = InputService(store: store, promiseTimeout: 1, stagingRoot: root)
             let log = InputRecorder(input)
             let text = NSItemProvider(object: "Task reference words" as NSString)
@@ -393,13 +416,19 @@ private final class PromiseFixture: InputFilePromise {
                 completion(file, false, nil)
                 return nil
             }
-            input.receiveProviders([text, provider], attachingTo: task, at: stamp, timeZone: zone)
+            input.receiveProviders([text, provider], projectName: "Other selected project",
+                                   attachingTo: task, at: stamp, timeZone: zone)
             try await wait("Task provider drop completes") { log.results.count == 1 }
             try expect(log.results[0].1.isEmpty && log.results[0].0.count == 2,
                        "SwiftUI providers import both real text and a promised file")
-            try expect(log.results[0].0.allSatisfy { $0.parentTaskID == task.id && $0.capturedAt == stamp },
-                       "Provider drop keeps task relationship and one immutable drop timestamp")
+            try expect(log.results[0].0.allSatisfy {
+                           $0.parentTaskID == task.id && $0.capturedAt == stamp
+                            && $0.projectName == "Provider parent"
+                       },
+                       "Provider drop keeps task relationship, parent-project precedence and one drop timestamp")
             let savedFile = store.attachments(for: task).first { $0.kind == .pdf }!
+            try expect(savedFile.attachmentRelativePath?.hasPrefix(ProjectFileArchive.projectRelativePath("Provider parent") + "/") == true,
+                       "A task attachment is initially stored under its parent project")
             try expect(savedFile.sourceFilePath == nil && savedFile.originalFilename == "Task reference.pdf",
                        "Provider temporary file paths are never presented as source provenance")
             try expect(try Data(contentsOf: store.managedURL(for: savedFile)!) == Data("fictional PDF bytes".utf8),

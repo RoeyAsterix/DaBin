@@ -94,9 +94,13 @@ import UniformTypeIdentifiers
 
     func capture(text: String, at: Date = Date(), timeZone: TimeZone = .current,
                  source: CaptureSource = .unknown,
-                 receipt: CaptureReceiptContext = .manual, parentTask: Capture? = nil,
+                 receipt: CaptureReceiptContext = .manual, projectName: String? = nil,
+                 parentTask: Capture? = nil,
                  commitGuard: () -> Bool = { true }) throws -> [Capture] {
         try requireAttachmentParent(parentTask)
+        let effectiveProject: String?
+        if let parentTask { effectiveProject = normalizedProjectName(parentTask.projectName) }
+        else { effectiveProject = normalizedProjectName(projectName) }
         let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { throw CaptureStoreError.emptyInput }
         let nonemptyLines = text.components(separatedBy: .newlines).filter {
@@ -108,10 +112,12 @@ import UniformTypeIdentifiers
             let value = original.trimmingCharacters(in: .whitespacesAndNewlines)
             let kind = CaptureClassifier.textKind(original)
             let title = kind == .link ? (URL(string: value)?.host ?? value) : String(value.prefix(100))
-            return Capture(capturedAt: at, timeZone: timeZone, kind: kind,
-                           originalURL: kind == .link ? value : nil, originalText: original, title: title,
-                           sourceFilePath: source.filePath, sourceURL: source.url, receipt: receipt,
-                           parentTaskID: parentTask?.id)
+            let capture = Capture(capturedAt: at, timeZone: timeZone, kind: kind,
+                                  originalURL: kind == .link ? value : nil, originalText: original, title: title,
+                                  sourceFilePath: source.filePath, sourceURL: source.url, receipt: receipt,
+                                  parentTaskID: parentTask?.id)
+            capture.projectName = effectiveProject
+            return capture
         }
         // URL-only multiline pastes commit as one transaction. Mixed prose remains one exact text original.
         guard commitGuard() else { throw CaptureStoreError.captureCancelled }
@@ -126,7 +132,8 @@ import UniformTypeIdentifiers
 
     func importFile(_ source: URL, at: Date = Date(), timeZone: TimeZone = .current,
                     originalName: String? = nil, source provenance: CaptureSource? = nil,
-                    receipt: CaptureReceiptContext = .manual, parentTask: Capture? = nil,
+                    receipt: CaptureReceiptContext = .manual, projectName: String? = nil,
+                    parentTask: Capture? = nil,
                     commitGuard: @escaping () -> Bool = { true }) async throws -> Capture {
         let access = source.startAccessingSecurityScopedResource()
         defer { if access { source.stopAccessingSecurityScopedResource() } }
@@ -136,7 +143,8 @@ import UniformTypeIdentifiers
         let type = (try? source.resourceValues(forKeys: [.contentTypeKey]).contentType) ?? UTType(filenameExtension: source.pathExtension)
         let origin = provenance ?? CaptureSource(filePath: source.standardizedFileURL.path)
         return try await importOriginal(filename: filename, contentType: type, at: at, timeZone: timeZone,
-                                        source: origin, receipt: receipt, parentTask: parentTask, commitGuard: commitGuard) { destination in
+                                        source: origin, receipt: receipt, projectName: projectName,
+                                        parentTask: parentTask, commitGuard: commitGuard) { destination in
             try FileManager.default.copyItem(at: source, to: destination)
         }
     }
@@ -651,32 +659,39 @@ import UniformTypeIdentifiers
 
     func importData(_ data: Data, filename: String, at: Date = Date(), timeZone: TimeZone = .current,
                     source: CaptureSource = .unknown,
-                    receipt: CaptureReceiptContext = .manual, parentTask: Capture? = nil,
+                    receipt: CaptureReceiptContext = .manual, projectName: String? = nil,
+                    parentTask: Capture? = nil,
                     commitGuard: @escaping () -> Bool = { true }) async throws -> Capture {
         try await importOriginal(filename: filename,
                                  contentType: UTType(filenameExtension: (filename as NSString).pathExtension),
                                  at: at, timeZone: timeZone, source: source, receipt: receipt,
-                                 parentTask: parentTask, commitGuard: commitGuard) { destination in
+                                 projectName: projectName, parentTask: parentTask,
+                                 commitGuard: commitGuard) { destination in
             try data.write(to: destination, options: [.atomic])
         }
     }
 
     private func importOriginal(filename: String, contentType: UTType?, at: Date, timeZone: TimeZone,
-                                source: CaptureSource, receipt: CaptureReceiptContext, parentTask: Capture?,
+                                source: CaptureSource, receipt: CaptureReceiptContext, projectName: String?,
+                                parentTask: Capture?,
                                 commitGuard: @escaping () -> Bool,
                                 copy: @escaping @Sendable (URL) throws -> Void) async throws -> Capture {
         try requireAttachmentParent(parentTask)
+        let effectiveProject: String?
+        if let parentTask { effectiveProject = normalizedProjectName(parentTask.projectName) }
+        else { effectiveProject = normalizedProjectName(projectName) }
         let id = UUID()
         let safeName = CaptureClassifier.storageFilename(filename)
         var journal = ImportJournal(id: id, capturedAt: at, captureDay: CaptureCalendar.dayString(at, timeZone: timeZone),
                                     timeZoneID: timeZone.identifier, utcOffset: timeZone.secondsFromGMT(for: at),
                                     originalFilename: filename, sourceFilePath: source.filePath, sourceURL: source.url,
                                     parentTaskID: parentTask?.id,
+                                    projectName: effectiveProject,
                                     captureOriginRaw: receipt.origin.rawValue,
                                     automaticActionID: receipt.origin.isAutomatic ? receipt.automaticActionID : nil,
                                     sourceApplicationName: receipt.sourceApplicationName,
                                     sourceApplicationBundleIdentifier: receipt.sourceApplicationBundleIdentifier,
-                                    relativePath: try ProjectFileArchive.originalRelativePath(id: id, project: parentTask?.projectName,
+                                    relativePath: try ProjectFileArchive.originalRelativePath(id: id, project: effectiveProject,
                                         day: CaptureCalendar.dayString(at, timeZone: timeZone),
                                         kind: CaptureClassifier.fileKind(filename: filename, contentType: contentType), filename: filename),
                                     stagingRelativePath: "Staging/\(id.uuidString)/\(safeName)",
@@ -1028,20 +1043,22 @@ import UniformTypeIdentifiers
     }
 
     private func model(for journal: ImportJournal) -> Capture {
-        Capture(id: journal.id, capturedAt: journal.capturedAt,
-                timeZone: TimeZone(identifier: journal.timeZoneID) ?? TimeZone(secondsFromGMT: journal.utcOffset) ?? TimeZone(secondsFromGMT: 0)!,
-                kind: journal.kind, attachmentRelativePath: journal.relativePath,
-                originalFilename: journal.originalFilename, contentType: journal.contentType,
-                byteCount: journal.byteCount, title: journal.originalFilename,
-                captureDay: journal.captureDay, captureTimeZoneID: journal.timeZoneID,
-                captureUTCOffsetSeconds: journal.utcOffset,
-                sourceFilePath: journal.sourceFilePath, sourceURL: journal.sourceURL,
-                receipt: CaptureReceiptContext(
-                    origin: CaptureOrigin(rawValue: journal.captureOriginRaw ?? "") ?? .manual,
-                    automaticActionID: journal.automaticActionID,
-                    sourceApplicationName: journal.sourceApplicationName,
-                    sourceApplicationBundleIdentifier: journal.sourceApplicationBundleIdentifier),
-                parentTaskID: journal.parentTaskID)
+        let capture = Capture(id: journal.id, capturedAt: journal.capturedAt,
+                              timeZone: TimeZone(identifier: journal.timeZoneID) ?? TimeZone(secondsFromGMT: journal.utcOffset) ?? TimeZone(secondsFromGMT: 0)!,
+                              kind: journal.kind, attachmentRelativePath: journal.relativePath,
+                              originalFilename: journal.originalFilename, contentType: journal.contentType,
+                              byteCount: journal.byteCount, title: journal.originalFilename,
+                              captureDay: journal.captureDay, captureTimeZoneID: journal.timeZoneID,
+                              captureUTCOffsetSeconds: journal.utcOffset,
+                              sourceFilePath: journal.sourceFilePath, sourceURL: journal.sourceURL,
+                              receipt: CaptureReceiptContext(
+                                origin: CaptureOrigin(rawValue: journal.captureOriginRaw ?? "") ?? .manual,
+                                automaticActionID: journal.automaticActionID,
+                                sourceApplicationName: journal.sourceApplicationName,
+                                sourceApplicationBundleIdentifier: journal.sourceApplicationBundleIdentifier),
+                              parentTaskID: journal.parentTaskID)
+        capture.projectName = normalizedProjectName(journal.projectName)
+        return capture
     }
 
     private func cleanupCompleted(_ journal: ImportJournal, journalURL: URL) {

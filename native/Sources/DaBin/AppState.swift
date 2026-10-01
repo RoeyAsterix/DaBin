@@ -81,8 +81,12 @@ final class CaptureDraft: ObservableObject {
     @Published var countdownHours = 0
     @Published var countdownMinutes = 30
     @Published var reminderDate: Date
-    @Published var message: String?
+    @Published var message: String? {
+        didSet { feedback.present(message) }
+    }
     @Published var hasError = false
+    let feedback = TransientMessagePresentation<String>()
+    private var feedbackSubscription: AnyCancellable?
     @Published var planning: TaskPlanning
     private var savedPlanning: TaskPlanning
     private var savedComment: String
@@ -99,7 +103,10 @@ final class CaptureDraft: ObservableObject {
         savedComment = capture.comment
         savedReminder = capture.reminderAt
         committedReminderRevisionForRecovery = capture.reminderRevision
+        feedbackSubscription = feedback.objectWillChange.sink { [weak self] _ in self?.objectWillChange.send() }
     }
+
+    var visibleMessage: String? { hasError ? message : feedback.visibleMessage }
 
     var committedPlanningForRecovery: TaskPlanning { savedPlanning }
     var reminder: Date? { reminderEnabled ? reminderDate : nil }
@@ -267,7 +274,21 @@ final class AppState: ObservableObject {
     @Published var pendingRemoval: Capture?
     @Published private(set) var removingCaptureID: UUID?
     @Published private(set) var captureLayoutRevision: UInt = 0
-    @Published var status: AppStatusMessage?
+    @Published var status: AppStatusMessage? {
+        didSet {
+            if let status {
+                notificationSource = .status
+                notifications.present(status)
+            } else if notificationSource == .status {
+                notificationSource = nil
+                notifications.dismiss()
+            }
+        }
+    }
+    let notifications = TransientMessagePresentation<AppStatusMessage>()
+    private enum NotificationSource { case status, storeError }
+    private var notificationSource: NotificationSource?
+    var notificationMessage: AppStatusMessage? { notifications.visibleMessage }
     @Published var detailFocus: String?
     @Published var selectedDraft: CaptureDraft?
     @Published var dailyScrollID: CaptureFeedCardID?
@@ -279,6 +300,7 @@ final class AppState: ObservableObject {
     private var attachmentReturnTaskID: UUID?
     var onDismiss: (() -> Void)?
     var onTaskCompleted: (() -> Void)?
+    var onTaskTimerExpired: (([Capture]) -> Void)?
     var onToggleExpandedWindow: (() -> Void)?
     var onBoardDragStarted: (() -> Void)?
     var onBoardDragEnded: ((CGPoint) -> Void)?
@@ -337,6 +359,7 @@ final class AppState: ObservableObject {
             if self.isBoardVisible {
                 self.status = AppStatusMessage(text: captures.count == 1 ? "Time’s up. Your task stays open." : "\(captures.count) focus sessions finished. Tasks stay open.", severity: .success)
             }
+            self.onTaskTimerExpired?(captures)
         }
         focusSessions.onFailure = { [weak self] message in self?.reportFailure(message) }
         restoreDrafts()
@@ -345,6 +368,18 @@ final class AppState: ObservableObject {
         newTaskDraft.objectWillChange.debounce(for: .milliseconds(150), scheduler: RunLoop.main)
             .sink { [weak self] _ in self?.persistDrafts() }.store(in: &subscriptions)
         self.manualInput.onBusy = { [weak self] _ in self?.objectWillChange.send() }
+        notifications.objectWillChange.sink { [weak self] _ in self?.objectWillChange.send() }
+            .store(in: &subscriptions)
+        store.$error.sink { [weak self] error in
+            guard let self else { return }
+            if let error {
+                self.notificationSource = .storeError
+                self.notifications.present(AppStatusMessage(text: error, severity: .error))
+            } else if self.notificationSource == .storeError {
+                self.notificationSource = nil
+                self.notifications.dismiss()
+            }
+        }.store(in: &subscriptions)
         store.objectWillChange.sink { [weak self] _ in
             self?.searchRevision &+= 1
             self?.objectWillChange.send()
@@ -389,6 +424,15 @@ final class AppState: ObservableObject {
     }
 
     var dayKey: String { CaptureCalendar.dayString(selectedDay) }
+
+    func dismissNotification() { notifications.dismiss() }
+
+    func shutdownNotificationPresentation() {
+        notifications.shutdown()
+        reminders.shutdownPresentation()
+        clipboardRetention.feedback.shutdown()
+        for draft in drafts.values { draft.feedback.shutdown() }
+    }
 
     func persistDrafts() {
         var snapshot = DraftArchiveSnapshot()

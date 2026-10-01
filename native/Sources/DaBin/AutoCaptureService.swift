@@ -20,6 +20,7 @@ struct AutoCaptureSavedAction {
     let origin: CaptureOrigin
     let capturedAt: Date
     let sourceApplication: AutoCaptureSourceApplication?
+    let projectName: String?
     let captures: [Capture]
 }
 
@@ -63,6 +64,9 @@ final class AutoCaptureService: ObservableObject {
     /// the sole callback suitable for positive visual confirmation.
     var onSaved: ((AutoCaptureSavedAction) -> Void)?
     var onFailure: ((String) -> Void)?
+    /// Read only while constructing an event. The returned project is frozen on
+    /// that event so later navigation cannot redirect an already observed copy.
+    var projectProvider: () -> String? = { nil }
 
     private let input: InputService
     private let pasteboardProvider: () -> NSPasteboard
@@ -197,10 +201,19 @@ final class AutoCaptureService: ObservableObject {
                   !self.settings.isPaused else { return nil }
             return self.sourceApplicationProvider()
         }
-        monitor.onNewScreenshot = { [weak self] url, sampledApplication in
+        monitor.projectAtDirectoryActivity = { [weak self] in
+            guard let self,
+                  self.sessionGeneration == generation,
+                  self.screenshotGeneration == channelGeneration,
+                  self.settings.isScreenshotsEnabled,
+                  !self.settings.isPaused else { return nil }
+            return self.normalizedProjectName(self.projectProvider())
+        }
+        monitor.onNewScreenshot = { [weak self] url, sampledApplication, sampledProject in
             guard let self, self.isSessionGenerationCurrent(generation),
                   self.screenshotGeneration == channelGeneration else { return }
-            self.receiveScreenshot(url, application: sampledApplication, generation: generation)
+            self.receiveScreenshot(url, application: sampledApplication,
+                                   projectName: sampledProject, generation: generation)
         }
         monitor.onFailure = { [weak self] error in
             guard let self, self.sessionGeneration == generation,
@@ -337,6 +350,7 @@ final class AutoCaptureService: ObservableObject {
 
         let event = makeEvent(origin: .automaticClipboard, snapshot: snapshot,
                               application: application,
+                              projectName: normalizedProjectName(projectProvider()),
                               fingerprint: AutoCaptureFingerprint.image(on: snapshot.pasteboard),
                               generation: sessionGeneration)
         if let fingerprint = event.fingerprint, isScreenshotsRunning {
@@ -363,7 +377,8 @@ final class AutoCaptureService: ObservableObject {
         updateRuntimeStatus(excludedApplication: isExcluded ? application : nil)
     }
 
-    private func receiveScreenshot(_ url: URL, application: AutoCaptureSourceApplication?, generation: UInt) {
+    private func receiveScreenshot(_ url: URL, application: AutoCaptureSourceApplication?,
+                                   projectName: String?, generation: UInt) {
         guard isScreenshotsRunning, settings.isScreenshotsEnabled,
               isSessionGenerationCurrent(generation) else { return }
         if settings.isExcluded(bundleIdentifier: application?.bundleIdentifier) {
@@ -379,12 +394,14 @@ final class AutoCaptureService: ObservableObject {
         }
         let fingerprint = AutoCaptureFingerprint.image(at: url)
         enqueue(makeEvent(origin: .automaticScreenshot, snapshot: snapshot,
-                          application: application, fingerprint: fingerprint,
+                          application: application, projectName: projectName,
+                          fingerprint: fingerprint,
                           generation: generation))
     }
 
     private func makeEvent(origin: CaptureOrigin, snapshot: AutoCapturePasteboardSnapshot,
                            application: AutoCaptureSourceApplication?,
+                           projectName: String?,
                            fingerprint: AutoCaptureFingerprint?, generation: UInt) -> PendingEvent {
         let actionID = UUID()
         let receipt = CaptureReceiptContext.automatic(
@@ -395,7 +412,7 @@ final class AutoCaptureService: ObservableObject {
         )
         return PendingEvent(actionID: actionID, origin: origin, snapshot: snapshot,
                             receivedAt: dateProvider(), timeZone: timeZoneProvider(),
-                            sourceApplication: application, receipt: receipt,
+                            sourceApplication: application, projectName: projectName, receipt: receipt,
                             fingerprint: fingerprint, generation: generation,
                             screenshotGeneration: screenshotGeneration,
                             clipboardGeneration: clipboardGeneration)
@@ -460,6 +477,7 @@ final class AutoCaptureService: ObservableObject {
             at: event.receivedAt,
             timeZone: event.timeZone,
             receipt: event.receipt,
+            projectName: event.projectName,
             fileURLTransfer: event.snapshot.fileURLTransfer,
             commitGuard: { [weak self] in
                 self?.isEventCurrent(event) == true
@@ -484,6 +502,7 @@ final class AutoCaptureService: ObservableObject {
                         origin: event.origin,
                         capturedAt: event.receivedAt,
                         sourceApplication: event.sourceApplication,
+                        projectName: event.projectName,
                         captures: captures
                     )
                     self.onCommitted?(action)
@@ -622,6 +641,12 @@ final class AutoCaptureService: ObservableObject {
         onFailure?(message)
     }
 
+    private func normalizedProjectName(_ value: String?) -> String? {
+        let normalized = value?.trimmingCharacters(in: .whitespacesAndNewlines)
+            .precomposedStringWithCanonicalMapping ?? ""
+        return normalized.isEmpty ? nil : String(normalized.prefix(180))
+    }
+
     nonisolated private static func createBookmark(for url: URL) throws -> Data {
         try url.bookmarkData(options: [.withSecurityScope, .securityScopeAllowOnlyReadAccess],
                              includingResourceValuesForKeys: nil, relativeTo: nil)
@@ -644,6 +669,7 @@ private struct PendingEvent {
     let receivedAt: Date
     let timeZone: TimeZone
     let sourceApplication: AutoCaptureSourceApplication?
+    let projectName: String?
     let receipt: CaptureReceiptContext
     let fingerprint: AutoCaptureFingerprint?
     let generation: UInt

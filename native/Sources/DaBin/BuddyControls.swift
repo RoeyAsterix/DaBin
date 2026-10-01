@@ -12,21 +12,60 @@ extension EnvironmentValues {
     }
 }
 
+@MainActor
 private struct BuddyHelpModifier: ViewModifier {
     @Environment(\.daBinTooltipsEnabled) private var enabled
+    @Environment(\.isEnabled) private var controlEnabled
+    @Environment(\.timelineTooltipController) private var controller
+    @State private var generatedID = UUID().uuidString
+    @State private var hovered = false
     let title: String
+    var explicitID: String?
+    var isFocused: Bool
+
+    private var id: String { explicitID ?? generatedID }
+    private var descriptor: TimelineTooltipDescriptor {
+        TimelineTooltipDescriptor(id: id, text: title, index: 0, itemCount: 1)
+    }
 
     @ViewBuilder
     func body(content: Content) -> some View {
-        if enabled { content.help(title) }
-        else { content }
+        if let controller {
+            content
+                .accessibilityHint(title)
+                .anchorPreference(key: HoverTooltipAnchorKey.self, value: .bounds) { [id: $0] }
+                .onHover { hovered = $0; update(controller) }
+                .onChange(of: isFocused) { _, _ in update(controller) }
+                .onChange(of: enabled) { _, _ in update(controller) }
+                .onChange(of: controlEnabled) { _, _ in update(controller) }
+                .onChange(of: title) { _, _ in update(controller) }
+                .onDisappear { controller.end(id: id) }
+                .simultaneousGesture(TapGesture().onEnded { controller.activate(id: id) })
+        } else if enabled {
+            content.accessibilityHint(title).help(title)
+        } else {
+            content.accessibilityHint(title)
+        }
+    }
+
+    private func update(_ controller: TimelineTooltipController) {
+        // The root and descendants receive the same preference. Synchronize
+        // before beginning so re-enabling under a stationary pointer works
+        // regardless of SwiftUI's parent/child change-delivery order.
+        controller.setEnabled(enabled)
+        if enabled && controlEnabled && (hovered || isFocused) {
+            controller.begin(descriptor, immediate: isFocused && !hovered)
+        } else {
+            controller.end(id: id)
+        }
     }
 }
 
 extension View {
     /// Applies hover help while preserving the control's own accessibility semantics.
-    func buddyHelp(_ title: String) -> some View {
-        modifier(BuddyHelpModifier(title: title))
+    @MainActor
+    func buddyHelp(_ title: String, id: String? = nil, isFocused: Bool = false) -> some View {
+        modifier(BuddyHelpModifier(title: title, explicitID: id, isFocused: isFocused))
     }
 }
 
@@ -34,15 +73,23 @@ extension View {
 @MainActor
 struct BuddyIconButton: View {
     @Environment(\.daBinAccent) private var accent
+    @Environment(\.timelineTooltipController) private var tooltipController
     let symbol: String
     let title: String
     var isActive = false
+    var tooltipID: String? = nil
     let action: () -> Void
     @State private var hovered = false
+    @State private var helpID = UUID().uuidString
     @FocusState private var focused: Bool
 
+    private var effectiveTooltipID: String { tooltipID ?? helpID }
+
     var body: some View {
-        Button(action: action) {
+        Button {
+            tooltipController?.activate(id: effectiveTooltipID)
+            action()
+        } label: {
             Image(systemName: symbol)
                 .font(.system(size: 16, weight: .semibold))
                 .symbolRenderingMode(.monochrome)
@@ -54,7 +101,7 @@ struct BuddyIconButton: View {
                                           hovered: hovered, focused: focused))
         .focused($focused)
         .onHover { hovered = $0 }
-        .buddyHelp(title)
+        .buddyHelp(title, id: effectiveTooltipID, isFocused: focused)
         .accessibilityLabel(title)
         .accessibilityAddTraits(isActive ? .isSelected : [])
         .accessibilityRemoveTraits(isActive ? [] : .isSelected)

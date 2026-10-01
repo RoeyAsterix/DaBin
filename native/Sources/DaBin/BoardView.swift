@@ -7,6 +7,7 @@ struct BoardView: View {
     @ObservedObject var state: AppState
     @StateObject private var theme: ThemeSettings
     @StateObject private var dayExportController: DayExportActionController
+    @StateObject private var tooltipController: TimelineTooltipController
     @State private var showCalendar = false
     @FocusState private var searchFocused: Bool
 
@@ -16,6 +17,7 @@ struct BoardView: View {
         self.state = state
         _theme = StateObject(wrappedValue: theme ?? ThemeSettings())
         _dayExportController = StateObject(wrappedValue: dayExportController ?? .live())
+        _tooltipController = StateObject(wrappedValue: tooltipController ?? TimelineTooltipController())
     }
 
     private var accent: Color { theme.accent }
@@ -25,7 +27,7 @@ struct BoardView: View {
     var body: some View {
         VStack(spacing: 0) {
             header
-            if let message = state.store.error.map({ AppStatusMessage(text: $0, severity: .error) }) ?? state.status {
+            if let message = state.notificationMessage {
                 statusBanner(message)
             }
             if state.canUndoRemoval { undoBanner }
@@ -37,16 +39,20 @@ struct BoardView: View {
         }
         .foregroundStyle(Palette.foreground).tint(accent).environment(\.daBinAccent, accent)
         .environment(\.daBinTooltipsEnabled, theme.showTooltips)
+        .environment(\.timelineTooltipController, tooltipController)
         .background(Palette.background.opacity(ThemeSettings.effectiveBoardOpacity(
             preferred: theme.boardOpacity, reduceTransparency: reduceTransparency || colorSchemeContrast == .increased)))
         .preferredColorScheme(theme.darkModeEnabled ? .dark : .light)
-        .clipShape(RoundedRectangle(cornerRadius: 21, style: .continuous))
-        .overlay(RoundedRectangle(cornerRadius: 21, style: .continuous).strokeBorder(Palette.line, lineWidth: 1))
+        .clipShape(BoardWindowChrome.shape)
+        .overlay(BoardWindowChrome.shape.strokeBorder(Palette.line, lineWidth: 1))
+        .overlayPreferenceValue(HoverTooltipAnchorKey.self) { anchors in
+            HoverTooltipOverlay(controller: tooltipController, anchors: anchors, isEnabled: theme.showTooltips)
+        }
         .overlay {
             if state.isDailyDropTargeted && (state.route == .daily || state.route == .inbox
                 || (state.route == .detail && state.selectedCapture?.isTask == true)) {
-                RoundedRectangle(cornerRadius: 21, style: .continuous).fill(accent.opacity(0.06))
-                    .overlay(RoundedRectangle(cornerRadius: 21, style: .continuous).strokeBorder(accent, lineWidth: 2))
+                BoardWindowChrome.shape.fill(accent.opacity(0.06))
+                    .overlay(BoardWindowChrome.shape.strokeBorder(accent, lineWidth: 2))
                     .allowsHitTesting(false).accessibilityHidden(true)
             }
         }
@@ -64,15 +70,22 @@ struct BoardView: View {
         .onExitCommand {
             if searchFocused { searchFocused = false } else { state.onDismiss?() }
         }
-        .onChange(of: state.route) { _, route in searchFocused = route == .search }
+        .onChange(of: state.route) { _, route in
+            tooltipController.dismiss()
+            searchFocused = route == .search
+        }
+        .onChange(of: theme.showTooltips, initial: true) { _, enabled in tooltipController.setEnabled(enabled) }
+        .onAppear { tooltipController.setPresentationActive(true) }
+        .onChange(of: state.isBoardVisible) { _, visible in tooltipController.setPresentationActive(visible) }
+        .onDisappear { tooltipController.setPresentationActive(false) }
         .onChange(of: state.globalSearchFocusRequest) { _, _ in searchFocused = true }
-        .onChange(of: dayExportController.feedback) { _, feedback in
-            guard let feedback else { return }
+        .onChange(of: dayExportController.feedbackRevision) { _, _ in
+            guard let feedback = dayExportController.visibleFeedback else { return }
             if case .failed = feedback { state.reportFailure(feedback.message) }
             else { state.status = AppStatusMessage(text: feedback.message, severity: .success) }
         }
-        .onChange(of: state.status) { _, message in
-            if let message { AccessibilityAnnouncement.post(message.text) }
+        .onChange(of: state.notifications.revision) { _, _ in
+            if let message = state.notificationMessage { AccessibilityAnnouncement.post(message.text) }
         }
         .background {
             Group {
@@ -97,7 +110,7 @@ struct BoardView: View {
             if let capture = state.selectedCapture, let draft = state.selectedDraft {
                 DetailScreen(state: state, capture: capture, draft: draft).id(capture.id)
             } else {
-                EmptyMessage(symbol: "tray", title: "Capture unavailable", message: "Open Library to browse your saved captures.")
+                EmptyMessage(symbol: "tray", title: "Capture unavailable", message: "Open Projects to browse your saved captures.")
             }
         case .reminders: TodayPlanningScreen(state: state)
         case .settings: SettingsScreen(state: state, theme: theme)
@@ -109,7 +122,7 @@ struct BoardView: View {
         VStack(spacing: 4) {
             HStack(spacing: 3) {
                 if state.route == .library {
-                    ExplorerProjectPicker(state: state, workspace: state.workspace, onCreate: {})
+                    ExplorerProjectPicker(state: state, workspace: state.workspace)
                         .frame(minWidth: 124, idealWidth: 160, maxWidth: 240).layoutPriority(1)
                 } else {
                     DaBinLogo(variant: .compact).frame(width: 68, height: 28, alignment: .leading)
@@ -123,17 +136,20 @@ struct BoardView: View {
                     .frame(minWidth: 0, maxWidth: .infinity).frame(height: 28).layoutPriority(-1)
                     .accessibilityHidden(true)
                 addMenu
-                BuddyIconButton(symbol: "magnifyingglass", title: state.route == .weekly ? "Search a day or week" : "Search all captures", isActive: state.route == .search) {
+                BuddyIconButton(symbol: "magnifyingglass", title: state.route == .weekly ? "Search a day or week" : "Search all captures", isActive: state.route == .search,
+                                tooltipID: "board-search-tooltip") {
                     if state.route == .weekly { state.weeklySearchActionsPresented.toggle() }
                     else { state.performSearchCommand(); searchFocused = true }
                 }.accessibilityIdentifier("board-search")
                     .popover(isPresented: $state.weeklySearchActionsPresented, arrowEdge: .bottom) {
                         WeeklySearchPopover(state: state, isPresented: $state.weeklySearchActionsPresented)
+                            .hoverTooltips()
                     }
-                BuddyIconButton(symbol: "gearshape", title: "Settings") { state.showSettings() }
+                BuddyIconButton(symbol: "gearshape", title: "Settings", tooltipID: "board-settings-tooltip") { state.showSettings() }
                     .accessibilityIdentifier("board-settings")
                 moreMenu
-                BuddyIconButton(symbol: "arrow.up.left.and.arrow.down.right", title: "Expand or restore window") {
+                BuddyIconButton(symbol: "arrow.up.left.and.arrow.down.right", title: "Expand or restore window",
+                                tooltipID: "window-expand-tooltip") {
                     state.onToggleExpandedWindow?()
                 }.accessibilityIdentifier("window-expand")
                 SmallIcon(symbol: "xmark", label: "Hide DaBin", size: 28) { state.onDismiss?() }
@@ -148,7 +164,8 @@ struct BoardView: View {
                 HStack(spacing: 4) {
                     navigationButton("Inbox", symbol: "tray", selected: state.isInboxRoute) { state.openInbox() }
                     navigationButton("Today", symbol: "sun.max", selected: state.route == .reminders) { state.showReminders() }
-                    navigationButton("Workspace", symbol: "folder", selected: state.route == .library) { state.openLibrary() }
+                    navigationButton("Projects", symbol: "folder", selected: state.route == .library,
+                                     identifier: "primary-workspace") { state.openLibrary() }
                 }.accessibilityElement(children: .contain).accessibilityLabel("Main views")
             } else {
                 HStack(spacing: 8) {
@@ -198,7 +215,8 @@ struct BoardView: View {
                 .overlay(RoundedRectangle(cornerRadius: 10).strokeBorder(Palette.line))
     }
 
-    private func navigationButton(_ title: String, symbol: String, selected: Bool, action: @escaping () -> Void) -> some View {
+    private func navigationButton(_ title: String, symbol: String, selected: Bool,
+                                  identifier: String? = nil, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             Label(title, systemImage: symbol).font(.system(size: 12, weight: selected ? .semibold : .medium))
                 .lineLimit(1).fixedSize(horizontal: true, vertical: false)
@@ -207,7 +225,7 @@ struct BoardView: View {
                 .contentShape(Rectangle())
         }.buttonStyle(.plain).foregroundStyle(selected ? Palette.foreground : Palette.muted)
             .accessibilityAddTraits(selected ? [.isSelected] : [])
-            .accessibilityIdentifier("primary-\(title.lowercased())")
+            .accessibilityIdentifier(identifier ?? "primary-\(title.lowercased())")
     }
 
     private var addMenu: some View {
@@ -218,14 +236,13 @@ struct BoardView: View {
             Divider()
             Button("New task", systemImage: "checkmark.circle") { state.openNewTask() }
         } label: { Image(systemName: "plus").font(.system(size: 16, weight: .semibold)).frame(width: 28, height: 32) }
-        .menuStyle(.borderlessButton).menuIndicator(.hidden).fixedSize().buddyHelp("Add capture")
+        .menuStyle(.borderlessButton).menuIndicator(.hidden).fixedSize().buddyHelp("Add capture", id: "primary-tooltip-add")
         .background(accent.opacity(0.13), in: RoundedRectangle(cornerRadius: 8))
         .accessibilityLabel("Add capture").accessibilityIdentifier("timeline-action-add").disabled(state.isImporting)
     }
 
     private var moreMenu: some View {
         Menu {
-            Button("Activity by date", systemImage: "calendar") { state.openDaily() }
             Menu {
                 Button("Copy day · \(exportDay.formatted(.dateTime.month(.abbreviated).day()))", systemImage: "doc.on.doc") { dayExportController.copy(dayDocument) }.disabled(dayDocument.isEmpty)
                 Button("Export day · \(exportDay.formatted(.dateTime.month(.abbreviated).day()))…", systemImage: "doc.badge.arrow.up") { reportExport(dayExportController.save(dayDocument)) }.disabled(dayDocument.isEmpty)
@@ -252,13 +269,11 @@ struct BoardView: View {
         VStack(spacing: 4) {
             HStack(spacing: 4) {
                 if state.route == .inbox {
-                    Button { state.openInbox() } label: {
-                        Label("To organize", systemImage: "tray.full")
-                            .font(.system(size: 12, weight: .medium)).frame(minHeight: 30)
-                            .contentShape(Rectangle())
-                    }.buttonStyle(.plain).foregroundStyle(accent)
+                    Label("To organize", systemImage: "tray.full")
+                        .font(.system(size: 12, weight: .medium)).frame(minHeight: 30)
+                        .foregroundStyle(accent)
+                        .accessibilityElement(children: .combine)
                         .accessibilityAddTraits(.isSelected).accessibilityIdentifier("inbox-organize")
-                        .buddyHelp("Unfiled captures from all dates")
                     Spacer(minLength: 0)
                 } else {
                     SmallIcon(symbol: "chevron.left", label: state.route == .weekly ? "Previous week" : "Previous day", size: 26) { moveTimeline(-1) }
@@ -274,6 +289,7 @@ struct BoardView: View {
                                     showCalendar = false
                                 }), in: ...Date(), displayedComponents: .date)
                                 .datePickerStyle(.graphical).padding(12).frame(width: 280)
+                                .hoverTooltips()
                         }
                     SmallIcon(symbol: "chevron.right", label: state.route == .weekly ? "Next week" : "Next day", size: 26) { moveTimeline(1) }
                         .disabled(Calendar.current.isDateInToday(state.route == .weekly ? state.weekEndingDay : state.selectedDay))
@@ -309,7 +325,8 @@ struct BoardView: View {
                     .accessibilityLabel(mode == .daily ? "Daily view" : "Weekly view")
                     .accessibilityAddTraits(selected ? .isSelected : [])
                     .accessibilityIdentifier(mode == .daily ? "timeline-mode-daily" : "timeline-mode-weekly")
-                    .buddyHelp(mode == .daily ? "Captures for the selected day" : "Browse the seven-day calendar")
+                    .buddyHelp(mode == .daily ? "Captures for the selected day" : "Browse the seven-day calendar",
+                               id: "timeline-mode-tooltip-\(mode == .daily ? "daily" : "weekly")")
             }
         }.padding(2).background(Palette.soft, in: RoundedRectangle(cornerRadius: 9))
             .accessibilityElement(children: .contain).accessibilityLabel("Inbox calendar view")
@@ -347,10 +364,12 @@ struct BoardView: View {
             Image(systemName: message.symbol).foregroundStyle(message.severity == .error ? Palette.task : accent)
             Text(message.text).font(.system(size: 12)).fixedSize(horizontal: false, vertical: true)
             Spacer(minLength: 0)
-            Button { state.status = nil; state.store.error = nil } label: { Image(systemName: "xmark").font(.system(size: 10)) }
+            Button { state.dismissNotification() } label: { Image(systemName: "xmark").font(.system(size: 10)) }
                 .buttonStyle(.plain).buddyHelp("Dismiss message").accessibilityLabel("Dismiss message")
         }.padding(10).background(Palette.soft, in: RoundedRectangle(cornerRadius: 11))
             .padding(.horizontal, 14).padding(.vertical, 6)
+            .accessibilityElement(children: .contain)
+            .accessibilityIdentifier("app-notification-banner")
     }
 }
 
@@ -381,15 +400,25 @@ private struct BoardCaptureStatus: View {
                 .font(.system(size: 8)).foregroundStyle(accent).accessibilityHidden(true)
             Text(service.overallStatusText).font(.system(size: 11)).foregroundStyle(Palette.muted)
                 .lineLimit(2).fixedSize(horizontal: false, vertical: true)
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel("Auto Capture: \(service.overallStatusText)")
+                .accessibilityIdentifier("auto-capture-status")
             Spacer(minLength: 0)
-            if settings.isEnabled {
-                Button(settings.isPaused ? "Resume" : "Pause") { state.autoCapture.setPaused(!settings.isPaused) }
-                    .buttonStyle(.plain).font(.system(size: 11)).foregroundStyle(accent)
+            if let project = state.libraryProject {
+                Label("Destination: \(project)", systemImage: "folder.fill")
+                    .font(.system(size: 11, weight: .medium)).foregroundStyle(accent).lineLimit(1)
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel("Auto Capture destination: \(project)")
+                    .accessibilityIdentifier("auto-capture-destination")
             } else {
-                Button("Set up") { state.showSettings() }.buttonStyle(.plain).font(.system(size: 11)).foregroundStyle(accent)
+                Label("Destination: Unfiled", systemImage: "tray")
+                    .font(.system(size: 11, weight: .medium)).foregroundStyle(Palette.muted).lineLimit(1)
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel("Auto Capture destination: Unfiled")
+                    .accessibilityIdentifier("auto-capture-destination")
             }
         }.padding(.horizontal, 16).padding(.vertical, 9)
             .background(Palette.background)
-            .overlay(alignment: .top) { Rectangle().fill(Palette.line).frame(height: 1) }.accessibilityElement(children: .contain)
+            .overlay(alignment: .top) { Rectangle().fill(Palette.line).frame(height: 1) }
     }
 }

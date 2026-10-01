@@ -65,6 +65,8 @@ final class StatusBarController: NSObject {
     private let quitAction: () -> Void
     private let autoCapture: AutoCaptureService
     private let statusBar: NSStatusBar
+    private let theme: ThemeSettings?
+    private var tooltipsEnabled: Bool
     private var subscriptions = Set<AnyCancellable>()
 
     private(set) var statusItem: NSStatusItem?
@@ -76,12 +78,15 @@ final class StatusBarController: NSObject {
          showSettings: @escaping () -> Void,
          quit: @escaping () -> Void,
          autoCapture: AutoCaptureService,
-         statusBar: NSStatusBar = .system) {
+         statusBar: NSStatusBar = .system,
+         theme: ThemeSettings? = nil) {
         openDailyAction = openDaily
         showSettingsAction = showSettings
         quitAction = quit
         self.autoCapture = autoCapture
         self.statusBar = statusBar
+        self.theme = theme
+        tooltipsEnabled = theme?.showTooltips ?? true
         presentation = Presentation.make(enabled: autoCapture.settings.isEnabled,
                                          paused: autoCapture.settings.isPaused,
                                          status: autoCapture.settings.status)
@@ -105,6 +110,12 @@ final class StatusBarController: NSObject {
         add("Quit DaBin", #selector(quitDaBin), to: menu)
         item.menu = menu
         statusItem = item
+
+        theme?.$showTooltips.sink { [weak self] enabled in
+            guard let self else { return }
+            self.tooltipsEnabled = enabled
+            self.refreshTooltip()
+        }.store(in: &subscriptions)
 
         let settings = autoCapture.settings
         Publishers.CombineLatest3(settings.$isEnabled, settings.$isPaused, settings.$status)
@@ -147,10 +158,14 @@ final class StatusBarController: NSObject {
         image?.isTemplate = true
         button.image = image
         button.imagePosition = .imageOnly
-        button.toolTip = "DaBin — \(next.accessibilityValue)"
+        refreshTooltip()
         button.setAccessibilityLabel("DaBin menu")
         button.setAccessibilityValue(next.accessibilityValue)
         button.setAccessibilityHelp("Open DaBin controls and view Auto Capture status")
+    }
+
+    private func refreshTooltip() {
+        statusItem?.button?.toolTip = tooltipsEnabled ? "DaBin — \(presentation.accessibilityValue)" : nil
     }
 
     @objc private func openDaily() { openDailyAction() }

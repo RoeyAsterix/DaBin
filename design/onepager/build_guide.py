@@ -1,375 +1,286 @@
+"""Build the friendly, robot-led guide from native UI renders and shared copy."""
 from pathlib import Path
 from shutil import copy2
+from html import escape
+import hashlib
 import json
 
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import A4, landscape
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.lib.utils import ImageReader
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas
 from reportlab.platypus import Paragraph
 from pypdf import PdfReader
 
-
 ROOT = Path(__file__).resolve().parents[2]
+DESIGN = ROOT / "design/onepager"
+ASSETS = DESIGN / "assets"
+COPY = json.loads((DESIGN / "copy.json").read_text())
 OUT = ROOT / "output/pdf/DaBin-Quick-Guide.pdf"
 DOC_COPY = ROOT / "docs/DaBin-Quick-Guide.pdf"
-QA_PATH = ROOT / "tmp/pdfs/layout-check.json"
-OUT.parent.mkdir(parents=True, exist_ok=True)
-QA_PATH.parent.mkdir(parents=True, exist_ok=True)
-
-NORMAL = "Helvetica"
-BOLD = "Helvetica-Bold"
-W, H = landscape(A4)
+COPY_OUT = ROOT / "output/copy/DaBin-Friendly-Copy.txt"
+QA_PATH = ROOT / "tmp/pdfs/robot-guide-layout-check.json"
+MANIFEST = ASSETS / "guide-assets.json"
 
 INK = colors.HexColor("#30283D")
+BODY = colors.HexColor("#625B6A")
 PURPLE = colors.HexColor("#72508E")
 PURPLE_DARK = colors.HexColor("#4A365C")
-BODY = colors.HexColor("#625B6A")
-MUTED = colors.HexColor("#6D6574")
-PALE = colors.HexColor("#F3EDF7")
-PALE_2 = colors.HexColor("#F8F5FA")
-PAPER = colors.HexColor("#FDFCFD")
-LINE = colors.HexColor("#E2D9E8")
-MINT = colors.HexColor("#DDF4ED")
-MINT_INK = colors.HexColor("#35695C")
+PALE = colors.HexColor("#F2EDF6")
+PAPER = colors.HexColor("#FCFAFD")
+LINE = colors.HexColor("#E1D8E8")
+MINT = colors.HexColor("#E5F3EF")
+TEAL = colors.HexColor("#257A70")
 WHITE = colors.white
+W, H = landscape(A4)
+NORMAL, BOLD = "DaBinSans", "DaBinSans-Bold"
+FONT_FILES = {
+    NORMAL: Path("/System/Library/Fonts/Supplemental/Arial.ttf"),
+    BOLD: Path("/System/Library/Fonts/Supplemental/Arial Bold.ttf"),
+}
+for name, source in FONT_FILES.items():
+    pdfmetrics.registerFont(TTFont(name, str(source)))
+
+required_assets = ["DABIN__GUIDE__PROJECTS.png", "DABIN__GUIDE__INBOX.png",
+                   "DABIN__GUIDE__TASK.png", "DABIN__GUIDE__ROBOT.png"]
+for name in required_assets:
+    if not (ASSETS / name).is_file():
+        raise FileNotFoundError(f"Run export_guide_assets.py first: {name}")
+assets = json.loads(MANIFEST.read_text())
+native_provenance = json.loads((ASSETS / assets["native_source_manifest"]).read_text())
+for name in required_assets:
+    assert hashlib.sha256((ASSETS / name).read_bytes()).hexdigest() == native_provenance["assetsSHA256"][name], name
+assert hashlib.sha256((DESIGN / "ExportGuide.swift").read_bytes()).hexdigest() == native_provenance["exportSourceSHA256"]
+for name, digest in native_provenance["sourceSHA256"].items():
+    assert hashlib.sha256((ROOT / "native" / name).read_bytes()).hexdigest() == digest, f"Re-export stale native guide UI: {name}"
+for folder in [OUT.parent, COPY_OUT.parent, QA_PATH.parent]:
+    folder.mkdir(parents=True, exist_ok=True)
+
+# Preserve the previous delivered PDF before replacing either stable copy.
+for previous in [DOC_COPY, OUT]:
+    if previous.is_file():
+        digest = hashlib.sha256(previous.read_bytes()).hexdigest()[:12]
+        archive = DESIGN / "archive" / f"DaBin-Quick-Guide__before_robot_walkthrough__{digest}.pdf"
+        archive.parent.mkdir(parents=True, exist_ok=True)
+        if not archive.exists():
+            copy2(previous, archive)
 
 c = canvas.Canvas(str(OUT), pagesize=(W, H), pageCompression=1)
-c.setTitle("DaBin | Everything your day leaves behind")
+c.setTitle("DaBin | A friendly robot-led quick guide")
 c.setAuthor("DaBin")
-c.setSubject("A complete one-page guide to DaBin for macOS")
-c.setCreator("DaBin one-page guide")
+c.setSubject("Save, organize and return to your work with DaBin")
+c.setCreator("DaBin robot-led guide, native UI fixtures")
+blocks, images, annotations = [], [], []
+page = 1
 
-text_blocks = []
-card_checks = []
 
-
-def rect(x, top, width, height, fill, radius=0, stroke=None, line_width=0.7):
+def rect(x, top, width, height, fill, radius=0, stroke=None):
     c.setFillColor(fill)
     c.setStrokeColor(stroke or fill)
-    c.setLineWidth(line_width)
-    c.roundRect(
-        x,
-        H - top - height,
-        width,
-        height,
-        radius,
-        fill=1,
-        stroke=int(stroke is not None),
-    )
+    c.setLineWidth(0.75)
+    c.roundRect(x, H - top - height, width, height, radius,
+                stroke=int(stroke is not None), fill=1)
 
 
-def rule(x1, y1, x2, y2, color=LINE, width=0.7):
-    c.setStrokeColor(color)
-    c.setLineWidth(width)
-    c.line(x1, H - y1, x2, H - y2)
-
-
-def text(value, x, top, size=10, font=NORMAL, color=INK):
-    c.setFont(font, size)
-    c.setFillColor(color)
-    c.drawString(x, H - top - size * 0.82, value)
-
-
-def right(value, x, top, size=9, font=NORMAL, color=BODY):
-    c.setFont(font, size)
-    c.setFillColor(color)
-    c.drawRightString(x, H - top - size * 0.82, value)
-
-
-def centered(value, x, top, width, size=9, font=NORMAL, color=BODY):
-    c.setFont(font, size)
-    c.setFillColor(color)
-    c.drawCentredString(x + width / 2, H - top - size * 0.82, value)
-
-
-def paragraph(value, x, top, width, size=9, leading=11, color=BODY, font=NORMAL, max_height=None):
-    p = Paragraph(
-        value,
-        ParagraphStyle(
-            "p",
-            fontName=font,
-            fontSize=size,
-            leading=leading,
-            textColor=color,
-            spaceAfter=0,
-            allowWidows=0,
-            allowOrphans=0,
-        ),
-    )
+def paragraph(value, x, top, width, size=11, leading=15, color=BODY,
+              font=NORMAL, max_height=None):
+    style = ParagraphStyle("guide", fontName=font, fontSize=size, leading=leading,
+                           textColor=color, allowWidows=0, allowOrphans=0)
+    p = Paragraph(value, style)
     _, height = p.wrap(width, H)
     if max_height is not None:
         assert height <= max_height, (value, height, max_height)
     p.drawOn(c, x, H - top - height)
-    text_blocks.append({"text": value, "x": x, "top": top, "width": width, "height": height})
+    blocks.append(dict(page=page, text=value, x=x, top=top, width=width,
+                       height=height, font_size=size))
     return height
 
 
-def image(path, x, top, width, height):
-    c.drawImage(ImageReader(str(path)), x, H - top - height, width=width, height=height, mask="auto")
+def label(value, x, top, size=9, color=PURPLE, font=BOLD):
+    return paragraph(escape(value), x, top, W - x - 30, size, size * 1.25, color, font)
 
 
-def icon(kind, x, top, size=18, color=PURPLE):
-    """Small line icons drawn as vectors so the guide remains sharp when printed."""
+def image_contain(name, x, top, width, height):
+    source = ImageReader(str(ASSETS / name))
+    sw, sh = source.getSize()
+    scale = min(width / sw, height / sh)
+    iw, ih = sw * scale, sh * scale
+    ix, it = x + (width - iw) / 2, top + (height - ih) / 2
+    c.drawImage(source, ix, H - it - ih, width=iw, height=ih, mask="auto")
+    images.append(dict(page=page, asset=name, x=ix, top=it, width=iw, height=ih))
+    return ix, it, iw, ih
+
+
+def image_crop(name, x, top, width, height, crop):
+    """Crop by PDF clipping only; the native source PNG remains unmodified."""
+    source = ImageReader(str(ASSETS / name))
+    sw, sh = source.getSize()
+    left, upper, right, lower = crop
+    cw, ch = sw * (right - left), sh * (lower - upper)
+    scale = min(width / cw, height / ch)
+    iw, ih = cw * scale, ch * scale
+    ix, it = x + (width - iw) / 2, top + (height - ih) / 2
     c.saveState()
-    c.translate(x, H - top - size)
-    c.scale(size / 24, size / 24)
-    c.setStrokeColor(color)
-    c.setFillColor(color)
-    c.setLineWidth(1.65)
-    c.setLineCap(1)
-    c.setLineJoin(1)
-
-    if kind == "capture":
-        c.roundRect(3, 4, 18, 15, 3, stroke=1, fill=0)
-        c.circle(12, 11.5, 4.2, stroke=1, fill=0)
-        c.line(7, 19, 9, 22)
-        c.line(9, 22, 15, 22)
-        c.line(15, 22, 17, 19)
-    elif kind == "calendar":
-        c.roundRect(3, 3, 18, 17, 3, stroke=1, fill=0)
-        c.line(3, 15.5, 21, 15.5)
-        c.line(8, 19, 8, 22)
-        c.line(16, 19, 16, 22)
-        for cx in (7.5, 12, 16.5):
-            c.circle(cx, 10.5, 0.75, stroke=0, fill=1)
-        c.circle(7.5, 6.8, 0.75, stroke=0, fill=1)
-        c.circle(12, 6.8, 0.75, stroke=0, fill=1)
-    elif kind == "search":
-        c.circle(10, 14, 6.5, stroke=1, fill=0)
-        c.line(15, 9, 21, 3)
-        c.line(7, 14, 13, 14)
-        c.line(7, 11, 11, 11)
-    elif kind == "card":
-        c.roundRect(3, 4, 18, 16, 3, stroke=1, fill=0)
-        c.line(7, 16, 17, 16)
-        c.line(7, 12, 14, 12)
-        c.line(7, 8, 12, 8)
-        c.circle(18.5, 6.5, 3.2, stroke=0, fill=1)
-        c.setStrokeColor(WHITE)
-        c.setLineWidth(1.4)
-        c.line(17, 6.5, 20, 6.5)
-    elif kind == "task":
-        c.roundRect(3, 3, 18, 18, 5, stroke=1, fill=0)
-        p = c.beginPath()
-        p.moveTo(7, 12)
-        p.lineTo(10.5, 8)
-        p.lineTo(17.5, 16)
-        c.drawPath(p, stroke=1, fill=0)
-    elif kind == "export":
-        c.roundRect(4, 3, 16, 12, 2.5, stroke=1, fill=0)
-        c.line(12, 8, 12, 22)
-        c.line(12, 22, 8, 18)
-        c.line(12, 22, 16, 18)
-    elif kind == "auto":
-        c.circle(12, 12, 9, stroke=1, fill=0)
-        c.line(12, 7, 12, 17)
-        c.line(7, 12, 17, 12)
-        c.circle(12, 12, 2.2, stroke=0, fill=1)
-    elif kind == "settings":
-        c.circle(12, 12, 4, stroke=1, fill=0)
-        for angle in range(0, 360, 45):
-            c.saveState()
-            c.translate(12, 12)
-            c.rotate(angle)
-            c.line(0, 6, 0, 10)
-            c.restoreState()
-    elif kind == "pin":
-        c.circle(12, 13, 8, stroke=1, fill=0)
-        c.circle(12, 13, 2.2, stroke=1, fill=0)
-        c.line(12, 5, 12, 1)
+    clip = c.beginPath()
+    clip.roundRect(ix, H - it - ih, iw, ih, 8)
+    c.clipPath(clip, stroke=0, fill=0)
+    c.drawImage(source, ix - sw * left * scale,
+                H - it + sh * upper * scale - sh * scale,
+                width=sw * scale, height=sh * scale, mask="auto")
     c.restoreState()
+    images.append(dict(page=page, asset=name, x=ix, top=it, width=iw, height=ih,
+                       source_crop=crop))
 
 
-def pill(label, x, top, width, fill=PALE, ink=PURPLE):
-    rect(x, top, width, 20, fill, radius=10)
-    centered(label, x, top + 6, width, 7.2, BOLD, ink)
+def badge(number, x, top, radius=10, fill=PURPLE):
+    c.setFillColor(fill)
+    c.setStrokeColor(WHITE)
+    c.setLineWidth(2)
+    c.circle(x, H - top, radius, stroke=1, fill=1)
+    c.setFont(BOLD, 10)
+    c.setFillColor(WHITE)
+    c.drawCentredString(x, H - top - 3.4, str(number))
 
 
-def step(number, title, body, x, top, width):
-    rect(x, top + 1, 20, 20, PURPLE, radius=10)
-    centered(str(number), x, top + 7, 20, 8.5, BOLD, WHITE)
-    text(title, x + 29, top + 2, 9.4, BOLD, INK)
-    paragraph(body, x + 29, top + 18, width - 29, 7.5, 9.2, BODY, max_height=29)
+def bubble(value, x, top, width, height):
+    rect(x, top, width, height, PURPLE_DARK, 12)
+    c.setFillColor(PURPLE_DARK)
+    tail = c.beginPath()
+    tail.moveTo(x, H - top - 22)
+    tail.lineTo(x - 10, H - top - 31)
+    tail.lineTo(x, H - top - 37)
+    tail.close()
+    c.drawPath(tail, stroke=0, fill=1)
+    paragraph(escape(value), x + 12, top + 12, width - 24, 12, 15, WHITE,
+              BOLD, max_height=height - 20)
 
 
-def feature_card(title, kind, items, x, top, width, height):
-    rect(x, top, width, height, WHITE, radius=12, stroke=LINE, line_width=0.75)
-    rect(x + 11, top + 10, 26, 26, PALE, radius=8)
-    icon(kind, x + 15, top + 14, 18)
-    text(title.upper(), x + 45, top + 14, 8.4, BOLD, PURPLE_DARK)
-
-    cursor = top + 43
-    max_bottom = top + height - 8
-    for item in items:
-        c.setFillColor(PURPLE)
-        c.circle(x + 15, H - cursor - 3.6, 1.55, stroke=0, fill=1)
-        used = paragraph(item, x + 22, cursor, width - 33, 7.5, 9.0, BODY, max_height=29)
-        cursor += used + 3.1
-    card_checks.append({"title": title, "bottom": cursor, "limit": max_bottom})
-    assert cursor <= max_bottom, (title, cursor, max_bottom)
+def footer(number, note="Real interface. Fictional examples."):
+    c.setStrokeColor(LINE)
+    c.setLineWidth(0.7)
+    c.line(36, 31, W - 36, 31)
+    paragraph(f"DaBin {COPY['version']}  |  {escape(note)}", 36, H - 23,
+              W - 95, 8.4, 10, BODY)
+    paragraph(str(number), W - 48, H - 23, 12, 8.4, 10, PURPLE, BOLD)
 
 
-# Page foundation and brand header.
-rect(0, 0, W, H, PAPER)
-rect(0, 0, W, 110, PALE_2)
-image(ROOT / "design/onepager/assets/DaBin-logo.png", 32, 20, 111, 111 * 256 / 781)
-pill("macOS 14+", W - 336, 24, 58)
-pill("APPLE SILICON", W - 271, 24, 77)
-pill("LOCAL FIRST", W - 187, 24, 59, MINT, MINT_INK)
+def page_header(section):
+    rect(0, 0, W, H, PAPER)
+    label(section["eyebrow"], 36, 25, 8.6)
+    label(section["title"], 36, 44, 30, INK)
 
-text("Everything your day leaves behind, saved in one glance.", 32, 67, 23.5, BOLD, INK)
-paragraph(
-    "Capture quickly. Keep it with a project. Take the next action. Find your work again, all on your Mac.",
-    33,
-    96,
-    640,
-    9.3,
-    12,
-    BODY,
-    max_height=14,
-)
-rect(W - 108, 17, 76, 76, PALE, radius=38)
-image(ROOT / "native/Resources/Assets.xcassets/AppIcon.appiconset/icon_512x512@2x.png", W - 103, 22, 66, 66)
 
-# Three-step quick start.
-rect(32, 124, W - 64, 58, WHITE, radius=12, stroke=LINE)
-text("START HERE", 45, 141, 8.2, BOLD, PURPLE)
-step(1, "Reveal", "Move to a corner, or choose the camera island home.", 129, 138, 192)
-rule(328, 135, 328, 171)
-step(2, "Feed DaBin", "Drop or paste into the robot or Inbox.", 343, 138, 192)
-rule(542, 135, 542, 171)
-step(3, "Open your day", "Double-click the robot. Choose Inbox, Today or Workspace.", 557, 138, 211)
+# 1: the robot explains the interface using the exact native project view.
+p1 = COPY["page_one"]
+page_header(p1)
+paragraph(escape(p1["intro"]), 36, 84, W - 72, 12.5, 17, BODY, max_height=34)
+paragraph(escape(p1["quick_start"]), 36, 126, W - 72, 10.5, 14, PURPLE_DARK, max_height=16)
+rect(36, 151, 193, 83, PALE, 16)
+image_contain("DABIN__GUIDE__ROBOT.png", 46, 155, 67, 75)
+bubble(p1["robot_bubble"], 126, 157, 91, 66)
 
-text("EVERYTHING DABIN CAN DO", 32, 199, 8.2, BOLD, PURPLE)
-right("Newest captures appear first", W - 32, 199, 7.7, NORMAL, MUTED)
+for item, top in zip(p1["callouts"], [248, 322, 394, 466]):
+    badge(item["number"], 47, top + 8, 10, TEAL if item["number"] == 1 else PURPLE)
+    paragraph(escape(item["title"]), 65, top, 164, 11.2, 14, INK, BOLD, max_height=28)
+    paragraph(escape(item["body"]), 36, top + 24, 193, 10.5, 13.5, BODY, max_height=68)
 
-LEFT = 32
-GAP = 10
-CARD_W = (W - 64 - 3 * GAP) / 4
-CARD_H = 145
-ROW_GAP = 10
-GRID_TOP = 216
+hero = image_contain("DABIN__GUIDE__PROJECTS.png", 249, 151, W - 285, 403)
+hx, ht, hw, hh = hero
+for number, anchor in assets["project_callout_anchors"].items():
+    ax, ay = anchor
+    bx, bt = hx + ax * hw, ht + ay * hh
+    tx, ty = assets["project_callout_targets"][number]
+    c.setStrokeColor(TEAL if number == "1" else PURPLE)
+    c.setLineWidth(0.65)
+    c.line(bx, H - bt, hx + tx * hw, H - ht - ty * hh)
+    badge(int(number), bx, bt, 10, TEAL if number == "1" else PURPLE)
+    annotations.append(dict(number=int(number), x=bx, top=bt,
+                            normalized_native_anchor=[ax, ay]))
+footer(1)
+c.showPage()
 
-cards = [
-    ("Capture anything", "capture", [
-        "Drop or paste text, links, media, PDFs and files into the robot or Inbox. Items added together share a card.",
-        "Hover the robot: <b>Control-V</b> or <b>Command-V</b>. Add offers notes, tasks and file import.",
-        "DaBin copies files, fits previews and keeps time, type, source app and source path when available.",
-    ]),
-    ("Inbox: your day and week", "calendar", [
-        "First launch opens <b>Inbox</b>. To organize holds unfiled captures from every date.",
-        "<b>Day / Week</b> browses the calendar. Empty days stay hidden; newest captures come first.",
-        "Filter by All, Text, Links, Files, Media or Tasks. Move between displays; drag any corner to resize.",
-    ]),
-    ("Find and reuse", "search", [
-        "<b>Command-K</b> searches the full archive. Weekly offers Search Day and Search Week.",
-        "Find filenames, links, comments and content. Local recognition reads images, screenshots, PDFs and text documents.",
-        "Show nearby captures adds context. Copy cards or grouped files; inspect source and record paste destinations.",
-    ]),
-    ("Workspace and Explorer", "card", [
-        "Group optional project resources. Explorer follows real project, type and dated folders with readable daily records.",
-        "Preview, copy or drag files to other apps; open, reveal or copy paths. Gather a shelf and export a ZIP.",
-        "Search clipboard history, pin content and name snippets. Copy as plain text; keep autosaving project scratchpads.",
-    ]),
-    ("Tasks, reminders and focus", "task", [
-        "Turn any capture into a task. Add comments, files and checklist steps; keep the original content.",
-        "Set priority, effort and repeat rules. Plan separately from deadlines: reorder Today, reschedule or mark Completed.",
-        "Remind by date or countdown. Start, pause or reset a focus timer; finishing it does not complete the task.",
-    ]),
-    ("Copy or export", "export", [
-        "More copies or downloads a selected day or the full displayed week.",
-        "Exports ignore active filters, include every stored action and sort chronologically.",
-        "Copy and download match: date-named UTF-8 text with time, type, source, content, comments and recognized text.",
-    ]),
-    ("Optional Auto Capture", "auto", [
-        "<b>Off by default.</b> Choose Clipboard, Screenshots or both. Saves future changes, never existing contents.",
-        "DaBin and common password managers are excluded. Choose a screenshot folder; pause anytime.",
-        "Four automatic saves in one local clock hour form a summary. Ten eating reactions use a generic token and count.",
-    ]),
-    ("Keep control", "settings", [
-        "Set dark mode, theme, transparency, tooltips, shortcuts and Quiet mode. Reduce Motion is respected.",
-        "Quiet Orbit lives by the island or a corner. Minimize cards; trash is recoverable with Undo and Recently Deleted.",
-        "Back up or restore from More. Settings has clipboard retention, Get updates and Quit DaBin. Source files stay untouched.",
-    ]),
-]
+# 2: three clear habits, each paired with a relevant real interface excerpt.
+page = 2
+p2 = COPY["page_two"]
+page_header(p2)
+paragraph(escape(p2["subtitle"]), 36, 86, W - 72, 12, 16, BODY, max_height=18)
+gap = 14
+card_width = (W - 72 - 2 * gap) / 3
+step_assets = ["DABIN__GUIDE__INBOX.png", "DABIN__GUIDE__PROJECTS.png", "DABIN__GUIDE__TASK.png"]
+for index, step in enumerate(p2["steps"]):
+    x = 36 + index * (card_width + gap)
+    rect(x, 123, card_width, 315, WHITE, 15, LINE)
+    badge(step["number"], x + 21, 144, 10)
+    paragraph(escape(step["title"]), x + 40, 135, card_width - 52, 12.3, 15,
+              INK, BOLD, max_height=30)
+    name = step_assets[index]
+    image_crop(name, x + 12, 175, card_width - 24, 131, assets["step_crops"][name])
+    used = paragraph(escape(step["body"]), x + 14, 322, card_width - 28, 10.7,
+                     14, BODY, max_height=70)
+    paragraph(escape(step["tip"]), x + 14, 322 + used + 10, card_width - 28,
+              10.2, 13, PURPLE_DARK, max_height=65)
 
-for index, (title_value, kind, items) in enumerate(cards):
-    row = index // 4
-    column = index % 4
-    x = LEFT + column * (CARD_W + GAP)
-    top = GRID_TOP + row * (CARD_H + ROW_GAP)
-    feature_card(title_value, kind, items, x, top, CARD_W, CARD_H)
-
-# Privacy promise and footer.
-FOOT_TOP = GRID_TOP + 2 * CARD_H + ROW_GAP + 12
-rect(32, FOOT_TOP, W - 64, 43, PURPLE_DARK, radius=12)
-icon("pin", 44, FOOT_TOP + 12, 18, WHITE)
-text("PRIVATE AND LOCAL", 71, FOOT_TOP + 9, 8.3, BOLD, WHITE)
-paragraph(
-    "Readable Year / Month / Day folders on this Mac. No account, analytics, ads, cloud sync, external AI, or automatic uploads. Link previews connect only when you enable them; Quit stops every background activity.",
-    71,
-    FOOT_TOP + 22,
-    W - 117,
-    7.5,
-    9.1,
-    colors.HexColor("#F7F1FA"),
-    max_height=20,
-)
-
-text("DaBin", 32, 574, 7.7, BOLD, PURPLE)
-right("0.4.6 (61)  |  Control-Option-Space search  |  Control-Option-V capture  |  Esc hide  |  Command-Q quit", W - 32, 574, 7.4, NORMAL, MUTED)
-
+rect(36, 454, 474, 103, MINT, 14)
+paragraph(escape(p2["auto_title"]), 50, 465, 445, 12, 15, TEAL, BOLD, max_height=18)
+paragraph(escape(p2["auto_body"]), 50, 488, 445, 10.3, 13.2, BODY, max_height=40)
+paragraph(escape(p2["auto_tip"]), 50, 529, 445, 10.1, 12.8, TEAL, max_height=27)
+rect(524, 454, W - 560, 103, PALE, 14)
+paragraph(escape(p2["comfort_title"]), 538, 465, W - 588, 12, 15,
+          PURPLE_DARK, BOLD, max_height=18)
+paragraph(escape(p2["comfort_body"]), 538, 489, W - 588, 10.3, 13.2,
+          BODY, max_height=65)
+footer(2, "Saved on your Mac. No account or cloud sync.")
 c.showPage()
 c.save()
-copy2(OUT, DOC_COPY)
 
-# Structural and content checks stay with the generator so future edits cannot
-# silently turn this one-pager into a multi-page or incomplete guide.
+# A reusable text version shares the PDF's copy source rather than drifting.
+copy_lines = ["DABIN - FRIENDLY PRODUCT COPY", "", COPY["headline"], "", COPY["description"], "",
+              "ROBOT-LED QUICK GUIDE", "", p1["title"], p1["intro"], "", p1["meet_title"],
+              p1["meet_body"], p1["island_note"], ""]
+for item in p1["callouts"]:
+    copy_lines += [item["title"], item["body"], ""]
+copy_lines += [p2["title"], p2["subtitle"], ""]
+for step in p2["steps"]:
+    copy_lines += [step["title"], step["body"], step["tip"], ""]
+copy_lines += [p2["auto_title"], p2["auto_body"], p2["auto_tip"], "",
+               p2["comfort_title"], p2["comfort_body"], "", p2["privacy_title"], p2["privacy_body"], ""]
+COPY_OUT.write_text("\n".join(copy_lines), encoding="utf-8")
+
 reader = PdfReader(OUT)
-assert len(reader.pages) == 1
-page = reader.pages[0]
-media_box = tuple(round(float(value), 2) for value in page.mediabox)
-assert media_box == (0.0, 0.0, round(W, 2), round(H, 2)), media_box
-extracted = page.extract_text()
-normalized = " ".join(extracted.split())
-
-required = [
-    "Capture anything", "Inbox", "Day", "Week", "All, Text, Links, Files, Media or Tasks",
-    "full archive", "Local recognition", "nearby captures", "source path", "comments",
-    "turn any capture into a task", "Completed", "reorder Today", "countdown", "focus timer",
-    "Workspace", "Explorer", "snippets", "scratchpads", "shelf", "ZIP", "Copy as plain text",
-    "Copy or export", "full displayed week", "ignore active filters", "UTF-8",
-    "Auto Capture", "Off by default", "common password managers are excluded",
-    "Four automatic saves in one local clock hour", "ten eating reactions", "generic token",
-    "dark mode", "transparency", "Quiet Orbit", "Recently Deleted", "Undo",
-    "Back up or restore", "clipboard retention", "Get updates", "APPLE SILICON",
-    "Readable Year / Month / Day folders", "No account, analytics, ads, cloud sync, external AI, or automatic uploads",
-]
-
-for phrase in required:
-    assert phrase.lower() in normalized.lower(), phrase
+assert len(reader.pages) == 2
+extracted = "\n".join(p.extract_text() for p in reader.pages)
+searchable_text = " ".join(extracted.split()).lower()
 assert "\ufffd" not in extracted
-assert all(block["x"] >= 28 and block["x"] + block["width"] <= W - 28 for block in text_blocks)
-assert all(block["top"] + block["height"] < H - 11 for block in text_blocks)
+required = ["Hi, I'm DaBin.", "Choose a project", "Inbox", "Today", "Projects", "Explorer",
+            "Find it again", "Save now. Sort later.", "Auto Capture", "off by default",
+            "Only new changes are saved", "task stays open", "Show tooltips"]
+for phrase in required:
+    assert phrase.lower() in searchable_text, phrase
+for block in blocks:
+    assert block["x"] >= 30 and block["x"] + block["width"] <= W - 28, block
+    assert block["top"] + block["height"] <= H - 9, block
+for item in images:
+    assert item["x"] >= 30 and item["x"] + item["width"] <= W - 28, item
+    assert item["top"] + item["height"] <= H - 30, item
+copy2(OUT, DOC_COPY)
 assert OUT.read_bytes() == DOC_COPY.read_bytes()
-
-QA_PATH.write_text(
-    json.dumps(
-        {
-            "page_count": len(reader.pages),
-            "page_size": "A4 landscape",
-            "media_box": media_box,
-            "word_count": len(extracted.split()),
-            "cards": card_checks,
-            "paragraphs": text_blocks,
-            "required_phrases": required,
-            "text": extracted,
-        },
-        indent=2,
-    )
-)
+QA_PATH.write_text(json.dumps(dict(
+    page_count=2, page_size="A4 landscape", word_count=len(extracted.split()),
+    paragraphs=blocks, images=images, native_annotations=annotations,
+    pdf_sha256=hashlib.sha256(OUT.read_bytes()).hexdigest(),
+    copy_source_sha256=hashlib.sha256((DESIGN / "copy.json").read_bytes()).hexdigest(),
+    native_asset_manifest=str(MANIFEST.relative_to(ROOT)),
+    embedded_fonts={name: str(path) for name, path in FONT_FILES.items()},
+    native_asset_hash_check="PASS",
+    current_native_source_hash_check="PASS",
+    copy_output_sha256=hashlib.sha256(COPY_OUT.read_bytes()).hexdigest(),
+    required_phrases=required, text=extracted,
+    privacy="Actual native views with isolated fictional examples; no personal capture screenshots.",
+    visual_review="Pending Poppler rendering and manual review."
+), indent=2), encoding="utf-8")
 print(OUT)
-print(DOC_COPY)
-print(f"PASS: one A4 page, {len(extracted.split())} words, complete feature checklist, matching copies")
+print(COPY_OUT)
+print(f"PASS: two A4 landscape pages, {len(extracted.split())} words, matching PDF copies; render before delivery")

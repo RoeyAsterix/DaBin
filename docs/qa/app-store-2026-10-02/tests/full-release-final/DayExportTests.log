@@ -1,0 +1,1 @@
+PASS: 36 day/week export checks; deterministic content, fixed date scopes, cutoff, grouping and UTF-8 identity.

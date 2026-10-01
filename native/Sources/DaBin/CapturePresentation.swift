@@ -49,6 +49,12 @@ func captureClock(_ capture: Capture) -> String {
     return formatter.string(from: capture.capturedAt)
 }
 
+/// Display the immutable receipt's civil date and clock, not the last edit or
+/// the current machine's time zone.
+func captureReceiptText(_ capture: Capture, includeWeekday: Bool = false) -> String {
+    "\(prettyDay(capture.captureDay, includeWeekday: includeWeekday)) · \(captureClock(capture))"
+}
+
 func prettyDay(_ day: String, includeWeekday: Bool = true) -> String {
     let parser = DateFormatter()
     parser.locale = Locale(identifier: "en_US_POSIX")

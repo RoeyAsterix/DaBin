@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "verifiedAtUTC": "2026-10-01T18:35:45Z",
+  "version": "0.4.13",
+  "buildNumber": "68",
+  "configuration": "Release",
+  "architecture": "arm64",
+  "installedApp": "/Users/roeylibfeld/Applications/DaBin.app",
+  "previousAppBackup": "/Users/roeylibfeld/Applications/.DaBinBackups/20261001-213248-fe600095.app",
+  "forceQuitExplicitlyAuthorized": true,
+  "previousPID": 42680,
+  "previousProcessExitedBeforeInstall": true,
+  "runningPID": 61949,
+  "installedStrictCodeSignatureVerified": true,
+  "installedMainSHA256": "3bd48a60428517049f08379a341d1e387ad299e3dbca8f485af9ef3e4699df38",
+  "installedHelperSHA256": "3797d8a050909773beb3ebced5022726fc4e8c8550b47590a960ae40bbe7d6f6",
+  "installedExecutablesMatchBuildReceipt": true,
+  "buildInputHashesMatchCurrentSources": true,
+  "selectedQASuitesPassed": 16,
+  "selectedQASuitesFailed": 0,
+  "qaReport": "native/build/qa/runs/20261001T182718814017Z/report.json",
+  "liveChecks": {
+    "settingsDisplaysInstalledVersion": "DaBin 0.4.13 (68)",
+    "showTooltipsPreferenceVisible": true,
+    "visibleCaptureCardsHaveNoManualAddPasteControl": true,
+    "settingsAndBackNavigationRespond": true,
+    "returnedToPreviousInboxView": true
+  },
+  "readOnlyProcessSnapshot": {
+    "elapsed": "02:44",
+    "cpuPercent": 0.1,
+    "rssKiB": 127520
+  },
+  "installerModifiedArchive": false,
+  "verificationEditedCapturesOrToggledPreferences": false,
+  "publicReleasePublished": false,
+  "limitations": [
+    "No before-and-after byte inventory of the personal archive was performed in this installation step.",
+    "Two-second-message expiry was not changed because the intended message type remains unidentified.",
+    "Installed-app desktop pointer dwell was not tested; tooltip presentation and click-through have isolated native fixture coverage."
+  ]
+}

@@ -107,6 +107,25 @@ private struct Fixtures: Decodable { let entries: [FixtureEntry]; let cases: [Fi
                    "Text search excludes matching tasks while retaining surrounding context")
     }
 
+    @MainActor private static func checkCachedOriginalSearch() throws {
+        let original = String(repeating: "long original note ", count: 1_000) + "Café مرحبا"
+        let capture = Capture(kind: .text, originalText: original, title: "First title")
+        func hits(_ query: String) -> [UUID] {
+            CaptureSearch.groups(captures: [capture], query: query, filter: .all, includeContext: false)
+                .flatMap(\.entries).filter(\.isMatch).map(\.id)
+        }
+        try expect(hits("cafe مرحبا") == [capture.id], "Long original search retains accent folding and mixed-language matching")
+        capture.title = "Updated title"
+        capture.comment = "Fresh comment"
+        capture.indexedText = "New derived content"
+        try expect(hits("updated cafe fresh derived") == [capture.id], "Warm original search still combines current title, comment and indexed text")
+        try expect(hits("first title").isEmpty, "Original caching never retains an edited title")
+        capture.comment = "Replacement comment"
+        capture.indexedText = "Different derived content"
+        try expect(hits("fresh").isEmpty && hits("new derived").isEmpty, "Mutable comment and derived search text remain current after warming the original cache")
+        try expect(capture.originalText == original, "Search leaves the exact captured original unchanged")
+    }
+
     @MainActor private static func checkDateScopedSearch() throws {
         let zone = TimeZone(secondsFromGMT: 0)!
         func item(_ stamp: String, day: String, kind: CaptureKind = .text,
@@ -207,6 +226,7 @@ private struct Fixtures: Decodable { let entries: [FixtureEntry]; let cases: [Fi
         try expect(CaptureFilter.media.includes(.image) && CaptureFilter.media.includes(.video), "Media filter scope")
         try checkTextFilterAndSearch()
         try checkTasksFilterAndSearch()
+        try checkCachedOriginalSearch()
         try checkDateScopedSearch()
         let newYork = TimeZone(identifier: "America/New_York")!
         let beforeDST = date("2026-11-01T05:30:00Z")
@@ -387,7 +407,11 @@ private struct Fixtures: Decodable { let entries: [FixtureEntry]; let cases: [Fi
             let recoveryRoot = root.appendingPathComponent("recovery-\(checkpoint.rawValue)")
             var interrupted: CaptureStore? = try CaptureStore(root: recoveryRoot)
             interrupted!.failureInjector = { if $0 == checkpoint { throw CaptureStoreError.injectedInterruption } }
-            do { _ = try await interrupted!.importData(payload, filename: "original.bin", at: receipt, timeZone: zone, source: attributedSource) }
+            do {
+                _ = try await interrupted!.importData(payload, filename: "original.bin", at: receipt,
+                                                       timeZone: zone, source: attributedSource,
+                                                       projectName: "Recovery project")
+            }
             catch CaptureStoreError.injectedInterruption { checks += 1 }
             interrupted = nil
             let recovered = try CaptureStore(root: recoveryRoot)
@@ -399,6 +423,9 @@ private struct Fixtures: Decodable { let entries: [FixtureEntry]; let cases: [Fi
                 let recoveredCapture = recovered.captures[0]
                 try expect(recoveredCapture.capturedAt == receipt && recoveredCapture.captureDay == "2026-09-21", "\(checkpoint): recovery retains receipt stamp")
                 try expect(recoveredCapture.sourceFilePath == attributedSource.filePath && recoveredCapture.sourceURL == attributedSource.url, "\(checkpoint): recovery retains source metadata")
+                try expect(recoveredCapture.projectName == "Recovery project"
+                           && recoveredCapture.attachmentRelativePath?.hasPrefix(ProjectFileArchive.projectRelativePath("Recovery project") + "/") == true,
+                           "\(checkpoint): recovery restores initial project filing from the import journal")
                 try expect(try Data(contentsOf: recovered.managedURL(for: recoveredCapture)!) == payload, "\(checkpoint): recovery retains bytes")
                 let secondOpen = try CaptureStore(root: recoveryRoot)
                 try expect(secondOpen.captures.count == 1, "\(checkpoint): recovery is idempotent")

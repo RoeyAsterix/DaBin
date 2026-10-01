@@ -6,6 +6,7 @@ struct ScratchpadView: View {
     @ObservedObject var workspace: WorkspaceStore
     @Environment(\.daBinAccent) private var accent
     @State private var message: String?
+    @StateObject private var successPresentation = TransientMessagePresentation<String>()
     @State private var savedCaptureID: UUID?
     @State private var savedText: String?
 
@@ -30,8 +31,8 @@ struct ScratchpadView: View {
             HStack(spacing: 10) {
                 if pending {
                     Button("Retry save", systemImage: "arrow.clockwise") {
-                        do { try workspace.setScratchpad(text: text, project: project); message = nil }
-                        catch { message = error.localizedDescription }
+                        do { try workspace.setScratchpad(text: text, project: project); clearFeedback() }
+                        catch { successPresentation.dismiss(); message = error.localizedDescription }
                     }
                 } else {
                     Button("Save note", systemImage: "square.and.arrow.down") { saveNote(asTask: false) }
@@ -44,8 +45,8 @@ struct ScratchpadView: View {
             Text("A place to think. Your notes stay on this Mac after you close DaBin.")
                 .font(.system(size: 14)).foregroundStyle(Palette.muted).fixedSize(horizontal: false, vertical: true)
             TextEditor(text: Binding(get: { text }, set: { value in
-                do { try workspace.setScratchpad(text: value, project: project); message = nil }
-                catch { message = error.localizedDescription }
+                do { try workspace.setScratchpad(text: value, project: project); clearFeedback() }
+                catch { successPresentation.dismiss(); message = error.localizedDescription }
             }))
             .font(.system(size: 14)).lineSpacing(4).scrollContentBackground(.hidden)
             .padding(12).frame(height: max(220, geometry.size.height - 220))
@@ -53,7 +54,7 @@ struct ScratchpadView: View {
             .overlay(RoundedRectangle(cornerRadius: 12).strokeBorder(Palette.line, lineWidth: 0.75))
             .accessibilityLabel("Autosaving scratchpad")
             .accessibilityIdentifier("workspace-scratchpad")
-            if let message {
+            if let message = message ?? successPresentation.visibleMessage {
                 Text(message).font(.system(size: 13)).foregroundStyle(pending ? Palette.task : Palette.muted)
                     .fixedSize(horizontal: false, vertical: true)
             }
@@ -61,7 +62,8 @@ struct ScratchpadView: View {
                 .font(.system(size: 12)).foregroundStyle(Palette.muted).fixedSize(horizontal: false, vertical: true)
         }.frame(maxWidth: 740).padding(.horizontal, 16).padding(.bottom, 16)
             .frame(maxWidth: .infinity, alignment: .top)
-            .onChange(of: project) { _, _ in message = nil; savedCaptureID = nil; savedText = nil }
+            .onChange(of: project) { _, _ in clearFeedback(); savedCaptureID = nil; savedText = nil }
+            .onDisappear { successPresentation.dismiss() }
         }
         }
     }
@@ -79,12 +81,22 @@ struct ScratchpadView: View {
                 state.didCapture([capture])
             }
             if asTask {
+                clearFeedback()
                 if capture.isTask { state.openCapture(capture.id, focus: "task") }
                 else { state.convertToTask(capture, openDetails: true) }
             } else {
-                message = "Saved in \(project ?? "your library"). Your scratchpad is still here."
+                message = nil
+                successPresentation.present("Saved in \(project ?? "your library"). Your scratchpad is still here.")
                 workspace.selectedCaptureID = capture.id
             }
-        } catch { message = "Couldn’t save this note. " + error.localizedDescription }
+        } catch {
+            successPresentation.dismiss()
+            message = "Couldn’t save this note. " + error.localizedDescription
+        }
+    }
+
+    private func clearFeedback() {
+        message = nil
+        successPresentation.dismiss()
     }
 }

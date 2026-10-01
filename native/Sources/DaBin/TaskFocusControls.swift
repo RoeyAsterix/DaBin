@@ -62,7 +62,7 @@ struct TaskFocusControls: View {
                     }.buttonStyle(.plain).accessibilityLabel("Set focus duration")
                         .accessibilityIdentifier("task-focus-duration-\(capture.id.uuidString)")
                         .buddyHelp("Set hours and minutes")
-                        .popover(isPresented: $showDuration, arrowEdge: .bottom) { durationForm }
+                        .popover(isPresented: $showDuration, arrowEdge: .bottom) { durationForm.hoverTooltips() }
                     Button {
                         if capture.taskPlanning?.effortMinutes == nil { openDuration() }
                         else { _ = state.toggleTaskFocus(capture) }
@@ -88,7 +88,7 @@ struct TaskFocusControls: View {
                     .accessibilityLabel("Schedule task: \(scheduleLabel)")
                     .accessibilityIdentifier("task-focus-schedule-\(capture.id.uuidString)")
                     .buddyHelp("Choose when to work, separate from a reminder")
-                    .popover(isPresented: $showSchedule, arrowEdge: .bottom) { scheduleForm }
+                    .popover(isPresented: $showSchedule, arrowEdge: .bottom) { scheduleForm.hoverTooltips() }
     }
 
     private func countdown(large: Bool) -> some View {

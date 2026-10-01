@@ -46,10 +46,25 @@ struct AutomaticHourGroup: Identifiable {
     let id: AutomaticHourKey
     let actions: [AutomaticCaptureAction]
     let totalActionCount: Int
+    /// Capture records still inside the collection before the active type filter.
+    /// Promoted tasks have their own cards and are not counted as hidden contents.
+    let totalCaptureCount: Int
     let displaysDate: Bool
 
     var visibleActionCount: Int { actions.count }
     var captures: [Capture] { actions.flatMap(\.captures) }
+    var visibleCaptureCount: Int { captures.count }
+    var captureCountLabel: String {
+        if visibleCaptureCount == totalCaptureCount {
+            return "\(totalCaptureCount) \(totalCaptureCount == 1 ? "capture" : "captures")"
+        }
+        return "\(visibleCaptureCount) of \(totalCaptureCount) captures"
+    }
+    var actionCountLabel: String {
+        visibleActionCount == totalActionCount
+            ? "\(totalActionCount) actions"
+            : "\(visibleActionCount) of \(totalActionCount) actions"
+    }
 
     var summaryTitle: String {
         let count: String
@@ -167,6 +182,7 @@ enum HourlyCaptureFeed {
                     id: action.hour,
                     actions: visibleActions,
                     totalActionCount: allActions.count,
+                    totalCaptureCount: allActions.reduce(0) { $0 + $1.captures.filter { !$0.isTask }.count },
                     displaysDate: action.hour.captureDay != todayKey
                 )))
             }

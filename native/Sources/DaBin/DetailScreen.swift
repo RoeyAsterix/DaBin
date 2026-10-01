@@ -28,7 +28,6 @@ struct DetailScreen: View {
     @ObservedObject var draft: CaptureDraft
     @FocusState private var focusedField: String?
     @State private var copiedSearchableText = false
-    @State private var showingProjectEditor = false
     @State private var taskExpanded = true
     @State private var infoExpanded = false
     @State private var noteExpanded = false
@@ -43,6 +42,8 @@ struct DetailScreen: View {
                 ScrollViewReader { proxy in
                     ScrollView {
                         VStack(alignment: .leading, spacing: layout.sectionSpacing) {
+                            CaptureProjectPickerButton(state: state, capture: capture)
+                                .frame(maxWidth: .infinity, alignment: .leading)
                             HStack(alignment: .top, spacing: 8) {
                                 if capture.isTask { TaskStatusButton(state: state, capture: capture) }
                                 VStack(alignment: .leading, spacing: 8) {
@@ -63,8 +64,13 @@ struct DetailScreen: View {
                                             .textSelection(.enabled).fixedSize(horizontal: false, vertical: true)
                                     }
                                     Button { state.showCaptureDay(capture) } label: {
-                                        Label("\(prettyDay(capture.captureDay)) · \(captureClock(capture))", systemImage: "calendar")
-                                    }.font(.system(size: 11)).buttonStyle(.plain).foregroundStyle(Palette.muted).buddyHelp("Show original capture day")
+                                        Label(captureReceiptText(capture, includeWeekday: true), systemImage: "calendar")
+                                            .monospacedDigit().fixedSize(horizontal: false, vertical: true)
+                                    }.font(.system(size: 16, weight: .medium)).buttonStyle(.plain)
+                                        .foregroundStyle(Palette.foreground)
+                                        .accessibilityLabel("Captured \(prettyDay(capture.captureDay)) at \(captureClock(capture))")
+                                        .accessibilityIdentifier("detail-captured-at")
+                                        .buddyHelp("Show original capture day")
                                 }.frame(maxWidth: .infinity, alignment: .leading)
                             }
                             CaptureTrailView(state: state, capture: capture, compact: false)
@@ -97,7 +103,6 @@ struct DetailScreen: View {
                                 Button { state.openCapture(parent, focus: "task") } label: { Label("Back to task", systemImage: "arrow.turn.up.left") }
                                     .buttonStyle(.plain).foregroundStyle(accent).font(.system(size: 12))
                             }
-                            if showingProjectEditor { organization.id("project") }
                             DisclosureGroup(isExpanded: $noteExpanded) { commentField(height: layout.commentHeight).padding(.top, 8) } label: {
                                 Label(capture.comment.isEmpty ? "Comment" : "Comment · saved", systemImage: "text.bubble")
                                     .font(.system(size: 12, weight: .medium))
@@ -117,8 +122,9 @@ struct DetailScreen: View {
                             } label: {
                                 Label("File & recognized text", systemImage: "doc.text.magnifyingglass").font(.system(size: 12))
                             }
-                            if let serviceStatus = state.reminders.status {
+                            if let serviceStatus = state.reminders.visibleStatus {
                                 Text(serviceStatus).font(.system(size: 12)).foregroundStyle(Palette.muted).fixedSize(horizontal: false, vertical: true)
+                                    .accessibilityIdentifier("detail-reminder-feedback")
                             }
                             if let reminder = capture.reminderAt, !(capture.isTask && capture.isCompleted), reminder > Date(), !["scheduled", "delivered"].contains(capture.notificationState) {
                                 Button("Retry notification", systemImage: "bell.badge") { state.retryReminder(capture) }
@@ -134,7 +140,6 @@ struct DetailScreen: View {
                         if let target = state.detailFocus {
                             noteExpanded = noteExpanded || target == "comment"
                             reminderExpanded = reminderExpanded || target == "reminder"
-                            if target == "project" { showingProjectEditor = true }
                             proxy.scrollTo(target, anchor: .top)
                             focusedField = target
                         }
@@ -143,7 +148,6 @@ struct DetailScreen: View {
                         if target == "comment" { noteExpanded = true }
                         if target == "reminder" { reminderExpanded = true }
                         if target == "task" { taskExpanded = true }
-                        if target == "project" { showingProjectEditor = true }
                         proxy.scrollTo(target, anchor: .top)
                         focusedField = target
                     }.onChange(of: capture.isTask) { _, isTask in
@@ -153,8 +157,9 @@ struct DetailScreen: View {
             }
             HStack(spacing: 10) {
                 VStack(alignment: .leading, spacing: 2) {
-                    if let message = draft.message {
+                    if let message = draft.visibleMessage {
                         Text(message).foregroundStyle(draft.hasError ? Color.red : Palette.muted)
+                            .accessibilityIdentifier("detail-save-feedback")
                     } else {
                         Text(draft.hasChanges ? "Draft kept locally · Save to apply" : "Captured day stays the same").foregroundStyle(Palette.muted)
                     }
@@ -169,7 +174,8 @@ struct DetailScreen: View {
 
     private func originalContent(layout: DetailLayout) -> some View {
         VStack(alignment: .leading, spacing: 12) {
-            DetailPreview(store: state.store, capture: capture, height: layout.previewHeight)
+            DetailPreview(store: state.store, capture: capture, height: layout.previewHeight,
+                          onOpenOriginal: { state.openOriginal(capture) })
             if let text = capture.originalText, !text.isEmpty, capture.kind == .text || capture.kind == .task {
                 if capture.isTask || text != capture.title {
                     Text(text).font(.system(size: layout.bodySize)).lineSpacing(5).textSelection(.enabled)
@@ -201,8 +207,7 @@ struct DetailScreen: View {
 
     private var actionRail: some View {
         HStack(spacing: 4) {
-            CaptureProjectPickerButton(state: state, capture: capture)
-                .frame(maxWidth: .infinity, alignment: .leading)
+            Spacer(minLength: 0)
             BuddyIconButton(symbol: "doc.on.doc", title: "Copy capture") { state.copyCapturesToClipboard([capture]) }
             if !capture.isTask { CaptureTaskConversionButton(state: state, capture: capture) }
             BuddyIconButton(symbol: capture.isPinned ? "pin.fill" : "pin", title: capture.isPinned ? "Unpin" : "Pin", isActive: capture.isPinned) { state.togglePinned(capture) }
@@ -212,16 +217,6 @@ struct DetailScreen: View {
             BuddyIconButton(symbol: "folder", title: "Show saved folder") { state.showArchiveFolder(for: capture) }
             CaptureTrashButton(state: state, capture: capture)
         }.accessibilityElement(children: .contain).accessibilityLabel("Capture actions")
-    }
-
-    private var organization: some View {
-        HStack(spacing: 12) {
-            CaptureProjectPickerButton(state: state, capture: capture)
-            Spacer(minLength: 0)
-            BuddyIconButton(symbol: capture.isPinned ? "pin.fill" : "pin", title: capture.isPinned ? "Unpin" : "Pin", isActive: capture.isPinned) {
-                state.togglePinned(capture)
-            }
-        }.accessibilityElement(children: .contain).accessibilityLabel("Project and pin")
     }
 
     @ViewBuilder
@@ -305,9 +300,6 @@ struct DetailScreen: View {
                 if let bytes = capture.byteCount { Text(ByteCountFormatter.string(fromByteCount: bytes, countStyle: .file)).font(.system(size: 11)).foregroundStyle(Palette.muted) }
             }
             Spacer(minLength: 0)
-            if capture.kind != .text {
-                Button("Open original") { state.openOriginal(capture) }.controlSize(.small).fixedSize()
-            }
         }.padding(.vertical, 11)
             .overlay(alignment: .top) { Rectangle().fill(Palette.line).frame(height: 1) }
             .overlay(alignment: .bottom) { Rectangle().fill(Palette.line).frame(height: 1) }

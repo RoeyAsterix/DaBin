@@ -1,0 +1,1698 @@
+{
+  "assets" : [
+    {
+      "anchors" : [
+        {
+          "id" : "workspace-project-picker",
+          "label" : "Project, Weekend ideas",
+          "logicalRectFromTopLeft" : [
+            22,
+            38,
+            240,
+            36
+          ]
+        },
+        {
+          "id" : "timeline-auto-capture",
+          "label" : "Set up Auto Capture",
+          "logicalRectFromTopLeft" : [
+            265,
+            39,
+            40,
+            34
+          ]
+        },
+        {
+          "id" : "timeline-action-add",
+          "label" : "Add capture",
+          "logicalRectFromTopLeft" : [
+            618,
+            49,
+            20,
+            14
+          ]
+        },
+        {
+          "id" : "board-search",
+          "label" : "Search all captures",
+          "logicalRectFromTopLeft" : [
+            641,
+            40,
+            32,
+            32
+          ]
+        },
+        {
+          "id" : "board-settings",
+          "label" : "Settings",
+          "logicalRectFromTopLeft" : [
+            676,
+            40,
+            32,
+            32
+          ]
+        },
+        {
+          "id" : "board-more",
+          "label" : "More options",
+          "logicalRectFromTopLeft" : [
+            711,
+            48.5,
+            21,
+            15
+          ]
+        },
+        {
+          "id" : "window-expand",
+          "label" : "Expand or restore window",
+          "logicalRectFromTopLeft" : [
+            735,
+            40,
+            32,
+            32
+          ]
+        },
+        {
+          "id" : "window-close",
+          "label" : "Hide DaBin",
+          "logicalRectFromTopLeft" : [
+            770,
+            41,
+            28,
+            30
+          ]
+        },
+        {
+          "id" : "",
+          "label" : "Main views",
+          "logicalRectFromTopLeft" : [
+            22,
+            78,
+            776,
+            32
+          ]
+        },
+        {
+          "id" : "primary-inbox",
+          "label" : "Inbox",
+          "logicalRectFromTopLeft" : [
+            22,
+            78,
+            256,
+            32
+          ]
+        },
+        {
+          "id" : "primary-today",
+          "label" : "Today",
+          "logicalRectFromTopLeft" : [
+            282,
+            78,
+            256,
+            32
+          ]
+        },
+        {
+          "id" : "primary-workspace",
+          "label" : "Projects",
+          "logicalRectFromTopLeft" : [
+            542,
+            78,
+            256,
+            32
+          ]
+        },
+        {
+          "id" : "workspace-mode-collection",
+          "label" : "Explorer",
+          "logicalRectFromTopLeft" : [
+            29,
+            127,
+            187.5,
+            32
+          ]
+        },
+        {
+          "id" : "workspace-mode-clipboard",
+          "label" : "Clipboard",
+          "logicalRectFromTopLeft" : [
+            220.5,
+            127,
+            187.5,
+            32
+          ]
+        },
+        {
+          "id" : "workspace-mode-shelf",
+          "label" : "Shelf",
+          "logicalRectFromTopLeft" : [
+            412,
+            127,
+            187.5,
+            32
+          ]
+        },
+        {
+          "id" : "workspace-mode-scratchpad",
+          "label" : "Notes",
+          "logicalRectFromTopLeft" : [
+            603.5,
+            127,
+            187.5,
+            32
+          ]
+        },
+        {
+          "id" : "capture-filter-all",
+          "label" : "All",
+          "logicalRectFromTopLeft" : [
+            26,
+            170,
+            32,
+            32
+          ]
+        },
+        {
+          "id" : "capture-filter-text",
+          "label" : "Copy\/paste text",
+          "logicalRectFromTopLeft" : [
+            62,
+            170,
+            32,
+            32
+          ]
+        },
+        {
+          "id" : "capture-filter-links",
+          "label" : "Links",
+          "logicalRectFromTopLeft" : [
+            98,
+            170,
+            32,
+            32
+          ]
+        },
+        {
+          "id" : "capture-filter-files",
+          "label" : "Files",
+          "logicalRectFromTopLeft" : [
+            134,
+            170,
+            32,
+            32
+          ]
+        },
+        {
+          "id" : "capture-filter-media",
+          "label" : "Media",
+          "logicalRectFromTopLeft" : [
+            170,
+            170,
+            32,
+            32
+          ]
+        },
+        {
+          "id" : "capture-filter-tasks",
+          "label" : "Tasks",
+          "logicalRectFromTopLeft" : [
+            206,
+            170,
+            32,
+            32
+          ]
+        },
+        {
+          "id" : "workspace-extra-filters",
+          "label" : "Filter by date, source application or capture origin",
+          "logicalRectFromTopLeft" : [
+            731.5,
+            178.5,
+            21,
+            15
+          ]
+        },
+        {
+          "id" : "",
+          "label" : "Show pinned captures",
+          "logicalRectFromTopLeft" : [
+            762,
+            170,
+            32,
+            32
+          ]
+        },
+        {
+          "id" : "explorer-browser",
+          "label" : "Explorer",
+          "logicalRectFromTopLeft" : [
+            10,
+            212,
+            800,
+            388
+          ]
+        },
+        {
+          "id" : "explorer-search",
+          "label" : "Search Explorer",
+          "logicalRectFromTopLeft" : [
+            56.5,
+            220,
+            653.5,
+            16
+          ]
+        },
+        {
+          "id" : "explorer-paste",
+          "label" : "Paste",
+          "logicalRectFromTopLeft" : [
+            724,
+            212,
+            32,
+            32
+          ]
+        },
+        {
+          "id" : "explorer-add-files",
+          "label" : "Files",
+          "logicalRectFromTopLeft" : [
+            762,
+            212,
+            32,
+            32
+          ]
+        },
+        {
+          "id" : "",
+          "label" : "",
+          "logicalRectFromTopLeft" : [
+            28,
+            262,
+            284,
+            619.32476806640625
+          ]
+        },
+        {
+          "id" : "",
+          "label" : "",
+          "logicalRectFromTopLeft" : [
+            29.5,
+            262,
+            56.5,
+            14
+          ]
+        },
+        {
+          "id" : "",
+          "label" : "",
+          "logicalRectFromTopLeft" : [
+            306,
+            262.0623779296875,
+            6,
+            14
+          ]
+        },
+        {
+          "id" : "",
+          "label" : "Project",
+          "logicalRectFromTopLeft" : [
+            28,
+            301,
+            144,
+            28
+          ]
+        },
+        {
+          "id" : "capture-copy-C45D258F-A418-4CF4-A7A1-D9C915EDB936",
+          "label" : "Copy A trail worth saving to clipboard",
+          "logicalRectFromTopLeft" : [
+            248,
+            302,
+            28,
+            26
+          ]
+        },
+        {
+          "id" : "capture-trash-C45D258F-A418-4CF4-A7A1-D9C915EDB936",
+          "label" : "Move A trail worth saving to Recently Deleted",
+          "logicalRectFromTopLeft" : [
+            280,
+            299,
+            32,
+            32
+          ]
+        },
+        {
+          "id" : "workspace-item-C45D258F-A418-4CF4-A7A1-D9C915EDB936",
+          "label" : "Open A trail worth saving",
+          "logicalRectFromTopLeft" : [
+            28,
+            339,
+            284,
+            273.5
+          ]
+        },
+        {
+          "id" : "",
+          "label" : "",
+          "logicalRectFromTopLeft" : [
+            28,
+            620.5,
+            106.5,
+            34
+          ]
+        },
+        {
+          "id" : "capture-trail-C45D258F-A418-4CF4-A7A1-D9C915EDB936",
+          "label" : "From Unknown source. No paste destinations recorded. Open content trail.",
+          "logicalRectFromTopLeft" : [
+            28,
+            620.5,
+            106.5,
+            34
+          ]
+        },
+        {
+          "id" : "",
+          "label" : "Turn into task",
+          "logicalRectFromTopLeft" : [
+            280,
+            621.5,
+            32,
+            32
+          ]
+        },
+        {
+          "id" : "",
+          "label" : "",
+          "logicalRectFromTopLeft" : [
+            29.5,
+            682.32476806640625,
+            101,
+            14
+          ]
+        },
+        {
+          "id" : "",
+          "label" : "",
+          "logicalRectFromTopLeft" : [
+            306,
+            682.32475585937573,
+            6,
+            14
+          ]
+        },
+        {
+          "id" : "",
+          "label" : "Project",
+          "logicalRectFromTopLeft" : [
+            28,
+            721.5,
+            144,
+            28
+          ]
+        },
+        {
+          "id" : "capture-copy-B792E83E-F881-41BF-B782-9A184BA137A9",
+          "label" : "Copy A little fresh air to clipboard",
+          "logicalRectFromTopLeft" : [
+            248,
+            722.5,
+            28,
+            26
+          ]
+        },
+        {
+          "id" : "capture-trash-B792E83E-F881-41BF-B782-9A184BA137A9",
+          "label" : "Move A little fresh air to Recently Deleted",
+          "logicalRectFromTopLeft" : [
+            280,
+            719.5,
+            32,
+            32
+          ]
+        },
+        {
+          "id" : "workspace-item-B792E83E-F881-41BF-B782-9A184BA137A9",
+          "label" : "Open A little fresh air",
+          "logicalRectFromTopLeft" : [
+            28,
+            759.5,
+            284,
+            38
+          ]
+        },
+        {
+          "id" : "",
+          "label" : "",
+          "logicalRectFromTopLeft" : [
+            28,
+            805.5,
+            106.5,
+            34
+          ]
+        },
+        {
+          "id" : "capture-trail-B792E83E-F881-41BF-B782-9A184BA137A9",
+          "label" : "From Unknown source. No paste destinations recorded. Open content trail.",
+          "logicalRectFromTopLeft" : [
+            28,
+            805.5,
+            106.5,
+            34
+          ]
+        },
+        {
+          "id" : "",
+          "label" : "Turn into task",
+          "logicalRectFromTopLeft" : [
+            280,
+            806.5,
+            32,
+            32
+          ]
+        },
+        {
+          "id" : "",
+          "label" : "",
+          "logicalRectFromTopLeft" : [
+            29,
+            867.32476806640625,
+            52,
+            14
+          ]
+        },
+        {
+          "id" : "",
+          "label" : "",
+          "logicalRectFromTopLeft" : [
+            306,
+            867.32475585937573,
+            6,
+            14
+          ]
+        },
+        {
+          "id" : "explorer-inspector",
+          "label" : "",
+          "logicalRectFromTopLeft" : [
+            331,
+            252,
+            479,
+            310
+          ]
+        },
+        {
+          "id" : "",
+          "label" : "Project",
+          "logicalRectFromTopLeft" : [
+            351,
+            272,
+            144,
+            28
+          ]
+        },
+        {
+          "id" : "",
+          "label" : "",
+          "logicalRectFromTopLeft" : [
+            351,
+            358,
+            106.5,
+            34
+          ]
+        },
+        {
+          "id" : "capture-trail-C45D258F-A418-4CF4-A7A1-D9C915EDB936",
+          "label" : "From Unknown source. No paste destinations recorded. Open content trail.",
+          "logicalRectFromTopLeft" : [
+            351,
+            358,
+            106.5,
+            34
+          ]
+        },
+        {
+          "id" : "",
+          "label" : "",
+          "logicalRectFromTopLeft" : [
+            758,
+            368,
+            32,
+            14
+          ]
+        },
+        {
+          "id" : "detail-preview",
+          "label" : "Capture preview",
+          "logicalRectFromTopLeft" : [
+            351,
+            406,
+            439,
+            186
+          ]
+        },
+        {
+          "id" : "detail-preview-open-original",
+          "label" : "Open original file: A trail worth saving",
+          "logicalRectFromTopLeft" : [
+            351,
+            406,
+            439,
+            186
+          ]
+        },
+        {
+          "id" : "explorer-open-details",
+          "label" : "Details",
+          "logicalRectFromTopLeft" : [
+            351,
+            607,
+            90,
+            24
+          ]
+        },
+        {
+          "id" : "capture-copy-C45D258F-A418-4CF4-A7A1-D9C915EDB936",
+          "label" : "Copy A trail worth saving to clipboard",
+          "logicalRectFromTopLeft" : [
+            762,
+            606,
+            28,
+            26
+          ]
+        },
+        {
+          "id" : "",
+          "label" : "Reveal saved file",
+          "logicalRectFromTopLeft" : [
+            351,
+            646,
+            150.5,
+            24
+          ]
+        },
+        {
+          "id" : "",
+          "label" : "Saved location",
+          "logicalRectFromTopLeft" : [
+            328.5,
+            679,
+            117,
+            15
+          ]
+        },
+        {
+          "id" : "",
+          "label" : "",
+          "logicalRectFromTopLeft" : [
+            351,
+            712,
+            131.5,
+            14
+          ]
+        },
+        {
+          "id" : "",
+          "label" : "",
+          "logicalRectFromTopLeft" : [
+            22,
+            574,
+            39,
+            14
+          ]
+        },
+        {
+          "id" : "explorer-daily-files",
+          "label" : "Daily files",
+          "logicalRectFromTopLeft" : [
+            69.5,
+            573.9376220703125,
+            70,
+            14
+          ]
+        },
+        {
+          "id" : "",
+          "label" : "Export visible items as ZIP",
+          "logicalRectFromTopLeft" : [
+            727,
+            565,
+            32,
+            32
+          ]
+        },
+        {
+          "id" : "",
+          "label" : "Open this project in Finder",
+          "logicalRectFromTopLeft" : [
+            766,
+            565,
+            32,
+            32
+          ]
+        },
+        {
+          "id" : "auto-capture-status",
+          "label" : "Auto Capture: Off · choose what to capture",
+          "logicalRectFromTopLeft" : [
+            42,
+            609,
+            150,
+            14
+          ]
+        },
+        {
+          "id" : "auto-capture-destination",
+          "label" : "Auto Capture destination: Weekend ideas",
+          "logicalRectFromTopLeft" : [
+            623,
+            609,
+            171,
+            14
+          ]
+        }
+      ],
+      "file" : "DABIN__GUIDE__PROJECTS.png",
+      "logicalHeight" : 650,
+      "logicalWidth" : 820,
+      "pixelHeight" : 1300,
+      "pixelScale" : 2,
+      "pixelWidth" : 1640,
+      "route" : "library"
+    },
+    {
+      "anchors" : [
+        {
+          "id" : "",
+          "label" : "DaBin",
+          "logicalRectFromTopLeft" : [
+            23,
+            44.5,
+            69.75,
+            21
+          ]
+        },
+        {
+          "id" : "timeline-auto-capture",
+          "label" : "Set up Auto Capture",
+          "logicalRectFromTopLeft" : [
+            93,
+            38,
+            40,
+            34
+          ]
+        },
+        {
+          "id" : "timeline-action-add",
+          "label" : "Add capture",
+          "logicalRectFromTopLeft" : [
+            198,
+            48,
+            20,
+            14
+          ]
+        },
+        {
+          "id" : "board-search",
+          "label" : "Search all captures",
+          "logicalRectFromTopLeft" : [
+            221,
+            39,
+            32,
+            32
+          ]
+        },
+        {
+          "id" : "board-settings",
+          "label" : "Settings",
+          "logicalRectFromTopLeft" : [
+            256,
+            39,
+            32,
+            32
+          ]
+        },
+        {
+          "id" : "board-more",
+          "label" : "More options",
+          "logicalRectFromTopLeft" : [
+            291,
+            47.5,
+            21,
+            15
+          ]
+        },
+        {
+          "id" : "window-expand",
+          "label" : "Expand or restore window",
+          "logicalRectFromTopLeft" : [
+            315,
+            39,
+            32,
+            32
+          ]
+        },
+        {
+          "id" : "window-close",
+          "label" : "Hide DaBin",
+          "logicalRectFromTopLeft" : [
+            350,
+            40,
+            28,
+            30
+          ]
+        },
+        {
+          "id" : "",
+          "label" : "Main views",
+          "logicalRectFromTopLeft" : [
+            22,
+            76,
+            356,
+            32
+          ]
+        },
+        {
+          "id" : "primary-inbox",
+          "label" : "Inbox",
+          "logicalRectFromTopLeft" : [
+            22,
+            76,
+            116,
+            32
+          ]
+        },
+        {
+          "id" : "primary-today",
+          "label" : "Today",
+          "logicalRectFromTopLeft" : [
+            142,
+            76,
+            116,
+            32
+          ]
+        },
+        {
+          "id" : "primary-workspace",
+          "label" : "Projects",
+          "logicalRectFromTopLeft" : [
+            262,
+            76,
+            116,
+            32
+          ]
+        },
+        {
+          "id" : "inbox-organize",
+          "label" : "",
+          "logicalRectFromTopLeft" : [
+            23.5,
+            121.5,
+            90.5,
+            15
+          ]
+        },
+        {
+          "id" : "",
+          "label" : "Inbox calendar view",
+          "logicalRectFromTopLeft" : [
+            278,
+            112,
+            100,
+            34
+          ]
+        },
+        {
+          "id" : "timeline-mode-daily",
+          "label" : "Daily view",
+          "logicalRectFromTopLeft" : [
+            280,
+            114,
+            44,
+            30
+          ]
+        },
+        {
+          "id" : "timeline-mode-weekly",
+          "label" : "Weekly view",
+          "logicalRectFromTopLeft" : [
+            326,
+            114,
+            50,
+            30
+          ]
+        },
+        {
+          "id" : "",
+          "label" : "",
+          "logicalRectFromTopLeft" : [
+            24,
+            166,
+            187.5,
+            17
+          ]
+        },
+        {
+          "id" : "inbox-quick-text",
+          "label" : "Quick capture text",
+          "logicalRectFromTopLeft" : [
+            36,
+            204,
+            299,
+            17
+          ]
+        },
+        {
+          "id" : "",
+          "label" : "Paste",
+          "logicalRectFromTopLeft" : [
+            25.5,
+            242.9775390625,
+            53,
+            15.0224609375
+          ]
+        },
+        {
+          "id" : "",
+          "label" : "Files",
+          "logicalRectFromTopLeft" : [
+            93,
+            243,
+            49.5,
+            15
+          ]
+        },
+        {
+          "id" : "",
+          "label" : "Task",
+          "logicalRectFromTopLeft" : [
+            156.5,
+            243,
+            47,
+            15
+          ]
+        },
+        {
+          "id" : "",
+          "label" : "",
+          "logicalRectFromTopLeft" : [
+            24,
+            268,
+            244,
+            14
+          ]
+        },
+        {
+          "id" : "",
+          "label" : "",
+          "logicalRectFromTopLeft" : [
+            24,
+            296,
+            352,
+            278
+          ]
+        },
+        {
+          "id" : "",
+          "label" : "",
+          "logicalRectFromTopLeft" : [
+            24,
+            296,
+            67.5,
+            14
+          ]
+        },
+        {
+          "id" : "",
+          "label" : "Project",
+          "logicalRectFromTopLeft" : [
+            40,
+            341,
+            98,
+            28
+          ]
+        },
+        {
+          "id" : "",
+          "label" : "",
+          "logicalRectFromTopLeft" : [
+            40,
+            381,
+            106.5,
+            34
+          ]
+        },
+        {
+          "id" : "capture-trail-ED4B8B0E-A62E-4901-90F5-27907BB42051",
+          "label" : "From Unknown source. No paste destinations recorded. Open content trail.",
+          "logicalRectFromTopLeft" : [
+            40,
+            381,
+            106.5,
+            34
+          ]
+        },
+        {
+          "id" : "capture-receipt-ED4B8B0E-A62E-4901-90F5-27907BB42051",
+          "label" : "",
+          "logicalRectFromTopLeft" : [
+            40,
+            419,
+            140.5,
+            14
+          ]
+        },
+        {
+          "id" : "capture-receipt-time-ED4B8B0E-A62E-4901-90F5-27907BB42051",
+          "label" : "",
+          "logicalRectFromTopLeft" : [
+            40,
+            419,
+            101.5,
+            14
+          ]
+        },
+        {
+          "id" : "capture-receipt-category-ED4B8B0E-A62E-4901-90F5-27907BB42051",
+          "label" : "",
+          "logicalRectFromTopLeft" : [
+            155,
+            419,
+            25.5,
+            14
+          ]
+        },
+        {
+          "id" : "capture-copy-ED4B8B0E-A62E-4901-90F5-27907BB42051",
+          "label" : "Copy Try the riverside path on Saturday.",
+          "logicalRectFromTopLeft" : [
+            288,
+            391,
+            32,
+            32
+          ]
+        },
+        {
+          "id" : "capture-trash-ED4B8B0E-A62E-4901-90F5-27907BB42051",
+          "label" : "Move Try the riverside path on Saturday. to Recently Deleted",
+          "logicalRectFromTopLeft" : [
+            328,
+            391,
+            32,
+            32
+          ]
+        },
+        {
+          "id" : "",
+          "label" : "Open Try the riverside path on Saturday., Note, saved Fri, 2 Oct 2026 at 09:41",
+          "logicalRectFromTopLeft" : [
+            40,
+            445,
+            320,
+            19
+          ]
+        },
+        {
+          "id" : "capture-convert-to-task-ED4B8B0E-A62E-4901-90F5-27907BB42051",
+          "label" : "Turn Try the riverside path on Saturday. into a task",
+          "logicalRectFromTopLeft" : [
+            292,
+            476,
+            32,
+            32
+          ]
+        },
+        {
+          "id" : "",
+          "label" : "Keep in Projects: Try the riverside path on Saturday.",
+          "logicalRectFromTopLeft" : [
+            328,
+            476,
+            32,
+            32
+          ]
+        },
+        {
+          "id" : "",
+          "label" : "Comment",
+          "logicalRectFromTopLeft" : [
+            40,
+            520,
+            32,
+            32
+          ]
+        },
+        {
+          "id" : "",
+          "label" : "Reminder",
+          "logicalRectFromTopLeft" : [
+            74,
+            520,
+            32,
+            32
+          ]
+        },
+        {
+          "id" : "",
+          "label" : "Minimize capture",
+          "logicalRectFromTopLeft" : [
+            306,
+            520,
+            32,
+            32
+          ]
+        },
+        {
+          "id" : "auto-capture-status",
+          "label" : "Auto Capture: Off · choose what to capture",
+          "logicalRectFromTopLeft" : [
+            42,
+            439,
+            150,
+            14
+          ]
+        },
+        {
+          "id" : "auto-capture-destination",
+          "label" : "Auto Capture destination: Weekend ideas",
+          "logicalRectFromTopLeft" : [
+            219,
+            439,
+            155,
+            14
+          ]
+        }
+      ],
+      "file" : "DABIN__GUIDE__INBOX.png",
+      "logicalHeight" : 480,
+      "logicalWidth" : 400,
+      "pixelHeight" : 960,
+      "pixelScale" : 2,
+      "pixelWidth" : 800,
+      "route" : "inbox"
+    },
+    {
+      "anchors" : [
+        {
+          "id" : "",
+          "label" : "DaBin",
+          "logicalRectFromTopLeft" : [
+            23,
+            44.5,
+            69.75,
+            21
+          ]
+        },
+        {
+          "id" : "timeline-auto-capture",
+          "label" : "Set up Auto Capture",
+          "logicalRectFromTopLeft" : [
+            93,
+            38,
+            40,
+            34
+          ]
+        },
+        {
+          "id" : "timeline-action-add",
+          "label" : "Add capture",
+          "logicalRectFromTopLeft" : [
+            198,
+            48,
+            20,
+            14
+          ]
+        },
+        {
+          "id" : "board-search",
+          "label" : "Search all captures",
+          "logicalRectFromTopLeft" : [
+            221,
+            39,
+            32,
+            32
+          ]
+        },
+        {
+          "id" : "board-settings",
+          "label" : "Settings",
+          "logicalRectFromTopLeft" : [
+            256,
+            39,
+            32,
+            32
+          ]
+        },
+        {
+          "id" : "board-more",
+          "label" : "More options",
+          "logicalRectFromTopLeft" : [
+            291,
+            47.5,
+            21,
+            15
+          ]
+        },
+        {
+          "id" : "window-expand",
+          "label" : "Expand or restore window",
+          "logicalRectFromTopLeft" : [
+            315,
+            39,
+            32,
+            32
+          ]
+        },
+        {
+          "id" : "window-close",
+          "label" : "Hide DaBin",
+          "logicalRectFromTopLeft" : [
+            350,
+            40,
+            28,
+            30
+          ]
+        },
+        {
+          "id" : "board-back",
+          "label" : "Back",
+          "logicalRectFromTopLeft" : [
+            22,
+            76,
+            44.5,
+            28
+          ]
+        },
+        {
+          "id" : "",
+          "label" : "Task",
+          "logicalRectFromTopLeft" : [
+            74.5,
+            81.5,
+            31.5,
+            17
+          ]
+        },
+        {
+          "id" : "detail-content",
+          "label" : "",
+          "logicalRectFromTopLeft" : [
+            3.5,
+            126,
+            370.5,
+            1118
+          ]
+        },
+        {
+          "id" : "",
+          "label" : "Project",
+          "logicalRectFromTopLeft" : [
+            26,
+            126,
+            144,
+            28
+          ]
+        },
+        {
+          "id" : "capture-task-status-FE566443-0B6E-456C-8F04-E3DC201B40B4",
+          "label" : "Task: Plan a weekend walk",
+          "logicalRectFromTopLeft" : [
+            26,
+            168,
+            34,
+            36
+          ]
+        },
+        {
+          "id" : "",
+          "label" : "",
+          "logicalRectFromTopLeft" : [
+            68,
+            168.034912109375,
+            30,
+            13
+          ]
+        },
+        {
+          "id" : "detail-title",
+          "label" : "Task title",
+          "logicalRectFromTopLeft" : [
+            68,
+            189,
+            306,
+            25
+          ]
+        },
+        {
+          "id" : "detail-captured-at",
+          "label" : "Captured Fri, 2 Oct 2026 at 09:38",
+          "logicalRectFromTopLeft" : [
+            70,
+            222.034912109375,
+            196.5,
+            19
+          ]
+        },
+        {
+          "id" : "",
+          "label" : "",
+          "logicalRectFromTopLeft" : [
+            26,
+            255,
+            110.5,
+            34
+          ]
+        },
+        {
+          "id" : "capture-trail-FE566443-0B6E-456C-8F04-E3DC201B40B4",
+          "label" : "From Unknown source. No paste destinations recorded. Open content trail.",
+          "logicalRectFromTopLeft" : [
+            26,
+            255,
+            110.5,
+            34
+          ]
+        },
+        {
+          "id" : "",
+          "label" : "Capture actions",
+          "logicalRectFromTopLeft" : [
+            234,
+            303,
+            140,
+            32
+          ]
+        },
+        {
+          "id" : "",
+          "label" : "Copy capture",
+          "logicalRectFromTopLeft" : [
+            234,
+            303,
+            32,
+            32
+          ]
+        },
+        {
+          "id" : "",
+          "label" : "Pin",
+          "logicalRectFromTopLeft" : [
+            270,
+            303,
+            32,
+            32
+          ]
+        },
+        {
+          "id" : "",
+          "label" : "Show saved folder",
+          "logicalRectFromTopLeft" : [
+            306,
+            303,
+            32,
+            32
+          ]
+        },
+        {
+          "id" : "capture-trash-FE566443-0B6E-456C-8F04-E3DC201B40B4",
+          "label" : "Move Plan a weekend walk to Recently Deleted",
+          "logicalRectFromTopLeft" : [
+            342,
+            303,
+            32,
+            32
+          ]
+        },
+        {
+          "id" : "",
+          "label" : "",
+          "logicalRectFromTopLeft" : [
+            27,
+            349.034912109375,
+            105,
+            15
+          ]
+        },
+        {
+          "id" : "",
+          "label" : "",
+          "logicalRectFromTopLeft" : [
+            110.75,
+            381.057373046875,
+            178.5,
+            43
+          ]
+        },
+        {
+          "id" : "task-focus-duration-FE566443-0B6E-456C-8F04-E3DC201B40B4",
+          "label" : "Set focus duration",
+          "logicalRectFromTopLeft" : [
+            36,
+            451.557373046875,
+            67.5,
+            15
+          ]
+        },
+        {
+          "id" : "task-focus-play-FE566443-0B6E-456C-8F04-E3DC201B40B4",
+          "label" : "Start or restart focus session",
+          "logicalRectFromTopLeft" : [
+            112.5,
+            443,
+            32,
+            32
+          ]
+        },
+        {
+          "id" : "task-focus-schedule-FE566443-0B6E-456C-8F04-E3DC201B40B4",
+          "label" : "Schedule task: Schedule",
+          "logicalRectFromTopLeft" : [
+            293.5,
+            451.557373046875,
+            74.5,
+            15
+          ]
+        },
+        {
+          "id" : "",
+          "label" : "",
+          "logicalRectFromTopLeft" : [
+            26,
+            489.2449951171875,
+            125.5,
+            14
+          ]
+        },
+        {
+          "id" : "",
+          "label" : "Reset focus to configured duration",
+          "logicalRectFromTopLeft" : [
+            325.5,
+            489.4326171875,
+            48.5,
+            14
+          ]
+        },
+        {
+          "id" : "task-workspace",
+          "label" : "Task workspace",
+          "logicalRectFromTopLeft" : [
+            3.5,
+            521.4326171875,
+            161,
+            16
+          ]
+        },
+        {
+          "id" : "task-workspace",
+          "label" : "Work plan",
+          "logicalRectFromTopLeft" : [
+            39.5,
+            565.4326171875,
+            86.5,
+            16.5673828125
+          ]
+        },
+        {
+          "id" : "task-workspace",
+          "label" : "",
+          "logicalRectFromTopLeft" : [
+            38,
+            620.352783203125,
+            41,
+            15
+          ]
+        },
+        {
+          "id" : "task-workspace",
+          "label" : "No priority",
+          "logicalRectFromTopLeft" : [
+            215.64999389648438,
+            611.6500244140625,
+            32.70001220703125,
+            32.699951171875
+          ]
+        },
+        {
+          "id" : "task-workspace",
+          "label" : "Low",
+          "logicalRectFromTopLeft" : [
+            262.5,
+            620.5,
+            15,
+            15
+          ]
+        },
+        {
+          "id" : "task-workspace",
+          "label" : "Medium",
+          "logicalRectFromTopLeft" : [
+            300.5,
+            620.5,
+            15,
+            15
+          ]
+        },
+        {
+          "id" : "task-workspace",
+          "label" : "High",
+          "logicalRectFromTopLeft" : [
+            338.5,
+            620.5,
+            15,
+            15
+          ]
+        },
+        {
+          "id" : "task-workspace",
+          "label" : "",
+          "logicalRectFromTopLeft" : [
+            39.5,
+            670.852783203125,
+            77,
+            15
+          ]
+        },
+        {
+          "id" : "task-workspace",
+          "label" : "",
+          "logicalRectFromTopLeft" : [
+            38,
+            698,
+            303,
+            23
+          ]
+        },
+        {
+          "id" : "task-workspace",
+          "label" : "Add checklist step",
+          "logicalRectFromTopLeft" : [
+            349,
+            703.5,
+            12,
+            12
+          ]
+        },
+        {
+          "id" : "task-workspace",
+          "label" : "Details & repeat",
+          "logicalRectFromTopLeft" : [
+            15.5,
+            738.875244140625,
+            125,
+            15
+          ]
+        },
+        {
+          "id" : "",
+          "label" : "",
+          "logicalRectFromTopLeft" : [
+            38,
+            770.375244140625,
+            49.5,
+            15
+          ]
+        },
+        {
+          "id" : "task-workspace",
+          "label" : "",
+          "logicalRectFromTopLeft" : [
+            94.5,
+            767,
+            46,
+            22
+          ]
+        },
+        {
+          "id" : "task-workspace",
+          "label" : "",
+          "logicalRectFromTopLeft" : [
+            39.5,
+            799.875244140625,
+            62.5,
+            15
+          ]
+        },
+        {
+          "id" : "task-workspace",
+          "label" : "Task attachments",
+          "logicalRectFromTopLeft" : [
+            26,
+            957,
+            348,
+            105
+          ]
+        },
+        {
+          "id" : "",
+          "label" : "",
+          "logicalRectFromTopLeft" : [
+            39,
+            976.455078125,
+            103.5,
+            16.044921875
+          ]
+        },
+        {
+          "id" : "task-paste-attachments",
+          "label" : "Paste into task",
+          "logicalRectFromTopLeft" : [
+            293,
+            969,
+            32,
+            32
+          ]
+        },
+        {
+          "id" : "task-add-attachments",
+          "label" : "Add files to task",
+          "logicalRectFromTopLeft" : [
+            330,
+            969,
+            32,
+            32
+          ]
+        },
+        {
+          "id" : "",
+          "label" : "",
+          "logicalRectFromTopLeft" : [
+            67.75,
+            1022.875244140625,
+            264.5,
+            15
+          ]
+        },
+        {
+          "id" : "",
+          "label" : "Original capture · Task",
+          "logicalRectFromTopLeft" : [
+            3.5,
+            1079.875244140625,
+            185.5,
+            15
+          ]
+        },
+        {
+          "id" : "",
+          "label" : "Source details",
+          "logicalRectFromTopLeft" : [
+            3.5,
+            1116.897705078125,
+            139.5,
+            15
+          ]
+        },
+        {
+          "id" : "",
+          "label" : "Comment",
+          "logicalRectFromTopLeft" : [
+            3.5,
+            1153.897705078125,
+            115,
+            15
+          ]
+        },
+        {
+          "id" : "",
+          "label" : "Reminder",
+          "logicalRectFromTopLeft" : [
+            3.5,
+            1191.420166015625,
+            112,
+            15
+          ]
+        },
+        {
+          "id" : "",
+          "label" : "File & recognized text",
+          "logicalRectFromTopLeft" : [
+            3.5,
+            1228.442626953125,
+            178.5,
+            15.557373046875
+          ]
+        },
+        {
+          "id" : "",
+          "label" : "",
+          "logicalRectFromTopLeft" : [
+            23,
+            528,
+            152.5,
+            14
+          ]
+        },
+        {
+          "id" : "detail-save",
+          "label" : "Save changes",
+          "logicalRectFromTopLeft" : [
+            269,
+            523,
+            108,
+            24
+          ]
+        },
+        {
+          "id" : "auto-capture-status",
+          "label" : "Auto Capture: Off · choose what to capture",
+          "logicalRectFromTopLeft" : [
+            42,
+            569,
+            150,
+            14
+          ]
+        },
+        {
+          "id" : "auto-capture-destination",
+          "label" : "Auto Capture destination: Weekend ideas",
+          "logicalRectFromTopLeft" : [
+            219,
+            569,
+            155,
+            14
+          ]
+        }
+      ],
+      "file" : "DABIN__GUIDE__TASK.png",
+      "logicalHeight" : 610,
+      "logicalWidth" : 400,
+      "pixelHeight" : 1220,
+      "pixelScale" : 2,
+      "pixelWidth" : 800,
+      "route" : "detail"
+    },
+    {
+      "artwork" : "Canonical RobotCharacterView Quiet Orbit idle pose; transparent background; Reduce Motion injected only for this native instance.",
+      "file" : "DABIN__GUIDE__ROBOT.png",
+      "logicalHeight" : 78,
+      "logicalWidth" : 64,
+      "pixelHeight" : 624,
+      "pixelScale" : 8,
+      "pixelWidth" : 512
+    }
+  ],
+  "fixturePrivacy" : "Fictional temporary archive and isolated preferences only. No personal captures, clipboard access, network, installed-app actions, global input, notification delivery, or permission prompts.",
+  "renderMethod" : "Current production native BoardView and RobotAppFrameView at 2x; canonical native RobotCharacterView at 8x. Native cacheDisplay, no pixel resampling."
+}

@@ -126,7 +126,8 @@ final class InputService {
     func paste(attachingTo task: Capture? = nil) { receive(.general, attachingTo: task) }
 
     func receive(_ pasteboard: NSPasteboard, at receivedAt: Date = Date(), timeZone zone: TimeZone = .current,
-                 receipt: CaptureReceiptContext = .manual, attachingTo task: Capture? = nil,
+                 receipt: CaptureReceiptContext = .manual, projectName: String? = nil,
+                 attachingTo task: Capture? = nil,
                  fileURLTransfer suppliedFileURLTransfer: InputFileURLTransfer? = nil,
                  commitGuard: @escaping () -> Bool = { true },
                  completion: (([Capture], [String]) -> Void)? = nil) {
@@ -167,7 +168,8 @@ final class InputService {
             }
         }
         if items.isEmpty, receivers.isEmpty { payloads.append(.failure("The clipboard has no readable content to capture.")) }
-        let batch = InputBatch(date: receivedAt, zone: zone, receipt: receipt, parentTask: task,
+        let batch = InputBatch(date: receivedAt, zone: zone, receipt: receipt,
+                               projectName: projectName, parentTask: task,
                                fileURLTransfer: fileURLTransfer, commitGuard: commitGuard,
                                remaining: (payloads.isEmpty ? 0 : 1) + receivers.count,
                                completion: completion)
@@ -186,11 +188,13 @@ final class InputService {
     /// SwiftUI task-card and collection-shelf drops use item providers instead of an NSPasteboard.
     /// Materialize each original inside the provider callback, then reuse the
     /// verified import pipeline. Provider temporary paths are never provenance.
-    func receiveProviders(_ providers: [NSItemProvider], attachingTo task: Capture? = nil,
+    func receiveProviders(_ providers: [NSItemProvider], projectName: String? = nil,
+                          attachingTo task: Capture? = nil,
                           at receivedAt: Date = Date(), timeZone: TimeZone = .current,
                           completion: (([Capture], [String]) -> Void)? = nil) {
         guard !providers.isEmpty else { completion?([], ["There are no items to attach."]); return }
-        let batch = InputBatch(date: receivedAt, zone: timeZone, parentTask: task,
+        let batch = InputBatch(date: receivedAt, zone: timeZone,
+                               projectName: projectName, parentTask: task,
                                fileURLTransfer: InputFileURLTransfer(retaining: []), remaining: 1,
                                completion: completion)
         setBusy(1)
@@ -325,9 +329,9 @@ final class InputService {
         for payload in payloads {
             do {
                 switch payload {
-                case .text(let text, let source): batch.captures += try store.capture(text: text, at: batch.date, timeZone: batch.zone, source: source, receipt: batch.receipt, parentTask: batch.parentTask, commitGuard: batch.commitGuard)
-                case .file(let url, let source, let originalName): batch.captures.append(try await store.importFile(url, at: batch.date, timeZone: batch.zone, originalName: originalName, source: source, receipt: batch.receipt, parentTask: batch.parentTask, commitGuard: batch.commitGuard))
-                case .bytes(let data, let filename, let source): batch.captures.append(try await store.importData(data, filename: filename, at: batch.date, timeZone: batch.zone, source: source, receipt: batch.receipt, parentTask: batch.parentTask, commitGuard: batch.commitGuard))
+                case .text(let text, let source): batch.captures += try store.capture(text: text, at: batch.date, timeZone: batch.zone, source: source, receipt: batch.receipt, projectName: batch.projectName, parentTask: batch.parentTask, commitGuard: batch.commitGuard)
+                case .file(let url, let source, let originalName): batch.captures.append(try await store.importFile(url, at: batch.date, timeZone: batch.zone, originalName: originalName, source: source, receipt: batch.receipt, projectName: batch.projectName, parentTask: batch.parentTask, commitGuard: batch.commitGuard))
+                case .bytes(let data, let filename, let source): batch.captures.append(try await store.importData(data, filename: filename, at: batch.date, timeZone: batch.zone, source: source, receipt: batch.receipt, projectName: batch.projectName, parentTask: batch.parentTask, commitGuard: batch.commitGuard))
                 case .failure(let reason): batch.failures.append(reason)
                 }
             } catch { batch.failures.append(error.localizedDescription) }
@@ -380,7 +384,8 @@ final class InputService {
         let target: InputBatch
         if batch.reported {
             // A timed-out source may finish later. Report only new captures, never past successes.
-            target = InputBatch(date: batch.date, zone: batch.zone, receipt: batch.receipt, parentTask: batch.parentTask,
+            target = InputBatch(date: batch.date, zone: batch.zone, receipt: batch.receipt,
+                                projectName: batch.projectName, parentTask: batch.parentTask,
                                 fileURLTransfer: batch.fileURLTransfer,
                                 commitGuard: batch.commitGuard,
                                 remaining: 1, completion: batch.completion)
@@ -419,6 +424,7 @@ final class InputService {
     let date: Date
     let zone: TimeZone
     let receipt: CaptureReceiptContext
+    let projectName: String?
     let parentTask: Capture?
     /// Retains the NSURL readers, and therefore Finder's sandbox transfer grant,
     /// through all asynchronous file imports in this batch.
@@ -429,11 +435,13 @@ final class InputService {
     var failures: [String] = []
     var reported = false
     let completion: (([Capture], [String]) -> Void)?
-    init(date: Date, zone: TimeZone, receipt: CaptureReceiptContext = .manual, parentTask: Capture? = nil,
+    init(date: Date, zone: TimeZone, receipt: CaptureReceiptContext = .manual,
+         projectName: String? = nil, parentTask: Capture? = nil,
          fileURLTransfer: InputFileURLTransfer,
          commitGuard: @escaping () -> Bool = { true }, remaining: Int,
          completion: (([Capture], [String]) -> Void)? = nil) {
-        self.date = date; self.zone = zone; self.receipt = receipt; self.parentTask = parentTask
+        self.date = date; self.zone = zone; self.receipt = receipt
+        self.projectName = projectName; self.parentTask = parentTask
         self.fileURLTransfer = fileURLTransfer; self.commitGuard = commitGuard; self.remaining = remaining
         self.completion = completion
     }

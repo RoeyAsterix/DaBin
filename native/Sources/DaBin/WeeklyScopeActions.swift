@@ -23,6 +23,7 @@ struct WeeklySearchButton: View {
         }
         .popover(isPresented: $isPresented, arrowEdge: .bottom) {
             WeeklySearchPopover(state: state, isPresented: $isPresented)
+                .hoverTooltips()
         }
         .onChange(of: state.weekEndingDay) { _, _ in isPresented = false }
         .onDisappear { isPresented = false }

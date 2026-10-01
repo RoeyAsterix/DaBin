@@ -39,8 +39,9 @@ public final class RobotAppFrameView: NSView {
     private var dragSession: WindowDragSession?
     private var resizeGesture: (edge: BoardResizeGeometry.Edge, pointer: CGPoint, frame: CGRect, visible: CGRect)?
     private(set) var taskCelebrationCount = 0
+    private(set) var gazeAnimationStartCount = 0
     var hasActiveEyeMotion: Bool {
-        [leftEyeLayer, rightEyeLayer, leftPupilLayer, rightPupilLayer]
+        [leftEyeLayer, rightEyeLayer]
             .contains { !($0.animationKeys() ?? []).isEmpty }
     }
     var usesSolidTransitionTorso: Bool {
@@ -50,36 +51,40 @@ public final class RobotAppFrameView: NSView {
     private enum Phase { case hidden, opening, open, closing }
 
     static let openDuration: TimeInterval = 1.15
-    static let closeDuration: TimeInterval = 0.42
+    static let closeDuration: TimeInterval = 0.78
     static let reducedDuration: TimeInterval = 0.14
 
     private let contentContainer = NSView(frame: .zero)
-    private let contentRevealMask = CALayer()
+    private let contentRevealMask = CAShapeLayer()
 
     private let leftTorsoLayer = CAGradientLayer()
     private let rightTorsoLayer = CAGradientLayer()
     private let leftTorsoMask = CAShapeLayer()
     private let rightTorsoMask = CAShapeLayer()
     private let frameOutlineLayer = CAShapeLayer()
+    private let continuousRimLayer = CAShapeLayer()
     private let centerSeamLayer = CAShapeLayer()
     private let transitionSeamLayer = CAShapeLayer()
 
     private let headLayer = CALayer()
-    private let headShellLayer = CAGradientLayer()
-    private let lidLayer = CAGradientLayer()
-    private let lidHandleLayer = CAShapeLayer()
     private let faceScreenLayer = CAShapeLayer()
-    private let leftEyeLayer = CALayer()
-    private let rightEyeLayer = CALayer()
-    private let leftPupilLayer = CAShapeLayer()
-    private let rightPupilLayer = CAShapeLayer()
+    private let leftEyeLayer = CAShapeLayer()
+    private let rightEyeLayer = CAShapeLayer()
     private let mouthLayer = CAShapeLayer()
+
+    private static let headSize = CGSize(width: 42, height: 28.56)
 
     private let leftArmLayer = CAShapeLayer()
     private let rightArmLayer = CAShapeLayer()
+    private let leftArmHighlight = CAShapeLayer()
+    private let rightArmHighlight = CAShapeLayer()
+    private let leftArmHardware = CAShapeLayer()
+    private let rightArmHardware = CAShapeLayer()
     private let legsLayer = CALayer()
     private let leftLegLayer = CAShapeLayer()
     private let rightLegLayer = CAShapeLayer()
+    private let leftLegHighlight = CAShapeLayer()
+    private let rightLegHighlight = CAShapeLayer()
     private let leftFootLayer = CAShapeLayer()
     private let rightFootLayer = CAShapeLayer()
 
@@ -89,8 +94,9 @@ public final class RobotAppFrameView: NSView {
     private var nextBlinkTime: CFTimeInterval = .greatestFiniteMagnitude
     private var blinkSequence: UInt = 0
     private var reduceMotionActive = false
-    private var leftPupilHome = CGPoint.zero
-    private var rightPupilHome = CGPoint.zero
+    private var torsoMaskIsFilled = false
+    private var leftEyeHome = CGPoint.zero
+    private var rightEyeHome = CGPoint.zero
 
     private enum RobotPart { case leftTorso, rightTorso, head, leftArm, rightArm, legs }
     private enum SourcePose: Equatable { case climb, brace }
@@ -110,6 +116,14 @@ public final class RobotAppFrameView: NSView {
 
         configureContent()
         configureRobotLayers()
+        for (robotLayer, name) in zip(decorationLayers,
+            ["leftTorso", "rightTorso", "head", "leftArm", "rightArm", "legs"]) {
+            if robotLayer.name == nil { robotLayer.name = "robotFrame.\(name)" }
+        }
+        contentContainer.layer?.name = "robotFrame.content"
+        frameOutlineLayer.name = "robotFrame.outline"
+        centerSeamLayer.name = "robotFrame.centerSeam"
+        transitionSeamLayer.name = "robotFrame.transitionSeam"
         applyStableState(open: false)
     }
 
@@ -128,15 +142,45 @@ public final class RobotAppFrameView: NSView {
             contentRevealMask.bounds = contentContainer.bounds
             contentRevealMask.position = CGPoint(x: contentContainer.bounds.midX,
                                                  y: contentContainer.bounds.midY)
-            contentRevealMask.cornerRadius = 13
+            contentRevealMask.path = BoardWindowChrome.path(in: contentContainer.bounds)
 
             layoutTorso()
             layoutHead()
             layoutArms()
             layoutLegs()
             layoutOutlineAndSeam()
+            updateChromeBackingScale()
         }
         window?.invalidateCursorRects(for: self)
+    }
+
+    public override func viewDidMoveToWindow() {
+        super.viewDidMoveToWindow()
+        updateChromeBackingScale()
+    }
+
+    public override func viewDidChangeBackingProperties() {
+        super.viewDidChangeBackingProperties()
+        updateChromeBackingScale()
+    }
+
+    private func updateChromeBackingScale() {
+        let measured = window?.backingScaleFactor ?? NSScreen.main?.backingScaleFactor ?? 1
+        let scale = measured.isFinite && measured > 0 ? measured : 1
+        // SwiftUI/AppKit own their view backing layers. Only update the custom
+        // vector layers and masks, including on mixed-density display moves.
+        func update(_ target: CALayer) {
+            target.contentsScale = scale
+            target.rasterizationScale = scale
+            target.allowsEdgeAntialiasing = true
+            target.sublayers?.forEach(update)
+            if let mask = target.mask { update(mask) }
+        }
+        withoutActions {
+            (decorationLayers + [frameOutlineLayer, centerSeamLayer,
+                transitionSeamLayer, contentRevealMask]).forEach(update)
+            contentContainer.layer?.allowsEdgeAntialiasing = true
+        }
     }
 
     /// Visible corners resize; the reserved top chrome moves the window.
@@ -163,10 +207,10 @@ public final class RobotAppFrameView: NSView {
             addCursorRect(BoardResizeGeometry.dragRegion(in: bounds), cursor: .openHand)
         }
         guard onResize != nil else { return }
-        addCursorRect(CGRect(x: 0, y: 0, width: 6, height: bounds.height), cursor: .resizeLeftRight)
-        addCursorRect(CGRect(x: bounds.maxX - 6, y: 0, width: 6, height: bounds.height), cursor: .resizeLeftRight)
-        addCursorRect(CGRect(x: 0, y: 0, width: bounds.width, height: 6), cursor: .resizeUpDown)
-        addCursorRect(CGRect(x: 0, y: bounds.maxY - 6, width: bounds.width, height: 6), cursor: .resizeUpDown)
+        for region in BoardResizeGeometry.edgeRegions(in: bounds) {
+            addCursorRect(region.rect, cursor: region.edge.contains(.left) || region.edge.contains(.right)
+                ? .resizeLeftRight : .resizeUpDown)
+        }
         for region in BoardResizeGeometry.cornerRegions(in: bounds) {
             addCursorRect(region.rect, cursor: Self.cornerCursor(region.edge))
         }
@@ -251,11 +295,10 @@ public final class RobotAppFrameView: NSView {
     func celebrateTaskCompletion(reduceMotion: Bool) {
         guard phase == .open, isFrameVisible, !isHidden else { return }
         taskCelebrationCount += 1
-        let smile = CGMutablePath()
-        smile.move(to: CGPoint(x: headLayer.bounds.midX - 5, y: 10))
-        smile.addCurve(to: CGPoint(x: headLayer.bounds.midX + 5, y: 10),
-                       control1: CGPoint(x: headLayer.bounds.midX - 3, y: 4),
-                       control2: CGPoint(x: headLayer.bounds.midX + 3, y: 4))
+        // Core Animation path morphing needs the same element topology as
+        // the canonical idle mouth (one move and three straight segments).
+        let smile = QuietOrbitVisualStyle.polygon([(40, 48), (45, 55), (55, 55), (60, 48)],
+            in: headLayer.bounds, topDown: false, closed: false)
         let grin = CAKeyframeAnimation(keyPath: "path")
         grin.values = [mouthLayer.path as Any, smile, smile, mouthLayer.path as Any]
         grin.keyTimes = [0, 0.15, 0.82, 1]
@@ -305,6 +348,8 @@ public final class RobotAppFrameView: NSView {
         let sourceRect = localSourceRect(for: sourceRectInScreen)
         let continuing = isTransitioning
         let currentTransforms = continuing ? presentationTransforms() : [:]
+        let currentOpacities = continuing ? presentationOpacities() : [:]
+        let currentTorsoMasks = continuing ? presentationTorsoMasks() : [:]
         let currentContentTransform = continuing
             ? (contentContainer.layer?.presentation()?.transform
                 ?? contentContainer.layer?.transform ?? CATransform3DIdentity) : nil
@@ -340,8 +385,9 @@ public final class RobotAppFrameView: NSView {
 
         withoutActions {
             layer?.opacity = 1
-            setTorsoSolid(true)
+            if !continuing { setTorsoSolid(true) }
         }
+        if continuing { animateTorsoFill(from: currentTorsoMasks, delay: 0, duration: 0.20) }
         for (index, robotLayer) in decorationLayers.enumerated() {
             let climb = sourcePoseTransform(for: robotLayer, sourceRect: sourceRect,
                                             pose: .climb, island: island)
@@ -353,6 +399,10 @@ public final class RobotAppFrameView: NSView {
                                 outward: splitDirection(for: robotLayer),
                                 delay: Double(index) * 0.006,
                                 continuing: continuing)
+            if let opacity = currentOpacities[ObjectIdentifier(robotLayer)], opacity < 1 {
+                animateOpacity(robotLayer, from: opacity, to: 1, duration: 0.20, delay: 0,
+                               key: "robotFrame.reopenOpacity")
+            }
         }
 
         let contentClimb = bodySurfaceTransform(for: contentContainer.layer,
@@ -426,7 +476,10 @@ public final class RobotAppFrameView: NSView {
                              completion: (() -> Void)? = nil) {
         reduceMotionActive = reduceMotion
         let sourceRect = localSourceRect(for: sourceRectInScreen)
+        let continuing = isTransitioning
         let currentTransforms = presentationTransforms()
+        let currentOpacities = presentationOpacities()
+        let currentTorsoMasks = presentationTorsoMasks()
         let currentContentTransform = contentContainer.layer?.presentation()?.transform
             ?? contentContainer.layer?.transform ?? CATransform3DIdentity
         let currentContentOpacity = contentContainer.layer?.presentation()?.opacity
@@ -458,76 +511,74 @@ public final class RobotAppFrameView: NSView {
 
         withoutActions {
             layer?.opacity = 1
-            setTorsoSolid(true)
         }
+        // Keep the stable perimeter at first. The shell fills continuously
+        // only as the content contracts, instead of flashing a backing plate.
+        animateTorsoFill(from: currentTorsoMasks, delay: 0.22, duration: 0.29)
+        let gather = closingGatherRect(source: sourceRect)
+        let coiled = scaledRect(gather, by: 0.92, center: CGPoint(x: gather.midX, y: gather.midY + 3))
+        let tuckCenter = CGPoint(x: sourceRect.midX,
+                                 y: island ? sourceRect.maxY - sourceRect.height * 0.06 : sourceRect.midY)
+        let tucked = scaledRect(sourceRect, by: 0.12, center: tuckCenter)
+        let beginTime = CACurrentMediaTime()
         for robotLayer in decorationLayers {
             let start = currentTransforms[ObjectIdentifier(robotLayer)] ?? CATransform3DIdentity
-            let collapsed = sourcePoseTransform(for: robotLayer, sourceRect: sourceRect,
-                                                pose: .brace, island: island)
-            withoutActions { robotLayer.transform = collapsed }
-            animateTransform(robotLayer, from: start, to: collapsed,
-                             duration: Self.closeDuration, delay: 0,
-                             timing: CAMediaTimingFunction(name: .easeIn),
-                             key: "robotFrame.close")
+            addClosingTransform(to: robotLayer, from: start, source: sourceRect,
+                                gather: gather, coiled: coiled, tucked: tucked,
+                                island: island, continuing: continuing, beginTime: beginTime,
+                                surface: false, key: "robotFrame.close")
+            addClosingOpacity(to: robotLayer,
+                              from: currentOpacities[ObjectIdentifier(robotLayer)] ?? 1,
+                              beginTime: beginTime)
         }
 
-        let collapsedContent = bodySurfaceTransform(for: contentContainer.layer,
-                                                    sourceRect: sourceRect,
-                                                    pose: .brace, island: island)
-        let collapsedOutline = bodySurfaceTransform(for: frameOutlineLayer,
-                                                    sourceRect: sourceRect,
-                                                    pose: .brace, island: island)
-        let collapsedCenterSeam = bodySurfaceTransform(for: centerSeamLayer,
-                                                       sourceRect: sourceRect,
-                                                       pose: .brace, island: island)
         withoutActions {
             contentRevealMask.transform = CATransform3DIdentity
-            contentContainer.layer?.transform = collapsedContent
             contentContainer.layer?.opacity = 0
-            frameOutlineLayer.transform = collapsedOutline
             frameOutlineLayer.opacity = 0
-            centerSeamLayer.transform = collapsedCenterSeam
             centerSeamLayer.opacity = 0
-            transitionSeamLayer.transform = sourcePoseTransform(for: transitionSeamLayer,
-                                                                 sourceRect: sourceRect,
-                                                                 pose: .brace, island: island)
-            transitionSeamLayer.opacity = 1
+            transitionSeamLayer.opacity = 0
         }
         if let contentLayer = contentContainer.layer {
-            animateTransform(contentLayer, from: currentContentTransform, to: collapsedContent,
-                             duration: Self.closeDuration, delay: 0,
-                             timing: CAMediaTimingFunction(name: .easeIn),
-                             key: "robotFrame.content.close")
+            addClosingTransform(to: contentLayer, from: currentContentTransform, source: sourceRect,
+                                gather: gather, coiled: coiled, tucked: tucked,
+                                island: island, continuing: continuing, beginTime: beginTime,
+                                surface: true, key: "robotFrame.content.transform.close")
         }
+        // Transform and opacity need different keys. Reusing a key silently
+        // replaces the shrink with a fade, leaving the board full-size.
         animateOpacity(contentContainer.layer, from: currentContentOpacity, to: 0,
-                       duration: 0.24, delay: 0.08, key: "robotFrame.content.close")
+                       duration: 0.30, delay: 0.20, key: "robotFrame.content.opacity.close")
         animateOpacity(frameOutlineLayer, from: currentOutlineOpacity, to: 0,
-                       duration: 0.24, delay: 0, key: "robotFrame.outline.close")
-        animateTransform(frameOutlineLayer, from: currentOutlineTransform, to: collapsedOutline,
-                         duration: Self.closeDuration, delay: 0,
-                         timing: CAMediaTimingFunction(name: .easeIn),
-                         key: "robotFrame.outline.transform.close")
+                       duration: 0.36, delay: 0.18, key: "robotFrame.outline.close")
+        addClosingTransform(to: frameOutlineLayer, from: currentOutlineTransform, source: sourceRect,
+                            gather: gather, coiled: coiled, tucked: tucked,
+                            island: island, continuing: continuing, beginTime: beginTime,
+                            surface: true, key: "robotFrame.outline.transform.close")
         animateOpacity(centerSeamLayer, from: currentCenterSeamOpacity, to: 0,
-                       duration: 0.20, delay: 0, key: "robotFrame.seam.close")
-        animateTransform(centerSeamLayer, from: currentCenterSeamTransform,
-                         to: collapsedCenterSeam,
-                         duration: Self.closeDuration, delay: 0,
-                         timing: CAMediaTimingFunction(name: .easeIn),
-                         key: "robotFrame.centerSeam.transform.close")
-        animateTransform(transitionSeamLayer, from: currentTransitionSeamTransform,
-                         to: transitionSeamLayer.transform,
-                         duration: Self.closeDuration, delay: 0,
-                         timing: CAMediaTimingFunction(name: .easeIn),
-                         key: "robotFrame.splitSeam.close")
-        animateOpacity(transitionSeamLayer, from: currentTransitionSeamOpacity, to: 1,
-                       duration: 0.24, delay: 0.12, key: "robotFrame.splitSeam.opacity.close")
+                       duration: 0.35, delay: 0.20, key: "robotFrame.seam.close")
+        addClosingTransform(to: centerSeamLayer, from: currentCenterSeamTransform, source: sourceRect,
+                            gather: gather, coiled: coiled, tucked: tucked,
+                            island: island, continuing: continuing, beginTime: beginTime,
+                            surface: true, key: "robotFrame.centerSeam.transform.close")
+        addClosingTransform(to: transitionSeamLayer, from: currentTransitionSeamTransform,
+                            source: sourceRect, gather: gather, coiled: coiled, tucked: tucked,
+                            island: island, continuing: continuing, beginTime: beginTime,
+                            surface: false, key: "robotFrame.splitSeam.close")
+        let seam = CAKeyframeAnimation(keyPath: "opacity")
+        seam.values = [currentTransitionSeamOpacity, 0, 0.9, 0.9, 0]
+        seam.keyTimes = [0, 0.18, 0.60, 0.80, 1]
+        seam.duration = Self.closeDuration
+        seam.beginTime = beginTime
+        seam.timingFunctions = Array(repeating: CAMediaTimingFunction(name: .easeInEaseOut), count: 4)
+        transitionSeamLayer.add(seam, forKey: "robotFrame.splitSeam.opacity.close")
 
         finish(after: Self.closeDuration, generation: generation, open: false,
                completion: completion)
     }
 
     /// Called by the owning controller's existing pointer poll. This schedules
-    /// no timer: it only eases the pupils to the latest clamped target and uses
+    /// no timer: it only eases the mint eyes to the latest clamped target and uses
     /// the same tick to trigger an occasional blink.
     public func updatePointer(screenPoint: CGPoint?, displayFrame: CGRect) {
         guard isFrameVisible || isTransitioning else { return }
@@ -536,8 +587,8 @@ public final class RobotAppFrameView: NSView {
         let offset = RobotAppFrameGaze.offset(pointer: screenPoint,
                                               eyeCenter: eyeCenter,
                                               displayFrame: displayFrame)
-        easePupil(leftPupilLayer, home: leftPupilHome, offset: offset)
-        easePupil(rightPupilLayer, home: rightPupilHome, offset: offset)
+        easeEye(leftEyeLayer, home: leftEyeHome, offset: offset)
+        easeEye(rightEyeLayer, home: rightEyeHome, offset: offset)
         blinkIfNeeded(now: CACurrentMediaTime())
     }
 
@@ -549,10 +600,12 @@ public final class RobotAppFrameView: NSView {
         // would defeat those settings and a full purple backing would tint its
         // translucent material, so this host stays completely clear.
         contentContainer.layer?.backgroundColor = NSColor.clear.cgColor
-        contentContainer.layer?.cornerRadius = 13
+        // A single shape mask, rather than a second mismatched circular clip.
+        contentContainer.layer?.cornerRadius = 0
         contentContainer.layer?.masksToBounds = true
         contentContainer.layer?.zPosition = 10
-        contentRevealMask.backgroundColor = NSColor.black.cgColor
+        contentRevealMask.name = "robotFrame.contentRevealMask"
+        contentRevealMask.fillColor = NSColor.black.cgColor
         contentContainer.layer?.mask = contentRevealMask
         addSubview(contentContainer)
 
@@ -566,10 +619,10 @@ public final class RobotAppFrameView: NSView {
         guard let root = layer else { return }
         root.masksToBounds = false
 
-        let shellColors = [Self.color(0xB89CCF), Self.color(0x765D94), Self.color(0x503E6E)]
+        let shellColors = QuietOrbitVisualStyle.metal.map { QuietOrbitVisualStyle.color($0) }
         for torso in [leftTorsoLayer, rightTorsoLayer] {
             torso.colors = shellColors
-            torso.locations = [0, 0.54, 1]
+            torso.locations = [0, 0.25, 0.5, 0.75, 1]
             torso.startPoint = CGPoint(x: 0.08, y: 0.9)
             torso.endPoint = CGPoint(x: 0.92, y: 0.05)
             torso.masksToBounds = true
@@ -584,6 +637,18 @@ public final class RobotAppFrameView: NSView {
         frameOutlineLayer.lineWidth = 0.7
         frameOutlineLayer.zPosition = 21
         root.addSublayer(frameOutlineLayer)
+
+        // Fill the complete continuous corner rim. The existing four-rectangle
+        // torso masks stay intact for the rail-to-solid closing choreography.
+        // As an outline child this rim shares its shrink/fade, not a new timer.
+        continuousRimLayer.name = "robotFrame.continuousRim"
+        // A direct hollow vector fill avoids compositing a full-board gradient
+        // and mask for a rim only a few points wide. The torso rails retain
+        // their metallic shading; the continuous rim seals their corner gaps.
+        continuousRimLayer.fillRule = .evenOdd
+        continuousRimLayer.fillColor = Self.color(0xC6BBD0)
+        continuousRimLayer.zPosition = -1
+        frameOutlineLayer.addSublayer(continuousRimLayer)
 
         centerSeamLayer.fillColor = nil
         centerSeamLayer.strokeColor = Self.color(0xDCC9E9, alpha: 0.48)
@@ -602,12 +667,23 @@ public final class RobotAppFrameView: NSView {
         headLayer.zPosition = 24
         root.addSublayer(headLayer)
 
-        for arm in [leftArmLayer, rightArmLayer] {
+        for (arm, highlight, hardware) in [(leftArmLayer, leftArmHighlight, leftArmHardware),
+                                           (rightArmLayer, rightArmHighlight, rightArmHardware)] {
             arm.fillColor = nil
-            arm.strokeColor = Self.color(0x59466E)
-            arm.lineWidth = 2.5
+            arm.strokeColor = QuietOrbitVisualStyle.color(0x554760)
+            arm.lineWidth = 3.5
             arm.lineCap = .round
             arm.lineJoin = .round
+            highlight.fillColor = nil
+            highlight.strokeColor = QuietOrbitVisualStyle.color(QuietOrbitVisualStyle.silver[1])
+            highlight.lineWidth = 2
+            highlight.lineCap = .round
+            highlight.lineJoin = .round
+            arm.addSublayer(highlight)
+            hardware.fillColor = QuietOrbitVisualStyle.color(QuietOrbitVisualStyle.silver[1])
+            hardware.strokeColor = QuietOrbitVisualStyle.color(0x766285)
+            hardware.lineWidth = 0.6
+            arm.addSublayer(hardware)
             arm.zPosition = 23
             root.addSublayer(arm)
         }
@@ -619,71 +695,31 @@ public final class RobotAppFrameView: NSView {
 
     private func configureHead() {
         headLayer.masksToBounds = false
-        headShellLayer.colors = [Self.color(0xC9B5DA), Self.color(0x755B91), Self.color(0x4F3C69)]
-        headShellLayer.locations = [0, 0.58, 1]
-        headShellLayer.startPoint = CGPoint(x: 0.1, y: 0.9)
-        headShellLayer.endPoint = CGPoint(x: 0.9, y: 0.1)
-        headShellLayer.cornerRadius = 11
-        headShellLayer.borderWidth = 1.2
-        headShellLayer.borderColor = Self.color(0x433451)
-        headLayer.addSublayer(headShellLayer)
-
-        lidLayer.colors = [Self.color(0xD8C3E5), Self.color(0x8C6FA3)]
-        lidLayer.startPoint = CGPoint(x: 0, y: 1)
-        lidLayer.endPoint = CGPoint(x: 1, y: 0)
-        lidLayer.cornerRadius = 2.5
-        headLayer.addSublayer(lidLayer)
-        lidHandleLayer.fillColor = nil
-        lidHandleLayer.strokeColor = Self.color(0xB69BCC)
-        lidHandleLayer.lineWidth = 1.7
-        headLayer.addSublayer(lidHandleLayer)
-
-        faceScreenLayer.fillColor = Self.color(0x292338)
-        faceScreenLayer.strokeColor = Self.color(0xB49CC7)
-        faceScreenLayer.lineWidth = 1
-        headLayer.addSublayer(faceScreenLayer)
-
-        configureEye(leftEyeLayer, pupil: leftPupilLayer)
-        configureEye(rightEyeLayer, pupil: rightPupilLayer)
-        headLayer.addSublayer(leftEyeLayer)
-        headLayer.addSublayer(rightEyeLayer)
-
-        mouthLayer.fillColor = nil
-        mouthLayer.strokeColor = Self.color(0x96CEC9)
-        mouthLayer.lineWidth = 1.1
-        mouthLayer.lineCap = .round
-        headLayer.addSublayer(mouthLayer)
-    }
-
-    private func configureEye(_ eye: CALayer, pupil: CAShapeLayer) {
-        eye.backgroundColor = Self.color(0xD7F4EF)
-        eye.cornerRadius = 3.5
-        eye.shadowColor = Self.color(0xBCEBFF)
-        eye.shadowOpacity = 0.26
-        eye.shadowRadius = 2
-        eye.shadowOffset = .zero
-        eye.masksToBounds = false
-
-        pupil.fillColor = Self.color(0x4B526E)
-        pupil.shadowColor = Self.color(0xBCEBFF)
-        pupil.shadowOpacity = 0.3
-        pupil.shadowRadius = 1.5
-        pupil.shadowOffset = .zero
-        eye.addSublayer(pupil)
+        headLayer.bounds = CGRect(origin: .zero, size: Self.headSize)
+        QuietOrbitHeadArtwork.install(in: headLayer, canvas: Self.headSize,
+            headRect: headLayer.bounds, topDown: false, visor: faceScreenLayer,
+            leftEye: leftEyeLayer, rightEye: rightEyeLayer, mouth: mouthLayer)
+        leftEyeHome = leftEyeLayer.position
+        rightEyeHome = rightEyeLayer.position
     }
 
     private func configureLegs() {
         legsLayer.masksToBounds = false
-        for leg in [leftLegLayer, rightLegLayer] {
+        for (leg, highlight) in [(leftLegLayer, leftLegHighlight), (rightLegLayer, rightLegHighlight)] {
             leg.fillColor = nil
-            leg.strokeColor = Self.color(0x59466E)
+            leg.strokeColor = QuietOrbitVisualStyle.color(0x554760)
             leg.lineWidth = 4
             leg.lineCap = .round
+            highlight.fillColor = nil
+            highlight.strokeColor = QuietOrbitVisualStyle.color(QuietOrbitVisualStyle.silver[1])
+            highlight.lineWidth = 2.3
+            highlight.lineCap = .round
+            leg.addSublayer(highlight)
             legsLayer.addSublayer(leg)
         }
         for foot in [leftFootLayer, rightFootLayer] {
-            foot.fillColor = Self.color(0x4A3A62)
-            foot.strokeColor = Self.color(0x392D4A)
+            foot.fillColor = QuietOrbitVisualStyle.color(QuietOrbitVisualStyle.silver[1])
+            foot.strokeColor = QuietOrbitVisualStyle.color(0x766285)
             foot.lineWidth = 0.8
             legsLayer.addSublayer(foot)
         }
@@ -693,14 +729,16 @@ public final class RobotAppFrameView: NSView {
 
     private func layoutTorso() {
         let content = Self.contentRect(in: bounds)
-        let torso = content.insetBy(dx: -2.25, dy: -2.25)
+        let torso = content.insetBy(dx: -BoardWindowChrome.rimWidth, dy: -BoardWindowChrome.rimWidth)
         let split = torso.midX
         leftTorsoLayer.frame = CGRect(x: torso.minX, y: torso.minY,
                                      width: split - torso.minX + 0.5, height: torso.height)
         rightTorsoLayer.frame = CGRect(x: split - 0.5, y: torso.minY,
                                       width: torso.maxX - split + 0.5, height: torso.height)
-        leftTorsoLayer.cornerRadius = 15
-        rightTorsoLayer.cornerRadius = 15
+        leftTorsoLayer.cornerRadius = BoardWindowChrome.cornerRadius + BoardWindowChrome.rimWidth
+        rightTorsoLayer.cornerRadius = BoardWindowChrome.cornerRadius + BoardWindowChrome.rimWidth
+        leftTorsoLayer.cornerCurve = .continuous
+        rightTorsoLayer.cornerCurve = .continuous
         leftTorsoLayer.maskedCorners = [.layerMinXMinYCorner, .layerMinXMaxYCorner]
         rightTorsoLayer.maskedCorners = [.layerMaxXMinYCorner, .layerMaxXMaxYCorner]
         layoutTorsoMask(leftTorsoMask, for: leftTorsoLayer, content: content)
@@ -714,70 +752,27 @@ public final class RobotAppFrameView: NSView {
         let contentInTorso = CGRect(x: content.minX - torso.frame.minX,
                                     y: content.minY - torso.frame.minY,
                                     width: content.width, height: content.height)
-        let visible = CGMutablePath()
-        if contentInTorso.minX > torso.bounds.minX {
-            visible.addRect(CGRect(x: torso.bounds.minX, y: torso.bounds.minY,
-                                   width: contentInTorso.minX - torso.bounds.minX,
-                                   height: torso.bounds.height))
-        }
-        if contentInTorso.maxX < torso.bounds.maxX {
-            visible.addRect(CGRect(x: contentInTorso.maxX, y: torso.bounds.minY,
-                                   width: torso.bounds.maxX - contentInTorso.maxX,
-                                   height: torso.bounds.height))
-        }
-        if contentInTorso.minY > torso.bounds.minY {
-            visible.addRect(CGRect(x: torso.bounds.minX, y: torso.bounds.minY,
-                                   width: torso.bounds.width,
-                                   height: contentInTorso.minY - torso.bounds.minY))
-        }
-        if contentInTorso.maxY < torso.bounds.maxY {
-            visible.addRect(CGRect(x: torso.bounds.minX, y: contentInTorso.maxY,
-                                   width: torso.bounds.width,
-                                   height: torso.bounds.maxY - contentInTorso.maxY))
-        }
-        mask.path = visible
+        let rails = [
+            CGRect(x: torso.bounds.minX, y: torso.bounds.minY,
+                   width: max(0, contentInTorso.minX - torso.bounds.minX), height: torso.bounds.height),
+            CGRect(x: min(torso.bounds.maxX, contentInTorso.maxX), y: torso.bounds.minY,
+                   width: max(0, torso.bounds.maxX - contentInTorso.maxX), height: torso.bounds.height),
+            CGRect(x: torso.bounds.minX, y: torso.bounds.minY, width: torso.bounds.width,
+                   height: max(0, contentInTorso.minY - torso.bounds.minY)),
+            CGRect(x: torso.bounds.minX, y: min(torso.bounds.maxY, contentInTorso.maxY),
+                   width: torso.bounds.width, height: max(0, torso.bounds.maxY - contentInTorso.maxY))
+        ]
+        mask.path = torsoMaskIsFilled ? solidTorsoMaskPath(for: torso) : rectangleMaskPath(rails)
         mask.fillColor = NSColor.black.cgColor
     }
 
     private func layoutHead() {
-        let width: CGFloat = 48
-        let height: CGFloat = 26
+        let width = Self.headSize.width
+        let height = Self.headSize.height
         let rect = CGRect(x: bounds.midX - width / 2,
-                          y: bounds.maxY - height - 4,
+                          y: bounds.maxY - height - 3,
                           width: width, height: height)
         headLayer.frame = rect
-        headShellLayer.frame = headLayer.bounds.insetBy(dx: 2, dy: 2)
-        headShellLayer.cornerRadius = 6
-        lidLayer.frame = CGRect(x: 0, y: height - 4, width: width, height: 5)
-        lidHandleLayer.path = CGPath(roundedRect: CGRect(x: width / 2 - 7, y: height, width: 14, height: 3),
-                                    cornerWidth: 1.5, cornerHeight: 1.5, transform: nil)
-        faceScreenLayer.path = CGPath(roundedRect: CGRect(x: 7, y: 5, width: width - 14, height: 16),
-                                      cornerWidth: 4, cornerHeight: 4, transform: nil)
-
-        let eyeY = headLayer.bounds.midY + 1
-        let leftCenter = CGPoint(x: headLayer.bounds.midX - 8, y: eyeY)
-        let rightCenter = CGPoint(x: headLayer.bounds.midX + 8, y: eyeY)
-        leftEyeLayer.bounds = CGRect(x: 0, y: 0, width: 6, height: 5)
-        rightEyeLayer.bounds = leftEyeLayer.bounds
-        leftEyeLayer.position = leftCenter
-        rightEyeLayer.position = rightCenter
-        layoutPupil(leftPupilLayer, in: leftEyeLayer, home: &leftPupilHome)
-        layoutPupil(rightPupilLayer, in: rightEyeLayer, home: &rightPupilHome)
-
-        let mouth = CGMutablePath()
-        mouth.move(to: CGPoint(x: headLayer.bounds.midX - 4, y: 7.5))
-        mouth.addCurve(to: CGPoint(x: headLayer.bounds.midX + 4, y: 7.5),
-                       control1: CGPoint(x: headLayer.bounds.midX - 2, y: 6),
-                       control2: CGPoint(x: headLayer.bounds.midX + 2, y: 6))
-        mouthLayer.path = mouth
-    }
-
-    private func layoutPupil(_ pupil: CAShapeLayer, in eye: CALayer, home: inout CGPoint) {
-        let pupilBounds = CGRect(x: 0, y: 0, width: 3.2, height: 3.2)
-        pupil.bounds = pupilBounds
-        pupil.path = CGPath(ellipseIn: pupilBounds, transform: nil)
-        home = CGPoint(x: eye.bounds.midX, y: eye.bounds.midY)
-        if pupil.animation(forKey: "robotFrame.gaze") == nil { pupil.position = home }
     }
 
     private func layoutArms() {
@@ -791,6 +786,7 @@ public final class RobotAppFrameView: NSView {
                       control1: CGPoint(x: content.minX - 8, y: content.midY + 20),
                       control2: CGPoint(x: content.minX - 9, y: content.midY - 13))
         leftArmLayer.path = left
+        leftArmHighlight.path = left
 
         let right = CGMutablePath()
         right.move(to: CGPoint(x: content.maxX + 2, y: content.midY + 28))
@@ -798,6 +794,15 @@ public final class RobotAppFrameView: NSView {
                        control1: CGPoint(x: content.maxX + 8, y: content.midY + 20),
                        control2: CGPoint(x: content.maxX + 9, y: content.midY - 13))
         rightArmLayer.path = right
+        rightArmHighlight.path = right
+        for (hardware, x, direction) in [(leftArmHardware, content.minX - 7, CGFloat(-1)),
+                                         (rightArmHardware, content.maxX + 7, CGFloat(1))] {
+            let joints = CGMutablePath()
+            joints.addEllipse(in: CGRect(x: x - 2.6, y: content.midY - 2.6, width: 5.2, height: 5.2))
+            joints.addRoundedRect(in: CGRect(x: x - 2.5 + direction * 0.3, y: content.midY - 26,
+                                            width: 5, height: 7), cornerWidth: 1.5, cornerHeight: 1.5)
+            hardware.path = joints
+        }
     }
 
     private func layoutLegs() {
@@ -812,6 +817,7 @@ public final class RobotAppFrameView: NSView {
                       control1: CGPoint(x: leftX + 2, y: 13),
                       control2: CGPoint(x: leftX - 3, y: 9))
         leftLegLayer.path = left
+        leftLegHighlight.path = left
 
         let right = CGMutablePath()
         right.move(to: CGPoint(x: rightX, y: Self.contentInsets.bottom - 2))
@@ -819,6 +825,7 @@ public final class RobotAppFrameView: NSView {
                        control1: CGPoint(x: rightX - 2, y: 13),
                        control2: CGPoint(x: rightX + 3, y: 9))
         rightLegLayer.path = right
+        rightLegHighlight.path = right
 
         leftFootLayer.path = CGPath(roundedRect: CGRect(x: leftX - 8, y: 2, width: 14, height: 6),
                                                cornerWidth: 2.5, cornerHeight: 2.5, transform: nil)
@@ -829,8 +836,9 @@ public final class RobotAppFrameView: NSView {
     private func layoutOutlineAndSeam() {
         let content = Self.contentRect(in: bounds)
         frameOutlineLayer.frame = bounds
-        frameOutlineLayer.path = CGPath(roundedRect: content.insetBy(dx: -0.75, dy: -0.75),
-                                        cornerWidth: 13.75, cornerHeight: 13.75, transform: nil)
+        frameOutlineLayer.path = BoardWindowChrome.path(in: content, outset: 0.75)
+        continuousRimLayer.frame = frameOutlineLayer.bounds
+        continuousRimLayer.path = BoardWindowChrome.rimPath(in: content)
         centerSeamLayer.frame = bounds
         let seam = CGMutablePath()
         seam.move(to: CGPoint(x: bounds.midX, y: max(2, content.minY - 7)))
@@ -847,6 +855,127 @@ public final class RobotAppFrameView: NSView {
     }
 
     // MARK: - Transition choreography
+
+    /// Four rectangles keep identical path topology in both rail and filled
+    /// states. The fill can therefore grow smoothly without swapping masks.
+    private func rectangleMaskPath(_ rectangles: [CGRect]) -> CGPath {
+        let path = CGMutablePath()
+        for rect in rectangles {
+            path.move(to: CGPoint(x: rect.minX, y: rect.minY))
+            path.addLine(to: CGPoint(x: rect.maxX, y: rect.minY))
+            path.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY))
+            path.addLine(to: CGPoint(x: rect.minX, y: rect.maxY))
+            path.closeSubpath()
+        }
+        return path
+    }
+
+    private func solidTorsoMaskPath(for torso: CALayer) -> CGPath {
+        let empty = CGRect(origin: torso.bounds.origin, size: .zero)
+        return rectangleMaskPath([torso.bounds, empty, empty, empty])
+    }
+
+    private func presentationTorsoMasks() -> [ObjectIdentifier: CGPath] {
+        Dictionary(uniqueKeysWithValues: [leftTorsoLayer, rightTorsoLayer].map { torso in
+            let mask = torso.mask as? CAShapeLayer
+            let path = (mask?.presentation() as? CAShapeLayer)?.path ?? mask?.path
+                ?? solidTorsoMaskPath(for: torso)
+            return (ObjectIdentifier(torso), path)
+        })
+    }
+
+    private func animateTorsoFill(from paths: [ObjectIdentifier: CGPath],
+                                 delay: TimeInterval, duration: TimeInterval) {
+        withoutActions {
+            setTorsoSolid(false)
+            torsoMaskIsFilled = true
+        }
+        for (torso, mask) in [(leftTorsoLayer, leftTorsoMask), (rightTorsoLayer, rightTorsoMask)] {
+            let end = solidTorsoMaskPath(for: torso)
+            withoutActions { mask.path = end }
+            let fill = CABasicAnimation(keyPath: "path")
+            fill.fromValue = paths[ObjectIdentifier(torso)] ?? end
+            fill.toValue = end
+            fill.duration = duration
+            fill.beginTime = CACurrentMediaTime() + delay
+            fill.fillMode = .backwards
+            fill.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
+            mask.add(fill, forKey: "robotFrame.shellFill")
+        }
+    }
+
+    private func scaledRect(_ rect: CGRect, by scale: CGFloat, center: CGPoint) -> CGRect {
+        CGRect(x: center.x - rect.width * scale / 2, y: center.y - rect.height * scale / 2,
+               width: rect.width * scale, height: rect.height * scale)
+    }
+
+    private func closingGatherRect(source: CGRect) -> CGRect {
+        let width = min(92, max(62, source.width * 1.20))
+        let height = min(118, max(90, source.height * 1.12))
+        let center = CGPoint(x: bounds.midX + (source.midX - bounds.midX) * 0.18,
+                             y: max(bounds.minY + height / 2, bounds.maxY - height * 1.08))
+        return CGRect(x: center.x - width / 2, y: center.y - height / 2,
+                      width: width, height: height)
+    }
+
+    private func closingPreparation(from start: CATransform3D, for target: CALayer,
+                                    surface: Bool, continuing: Bool) -> CATransform3D {
+        guard !continuing else { return start }
+        var result = start
+        if surface || target === transitionSeamLayer || target === leftTorsoLayer || target === rightTorsoLayer {
+            result.m11 *= 0.992
+            result.m22 *= 0.975
+            result.m42 += 3
+        } else if target === headLayer {
+            result.m11 *= 0.97
+            result.m22 *= 0.97
+            result.m42 -= 3
+        } else if target === legsLayer {
+            result.m22 *= 0.93
+            result.m42 += 3
+        } else {
+            result.m41 += target === leftArmLayer ? 4 : -4
+            result.m42 += 4
+        }
+        return result
+    }
+
+    private func addClosingTransform(to target: CALayer, from start: CATransform3D,
+                                     source: CGRect, gather: CGRect, coiled: CGRect, tucked: CGRect,
+                                     island: Bool, continuing: Bool, beginTime: CFTimeInterval,
+                                     surface: Bool, key: String) {
+        func pose(_ rect: CGRect, _ pose: SourcePose = .brace) -> CATransform3D {
+            surface ? bodySurfaceTransform(for: target, sourceRect: rect, pose: pose, island: island)
+                : sourcePoseTransform(for: target, sourceRect: rect, pose: pose, island: island)
+        }
+        let end = pose(tucked, island ? .climb : .brace)
+        let animation = CAKeyframeAnimation(keyPath: "transform")
+        animation.values = [start, closingPreparation(from: start, for: target, surface: surface,
+                                                      continuing: continuing),
+                            pose(gather), pose(coiled), pose(source, island ? .climb : .brace), end]
+            .map { NSValue(caTransform3D: $0) }
+        animation.keyTimes = [0, 0.12, 0.60, 0.72, 0.87, 1]
+        animation.timingFunctions = [CAMediaTimingFunction(name: .easeOut),
+            CAMediaTimingFunction(controlPoints: 0.32, 0.04, 0.16, 1),
+            CAMediaTimingFunction(name: .easeInEaseOut),
+            CAMediaTimingFunction(controlPoints: 0.42, 0, 0.58, 1),
+            CAMediaTimingFunction(name: .easeIn)]
+        animation.duration = Self.closeDuration
+        animation.beginTime = beginTime
+        withoutActions { target.transform = end }
+        target.add(animation, forKey: key)
+    }
+
+    private func addClosingOpacity(to target: CALayer, from opacity: Float, beginTime: CFTimeInterval) {
+        let animation = CAKeyframeAnimation(keyPath: "opacity")
+        animation.values = [opacity, 1, 1, 0]
+        animation.keyTimes = [0, 0.12, 0.80, 1]
+        animation.timingFunctions = Array(repeating: CAMediaTimingFunction(name: .easeInEaseOut), count: 3)
+        animation.duration = Self.closeDuration
+        animation.beginTime = beginTime
+        withoutActions { target.opacity = 0 }
+        target.add(animation, forKey: "robotFrame.closeOpacity")
+    }
 
     private func beginTransition(_ newPhase: Phase) -> UInt {
         transitionGeneration &+= 1
@@ -1039,11 +1168,11 @@ public final class RobotAppFrameView: NSView {
             let feature = CGPoint(x: target.bounds.midX, y: target.bounds.midY)
             let destination = CGPoint(x: source.midX,
                                       y: source.minY + source.height * (climbing ? 0.84 : 0.78))
+            // Preserve the canonical head's aspect ratio while it travels
+            // between the island and the application, not a flattened bin.
+            let scale = source.width * (climbing ? 0.47 : 0.55) / max(1, target.bounds.width)
             return mappedTransform(for: target, feature: feature, destination: destination,
-                                   scaleX: source.width * (climbing ? 0.47 : 0.55) /
-                                       max(1, target.bounds.width),
-                                   scaleY: source.height * (climbing ? 0.22 : 0.30) /
-                                       max(1, target.bounds.height))
+                                   scaleX: scale, scaleY: scale)
 
         case .leftTorso, .rightTorso:
             let isLeft = target === leftTorsoLayer
@@ -1134,8 +1263,12 @@ public final class RobotAppFrameView: NSView {
     /// rail masks so a transparent BoardView still shows the desktop through
     /// its center instead of a purple backing plate.
     private func setTorsoSolid(_ solid: Bool) {
+        torsoMaskIsFilled = solid
         leftTorsoLayer.mask = solid ? nil : leftTorsoMask
         rightTorsoLayer.mask = solid ? nil : rightTorsoMask
+        let content = Self.contentRect(in: bounds)
+        layoutTorsoMask(leftTorsoMask, for: leftTorsoLayer, content: content)
+        layoutTorsoMask(rightTorsoMask, for: rightTorsoLayer, content: content)
     }
 
     private func splitDirection(for target: CALayer) -> CGFloat {
@@ -1181,6 +1314,12 @@ public final class RobotAppFrameView: NSView {
         })
     }
 
+    private func presentationOpacities() -> [ObjectIdentifier: Float] {
+        Dictionary(uniqueKeysWithValues: decorationLayers.map {
+            (ObjectIdentifier($0), $0.presentation()?.opacity ?? $0.opacity)
+        })
+    }
+
     private func interpolatedTransform(from: CATransform3D,
                                        to: CATransform3D,
                                        progress: CGFloat) -> CATransform3D {
@@ -1197,6 +1336,8 @@ public final class RobotAppFrameView: NSView {
         layer?.removeAnimation(forKey: "robotFrame.reduced")
         contentContainer.layer?.removeAllAnimations()
         contentRevealMask.removeAllAnimations()
+        leftTorsoMask.removeAllAnimations()
+        rightTorsoMask.removeAllAnimations()
         decorationLayers.forEach { $0.removeAllAnimations() }
         frameOutlineLayer.removeAllAnimations()
         centerSeamLayer.removeAllAnimations()
@@ -1213,16 +1354,22 @@ public final class RobotAppFrameView: NSView {
         return window.convertPoint(toScreen: windowPoint)
     }
 
-    private func easePupil(_ pupil: CALayer, home: CGPoint, offset: CGPoint) {
+    private func easeEye(_ eye: CALayer, home: CGPoint, offset: CGPoint) {
         let target = CGPoint(x: home.x + offset.x, y: home.y + offset.y)
-        let start = pupil.presentation()?.position ?? pupil.position
-        withoutActions { pupil.position = target }
+        // The pointer poll continues while the board is open. Its last target
+        // is already the model position, even while the easing is in flight.
+        // Leave that animation alone so stationary gaze can finish and rest.
+        guard abs(target.x - eye.position.x) > 0.001
+            || abs(target.y - eye.position.y) > 0.001 else { return }
+        let start = eye.presentation()?.position ?? eye.position
+        withoutActions { eye.position = target }
         let animation = CABasicAnimation(keyPath: "position")
         animation.fromValue = NSValue(point: start)
         animation.toValue = NSValue(point: target)
         animation.duration = 0.16
         animation.timingFunction = CAMediaTimingFunction(name: .easeOut)
-        pupil.add(animation, forKey: "robotFrame.gaze")
+        eye.add(animation, forKey: "robotFrame.gaze")
+        gazeAnimationStartCount += 1
     }
 
     private func blinkIfNeeded(now: CFTimeInterval) {
@@ -1242,11 +1389,9 @@ public final class RobotAppFrameView: NSView {
     }
 
     private func resetEyes() {
-        for eye in [leftEyeLayer, rightEyeLayer] { eye.removeAllAnimations() }
-        for (pupil, home) in [(leftPupilLayer, leftPupilHome),
-                              (rightPupilLayer, rightPupilHome)] {
-            pupil.removeAllAnimations()
-            withoutActions { pupil.position = home }
+        for (eye, home) in [(leftEyeLayer, leftEyeHome), (rightEyeLayer, rightEyeHome)] {
+            eye.removeAllAnimations()
+            withoutActions { eye.position = home }
         }
     }
 

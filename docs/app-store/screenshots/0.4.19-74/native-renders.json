@@ -1,0 +1,87 @@
+{
+  "assets" : [
+    {
+      "autoCaptureEnabled" : false,
+      "exportConversion" : "Opaque RGB export by companion script, without resizing or repainting native UI",
+      "file" : "DABIN__APP_STORE__01_INBOX.png",
+      "fixtureCaptures" : 8,
+      "fixtureImageProvenance" : "Original code-drawn landscapes adapted from ExportGuide.swift; no personal\/copyrighted third-party imagery.",
+      "headline" : "Keep the useful bits.",
+      "height" : 900,
+      "mascot" : "Canonical production Quiet Orbit RobotCharacterView",
+      "nativeBoardRectFromTopLeft" : [
+        130,
+        164,
+        1180,
+        702
+      ],
+      "nativeBuffer" : "RGBA",
+      "nativeContentSize" : [
+        1160,
+        652
+      ],
+      "pixelScale" : 1,
+      "route" : "inbox",
+      "subtitle" : "Save notes, images and files. Sort them when you're ready.",
+      "websitePreviewsEnabled" : false,
+      "width" : 1440
+    },
+    {
+      "autoCaptureEnabled" : false,
+      "exportConversion" : "Opaque RGB export by companion script, without resizing or repainting native UI",
+      "file" : "DABIN__APP_STORE__02_PROJECTS.png",
+      "fixtureCaptures" : 8,
+      "fixtureImageProvenance" : "Original code-drawn landscapes adapted from ExportGuide.swift; no personal\/copyrighted third-party imagery.",
+      "headline" : "A home for every project.",
+      "height" : 900,
+      "mascot" : "Canonical production Quiet Orbit RobotCharacterView",
+      "nativeBoardRectFromTopLeft" : [
+        130,
+        164,
+        1180,
+        702
+      ],
+      "nativeBuffer" : "RGBA",
+      "nativeContentSize" : [
+        1160,
+        652
+      ],
+      "pixelScale" : 1,
+      "route" : "library",
+      "subtitle" : "Choose a color. Keep your previews, notes and tasks together.",
+      "websitePreviewsEnabled" : false,
+      "width" : 1440
+    },
+    {
+      "autoCaptureEnabled" : false,
+      "exportConversion" : "Opaque RGB export by companion script, without resizing or repainting native UI",
+      "file" : "DABIN__APP_STORE__03_FOCUS.png",
+      "fixtureCaptures" : 8,
+      "fixtureImageProvenance" : "Original code-drawn landscapes adapted from ExportGuide.swift; no personal\/copyrighted third-party imagery.",
+      "headline" : "Make room for one task.",
+      "height" : 900,
+      "mascot" : "Canonical production Quiet Orbit RobotCharacterView",
+      "nativeBoardRectFromTopLeft" : [
+        130,
+        164,
+        1180,
+        702
+      ],
+      "nativeBuffer" : "RGBA",
+      "nativeContentSize" : [
+        1160,
+        652
+      ],
+      "pixelScale" : 1,
+      "route" : "detail",
+      "subtitle" : "Choose a duration and start a focus timer when you're ready.",
+      "websitePreviewsEnabled" : false,
+      "width" : 1440
+    }
+  ],
+  "build" : "74",
+  "fixturePrivacy" : "Temporary fictional archive and isolated preference domain, own offscreen non-key windows, no actual clipboard\/network\/permission\/notification\/global-input access.",
+  "renderMethod" : "Actual current-production BoardView and RobotAppFrameView, canonical RobotCharacterView, native 1x cacheDisplay on opaque canvas. Marketing headline\/subtitle\/backdrop are not app controls.",
+  "status" : "DRAFT",
+  "version" : "0.4.19"
+}

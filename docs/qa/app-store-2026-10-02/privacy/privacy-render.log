@@ -1,0 +1,12 @@
+PASS: Real policy resource is present in the isolated app bundle
+PASS: Full current privacy policy is loaded with every required topic
+PASS: Policy includes current removal and minimize behavior
+PASS: Unconfigured public policy/support links are absent
+PASS: light: render window never takes keyboard focus
+PASS: light: full policy has a scrollable reading area
+PASS: light: bottom of the complete policy is reachable
+PASS: dark: render window never takes keyboard focus
+PASS: dark: full policy has a scrollable reading area
+PASS: dark: bottom of the complete policy is reachable
+PASS: Rendering preserved the user's foreground application
+PASS: 11 privacy-render checks; 4 native offscreen PNGs

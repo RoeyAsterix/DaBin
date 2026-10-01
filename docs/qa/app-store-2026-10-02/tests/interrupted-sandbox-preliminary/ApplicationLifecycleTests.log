@@ -1,0 +1,3 @@
+2026-10-02 01:43:59.472 ApplicationLifecycleTests[86801:21573691] Failure on line 688 in function id scheduleApplicationNotification(LSNotificationCode, NSWorkspaceNotificationCenter *): noErr == _LSModifyNotification(notificationID, 1, &code, 0, NULL, NULL, NULL)
+2026-10-02 01:43:59.578 ApplicationLifecycleTests[86801:21573691] Error received in message reply handler: Connection invalid
+2026-10-02 01:43:59.578 ApplicationLifecycleTests[86801:21573694] Connection Invalid error for service com.apple.hiservices-xpcservice.

@@ -117,6 +117,9 @@ struct SettingsScreen: View {
                     .font(.system(size: 14))
                     .accessibilityIdentifier("settings-show-tooltips")
                     .accessibilityHint("Shows names when hovering over icons; accessibility labels are always available")
+                    Text("Show helpful labels when hovering over controls. Turn off to hide them; accessibility labels stay available.")
+                        .font(.system(size: 12)).foregroundStyle(Palette.muted)
+                        .fixedSize(horizontal: false, vertical: true)
                     VStack(alignment: .leading, spacing: 7) {
                         HStack {
                             Text("Transparency").font(.system(size: 14))
@@ -214,7 +217,7 @@ struct SettingsScreen: View {
                 VStack(alignment: .leading, spacing: 8) {
                     Toggle("Fetch link previews", isOn: Binding(get: { state.previews.enabled }, set: { state.setLinkPreviews($0) }))
                         .toggleStyle(.switch).controlSize(.small).font(.system(size: 16, weight: .semibold, design: .rounded))
-                    Text("Off by default. Turning this on contacts websites for earlier saved links that need previews and for new links. Websites receive the requested URL and your IP address. Links still save without previews. Turn it off to stop further preview requests.")
+                    Text("Off by default. Turning this on contacts websites for earlier manually saved links that need previews and for new manual links. Websites receive the requested URL and your IP address. Automatically captured links never fetch previews. Links still save without previews. Turn it off to stop further preview requests.")
                         .font(.system(size: 14)).foregroundStyle(Palette.muted).fixedSize(horizontal: false, vertical: true)
                 }
                 Divider()
@@ -233,8 +236,9 @@ struct SettingsScreen: View {
                 Divider()
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Notifications").font(.system(size: 16, weight: .semibold, design: .rounded))
-                    Text(state.reminders.status ?? "Permission is requested when you first save a reminder. Alerts keep capture contents private.")
+                    Text(state.reminders.visibleStatus ?? "Permission is requested when you first save a reminder. Alerts keep capture contents private.")
                         .font(.system(size: 14)).foregroundStyle(Palette.muted).fixedSize(horizontal: false, vertical: true)
+                        .accessibilityIdentifier("settings-reminder-feedback")
                     Button("Open notification settings") {
                         if let url = URL(string: "x-apple.systempreferences:com.apple.Notifications-Settings.extension") { NSWorkspace.shared.open(url) }
                     }.buttonStyle(.plain).font(.system(size: 14)).foregroundStyle(accent)
@@ -267,6 +271,7 @@ struct SettingsScreen: View {
         .sheet(isPresented: $showPrivacyPolicy) {
             PrivacyPolicySheet(dataFolder: state.store.root)
                 .environment(\.daBinAccent, accent)
+                .hoverTooltips()
         }
         .sheet(isPresented: $showAutoCaptureExplanation) {
             AutoCaptureExplanationSheet(channel: pendingCaptureChannel) {
@@ -278,10 +283,12 @@ struct SettingsScreen: View {
                 showAutoCaptureExplanation = false
             }
             .environment(\.daBinAccent, accent)
+            .hoverTooltips()
         }
         .sheet(isPresented: $showExcludedApplications) {
             ExcludedApplicationsSheet(settings: autoCaptureSettings)
                 .environment(\.daBinAccent, accent)
+                .hoverTooltips()
         }
         .onAppear { beginRequestedAutoCaptureSetup() }
     }

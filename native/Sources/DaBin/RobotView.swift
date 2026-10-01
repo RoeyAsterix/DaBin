@@ -3,6 +3,10 @@ import QuartzCore
 
 @MainActor
 final class RobotView: NSView {
+    private static let interactionTooltip = "Drop here · hover then ⌃V or ⌘V to paste · double-click to open DaBin"
+    var showTooltips = true {
+        didSet { toolTip = showTooltips ? Self.interactionTooltip : nil }
+    }
     var onPaste: (() -> Void)?
     var onDaily: (() -> Void)?
     var onDrop: ((NSPasteboard) -> Void)?
@@ -75,7 +79,7 @@ final class RobotView: NSView {
         setAccessibilityRole(.button)
         setAccessibilityLabel("DaBin purple robot")
         setAccessibilityHelp("Drop onto the robot, or hover over it and press Control V or Command V to paste. Clicking also focuses the robot. Double-click or press Return to open DaBin. Escape hides DaBin.")
-        toolTip = "Drop here · hover then ⌃V or ⌘V to paste · double-click to open DaBin"
+        toolTip = Self.interactionTooltip
     }
 
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }

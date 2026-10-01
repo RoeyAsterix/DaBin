@@ -34,6 +34,8 @@ private struct RobotMotionFixture: View {
 @main
 @MainActor
 private final class NativeRenderTests: NSObject, NSApplicationDelegate {
+    private static let selectedProjectFixtureName = "Launch studio"
+    private static let selectedProjectFixtureColorHex = "198F91"
     private var result = 0
     private var retainedWindows: [NSWindow] = []
     private var records: [[String: Any]] = []
@@ -92,9 +94,21 @@ private final class NativeRenderTests: NSObject, NSApplicationDelegate {
             try JSONSerialization.data(withJSONObject: [
                 "description": "Production Explorer at compact, expanded and wide short sizes in both appearances.",
                 "fixturePrivacy": "Fictional isolated local archive; no user clipboard, network or notifications.",
+                "activeProject": Self.selectedProjectFixtureName,
+                "activeProjectColorHex": Self.selectedProjectFixtureColorHex,
                 "screenshots": records
             ], options: [.prettyPrinted, .sortedKeys]).write(to: output.appendingPathComponent("explorer-renders.json"), options: .atomic)
             print("PASS: \(records.count) Explorer production renders")
+            return
+        }
+        if arguments.contains("--robot-empty-state") {
+            let motion = try await verifyRobotMotion(output: output)
+            try JSONSerialization.data(withJSONObject: [
+                "description": "Canonical native island artwork hosted by the empty state, with visible-only sleepy motion and inactive pixel stability.",
+                "fixturePrivacy": "Offscreen own-window fixture; no user captures, clipboard, network, notification or preference changes.",
+                "robotMotion": motion
+            ], options: [.prettyPrinted, .sortedKeys])
+                .write(to: output.appendingPathComponent("robot-empty-state-renders.json"), options: .atomic)
             return
         }
         // This review route uses injected preferences throughout and never temporarily
@@ -588,10 +602,6 @@ private final class NativeRenderTests: NSObject, NSApplicationDelegate {
     /// Compare actual rasterized production-view frames rather than animation constants.
     /// The inactive check keeps the hosting view mounted to exercise a hidden panel's lifecycle.
     private func verifyRobotMotion(output: URL) async throws -> [String: Any] {
-        guard let asset = Bundle.main.url(forResource: "robot", withExtension: "svg"),
-              let image = NSImage(contentsOf: asset), image.size.width > 0, image.size.height > 0 else {
-            throw RenderError.message("The production robot SVG is missing or unreadable in the native renderer")
-        }
         let state = BoredRobotMotionState()
         let hosting = NSHostingView(rootView: RobotMotionFixture(state: state))
         hosting.frame = NSRect(x: 0, y: 0, width: 128, height: 156)
@@ -640,7 +650,7 @@ private final class NativeRenderTests: NSObject, NSApplicationDelegate {
         let activeChange = changedBytes(activeBefore, activeAfter)
         let systemReduceMotion = NSWorkspace.shared.accessibilityDisplayShouldReduceMotion
         guard activeBefore.filter({ $0 != 0 }).count > 1000 else {
-            throw RenderError.message("The native robot frame is empty despite the SVG resource being present")
+            throw RenderError.message("The canonical native empty-state robot did not render")
         }
         if systemReduceMotion {
             guard activeChange == 0 else {
@@ -660,8 +670,8 @@ private final class NativeRenderTests: NSObject, NSApplicationDelegate {
             throw RenderError.message("The hidden/inactive bored robot kept changing (\(inactiveChange) raster bytes)")
         }
 
-        print("PASS: Robot asset rendered; active motion changed \(activeChange) raster bytes; inactive changed 0 bytes.")
-        return ["assetPresent": true, "activeChangedBytes": activeChange,
+        print("PASS: Canonical native robot rendered; active motion changed \(activeChange) raster bytes; inactive changed 0 bytes.")
+        return ["canonicalNativeArtwork": true, "activeChangedBytes": activeChange,
             "activeIntervalSeconds": 1.5, "inactiveChangedBytes": inactiveChange,
             "staticIntervalSeconds": 0.7,
             "systemReduceMotionEnabled": systemReduceMotion,
@@ -937,17 +947,20 @@ private final class NativeRenderTests: NSObject, NSApplicationDelegate {
                                                                   entrance: .top,
                                                                   reduceMotion: true)
         character.playAutoCaptureCelebration(reducedPerformance)
-        try await Task.sleep(for: .milliseconds(360))
+        // Sample well inside the static success-check hold (0.15...0.47s).
+        // Rendering two named fixtures can be slower on a loaded machine, so
+        // comparing after those writes risks crossing the intentional fade.
+        try await Task.sleep(for: .milliseconds(230))
         let reducedAutoBefore = try frame("auto-reduced-check-light", presentation: true,
                                           background: lightBackground)
-        let reducedAutoDark = try frame("auto-reduced-check-dark", presentation: true,
-                                        background: darkBackground)
-        try await Task.sleep(for: .milliseconds(80))
+        try await Task.sleep(for: .milliseconds(20))
         let reducedAutoAfter = try frame(presentation: true, background: lightBackground)
         let reducedAutoChange = changedBytes(reducedAutoBefore, reducedAutoAfter)
         guard reducedAutoChange == 0, !character.hasActiveAmbientMotion else {
             throw RenderError.message("Reduced automatic confirmation moved by \(reducedAutoChange) bytes or started ambient work")
         }
+        let reducedAutoDark = try frame("auto-reduced-check-dark", presentation: true,
+                                        background: darkBackground)
         guard changedBytes(reducedAutoBefore, reducedAutoDark) > 1_000 else {
             throw RenderError.message("Reduced automatic success check is not readable across backing colors")
         }
@@ -994,10 +1007,11 @@ private final class NativeRenderTests: NSObject, NSApplicationDelegate {
         popupContent.layoutSubtreeIfNeeded()
 
         let popupLogicalSize = AutoCaptureRobotGeometry.panelSize
-        func popupRaster(name: String, background: NSColor) throws -> Data {
+        func popupRaster(content: NSView, logicalSize: CGSize,
+                         name: String, background: NSColor) throws -> Data {
             guard let bitmap = NSBitmapImageRep(bitmapDataPlanes: nil,
-                    pixelsWide: Int(popupLogicalSize.width) * pixelScale,
-                    pixelsHigh: Int(popupLogicalSize.height) * pixelScale,
+                    pixelsWide: Int(logicalSize.width) * pixelScale,
+                    pixelsHigh: Int(logicalSize.height) * pixelScale,
                     bitsPerSample: 8, samplesPerPixel: 4, hasAlpha: true,
                     isPlanar: false, colorSpaceName: .deviceRGB,
                     bytesPerRow: 0, bitsPerPixel: 0),
@@ -1006,16 +1020,16 @@ private final class NativeRenderTests: NSObject, NSApplicationDelegate {
             }
             let byteCount = bitmap.bytesPerRow * bitmap.pixelsHigh
             bytes.initialize(repeating: 0, count: byteCount)
-            bitmap.size = popupLogicalSize
+            bitmap.size = logicalSize
             guard let context = NSGraphicsContext(bitmapImageRep: bitmap),
-                  let renderedLayer = popupContent.layer?.presentation() ?? popupContent.layer else {
+                  let renderedLayer = content.layer?.presentation() ?? content.layer else {
                 throw RenderError.message("Could not create the 2x camera-island popup context")
             }
             NSGraphicsContext.saveGraphicsState()
             NSGraphicsContext.current = context
             // AppKit derives the 2x transform from bitmap.size above.
             context.cgContext.setFillColor(background.cgColor)
-            context.cgContext.fill(CGRect(origin: .zero, size: popupLogicalSize))
+            context.cgContext.fill(CGRect(origin: .zero, size: logicalSize))
             renderedLayer.render(in: context.cgContext)
             NSGraphicsContext.restoreGraphicsState()
             guard let png = bitmap.representation(using: .png, properties: [:]) else {
@@ -1025,14 +1039,72 @@ private final class NativeRenderTests: NSObject, NSApplicationDelegate {
                           options: .atomic)
             return Data(bytes: bytes, count: byteCount)
         }
-        let islandLight = try popupRaster(name: "burst-light", background: lightBackground)
-        let islandDark = try popupRaster(name: "burst-dark", background: darkBackground)
+        let islandLight = try popupRaster(content: popupContent, logicalSize: popupLogicalSize,
+                                          name: "burst-light", background: lightBackground)
+        let islandDark = try popupRaster(content: popupContent, logicalSize: popupLogicalSize,
+                                         name: "burst-dark", background: darkBackground)
         guard changedBytes(islandLight, islandDark) > 2_000,
               presenter.panel.ignoresMouseEvents,
               presenter.panel.sharingType == .none,
               !presenter.panel.isKeyWindow,
               !presenter.panel.isMainWindow else {
             throw RenderError.message("Camera-island burst popup lost contrast, focus safety or capture exclusion")
+        }
+
+        // A separate Reduce Motion presentation gives the named/color placard a
+        // deterministic model-layer pose. The full production content tree is
+        // captured at its actual Quiet Orbit size so the sign cannot be cropped
+        // out by the older compact burst samples above.
+        let projectSignColor = ProjectColorChoice.nsColor(for: Self.selectedProjectFixtureColorHex)
+        let projectPresenter = AutoCaptureRobotPresenter(
+            dismissDelay: 5,
+            primaryScreen: { islandScreen },
+            reduceMotion: { true },
+            reactionDeck: AutoCaptureRobotReactionDeck(seed: 0xDA_B1_12)
+        )
+        defer { projectPresenter.shutdown() }
+        guard projectPresenter.present(
+                additionalCaptureCount: 1,
+                projectName: Self.selectedProjectFixtureName,
+                projectColor: projectSignColor
+              ),
+              projectPresenter.currentProjectName == Self.selectedProjectFixtureName,
+              projectPresenter.projectSignIsVisible,
+              projectPresenter.projectSignWaveCount == 1,
+              projectPresenter.projectSignLastUpdateReducedMotion,
+              !projectPresenter.projectSignHasActiveWave,
+              let projectContent = projectPresenter.panel.contentView else {
+            throw RenderError.message("Could not compose the deterministic named project-sign popup")
+        }
+        try await Task.sleep(for: .milliseconds(360))
+        projectContent.layoutSubtreeIfNeeded()
+        let projectPopupLogicalSize = projectContent.bounds.size
+        guard projectPopupLogicalSize.width > 0, projectPopupLogicalSize.height > 0,
+              let projectSignView = projectContent.subviews.first(where: { view in
+                  !view.isHidden && view.subviews.contains(where: {
+                      ($0 as? NSTextField)?.stringValue == Self.selectedProjectFixtureName
+                  })
+              }),
+              projectContent.bounds.contains(projectSignView.frame),
+              let borderColor = projectSignView.layer?.borderColor,
+              let renderedProjectColor = NSColor(cgColor: borderColor)?.usingColorSpace(.sRGB),
+              let expectedProjectColor = projectSignColor.usingColorSpace(.sRGB) else {
+            throw RenderError.message("Named project sign is missing, clipped or has no readable color")
+        }
+        let projectColorDelta = abs(renderedProjectColor.redComponent - expectedProjectColor.redComponent)
+            + abs(renderedProjectColor.greenComponent - expectedProjectColor.greenComponent)
+            + abs(renderedProjectColor.blueComponent - expectedProjectColor.blueComponent)
+        guard projectColorDelta < 0.01 else {
+            throw RenderError.message("Named project sign did not use its requested project color")
+        }
+        let projectSignRaster = try popupRaster(
+            content: projectContent,
+            logicalSize: projectPopupLogicalSize,
+            name: "project-sign-teal-light",
+            background: lightBackground
+        )
+        guard Set(projectSignRaster).count > 16 else {
+            throw RenderError.message("Named project-sign popup rendered as a flat image")
         }
 
         let stateScreenshots: [[String: Any]] = states.map { state in
@@ -1085,8 +1157,30 @@ private final class NativeRenderTests: NSObject, NSApplicationDelegate {
              "pixelHeight": Int(popupLogicalSize.height) * pixelScale, "pixelScale": pixelScale,
              "renderMethod": "Complete production popup presentation tree rendered directly at 2x"]
         }
+        let projectSignScreenshot: [String: Any] = [
+            "file": "native-auto-capture-island-project-sign-teal-light@2x.png",
+            "semanticState": "camera-island-project-sign-reduced-motion",
+            "appearance": "light",
+            "projectName": Self.selectedProjectFixtureName,
+            "projectColorHex": Self.selectedProjectFixtureColorHex,
+            "signWaveEventCount": projectPresenter.projectSignWaveCount,
+            "logicalWidth": Int(projectPopupLogicalSize.width),
+            "logicalHeight": Int(projectPopupLogicalSize.height),
+            "pixelWidth": Int(projectPopupLogicalSize.width) * pixelScale,
+            "pixelHeight": Int(projectPopupLogicalSize.height) * pixelScale,
+            "pixelScale": pixelScale,
+            "renderMethod": "Complete production popup rendered directly at 2x in its deterministic Reduce Motion pose; named sign uses the selected project's persisted teal color"
+        ]
         print("PASS: Native robot personality and ten automatic eating reactions are distinct; full and reduced timelines clean up without drift.")
-        return [
+        var screenshots = stateScreenshots
+        screenshots.append(contentsOf: motionScreenshots)
+        screenshots.append(reducedScreenshot)
+        screenshots.append(contentsOf: celebrationScreenshots)
+        screenshots.append(contentsOf: phaseScreenshots)
+        screenshots.append(contentsOf: reducedAutoScreenshots)
+        screenshots.append(contentsOf: islandScreenshots)
+        screenshots.append(projectSignScreenshot)
+        let manifest: [String: Any] = [
             "description": "Native transient RobotCharacterView personality states and ten automatic eating reactions rendered at 2x, plus live motion and lifecycle checks.",
             "fixturePrivacy": "Code-drawn local character only; no clipboard, files, network, notifications or personal content.",
             "deterministicStateCount": states.count,
@@ -1102,9 +1196,9 @@ private final class NativeRenderTests: NSObject, NSApplicationDelegate {
             "cleanup": ["mood": "hidden", "ambientWorkActive": false,
                          "genericChangedBytesOverPointFourSeconds": cleanupChange,
                          "automaticChangedBytesOverPointThreeSeconds": automaticCleanupChange],
-            "screenshots": stateScreenshots + motionScreenshots + [reducedScreenshot]
-                + celebrationScreenshots + phaseScreenshots + reducedAutoScreenshots + islandScreenshots
+            "screenshots": screenshots
         ]
+        return manifest
     }
 
     private func snapshot(_ state: AppState, name: String, mode: String, output: URL, scrollToBottom: Bool = false, height: CGFloat = 500, width: CGFloat = 380, requireCornerMarkers: Bool = false, theme: ThemeSettings? = nil, pixelScale: Int = 1, tooltip: TimelineTooltipDescriptor? = nil) async throws {
@@ -1607,9 +1701,19 @@ private final class NativeRenderTests: NSObject, NSApplicationDelegate {
         if explorerOnly {
             state.openLibrary(); state.filter = .all
             for capture in [image, link, task, completed] {
-                try store.setOrganization(capture, pinned: capture.isPinned, projectName: "Launch studio")
+                try store.setOrganization(capture, pinned: capture.isPinned,
+                                          projectName: Self.selectedProjectFixtureName)
             }
-            state.libraryProject = "Launch studio"
+            guard Self.selectedProjectFixtureColorHex != WorkspaceStore.defaultProjectColorHex else {
+                throw RenderError.message("Explorer fixture must use a non-default project color")
+            }
+            try state.workspace.setProjectColor(hex: Self.selectedProjectFixtureColorHex,
+                                                for: Self.selectedProjectFixtureName)
+            guard state.workspace.projectColorHex(for: Self.selectedProjectFixtureName)
+                    == Self.selectedProjectFixtureColorHex else {
+                throw RenderError.message("Explorer fixture did not persist its selected-project color")
+            }
+            state.libraryProject = Self.selectedProjectFixtureName
             state.workspace.selectedCaptureID = image.id
             for mode in ["light", "dark"] {
                 for size in [CGSize(width: 380, height: 430), CGSize(width: 380, height: 680),
@@ -1908,15 +2012,18 @@ private final class NativeRenderTests: NSObject, NSApplicationDelegate {
             for fixture in captures {
                 state.openCapture(fixture.capture.id)
                 for width: CGFloat in [380, 260] {
+                    // Projects, title and provenance now precede the media.
+                    // Expose its full rectangle; compact-window scrolling is
+                    // covered separately by the responsive interaction suites.
                     try await snapshot(state, name: "preview-fit-\(fixture.name)", mode: mode, output: output,
-                                       width: width, requireCornerMarkers: fixture.capture.kind != .pdf)
+                                       height: 680, width: width, requireCornerMarkers: fixture.capture.kind != .pdf)
                 }
                 if fixture.capture.kind == .image {
                     state.route = .daily
                     state.selectedDay = fixture.day
                     state.dailyScrollID = nil
                     try await snapshot(state, name: "preview-fit-thumbnail-\(fixture.name)", mode: mode,
-                                       output: output, requireCornerMarkers: true)
+                                       output: output, height: 680, requireCornerMarkers: true)
                 }
             }
         }

@@ -21,7 +21,21 @@ NONFOCUS = ["ProjectFileArchiveTests", "ExplorerTransferTests", "ExplorerQueryTe
             "HourlyGroupingTests", "DayExportTests", "DayExportUITests", "WeeklyStateTests", "InputTests", "AutoCaptureServiceTests", "AutoCaptureRobotPresenterTests", "AutoCaptureRobotCelebrationTests",
             "SoftwareUpdateTests", "UpdateConfigurationTests", "RobotMotionTests", "IslandRobotChoreographyTests", "RobotLifecycleTests", "RobotAppFrameTests", "QuietOrbitRenderTests"]
 WINDOW = ["RedesignInteractionTests", "WindowResizeInteractionTests", "WindowTests", "WeeklyWindowTests", "FilterResizeTests", "RobotDropTests", "DailyCaptureTests", "HeaderInteractionTests", "WorkspaceWindowTests", "RobotWindowTransitionTests"]
+WINDOW.append("DetailPreviewInteractionTests")
+WINDOW.append("CaptureTimestampPresentationTests")
+WINDOW.append("RobotVisualConsistencyTests")
+WINDOW.append("NativeTooltipPreferenceTests")
+WINDOW.append("TooltipPresentationTests")
+WINDOW.append("RobotCloseVisualTests")
+WINDOW.append("CollectionCardPresentationTests")
+WINDOW.append("TaskTimerRobotTests")
+WINDOW.append("ExplorerCaptureCardPresentationTests")
+WINDOW.append("NotificationPresentationTests")
+WINDOW.append("WindowChromePresentationTests")
 MODULE = "DaBinTestCore"
+NONFOCUS.append("CapturePreviewPerformanceTests")
+NONFOCUS.append("BoredRobotArtworkTests")
+NONFOCUS.append("TooltipBehaviorTests")
 
 
 def capture(arguments):

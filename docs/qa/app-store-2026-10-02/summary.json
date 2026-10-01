@@ -1,0 +1,134 @@
+{
+  "schemaVersion": 1,
+  "auditDate": "2026-10-02",
+  "status": "LOCAL_PREPARATION_NOT_SUBMISSION_READY",
+  "candidate": {
+    "name": "DaBin",
+    "version": "0.4.19",
+    "build": "74",
+    "bundleIdentifier": "com.dabin.mac",
+    "team": "8QG4967CSU",
+    "architecture": "arm64",
+    "minimumMacOS": "14.0"
+  },
+  "source": {
+    "productionBuildFingerprint": "cd0a8ef9a095df3090991077c35ef5534d2a18a5cf75f05d1fb6f21a5e88d1be",
+    "finalQAFingerprint": "9039172fca3d6b400c7ed1ec3ecd1551210d7eca23cd69a524c1efb00893e3fe",
+    "nativeResourceSwiftTestInputsStillMatchFullReceipt": true
+  },
+  "localChecks": {
+    "fullRelease": {
+      "status": "PASS",
+      "passedSuites": 73,
+      "failedSuites": 0,
+      "reportedAssertions": 87546,
+      "receipt": "tests/full-release-final/report.json",
+      "receiptSHA256": "7a4521e405437c7d3ce93715d85f5246f06e315addf28b0cd82fb90b00787bfa",
+      "testModule": "DABIN_DIRECT_UPDATES",
+      "boundary": "Includes pixel/choreography assertions; not a signed Store Sandbox runtime or macOS14/VoiceOver usability audit"
+    },
+    "syntheticMedia": {
+      "status": "PASS",
+      "checks": 39,
+      "network": false,
+      "receipt": "tests/media-integration-final-report.json",
+      "receiptSHA256": "4bcb52dd7fb6b7063896f09e39aceb9845fcc32fa3cefd2dbffe433c8b9d2505"
+    },
+    "offlinePython": {
+      "status": "PASS",
+      "tests": 77,
+      "distribution": 30,
+      "metadata": 15,
+      "storePackaging": 32,
+      "finalMetadataRerun": "metadata/final-regressions.log"
+    },
+    "scopedPostPackagingUpdateConfiguration": {
+      "status": "PASS",
+      "checks": 27,
+      "overlapsFullSuite": true,
+      "receipt": "packaging/scoped-update-configuration-report.json"
+    },
+    "unsignedStoreBuild": {
+      "status": "PASS_COMPILE_AND_PACKAGING_ONLY",
+      "checks": 51,
+      "receipt": "packaging/unsigned-store-candidate-receipt.json",
+      "receiptSHA256": "77d899b9360de9e8f6cc0f7e403b1d24c2d1bdd987d1c029620433b38003427f",
+      "executableSHA256": "8f60d225de40822c84c5afa7c13aee1c386680bfe7ec89462b2cd4573c98396e",
+      "signed": false,
+      "sandboxRuntimeVerified": false,
+      "directUpdaterOrHelperPresent": false
+    },
+    "metadata": {
+      "status": "DRAFT_LIMITS_PASS_COMPLETENESS_EXPECTED_FAIL",
+      "localPassingChecks": 13,
+      "unresolvedCompletenessChecks": 12,
+      "metadataSHA256": "dea260bdaba15946b153cf776bf317a8ff17b890fbba6d4c5f62f000cba889b4",
+      "draftEvidence": "metadata/draft-checks.json",
+      "completenessEvidence": "metadata/submission-completeness.json"
+    }
+  },
+  "visualQA": {
+    "storeScreenshotDrafts": {
+      "status": "SOURCE_MATCHED_DRAFT_VISUAL_REVIEW_PASS",
+      "images": 3,
+      "dimensions": [
+        1440,
+        900
+      ],
+      "mode": "RGB_NO_ALPHA",
+      "manifest": "../../app-store/screenshots/0.4.19-74/manifest.json",
+      "distributionBinaryVerified": false,
+      "uploadApproved": false
+    },
+    "privacyPolicyViews": {
+      "assertionsPassed": 11,
+      "topDateReadability": {
+        "images": 2,
+        "status": "VISUAL_PASS"
+      },
+      "bottomCaptures": {
+        "images": 2,
+        "status": "VISUAL_FAIL_WITHHELD",
+        "location": "privacy/rejected/",
+        "reason": "Heading/Done control clipped in offscreen snapshots"
+      },
+      "productionBugEstablished": false,
+      "signedLiveScrollingVerified": false,
+      "provenance": "privacy/privacy-render-provenance.json"
+    }
+  },
+  "signing": {
+    "status": "COMPILED_SIGNING_ATTEMPT_SAFELY_STOPPED_OWNER_AUTHORIZATION_REQUIRED",
+    "existingAppleDevelopmentAndDistributionIdentities": true,
+    "matchingStoreProfile": true,
+    "macInstallerDistributionIdentityAvailable": false,
+    "completedArchive": false,
+    "installerExport": false,
+    "waitingOwnBuildSigningJobs": 0,
+    "partialDerivedDataAndLogsPreserved": true,
+    "evidence": "packaging/packaging-status.json"
+  },
+  "pendingGates": [
+    "Owner authorization to use existing signing key; missing Mac Installer Distribution asset",
+    "Exact Store-distribution app/installer export, Xcode/Connect validation and processing",
+    "Connect app/name/Bundle ID/version history, legal/support/review contact, price/territories",
+    "Publish corrected public privacy policy and verify content parity",
+    "Owner privacy/age/encryption/accessibility/regional/agreement/tax/banking declarations",
+    "Signed Sandbox clean-install/update/runtime on macOS14 and current macOS",
+    "File access/bookmark revocation, capture consent/indication/shutdown and privacy-policy scrolling",
+    "Preview network isolation, IPv6-only/offline behavior",
+    "Energy/CPU/memory/disk, VoiceOver/keyboard, motion/transparency and multiple displays",
+    "Compare or recapture screenshots from exact signed candidate",
+    "Signed beta QA route (TestFlight recommended, not mandatory) and Apple's App Review"
+  ],
+  "boundaries": {
+    "submissionReady": false,
+    "appStoreApproved": false,
+    "uploaded": false,
+    "published": false,
+    "installedAppChanged": false,
+    "personalArchiveOrSettingsChanged": false,
+    "keychainOrAccountPermissionsChanged": false,
+    "kariMaterialUsed": false
+  }
+}

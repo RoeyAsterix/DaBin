@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "scope": "Docs-only fictional offscreen native screenshot exporter; production inputs unchanged.",
+  "attempts": [
+    {
+      "environment": "restricted tool sandbox",
+      "result": "RENDER_ENVIRONMENT_FAILURE",
+      "compilation": "passed",
+      "render": "timed out after 90 seconds before writing PNGs",
+      "observedDiagnostics": [
+        "LaunchServices scheduleApplicationNotification connection invalid",
+        "com.apple.hiservices-xpcservice unavailable to tool sandbox"
+      ],
+      "notAnAppFailure": true
+    },
+    {
+      "environment": "scoped native GUI permission",
+      "result": "REJECTED_CAPTURE_FORMAT",
+      "compilation": "passed",
+      "render": "initial 24-bit cacheDisplay outputs were entirely black despite valid PNG dimensions",
+      "visualReview": "Rejected all three immediately; not delivered or approved.",
+      "correction": "Use AppKit RGBA snapshot, require opacity, export RGB without resampling, and reject blank or nearly blank images."
+    },
+    {
+      "environment": "scoped native GUI permission",
+      "result": "VALID_NATIVE_SOURCE_MATCHED_DRAFT",
+      "render": "RGBA snapshot and opaque RGB export passed; main agent inspected all three original-resolution PNGs",
+      "copyReview": "Inbox and Projects readable and faithful. Focus subtitle narrowed to visible duration controls; no claim that below-viewport checklist/attachments are shown.",
+      "notDistributionVerified": true
+    }
+  ]
+}

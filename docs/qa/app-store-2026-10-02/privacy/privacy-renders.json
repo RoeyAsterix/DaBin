@@ -1,0 +1,48 @@
+{
+  "checks" : 11,
+  "fixturePrivacy" : "Production policy view and locally bundled policy only. No personal archive, clipboard, network, notification or input actions.",
+  "renders" : [
+    {
+      "appearance" : "light",
+      "bottom" : "rejected/DABIN__PRIVACY__LIGHT_BOTTOM.png",
+      "bottomVisualQA" : "VISUAL FAIL / WITHHELD: main-agent review reports pinned heading and Done clipping in the offscreen fixture; not an established production bug",
+      "documentHeight" : 4297,
+      "hostBounds" : [
+        0,
+        0,
+        350,
+        440
+      ],
+      "pixelScale" : 1,
+      "policySectionCount" : 9,
+      "scrollBottom" : 4297,
+      "top" : "DABIN__PRIVACY__LIGHT_TOP.png",
+      "topVisualQA" : "PASS: main-agent original-resolution date/readability review",
+      "viewportHeight" : 379,
+      "windowKey" : false,
+      "windowMain" : false
+    },
+    {
+      "appearance" : "dark",
+      "bottom" : "rejected/DABIN__PRIVACY__DARK_BOTTOM.png",
+      "bottomVisualQA" : "VISUAL FAIL / WITHHELD: main-agent review reports pinned heading and Done clipping in the offscreen fixture; not an established production bug",
+      "documentHeight" : 4297,
+      "hostBounds" : [
+        0,
+        0,
+        350,
+        440
+      ],
+      "pixelScale" : 1,
+      "policySectionCount" : 9,
+      "scrollBottom" : 4297,
+      "top" : "DABIN__PRIVACY__DARK_TOP.png",
+      "topVisualQA" : "PASS: main-agent original-resolution date/readability review",
+      "viewportHeight" : 379,
+      "windowKey" : false,
+      "windowMain" : false
+    }
+  ],
+  "updatedLine" : "Updated 2 October 2026",
+  "visualReviewRequired" : "Completed: top light/dark date/readability PASS; both bottom candidates VISUAL FAIL / withheld in rejected/. Eleven assertion checks pass independently. Exact distribution-signed live policy scrolling still pending."
+}

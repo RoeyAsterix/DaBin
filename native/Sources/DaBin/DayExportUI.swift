@@ -1,4 +1,5 @@
 import AppKit
+import Combine
 import SwiftUI
 import UniformTypeIdentifiers
 
@@ -103,13 +104,24 @@ final class DayExportActionController: ObservableObject {
     typealias AccessibilityAnnouncer = (String) -> Void
 
     @Published var isPresented = false
-    @Published private(set) var feedback: DayExportActionFeedback?
+    @Published private(set) var feedback: DayExportActionFeedback? {
+        didSet {
+            invalidateSuccessfulDismissal()
+            feedbackPresentation.present(feedback)
+        }
+    }
+    /// Expiry affects only the message, not the outcome or export/retry actions.
+    var visibleFeedback: DayExportActionFeedback? { feedbackPresentation.visibleMessage }
+    var feedbackRevision: UInt { feedbackPresentation.revision }
 
     private let pasteboardWriter: PasteboardWriter
     private let destinationChooser: DestinationChooser
     private let fileWriter: FileWriter
     private let accessibilityAnnouncer: AccessibilityAnnouncer
+    private let feedbackPresentation = TransientMessagePresentation<DayExportActionFeedback>()
+    private var feedbackObservation: AnyCancellable?
     private var dismissalTask: Task<Void, Never>?
+    private var dismissalGeneration: UInt = 0
     private var outsideClickMonitor: Any?
 
     init(pasteboardWriter: @escaping PasteboardWriter,
@@ -120,6 +132,9 @@ final class DayExportActionController: ObservableObject {
         self.destinationChooser = destinationChooser
         self.fileWriter = fileWriter
         self.accessibilityAnnouncer = accessibilityAnnouncer
+        feedbackObservation = feedbackPresentation.objectWillChange.sink { [weak self] _ in
+            self?.objectWillChange.send()
+        }
     }
 
     deinit {
@@ -155,7 +170,7 @@ final class DayExportActionController: ObservableObject {
     }
 
     func present() {
-        dismissalTask?.cancel()
+        invalidateSuccessfulDismissal()
         feedback = nil
         isPresented = true
         let presentingWindow = NSApplication.shared.currentEvent?.windowNumber
@@ -168,8 +183,7 @@ final class DayExportActionController: ObservableObject {
     }
 
     func dismiss() {
-        dismissalTask?.cancel()
-        dismissalTask = nil
+        invalidateSuccessfulDismissal()
         if let outsideClickMonitor {
             NSEvent.removeMonitor(outsideClickMonitor)
             self.outsideClickMonitor = nil
@@ -180,6 +194,8 @@ final class DayExportActionController: ObservableObject {
 
     @discardableResult
     func copy<Document: TimelineTextExportDocument>(_ document: Document) -> Bool {
+        invalidateSuccessfulDismissal()
+        feedback = nil
         guard document.actionCount > 0 else { return false }
         if pasteboardWriter(document.text) {
             feedback = .copied(document.exportPeriod)
@@ -194,8 +210,9 @@ final class DayExportActionController: ObservableObject {
 
     @discardableResult
     func save<Document: TimelineTextExportDocument>(_ document: Document) -> DayExportSaveOutcome {
-        guard document.actionCount > 0 else { return .nothingToExport }
+        invalidateSuccessfulDismissal()
         feedback = nil
+        guard document.actionCount > 0 else { return .nothingToExport }
         switch destinationChooser(document.exportPeriod, document.filename) {
         case .cancelled:
             return .cancelled
@@ -216,12 +233,20 @@ final class DayExportActionController: ObservableObject {
     }
 
     private func dismissAfterFeedback() {
-        dismissalTask?.cancel()
+        invalidateSuccessfulDismissal()
+        let receipt = dismissalGeneration
         dismissalTask = Task { [weak self] in
-            try? await Task.sleep(for: .seconds(1.15))
-            guard !Task.isCancelled else { return }
-            self?.dismiss()
+            do { try await Task.sleep(for: .seconds(1.15)) } catch { return }
+            guard !Task.isCancelled, let self, self.dismissalGeneration == receipt else { return }
+            self.dismissalTask = nil
+            self.dismiss()
         }
+    }
+
+    private func invalidateSuccessfulDismissal() {
+        dismissalGeneration &+= 1
+        dismissalTask?.cancel()
+        dismissalTask = nil
     }
 
     private func installOutsideClickMonitor(for presentingWindowNumber: Int?) {
@@ -276,10 +301,12 @@ struct TimelineExportButton: View {
                 WeeklyExportPopover(state: state, controller: controller) { message in
                     state.reportFailure(message)
                 }
+                .hoverTooltips()
             } else {
                 DayExportPopover(state: state, controller: controller) { message in
                     state.reportFailure(message)
                 }
+                .hoverTooltips()
             }
         }
         .onChange(of: state.selectedDay) { _, _ in
@@ -328,7 +355,7 @@ private struct DayExportPopover: View {
                     .font(.system(size: 11))
                     .foregroundStyle(Palette.muted)
                     .accessibilityLabel("Nothing to export")
-            } else if let feedback = controller.feedback {
+            } else if let feedback = controller.visibleFeedback {
                 HStack(spacing: 6) {
                     Image(systemName: feedback.symbol)
                         .foregroundStyle(feedbackColor(feedback))
@@ -472,7 +499,7 @@ struct WeeklyExportPopover: View {
                     .accessibilityLabel(emptyMessage)
             }
 
-            if let feedback = controller.feedback {
+            if let feedback = controller.visibleFeedback {
                 HStack(spacing: 6) {
                     Image(systemName: feedback.symbol)
                         .foregroundStyle(feedbackColor(feedback))

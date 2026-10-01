@@ -9,6 +9,7 @@
   "packagingStatus": "withheld_backup_confirmation_alias",
   "supersededByReviewedVersion": "0.4.8",
   "supersededByReviewedBuild": "63",
-  "latestReleaseStatus": "pending_new_frozen_candidate",
-  "distributionTestsPassed": 30
+  "latestReleaseStatus": "held_at_user_request",
+  "distributionTestsPassed": 30,
+  "heartbeatStatus": "PAUSED"
 }

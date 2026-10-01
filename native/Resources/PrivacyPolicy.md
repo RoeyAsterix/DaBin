@@ -1,6 +1,6 @@
 # DaBin privacy & your data
 
-Updated 1 October 2026
+Updated 2 October 2026
 
 ## Your daily board stays on your Mac
 
@@ -32,7 +32,7 @@ DaBin saves a source application when macOS makes one reasonably identifiable at
 
 For a single image seen through both the screenshot folder and clipboard within a short interval, DaBin compares a normalized image fingerprint and suppresses the second channel's copy. Copying the same image again through one channel remains a new action. Automatic captures use the same local archive as manual captures. Their contents are not uploaded. Automatically captured links never fetch website previews, even if Fetch link previews is enabled for manually saved links.
 
-Successful automatic saves produce a brief, noninteractive robot confirmation unless Quiet mode is enabled. Four or more successful automatic actions in the same capture hour appear as an expandable hourly group in Inbox's Day view. The popup begins after the triggering item has been saved, uses a generic token and never displays private capture contents. Its panel requests exclusion from window capture; macOS does not guarantee that every third-party screen recorder will honor that exclusion.
+Successful automatic saves produce a brief, noninteractive robot confirmation unless Quiet mode is enabled. Four or more successful automatic actions in the same capture hour appear as an expandable hourly group in Inbox's Day view. The popup begins after the triggering item has been saved and uses a generic token rather than the saved text, image or file. If the capture is filed to a project, the robot also holds a sign with that project name. This local sign can reveal a project label to someone viewing your screen. Quiet mode hides automatic-save confirmations; the menu bar still indicates monitoring status. The popup requests exclusion from window capture, but macOS does not guarantee that every screenshot or third-party screen recorder will honor that exclusion.
 
 ## Optional website previews
 
@@ -51,6 +51,8 @@ When you choose Download & install, DaBin downloads the published release packag
 ## Reminders
 
 DaBin asks for notification permission when you first save a reminder. Notifications are scheduled locally through macOS with a generic message, without the capture's contents. You can turn off a reminder in its record and save, or change DaBin's notification permission in System Settings.
+
+Task focus timers are separate from system reminders. When a timer you start finishes while DaBin is running, the robot shows a visual alarm clock and a sign with the first three words of the task title. Those words are visible locally to someone viewing your screen; they are not uploaded or placed in the generic reminder notification. Pressing the robot dismisses the alarm without marking the task completed. Quiet mode and Reduce Motion stop its animations but do not hide a waiting timer alarm. Its panel requests exclusion from window capture, but this is not a guarantee against screenshots or third-party screen recording.
 
 ## Keeping and removing your data
 

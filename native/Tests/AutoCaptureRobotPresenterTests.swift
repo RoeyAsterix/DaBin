@@ -144,7 +144,9 @@ private struct AutoCaptureRobotPresenterTests {
                    "The automatic confirmation cannot take focus and ignores clicks")
         try expect(presenter.panel.sharingType == .none,
                    "The automatic confirmation is excluded from screen capture")
-        try expect(presenter.present(additionalCaptureCount: 1),
+        try expect(presenter.present(additionalCaptureCount: 1,
+                                     projectName: "  Research  ",
+                                     projectColor: .systemTeal),
                    "A valid automatic capture presents successfully")
         guard let firstPerformance = presenter.currentPerformance else {
             throw NSError(domain: "DaBinAutoCaptureRobotPresenterTests", code: 2,
@@ -155,19 +157,30 @@ private struct AutoCaptureRobotPresenterTests {
                    "The live accessibility preference selects the reduced peek, check and fade")
         try expect(presenter.performanceStartCount == 1 && presenter.badgeText == nil,
                    "One success starts one performance and does not show a redundant ×1 badge")
+        try expect(presenter.currentProjectName == "Research"
+                   && presenter.projectSignIsVisible
+                   && presenter.projectSignWaveCount == 1
+                   && presenter.projectSignLastUpdateReducedMotion
+                   && !presenter.projectSignHasActiveWave,
+                   "Reduce Motion shows the normalized project sign without moving it")
         try expect(ObjectIdentifier(presenter.panel) == panelIdentity && presenter.panel.isVisible,
                    "Presentation reuses the one panel instead of creating a window")
         try expect(hasNativeFrame(presenter.panel, requested: islandFrame)
                    && presenter.panel.contentView?.subviews.first?.frame.size == QuietOrbitLayout(cameraIsland: islandRect, displayFrame: builtIn.frame)?.robotFrame(for: .bottom).size
                    && presenter.panel.contentView?.layer?.masksToBounds == true,
                    "Island artwork gets the full clipped stage after native screen constraints, without a fake housing")
-        try expect(presenter.present(additionalCaptureCount: 2)
+        try expect(presenter.present(additionalCaptureCount: 2,
+                                     projectName: "Research",
+                                     projectColor: .systemTeal)
                    && presenter.state.visibleCount == 3
                    && presenter.performanceStartCount == 1
                    && presenter.currentPerformance?.reaction == firstPerformance.reaction
                    && presenter.badgeText == "×3"
+                   && presenter.currentProjectName == "Research"
+                   && presenter.projectSignWaveCount == 2
+                   && !presenter.projectSignHasActiveWave
                    && ObjectIdentifier(presenter.panel) == panelIdentity,
-                   "A rapid burst updates ×3 without restarting or changing the reaction")
+                   "Every reduced-motion save refreshes the sign without restarting or moving the robot")
         let nativeBadge = presenter.panel.contentView?.subviews.compactMap { $0 as? NSTextField }.first
         let cameraInPanel = QuietOrbitLayout(cameraIsland: islandRect, displayFrame: builtIn.frame)!.cameraFrameInPanel
         try expect(nativeBadge?.stringValue == "✓ ×3" && nativeBadge?.isHidden == false
@@ -190,6 +203,10 @@ private struct AutoCaptureRobotPresenterTests {
         }
         try expect(!presenter.state.isVisible && !presenter.panel.isVisible,
                    "The one performance completes, fades out and orders out the panel")
+        try expect(presenter.currentProjectName == nil
+                   && !presenter.projectSignIsVisible
+                   && presenter.projectSignWaveCount == 0,
+                   "Finishing the popup hides and resets its project sign")
         try expect(presentationChanges == [true, false],
                    "Presentation coordination reports one visible edge and one hidden edge")
 
@@ -208,14 +225,25 @@ private struct AutoCaptureRobotPresenterTests {
                    "A shut-down presenter cannot recreate its passive UI")
 
         let externalPresenter = AutoCaptureRobotPresenter(
-            dismissDelay: 0.04,
+            dismissDelay: 0.30,
             primaryScreen: { external },
             reduceMotion: { false },
             reactionDeck: AutoCaptureRobotReactionDeck(seed: 91)
         )
-        try expect(externalPresenter.present(additionalCaptureCount: 1)
+        try expect(externalPresenter.present(additionalCaptureCount: 1,
+                                             projectName: "Launch",
+                                             projectColor: .systemOrange)
                    && externalPresenter.currentPerformance?.entrance == .right,
                    "An external hardware primary display uses the right-edge entrance")
+        try expect(externalPresenter.present(additionalCaptureCount: 2,
+                                             projectName: "Launch",
+                                             projectColor: .systemOrange)
+                   && externalPresenter.state.visibleCount == 3
+                   && externalPresenter.performanceStartCount == 1
+                   && externalPresenter.currentProjectName == "Launch"
+                   && externalPresenter.projectSignWaveCount == 2
+                   && externalPresenter.projectSignHasActiveWave,
+                   "Each same-project save waves the sign without restarting the eating choreography")
         try expect(hasNativeFrame(externalPresenter.panel, requested: externalFrame),
                    "The external popup uses the tested top-right safe-area frame")
         externalPresenter.shutdown()
@@ -262,6 +290,47 @@ private struct AutoCaptureRobotPresenterTests {
         try expect(suspensionChanges == [true, false, true],
                    "Suspension and resumption expose exact presentation ownership changes")
         suspendedPresenter.shutdown()
+
+        let destinationPresenter = AutoCaptureRobotPresenter(
+            dismissDelay: 0.12,
+            primaryScreen: { builtInWithIsland },
+            reduceMotion: { false },
+            reactionDeck: AutoCaptureRobotReactionDeck(seed: 106)
+        )
+        destinationPresenter.suspendForBoard()
+        try expect(destinationPresenter.present(additionalCaptureCount: 2,
+                                                projectName: "Atlas",
+                                                projectColor: .systemBlue)
+                   && destinationPresenter.present(additionalCaptureCount: 1,
+                                                   projectName: "Atlas",
+                                                   projectColor: .systemBlue)
+                   && destinationPresenter.present(additionalCaptureCount: 4,
+                                                   projectName: "Beacon",
+                                                   projectColor: .systemPink)
+                   && destinationPresenter.pendingCaptureCount == 7
+                   && destinationPresenter.nextPendingProjectName == "Atlas"
+                   && destinationPresenter.currentProjectName == nil,
+                   "Suspension retains ordered project destinations without displaying a stale sign")
+        try expect(destinationPresenter.resumeAfterBoard()
+                   && destinationPresenter.state.visibleCount == 3
+                   && destinationPresenter.currentProjectName == "Atlas"
+                   && destinationPresenter.projectSignWaveCount == 2,
+                   "Resuming combines only matching destinations and replays every queued sign wave")
+        let beaconDeadline = Date().addingTimeInterval(1)
+        while destinationPresenter.currentProjectName != "Beacon", Date() < beaconDeadline {
+            try await Task.sleep(for: .milliseconds(10))
+        }
+        try expect(destinationPresenter.currentProjectName == "Beacon"
+                   && destinationPresenter.state.visibleCount == 4
+                   && destinationPresenter.pendingCaptureCount == 0
+                   && destinationPresenter.performanceStartCount == 2
+                   && destinationPresenter.projectSignWaveCount == 3,
+                   "A different queued project receives its own later performance and never relabels Atlas")
+        destinationPresenter.shutdown()
+        try expect(destinationPresenter.currentProjectName == nil
+                   && !destinationPresenter.projectSignIsVisible
+                   && destinationPresenter.projectSignWaveCount == 0,
+                   "Shutdown clears all sign state")
 
         let latePresenter = AutoCaptureRobotPresenter(
             dismissDelay: 0.16,

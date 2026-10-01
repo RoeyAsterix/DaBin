@@ -1,0 +1,55 @@
+{
+  "date": "2026-10-02",
+  "result": "PASS",
+  "scope": "Friendly product copy and a two-page robot-led PDF guide for DaBin 0.4.19 (74). Documentation only; no production app source, installed app, user archive or settings changed.",
+  "outputs": {
+    "output/pdf/DaBin-Quick-Guide.pdf": "a96e33be9e03db262e9961a722b7950d7aafa87ac16e3faf9e040c5f0e5a6d33",
+    "docs/DaBin-Quick-Guide.pdf": "a96e33be9e03db262e9961a722b7950d7aafa87ac16e3faf9e040c5f0e5a6d33",
+    "output/copy/DaBin-Friendly-Copy.txt": "3a8905faab8c42641f8a5d281a5346c96d818d2a135e6db52103afe2cd13f2cf"
+  },
+  "authoring_inputs": {
+    "design/onepager/copy.json": "761c0c4ed5c49b1fc442599ac2555a7d366c34bdae6e198c8bb46af2f8dff8a2",
+    "design/onepager/assets/guide-assets.json": "a358bb63b4ea7fa4ca337e00f56a434666ae2c303fec9449aed1a05664ae3a53",
+    "design/onepager/assets/guide-native-source-manifest.json": "5848e9a81181cb7dc1814109086b365c8fff4f6fbc87d4ab6e389e14867520d1",
+    "design/onepager/build_guide.py": "fe2297b76f3eaaf3c13ed9e131bdb5a67f66fa4075aa59cabeb60e4752daeb79"
+  },
+  "structure": {
+    "page_count": 2,
+    "page_size": "A4 landscape",
+    "pdf_word_count": 397,
+    "matching_pdf_copies": "PASS",
+    "required_feature_claims": "PASS",
+    "text_and_image_bounds": "PASS",
+    "embedded_Arial_regular_and_bold": "PASS",
+    "selectable_extracted_text": "PASS",
+    "font_render_warnings": 0
+  },
+  "native_visual_provenance": {
+    "source_manifest": "../assets/guide-native-source-manifest.json",
+    "render_manifest": "../assets/guide-native-renders.json",
+    "current_native_source_hashes": "PASS",
+    "native_PNG_hashes": "PASS",
+    "robot_identity": "Canonical current-production Quiet Orbit RobotCharacterView; no generated replacement.",
+    "privacy": "Local native exports with a fictional temporary archive and isolated preferences. No personal captures, clipboard access, network, global input, notification delivery or permission prompts. The simple trail illustration is code-drawn fixture content, not KARI material."
+  },
+  "visual_review": {
+    "result": "PASS",
+    "method": "Both final PDF pages rendered with Poppler at 180 dpi and inspected in full. Independent read-only copy and visual review also passed.",
+    "render_sha256": {
+      "tmp/pdfs/robot-guide-1.png": "c5325db0366fa019d8cb4644c8c46ea3aa80074ed890f6494f7dd2cc56a6880c",
+      "tmp/pdfs/robot-guide-2.png": "d9f15d765735e3c2a99f43e8441ce63317569d78972d8b873d9a7acef89e2e1d"
+    },
+    "checks": [
+      "No overlapping, clipped or overflowing authored text.",
+      "Consistent embedded typography, margins, contrast, headings, footers and page numbering.",
+      "Native interface labels remain readable; numbered callouts avoid covering controls.",
+      "Project and preview callouts target real native interface regions.",
+      "PDF-only crops preserve native source pixels and frame proportions.",
+      "Friendly robot voice; first steps separated from optional capture and comfort settings.",
+      "Auto Capture is opt-in, destination-aware and limited to new changes.",
+      "Clicking an expired alarm acknowledges it; the task stays open until marked done."
+    ]
+  },
+  "preservation": "Previous PDF contents and the prior builder are retained under design/onepager/archive. Existing unrelated worktree changes are preserved.",
+  "rebuild_note": "A later build invalidates this review unless its output and authoring-input hashes match; inspect both new renders and update the review record."
+}

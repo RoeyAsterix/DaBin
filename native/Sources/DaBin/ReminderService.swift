@@ -4,7 +4,12 @@ import UserNotifications
 
 @MainActor
 final class ReminderService: NSObject, UNUserNotificationCenterDelegate, ObservableObject {
-    @Published var status: String?
+    @Published var status: String? {
+        didSet { feedback.present(status) }
+    }
+    let feedback = TransientMessagePresentation<String>()
+    var visibleStatus: String? { feedback.visibleMessage }
+    private var feedbackSubscription: AnyCancellable?
     var onOpenCapture: ((UUID) -> Void)? {
         didSet {
             guard let callback = onOpenCapture, let id = deferredOpen else { return }
@@ -28,8 +33,12 @@ final class ReminderService: NSObject, UNUserNotificationCenterDelegate, Observa
         self.store = store
         self.client = client
         super.init()
+        feedbackSubscription = feedback.objectWillChange.sink { [weak self] _ in self?.objectWillChange.send() }
         (client as? SystemReminderNotificationClient)?.center.delegate = self
     }
+
+    /// Only disposes UI feedback; scheduled system reminders survive quitting.
+    func shutdownPresentation() { feedback.shutdown() }
 
     /// Called at launch/activation. This deliberately never presents a permission request.
     func reconcile() async {

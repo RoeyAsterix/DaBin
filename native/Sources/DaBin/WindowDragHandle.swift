@@ -5,18 +5,19 @@ import SwiftUI
 /// Keeping it separate from the header buttons preserves their normal mouse events.
 @MainActor
 struct WindowDragHandle: NSViewRepresentable {
+    @Environment(\.daBinTooltipsEnabled) private var tooltipsEnabled
     var onDragStarted: (() -> Void)? = nil
     var onDragEnded: ((CGPoint) -> Void)? = nil
 
     func makeNSView(context: Context) -> WindowDragHandleView {
         let view = WindowDragHandleView()
-        view.toolTip = "Drag to move DaBin between screens"
         view.setAccessibilityElement(false)
         updateNSView(view, context: context)
         return view
     }
 
     func updateNSView(_ nsView: WindowDragHandleView, context: Context) {
+        nsView.toolTip = tooltipsEnabled ? "Drag to move DaBin between screens" : nil
         nsView.onDragStarted = onDragStarted
         nsView.onDragEnded = onDragEnded
     }

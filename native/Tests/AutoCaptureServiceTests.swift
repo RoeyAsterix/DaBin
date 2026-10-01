@@ -8,10 +8,12 @@ import UniformTypeIdentifiers
 private final class FakeScreenshotMonitor: ScreenshotFolderMonitoring {
     private struct ActivitySample {
         let application: AutoCaptureSourceApplication?
+        let projectName: String?
     }
 
     var sourceApplicationAtDirectoryActivity: (() -> AutoCaptureSourceApplication?)?
-    var onNewScreenshot: ((URL, AutoCaptureSourceApplication?) -> Void)?
+    var projectAtDirectoryActivity: (() -> String?)?
+    var onNewScreenshot: ((URL, AutoCaptureSourceApplication?, String?) -> Void)?
     var onFailure: ((Error) -> Void)?
     private(set) var isRunning = false
     var startError: Error?
@@ -29,14 +31,16 @@ private final class FakeScreenshotMonitor: ScreenshotFolderMonitoring {
 
     func beginActivity() {
         guard isRunning, activitySample == nil else { return }
-        activitySample = ActivitySample(application: sourceApplicationAtDirectoryActivity?())
+        activitySample = ActivitySample(application: sourceApplicationAtDirectoryActivity?(),
+                                        projectName: projectAtDirectoryActivity?())
     }
 
     func emitSettled(_ url: URL) {
         guard isRunning else { return }
         let application = activitySample?.application
+        let projectName = activitySample?.projectName
         activitySample = nil
-        onNewScreenshot?(url, application)
+        onNewScreenshot?(url, application, projectName)
     }
 
     func emit(_ url: URL) {
@@ -231,7 +235,7 @@ struct AutoCaptureServiceTests {
         let obsoleteScreenshotCallback = monitor.onNewScreenshot
         service.setScreenshotsEnabled(false)
         service.setScreenshotsEnabled(true)
-        obsoleteScreenshotCallback?(imageURL, nil)
+        obsoleteScreenshotCallback?(imageURL, nil, nil)
         try await Task.sleep(for: .milliseconds(180))
         try expect(store.captures.count == 3,
                    "Disabling and immediately restarting screenshots cancels pending events and obsolete callbacks")
@@ -344,6 +348,7 @@ struct AutoCaptureServiceTests {
         let input = InputService(store: store)
         let settings = AutoCaptureSettings(defaults: defaults, ownBundleIdentifier: "com.dabin.mac")
         var source = AutoCaptureSourceApplication(name: "Notes", bundleIdentifier: "com.apple.Notes")
+        var selectedProject: String?
         let fakeMonitor = FakeScreenshotMonitor()
         let service = AutoCaptureService(
             settings: settings,
@@ -360,6 +365,7 @@ struct AutoCaptureServiceTests {
             clipboardImageDelay: .milliseconds(180),
             duplicateInterval: 2
         )
+        service.projectProvider = { selectedProject }
 
         try expect(!settings.isEnabled && !settings.isPaused && settings.status == .disabled,
                    "Auto Capture defaults off and unpaused")
@@ -408,8 +414,12 @@ struct AutoCaptureServiceTests {
             }
         }
         service.onFailure = { failures.append($0) }
+        selectedProject = "Launch project"
         writeString("A private automatic clipboard fixture", to: privateBoard)
         service.pollNow()
+        // Navigation after observation must not redirect an event already queued
+        // through the asynchronous import pipeline.
+        selectedProject = "Different project"
         try await waitUntil { savedActions.count == 1 }
         try expect(committedActions.count == 1,
                    "A fully saved action updates the feed and success channel once")
@@ -420,6 +430,10 @@ struct AutoCaptureServiceTests {
         try expect(clipboardCapture.sourceApplicationName == "Notes"
                    && clipboardCapture.sourceApplicationBundleIdentifier == "com.apple.Notes",
                    "The available source application is stored on the capture")
+        try expect(clipboardCapture.projectName == "Launch project"
+                   && savedActions[0].projectName == "Launch project",
+                   "Auto Capture snapshots the selected project when the copy is observed")
+        selectedProject = nil
         try expect(settings.isEnabled && defaults.bool(forKey: AutoCaptureSettings.enabledKey),
                    "Enabled state is persisted")
         try expect(AutoCaptureSettings(defaults: defaults, ownBundleIdentifier: "com.dabin.mac").status == .ready,
@@ -528,17 +542,23 @@ struct AutoCaptureServiceTests {
         let screenshotURL = screenshotFolder.appendingPathComponent("Screen Shot fixture.png")
         try screenshotData.write(to: screenshotURL, options: .atomic)
         let actionsBeforeDedupe = savedActions.count
+        selectedProject = "Screenshot observation project"
         writePNG(screenshotData, to: privateBoard)
         service.pollNow()
-        fakeMonitor.emit(screenshotURL)
+        fakeMonitor.beginActivity()
+        selectedProject = "Later project"
+        fakeMonitor.emitSettled(screenshotURL)
         try await waitUntil { savedActions.count == actionsBeforeDedupe + 1 }
         try await Task.sleep(for: .milliseconds(350))
         try expect(savedActions.count == actionsBeforeDedupe + 1,
                    "Clipboard and screenshot-folder versions of one image create one action")
         let screenshotAction = savedActions.last!
         try expect(screenshotAction.origin == .automaticScreenshot
-                   && screenshotAction.captures.first?.captureOrigin == .automaticScreenshot,
-                   "The file-backed screenshot wins the cross-channel duplicate race")
+                   && screenshotAction.captures.first?.captureOrigin == .automaticScreenshot
+                   && screenshotAction.projectName == "Screenshot observation project"
+                   && screenshotAction.captures.first?.projectName == "Screenshot observation project",
+                   "The file-backed screenshot wins dedupe without changing the project sampled at directory activity")
+        selectedProject = nil
 
         let successCount = savedActions.count
         fakeMonitor.emit(screenshotFolder.appendingPathComponent("missing.png"))
@@ -593,16 +613,20 @@ struct AutoCaptureServiceTests {
         try screenshotData.write(to: monitorFolder.appendingPathComponent("existing.png"), options: .atomic)
         let concreteMonitor = ScreenshotFolderMonitor(folder: monitorFolder, settleDelay: .milliseconds(60))
         var monitorSource = AutoCaptureSourceApplication(name: "Notes", bundleIdentifier: "com.apple.Notes")
+        var monitorProject = "Initial screenshot project"
         var sourceSampleCount = 0
         var monitoredNames: [String] = []
         var monitoredSourceBundleIdentifiers: [String: String] = [:]
+        var monitoredProjects: [String: String] = [:]
         concreteMonitor.sourceApplicationAtDirectoryActivity = {
             sourceSampleCount += 1
             return monitorSource
         }
-        concreteMonitor.onNewScreenshot = { url, application in
+        concreteMonitor.projectAtDirectoryActivity = { monitorProject }
+        concreteMonitor.onNewScreenshot = { url, application, projectName in
             monitoredNames.append(url.lastPathComponent)
             monitoredSourceBundleIdentifiers[url.lastPathComponent] = application?.bundleIdentifier
+            monitoredProjects[url.lastPathComponent] = projectName
         }
         try concreteMonitor.start()
         try await Task.sleep(for: .milliseconds(100))
@@ -610,10 +634,12 @@ struct AutoCaptureServiceTests {
         try pngData(red: 0.8).write(to: monitorFolder.appendingPathComponent("new.png"), options: .atomic)
         try await waitUntil { sourceSampleCount > 0 }
         monitorSource = AutoCaptureSourceApplication(name: "Preview", bundleIdentifier: "com.apple.Preview")
+        monitorProject = "Later screenshot project"
         try await waitUntil { monitoredNames.contains("new.png") }
         try expect(monitoredNames == ["new.png"]
-                   && monitoredSourceBundleIdentifiers["new.png"] == "com.apple.Notes",
-                   "A complete screenshot emits once with the app sampled at the first directory activity")
+                   && monitoredSourceBundleIdentifiers["new.png"] == "com.apple.Notes"
+                   && monitoredProjects["new.png"] == "Initial screenshot project",
+                   "A complete screenshot emits once with the app and project sampled at the first directory activity")
 
         let partialData = try pngData(red: 0.62)
         let splitIndex = partialData.count / 2

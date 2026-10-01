@@ -14,6 +14,11 @@ struct ExplorerSection: Identifiable {
     let captures: [Capture]
 }
 
+struct ExplorerProjectDay: Hashable, Sendable {
+    let projectName: String?
+    let day: String
+}
+
 @MainActor enum ExplorerQuery {
     static func project(of capture: Capture, in captures: [Capture]) -> String? {
         if let parent = capture.parentTaskID, let task = captures.first(where: { $0.id == parent }) {
@@ -35,11 +40,40 @@ struct ExplorerSection: Identifiable {
                   workspace.sourceApplication == nil || WorkspaceQuery.sourceName(capture) == workspace.sourceApplication,
                   workspace.dateFilter.includes(capture.captureDay, now: now),
                   workspace.originFilter.includes(capture.captureOrigin) else { return false }
-            let haystack = CaptureSearch.normalized([capture.title, capture.originalText ?? "", capture.originalURL ?? "",
+            // Browsing does not need to fold the full immutable content of every
+            // capture. Large pasted documents must stay out of the empty-search path.
+            guard !words.isEmpty else { return true }
+            let haystack = CaptureSearch.normalized([capture.title, capture.originalURL ?? "",
                 capture.originalFilename ?? "", capture.comment, projectName ?? "", capture.captureDay,
                 WorkspaceQuery.sourceName(capture) ?? "", workspace.snippetName(for: capture.id) ?? ""].joined(separator: " "))
-            return words.allSatisfy { haystack.contains($0) || capture.normalizedIndexedTextForSearch.contains($0) }
+            return words.allSatisfy {
+                haystack.contains($0) || capture.normalizedOriginalTextForSearch.contains($0)
+                    || capture.normalizedIndexedTextForSearch.contains($0)
+            }
         }.sorted { $0.capturedAt == $1.capturedAt ? $0.id.uuidString < $1.id.uuidString : $0.capturedAt > $1.capturedAt }
+    }
+
+    /// Snapshot only the facts needed to list dated files. Parent ownership is
+    /// resolved once on the main actor before filesystem validation runs away
+    /// from the view, without passing mutable Capture objects to a worker.
+    static func projectDays(_ captures: [Capture], in records: [Capture]) -> [ExplorerProjectDay] {
+        let parents = Dictionary(uniqueKeysWithValues: records.map { ($0.id, $0) })
+        return captures.filter { $0.deletedAt == nil }.map { capture in
+            let parent = capture.parentTaskID.flatMap { parents[$0] }
+            return ExplorerProjectDay(projectName: parent == nil ? capture.projectName : parent?.projectName,
+                                      day: capture.captureDay)
+        }
+    }
+
+    nonisolated static func dailyDocuments(_ days: [ExplorerProjectDay], archive: DailyArchive,
+                                           project: String?, unfiledOnly: Bool) throws -> [ProjectArchiveDay] {
+        try Dictionary(grouping: days, by: { $0 }).compactMap { day, captures in
+            guard (!unfiledOnly || day.projectName == nil), project == nil || day.projectName == project else { return nil }
+            let relative = try ProjectFileArchive.dayRelativePath(project: day.projectName, day: day.day)
+                + "/\(day.day) - Captures and Links.md"
+            return ProjectArchiveDay(projectName: day.projectName, captureDay: day.day,
+                                     url: try archive.safeURL(relative), captureCount: captures.count)
+        }.sorted { $0.captureDay == $1.captureDay ? ($0.projectName ?? "") < ($1.projectName ?? "") : $0.captureDay > $1.captureDay }
     }
 
     static func sections(_ captures: [Capture], grouping: ExplorerGrouping) -> [ExplorerSection] {

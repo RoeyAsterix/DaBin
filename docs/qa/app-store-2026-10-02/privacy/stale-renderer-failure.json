@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "command": "bash native/scripts/render_privacy_qa.sh",
+  "result": "STALE_STANDALONE_HARNESS_COMPILE_FAILURE",
+  "exitCode": 1,
+  "observedCompilerDiagnostic": "Sources/DaBin/PrivacyInformation.swift:111:26: error: value of type 'some View' has no member 'buddyHelp'",
+  "cause": "The standalone script compiles only ThemeSettings.swift, PrivacyInformation.swift and PrivacyRenderTests.swift, omitting the current buddyHelp dependency.",
+  "separateUnexecutedAssertionFinding": "PrivacyRenderTests.swift still checks Choose Remove, while the current bundled policy says Choose Move to Recently Deleted. This assertion was not reached because compilation failed.",
+  "classification": "Test harness dependency/copy drift, not a demonstrated production app runtime failure.",
+  "productionFilesModified": false,
+  "approvedAdaptation": "Docs-only ExportPrivacy.swift links the current hash-verified Release final-QA module, preserves all eleven check semantics and replaces only the stale removal-copy assertion."
+}

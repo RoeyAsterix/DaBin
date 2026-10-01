@@ -163,19 +163,15 @@ private struct WeeklyCaptureCard: View {
     let taskAtTop: Bool
 
     private var showsPreview: Bool { !capture.isTask && capture.kind != .text && capture.kind != .task }
+    private var projectName: String? { ExplorerQuery.project(of: capture, in: state.store.captures) }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            if taskAtTop {
-                Text("Created \(prettyDay(capture.captureDay, includeWeekday: false))")
-                    .font(.system(size: 11)).foregroundStyle(accent)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
+            CaptureProjectPickerButton(state: state, capture: capture)
+                .frame(maxWidth: .infinity, alignment: .leading)
+            CaptureReceiptView(capture: capture, category: captureTypeLabel(capture.kind))
+                .frame(maxWidth: .infinity, alignment: .leading)
             HStack(spacing: 3) {
-                VStack(alignment: .leading, spacing: 3) {
-                    Text(captureClock(capture)).font(.system(size: 12)).monospacedDigit()
-                    Text(captureTypeLabel(capture.kind)).font(.system(size: 10)).lineLimit(1)
-                }.foregroundStyle(Palette.muted)
                 Spacer(minLength: 0)
                 CaptureCopyButton(state: state, captures: [capture], compact: true)
                 CaptureTrashButton(state: state, capture: capture)
@@ -215,12 +211,9 @@ private struct WeeklyCaptureCard: View {
                 }
                 if capture.isTask { TaskFocusControls(state: state, capture: capture) }
                 CaptureConversionUndo(state: state, capture: capture)
-                CaptureProjectPickerButton(state: state, capture: capture)
-                    .frame(maxWidth: .infinity, alignment: .leading)
                 HStack(spacing: 0) {
                     if !capture.isTask {
                         CaptureTaskConversionButton(state: state, capture: capture)
-                        CaptureKeepButton(state: state, capture: capture)
                     }
                     BuddyIconButton(symbol: capture.comment.isEmpty ? "text.bubble" : "text.bubble.fill", title: "Comment on \(capture.title)") {
                         state.openCapture(capture.id, focus: "comment")
@@ -237,8 +230,8 @@ private struct WeeklyCaptureCard: View {
             }
         }.padding(10).frame(maxWidth: .infinity, alignment: .leading)
             .background(Palette.surface, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
-            .overlay(RoundedRectangle(cornerRadius: 14, style: .continuous)
-                .strokeBorder(taskAtTop ? accent.opacity(0.55) : Palette.line, lineWidth: 0.7))
+            .projectCardFrame(workspace: state.workspace, projectName: projectName, activeProject: nil,
+                              fallbackColor: taskAtTop ? accent.opacity(0.55) : Palette.line)
             .contextMenu {
                 CaptureTaskConversionMenu(state: state, capture: capture)
                 Button(capture.isMinimized ? "Expand capture" : "Minimize capture", systemImage: capture.isMinimized ? "chevron.down" : "chevron.up") { state.toggleMinimized(capture) }

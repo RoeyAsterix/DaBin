@@ -33,7 +33,7 @@ struct RemindersScreen: View {
                 .padding(.top, 8).accessibilityAddTraits(.isHeader)
             ForEach(items) { capture in
                 VStack(alignment: .leading, spacing: 0) {
-                    CaptureRow(state: state, capture: capture, featured: false, embeddedInCard: true, showsDate: true)
+                    CaptureRow(state: state, capture: capture, featured: false, embeddedInCard: true)
                     HStack(spacing: 16) {
                         Button { state.completeFollowUp(capture) } label: { Label("Complete", systemImage: "checkmark.circle") }
                         Button { state.snoozeFollowUp(capture) } label: { Label("Snooze", systemImage: "clock.arrow.circlepath") }

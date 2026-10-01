@@ -15,9 +15,12 @@ struct WorkspaceItemCard: View {
     private var onShelf: Bool { workspace.shelfCaptureIDs.contains(capture.id) }
     private var hasFile: Bool { capture.attachmentRelativePath != nil }
     private var isSelected: Bool { workspace.selectedCaptureID == capture.id }
+    private var projectName: String? { ExplorerQuery.project(of: capture, in: state.store.captures) }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
+            CaptureProjectPickerButton(state: state, capture: capture)
+                .frame(maxWidth: .infinity, alignment: .leading)
             HStack(alignment: .top, spacing: 4) {
                 CaptureTrailView(state: state, capture: capture)
                 Spacer(minLength: 0)
@@ -25,11 +28,7 @@ struct WorkspaceItemCard: View {
                 BuddyIconButton(symbol: copied ? "checkmark" : "doc.on.doc", title: copied ? "Copied" : "Copy \(capture.title)") { copy() }
                 CaptureTrashButton(state: state, capture: capture)
             }
-            HStack(spacing: 5) {
-                Text(captureTypeLabel(capture.kind)).lineLimit(1)
-                Spacer(minLength: 0)
-                Text("\(prettyDay(capture.captureDay, includeWeekday: false)) · \(captureClock(capture))").monospacedDigit().lineLimit(1)
-            }.font(.system(size: 11)).foregroundStyle(Palette.muted)
+            CaptureReceiptView(capture: capture, category: captureTypeLabel(capture.kind))
             HStack(alignment: .top, spacing: 8) {
                 if capture.isTask { TaskStatusButton(state: state, capture: capture) }
                 Button {
@@ -65,29 +64,22 @@ struct WorkspaceItemCard: View {
             if capture.isTask, !capture.isMinimized { TaskFocusControls(state: state, capture: capture) }
             CaptureConversionUndo(state: state, capture: capture)
             HStack(spacing: 4) {
-                if capture.parentTaskID == nil {
-                    CaptureProjectPickerButton(state: state, capture: capture)
-                } else {
-                    Label(ExplorerQuery.project(of: capture, in: state.store.captures) ?? "Unfiled", systemImage: "folder")
-                        .font(.system(size: 12)).lineLimit(1).foregroundStyle(Palette.muted)
-                        .accessibilityLabel("Parent task project")
-                        .accessibilityValue(ExplorerQuery.project(of: capture, in: state.store.captures) ?? "Unfiled")
-                }
                 Spacer(minLength: 0)
                 if !capture.isTask {
                     CaptureTaskConversionButton(state: state, capture: capture)
-                    if capture.parentTaskID == nil { CaptureKeepButton(state: state, capture: capture) }
                 }
                 BuddyIconButton(symbol: onShelf ? "tray.full.fill" : "tray.and.arrow.down", title: onShelf ? "Remove from shelf; keep capture" : "Add to shelf", isActive: onShelf) { toggleShelf() }
-                Menu { itemActions } label: {
+                Menu { itemActions(includesRemoval: false, includesCardButtons: false) } label: {
                     Image(systemName: "ellipsis").font(.system(size: 16, weight: .medium)).frame(width: 32, height: 32)
                 }.menuStyle(.borderlessButton).menuIndicator(.hidden).fixedSize().foregroundStyle(Palette.muted)
                     .accessibilityLabel("Actions for \(capture.title)").buddyHelp("Item actions")
             }.padding(.top, 8).overlay(alignment: .top) { Rectangle().fill(Palette.line).frame(height: 0.7) }
         }.padding(16)
             .background(Palette.surface, in: RoundedRectangle(cornerRadius: 14))
-            .overlay(RoundedRectangle(cornerRadius: 14).strokeBorder(isSelected ? accent.opacity(0.55) : Palette.line, lineWidth: isSelected ? 1 : 0.7))
-            .contextMenu { itemActions }
+            .projectCardFrame(workspace: workspace, projectName: projectName, activeProject: state.libraryProject,
+                              fallbackColor: isSelected ? accent.opacity(0.55) : Palette.line,
+                              fallbackWidth: isSelected ? 1 : 0.7)
+            .contextMenu { itemActions(includesRemoval: true, includesCardButtons: true) }
             .alert(alias == nil ? "Save as snippet" : "Rename snippet", isPresented: $namingSnippet) {
                 TextField("Snippet name", text: $snippetName)
                 Button("Cancel", role: .cancel) { }
@@ -95,9 +87,11 @@ struct WorkspaceItemCard: View {
             } message: { Text("Give this reusable content a name. Its original capture stays intact and is searchable.") }
     }
 
-    @ViewBuilder private var itemActions: some View {
+    @ViewBuilder private func itemActions(includesRemoval: Bool, includesCardButtons: Bool) -> some View {
         Button("Open details", systemImage: "rectangle.and.text.magnifyingglass") { workspace.selectedCaptureID = capture.id; state.openCapture(capture.id) }
-        Button("Copy", systemImage: "doc.on.doc") { copy() }
+        if includesCardButtons {
+            Button("Copy", systemImage: "doc.on.doc") { copy() }
+        }
         if WorkspaceQuery.plainText(capture) != nil {
             Button("Copy as plain text", systemImage: "text.alignleft") {
                 do { try WorkspaceClipboard.copyPlainText(capture); markCopied(); state.status = AppStatusMessage(text: "Plain text copied. Paste it into your working app.", severity: .success) }
@@ -114,15 +108,13 @@ struct WorkspaceItemCard: View {
             }
         }
         Button(capture.isPinned ? "Unpin" : "Pin", systemImage: capture.isPinned ? "pin.slash" : "pin") { state.togglePinned(capture) }
-        Button(onShelf ? "Remove from shelf; keep capture" : "Add to shelf", systemImage: onShelf ? "tray" : "tray.and.arrow.down") { toggleShelf() }
-        if capture.parentTaskID == nil { Menu {
-            Button("No project", systemImage: "tray") { state.assignProject(capture, name: nil) }
-            ForEach(Set(state.projectNames + workspace.projectNames).sorted(), id: \.self) { project in
-                Button(project, systemImage: "folder") { state.assignProject(capture, name: project) }
-            }
-        } label: { Label("Move to project", systemImage: "folder") } }
+        if includesCardButtons {
+            Button(onShelf ? "Remove from shelf; keep capture" : "Add to shelf", systemImage: onShelf ? "tray" : "tray.and.arrow.down") { toggleShelf() }
+        }
         if !capture.isTask {
-            Button("Turn into task", systemImage: "checkmark.circle") { state.convertToTask(capture) }
+            if includesCardButtons {
+                Button("Turn into task", systemImage: "checkmark.circle") { state.convertToTask(capture) }
+            }
             if capture.parentTaskID == nil { Menu {
                 ForEach(state.store.captures.filter { $0.isTask && !$0.isCompleted }) { task in
                     Button(task.title, systemImage: "paperclip") {
@@ -153,7 +145,9 @@ struct WorkspaceItemCard: View {
         Button(capture.isMinimized ? "Expand capture" : "Minimize capture", systemImage: capture.isMinimized ? "chevron.down" : "chevron.up") { state.toggleMinimized(capture) }
         Button("Comment", systemImage: "text.bubble") { state.openCapture(capture.id, focus: "comment") }
         Button("Reminder", systemImage: "bell") { state.openCapture(capture.id, focus: "reminder") }
-        Button("Move to Recently Deleted…", systemImage: "trash", role: .destructive) { state.requestRemoval(capture) }
+        if includesRemoval {
+            Button("Move to Recently Deleted…", systemImage: "trash", role: .destructive) { state.requestRemoval(capture) }
+        }
     }
 
     private func copy() { if state.copyCapturesToClipboard([capture]) { markCopied() } }
@@ -172,7 +166,7 @@ struct WorkspaceItemCard: View {
     private func saveSnippet() {
         do {
             try workspace.setSnippetName(snippetName, for: capture.id)
-            state.status = AppStatusMessage(text: "Snippet saved. Find it in Workspace → Clipboard → Snippets.", severity: .success)
+            state.status = AppStatusMessage(text: "Snippet saved. Find it in Projects → Clipboard → Snippets.", severity: .success)
         } catch { state.reportFailure(error.localizedDescription) }
     }
 }

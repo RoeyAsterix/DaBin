@@ -151,11 +151,22 @@ private final class FilterResizeNotificationClient: ReminderNotificationClient {
         expect(near(initial.height, 610), "The unplaced bottom-corner Today reserves 560 points of content plus its outer frame")
         expect(defaults.object(forKey: CornerController.boardPlacementKey) == nil, "Opening an unplaced Daily does not persist a user drag")
 
+        let initialFrameApplicationCount = controller.boardFrameApplicationCount
+        for _ in 0..<3 {
+            state.objectWillChange.send()
+            settle(0.12)
+        }
+        expect(controller.board.frame == initial
+               && controller.boardFrameApplicationCount == initialFrameApplicationCount,
+               "Content-only state notifications preserve geometry without reapplying the same native frame")
+
         let shrink = sample(controller.board) { state.filter = .tasks }
         let taskFrame = controller.board.frame
         expect(state.todayTimelineCaptures.count == 1 && taskFrame.height >= 429 && taskFrame.height < 609,
                "Tasks leaves one receipt in a compact panel between the 430-point shell minimum and the full 610-point height")
         expectTransition(shrink, from: initial, to: taskFrame, reducedMotion: reducedMotion, label: "Daily shrink")
+        expect(controller.boardFrameApplicationCount > initialFrameApplicationCount,
+               "A real filter resize still applies its changed native frames")
         expect(defaults.object(forKey: CornerController.boardPlacementKey) == nil, "Filter animation does not become a saved user placement")
 
         let task = state.todayTimelineCaptures[0]

@@ -3,6 +3,7 @@
 __pycache__/
 
 DerivedData/
+/build/
 *.dSYM/
 *.xcuserstate
 xcuserdata/

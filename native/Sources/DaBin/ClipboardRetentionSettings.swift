@@ -38,9 +38,9 @@ struct ClipboardRetentionSettings: View {
                 HStack(spacing: 7) { ProgressView().controlSize(.small); Text("Tidying unused copies…").font(.system(size: 11)) }
             } else if let error = service.error {
                 Text(error).font(.system(size: 11)).foregroundStyle(Palette.task).fixedSize(horizontal: false, vertical: true)
-            } else if let result = service.lastResult {
-                Text(result.message).font(.system(size: 11)).foregroundStyle(result.error == nil ? Palette.muted : Palette.task)
-                    .fixedSize(horizontal: false, vertical: true).accessibilityLabel(result.message)
+            } else if let message = service.visibleResultMessage {
+                Text(message).font(.system(size: 11)).foregroundStyle(Palette.muted)
+                    .fixedSize(horizontal: false, vertical: true).accessibilityLabel(message)
             }
         }
         .alert("Move \(confirmedIDs.count) copies to Recently Deleted?", isPresented: $showClearConfirmation) {

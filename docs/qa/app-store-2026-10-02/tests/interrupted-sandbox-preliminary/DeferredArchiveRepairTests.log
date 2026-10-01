@@ -1,0 +1,1 @@
+Swift/ErrorType.swift:254: Fatal error: Error raised at top level: Error Domain=DeferredArchiveRepairTests Code=1 "Background maintenance eventually creates every readable folder" UserInfo={NSLocalizedDescription=Background maintenance eventually creates every readable folder}

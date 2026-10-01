@@ -6,20 +6,25 @@ import SwiftUI
 @MainActor
 struct FittedPDFPreview: View {
     let url: URL
+    let showsPageControls: Bool
     @Environment(\.daBinAccent) private var accent
     @StateObject private var model: FittedPDFModel
 
-    init(url: URL) {
+    init(url: URL, showsPageControls: Bool = true) {
         self.url = url
+        self.showsPageControls = showsPageControls
         _model = StateObject(wrappedValue: FittedPDFModel(url: url))
     }
 
     var body: some View {
         VStack(spacing: 4) {
             FittedPDFSurface(view: model.view)
+                // Display-only pages inside an open-file button must let the
+                // containing button receive the click instead of PDFKit.
+                .allowsHitTesting(showsPageControls)
                 .padding(4)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-            if model.pageCount > 1 {
+            if showsPageControls, model.pageCount > 1 {
                 HStack(spacing: 12) {
                     Button(action: { model.movePage(by: -1) }) {
                         Image(systemName: "chevron.left")

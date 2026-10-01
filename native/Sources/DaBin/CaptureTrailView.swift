@@ -31,15 +31,9 @@ struct CaptureTrailView: View {
     @ObservedObject var state: AppState
     @ObservedObject var capture: Capture
     var compact = true
-    @Environment(\.daBinAccent) private var accent
-    private enum Presentation: String, Identifiable {
-        case history, recording
-        var id: String { rawValue }
-    }
-    @State private var presentation: Presentation?
-    @State private var customName = ""
-    @State private var error: String?
-    @State private var confirmation: String?
+    @State private var showingHistory = false
+    @StateObject private var errorPresentation = TransientMessagePresentation<String>()
+    @StateObject private var confirmationPresentation = TransientMessagePresentation<String>()
 
     private var source: CaptureApplicationIdentity { CaptureSourcePresentation.origin(for: capture) }
     private var destinations: [CapturePasteDestination] { CapturePasteHistory.destinations(capture.pasteHistory) }
@@ -53,8 +47,8 @@ struct CaptureTrailView: View {
     var body: some View {
         HStack(spacing: 2) {
             Button {
-                error = nil; confirmation = nil
-                presentation = .history
+                clearFeedback()
+                showingHistory = true
             } label: {
                 ViewThatFits(in: .horizontal) {
                     trailPath(limit: CapturePasteHistory.compactLimit)
@@ -67,23 +61,15 @@ struct CaptureTrailView: View {
             .buddyHelp(summary)
             .accessibilityLabel(summary)
             .accessibilityIdentifier("capture-trail-\(capture.id.uuidString)")
-            .popover(item: $presentation, arrowEdge: .bottom) { mode in
-                historyPopover(showingPicker: mode == .recording)
+            .popover(isPresented: $showingHistory, arrowEdge: .bottom) {
+                historyPopover
+                    .hoverTooltips()
             }
-
-            Button {
-                error = nil; confirmation = nil
-                presentation = .recording
-            } label: {
-                Image(systemName: "plus").font(.system(size: 12, weight: .medium))
-                    .foregroundStyle(accent).frame(width: 32, height: 32)
-            }
-            .buttonStyle(TrailButtonStyle())
-            .buddyHelp("Record a paste destination")
-            .accessibilityLabel("Record a paste destination for \(capture.title)")
-            .accessibilityIdentifier("capture-trail-add-\(capture.id.uuidString)")
         }
         .accessibilityElement(children: .contain)
+        .onChange(of: capture.id) { _, _ in clearFeedback(); showingHistory = false }
+        .onChange(of: showingHistory) { _, shown in if !shown { clearFeedback() } }
+        .onDisappear { clearFeedback() }
     }
 
     private func trailPath(limit: Int) -> some View {
@@ -105,12 +91,12 @@ struct CaptureTrailView: View {
         }.fixedSize(horizontal: true, vertical: false)
     }
 
-    private func historyPopover(showingPicker: Bool) -> some View {
+    private var historyPopover: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
                 Text("Content trail").font(.system(size: 15, weight: .semibold))
                 Spacer()
-                Button { presentation = nil } label: {
+                Button { showingHistory = false } label: {
                     Image(systemName: "xmark").font(.system(size: 11, weight: .medium)).frame(width: 24, height: 24)
                 }.buttonStyle(.plain).accessibilityLabel("Close content trail").buddyHelp("Close content trail")
             }
@@ -136,28 +122,22 @@ struct CaptureTrailView: View {
                     LazyVStack(spacing: 0) {
                         ForEach(history) { event in historyRow(event) }
                     }
-                }.frame(height: min(CGFloat(history.count) * 57, showingPicker ? 112 : 224))
+                }.frame(height: min(CGFloat(history.count) * 57, 224))
             }
-            if let error {
+            if let error = errorPresentation.visibleMessage {
                 Label(error, systemImage: "exclamationmark.circle")
                     .font(.system(size: 11)).foregroundStyle(Palette.task)
                     .fixedSize(horizontal: false, vertical: true)
                     .accessibilityIdentifier("capture-trail-error")
             }
-            if let confirmation {
+            if let confirmation = confirmationPresentation.visibleMessage {
                 Label(confirmation, systemImage: "checkmark.circle")
                     .font(.system(size: 11)).foregroundStyle(Palette.muted)
                     .accessibilityIdentifier("capture-trail-success")
             }
-            if showingPicker { picker }
-            else {
-                Button { presentation = .recording; confirmation = nil } label: {
-                    Label("Record a paste", systemImage: "plus").frame(maxWidth: .infinity).padding(.vertical, 5)
-                }.accessibilityLabel("Record a paste destination")
-            }
         }
         .padding(16).frame(width: 320)
-        .onExitCommand { presentation = nil }
+        .onExitCommand { showingHistory = false }
         .accessibilityElement(children: .contain)
         .accessibilityLabel("Content trail")
     }
@@ -185,65 +165,23 @@ struct CaptureTrailView: View {
         .accessibilityElement(children: .contain)
     }
 
-    private var picker: some View {
-        VStack(alignment: .leading, spacing: 9) {
-            Divider()
-            Text("Record a paste").font(.system(size: 13, weight: .semibold))
-            Text("Choose where you pasted. This adds a record; it doesn’t paste content.")
-                .font(.system(size: 11)).foregroundStyle(Palette.muted)
-                .fixedSize(horizontal: false, vertical: true)
-            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 4), count: 4), spacing: 4) {
-                ForEach(CaptureApplicationIdentity.choices) { app in
-                    Button { record(app) } label: {
-                        VStack(spacing: 4) {
-                            CaptureApplicationMark(application: app, size: 28)
-                            Text(app.name).font(.system(size: 10)).lineLimit(1)
-                        }.frame(maxWidth: .infinity).padding(.vertical, 7)
-                    }
-                    .buttonStyle(TrailButtonStyle())
-                    .accessibilityLabel("Record paste to \(app.name)")
-                }
-            }
-            HStack(spacing: 6) {
-                TextField("Another app or product…", text: $customName)
-                    .textFieldStyle(.roundedBorder).font(.system(size: 12))
-                    .accessibilityLabel("Another app or product")
-                    .accessibilityIdentifier("capture-trail-custom-app")
-                    .onSubmit { recordCustom() }
-                Button("Add") { recordCustom() }
-                    .disabled(customName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
-                    .accessibilityLabel("Record custom paste destination")
-            }
-        }
-    }
-
-    private func recordCustom() {
-        let name = customName.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !name.isEmpty else { return }
-        record(.init(name: name, bundleIdentifier: nil))
-    }
-
-    private func record(_ app: CaptureApplicationIdentity) {
-        do {
-            try state.store.recordPasteDestination(for: capture, applicationName: app.name, applicationBundleIdentifier: app.bundleIdentifier)
-            error = nil; customName = ""; presentation = .history
-            confirmation = "Paste destination recorded."
-            AccessibilityAnnouncement.post("Paste destination recorded for \(app.name).")
-        } catch { showFailure(error) }
-    }
-
     private func remove(_ event: CapturePasteEvent) {
         do {
             try state.store.removePasteDestination(event.id, from: capture)
-            error = nil; confirmation = "Paste record removed."
+            errorPresentation.dismiss()
+            confirmationPresentation.present("Paste record removed.")
             AccessibilityAnnouncement.post("Paste record removed.")
-        } catch { showFailure(error) }
+        } catch {
+            confirmationPresentation.dismiss()
+            let message = "Couldn’t save this paste record. \(error.localizedDescription)"
+            errorPresentation.present(message)
+            AccessibilityAnnouncement.post(message)
+        }
     }
 
-    private func showFailure(_ failure: Error) {
-        confirmation = nil
-        error = "Couldn’t save this paste record. \(failure.localizedDescription)"
-        AccessibilityAnnouncement.post(error!)
+    private func clearFeedback() {
+        errorPresentation.dismiss()
+        confirmationPresentation.dismiss()
     }
 }
 

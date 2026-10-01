@@ -6,10 +6,11 @@ import UniformTypeIdentifiers
 @MainActor
 protocol ScreenshotFolderMonitoring: AnyObject {
     /// Sampled on the first directory notification for a write burst, before
-    /// the watcher waits for the file to settle. The sampled application is
-    /// carried with every image first discovered in that burst.
+    /// the watcher waits for the file to settle. The sampled application and
+    /// project are carried with every image first discovered in that burst.
     var sourceApplicationAtDirectoryActivity: (() -> AutoCaptureSourceApplication?)? { get set }
-    var onNewScreenshot: ((URL, AutoCaptureSourceApplication?) -> Void)? { get set }
+    var projectAtDirectoryActivity: (() -> String?)? { get set }
+    var onNewScreenshot: ((URL, AutoCaptureSourceApplication?, String?) -> Void)? { get set }
     var onFailure: ((Error) -> Void)? { get set }
     var isRunning: Bool { get }
     func start() throws
@@ -41,7 +42,8 @@ enum ScreenshotFolderMonitorError: LocalizedError {
 @MainActor
 final class ScreenshotFolderMonitor: ScreenshotFolderMonitoring {
     var sourceApplicationAtDirectoryActivity: (() -> AutoCaptureSourceApplication?)?
-    var onNewScreenshot: ((URL, AutoCaptureSourceApplication?) -> Void)?
+    var projectAtDirectoryActivity: (() -> String?)?
+    var onNewScreenshot: ((URL, AutoCaptureSourceApplication?, String?) -> Void)?
     var onFailure: ((Error) -> Void)?
     private(set) var isRunning = false
 
@@ -120,7 +122,8 @@ final class ScreenshotFolderMonitor: ScreenshotFolderMonitoring {
         guard isRunning else { return }
         if activitySourceSample == nil {
             activitySourceSample = ActivitySourceSample(
-                application: sourceApplicationAtDirectoryActivity?()
+                application: sourceApplicationAtDirectoryActivity?(),
+                projectName: projectAtDirectoryActivity?()
             )
         }
         scheduleSettledScan(replacingExisting: true)
@@ -148,9 +151,10 @@ final class ScreenshotFolderMonitor: ScreenshotFolderMonitoring {
                 .filter { !knownPaths.contains(Self.identity($0)) }
                 .sorted { $0.lastPathComponent.localizedStandardCompare($1.lastPathComponent) == .orderedAscending }
             let sampledApplication = activitySourceSample?.application
+            let sampledProject = activitySourceSample?.projectName
             activitySourceSample = nil
 
-            var completed: [(URL, AutoCaptureSourceApplication?)] = []
+            var completed: [(URL, AutoCaptureSourceApplication?, String?)] = []
             for file in additions {
                 let identity = Self.identity(file)
                 let currentSize = Self.fileSize(file)
@@ -158,7 +162,8 @@ final class ScreenshotFolderMonitor: ScreenshotFolderMonitoring {
                     pendingObservations[identity] = PendingObservation(
                         lastSize: currentSize,
                         attempts: 1,
-                        sourceApplication: sampledApplication
+                        sourceApplication: sampledApplication,
+                        projectName: sampledProject
                     )
                     continue
                 }
@@ -170,7 +175,7 @@ final class ScreenshotFolderMonitor: ScreenshotFolderMonitoring {
                    Self.isCompleteImage(file) {
                     pendingObservations.removeValue(forKey: identity)
                     knownPaths.insert(identity)
-                    completed.append((file, previous.sourceApplication))
+                    completed.append((file, previous.sourceApplication, previous.projectName))
                 } else if attempts >= maximumSettleAttempts {
                     // Stop polling a permanently incomplete or unreadable file.
                     // A delete/recreate cycle removes this identity from knownPaths
@@ -181,13 +186,14 @@ final class ScreenshotFolderMonitor: ScreenshotFolderMonitoring {
                     pendingObservations[identity] = PendingObservation(
                         lastSize: currentSize,
                         attempts: attempts,
-                        sourceApplication: previous.sourceApplication
+                        sourceApplication: previous.sourceApplication,
+                        projectName: previous.projectName
                     )
                 }
             }
 
-            for (file, application) in completed {
-                onNewScreenshot?(file, application)
+            for (file, application, projectName) in completed {
+                onNewScreenshot?(file, application, projectName)
             }
             if !pendingObservations.isEmpty {
                 // A file can complete without another vnode event. Poll until it
@@ -245,10 +251,12 @@ private struct PendingObservation {
     let lastSize: Int?
     let attempts: Int
     let sourceApplication: AutoCaptureSourceApplication?
+    let projectName: String?
 }
 
 /// Wrapping the optional application distinguishes "sampled, but unavailable"
 /// from "no directory activity has been sampled yet."
 private struct ActivitySourceSample {
     let application: AutoCaptureSourceApplication?
+    let projectName: String?
 }

@@ -240,9 +240,9 @@ struct RobotAppFrameTests {
                    "A hidden frame cannot intercept a stale content hit")
 
         try expect(RobotAppFrameView.openDuration == 1.15 &&
-                   RobotAppFrameView.closeDuration == 0.42 &&
+                   RobotAppFrameView.closeDuration == 0.78 &&
                    RobotAppFrameView.reducedDuration == 0.14,
-                   "Continuous open, quick close and reduced fade durations stay explicit")
+                   "Continuous open, deliberate fold-and-tuck close and reduced fade durations stay explicit")
 
         var opened = 0
         frame.animateOpen(from: CGRect(x: 600, y: 740, width: 72, height: 88),
@@ -288,6 +288,26 @@ struct RobotAppFrameTests {
                    "Cancelling a generation resolves its endpoint without firing a stale completion")
         try expect(!frame.usesSolidTransitionTorso,
                    "Cancellation restores stable perimeter masks and preserves center transparency")
+
+        let gazePoint = CGPoint(x: display.maxX, y: display.maxY)
+        let initialGazeCount = frame.gazeAnimationStartCount
+        frame.updatePointer(screenPoint: gazePoint, displayFrame: display)
+        try expect(frame.gazeAnimationStartCount == initialGazeCount + 2,
+                   "A new pointer target eases both pupils")
+        let movingGazeCount = frame.gazeAnimationStartCount
+        for _ in 0..<20 { frame.updatePointer(screenPoint: gazePoint, displayFrame: display) }
+        try expect(frame.gazeAnimationStartCount == movingGazeCount,
+                   "Repeated stationary pointer polls leave the current gaze animation running without restarting it")
+        frame.updatePointer(screenPoint: CGPoint(x: display.minX, y: display.maxY), displayFrame: display)
+        try expect(frame.gazeAnimationStartCount == movingGazeCount + 2,
+                   "Moving the pointer still retargets both pupils")
+        frame.updatePointer(screenPoint: nil, displayFrame: display)
+        let centeredGazeCount = frame.gazeAnimationStartCount
+        try expect(centeredGazeCount == movingGazeCount + 4,
+                   "Leaving the display eases the gaze back to center")
+        for _ in 0..<20 { frame.updatePointer(screenPoint: nil, displayFrame: display) }
+        try expect(frame.gazeAnimationStartCount == centeredGazeCount,
+                   "An already-centered absent pointer produces no new eye animations")
 
         print("PASS: \(checks) robot application frame geometry, gaze and lifecycle checks")
     }

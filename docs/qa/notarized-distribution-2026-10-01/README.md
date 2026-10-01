@@ -16,6 +16,6 @@ The reviewed 0.4.8 (63) app passed all 60 registered Release suites and its reco
 
 ## Completion gates
 
-Final public downloads remain pending. Required gates are Developer ID runtime signing with a trusted timestamp, Apple acceptance, stapling, strict signature checks, Gatekeeper, macOS distribution policy, exact ZIP round trips, fresh installation, replacement and rollback checks, quarantined downloads, actual 0.3.18 helper migration, GitHub validation, and anonymous download hash comparison. The heartbeat continues every 30 minutes and must pause only when verified downloads are ready.
+Final public downloads remain pending. Required gates are Developer ID runtime signing with a trusted timestamp, Apple acceptance, stapling, strict signature checks, Gatekeeper, macOS distribution policy, exact ZIP round trips, fresh installation, replacement and rollback checks, quarantined downloads, actual 0.3.18 helper migration, GitHub validation, and anonymous download hash comparison. Automatic completion is now paused at the user's explicit request. The user will finish the next version and authorize sending it before any new notarization submission or publication.
 
 Developer ID distribution does not mean App Store or TestFlight approval. Isolated updater verification does not exercise migration of a real user archive at first launch.

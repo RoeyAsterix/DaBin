@@ -1,0 +1,69 @@
+{
+  "schemaVersion": 1,
+  "verifiedAtUTC": "2026-10-01T19:54:40Z",
+  "version": "0.4.15",
+  "buildNumber": "70",
+  "configuration": "Release",
+  "architecture": "arm64",
+  "installedApp": "/Users/roeylibfeld/Applications/DaBin.app",
+  "previousAppBackup": "/Users/roeylibfeld/Applications/.DaBinBackups/20261001-225209-4ab3fc13.app",
+  "previousVersion": "0.4.14 (69)",
+  "normalQuitUsed": true,
+  "forceQuitUsedForThisUpdate": false,
+  "previousProcessExitedBeforeInstall": true,
+  "runningPID": 68937,
+  "installedStrictCodeSignatureVerified": true,
+  "installedMainSHA256": "d2407fdaaa7752a7df89532a600d3302e137889fca330891e08cbad97703d599",
+  "installedHelperSHA256": "c0e18fa68fe6c10714ce7b9980d68107835f7ef526efb51b98fe6ab526529639",
+  "installedExecutablesMatchBuildReceipt": true,
+  "buildInputHashesMatchCurrentSources": true,
+  "selectedQASuitesPassed": 21,
+  "selectedQASuitesFailed": 0,
+  "qaInputsStillMatchCurrentSources": true,
+  "qaSourceChangedDuringRun": false,
+  "qaReports": [
+    {
+      "report": "native/build/qa/runs/20261001T194415604256Z/report.json",
+      "passedSuites": 20,
+      "sourceFingerprint": "c149b0c839c78d08d8c9a90168195dc3596cd25e9180ceb19f708bba3b047ef4"
+    },
+    {
+      "report": "native/build/qa/runs/20261001T195340998965Z/report.json",
+      "passedSuites": 1,
+      "sourceFingerprint": "c7a25810f05e4a2652f8b030c4a18197b89c92841048f6ba84a794cb858a859b"
+    }
+  ],
+  "nativeCollectionPresentation": {
+    "checksPassed": 350,
+    "renderMethod": "Production HourlyCaptureCard and GroupedCaptureCard in isolated native 2x NSHostingViews with fictional capture data",
+    "collapsedFixtures": ["hour-200-light", "hour-200-dark", "batch-200-light", "batch-200-dark", "hour-350-light", "hour-350-dark", "batch-350-light", "batch-350-dark"],
+    "expandedFixtures": ["hour-650-light", "hour-650-dark", "batch-650-light", "batch-650-dark"],
+    "report": "native/build/qa/collection-card-presentation/7413A04E-9F2B-4FDD-9B05-CC36F9343A97/collection-card-presentation-report.json",
+    "lightHourPreview": "native/build/qa/collection-card-presentation/7413A04E-9F2B-4FDD-9B05-CC36F9343A97/hour-collapsed-350-light@2x.png",
+    "darkBatchPreview": "native/build/qa/collection-card-presentation/7413A04E-9F2B-4FDD-9B05-CC36F9343A97/batch-collapsed-350-dark@2x.png",
+    "visualReview": "No material blocker: previews dominate, count/date-time and overflow remain readable, no card clipping, expansion retains item details and collapse routes",
+    "fictionalCaptureIdentityReceiptContentAndOriginalBytesPreserved": true,
+    "onlyEstablishedBatchPresentationFlagsAndEditTimesChanged": true,
+    "hourlyExpansionRemainsTransient": true,
+    "fixtureRepairs": "Read-only SDK environment override removed; explicit fixture animation cleared and render settling extended past the production transition. Full containment checks retained. No production changes."
+  },
+  "liveChecks": {
+    "settingsDisplaysInstalledVersion": "DaBin 0.4.15 (70)",
+    "showTooltipsPreferenceRemainsOn": true,
+    "autoCaptureRemainsPaused": true,
+    "collectionSummaryDisplaysCountAndSavedDateHourRange": true,
+    "hourlyCollectionExpandedThroughSummary": true,
+    "hourlyCollectionCollapsedThroughExistingControl": true,
+    "returnedToPreviousInboxView": true
+  },
+  "installerModifiedArchive": false,
+  "verificationEditedCapturesOrToggledCaptureThemePreferences": false,
+  "publicReleasePublished": false,
+  "limitations": [
+    "This is 21 selected Release suites across two final reports, not a new full distribution/notarization review.",
+    "The personal archive was not independently byte-inventoried before and after this update; the guarded installer only replaces the application bundle.",
+    "Native app windows request capture exclusion. Live verification used accessibility; visual review used isolated fictional production-view renders.",
+    "View rendering and reuse of the bounded background thumbnail cache are not a new FPS/performance measurement.",
+    "The separate two-second-message request remains unidentified and was not changed."
+  ]
+}

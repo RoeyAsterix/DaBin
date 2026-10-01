@@ -94,6 +94,8 @@ struct HourlyGroupingTests {
                    "The fourth successfully saved action creates one hourly summary")
         try expect(fourGroups[0].visibleActionCount == 4 && fourGroups[0].captures.count == 4,
                    "The summary contains every action from its fixed hour")
+        try expect(fourGroups[0].totalCaptureCount == 4 && fourGroups[0].captureCountLabel == "4 captures",
+                   "Collection overview reports actual captures independently of action counts")
         try expect(fourGroups[0].id.rangeLabel == "14:00–14:59",
                    "Hour range is reconstructed from the receipt offset")
         try expect(fourGroups[0].summaryTitle == "14:00–14:59 · 4 actions",
@@ -121,6 +123,9 @@ struct HourlyGroupingTests {
         let multiFour = groups(feed([sharedA, sharedB, otherA, otherB, otherC]))[0]
         try expect(multiFour.totalActionCount == 4 && multiFour.captures.count == 5,
                    "Four action IDs summarize even when they contain five capture records")
+        try expect(multiFour.totalCaptureCount == 5 && multiFour.captureCountLabel == "5 captures"
+                   && multiFour.actionCountLabel == "4 actions",
+                   "A multi-item action keeps five captures and four actions distinct")
         try expect(multiFour.actions.first?.id == uuid(201)
                    && multiFour.actions.first?.cards.count == 2,
                    "Expanded content retains every card belonging to a multi-item action")
@@ -134,12 +139,27 @@ struct HourlyGroupingTests {
                    "Filtering never reverses a qualifying four-action hour")
         try expect(linksOnly.summaryTitle == "14:00–14:59 · 1 of 4 actions",
                    "Filtered summary distinguishes matching actions from the stable total")
+        try expect(linksOnly.totalCaptureCount == 4 && linksOnly.visibleCaptureCount == 1
+                   && linksOnly.captureCountLabel == "1 of 4 captures",
+                   "Preview counts distinguish matching captures from hidden collection members")
+        let multiLinks = groups(feed([sharedA, sharedB, otherA, otherB, otherC], filter: .links))[0]
+        try expect(multiLinks.captureCountLabel == "1 of 5 captures"
+                   && multiLinks.actionCountLabel == "1 of 4 actions",
+                   "Filtered multi-item actions retain truthful capture and action totals")
         let textOnly = groups(feed([link, image, pdf, text], filter: .text))[0]
         try expect(textOnly.totalActionCount == 4 && textOnly.visibleActionCount == 1
                    && textOnly.captures.map(\.id) == [text.id],
                    "Text filter retains only copied plain text inside a qualifying automatic hour")
         try expect(feed([link, image, pdf, text], filter: .tasks).isEmpty,
                    "A qualifying hour is hidden when none of its actions match the filter")
+        let promoted = automatic(id: 25, action: 304, stamp: "2026-09-23T11:23:00Z")
+        promoted.setConvertedToTask(true)
+        let promotedFeed = feed([link, image, pdf, promoted])
+        let remainingCollection = groups(promotedFeed)[0]
+        try expect(remainingCollection.totalActionCount == 4 && remainingCollection.totalCaptureCount == 3
+                   && remainingCollection.captureCountLabel == "3 captures"
+                   && regular(promotedFeed).contains(where: { $0.primary.id == promoted.id }),
+                   "Promoted tasks are not falsely counted as hidden collection contents")
 
         let yesterdayCaptures = [
             automatic(id: 31, action: 401, stamp: "2026-09-22T11:50:00Z", captureDay: "2026-09-22"),

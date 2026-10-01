@@ -94,10 +94,13 @@ struct TimelineTooltipDescriptor: Equatable, Identifiable {
 @MainActor
 final class TimelineTooltipController: ObservableObject {
     @Published private(set) var visible: TimelineTooltipDescriptor?
+    private(set) var isEnabled = true
+    private(set) var isPresentationActive = true
 
     private let delayNanoseconds: UInt64
     private var pending: Task<Void, Never>?
     private var activeID: String?
+    private var activeDescriptor: TimelineTooltipDescriptor?
     private var suppressedID: String?
 
     init(delay: TimeInterval = 0.22) {
@@ -107,6 +110,12 @@ final class TimelineTooltipController: ObservableObject {
     deinit { pending?.cancel() }
 
     func begin(_ descriptor: TimelineTooltipDescriptor, immediate: Bool = false) {
+        guard isEnabled && isPresentationActive else { return }
+        activeDescriptor = descriptor
+        if activeID == descriptor.id, suppressedID != descriptor.id {
+            if visible != nil { visible = descriptor; return }
+            if pending != nil, !immediate { return }
+        }
         if visible?.id != descriptor.id { visible = nil }
         activeID = descriptor.id
         pending?.cancel()
@@ -118,9 +127,10 @@ final class TimelineTooltipController: ObservableObject {
         pending = Task { [weak self] in
             do { try await Task.sleep(nanoseconds: self?.delayNanoseconds ?? 0) }
             catch { return }
-            guard let self, self.activeID == descriptor.id,
+            guard let self, self.isEnabled, self.isPresentationActive, self.activeID == descriptor.id,
                   self.suppressedID != descriptor.id else { return }
-            self.visible = descriptor
+            self.pending = nil
+            self.visible = self.activeDescriptor
         }
     }
 
@@ -131,6 +141,7 @@ final class TimelineTooltipController: ObservableObject {
         pending?.cancel()
         pending = nil
         activeID = nil
+        activeDescriptor = nil
     }
 
     /// Hide a label before its action opens a route, popover, or menu. It stays
@@ -146,14 +157,27 @@ final class TimelineTooltipController: ObservableObject {
         pending?.cancel()
         pending = nil
         activeID = nil
+        activeDescriptor = nil
         suppressedID = nil
         visible = nil
+    }
+
+    func setEnabled(_ enabled: Bool) {
+        isEnabled = enabled
+        if !enabled { dismiss() }
+    }
+
+    func setPresentationActive(_ active: Bool) {
+        isPresentationActive = active
+        if !active { dismiss() }
     }
 
     /// Deterministic visual QA hook; production hover still uses `begin`.
     func presentImmediately(_ descriptor: TimelineTooltipDescriptor) {
         dismiss()
+        guard isEnabled && isPresentationActive else { return }
         activeID = descriptor.id
+        activeDescriptor = descriptor
         visible = descriptor
     }
 }
@@ -166,51 +190,6 @@ extension EnvironmentValues {
     var timelineTooltipController: TimelineTooltipController? {
         get { self[TimelineTooltipControllerKey.self] }
         set { self[TimelineTooltipControllerKey.self] = newValue }
-    }
-}
-
-@MainActor
-struct TimelineHoverTooltip: View {
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    let text: String
-
-    var body: some View {
-        VStack(spacing: -1) {
-            TimelineTooltipPointer()
-                .fill(Palette.surface)
-                .overlay(TimelineTooltipPointer().stroke(Palette.line, lineWidth: 0.75))
-                .frame(width: 10, height: 5)
-            Text(text)
-                .font(.system(size: 11, weight: .medium))
-                .foregroundStyle(Palette.foreground)
-                .lineLimit(1)
-                .fixedSize(horizontal: true, vertical: true)
-                .padding(.horizontal, 7)
-                .padding(.vertical, 4)
-                .background(Palette.surface,
-                            in: RoundedRectangle(cornerRadius: 7, style: .continuous))
-                .overlay {
-                    RoundedRectangle(cornerRadius: 7, style: .continuous)
-                        .strokeBorder(Palette.line, lineWidth: 0.75)
-                }
-        }
-            .shadow(color: .black.opacity(0.16), radius: 5, y: 2)
-            .transition(reduceMotion
-                        ? .opacity
-                        : .opacity.combined(with: .scale(scale: 0.96, anchor: .top)))
-            .allowsHitTesting(false)
-            .accessibilityHidden(true)
-    }
-}
-
-private struct TimelineTooltipPointer: Shape {
-    func path(in rect: CGRect) -> Path {
-        var path = Path()
-        path.move(to: CGPoint(x: rect.midX, y: rect.minY))
-        path.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY))
-        path.addLine(to: CGPoint(x: rect.minX, y: rect.maxY))
-        path.closeSubpath()
-        return path
     }
 }
 
@@ -306,11 +285,14 @@ struct AccentIconButton: View {
     var accessibilityIdentifier: String? = nil
     let action: () -> Void
     @State private var hovered = false
+    @State private var helpID = UUID().uuidString
     @FocusState private var focused: Bool
+
+    private var effectiveTooltipID: String { tooltip?.id ?? helpID }
 
     var body: some View {
         Button {
-            if let tooltip { tooltipController?.activate(id: tooltip.id) }
+            tooltipController?.activate(id: effectiveTooltipID)
             action()
         } label: {
             Image(systemName: symbol)
@@ -327,17 +309,10 @@ struct AccentIconButton: View {
         .buttonStyle(AccentIconButtonStyle(accent: accent, selected: selected,
                                            emphasized: emphasized,
                                            hovered: hovered, focused: focused))
-        .buddyHelp(label)
+        .buddyHelp(tooltip?.text ?? label, id: effectiveTooltipID, isFocused: focused)
         .focused($focused)
         .onHover { isHovering in
             hovered = isHovering
-            updateTooltip(hovered: isHovering, focused: focused)
-        }
-        .onChange(of: focused) { _, isFocused in
-            updateTooltip(hovered: hovered, focused: isFocused)
-        }
-        .onDisappear {
-            if let tooltip { tooltipController?.end(id: tooltip.id) }
         }
         .accessibilityLabel(label)
         .accessibilityIdentifier(accessibilityIdentifier ?? label)
@@ -345,14 +320,6 @@ struct AccentIconButton: View {
         .accessibilityRemoveTraits(selected ? [] : .isSelected)
     }
 
-    private func updateTooltip(hovered: Bool, focused: Bool) {
-        guard let tooltip else { return }
-        if hovered || focused {
-            tooltipController?.begin(tooltip, immediate: focused && !hovered)
-        } else {
-            tooltipController?.end(id: tooltip.id)
-        }
-    }
 }
 
 private struct AccentIconButtonStyle: ButtonStyle {
@@ -393,13 +360,18 @@ private struct AccentIconButtonStyle: ButtonStyle {
 
 @MainActor
 struct SmallIcon: View {
+    @Environment(\.timelineTooltipController) private var tooltipController
+    @State private var helpID = UUID().uuidString
     let symbol: String
     let label: String
     var tint: Color = Palette.muted
     var size: CGFloat = 30
     let action: () -> Void
     var body: some View {
-        Button(action: action) {
+        Button {
+            tooltipController?.activate(id: helpID)
+            action()
+        } label: {
             Image(systemName: symbol)
                 .symbolRenderingMode(.monochrome)
                 .font(.system(size: TimelineIconRowMetrics.navigationSymbolPointSize,
@@ -407,7 +379,7 @@ struct SmallIcon: View {
                 .frame(width: size, height: 30)
                 .contentShape(Rectangle())
         }
-            .buttonStyle(.plain).foregroundStyle(tint).buddyHelp(label).accessibilityLabel(label)
+            .buttonStyle(.plain).foregroundStyle(tint).buddyHelp(label, id: helpID).accessibilityLabel(label)
     }
 }
 
@@ -505,7 +477,6 @@ struct AutoCaptureHeaderButton: View {
             accessibilityIdentifier: "timeline-auto-capture",
             action: action
         )
-        .buddyHelp(statusText)
         .accessibilityValue(statusText)
         .task(id: tiltAnimationActive) {
             tiltPhase = false

@@ -13,6 +13,7 @@ import UniformTypeIdentifiers
     @State private var dailyFiles: [ProjectArchiveDay] = []
     @State private var documentID: String?
     @State private var documentError: String?
+    @State private var documentRefreshRevision: UInt = 0
     @State private var exporting = false
     @FocusState private var keyboardSelection: UUID?
 
@@ -23,42 +24,46 @@ import UniformTypeIdentifiers
         _intake = ObservedObject(wrappedValue: state.explorerInput)
     }
 
-    private var items: [Capture] {
-        ExplorerQuery.items(store.captures, workspace: workspace, project: state.libraryProject,
-                            filter: state.filter, pinnedOnly: state.libraryPinnedOnly)
-    }
-    private var sections: [ExplorerSection] { ExplorerQuery.sections(items, grouping: workspace.explorerGrouping) }
-    private var selected: Capture? { items.first { $0.id == workspace.selectedCaptureID } }
-    private var selectedDocument: ProjectArchiveDay? { visibleDailyFiles.first { $0.id == documentID } }
     private var scopeKey: String { (state.libraryProject ?? "") + ":" + String(workspace.explorerUnfiledOnly) }
-    private var visibleDailyFiles: [ProjectArchiveDay] {
-        let matching = Set(items.map { ProjectDayKey(projectName: ExplorerQuery.project(of: $0, in: store.captures), day: $0.captureDay) })
-        return dailyFiles.filter { matching.contains(ProjectDayKey(projectName: $0.projectName, day: $0.captureDay)) }
+    private var documentRefreshKey: ExplorerDocumentRefreshKey {
+        ExplorerDocumentRefreshKey(project: state.libraryProject, unfiledOnly: workspace.explorerUnfiledOnly,
+            enabled: workspace.explorerShowsDailyFiles, revision: documentRefreshRevision)
+    }
+    private var presentation: ExplorerPresentation {
+        let items = ExplorerQuery.items(store.captures, workspace: workspace, project: state.libraryProject,
+            filter: state.filter, pinnedOnly: state.libraryPinnedOnly)
+        let sections = workspace.explorerShowsDailyFiles ? [] : ExplorerQuery.sections(items, grouping: workspace.explorerGrouping)
+        let matchingDays = workspace.explorerShowsDailyFiles ? Set(ExplorerQuery.projectDays(items, in: store.captures)) : []
+        let visibleDays = dailyFiles.filter { matchingDays.contains(ExplorerProjectDay(projectName: $0.projectName, day: $0.captureDay)) }
+        return ExplorerPresentation(items: items, sections: sections, orderedItems: sections.flatMap(\.captures),
+            selected: items.first { $0.id == workspace.selectedCaptureID }, dailyFiles: visibleDays,
+            selectedDocument: visibleDays.first { $0.id == documentID })
     }
 
     var body: some View {
-        VStack(spacing: 0) {
+        let presentation = presentation
+        return VStack(spacing: 0) {
             toolbar
             if let error = documentError {
                 HStack {
                     Label(error, systemImage: "exclamationmark.triangle").font(.system(size: 11)).foregroundStyle(Palette.task)
-                    Button("Retry") { refreshDocuments() }.font(.system(size: 11))
+                    Button("Retry") { documentRefreshRevision &+= 1 }.font(.system(size: 11))
                 }.padding(.horizontal, 16).padding(.bottom, 6)
             }
             GeometryReader { geometry in
                 let expanded = geometry.size.width > 700
                 HStack(spacing: 0) {
-                    browser(expanded: expanded)
+                    browser(expanded: expanded, presentation: presentation)
                         .frame(width: expanded ? min(400, geometry.size.width * 0.4) : nil)
                     if expanded {
                         Rectangle().fill(Palette.line).frame(width: 1)
-                        inspector(height: geometry.size.height)
+                        inspector(height: geometry.size.height, presentation: presentation)
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
                             .accessibilityIdentifier("explorer-inspector")
                     }
                 }
             }
-            footer
+            footer(presentation: presentation)
         }
         .background(accent.opacity(targeted ? 0.055 : 0))
         .overlay { if targeted { RoundedRectangle(cornerRadius: 12).strokeBorder(accent, lineWidth: 2).allowsHitTesting(false) } }
@@ -67,21 +72,21 @@ import UniformTypeIdentifiers
         }
         .onCopyCommand {
             do {
-                if workspace.explorerShowsDailyFiles, let day = selectedDocument {
+                if workspace.explorerShowsDailyFiles, let day = presentation.selectedDocument {
                     return [try ExplorerTransfer.documentProvider(url: day.url)]
                 }
-                if !workspace.explorerShowsDailyFiles, let selected {
+                if !workspace.explorerShowsDailyFiles, let selected = presentation.selected {
                     return [try ExplorerTransfer.itemProvider(for: selected, store: store, includeInternalReference: false)]
                 }
             } catch { state.reportFailure(error.localizedDescription) }
             return []
         }
-        .task(id: scopeKey) { refreshDocuments() }
+        .task(id: documentRefreshKey) { await refreshDocuments() }
         .onChange(of: keyboardSelection) { _, id in
             if let id { workspace.selectedCaptureID = id }
         }
-        .onReceive(store.objectWillChange) { _ in
-            Task { @MainActor in await Task.yield(); refreshDocuments() }
+        .onReceive(store.objectWillChange.debounce(for: .milliseconds(100), scheduler: RunLoop.main)) { _ in
+            if workspace.explorerShowsDailyFiles { documentRefreshRevision &+= 1 }
         }
         .accessibilityElement(children: .contain).accessibilityLabel("Explorer")
         .accessibilityIdentifier("explorer-browser")
@@ -113,7 +118,7 @@ import UniformTypeIdentifiers
             ForEach(ExplorerGrouping.allCases) { grouping in
                 Button { workspace.explorerGrouping = grouping } label: {
                     Label("Group by \(grouping.title.lowercased())", systemImage: workspace.explorerGrouping == grouping ? "checkmark" : grouping.symbol)
-                }.disabled(workspace.explorerShowsDailyFiles)
+                }
             }
         } label: { Image(systemName: workspace.explorerGrouping.symbol).frame(width: 28, height: 32) }
             .menuStyle(.borderlessButton).menuIndicator(.hidden).fixedSize().foregroundStyle(Palette.muted)
@@ -121,18 +126,18 @@ import UniformTypeIdentifiers
             .buddyHelp("Group by type or date")
     }
 
-    private func browser(expanded: Bool) -> some View {
+    private func browser(expanded: Bool, presentation: ExplorerPresentation) -> some View {
         ScrollViewReader { proxy in
             ScrollView {
-                LazyVStack(alignment: .leading, spacing: 3) {
+                LazyVStack(alignment: .leading, spacing: 8) {
                     if workspace.explorerShowsDailyFiles {
-                        if visibleDailyFiles.isEmpty { empty }
-                        ForEach(visibleDailyFiles) { day in
+                        if presentation.dailyFiles.isEmpty { empty }
+                        ForEach(presentation.dailyFiles) { day in
                             dailyRow(day, expanded: expanded)
                         }
-                    } else if items.isEmpty { empty }
+                    } else if presentation.items.isEmpty { empty }
                     else {
-                        ForEach(sections) { section in
+                        ForEach(presentation.sections) { section in
                             HStack {
                                 Label(section.title, systemImage: section.symbol)
                                 Spacer()
@@ -145,7 +150,7 @@ import UniformTypeIdentifiers
                                     if !expanded { state.openCapture(capture.id) }
                                 }.id(capture.id)
                                     .onMoveCommand { direction in
-                                        let ordered = sections.flatMap(\.captures)
+                                        let ordered = presentation.orderedItems
                                         guard direction == .up || direction == .down,
                                               let index = ordered.firstIndex(where: { $0.id == (workspace.selectedCaptureID ?? capture.id) }) else { return }
                                         let target = min(ordered.count - 1, max(0, index + (direction == .down ? 1 : -1)))
@@ -164,7 +169,7 @@ import UniformTypeIdentifiers
             }.task(id: scopeKey) {
                 await Task.yield()
                 guard !Task.isCancelled else { return }
-                if let id = workspace.selectedCaptureID, items.contains(where: { $0.id == id }) {
+                if let id = workspace.selectedCaptureID, presentation.items.contains(where: { $0.id == id }) {
                     proxy.scrollTo(id, anchor: .center)
                 } else { proxy.scrollTo("explorer-top", anchor: .top) }
             }
@@ -200,6 +205,9 @@ import UniformTypeIdentifiers
                 Spacer(minLength: 0)
             }.padding(10).frame(maxWidth: .infinity, alignment: .leading)
                 .background(documentID == day.id ? accent.opacity(0.1) : Palette.surface, in: RoundedRectangle(cornerRadius: 10))
+                .projectCardFrame(workspace: workspace, projectName: day.projectName,
+                                  activeProject: state.libraryProject, cornerRadius: 10,
+                                  fallbackColor: .clear, fallbackWidth: 0)
         }.buttonStyle(.plain).accessibilityLabel("Daily file, \(day.captureDay), \(day.projectName ?? "Unfiled")")
             .accessibilityIdentifier("explorer-day-\(day.id)")
             .onDrag { documentProvider(day) }
@@ -211,8 +219,8 @@ import UniformTypeIdentifiers
             }
     }
 
-    @ViewBuilder private func inspector(height: CGFloat) -> some View {
-        if workspace.explorerShowsDailyFiles, let day = selectedDocument {
+    @ViewBuilder private func inspector(height: CGFloat, presentation: ExplorerPresentation) -> some View {
+        if workspace.explorerShowsDailyFiles, let day = presentation.selectedDocument {
             ScrollView {
                 VStack(alignment: .leading, spacing: 14) {
                     Label(day.captureDay, systemImage: "doc.text").font(.system(size: 20, weight: .semibold))
@@ -223,12 +231,11 @@ import UniformTypeIdentifiers
                     }.font(.system(size: 12))
                     Text("Updates when you edit captures in DaBin. Outside edits are preserved before the file is refreshed.")
                         .font(.system(size: 11)).foregroundStyle(Palette.muted)
-                    Text(dailyPreview(day.url))
-                        .font(.system(size: 13)).textSelection(.enabled).frame(maxWidth: .infinity, alignment: .leading)
+                    ExplorerDailyPreview(url: day.url, revision: documentRefreshRevision)
                     Text(day.url.path).font(.system(size: 10)).foregroundStyle(Palette.muted).textSelection(.enabled)
                 }.padding(20)
             }
-        } else if !workspace.explorerShowsDailyFiles, let capture = selected {
+        } else if !workspace.explorerShowsDailyFiles, let capture = presentation.selected {
             ExplorerInspector(state: state, workspace: workspace, capture: capture, height: height)
         } else {
             VStack(spacing: 10) {
@@ -240,43 +247,41 @@ import UniformTypeIdentifiers
         }
     }
 
-    private var footer: some View {
+    private func footer(presentation: ExplorerPresentation) -> some View {
         HStack(spacing: 7) {
-            Text(intake.isBusy ? "Saving…" : "\(items.count) items").font(.system(size: 11)).foregroundStyle(Palette.muted).lineLimit(1)
+            Text(intake.isBusy ? "Saving…" : "\(presentation.items.count) items").font(.system(size: 11)).foregroundStyle(Palette.muted).lineLimit(1)
             Button { workspace.explorerShowsDailyFiles.toggle() } label: {
                 Label("Daily files", systemImage: "doc.text").font(.system(size: 11)).frame(minHeight: 32)
             }.buttonStyle(.plain).foregroundStyle(workspace.explorerShowsDailyFiles ? accent : Palette.muted)
                 .accessibilityAddTraits(workspace.explorerShowsDailyFiles ? .isSelected : [])
                 .accessibilityIdentifier("explorer-daily-files")
                 .buddyHelp("One complete dated file for each project day")
-            groupingMenu
+            if !workspace.explorerShowsDailyFiles { groupingMenu }
             if intake.canUndoMove {
                 BuddyIconButton(symbol: "arrow.uturn.backward", title: "Undo move") { intake.undoLastMove() }
                     .accessibilityIdentifier("explorer-undo-move")
             }
             Spacer(minLength: 0)
-            BuddyIconButton(symbol: "arrow.down.doc", title: exporting ? "Creating ZIP" : "Export visible items as ZIP") { exportZIP() }
-                .disabled((workspace.explorerShowsDailyFiles ? visibleDailyFiles.isEmpty : items.isEmpty) || exporting || intake.isBusy)
+            BuddyIconButton(symbol: "arrow.down.doc", title: exporting ? "Creating ZIP" : "Export visible items as ZIP") { exportZIP(presentation: presentation) }
+                .disabled((workspace.explorerShowsDailyFiles ? presentation.dailyFiles.isEmpty : presentation.items.isEmpty) || exporting || intake.isBusy)
             BuddyIconButton(symbol: "folder", title: "Open this project in Finder") { revealScope() }
         }.padding(.horizontal, 12).padding(.vertical, 3).background(Palette.surface).overlay(alignment: .top) { Rectangle().fill(Palette.line).frame(height: 1) }
     }
 
-    private func refreshDocuments() {
+    private func refreshDocuments() async {
+        guard workspace.explorerShowsDailyFiles else { documentError = nil; return }
+        let project = state.libraryProject
+        let unfiledOnly = workspace.explorerUnfiledOnly
+        let days = ExplorerQuery.projectDays(store.captures, in: store.captures)
+        let archive = DailyArchive(root: store.root)
         do {
-            dailyFiles = try store.explorerDocuments(project: state.libraryProject, unfiledOnly: workspace.explorerUnfiledOnly)
+            let documents = try await Task.detached(priority: .userInitiated) {
+                try ExplorerQuery.dailyDocuments(days, archive: archive, project: project, unfiledOnly: unfiledOnly)
+            }.value
+            guard !Task.isCancelled else { return }
+            dailyFiles = documents
             documentError = nil
-        } catch { documentError = error.localizedDescription }
-    }
-    private func dailyPreview(_ url: URL) -> String {
-        // Keep the inspector responsive for long days. Opening/copying transfers
-        // the complete document, with no truncation of the saved file.
-        do {
-            try OriginalFileStorage.validateRegularFile(url)
-            let handle = try FileHandle(forReadingFrom: url)
-            defer { try? handle.close() }
-            let data = try handle.read(upToCount: 64_000) ?? Data()
-            return String(decoding: data, as: UTF8.self) + (data.count == 64_000 ? "\n\nPreview shortened. Open the daily file to read everything." : "")
-        } catch { return "The daily file is unavailable. Try refreshing the archive." }
+        } catch { if !Task.isCancelled { documentError = error.localizedDescription } }
     }
     private func revealScope() {
         do {
@@ -304,13 +309,13 @@ import UniformTypeIdentifiers
         do { return try ExplorerTransfer.documentProvider(url: day.url) }
         catch { state.reportFailure(error.localizedDescription); return NSItemProvider() }
     }
-    private func exportZIP() {
+    private func exportZIP(presentation: ExplorerPresentation) {
         do {
             let entries = try workspace.explorerShowsDailyFiles
-                ? visibleDailyFiles.map { day in
+                ? presentation.dailyFiles.map { day in
                     ShelfExportEntry(name: day.captureDay + " - " + (ProjectFileArchive.projectRelativePath(day.projectName) as NSString).lastPathComponent + ".md", source: day.url, text: nil)
                 }
-                : ShelfExport.entries(for: items, store: store)
+                : ShelfExport.entries(for: presentation.items, store: store)
             let panel = NSSavePanel(); panel.allowedContentTypes = [.zip]; panel.nameFieldStringValue = "DaBin-Explorer.zip"
             panel.message = "Copies the visible items into a ZIP. Choose a new filename."
             guard panel.runModal() == .OK, let url = panel.url else { return }
@@ -328,7 +333,47 @@ import UniformTypeIdentifiers
     }
 }
 
-private struct ProjectDayKey: Hashable {
-    let projectName: String?
-    let day: String
+private struct ExplorerPresentation {
+    let items: [Capture]
+    let sections: [ExplorerSection]
+    let orderedItems: [Capture]
+    let selected: Capture?
+    let dailyFiles: [ProjectArchiveDay]
+    let selectedDocument: ProjectArchiveDay?
+}
+
+private struct ExplorerDocumentRefreshKey: Hashable {
+    let project: String?
+    let unfiledOnly: Bool
+    let enabled: Bool
+    let revision: UInt
+}
+
+private struct ExplorerDailyPreview: View {
+    let url: URL
+    let revision: UInt
+    @State private var text = "Loading daily file…"
+
+    var body: some View {
+        Text(text).font(.system(size: 13)).textSelection(.enabled)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .task(id: url.path + ":" + String(revision)) {
+                text = "Loading daily file…"
+                let preview = await Task.detached(priority: .userInitiated) { Self.load(url) }.value
+                guard !Task.isCancelled else { return }
+                text = preview
+            }
+    }
+
+    /// Read only when the selection or saved document changes, with a bounded
+    /// preview. Opening/copying still transfers the complete daily document.
+    private nonisolated static func load(_ url: URL) -> String {
+        do {
+            try OriginalFileStorage.validateRegularFile(url)
+            let handle = try FileHandle(forReadingFrom: url)
+            defer { try? handle.close() }
+            let data = try handle.read(upToCount: 64_000) ?? Data()
+            return String(decoding: data, as: UTF8.self) + (data.count == 64_000 ? "\n\nPreview shortened. Open the daily file to read everything." : "")
+        } catch { return "The daily file is unavailable. Try refreshing the archive." }
+    }
 }

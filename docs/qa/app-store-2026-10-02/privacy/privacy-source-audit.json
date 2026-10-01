@@ -1,0 +1,152 @@
+{
+  "schemaVersion": 1,
+  "reviewedAtUTC": "2026-10-01T23:19:04Z",
+  "localReviewDate": "2026-10-02",
+  "app": "DaBin",
+  "version": "0.4.19",
+  "build": "74",
+  "status": "source_audited_local_corrections_applied_not_submitted",
+  "scope": "Current native production sources and resources, current official Apple documentation, and unauthenticated read-only checks of the configured public policy/support URLs. No personal archive, real clipboard, installed application, standard preference domain, permission prompt, notification delivery, or upload was used.",
+  "limitations": [
+    "Source review and automated tests cannot guarantee App Store approval.",
+    "The exact App Store distribution-signed binary must still be tested for sandbox access, folder permission revocation, notification permission behavior, clean installation, and current supported macOS versions.",
+    "Final coordinated Release source QA passed 73 of 73 suites, including 37 privacy information checks. This is not exact App Store distribution-binary verification.",
+    "The docs-only privacy renderer passed eleven assertions, but its bottom-scroll candidates failed visual QA and are withheld in rejected/. The top/date fixtures passed; exact signed live policy scrolling remains pending. This exporter limitation is not an established production bug.",
+    "The public privacy policy still contains the older wording. Publishing the updated policy was not authorized or performed.",
+    "HTTP 200 for the support page does not prove that a real, maintained contact method is present."
+  ],
+  "verificationEvidence": {
+    "fullReleaseQA": {
+      "report": "../tests/full-release-final/report.json",
+      "reportSHA256": "7a4521e405437c7d3ce93715d85f5246f06e315addf28b0cd82fb90b00787bfa",
+      "sourceFingerprint": "9039172fca3d6b400c7ed1ec3ecd1551210d7eca23cd69a524c1efb00893e3fe",
+      "passedSuites": 73,
+      "failedSuites": 0,
+      "reportedChecks": 87546,
+      "privacyInformationChecks": 37,
+      "privacyInformationLogSHA256": "b4d584d30f8107ad3b66fa772a603d07637ff69b046d255741253e1656a68176",
+      "finishedAtUTC": "2026-10-01T23:06:05.963263Z",
+      "notClaimed": "A current entire build-inventory fingerprint or exact signed sandbox runtime verification; packaging-only preflight changed after final source QA."
+    },
+    "privacyRender": {
+      "provenance": "privacy-render-provenance.json",
+      "log": "privacy-render.log",
+      "checks": 11,
+      "status": "11_assertions_pass_visual_QA_partial_bottom_fixtures_withheld",
+      "updatedLine": "Updated 2 October 2026",
+      "visualInspection": "Main-agent review: LIGHT_TOP and DARK_TOP PASS for current date/readability. Both current bottom candidates VISUAL FAIL / WITHHELD in rejected/ because pinned heading/Done clipping remained in the offscreen fixture. Eleven functional assertions passed separately. This is an exporter limitation, not an established production bug; signed live policy scrolling remains pending.",
+      "staleStandaloneHarness": "stale-renderer-failure.json"
+    }
+  },
+  "sourceSHA256": {
+    "native/Resources/PrivacyInfo.xcprivacy": "a9863c850f76e33c454b61aea834e1a9980db80a6d1d659b0d7a68ae835ee014",
+    "native/Resources/PrivacyPolicy.md": "78ba4109f4caf2759ecfaedc0c2a15257772e40b4628b0092913db9590052bc7",
+    "native/Sources/DaBin/PrivacyInformation.swift": "ddbaf27f5a1f2fd1abbeb7dab67719e9631a974b67e93a9822ce7c6fd08df2e3",
+    "native/Sources/DaBin/SettingsScreen.swift": "c5fdc3eef4d82fe76d76b163b1526ee796457d441698b463d0a1fc8253db17ab",
+    "native/Tests/PrivacyInformationTests.swift": "c351944640e1cacc1b46aa3cbf5a8db05f07f86962f3a489fec4a26046d00e3b",
+    "native/Sources/DaBin/CapturePreviews.swift": "fd78d109828488b9e4049c0dd836c47286ac7f4277bccfef53a2645803d49f32",
+    "native/Sources/DaBin/CaptureStore.swift": "96b82ddf7cd3d04a6b54e918a27b56566e3198ab04807ca6a32b671821c7f50f",
+    "native/Resources/DaBin.entitlements": "10612525a986757263c6905a0c3bdd19bb214235b0d83e58cc8e4a756f8ff14a"
+  },
+  "requiredReasonAPIs": [
+    {
+      "category": "NSPrivacyAccessedAPICategoryUserDefaults",
+      "reasons": ["CA92.1"],
+      "justification": "Production preference keys store DaBin-only settings. System appearance is read through NSApp.effectiveAppearance, not another app's UserDefaults domain."
+    },
+    {
+      "category": "NSPrivacyAccessedAPICategorySystemBootTime",
+      "reasons": ["35F9.1"],
+      "source": "native/Sources/DaBin/CornerController.swift:1094",
+      "justification": "systemUptime measures elapsed time for an in-app animation. It is not transmitted off-device."
+    },
+    {
+      "category": "NSPrivacyAccessedAPICategoryFileTimestamp",
+      "reasons": ["C617.1"],
+      "source": "native/Sources/DaBin/CapturePreviews.swift:83",
+      "justification": "Preview-cache keys read modificationDate and creationDate of verified DaBin-owned original/preview files. CapturePreviewFileReference restricts production references to archive-owned paths; DailyArchive.safeURL and OriginalFileStorage.validateRegularFile enforce the boundary. Production CaptureStore uses sandbox Application Support/DaBin. No display-only or user-selected-external-file timestamp reason was added."
+    }
+  ],
+  "localCorrections": [
+    {
+      "id": "missing-file-timestamp-reason",
+      "status": "fixed_in_source",
+      "file": "native/Resources/PrivacyInfo.xcprivacy",
+      "line": 25,
+      "test": "PrivacyInformationTests verifies FileTimestamp is exactly C617.1."
+    },
+    {
+      "id": "stale-visible-policy-date",
+      "status": "fixed_in_source",
+      "file": "native/Sources/DaBin/PrivacyInformation.swift",
+      "line": 55,
+      "test": "PrivacyInformationTests covers bundled date extraction, whitespace, CRLF, missing/empty dates, inline body mentions, and missing-resource fallback."
+    },
+    {
+      "id": "project-and-task-sign-disclosure",
+      "status": "fixed_locally_public_copy_pending",
+      "file": "native/Resources/PrivacyPolicy.md",
+      "lines": [35, 55],
+      "test": "PrivacyInformationTests verifies visible project names and task words, acknowledgment without task completion, Quiet mode behavior, and non-guaranteed capture exclusion."
+    },
+    {
+      "id": "manual-link-preview-consent-precision",
+      "status": "fixed_in_source",
+      "file": "native/Sources/DaBin/SettingsScreen.swift",
+      "line": 220,
+      "justification": "The consent paragraph explicitly limits website-preview requests to manually saved links and says automatic links never fetch previews, matching PreviewService."
+    }
+  ],
+  "verifiedSourceBoundaries": [
+    "App Sandbox is enabled; entitlements are limited to user-selected read/write files, app-scope bookmarks, and outbound network client.",
+    "No broad file, Screen Recording, Accessibility, camera, microphone, Contacts, Photos, Calendar, or location entitlement was found.",
+    "Auto Capture is off by default. Its shared hasAcknowledgedPrivacyExplanation gate shows a local-storage explanation on first activation, not on every subsequent switch. Clipboard and screenshot channels have separate switches; screenshot capture also requires explicit folder authorization.",
+    "Clipboard and screenshot-folder startup establish a baseline instead of importing existing content.",
+    "Screenshot grants use read-only security-scoped bookmarks, stale bookmarks are rejected, and acquired scope is balanced on shutdown/revocation.",
+    "Pause, Off, and channel generation guards stop monitoring and discard queued private snapshots.",
+    "Auto Capture has a persistent visible menu bar indication even when Quiet mode suppresses success animation.",
+    "Common password managers and DaBin itself are excluded by default; frontmost-app attribution is best effort, not a privacy guarantee.",
+    "Automatic links never initiate website previews; optional manual link previews default off and cancellation invalidates queued and active requests.",
+    "Notification permission is requested only for explicit reminder saves; reminder notification content is generic.",
+    "Focus timer signs reveal first-three-word task labels locally and do not request notification permission or complete the task.",
+    "Application shutdown stops automatic monitors, shortcuts, panels, preview requests, content indexing, and local focus sessions.",
+    "Targeted source scan found no private APIs, dynamic code loading, unrestricted event taps, or silent login/startup registration."
+  ],
+  "publicURLChecks": {
+    "privacyPolicy": {
+      "url": "https://github.com/RoeyAsterix/DaBin/blob/main/native/Resources/PrivacyPolicy.md",
+      "httpStatus": 200,
+      "authenticated": false,
+      "rawURL": "https://raw.githubusercontent.com/RoeyAsterix/DaBin/main/native/Resources/PrivacyPolicy.md",
+      "rawBytes": 11721,
+      "rawSHA256": "81dd81b793d6de525b0da7f0f257db4d0574304e4d048bd2f1453bd7795a584b",
+      "updatedLine": "Updated 1 October 2026",
+      "matchesUpdatedLocalPolicy": false,
+      "publishingPerformed": false
+    },
+    "support": {
+      "url": "https://github.com/RoeyAsterix/DaBin/issues",
+      "httpStatus": 200,
+      "authenticated": false,
+      "maintainedContactMethodVerified": false
+    }
+  },
+  "officialAppleSources": [
+    {
+      "url": "https://developer.apple.com/documentation/bundleresources/app-privacy-configuration/nsprivacyaccessedapitypes/nsprivacyaccessedapitype",
+      "supports": "Required-reason API category list, including modificationDate, creationDate, systemUptime, and UserDefaults."
+    },
+    {
+      "url": "https://developer.apple.com/documentation/bundleresources/app-privacy-configuration/nsprivacyaccessedapitypes/nsprivacyaccessedapitypereasons",
+      "supports": "C617.1 for app-container metadata, 35F9.1 for elapsed-time/timers, and CA92.1 for app-only preferences."
+    },
+    {
+      "url": "https://developer.apple.com/app-store/review/guidelines/",
+      "supports": "2.4.5 sandbox/Store distribution, 2.5.1 public APIs, 2.5.14 recording consent/indication, 5.1.1 accessible accurate policy and revocation, and 1.5 support contact."
+    },
+    {
+      "url": "https://developer.apple.com/app-store/app-privacy-details/",
+      "supports": "On-device-only processing is not collected for privacy-label answers; optional off-device behavior must be separately assessed; public policy link is required."
+    }
+  ]
+}

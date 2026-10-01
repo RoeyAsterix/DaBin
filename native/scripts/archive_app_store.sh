@@ -1,5 +1,6 @@
 #!/bin/bash
-# Prepare an archive only. This script never exports, uploads, or submits it.
+# Prepare an archive only using already-installed signing assets. This script
+# never downloads provisioning assets, exports, uploads, or submits anything.
 set -euo pipefail
 project_root="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$project_root"
@@ -42,7 +43,6 @@ xcrun xcodebuild \
   -project DaBin.xcodeproj -scheme DaBin -configuration Release \
   -destination 'generic/platform=macOS' \
   -archivePath "$archive_path" \
-  -allowProvisioningUpdates \
   DEVELOPMENT_TEAM="$DABIN_DEVELOPMENT_TEAM" \
   CODE_SIGN_STYLE=Automatic ARCHS=arm64 ONLY_ACTIVE_ARCH=NO \
   INFOPLIST_FILE="$archive_info" \

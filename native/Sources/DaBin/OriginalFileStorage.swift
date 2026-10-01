@@ -35,6 +35,8 @@ struct ImportJournal: Codable, Sendable {
     let sourceFilePath: String?
     let sourceURL: String?
     var parentTaskID: UUID? = nil
+    /// Optional so import journals written before project filing remain recoverable.
+    var projectName: String? = nil
     var captureOriginRaw: String? = nil
     var automaticActionID: UUID? = nil
     var sourceApplicationName: String? = nil

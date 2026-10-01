@@ -237,7 +237,26 @@ import SwiftUI
         try expect(duplicate.dismissals == 1, "Escape closes project search after its inner form (dismissals: \(duplicate.dismissals), responder: \(String(describing: window.firstResponder)))")
     }
 
-    @MainActor private static func checkCapture(state: AppState, window: NSWindow, evidence: URL) async throws {
+    @MainActor private static func checkNoManualPasteAddition(context: String) throws {
+        let controls = allNodes()
+        try expect(!controls.contains { $0.identifier?.hasPrefix("capture-trail-add-") == true
+            || $0.identifier == "capture-trail-custom-app" },
+            "\(context) has no manual-paste plus button or custom destination editor")
+        try expect(!controls.contains {
+            guard let label = $0.label else { return false }
+            return label.hasPrefix("Record a paste") || label.hasPrefix("Record paste to ")
+                || label == "Record custom paste destination" || label.hasPrefix("Another app or product")
+        }, "\(context) has no Record-paste action or destination picker")
+    }
+
+    @MainActor private static func encodedSnapshot(_ capture: Capture) throws -> Data {
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = [.sortedKeys]
+        return try encoder.encode(CaptureSnapshot(capture))
+    }
+
+    @MainActor private static func checkCapture(state: AppState, window: NSWindow, evidence: URL,
+                                               clipboardWrites: () -> [CaptureClipboardPayload]) async throws {
         let capture = try state.store.createNote(text: "Review the fictional client’s design feedback", projectName: nil)
         let original = (id: capture.id, originalText: capture.originalText, captureDay: capture.captureDay)
         state.openInbox(); state.isBoardVisible = true
@@ -245,6 +264,7 @@ import SwiftUI
         let hosting = await install(AnyView(ScrollView {
             CaptureRow(state: state, capture: capture, featured: false).padding(12)
         }.background(Palette.background)), in: window)
+        try checkNoManualPasteAddition(context: "The ordinary capture card")
         try snapshot(hosting, at: evidence.appendingPathComponent("capture-before-conversion-380.png"))
         try await press(id: "capture-convert-to-task-\(capture.id.uuidString)")
         try expect(capture.isTask && capture.id == original.id && capture.originalText == original.originalText
@@ -282,22 +302,57 @@ import SwiftUI
         try snapshot(hosting, at: evidence.appendingPathComponent("task-after-conversion-380.png"))
 
         try expect(capture.pasteHistory.isEmpty, "A capture begins without fabricated paste history")
-        try await press(id: "capture-trail-add-\(capture.id.uuidString)")
-        for (index, visible) in NSApp.windows.filter(\.isVisible).enumerated() {
-            if let content = visible.contentView { try snapshot(content, at: evidence.appendingPathComponent("trail-picker-window-\(index).png")) }
-        }
-        try await type("Fictional proofing tool", label: "Another app or product…")
-        try await press(label: "Record custom paste destination")
-        try expect(capture.pasteHistory.count == 1 && capture.pasteHistory[0].applicationName == "Fictional proofing tool"
-            && capture.pasteHistory[0].evidence == .manual, "Manual trail recording persists explicit manual evidence")
-        _ = try await find(id: "capture-trail-success")
-        try await press(label: "Close content trail")
+        try checkNoManualPasteAddition(context: "The task card")
+        let manual = try state.store.recordPasteDestination(for: capture,
+            applicationName: "Fictional proofing tool", at: capture.capturedAt.addingTimeInterval(1))
+        // Seed historical confirmed evidence directly in this fictional fixture.
+        // The user-facing record API remains unable to fabricate confirmation.
+        let confirmed = CapturePasteEvent(applicationName: "Notes",
+            applicationBundleIdentifier: "com.apple.Notes", recordedAt: capture.capturedAt.addingTimeInterval(2),
+            evidence: .confirmed)
+        capture.setPasteHistory(capture.pasteHistory + [confirmed])
+        try state.store.save(captures: [capture])
+        let existingHistory = capture.pasteHistory
+        let existingSnapshot = try encodedSnapshot(capture)
         try await press(id: "capture-trail-\(capture.id.uuidString)")
-        try expect(allNodes().contains { $0.label?.contains("Recorded by you") == true },
-            "History displays its manual evidence label")
+        for (index, visible) in NSApp.windows.filter(\.isVisible).enumerated() {
+            if let content = visible.contentView { try snapshot(content, at: evidence.appendingPathComponent("trail-history-window-\(index).png")) }
+        }
+        try checkNoManualPasteAddition(context: "The content-trail history")
+        try expect(allNodes().contains { $0.label == CaptureSourcePresentation.origin(for: capture).name },
+            "Opening the content trail still displays the capture's recorded source")
+        try expect(allNodes().contains { $0.label?.contains("Recorded by you") == true }
+            && allNodes().contains { $0.label?.contains("Confirmed paste") == true },
+            "History retains both legacy manual and confirmed evidence labels")
+        try expect(capture.pasteHistory == existingHistory && (try encodedSnapshot(capture)) == existingSnapshot,
+            "Viewing history does not add, remove or rewrite existing capture receipts")
         try await press(label: "Close content trail")
+        let reopened = try CaptureStore(root: state.store.root)
+        guard let persisted = reopened.captures.first(where: { $0.id == capture.id }) else {
+            throw missing("Persisted read-only trail fixture")
+        }
+        try expect(persisted.pasteHistory == existingHistory && (try encodedSnapshot(persisted)) == existingSnapshot,
+            "Opening and closing history leaves the complete persisted capture record untouched")
+
+        try await press(id: "capture-trail-\(capture.id.uuidString)")
+        try expect(!allNodes().contains { $0.label == "Remove recorded paste to Notes" },
+            "Confirmed evidence cannot be removed through the manual receipt action")
+        try await press(label: "Remove recorded paste to Fictional proofing tool")
+        try expect(capture.pasteHistory == [confirmed] && !capture.pasteHistory.contains(manual),
+            "Removing an old manual receipt preserves the confirmed paste")
+        _ = try await find(id: "capture-trail-success")
+        try checkNoManualPasteAddition(context: "The history after a manual receipt removal")
+        try await press(label: "Close content trail")
+        let remainingHistory = capture.pasteHistory
+        let writesBeforeCopy = clipboardWrites().count
+        try await press(id: CaptureCopyButton.accessibilityIdentifier(for: [capture]))
+        try expect(clipboardWrites().count == writesBeforeCopy + 1
+            && clipboardWrites().last?.items == [.text(original.originalText ?? "")],
+            "The card's normal Copy button still copies its original content exactly once")
+        try expect(capture.pasteHistory == remainingHistory,
+            "Copying content does not fabricate a paste destination receipt")
         window.setContentSize(NSSize(width: 1000, height: 700)); await settle()
-        try expect(capture.pasteHistory.count == 1 && capture.isTask && !capture.isCompleted,
+        try expect(capture.pasteHistory == remainingHistory && capture.isTask && !capture.isCompleted,
             "Expanding the card preserves task and provenance state")
         try snapshot(hosting, at: evidence.appendingPathComponent("task-expanded-1000.png"))
         window.setContentSize(NSSize(width: 380, height: 430)); await settle()
@@ -334,9 +389,9 @@ import SwiftUI
         await settle()
         let restored = state.store.captures.first { $0.id == capture.id }
         try expect(restored?.originalText == original.originalText && restored?.isTask == true
-            && restored?.pasteHistory.count == 1 && restored?.deletedAt == nil
+            && restored?.pasteHistory == remainingHistory && restored?.deletedAt == nil
             && !state.store.trashedCaptures.contains { $0.id == capture.id },
-            "Undo restores the removed task with its original content and manually recorded provenance")
+            "Undo restores the removed task with its original content and remaining confirmed provenance")
     }
 
     @MainActor static func main() async throws {
@@ -350,9 +405,10 @@ import SwiftUI
         let store = try CaptureStore(root: root)
         let previews = PreviewService(store: store, defaults: defaults)
         defer { previews.shutdown() }
+        var clipboardPayloads: [CaptureClipboardPayload] = []
         let state = AppState(store: store, previews: previews,
             reminders: ReminderService(store: store, client: RedesignReminderClient()),
-            captureClipboard: CaptureClipboardService(writer: { _ in true }))
+            captureClipboard: CaptureClipboardService(writer: { clipboardPayloads.append($0); return true }))
         let evidence = URL(fileURLWithPath: files.currentDirectoryPath)
             .appendingPathComponent("build/qa/redesign-interactions", isDirectory: true)
         try files.createDirectory(at: evidence, withIntermediateDirectories: true)
@@ -362,7 +418,8 @@ import SwiftUI
         defer { window.orderOut(nil); window.contentView = nil; window.close() }
         application.activate(ignoringOtherApps: true)
         try await checkProjectPicker(state: state, window: window, evidence: evidence)
-        try await checkCapture(state: state, window: window, evidence: evidence)
+        try await checkCapture(state: state, window: window, evidence: evidence,
+                               clipboardWrites: { clipboardPayloads })
         state.isBoardVisible = false
         print("PASS: \(checks) native redesign interaction checks")
         print("Redesign screenshots: \(evidence.path)")

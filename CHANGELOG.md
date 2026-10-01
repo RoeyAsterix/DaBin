@@ -1,5 +1,104 @@
 # Changelog
 
+## 0.4.19 (74) - 2026-10-02, local candidate
+
+- Aligns the board, native reveal mask and metal rim to one continuous rounded-corner profile; removes the mismatched circular host clip and fills gaps in the corner rim.
+- Updates custom vector/mask backing scales when attaching or moving between displays, without rasterizing the interactive board.
+- Draws the continuous rim as a hollow vector fill instead of compositing another full-window gradient and mask.
+- Makes every visible edge grabbable, with wider transparent-gutter targets and shallow inside padding; connects the card corners to the physical outer window corners.
+- Shares resize geometry with cursor regions and preserves header button/project-picker click areas, central chrome dragging, minimum sizes and expand/restore behavior.
+- Keeps the original cancelable robot shrink/fade and four-subpath torso-fill choreography. Capture data and preferences are not part of this window-only change.
+- Prepares current App Store privacy resources, friendly listing/reviewer copy, native screenshot drafts and packaging checks. All 73 registered Release suites, 39 media checks, 77 offline Python tests and 51 unsigned Store packaging checks pass; signed distribution/runtime verification and owner declarations remain pending. [Preparation evidence](docs/qa/app-store-2026-10-02/README.md). This is not a binary release or Apple approval.
+
+## 0.4.18 (73) - 2026-10-02, local candidate
+
+- Limits brief in-app notification banners and robot message popovers to two seconds, using monotonic deadlines and cancelable presentation receipts.
+- Times out reminder feedback, successful detail/scratchpad saves, clipboard cleanup confirmations, and trail/source/export operation messages without erasing underlying diagnostics or saved data.
+- Restarts the deadline for repeated identical messages; old expiry callbacks cannot dismiss a newer message, and expired banners no longer reserve window height.
+- Fixes export success-to-failure dismissal races and repeated identical export feedback in the main banner.
+- Keeps unsaved-form errors, recovery controls, Undo, in-progress/state indicators and the click-to-dismiss task alarm persistent. System notification duration remains controlled by macOS.
+
+## 0.4.17 (72) - 2026-10-01, local candidate
+
+- Redesigns Explorer capture cards around a large, full-width fitted preview, with the title and original capture date/category beneath it and compact sibling actions.
+- Keeps images, video stills, PDF/document pages and visual captures promoted to tasks preview-led; text-only notes and files without a preview remain compact.
+- Preserves project-leading labels and frames, attachment inheritance, task controls, selection/keyboard navigation, drag transfer and recoverable removal.
+- Reuses the bounded background thumbnail cache without row-level original-file reads, native media players or network requests.
+
+## 0.4.16 (71) - 2026-10-01, local candidate
+
+- Announces successfully saved task focus-timer expiry with a slightly larger canonical robot, an island leap, a visually ringing alarm clock and a sign containing the task's first three words.
+- Keeps the alert visible until the robot is clicked or pressed through accessibility, then shrinks and returns it home. Expiry pauses the focus timer at zero without completing the task; acknowledgement does not restart the timer or edit task data.
+- Queues separate timer expiries, including repeated runs of the same task; preserves unacknowledged alerts across manual robot interaction and display changes.
+- Gives the timer independent island ownership so Auto Capture cannot overlap it; board-open expiry appears immediately without changing navigation.
+- Uses static silent presentation for Quiet mode and Reduce Motion, with no audio, notification permission or per-frame application timer. Shutdown cancels pending expiry and return callbacks.
+
+## 0.4.15 (70) - 2026-10-01, local candidate
+
+- Gives collapsed hourly collections and minimized file batches a large, responsive mosaic of up to four real local previews, with a truthful overflow badge and readable text/file fallbacks.
+- Places capture count and immutable saved date/time directly beneath the previews; keeps capture totals distinct from automatic action counts, including filtered collections and promoted tasks.
+- Keeps one collection-expansion target, full batch copy, existing details/reminders/removal controls, stable hourly scroll identity and persisted batch collapse state.
+- Reserves preview-led summary height in native window sizing and reuses the bounded background thumbnail cache; collection previews do not start players or contact websites.
+
+## 0.4.14 (69) - 2026-10-01, local candidate
+
+- Replaces the flat close with a 0.78-second inward fold, compact robot pose and final shrinking tuck/fade toward its island or screen-corner home.
+- Fixes a Core Animation key collision that replaced the live content's shrink transform with its fade; content, outline and robot body now contract together.
+- Grows the temporary metallic torso fill smoothly instead of flashing a full-size backing plate, and preserves presented opacity/mask state when reopening late in the close.
+- Keeps the 0.14-second static Reduce Motion fade, final-size hosted content, cancelable generations and exactly-once closing cleanup.
+
+## 0.4.13 (68) - 2026-10-01, local candidate
+
+- Removes the manual add-paste plus button from capture trails and the alternate Record a paste form from the history popover.
+- Keeps original source information, existing paste receipts and correction of legacy manually recorded entries; opening or copying a capture does not invent a paste event.
+- Includes the tooltip, robot, preview-click and timestamp improvements. Installed and verified locally after the older app was force-quit with explicit permission; its previous bundle was backed up.
+
+## 0.4.12 (67) - 2026-10-01, local candidate
+
+- Restores visible hover labels using real control anchors, including the redesigned header and capture actions; labels wrap and stay inside the window without intercepting clicks.
+- Makes Settings → Appearance → Show tooltips apply immediately to the board, popovers, sheets, island robot, drag handles and menu-bar status icon. Existing saved choices are preserved; the default is enabled.
+- Cancels delayed or visible help when disabled, hidden, removed or navigating; keyboard/accessibility labels remain available independently of visual tooltips.
+- Includes pending robot, preview-click and timestamp improvements; installation still requires a safe exit from the older running app.
+
+## 0.4.11 (66) - 2026-10-01, local candidate
+
+- Uses one canonical Quiet Orbit head renderer for the island robot and full application frame: angular metallic shell, polygon visor, rectangular mint eyes, scanlines and the same mouth/seam details.
+- Removes the old frame's bin lid, handle and separate dark pupils; matches its shell and articulated limbs to the island's metal/silver palette.
+- Preserves head proportions during expansion and retains native gaze, blink, resizing, click-through, content transparency and Reduce Motion behavior.
+- Uses the native island robot in empty states rather than a legacy SVG and a second face; sleepy motion remains visible-only and bounded.
+- Includes pending preview-click and timestamp improvements from 0.4.9–0.4.10; local installation still requires a safe exit from the older running session.
+
+## 0.4.10 (65) - 2026-10-01, local candidate
+
+- Enlarges the capture page's original date and time from 11-point muted text to 16-point medium-weight, high-contrast text.
+- Shows the original date and time before the category on daily, weekly, project, Explorer and grouped capture cards.
+- Keeps timestamps tied to the original capture day and recorded UTC offset, including after edits or time-zone changes.
+- Includes the pending click-to-open file preview behavior from 0.4.9; local installation is pending a safe exit from the unresponsive running app.
+
+## 0.4.9 (64) - 2026-10-01, local candidate
+
+- Clicking a file preview on its capture page opens the saved original in the default macOS application.
+- Explorer's inspector uses the same click-to-open behavior, with keyboard and accessibility activation.
+- PDFs show a fitted page and videos show a playable-file thumbnail; full document navigation and playback open in the original application's window.
+- Preserves background image loading, validated archive paths and existing missing-file feedback.
+
+## 0.4.8 (63) - 2026-10-01, local candidate
+
+- Removes repeated full-text normalization from ordinary Explorer browsing and shares one query result across each view update.
+- Reuses immutable original-text search data while keeping edited titles, comments and indexed text immediately searchable.
+- Loads dated-file lists, daily previews and downsampled capture images away from the UI thread; image reuse is bounded and tracks file replacements.
+- Lets stationary robot gaze settle and skips unchanged window geometry and click-through updates.
+- Retains project colors, automatic project routing and the waving project sign from build 62.
+
+## 0.4.7 (62) - 2026-10-01, local candidate
+
+- Promotes Projects in the primary navigation and moves project identity above capture content.
+- Adds project colors, including color selection during creation, later color changes and a matching frame around cards in the active project.
+- Routes new Auto Capture items directly to the selected project and gives the robot a color-matched project sign that waves for each save.
+- Removes redundant or inert visible controls while preserving the useful menu, keyboard and accessibility paths.
+- Keeps existing archives compatible: project colors and automatic-capture destinations are additive, optional metadata.
+- Public testing release remains gated on complete local verification, Apple signing and notarization; see the [candidate notes](docs/RELEASE_NOTES_0.4.7.md).
+
 ## 0.4.6 (61) - 2026-10-01, local candidate
 
 - Includes the pending Inbox Day / Week calendar and Quiet Orbit robot redesign.

@@ -74,6 +74,9 @@ struct WorkspaceScratchpad: Codable, Equatable {
 struct WorkspaceSnapshot: Codable, Equatable {
     var schemaVersion = 1
     var scratchpads: [String: WorkspaceScratchpad] = [:]
+    /// Optional so workspaces written before project colors remain readable.
+    /// Keys are the exact persisted project names; values are six RGB hex digits.
+    var projectColors: [String: String]?
     var shelfCaptureIDs: [UUID] = []
     var snippetNames: [String: String] = [:]
     var processedInboxIDs: [UUID] = []
@@ -100,6 +103,12 @@ struct WorkspaceSnapshot: Codable, Equatable {
               (explorerQuery?.count ?? 0) <= 2_000,
               (projectSelections?.count ?? 0) <= 5_001,
               projectSelections?.keys.allSatisfy({ $0 == "inbox:" || ($0.hasPrefix("project:") && $0.count <= 188) }) != false,
+              (projectColors?.count ?? 0) <= 5_000,
+              projectColors?.allSatisfy({ name, hex in
+                  WorkspaceStore.isValidProjectName(name)
+                    && WorkspaceStore.isValidProjectColorHex(hex)
+                    && scratchpads[Self.projectKey(name)]?.projectName == name
+              }) != false,
               shelfCaptureIDs.count <= 100_000, snippetNames.count <= 100_000,
               Set(snippetNames.keys.compactMap(UUID.init(uuidString:))).count == snippetNames.count,
               processedInboxIDs.count <= 500_000,
@@ -139,12 +148,20 @@ struct WorkspaceSnapshot: Codable, Equatable {
             for (key, value) in selections where currentSelections[key] == nil { currentSelections[key] = value }
             result.projectSelections = currentSelections
         }
+        if let incomingColors = incoming.projectColors {
+            var currentColors = result.projectColors ?? [:]
+            for (name, color) in incomingColors where currentColors[name] == nil {
+                currentColors[name] = color
+            }
+            result.projectColors = currentColors
+        }
         return try result.validated()
     }
 }
 
 enum WorkspaceError: LocalizedError {
     case invalidArchive, unavailable(String), restoreConflict(String), missingContent, emptyCollection
+    case invalidProjectName, invalidProjectColor
     var errorDescription: String? {
         switch self {
         case .invalidArchive: return "The saved workspace could not be read safely. Your existing file has been preserved."
@@ -152,6 +169,8 @@ enum WorkspaceError: LocalizedError {
         case .restoreConflict(let name): return "The backup contains different workspace text for \(name). Your current notes were kept."
         case .missingContent: return "This item has no available text to copy."
         case .emptyCollection: return "Add items to the shelf before exporting."
+        case .invalidProjectName: return "Enter a project name between 1 and 180 characters without line breaks."
+        case .invalidProjectColor: return "Choose a valid six-digit RGB project color."
         }
     }
 }
@@ -159,6 +178,7 @@ enum WorkspaceError: LocalizedError {
 @MainActor
 final class WorkspaceStore: ObservableObject {
     static let filename = "Workspace.json"
+    nonisolated static let defaultProjectColorHex = "7568D8"
     let root: URL
     @Published private(set) var snapshot = WorkspaceSnapshot()
     @Published private(set) var error: String?
@@ -234,6 +254,50 @@ final class WorkspaceStore: ObservableObject {
     var projectNames: [String] { snapshot.scratchpads.values.compactMap(\.projectName).sorted() }
     var scratchpads: [WorkspaceScratchpad] { snapshot.scratchpads.values.filter { !$0.text.isEmpty }.sorted { $0.updatedAt > $1.updatedAt } }
     var hasUnsavedChanges: Bool { !pendingScratchpads.isEmpty }
+
+    func projectColorHex(for name: String?) -> String? {
+        guard let name, Self.isValidProjectName(name) else { return nil }
+        return snapshot.projectColors?[name]?.uppercased() ?? Self.defaultProjectColorHex
+    }
+
+    /// Creates the project marker and its appearance in one atomic workspace write.
+    func createProject(name: String, colorHex: String) throws {
+        guard let normalizedName = Self.normalizedProjectName(name) else {
+            throw WorkspaceError.invalidProjectName
+        }
+        guard let normalizedColor = Self.normalizedProjectColorHex(colorHex) else {
+            throw WorkspaceError.invalidProjectColor
+        }
+        var next = snapshot
+        let key = WorkspaceSnapshot.projectKey(normalizedName)
+        if next.scratchpads[key] == nil {
+            next.scratchpads[key] = WorkspaceScratchpad(text: "", projectName: normalizedName, updatedAt: Date())
+        }
+        var colors = next.projectColors ?? [:]
+        colors[normalizedName] = normalizedColor
+        next.projectColors = colors
+        try save(next)
+    }
+
+    /// Assigning a color also persists an empty scratchpad marker so the project
+    /// remains available even when its last capture is later moved elsewhere.
+    func setProjectColor(hex: String, for name: String) throws {
+        guard let normalizedName = Self.normalizedProjectName(name) else {
+            throw WorkspaceError.invalidProjectName
+        }
+        guard let normalizedColor = Self.normalizedProjectColorHex(hex) else {
+            throw WorkspaceError.invalidProjectColor
+        }
+        var next = snapshot
+        let key = WorkspaceSnapshot.projectKey(normalizedName)
+        if next.scratchpads[key] == nil {
+            next.scratchpads[key] = WorkspaceScratchpad(text: "", projectName: normalizedName, updatedAt: Date())
+        }
+        var colors = next.projectColors ?? [:]
+        colors[normalizedName] = normalizedColor
+        next.projectColors = colors
+        try save(next)
+    }
 
     func scratchpad(project: String?) -> String {
         let key = WorkspaceSnapshot.projectKey(project)
@@ -316,5 +380,31 @@ final class WorkspaceStore: ObservableObject {
         var next = snapshot; change(&next)
         guard next != snapshot else { return }
         do { try save(next) } catch { self.error = error.localizedDescription }
+    }
+
+    nonisolated static func isValidProjectName(_ name: String) -> Bool {
+        normalizedProjectName(name) == name
+    }
+
+    nonisolated static func isValidProjectColorHex(_ hex: String) -> Bool {
+        normalizedProjectColorHex(hex) != nil
+    }
+
+    nonisolated private static func normalizedProjectName(_ value: String) -> String? {
+        let normalized = value.trimmingCharacters(in: .whitespacesAndNewlines)
+            .precomposedStringWithCanonicalMapping
+        guard !normalized.isEmpty, normalized.count <= 180,
+              !normalized.unicodeScalars.contains(where: {
+                  CharacterSet.newlines.union(.controlCharacters).contains($0)
+              }) else { return nil }
+        return normalized
+    }
+
+    nonisolated private static func normalizedProjectColorHex(_ value: String) -> String? {
+        guard value.utf8.count == 6,
+              value.utf8.allSatisfy({ byte in
+                  (48...57).contains(byte) || (65...70).contains(byte) || (97...102).contains(byte)
+              }) else { return nil }
+        return value.uppercased()
     }
 }

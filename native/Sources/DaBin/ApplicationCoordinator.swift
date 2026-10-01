@@ -14,6 +14,7 @@ final class ApplicationCoordinator {
     let input: InputService
     let autoCapture: AutoCaptureService
     let autoCaptureRobot: AutoCaptureRobotPresenter
+    let taskTimerRobot: TaskTimerRobotPresenter
     let state: AppState
     let theme: ThemeSettings
     let robotPlacement: RobotPlacementSettings
@@ -39,7 +40,8 @@ final class ApplicationCoordinator {
     init(store: CaptureStore, defaults: UserDefaults = .standard,
          notificationClient: ReminderNotificationClient? = nil,
          applicationEvents: NotificationCenter = .default,
-         workspaceEvents: NotificationCenter = NSWorkspace.shared.notificationCenter) {
+         workspaceEvents: NotificationCenter = NSWorkspace.shared.notificationCenter,
+         taskTimerPrimaryScreen: @escaping TaskTimerRobotPresenter.PrimaryScreenProvider = { AutoCaptureRobotGeometry.livePrimaryScreen() }) {
         self.store = store
         self.defaults = defaults
         self.applicationEvents = applicationEvents
@@ -56,9 +58,16 @@ final class ApplicationCoordinator {
         let autoCaptureRobot = AutoCaptureRobotPresenter()
         let robotPlacement = RobotPlacementSettings(defaults: defaults)
         let quickAccess = QuickAccessSettings(defaults: defaults)
+        let taskTimerRobot = TaskTimerRobotPresenter(primaryScreen: taskTimerPrimaryScreen,
+            reduceMotion: { [weak quickAccess] in
+                quickAccess?.quietMode == true || NSWorkspace.shared.accessibilityDisplayShouldReduceMotion
+            })
         let state = AppState(store: store, previews: previews, contentIndex: contentIndex, reminders: reminders,
                              updates: updates, robotPlacement: robotPlacement,
                              autoCapture: autoCapture, quickAccessSettings: quickAccess)
+        autoCapture.projectProvider = { [weak state] in
+            state?.libraryProject
+        }
         let theme = ThemeSettings(defaults: defaults)
         let corners = CornerController(state: state, input: input, placementDefaults: defaults, theme: theme)
         self.previews = previews
@@ -68,11 +77,17 @@ final class ApplicationCoordinator {
         self.input = input
         self.autoCapture = autoCapture
         self.autoCaptureRobot = autoCaptureRobot
+        self.taskTimerRobot = taskTimerRobot
         self.state = state
         self.theme = theme
         self.robotPlacement = robotPlacement
         self.corners = corners
         state.onTaskCompleted = { [weak corners] in corners?.celebrateTaskCompletion() }
+        state.onTaskTimerExpired = { [weak taskTimerRobot] captures in
+            for capture in captures {
+                _ = taskTimerRobot?.present(task: TaskTimerCompletion(taskID: capture.id, title: capture.title))
+            }
+        }
         state.onToggleExpandedWindow = { [weak corners] in corners?.toggleExpandedWindow() }
         lifecycle = ReminderLifecycle { await reminders.reconcile() }
         corners.onWillOpenBoard = { [weak autoCaptureRobot] in autoCaptureRobot?.suspendForBoard() }
@@ -80,16 +95,40 @@ final class ApplicationCoordinator {
         autoCaptureRobot.onPresentationChanged = { [weak corners] visible in
             if visible { corners?.captureAnimationWillAppear() }
         }
-        corners.onRobotInteractionBegan = { [weak autoCaptureRobot] in autoCaptureRobot?.suspendForInteraction() }
-        corners.onRobotInteractionEnded = { [weak autoCaptureRobot] in autoCaptureRobot?.resumeAfterInteraction() }
+        corners.onRobotInteractionBegan = { [weak autoCaptureRobot, weak taskTimerRobot] in
+            autoCaptureRobot?.suspendForInteraction()
+            taskTimerRobot?.suspendForInteraction()
+        }
+        corners.onRobotInteractionEnded = { [weak autoCaptureRobot, weak taskTimerRobot] in
+            taskTimerRobot?.resumeAfterInteraction()
+            autoCaptureRobot?.resumeAfterInteraction()
+        }
         corners.isCaptureRobotVisible = { [weak autoCaptureRobot] in autoCaptureRobot?.panel.isVisible == true }
+        corners.isTaskTimerRobotVisible = { [weak taskTimerRobot] in taskTimerRobot?.panel.isVisible == true }
+        taskTimerRobot.onPresentationChanged = { [weak autoCaptureRobot, weak corners] visible in
+            if visible {
+                autoCaptureRobot?.suspendForTaskTimer()
+                corners?.captureAnimationWillAppear()
+            } else {
+                autoCaptureRobot?.resumeAfterTaskTimer()
+            }
+        }
         autoCapture.onCommitted = { [weak state] action in
             state?.didAutoCapture(action.captures)
         }
-        autoCapture.onSaved = { [weak autoCaptureRobot, weak quickAccess] _ in
+        autoCapture.onSaved = { [weak autoCaptureRobot, weak quickAccess,
+                                 weak workspace = state.workspace] action in
             // One receipt is one action, including a grouped multi-file paste.
             guard quickAccess?.quietMode != true else { return }
-            _ = autoCaptureRobot?.present(additionalCaptureCount: 1)
+            let projectColor = action.projectName
+                .flatMap { workspace?.projectColorHex(for: $0) }
+                .map { ProjectColorChoice.nsColor(for: $0) }
+            _ = autoCaptureRobot?.present(additionalCaptureCount: 1,
+                                          projectName: action.projectName,
+                                          projectColor: projectColor)
+            if let project = action.projectName {
+                AccessibilityAnnouncement.post("Saved to \(project)")
+            }
         }
         autoCapture.onFailure = { [weak state] message in
             state?.status = AppStatusMessage(text: "Auto Capture: \(message)", severity: .warning)
@@ -110,7 +149,8 @@ final class ApplicationCoordinator {
             openDaily: { [weak corners] in corners?.openDaily() },
             showSettings: { [weak state, weak corners] in state?.showSettings(); corners?.showBoard() },
             quit: { NSApplication.shared.terminate(nil) },
-            autoCapture: autoCapture
+            autoCapture: autoCapture,
+            theme: theme
         )
         shortcuts = GlobalShortcutService(settings: quickAccess,
             search: { [weak corners] in corners?.openSearch() },
@@ -119,8 +159,11 @@ final class ApplicationCoordinator {
                 corners?.showBoard(immediate: true)
                 state?.pasteClipboard()
             })
-        quietSubscription = quickAccess.$quietMode.sink { [weak autoCaptureRobot] quiet in
-            if quiet { autoCaptureRobot?.dismiss() }
+        quietSubscription = quickAccess.$quietMode.sink { [weak autoCaptureRobot, weak taskTimerRobot] quiet in
+            if quiet {
+                autoCaptureRobot?.dismiss()
+                taskTimerRobot?.refreshMotionPreference()
+            }
         }
     }
 
@@ -185,6 +228,12 @@ final class ApplicationCoordinator {
         autoCapture.shutdown()
         shortcuts.stop()
         quietSubscription?.cancel(); quietSubscription = nil
+        state.onTaskTimerExpired = nil
+        state.onTaskCompleted = nil
+        state.focusSessions.shutdown()
+        state.shutdownNotificationPresentation()
+        taskTimerRobot.onPresentationChanged = nil
+        taskTimerRobot.shutdown()
         autoCaptureRobot.shutdown()
         corners.shutdown()
         previews.shutdown()

@@ -72,6 +72,18 @@ final class RobotCharacterView: NSView {
         configureAutomaticCountBadge()
     }
 
+    /// A dedicated held-prop scene supplies two stage-space arms of its own.
+    /// Its unique character instance retains the canonical head/body artwork
+    /// without also drawing the normal raised greeting palms.
+    func setNativeArmsHidden(_ hidden: Bool) {
+        withoutActions {
+            leftArmLayer.opacity = hidden ? 0 : 1
+            rightArmLayer.opacity = hidden ? 0 : 1
+        }
+    }
+
+    var nativeArmsAreHidden: Bool { leftArmLayer.opacity == 0 && rightArmLayer.opacity == 0 }
+
     init(frame frameRect: NSRect,
          reduceMotion: @escaping ReduceMotionProvider = {
              NSWorkspace.shared.accessibilityDisplayShouldReduceMotion
@@ -290,8 +302,8 @@ final class RobotCharacterView: NSView {
         CGPath(roundedRect: orbitRect(x, y, width, height), cornerWidth: radius * orbitUnit,
                cornerHeight: radius * orbitUnit, transform: nil)
     }
-    private var orbitMetal: [UInt32] { [0xEEE7F4, 0xC8B4DC, 0x977CAD, 0xBCA5D0, 0x6D5387] }
-    private var orbitSilver: [UInt32] { [0xF6F4F8, 0xD4CDDC, 0xA9A1B3, 0xE3DCE9, 0x85758F] }
+    private var orbitMetal: [UInt32] { QuietOrbitVisualStyle.metal }
+    private var orbitSilver: [UInt32] { QuietOrbitVisualStyle.silver }
 
     @discardableResult
     private func addOrbitGradient(_ path: CGPath, colors: [UInt32], to parent: CALayer,
@@ -409,60 +421,9 @@ final class RobotCharacterView: NSView {
     }
 
     private func configureFace() {
-        let head = orbitPolygon([(166, 57), (234, 57), (250, 71), (250, 112),
-                                 (237, 125), (163, 125), (150, 112), (150, 71)])
-        addOrbitGradient(head, colors: orbitMetal, to: faceLayer)
-        addOrbitShape(head, to: faceLayer, stroke: 0x7D6490, width: 1.2 * orbitUnit)
-        addOrbitShape(orbitPolygon([(158, 73), (169, 63), (231, 63), (242, 73)], close: false),
-                      to: faceLayer, stroke: 0xF2EAF9, width: 2 * orbitUnit)
-        let visor = orbitPolygon([(164, 75), (236, 75), (242, 82), (242, 107),
-                                  (234, 116), (166, 116), (158, 107), (158, 82)])
-        faceScreenLayer.path = visor
-        faceScreenLayer.fillColor = Self.color(0x1E1924)
-        faceScreenLayer.strokeColor = Self.color(0x8D759F)
-        faceScreenLayer.lineWidth = orbitUnit
-        faceLayer.addSublayer(faceScreenLayer)
-        addOrbitGradient(visor, colors: [0x3E3449, 0x1E1924, 0x30253B], to: faceScreenLayer)
-        addOrbitShape(orbitPolygon([(169, 80), (229, 80)], close: false), to: faceLayer,
-                      stroke: 0xDFD2EA, width: 1.4 * orbitUnit, alpha: 0.18)
-
-        for (eye, origin) in [(leftEyeLayer, CGPoint(x: 174, y: 88)),
-                              (rightEyeLayer, CGPoint(x: 213, y: 88))] {
-            let center = orbitPoint(origin.x + 6.5, origin.y + 7.5)
-            configureContainer(eye, anchor: center)
-            eye.path = CGPath(rect: orbitRect(origin.x, origin.y, 13, 15), transform: nil)
-            eye.fillColor = Self.color(0xC8F1E5)
-            eye.shadowColor = Self.color(0xB3E6D9)
-            eye.shadowOpacity = 0.16
-            eye.shadowRadius = 0.8
-            eye.shadowOffset = .zero
-            let scanlines = CGMutablePath()
-            for offset: CGFloat in [4, 8, 12] {
-                scanlines.move(to: orbitPoint(origin.x + 2, origin.y + offset))
-                scanlines.addLine(to: orbitPoint(origin.x + 11, origin.y + offset))
-            }
-            addOrbitShape(scanlines, to: eye, stroke: 0x233B35, width: 0.8 * orbitUnit, alpha: 0.18)
-            faceLayer.addSublayer(eye)
-        }
-        mouthLayer.path = mouthPath(for: .idle)
-        mouthLayer.fillColor = nil
-        mouthLayer.strokeColor = Self.color(0xA3C7BD)
-        mouthLayer.lineWidth = 1.8 * orbitUnit
-        mouthLayer.lineCap = .square
-        mouthLayer.lineJoin = .round
-        faceLayer.addSublayer(mouthLayer)
-
-        addOrbitShape(orbitRoundRect(192, 66, 16, 3, radius: 1), to: faceLayer, fill: 0x5B486A)
-        addOrbitShape(orbitPolygon([(195, 67.5), (202, 67.5)], close: false), to: faceLayer,
-                      stroke: 0xC8F1E5, width: 1.2 * orbitUnit)
-        let seams = CGMutablePath()
-        for x: CGFloat in [155, 245] {
-            seams.move(to: orbitPoint(x, 84)); seams.addLine(to: orbitPoint(x, 101))
-        }
-        for x: CGFloat in [165, 232] {
-            seams.move(to: orbitPoint(x, 119)); seams.addLine(to: orbitPoint(x + 3, 119))
-        }
-        addOrbitShape(seams, to: faceLayer, stroke: 0x584664, width: 1.5 * orbitUnit)
+        QuietOrbitHeadArtwork.install(in: faceLayer, canvas: Self.designSize,
+            headRect: orbitRect(150, 57, 100, 68), topDown: true,
+            visor: faceScreenLayer, leftEye: leftEyeLayer, rightEye: rightEyeLayer, mouth: mouthLayer)
     }
 
     private func configureIntakeCard() {
@@ -1854,10 +1815,7 @@ final class RobotCharacterView: NSView {
             path.move(to: CGPoint(x: 29.5, y: 42))
             path.addLine(to: CGPoint(x: 34.5, y: 42))
         default:
-            path.move(to: orbitPoint(194, 106))
-            path.addLine(to: orbitPoint(197, 109))
-            path.addLine(to: orbitPoint(203, 109))
-            path.addLine(to: orbitPoint(206, 106))
+            return QuietOrbitVisualStyle.idleMouthPath(in: orbitRect(150, 57, 100, 68), topDown: true)
         }
         return path
     }

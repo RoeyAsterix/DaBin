@@ -1,5 +1,36 @@
 import SwiftUI
 
+/// Explorer uses existing local thumbnails, including visual captures promoted
+/// to tasks. Text-only notes remain compact rather than gaining an empty hero.
+enum ExplorerCaptureCardPresentation {
+    @MainActor static func hasLargePreview(capture: Capture, store: CaptureStore) -> Bool {
+        [.image, .video, .pdf, .document, .ai].contains(capture.kind)
+            || CapturePreviewFileReference.thumbnail(store: store, capture: capture) != nil
+    }
+
+    static func previewHeight(for width: CGFloat) -> CGFloat {
+        guard width.isFinite, width > 0 else { return 160 }
+        return min(300, max(160, width * 0.8))
+    }
+}
+
+/// A real width-dependent height without GeometryReader state or a resize loop.
+/// The single cached thumbnail fits its complete content inside this surface.
+struct ExplorerCapturePreviewLayout: Layout {
+    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+        let proposedWidth = proposal.width ?? 320
+        let width = proposedWidth.isFinite ? max(0, proposedWidth) : 320
+        return CGSize(width: width, height: ExplorerCaptureCardPresentation.previewHeight(for: width))
+    }
+
+    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
+        for subview in subviews {
+            subview.place(at: bounds.origin, anchor: .topLeading,
+                          proposal: ProposedViewSize(width: bounds.width, height: bounds.height))
+        }
+    }
+}
+
 @MainActor struct ExplorerCaptureRow: View {
     @ObservedObject var state: AppState
     @ObservedObject var workspace: WorkspaceStore
@@ -7,66 +38,111 @@ import SwiftUI
     var focus: FocusState<UUID?>.Binding
     let select: () -> Void
     @Environment(\.daBinAccent) private var accent
+    private var projectName: String? { ExplorerQuery.project(of: capture, in: state.store.captures) }
+    private var hasLargePreview: Bool {
+        ExplorerCaptureCardPresentation.hasLargePreview(capture: capture, store: state.store)
+    }
+    private var title: String { capture.title.isEmpty ? "Untitled capture" : capture.title }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            HStack(alignment: .top, spacing: 10) {
-                if capture.isTask {
-                    Button { state.toggleTaskCompletion(capture) } label: {
-                        Image(systemName: capture.isCompleted ? "checkmark.square.fill" : "square")
-                            .font(.system(size: 20, weight: .medium))
-                            .foregroundStyle(capture.isCompleted ? Palette.completed : Palette.muted)
-                            .frame(width: 32, height: 32)
-                    }.buttonStyle(.plain).accessibilityLabel(capture.isCompleted ? "Reopen task" : "Complete task")
-                }
-                Button(action: select) {
-                    HStack(spacing: 10) {
-                        if !capture.isTask {
-                            CaptureThumbnail(store: state.store, capture: capture)
-                                .frame(width: 56, height: 56).clipShape(RoundedRectangle(cornerRadius: 8))
-                        }
-                        VStack(alignment: .leading, spacing: 5) {
-                            Text(capture.title.isEmpty ? "Untitled capture" : capture.title)
-                                .font(.system(size: 15, weight: .semibold)).lineLimit(2)
-                                .strikethrough(capture.isTask && capture.isCompleted)
-                            HStack(spacing: 4) {
-                                Text(capture.isTask ? (capture.isCompleted ? "Completed" : "Task") : captureTypeLabel(capture.kind))
-                                Text("· " + prettyDay(capture.captureDay, includeWeekday: false))
-                                if capture.isPinned { Image(systemName: "pin.fill").accessibilityLabel("Pinned") }
-                            }.font(.system(size: 11)).foregroundStyle(Palette.muted).lineLimit(1)
-                            if capture.parentTaskID != nil {
-                                Label("Task attachment", systemImage: "paperclip").font(.system(size: 11)).foregroundStyle(Palette.muted)
-                            }
-                        }
-                        Spacer(minLength: 0)
-                    }.frame(maxWidth: .infinity, alignment: .leading).contentShape(Rectangle())
-                }.buttonStyle(.plain).multilineTextAlignment(.leading)
-                    .focused(focus, equals: capture.id)
-                    .accessibilityLabel("Open \(capture.title)")
-                    .accessibilityIdentifier("workspace-item-\(capture.id.uuidString)")
-                    .accessibilityAddTraits(workspace.selectedCaptureID == capture.id ? .isSelected : [])
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 4) {
+                CaptureProjectPickerButton(state: state, capture: capture)
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 CaptureCopyButton(state: state, captures: [capture])
                 CaptureTrashButton(state: state, capture: capture)
             }
-            CaptureTrailView(state: state, capture: capture)
-            CaptureConversionUndo(state: state, capture: capture)
-            if capture.isTask { TaskFocusControls(state: state, capture: capture) }
-            else if capture.parentTaskID == nil {
-                HStack(spacing: 6) {
-                    CaptureProjectPickerButton(state: state, capture: capture)
+            HStack(alignment: .top, spacing: 8) {
+                if capture.isTask {
+                    if !hasLargePreview { taskCompletion }
+                }
+                Button(action: select) {
+                    VStack(alignment: .leading, spacing: 8) {
+                        if hasLargePreview {
+                            ExplorerCapturePreviewLayout {
+                                CaptureThumbnail(store: state.store, capture: capture)
+                            }
+                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                            .overlay(RoundedRectangle(cornerRadius: 10).strokeBorder(Palette.line, lineWidth: 0.5))
+                            .accessibilityHidden(true)
+                        }
+                        HStack(alignment: .top, spacing: 8) {
+                            if !hasLargePreview && !capture.isTask {
+                                CaptureThumbnail(store: state.store, capture: capture)
+                                    .frame(width: 38, height: 38).clipShape(RoundedRectangle(cornerRadius: 7))
+                            }
+                            metadata
+                        }
+                    }.frame(maxWidth: .infinity, alignment: .leading).contentShape(Rectangle())
+                }.buttonStyle(.plain).multilineTextAlignment(.leading)
+                    .focused(focus, equals: capture.id)
+                    .accessibilityLabel("Open \(title)")
+                    .accessibilityValue(captureReceiptText(capture) + ", " + category)
+                    .accessibilityIdentifier("workspace-item-\(capture.id.uuidString)")
+                    .accessibilityAddTraits(workspace.selectedCaptureID == capture.id ? .isSelected : [])
+            }
+            ViewThatFits(in: .horizontal) {
+                HStack(spacing: 4) {
+                    CaptureTrailView(state: state, capture: capture)
                     Spacer(minLength: 0)
-                    BuddyIconButton(symbol: "checklist", title: "Turn into task") { state.convertToTask(capture) }
-                    CaptureKeepButton(state: state, capture: capture)
+                    quickAction
+                }
+                VStack(alignment: .leading, spacing: 4) {
+                    CaptureTrailView(state: state, capture: capture)
+                    HStack { Spacer(minLength: 0); quickAction }
                 }
             }
-        }.padding(12)
+            CaptureConversionUndo(state: state, capture: capture)
+            if capture.isTask { TaskFocusControls(state: state, capture: capture) }
+        }.padding(10)
             .background(workspace.selectedCaptureID == capture.id ? Palette.soft : Palette.surface, in: RoundedRectangle(cornerRadius: 14))
-            .overlay(RoundedRectangle(cornerRadius: 14).strokeBorder(workspace.selectedCaptureID == capture.id ? accent.opacity(0.45) : Palette.line, lineWidth: 1))
+            .projectCardFrame(workspace: workspace, projectName: projectName, activeProject: state.libraryProject,
+                              fallbackColor: workspace.selectedCaptureID == capture.id ? accent.opacity(0.45) : Palette.line,
+                              fallbackWidth: 1)
             .contextMenu { ExplorerCaptureActions(state: state, workspace: workspace, capture: capture) }
             .onDrag {
                 do { return try ExplorerTransfer.itemProvider(for: capture, store: state.store) }
                 catch { state.reportFailure(error.localizedDescription); return NSItemProvider() }
             }
+    }
+
+    private var category: String {
+        capture.isTask ? (capture.isCompleted ? "Completed" : "Task") : captureTypeLabel(capture.kind)
+    }
+
+    private var metadata: some View {
+        VStack(alignment: .leading, spacing: 5) {
+            HStack(alignment: .firstTextBaseline, spacing: 5) {
+                Text(title).font(.system(size: 15, weight: .semibold)).lineLimit(2)
+                    .strikethrough(capture.isTask && capture.isCompleted)
+                if capture.isPinned {
+                    Image(systemName: "pin.fill").font(.system(size: 10)).foregroundStyle(accent)
+                        .accessibilityLabel("Pinned")
+                }
+            }
+            CaptureReceiptView(capture: capture, category: category)
+            if capture.parentTaskID != nil {
+                Label("Task attachment", systemImage: "paperclip")
+                    .font(.system(size: 11)).foregroundStyle(Palette.muted)
+            }
+        }.frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    private var taskCompletion: some View {
+        Button { state.toggleTaskCompletion(capture) } label: {
+            Image(systemName: capture.isCompleted ? "checkmark.square.fill" : "square")
+                .font(.system(size: 20, weight: .medium))
+                .foregroundStyle(capture.isCompleted ? Palette.completed : Palette.muted)
+                .frame(width: 32, height: 32)
+        }.buttonStyle(.plain).accessibilityLabel(capture.isCompleted ? "Reopen task" : "Complete task")
+    }
+
+    @ViewBuilder private var quickAction: some View {
+        if capture.isTask {
+            if hasLargePreview { taskCompletion }
+        } else if capture.parentTaskID == nil {
+                    BuddyIconButton(symbol: "checklist", title: "Turn into task") { state.convertToTask(capture) }
+        }
     }
 }
 
@@ -80,10 +156,15 @@ import SwiftUI
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 14) {
+                CaptureProjectPickerButton(state: state, capture: capture)
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 HStack(alignment: .top) {
                     Text(capture.title).font(.system(size: 26, weight: .semibold, design: .rounded)).textSelection(.enabled)
                     Spacer(minLength: 6)
-                    Menu { ExplorerCaptureActions(state: state, workspace: workspace, capture: capture) } label: {
+                    Menu {
+                        ExplorerCaptureActions(state: state, workspace: workspace, capture: capture,
+                                               includesInspectorButtons: false)
+                    } label: {
                         Image(systemName: "ellipsis.circle").font(.system(size: 19)).frame(width: 28, height: 28)
                     }.menuStyle(.borderlessButton).menuIndicator(.hidden).fixedSize()
                         .accessibilityLabel("Actions for selected capture").buddyHelp("Item actions")
@@ -96,7 +177,8 @@ import SwiftUI
                 if capture.isTask { TaskFocusControls(state: state, capture: capture, compact: false) }
                 if capture.attachmentRelativePath != nil {
                     if state.store.managedURL(for: capture) != nil {
-                        DetailPreview(store: state.store, capture: capture, height: max(120, min(520, height * 0.6)))
+                        DetailPreview(store: state.store, capture: capture, height: max(120, min(520, height * 0.6)),
+                                      onOpenOriginal: { state.openOriginal(capture) })
                     } else {
                         Label("Saved file unavailable. Your capture details are still here.", systemImage: "doc.badge.ellipsis")
                             .font(.system(size: 13)).foregroundStyle(Palette.muted)
@@ -117,7 +199,6 @@ import SwiftUI
                         .accessibilityIdentifier("explorer-open-details")
                     Spacer(minLength: 0)
                     CaptureCopyButton(state: state, captures: [capture])
-                    CaptureTrashButton(state: state, capture: capture)
                 }.font(.system(size: 12)).foregroundStyle(accent)
                 if let reminder = capture.reminderAt {
                     Label(reminder.formatted(date: .abbreviated, time: .shortened), systemImage: "bell")
@@ -137,7 +218,7 @@ import SwiftUI
                         }.font(.system(size: 12)).foregroundStyle(Palette.muted)
                     }
                 }
-                Text("Captured \(prettyDay(capture.captureDay)) · \(ExplorerQuery.project(of: capture, in: state.store.captures) ?? "Unfiled")")
+                Text("Captured \(prettyDay(capture.captureDay))")
                     .font(.system(size: 11)).foregroundStyle(Palette.muted)
             }.padding(20).frame(maxWidth: .infinity, alignment: .leading)
         }.id(capture.id)
@@ -148,9 +229,12 @@ import SwiftUI
     @ObservedObject var state: AppState
     @ObservedObject var workspace: WorkspaceStore
     @ObservedObject var capture: Capture
+    var includesInspectorButtons = true
     var body: some View {
-        Button("Open details", systemImage: "rectangle.and.text.magnifyingglass") { state.openCapture(capture.id) }
-        Button("Copy", systemImage: "doc.on.doc") { state.copyCapturesToClipboard([capture]) }
+        if includesInspectorButtons {
+            Button("Open details", systemImage: "rectangle.and.text.magnifyingglass") { state.openCapture(capture.id) }
+            Button("Copy", systemImage: "doc.on.doc") { state.copyCapturesToClipboard([capture]) }
+        }
         if WorkspaceQuery.plainText(capture) != nil {
             Button("Copy as plain text", systemImage: "text.alignleft") {
                 do { try WorkspaceClipboard.copyPlainText(capture); state.status = AppStatusMessage(text: "Plain text copied.", severity: .success) }
@@ -171,14 +255,6 @@ import SwiftUI
             }
         }
         Divider()
-        if capture.parentTaskID == nil {
-            Menu {
-                Button("Unfiled", systemImage: "tray") { move(to: nil) }
-                ForEach(Set(state.projectNames + workspace.projectNames).sorted(), id: \.self) { project in
-                    Button(project, systemImage: "folder") { move(to: project) }
-                }
-            } label: { Label("Move to project", systemImage: "folder") }
-        }
         Button(capture.isPinned ? "Unpin" : "Pin", systemImage: capture.isPinned ? "pin.slash" : "pin") { state.togglePinned(capture) }
         Button(workspace.shelfCaptureIDs.contains(capture.id) ? "Remove from shelf; keep capture" : "Add to shelf", systemImage: "tray") {
             do { try workspace.setOnShelf([capture.id], included: !workspace.shelfCaptureIDs.contains(capture.id)) }
@@ -201,28 +277,33 @@ import SwiftUI
         Button("Move to Recently Deleted…", systemImage: "trash", role: .destructive) { state.requestRemoval(capture) }
     }
 
-    private func move(to project: String?) {
-        do {
-            let provider = try ExplorerTransfer.itemProvider(for: capture, store: state.store)
-            _ = state.explorerInput.receive([provider], project: project)
-        } catch { state.reportFailure(error.localizedDescription) }
-    }
 }
 
 @MainActor struct ExplorerProjectPicker: View {
     @ObservedObject var state: AppState
     @ObservedObject var workspace: WorkspaceStore
-    let onCreate: () -> Void
     @State private var presented = false
     @State private var dragHovered = false
     @FocusState private var focused: Bool
     private var title: String { state.libraryProject ?? (workspace.explorerUnfiledOnly ? "Unfiled" : "All projects") }
+    private var symbol: String {
+        state.libraryProject != nil ? "folder.fill" : workspace.explorerUnfiledOnly ? "tray" : "square.stack.3d.up"
+    }
+    private var projectColor: Color? {
+        state.libraryProject.map {
+            ProjectColorChoice.color(for: workspace.projectColorHex(for: $0) ?? WorkspaceStore.defaultProjectColorHex)
+        }
+    }
     var body: some View {
         Button { presented.toggle() } label: {
             HStack(spacing: 8) {
-                Image(systemName: "folder").font(.system(size: 14)).foregroundStyle(Palette.muted)
-                    .frame(width: 29, height: 29).background(Palette.surface, in: RoundedRectangle(cornerRadius: 8))
-                    .overlay(RoundedRectangle(cornerRadius: 8).strokeBorder(Palette.line))
+                Image(systemName: symbol)
+                    .font(.system(size: 14)).foregroundStyle(projectColor ?? Palette.muted)
+                    .frame(width: 29, height: 29)
+                    .background((projectColor ?? Palette.surface).opacity(projectColor == nil ? 1 : 0.14),
+                                in: RoundedRectangle(cornerRadius: 8))
+                    .overlay(RoundedRectangle(cornerRadius: 8)
+                        .strokeBorder((projectColor ?? Palette.line).opacity(projectColor == nil ? 1 : 0.7)))
                 Text(title).font(.system(size: 18, weight: .semibold, design: .rounded)).lineLimit(1).minimumScaleFactor(0.72)
                 Image(systemName: "chevron.down").font(.system(size: 9)).foregroundStyle(Palette.muted)
             }.frame(maxWidth: .infinity, minHeight: 36, alignment: .leading).contentShape(Rectangle())
@@ -242,6 +323,7 @@ import SwiftUI
                         state.libraryProject = name; workspace.explorerUnfiledOnly = name == nil && !all
                         if let error = workspace.error { throw WorkspaceError.unavailable(error) }
                     }, onDismiss: { presented = false; focused = true })
+                    .hoverTooltips()
             }
     }
 }

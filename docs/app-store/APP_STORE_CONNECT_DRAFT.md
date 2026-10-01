@@ -1,92 +1,96 @@
-# DaBin App Store Connect draft
+# DaBin App Store Connect preparation
 
-Apple Developer Team `8QG4967CSU` is configured in the Release project. Use this as a working copy when creating the App Store Connect record. Replace every owner field and compare the text with the final signed archive before upload.
+Updated 2 October 2026 for source 0.4.19 (74). This is a local submission draft, not an uploaded app or an Apple approval.
 
-## Product page
+The canonical English fields are in [metadata-en-US.json](metadata-en-US.json). Run `native/scripts/validate_app_store_metadata.py` to check copy lengths and source version alignment. `--require-complete` deliberately fails while owner decisions and external verification remain pending.
 
-- **Name:** DaBin — availability is not confirmed
-- **Subtitle:** A private daily capture board
-- **Primary category:** Productivity
-- **Platforms:** macOS 14 or later, Apple Silicon
-- **Privacy policy URL:** `https://github.com/RoeyAsterix/DaBin/blob/main/native/Resources/PrivacyPolicy.md`
-- **Support URL:** replace with a maintained page that contains a real contact method
-- **Copyright:** replace with the legal rights holder shown by the developer account
-- **Price and availability:** owner decision
+## Product page draft
+
+- Name: DaBin; App Store name availability is unconfirmed.
+- Subtitle: Save, organize and focus.
+- Primary category: Productivity.
+- Requirements: Apple Silicon, macOS 14 or later. Intel is not supported.
+- Privacy URL: https://github.com/RoeyAsterix/DaBin/blob/main/native/Resources/PrivacyPolicy.md.
+- Support URL: owner must provide a maintained public page with actual contact information. The currently bundled GitHub Issues URL is reachable but contact adequacy is not established.
+- Copyright: owner must confirm the legal rights holder, not just the DaBin product name.
+- Price, territories and release method: owner decisions; no choice has been made on the owner's behalf.
 
 ### Promotional text
 
-Drop it, paste it, or capture it. DaBin keeps a private timeline of the links, files, media, notes, and tasks you touched on your Mac.
+A little robot for the useful bits of your day. Save ideas, links and files, keep projects together, and give one task your attention - all on your Mac.
 
 ### Description
 
-DaBin is a friendly purple robot bin for everything you work with during the day.
+DaBin is a little robot for the useful bits of your day. Keep ideas, links, images and files together on your Mac, then find them when you need them.
 
-Drag files, images, videos, PDFs, links, or selected text onto the robot. You can also paste directly into the robot or the Daily window. Every capture joins a private calendar board on your Mac, ordered by the moment it was saved.
+SAVE NOW. SORT LATER.
+Drop something onto the robot or paste it into Inbox. Browse your captures by Day or Week, add a note, or turn a capture into a task. File previews let you open DaBin's saved copy.
 
-Browse Daily or Weekly, filter by text, links, files, media, or tasks, and search text recognized locally in supported images, PDFs, and documents. Add comments and reminders, turn any capture into a task, or export a complete day or week as plain text.
+KEEP A PROJECT TOGETHER.
+Choose a project and give it a color. Matching card frames help you see what belongs together. Explorer puts previews first, while Notes, Clipboard and Shelf keep your thoughts, copied things and useful files close by. Search can also find text recognized locally in supported images, PDFs and documents.
 
-Auto Capture is optional and off by default. If enabled, it can save later clipboard changes and new images from a screenshot folder you choose. A visible menu bar status lets you pause or resume monitoring at any time. DaBin excludes itself and common password managers by default.
+GIVE ONE TASK YOUR ATTENTION.
+Plan your day in Today, add checklist steps and reminders, or start a focus timer. When time is up, the robot holds an alarm clock and a sign with the task's first three words. Click the robot to send it home; your task stays open until you mark it done.
 
-Your captures and searchable text stay in DaBin's local archive. There is no account, analytics, advertising, or cloud sync. Optional previews for links you save manually can contact those websites and are off by default.
+CHOOSE WHAT TO CAPTURE.
+Auto Capture is optional and off by default. Turn on Clipboard, Screenshots, or both. It saves later clipboard changes and new images in a screenshot folder you choose, not existing content or a live screen recording. Check the visible destination to see which project will receive new automatic captures. The menu bar shows the capture state and lets you pause or resume it. Source-app exclusions are best effort, not a guarantee against saving sensitive copied content.
 
-DaBin supports dark mode, theme colors, adjustable transparency, keyboard navigation, Reduce Motion, and Reduce Transparency.
+YOUR THINGS STAY ON YOUR MAC.
+No account, advertising, analytics or cloud sync. Captures and searchable text are kept locally. Website previews are optional and off by default; previews for manually saved links contact those websites. Automatic links never fetch website previews.
+
+Make DaBin comfortable with dark mode, theme colors and optional tooltips. Your saved captures can be exported, backed up or removed through Recently Deleted.
+
+Requires an Apple Silicon Mac running macOS 14 or later.
 
 ### Keywords
 
-`daily board,clipboard,screenshot,notes,files,reminders,tasks,productivity,local,private`
-
-## App privacy and compliance draft
-
-- **Tracking:** No
-- **Developer data collection:** Data Not Collected, based on the current local-only implementation; owner must confirm in App Store Connect
-- **Accounts:** None
-- **Third-party SDKs:** None found in the final local audit
-- **Encryption:** `ITSAppUsesNonExemptEncryption = false`; no non-exempt encryption is implemented
-- **Age rating:** answer the current questionnaire from the signed build's actual content; the app has no built-in objectionable content
-- **Accessibility labels:** only claim VoiceOver, Full Keyboard Access, Reduce Motion, and Reduce Transparency after manual verification of the signed archive
+`clipboard,screenshots,notes,files,tasks,projects,focus,reminders,organizer,local,robot`
 
 ## Review notes draft
 
-DaBin is a menu bar utility and floating daily board. It opens Daily once on first launch. After the board is hidden, use the DaBin menu bar item and choose **Open Daily**, or move the pointer into a screen corner to reveal the purple robot. Double-click the robot to open Daily.
+DaBin is a native menu bar utility with a floating robot and a capture/project board. No login, purchases or demo account are required.
 
-Manual capture test:
+FIRST LAUNCH: Inbox opens once. Later use the DaBin menu bar item > Open DaBin, or move the pointer to a screen corner and double-click the robot. Camera-island placement is optional in Settings, with a corner fallback.
 
-1. Copy ordinary text or drag a test file from Finder.
-2. Reveal the robot at a screen corner and paste with Command-V or Control-V, or drop onto the robot.
-3. Open Daily to see the capture on today's date.
-4. The same paste and drop actions also work directly in the Daily window.
+MANUAL CAPTURE: Copy ordinary test text. Hover over the robot and press Command-V, or use Paste in Inbox. You can also drop a test file onto the robot or choose Files in Inbox. Open a card to add a note, select its project or inspect its saved file preview. Inbox > Day/Week browses capture dates; Today plans tasks; Projects > Explorer, Clipboard, Shelf and Notes organize related work.
 
-Auto Capture test:
+AUTO CAPTURE: Open Settings > Automatic capture. Clipboard and Screenshots have separate explicit opt-in switches, both off by default. The first activation presents a shared local-storage explanation; later channel changes use their own switches. Clipboard requires no folder. Screenshots require a folder selected in the macOS picker; use a dedicated temporary folder. Make a new clipboard change or add a new image after enabling. Existing contents are not imported. The persistent menu bar indicator/menu shows the state; Pause Auto Capture stops both selected channels. Off disables a channel. Capture only runs while the app runs.
 
-1. Open **Settings → Capture**. Auto Capture starts off.
-2. Enable it, read the local-storage explanation, and choose a dedicated temporary screenshot folder through the macOS picker.
-3. Copy new test content after enablement or save a new screenshot image into that folder. Existing clipboard and folder content is not imported.
-4. The menu bar icon and menu show the current state. Choose **Pause Auto Capture** to stop both monitors immediately; Resume and Off are also available.
-5. DaBin and common password managers are excluded by default. Source-application attribution is best effort.
+The visible Destination determines the project for new automatic captures, or Unfiled. DaBin and common password managers are excluded by default, but source-app attribution is best effort. Auto Capture observes later clipboard changes and new image files in the authorized folder, not a universal screenshot feed or live screen recording.
 
-Other review boundaries:
+PRIVACY: Captures, OCR/search text, notes and tasks stay locally; exports are written to a location the user chooses. DaBin does not upload them, but the chosen location may be synced by another service. Optional website previews are off by default and only manually saved links are eligible. Automatically captured links never fetch website previews. The robot's automatic-save sign can show the selected project name. An expired focus timer shows an alarm clock and the first three task-title words; click it to dismiss without completing the task. These labels may be visible to people looking at the screen.
 
-- Auto Capture does not provide a universal system screenshot feed. It observes new images only in the user-selected folder and later clipboard changes.
-- Automatic links never fetch website previews. Manual link previews are optional and off by default.
-- Captures, OCR/search text, comments, tasks, reminders, and exports are processed locally.
-- Notification permission is requested only when saving a reminder.
-- Store builds compile out the GitHub update downloader and do not embed its helper. Updates are delivered by the Mac App Store.
-- The success robot appears only after a capture is durably saved, is click-through, and is excluded from screen capture.
-- No login, demo account, purchase, camera, microphone, Contacts, Photos, calendar, location, Accessibility permission, or Screen Recording permission is required.
+REMINDERS: Notification permission is requested only when a reminder is saved. Denial does not prevent saving captures. Notification messages omit capture content.
 
-## Assets
+STORE BUILD: This build does not contain DaBin's direct GitHub update installer/downloader. Updates are managed by the Mac App Store. It requires no camera, microphone, Contacts, Photos, calendar, location, Accessibility or Screen Recording permission.
 
-The three drafts in [`screenshots/1440x900`](screenshots/1440x900/README.md) are 1440 × 900 RGB PNGs without alpha and contain fictional isolated data. Recheck every image against the signed archive before upload.
+QUIT: Settings > Quit DaBin or the menu bar > Quit DaBin stops capture and closes the robot/board. The archive is retained. Requires Apple Silicon and macOS 14 or later.
 
-## Final submission checklist
+## Declarations requiring owner confirmation
 
-- Confirm the app name and reserve the Bundle ID.
-- Install and select full Xcode; add the owner account and confirm Team `8QG4967CSU` is selected.
-- Replace support and copyright placeholders with real owner information.
-- Freeze and bump the release version/build, then tag the exact archived commit.
-- Archive with `native/scripts/archive_app_store.sh`.
-- Pass distribution preflight and Xcode Organizer validation.
-- Test the signed archive on macOS 14 and current macOS with a clean standard account.
-- Test VoiceOver, Full Keyboard Access, Reduce Motion, Reduce Transparency, folder permission revocation, Auto Capture pause/off, multiple displays, and built-in camera-island placement.
-- Complete privacy, age-rating, availability, pricing, review-contact, and accessibility forms from the final binary.
-- Upload to TestFlight, complete a clean install/update pass, then submit for review.
+- App privacy: candidate answer is Data Not Collected, inferred from the on-device implementation and no developer telemetry. Optional manual website previews contact websites; this is disclosed in the policy. Reassess the exact signed binary before answering Apple's form.
+- Tracking, advertising, accounts and purchases: none in the audited source. There is no public social network or shared user-content service.
+- Encryption: source declares no non-exempt encryption; system networking uses Apple's frameworks. Confirm the current export-compliance questions.
+- Age rating: complete the current questionnaire from the real behavior. Do not assume a legacy numeric rating or treat the robot as a kids-category product.
+- Accessibility: evaluate the exact signed app against Apple's criteria before claiming any Accessibility Nutrition Label. Source tests are not a complete VoiceOver audit.
+- Ownership: confirm rights to the app, name, robot artwork/icon and every submitted screenshot. Use fictional examples; no private KARI material or personal captures.
+- EU availability: confirm trader/non-trader status and applicable contact verification. Do not invent a legal address or identity.
+
+## Screenshots
+
+The existing [24 September drafts](screenshots/1440x900/README.md) are preserved as historical assets and are not current submission screenshots. The [current 0.4.19 drafts](screenshots/0.4.19-74/README.md) use current native UI and fictional fixtures. After visual review, compare or recapture from the exact signed candidate before upload. Mac screenshots must match Apple's accepted 16:10 dimensions; this project uses 1440 x 900 RGB PNGs without alpha.
+
+## Final release gates
+
+1. Confirm the App Store Connect app record, app name, Bundle ID and version/build history. Local profile matching is not a check of the current Connect record.
+2. Confirm support/contact, legal copyright, review contact (name/email/international phone), price and territories. Remove every unresolved owner field before copying metadata into Connect.
+3. Publish the corrected 2 October privacy policy at the configured URL and verify the public content. The existing public policy was reachable but still described the older signs behavior during this audit. Nothing was pushed or published.
+4. Prepare the exact source-matched Xcode development archive, then export the Store-distribution-signed app/installer. Inspect the exported product's distribution signature, sandbox entitlements, Store provisioning profile, resources, quarantine metadata and absence of the direct updater/helper. Xcode Organizer/App Store Connect validation remains separate from local checks.
+5. Test the exact signed sandboxed candidate with a clean account on macOS 14 and current macOS: first launch/relaunch, capture/drag/paste, saved-file access, bookmark restoration/revocation, Auto Capture enable/pause/off and automatic-link network isolation.
+6. Test VoiceOver, keyboard navigation, reduced motion/transparency, multiple displays and optional camera-island placement. Confirm monitoring stays visibly indicated even when celebrations are quiet. Measure signed-build idle/active energy, CPU, memory and disk use; test IPv6-only and offline preview/capture behavior.
+7. Compare current screenshots with that exact app, and complete age-rating, privacy, encryption, accessibility and applicable EU trader/agreements/tax/banking information.
+8. Complete signed clean-install/update testing, upload processing and Apple review. TestFlight is recommended for project QA, not required by Apple before production review. Upload, submission, policy publication and account changes require a separate authorized step; none was performed here. [Apple's upload workflow](https://developer.apple.com/help/app-store-connect/manage-builds/upload-builds/).
+
+## Apple references checked 2 October 2026
+
+[App Review Guidelines](https://developer.apple.com/app-store/review/guidelines/) cover completeness, accurate metadata, Mac sandbox/self-contained packaging, Store-managed updates, consent/recording indication, privacy and support. [Platform version information](https://developer.apple.com/help/app-store-connect/reference/app-information/platform-version-information/) defines the name/copy/contact fields. [Mac screenshot specifications](https://developer.apple.com/help/app-store-connect/reference/app-information/screenshot-specifications/) define allowed dimensions. [App privacy details](https://developer.apple.com/app-store/app-privacy-details/) explain the data-collection declaration. [Current age-rating workflow](https://developer.apple.com/help/app-store-connect/manage-app-information/set-an-app-age-rating/) and [EU trader requirements](https://developer.apple.com/help/app-store-connect/manage-compliance-information/manage-european-union-digital-services-act-trader-requirements/) remain owner submission obligations.

@@ -100,7 +100,7 @@ struct TodayPlanningScreen: View {
                 .padding(.top, 8).accessibilityAddTraits(.isHeader)
             ForEach(items) { capture in
                 VStack(alignment: .leading, spacing: 5) {
-                    CaptureRow(state: state, capture: capture, featured: false, embeddedInCard: true, showsDate: false)
+                    CaptureRow(state: state, capture: capture, featured: false, embeddedInCard: true)
                     if let plan = capture.taskPlanning {
                         HStack(spacing: 8) {
                             if plan.priority != .none { Label(plan.priority.title, systemImage: plan.priority.symbol) }

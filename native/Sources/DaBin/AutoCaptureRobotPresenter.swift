@@ -145,15 +145,132 @@ private final class AutoCaptureRobotPanel: NSPanel {
     override var canBecomeMain: Bool { false }
 }
 
+/// A tiny, passive destination placard. It deliberately lives outside the
+/// character renderer so a new saved capture can wave the sign without
+/// restarting the robot's eating choreography.
+@MainActor
+private final class AutoCaptureProjectSignView: NSView {
+    private static let animationKey = "dabin.auto-capture.project-sign-wave"
+    private let folder = NSImageView()
+    private let label = NSTextField(labelWithString: "")
+    private(set) var projectName: String?
+    private(set) var waveCount = 0
+    private(set) var lastUpdateReducedMotion = false
+    var hasActiveWave: Bool { layer?.animation(forKey: Self.animationKey) != nil }
+
+    override init(frame frameRect: NSRect) {
+        super.init(frame: frameRect)
+        wantsLayer = true
+        layer?.backgroundColor = NSColor(calibratedWhite: 0.08, alpha: 0.94).cgColor
+        layer?.cornerRadius = 7
+        layer?.borderWidth = 1.5
+        layer?.shadowColor = NSColor.black.cgColor
+        layer?.shadowOpacity = 0.28
+        layer?.shadowRadius = 3
+        layer?.shadowOffset = CGSize(width: 0, height: -1)
+
+        folder.image = NSImage(systemSymbolName: "folder.fill", accessibilityDescription: nil)
+        folder.symbolConfiguration = NSImage.SymbolConfiguration(pointSize: 10, weight: .semibold)
+        folder.imageScaling = .scaleProportionallyDown
+        addSubview(folder)
+
+        label.font = .systemFont(ofSize: 10, weight: .semibold)
+        label.textColor = .white
+        label.lineBreakMode = .byTruncatingTail
+        label.maximumNumberOfLines = 1
+        addSubview(label)
+
+        isHidden = true
+        setAccessibilityElement(false)
+    }
+
+    required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
+
+    override func layout() {
+        super.layout()
+        folder.frame = CGRect(x: 7, y: floor((bounds.height - 12) / 2), width: 12, height: 12)
+        label.frame = CGRect(x: 23, y: 3, width: max(0, bounds.width - 29), height: bounds.height - 6)
+    }
+
+    func preferredWidth(maximum: CGFloat) -> CGFloat {
+        let measured = ceil((label.stringValue as NSString).size(
+            withAttributes: [.font: label.font!]
+        ).width) + 34
+        return min(max(0, maximum), max(62, measured))
+    }
+
+    func show(projectName: String, color: NSColor?, waveRepetitions: Int,
+              reduceMotion: Bool) {
+        self.projectName = projectName
+        label.stringValue = projectName
+        let accent = (color ?? .systemPurple).usingColorSpace(.sRGB) ?? .systemPurple
+        folder.contentTintColor = accent
+        layer?.borderColor = accent.cgColor
+        isHidden = false
+        needsLayout = true
+        wave(repetitions: waveRepetitions, reduceMotion: reduceMotion)
+    }
+
+    func hideAndReset() {
+        layer?.removeAnimation(forKey: Self.animationKey)
+        layer?.setAffineTransform(.identity)
+        isHidden = true
+        projectName = nil
+        label.stringValue = ""
+        waveCount = 0
+        lastUpdateReducedMotion = false
+    }
+
+    private func wave(repetitions: Int, reduceMotion: Bool) {
+        guard repetitions > 0 else { return }
+        waveCount = Self.saturatingAdd(waveCount, repetitions)
+        lastUpdateReducedMotion = reduceMotion
+        layer?.removeAnimation(forKey: Self.animationKey)
+        layer?.setAffineTransform(.identity)
+        guard !reduceMotion else { return }
+
+        // Normal saves arrive one at a time. A long suspension can coalesce a
+        // much larger backlog, so retain its exact logical count while keeping
+        // the resumed animation short and allocation-bounded.
+        let renderedRepetitions = min(repetitions, 6)
+        let cycle: [CGFloat] = [0, -0.10, 0.12, -0.055, 0]
+        var values: [NSNumber] = []
+        for index in 0..<renderedRepetitions {
+            let slice = index == 0 ? cycle : Array(cycle.dropFirst())
+            values.append(contentsOf: slice.map { NSNumber(value: Double($0)) })
+        }
+        let animation = CAKeyframeAnimation(keyPath: "transform.rotation.z")
+        animation.values = values
+        animation.keyTimes = values.indices.map {
+            NSNumber(value: values.count == 1 ? 0 : Double($0) / Double(values.count - 1))
+        }
+        animation.duration = 0.28 * Double(renderedRepetitions)
+        animation.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
+        animation.isRemovedOnCompletion = true
+        layer?.add(animation, forKey: Self.animationKey)
+    }
+
+    private static func saturatingAdd(_ lhs: Int, _ rhs: Int) -> Int {
+        let (sum, overflow) = lhs.addingReportingOverflow(rhs)
+        return overflow ? Int.max : sum
+    }
+}
+
 @MainActor
 private final class AutoCaptureRobotContentView: NSView {
     private let character: RobotCharacterView
     private let receiptBadge = NSTextField(labelWithString: "✓")
+    private let projectSign = AutoCaptureProjectSignView()
     private var islandWidth: CGFloat?
     private var orbitLayout: QuietOrbitLayout?
     private var orbitPerch: QuietOrbitPerch = .bottom
     private let hardwareMask = CAShapeLayer()
     private(set) var badgeText: String?
+    var projectName: String? { projectSign.projectName }
+    var projectSignWaveCount: Int { projectSign.waveCount }
+    var projectSignIsVisible: Bool { !projectSign.isHidden }
+    var projectSignHasActiveWave: Bool { projectSign.hasActiveWave }
+    var projectSignLastUpdateReducedMotion: Bool { projectSign.lastUpdateReducedMotion }
 
     init(frame frameRect: CGRect,
          reduceMotion: @escaping RobotCharacterView.ReduceMotionProvider) {
@@ -172,6 +289,7 @@ private final class AutoCaptureRobotContentView: NSView {
         receiptBadge.isHidden = true
         receiptBadge.setAccessibilityElement(false)
         addSubview(receiptBadge)
+        addSubview(projectSign)
 
         setAccessibilityElement(false)
     }
@@ -189,6 +307,7 @@ private final class AutoCaptureRobotContentView: NSView {
             hardwareMask.path = path
             hardwareMask.fillRule = .evenOdd
             layer?.mask = hardwareMask
+            layoutProjectSign()
             layoutReceiptBadge()
             return
         }
@@ -196,10 +315,13 @@ private final class AutoCaptureRobotContentView: NSView {
         character.frame = islandWidth == nil
             ? CGRect(x: 8, y: 5, width: max(0, bounds.width - 16), height: max(0, bounds.height - 13))
             : bounds
+        layoutProjectSign()
         layoutReceiptBadge()
     }
 
-    func begin(_ performance: AutoCaptureRobotPerformance, count: Int, orbitLayout: QuietOrbitLayout?) {
+    func begin(_ performance: AutoCaptureRobotPerformance, count: Int,
+               orbitLayout: QuietOrbitLayout?, projectName: String?,
+               projectColor: NSColor?, projectSignWaveCount: Int) {
         self.orbitLayout = orbitLayout
         // Vary the home only between complete saved-capture performances.
         // Never move a robot while it is eating a burst.
@@ -217,6 +339,9 @@ private final class AutoCaptureRobotContentView: NSView {
         // Starting the renderer resets transient token layers. Apply the exact
         // aggregate after that reset so the visible paper stack is never ×1.
         updateCount(count)
+        updateProjectSign(projectName: projectName, color: projectColor,
+                          waveRepetitions: projectSignWaveCount,
+                          reduceMotion: performance.reduceMotion)
     }
 
     func updateCount(_ count: Int) {
@@ -227,11 +352,59 @@ private final class AutoCaptureRobotContentView: NSView {
         layoutReceiptBadge()
     }
 
+    func updateProjectSign(projectName: String?, color: NSColor?,
+                           waveRepetitions: Int, reduceMotion: Bool) {
+        guard let projectName else {
+            projectSign.hideAndReset()
+            return
+        }
+        projectSign.show(projectName: projectName, color: color,
+                         waveRepetitions: waveRepetitions,
+                         reduceMotion: reduceMotion)
+        layoutProjectSign()
+        layoutReceiptBadge()
+    }
+
+    func hideProjectSign() {
+        projectSign.hideAndReset()
+    }
+
     func hideCharacter() {
         receiptBadge.isHidden = true
         badgeText = nil
+        projectSign.hideAndReset()
         character.updateAutoCaptureCount(0)
         character.stopMotion()
+    }
+
+    private func layoutProjectSign() {
+        guard !projectSign.isHidden else { return }
+        let width = projectSign.preferredWidth(maximum: min(112, max(0, bounds.width - 8)))
+        let height: CGFloat = 23
+        var frame: CGRect
+        if let orbitLayout {
+            let artwork = orbitLayout.visibleRobotFrame(for: orbitPerch, local: true)
+            let proposedX: CGFloat
+            switch orbitPerch {
+            case .upperLeft, .left, .lowerLeft:
+                proposedX = artwork.minX - width + 9
+            case .bottom:
+                proposedX = artwork.midX - width / 2
+            case .lowerRight, .right, .upperRight:
+                proposedX = artwork.maxX - 9
+            }
+            frame = CGRect(x: min(max(4, proposedX), max(4, bounds.width - width - 4)),
+                           y: min(max(3, artwork.minY - 5), max(3, bounds.height - height - 3)),
+                           width: width, height: height)
+            if frame.intersects(orbitLayout.cameraFrameInPanel) {
+                frame.origin.y = max(3, orbitLayout.cameraFrameInPanel.minY - height - 3)
+            }
+        } else {
+            frame = CGRect(x: max(4, (bounds.width - width) / 2), y: 5,
+                           width: width, height: height)
+        }
+        projectSign.frame = frame
+        projectSign.layoutSubtreeIfNeeded()
     }
 
     /// A native-size cue remains readable when the tiny head is partly hidden
@@ -249,8 +422,48 @@ private final class AutoCaptureRobotContentView: NSView {
         if frame.intersects(orbitLayout.cameraFrameInPanel) {
             frame.origin.y = max(2, orbitLayout.cameraFrameInPanel.minY - frame.height - 3)
         }
+        if !projectSign.isHidden, frame.intersects(projectSign.frame) {
+            let right = projectSign.frame.maxX + 3
+            let left = projectSign.frame.minX - width - 3
+            if right + width <= bounds.width - 2 {
+                frame.origin.x = right
+            } else if left >= 2 {
+                frame.origin.x = left
+            } else {
+                frame.origin.y = min(max(2, projectSign.frame.maxY + 2),
+                                     max(2, bounds.height - frame.height - 2))
+            }
+        }
         receiptBadge.frame = frame
     }
+}
+
+@MainActor
+private struct AutoCaptureRobotDestination {
+    let projectName: String?
+    let projectColor: NSColor?
+
+    init(projectName: String?, projectColor: NSColor?) {
+        let trimmed = projectName?.trimmingCharacters(in: .whitespacesAndNewlines)
+        self.projectName = trimmed.flatMap { $0.isEmpty ? nil : $0 }
+        self.projectColor = self.projectName == nil ? nil : projectColor
+    }
+
+    func isSameProject(as other: AutoCaptureRobotDestination) -> Bool {
+        projectName == other.projectName
+    }
+
+    func preferringColor(from newer: AutoCaptureRobotDestination) -> AutoCaptureRobotDestination {
+        AutoCaptureRobotDestination(projectName: projectName,
+                                    projectColor: newer.projectColor ?? projectColor)
+    }
+}
+
+@MainActor
+private struct AutoCaptureRobotPendingBurst {
+    var count: Int
+    var projectSignWaveCount: Int
+    var destination: AutoCaptureRobotDestination
 }
 
 /// Shows successful automatic captures without activating DaBin or accepting
@@ -264,12 +477,21 @@ final class AutoCaptureRobotPresenter {
     private(set) var lifecycle = RobotLifecycle()
     private(set) var currentPerformance: AutoCaptureRobotPerformance?
     private(set) var performanceStartCount = 0
-    private(set) var pendingCaptureCount = 0
     private(set) var isSuspendedForBoard = false
     private(set) var isSuspendedForInteraction = false
-    private var isSuspended: Bool { isSuspendedForBoard || isSuspendedForInteraction }
+    private(set) var isSuspendedForTaskTimer = false
+    private var isSuspended: Bool { isSuspendedForBoard || isSuspendedForInteraction || isSuspendedForTaskTimer }
     let panel: NSPanel
     var badgeText: String? { content.badgeText }
+    var currentProjectName: String? { content.projectName }
+    var projectSignWaveCount: Int { content.projectSignWaveCount }
+    var projectSignIsVisible: Bool { content.projectSignIsVisible }
+    var projectSignHasActiveWave: Bool { content.projectSignHasActiveWave }
+    var projectSignLastUpdateReducedMotion: Bool { content.projectSignLastUpdateReducedMotion }
+    var nextPendingProjectName: String? { pendingBursts.first?.destination.projectName }
+    var pendingCaptureCount: Int {
+        pendingBursts.reduce(0) { Self.saturatingAdd($0, $1.count) }
+    }
     var onPresentationChanged: ((Bool) -> Void)?
 
     private let content: AutoCaptureRobotContentView
@@ -285,6 +507,8 @@ final class AutoCaptureRobotPresenter {
     private var updateDeadline: Date?
     private var consumptionDeadline: Date?
     private var performanceScreen: AutoCaptureRobotScreen?
+    private var activeDestination: AutoCaptureRobotDestination?
+    private var pendingBursts: [AutoCaptureRobotPendingBurst] = []
     private var displayObserver: NSObjectProtocol?
     private var reportedPresentation = false
     private var isShutDown = false
@@ -339,10 +563,18 @@ final class AutoCaptureRobotPresenter {
     /// Starts one celebration for a new burst. Later successes update the same
     /// badge immediately and leave the active sequence untouched.
     @discardableResult
-    func present(additionalCaptureCount: Int = 1) -> Bool {
+    func present(additionalCaptureCount: Int = 1, projectName: String? = nil,
+                 projectColor: NSColor? = nil) -> Bool {
         guard !isShutDown, additionalCaptureCount > 0 else { return false }
+        let destination = AutoCaptureRobotDestination(projectName: projectName,
+                                                      projectColor: projectColor)
+        let pending = AutoCaptureRobotPendingBurst(
+            count: additionalCaptureCount,
+            projectSignWaveCount: destination.projectName == nil ? 0 : 1,
+            destination: destination
+        )
         if isSuspended {
-            addPending(additionalCaptureCount)
+            enqueuePending(pending)
             return true
         }
 
@@ -351,24 +583,34 @@ final class AutoCaptureRobotPresenter {
         }
 
         if state.isVisible {
-            if let deadline = updateDeadline, currentDateProvider() <= deadline {
+            if let activeDestination,
+               activeDestination.isSameProject(as: destination),
+               let deadline = updateDeadline, currentDateProvider() <= deadline {
                 guard state.present(additionalCount: additionalCaptureCount) != nil else { return false }
                 _ = lifecycle.send(.captureSaved(count: additionalCaptureCount))
+                let resolvedDestination = activeDestination.preferringColor(from: destination)
+                self.activeDestination = resolvedDestination
                 content.updateCount(state.visibleCount)
+                content.updateProjectSign(
+                    projectName: resolvedDestination.projectName,
+                    color: resolvedDestination.projectColor,
+                    waveRepetitions: pending.projectSignWaveCount,
+                    reduceMotion: reduceMotionProvider()
+                )
             } else {
-                // The current robot is already retreating. Keep one exact
-                // integer for the next performance instead of overlapping it.
-                addPending(additionalCaptureCount)
+                // A destination change must never relabel a still-active
+                // capture. Keep it as a separate performance; late arrivals
+                // use the same queue instead of overlapping the retreat.
+                enqueuePending(pending)
             }
             return true
         }
 
+        enqueuePending(pending)
         guard let screen = validPrimaryScreen() else {
-            addPending(additionalCaptureCount)
             return false
         }
-        let count = takePending(adding: additionalCaptureCount)
-        return beginPerformance(count: count, on: screen)
+        return startPendingPerformanceIfPossible(on: screen)
     }
 
     /// The full board owns the one robot while it opens and remains visible.
@@ -402,8 +644,29 @@ final class AutoCaptureRobotPresenter {
         return startPendingPerformanceIfPossible()
     }
 
+    func suspendForTaskTimer() {
+        guard !isShutDown, !isSuspendedForTaskTimer else { return }
+        let wasSuspended = isSuspended
+        isSuspendedForTaskTimer = true
+        if !wasSuspended { preserveAndSuspendPresentation() }
+    }
+
+    @discardableResult
+    func resumeAfterTaskTimer() -> Bool {
+        guard !isShutDown, isSuspendedForTaskTimer else { return false }
+        isSuspendedForTaskTimer = false
+        return startPendingPerformanceIfPossible()
+    }
+
     private func preserveAndSuspendPresentation() {
-        if state.isVisible, !activeCaptureWasConsumed { addPending(state.visibleCount) }
+        if state.isVisible, !activeCaptureWasConsumed {
+            prependPending(AutoCaptureRobotPendingBurst(
+                count: state.visibleCount,
+                projectSignWaveCount: 0,
+                destination: activeDestination ?? AutoCaptureRobotDestination(
+                    projectName: nil, projectColor: nil)
+            ))
+        }
         stopActivePresentation(clearPending: false, closePanel: false)
     }
 
@@ -414,7 +677,12 @@ final class AutoCaptureRobotPresenter {
         guard !isShutDown else { return }
         guard let screen = validPrimaryScreen() else {
             if state.isVisible, !activeCaptureWasConsumed {
-                addPending(state.visibleCount)
+                prependPending(AutoCaptureRobotPendingBurst(
+                    count: state.visibleCount,
+                    projectSignWaveCount: 0,
+                    destination: activeDestination ?? AutoCaptureRobotDestination(
+                        projectName: nil, projectColor: nil)
+                ))
             }
             stopActivePresentation(clearPending: false, closePanel: false)
             return
@@ -425,7 +693,14 @@ final class AutoCaptureRobotPresenter {
             // Attachment geometry and the entrance form one plan. Replaying a
             // completed eating cue would duplicate saved-capture feedback, but
             // an unfinished cue must survive a new display or island layout.
-            if !activeCaptureWasConsumed { addPending(state.visibleCount) }
+            if !activeCaptureWasConsumed {
+                prependPending(AutoCaptureRobotPendingBurst(
+                    count: state.visibleCount,
+                    projectSignWaveCount: 0,
+                    destination: activeDestination ?? AutoCaptureRobotDestination(
+                        projectName: nil, projectColor: nil)
+                ))
+            }
             stopActivePresentation(clearPending: false, closePanel: false)
         }
         if !isSuspended {
@@ -435,14 +710,13 @@ final class AutoCaptureRobotPresenter {
 
     func dismiss() {
         guard !isShutDown else { return }
-        pendingCaptureCount = 0
+        content.hideProjectSign()
         stopActivePresentation(clearPending: true, closePanel: false, animated: panel.isVisible)
     }
 
     func shutdown() {
         guard !isShutDown else { return }
         isShutDown = true
-        pendingCaptureCount = 0
         stopActivePresentation(clearPending: true, closePanel: false)
         if let displayObserver {
             NotificationCenter.default.removeObserver(displayObserver)
@@ -455,11 +729,12 @@ final class AutoCaptureRobotPresenter {
         panel.close()
     }
 
-    private func beginPerformance(count: Int, on screen: AutoCaptureRobotScreen) -> Bool {
-        guard count > 0 else { return false }
+    private func beginPerformance(_ pending: AutoCaptureRobotPendingBurst,
+                                  on screen: AutoCaptureRobotScreen) -> Bool {
+        guard pending.count > 0 else { return false }
         let frame = AutoCaptureRobotGeometry.panelFrame(on: screen)
-        guard !frame.isEmpty, state.present(additionalCount: count) != nil else {
-            addPending(count)
+        guard !frame.isEmpty, state.present(additionalCount: pending.count) != nil else {
+            prependPending(pending)
             return false
         }
 
@@ -469,16 +744,17 @@ final class AutoCaptureRobotPresenter {
         performanceToken &+= 1
         let token = performanceToken
         lifecycle = RobotLifecycle()
-        _ = lifecycle.send(.captureSaved(count: count))
+        _ = lifecycle.send(.captureSaved(count: pending.count))
 
         let island = AutoCaptureRobotGeometry.cameraIsland(on: screen)
         let orbit = island.flatMap { QuietOrbitLayout(cameraIsland: $0, displayFrame: screen.frame) }
         let entrance: RobotEntrance = island == nil ? .right : .top
         let performance = reactionDeck.nextPerformance(entrance: entrance,
                                                        reduceMotion: reduceMotionProvider(),
-                                                       captureCount: count)
+                                                       captureCount: pending.count)
         currentPerformance = performance
         performanceScreen = screen
+        activeDestination = pending.destination
         performanceStartCount += 1
         let delay = dismissDelayOverride ?? performance.totalDuration
         let now = currentDateProvider()
@@ -490,7 +766,10 @@ final class AutoCaptureRobotPresenter {
 
         (panel as? AutoCaptureRobotPanel)?.cameraStageDisplayFrame = orbit == nil ? nil : screen.frame
         panel.setFrame(frame, display: true)
-        content.begin(performance, count: count, orbitLayout: orbit)
+        content.begin(performance, count: pending.count, orbitLayout: orbit,
+                      projectName: pending.destination.projectName,
+                      projectColor: pending.destination.projectColor,
+                      projectSignWaveCount: pending.projectSignWaveCount)
         panel.alphaValue = 1
         panel.orderFrontRegardless()
         reportPresentation(true)
@@ -533,6 +812,7 @@ final class AutoCaptureRobotPresenter {
         _ = lifecycle.send(.interrupt(toward: .hidden))
         currentPerformance = nil
         performanceScreen = nil
+        activeDestination = nil
         updateDeadline = nil
         consumptionDeadline = nil
 
@@ -545,11 +825,10 @@ final class AutoCaptureRobotPresenter {
 
     private func startPendingPerformanceIfPossible(on suppliedScreen: AutoCaptureRobotScreen? = nil) -> Bool {
         guard !isShutDown, !isSuspended, !state.isVisible,
-              pendingCaptureCount > 0,
+              !pendingBursts.isEmpty,
               let screen = suppliedScreen ?? validPrimaryScreen() else { return false }
-        let count = pendingCaptureCount
-        pendingCaptureCount = 0
-        return beginPerformance(count: count, on: screen)
+        let pending = pendingBursts.removeFirst()
+        return beginPerformance(pending, on: screen)
     }
 
     private func stopActivePresentation(clearPending: Bool, closePanel: Bool,
@@ -562,9 +841,10 @@ final class AutoCaptureRobotPresenter {
         _ = lifecycle.send(.interrupt(toward: .hidden))
         currentPerformance = nil
         performanceScreen = nil
+        activeDestination = nil
         updateDeadline = nil
         consumptionDeadline = nil
-        if clearPending { pendingCaptureCount = 0 }
+        if clearPending { pendingBursts.removeAll() }
         hidePanel(animated: animated)
         if closePanel { panel.close() }
     }
@@ -604,15 +884,33 @@ final class AutoCaptureRobotPresenter {
         return screen
     }
 
-    private func takePending(adding count: Int) -> Int {
-        let result = Self.saturatingAdd(pendingCaptureCount, count)
-        pendingCaptureCount = 0
-        return result
+    private func enqueuePending(_ pending: AutoCaptureRobotPendingBurst) {
+        guard pending.count > 0 else { return }
+        if let last = pendingBursts.indices.last,
+           pendingBursts[last].destination.isSameProject(as: pending.destination) {
+            pendingBursts[last].count = Self.saturatingAdd(pendingBursts[last].count, pending.count)
+            pendingBursts[last].projectSignWaveCount = Self.saturatingAdd(
+                pendingBursts[last].projectSignWaveCount, pending.projectSignWaveCount)
+            pendingBursts[last].destination = pendingBursts[last].destination
+                .preferringColor(from: pending.destination)
+        } else {
+            pendingBursts.append(pending)
+        }
     }
 
-    private func addPending(_ count: Int) {
-        guard count > 0 else { return }
-        pendingCaptureCount = Self.saturatingAdd(pendingCaptureCount, count)
+    private func prependPending(_ pending: AutoCaptureRobotPendingBurst) {
+        guard pending.count > 0 else { return }
+        if !pendingBursts.isEmpty,
+           pending.destination.isSameProject(as: pendingBursts[0].destination) {
+            pendingBursts[0].count = Self.saturatingAdd(pending.count, pendingBursts[0].count)
+            pendingBursts[0].projectSignWaveCount = Self.saturatingAdd(
+                pending.projectSignWaveCount, pendingBursts[0].projectSignWaveCount)
+            // The first queued value is newer than the interrupted active one.
+            pendingBursts[0].destination = pending.destination
+                .preferringColor(from: pendingBursts[0].destination)
+        } else {
+            pendingBursts.insert(pending, at: 0)
+        }
     }
 
     private func reportPresentation(_ visible: Bool) {

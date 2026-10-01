@@ -1,0 +1,3 @@
+2026-10-02 01:43:21.754 ConnectedWorkflowTests[86499:21570298] IOPMScheduleUserActivityLevelNotification returned 0
+2026-10-02 01:43:21.755 ConnectedWorkflowTests[86499:21570298] IOPMScheduleUserActivityLevelNotification returned 0
+Swift/ErrorType.swift:254: Fatal error: Error raised at top level: Error Domain=ConnectedWorkflowTests Code=1 "Reusing a search result copies the original text to the isolated clipboard" UserInfo={NSLocalizedDescription=Reusing a search result copies the original text to the isolated clipboard}

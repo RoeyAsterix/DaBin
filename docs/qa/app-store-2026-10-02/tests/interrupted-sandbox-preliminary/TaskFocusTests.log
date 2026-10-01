@@ -1,0 +1,16 @@
+2026-10-02 01:43:15.592 TaskFocusTests[86464:21569763] IOPMScheduleUserActivityLevelNotification returned 0
+2026-10-02 01:43:15.594 TaskFocusTests[86464:21569763] IOPMScheduleUserActivityLevelNotification returned 0
+2026-10-02 01:43:15.669 TaskFocusTests[86464:21569763] IOPMScheduleUserActivityLevelNotification returned 0
+2026-10-02 01:43:15.681 TaskFocusTests[86464:21569763] IOPMScheduleUserActivityLevelNotification returned 0
+2026-10-02 01:43:15.682 TaskFocusTests[86464:21569763] IOPMScheduleUserActivityLevelNotification returned 0
+2026-10-02 01:43:15.726 TaskFocusTests[86464:21569763] IOPMScheduleUserActivityLevelNotification returned 0
+2026-10-02 01:43:15.727 TaskFocusTests[86464:21569763] IOPMScheduleUserActivityLevelNotification returned 0
+2026-10-02 01:43:15.733 TaskFocusTests[86464:21569763] IOPMScheduleUserActivityLevelNotification returned 0
+2026-10-02 01:43:15.734 TaskFocusTests[86464:21569763] IOPMScheduleUserActivityLevelNotification returned 0
+2026-10-02 01:43:15.741 TaskFocusTests[86464:21569763] IOPMScheduleUserActivityLevelNotification returned 0
+2026-10-02 01:43:15.743 TaskFocusTests[86464:21569763] IOPMScheduleUserActivityLevelNotification returned 0
+2026-10-02 01:43:15.749 TaskFocusTests[86464:21569763] IOPMScheduleUserActivityLevelNotification returned 0
+2026-10-02 01:43:15.750 TaskFocusTests[86464:21569763] IOPMScheduleUserActivityLevelNotification returned 0
+2026-10-02 01:43:15.753 TaskFocusTests[86464:21569763] IOPMScheduleUserActivityLevelNotification returned 0
+2026-10-02 01:43:15.754 TaskFocusTests[86464:21569763] IOPMScheduleUserActivityLevelNotification returned 0
+PASS: 79 task focus, local schedule, lifecycle, recovery and draft checks; synthetic archive only.

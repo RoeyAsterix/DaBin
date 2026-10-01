@@ -135,6 +135,7 @@ final class Capture: ObservableObject, Identifiable {
     private(set) var createdAt: Date
     @Published var updatedAt: Date
     private var normalizedIndexedTextCache: String?
+    private var normalizedOriginalTextCache: String?
     var kind: CaptureKind { CaptureKind(rawValue: kindRaw) ?? .file }
     var isTask: Bool { kind == .task || convertedToTask }
     var captureOrigin: CaptureOrigin { CaptureOrigin(rawValue: captureOriginRaw) ?? .manual }
@@ -142,6 +143,15 @@ final class Capture: ObservableObject, Identifiable {
         if let cached = normalizedIndexedTextCache { return cached }
         let normalized = CaptureSearch.normalized(indexedText)
         normalizedIndexedTextCache = normalized
+        return normalized
+    }
+
+    /// Original text is immutable. Fold it once when a search first needs it,
+    /// rather than copying and folding long captured notes on every keystroke.
+    var normalizedOriginalTextForSearch: String {
+        if let cached = normalizedOriginalTextCache { return cached }
+        let normalized = CaptureSearch.normalized(originalText ?? "")
+        normalizedOriginalTextCache = normalized
         return normalized
     }
 
@@ -463,7 +473,7 @@ enum CaptureSearch {
                 let item = items[index]
                 guard filter.includes(item) else { return false }
                 let metadata = normalized([item.title, item.previewDescription, item.originalURL ?? "",
-                                           item.originalText ?? "", item.originalFilename ?? "", item.comment,
+                                           item.originalFilename ?? "", item.comment,
                                            item.kind.rawValue, item.isTask ? "task" : "", item.captureDay,
                                            item.sourceApplicationName ?? "",
                                            item.sourceApplicationBundleIdentifier ?? "",
@@ -472,8 +482,8 @@ enum CaptureSearch {
                                            item.captureOrigin == .automaticScreenshot ? "screenshot screen capture" : "",
                                            additionalText[item.id] ?? "",
                                            item.taskPlanning?.checklist.map(\.text).joined(separator: " ") ?? ""].joined(separator: " "))
-                let indexed = item.normalizedIndexedTextForSearch
-                return words.allSatisfy { metadata.contains($0) || indexed.contains($0) }
+                return words.allSatisfy { metadata.contains($0) || item.normalizedOriginalTextForSearch.contains($0)
+                    || item.normalizedIndexedTextForSearch.contains($0) }
             })
             guard !hits.isEmpty else { return nil }
             var included = hits

@@ -53,7 +53,7 @@ struct InboxScreen: View {
                     LazyVStack(alignment: .leading, spacing: 9) {
                         Text("\(items.count) to organize").font(.system(size: 11)).foregroundStyle(Palette.muted)
                         ForEach(items) { item in
-                            CaptureRow(state: state, capture: item, featured: false, showsDate: true)
+                            CaptureRow(state: state, capture: item, featured: false)
 
                         }
                     }.padding(.horizontal, 14).padding(.bottom, 14).frame(maxWidth: 860).frame(maxWidth: .infinity)

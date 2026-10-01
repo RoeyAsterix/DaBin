@@ -1,7 +1,7 @@
 import Foundation
 
 @main struct ExplorerQueryTests {
-    @MainActor static func main() throws {
+    @MainActor static func main() async throws {
         var checks = 0
         func expect(_ value: Bool, _ message: String) throws {
             checks += 1
@@ -40,12 +40,51 @@ import Foundation
         try expect(items().map(\.id) == [text.id], "Search spans mixed language content and comments")
         workspace.explorerQuery = "Proposal"
         try expect(items().map(\.id) == [file.id], "Filename search returns the saved file")
+        workspace.explorerQuery = "feedback deadline"
+        try expect(items().map(\.id) == [text.id], "Search words can span cached original content and editable metadata")
+        text.comment = "A revised milestone"
+        workspace.explorerQuery = "feedback milestone"
+        try expect(items().map(\.id) == [text.id], "Metadata edits remain immediately searchable beside cached immutable content")
         workspace.explorerQuery = ""
         try expect(items(nil, .tasks).map(\.id) == [task.id], "Tasks filter remains available")
         let grouped = ExplorerQuery.sections(items(), grouping: .type)
         try expect(Set(grouped.flatMap(\.captures).map(\.id)).count == items().count, "Each capture occurs once across type groups")
         try expect(grouped.map(\.id) == ["files", "media", "links", "text", "tasks"], "Recognizable stable group order")
         try expect(ExplorerQuery.sections(items(), grouping: .date).flatMap(\.captures).count == 5, "Date grouping retains all items")
+        let archive = DailyArchive(root: root)
+        let snapshot = ExplorerQuery.projectDays(all, in: all)
+        let documents = try await Task.detached {
+            try ExplorerQuery.dailyDocuments(snapshot, archive: archive, project: nil, unfiledOnly: false)
+        }.value
+        let expectedDocuments = try ProjectFileArchive(root: root).documents(records: all, project: nil, unfiledOnly: false)
+        try expect(documents.map(\.id) == expectedDocuments.map(\.id)
+                   && documents.map(\.url) == expectedDocuments.map(\.url)
+                   && documents.map(\.captureCount) == expectedDocuments.map(\.captureCount),
+                   "Background daily listing preserves canonical grouping, validated paths, counts and order")
+        task.projectName = "Moved project"
+        let oldProjectDocuments = try await Task.detached {
+            try ExplorerQuery.dailyDocuments(snapshot, archive: archive, project: "Northstar", unfiledOnly: false)
+        }.value
+        try expect(oldProjectDocuments.reduce(0) { $0 + $1.captureCount } == 4,
+                   "Daily workers read immutable ownership snapshots rather than mutable captures")
+        let currentDays = ExplorerQuery.projectDays(all, in: all)
+        try expect(currentDays.filter { $0.projectName == "Moved project" }.count == 2,
+                   "A fresh daily snapshot follows the parent and its attachment after a project move")
+        let unfiledDocuments = try ExplorerQuery.dailyDocuments(currentDays, archive: archive, project: nil, unfiledOnly: true)
+        try expect(unfiledDocuments.count == 1 && unfiledDocuments[0].captureCount == 1,
+                   "Background listing retains an independent Unfiled scope")
+        task.projectName = "Northstar"
+        let foreign = root.appendingPathComponent("Foreign")
+        try FileManager.default.createDirectory(at: foreign, withIntermediateDirectories: true)
+        let projectsLink = root.appendingPathComponent("Projects")
+        try FileManager.default.createSymbolicLink(at: projectsLink, withDestinationURL: foreign)
+        do {
+            _ = try ExplorerQuery.dailyDocuments(snapshot, archive: archive, project: "Northstar", unfiledOnly: false)
+            try expect(false, "Background listing must reject a project path replaced by a symlink")
+        } catch is DailyArchive.ArchiveError {
+            try expect(true, "Background listing retains canonical symlink rejection")
+        }
+        try FileManager.default.removeItem(at: projectsLink)
         workspace.selectedProject = "Northstar"; workspace.selectedCaptureID = file.id
         workspace.explorerGrouping = .date; workspace.explorerShowsDailyFiles = true
         workspace.explorerQuery = "Proposal"; workspace.explorerUnfiledOnly = true

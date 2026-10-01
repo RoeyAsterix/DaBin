@@ -89,6 +89,18 @@ private final class ApplicationLifecycleTests: NSObject, NSApplicationDelegate {
                    "The app has one shared archive across capture and presentation")
         try expect(coordinator?.updates === coordinator?.state.updates,
                    "The app has one shared update service across commands and settings")
+        coordinator!.state.libraryProject = "Fictional Atlas"
+        try expect(coordinator!.autoCapture.projectProvider() == "Fictional Atlas",
+                   "The composition root routes Auto Capture to the project selected in Projects")
+        coordinator!.state.workspace.failureInjector = { throw CaptureStoreError.injectedInterruption }
+        coordinator!.state.libraryProject = "Live unsaved selection"
+        try expect(coordinator!.state.workspace.selectedProject == "Fictional Atlas"
+                   && coordinator!.autoCapture.projectProvider() == "Live unsaved selection",
+                   "Auto Capture follows the live project shown in the footer even when preference persistence fails")
+        coordinator!.state.workspace.failureInjector = nil
+        coordinator!.state.libraryProject = nil
+        try expect(coordinator!.autoCapture.projectProvider() == nil,
+                   "Clearing the selected project returns Auto Capture to Unfiled")
         try expect(coordinator?.isStarted == false && coordinator?.isStopped == false,
                    "Construction does not start observers or pointer monitoring")
         try expect(!coordinator!.corners.board.isVisible && !coordinator!.corners.bin.isVisible,

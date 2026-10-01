@@ -17,7 +17,7 @@ enum CornerGeometry {
     /// Reserve the labeled navigation and search header before sizing the
     /// receipt feed. Longer lists scroll inside the screen's available space.
     @MainActor static func dailyPanelHeight(for state: AppState) -> CGFloat {
-        let extra: CGFloat = state.status != nil || state.store.error != nil ? 45 : 0
+        let extra: CGFloat = state.notificationMessage != nil ? 45 : 0
         let captures = state.todayTimelineCaptures
         guard !captures.isEmpty else { return 380 + extra }
         let feed = HourlyCaptureFeed.cards(from: state.receiptCaptures(for: state.selectedDay), filter: state.filter)
@@ -29,7 +29,7 @@ enum CornerGeometry {
 
         func cardHeight(_ card: CaptureCardGroup, includesSingleFrameSpacing: Bool = true) -> CGFloat {
             if card.isImportedBatch {
-                if card.isMinimized { return 88 }
+                if card.isMinimized { return CollectionPreviewLayout.previewHeight(compact: false) + 170 }
                 var height = CGFloat(92 + card.captures.count * 58)
                 if !card.primary.comment.isEmpty { height += 30 }
                 if card.primary.reminderAt != nil { height += 22 }
@@ -79,7 +79,9 @@ enum CornerGeometry {
             case .capture(let card):
                 return total + cardHeight(card)
             case .automaticHour(let group):
-                guard state.isHourlyGroupExpanded(group.id) else { return total + 66 }
+                guard state.isHourlyGroupExpanded(group.id) else {
+                    return total + CollectionPreviewLayout.previewHeight(compact: false) + 134
+                }
                 let actions = group.actions.reduce(CGFloat.zero) { partial, action in
                     partial + action.cards.reduce(CGFloat.zero) {
                         $0 + cardHeight($1, includesSingleFrameSpacing: false)
@@ -325,6 +327,7 @@ final class CornerController: NSObject {
     var onRobotInteractionEnded: (() -> Void)?
     private var restoreBoardAfterDisplayLoss = false
     var isCaptureRobotVisible: () -> Bool = { false }
+    var isTaskTimerRobotVisible: () -> Bool = { false }
     private let animateRobotTransitions: Bool
     private let robotReduceMotion: () -> Bool
     private var robotTransitionSerial: UInt64 = 0
@@ -348,9 +351,11 @@ final class CornerController: NSObject {
     private var suppressUntilExit = false
     private var escapeMonitor: Any?
     private var message: NSPopover?
+    private var messageExpiry: Task<Void, Never>?
     private var layoutSubscription: AnyCancellable?
     private var placementSubscription: AnyCancellable?
     private var appearanceSubscription: AnyCancellable?
+    private var tooltipSubscription: AnyCancellable?
     private let appearanceSettings: ThemeSettings
     private let placementDefaults: UserDefaults?
     private var boardTopLeft: NSPoint?
@@ -362,6 +367,7 @@ final class CornerController: NSObject {
     private var workingApplication: NSRunningApplication?
     private var applyingBoardFrame = false
     private var lastAppliedBoardFrame: NSRect?
+    private(set) var boardFrameApplicationCount = 0
     private var lastLayoutRoute: BoardRoute?
     private var lastLayoutFilter: CaptureFilter?
     private var weeklyDirection: WeeklyExpansionDirection?
@@ -423,6 +429,9 @@ final class CornerController: NSObject {
             guard let self else { return }
             Self.applyBoardAppearance(darkMode: dark, to: self.board,
                                       frame: self.appFrame, hosting: self.captureHostingView)
+        }
+        tooltipSubscription = appearanceSettings.$showTooltips.sink { [weak self] enabled in
+            self?.robot.showTooltips = enabled
         }
         hosting.onPaste = { [weak self] in self?.receiveOnDaily(.general) }
         hosting.onDrop = { [weak self] pasteboard in self?.receiveOnDaily(pasteboard) }
@@ -533,11 +542,12 @@ final class CornerController: NSObject {
         layoutSubscription?.cancel(); layoutSubscription = nil
         placementSubscription?.cancel(); placementSubscription = nil
         appearanceSubscription?.cancel(); appearanceSubscription = nil
+        tooltipSubscription?.cancel(); tooltipSubscription = nil
         if let escapeMonitor { NSEvent.removeMonitor(escapeMonitor) }
         escapeMonitor = nil
         NotificationCenter.default.removeObserver(self)
         NSWorkspace.shared.notificationCenter.removeObserver(self)
-        message?.close(); message = nil
+        dismissMessage()
         captureHostingView.clearDropTarget()
         captureHostingView.onPaste = nil; captureHostingView.onDrop = nil; captureHostingView.onDragState = nil
         robot.onPaste = nil; robot.onDaily = nil; robot.onDrop = nil
@@ -556,6 +566,9 @@ final class CornerController: NSObject {
     func pollPointer(at simulatedPoint: NSPoint? = nil, now: Date = Date(), pressedMouseButtons: Int = NSEvent.pressedMouseButtons) {
         if state.quickAccessSettings.quietMode { cancelIdlePeek() }
         guard !isShutDown else { return }
+        // A persistent timer acknowledgement owns the island. Hover must not
+        // reveal a second robot over its clickable clock/sign surface.
+        if isTaskTimerRobotVisible() { cancelIdlePeek(); return }
         let point = simulatedPoint ?? NSEvent.mouseLocation
         updatePointerAcceptance(at: point)
         if state.isBoardVisible, let screen = activeScreen {
@@ -629,16 +642,18 @@ final class CornerController: NSObject {
     }
 
     private func updatePointerAcceptance(at point: NSPoint) {
+        let ignoresPointer: Bool
         if idlePeeking {
-            bin.ignoresMouseEvents = true
+            ignoresPointer = true
         } else if activeTarget != .cameraIsland || dragActive {
             // AppKit owns an accepted transfer until its conclusion callback.
             // Do not withdraw the whole destination window during that transfer.
-            bin.ignoresMouseEvents = false
+            ignoresPointer = false
         } else {
             let localPoint = robot.convert(bin.convertPoint(fromScreen: point), from: nil)
-            bin.ignoresMouseEvents = !robot.containsInteraction(localPoint)
+            ignoresPointer = !robot.containsInteraction(localPoint)
         }
+        if bin.ignoresMouseEvents != ignoresPointer { bin.ignoresMouseEvents = ignoresPointer }
     }
 
     private func releaseHoverFocus() {
@@ -939,7 +954,7 @@ final class CornerController: NSObject {
     private var boardHeight: CGFloat { contentHeight + RobotAppFrameView.extraHeight }
 
     private var contentHeight: CGFloat {
-        let extra: CGFloat = state.status != nil || state.store.error != nil ? 45 : 0
+        let extra: CGFloat = state.notificationMessage != nil ? 45 : 0
         switch state.route {
         case .inbox: return 590 + extra
         case .weekly: return state.weeklyVisibleDays.isEmpty ? 380 + extra : 560
@@ -1064,9 +1079,11 @@ final class CornerController: NSObject {
 
     private func setBoardFrame(_ frame: NSRect) {
         lastAppliedBoardFrame = frame
+        guard board.frame != frame else { return }
         applyingBoardFrame = true
         board.setFrame(frame, display: true)
         applyingBoardFrame = false
+        boardFrameApplicationCount += 1
     }
 
     private func applyBoardFrame(_ frame: NSRect, animation: BoardFrameAnimationKind? = nil) {
@@ -1197,7 +1214,7 @@ final class CornerController: NSObject {
         stopBoardAnimation()
         cancelIdlePeek()
         captureHostingView.clearDropTarget()
-        message?.close()
+        dismissMessage()
         keyboardHold = false
         suppressUntilExit = true
         hideRobot()
@@ -1243,7 +1260,7 @@ final class CornerController: NSObject {
         robot.digest(success: !captures.isEmpty, partial: !errors.isEmpty)
         state.reportCaptureResult(captures, errors: errors)
         if !errors.isEmpty {
-            if let summary = state.status?.text { showMessage(summary) }
+            if let summary = state.notificationMessage?.text { showMessage(summary) }
         }
     }
 
@@ -1271,10 +1288,11 @@ final class CornerController: NSObject {
     }
 
     private func showMessage(_ text: String) {
-        guard bin.isVisible else { return }
-        message?.close()
+        guard !isShutDown, bin.isVisible else { return }
+        dismissMessage()
         let popover = NSPopover()
         popover.behavior = .transient
+        popover.animates = false
         popover.contentViewController = NSHostingController(rootView:
             Text(text).font(.system(size: 12)).padding(12).frame(width: 245).fixedSize(horizontal: false, vertical: true)
         )
@@ -1285,6 +1303,19 @@ final class CornerController: NSObject {
         }
         popover.show(relativeTo: robot.bounds, of: robot, preferredEdge: edge)
         message = popover
+        messageExpiry = Task { [weak self, weak popover] in
+            do { try await Task.sleep(for: TransientMessagePolicy.maximumDisplayDuration) }
+            catch { return }
+            guard !Task.isCancelled, let self, let popover, self.message === popover else { return }
+            self.dismissMessage()
+        }
+    }
+
+    private func dismissMessage() {
+        messageExpiry?.cancel()
+        messageExpiry = nil
+        message?.close()
+        message = nil
     }
 
     @objc private func screensChanged() {

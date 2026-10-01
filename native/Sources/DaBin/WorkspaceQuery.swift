@@ -53,12 +53,12 @@ enum WorkspaceQuery {
             guard !words.isEmpty else { return true }
             let parent = isShelf ? capture.parentTaskID.flatMap { parents[$0] } : nil
             let projectName = parent == nil ? capture.projectName : parent?.projectName
-            let metadata = CaptureSearch.normalized([capture.title, capture.originalText ?? "",
+            let metadata = CaptureSearch.normalized([capture.title,
                 capture.originalFilename ?? "", capture.originalURL ?? "", capture.comment,
                 projectName ?? "", sourceName(capture) ?? "", capture.captureDay,
                 workspace.snippetName(for: capture.id) ?? ""].joined(separator: " "))
-            let indexed = capture.normalizedIndexedTextForSearch
-            return words.allSatisfy { metadata.contains($0) || indexed.contains($0) }
+            return words.allSatisfy { metadata.contains($0) || capture.normalizedOriginalTextForSearch.contains($0)
+                || capture.normalizedIndexedTextForSearch.contains($0) }
         }.sorted {
             // New copies stay within reach even when there are many pinned items.
             $0.capturedAt == $1.capturedAt ? $0.id.uuidString < $1.id.uuidString : $0.capturedAt > $1.capturedAt

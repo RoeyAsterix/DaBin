@@ -23,6 +23,100 @@ enum ProjectNamePolicy {
     }
 }
 
+/// A deliberately small palette keeps project identity recognizable in both
+/// appearances. WorkspaceStore persists only the canonical six-digit RGB value;
+/// the display name is intentionally localizable presentation, not stored data.
+struct ProjectColorChoice: Identifiable, Hashable {
+    let name: String
+    let hex: String
+    var id: String { hex }
+
+    static let palette: [ProjectColorChoice] = [
+        .init(name: "Violet", hex: "7568D8"),
+        .init(name: "Blue", hex: "3478D4"),
+        .init(name: "Teal", hex: "198F91"),
+        .init(name: "Green", hex: "3C8B5F"),
+        .init(name: "Amber", hex: "C47A16"),
+        .init(name: "Coral", hex: "C65F4B"),
+        .init(name: "Rose", hex: "B9537A"),
+        .init(name: "Slate", hex: "657083")
+    ]
+
+    static func nsColor(for hex: String) -> NSColor {
+        let canonical = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted).uppercased()
+        let fallback = UInt32(WorkspaceStore.defaultProjectColorHex, radix: 16) ?? 0x7568D8
+        let value = canonical.count == 6 ? (UInt32(canonical, radix: 16) ?? fallback) : fallback
+        return NSColor(srgbRed: CGFloat((value >> 16) & 255) / 255,
+                       green: CGFloat((value >> 8) & 255) / 255,
+                       blue: CGFloat(value & 255) / 255,
+                       alpha: 1)
+    }
+
+    static func color(for hex: String) -> Color { Color(nsColor: nsColor(for: hex)) }
+}
+
+@MainActor
+struct ProjectChipLabel: View {
+    let name: String?
+    let colorHex: String?
+    var inherited = false
+
+    private var title: String { name ?? "Unfiled" }
+    private var color: Color { colorHex.map(ProjectColorChoice.color(for:)) ?? Palette.muted }
+
+    var body: some View {
+        HStack(spacing: 7) {
+            Image(systemName: name == nil ? "tray" : "folder.fill")
+                .font(.system(size: 11, weight: .semibold)).foregroundStyle(color)
+            Text(title).font(.system(size: 12, weight: .semibold)).lineLimit(1)
+            if inherited {
+                Image(systemName: "link").font(.system(size: 8, weight: .semibold)).foregroundStyle(Palette.muted)
+                    .accessibilityHidden(true)
+            }
+        }
+        .foregroundStyle(Palette.foreground)
+        .padding(.horizontal, 9).frame(minHeight: 28)
+        .background(color.opacity(name == nil ? 0.06 : 0.12), in: Capsule())
+        .overlay(Capsule().strokeBorder(color.opacity(name == nil ? 0.3 : 0.62), lineWidth: 1))
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(inherited ? "Parent task project" : "Project")
+        .accessibilityValue(title)
+    }
+}
+
+@MainActor
+private struct ProjectCardFrameModifier: ViewModifier {
+    @ObservedObject var workspace: WorkspaceStore
+    let projectName: String?
+    let activeProject: String?
+    let cornerRadius: CGFloat
+    let fallbackColor: Color
+    let fallbackWidth: CGFloat
+
+    func body(content: Content) -> some View {
+        let projectIsActive = projectName != nil && projectName == activeProject
+        let frameColor = projectIsActive
+            ? ProjectColorChoice.color(for: workspace.projectColorHex(for: projectName!)
+                ?? WorkspaceStore.defaultProjectColorHex)
+            : fallbackColor
+        content.overlay {
+            RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                .strokeBorder(frameColor, lineWidth: projectIsActive ? 1.8 : fallbackWidth)
+        }
+    }
+}
+
+extension View {
+    @MainActor
+    func projectCardFrame(workspace: WorkspaceStore, projectName: String?, activeProject: String?,
+                          cornerRadius: CGFloat = 14, fallbackColor: Color = Palette.line,
+                          fallbackWidth: CGFloat = 0.7) -> some View {
+        modifier(ProjectCardFrameModifier(workspace: workspace, projectName: projectName,
+                                          activeProject: activeProject, cornerRadius: cornerRadius,
+                                          fallbackColor: fallbackColor, fallbackWidth: fallbackWidth))
+    }
+}
+
 /// One searchable project panel for browsing and filing. Creating a project
 /// never rewrites existing project names or their managed folder identities.
 @MainActor
@@ -38,6 +132,7 @@ struct ProjectPickerPanel: View {
     @State private var query = ""
     @State private var creating: Bool
     @State private var name = ""
+    @State private var colorHex = WorkspaceStore.defaultProjectColorHex
     @State private var error: String?
     @State private var highlighted: String?
     @FocusState private var field: Field?
@@ -89,7 +184,15 @@ struct ProjectPickerPanel: View {
                                     selected: choice.all ? allSelected : !allSelected && choice.project == selectedProject,
                                     highlighted: highlighted == choice.id,
                                     symbol: choice.all ? "square.stack.3d.up" : choice.project == nil ? "tray" : "folder",
+                                    colorHex: choice.project.flatMap { workspace.projectColorHex(for: $0) }
+                                        ?? choice.project.map { _ in WorkspaceStore.defaultProjectColorHex },
                                     select: { select(choice) },
+                                    setColor: choice.project.map { project in
+                                        { hex in
+                                            do { try workspace.setProjectColor(hex: hex, for: project) }
+                                            catch { self.error = error.localizedDescription }
+                                        }
+                                    },
                                     receive: allowsDrop && !choice.all ? { state.explorerInput.receive($0, project: choice.project) } : nil)
                                     .id(choice.id)
                             }
@@ -129,6 +232,24 @@ struct ProjectPickerPanel: View {
             TextField("Client or project name", text: $name).textFieldStyle(.roundedBorder)
                 .focused($field, equals: .name).onSubmit(create)
                 .accessibilityLabel("New project name").accessibilityIdentifier("project-picker-name")
+            VStack(alignment: .leading, spacing: 7) {
+                Text("Project color").font(.system(size: 11, weight: .medium)).foregroundStyle(Palette.muted)
+                HStack(spacing: 4) {
+                    ForEach(ProjectColorChoice.palette) { choice in
+                        Button { colorHex = choice.hex } label: {
+                            Circle().fill(ProjectColorChoice.color(for: choice.hex)).frame(width: 22, height: 22)
+                                .overlay {
+                                    if colorHex == choice.hex {
+                                        Image(systemName: "checkmark").font(.system(size: 9, weight: .bold)).foregroundStyle(.white)
+                                    }
+                                }
+                                .frame(width: 28, height: 28).contentShape(Circle())
+                        }.buttonStyle(.plain)
+                            .accessibilityLabel("\(choice.name) project color")
+                            .accessibilityAddTraits(colorHex == choice.hex ? .isSelected : [])
+                    }
+                }.accessibilityElement(children: .contain)
+            }
             HStack {
                 Button("Cancel") { creating = false; error = nil; field = .search }
                 Spacer()
@@ -153,7 +274,7 @@ struct ProjectPickerPanel: View {
         if let message = ProjectNamePolicy.validationMessage(name, existing: projects) { error = message; return }
         let value = ProjectNamePolicy.normalized(name)
         do {
-            try workspace.setScratchpad(text: "", project: value)
+            try workspace.createProject(name: value, colorHex: colorHex)
             do { try onSelect(value, false); onDismiss() }
             catch {
                 creating = false; query = value; highlighted = "project:" + value; field = .search
@@ -245,43 +366,85 @@ struct ProjectPickerPanel: View {
     let selected: Bool
     let highlighted: Bool
     let symbol: String
+    let colorHex: String?
     let select: () -> Void
+    let setColor: ((String) -> Void)?
     let receive: (([NSItemProvider]) -> Bool)?
     @State private var targeted = false
     @Environment(\.daBinAccent) private var accent
     var body: some View {
-        Button(action: select) {
-            HStack(spacing: 10) {
+        HStack(spacing: 4) {
+            Button(action: select) {
+                HStack(spacing: 10) {
                 Image(systemName: symbol).frame(width: 28, height: 28)
-                    .background(Palette.background, in: RoundedRectangle(cornerRadius: 7))
+                        .foregroundStyle(colorHex.map(ProjectColorChoice.color(for:)) ?? Palette.muted)
+                        .background((colorHex.map(ProjectColorChoice.color(for:)) ?? Palette.background).opacity(colorHex == nil ? 1 : 0.13),
+                                    in: RoundedRectangle(cornerRadius: 7))
                 Text(name).lineLimit(2).frame(maxWidth: .infinity, alignment: .leading)
                 if selected { Image(systemName: "checkmark").foregroundStyle(accent) }
-            }.frame(minHeight: 36).padding(6).contentShape(Rectangle())
-        }.buttonStyle(.plain)
-            .background(targeted ? accent.opacity(0.12) : selected || highlighted ? Palette.soft : .clear,
+                }.frame(maxWidth: .infinity, minHeight: 36).padding(6).contentShape(Rectangle())
+            }.buttonStyle(.plain)
+                .accessibilityLabel("Project \(name)")
+                .accessibilityAddTraits(selected ? .isSelected : [])
+            if let setColor, let colorHex {
+                Menu {
+                    ForEach(ProjectColorChoice.palette) { choice in
+                        Button { setColor(choice.hex) } label: {
+                            Label(choice.name, systemImage: choice.hex == colorHex ? "checkmark.circle.fill" : "circle.fill")
+                        }
+                    }
+                } label: {
+                    Image(systemName: "paintpalette").font(.system(size: 12, weight: .medium))
+                        .frame(width: 28, height: 32).contentShape(Rectangle())
+                }.menuStyle(.borderlessButton).menuIndicator(.hidden).fixedSize()
+                    .foregroundStyle(ProjectColorChoice.color(for: colorHex))
+                    .accessibilityLabel("Change color for project \(name)")
+            }
+        }
+            .background(targeted ? accent.opacity(0.12) : selected || highlighted ? Palette.soft : Color.clear,
                         in: RoundedRectangle(cornerRadius: 9))
             .onDrop(of: receive == nil ? [] : ExplorerTransfer.acceptedTypeIdentifiers, isTargeted: $targeted) { receive?($0) ?? false }
-            .accessibilityLabel("Project \(name)").accessibilityAddTraits(selected ? .isSelected : [])
     }
 }
 
 @MainActor struct CaptureProjectPickerButton: View {
     @ObservedObject var state: AppState
     @ObservedObject var capture: Capture
+    @ObservedObject private var workspace: WorkspaceStore
     @State private var presented = false
     @FocusState private var focused: Bool
+
+    init(state: AppState, capture: Capture) {
+        self.state = state
+        self.capture = capture
+        _workspace = ObservedObject(wrappedValue: state.workspace)
+    }
+
+    private var projectName: String? { ExplorerQuery.project(of: capture, in: state.store.captures) }
+    private var colorHex: String? {
+        projectName.map { workspace.projectColorHex(for: $0) ?? WorkspaceStore.defaultProjectColorHex }
+    }
+
+    @ViewBuilder
     var body: some View {
-        Button { presented.toggle() } label: {
-            Label(capture.projectName ?? "Project", systemImage: "folder")
-                .font(.system(size: 12)).lineLimit(1).frame(minHeight: 32)
-        }.buttonStyle(.plain).foregroundStyle(Palette.muted).focused($focused)
-            .accessibilityLabel("Project").accessibilityValue(capture.projectName ?? "Unfiled")
-            .buddyHelp("File this capture to a project")
-            .disabled(capture.parentTaskID != nil)
-            .popover(isPresented: $presented, arrowEdge: .bottom) {
-                ProjectPickerPanel(state: state, selectedProject: capture.projectName, onSelect: { name, _ in
-                    try state.store.setOrganization(capture, pinned: capture.isPinned, projectName: name)
-                }, onDismiss: { presented = false; focused = true })
-            }
+        if capture.parentTaskID != nil {
+            ProjectChipLabel(name: projectName, colorHex: colorHex, inherited: true)
+                .buddyHelp("Inherited from the parent task")
+        } else {
+            Button { presented.toggle() } label: {
+                HStack(spacing: 5) {
+                    ProjectChipLabel(name: projectName, colorHex: colorHex)
+                    Image(systemName: "chevron.down").font(.system(size: 8, weight: .semibold)).foregroundStyle(Palette.muted)
+                }.contentShape(Rectangle())
+            }.buttonStyle(.plain).focused($focused)
+                .accessibilityLabel("Project").accessibilityValue(projectName ?? "Unfiled")
+                .buddyHelp("File this capture to a project")
+                .popover(isPresented: $presented, arrowEdge: .bottom) {
+                    ProjectPickerPanel(state: state, selectedProject: capture.projectName, onSelect: { name, _ in
+                        try state.store.setOrganization(capture, pinned: capture.isPinned, projectName: name)
+                    }, onDismiss: { presented = false; focused = true })
+                        .hoverTooltips()
+                }
+        }
     }
 }

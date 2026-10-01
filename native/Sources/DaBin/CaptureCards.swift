@@ -13,18 +13,20 @@ struct CaptureRow: View {
     var taskAtTop = false
     var showsCopyButton = true
     var embeddedInCard = false
-    var showsDate = false
+    var showsProject = true
     @State private var copied = false
     @State private var copyGeneration = 0
     @State private var dropTargeted = false
 
     private var attachments: [Capture] { state.store.attachments(for: capture) }
-    private var receipt: String {
-        showsDate ? "\(prettyDay(capture.captureDay, includeWeekday: false)) · \(captureClock(capture))" : captureClock(capture)
-    }
+    private var projectName: String? { ExplorerQuery.project(of: capture, in: state.store.captures) }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
+            if showsProject {
+                CaptureProjectPickerButton(state: state, capture: capture)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
             header
             if let isMatch {
                 Label(isMatch ? "Match" : "Nearby capture", systemImage: isMatch ? "magnifyingglass" : "clock")
@@ -68,13 +70,11 @@ struct CaptureRow: View {
         .background {
             if !embeddedInCard { RoundedRectangle(cornerRadius: 14).fill(Palette.surface) }
         }
-        .overlay {
-            if !embeddedInCard {
-                RoundedRectangle(cornerRadius: 14).strokeBorder(dropTargeted ? accent : taskAtTop ? accent.opacity(0.55) : Palette.line, lineWidth: dropTargeted ? 1.5 : 0.7)
-            }
-        }
+        .projectCardFrame(workspace: state.workspace, projectName: projectName, activeProject: nil,
+                          fallbackColor: embeddedInCard ? .clear : dropTargeted ? accent : taskAtTop ? accent.opacity(0.55) : Palette.line,
+                          fallbackWidth: embeddedInCard ? 0 : dropTargeted ? 1.5 : 0.7)
         .padding(.vertical, embeddedInCard ? 0 : 6)
-        .contextMenu { CaptureActionMenuItems(state: state, capture: capture) }
+        .contextMenu { CaptureActionMenuItems(state: state, capture: capture, includesRemoval: true) }
         .onDrop(of: TaskAttachmentTypes.identifiers, isTargeted: $dropTargeted) { providers in
             guard capture.isTask else { return false }
             return state.receiveTaskAttachments(providers, to: capture)
@@ -90,12 +90,10 @@ struct CaptureRow: View {
                     Text(capture.isCompleted ? "COMPLETED" : "TASK")
                         .font(.system(size: 10, weight: .medium)).tracking(0.7).foregroundStyle(Palette.muted)
                     title
-                    Label("\(captureTypeLabel(capture.kind)) · \(receipt)", systemImage: "clock")
-                        .font(.system(size: 11)).foregroundStyle(Palette.muted).lineLimit(1).monospacedDigit()
+                    CaptureReceiptView(capture: capture, category: captureTypeLabel(capture.kind))
                 } else {
                     CaptureTrailView(state: state, capture: capture)
-                    Text("\(captureLinkHost(capture) ?? captureTypeLabel(capture.kind)) · \(receipt)")
-                        .font(.system(size: 11)).foregroundStyle(Palette.muted).monospacedDigit().lineLimit(1)
+                    CaptureReceiptView(capture: capture, category: captureTypeLabel(capture.kind))
                 }
             }.frame(maxWidth: .infinity, alignment: .leading)
             if capture.isPinned { Image(systemName: "pin.fill").font(.system(size: 10)).foregroundStyle(accent).accessibilityLabel("Pinned") }
@@ -137,7 +135,6 @@ struct CaptureRow: View {
 
     private var primaryActions: some View {
         HStack(spacing: 4) {
-            CaptureProjectPickerButton(state: state, capture: capture)
             Spacer(minLength: 0)
             if !capture.isTask { CaptureTaskConversionButton(state: state, capture: capture) }
             if !capture.isTask, capture.parentTaskID == nil { CaptureKeepButton(state: state, capture: capture) }
@@ -180,6 +177,49 @@ struct CaptureRow: View {
             try? await Task.sleep(for: .seconds(1.25))
             guard generation == copyGeneration else { return }
             copied = false
+        }
+    }
+}
+
+/// Keep the capture date and time to the left of its category on every card.
+/// Keep the category intact; the receipt may wrap in narrow columns instead of
+/// dropping the date or replacing it with an edit timestamp.
+@MainActor
+struct CaptureReceiptView: View {
+    @ObservedObject var capture: Capture
+    let category: String
+    var fontSize: CGFloat = 11
+
+    var body: some View {
+        ViewThatFits(in: .horizontal) {
+            receiptRow(stacked: false)
+            receiptRow(stacked: true)
+        }
+        .font(.system(size: fontSize)).foregroundStyle(Palette.muted)
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier("capture-receipt-\(capture.id.uuidString)")
+    }
+
+    private func receiptRow(stacked: Bool) -> some View {
+        HStack(alignment: .firstTextBaseline, spacing: 5) {
+            Group {
+                if stacked {
+                    VStack(alignment: .leading, spacing: 1) {
+                        Text(prettyDay(capture.captureDay, includeWeekday: false))
+                        Text(captureClock(capture))
+                    }
+                    .fixedSize(horizontal: false, vertical: true)
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel(captureReceiptText(capture))
+                } else {
+                    Text(captureReceiptText(capture)).fixedSize()
+                }
+            }
+                .monospacedDigit().layoutPriority(1)
+                .accessibilityIdentifier("capture-receipt-time-\(capture.id.uuidString)")
+            Text("·").accessibilityHidden(true)
+            Text(category).lineLimit(1).fixedSize(horizontal: true, vertical: false)
+                .accessibilityIdentifier("capture-receipt-category-\(capture.id.uuidString)")
         }
     }
 }
@@ -232,12 +272,14 @@ struct CaptureKeepButton: View {
     }
 
     var body: some View {
-        BuddyIconButton(symbol: kept ? "checkmark.circle.fill" : "checkmark", title: kept ? "Kept in Workspace" : "Keep in Workspace", isActive: kept) {
-            do {
-                try workspace.markInboxProcessed([capture.id], processed: true)
-                state.status = AppStatusMessage(text: "Kept in Workspace. Your original capture day stays the same.", severity: .success)
-            } catch { state.reportFailure(error.localizedDescription) }
-        }.disabled(kept).accessibilityLabel("Keep in Workspace: \(capture.title)")
+        if state.route == .inbox, capture.parentTaskID == nil, !kept {
+            BuddyIconButton(symbol: "checkmark", title: "Keep in Projects") {
+                do {
+                    try workspace.markInboxProcessed([capture.id], processed: true)
+                    state.status = AppStatusMessage(text: "Kept in Projects. Your original capture day stays the same.", severity: .success)
+                } catch { state.reportFailure(error.localizedDescription) }
+            }.accessibilityLabel("Keep in Projects: \(capture.title)")
+        }
     }
 }
 
@@ -246,9 +288,10 @@ struct CaptureControls: View {
     @Environment(\.daBinAccent) private var accent
     @ObservedObject var state: AppState
     @ObservedObject var capture: Capture
+    var includesRemoval = false
 
     var body: some View {
-        Menu { CaptureActionMenuItems(state: state, capture: capture) } label: {
+        Menu { CaptureActionMenuItems(state: state, capture: capture, includesRemoval: includesRemoval) } label: {
             Image(systemName: "ellipsis").font(.system(size: 16, weight: .semibold)).frame(width: 32, height: 32)
         }.menuStyle(.borderlessButton).menuIndicator(.hidden).fixedSize().foregroundStyle(accent).buddyHelp("More capture actions")
             .accessibilityLabel("More actions for \(capture.title)")
@@ -260,12 +303,12 @@ struct CaptureControls: View {
 private struct CaptureActionMenuItems: View {
     @ObservedObject var state: AppState
     @ObservedObject var capture: Capture
+    let includesRemoval: Bool
     var body: some View {
         Button("Open capture", systemImage: "arrow.up.forward.square") { state.openCapture(capture.id) }
         Button(capture.comment.isEmpty ? "Add note" : "Edit note", systemImage: "text.bubble") { state.openCapture(capture.id, focus: "comment") }
         Button(capture.reminderAt == nil ? "Add reminder" : "Edit reminder", systemImage: "bell") { state.openCapture(capture.id, focus: "reminder") }
         Button(capture.isPinned ? "Unpin" : "Pin", systemImage: capture.isPinned ? "pin.slash" : "pin") { state.togglePinned(capture) }
-        Button("Set project…", systemImage: "folder") { state.openCapture(capture.id, focus: "project") }
         CaptureTaskConversionMenu(state: state, capture: capture)
         if capture.isTask {
             Button("Add task attachments", systemImage: "paperclip") { state.openCapture(capture.id, focus: "task") }
@@ -274,7 +317,9 @@ private struct CaptureActionMenuItems: View {
         Divider()
         Button(capture.isMinimized ? "Expand capture" : "Minimize capture", systemImage: capture.isMinimized ? "chevron.down" : "chevron.up") { state.toggleMinimized(capture) }
         Button("Show capture day", systemImage: "calendar") { state.showCaptureDay(capture) }
-        Button("Move to Recently Deleted", systemImage: "trash", role: .destructive) { state.requestRemoval(capture) }
+        if includesRemoval {
+            Button("Move to Recently Deleted", systemImage: "trash", role: .destructive) { state.requestRemoval(capture) }
+        }
     }
 }
 

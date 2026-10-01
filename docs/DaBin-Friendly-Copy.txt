@@ -1,0 +1,51 @@
+DABIN - FRIENDLY PRODUCT COPY
+
+A little robot for the useful bits of your day.
+
+DaBin keeps your ideas, links, images and files together on your Mac. Drop something onto the robot, keep it with a project, and find it again when you need it.
+
+ROBOT-LED QUICK GUIDE
+
+Hi, I'm DaBin.
+I keep the useful bits of your day - an idea, a link, an image or a file - so you can find them again and get back to work.
+
+Catch me in a corner.
+Move your pointer to a screen corner. Drop something onto my body, or hover over me and press Command-V. Double-click me to open DaBin.
+Prefer the camera island? Choose it in Settings. On other displays, I'll use the top-right corner.
+
+Choose a project
+Pick a home for related work. Give it a color, and I'll frame its cards to match.
+
+Your three starting points
+Inbox is for organizing. Today is for doing. Projects keeps related work together.
+
+Find it again
+Use Search when you remember a word but not where you saved it.
+
+See what you saved
+Explorer puts previews first. Open a card for its details; click a file preview there to open my saved copy.
+
+Save it. Find it. Pick it up again.
+You don't need to learn everything at once. Start with these three small steps.
+
+Save now. Sort later.
+Drop or paste something into Inbox. Open a card to add a note or choose its project.
+Day and Week help you look back through your captures by date.
+
+Keep a project together.
+Choose a project, then browse its saved things in Explorer. Its color helps you spot what belongs together.
+Use Notes for your thoughts, Clipboard for copied things, and Shelf for files you want close by.
+
+Give one task your attention.
+Set a task's focus time and press Play. When time's up, I hold an alarm clock and a sign with the task's first three words.
+Click me to send me home. Your task stays open until you mark it done.
+
+Want a little help saving?
+Auto Capture is optional and off by default. In Settings, choose Clipboard, Screenshots, or both. Screenshots need a folder you choose. Only new changes are saved.
+Check Destination in the window: new automatic captures go to that project, or Unfiled. Pause whenever you like.
+
+Make yourself comfortable.
+Drag an empty spot at the top to move the window. Resize from an edge or corner, or use Expand. Hover for little hints; turn off Show tooltips in Settings if you prefer.
+
+Your things stay on your Mac.
+No account or cloud sync. Link previews only contact websites if you turn them on.

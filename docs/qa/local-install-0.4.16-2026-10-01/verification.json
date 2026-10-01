@@ -1,0 +1,77 @@
+{
+  "schemaVersion": 1,
+  "verifiedAtUTC": "2026-10-01T20:32:02Z",
+  "version": "0.4.16",
+  "buildNumber": "71",
+  "configuration": "Release",
+  "architecture": "arm64",
+  "installedApp": "/Users/roeylibfeld/Applications/DaBin.app",
+  "previousAppBackup": "/Users/roeylibfeld/Applications/.DaBinBackups/20261001-233029-b515d693.app",
+  "previousVersion": "0.4.15 (70)",
+  "normalQuitUsed": true,
+  "forceQuitUsedForThisUpdate": false,
+  "previousProcessExitedBeforeInstall": true,
+  "runningPID": 73004,
+  "installedStrictCodeSignatureVerified": true,
+  "installedMainSHA256": "8e6e37b48327e572a9b18be5b449460a095a1a716c61309d8835c7f64f30e057",
+  "installedHelperSHA256": "049e99f5e939793b366b44e3f39f328cc393e782bec1ebd7b0d8c85748aca30e",
+  "installedExecutablesMatchBuildReceipt": true,
+  "buildInputHashesMatchCurrentSources": true,
+  "selectedQASuitesPassed": 27,
+  "selectedQASuitesFailed": 0,
+  "qaInputsStillMatchCurrentSources": true,
+  "qaSourceChangedDuringRun": false,
+  "qaReports": [
+    {
+      "report": "native/build/qa/runs/20261001T202709651620Z/report.json",
+      "passedSuites": 27,
+      "sourceFingerprint": "441451de8dd6a7d3ea231efb002efa3445fd35b0cf75ecfe5e1b122970d8b225"
+    }
+  ],
+  "nativeTaskTimerRobot": {
+    "checksPassed": 162,
+    "report": "native/build/qa/task-timer-robot/484DEA02-710D-4A56-A1CF-8D5FEAE207BD/task-timer-robot-report.json",
+    "renderMethod": "Actual production Core Animation presentation tree at native 2x over generic light/dark backdrops",
+    "fixtures": ["light-normal-entry", "dark-normal-entry", "light-normal-hold", "dark-normal-hold", "light-reduced-hold", "dark-reduced-hold"],
+    "darkHoldPreview": "native/build/qa/task-timer-robot/484DEA02-710D-4A56-A1CF-8D5FEAE207BD/dark-normal-hold@2x.png",
+    "entryDurationSeconds": 0.82,
+    "returnDurationSeconds": 0.5,
+    "ringingIsVisualOnly": true,
+    "perFrameApplicationTimer": false,
+    "expiryIntegration": "Complete ApplicationCoordinator with isolated fictional CaptureStore, preferences, notifications and injected displays",
+    "successfulDurableExpiryTriggersAlarm": true,
+    "failedExpirySaveDoesNotTriggerAlarmAndRetryIsOnce": true,
+    "taskRemainsIncompleteAfterExpiry": true,
+    "acknowledgmentPreservesAllFictionalTaskFields": true,
+    "queuedExpiriesAndSeparateRunsOfSameTaskVerified": true,
+    "nativeAccessibilityPressAndOwnWindowMouseAcknowledgmentVerified": true,
+    "independentAutoCaptureBoardInteractionAndTimerOwnershipVerified": true,
+    "shutdownCancelsExpirySubscriptionsMotionAndReturnWork": true,
+    "visualReview": "Canonical character retained, two holding arms, readable alarm clock and three-word sign, no material clipping in resting poses",
+    "fixtureRepairs": "Stable sorted-key JSON comparison and actual presentation-pose settling replaced invalid fixture assumptions; production data/state and animation structure checks retained."
+  },
+  "collectionRegression": {
+    "checksPassed": 350,
+    "report": "native/build/qa/collection-card-presentation/9A477AFA-CF0C-4937-9432-532F33042A63/collection-card-presentation-report.json"
+  },
+  "liveChecks": {
+    "settingsDisplaysInstalledVersion": "DaBin 0.4.16 (71)",
+    "showTooltipsPreferenceRemainsOn": true,
+    "autoCaptureRemainsPaused": true,
+    "returnedToPreviousInboxView": true,
+    "personalTaskTimerStartedForVerification": false,
+    "personalTaskTimerExpiryTriggeredForVerification": false
+  },
+  "installerModifiedArchive": false,
+  "verificationEditedCapturesOrToggledCaptureThemePreferences": false,
+  "publicReleasePublished": false,
+  "limitations": [
+    "This is 27 selected Release suites, not a new full distribution/notarization review.",
+    "The personal archive was not independently byte-inventoried before and after this update; the guarded installer only replaces the application bundle.",
+    "Live verification checked version and retained preferences through accessibility. End-to-end expiry/acknowledgement and visual review used isolated fictional production fixtures, not a personal timer.",
+    "Native app windows request capture exclusion. No actual desktop capture, clipboard inspection, external service, global input or personal task content was used by the new fixture.",
+    "Core Animation rendering and motion-structure checks are not a new live FPS/performance measurement.",
+    "Ringing is visual only and intentionally emits no audio.",
+    "The separate two-second-message request remains unidentified and was not changed."
+  ]
+}
