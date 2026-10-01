@@ -510,7 +510,7 @@ class SignatureAndPolicyTests(unittest.TestCase):
                 backup = destination.parent / ".DaBinBackups/fixture.app"
                 backup.mkdir(parents=True)
                 return ("Installed DaBin 9.8.7 (42) at " + str(destination)
-                        + "\nPrevious app backed up at " + str(backup))
+                        + "\nPrevious app backed up at " + str(backup.resolve()))
 
         with tempfile.TemporaryDirectory() as directory:
             temporary = Path(directory)
@@ -550,6 +550,71 @@ class SignatureAndPolicyTests(unittest.TestCase):
         self.assertEqual([path.name for path in verified], ["DaBin.app", "DaBin.app", "fixture.app"])
         self.assertEqual(result["freshInstall"], "passed")
         self.assertEqual(result["replacement"], "passed")
+
+
+class BackupConfirmationTests(unittest.TestCase):
+    def test_directory_alias_confirms_the_same_exact_backup(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            backups = root / "owned-backups"
+            backup = backups / "fixture.app"
+            backup.mkdir(parents=True)
+            alias = root / "directory-alias"
+            alias.symlink_to(backups, target_is_directory=True)
+            reported = alias / backup.name
+            self.assertNotEqual(reported, backup)
+            distribution.validate_backup_confirmation(
+                "Previous app backed up at " + str(reported), backup
+            )
+
+    def test_private_tmp_alias_confirms_the_same_exact_backup(self):
+        private_tmp = Path("/private/tmp")
+        if not private_tmp.is_dir() or not private_tmp.samefile(Path("/tmp")):
+            self.skipTest("The macOS /private/tmp and /tmp alias is unavailable")
+        with tempfile.TemporaryDirectory(dir=private_tmp) as directory:
+            backup = Path(directory) / "fixture.app"
+            backup.mkdir()
+            reported = Path("/tmp") / backup.relative_to(private_tmp)
+            distribution.validate_backup_confirmation(
+                "Previous app backed up at " + str(reported), backup
+            )
+
+    def test_wrong_or_unavailable_backup_is_refused(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            expected = root / "expected.app"
+            other = root / "other.app"
+            expected.mkdir()
+            other.mkdir()
+            for reported in (other, root / "missing.app", Path("expected.app")):
+                with self.subTest(reported=reported), self.assertRaises(distribution.DistributionError):
+                    distribution.validate_backup_confirmation(
+                        "Previous app backed up at " + str(reported), expected
+                    )
+
+    def test_missing_duplicate_or_prefix_only_confirmation_is_refused(self):
+        with tempfile.TemporaryDirectory() as directory:
+            backup = Path(directory) / "fixture.app"
+            backup.mkdir()
+            exact = "Previous app backed up at " + str(backup)
+            for output in ("", exact + "\n" + exact, exact + "-different.app",
+                           "Unconfirmed: " + exact):
+                with self.subTest(output=output), self.assertRaises(distribution.DistributionError):
+                    distribution.validate_backup_confirmation(output, backup)
+
+    def test_backup_leaf_symlink_is_refused(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            backup = root / "fixture.app"
+            backup.mkdir()
+            link = root / "symlink.app"
+            link.symlink_to(backup, target_is_directory=True)
+            for reported, expected in ((link, backup), (backup, link)):
+                with self.subTest(reported=reported, expected=expected), \
+                     self.assertRaises(distribution.DistributionError):
+                    distribution.validate_backup_confirmation(
+                        "Previous app backed up at " + str(reported), expected
+                    )
 
 
 if __name__ == "__main__":

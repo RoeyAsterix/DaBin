@@ -482,6 +482,30 @@ def sign_notarize_and_validate_app(
     return submission
 
 
+def validate_backup_confirmation(output: str, expected_backup: Path) -> None:
+    prefix = "Previous app backed up at "
+    reported_paths = [line.removeprefix(prefix) for line in output.splitlines() if line.startswith(prefix)]
+    if len(reported_paths) != 1:
+        raise DistributionError("The updater did not confirm exactly one replacement backup")
+    reported_backup = Path(reported_paths[0])
+    try:
+        # Foundation can report /tmp for an existing /private/tmp destination.
+        # Bind the complete reported path to the actual backup directory rather
+        # than comparing spellings or accepting a path prefix in the output.
+        matches = (
+            reported_backup.is_absolute()
+            and not reported_backup.is_symlink()
+            and not expected_backup.is_symlink()
+            and reported_backup.is_dir()
+            and expected_backup.is_dir()
+            and reported_backup.samefile(expected_backup)
+        )
+    except (OSError, ValueError) as error:
+        raise DistributionError("The updater reported an unavailable replacement backup") from error
+    if not matches:
+        raise DistributionError("The updater did not confirm the exact replacement backup")
+
+
 def exercise_update_installer(
     runner: CommandRunner,
     packaged_app: Path,
@@ -528,8 +552,7 @@ def exercise_update_installer(
     backup_apps = sorted(backups.glob("*.app")) if backups.is_dir() and not backups.is_symlink() else []
     if len(backup_apps) != 1:
         raise DistributionError("Updater QA did not preserve exactly one previous application")
-    if f"Previous app backed up at {backup_apps[0]}" not in second:
-        raise DistributionError("The updater did not confirm the exact replacement backup")
+    validate_backup_confirmation(second, backup_apps[0])
     for installed in (destination, backup_apps[0]):
         if file_manifest(installed) != expected_files:
             raise DistributionError("The updater's no-metadata copy changed packaged application bytes")

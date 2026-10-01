@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "recordedAtUTC": "2026-10-01T15:53:04.260098+00:00",
+  "notarySubmissionID": "9f13f408-52bf-4386-a8c9-3fdb1ae72250",
+  "version": "0.4.6",
+  "buildNumber": "61",
+  "appleStatus": "Accepted",
+  "publicDistributionApproved": false,
+  "packagingStatus": "withheld_backup_confirmation_alias",
+  "supersededByReviewedVersion": "0.4.8",
+  "supersededByReviewedBuild": "63",
+  "latestReleaseStatus": "pending_new_frozen_candidate",
+  "distributionTestsPassed": 30
+}
