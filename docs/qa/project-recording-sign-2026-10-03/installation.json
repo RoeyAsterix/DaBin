@@ -1,0 +1,28 @@
+{
+  "buildNumber": "79",
+  "currentBuildInputDifferences": [
+    "Sources/DaBin/CaptureCards.swift",
+    "Sources/DaBin/ExplorerItems.swift",
+    "Sources/DaBin/GroupedCaptureCard.swift",
+    "Sources/DaBin/HourlyCaptureCard.swift",
+    "Sources/DaBin/ProjectPickerView.swift",
+    "Sources/DaBin/RemindersScreen.swift",
+    "Sources/DaBin/TodayPlanningScreen.swift",
+    "Sources/DaBin/WeeklyScreen.swift",
+    "Sources/DaBin/WorkspaceItemCard.swift"
+  ],
+  "executableSHA256": "8f61d266b31bc72c834fd28fb3ffb0325d697604fd0b838ad5aee8e5704178b7",
+  "featureSourceHashesMatchTestedSnapshot": true,
+  "path": "/Users/roeylibfeld/Applications/DaBin.app",
+  "previousAppBackup": "/Users/roeylibfeld/Applications/.DaBinBackups/20261003-155151-a3c1cd19.app",
+  "runningExecutable": [
+    "66180 /Users/roeylibfeld/Applications/DaBin.app/Contents/MacOS/DaBin"
+  ],
+  "schemaVersion": 1,
+  "scopeNote": "Verification covers the installed signed snapshot. Nine unrelated production views changed later; they were preserved and were not rebuilt or reinstalled by this feature task.",
+  "sourceFingerprint": "a888d106326a2bf3a09660f1b338b10408cb04a564b23f03af473d77a3341096",
+  "strictSignatureVerified": true,
+  "updaterExecutableSHA256": "9d9f48d08434783511bea8d881ca378350c2e85d92e6cc7df0bcde5100455440",
+  "verifiedAtUTC": "2026-10-03T13:01:58.955948+00:00",
+  "version": "0.4.24"
+}

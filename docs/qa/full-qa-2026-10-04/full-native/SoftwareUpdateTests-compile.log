@@ -1,0 +1,47 @@
+/private/tmp/dabin-full-qa-20261004/native/build/qa-cache/688937a5a540ad4121e714de6a7220c73890a688125fff92a5ae8f8d60205f42/SoftwareUpdateTests-e159f338d42bf79b/SoftwareUpdateTests.swift:264:29: error: cannot find 'DaBinTutorialStep' in scope
+262 |                    && settingsSource.contains("Run DaBin tutorial"),
+263 |                    "The Settings tutorial entry has a stable identifier and accessible name")
+264 |         let tutorialSteps = DaBinTutorialStep.ordered
+    |                             `- error: cannot find 'DaBinTutorialStep' in scope
+265 |         try expect(tutorialSteps.first == .welcome && tutorialSteps.last == .finish
+266 |                    && tutorialSteps.count == 12,
+
+/private/tmp/dabin-full-qa-20261004/native/build/qa-cache/688937a5a540ad4121e714de6a7220c73890a688125fff92a5ae8f8d60205f42/SoftwareUpdateTests-e159f338d42bf79b/SoftwareUpdateTests.swift:265:44: error: cannot infer contextual base in reference to member 'welcome'
+263 |                    "The Settings tutorial entry has a stable identifier and accessible name")
+264 |         let tutorialSteps = DaBinTutorialStep.ordered
+265 |         try expect(tutorialSteps.first == .welcome && tutorialSteps.last == .finish
+    |                                            `- error: cannot infer contextual base in reference to member 'welcome'
+266 |                    && tutorialSteps.count == 12,
+267 |                    "The tutorial has one deterministic beginning-to-end sequence")
+
+/private/tmp/dabin-full-qa-20261004/native/build/qa-cache/688937a5a540ad4121e714de6a7220c73890a688125fff92a5ae8f8d60205f42/SoftwareUpdateTests-e159f338d42bf79b/SoftwareUpdateTests.swift:265:78: error: cannot infer contextual base in reference to member 'finish'
+263 |                    "The Settings tutorial entry has a stable identifier and accessible name")
+264 |         let tutorialSteps = DaBinTutorialStep.ordered
+265 |         try expect(tutorialSteps.first == .welcome && tutorialSteps.last == .finish
+    |                                                                              `- error: cannot infer contextual base in reference to member 'finish'
+266 |                    && tutorialSteps.count == 12,
+267 |                    "The tutorial has one deterministic beginning-to-end sequence")
+
+/private/tmp/dabin-full-qa-20261004/native/build/qa-cache/688937a5a540ad4121e714de6a7220c73890a688125fff92a5ae8f8d60205f42/SoftwareUpdateTests-e159f338d42bf79b/SoftwareUpdateTests.swift:272:52: error: cannot infer contextual base in reference to member 'capture'
+270 |                        "The tutorial visits the \(destination) workflow")
+271 |         }
+272 |         try expect(tutorialSteps.contains { $0 == .capture }
+    |                                                    `- error: cannot infer contextual base in reference to member 'capture'
+273 |                    && tutorialSteps.contains { $0 == .projectRecording }
+274 |                    && tutorialSteps.contains { $0 == .automation },
+
+/private/tmp/dabin-full-qa-20261004/native/build/qa-cache/688937a5a540ad4121e714de6a7220c73890a688125fff92a5ae8f8d60205f42/SoftwareUpdateTests-e159f338d42bf79b/SoftwareUpdateTests.swift:273:55: error: cannot infer contextual base in reference to member 'projectRecording'
+271 |         }
+272 |         try expect(tutorialSteps.contains { $0 == .capture }
+273 |                    && tutorialSteps.contains { $0 == .projectRecording }
+    |                                                       `- error: cannot infer contextual base in reference to member 'projectRecording'
+274 |                    && tutorialSteps.contains { $0 == .automation },
+275 |                    "The tutorial covers manual capture, project recording and opt-in automation")
+
+/private/tmp/dabin-full-qa-20261004/native/build/qa-cache/688937a5a540ad4121e714de6a7220c73890a688125fff92a5ae8f8d60205f42/SoftwareUpdateTests-e159f338d42bf79b/SoftwareUpdateTests.swift:274:55: error: cannot infer contextual base in reference to member 'automation'
+272 |         try expect(tutorialSteps.contains { $0 == .capture }
+273 |                    && tutorialSteps.contains { $0 == .projectRecording }
+274 |                    && tutorialSteps.contains { $0 == .automation },
+    |                                                       `- error: cannot infer contextual base in reference to member 'automation'
+275 |                    "The tutorial covers manual capture, project recording and opt-in automation")
+276 |         print("PASS: \(checks) software update checks; no external network, installed app or user archive used.")

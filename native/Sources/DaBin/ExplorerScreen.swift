@@ -1,6 +1,13 @@
 import SwiftUI
 import UniformTypeIdentifiers
 
+private struct ExplorerBrowserScope: Equatable {
+    let project: String?
+    let unfiledOnly: Bool
+    let dailyFiles: Bool
+    let grouping: ExplorerGrouping
+}
+
 /// The saved capture browser shares project, search, and selection across sizes.
 /// Grouping changes the presentation; the inspector always shows the real path.
 @MainActor struct ExplorerScreen: View {
@@ -15,6 +22,8 @@ import UniformTypeIdentifiers
     @State private var documentError: String?
     @State private var documentRefreshRevision: UInt = 0
     @State private var exporting = false
+    @State private var lastBrowserScope: ExplorerBrowserScope?
+    @State private var lastBrowserRestorationRevision: UInt = 0
     @FocusState private var keyboardSelection: UUID?
 
     init(state: AppState) {
@@ -24,14 +33,26 @@ import UniformTypeIdentifiers
         _intake = ObservedObject(wrappedValue: state.explorerInput)
     }
 
-    private var scopeKey: String { (state.libraryProject ?? "") + ":" + String(workspace.explorerUnfiledOnly) }
+    private var scopeKey: String {
+        (state.libraryProject ?? "") + ":" + String(workspace.explorerUnfiledOnly)
+            + ":" + workspace.explorerGrouping.rawValue + ":" + String(state.navigationRestorationRevision)
+            + ":" + String(workspace.explorerShowsDailyFiles)
+    }
+    private var browserScope: ExplorerBrowserScope {
+        ExplorerBrowserScope(project: state.libraryProject, unfiledOnly: workspace.explorerUnfiledOnly,
+            dailyFiles: workspace.explorerShowsDailyFiles, grouping: workspace.explorerGrouping)
+    }
+    private var isDeliberateBrowserChange: Bool {
+        lastBrowserScope.map { $0 != browserScope } == true
+            && lastBrowserRestorationRevision == state.navigationRestorationRevision
+    }
     private var documentRefreshKey: ExplorerDocumentRefreshKey {
         ExplorerDocumentRefreshKey(project: state.libraryProject, unfiledOnly: workspace.explorerUnfiledOnly,
             enabled: workspace.explorerShowsDailyFiles, revision: documentRefreshRevision)
     }
     private var presentation: ExplorerPresentation {
         let items = ExplorerQuery.items(store.captures, workspace: workspace, project: state.libraryProject,
-            filter: state.filter, pinnedOnly: state.libraryPinnedOnly)
+            filter: state.filter, pinnedOnly: state.libraryPinnedOnly, query: "")
         let sections = workspace.explorerShowsDailyFiles ? [] : ExplorerQuery.sections(items, grouping: workspace.explorerGrouping)
         let matchingDays = workspace.explorerShowsDailyFiles ? Set(ExplorerQuery.projectDays(items, in: store.captures)) : []
         let visibleDays = dailyFiles.filter { matchingDays.contains(ExplorerProjectDay(projectName: $0.projectName, day: $0.captureDay)) }
@@ -94,20 +115,19 @@ import UniformTypeIdentifiers
 
     private var toolbar: some View {
         HStack(spacing: 6) {
-            HStack(spacing: 7) {
-                Image(systemName: "magnifyingglass").foregroundStyle(Palette.muted).accessibilityHidden(true)
-                TextField("Find in this project", text: Binding(get: { workspace.explorerQuery }, set: { workspace.explorerQuery = $0 }))
-                    .textFieldStyle(.plain).font(.system(size: 13)).accessibilityLabel("Search Explorer")
-                    .accessibilityIdentifier("explorer-search")
-                if !workspace.explorerQuery.isEmpty {
-                    Button { workspace.explorerQuery = "" } label: { Image(systemName: "xmark.circle.fill") }
-                        .buttonStyle(.plain).foregroundStyle(Palette.muted).accessibilityLabel("Clear Explorer search")
-                }
-            }.padding(8).background(Palette.surface, in: RoundedRectangle(cornerRadius: 8))
+            Button { state.performSearchCommand() } label: {
+                Label("Search everything", systemImage: "magnifyingglass")
+                    .font(.system(size: 13)).foregroundStyle(Palette.muted)
+                    .frame(maxWidth: .infinity, alignment: .leading).contentShape(Rectangle())
+            }.buttonStyle(.plain).accessibilityLabel("Search everything saved in DaBin")
+                .accessibilityIdentifier("explorer-search")
+                .padding(8).background(Palette.surface, in: RoundedRectangle(cornerRadius: 8))
                 .overlay(RoundedRectangle(cornerRadius: 8).strokeBorder(Palette.line))
             BuddyIconButton(symbol: "doc.on.clipboard", title: "Paste") { intake.paste(project: state.libraryProject) }
                 .accessibilityIdentifier("explorer-paste")
-            BuddyIconButton(symbol: "folder.badge.plus", title: "Files") { intake.chooseFiles(project: state.libraryProject) }
+            BuddyIconButton(symbol: "folder", title: "Files") { state.showProjectFiles() }
+                .accessibilityIdentifier("explorer-open-files")
+            BuddyIconButton(symbol: "folder.badge.plus", title: "Add files") { intake.chooseFiles(project: state.libraryProject) }
                 .accessibilityIdentifier("explorer-add-files")
         }.disabled(intake.isBusy || state.isArchiveOperationRunning)
             .padding(.horizontal, 16).padding(.bottom, 8)
@@ -128,8 +148,10 @@ import UniformTypeIdentifiers
 
     private func browser(expanded: Bool, presentation: ExplorerPresentation) -> some View {
         ScrollViewReader { proxy in
-            ScrollView {
-                LazyVStack(alignment: .leading, spacing: 8) {
+            // Native list rows keep rich card subtrees scoped to the viewport.
+            // Each identity has one fixed root, even when switching grouping.
+            List {
+                Group {
                     if workspace.explorerShowsDailyFiles {
                         if presentation.dailyFiles.isEmpty { empty }
                         ForEach(presentation.dailyFiles) { day in
@@ -137,42 +159,97 @@ import UniformTypeIdentifiers
                         }
                     } else if presentation.items.isEmpty { empty }
                     else {
-                        ForEach(presentation.sections) { section in
-                            HStack {
-                                Label(section.title, systemImage: section.symbol)
-                                Spacer()
-                                Text("\(section.captures.count)")
-                            }.font(.system(size: 11, weight: .semibold)).foregroundStyle(Palette.muted)
-                                .padding(.horizontal, 10).padding(.top, 10).padding(.bottom, 5)
-                            ForEach(section.captures) { capture in
-                                ExplorerCaptureRow(state: state, workspace: workspace, capture: capture, focus: $keyboardSelection) {
-                                    workspace.selectedCaptureID = capture.id
-                                    if !expanded { state.openCapture(capture.id) }
-                                }.id(capture.id)
-                                    .onMoveCommand { direction in
-                                        let ordered = presentation.orderedItems
-                                        guard direction == .up || direction == .down,
-                                              let index = ordered.firstIndex(where: { $0.id == (workspace.selectedCaptureID ?? capture.id) }) else { return }
-                                        let target = min(ordered.count - 1, max(0, index + (direction == .down ? 1 : -1)))
-                                        workspace.selectedCaptureID = ordered[target].id
-                                        keyboardSelection = ordered[target].id
-                                        proxy.scrollTo(ordered[target].id, anchor: .center)
+                        // Each lazy-list identity owns exactly one visible row.
+                        // A section must not expand into a changing number of
+                        // sibling views while automatic captures are prepended.
+                        ForEach(presentation.browserRows) { row in
+                            VStack(alignment: .leading, spacing: 0) {
+                                switch row {
+                                case .section(let section):
+                                    HStack {
+                                        Label(section.title, systemImage: section.symbol)
+                                        Spacer()
+                                        Text("\(section.captures.count)")
+                                    }.font(.system(size: 11, weight: .semibold)).foregroundStyle(Palette.muted)
+                                        .padding(.horizontal, 10).padding(.top, 10).padding(.bottom, 5)
+                                case .capture(let capture):
+                                    ExplorerCaptureRow(state: state, workspace: workspace, capture: capture, focus: $keyboardSelection) {
+                                        workspace.selectedCaptureID = capture.id
+                                        // A plain button inside macOS List can
+                                        // select without becoming a keyboard
+                                        // responder. Keep arrows/Return on the
+                                        // chosen card instead of the window.
+                                        keyboardSelection = capture.id
+                                        if !expanded { state.openCapture(capture.id) }
                                     }
-                                    .onKeyPress(.return) {
-                                        state.openCapture(workspace.selectedCaptureID ?? capture.id)
-                                        return .handled
-                                    }
+                                        .onMoveCommand { direction in
+                                            let ordered = presentation.orderedItems
+                                            guard direction == .up || direction == .down,
+                                                  let index = ordered.firstIndex(where: { $0.id == (workspace.selectedCaptureID ?? capture.id) }) else { return }
+                                            let target = min(ordered.count - 1, max(0, index + (direction == .down ? 1 : -1)))
+                                            workspace.selectedCaptureID = ordered[target].id
+                                            keyboardSelection = ordered[target].id
+                                            proxy.scrollTo(ExplorerBrowserRow.captureID(ordered[target].id), anchor: .center)
+                                        }
+                                        .onKeyPress(.return) {
+                                            state.openCapture(workspace.selectedCaptureID ?? capture.id)
+                                            return .handled
+                                        }
+                                }
                             }
                         }
                     }
-                }.padding(.horizontal, 8).padding(.bottom, 10).id("explorer-top")
-            }.task(id: scopeKey) {
-                await Task.yield()
-                guard !Task.isCancelled else { return }
-                if let id = workspace.selectedCaptureID, presentation.items.contains(where: { $0.id == id }) {
-                    proxy.scrollTo(id, anchor: .center)
-                } else { proxy.scrollTo("explorer-top", anchor: .top) }
+                }
+                .listRowInsets(EdgeInsets(top: 4, leading: 8, bottom: 4, trailing: 8))
+                .listRowSeparator(.hidden)
+                .listRowBackground(Color.clear)
             }
+            .listStyle(.plain)
+            .scrollContentBackground(.hidden)
+            // Incoming captures must not animate estimated native row heights
+            // while the user reads an existing card away from the list's top.
+            // Keep this local to the browser; robot/window motion is unaffected.
+            .transaction { transaction in
+                transaction.animation = nil
+                transaction.disablesAnimations = true
+            }
+            .background {
+                ExplorerViewport(store: store, rowIDs: workspace.explorerShowsDailyFiles
+                    ? presentation.dailyFiles.map(\.id) : presentation.browserRows.map(\.id),
+                    context: ExplorerViewportContext(project: state.libraryProject,
+                        unfiledOnly: workspace.explorerUnfiledOnly, dailyFiles: workspace.explorerShowsDailyFiles,
+                        query: "", filter: state.filter.rawValue,
+                        pinnedOnly: state.libraryPinnedOnly, dateFilter: workspace.dateFilter.rawValue,
+                        source: workspace.sourceApplication, origin: workspace.originFilter.rawValue,
+                        grouping: workspace.explorerGrouping.rawValue, selectedID: workspace.selectedCaptureID),
+                    historyAnchor: isDeliberateBrowserChange ? nil : state.workspaceViewport,
+                    onHistoryAnchor: { state.workspaceViewport = $0 })
+                    .allowsHitTesting(false).accessibilityHidden(true)
+            }
+            .task(id: scopeKey) {
+                // An explicit project/grouping change keeps its remembered
+                // selected item in view. Back
+                // and Forward restore their own item/offset instead, including
+                // when that snapshot also changes the grouping.
+                let changed = isDeliberateBrowserChange
+                lastBrowserScope = browserScope
+                lastBrowserRestorationRevision = state.navigationRestorationRevision
+                if changed { state.workspaceViewport = nil }
+                await Task.yield()
+                guard !Task.isCancelled, changed || state.workspaceViewport == nil else { return }
+                if !workspace.explorerShowsDailyFiles, let id = workspace.selectedCaptureID,
+                   presentation.items.contains(where: { $0.id == id }) {
+                    proxy.scrollTo(ExplorerBrowserRow.captureID(id), anchor: .center)
+                } else if let first = workspace.explorerShowsDailyFiles
+                    ? presentation.dailyFiles.first?.id : presentation.browserRows.first?.id {
+                    proxy.scrollTo(first, anchor: .top)
+                }
+            }
+            // Regrouping deliberately changes the whole row order. Recreate
+            // the native table (and viewport coordinator) instead of asking
+            // AppKit to move every variable-height row inside its delegate.
+            // Normal capture insertions keep the same table and stable IDs.
+            .id(workspace.explorerGrouping)
         }.frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
@@ -180,7 +257,7 @@ import UniformTypeIdentifiers
         VStack(spacing: 8) {
             EmptyMessage(symbol: "folder", title: "A home for your next idea",
                 message: "Drop files, paste a link or save a note. Your project’s files stay organized locally.")
-            if state.filter != .all || !workspace.explorerQuery.isEmpty || state.libraryPinnedOnly || workspace.dateFilter != .anytime
+            if state.filter != .all || state.libraryPinnedOnly || workspace.dateFilter != .anytime
                 || workspace.sourceApplication != nil || workspace.originFilter != .all {
                 Button("Clear filters and search") {
                     state.filter = .all; state.libraryPinnedOnly = false; workspace.explorerQuery = ""
@@ -262,9 +339,16 @@ import UniformTypeIdentifiers
                     .accessibilityIdentifier("explorer-undo-move")
             }
             Spacer(minLength: 0)
-            BuddyIconButton(symbol: "arrow.down.doc", title: exporting ? "Creating ZIP" : "Export visible items as ZIP") { exportZIP(presentation: presentation) }
+            Button { exportZIP(presentation: presentation) } label: {
+                Label(exporting ? "Exporting…" : "Export visible", systemImage: "arrow.down.to.line")
+                    .font(.system(size: 11)).lineLimit(1).fixedSize().frame(minHeight: 32)
+            }.buttonStyle(.plain).foregroundStyle(accent)
+                .accessibilityLabel("Export visible items as ZIP")
+                .accessibilityIdentifier("explorer-export-visible")
+                .buddyHelp("Save the items shown by your current filters as a ZIP")
                 .disabled((workspace.explorerShowsDailyFiles ? presentation.dailyFiles.isEmpty : presentation.items.isEmpty) || exporting || intake.isBusy)
-            BuddyIconButton(symbol: "folder", title: "Open this project in Finder") { revealScope() }
+            BuddyIconButton(symbol: "folder", title: "Open this project in Finder") { state.showProjectFiles() }
+                .accessibilityIdentifier("explorer-open-project-folder")
         }.padding(.horizontal, 12).padding(.vertical, 3).background(Palette.surface).overlay(alignment: .top) { Rectangle().fill(Palette.line).frame(height: 1) }
     }
 
@@ -282,13 +366,6 @@ import UniformTypeIdentifiers
             dailyFiles = documents
             documentError = nil
         } catch { if !Task.isCancelled { documentError = error.localizedDescription } }
-    }
-    private func revealScope() {
-        do {
-            let url = state.libraryProject == nil && !workspace.explorerUnfiledOnly ? store.explorerRootURL
-                : try store.explorerFolderURL(project: state.libraryProject)
-            if !NSWorkspace.shared.open(url) { state.reportFailure("Finder couldn’t open this folder.") }
-        } catch { state.reportFailure(error.localizedDescription) }
     }
     private func openDocument(_ day: ProjectArchiveDay) {
         if !NSWorkspace.shared.open(day.url) { state.reportFailure("The daily file could not be opened.") }
@@ -317,7 +394,9 @@ import UniformTypeIdentifiers
                 }
                 : ShelfExport.entries(for: presentation.items, store: store)
             let panel = NSSavePanel(); panel.allowedContentTypes = [.zip]; panel.nameFieldStringValue = "DaBin-Explorer.zip"
-            panel.message = "Copies the visible items into a ZIP. Choose a new filename."
+            panel.title = "Export visible items"
+            panel.prompt = "Save ZIP"
+            panel.message = "Visible items only · \(entries.count) \(entries.count == 1 ? "item" : "items"). Current filters apply."
             guard panel.runModal() == .OK, let url = panel.url else { return }
             exporting = true
             Task { @MainActor in
@@ -340,6 +419,24 @@ private struct ExplorerPresentation {
     let selected: Capture?
     let dailyFiles: [ProjectArchiveDay]
     let selectedDocument: ProjectArchiveDay?
+
+    var browserRows: [ExplorerBrowserRow] {
+        sections.flatMap { [.section($0)] + $0.captures.map(ExplorerBrowserRow.capture) }
+    }
+}
+
+private enum ExplorerBrowserRow: Identifiable {
+    case section(ExplorerSection)
+    case capture(Capture)
+
+    var id: String {
+        switch self {
+        case .section(let section): "section:\(section.id)"
+        case .capture(let capture): Self.captureID(capture.id)
+        }
+    }
+
+    static func captureID(_ id: UUID) -> String { "capture:\(id.uuidString)" }
 }
 
 private struct ExplorerDocumentRefreshKey: Hashable {

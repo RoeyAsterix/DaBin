@@ -1,0 +1,24 @@
+Rebuild Feed DaBin locally
+
+Requirements: Blender 5.x, Python 3.11+ with Pillow and numpy, public FFmpeg.
+The textures use system Arial fonts from macOS; change FONT/BOLD if needed.
+
+From this folder:
+  python3 prepare_video.py
+  blender -b --python build_feed_dabin.py -- --layout landscape --render
+  blender -b --python build_feed_dabin.py -- --layout portrait --render
+  python3 encode_video.py
+
+Use DABIN_FFMPEG to specify FFmpeg when it is not on PATH.
+Intermediate frame directories are created under the kit's .work directory.
+The ZIP excludes those frames. Scripts render all 660 frames at native size.
+
+Packed .blend files contain exact robot/native UI textures and editable objects,
+keyframes, orthographic camera, emission materials and timing. The MP4 audio is
+mixed after rendering; it is not stored as a Blender sound strip. Select take02
+and paced WAV are supplied. The .blend files can render without running the
+Python asset generator; the generator is provided to revise text and timing.
+
+Look in storyboard.json for the shot sequence and in 07_QA for encoded-frame
+contact sheets and full decode verification. This is a code-authored editorial
+animation; no model-generated app interface or robot redesign is used.

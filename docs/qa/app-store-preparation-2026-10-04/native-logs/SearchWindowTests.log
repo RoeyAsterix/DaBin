@@ -1,0 +1,40 @@
+PASS: 105 native global Search checks; keyboard verification passed: native focus, Tab retained filter focus with Keyboard Navigation disabled, Escape dismissal and Return activates Done.
+[SearchWindowTests 06:28:09.994 +1852286.145] fixture: create isolated records
+[SearchWindowTests 06:28:11.412 +1852287.563] matching: indexed text, checklist, snippets and empty browse
+[SearchWindowTests 06:28:11.475 +1852287.626] window: mount and activate native Board
+[SearchWindowTests 06:28:11.774 +1852287.925] entry: Project workspace Search is global
+[SearchWindowTests 06:28:11.774 +1852287.925] entry.step prepare scoped Search state
+[SearchWindowTests 06:28:11.774 +1852287.925] entry.step mount Alpha Project workspace
+[SearchWindowTests 06:28:11.774 +1852287.925] entry.step resize Project workspace to 736
+2026-10-04 06:28:11.827 DaBinSearchQA[52829:24613314] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future.
+[SearchWindowTests 06:28:12.296 +1852288.447] entry.step await Project workspace mount
+[SearchWindowTests 06:28:12.417 +1852288.568] entry.step lookup project-workspace
+[SearchWindowTests 06:28:12.488 +1852288.639] entry.step press project-search
+[SearchWindowTests 06:28:12.609 +1852288.760] entry.step project-search returned; await Search mount
+[SearchWindowTests 06:28:12.684 +1852288.834] entry.step assert global Search state
+[SearchWindowTests 06:28:12.684 +1852288.835] paging: responsive one, two and three date columns
+[SearchWindowTests 06:28:14.577 +1852290.727] viewport: independent native date columns
+[SearchWindowTests 06:28:16.968 +1852293.119] viewport: stale deferred write invalidation
+[SearchWindowTests 06:28:17.387 +1852293.537] routing: compact details and expanded preview
+[SearchWindowTests 06:28:18.484 +1852294.635] routing: editable project note and Back
+[SearchWindowTests 06:28:19.218 +1852295.368] filters: controls, keyboard or explicit Done, chips and clear
+[SearchWindowTests 06:28:21.303 +1852297.453] recycling: 2000 rows, live insertion and detail restoration
+[SearchWindowTests 06:28:21.303 +1852297.453] recycling.step mount 2000-row Search query
+[SearchWindowTests 06:28:21.622 +1852297.773] recycling.step await initial List mount
+2026-10-04 06:28:23.046 DaBinSearchQA[52829:24613314] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future.
+[SearchWindowTests 06:28:25.296 +1852301.446] recycling.step inspect native table and realized rows
+[SearchWindowTests 06:28:25.308 +1852301.459] recycling.step scroll native table to row 1000
+[SearchWindowTests 06:28:25.595 +1852301.745] recycling.step await scrolled viewport memory
+[SearchWindowTests 06:28:27.381 +1852303.531] recycling.step save live matching capture
+[SearchWindowTests 06:28:27.403 +1852303.553] recycling.step live save returned; await List update
+[SearchWindowTests 06:28:29.841 +1852305.991] recycling.step assert live List position and row count
+[SearchWindowTests 06:28:29.841 +1852305.991] recycling.step press deep visible Search result
+[SearchWindowTests 06:28:29.860 +1852306.010] recycling.step detail press returned; await detail route
+[SearchWindowTests 06:28:31.770 +1852307.920] recycling.step press Back from deep detail
+2026-10-04 06:28:33.182 DaBinSearchQA[52829:24613314] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future.
+[SearchWindowTests 06:28:36.248 +1852312.399] recycling.step Back returned; await restored List
+[SearchWindowTests 06:28:38.531 +1852314.681] recycling.step inspect restored native viewport
+[SearchWindowTests 06:28:38.532 +1852314.682] evidence: light and dark native renders
+[SearchWindowTests 06:28:49.334 +1852325.484] performance: 5000-record cold and cached Search
+CoreData: debug: WAL checkpoint: Database did checkpoint. Log size: 1162 checkpointed: 1162
+[SearchWindowTests 06:28:49.742 +1852325.892] complete

@@ -1,0 +1,46 @@
+DABIN / SCREENSHOT CAPTIONS AND ORDER
+Outcome-led captions for a marketing treatment of real app screenshots. Source submission-pack-0.4.31-86 contains original 1440 x 900 native PNGs for Inbox, Projects and Focus. The exact approved upload originals remain in the submission pack. Verify modified marketing treatments and app preview assets against Apple's current Mac specifications and the shipping app before upload.
+
+FIRST THREE / MATCH CURRENT REAL SCREENS
+01 Inbox
+Headline: Catch the useful bits.
+Support: Save notes, links, images and files on your Mac.
+Show: readable fictional captures; the primary interface is visible and unobscured.
+Source: DABIN__APP_STORE__01_INBOX.png
+
+02 Projects
+Headline: Keep a project together.
+Support: References, notes and tasks in one local workspace.
+Show: fictional project title and distinct resource previews.
+Source: DABIN__APP_STORE__02_PROJECTS.png
+
+03 Focus
+Headline: Give one task your attention.
+Support: Plan your day and choose a focus duration.
+Show: the actual Today/Focus controls and a task; do not depict task completion merely from timer expiry.
+Source: DABIN__APP_STORE__03_FOCUS.png
+
+ADDITIONAL REAL CAPTURE TO MAKE WHEN PUBLIC BUILD IS READY
+04 Saved-content Search
+Headline: Find words inside saved screenshots.
+Support: Local text search for supported content you've saved.
+Show: query 'terracotta', fictional screenshot with that word, neutral filename and matching result line. Do not put the word in the filename/title/caption as the only proof of OCR. Show actual successful search, not a composed mockup presented as real UI.
+Proposed output: DABIN__APP_STORE__04_SEARCH.png
+This kit does not assert that this extra screenshot has been captured or approved unless its asset manifest records it.
+
+OPTIONAL ADDITION
+05 Local controls / Settings
+Headline: Your Mac. Your useful bits.
+Support: No account, ads, analytics or cloud sync.
+Show: actual settings and clear off-by-default Auto Capture/website-preview controls. Explain optional network previews in adjacent listing copy; avoid '100% offline' or 'nothing leaves your Mac'.
+Proposed output: DABIN__APP_STORE__05_LOCAL_CONTROLS.png
+
+DESIGN RULES
+One benefit per image. Keep interface text readable at normal viewing size. Avoid busy feature grids, tiny captions or a robot blocking important UI. Use a consistent margin and headline position. Do not add Apple featuring/award badges or an unofficial App Store badge. Include a dark appearance image if it truthfully shows the shipping UI and adds value.
+
+APP PREVIEW VIDEO
+The supplied Blender Feed DaBin film is for social/website/press. Apple says app previews use footage captured on the device to demonstrate the app. Make a separate native capture if an App Store preview is wanted, then verify Mac dimensions, length and other requirements. Do not upload the brand animation unchanged as a certified preview.
+
+SOURCE
+https://developer.apple.com/app-store/product-page/
+https://developer.apple.com/help/app-store-connect/reference/app-information/screenshot-specifications/

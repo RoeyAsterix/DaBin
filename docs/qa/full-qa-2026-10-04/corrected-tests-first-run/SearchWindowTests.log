@@ -1,0 +1,22 @@
+[SearchWindowTests 00:33:40.389 +1831016.610] fixture: create isolated records
+[SearchWindowTests 00:33:41.807 +1831018.028] matching: indexed text, checklist, snippets and empty browse
+[SearchWindowTests 00:33:41.880 +1831018.100] window: mount and activate native Board
+[SearchWindowTests 00:33:42.176 +1831018.396] entry: Project workspace Search is global
+[SearchWindowTests 00:33:42.176 +1831018.396] entry.step prepare scoped Search state
+[SearchWindowTests 00:33:42.176 +1831018.396] entry.step mount Alpha Project workspace
+[SearchWindowTests 00:33:42.176 +1831018.396] entry.step resize Project workspace to 736
+2026-10-04 00:33:42.231 DaBinSearchQA[27731:24219518] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future.
+[SearchWindowTests 00:33:42.707 +1831018.927] entry.step await Project workspace mount
+[SearchWindowTests 00:33:42.819 +1831019.039] entry.step lookup project-workspace
+[SearchWindowTests 00:33:42.890 +1831019.110] entry.step press project-search
+[SearchWindowTests 00:33:43.012 +1831019.232] entry.step project-search returned; await Search mount
+[SearchWindowTests 00:33:43.081 +1831019.301] entry.step assert global Search state
+[SearchWindowTests 00:33:43.081 +1831019.301] paging: responsive one, two and three date columns
+[SearchWindowTests 00:33:44.972 +1831021.192] viewport: independent native date columns
+[SearchWindowTests 00:33:47.386 +1831023.606] viewport: stale deferred write invalidation
+[SearchWindowTests 00:33:47.823 +1831024.043] routing: compact details and expanded preview
+[SearchWindowTests 00:33:48.953 +1831025.173] routing: editable project note and Back
+[SearchWindowTests 00:33:49.680 +1831025.900] filters: controls, keyboard or explicit Done, chips and clear
+SearchWindowTests failed: Error Domain=SearchWindowTests Code=1 "Tab advances between native controls inside Search filters" UserInfo={NSLocalizedDescription=Tab advances between native controls inside Search filters}
+
+Native Search QA failed: Error Domain=SearchWindowTests Code=1 "Tab advances between native controls inside Search filters" UserInfo={NSLocalizedDescription=Tab advances between native controls inside Search filters}

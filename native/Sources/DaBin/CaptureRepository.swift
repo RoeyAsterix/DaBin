@@ -149,14 +149,19 @@ import CoreData
             && (0...ContentIndexService.currentVersion).contains(indexVersion)
             && (snapshot.indexedText?.count ?? 0) <= ContentTextExtractor.maximumCharacters
             && (snapshot.contentIndexError?.count ?? 0) <= 4_000
-            && (["idle", "indexing"].contains(indexState) ? indexVersion == 0 : indexVersion == ContentIndexService.currentVersion)
+            // Terminal indexes from older extractors remain readable. The
+            // indexing service decides which formats actually need an upgrade.
+            && (["idle", "indexing"].contains(indexState) ? indexVersion == 0 : (1...ContentIndexService.currentVersion).contains(indexVersion))
             && (!indexCanRetry || indexState == "unavailable")
         )
-        guard (1...10).contains(snapshot.schemaVersion), CaptureKind(rawValue: snapshot.kindRaw) != nil,
+        guard (1...11).contains(snapshot.schemaVersion), CaptureKind(rawValue: snapshot.kindRaw) != nil,
               recordID == snapshot.id,
               snapshot.captureOriginRaw.map({ CaptureOrigin(rawValue: $0) != nil }) ?? true,
               (!origin.isAutomatic || snapshot.automaticActionID != nil), indexValid,
               snapshot.taskPlanning?.isValid ?? true,
+              CaptureCommentThread.isValid(snapshot.commentEntries, aggregate: snapshot.comment),
+              snapshot.reminderAcknowledgment?.isValid ?? true,
+              (snapshot.reminderAcknowledgment?.revision ?? 0) <= snapshot.reminderRevision,
               CapturePasteHistory.isValid(snapshot.pasteHistory ?? []) else {
             throw CaptureStoreError.invalidOriginal("The metadata schema or identity is unsupported. The store was preserved.")
         }

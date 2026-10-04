@@ -1,0 +1,55 @@
+/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/store-preparation-20261004/native/build/qa-cache/direct-81cbe7fde1c9723fecd3fca484d3d6d6b515eebfd11c34f1491ce56a060c9b10/SoftwareUpdateTests-2818c8430df3b583/SoftwareUpdateTests.swift:265:29: error: cannot find 'DaBinTutorialStep' in scope
+263 |                    && settingsSource.contains("Run DaBin tutorial"),
+264 |                    "The Settings tutorial entry has a stable identifier and accessible name")
+265 |         let tutorialSteps = DaBinTutorialStep.ordered
+    |                             `- error: cannot find 'DaBinTutorialStep' in scope
+266 |         try expect(tutorialSteps.first == .welcome && tutorialSteps.last == .finish
+267 |                    && tutorialSteps.count == 13,
+
+/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/store-preparation-20261004/native/build/qa-cache/direct-81cbe7fde1c9723fecd3fca484d3d6d6b515eebfd11c34f1491ce56a060c9b10/SoftwareUpdateTests-2818c8430df3b583/SoftwareUpdateTests.swift:266:44: error: cannot infer contextual base in reference to member 'welcome'
+264 |                    "The Settings tutorial entry has a stable identifier and accessible name")
+265 |         let tutorialSteps = DaBinTutorialStep.ordered
+266 |         try expect(tutorialSteps.first == .welcome && tutorialSteps.last == .finish
+    |                                            `- error: cannot infer contextual base in reference to member 'welcome'
+267 |                    && tutorialSteps.count == 13,
+268 |                    "The tutorial has one deterministic beginning-to-end sequence")
+
+/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/store-preparation-20261004/native/build/qa-cache/direct-81cbe7fde1c9723fecd3fca484d3d6d6b515eebfd11c34f1491ce56a060c9b10/SoftwareUpdateTests-2818c8430df3b583/SoftwareUpdateTests.swift:266:78: error: cannot infer contextual base in reference to member 'finish'
+264 |                    "The Settings tutorial entry has a stable identifier and accessible name")
+265 |         let tutorialSteps = DaBinTutorialStep.ordered
+266 |         try expect(tutorialSteps.first == .welcome && tutorialSteps.last == .finish
+    |                                                                              `- error: cannot infer contextual base in reference to member 'finish'
+267 |                    && tutorialSteps.count == 13,
+268 |                    "The tutorial has one deterministic beginning-to-end sequence")
+
+/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/store-preparation-20261004/native/build/qa-cache/direct-81cbe7fde1c9723fecd3fca484d3d6d6b515eebfd11c34f1491ce56a060c9b10/SoftwareUpdateTests-2818c8430df3b583/SoftwareUpdateTests.swift:275:52: error: cannot infer contextual base in reference to member 'capture'
+273 |         try expect(tutorialSteps.allSatisfy { !$0.targetCandidates.isEmpty },
+274 |                    "Every tutorial step identifies a real interface target or safe visible fallback")
+275 |         try expect(tutorialSteps.contains { $0 == .capture }
+    |                                                    `- error: cannot infer contextual base in reference to member 'capture'
+276 |                    && tutorialSteps.contains { $0 == .projectRecording }
+277 |                    && tutorialSteps.contains { $0 == .automation },
+
+/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/store-preparation-20261004/native/build/qa-cache/direct-81cbe7fde1c9723fecd3fca484d3d6d6b515eebfd11c34f1491ce56a060c9b10/SoftwareUpdateTests-2818c8430df3b583/SoftwareUpdateTests.swift:276:55: error: cannot infer contextual base in reference to member 'projectRecording'
+274 |                    "Every tutorial step identifies a real interface target or safe visible fallback")
+275 |         try expect(tutorialSteps.contains { $0 == .capture }
+276 |                    && tutorialSteps.contains { $0 == .projectRecording }
+    |                                                       `- error: cannot infer contextual base in reference to member 'projectRecording'
+277 |                    && tutorialSteps.contains { $0 == .automation },
+278 |                    "The tutorial covers manual capture, project recording and opt-in automation")
+
+/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/store-preparation-20261004/native/build/qa-cache/direct-81cbe7fde1c9723fecd3fca484d3d6d6b515eebfd11c34f1491ce56a060c9b10/SoftwareUpdateTests-2818c8430df3b583/SoftwareUpdateTests.swift:277:55: error: cannot infer contextual base in reference to member 'automation'
+275 |         try expect(tutorialSteps.contains { $0 == .capture }
+276 |                    && tutorialSteps.contains { $0 == .projectRecording }
+277 |                    && tutorialSteps.contains { $0 == .automation },
+    |                                                       `- error: cannot infer contextual base in reference to member 'automation'
+278 |                    "The tutorial covers manual capture, project recording and opt-in automation")
+279 |         let boardSource = try String(contentsOfFile: "Sources/DaBin/BoardView.swift", encoding: .utf8)
+
+/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/store-preparation-20261004/native/build/qa-cache/direct-81cbe7fde1c9723fecd3fca484d3d6d6b515eebfd11c34f1491ce56a060c9b10/SoftwareUpdateTests-2818c8430df3b583/SoftwareUpdateTests.swift:284:37: error: cannot find 'DaBinTutorialStageLayout' in scope
+282 |                    && boardSource.contains("daBinTutorialAnchor(.captureDestination)"),
+283 |                    "The robot spotlights real controls instead of presenting a narration-only walkthrough")
+284 |         let compactTutorialLayout = DaBinTutorialStageLayout(
+    |                                     `- error: cannot find 'DaBinTutorialStageLayout' in scope
+285 |             container: CGSize(width: 380, height: 430),
+286 |             focus: CGRect(x: 16, y: 20, width: 160, height: 48)

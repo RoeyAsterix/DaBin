@@ -1,0 +1,427 @@
+{
+  "schemaVersion": 1,
+  "created": "2026-10-04",
+  "campaign": "Feed DaBin",
+  "status": "LAUNCH_CREATIVE_DRAFTS_READY_FOR_OWNER_REVIEW",
+  "identity": "Current production Quiet Orbit RobotCharacterView rendered unchanged. Existing official App Icon preserved separately; its rounded character differs from the desktop character. No redesigned robot was created.",
+  "nativeBuild": {
+    "version": "0.4.31",
+    "build": "86",
+    "distribution": "app-store",
+    "frozenModuleSource": "native/build/store-preparation-20261004/native/build/qa-cache/app-store-34dd658724d8a131934a15dd329a81843c7c8c7af3aad201a34ea2bf28acde4a",
+    "moduleHashes": {
+      "DaBinTestCore.swiftmodule": "687c1551740c2dcec8ac85f9c05b779aa77feba3ce04d5cbab0d2ab6325d9255",
+      "libDaBinTestCore.dylib": "45ed376eb743afff149ce09e96706221784da98ed7290a4454131a3c60e9f2f8"
+    },
+    "releaseComparison": "Native UI is the frozen Store-channel production view module. Compare with final distribution binary before App Store submission; no upload performed."
+  },
+  "sources": [
+    {
+      "path": "docs/app-store/screenshots/0.4.31-86/ExportScreenshots.swift",
+      "usage": "Copied and adapted as an isolated marketing fixture renderer, preserving original script unchanged."
+    },
+    {
+      "path": "docs/app-store/submission-pack-0.4.31-86/Assets/DaBin-App-Icon-1024.png",
+      "sha256": "44ad308890153268409b08ee22050d66557327c92cbd3f9bb8d0f071c03e72b5",
+      "usage": "Exact copy of existing app icon."
+    },
+    {
+      "path": "native/Resources/robot.svg",
+      "usage": "Inspected as legacy official icon source; never substituted for current desktop robot."
+    },
+    {
+      "path": "docs/qa/full-qa-2026-10-04/extended/final-default-render/renders/native-robot-personality-idle@2x.png",
+      "usage": "Inspected before independently exporting the same actual native character at high resolution."
+    }
+  ],
+  "privacy": "Only a disposable fictional CaptureStore, isolated defaults suite, locally code-drawn sample images, offscreen non-key windows and production local OCR. No live archive, clipboard, network, notification delivery, user screen, KARI source or hosted media service accessed.",
+  "sampleContent": {
+    "project": "Studio refresh",
+    "link": "https://example.com/studio",
+    "note": "Warm clay. Deep teal. Soft cream.",
+    "image": "Original code-drawn Riverside studio palette; Clay, Teal, Cream labels. Capture title Palette inspiration and filename Studio reference.png do not contain riverside.",
+    "otherFixture": "Weekend ideas, original code-drawn trails/water and fictional notes/tasks adapted from existing screenshot renderer."
+  },
+  "verifiedFeature": "Real local OCR recognized Riverside studio in the original raster image. Actual native Search for riverside finds the image with its extracted text; search covers DaBin-saved content only.",
+  "design": {
+    "background": "#F7F3EB",
+    "ink": "#24302E",
+    "accent": "#D87552",
+    "muted": "#64706A",
+    "font": "Locally rendered macOS system font (SFNS); font files not redistributed.",
+    "PillowVersion": "12.3.0",
+    "uiTreatment": "Exact source crop [260,328,2620,1732] from 2880\u00d71800 native render. Native controls are neither fabricated nor repainted. Only uniform exterior source-canvas backdrop is removed for UI cutout alpha. Presentation graphics scale whole native cutouts proportionally.",
+    "robotTreatment": "Alpha-bound crop of 1024\u00d71248 production vector render, resulting in 902\u00d7728 transparent art. Proportional resize only; silhouette, face, colors and parts unchanged.",
+    "editorialTokens": "Original typography/sample cards for conceptual input illustration; explicitly separate from actual app controls."
+  },
+  "qa": {
+    "status": "VISUAL PASS",
+    "review": "All eight public graphics inspected at original resolution; actual native Studio project and Search inspected at original resolution; original native robot compared against safe approved current native idle renderer. Square footnote clearance corrected and rechecked. Final contact sheet reviewed.",
+    "checks": [
+      "Dimensions and image decode verified",
+      "No clipping, overlapping footer, unreadable campaign text or fabricated app features",
+      "Identity continuity preserved",
+      "Fictional samples and real local OCR evidence matched across tokens, project and search",
+      "Compatibility shown on social graphics: Apple Silicon, macOS 14 or later",
+      "No App Store listing URL or licensed badge invented"
+    ],
+    "continuity": "CONTINUITY PASS: unchanged current native DaBin identity, no named screenplay character featured."
+  },
+  "outputs": [
+    {
+      "file": "03_Graphics/DABIN__APP_ICON__1024.png",
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "mode": "RGBA",
+      "sha256": "44ad308890153268409b08ee22050d66557327c92cbd3f9bb8d0f071c03e72b5",
+      "qa": "VISUAL PASS",
+      "continuity": "CONTINUITY PASS"
+    },
+    {
+      "file": "03_Graphics/DABIN__OUTCOME__01_INBOX_1920x1080.png",
+      "dimensions": [
+        1920,
+        1080
+      ],
+      "mode": "RGB",
+      "sha256": "4addd7a04ac654d6f6c1949d32e28866fdcf2ae345f11613b50eabf8d740fcb1",
+      "qa": "VISUAL PASS",
+      "continuity": "CONTINUITY PASS"
+    },
+    {
+      "file": "03_Graphics/DABIN__OUTCOME__02_SEARCH_1920x1080.png",
+      "dimensions": [
+        1920,
+        1080
+      ],
+      "mode": "RGB",
+      "sha256": "68cb71be6c5b0948b25b0d6eead143b2bf2b0188aa1360ec5b3c53713b195df0",
+      "qa": "VISUAL PASS",
+      "continuity": "CONTINUITY PASS"
+    },
+    {
+      "file": "03_Graphics/DABIN__OUTCOME__03_STUDIO_PROJECT_1920x1080.png",
+      "dimensions": [
+        1920,
+        1080
+      ],
+      "mode": "RGB",
+      "sha256": "e19e74a9c6edbb15a831049faebd057f9b2dd45d03cf23a99d3db9b00767d2d7",
+      "qa": "VISUAL PASS",
+      "continuity": "CONTINUITY PASS"
+    },
+    {
+      "file": "03_Graphics/DABIN__ROBOT__TRANSPARENT.png",
+      "dimensions": [
+        902,
+        728
+      ],
+      "mode": "RGBA",
+      "sha256": "be0f6b988a1efe29564abf323424b33e0cb09abb08ae1d1f8e309e7875e4f826",
+      "qa": "VISUAL PASS",
+      "continuity": "CONTINUITY PASS"
+    },
+    {
+      "file": "03_Graphics/DABIN__SOCIAL__LANDSCAPE_1200x630.png",
+      "dimensions": [
+        1200,
+        630
+      ],
+      "mode": "RGB",
+      "sha256": "dc3365495ed40ee7d7e01e63ad14e803727068805ee615191417c6dba3d1c164",
+      "qa": "VISUAL PASS",
+      "continuity": "CONTINUITY PASS"
+    },
+    {
+      "file": "03_Graphics/DABIN__SOCIAL__SQUARE_1080x1080.png",
+      "dimensions": [
+        1080,
+        1080
+      ],
+      "mode": "RGB",
+      "sha256": "20c373b5594154b339ea03ddb49dc6cb057abe2256abb2a36424fecd1d80ed34",
+      "qa": "VISUAL PASS",
+      "continuity": "CONTINUITY PASS"
+    },
+    {
+      "file": "03_Graphics/DABIN__SOCIAL__VERTICAL_1080x1920.png",
+      "dimensions": [
+        1080,
+        1920
+      ],
+      "mode": "RGB",
+      "sha256": "c748906d97876286ca9dfdb75c6662bdc8776c050f8fe65e44ba01c8c6d239f2",
+      "qa": "VISUAL PASS",
+      "continuity": "CONTINUITY PASS"
+    },
+    {
+      "file": "06_Source/assets/DABIN__APP_ICON__1024.png",
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "mode": "RGBA",
+      "sha256": "44ad308890153268409b08ee22050d66557327c92cbd3f9bb8d0f071c03e72b5",
+      "qa": "VISUAL PASS",
+      "continuity": "CONTINUITY PASS"
+    },
+    {
+      "file": "06_Source/assets/DABIN__NATIVE_RENDER__FOCUS.png",
+      "dimensions": [
+        2880,
+        1800
+      ],
+      "mode": "RGBA",
+      "sha256": "fb53d10558da7f9b692a7618abe5e70f2ae1a8138761c966ca3cf47adc791319",
+      "qa": "VISUAL PASS",
+      "continuity": "CONTINUITY PASS"
+    },
+    {
+      "file": "06_Source/assets/DABIN__NATIVE_RENDER__INBOX.png",
+      "dimensions": [
+        2880,
+        1800
+      ],
+      "mode": "RGBA",
+      "sha256": "9967f76785e57e9da72b665d62d4166d39309cb510aebfe3edd95a1106c90bfd",
+      "qa": "VISUAL PASS",
+      "continuity": "CONTINUITY PASS"
+    },
+    {
+      "file": "06_Source/assets/DABIN__NATIVE_RENDER__PROJECTS.png",
+      "dimensions": [
+        2880,
+        1800
+      ],
+      "mode": "RGBA",
+      "sha256": "1e60462910b19fe82827654c27f28535f5013917622211159a8bf3504854fa87",
+      "qa": "VISUAL PASS",
+      "continuity": "CONTINUITY PASS"
+    },
+    {
+      "file": "06_Source/assets/DABIN__NATIVE_RENDER__SEARCH.png",
+      "dimensions": [
+        2880,
+        1800
+      ],
+      "mode": "RGBA",
+      "sha256": "aa6594d50975a74bf6552cbc4c43d3f0f8250f60e094a46a84289e5d4a727824",
+      "qa": "VISUAL PASS",
+      "continuity": "CONTINUITY PASS"
+    },
+    {
+      "file": "06_Source/assets/DABIN__NATIVE_RENDER__STUDIO_PROJECT.png",
+      "dimensions": [
+        2880,
+        1800
+      ],
+      "mode": "RGBA",
+      "sha256": "2c88ca98b7cdbc91576ac2deb43642020ced530b2bbbe9623e539882461ae5e2",
+      "qa": "VISUAL PASS",
+      "continuity": "CONTINUITY PASS"
+    },
+    {
+      "file": "06_Source/assets/DABIN__QA__GRAPHICS_CONTACT_SHEET.png",
+      "dimensions": [
+        1320,
+        1110
+      ],
+      "mode": "RGB",
+      "sha256": "9ecea3c79d4d8260f6df56b0dd4db4a76345064615ef7be731df5343732cb2fa",
+      "qa": "VISUAL PASS",
+      "continuity": "CONTINUITY PASS"
+    },
+    {
+      "file": "06_Source/assets/DABIN__ROBOT_CANVAS__DELIGHTED.png",
+      "dimensions": [
+        1024,
+        1248
+      ],
+      "mode": "RGBA",
+      "sha256": "72420b29b0c0f53d746c1c6fe487ec5044e26f3e5ebb5f1b5ee13c944bea7a28",
+      "qa": "VISUAL PASS",
+      "continuity": "CONTINUITY PASS"
+    },
+    {
+      "file": "06_Source/assets/DABIN__ROBOT_CANVAS__HUNGRY.png",
+      "dimensions": [
+        1024,
+        1248
+      ],
+      "mode": "RGBA",
+      "sha256": "dda558003dda8e86716871fad151c0e8511cb361d6ceafc3019797468942ceed",
+      "qa": "VISUAL PASS",
+      "continuity": "CONTINUITY PASS"
+    },
+    {
+      "file": "06_Source/assets/DABIN__ROBOT_CANVAS__IDLE.png",
+      "dimensions": [
+        1024,
+        1248
+      ],
+      "mode": "RGBA",
+      "sha256": "2613336765a371d2dec19b9cf507de405eb2cf6e87e2ccb2e9800d2aec38bde7",
+      "qa": "VISUAL PASS",
+      "continuity": "CONTINUITY PASS"
+    },
+    {
+      "file": "06_Source/assets/DABIN__ROBOT__DELIGHTED.png",
+      "dimensions": [
+        902,
+        728
+      ],
+      "mode": "RGBA",
+      "sha256": "45708253c25f8b8a26f5daa386d3d6f41edfdc5548792b995f1f82dbc3cb27c2",
+      "qa": "VISUAL PASS",
+      "continuity": "CONTINUITY PASS"
+    },
+    {
+      "file": "06_Source/assets/DABIN__ROBOT__HUNGRY.png",
+      "dimensions": [
+        902,
+        728
+      ],
+      "mode": "RGBA",
+      "sha256": "80c6cfaa1ec1719e40f188b24c754cdf273cd6253718908f7e9b2bac4cedd257",
+      "qa": "VISUAL PASS",
+      "continuity": "CONTINUITY PASS"
+    },
+    {
+      "file": "06_Source/assets/DABIN__ROBOT__IDLE.png",
+      "dimensions": [
+        902,
+        728
+      ],
+      "mode": "RGBA",
+      "sha256": "be0f6b988a1efe29564abf323424b33e0cb09abb08ae1d1f8e309e7875e4f826",
+      "qa": "VISUAL PASS",
+      "continuity": "CONTINUITY PASS"
+    },
+    {
+      "file": "06_Source/assets/DABIN__SAMPLE__STUDIO_REFERENCE.png",
+      "dimensions": [
+        1000,
+        650
+      ],
+      "mode": "RGBA",
+      "sha256": "2329df4aa7c73730d415c2f06eb51025a73bbe561214923e97cc4b2d27bfcaec",
+      "qa": "VISUAL PASS",
+      "continuity": "CONTINUITY PASS"
+    },
+    {
+      "file": "06_Source/assets/DABIN__TOKEN__LINK.png",
+      "dimensions": [
+        680,
+        440
+      ],
+      "mode": "RGBA",
+      "sha256": "34b3649058222f12a2638a1b675728f5c9f6cca6f22e77e696b25f5f042c38a1",
+      "qa": "VISUAL PASS",
+      "continuity": "CONTINUITY PASS"
+    },
+    {
+      "file": "06_Source/assets/DABIN__TOKEN__NOTE.png",
+      "dimensions": [
+        680,
+        440
+      ],
+      "mode": "RGBA",
+      "sha256": "ca0f75edb107cb789951e1e639601ea80734c2a4cfb69b337debdeccb08553b6",
+      "qa": "VISUAL PASS",
+      "continuity": "CONTINUITY PASS"
+    },
+    {
+      "file": "06_Source/assets/DABIN__TOKEN__SCREENSHOT.png",
+      "dimensions": [
+        680,
+        440
+      ],
+      "mode": "RGBA",
+      "sha256": "a00d771ed86a54d742cdfe3f47aecb20adc8cb3ae81d8ad27e1a59c4f63a671c",
+      "qa": "VISUAL PASS",
+      "continuity": "CONTINUITY PASS"
+    },
+    {
+      "file": "06_Source/assets/DABIN__UI__FOCUS.png",
+      "dimensions": [
+        2360,
+        1404
+      ],
+      "mode": "RGBA",
+      "sha256": "f450146b9d76e0406da401acbd59591440bf2154946291b069d359dabe4792f8",
+      "qa": "VISUAL PASS",
+      "continuity": "CONTINUITY PASS"
+    },
+    {
+      "file": "06_Source/assets/DABIN__UI__INBOX.png",
+      "dimensions": [
+        2360,
+        1404
+      ],
+      "mode": "RGBA",
+      "sha256": "1aeeb32b7eeeefc186ba18e92b8be810ae8f03f74aff88b2a9913b3904c9b100",
+      "qa": "VISUAL PASS",
+      "continuity": "CONTINUITY PASS"
+    },
+    {
+      "file": "06_Source/assets/DABIN__UI__PROJECTS.png",
+      "dimensions": [
+        2360,
+        1404
+      ],
+      "mode": "RGBA",
+      "sha256": "2f1e15bbd92913826c2000f5ed60c5999a2e9abc83928b93971600f51881370d",
+      "qa": "VISUAL PASS",
+      "continuity": "CONTINUITY PASS"
+    },
+    {
+      "file": "06_Source/assets/DABIN__UI__SEARCH.png",
+      "dimensions": [
+        2360,
+        1404
+      ],
+      "mode": "RGBA",
+      "sha256": "3bdd636a6a033776f34f066a5747605964936d0e2f5a9d574c91cc2a64e3364c",
+      "qa": "VISUAL PASS",
+      "continuity": "CONTINUITY PASS"
+    },
+    {
+      "file": "06_Source/assets/DABIN__UI__STUDIO_PROJECT.png",
+      "dimensions": [
+        2360,
+        1404
+      ],
+      "mode": "RGBA",
+      "sha256": "692a9a75d07489c8d468095ed9980571be4b2dc329bafb4db40fcc98af91f41c",
+      "qa": "VISUAL PASS",
+      "continuity": "CONTINUITY PASS"
+    },
+    {
+      "file": "06_Source/assets/DABIN__VIDEO__BACKGROUND_1920x1080.png",
+      "dimensions": [
+        1920,
+        1080
+      ],
+      "mode": "RGB",
+      "sha256": "06e9ce21ce7aa431010a9250d80d46254a68473fd929b91a9f5bb6f1b53810f6",
+      "qa": "VISUAL PASS",
+      "continuity": "CONTINUITY PASS"
+    }
+  ],
+  "sourceFiles": [
+    {
+      "file": "RenderMarketingAssets.swift",
+      "sha256": "9fbd82b6d79c0168bfa09f09be41089cc2ba6cc6afa16eb30f078b5ff97dc1b5"
+    },
+    {
+      "file": "ReproduceNativeAssets.py",
+      "sha256": "6443fad6d5f6956ee7076df1f1f21fce400fbf0d8bb803396e1d37a4b9a8b176"
+    },
+    {
+      "file": "GenerateGraphics.py",
+      "sha256": "822001387fae7f8829c6ff04ab19cc4a209ba02ed94a46be73e108ec6f5f1c0d"
+    }
+  ]
+}

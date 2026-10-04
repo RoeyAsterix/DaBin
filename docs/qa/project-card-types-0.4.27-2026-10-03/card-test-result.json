@@ -1,0 +1,15 @@
+{
+  "suite": "ProjectWorkspaceCardTests",
+  "status": "passed",
+  "checks": 263,
+  "execution": "Direct Release test executable linked to retained source-bound DaBinTestCore module",
+  "currentSharedSourceTreeValidated": false,
+  "reason": "Concurrent robot changes began after the passing regression snapshot and interrupted the app build.",
+  "regressionSnapshot": "native/build/qa/runs/20261003T162619727270Z/report.json",
+  "moduleCache": "native/build/qa-cache/1bdd49d432c58268636f439418b0d837d4662900deb652d31c2c1446f1252663",
+  "testSourceSHA256": "79617a7f2c3b8e93209559e87d93aad4114e3ec616e967312e2de63618230ba9",
+  "testExecutableSHA256": "45234cde379135ee6656555b4ba2bb6329e72781f90a0d6af16cd2dc4637a9cf",
+  "productionLibrarySHA256": "59d8c00bc5cb7ec1a5a4be3968febec06beab1190f97b66417bfa8c4eb6aec60",
+  "summary": "Task/Note/Capture semantics, real live task updates, light/dark/grid/320-point compact fixtures, original previews and independent selection; no personal archive, clipboard, network, or external opening.",
+  "installed": false
+}

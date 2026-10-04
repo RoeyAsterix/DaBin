@@ -1,0 +1,20 @@
+[
+  "Sources/DaBin/ProjectWorkspaceCard.swift",
+  "Sources/DaBin/CollectionPreviewMosaic.swift",
+  "Sources/DaBin/SearchResultCard.swift",
+  "Sources/DaBin/TaskPlanningEditor.swift",
+  "Sources/DaBin/ProjectPickerView.swift",
+  "Sources/DaBin/TaskEditorScreen.swift",
+  "Sources/DaBin/WeeklyScreen.swift",
+  "Sources/DaBin/ExplorerItems.swift",
+  "Sources/DaBin/ScratchpadView.swift",
+  "Sources/DaBin/GroupedCaptureCard.swift",
+  "Sources/DaBin/CaptureCards.swift",
+  "Sources/DaBin/CapturePreviews.swift",
+  "Sources/DaBin/WorkspaceItemCard.swift",
+  "Sources/DaBin/DetailScreen.swift",
+  "Sources/DaBin/HourlyCaptureCard.swift",
+  "Sources/DaBin/WorkspaceZoomLayout.swift",
+  "Sources/DaBin/NewNoteScreen.swift",
+  "Tests/WorkspaceZoomLayoutTests.swift"
+]

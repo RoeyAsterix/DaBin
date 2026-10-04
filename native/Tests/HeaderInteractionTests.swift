@@ -37,6 +37,9 @@ private struct HeaderAccessibilityNode {
     func accessibilityIdentifier() -> String? {
         (value("accessibilityIdentifier") as? String) ?? (attribute("AXIdentifier") as? String)
     }
+    func accessibilityRole() -> String? {
+        (value("accessibilityRole") as? String) ?? (attribute("AXRole") as? String)
+    }
     func accessibilityLabel() -> String? {
         for candidate in [value("accessibilityLabel") as? String,
                           attribute("AXTitle") as? String,
@@ -112,6 +115,26 @@ private enum HeaderInteractionTests {
     @MainActor private static func settle(_ seconds: TimeInterval = 0.18) {
         RunLoop.main.run(until: Date().addingTimeInterval(seconds))
     }
+    @MainActor private static func waitForSearchEditor(in hosting: NSView, window: NSWindow) async -> Bool {
+        func hasSearchEditor(_ view: NSView) -> Bool {
+            if let field = view as? NSTextField, field.placeholderString == BoardView.searchPlaceholder,
+               let editor = field.currentEditor() as? NSTextView {
+                return editor.isFieldEditor && window.firstResponder === editor
+            }
+            return view.subviews.contains(where: hasSearchEditor)
+        }
+        // The production field yields once after mounting before restoring its
+        // FocusState. A nested synchronous RunLoop cannot reliably release this
+        // fixture's current main-actor job for that task to continue.
+        let deadline = Date().addingTimeInterval(1)
+        repeat {
+            await Task.yield()
+            try? await Task.sleep(for: .milliseconds(10))
+            settle(0.01)
+            if hasSearchEditor(hosting) { return true }
+        } while Date() < deadline
+        return false
+    }
     @MainActor private static func elements(in view: NSView) -> [HeaderAccessibilityNode] {
         view.layoutSubtreeIfNeeded()
         var result: [HeaderAccessibilityNode] = []
@@ -145,6 +168,30 @@ private enum HeaderInteractionTests {
         try expect(control.accessibilityPerformPress(), "\(identifier) exposes a native press action")
         settle()
     }
+    @MainActor private static func choose(_ title: String, in hosting: NSView, identifier: String) throws {
+        let control = try element(hosting, identifier: identifier).object
+        let popups = elements(in: hosting).compactMap { node in
+            (node.object as? NSPopUpButton) ?? ((node.object as? NSCell)?.controlView as? NSPopUpButton)
+        }
+        let popup = (control as? NSPopUpButton) ?? ((control as? NSCell)?.controlView as? NSPopUpButton)
+            ?? popups.first { $0.item(withTitle: title) != nil }
+        guard let popup, let item = popup.item(withTitle: title) else {
+            let inventory = elements(in: hosting).map { "\(type(of: $0.object)): \($0.accessibilityLabel() ?? "")" }
+            throw NSError(domain: "HeaderInteractionTests", code: 5,
+                          userInfo: [NSLocalizedDescriptionKey: "Date mode must expose its real native popup and \(title) action. Node: \(type(of: control)); popups: \(popups.map { $0.itemTitles }); nodes: \(inventory)"])
+        }
+        if let action = popup.action {
+            popup.select(item)
+            try expect(NSApplication.shared.sendAction(action, to: popup.target, from: popup),
+                       "Date mode dispatches its real native selection action")
+        } else {
+            // SwiftUI's native popup owns the binding action on each NSMenuItem,
+            // not on NSPopUpButton. Dispatch that actual item, not an AppState setter.
+            try expect(item.action != nil && popup.menu != nil, "Date mode exposes a native menu-item binding action")
+            popup.menu?.performActionForItem(at: popup.index(of: item))
+        }
+        settle()
+    }
     @MainActor private static func key(_ application: NSApplication, window: NSWindow,
                                       code: UInt16, text: String, modifiers: NSEvent.ModifierFlags = []) {
         window.makeKey()
@@ -156,6 +203,88 @@ private enum HeaderInteractionTests {
             application.sendEvent(event)
         }
         settle()
+    }
+
+    @MainActor private static func click(_ screenPoint: NSPoint, in window: NSWindow) throws {
+        let point = window.convertPoint(fromScreen: screenPoint)
+        try expect(window.contentView?.bounds.contains(point) == true,
+                   "The synthetic record-button click stays inside its own fixture window")
+        let timestamp = ProcessInfo.processInfo.systemUptime
+        guard let down = NSEvent.mouseEvent(with: .leftMouseDown, location: point, modifierFlags: [],
+            timestamp: timestamp, windowNumber: window.windowNumber, context: nil,
+            eventNumber: 1, clickCount: 1, pressure: 1),
+              let up = NSEvent.mouseEvent(with: .leftMouseUp, location: point, modifierFlags: [],
+            timestamp: timestamp + 0.02, windowNumber: window.windowNumber, context: nil,
+            eventNumber: 2, clickCount: 1, pressure: 0) else {
+            throw NSError(domain: "HeaderInteractionTests", code: 7,
+                          userInfo: [NSLocalizedDescriptionKey: "Could not create the own-window record-button click"])
+        }
+        // A native button may consume mouse-up while tracking mouse-down.
+        // Keep both events in this process and target only this retained window.
+        NSApplication.shared.postEvent(up, atStart: true)
+        window.sendEvent(down)
+        if let remaining = NSApplication.shared.nextEvent(matching: .leftMouseUp, until: Date(),
+                                                          inMode: .default, dequeue: true) {
+            try expect(remaining.windowNumber == window.windowNumber,
+                       "The remaining record-button mouse-up belongs to this fixture")
+            window.sendEvent(remaining)
+        }
+        settle()
+    }
+
+    @MainActor private static func recordButtonInteractions(_ hosting: NSView, window: NSWindow,
+                                                             state: AppState) throws {
+        let settings = state.autoCapture.settings
+        let captureIDs = Set(state.store.captures.map(\.id))
+        try expect(!settings.isEnabled && !state.autoCapture.isRunning,
+                   "Record-button interaction starts with capture disabled and its runtime stopped")
+        state.openDaily(); settle()
+
+        func indicators(in view: NSView) -> [AutoRecordIndicatorView] {
+            if let indicator = view as? AutoRecordIndicatorView { return [indicator] }
+            return view.subviews.flatMap { indicators(in: $0) }
+        }
+        for interaction in ["dot center", "target edge", "accessibility press"] {
+            let buttons = elements(in: hosting).filter {
+                $0.accessibilityIdentifier() == "timeline-auto-capture"
+                    && $0.accessibilityRole() == NSAccessibility.Role.button.rawValue
+            }
+            try expect(buttons.count == 1,
+                       "\(interaction): the record control exposes exactly one header accessibility button")
+            let button = buttons[0]
+            let frame = button.interactionFrame()
+            try expect(abs(frame.width - 40) <= 1 && abs(frame.height - 34) <= 1,
+                       "\(interaction): the record button retains its 40×34-point target")
+            try expect(button.accessibilityLabel() == "Set up Auto Capture" && button.supportsAccessiblePress(),
+                       "\(interaction): the record button retains its setup label and accessibility action")
+            if interaction == "accessibility press" {
+                try press(hosting, identifier: "timeline-auto-capture")
+            } else {
+                let nativeIndicators = indicators(in: hosting)
+                try expect(nativeIndicators.count == 1 && nativeIndicators[0].window === window,
+                           "\(interaction): the production native dot belongs to this fixture window")
+                let indicator = nativeIndicators[0]
+                let drawing = window.convertToScreen(indicator.convert(indicator.bounds, to: nil))
+                let point = interaction == "dot center"
+                    ? NSPoint(x: drawing.midX, y: drawing.midY)
+                    : NSPoint(x: frame.minX + 2, y: frame.midY)
+                try expect(frame.contains(point) && (interaction != "target edge" || !drawing.contains(point)),
+                           "\(interaction): the click probes the intended dot or padded button region")
+                try click(point, in: window)
+            }
+            try expect(state.route == .settings,
+                       "\(interaction): activating the disabled record control opens Auto Capture setup")
+            _ = try element(hosting, identifier: "settings-capture-clipboard")
+            _ = try element(hosting, identifier: "settings-capture-screenshots")
+            try expect(!settings.isEnabled && !settings.isClipboardEnabled && !settings.isScreenshotsEnabled
+                        && !state.autoCapture.isRunning && Set(state.store.captures.map(\.id)) == captureIDs,
+                       "\(interaction): opening setup starts no capture channel and preserves saved data")
+            try press(hosting, identifier: "board-back")
+            try expect(state.route == .daily, "\(interaction): Back restores the daily board")
+        }
+        // SwiftUI button keyboard focus follows macOS Keyboard navigation.
+        // Do not change that user preference or substitute AXPress for Space.
+        print("NOT TESTED: Record-button Space activation depends on macOS Keyboard navigation; this fixture leaves that preference unchanged.")
     }
 
     @MainActor private static func snapshot(_ view: NSView, at url: URL) throws {
@@ -247,7 +376,7 @@ private enum HeaderInteractionTests {
         // before the feed; checking only intrinsic view sizes missed that bug.
         // Keep search one action away without reserving an unused field row.
         let toolbarIDs = ["timeline-auto-capture", "timeline-action-add", "board-search", "board-settings", "board-more", "window-expand", "window-close"]
-        let menuIDs: Set<String> = ["timeline-action-add", "board-more"]
+        let menuIDs: Set<String> = ["board-more"]
         let primaryIDs = ["primary-inbox", "primary-today", "primary-workspace"]
         for layoutSize in [NSSize(width: 380, height: 430), size, NSSize(width: 760, height: 760)] {
             hosting.rootView = BoardView(state: state, theme: theme)
@@ -370,6 +499,7 @@ private enum HeaderInteractionTests {
         try press(hosting, identifier: "capture-filter-text")
         try expect(state.filter == .text, "Text icon filters copied text")
         try press(hosting, identifier: "capture-filter-all")
+        try recordButtonInteractions(hosting, window: window, state: state)
         try press(hosting, identifier: "window-expand")
         try expect(expansions == 1 && dismissals == 0, "Expand remains independent of Close")
         try press(hosting, identifier: "board-settings")
@@ -379,32 +509,144 @@ private enum HeaderInteractionTests {
                    "Settings uses a compact toolbar and Back row")
         try expect(!elements(in: hosting).contains { $0.accessibilityIdentifier() == "primary-inbox" },
                    "Settings does not reserve an unrelated primary navigation row")
+
+        let tutorialCaptureCount = state.store.captures.count
+        let tutorialProject = state.libraryProject
+        let tutorialClipboardEnabled = settings.isClipboardEnabled
+        let tutorialScreenshotsEnabled = settings.isScreenshotsEnabled
+        let tutorialSearchAnchor = state.searchDateAnchor
+        try press(hosting, identifier: "settings-run-tutorial")
+        _ = try element(hosting, identifier: "dabin-tutorial-overlay")
+        try expect(state.route == .settings && state.isTutorialPresented,
+                   "Run tutorial starts over the real Settings screen")
+        try press(hosting, identifier: "tutorial-next")
+        try expect(state.route == .inbox && state.isDailyDropTargeted,
+                   "Capture chapter opens Inbox and visibly stages the real drop target")
+        try press(hosting, identifier: "tutorial-back")
+        try expect(state.route == .settings,
+                   "Tutorial Back restores the preceding real screen")
+
+        let tutorialRouteChecks: [BoardRoute] = [
+            .inbox, .library, .inbox, .daily, .weekly, .inbox, .reminders,
+            .library, .search, .settings, .settings, .settings
+        ]
+        for route in tutorialRouteChecks {
+            try press(hosting, identifier: "tutorial-next")
+            try expect(state.route == route, "Tutorial presents its \(route) chapter on the real route")
+            _ = try element(hosting, identifier: "dabin-tutorial-overlay")
+        }
+        try press(hosting, identifier: "tutorial-next")
+        try expect(state.route == .settings
+                   && !state.isTutorialPresented
+                   && !elements(in: hosting).contains { $0.accessibilityIdentifier() == "dabin-tutorial-overlay" },
+                   "Finish closes the walkthrough and returns to its Settings origin")
+        try expect(state.store.captures.count == tutorialCaptureCount
+                   && state.libraryProject == tutorialProject
+                   && settings.isClipboardEnabled == tutorialClipboardEnabled
+                   && settings.isScreenshotsEnabled == tutorialScreenshotsEnabled
+                   && state.searchDateAnchor == tutorialSearchAnchor
+                   && !state.isDailyDropTargeted,
+                   "Walking every tutorial chapter leaves captures, project selection, capture settings and search state untouched")
         try press(hosting, identifier: "board-back")
         try expect(state.route == .daily, "Settings Back preserves the Activity route")
         state.openDaily(); settle()
         let add = try element(hosting, identifier: "timeline-action-add")
-        try expect(add.accessibilityLabel() == "Add capture", "Add describes capture choices instead of pretending to create only tasks")
+        try expect(add.accessibilityLabel() == "New task", "Plus describes its direct task action")
+        try press(hosting, identifier: "timeline-action-add")
+        try expect(state.route == .newTask, "Plus opens the New task screen directly")
+        try press(hosting, identifier: "board-back")
+        try expect(state.route == .daily, "New task Back returns to the previous Activity route")
         let search = try element(hosting, identifier: "board-search")
-        try expect(search.accessibilityLabel() == "Search all captures", "Compact search action has an accessible label")
+        try expect(search.accessibilityLabel() == "Search captures", "Compact search action has an accessible label")
         state.filter = .text
         application.activate(ignoringOtherApps: true)
         window.makeKeyAndOrderFront(nil)
         settle()
         try press(hosting, identifier: "board-search")
-        try expect(state.route == .search && state.searchScope == .all && state.filter == .all,
-                   "Search icon opens archive search and clears the Activity filter")
+        try expect(state.route == .search && state.searchScope == .all && state.filter == .all
+                   && state.searchProject == nil && state.searchSource == nil && !state.showSearchContext,
+                   "Search icon starts global instead of inheriting the selected day and type")
         let searchField = try element(hosting, identifier: "global-search")
-        try expect(searchField.accessibilityLabel() == "Search captures, All dates", "Active search field states its actual archive scope")
+        try expect(searchField.accessibilityLabel()?.contains("Search") == true
+                   && searchField.accessibilityLabel()?.contains(state.searchScopeTitle) == true,
+                   "Active search field states its actual global date scope")
         try expect(window.canBecomeKey, "Search is tested in a key-eligible production panel")
         if window.isKeyWindow {
-            try expect((window.firstResponder as? NSTextView)?.isFieldEditor == true,
-                       "Search icon focuses text entry immediately")
+            let searchHasFocus = await waitForSearchEditor(in: hosting, window: window)
+            let responderType = window.firstResponder.map { String(describing: type(of: $0)) } ?? "nil"
+            try expect(searchHasFocus,
+                       "Search icon focuses its mounted native text editor immediately; firstResponder=\(responderType), keyWindow=\(window.isKeyWindow)")
         } else {
             print("NOT VERIFIED: macOS did not activate the standalone test process; immediate search typing requires live installed-app verification.")
         }
-        let searchHeaderFrames = try (toolbarIDs + ["board-back", "global-search"]).map { try element(hosting, identifier: $0).accessibilityFrame() }
+        let searchToolbarIDs = toolbarIDs.filter { $0 != "board-search" }
+        try expect(!elements(in: hosting).contains { $0.accessibilityIdentifier() == "board-search" },
+                   "Active search does not repeat a launch-search button beside its search field")
+        let searchHeaderFrames = try (searchToolbarIDs + ["board-back", "global-search"]).map { try element(hosting, identifier: $0).accessibilityFrame() }
         try expect(searchHeaderFrames.reduce(NSRect.null) { $0.union($1) }.height <= 74,
                    "Active search uses two compact header rows")
+        for id in ["search-filters", "search-scope-summary"] {
+            let frame = try element(hosting, identifier: id).accessibilityFrame()
+            try expect(frame.width > 0 && frame.height > 0 && (id != "search-filters" || frame.height >= 24)
+                       && frame.minX >= window.frame.minX - 1 && frame.maxX <= window.frame.maxX + 1,
+                       "\(id) remains visible inside compact Search")
+        }
+        state.query = "Today"; settle()
+        try snapshot(hosting, at: evidence.appendingPathComponent("search-global-380.png"))
+        hosting.rootView = BoardView(state: state, theme: theme).frame(width: 380, height: 430)
+        window.setContentSize(NSSize(width: 380, height: 430))
+        hosting.frame = NSRect(x: 0, y: 0, width: 380, height: 430); settle()
+        for id in ["search-filters", "search-scope-summary"] {
+            let frame = try element(hosting, identifier: id).accessibilityFrame()
+            try expect(frame.width > 0 && frame.height > 0 && (id != "search-filters" || frame.height >= 24)
+                       && window.frame.insetBy(dx: -1, dy: -1).contains(frame),
+                       "\(id) fits the minimum-height 380×430 Search window")
+        }
+        try snapshot(hosting, at: evidence.appendingPathComponent("search-global-380-430.png"))
+        hosting.rootView = BoardView(state: state, theme: theme).frame(width: size.width, height: size.height)
+        window.setContentSize(size); hosting.frame = NSRect(origin: .zero, size: size); settle()
+        try press(hosting, identifier: "search-filters")
+        let datesWindow = application.windows.first { candidate in
+            guard candidate.isVisible, let content = candidate.contentView else { return false }
+            return elements(in: content).contains { $0.accessibilityIdentifier() == "search-date-mode" }
+        }
+        try expect(datesWindow != nil, "Filters opens one reachable popover containing the native date controls")
+        if let datesWindow, let content = datesWindow.contentView {
+            for id in ["search-filters-popover", "search-project-picker", "search-type-picker", "search-source-picker", "search-date-mode"] {
+                let frame = try element(content, identifier: id).accessibilityFrame()
+                try expect(frame.width > 0 && frame.minX >= datesWindow.frame.minX - 1 && frame.maxX <= datesWindow.frame.maxX + 1,
+                           "\(id) is accessible inside the consolidated Filters popover")
+            }
+            try choose("Date range", in: content, identifier: "search-date-mode")
+            try expect(state.searchScope != .all, "Choosing Date range updates the live search scope")
+            for id in ["search-range-start", "search-range-end"] {
+                let frame = try element(content, identifier: id).accessibilityFrame()
+                try expect(frame.width > 0 && frame.minX >= datesWindow.frame.minX - 1 && frame.maxX <= datesWindow.frame.maxX + 1,
+                           "\(id) is accessible inside the date popover")
+            }
+            let dateFields = try ["search-range-start", "search-range-end"].compactMap { id in
+                let control = try element(content, identifier: id).object
+                return (control as? NSDatePicker) ?? ((control as? NSCell)?.controlView as? NSDatePicker)
+            }
+            try expect(dateFields.count == 2, "Custom range exposes two real date-entry controls")
+            for picker in dateFields {
+                guard let action = picker.action else { throw NSError(domain: "HeaderInteractionTests", code: 6) }
+                picker.dateValue = Calendar.current.startOfDay(for: yesterday)
+                try expect(application.sendAction(action, to: picker.target, from: picker),
+                           "Date entry sends its real production binding action")
+                settle()
+            }
+            let enteredKey = CaptureCalendar.dayString(yesterday)
+            try expect(state.searchScope == .range(startDay: enteredKey, endDay: enteredKey),
+                       "Native date entry changes both bounds to a different inclusive same-day range")
+            try expect(state.query == "Today" && state.filter == .all,
+                       "Changing dates preserves query and type refinements")
+            try snapshot(content, at: evidence.appendingPathComponent("search-date-range-popover.png"))
+            key(application, window: datesWindow, code: 53, text: "\u{1b}")
+            try expect(!datesWindow.isVisible && state.route == .search,
+                       "Escape dismisses the Filters popover without closing Search")
+        }
+        state.query = ""; settle()
         try press(hosting, identifier: "board-back")
         try expect(state.route == .daily && state.filter == .text, "Search Back restores Activity and its selected filter")
         state.filter = .all
@@ -429,39 +671,57 @@ private enum HeaderInteractionTests {
         state.openWeekly(); settle()
         let weeklyLabel = try element(hosting, identifier: "timeline-date").accessibilityLabel() ?? ""
         try expect(weeklyLabel.hasPrefix("Choose date"), "Week uses the same date-picker control as Day")
+        let windowsBeforeWeekPicker = Set(application.windows.filter(\.isVisible).map(\.windowNumber))
+        try press(hosting, identifier: "timeline-date")
+        guard let weekPicker = application.windows.first(where: { $0.isVisible && !windowsBeforeWeekPicker.contains($0.windowNumber) }),
+              let pickerContent = weekPicker.contentView else {
+            throw NSError(domain: "HeaderInteractionTests", code: 20,
+                          userInfo: [NSLocalizedDescriptionKey: "Weekly date control must open its native selection popover"])
+        }
+        try press(pickerContent, identifier: "calendar-clear")
+        try press(pickerContent, identifier: "calendar-day-\(CaptureCalendar.dayString(Date()))")
+        try expect(state.weeklyDays.count == 7, "Changing picker draft leaves the live calendar unchanged")
+        try snapshot(pickerContent, at: evidence.appendingPathComponent("weekly-date-picker.png"))
+        try press(pickerContent, identifier: "calendar-apply")
+        try expect(state.route == .weekly && state.weeklyDays.count == 1
+                   && Calendar.current.isDateInToday(state.weeklyDays[0]) && !weekPicker.isVisible,
+                   "Applying the native popover selects exactly one day and closes only the popover")
+        try expect(dismissals == 0, "Applying weekly dates leaves DaBin available")
+        state.showCurrentWeek(); settle()
         let weekSearchLabel = try element(hosting, identifier: "board-search").accessibilityLabel()
-        try expect(weekSearchLabel == "Search a day or week", "Weekly search exposes its reachable scope choices")
+        try expect(weekSearchLabel == "Search captures", "Weekly toolbar Search uses the same global entry as other screens")
         try press(hosting, identifier: "board-search")
-        let scopeWindow = application.windows.first { candidate in
-            guard candidate.isVisible, let content = candidate.contentView else { return false }
-            return elements(in: content).contains { $0.accessibilityIdentifier() == "weekly-search-week" }
-        }
-        try expect(scopeWindow != nil, "Weekly Search opens the day/week action popover")
-        if let content = scopeWindow?.contentView {
-            _ = try element(content, identifier: "weekly-search-day")
-            _ = try element(content, identifier: "weekly-search-all")
-            try press(content, identifier: "weekly-search-week")
-        }
-        try expect(state.route == .search && state.searchScope != .all,
-                   "Search Week opens a bounded search through the actual header")
+        try expect(state.route == .search && state.searchScope == .all && state.filter == .all,
+                   "Weekly toolbar Search immediately opens the global search field")
+        state.setSearchWeek(ending: state.weekEndingDay); settle()
         let scopedLabel = try element(hosting, identifier: "global-search").accessibilityLabel() ?? ""
         try expect(scopedLabel.contains(state.searchScopeTitle), "Scoped search announces its selected date range")
         state.query = "no-match-\(UUID())"; state.filter = .files; state.searchProject = "Missing project"; settle()
+        try press(hosting, identifier: "search-chip-date")
+        try expect(state.searchScope == .all && state.filter == .files && state.searchProject == "Missing project",
+                   "Removing the date chip broadens dates without dropping other deliberate refinements")
+        state.setSearchWeek(ending: state.weekEndingDay); settle()
         try press(hosting, identifier: "search-clear-filters")
-        try expect(state.filter == .all && state.searchProject == nil && state.searchScope != .all,
-                   "Clear search filters preserves the intentionally selected week")
-        try press(hosting, identifier: "search-all-dates")
-        try expect(state.searchScope == .all && !state.query.isEmpty, "Search all dates preserves the user's query")
+        try expect(state.filter == .all && state.searchProject == nil && state.searchScope == .all
+                   && !state.query.isEmpty,
+                   "Clear search filters removes every chip, including dates, while retaining query words")
         state.query = ""; state.back(); settle()
         try expect(state.route == .weekly, "Search returns to the originating week")
         state.filter = .files
         key(application, window: window, code: 40, text: "k", modifiers: .command)
         try expect(state.route == .search && state.searchScope == .all && state.filter == .all,
-                   "Command K searches the entire archive from Week and clears stale type filters")
+                   "Command K clears the displayed week and type filter for a fresh global search")
+        state.updateGlobalSearch("Earlier")
+        state.setSearchDay(yesterday); state.filter = .text
+        state.searchDateAnchor = older.captureDay
         let firstFocusRequest = state.globalSearchFocusRequest
         key(application, window: window, code: 40, text: "k", modifiers: .command)
-        try expect(state.globalSearchFocusRequest > firstFocusRequest, "Command K focuses an already-open search")
-        state.updateGlobalSearch("Earlier")
+        try expect(state.globalSearchFocusRequest > firstFocusRequest && state.filter == .text
+                   && state.searchScope == .day(older.captureDay) && state.searchDateAnchor == older.captureDay,
+                   "Command K refocuses an existing session without resetting deliberate refinements or its date page")
+        try press(hosting, identifier: "search-clear-filters")
+        try expect(state.searchScope == .all && state.filter == .all && state.searchProject == nil,
+                   "Clear filters is an explicit way to return to the whole saved archive")
         try expect(state.searchGroups.flatMap(\.entries).contains(where: { $0.capture.id == older.id && $0.isMatch }),
                    "Global search finds captures outside today")
         state.back(); settle()

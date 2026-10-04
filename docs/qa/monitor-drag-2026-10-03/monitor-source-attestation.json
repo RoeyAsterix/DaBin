@@ -1,0 +1,22 @@
+{
+  "CornerController.swift": {
+    "workspaceSHA256": "b7918ec21f01577bd27d36db35524c609cb17c4640861edc5edcb7031d743098",
+    "testedSHA256": "b7918ec21f01577bd27d36db35524c609cb17c4640861edc5edcb7031d743098",
+    "matches": true
+  },
+  "WindowDragHandle.swift": {
+    "workspaceSHA256": "9ee0df83a6c93cbf4b18a10ff081b0a4afa11e12ab55520c0da3beab20e509d3",
+    "testedSHA256": "9ee0df83a6c93cbf4b18a10ff081b0a4afa11e12ab55520c0da3beab20e509d3",
+    "matches": true
+  },
+  "BoardResizeGeometry.swift": {
+    "workspaceSHA256": "e0292eaee1f5df8a1ab75c5f03c891e35ce10e5b7622d49ab3652dea29f92bf6",
+    "testedSHA256": "e0292eaee1f5df8a1ab75c5f03c891e35ce10e5b7622d49ab3652dea29f92bf6",
+    "matches": true
+  },
+  "RobotAppFrameView.swift": {
+    "workspaceSHA256": "0edbd249a3998343c5e1f83cf412833597f3e74e7e02f70914792e1c23cf8809",
+    "testedSHA256": "0edbd249a3998343c5e1f83cf412833597f3e74e7e02f70914792e1c23cf8809",
+    "matches": true
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "status": "installed_search_verified_shortcut_collision_fix_pending",
+  "utc": "2026-10-03T22:15:10.397869+00:00",
+  "app": "/Users/roeylibfeld/Applications/DaBin.app",
+  "version": "0.4.28",
+  "build": "83",
+  "backup": "/Users/roeylibfeld/Applications/.DaBinBackups/20261004-011428-ae62d438.app",
+  "sourceFingerprint": "b85c40ad4c026eae8eb40ba064aefcc3a0fb82be48788187ca816717d640c4a1",
+  "mainSHA256": "3bbb19486b17f6ffcc18059aed2f5b457e12d4b77787e021127d691870f53d61",
+  "updaterSHA256": "53722b05cf33f4cfdc30e84aabbcafc6630f81370133cc287bb3d4486461a185",
+  "strictSignaturePassed": true,
+  "personalArchiveEdited": false,
+  "autoCapturePausedBefore": true,
+  "liveChecks": [
+    "Command-K focuses Search after UI transition",
+    "Typed Latin query visible in Search",
+    "Clear returns native keyboard focus",
+    "Native paste replaces selected query",
+    "Search reopening restores query editor focus",
+    "Physical letter keystrokes accepted in English and Hebrew",
+    "Search restored empty; displayed saved count remains60",
+    "Auto Capture remains paused"
+  ],
+  "liveToolingObservation": "A zero-wait typeText immediately after Command-K preceded the async focus transition; typing after observed focus succeeded. Control-Option-Space switched macOS input source; synthetic Latin typeText drops letters under Hebrew layout while physical keystrokes insert Hebrew correctly. Same shortcut restored English. Production shortcut collision fix is being verified separately.",
+  "keyboardInputSourceRestored": true,
+  "autoCapturePausedAfter": true
+}

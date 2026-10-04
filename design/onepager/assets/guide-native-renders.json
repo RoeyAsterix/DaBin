@@ -24,17 +24,17 @@
         },
         {
           "id" : "timeline-action-add",
-          "label" : "Add capture",
+          "label" : "New task",
           "logicalRectFromTopLeft" : [
-            618,
-            49,
-            20,
-            14
+            610,
+            40,
+            28,
+            32
           ]
         },
         {
           "id" : "board-search",
-          "label" : "Search all captures",
+          "label" : "Search captures",
           "logicalRectFromTopLeft" : [
             641,
             40,
@@ -123,533 +123,363 @@
           ]
         },
         {
-          "id" : "workspace-mode-collection",
-          "label" : "Explorer",
+          "id" : "project-workspace",
+          "label" : "Project workspace",
           "logicalRectFromTopLeft" : [
-            29,
-            127,
-            187.5,
-            32
+            10,
+            116,
+            800,
+            484
           ]
         },
         {
-          "id" : "workspace-mode-clipboard",
-          "label" : "Clipboard",
+          "id" : "project-search",
+          "label" : "Search everything saved in DaBin",
           "logicalRectFromTopLeft" : [
-            220.5,
-            127,
-            187.5,
-            32
-          ]
-        },
-        {
-          "id" : "workspace-mode-shelf",
-          "label" : "Shelf",
-          "logicalRectFromTopLeft" : [
-            412,
-            127,
-            187.5,
-            32
-          ]
-        },
-        {
-          "id" : "workspace-mode-scratchpad",
-          "label" : "Notes",
-          "logicalRectFromTopLeft" : [
-            603.5,
-            127,
-            187.5,
-            32
-          ]
-        },
-        {
-          "id" : "capture-filter-all",
-          "label" : "All",
-          "logicalRectFromTopLeft" : [
-            26,
-            170,
-            32,
-            32
-          ]
-        },
-        {
-          "id" : "capture-filter-text",
-          "label" : "Copy\/paste text",
-          "logicalRectFromTopLeft" : [
-            62,
-            170,
-            32,
-            32
-          ]
-        },
-        {
-          "id" : "capture-filter-links",
-          "label" : "Links",
-          "logicalRectFromTopLeft" : [
-            98,
-            170,
-            32,
-            32
-          ]
-        },
-        {
-          "id" : "capture-filter-files",
-          "label" : "Files",
-          "logicalRectFromTopLeft" : [
-            134,
-            170,
-            32,
-            32
-          ]
-        },
-        {
-          "id" : "capture-filter-media",
-          "label" : "Media",
-          "logicalRectFromTopLeft" : [
-            170,
-            170,
-            32,
-            32
-          ]
-        },
-        {
-          "id" : "capture-filter-tasks",
-          "label" : "Tasks",
-          "logicalRectFromTopLeft" : [
-            206,
-            170,
-            32,
-            32
-          ]
-        },
-        {
-          "id" : "workspace-extra-filters",
-          "label" : "Filter by date, source application or capture origin",
-          "logicalRectFromTopLeft" : [
-            731.5,
-            178.5,
-            21,
+            29.5,
+            132.5,
+            123.5,
             15
           ]
         },
         {
-          "id" : "",
-          "label" : "Show pinned captures",
+          "id" : "project-export",
+          "label" : "Export project",
           "logicalRectFromTopLeft" : [
-            762,
-            170,
-            32,
-            32
+            633,
+            128,
+            131,
+            24
           ]
         },
         {
-          "id" : "explorer-browser",
-          "label" : "Explorer",
+          "id" : "project-actions",
+          "label" : "Project actions",
           "logicalRectFromTopLeft" : [
-            10,
-            212,
-            800,
-            388
+            772,
+            133,
+            20,
+            14
           ]
         },
         {
-          "id" : "explorer-search",
-          "label" : "Search Explorer",
+          "id" : "project-filter-All",
+          "label" : "All",
           "logicalRectFromTopLeft" : [
-            56.5,
-            220,
-            653.5,
+            28,
+            164,
+            35.5,
+            30
+          ]
+        },
+        {
+          "id" : "project-filter-Files",
+          "label" : "Files",
+          "logicalRectFromTopLeft" : [
+            69.5,
+            164,
+            46.5,
+            30
+          ]
+        },
+        {
+          "id" : "project-filter-Captures & notes",
+          "label" : "Captures & notes",
+          "logicalRectFromTopLeft" : [
+            122,
+            164,
+            118.5,
+            30
+          ]
+        },
+        {
+          "id" : "project-filter-Links",
+          "label" : "Links",
+          "logicalRectFromTopLeft" : [
+            246.5,
+            164,
+            49.5,
+            30
+          ]
+        },
+        {
+          "id" : "project-filter-Tasks",
+          "label" : "Tasks",
+          "logicalRectFromTopLeft" : [
+            302,
+            164,
+            52,
+            30
+          ]
+        },
+        {
+          "id" : "project-view-toggle",
+          "label" : "Show compact list",
+          "logicalRectFromTopLeft" : [
+            771.5,
+            175,
+            11,
+            8
+          ]
+        },
+        {
+          "id" : "project-selection-count",
+          "label" : "",
+          "logicalRectFromTopLeft" : [
+            28,
+            213.5,
+            42,
+            15
+          ]
+        },
+        {
+          "id" : "project-select-all",
+          "label" : "Select all",
+          "logicalRectFromTopLeft" : [
+            740,
+            213.5,
+            52,
+            15
+          ]
+        },
+        {
+          "id" : "project-items",
+          "label" : "",
+          "logicalRectFromTopLeft" : [
+            9,
+            247,
+            802,
+            324
+          ]
+        },
+        {
+          "id" : "project-card-capture:C8EFC79E-81C3-406F-B7D8-548177A0EE7D",
+          "label" : "",
+          "logicalRectFromTopLeft" : [
+            34,
+            253,
+            369.5,
+            284
+          ]
+        },
+        {
+          "id" : "project-preview-capture:C8EFC79E-81C3-406F-B7D8-548177A0EE7D",
+          "label" : "Open capture, A weekend trail worth saving",
+          "logicalRectFromTopLeft" : [
+            34,
+            253,
+            369.5,
+            214
+          ]
+        },
+        {
+          "id" : "project-select-capture:C8EFC79E-81C3-406F-B7D8-548177A0EE7D",
+          "label" : "Select A weekend trail worth saving",
+          "logicalRectFromTopLeft" : [
+            38,
+            257,
+            44,
+            44
+          ]
+        },
+        {
+          "id" : "project-kind-capture:C8EFC79E-81C3-406F-B7D8-548177A0EE7D",
+          "label" : "Capture",
+          "logicalRectFromTopLeft" : [
+            311,
+            265,
+            80.5,
+            23
+          ]
+        },
+        {
+          "id" : "project-details-capture:C8EFC79E-81C3-406F-B7D8-548177A0EE7D",
+          "label" : "Details for A weekend trail worth saving",
+          "logicalRectFromTopLeft" : [
+            46,
+            485,
+            319.5,
             16
           ]
         },
         {
-          "id" : "explorer-paste",
-          "label" : "Paste",
+          "id" : "",
+          "label" : "",
           "logicalRectFromTopLeft" : [
-            724,
-            212,
-            32,
-            32
-          ]
-        },
-        {
-          "id" : "explorer-add-files",
-          "label" : "Files",
-          "logicalRectFromTopLeft" : [
-            762,
-            212,
-            32,
-            32
+            46,
+            506,
+            93,
+            13
           ]
         },
         {
           "id" : "",
           "label" : "",
           "logicalRectFromTopLeft" : [
-            28,
-            262,
-            284,
-            619.32476806640625
-          ]
-        },
-        {
-          "id" : "",
-          "label" : "",
-          "logicalRectFromTopLeft" : [
-            29.5,
-            262,
-            56.5,
-            14
-          ]
-        },
-        {
-          "id" : "",
-          "label" : "",
-          "logicalRectFromTopLeft" : [
-            306,
-            262.0623779296875,
-            6,
-            14
-          ]
-        },
-        {
-          "id" : "",
-          "label" : "Project",
-          "logicalRectFromTopLeft" : [
-            28,
-            301,
-            144,
-            28
-          ]
-        },
-        {
-          "id" : "capture-copy-C45D258F-A418-4CF4-A7A1-D9C915EDB936",
-          "label" : "Copy A trail worth saving to clipboard",
-          "logicalRectFromTopLeft" : [
-            248,
-            302,
-            28,
-            26
-          ]
-        },
-        {
-          "id" : "capture-trash-C45D258F-A418-4CF4-A7A1-D9C915EDB936",
-          "label" : "Move A trail worth saving to Recently Deleted",
-          "logicalRectFromTopLeft" : [
-            280,
-            299,
-            32,
-            32
-          ]
-        },
-        {
-          "id" : "workspace-item-C45D258F-A418-4CF4-A7A1-D9C915EDB936",
-          "label" : "Open A trail worth saving",
-          "logicalRectFromTopLeft" : [
-            28,
-            339,
-            284,
-            273.5
-          ]
-        },
-        {
-          "id" : "",
-          "label" : "",
-          "logicalRectFromTopLeft" : [
-            28,
-            620.5,
-            106.5,
-            34
-          ]
-        },
-        {
-          "id" : "capture-trail-C45D258F-A418-4CF4-A7A1-D9C915EDB936",
-          "label" : "From Unknown source. No paste destinations recorded. Open content trail.",
-          "logicalRectFromTopLeft" : [
-            28,
-            620.5,
-            106.5,
-            34
-          ]
-        },
-        {
-          "id" : "",
-          "label" : "Turn into task",
-          "logicalRectFromTopLeft" : [
-            280,
-            621.5,
-            32,
-            32
-          ]
-        },
-        {
-          "id" : "",
-          "label" : "",
-          "logicalRectFromTopLeft" : [
-            29.5,
-            682.32476806640625,
-            101,
-            14
-          ]
-        },
-        {
-          "id" : "",
-          "label" : "",
-          "logicalRectFromTopLeft" : [
-            306,
-            682.32475585937573,
-            6,
-            14
-          ]
-        },
-        {
-          "id" : "",
-          "label" : "Project",
-          "logicalRectFromTopLeft" : [
-            28,
-            721.5,
-            144,
-            28
-          ]
-        },
-        {
-          "id" : "capture-copy-B792E83E-F881-41BF-B782-9A184BA137A9",
-          "label" : "Copy A little fresh air to clipboard",
-          "logicalRectFromTopLeft" : [
-            248,
-            722.5,
-            28,
-            26
-          ]
-        },
-        {
-          "id" : "capture-trash-B792E83E-F881-41BF-B782-9A184BA137A9",
-          "label" : "Move A little fresh air to Recently Deleted",
-          "logicalRectFromTopLeft" : [
-            280,
-            719.5,
-            32,
-            32
-          ]
-        },
-        {
-          "id" : "workspace-item-B792E83E-F881-41BF-B782-9A184BA137A9",
-          "label" : "Open A little fresh air",
-          "logicalRectFromTopLeft" : [
-            28,
-            759.5,
-            284,
-            38
-          ]
-        },
-        {
-          "id" : "",
-          "label" : "",
-          "logicalRectFromTopLeft" : [
-            28,
-            805.5,
-            106.5,
-            34
-          ]
-        },
-        {
-          "id" : "capture-trail-B792E83E-F881-41BF-B782-9A184BA137A9",
-          "label" : "From Unknown source. No paste destinations recorded. Open content trail.",
-          "logicalRectFromTopLeft" : [
-            28,
-            805.5,
-            106.5,
-            34
-          ]
-        },
-        {
-          "id" : "",
-          "label" : "Turn into task",
-          "logicalRectFromTopLeft" : [
-            280,
-            806.5,
-            32,
-            32
-          ]
-        },
-        {
-          "id" : "",
-          "label" : "",
-          "logicalRectFromTopLeft" : [
-            29,
-            867.32476806640625,
-            52,
-            14
-          ]
-        },
-        {
-          "id" : "",
-          "label" : "",
-          "logicalRectFromTopLeft" : [
-            306,
-            867.32475585937573,
-            6,
-            14
-          ]
-        },
-        {
-          "id" : "explorer-inspector",
-          "label" : "",
-          "logicalRectFromTopLeft" : [
-            331,
-            252,
-            479,
-            310
-          ]
-        },
-        {
-          "id" : "",
-          "label" : "Project",
-          "logicalRectFromTopLeft" : [
-            351,
-            272,
-            144,
-            28
-          ]
-        },
-        {
-          "id" : "",
-          "label" : "",
-          "logicalRectFromTopLeft" : [
-            351,
-            358,
-            106.5,
-            34
-          ]
-        },
-        {
-          "id" : "capture-trail-C45D258F-A418-4CF4-A7A1-D9C915EDB936",
-          "label" : "From Unknown source. No paste destinations recorded. Open content trail.",
-          "logicalRectFromTopLeft" : [
-            351,
-            358,
-            106.5,
-            34
-          ]
-        },
-        {
-          "id" : "",
-          "label" : "",
-          "logicalRectFromTopLeft" : [
-            758,
-            368,
-            32,
-            14
-          ]
-        },
-        {
-          "id" : "detail-preview",
-          "label" : "Capture preview",
-          "logicalRectFromTopLeft" : [
-            351,
-            406,
-            439,
-            186
-          ]
-        },
-        {
-          "id" : "detail-preview-open-original",
-          "label" : "Open original file: A trail worth saving",
-          "logicalRectFromTopLeft" : [
-            351,
-            406,
-            439,
-            186
-          ]
-        },
-        {
-          "id" : "explorer-open-details",
-          "label" : "Details",
-          "logicalRectFromTopLeft" : [
-            351,
-            607,
-            90,
-            24
-          ]
-        },
-        {
-          "id" : "capture-copy-C45D258F-A418-4CF4-A7A1-D9C915EDB936",
-          "label" : "Copy A trail worth saving to clipboard",
-          "logicalRectFromTopLeft" : [
-            762,
-            606,
-            28,
-            26
-          ]
-        },
-        {
-          "id" : "",
-          "label" : "Reveal saved file",
-          "logicalRectFromTopLeft" : [
-            351,
-            646,
             150.5,
-            24
+            506,
+            29.5,
+            13
           ]
         },
         {
-          "id" : "",
-          "label" : "Saved location",
+          "id" : "project-card-capture:9D485652-748F-4150-8B81-905DFCCD69D1",
+          "label" : "",
           "logicalRectFromTopLeft" : [
-            328.5,
-            679,
-            117,
-            15
+            34,
+            547,
+            369.5,
+            284
+          ]
+        },
+        {
+          "id" : "project-preview-capture:9D485652-748F-4150-8B81-905DFCCD69D1",
+          "label" : "Open task, Plan a weekend walk",
+          "logicalRectFromTopLeft" : [
+            34,
+            547,
+            369.5,
+            214
+          ]
+        },
+        {
+          "id" : "project-select-capture:9D485652-748F-4150-8B81-905DFCCD69D1",
+          "label" : "Select Plan a weekend walk",
+          "logicalRectFromTopLeft" : [
+            38,
+            551,
+            44,
+            44
+          ]
+        },
+        {
+          "id" : "project-kind-capture:9D485652-748F-4150-8B81-905DFCCD69D1",
+          "label" : "Task",
+          "logicalRectFromTopLeft" : [
+            328,
+            559,
+            63.5,
+            23
+          ]
+        },
+        {
+          "id" : "project-details-capture:9D485652-748F-4150-8B81-905DFCCD69D1",
+          "label" : "Details for Plan a weekend walk",
+          "logicalRectFromTopLeft" : [
+            46,
+            779,
+            313.5,
+            16
           ]
         },
         {
           "id" : "",
           "label" : "",
           "logicalRectFromTopLeft" : [
-            351,
-            712,
-            131.5,
-            14
+            46,
+            800,
+            93,
+            13
           ]
         },
         {
           "id" : "",
           "label" : "",
           "logicalRectFromTopLeft" : [
+            150.5,
+            800,
             22,
-            574,
-            39,
-            14
+            13
           ]
         },
         {
-          "id" : "explorer-daily-files",
-          "label" : "Daily files",
+          "id" : "project-task-toggle-capture:9D485652-748F-4150-8B81-905DFCCD69D1",
+          "label" : "Complete task",
           "logicalRectFromTopLeft" : [
-            69.5,
-            573.9376220703125,
-            70,
-            14
+            370.5,
+            782,
+            14.5,
+            14.5
+          ]
+        },
+        {
+          "id" : "project-card-capture:0A4F8D61-E91C-47DC-A1DA-DD9722B4A9B6",
+          "label" : "",
+          "logicalRectFromTopLeft" : [
+            415.5,
+            547,
+            369.5,
+            284
+          ]
+        },
+        {
+          "id" : "project-preview-capture:0A4F8D61-E91C-47DC-A1DA-DD9722B4A9B6",
+          "label" : "Open capture, A little fresh air for the weekend",
+          "logicalRectFromTopLeft" : [
+            415.5,
+            547,
+            369.5,
+            214
+          ]
+        },
+        {
+          "id" : "project-select-capture:0A4F8D61-E91C-47DC-A1DA-DD9722B4A9B6",
+          "label" : "Select A little fresh air for the weekend",
+          "logicalRectFromTopLeft" : [
+            419.5,
+            551,
+            44,
+            44
+          ]
+        },
+        {
+          "id" : "project-kind-capture:0A4F8D61-E91C-47DC-A1DA-DD9722B4A9B6",
+          "label" : "Capture",
+          "logicalRectFromTopLeft" : [
+            692.5,
+            559,
+            80.5,
+            23
+          ]
+        },
+        {
+          "id" : "project-details-capture:0A4F8D61-E91C-47DC-A1DA-DD9722B4A9B6",
+          "label" : "Details for A little fresh air for the weekend",
+          "logicalRectFromTopLeft" : [
+            427.5,
+            779,
+            319.5,
+            16
           ]
         },
         {
           "id" : "",
-          "label" : "Export visible items as ZIP",
+          "label" : "",
           "logicalRectFromTopLeft" : [
-            727,
-            565,
-            32,
-            32
+            427.5,
+            800,
+            93,
+            13
           ]
         },
         {
           "id" : "",
-          "label" : "Open this project in Finder",
+          "label" : "",
           "logicalRectFromTopLeft" : [
-            766,
-            565,
-            32,
-            32
+            532,
+            800,
+            20.5,
+            13
+          ]
+        },
+        {
+          "id" : "",
+          "label" : "",
+          "logicalRectFromTopLeft" : [
+            44.5,
+            578,
+            96,
+            14
           ]
         },
         {
@@ -670,6 +500,16 @@
             609,
             171,
             14
+          ]
+        },
+        {
+          "id" : "project-items",
+          "label" : "",
+          "logicalRectFromTopLeft" : [
+            10,
+            248,
+            800,
+            322
           ]
         }
       ],
@@ -705,17 +545,17 @@
         },
         {
           "id" : "timeline-action-add",
-          "label" : "Add capture",
+          "label" : "New task",
           "logicalRectFromTopLeft" : [
-            198,
-            48,
-            20,
-            14
+            190,
+            39,
+            28,
+            32
           ]
         },
         {
           "id" : "board-search",
-          "label" : "Search all captures",
+          "label" : "Search captures",
           "logicalRectFromTopLeft" : [
             221,
             39,
@@ -910,7 +750,7 @@
             24,
             296,
             352,
-            278
+            297
           ]
         },
         {
@@ -944,7 +784,7 @@
           ]
         },
         {
-          "id" : "capture-trail-ED4B8B0E-A62E-4901-90F5-27907BB42051",
+          "id" : "capture-trail-6519FA49-C56C-4148-8723-F48EE2C2DF24",
           "label" : "From Unknown source. No paste destinations recorded. Open content trail.",
           "logicalRectFromTopLeft" : [
             40,
@@ -954,7 +794,7 @@
           ]
         },
         {
-          "id" : "capture-receipt-ED4B8B0E-A62E-4901-90F5-27907BB42051",
+          "id" : "capture-receipt-6519FA49-C56C-4148-8723-F48EE2C2DF24",
           "label" : "",
           "logicalRectFromTopLeft" : [
             40,
@@ -964,7 +804,7 @@
           ]
         },
         {
-          "id" : "capture-receipt-time-ED4B8B0E-A62E-4901-90F5-27907BB42051",
+          "id" : "capture-receipt-time-6519FA49-C56C-4148-8723-F48EE2C2DF24",
           "label" : "",
           "logicalRectFromTopLeft" : [
             40,
@@ -974,7 +814,7 @@
           ]
         },
         {
-          "id" : "capture-receipt-category-ED4B8B0E-A62E-4901-90F5-27907BB42051",
+          "id" : "capture-receipt-category-6519FA49-C56C-4148-8723-F48EE2C2DF24",
           "label" : "",
           "logicalRectFromTopLeft" : [
             155,
@@ -984,8 +824,8 @@
           ]
         },
         {
-          "id" : "capture-copy-ED4B8B0E-A62E-4901-90F5-27907BB42051",
-          "label" : "Copy Try the riverside path on Saturday.",
+          "id" : "capture-copy-6519FA49-C56C-4148-8723-F48EE2C2DF24",
+          "label" : "Copy Weekend idea: try the riverside path on Saturday.",
           "logicalRectFromTopLeft" : [
             288,
             391,
@@ -994,8 +834,8 @@
           ]
         },
         {
-          "id" : "capture-trash-ED4B8B0E-A62E-4901-90F5-27907BB42051",
-          "label" : "Move Try the riverside path on Saturday. to Recently Deleted",
+          "id" : "capture-trash-6519FA49-C56C-4148-8723-F48EE2C2DF24",
+          "label" : "Move Weekend idea: try the riverside path on Saturday. to Recently Deleted",
           "logicalRectFromTopLeft" : [
             328,
             391,
@@ -1005,30 +845,30 @@
         },
         {
           "id" : "",
-          "label" : "Open Try the riverside path on Saturday., Note, saved Fri, 2 Oct 2026 at 09:41",
+          "label" : "Open Weekend idea: try the riverside path on Saturday., Note, saved Sat, 3 Oct 2026 at 09:40",
           "logicalRectFromTopLeft" : [
             40,
             445,
             320,
-            19
+            38
           ]
         },
         {
-          "id" : "capture-convert-to-task-ED4B8B0E-A62E-4901-90F5-27907BB42051",
-          "label" : "Turn Try the riverside path on Saturday. into a task",
+          "id" : "capture-convert-to-task-6519FA49-C56C-4148-8723-F48EE2C2DF24",
+          "label" : "Turn Weekend idea: try the riverside path on Saturday. into a task",
           "logicalRectFromTopLeft" : [
             292,
-            476,
+            495,
             32,
             32
           ]
         },
         {
           "id" : "",
-          "label" : "Keep in Projects: Try the riverside path on Saturday.",
+          "label" : "Keep in Projects: Weekend idea: try the riverside path on Saturday.",
           "logicalRectFromTopLeft" : [
             328,
-            476,
+            495,
             32,
             32
           ]
@@ -1038,7 +878,7 @@
           "label" : "Comment",
           "logicalRectFromTopLeft" : [
             40,
-            520,
+            539,
             32,
             32
           ]
@@ -1048,7 +888,7 @@
           "label" : "Reminder",
           "logicalRectFromTopLeft" : [
             74,
-            520,
+            539,
             32,
             32
           ]
@@ -1058,7 +898,7 @@
           "label" : "Minimize capture",
           "logicalRectFromTopLeft" : [
             306,
-            520,
+            539,
             32,
             32
           ]
@@ -1116,17 +956,448 @@
         },
         {
           "id" : "timeline-action-add",
-          "label" : "Add capture",
+          "label" : "New task",
           "logicalRectFromTopLeft" : [
-            198,
-            48,
-            20,
+            745,
+            39,
+            28,
+            32
+          ]
+        },
+        {
+          "id" : "board-settings",
+          "label" : "Settings",
+          "logicalRectFromTopLeft" : [
+            776,
+            39,
+            32,
+            32
+          ]
+        },
+        {
+          "id" : "board-more",
+          "label" : "More options",
+          "logicalRectFromTopLeft" : [
+            811,
+            47.5,
+            21,
+            15
+          ]
+        },
+        {
+          "id" : "window-expand",
+          "label" : "Expand or restore window",
+          "logicalRectFromTopLeft" : [
+            835,
+            39,
+            32,
+            32
+          ]
+        },
+        {
+          "id" : "window-close",
+          "label" : "Hide DaBin",
+          "logicalRectFromTopLeft" : [
+            870,
+            40,
+            28,
+            30
+          ]
+        },
+        {
+          "id" : "board-back",
+          "label" : "Back",
+          "logicalRectFromTopLeft" : [
+            22,
+            78,
+            44.5,
+            28
+          ]
+        },
+        {
+          "id" : "global-search",
+          "label" : "Search everything saved in DaBin, All dates",
+          "logicalRectFromTopLeft" : [
+            102,
+            84,
+            685.5,
+            16
+          ]
+        },
+        {
+          "id" : "xmark.circle.fill",
+          "label" : "Clear search",
+          "logicalRectFromTopLeft" : [
+            795.5,
+            85.5,
+            13,
+            13
+          ]
+        },
+        {
+          "id" : "search-filters",
+          "label" : "Filters",
+          "logicalRectFromTopLeft" : [
+            822.5,
+            76,
+            75.5,
+            32
+          ]
+        },
+        {
+          "id" : "",
+          "label" : "Search saved DaBin content",
+          "logicalRectFromTopLeft" : [
+            26,
+            123,
+            868,
+            407
+          ]
+        },
+        {
+          "id" : "search-scope-summary",
+          "label" : "",
+          "logicalRectFromTopLeft" : [
+            26,
+            123,
+            112,
+            15
+          ]
+        },
+        {
+          "id" : "search-date-page-label",
+          "label" : "",
+          "logicalRectFromTopLeft" : [
+            26,
+            153,
+            88.5,
             14
           ]
         },
         {
+          "id" : "search-newer-dates",
+          "label" : "Newer dates",
+          "logicalRectFromTopLeft" : [
+            833,
+            145,
+            28,
+            30
+          ]
+        },
+        {
+          "id" : "search-older-dates",
+          "label" : "Older dates",
+          "logicalRectFromTopLeft" : [
+            866,
+            145,
+            28,
+            30
+          ]
+        },
+        {
+          "id" : "search-date-column-2026-10-04",
+          "label" : "Sun, 4 Oct 2026, 2 results",
+          "logicalRectFromTopLeft" : [
+            26,
+            183,
+            429,
+            347
+          ]
+        },
+        {
+          "id" : "",
+          "label" : "Sun, 4 Oct 2026",
+          "logicalRectFromTopLeft" : [
+            31,
+            183,
+            102,
+            16
+          ]
+        },
+        {
+          "id" : "",
+          "label" : "",
+          "logicalRectFromTopLeft" : [
+            443,
+            185,
+            7,
+            14
+          ]
+        },
+        {
+          "id" : "",
+          "label" : "",
+          "logicalRectFromTopLeft" : [
+            31,
+            202,
+            143,
+            13
+          ]
+        },
+        {
+          "id" : "search-result-capture:C8EFC79E-81C3-406F-B7D8-548177A0EE7D",
+          "label" : "",
+          "logicalRectFromTopLeft" : [
+            34,
+            223,
+            412,
+            254
+          ]
+        },
+        {
+          "id" : "search-select-C8EFC79E-81C3-406F-B7D8-548177A0EE7D",
+          "label" : "Open A weekend trail worth saving, Weekend ideas, saved 4 Oct 2026 · 09:40",
+          "logicalRectFromTopLeft" : [
+            44,
+            233,
+            392,
+            196
+          ]
+        },
+        {
+          "id" : "",
+          "label" : "Project",
+          "logicalRectFromTopLeft" : [
+            44,
+            438,
+            129.5,
+            28
+          ]
+        },
+        {
+          "id" : "search-open-C8EFC79E-81C3-406F-B7D8-548177A0EE7D",
+          "label" : "Open details",
+          "logicalRectFromTopLeft" : [
+            376,
+            437,
+            28,
+            30
+          ]
+        },
+        {
+          "id" : "capture-copy-C8EFC79E-81C3-406F-B7D8-548177A0EE7D",
+          "label" : "Copy A weekend trail worth saving to clipboard",
+          "logicalRectFromTopLeft" : [
+            408,
+            439,
+            28,
+            26
+          ]
+        },
+        {
+          "id" : "search-result-capture:9D485652-748F-4150-8B81-905DFCCD69D1",
+          "label" : "",
+          "logicalRectFromTopLeft" : [
+            34,
+            477,
+            412,
+            152
+          ]
+        },
+        {
+          "id" : "search-select-9D485652-748F-4150-8B81-905DFCCD69D1",
+          "label" : "Open Plan a weekend walk, Weekend ideas, saved 4 Oct 2026 · 09:38",
+          "logicalRectFromTopLeft" : [
+            44,
+            487,
+            392,
+            64
+          ]
+        },
+        {
+          "id" : "task-priority-tag-9D485652-748F-4150-8B81-905DFCCD69D1",
+          "label" : "Medium priority",
+          "logicalRectFromTopLeft" : [
+            44,
+            559,
+            70.5,
+            22
+          ]
+        },
+        {
+          "id" : "",
+          "label" : "Project",
+          "logicalRectFromTopLeft" : [
+            44,
+            590,
+            129.5,
+            28
+          ]
+        },
+        {
+          "id" : "search-open-9D485652-748F-4150-8B81-905DFCCD69D1",
+          "label" : "Open details",
+          "logicalRectFromTopLeft" : [
+            376,
+            589,
+            28,
+            30
+          ]
+        },
+        {
+          "id" : "capture-copy-9D485652-748F-4150-8B81-905DFCCD69D1",
+          "label" : "Copy Plan a weekend walk to clipboard",
+          "logicalRectFromTopLeft" : [
+            408,
+            591,
+            28,
+            26
+          ]
+        },
+        {
+          "id" : "search-date-column-2026-10-03",
+          "label" : "Sat, 3 Oct 2026, 1 results",
+          "logicalRectFromTopLeft" : [
+            465,
+            183,
+            429,
+            347
+          ]
+        },
+        {
+          "id" : "",
+          "label" : "Sat, 3 Oct 2026",
+          "logicalRectFromTopLeft" : [
+            470,
+            183,
+            98.5,
+            16
+          ]
+        },
+        {
+          "id" : "",
+          "label" : "",
+          "logicalRectFromTopLeft" : [
+            882,
+            185,
+            7,
+            14
+          ]
+        },
+        {
+          "id" : "",
+          "label" : "",
+          "logicalRectFromTopLeft" : [
+            470,
+            202,
+            143,
+            13
+          ]
+        },
+        {
+          "id" : "search-result-capture:6519FA49-C56C-4148-8723-F48EE2C2DF24",
+          "label" : "",
+          "logicalRectFromTopLeft" : [
+            473,
+            223,
+            412,
+            122
+          ]
+        },
+        {
+          "id" : "search-select-6519FA49-C56C-4148-8723-F48EE2C2DF24",
+          "label" : "Open Weekend idea: try the riverside path on Saturday., Unfiled, saved 3 Oct 2026 · 09:40",
+          "logicalRectFromTopLeft" : [
+            483,
+            233,
+            392,
+            64
+          ]
+        },
+        {
+          "id" : "",
+          "label" : "Project",
+          "logicalRectFromTopLeft" : [
+            483,
+            306,
+            83.5,
+            28
+          ]
+        },
+        {
+          "id" : "search-open-6519FA49-C56C-4148-8723-F48EE2C2DF24",
+          "label" : "Open details",
+          "logicalRectFromTopLeft" : [
+            815,
+            305,
+            28,
+            30
+          ]
+        },
+        {
+          "id" : "capture-copy-6519FA49-C56C-4148-8723-F48EE2C2DF24",
+          "label" : "Copy Weekend idea: try the riverside path on Saturday. to clipboard",
+          "logicalRectFromTopLeft" : [
+            847,
+            307,
+            28,
+            26
+          ]
+        },
+        {
+          "id" : "auto-capture-status",
+          "label" : "Auto Capture: Off · choose what to capture",
+          "logicalRectFromTopLeft" : [
+            42,
+            549,
+            150,
+            14
+          ]
+        },
+        {
+          "id" : "auto-capture-destination",
+          "label" : "Auto Capture destination: Weekend ideas",
+          "logicalRectFromTopLeft" : [
+            723,
+            549,
+            171,
+            14
+          ]
+        }
+      ],
+      "file" : "DABIN__GUIDE__SEARCH.png",
+      "logicalHeight" : 590,
+      "logicalWidth" : 920,
+      "pixelHeight" : 1180,
+      "pixelScale" : 2,
+      "pixelWidth" : 1840,
+      "route" : "search"
+    },
+    {
+      "anchors" : [
+        {
+          "id" : "",
+          "label" : "DaBin",
+          "logicalRectFromTopLeft" : [
+            23,
+            44.5,
+            69.75,
+            21
+          ]
+        },
+        {
+          "id" : "timeline-auto-capture",
+          "label" : "Set up Auto Capture",
+          "logicalRectFromTopLeft" : [
+            93,
+            38,
+            40,
+            34
+          ]
+        },
+        {
+          "id" : "timeline-action-add",
+          "label" : "New task",
+          "logicalRectFromTopLeft" : [
+            190,
+            39,
+            28,
+            32
+          ]
+        },
+        {
           "id" : "board-search",
-          "label" : "Search all captures",
+          "label" : "Search captures",
           "logicalRectFromTopLeft" : [
             221,
             39,
@@ -1201,7 +1472,7 @@
             3.5,
             126,
             370.5,
-            1118
+            1169
           ]
         },
         {
@@ -1215,7 +1486,7 @@
           ]
         },
         {
-          "id" : "capture-task-status-FE566443-0B6E-456C-8F04-E3DC201B40B4",
+          "id" : "capture-task-status-9D485652-748F-4150-8B81-905DFCCD69D1",
           "label" : "Task: Plan a weekend walk",
           "logicalRectFromTopLeft" : [
             26,
@@ -1225,7 +1496,7 @@
           ]
         },
         {
-          "id" : "",
+          "id" : "detail-task-caption",
           "label" : "",
           "logicalRectFromTopLeft" : [
             68,
@@ -1245,12 +1516,22 @@
           ]
         },
         {
+          "id" : "",
+          "label" : "Medium priority",
+          "logicalRectFromTopLeft" : [
+            68,
+            222,
+            70.5,
+            22
+          ]
+        },
+        {
           "id" : "detail-captured-at",
-          "label" : "Captured Fri, 2 Oct 2026 at 09:38",
+          "label" : "Captured Sun, 4 Oct 2026 at 09:38",
           "logicalRectFromTopLeft" : [
             70,
-            222.034912109375,
-            196.5,
+            252.034912109375,
+            206.5,
             19
           ]
         },
@@ -1259,17 +1540,17 @@
           "label" : "",
           "logicalRectFromTopLeft" : [
             26,
-            255,
+            285,
             110.5,
             34
           ]
         },
         {
-          "id" : "capture-trail-FE566443-0B6E-456C-8F04-E3DC201B40B4",
+          "id" : "capture-trail-9D485652-748F-4150-8B81-905DFCCD69D1",
           "label" : "From Unknown source. No paste destinations recorded. Open content trail.",
           "logicalRectFromTopLeft" : [
             26,
-            255,
+            285,
             110.5,
             34
           ]
@@ -1279,7 +1560,7 @@
           "label" : "Capture actions",
           "logicalRectFromTopLeft" : [
             234,
-            303,
+            333,
             140,
             32
           ]
@@ -1289,7 +1570,7 @@
           "label" : "Copy capture",
           "logicalRectFromTopLeft" : [
             234,
-            303,
+            333,
             32,
             32
           ]
@@ -1299,7 +1580,7 @@
           "label" : "Pin",
           "logicalRectFromTopLeft" : [
             270,
-            303,
+            333,
             32,
             32
           ]
@@ -1309,17 +1590,17 @@
           "label" : "Show saved folder",
           "logicalRectFromTopLeft" : [
             306,
-            303,
+            333,
             32,
             32
           ]
         },
         {
-          "id" : "capture-trash-FE566443-0B6E-456C-8F04-E3DC201B40B4",
+          "id" : "capture-trash-9D485652-748F-4150-8B81-905DFCCD69D1",
           "label" : "Move Plan a weekend walk to Recently Deleted",
           "logicalRectFromTopLeft" : [
             342,
-            303,
+            333,
             32,
             32
           ]
@@ -1329,7 +1610,7 @@
           "label" : "",
           "logicalRectFromTopLeft" : [
             27,
-            349.034912109375,
+            379.034912109375,
             105,
             15
           ]
@@ -1339,37 +1620,37 @@
           "label" : "",
           "logicalRectFromTopLeft" : [
             110.75,
-            381.057373046875,
+            411.057373046875,
             178.5,
             43
           ]
         },
         {
-          "id" : "task-focus-duration-FE566443-0B6E-456C-8F04-E3DC201B40B4",
+          "id" : "task-focus-duration-9D485652-748F-4150-8B81-905DFCCD69D1",
           "label" : "Set focus duration",
           "logicalRectFromTopLeft" : [
             36,
-            451.557373046875,
+            481.557373046875,
             67.5,
             15
           ]
         },
         {
-          "id" : "task-focus-play-FE566443-0B6E-456C-8F04-E3DC201B40B4",
+          "id" : "task-focus-play-9D485652-748F-4150-8B81-905DFCCD69D1",
           "label" : "Start or restart focus session",
           "logicalRectFromTopLeft" : [
             112.5,
-            443,
+            473,
             32,
             32
           ]
         },
         {
-          "id" : "task-focus-schedule-FE566443-0B6E-456C-8F04-E3DC201B40B4",
+          "id" : "task-focus-schedule-9D485652-748F-4150-8B81-905DFCCD69D1",
           "label" : "Schedule task: Schedule",
           "logicalRectFromTopLeft" : [
             293.5,
-            451.557373046875,
+            481.557373046875,
             74.5,
             15
           ]
@@ -1379,7 +1660,7 @@
           "label" : "",
           "logicalRectFromTopLeft" : [
             26,
-            489.2449951171875,
+            519.2449951171875,
             125.5,
             14
           ]
@@ -1389,7 +1670,7 @@
           "label" : "Reset focus to configured duration",
           "logicalRectFromTopLeft" : [
             325.5,
-            489.4326171875,
+            519.4326171875,
             48.5,
             14
           ]
@@ -1399,7 +1680,7 @@
           "label" : "Task workspace",
           "logicalRectFromTopLeft" : [
             3.5,
-            521.4326171875,
+            551.4326171875,
             161,
             16
           ]
@@ -1409,7 +1690,7 @@
           "label" : "Work plan",
           "logicalRectFromTopLeft" : [
             39.5,
-            565.4326171875,
+            595.4326171875,
             86.5,
             16.5673828125
           ]
@@ -1419,49 +1700,59 @@
           "label" : "",
           "logicalRectFromTopLeft" : [
             38,
-            620.352783203125,
+            641.852783203125,
+            264.5,
+            53.147216796875
+          ]
+        },
+        {
+          "id" : "",
+          "label" : "",
+          "logicalRectFromTopLeft" : [
+            38,
+            641.852783203125,
             41,
             15
           ]
         },
         {
-          "id" : "task-workspace",
+          "id" : "task-priority-choice-none",
           "label" : "No priority",
           "logicalRectFromTopLeft" : [
-            215.64999389648438,
-            611.6500244140625,
-            32.70001220703125,
-            32.699951171875
+            38,
+            663,
+            74.5,
+            32
           ]
         },
         {
-          "id" : "task-workspace",
-          "label" : "Low",
+          "id" : "task-priority-choice-low",
+          "label" : "Low priority",
           "logicalRectFromTopLeft" : [
-            262.5,
-            620.5,
-            15,
-            15
+            118.5,
+            663,
+            49,
+            32
           ]
         },
         {
-          "id" : "task-workspace",
-          "label" : "Medium",
+          "id" : "task-priority-choice-medium",
+          "label" : "Medium priority",
           "logicalRectFromTopLeft" : [
-            300.5,
-            620.5,
-            15,
-            15
+            173.5,
+            663,
+            70.5,
+            32
           ]
         },
         {
-          "id" : "task-workspace",
-          "label" : "High",
+          "id" : "task-priority-choice-high",
+          "label" : "High priority",
           "logicalRectFromTopLeft" : [
-            338.5,
-            620.5,
-            15,
-            15
+            250,
+            663,
+            52.5,
+            32
           ]
         },
         {
@@ -1469,7 +1760,7 @@
           "label" : "",
           "logicalRectFromTopLeft" : [
             39.5,
-            670.852783203125,
+            721.852783203125,
             77,
             15
           ]
@@ -1479,7 +1770,7 @@
           "label" : "",
           "logicalRectFromTopLeft" : [
             38,
-            698,
+            749,
             303,
             23
           ]
@@ -1489,7 +1780,7 @@
           "label" : "Add checklist step",
           "logicalRectFromTopLeft" : [
             349,
-            703.5,
+            754.5,
             12,
             12
           ]
@@ -1499,7 +1790,7 @@
           "label" : "Details & repeat",
           "logicalRectFromTopLeft" : [
             15.5,
-            738.875244140625,
+            789.875244140625,
             125,
             15
           ]
@@ -1509,7 +1800,7 @@
           "label" : "",
           "logicalRectFromTopLeft" : [
             38,
-            770.375244140625,
+            821.375244140625,
             49.5,
             15
           ]
@@ -1519,7 +1810,7 @@
           "label" : "",
           "logicalRectFromTopLeft" : [
             94.5,
-            767,
+            818,
             46,
             22
           ]
@@ -1529,7 +1820,7 @@
           "label" : "",
           "logicalRectFromTopLeft" : [
             39.5,
-            799.875244140625,
+            850.875244140625,
             62.5,
             15
           ]
@@ -1539,7 +1830,7 @@
           "label" : "Task attachments",
           "logicalRectFromTopLeft" : [
             26,
-            957,
+            1008,
             348,
             105
           ]
@@ -1549,7 +1840,7 @@
           "label" : "",
           "logicalRectFromTopLeft" : [
             39,
-            976.455078125,
+            1027.455078125,
             103.5,
             16.044921875
           ]
@@ -1559,7 +1850,7 @@
           "label" : "Paste into task",
           "logicalRectFromTopLeft" : [
             293,
-            969,
+            1020,
             32,
             32
           ]
@@ -1569,7 +1860,7 @@
           "label" : "Add files to task",
           "logicalRectFromTopLeft" : [
             330,
-            969,
+            1020,
             32,
             32
           ]
@@ -1579,7 +1870,7 @@
           "label" : "",
           "logicalRectFromTopLeft" : [
             67.75,
-            1022.875244140625,
+            1073.875244140625,
             264.5,
             15
           ]
@@ -1589,7 +1880,7 @@
           "label" : "Original capture · Task",
           "logicalRectFromTopLeft" : [
             3.5,
-            1079.875244140625,
+            1130.875244140625,
             185.5,
             15
           ]
@@ -1599,7 +1890,7 @@
           "label" : "Source details",
           "logicalRectFromTopLeft" : [
             3.5,
-            1116.897705078125,
+            1167.897705078125,
             139.5,
             15
           ]
@@ -1609,7 +1900,7 @@
           "label" : "Comment",
           "logicalRectFromTopLeft" : [
             3.5,
-            1153.897705078125,
+            1204.897705078125,
             115,
             15
           ]
@@ -1619,7 +1910,7 @@
           "label" : "Reminder",
           "logicalRectFromTopLeft" : [
             3.5,
-            1191.420166015625,
+            1242.420166015625,
             112,
             15
           ]
@@ -1629,7 +1920,7 @@
           "label" : "File & recognized text",
           "logicalRectFromTopLeft" : [
             3.5,
-            1228.442626953125,
+            1279.442626953125,
             178.5,
             15.557373046875
           ]

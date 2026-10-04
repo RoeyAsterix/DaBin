@@ -1,0 +1,29 @@
+DABIN / MESSAGING CLAIM GUARDRAILS
+Basis: user intends a free release; local source submission pack 0.4.31 (86), prepared 4 October 2026. Source metadata is DRAFT_NOT_FOR_UPLOAD and does not establish approval or public availability.
+
+SAFE CLAIM -> REQUIRED LIMIT
+'Free Mac app' -> Confirm actual Free pricing in the intended launch territories. Do not promise free forever or invent a monetization plan.
+'No account, advertising, analytics or cloud sync' -> Describes the reviewed app source. Apple/platform campaign reports are separate from analytics inside DaBin. Recheck the shipping build.
+'Saved content stays on your Mac' -> DaBin stores captures locally. User-chosen exports/backups may be saved to a folder synced by another service. Avoid 'nothing ever leaves your Mac'.
+'Local text recognition' -> Recognizes text in supported content saved into DaBin using local Apple frameworks. It does not scan every file, record the live screen, answer with AI or provide semantic search. Recognition can be imperfect; very large documents can be partially indexed.
+'Find words inside saved screenshots' -> Save the screenshot first; demonstrate an actual matching word in a supported image with a neutral filename. Do not imply search of all past screenshots.
+'Optional Auto Capture' -> Off by default with independent clipboard and selected screenshot-folder channels. Only later clipboard changes/new images after activation are eligible. Do not say 'captures everything'.
+'Privacy by design' -> Be specific. App Sandbox is present; DaBin does not separately encrypt the archive and does not promise forensic secure erasure. Do not claim end-to-end encryption or immunity from sensitive captures.
+'Website previews are optional' -> Off by default; enabled previews may contact manually saved sites and their resources. Automatically captured links do not fetch previews. Opening a saved URL uses a browser and its normal network behavior.
+'Made for Mac' -> Apple Silicon Macs, macOS 14 or later. Do not imply Intel, Windows, iPhone or cross-device sync support.
+'Focus timer' -> A running timer shows a robot alarm; clicking dismisses it and does not complete the task. Do not promise to prevent distractions or improve output by a numerical amount.
+'Accessible' -> State only features demonstrated on the exact shipping build. Do not declare full VoiceOver support or Apple Accessibility Nutrition Labels without the required evaluation.
+'On the Mac App Store' -> Use after verified publication. No 'Apple featured', award badges or Apple endorsement without documented selection.
+'Feed DaBin' film -> Blender scenes are playful brand animation. Real app views must remain visibly recognizable as actual screenshots/recordings. Never label the entire brand film a native App Store preview.
+
+TONE
+Friendly, direct and useful. The robot is a companion, not an AI agent. Prefer 'Save a screenshot; find a word inside it later' to inflated claims about an intelligent second brain. Always spell the product DaBin. Do not invent testimonials, user numbers, founder motivation, speed claims, subscription comparisons or future features.
+
+PUBLICATION FIELDS
+Mandatory placeholders: [[APP_STORE_URL]], [[WEBSITE_URL]], [[CONTACT_EMAIL]]. Other owner fields remain explicit in copy. A placeholder is a work item, never a public link. Do not publish unreplaced placeholders.
+
+PRIVACY IN DEMOS
+Use the fictional Studio Refresh project, example.com links and fabricated design notes. Do not use real clipboard content, client names, desktop filenames, personal bookmarks, email addresses, notifications or the KARI screenplay/reference library.
+
+STATUS
+This marketing package is prepared and local. All outreach is unsent. No external posting, website deployment, nomination or Apple metadata upload is included in its creation.

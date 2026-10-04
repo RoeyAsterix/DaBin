@@ -1,0 +1,119 @@
+1
+00:00:00,000 --> 00:00:01,160
+Hey, I’m DaBin.
+
+2
+00:00:01,880 --> 00:00:03,520
+You know that screenshot you’ll need later?
+
+3
+00:00:04,180 --> 00:00:04,720
+Drop it here.
+
+4
+00:00:05,520 --> 00:00:05,740
+A link?
+
+5
+00:00:06,480 --> 00:00:06,780
+Paste it.
+
+6
+00:00:07,460 --> 00:00:08,980
+A thought you’ll forget in five minutes?
+
+7
+00:00:09,660 --> 00:00:10,220
+Write it down.
+
+8
+00:00:11,300 --> 00:00:13,860
+Your Inbox groups the catch by day or week.
+
+9
+00:00:14,860 --> 00:00:17,300
+To organize holds the bits you haven’t filed yet.
+
+10
+00:00:18,380 --> 00:00:21,080
+Let’s give this studio refresh a project.
+
+11
+00:00:22,740 --> 00:00:27,160
+References, autosaving notes, named snippets, saved clipboard history...
+
+12
+00:00:27,880 --> 00:00:29,040
+all close at hand.
+
+13
+00:00:30,060 --> 00:00:31,340
+And here’s your collection shelf.
+
+14
+00:00:32,300 --> 00:00:33,680
+Now, where’s that screenshot?
+
+15
+00:00:35,000 --> 00:00:36,280
+Search a word inside it.
+
+16
+00:00:37,060 --> 00:00:40,260
+I recognize text locally in supported content you’ve saved.
+
+17
+00:00:41,080 --> 00:00:42,600
+Use filters to narrow the hunt.
+
+18
+00:00:43,620 --> 00:00:45,520
+Turn an idea into a task.
+
+19
+00:00:46,300 --> 00:00:49,480
+Add a priority, checklist, reminder, or repeat.
+
+20
+00:00:50,280 --> 00:00:53,300
+Plan it in Today, then start a focus timer.
+
+21
+00:00:54,280 --> 00:00:56,020
+When time’s up, I’ll nudge you.
+
+22
+00:00:56,620 --> 00:00:57,820
+You decide when it’s done.
+
+23
+00:00:58,820 --> 00:00:59,820
+Want automatic capture?
+
+24
+00:01:00,720 --> 00:01:01,320
+It starts off.
+
+25
+00:01:02,400 --> 00:01:05,020
+Choose new clipboard changes or a screenshot folder.
+
+26
+00:01:05,740 --> 00:01:06,820
+Pause whenever you like.
+
+27
+00:01:07,660 --> 00:01:13,020
+Export a project, make a local backup, or rescue a capture from Recently Deleted.
+
+28
+00:01:14,300 --> 00:01:14,780
+I’m free.
+
+29
+00:01:15,820 --> 00:01:19,320
+No account, ads, analytics, or cloud sync.
+
+30
+00:01:20,340 --> 00:01:22,900
+Your saved captures stay on this Mac.

@@ -1,0 +1,3 @@
+FAIL: Error Domain=PrivacyRenderTests Code=1 "Policy includes current removal and minimize behavior" UserInfo={NSLocalizedDescription=Policy includes current removal and minimize behavior}
+PASS: Real policy resource is present in the isolated app bundle
+PASS: Full current privacy policy is loaded with every required topic

@@ -1,0 +1,66 @@
+{
+  "status": "passed",
+  "utc": "2026-10-03T22:44:40.590464+00:00",
+  "checks": [
+    {
+      "name": "python-tests",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "Tests",
+        "-p",
+        "test_*.py",
+        "-v"
+      ],
+      "exitCode": 0,
+      "seconds": 0.119
+    },
+    {
+      "name": "python-preflight",
+      "command": [
+        "python3",
+        "scripts/test_app_store_preflight.py"
+      ],
+      "exitCode": 0,
+      "seconds": 0.061
+    },
+    {
+      "name": "packaging",
+      "command": [
+        "python3",
+        "scripts/app_store_preflight.py",
+        "--static-only"
+      ],
+      "exitCode": 0,
+      "seconds": 0.094
+    },
+    {
+      "name": "metadata",
+      "command": [
+        "python3",
+        "scripts/validate_app_store_metadata.py"
+      ],
+      "exitCode": 0,
+      "seconds": 0.035
+    },
+    {
+      "name": "project",
+      "command": [
+        "python3",
+        "scripts/generate_project.py",
+        "--check"
+      ],
+      "exitCode": 0,
+      "seconds": 0.038
+    },
+    {
+      "name": "diff-check",
+      "exitCode": 0
+    }
+  ],
+  "quickAccessSHA256": "02709d3b0024cf4bec0aab85f58cff9d7352c2647bf7c2c49dda538bc4b18c94",
+  "quickAccessTestsSHA256": "99ff31357f44d3eb5259cda4248e14427dfbeef10db29467052b63b2f01e7985"
+}

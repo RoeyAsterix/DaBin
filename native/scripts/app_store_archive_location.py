@@ -56,6 +56,12 @@ def file_provider_attribute(path: Path) -> str | None:
 
 def validate(destination: Path, project_root: Path) -> Path:
     destination = destination.expanduser().absolute()
+    # A missing component before '..' prevents existing_ancestors from seeing
+    # the eventual parent. Reject traversal before checking containment or
+    # File Provider ancestry; mkdir can otherwise make that path resolve into
+    # the forbidden source tree after validation has already succeeded.
+    if ".." in destination.parts:
+        raise ValueError("The App Store archive path may not contain parent-directory traversal")
     project_root = project_root.expanduser().resolve(strict=True)
     if destination.suffix != ".xcarchive":
         raise ValueError("The App Store archive path must end in .xcarchive")

@@ -2,6 +2,7 @@ import SwiftUI
 
 @MainActor
 struct DailyScreen: View {
+    @Environment(\.workspaceZoom) private var zoom
     @Environment(\.daBinAccent) private var accent
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @ObservedObject var state: AppState
@@ -40,16 +41,24 @@ struct DailyScreen: View {
                             case .capture(let captureCard):
                                 if captureCard.isImportedBatch {
                                     GroupedCaptureCard(state: state, group: captureCard)
+                                        .workspaceZoomItem("capture:" + captureCard.primary.id.uuidString)
                                 } else {
                                     CaptureRow(state: state, capture: captureCard.primary,
                                                featured: false)
                                 }
                             case .automaticHour(let group):
                                 HourlyCaptureCard(state: state, group: group)
+                                    .workspaceZoomItem("capture:" + group.captures[0].id.uuidString)
                             }
                         }
-                    }.scrollTargetLayout().padding(.horizontal, 16)
+                    }.scrollTargetLayout().padding(.horizontal, zoom.value(16))
                 }.scrollPosition(id: $state.dailyScrollID, anchor: .top)
+                    .background {
+                        WorkspaceScrollHistory(anchor: state.workspaceViewport,
+                            contextID: "daily-" + CaptureCalendar.dayString(state.selectedDay),
+                            onAnchor: { state.workspaceViewport = $0 })
+                            .allowsHitTesting(false).accessibilityHidden(true)
+                    }
             }
         }
     }

@@ -1,0 +1,13 @@
+{
+  "sameApplicationTextDrop": "passed, exact fictional text arrived in native NSTextView",
+  "sameApplicationURLDrop": "passed, native clickable example.invalid URL arrived",
+  "previewClicksDuringSuccessfulDrags": 0,
+  "crossApplicationDropCompletion": "unverified",
+  "observedExternalSourceMask": 1,
+  "fixedSourceFileSession": "began and ended with zero preview clicks; destination never received performDragOperation",
+  "automationLimitation": "The desktop controller injected source-window gestures while logged NSEvent.mouseLocation remained unchanged. Cross-application completion was not established; do not claim a receiving-app or browser matrix pass.",
+  "clipboardUnchangedInFinalManualSource": true,
+  "data": "fictional local fixtures only",
+  "updatedApplicationReopened": true,
+  "installedProjectUI": "Project workspace shows one Export project button, Project actions menu, and Task/Note/Capture distinctions."
+}

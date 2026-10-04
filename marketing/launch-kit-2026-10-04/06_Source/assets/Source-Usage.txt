@@ -1,0 +1,11 @@
+DaBin source assets
+
+DABIN__ROBOT__IDLE / HUNGRY / DELIGHTED: exact current native character at high resolution with transparent background.
+DABIN__UI__INBOX / PROJECTS / STUDIO_PROJECT / SEARCH / FOCUS: actual production native UI cutouts, 2360×1404, fictional local records. STUDIO_PROJECT and SEARCH match the three Feed DaBin input tokens.
+DABIN__SAMPLE__STUDIO_REFERENCE: original code-drawn palette image; real local OCR was used to produce the displayed search match.
+DABIN__TOKEN__: editorial input cards for the promo animation; not app controls.
+DABIN__NATIVE_RENDER__: full private native fixture compositions, 2880×1800, useful for source review.
+
+Reproduction: from this project run ReproduceNativeAssets.py with Python 3, then GenerateGraphics.py with Python + Pillow. The frozen, hash-verified 0.4.31 (86) native test module, Swift compiler and system font are needed to rebuild native views. This protects original app sources and never controls the live app. Static PNGs remain usable without the project.
+
+See graphics-provenance.json for source hashes, exact fictional content, design colors, verified feature and visual QA. No personal or KARI material is included.

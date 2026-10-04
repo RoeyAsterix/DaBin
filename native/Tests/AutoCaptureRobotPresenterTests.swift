@@ -143,7 +143,7 @@ private struct AutoCaptureRobotPresenterTests {
                    && presenter.panel.ignoresMouseEvents,
                    "The automatic confirmation cannot take focus and ignores clicks")
         try expect(presenter.panel.sharingType == .none,
-                   "The automatic confirmation is excluded from screen capture")
+                   "The automatic confirmation retains the legacy window-sharing hint")
         try expect(presenter.present(additionalCaptureCount: 1,
                                      projectName: "  Research  ",
                                      projectColor: .systemTeal),
@@ -191,7 +191,7 @@ private struct AutoCaptureRobotPresenterTests {
         try expect(!presenter.panel.isKeyWindow && !presenter.panel.isMainWindow,
                    "Ordering the passive panel never makes it key or main")
         try expect(presenter.panel.ignoresMouseEvents && presenter.panel.sharingType == .none,
-                   "The visible burst remains click-through and excluded from capture")
+                   "The visible burst remains click-through and retains the legacy sharing hint")
 
         // Completion includes a second scheduled fade task. Under concurrent
         // compiler/IO load its main-actor turn can arrive after a fixed sleep.
@@ -247,6 +247,39 @@ private struct AutoCaptureRobotPresenterTests {
         try expect(hasNativeFrame(externalPresenter.panel, requested: externalFrame),
                    "The external popup uses the tested top-right safe-area frame")
         externalPresenter.shutdown()
+
+        let recordingPresenter = AutoCaptureRobotPresenter(
+            dismissDelay: 0.50, primaryScreen: { external }, reduceMotion: { true },
+            reactionDeck: AutoCaptureRobotReactionDeck(seed: 92)
+        )
+        try expect(recordingPresenter.present(projectName: "Atlas")
+                   && recordingPresenter.projectSignIsVisible,
+                   "An active project's saved receipt can show its destination")
+        recordingPresenter.setProjectRecordingActive(false)
+        try expect(!recordingPresenter.projectSignIsVisible
+                   && recordingPresenter.currentProjectName == nil
+                   && recordingPresenter.panel.isVisible
+                   && recordingPresenter.state.visibleCount == 1,
+                   "Pausing removes an existing sign immediately without losing saved success feedback")
+        try expect(recordingPresenter.present(additionalCaptureCount: 2, projectName: "Atlas")
+                   && !recordingPresenter.projectSignIsVisible
+                   && recordingPresenter.state.visibleCount == 3,
+                   "Late committed saves update the count but cannot restore a paused sign")
+        recordingPresenter.suspendForBoard()
+        try expect(recordingPresenter.present(additionalCaptureCount: 4, projectName: "Atlas")
+                   && recordingPresenter.pendingCaptureCount == 7,
+                   "Pausing the sign preserves already-saved bursts during board suspension")
+        try expect(recordingPresenter.resumeAfterBoard()
+                   && !recordingPresenter.projectSignIsVisible
+                   && recordingPresenter.state.visibleCount == 7,
+                   "A queued receipt cannot redisplay the sign while recording remains inactive")
+        recordingPresenter.setProjectRecordingActive(true)
+        try expect(recordingPresenter.present(projectName: "Atlas")
+                   && recordingPresenter.projectSignIsVisible
+                   && recordingPresenter.currentProjectName == "Atlas"
+                   && recordingPresenter.state.visibleCount == 8,
+                   "Resuming allows a fresh success to show the project without discarding earlier counts")
+        recordingPresenter.shutdown()
 
         let exactPresenter = AutoCaptureRobotPresenter(
             dismissDelay: 0.20,

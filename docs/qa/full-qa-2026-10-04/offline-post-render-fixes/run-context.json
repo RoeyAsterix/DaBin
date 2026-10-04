@@ -1,0 +1,8 @@
+{
+  "startedUTC": "2026-10-03T22:25:47.008547+00:00",
+  "candidateRoot": "/private/tmp/dabin-full-qa-20261004/native",
+  "noGUI": true,
+  "noNativeExecution": true,
+  "inputCount": 259,
+  "reason": "Final global shortcut collision fix; README default shortcut documentation mirrored"
+}

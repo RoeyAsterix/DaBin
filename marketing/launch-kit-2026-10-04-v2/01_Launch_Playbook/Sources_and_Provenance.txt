@@ -1,0 +1,69 @@
+DABIN / SOURCES AND PROVENANCE
+Prepared 4 October 2026. Web sources checked on that date. Rules, contact routes and form requirements should be checked again at launch.
+
+PRODUCT AUTHORITY
+DaBin/README.md - native app workflow, local saved-content recognition, privacy and platform context. README contains older installed-version status; the source candidate is taken from the newer submission pack.
+DaBin/docs/app-store/submission-pack-0.4.31-86/README.txt - prepared local content pack; no public-release/submission claim.
+DaBin/docs/app-store/submission-pack-0.4.31-86/Copy/description.txt - reviewed feature/compatibility copy.
+DaBin/docs/app-store/submission-pack-0.4.31-86/Copy/PrivacyPolicy.md - updated 4 October 2026; local storage, recognition and network exceptions.
+DaBin/docs/app-store/submission-pack-0.4.31-86/Copy/metadata-en-US.json - source candidate 0.4.31 (86), arm64, macOS 14.0, DRAFT_NOT_FOR_UPLOAD; owner/public-release fields pending.
+Source screenshots: native 1440 x 900 RGB PNGs for Inbox, Projects and Focus from the same pack. They use fictional data.
+Source app icon: Assets/DaBin-App-Icon-1024.png from the same pack.
+The owner states the intended product is free. Free pricing must still match the eventual live listing; no permanent pricing commitment is inferred.
+
+PLATFORM GUIDANCE
+Reddit r/macapps developer-post notice:
+https://www.reddit.com/r/macapps/comments/1r6d06r/new_post_requirements_to_combat_low_quality/
+Supports concise structured developer posts, developer/AI disclosure and limited self-promotion. The notice describes an experiment; current rules take priority. This kit neither posts nor selects an unverified AI category.
+
+Product Hunt official launch guide:
+https://www.producthunt.com/launch
+Supports preparation, personal maker identity, own-product submission and asking for comments rather than upvotes. No hunter, placement or ranking is promised.
+
+Apple product page guidance:
+https://developer.apple.com/app-store/product-page/
+Supports clear UI screenshots, outcome emphasis, device-captured app previews, concise description, subtitle/promotional/keyword limits and avoiding price/competitor-keyword claims in store metadata.
+
+Apple screenshot specifications:
+https://developer.apple.com/help/app-store-connect/reference/app-information/screenshot-specifications/
+Reference for a separate check before any new treatment is uploaded. This marketing kit does not certify newly created graphics as App Store-upload compliant.
+
+Apple featuring nomination:
+https://developer.apple.com/help/app-store-connect/manage-featuring-nominations/nominate-your-app-for-featuring/
+Supports nomination for actual launches/enhancements and recommends at least three weeks' lead time. Drafting here does not submit a nomination or establish editorial selection.
+
+Apple campaign links:
+https://developer.apple.com/help/app-store-connect-analytics/acquisition/campaign-links
+Supports Apple-generated attribution links, delayed availability for new apps, minimum reporting thresholds and attribution limits. This plan adds no analytics to DaBin.
+
+OFFICIAL OUTREACH SOURCES
+MacStories: https://www.macstories.net/about/
+The Sweet Setup: https://thesweetsetup.com/contact/
+The Mac Observer: https://www.macobserver.com/contact/
+TidBITS contacts: https://tidbits.com/about/contact/
+TidBITS app-pitch guidance: https://tidbits.com/2026/07/23/how-to-pitch-apps-to-tidbits-in-the-ai-era/
+Created Tech: https://createdtech.com/contact
+Created Tech publication scope: https://createdtech.com/
+9to5Mac: https://9to5mac.com/contact/
+MacRumors: https://www.macrumors.com/about/
+MacSparky: https://www.macsparky.com/about/
+Better Creating: https://bettercreating.com/partnerships
+Jeff Su: https://www.jeffsu.org/partnerships/
+MacMost exclusion: https://macmost.com/contact
+Each route/policy is described in Creator_and_Publication_Targets.html. Suggested fit and priority are editorial judgments, not source statements about interest in DaBin. No private emails are guessed; public addresses remain accessible on official contact pages.
+DailyTekk's official contact page was unavailable to the web check, so it is not treated as a verified outreach route.
+
+AUTHORING / STATUS
+Written copy and launch plan authored locally from DaBin source material and public generic marketing guidance. No KARI screenplay, reference, prompt, image or capture archive was accessed or copied for this task. No messages have been sent, no posts published, no website hosted, no Apple forms submitted and no recurring automation created.
+
+NOT INCLUDED AS FACTS
+Founder backstory; why the product is free; public launch date; actual App Store URL; public contact email; user numbers; endorsements; permanent pricing; measured retention/activation; future roadmap; full accessibility evaluation. Explicit fields or conditional drafts are used where owner facts are needed.
+
+V2 GUIDED UI TOUR
+The original launch-kit-2026-10-04 is preserved. This v2 replaces the short introduction with a conversational UI walkthrough.
+Narrator: Andre Rene, generated with the user-authorized ElevenLabs service at a natural speed. Exact accepted take/timing is recorded by the voice agent in 06_Source/voice.
+Robot artwork remains the current native DaBin robot. Blender composes mouth/gaze performance, pointer guidance and actual before/after UI states.
+Native fixture renders and evidence: 06_Source/assets/native-v2-renders.json. They use isolated fictional Studio Refresh content and do not operate on the user's live capture archive or clipboard.
+Continuous live input recording is not claimed. Actual state endpoints demonstrate the shipped-source interface; composed cursor actions do not establish an input trace or successful file write.
+Main media filenames: DABIN__UI_TOUR__LANDSCAPE.mp4, PORTRAIT.mp4, their SILENT variants, POSTER.png / PORTRAIT_POSTER.png, and SUBTITLES.srt in 04_Video.
+Final duration follows the actual voice and rendered export; no fixed runtime is claimed in review copy.

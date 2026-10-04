@@ -1,0 +1,45 @@
+{
+  "status": "CANDIDATES_ONLY_NO_GENERATION",
+  "date": "2026-10-04",
+  "recommendation": "GogJbMCDT0Viv4cU3N4s",
+  "candidates": [
+    {
+      "voice_id": "GogJbMCDT0Viv4cU3N4s",
+      "name": "Andre Rene - Warm, Real & Conversational",
+      "description": "Andre Rene is a smooth, textured younger male voice that feels genuinely human \u2014 friendly without being lightweight, confident without sounding like an announcer. A natural fit for consumer brand campaigns, lifestyle and tech content, and any project where authentic representation and conversational warmth are the brief.",
+      "labels": {
+        "accent": "en-american",
+        "language": "en"
+      },
+      "preview_url": "https://storage.googleapis.com/eleven-public-prod/database/workspace/84bfa28459634f8fb30ca6e5a8643fd4/voices/GogJbMCDT0Viv4cU3N4s/z2KgtSnxBdtvwl1H2mNr.mp3"
+    },
+    {
+      "voice_id": "tfsEebr1nWcNraaptkk3",
+      "name": "Willem - Casual British Conversational",
+      "description": "Friendly, natural British male voice with a subtle Welsh lilt. Casual and conversational, great for YouTube, explainers, podcasts, social content and AI agents or assistants.",
+      "labels": {
+        "gender": "male",
+        "age": "middle-aged",
+        "accent": "en-british",
+        "language": "en"
+      },
+      "preview_url": "https://api.us.elevenlabs.io/v1/voices/tfsEebr1nWcNraaptkk3/previews/audio?payload=eyJ2b2ljZV9zb3VyY2UiOiJjdXN0b20iLCJ3b3Jrc3BhY2VfaWQiOiJiMTkwZTM5MzZiMWE0NWNlOWE5NjkyODI4NGEwMTIxOCIsImZpbGVuYW1lIjoiTEZOdFVUZ1htY29hS0o4N3RkaWQubXAzIiwidGltZXN0YW1wIjoxNzkxMTAwODAwMDAwMDAwfQ%3D%3D"
+    },
+    {
+      "voice_id": "kyu5ji11Ocj3MIcc9vdQ",
+      "name": "Jesse - Conversational & Relatable Male",
+      "description": "A warm, natural American male voice built for conversation - podcasting hosting, phone systems, and voice agents. Clear articulation, relaxed pacing, and genuine emotional range that makes dialogue feel human.",
+      "labels": {
+        "accent": "en-american",
+        "age": "middle-aged",
+        "gender": "male",
+        "language": "en"
+      },
+      "preview_url": "https://api.us.elevenlabs.io/v1/voices/kyu5ji11Ocj3MIcc9vdQ/previews/audio?payload=eyJ2b2ljZV9zb3VyY2UiOiJjdXN0b20iLCJ3b3Jrc3BhY2VfaWQiOiI5YjZjODc0YjJjMDg0YjY3YjgxYTc0ZjkyN2U2YzJhZSIsImZpbGVuYW1lIjoiWHp2d05yTWJ0TXRlQlFQVzlxUHcubXAzIiwidGltZXN0YW1wIjoxNzkxMTAwODAwMDAwMDAwfQ%3D%3D"
+    }
+  ],
+  "model": "eleven_v3",
+  "performance_plan": "Sparse delivery tags such as [warmly], [curious], [mischievously], punctuated conversational script; no robot audio effect, no commercial announcement, no voice clone.",
+  "voice_settings": "Connector's returned v3 schema exposes only voice_id/language_code; no stability, speed, similarity or style controls are exposed. No unsupported setting will be invented.",
+  "subjective_review": "Audio hearing unsupported in this agent session; selection is based on provider voice descriptions."
+}

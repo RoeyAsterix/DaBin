@@ -1,8 +1,8 @@
 import SwiftUI
 
 /// Weekly keeps the compact header while exposing the range choice in a small
-/// anchored popover. The selected day is always one of the seven fixed local
-/// calendar days, including days hidden from the activity-only week columns.
+/// anchored popover. The action day is one of the user's selected calendar
+/// dates, including days hidden from the activity-only week columns.
 @MainActor
 struct WeeklySearchButton: View {
     @ObservedObject var state: AppState
@@ -25,7 +25,7 @@ struct WeeklySearchButton: View {
             WeeklySearchPopover(state: state, isPresented: $isPresented)
                 .hoverTooltips()
         }
-        .onChange(of: state.weekEndingDay) { _, _ in isPresented = false }
+        .onChange(of: state.weeklyDays) { _, _ in isPresented = false }
         .onDisappear { isPresented = false }
     }
 }
@@ -63,16 +63,16 @@ struct WeeklySearchPopover: View {
             scopeButton(title: "Search Week", symbol: "rectangle.stack",
                         choice: .week,
                         shortcut: "7", shortcutLabel: "⌘7",
-                        hint: "Search all seven days in the displayed week") {
+                        hint: "Search every selected date in Week") {
                 let days = state.weeklyDays
                 isPresented = false
                 state.openSearch(week: days)
             }
-            scopeButton(title: "Search All Captures", symbol: "magnifyingglass",
-                        choice: .all, shortcut: "k", shortcutLabel: "⌘K",
+            scopeButton(title: "Search Everything", symbol: "magnifyingglass",
+                        choice: .all, shortcut: "k", shortcutLabel: "⌘⇧K", modifiers: [.command, .shift],
                         hint: "Search all dates and projects") {
                 isPresented = false
-                state.performSearchCommand()
+                state.searchEverything()
             }
         }
         .padding(12)
@@ -85,6 +85,7 @@ struct WeeklySearchPopover: View {
 
     private func scopeButton(title: String, symbol: String, choice: Choice,
                              shortcut: KeyEquivalent, shortcutLabel: String,
+                             modifiers: EventModifiers = .command,
                              hint: String, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             HStack(spacing: 9) {
@@ -110,7 +111,7 @@ struct WeeklySearchPopover: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .keyboardShortcut(shortcut, modifiers: .command)
+        .keyboardShortcut(shortcut, modifiers: modifiers)
         .focused($focusedChoice, equals: choice)
         .buddyHelp(title)
         .accessibilityLabel(title)

@@ -1,0 +1,7 @@
+DaBin launch graphics
+
+Use the landscape 1200×630 post for X, LinkedIn and launch announcements. Use the square 1080×1080 for Instagram or community posts, and the portrait 1080×1920 as a Reel/Story cover. Outcome cards show actual native app controls with fictional records. UI can scroll; only visible content is represented.
+
+The transparent robot is the current production Quiet Orbit character. The App Icon is the existing official DaBin app icon and is preserved separately; its design differs from the current desktop robot. Do not treat it as a replacement character.
+
+Assets are launch-ready creative drafts. Publish after the App Store listing is live and insert its real link into accompanying copy. No App Store badge or fabricated listing URL is included. Compatibility: Apple Silicon, macOS 14 or later. Search covers content saved in DaBin and local text recognition works with supported images/documents.

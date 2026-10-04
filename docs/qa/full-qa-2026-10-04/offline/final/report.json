@@ -1,0 +1,74 @@
+{
+  "utc": "2026-10-03T21:06:49.848505+00:00",
+  "metadataChange": {
+    "version": "0.4.28",
+    "build": "83",
+    "allOtherFieldsUnchanged": true
+  },
+  "checks": [
+    {
+      "name": "python-tests",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "Tests",
+        "-p",
+        "test_*.py",
+        "-v"
+      ],
+      "cwd": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native",
+      "exitCode": 0,
+      "seconds": 0.115,
+      "log": "/private/tmp/dabin-offline-qa-20261004/final/python-tests.log"
+    },
+    {
+      "name": "python-preflight-tests",
+      "command": [
+        "python3",
+        "scripts/test_app_store_preflight.py"
+      ],
+      "cwd": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native",
+      "exitCode": 0,
+      "seconds": 0.053,
+      "log": "/private/tmp/dabin-offline-qa-20261004/final/python-preflight-tests.log"
+    },
+    {
+      "name": "source-packaging",
+      "command": [
+        "python3",
+        "scripts/app_store_preflight.py",
+        "--static-only"
+      ],
+      "cwd": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native",
+      "exitCode": 0,
+      "seconds": 0.087,
+      "log": "/private/tmp/dabin-offline-qa-20261004/final/source-packaging.log"
+    },
+    {
+      "name": "draft-metadata",
+      "command": [
+        "python3",
+        "scripts/validate_app_store_metadata.py"
+      ],
+      "cwd": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native",
+      "exitCode": 0,
+      "seconds": 0.037,
+      "log": "/private/tmp/dabin-offline-qa-20261004/final/draft-metadata.log"
+    },
+    {
+      "name": "project-inventory",
+      "command": [
+        "python3",
+        "scripts/generate_project.py",
+        "--check"
+      ],
+      "cwd": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native",
+      "exitCode": 0,
+      "seconds": 0.038,
+      "log": "/private/tmp/dabin-offline-qa-20261004/final/project-inventory.log"
+    }
+  ]
+}

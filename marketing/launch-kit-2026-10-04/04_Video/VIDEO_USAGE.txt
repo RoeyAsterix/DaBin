@@ -1,0 +1,35 @@
+Feed DaBin — 22-second editorial promotional video
+
+DABIN__FEED_DABIN__LANDSCAPE.mp4 — 1920 x 1080, 30 fps, H.264/AAC
+DABIN__FEED_DABIN__PORTRAIT.mp4 — 1080 x 1920, 30 fps, H.264/AAC
+Matching _SILENT.mp4 exports have no audio track, for autoplay placements.
+DABIN__FEED_DABIN__SUBTITLES.srt — optional English speech captions.
+DABIN__FEED_DABIN__POSTER.png — landscape video poster.
+
+The landscape version fits a website, YouTube, Product Hunt and press pitch.
+The portrait version is re-composed for short-video feeds, rather than cropped
+from landscape. Use the platform's caption upload with the SRT and preview it.
+The video has readable benefit text; speech captions are separate, not burned.
+
+Narration: ElevenLabs Emma — Youthful, Upbeat Commercial, selected take 02,
+paced to 0.92, with two additional silent reading pauses. Exact script and all
+four provider takes are included in 06_Source/voice. Three quiet original
+synthetic save ticks are included. No third-party music or stock footage.
+
+This is an editorial promo, not continuous screen recording. The robot is the
+exact current native DaBin artwork. Floating input cards are editorial tokens.
+Projects and Search are genuine native product views rendered from an isolated
+fictional archive. The same 'Riverside studio' image is fed, filed under Studio
+refresh, and retrieved by real local text recognition. Source filename and
+capture title do not contain 'riverside'. Auto Capture and link previews are off.
+
+Editable packed Blender projects and Python scripts are in 06_Source/video.
+Production UI is captured, not redrawn. No live personal archive was read.
+No social post, pitch, App Store upload or website publication was performed.
+
+Captions use actual waveform silence boundaries with editorial estimated phrase
+timing. Provider transcription exactly matches the spoken script. Audio passes
+technical decoding and clipping checks; subjective vocal taste is for playback.
+
+Before launch, compare the visible interface and claims with the shipping build.
+The video does not embed an unverified download URL, rating or featuring claim.

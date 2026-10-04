@@ -47,8 +47,18 @@ import Foundation
     override func paste(_ sender: Any?) { pastes += 1 }
 }
 
-@main struct DailyCaptureTests {
+/// Focus eligibility is injected without activating another application window.
+@MainActor private final class NavigationFocusFixtureWindow: NSWindow {
+    var rejectFocus = false
+    override var isKeyWindow: Bool { true }
+    override func makeFirstResponder(_ responder: NSResponder?) -> Bool {
+        !rejectFocus && super.makeFirstResponder(responder)
+    }
+}
+
+@main @MainActor private final class DailyCaptureTests: NSObject, NSApplicationDelegate {
     @MainActor private static var checks = 0
+    private var result: Int32 = 0
     @MainActor private static func expect(_ value: @autoclosure () throws -> Bool, _ message: String) throws {
         checks += 1
         if try !value() { throw NSError(domain: "DaBinDailyCaptureTests", code: 1,
@@ -81,10 +91,127 @@ import Foundation
             charactersIgnoringModifiers: ignoringModifiers, isARepeat: repeatKey, keyCode: 9)!
     }
 
-    @MainActor static func main() async throws {
+    @MainActor private static func verifyFocusRestoration(_ state: AppState) async throws {
+        let host = DailyCaptureHostingView(state: state)
+        let window = NavigationFocusFixtureWindow(contentRect: NSRect(x: -4000, y: -4000, width: 380, height: 500),
+            styleMask: .borderless, backing: .buffered, defer: false)
+        window.isReleasedWhenClosed = false; window.contentView = host
+        defer { window.contentView = nil; window.close() }
+        let first = NSTextView(frame: NSRect(x: 0, y: 0, width: 140, height: 40))
+        let second = NSTextView(frame: NSRect(x: 0, y: 50, width: 140, height: 40))
+        first.identifier = .init("focus-first"); first.string = "Original editor"
+        second.identifier = .init("focus-second"); second.string = "Returning editor"
+        host.addSubview(first); host.addSubview(second)
+        try expect(window.makeFirstResponder(first), "Focus fixture accepts its first editor")
+        first.setSelectedRange(NSRange(location: 1, length: 0))
+        let restoreSecond = NativeNavigationFocus(identifier: "focus-second", location: 2, length: 3).encoded
+        state.onRestoreNavigationFocus?(restoreSecond)
+        state.navigate(to: .settings)
+        try await Task.sleep(for: .milliseconds(30))
+        try expect(window.firstResponder === first && first.selectedRange() == NSRange(location: 1, length: 0),
+                   "A newer deliberate navigation cancels queued focus and selection restoration")
+        state.onRestoreNavigationFocus?(restoreSecond)
+        try await Task.sleep(for: .milliseconds(30))
+        try expect(window.firstResponder === second && second.selectedRange() == NSRange(location: 2, length: 3),
+                   "Current navigation restores the identified editor and its insertion range")
+        window.rejectFocus = true
+        state.onRestoreNavigationFocus?(NativeNavigationFocus(identifier: "focus-first", location: 5, length: 0).encoded)
+        try await Task.sleep(for: .milliseconds(30))
+        try expect(window.firstResponder === second && second.selectedRange() == NSRange(location: 2, length: 3),
+                   "A rejected focus transfer cannot change the current editor's selection")
+        window.rejectFocus = false
+        state.onRestoreNavigationFocus?(NativeNavigationFocus(identifier: "focus-first", location: 5, length: 0).encoded)
+        state.onRestoreNavigationFocus?(nil)
+        try await Task.sleep(for: .milliseconds(30))
+        try expect(window.firstResponder === second, "A newer empty focus destination cancels the previous request")
+        state.navigate(to: .daily)
+    }
+
+    @MainActor private static func verifyProductionEditorRestoration(root: URL) async throws {
+        let suite = "DaBinProductionEditorQA.\(UUID())"
+        let defaults = UserDefaults(suiteName: suite)!
+        let store = try CaptureStore(root: root)
+        let previews = PreviewService(store: store, defaults: defaults)
+        let auto = AutoCaptureService(settings: AutoCaptureSettings(defaults: defaults), input: InputService(store: store),
+            pasteboardProvider: { fatalError("Editor QA never reads the clipboard") }, sourceApplicationProvider: { nil })
+        let state = AppState(store: store, previews: previews,
+            reminders: ReminderService(store: store, client: DailyNotificationClient()), autoCapture: auto)
+        let host = DailyCaptureHostingView(state: state, theme: ThemeSettings(defaults: defaults))
+        let window = DailyCapturePanel(contentRect: NSRect(x: 120, y: 120, width: 680, height: 950),
+            styleMask: [.titled, .closable], backing: .buffered, defer: false)
+        window.isReleasedWhenClosed = false; window.contentView = host
+        defer {
+            window.orderOut(nil); window.contentView = nil; window.close()
+            auto.shutdown(); previews.shutdown(); state.focusSessions.shutdown(); state.shutdownNotificationPresentation()
+            store.cancelArchiveRepair(); defaults.removePersistentDomain(forName: suite)
+        }
+        func nativeControls(_ view: NSView) -> [NSView] { [view] + view.subviews.flatMap(nativeControls) }
+        // Locate the actual mounted input independently of the production
+        // region resolver; fixture text is unique and never from a user store.
+        func input(_ text: String) -> NSView? {
+            nativeControls(host).first {
+                if let editor = $0 as? NSTextView { return editor.isEditable && !editor.isFieldEditor && editor.string == text }
+                if let field = $0 as? NSTextField { return field.isEditable && field.stringValue == text }
+                return false
+            }
+        }
+        func settle() async throws {
+            for _ in 0..<8 { host.layoutSubtreeIfNeeded(); try await Task.sleep(for: .milliseconds(25)) }
+        }
+        func checkRoundTrip(text: String, target: NavigationEditorTarget) async throws {
+            try await settle()
+            let control = try unwrap(input(text), "Production \(target) editor is mounted")
+            try expect(window.makeFirstResponder(control), "Production \(target) accepts native focus")
+            let editor = try unwrap(window.firstResponder as? NSTextView, "Production editor owns the native insertion point")
+            editor.setSelectedRange(NSRange(location: 4, length: 3))
+            let encoded = try unwrap(state.onCaptureNavigationFocus?(), "Production \(target) captures a stable focus identity")
+            try expect(NativeNavigationFocus.decode(encoded).identifier == target.rawValue,
+                       "Production editor binds its explicit identity without matching labels or field order")
+            state.showSettings(); try await settle(); state.back(); try await settle()
+            let restored = try unwrap(input(text), "Returning production editor retains its exact draft text")
+            let current = window.firstResponder as? NSTextView
+            try expect(current === restored || (restored as? NSTextField)?.currentEditor() === current,
+                       "Back restores the same production editor role after the page remounts")
+            try expect(current?.selectedRange() == NSRange(location: 4, length: 3),
+                       "Back restores the production editor's selection instead of moving to the end")
+        }
+        NSApp.activate(ignoringOtherApps: true); window.makeKeyAndOrderFront(nil)
+        try await wait("Production editor fixture has native key-window focus") { window.isKeyWindow }
+        state.openNewTask(); state.newTaskDraft.text = "Fictional task composer keeps its selection"
+        try await checkRoundTrip(text: state.newTaskDraft.text, target: .newTask)
+        state.openNewNote(); state.newNoteText = "Fictional note composer keeps its selection"
+        try await checkRoundTrip(text: state.newNoteText, target: .newNote)
+        let task = try store.createTask(text: "Fictional editable task title retains its selection")
+        state.openCapture(task.id)
+        try await checkRoundTrip(text: task.title, target: .detailTitle)
+        let draft = try unwrap(state.selectedDraft, "Production task owns a draft")
+        draft.commentComposer = "Fictional unfinished reply retains its selection"
+        try await checkRoundTrip(text: draft.commentComposer, target: .commentComposer)
+        try expect(state.selectedDraft === draft && task.comment.isEmpty && draft.commentComposer.hasPrefix("Fictional unfinished"),
+                   "Focus restoration retains the live draft without posting or saving its text")
+    }
+
+    static func main() {
         let application = NSApplication.shared
+        let delegate = DailyCaptureTests()
         application.setActivationPolicy(.accessory)
-        application.finishLaunching()
+        application.delegate = delegate
+        withExtendedLifetime(delegate) { application.run() }
+        exit(delegate.result)
+    }
+
+    func applicationDidFinishLaunching(_ notification: Notification) {
+        Task {
+            do { try await Self.run() }
+            catch { result = 1; fputs("Daily capture QA failed: \(error)\n", stderr) }
+            NSApp.stop(nil)
+            NSApp.postEvent(NSEvent.otherEvent(with: .applicationDefined, location: .zero, modifierFlags: [],
+                timestamp: 0, windowNumber: 0, context: nil, subtype: 0, data1: 0, data2: 0)!, atStart: true)
+        }
+    }
+
+    private static func run() async throws {
+        let application = NSApplication.shared
         let root = FileManager.default.temporaryDirectory.appendingPathComponent("DaBinDailyCaptureTests-\(UUID().uuidString)")
         try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
         defer { try? FileManager.default.removeItem(at: root) }
@@ -95,6 +222,8 @@ import Foundation
         let reminders = ReminderService(store: store, client: notifications)
         let state = AppState(store: store, previews: previews, reminders: reminders)
         defer { previews.cancelNetwork() }
+        try await verifyFocusRestoration(state)
+        try await verifyProductionEditorRestoration(root: root.appendingPathComponent("ProductionEditors"))
         let hosting = DailyCaptureHostingView(state: state)
         hosting.sizingOptions = []
         let panel = DailyCapturePanel(contentRect: NSRect(x: 60, y: 60, width: 380, height: 500),
@@ -302,8 +431,19 @@ import Foundation
         defer { controller.dismiss(); controller.bin.orderOut(nil); controller.board.orderOut(nil) }
         try expect(controller.board.responds(to: #selector(DailyCapturePanel.paste(_:))), "Controller installs a native Paste responder")
         let wired = try unwrap(controller.board.captureHostingView, "Controller installs Daily capture hosting")
+        func prepareDailyBackgroundDrop() async throws {
+            // Synthetic route changes omit the native control interaction
+            // that ends text editing. Wait for a departing composer to unmount
+            // before establishing the intended background-drop responder.
+            try await wait("Daily content replaces the departing production editor") {
+                wired.layoutSubtreeIfNeeded()
+                return state.route == .daily && NavigationEditorRegionView.regions(in: wired).isEmpty
+            }
+            try expect(controller.board.makeFirstResponder(wired) && controller.board.firstResponder === wired,
+                       "Synthetic Daily background drop starts with native background focus")
+        }
         controller.openDaily()
-        try expect(controller.board.makeFirstResponder(wired), "Controller background receives focus before a board capture gesture")
+        try await prepareDailyBackgroundDrop()
         state.selectedDay = Calendar.current.date(byAdding: .day, value: -7, to: Date())!
         state.filter = .files
         _ = wired.draggingEntered(textDrag)
@@ -337,6 +477,7 @@ import Foundation
                    "A finishing import does not pull the user out of a new task draft")
         state.newTaskDraft.text = ""
         state.openDaily()
+        try await prepareDailyBackgroundDrop()
         state.selectedDay = oldDay; state.filter = .files
         try expect(wired.performDragOperation(textDrag), "Another Daily import starts before a date selection")
         let differentDay = Calendar.current.date(byAdding: .day, value: -2, to: oldDay)!
@@ -355,13 +496,19 @@ import Foundation
         try await wait("Daily import finishes after leaving and returning") { store.captures.count == 9 && !input.isBusy }
         try expect(state.selectedDay == differentDay && state.filter == .tasks,
                    "A finishing import preserves a view the user left and deliberately revisited")
+        try await prepareDailyBackgroundDrop()
         _ = wired.draggingEntered(textDrag)
         try expect(state.isDailyDropTargeted, "Controller receives next hover feedback")
         state.showSettings()
+        try expect(state.route == .daily && state.isDailyDropTargeted,
+                   "Deliberate navigation is rejected during an active drop")
+        state.route = .settings // An external route replacement still clears stale hover feedback.
         try expect(!state.isDailyDropTargeted, "Leaving Daily clears its drop highlight")
         state.route = .daily
         _ = wired.draggingUpdated(textDrag)
         try expect(state.isDailyDropTargeted, "Returning to Daily during a drag restores targeting feedback")
+        wired.draggingExited(textDrag)
+        try expect(!state.isDailyDropTargeted, "Ending a native drag releases navigation protection")
 
         // The same native host routes task workspace inputs into that task,
         // while ordinary capture details and active editors stay protected.

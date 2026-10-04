@@ -1,0 +1,24 @@
+{
+  "verifiedAtUTC": "2026-10-04T10:54:29.720798+00:00",
+  "installedPath": "/Users/roeylibfeld/Applications/DaBin.app",
+  "version": "0.4.31",
+  "buildNumber": "86",
+  "configuration": "Release",
+  "sourceFingerprint": "4edc428c70392a99c0a112c5227f2b4b02dd6a21c9f369d3040e739cd133aacd",
+  "installedExecutableSHA256": "f86821e819244691455a80823c705999f42325474e5ba47f1f891d956205a69a",
+  "matchesTestedSource": true,
+  "backupPath": "/Users/roeylibfeld/Applications/.DaBinBackups/20261004-135253-dbe3c584.app",
+  "desktopShortcutTarget": "/Users/roeylibfeld/Applications/DaBin.app",
+  "runningPID": 1733,
+  "launchTimeUTC": "2026-10-04T10:53:17Z",
+  "finishedLaunching": true,
+  "onlyOneMainDaBinRunning": true,
+  "visibleWindowBounds": {
+    "width": 400,
+    "height": 747,
+    "x": 1112,
+    "y": 33
+  },
+  "archiveModifiedByInstaller": false,
+  "published": false
+}

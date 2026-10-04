@@ -1,0 +1,10 @@
+{
+  "testedProductionSources": 118,
+  "buildSourceFingerprint": "f5447804ff05fb3ce49c460c23615e9c51cd456fe7003cabfad26bb9ddc9970d",
+  "qaSourceFingerprint": "de6b4e632a79e41c12e21bdc828d0e5699f0f6dbc5c6ac390f6ee3f5b6b40b0f",
+  "passedSuites": 12,
+  "checks": 2012,
+  "allTestedProductionInputsMatchBuild": true,
+  "sourceChangedDuringQA": false,
+  "executableSHA256": "01ebe8e06de65dc096c6784609240c241d57cdc0b443507f4a5f75dde3c19976"
+}

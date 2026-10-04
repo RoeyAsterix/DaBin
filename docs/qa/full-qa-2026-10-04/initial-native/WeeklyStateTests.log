@@ -1,0 +1,1 @@
+Swift/ErrorType.swift:254: Fatal error: Error raised at top level: Error Domain=DaBinWeeklyStateTests Code=1 "The shared Search command preserves the visible seven-day context" UserInfo={NSLocalizedDescription=The shared Search command preserves the visible seven-day context}

@@ -1,0 +1,42 @@
+{
+  "status": "passed",
+  "suites": [
+    {
+      "name": "AutoCaptureServiceTests",
+      "status": "passed",
+      "reportedSummary": "PASS: 75 auto-capture service checks"
+    },
+    {
+      "name": "TooltipBehaviorTests",
+      "status": "passed",
+      "reportedSummary": "PASS: 158 tooltip delay, cancellation, preference, suppression, active-only anchors and clamped-layout checks"
+    },
+    {
+      "name": "TooltipPresentationTests",
+      "status": "passed",
+      "reportedSummary": "PASS: 146 native tooltip visibility, actual anchors, preference, focus and click-through checks. /private/tmp/dabin-record-control-20261004/native/build/qa/tooltips"
+    },
+    {
+      "name": "SearchInputTests",
+      "status": "passed",
+      "reportedSummary": "PASS: 65 production Search typing, focus, clear, private direct/Cmd V paste, unrelated-editor and immediate/animated reopen checks"
+    },
+    {
+      "name": "AutoRecordIndicatorTests",
+      "status": "passed",
+      "reportedSummary": "PASS: 117 Auto Record state, native geometry, compositor motion, reduced-motion and lifecycle checks"
+    },
+    {
+      "name": "HeaderInteractionTests",
+      "status": "passed",
+      "reportedSummary": "PASS: 250 native labeled-header accessibility and interaction checks"
+    }
+  ],
+  "nativeChecks": 811,
+  "sourceInputsChanged": false,
+  "productionDelta": [
+    "Sources/DaBin/AutoRecordIndicator.swift",
+    "Sources/DaBin/BoardComponents.swift"
+  ],
+  "installedVersion": "0.4.29 (84)"
+}

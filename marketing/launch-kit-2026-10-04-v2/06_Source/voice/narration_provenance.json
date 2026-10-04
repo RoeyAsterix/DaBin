@@ -1,0 +1,92 @@
+{
+  "created_date": "2026-10-04",
+  "purpose": "Revised DaBin first-person actual-UI walkthrough narration",
+  "provider": "ElevenLabs",
+  "voice": {
+    "name": "Andre Rene - Warm, Real & Conversational",
+    "voice_id": "GogJbMCDT0Viv4cU3N4s",
+    "selection": "Existing professional voice chosen from connector voice discovery for conversational human warmth without an announcer or robot effect."
+  },
+  "model": "eleven_v3",
+  "flow_id": "sZk0mjXtSYlSh5H4mJwE",
+  "node_id": "fIFsG2suZXCzxC9QOKJy",
+  "exact_tts_input": "[warmly] Hey, I\u2019m DaBin. You know that screenshot you\u2019ll need later? Drop it here. A link? Paste it. A thought you\u2019ll forget in five minutes? Write it down. Your Inbox groups the catch by day or week. To organize holds the bits you haven\u2019t filed yet. Let\u2019s give this studio refresh a project. References, autosaving notes, named snippets, saved clipboard history... all close at hand. And here\u2019s your collection shelf. Now, where\u2019s that screenshot? Search a word inside it. I recognize text locally in supported content you\u2019ve saved. Use filters to narrow the hunt. Turn an idea into a task. Add a priority, checklist, reminder, or repeat. Plan it in Today, then start a focus timer. When time\u2019s up, I\u2019ll nudge you. You decide when it\u2019s done. Want automatic capture? It starts off. Choose new clipboard changes or a screenshot folder. Pause whenever you like. Export a project, make a local backup, or rescue a capture from Recently Deleted. I\u2019m free. No account, ads, analytics, or cloud sync. Your saved captures stay on this Mac.",
+  "canonical_script": "Hey, I\u2019m DaBin. You know that screenshot you\u2019ll need later? Drop it here. A link? Paste it. A thought you\u2019ll forget in five minutes? Write it down. Your Inbox groups the catch by day or week. To organize holds the bits you haven\u2019t filed yet. Let\u2019s give this studio refresh a project. References, autosaving notes, named snippets, saved clipboard history... all close at hand. And here\u2019s your collection shelf. Now, where\u2019s that screenshot? Search a word inside it. I recognize text locally in supported content you\u2019ve saved. Use filters to narrow the hunt. Turn an idea into a task. Add a priority, checklist, reminder, or repeat. Plan it in Today, then start a focus timer. When time\u2019s up, I\u2019ll nudge you. You decide when it\u2019s done. Want automatic capture? It starts off. Choose new clipboard changes or a screenshot folder. Pause whenever you like. Export a project, make a local backup, or rescue a capture from Recently Deleted. I\u2019m free. No account, ads, analytics, or cloud sync. Your saved captures stay on this Mac.",
+  "script_word_count": 174,
+  "tags": [
+    "warmly"
+  ],
+  "voice_settings": "No speed/stability/style parameters exposed by connector schema; none guessed.",
+  "generations": [
+    {
+      "take": 1,
+      "generation_id": "t3wRsoHtWwl04mU4VV7F",
+      "duration_seconds": 77.84,
+      "status": "completed",
+      "price": {
+        "credits": 1032,
+        "price_cents": 20.64,
+        "cost_fiat_currency": "usd"
+      },
+      "filename": "DABIN__UI_TOUR__NARRATION_TAKE_01.mp3"
+    },
+    {
+      "take": 2,
+      "generation_id": "iKwR1f4jGb0mcxutkPR2",
+      "duration_seconds": 83.2,
+      "status": "completed",
+      "price": {
+        "credits": 1032,
+        "price_cents": 20.64,
+        "cost_fiat_currency": "usd"
+      },
+      "filename": "DABIN__UI_TOUR__NARRATION_TAKE_02.mp3"
+    },
+    {
+      "take": 3,
+      "generation_id": "LiQish7FY66Ws8SdnGyR",
+      "duration_seconds": 88.24,
+      "status": "completed",
+      "price": {
+        "credits": 1032,
+        "price_cents": 20.64,
+        "cost_fiat_currency": "usd"
+      },
+      "filename": "DABIN__UI_TOUR__NARRATION_TAKE_03.mp3"
+    },
+    {
+      "take": 4,
+      "generation_id": "limFgEsIj5LrZqGPTXaE",
+      "duration_seconds": 86.8,
+      "status": "completed",
+      "price": {
+        "credits": 1032,
+        "price_cents": 20.64,
+        "cost_fiat_currency": "usd"
+      },
+      "filename": "DABIN__UI_TOUR__NARRATION_TAKE_04.mp3"
+    }
+  ],
+  "selected_take": 2,
+  "selected_generation_id": "iKwR1f4jGb0mcxutkPR2",
+  "selected_duration_seconds": 83.2,
+  "rate": "Original natural generated rate; no atempo or slow-down.",
+  "provider_transcript": {
+    "generation_id": "Q3lGMcic5TnFTU2octGM",
+    "text": "[warmly] Hey, I\u2019m DaBin. You know that screenshot you\u2019ll need later? Drop it here. A link? Paste it. A thought you\u2019ll forget in five minutes? Write it down. Your Inbox groups the catch by day or week. To organize holds the bits you haven\u2019t filed yet. Let\u2019s give this studio refresh a project. References, autosaving notes, named snippets, saved clipboard history... all close at hand. And here\u2019s your collection shelf. Now, where\u2019s that screenshot? Search a word inside it. I recognize text locally in supported content you\u2019ve saved. Use filters to narrow the hunt. Turn an idea into a task. Add a priority, checklist, reminder, or repeat. Plan it in Today, then start a focus timer. When time\u2019s up, I\u2019ll nudge you. You decide when it\u2019s done. Want automatic capture? It starts off. Choose new clipboard changes or a screenshot folder. Pause whenever you like. Export a project, make a local backup, or rescue a capture from Recently Deleted. I\u2019m free. No account, ads, analytics, or cloud sync. Your saved captures stay on this Mac.",
+    "qualification": "Provider transcript returns original performance tag as text; local STT independently verifies actual spoken words."
+  },
+  "local_content_qa": {
+    "software": "faster-whisper1.2.1",
+    "model": "base.en",
+    "processing": "Local CPU/int8, isolated .work tooling and generic model weights; audio was never sent to another provider.",
+    "canonical_words": 174,
+    "matched_words": 174,
+    "word_timestamps": "Approximate local STT word bounds; two short bounded rereads correct context-boundary artifacts at29s/59s.",
+    "clipping_samples": 0,
+    "peak_dbfs": -0.4362135056211137,
+    "rms_dbfs": -15.405842182431005
+  },
+  "subjective_listening": "Unavailable in agent session; no subjective listening pass claimed. Owner playback review needed.",
+  "privacy": "Only user-authorized DaBin public marketing script and generated narration used with ElevenLabs. No KARI content, private clipboard archive, reference image or screenshot sent."
+}

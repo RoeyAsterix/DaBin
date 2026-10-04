@@ -1,0 +1,21 @@
+{
+  "checks" : 117,
+  "motionMaxDistance" : 2.5525506873357009,
+  "privacy" : "Own-process native indicator, private offscreen non-key windows; no user settings, clipboard or input.",
+  "renders" : [
+    {
+      "appearance" : "light",
+      "filename" : "auto-record-light-idle-recording@2x.png",
+      "idleDotDiameter" : 8,
+      "recordingDotDiameter" : 16,
+      "scale" : 2
+    },
+    {
+      "appearance" : "dark",
+      "filename" : "auto-record-dark-idle-recording@2x.png",
+      "idleDotDiameter" : 8,
+      "recordingDotDiameter" : 16,
+      "scale" : 2
+    }
+  ]
+}

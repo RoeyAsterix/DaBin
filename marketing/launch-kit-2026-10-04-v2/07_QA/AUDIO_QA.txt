@@ -1,0 +1,11 @@
+TECHNICAL AND CONTENT PASS
+
+The 94.4-second edit preserves the original 83.2-second narration at its natural rate. It adds 8.9 seconds of reading pauses, a 0.5-second intro and a 1.8-second tail.
+
+All 11 insertions fall inside measured quiet intervals and outside aligned words. The active splice at 24.4 seconds was moved to 24.54; 66.99 moved to 67.05 and 70.3 moved to 70.33 for better quiet margins. The largest remaining join step is -48.67 dBFS; no speech fades are needed.
+
+Mix peak: -2.935 dBFS. Clipped samples: zero. Original narration samples retain their order and 0.75 gain outside the declared quiet tap effects. No speed alteration or missing voice samples detected.
+
+All 30 captions retain the exact script text and transformed times. SRT and VTT match, with no overlaps. The last spoken caption ends at 92.3 seconds.
+
+No subjective listening pass is claimed. Review playback before publication.

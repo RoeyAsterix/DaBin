@@ -1,0 +1,1102 @@
+{
+  "method": "Local faster-whisper base.en independent transcription and word timestamps; approximate alignment, not forced-aligned ground truth.",
+  "language": "en",
+  "duration": 83.2,
+  "segments": [
+    {
+      "start": 0.0,
+      "end": 29.02,
+      "text": " Hey, I'm DaBin. You know that screenshot you'll need later? Drop it here. A link. Paste it. A thought you'll forget in five minutes. Write it down. Your inbox groups the catch by day or week. To organize holds the bits you haven't filed yet. Let's give this Studio refresh a project. References. Autosaving notes. Named snippets. Saved clipboard history. All close at hand.",
+      "words": [
+        {
+          "start": 0.0,
+          "end": 0.18,
+          "word": " Hey,",
+          "probability": 0.8798980116844177
+        },
+        {
+          "start": 0.6,
+          "end": 0.88,
+          "word": " I'm",
+          "probability": 0.9970175921916962
+        },
+        {
+          "start": 0.88,
+          "end": 1.16,
+          "word": " DaBin.",
+          "probability": 0.45567030397554237
+        },
+        {
+          "start": 1.88,
+          "end": 2.12,
+          "word": " You",
+          "probability": 0.9926682114601135
+        },
+        {
+          "start": 2.12,
+          "end": 2.22,
+          "word": " know",
+          "probability": 0.9983458518981934
+        },
+        {
+          "start": 2.22,
+          "end": 2.36,
+          "word": " that",
+          "probability": 0.9934090375900269
+        },
+        {
+          "start": 2.36,
+          "end": 2.62,
+          "word": " screenshot",
+          "probability": 0.9361308813095093
+        },
+        {
+          "start": 2.62,
+          "end": 3.1,
+          "word": " you'll",
+          "probability": 0.9921974837779999
+        },
+        {
+          "start": 3.1,
+          "end": 3.28,
+          "word": " need",
+          "probability": 0.9978681802749634
+        },
+        {
+          "start": 3.28,
+          "end": 3.52,
+          "word": " later?",
+          "probability": 0.9958717226982117
+        },
+        {
+          "start": 4.18,
+          "end": 4.32,
+          "word": " Drop",
+          "probability": 0.9906733632087708
+        },
+        {
+          "start": 4.32,
+          "end": 4.52,
+          "word": " it",
+          "probability": 0.9988775849342346
+        },
+        {
+          "start": 4.52,
+          "end": 4.72,
+          "word": " here.",
+          "probability": 0.9964938759803772
+        },
+        {
+          "start": 5.52,
+          "end": 5.58,
+          "word": " A",
+          "probability": 0.9900662899017334
+        },
+        {
+          "start": 5.58,
+          "end": 5.74,
+          "word": " link.",
+          "probability": 0.9972866773605347
+        },
+        {
+          "start": 6.48,
+          "end": 6.52,
+          "word": " Paste",
+          "probability": 0.6661099791526794
+        },
+        {
+          "start": 6.52,
+          "end": 6.78,
+          "word": " it.",
+          "probability": 0.9984443783760071
+        },
+        {
+          "start": 7.46,
+          "end": 7.54,
+          "word": " A",
+          "probability": 0.9955796599388123
+        },
+        {
+          "start": 7.54,
+          "end": 7.72,
+          "word": " thought",
+          "probability": 0.9940351843833923
+        },
+        {
+          "start": 7.72,
+          "end": 7.98,
+          "word": " you'll",
+          "probability": 0.9894803464412689
+        },
+        {
+          "start": 7.98,
+          "end": 8.28,
+          "word": " forget",
+          "probability": 0.9982187151908875
+        },
+        {
+          "start": 8.28,
+          "end": 8.46,
+          "word": " in",
+          "probability": 0.9962855577468872
+        },
+        {
+          "start": 8.46,
+          "end": 8.68,
+          "word": " five",
+          "probability": 0.7986961007118225
+        },
+        {
+          "start": 8.68,
+          "end": 8.98,
+          "word": " minutes.",
+          "probability": 0.9991600513458252
+        },
+        {
+          "start": 9.66,
+          "end": 9.82,
+          "word": " Write",
+          "probability": 0.9894060492515564
+        },
+        {
+          "start": 9.82,
+          "end": 10.0,
+          "word": " it",
+          "probability": 0.9991163611412048
+        },
+        {
+          "start": 10.0,
+          "end": 10.22,
+          "word": " down.",
+          "probability": 0.9998534917831421
+        },
+        {
+          "start": 11.3,
+          "end": 11.38,
+          "word": " Your",
+          "probability": 0.9841697216033936
+        },
+        {
+          "start": 11.38,
+          "end": 11.7,
+          "word": " inbox",
+          "probability": 0.8826942443847656
+        },
+        {
+          "start": 11.7,
+          "end": 12.12,
+          "word": " groups",
+          "probability": 0.9697917103767395
+        },
+        {
+          "start": 12.12,
+          "end": 12.44,
+          "word": " the",
+          "probability": 0.9967235922813416
+        },
+        {
+          "start": 12.44,
+          "end": 12.64,
+          "word": " catch",
+          "probability": 0.9702003002166748
+        },
+        {
+          "start": 12.64,
+          "end": 12.92,
+          "word": " by",
+          "probability": 0.9204408526420593
+        },
+        {
+          "start": 12.92,
+          "end": 13.18,
+          "word": " day",
+          "probability": 0.9980393052101135
+        },
+        {
+          "start": 13.18,
+          "end": 13.62,
+          "word": " or",
+          "probability": 0.9846737384796143
+        },
+        {
+          "start": 13.62,
+          "end": 13.86,
+          "word": " week.",
+          "probability": 0.9978042244911194
+        },
+        {
+          "start": 14.86,
+          "end": 14.9,
+          "word": " To",
+          "probability": 0.9925853610038757
+        },
+        {
+          "start": 14.9,
+          "end": 15.2,
+          "word": " organize",
+          "probability": 0.9826977849006653
+        },
+        {
+          "start": 15.2,
+          "end": 15.78,
+          "word": " holds",
+          "probability": 0.7960905432701111
+        },
+        {
+          "start": 15.78,
+          "end": 16.12,
+          "word": " the",
+          "probability": 0.9986616373062134
+        },
+        {
+          "start": 16.12,
+          "end": 16.28,
+          "word": " bits",
+          "probability": 0.9972884654998779
+        },
+        {
+          "start": 16.28,
+          "end": 16.52,
+          "word": " you",
+          "probability": 0.9955416321754456
+        },
+        {
+          "start": 16.52,
+          "end": 16.8,
+          "word": " haven't",
+          "probability": 0.9992950558662415
+        },
+        {
+          "start": 16.8,
+          "end": 16.98,
+          "word": " filed",
+          "probability": 0.9939121007919312
+        },
+        {
+          "start": 16.98,
+          "end": 17.3,
+          "word": " yet.",
+          "probability": 0.9929445385932922
+        },
+        {
+          "start": 18.38,
+          "end": 18.66,
+          "word": " Let's",
+          "probability": 0.9982192516326904
+        },
+        {
+          "start": 18.66,
+          "end": 18.8,
+          "word": " give",
+          "probability": 0.9981778860092163
+        },
+        {
+          "start": 18.8,
+          "end": 19.04,
+          "word": " this",
+          "probability": 0.9944275617599487
+        },
+        {
+          "start": 19.04,
+          "end": 19.52,
+          "word": " Studio",
+          "probability": 0.5398747324943542
+        },
+        {
+          "start": 19.52,
+          "end": 20.0,
+          "word": " refresh",
+          "probability": 0.3628178536891937
+        },
+        {
+          "start": 20.0,
+          "end": 20.72,
+          "word": " a",
+          "probability": 0.9908087253570557
+        },
+        {
+          "start": 20.72,
+          "end": 21.08,
+          "word": " project.",
+          "probability": 0.997913658618927
+        },
+        {
+          "start": 22.74,
+          "end": 22.74,
+          "word": " References.",
+          "probability": 0.9803300499916077
+        },
+        {
+          "start": 23.3,
+          "end": 23.74,
+          "word": " Autosaving",
+          "probability": 0.6807428002357483
+        },
+        {
+          "start": 23.74,
+          "end": 24.08,
+          "word": " notes.",
+          "probability": 0.7320607900619507
+        },
+        {
+          "start": 24.76,
+          "end": 24.88,
+          "word": " Named",
+          "probability": 0.896181583404541
+        },
+        {
+          "start": 24.88,
+          "end": 25.28,
+          "word": " snippets.",
+          "probability": 0.9746755957603455
+        },
+        {
+          "start": 26.2,
+          "end": 26.48,
+          "word": " Saved",
+          "probability": 0.9827931821346283
+        },
+        {
+          "start": 26.48,
+          "end": 26.72,
+          "word": " clipboard",
+          "probability": 0.9612519145011902
+        },
+        {
+          "start": 26.72,
+          "end": 27.16,
+          "word": " history.",
+          "probability": 0.9905509948730469
+        },
+        {
+          "start": 28.14,
+          "end": 28.26,
+          "word": " All",
+          "probability": 0.9961024522781372
+        },
+        {
+          "start": 28.26,
+          "end": 28.6,
+          "word": " close",
+          "probability": 0.9086340069770813
+        },
+        {
+          "start": 28.6,
+          "end": 28.82,
+          "word": " at",
+          "probability": 0.9923967719078064
+        },
+        {
+          "start": 28.82,
+          "end": 29.02,
+          "word": " hand.",
+          "probability": 0.9991645812988281
+        }
+      ]
+    },
+    {
+      "start": 29.02,
+      "end": 59.0,
+      "text": " And here's your collection shelf. Now, where's that screenshot? Search a word inside it. I recognize text locally in supported content you've saved. Use filters to narrow the hunt. Turn an idea into a task. Add a priority checklist reminder or repeat. Plan it in today. Then start a focus timer. When time's up, I'll nudge you. You decide when it's done. Why don't you do it?",
+      "words": [
+        {
+          "start": 29.02,
+          "end": 29.16,
+          "word": " And",
+          "probability": 0.38462382555007935
+        },
+        {
+          "start": 29.16,
+          "end": 30.5,
+          "word": " here's",
+          "probability": 0.9464046359062195
+        },
+        {
+          "start": 30.5,
+          "end": 30.62,
+          "word": " your",
+          "probability": 0.9960997104644775
+        },
+        {
+          "start": 30.62,
+          "end": 30.92,
+          "word": " collection",
+          "probability": 0.9397732019424438
+        },
+        {
+          "start": 30.92,
+          "end": 31.38,
+          "word": " shelf.",
+          "probability": 0.8665295839309692
+        },
+        {
+          "start": 32.18,
+          "end": 32.58,
+          "word": " Now,",
+          "probability": 0.952979326248169
+        },
+        {
+          "start": 32.88,
+          "end": 33.12,
+          "word": " where's",
+          "probability": 0.9846684038639069
+        },
+        {
+          "start": 33.12,
+          "end": 33.28,
+          "word": " that",
+          "probability": 0.9952959418296814
+        },
+        {
+          "start": 33.28,
+          "end": 33.72,
+          "word": " screenshot?",
+          "probability": 0.943451464176178
+        },
+        {
+          "start": 35.0,
+          "end": 35.24,
+          "word": " Search",
+          "probability": 0.6951776742935181
+        },
+        {
+          "start": 35.24,
+          "end": 35.4,
+          "word": " a",
+          "probability": 0.9977472424507141
+        },
+        {
+          "start": 35.4,
+          "end": 35.6,
+          "word": " word",
+          "probability": 0.9973124265670776
+        },
+        {
+          "start": 35.6,
+          "end": 35.94,
+          "word": " inside",
+          "probability": 0.9971720576286316
+        },
+        {
+          "start": 35.94,
+          "end": 36.28,
+          "word": " it.",
+          "probability": 0.9974256157875061
+        },
+        {
+          "start": 37.06,
+          "end": 37.16,
+          "word": " I",
+          "probability": 0.9190425872802734
+        },
+        {
+          "start": 37.16,
+          "end": 37.46,
+          "word": " recognize",
+          "probability": 0.9708380699157715
+        },
+        {
+          "start": 37.46,
+          "end": 37.84,
+          "word": " text",
+          "probability": 0.9676754474639893
+        },
+        {
+          "start": 37.84,
+          "end": 38.32,
+          "word": " locally",
+          "probability": 0.9919576644897461
+        },
+        {
+          "start": 38.32,
+          "end": 38.8,
+          "word": " in",
+          "probability": 0.9584523439407349
+        },
+        {
+          "start": 38.8,
+          "end": 39.12,
+          "word": " supported",
+          "probability": 0.9860358238220215
+        },
+        {
+          "start": 39.12,
+          "end": 39.6,
+          "word": " content",
+          "probability": 0.9982485771179199
+        },
+        {
+          "start": 39.6,
+          "end": 39.98,
+          "word": " you've",
+          "probability": 0.9876412451267242
+        },
+        {
+          "start": 39.98,
+          "end": 40.26,
+          "word": " saved.",
+          "probability": 0.9958005547523499
+        },
+        {
+          "start": 41.08,
+          "end": 41.2,
+          "word": " Use",
+          "probability": 0.9859083294868469
+        },
+        {
+          "start": 41.2,
+          "end": 41.56,
+          "word": " filters",
+          "probability": 0.9805989265441895
+        },
+        {
+          "start": 41.56,
+          "end": 41.94,
+          "word": " to",
+          "probability": 0.9988967180252075
+        },
+        {
+          "start": 41.94,
+          "end": 42.16,
+          "word": " narrow",
+          "probability": 0.9986501336097717
+        },
+        {
+          "start": 42.16,
+          "end": 42.42,
+          "word": " the",
+          "probability": 0.9988598823547363
+        },
+        {
+          "start": 42.42,
+          "end": 42.6,
+          "word": " hunt.",
+          "probability": 0.991183876991272
+        },
+        {
+          "start": 43.62,
+          "end": 43.92,
+          "word": " Turn",
+          "probability": 0.9931241869926453
+        },
+        {
+          "start": 43.92,
+          "end": 44.06,
+          "word": " an",
+          "probability": 0.9954167604446411
+        },
+        {
+          "start": 44.06,
+          "end": 44.42,
+          "word": " idea",
+          "probability": 0.9950661659240723
+        },
+        {
+          "start": 44.42,
+          "end": 45.04,
+          "word": " into",
+          "probability": 0.9951804876327515
+        },
+        {
+          "start": 45.04,
+          "end": 45.14,
+          "word": " a",
+          "probability": 0.9962992072105408
+        },
+        {
+          "start": 45.14,
+          "end": 45.52,
+          "word": " task.",
+          "probability": 0.997649610042572
+        },
+        {
+          "start": 46.3,
+          "end": 46.44,
+          "word": " Add",
+          "probability": 0.9781278371810913
+        },
+        {
+          "start": 46.44,
+          "end": 46.54,
+          "word": " a",
+          "probability": 0.9990429282188416
+        },
+        {
+          "start": 46.54,
+          "end": 46.94,
+          "word": " priority",
+          "probability": 0.9875187277793884
+        },
+        {
+          "start": 46.94,
+          "end": 47.62,
+          "word": " checklist",
+          "probability": 0.23623299598693848
+        },
+        {
+          "start": 47.62,
+          "end": 48.44,
+          "word": " reminder",
+          "probability": 0.8885394930839539
+        },
+        {
+          "start": 48.44,
+          "end": 49.08,
+          "word": " or",
+          "probability": 0.9016728401184082
+        },
+        {
+          "start": 49.08,
+          "end": 49.48,
+          "word": " repeat.",
+          "probability": 0.9941592216491699
+        },
+        {
+          "start": 50.28,
+          "end": 50.8,
+          "word": " Plan",
+          "probability": 0.9266246557235718
+        },
+        {
+          "start": 50.8,
+          "end": 51.04,
+          "word": " it",
+          "probability": 0.9951660633087158
+        },
+        {
+          "start": 51.04,
+          "end": 51.36,
+          "word": " in",
+          "probability": 0.9415154457092285
+        },
+        {
+          "start": 51.36,
+          "end": 51.62,
+          "word": " today.",
+          "probability": 0.9863744974136353
+        },
+        {
+          "start": 52.24,
+          "end": 52.34,
+          "word": " Then",
+          "probability": 0.9826346039772034
+        },
+        {
+          "start": 52.34,
+          "end": 52.6,
+          "word": " start",
+          "probability": 0.9613977670669556
+        },
+        {
+          "start": 52.6,
+          "end": 52.76,
+          "word": " a",
+          "probability": 0.9955856800079346
+        },
+        {
+          "start": 52.76,
+          "end": 53.02,
+          "word": " focus",
+          "probability": 0.9808087348937988
+        },
+        {
+          "start": 53.02,
+          "end": 53.3,
+          "word": " timer.",
+          "probability": 0.9834330081939697
+        },
+        {
+          "start": 54.28,
+          "end": 54.44,
+          "word": " When",
+          "probability": 0.9698085188865662
+        },
+        {
+          "start": 54.44,
+          "end": 54.82,
+          "word": " time's",
+          "probability": 0.9003862738609314
+        },
+        {
+          "start": 54.82,
+          "end": 54.94,
+          "word": " up,",
+          "probability": 0.9983646273612976
+        },
+        {
+          "start": 55.32,
+          "end": 55.52,
+          "word": " I'll",
+          "probability": 0.9943466782569885
+        },
+        {
+          "start": 55.52,
+          "end": 55.8,
+          "word": " nudge",
+          "probability": 0.9941312074661255
+        },
+        {
+          "start": 55.8,
+          "end": 56.02,
+          "word": " you.",
+          "probability": 0.997894823551178
+        },
+        {
+          "start": 56.62,
+          "end": 56.84,
+          "word": " You",
+          "probability": 0.9936636686325073
+        },
+        {
+          "start": 56.84,
+          "end": 57.1,
+          "word": " decide",
+          "probability": 0.9962583780288696
+        },
+        {
+          "start": 57.1,
+          "end": 57.46,
+          "word": " when",
+          "probability": 0.9966829419136047
+        },
+        {
+          "start": 57.46,
+          "end": 57.64,
+          "word": " it's",
+          "probability": 0.9974100589752197
+        },
+        {
+          "start": 57.64,
+          "end": 57.82,
+          "word": " done.",
+          "probability": 0.9996446371078491
+        },
+        {
+          "start": 58.78,
+          "end": 59.0,
+          "word": " Why",
+          "probability": 0.24929475784301758
+        },
+        {
+          "start": 59.0,
+          "end": 59.0,
+          "word": " don't",
+          "probability": 0.5417624115943909
+        },
+        {
+          "start": 59.0,
+          "end": 59.0,
+          "word": " you",
+          "probability": 0.7359944581985474
+        },
+        {
+          "start": 59.0,
+          "end": 59.0,
+          "word": " do",
+          "probability": 0.08758495002985
+        },
+        {
+          "start": 59.0,
+          "end": 59.0,
+          "word": " it?",
+          "probability": 0.36334162950515747
+        }
+      ]
+    },
+    {
+      "start": 59.0,
+      "end": 82.9,
+      "text": " Want automatic capture? It starts off. Choose new clipboard changes or a screenshot folder. Pause whenever you like. Export a project, make a local backup, or rescue a capture from recently deleted. I'm free. No account. Ads. Analytics. Or cloud sync. Your saved captures stay on this Mac.",
+      "words": [
+        {
+          "start": 59.0,
+          "end": 59.1,
+          "word": " Want",
+          "probability": 0.6850064992904663
+        },
+        {
+          "start": 59.1,
+          "end": 59.42,
+          "word": " automatic",
+          "probability": 0.9531969428062439
+        },
+        {
+          "start": 59.42,
+          "end": 59.82,
+          "word": " capture?",
+          "probability": 0.9861069917678833
+        },
+        {
+          "start": 60.72,
+          "end": 60.78,
+          "word": " It",
+          "probability": 0.9845587611198425
+        },
+        {
+          "start": 60.78,
+          "end": 61.0,
+          "word": " starts",
+          "probability": 0.9957625269889832
+        },
+        {
+          "start": 61.0,
+          "end": 61.32,
+          "word": " off.",
+          "probability": 0.9976752400398254
+        },
+        {
+          "start": 62.4,
+          "end": 62.4,
+          "word": " Choose",
+          "probability": 0.9941734671592712
+        },
+        {
+          "start": 62.4,
+          "end": 62.66,
+          "word": " new",
+          "probability": 0.978919506072998
+        },
+        {
+          "start": 62.66,
+          "end": 63.02,
+          "word": " clipboard",
+          "probability": 0.9499499201774597
+        },
+        {
+          "start": 63.02,
+          "end": 63.46,
+          "word": " changes",
+          "probability": 0.9991245865821838
+        },
+        {
+          "start": 63.46,
+          "end": 64.06,
+          "word": " or",
+          "probability": 0.8492500185966492
+        },
+        {
+          "start": 64.06,
+          "end": 64.24,
+          "word": " a",
+          "probability": 0.99284428358078
+        },
+        {
+          "start": 64.24,
+          "end": 64.52,
+          "word": " screenshot",
+          "probability": 0.9282955527305603
+        },
+        {
+          "start": 64.52,
+          "end": 65.02,
+          "word": " folder.",
+          "probability": 0.9994593262672424
+        },
+        {
+          "start": 65.74,
+          "end": 66.06,
+          "word": " Pause",
+          "probability": 0.9841007590293884
+        },
+        {
+          "start": 66.06,
+          "end": 66.34,
+          "word": " whenever",
+          "probability": 0.9940173625946045
+        },
+        {
+          "start": 66.34,
+          "end": 66.62,
+          "word": " you",
+          "probability": 0.999626636505127
+        },
+        {
+          "start": 66.62,
+          "end": 66.82,
+          "word": " like.",
+          "probability": 0.9943564534187317
+        },
+        {
+          "start": 67.66,
+          "end": 68.06,
+          "word": " Export",
+          "probability": 0.9749753475189209
+        },
+        {
+          "start": 68.06,
+          "end": 68.32,
+          "word": " a",
+          "probability": 0.9984179735183716
+        },
+        {
+          "start": 68.32,
+          "end": 68.72,
+          "word": " project,",
+          "probability": 0.997368574142456
+        },
+        {
+          "start": 69.18,
+          "end": 69.4,
+          "word": " make",
+          "probability": 0.997081458568573
+        },
+        {
+          "start": 69.4,
+          "end": 69.52,
+          "word": " a",
+          "probability": 0.999405026435852
+        },
+        {
+          "start": 69.52,
+          "end": 69.7,
+          "word": " local",
+          "probability": 0.9942213296890259
+        },
+        {
+          "start": 69.7,
+          "end": 70.08,
+          "word": " backup,",
+          "probability": 0.9596469402313232
+        },
+        {
+          "start": 70.62,
+          "end": 70.74,
+          "word": " or",
+          "probability": 0.9984357953071594
+        },
+        {
+          "start": 70.74,
+          "end": 71.06,
+          "word": " rescue",
+          "probability": 0.9881231188774109
+        },
+        {
+          "start": 71.06,
+          "end": 71.3,
+          "word": " a",
+          "probability": 0.9985961318016052
+        },
+        {
+          "start": 71.3,
+          "end": 71.62,
+          "word": " capture",
+          "probability": 0.9850171804428101
+        },
+        {
+          "start": 71.62,
+          "end": 72.02,
+          "word": " from",
+          "probability": 0.9966805577278137
+        },
+        {
+          "start": 72.02,
+          "end": 72.32,
+          "word": " recently",
+          "probability": 0.9736872911453247
+        },
+        {
+          "start": 72.32,
+          "end": 73.02,
+          "word": " deleted.",
+          "probability": 0.9842616319656372
+        },
+        {
+          "start": 74.3,
+          "end": 74.56,
+          "word": " I'm",
+          "probability": 0.9783334732055664
+        },
+        {
+          "start": 74.56,
+          "end": 74.78,
+          "word": " free.",
+          "probability": 0.9914653897285461
+        },
+        {
+          "start": 75.82,
+          "end": 75.84,
+          "word": " No",
+          "probability": 0.9888941645622253
+        },
+        {
+          "start": 75.84,
+          "end": 76.08,
+          "word": " account.",
+          "probability": 0.9644744396209717
+        },
+        {
+          "start": 76.84,
+          "end": 76.98,
+          "word": " Ads.",
+          "probability": 0.9063639640808105
+        },
+        {
+          "start": 78.06,
+          "end": 78.06,
+          "word": " Analytics.",
+          "probability": 0.9742360711097717
+        },
+        {
+          "start": 78.72,
+          "end": 78.74,
+          "word": " Or",
+          "probability": 0.6972575187683105
+        },
+        {
+          "start": 78.74,
+          "end": 78.98,
+          "word": " cloud",
+          "probability": 0.6167660355567932
+        },
+        {
+          "start": 78.98,
+          "end": 79.32,
+          "word": " sync.",
+          "probability": 0.8934424519538879
+        },
+        {
+          "start": 80.34,
+          "end": 80.46,
+          "word": " Your",
+          "probability": 0.9942188262939453
+        },
+        {
+          "start": 80.46,
+          "end": 80.84,
+          "word": " saved",
+          "probability": 0.9667561650276184
+        },
+        {
+          "start": 80.84,
+          "end": 81.32,
+          "word": " captures",
+          "probability": 0.8836115598678589
+        },
+        {
+          "start": 81.32,
+          "end": 81.94,
+          "word": " stay",
+          "probability": 0.9439926743507385
+        },
+        {
+          "start": 81.94,
+          "end": 82.34,
+          "word": " on",
+          "probability": 0.9988829493522644
+        },
+        {
+          "start": 82.34,
+          "end": 82.64,
+          "word": " this",
+          "probability": 0.991883397102356
+        },
+        {
+          "start": 82.64,
+          "end": 82.9,
+          "word": " Mac.",
+          "probability": 0.9627627730369568
+        }
+      ]
+    }
+  ]
+}

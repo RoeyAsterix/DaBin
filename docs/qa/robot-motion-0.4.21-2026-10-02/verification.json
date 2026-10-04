@@ -1,0 +1,123 @@
+{
+  "schemaVersion": 1,
+  "verifiedAtUTC": "2026-10-02 08:00:27 UTC",
+  "version": "0.4.21",
+  "buildNumber": "76",
+  "configuration": "Release",
+  "architecture": "arm64",
+  "installedApp": "/Users/roeylibfeld/Applications/DaBin.app",
+  "runningPIDAtVerification": 17079,
+  "previousAppBackup": "/Users/roeylibfeld/Applications/.DaBinBackups/20261002-105456-4b368d91.app",
+  "previousVersion": "0.4.20 (75)",
+  "normalQuitBeforeReplacement": true,
+  "forceQuitUsed": false,
+  "installedStrictSignatureVerified": true,
+  "installedVersionFingerprintAndExecutableHashesMatch": true,
+  "buildReceipt": "native/build/build-receipt.json",
+  "build": {
+    "version": "0.4.21",
+    "buildNumber": "76",
+    "builtAtUTC": "2026-10-02T07:43:03.388921+00:00",
+    "sourceFingerprint": "6eca39729a9d5cfd328a9141c2ca8734ddd1dc5d36c163e034e786f550ea52a6",
+    "executableSHA256": "dbeed0cbdb39a2f65356989d99f8775637e875a4bbded99b5884b0c1918bc48c",
+    "updaterExecutableSHA256": "8d93ac46d759e01bb949629ecca3eb29e38c21f15ba2788922e6d8bc63a20f85"
+  },
+  "buildInputCount": 138,
+  "currentBuildInputsVerified": true,
+  "evidenceHashes": {
+    "native/build/build-receipt.json": "d56b4e7be81d5f2dee1ab013ad3d727d1a2e379b6809a247e0ac19b903c40ea2",
+    "native/build/qa/runs/20261002T074947795986Z/report.json": "0b2d075803e6aba031bb98bc4c208d3a37f2e3e0c790f0029c6673ad1af53a38",
+    "native/build/qa/runs/20261002T075326750725Z/report.json": "63e9f9ab6a15f54e3d624804d8280ce27fba9736ec3fbf7df00668a222d5b027",
+    "native/build/qa/robot-close-visual/57048286-EA03-48C8-8AE7-1273F04CA12D/robot-close-visual-report.json": "ca7de0f3e642d0a579821c5df676539ceafae5285476ebef17e29b4271ca89b5"
+  },
+  "qa": {
+    "coverage": "11 selected suites accepted across two source-matched runs; not a new full 75-suite run",
+    "status": "accepted_suite_union_passed",
+    "otherTenReport": "native/build/qa/runs/20261002T074947795986Z/report.json",
+    "otherTenAccepted": [
+      "UpdateConfigurationTests",
+      "RobotLifecycleTests",
+      "RobotAppFrameTests",
+      "QuietOrbitRenderTests",
+      "WindowResizeInteractionTests",
+      "HeaderInteractionTests",
+      "RobotWindowTransitionTests",
+      "RobotVisualConsistencyTests",
+      "TaskTimerRobotTests",
+      "WindowChromePresentationTests"
+    ],
+    "otherTenReportOverallStatus": "failed; its RobotCloseVisualTests result is superseded, not counted as passed",
+    "otherTenInputVerification": "All production/resources/runner inputs and accepted test files match current files; only superseded RobotCloseVisualTests.swift is excluded",
+    "visualReport": "native/build/qa/runs/20261002T075326750725Z/report.json",
+    "visualStatus": "passed",
+    "visualChecks": 1359,
+    "visualInputCount": 118,
+    "visualInputsAllMatchCurrent": true,
+    "visualEvidence": "native/build/qa/robot-close-visual/57048286-EA03-48C8-8AE7-1273F04CA12D/robot-close-visual-report.json",
+    "fixtures": [
+      {
+        "name": "380x500-light",
+        "openFrames": 39,
+        "closeFrames": 36,
+        "maxOpenGap": 0.0374315835069865,
+        "maxReadback": 0.03518941649235785,
+        "maxCloseGap": 0.03548924997448921
+      },
+      {
+        "name": "380x500-dark",
+        "openFrames": 38,
+        "closeFrames": 36,
+        "maxOpenGap": 0.03686799993738532,
+        "maxReadback": 0.0347269584890455,
+        "maxCloseGap": 0.03547100001014769
+      },
+      {
+        "name": "1200x800-light",
+        "openFrames": 26,
+        "closeFrames": 26,
+        "maxOpenGap": 0.1328344999346882,
+        "maxReadback": 0.1306495415046811,
+        "maxCloseGap": 0.09446670836769044
+      },
+      {
+        "name": "1200x800-dark",
+        "openFrames": 26,
+        "closeFrames": 26,
+        "maxOpenGap": 0.13344087498262525,
+        "maxReadback": 0.1312042917124927,
+        "maxCloseGap": 0.09534858330152929
+      }
+    ],
+    "native2xVideos": 8,
+    "generatedOrRepeatedFrames": false,
+    "recordingLimits": "Compact opening and all closing <120ms gaps. Expanded opening gap must be below both180ms and max(120ms, preceding measured CPU readback+25ms). Direct real-time phase, opacity and reversal assertions remain separate.",
+    "preliminaryFailures": "Warnings-as-errors casts, stale padded interaction source fixture, real transformed-frame rail-mask defect, expanded CPU readback budget and fixed-time late-fade sampling were corrected. Earlier failed attempts remain diagnostics."
+  },
+  "generatedProjectCheckPassed": true,
+  "whitespaceCheckPassed": true,
+  "offlineMetadataDraftChecks": 13,
+  "liveChecks": {
+    "settingsVersion": "DaBin 0.4.21 (76)",
+    "archiveOpensNormally": true,
+    "autoCapturePaused": true,
+    "tooltipsEnabled": true,
+    "quietModeRemainsOff": true,
+    "robotHomeRemainsCameraIsland": true,
+    "expandCloseEscapeReopenRestoreControlsExercised": true,
+    "settingsRetainedAfterReopen": true,
+    "leftInOriginalInbox": true,
+    "personalCaptureQueryOpenCopyEditUsed": false,
+    "visualEvidenceBoundary": "Native app screenshot was blank with capture exclusion active. Appearance review uses fictional native presentation renders; live check confirms controls, state and version, not compositor FPS."
+  },
+  "installerModifiedArchive": false,
+  "personalArchiveIndependentlyByteInventoried": false,
+  "independentReview": "Shared artwork/source alignment and interruption audit; moving-island presentation source issue found and corrected with deterministic normal/mirrored coverage.",
+  "gitCommitOrPushPerformed": false,
+  "publicBinaryReleasePublished": false,
+  "appStoreSubmitted": false,
+  "limitations": [
+    "CPU-rendered previews are actual presentation samples, not a display FPS benchmark or continuous screen recording.",
+    "Local ARM64 macOS26.6.2/SDK27 verification; not macOS14 runtime or signed distribution validation.",
+    "Previous0.4.19 Store preparation and0.4.20 full search QA remain historical; no Apple approval is implied."
+  ]
+}

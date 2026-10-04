@@ -1,0 +1,46 @@
+DABIN / PRODUCT FACTSHEET
+Prepared 4 October 2026. Public-release fields must be completed.
+
+Product name: DaBin
+One-line description: A little robot for the useful bits of your day.
+Category: Productivity
+Price: Free (intended launch price per owner; confirm live listing)
+Platform: macOS
+Compatibility: Apple Silicon Macs; macOS 14 or later
+Source candidate: 0.4.31 (86); current public version: [[PUBLIC_VERSION]]
+Publication date: [[LAUNCH_DATE]]
+App Store: [[APP_STORE_URL]]
+Website: [[WEBSITE_URL]]
+Support / media contact: [[CONTACT_EMAIL]]
+Developer / rights holder: [[OWNER_CONFIRMED_PUBLIC_NAME]]
+
+CORE WORKFLOW
+Capture: Paste text or a link, drop a file/image, or create a note/task.
+Organize: Keep related resources and tasks with a project; organizing is optional.
+Find: Search supported content saved into DaBin, including recognized text in supported screenshots/images/documents.
+Focus: Plan work and start a focus timer. A robot alarm appears at timer end; dismissing it does not complete the task.
+
+VIEWS
+Inbox: Quick captures, to-organize items and day/week capture history.
+Today: Deliberate workday planning.
+Projects: Resources, notes, saved items, snippets and tasks.
+
+PRIVACY / NETWORK
+No account, advertising, analytics, cloud sync or external AI/OCR service.
+Saved captures and recognized text are kept on this Mac.
+Auto Capture is optional and off by default; clipboard and selected screenshot-folder channels are independent. New content after activation is eligible; it does not record the live screen.
+Website previews are optional and off by default. Enabled previews may contact manually saved websites; automatic-link captures do not fetch previews.
+The archive is not separately encrypted by DaBin. User-chosen exports and backups may be stored in locations synced by other services.
+Mac App Store builds receive updates through the App Store.
+
+DOES NOT CLAIM
+Whole-Mac search, semantic AI answers, team/cloud workspace, Intel compatibility, cross-device sync, secure forensic deletion, guaranteed sensitive-content filtering, measured time savings, Apple featuring or permanent free pricing.
+
+MEDIA IN THIS KIT
+Actual app screenshots: 03_Graphics (see graphic manifest for exact files).
+Guided native UI tour: 04_Video/DABIN__UI_TOUR__LANDSCAPE.mp4
+Portrait guided UI tour: 04_Video/DABIN__UI_TOUR__PORTRAIT.mp4
+Muted viewing: 04_Video/DABIN__UI_TOUR__LANDSCAPE_SILENT.mp4
+Subtitle sidecar: 04_Video/DABIN__UI_TOUR__SUBTITLES.srt
+Landing page review draft: 05_Landing_Page
+The tour uses Andre Rene conversational narration, a synced robot mouth/gaze, composed pointer guidance and actual before/after native UI states. It is a guided walkthrough, not a continuous live input recording or a certified App Store preview. All sample content is fictional. No KARI material is included.

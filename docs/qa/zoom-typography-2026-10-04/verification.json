@@ -1,0 +1,29 @@
+{
+  "status": "passed",
+  "focusedNativeSuites": 8,
+  "sourceUnchangedDuringTests": true,
+  "buildConfiguration": "Release",
+  "version": "0.4.31",
+  "buildNumber": "86",
+  "sourceFingerprint": "e892b3d2e37de51cd2114e9e9731e97d7926ffa46de878ad004b3fe76bb833ef",
+  "executableSHA256": "98f606196d5d46191761550270c5416fc887536d255aed41c0b7adb547893569",
+  "installedApp": "/Users/roeylibfeld/Applications/DaBin.app",
+  "installedHashMatchesBuild": true,
+  "helperHashMatchesBuild": true,
+  "strictCodeSignature": "passed",
+  "runningProcess": [
+    "16506 /Users/roeylibfeld/Applications/DaBin.app/Contents/MacOS/DaBin"
+  ],
+  "rollbackApp": "/Users/roeylibfeld/Applications/.DaBinBackups/20261004-155319-cba7de97.app",
+  "visualInspection": [
+    "workspace-75-light@2x.png",
+    "workspace-100-light@2x.png",
+    "workspace-200-light@2x.png",
+    "today-380-200@2x.png"
+  ],
+  "liveUI": "DaBin Daily opens on Inbox with existing captures and Auto Capture status",
+  "limits": [
+    "Focused typography QA; earlier full application suite not repeated",
+    "Local ad-hoc Release build; no public release or App Store submission"
+  ]
+}

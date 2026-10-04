@@ -1,5 +1,21 @@
 # DaBin — Mac App Store readiness
 
+## Current preparation — 4 October 2026
+
+**0.4.31 (86), Store channel: local preparation verified; NOT ready to submit.** This candidate is frozen from the verified installed 0.4.30 source plus the Store preparation fixes. Ten independent tutorial edits remain preserved in the shared checkout and are excluded from this candidate. The local/direct application was subsequently updated to 0.4.31 (86); [installation and preserved-data verification](../docs/qa/local-update-0.4.31-2026-10-04/README.md). Store distribution signing/submission remains pending.
+
+The current source adds persistent red menu-bar Recording status, distinct Ready/Paused/Off states, corrected privacy wording, and explicit Store-channel QA. An unsigned Xcode 27 Release build passes 51 packaging checks. A separate ad-hoc sandbox fixture passes 31 checks across two processes, including denied ungranted file access; it is not the distribution app. All 96 registered native Store suites have passing results (95 in the full run plus one fixture-corrected rerun), 90 offline tests pass, and three screenshots pass visual review. Results are recorded in the [current evidence](../docs/qa/app-store-preparation-2026-10-04/README.md).
+
+Blocking gates include protected Keychain approval (the waiting archive attempt was cancelled), missing Mac Installer Distribution identity, exact signed-app acceptance on supported macOS versions, current public privacy-policy publication, and owner/Connect declarations. No upload, submission or public release has occurred. The [current Apple requirements audit](../docs/app-store/APPLE_REQUIREMENTS_2026-10-04.md), [listing/reviewer draft](../docs/app-store/metadata-en-US.json) and [current screenshot drafts](../docs/app-store/screenshots/0.4.31-86/README.md) supersede the historical material below. Local passing tests do not guarantee Apple approval.
+
+## Historical TestFlight attempt — 3 October 2026
+
+The target of that historical attempt was **0.4.23 (78), TestFlight beta review only**. The owner has now authorized that upload/submission, not a public App Store release. It has **not been uploaded or submitted**: App Store Connect is at sign-in, the Mac is locked, and read-only Keychain inspection still finds no Mac Installer Distribution identity. Distribution signing/export and signed Sandbox runtime QA remain pending.
+
+The fresh native run reports **73/77 suites passed, four failed** while the desktop was locked; those failures are preserved and require an unlocked rerun. Do not replace this result with the prior 77/77 passing receipt. The archive destination traversal guard was hardened with eight new regressions. See the [current attempt and evidence](../docs/qa/testflight-0.4.23-2026-10-03/README.md) and [beta handoff draft](../docs/app-store/TESTFLIGHT_0.4.23.md). The audit below is historical 0.4.19 preparation, not evidence for the current candidate.
+
+## Historical Store preparation — 2 October 2026
+
 Audit: **2 October 2026** · source **0.4.19 (74)** · `com.dabin.mac` · Apple Silicon, macOS 14+
 
 **Status: functional regressions and unsigned Store packaging PASS; NOT ready to submit.** Passing local tests does not guarantee Apple approval. This audit covers applicable requirements for the current native, account-free, local-storage app. A change to accounts, payments, networking or content would require a new review.

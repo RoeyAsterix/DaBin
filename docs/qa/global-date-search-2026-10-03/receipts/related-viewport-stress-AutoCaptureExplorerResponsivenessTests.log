@@ -1,0 +1,88 @@
+PHASE: production native host selected middle image and initial scrollTo
+PHASE: 80 initial captures begin live local previews
+ROWS: initial 80 captures; logical=82, available=20, indices=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
+PHASE: width 699.0 before burst 0
+PHASE: scrolled before burst 0
+PHASE: three automatic saves burst 0
+PHASE: preview completion burst 0
+ROWS: burst 0; logical=85, available=7, indices=[14, 15, 16, 17, 18, 19, 20]
+PHASE: width 701.0 before burst 1
+PHASE: scrolled before burst 1
+PHASE: three automatic saves burst 1
+PHASE: preview completion burst 1
+ROWS: burst 1; logical=88, available=2, indices=[12, 13]
+PHASE: width 260.0 before burst 2
+PHASE: scrolled before burst 2
+PHASE: three automatic saves burst 2
+PHASE: preview completion burst 2
+ROWS: burst 2; logical=91, available=3, indices=[58, 59, 60]
+PHASE: width 300.0 before burst 3
+PHASE: scrolled before burst 3
+PHASE: three automatic saves burst 3
+PHASE: preview completion burst 3
+ROWS: burst 3; logical=94, available=2, indices=[0, 1]
+PHASE: width 1300.0 before burst 4
+PHASE: scrolled before burst 4
+PHASE: three automatic saves burst 4
+PHASE: preview completion burst 4
+ROWS: burst 4; logical=97, available=3, indices=[17, 18, 19]
+PHASE: width 700.0 before burst 5
+PHASE: scrolled before burst 5
+PHASE: three automatic saves burst 5
+PHASE: preview completion burst 5
+ROWS: burst 5; logical=99, available=1, indices=[59]
+PHASE: width 701.0 before burst 6
+PHASE: scrolled before burst 6
+PHASE: three automatic saves burst 6
+PHASE: preview completion burst 6
+ROWS: burst 6; logical=102, available=4, indices=[0, 1, 2, 3]
+PHASE: width 360.0 before burst 7
+PHASE: scrolled before burst 7
+PHASE: automatic saves during native close
+PHASE: three automatic saves burst 7
+PHASE: native close-to-open reversal completed
+PHASE: preview completion burst 7
+ROWS: burst 7; logical=105, available=2, indices=[35, 36]
+PHASE: width 760.0 before burst 8
+PHASE: scrolled before burst 8
+PHASE: three automatic saves burst 8
+PHASE: preview completion burst 8
+ROWS: burst 8; logical=108, available=2, indices=[92, 93]
+PHASE: width 699.0 before burst 9
+PHASE: scrolled before burst 9
+PHASE: three automatic saves burst 9
+PHASE: preview completion burst 9
+ROWS: burst 9; logical=111, available=5, indices=[0, 1, 2, 3, 4]
+PHASE: width 701.0 before burst 10
+PHASE: scrolled before burst 10
+PHASE: three automatic saves burst 10
+PHASE: preview completion burst 10
+ROWS: burst 10; logical=115, available=2, indices=[25, 26]
+PHASE: width 700.0 before burst 11
+PHASE: scrolled before burst 11
+PHASE: three automatic saves burst 11
+PHASE: preview completion burst 11
+PHASE: native close completed
+PHASE: native reopen completed
+ROWS: burst 11; logical=118, available=2, indices=[108, 109]
+PHASE: width 320.0 before burst 12
+PHASE: scrolled before burst 12
+PHASE: three automatic saves burst 12
+PHASE: preview completion burst 12
+ROWS: burst 12; logical=121, available=3, indices=[0, 1, 2]
+PHASE: width 260.0 before burst 13
+PHASE: scrolled before burst 13
+PHASE: three automatic saves burst 13
+PHASE: preview completion burst 13
+ROWS: burst 13; logical=124, available=2, indices=[25, 26]
+PHASE: width 1300.0 before burst 14
+PHASE: scrolled before burst 14
+PHASE: three automatic saves burst 14
+PHASE: preview completion burst 14
+ROWS: burst 14; logical=127, available=3, indices=[124, 125, 126]
+PHASE: width 380.0 before burst 15
+PHASE: scrolled before burst 15
+PHASE: three automatic saves burst 15
+PHASE: preview completion burst 15
+ROWS: burst 15; logical=130, available=4, indices=[0, 1, 2, 3]
+PASS: 169 Explorer responsiveness checks; production DailyCaptureHostingView and RobotAppFrameView, actual BoardView, 128 automatic captures, late local previews, 16 insertion bursts, selected-middle-image scrolling, mixed paste trails/tasks, exact narrow/wide breakpoint resizing, visible tooltip overlay, native close/reopen and interrupted reversal. Native table had at most 20 simultaneously available row views. Background 8-second run-loop watchdog remained healthy.

@@ -151,6 +151,7 @@ private struct CachedCapturePreviewImage<Placeholder: View>: View {
 
 @MainActor
 struct CaptureThumbnail: View {
+    @Environment(\.workspaceZoom) private var zoom
     let store: CaptureStore
     @ObservedObject var capture: Capture
     var body: some View {
@@ -160,21 +161,21 @@ struct CaptureThumbnail: View {
                 CapturePreviewImageRequest(file: $0, maximumPixelSize: 600, revision: capture.previewState)
             }, placeholder: { placeholder })
             if capture.kind == .video {
-                Image(systemName: "play.circle.fill").font(.system(size: 25)).foregroundStyle(.white).shadow(radius: 3)
+                Image(systemName: "play.circle.fill").font(.system(size: zoom.fontSize(25))).foregroundStyle(.white).shadow(radius: 3)
             }
         }.accessibilityHidden(true)
     }
 
     @ViewBuilder private var placeholder: some View {
         if [.text, .task].contains(capture.kind), let text = capture.originalText, !text.isEmpty {
-            Text(String(text.prefix(2_000))).font(.system(size: 12, weight: .medium)).lineSpacing(3).lineLimit(12)
+            Text(String(text.prefix(2_000))).font(.system(size: zoom.fontSize(12), weight: .medium)).lineSpacing(zoom.lineSpacing(3)).lineLimit(12)
                 .foregroundStyle(Palette.foreground).multilineTextAlignment(.leading)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-                .padding(12).clipped()
+                .padding(zoom.value(12)).clipped()
         } else {
             VStack(spacing: 5) {
-                Image(systemName: kindSymbol(capture.kind)).font(.system(size: 22, weight: .light))
-                Text(kindLabel(capture.kind)).font(.system(size: 9, weight: .medium)).lineLimit(1)
+                Image(systemName: kindSymbol(capture.kind)).font(.system(size: zoom.fontSize(22), weight: .light))
+                Text(kindLabel(capture.kind)).font(.system(size: zoom.fontSize(9), weight: .medium)).lineLimit(1)
             }.foregroundStyle(Palette.muted)
         }
     }
@@ -199,6 +200,7 @@ struct DetailPreview: View {
     @ObservedObject var capture: Capture
     var height: CGFloat? = nil
     var onOpenOriginal: (() -> Void)? = nil
+    var openLabel: String? = nil
     var body: some View {
         Group {
             if let file = CapturePreviewFileReference.original(store: store, capture: capture),
@@ -208,9 +210,9 @@ struct DetailPreview: View {
                         preview(file: file).contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
-                    .accessibilityLabel("Open original file: \(capture.title)")
-                    .accessibilityIdentifier("detail-preview-open-original")
-                    .buddyHelp("Open original file")
+                    .accessibilityLabel(openLabel ?? "Open original file: \(capture.title)")
+                    .accessibilityIdentifier(openLabel == nil ? "detail-preview-open-original" : "detail-preview-open-extended")
+                    .buddyHelp(openLabel ?? "Open original file")
                 } else {
                     preview(file: file)
                 }

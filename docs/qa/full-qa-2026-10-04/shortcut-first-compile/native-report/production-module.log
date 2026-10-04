@@ -1,0 +1,18 @@
+/private/tmp/dabin-full-qa-20261004/native/Sources/DaBin/QuickAccess.swift:128:92: error: call to main actor-isolated static method 'current()' in a synchronous nonisolated context [#ActorIsolatedCall]
+ 44 |     /// chord. Read the user's enabled macOS shortcuts before registering.
+ 45 |     /// Nil means the reservation check could not be completed safely.
+ 46 |     @MainActor static func current() -> [SystemGlobalShortcut]? {
+    |                            `- note: calls to static method 'current()' from outside of its actor context are implicitly asynchronous
+ 47 |         var copied: Unmanaged<CFArray>?
+ 48 |         let status = CopySymbolicHotKeys(&copied)
+    :
+126 | 
+127 |     init(settings: QuickAccessSettings, registrar: ShortcutRegistering? = nil,
+128 |          systemShortcuts: @escaping () -> [SystemGlobalShortcut]? = { SystemGlobalShortcut.current() },
+    |                                                                                            `- error: call to main actor-isolated static method 'current()' in a synchronous nonisolated context [#ActorIsolatedCall]
+129 |          search: @escaping () -> Void, capture: @escaping () -> Void) {
+130 |         self.settings = settings
+
+[#ActorIsolatedCall]: <https://docs.swift.org/compiler/documentation/diagnostics/actor-isolated-call>
+error: input file '/private/tmp/dabin-full-qa-20261004/native/Sources/DaBin/QuickAccess.swift' was modified during the build
+error: input file '/private/tmp/dabin-full-qa-20261004/native/Sources/DaBin/QuickAccess.swift' was modified during the build

@@ -2,9 +2,12 @@ import SwiftUI
 
 @MainActor
 struct TodayPlanningScreen: View {
+    @Environment(\.workspaceZoom) private var zoom
     @ObservedObject var state: AppState
-    @Environment(\.daBinAccent) private var accent
-    @State private var scope = "today"
+    private var scope: String {
+        get { state.todayPlanningScope }
+        nonmutating set { state.todayPlanningScope = newValue }
+    }
     private var todayKey: String { CaptureCalendar.dayString(Date()) }
     private var projects: [String] {
         Set(state.projectNames + state.workspace.projectNames).sorted { $0.localizedStandardCompare($1) == .orderedAscending }
@@ -61,14 +64,16 @@ struct TodayPlanningScreen: View {
                     Text("\(planned.count) planned\(effortLabel)").font(.system(size: 11)).foregroundStyle(Palette.muted)
                         .fixedSize().accessibilityIdentifier("today-plan-summary")
                 }
-                Picker("Task view", selection: $scope) {
+                Picker("Task view", selection: Binding(get: { scope }, set: { scope = $0 })) {
                     Text("Today").tag("today")
                     Text("Upcoming").tag("later")
                     Text("Completed").tag("done")
                 }.pickerStyle(.segmented).accessibilityIdentifier("task-view-scope")
             }.padding(14)
+                .daBinTutorialAnchor(.todayControls)
+            ScrollViewReader { proxy in
             ScrollView {
-                LazyVStack(alignment: .leading, spacing: 9) {
+                LazyVStack(alignment: .leading, spacing: zoom.value(9)) {
                     if scope == "today" {
                         if planned.isEmpty {
                             Text("Pick a few tasks for today. Deadlines and reminders stay separate.")
@@ -86,7 +91,15 @@ struct TodayPlanningScreen: View {
                         section("Completed", items: completed)
                         if completed.isEmpty { Text("Your finished tasks will appear here.").font(.system(size: 12)).foregroundStyle(Palette.muted) }
                     }
-                }.padding(.horizontal, 14).padding(.bottom, 14).frame(maxWidth: 860).frame(maxWidth: .infinity)
+                }.padding(.horizontal, 14).padding(.bottom, 14).frame(maxWidth: zoom.value(860)).frame(maxWidth: .infinity)
+            }.background {
+                WorkspaceScrollHistory(anchor: state.workspaceViewport, contextID: "today-" + scope,
+                    onAnchor: { state.workspaceViewport = $0 }).allowsHitTesting(false).accessibilityHidden(true)
+            }
+            .onAppear { if let anchor = state.workspaceViewport { proxy.scrollTo(anchor.itemID, anchor: .top) } }
+            .onChange(of: state.navigationRestorationRevision) { _, _ in
+                if let anchor = state.workspaceViewport { proxy.scrollTo(anchor.itemID, anchor: .top) }
+            }
             }
         }
     }
@@ -99,46 +112,13 @@ struct TodayPlanningScreen: View {
             Text(title).font(.system(size: 12, weight: .semibold)).foregroundStyle(Palette.muted)
                 .padding(.top, 8).accessibilityAddTraits(.isHeader)
             ForEach(items) { capture in
-                VStack(alignment: .leading, spacing: 5) {
-                    CaptureRow(state: state, capture: capture, featured: false, embeddedInCard: true)
-                    if let plan = capture.taskPlanning {
-                        HStack(spacing: 8) {
-                            if plan.priority != .none { Label(plan.priority.title, systemImage: plan.priority.symbol) }
-                            if let due = plan.deadline { Label(due.formatted(date: .abbreviated, time: .omitted), systemImage: "flag") }
-                            if let day = plan.plannedDay, day != todayKey { Label(prettyDay(day), systemImage: "calendar") }
-                        }.font(.system(size: 11)).foregroundStyle(Palette.muted)
-                    }
-                    if !capture.isCompleted {
-                        HStack(spacing: 12) {
-                            if capture.isTask {
-                                Button { plan(capture, offset: capture.taskPlanning?.plannedDay == todayKey ? 1 : 0) } label: {
-                                    Label(capture.taskPlanning?.plannedDay == todayKey ? "Tomorrow" : "Today", systemImage: "calendar.badge.clock")
-                                        .frame(minHeight: 28).contentShape(Rectangle())
-                                }
-                                Button { state.openCapture(capture.id, focus: "task") } label: {
-                                    Label("Plan", systemImage: "slider.horizontal.3").frame(minHeight: 28).contentShape(Rectangle())
-                                }
-                            } else {
-                                Button("Done") { state.completeFollowUp(capture) }
-                                Button("Tomorrow") { state.snoozeFollowUp(capture) }
-                            }
-                            Spacer(minLength: 0)
-                            if reorderable, let index = items.firstIndex(where: { $0.id == capture.id }) {
-                                BuddyIconButton(symbol: "arrow.up", title: "Move task up: \(capture.title)") { move(index, by: -1) }
-                                    .disabled(index == 0).accessibilityIdentifier("today-move-up-\(capture.id.uuidString)")
-                                BuddyIconButton(symbol: "arrow.down", title: "Move task down: \(capture.title)") { move(index, by: 1) }
-                                    .disabled(index == items.count - 1).accessibilityIdentifier("today-move-down-\(capture.id.uuidString)")
-                            }
-                        }.buttonStyle(.plain).font(.system(size: 12)).foregroundStyle(accent)
-                    }
-                }.padding(16).background(Palette.surface, in: RoundedRectangle(cornerRadius: 14))
-                    .overlay(RoundedRectangle(cornerRadius: 14).strokeBorder(Palette.line, lineWidth: 0.7))
+                TodayTaskCard(state: state, capture: capture,
+                              reorderIndex: reorderable ? items.firstIndex(where: { $0.id == capture.id }) : nil,
+                              reorderCount: items.count,
+                              onMove: { index, delta in move(index, by: delta) })
+                    .id("capture:" + capture.id.uuidString)
             }
         }
-    }
-    private func plan(_ task: Capture, offset: Int) {
-        guard let day = Calendar.current.date(byAdding: .day, value: offset, to: Date()) else { return }
-        state.scheduleTask(task, day: CaptureCalendar.dayString(day), time: task.taskPlanning?.plannedTime)
     }
     private func move(_ index: Int, by delta: Int) {
         var ordered = planned

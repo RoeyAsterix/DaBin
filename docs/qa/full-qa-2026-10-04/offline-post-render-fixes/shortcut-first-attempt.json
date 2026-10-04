@@ -1,0 +1,147 @@
+{
+  "utc": "2026-10-03T22:25:47.255853+00:00",
+  "candidateRoot": "/private/tmp/dabin-full-qa-20261004/native",
+  "status": "failed",
+  "reason": "Final global shortcut collision fix; README default shortcut documentation mirrored",
+  "previousReport": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/full-qa-2026-10-04/offline-post-render-fixes/before-shortcut-fix.json",
+  "noGUI": true,
+  "noNativeExecution": true,
+  "checks": [
+    {
+      "name": "python-tests",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "Tests",
+        "-p",
+        "test_*.py",
+        "-v"
+      ],
+      "cwd": "/private/tmp/dabin-full-qa-20261004/native",
+      "exitCode": 0,
+      "seconds": 0.143,
+      "log": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/full-qa-2026-10-04/offline-post-render-fixes/python-tests.log",
+      "testCount": 53
+    },
+    {
+      "name": "python-preflight-tests",
+      "command": [
+        "python3",
+        "scripts/test_app_store_preflight.py"
+      ],
+      "cwd": "/private/tmp/dabin-full-qa-20261004/native",
+      "exitCode": 0,
+      "seconds": 0.092,
+      "log": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/full-qa-2026-10-04/offline-post-render-fixes/python-preflight-tests.log",
+      "testCount": 32
+    },
+    {
+      "name": "source-packaging",
+      "command": [
+        "python3",
+        "scripts/app_store_preflight.py",
+        "--static-only"
+      ],
+      "cwd": "/private/tmp/dabin-full-qa-20261004/native",
+      "exitCode": 0,
+      "seconds": 0.144,
+      "log": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/full-qa-2026-10-04/offline-post-render-fixes/source-packaging.log",
+      "passedChecks": 30
+    },
+    {
+      "name": "draft-metadata",
+      "command": [
+        "python3",
+        "scripts/validate_app_store_metadata.py"
+      ],
+      "cwd": "/private/tmp/dabin-full-qa-20261004/native",
+      "exitCode": 0,
+      "seconds": 0.047,
+      "log": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/full-qa-2026-10-04/offline-post-render-fixes/draft-metadata.log",
+      "passedChecks": 13,
+      "draftStatus": "LOCAL_DRAFT_CHECKS_PASS",
+      "submissionReady": false
+    },
+    {
+      "name": "project-inventory",
+      "command": [
+        "python3",
+        "scripts/generate_project.py",
+        "--check"
+      ],
+      "cwd": "/private/tmp/dabin-full-qa-20261004/native",
+      "exitCode": 0,
+      "seconds": 0.079,
+      "log": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/full-qa-2026-10-04/offline-post-render-fixes/project-inventory.log"
+    },
+    {
+      "name": "project-inventory-repeat",
+      "command": [
+        "python3",
+        "scripts/generate_project.py",
+        "--check"
+      ],
+      "cwd": "/private/tmp/dabin-full-qa-20261004/native",
+      "exitCode": 0,
+      "seconds": 0.085,
+      "log": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/full-qa-2026-10-04/offline-post-render-fixes/project-inventory-repeat.log"
+    },
+    {
+      "name": "diff-check",
+      "command": [
+        "git",
+        "diff",
+        "--check",
+        "--",
+        "Sources/DaBin",
+        "Tests",
+        "scripts",
+        "UpdateTools",
+        "Config",
+        "Resources",
+        "DaBin.xcodeproj",
+        "../README.md"
+      ],
+      "cwd": "/private/tmp/dabin-full-qa-20261004/native",
+      "exitCode": 128,
+      "seconds": 0.025,
+      "log": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/full-qa-2026-10-04/offline-post-render-fixes/diff-check.log"
+    },
+    {
+      "name": "swift-render-syntax",
+      "command": [
+        "xcrun",
+        "swiftc",
+        "-frontend",
+        "-parse",
+        "Tests/NativeRenderTests.swift",
+        "Tests/PrivacyRenderTests.swift",
+        "Tests/XcodeSmokeTests.swift",
+        "Sources/DaBin/QuickAccess.swift"
+      ],
+      "cwd": "/private/tmp/dabin-full-qa-20261004/native",
+      "exitCode": 0,
+      "seconds": 0.049,
+      "log": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/full-qa-2026-10-04/offline-post-render-fixes/swift-render-syntax.log"
+    }
+  ],
+  "pythonTestCount": 85,
+  "syntaxSummary": {
+    "pythonPassed": 18,
+    "shellPassed": 9,
+    "propertyListsPassed": 3,
+    "configJSONPassed": 1,
+    "swiftPassed": 4
+  },
+  "inputCount": 259,
+  "inputsUnchanged": true,
+  "changedInputs": [],
+  "readmeMirrored": true,
+  "readmeBeforeSHA256": "9c64e5481eed2b359ecde78fa4fcb06fbb73e5d18815b376d23a312d58895df2",
+  "readmeSHA256": "534fa4d85761d8026e119c0b0af678055876adfbb05f5c71323c8f79ff287370",
+  "generatedProjectSHA256": "bec748b95ea35bbe3c893db88be1a91b96894c5adbf48bded6806248f55192a4",
+  "generatedSchemeSHA256": "0922aad38e86918dc38f90b76d197e0405997d7dcd571bde62063ae96e4db283"
+}

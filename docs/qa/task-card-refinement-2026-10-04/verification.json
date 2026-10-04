@@ -1,0 +1,114 @@
+{
+  "request": "Compact Project task cards; redesign Today cards; align planning and expand/More actions; priority beside project",
+  "result": "passed",
+  "changes": [
+    "Content-sized Project task cards with bounded text and checklist previews",
+    "Compact Project text-task icon gives more room to task titles",
+    "Single Today card surface and aligned planning/reorder/collapse/More row",
+    "Shared project and priority metadata row",
+    "Native More menu now preserves its full 32-point hit target"
+  ],
+  "changedFiles": [
+    "native/Sources/DaBin/CaptureCards.swift",
+    "native/Sources/DaBin/ProjectPickerView.swift",
+    "native/Sources/DaBin/WorkspaceItemCard.swift",
+    "native/Sources/DaBin/ExplorerItems.swift",
+    "native/Sources/DaBin/TaskFocusControls.swift",
+    "native/Sources/DaBin/ProjectWorkspaceCard.swift",
+    "native/Sources/DaBin/TodayPlanningScreen.swift",
+    "native/Sources/DaBin/TodayTaskCard.swift",
+    "native/Tests/TodayTaskCardTests.swift",
+    "native/Tests/TaskPriorityTagTests.swift",
+    "native/Tests/ProjectWorkspaceCardTests.swift",
+    "native/Tests/WorkspaceWindowTests.swift",
+    "native/scripts/run_qa.py",
+    "native/DaBin.xcodeproj/project.pbxproj"
+  ],
+  "verification": {
+    "passedSuites": 10,
+    "suites": [
+      {
+        "name": "TaskFocusTests",
+        "status": "passed",
+        "summary": "PASS: 82 task focus, local schedule, lifecycle, recovery and draft checks; synthetic archive only."
+      },
+      {
+        "name": "TaskPlanningTests",
+        "status": "passed",
+        "summary": "PASS: 39 task planning checks; synthetic local archive only."
+      },
+      {
+        "name": "ProjectWorkspaceViewTests",
+        "status": "passed",
+        "summary": "PASS: 209 project workspace UI checks; 1,000 synthetic text captures plus image and editable project note; native mixed-selection drag payloads on a private pasteboard; no personal archive, network, general clipboard or external opening. At most 25 simultaneously materialized native rows."
+      },
+      {
+        "name": "ProjectWorkspaceCardTests",
+        "status": "passed",
+        "summary": "PASS: 379 project card checks; Task/Note/Capture semantics, real live task updates, light/dark/grid/320-point compact fixtures, original previews and independent selection; no personal archive, clipboard, network, or external opening."
+      },
+      {
+        "name": "FilterResizeTests",
+        "status": "passed",
+        "summary": ""
+      },
+      {
+        "name": "WorkspaceWindowTests",
+        "status": "passed",
+        "summary": "PASS: 252 native workspace interaction and responsive layout checks"
+      },
+      {
+        "name": "CaptureTimestampPresentationTests",
+        "status": "passed",
+        "summary": "Capture timestamp presentation QA passed: 129 checks; original receipt formatting, compact date-before-category cards, enlarged detail date navigation. Evidence: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/capture-timestamp"
+      },
+      {
+        "name": "TaskPriorityTagTests",
+        "status": "passed",
+        "summary": "PASS: 464 task priority tag checks; real choices/save/persistence, adjacent project/priority geometry and green\u2013amber\u2013red cards at 380/760 in light/dark; fictional local archive only. PNG evidence: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/task-priority-tags"
+      },
+      {
+        "name": "NativeContentDragTests",
+        "status": "passed",
+        "summary": "PASS: 38 native content drag checks; clicks, mixed native items, copy-only external transfers and source preservation."
+      },
+      {
+        "name": "TodayTaskCardTests",
+        "status": "passed",
+        "summary": "PASS: 117 Today task card checks; same-row planning/controls at 380/760 in light/dark, priority beside project, real rescheduling/completion/reorder and persistence. Evidence: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/task-card-refinement"
+      }
+    ],
+    "method": "Latest result per suite across two runs sharing identical production source hashes. Final Today test correction only changed native accessibility text retrieval.",
+    "productionSourceHashesMatchBuildAndCurrentFiles": true,
+    "releaseBuild": "passed",
+    "architecture": "arm64",
+    "signatureVerified": true,
+    "visualReview": [
+      "320-point compact Project cards",
+      "Content-sized Project cards in light/dark",
+      "380/760-point Today cards in light/dark"
+    ],
+    "whitespaceCheck": "passed",
+    "projectPlistValidation": "passed"
+  },
+  "build": {
+    "path": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/DaBin.app",
+    "version": "0.4.31",
+    "number": "86",
+    "executableSHA256": "ff4eb39733fdcf1336228b1480e329a6341f5afa913d9d0056851b1f9ba21434"
+  },
+  "scope": "Native isolated windows and fictional temporary archives. Installed app and personal captures were not modified; no publishing in this task.",
+  "artifacts": {
+    "today-card-760-light.png": "f978445f9c951dff34e59f094aacb47769d42852f61bf08ec6802c0c1bfb2a61",
+    "build-receipt.json": "e54f542a6286ef95837a18326f617d4cfb88b104e47c2d536b24c7d86d5c6337",
+    "qa-2.json": "6ac449610509d6c29a418eba4c9001d01e493094d036f25321932e4ddf7de232",
+    "today-card-380-light.png": "7cd407d7543c6650cd4030279d8c044dabb26f510a71783c83dd2e7762dc37d7",
+    "today-card-760-dark.png": "51459bb440f667de5a4c3a8ac1d93e1eee708b83ac68d48f5229affe840350a5",
+    "project-tasks-content-height-dark@2x.png": "836c570b767d314c82ca2a9141d76c94cc108a580f93e85c90f91a968b52b469",
+    "project-task-compact-medium-light@2x.png": "00195c4abe5ade6e8e6cd709441e53a0d6b447202df61d28140c6a46c8924c85",
+    "project-types-compact-320-light@2x.png": "6e71bfa907cc3c9f04063d47a1c75193397623d7fe1ca9878812f6c9c81eb0cf",
+    "today-card-380-dark.png": "27568f2a7a20155157b621966de763c7bf2ab7723d0ab56ed59ad493d164edd0",
+    "project-tasks-content-height-light@2x.png": "1383d2e1edc1e62434ed2554491934dd06cec8b842c952c1d6831a6fde3a0471",
+    "qa-1.json": "c194fb32cec6d2d9d508b9718fe06c7bbebddb5833895cd69a470e9d99577812"
+  }
+}

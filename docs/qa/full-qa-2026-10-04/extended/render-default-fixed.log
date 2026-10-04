@@ -1,0 +1,3 @@
+PASS: Canonical native robot rendered; active motion changed 15215 raster bytes; inactive changed 0 bytes.
+PASS: Native robot personality and ten automatic eating reactions are distinct; full and reduced timelines clean up without drift.
+PASS: 62 native-view renders from real persistent fixtures, including compact 380 × 290 points. Output: /private/tmp/dabin-extended-qa-20261004/renders/default-fixed

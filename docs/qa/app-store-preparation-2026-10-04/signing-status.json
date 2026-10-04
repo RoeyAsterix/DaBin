@@ -1,0 +1,15 @@
+{
+  "checkedOn": "2026-10-04",
+  "team": "8QG4967CSU",
+  "bundleIdentifier": "com.dabin.mac",
+  "existingDevelopmentIdentity": true,
+  "existingAppleDistributionIdentity": true,
+  "matchingStoreProfile": true,
+  "storeProfileExpiry": "2027-09-27",
+  "installerDistributionIdentityPresent": false,
+  "archiveKeyUse": "Blocked by protected SecurityAgent prompt. Own pending codesign cancelled; archive exited65. User interaction required on retry.",
+  "exportOptions": "ExportOptions-PENDING-SIGNING.plist",
+  "exportAttempted": false,
+  "uploaded": false,
+  "submitted": false
+}

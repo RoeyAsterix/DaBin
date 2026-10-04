@@ -1,0 +1,1 @@
+PASS: 236 project-workspace checks; stable ordering, scoped selection, backup-compatible persistence, atomic task conversion, inherited ownership and guarded undo.

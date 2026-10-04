@@ -181,7 +181,7 @@ struct LocalContentSearchTests {
         let store = try CaptureStore(root: scratch)
         let service = ContentIndexService(store: store)
         try expect(service.needsIndex(restored), "An eligible schema 5 capture is eligible for local indexing")
-        try expect(CaptureSnapshot(current).schemaVersion == 10, "New snapshots include the local index and archive organization schema")
+        try expect(CaptureSnapshot(current).schemaVersion == 11, "New snapshots include the local index, archive organization, comments and acknowledgments schema")
         try expect(!ContentIndexService.isEligible(.text) && !ContentIndexService.isEligible(.link)
                    && !ContentIndexService.isEligible(.video) && !ContentIndexService.isEligible(.file)
                    && !ContentIndexService.isEligible(.task),
@@ -312,8 +312,14 @@ struct LocalContentSearchTests {
         image.indexedText = String(repeating: "longword ", count: 30) + "violet tail"
         let longSnippet = CaptureSearch.groups(captures: [image], query: "violet", filter: .all)
             .first?.entries.first?.indexedTextMatch
-        try expect(longSnippet?.count == 178 && longSnippet?.hasSuffix("…") == true,
-                   "Long recognized lines are bounded for the compact result card")
+        try expect((longSnippet?.count ?? 0) <= 180 && longSnippet?.hasPrefix("…") == true
+                   && longSnippet?.contains("violet tail") == true,
+                   "Long recognized lines stay bounded while showing a hit beyond the opening words")
+        image.indexedText = String(repeating: "leading ", count: 50) + "résumé مرحبا " + String(repeating: "trailing ", count: 50)
+        let unicodeSnippet = CaptureSearch.groups(captures: [image], query: "resume مرحبا", filter: .all)
+            .first?.entries.first?.indexedTextMatch
+        try expect((unicodeSnippet?.count ?? 0) <= 180 && unicodeSnippet?.contains("résumé مرحبا") == true,
+                   "Centered snippets retain exact mixed-language text under accent-folded search")
 
         let store = try CaptureStore(root: root)
         let indexedTask = try await store.importData(solidPNG(width: 20, height: 20), filename: "task.png",
@@ -579,8 +585,8 @@ struct LocalContentSearchTests {
         let unsupported = await ContentTextExtractor.extract(url: unsupportedURL, kind: .document,
                                                              filename: "office.docx")
         try expect(unsupported.status == .unavailable && unsupported.text.isEmpty
-                   && unsupported.message?.contains("not available yet") == true && !unsupported.canRetry,
-                   "Unsupported document formats say they are unavailable instead of claiming success")
+                   && unsupported.message != nil && !unsupported.canRetry,
+                   "Malformed Word packages fail clearly instead of claiming a successful index")
         let blankURL = root.appendingPathComponent("blank.png")
         try solidPNG(width: 240, height: 160).write(to: blankURL)
         let blank = await ContentTextExtractor.extract(url: blankURL, kind: .image, filename: "blank.png")

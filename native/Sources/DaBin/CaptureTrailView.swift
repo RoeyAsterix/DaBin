@@ -28,7 +28,8 @@ struct CaptureApplicationMark: View {
 
 @MainActor
 struct CaptureTrailView: View {
-    @ObservedObject var state: AppState
+    // The trail observes its own capture; AppState is only an action target.
+    let state: AppState
     @ObservedObject var capture: Capture
     var compact = true
     @State private var showingHistory = false

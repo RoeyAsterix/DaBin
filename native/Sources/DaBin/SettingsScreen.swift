@@ -13,21 +13,26 @@ struct SettingsScreen: View {
     @ObservedObject private var robotPlacement: RobotPlacementSettings
     @ObservedObject private var autoCapture: AutoCaptureService
     @ObservedObject private var autoCaptureSettings: AutoCaptureSettings
+    @ObservedObject private var workspaceZoom: WorkspaceZoomSettings
     private let quitApplication: @MainActor () -> Void
+    private let runTutorial: @MainActor () -> Void
     @State private var showPrivacyPolicy = false
     @State private var showAutoCaptureExplanation = false
     @State private var pendingCaptureChannel: AutoCaptureChannel = .clipboard
     @State private var showExcludedApplications = false
 
     init(state: AppState, theme: ThemeSettings,
-         quitApplication: @escaping @MainActor () -> Void = { NSApplication.shared.terminate(nil) }) {
+         quitApplication: @escaping @MainActor () -> Void = { NSApplication.shared.terminate(nil) },
+         runTutorial: @escaping @MainActor () -> Void = {}) {
         self.state = state
         self.theme = theme
         self.quitApplication = quitApplication
+        self.runTutorial = runTutorial
         updates = state.updates
         robotPlacement = state.robotPlacement
         autoCapture = state.autoCapture
         autoCaptureSettings = state.autoCapture.settings
+        workspaceZoom = state.workspaceZoom
     }
 
     private var selectedName: String {
@@ -38,6 +43,27 @@ struct SettingsScreen: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 18) {
                 SettingsSoftwareUpdateSection(updates: updates)
+                SettingsTutorialSection(runTutorial: runTutorial)
+                Divider()
+                VStack(alignment: .leading, spacing: 9) {
+                    Label("Navigation and zoom", systemImage: "arrow.left.arrow.right")
+                        .font(.system(size: 16, weight: .semibold, design: .rounded))
+                    Toggle("Trackpad Back and Forward", isOn: $workspaceZoom.trackpadNavigationEnabled)
+                        .toggleStyle(.switch).controlSize(.small)
+                        .accessibilityIdentifier("settings-trackpad-navigation")
+                    Text("Use your Mac's page-swipe gesture to revisit views.")
+                        .font(.system(size: 12)).foregroundStyle(Palette.muted)
+                        .fixedSize(horizontal: false, vertical: true)
+                    Toggle("Resize window with workspace zoom", isOn: $workspaceZoom.resizeWindowWithZoom)
+                        .toggleStyle(.switch).controlSize(.small)
+                        .accessibilityIdentifier("settings-workspace-resize")
+                    Text("Make room as content gets larger. Expanded windows keep their size.")
+                        .font(.system(size: 12)).foregroundStyle(Palette.muted)
+                        .fixedSize(horizontal: false, vertical: true)
+                    Text("Pinch or use ⌘+ and ⌘− in the workspace. Reset with ⌘0.")
+                        .font(.system(size: 12)).foregroundStyle(Palette.muted)
+                        .fixedSize(horizontal: false, vertical: true)
+                }.font(.system(size: 14))
                 Divider()
                 VStack(alignment: .leading, spacing: 9) {
                     Text("Automatic capture").font(.system(size: 16, weight: .semibold, design: .rounded))
@@ -95,6 +121,7 @@ struct SettingsScreen: View {
                         .font(.system(size: 12)).foregroundStyle(Palette.muted)
                         .fixedSize(horizontal: false, vertical: true)
                 }
+                .daBinTutorialAnchor(.automaticCapture)
                 Divider()
                 ClipboardRetentionSettings(service: state.clipboardRetention, store: state.store)
                 Divider()
@@ -297,7 +324,7 @@ struct SettingsScreen: View {
     private var localArchiveActions: some View {
         Button { state.showArchiveFolder() } label: {
             Label("Open local archive", systemImage: "folder")
-        }
+        }.accessibilityIdentifier("settings-open-local-archive")
         if let index = state.contentIndex {
             Button { state.rebuildContentIndex() } label: {
                 Label("Rebuild text search", systemImage: "arrow.clockwise")
@@ -433,6 +460,50 @@ struct SettingsScreen: View {
             }
             return "No camera island is detected, so DaBin uses the top-right corner. Your choice stays ready for a compatible display."
         }
+    }
+}
+
+@MainActor
+private struct SettingsTutorialSection: View {
+    @Environment(\.daBinAccent) private var accent
+    let runTutorial: @MainActor () -> Void
+
+    var body: some View {
+        Button(action: runTutorial) {
+            HStack(spacing: 11) {
+                Image(systemName: "sparkles")
+                    .font(.system(size: 17, weight: .semibold))
+                    .foregroundStyle(accent)
+                    .frame(width: 24)
+                    .accessibilityHidden(true)
+                VStack(alignment: .leading, spacing: 3) {
+                    Text("Run tutorial")
+                        .font(.system(size: 15, weight: .semibold, design: .rounded))
+                    Text("Let the robot guide you through capture, planning, search, and projects on the real interface.")
+                        .font(.system(size: 12))
+                        .foregroundStyle(Palette.muted)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                Spacer(minLength: 8)
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundStyle(Palette.muted)
+                    .accessibilityHidden(true)
+            }
+            .padding(11)
+            .contentShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+        }
+        .buttonStyle(.plain)
+        .background(Palette.background, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .overlay {
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .strokeBorder(Palette.line, lineWidth: 0.75)
+        }
+        .accessibilityLabel("Run DaBin tutorial")
+        .accessibilityHint("Shows an animated guide over the real DaBin interface")
+        .accessibilityIdentifier("settings-run-tutorial")
+        .buddyHelp("Learn DaBin with the robot")
+        .daBinTutorialAnchor(.settingsTutorial)
     }
 }
 

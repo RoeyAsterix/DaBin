@@ -73,6 +73,9 @@ import SwiftUI
     @Published var controlEnabled = true
     var targetButton: NSButton?
     var targetPresses = 0
+    // Test instrumentation only: assigning an anchor snapshot does not publish
+    // another SwiftUI update or create a geometry/state feedback loop.
+    var publishedAnchorIDs: Set<String> = []
 }
 
 @MainActor private struct TooltipNativeButton: NSViewRepresentable {
@@ -105,6 +108,12 @@ import SwiftUI
 
     var body: some View {
         ZStack(alignment: .topLeading) {
+            ForEach(0..<100, id: \.self) { index in
+                Text("Idle")
+                    .buddyHelp("Unused help \(index)", id: "fixture-idle-\(index)")
+                    .frame(width: 1, height: 1).opacity(0)
+                    .allowsHitTesting(false).accessibilityHidden(true)
+            }
             TooltipNativeButton(title: "Help anchor", action: {})
                 .frame(width: 100, height: 32)
                 .buddyHelp("Focus tooltip", id: "fixture-focused-help", isFocused: model.isFocused)
@@ -117,8 +126,10 @@ import SwiftUI
         .frame(width: 320, height: 180)
         .background(Palette.background)
         .environment(\.timelineTooltipController, controller)
+        .environment(\.hoverTooltipActiveID, controller.visible?.id)
         .environment(\.daBinTooltipsEnabled, model.isEnabled)
         .overlayPreferenceValue(HoverTooltipAnchorKey.self) { anchors in
+            let _ = model.publishedAnchorIDs = Set(anchors.keys)
             HoverTooltipOverlay(controller: controller, anchors: anchors, isEnabled: model.isEnabled)
         }
     }
@@ -485,6 +496,8 @@ import SwiftUI
         let window = panel(hosting)
         defer { controller.dismiss(); window.orderOut(nil); window.contentView = nil; window.close() }
         await settle(hosting)
+        try expect(model.publishedAnchorIDs.isEmpty,
+                   "A mounted fixture with 100 idle help controls publishes no global tooltip anchors")
         guard let target = model.targetButton else { throw failure("The underlying native button must remain mounted") }
         let center = target.convert(CGPoint(x: target.bounds.midX, y: target.bounds.midY), to: hosting)
         let hostPoint = hosting.superview.map { hosting.convert(center, to: $0) } ?? center
@@ -500,6 +513,8 @@ import SwiftUI
         await settle(hosting)
         try expect(controller.visible?.id == "fixture-focused-help",
                    "The reusable modifier shows keyboard-focus help immediately without waiting for its half-second hover delay")
+        try expect(model.publishedAnchorIDs == ["fixture-focused-help"],
+                   "Keyboard focus publishes only the active control's real bounds, not the 100 idle controls")
         let shown = try render(hosting)
         let changed = changedRegion(baseline, shown)
         try expect(changed.0 > 80, "Focused reusable help produces visible pixels")
@@ -520,19 +535,34 @@ import SwiftUI
         model.isEnabled = false
         await settle(hosting)
         try expect(controller.visible == nil && !controller.isEnabled, "The reusable modifier removes focused help when disabled")
+        try expect(model.publishedAnchorIDs.isEmpty, "Disabling help removes all tooltip geometry even with stationary focus")
         model.isEnabled = true
         await settle(hosting)
         try expect(controller.visible?.id == "fixture-focused-help",
                    "Re-enabling help while focus stays stationary restores the same control's tooltip")
+        try expect(model.publishedAnchorIDs == ["fixture-focused-help"], "Re-enabling stationary focus restores the same single anchor")
         model.controlEnabled = false
         await settle(hosting)
         try expect(controller.visible == nil, "A disabled control cannot retain a focused tooltip")
+        try expect(model.publishedAnchorIDs.isEmpty, "Disabling the control also removes its anchor")
         model.controlEnabled = true
         await settle(hosting)
         try expect(controller.visible?.id == "fixture-focused-help", "A re-enabled focused control can show help again")
+        try expect(model.publishedAnchorIDs == ["fixture-focused-help"], "A re-enabled focused control republishes its own anchor")
         model.isFocused = false
         await settle(hosting)
         try expect(controller.visible == nil, "Leaving the reusable control's focus removes its tooltip")
+        try expect(model.publishedAnchorIDs.isEmpty, "Leaving focus releases the last global tooltip anchor")
+        controller.presentImmediately(TimelineTooltipDescriptor(id: "fixture-focused-help", text: "Focus tooltip", index: 0, itemCount: 1))
+        await settle(hosting)
+        try expect(model.publishedAnchorIDs == ["fixture-focused-help"],
+                   "An explicit visible descriptor resolves just its requested control without fabricated pointer input")
+        let explicitlyShown = try render(hosting)
+        try expect(changedRegion(baseline, explicitlyShown).0 > 80,
+                   "Explicit descriptor presentation still draws a real bubble after inactive anchors are pruned")
+        controller.dismiss()
+        await settle(hosting)
+        try expect(model.publishedAnchorIDs.isEmpty, "Explicit dismissal releases requested geometry again")
     }
 
     private static func run() async throws {

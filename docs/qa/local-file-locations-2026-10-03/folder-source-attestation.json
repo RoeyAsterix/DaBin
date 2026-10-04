@@ -1,0 +1,46 @@
+{
+  "candidatePath": "/private/tmp/dabin-local-file-locations-20261003/native",
+  "checkedAtUTC": "2026-10-03T14:24:45.491713+00:00",
+  "allProductionSourcesMatchPassingQA": true,
+  "productionSourceCount": 110,
+  "files": {
+    "Sources/DaBin/CaptureStore.swift": {
+      "projectMatchesCandidate": true,
+      "sha256": "05e7f56af879fee9038dcef28c3603ec082aae8f1eec9973ed2159b35beeb90d"
+    },
+    "Sources/DaBin/DailyArchive.swift": {
+      "projectMatchesCandidate": true,
+      "sha256": "818dca419ba050fd3462196d28ed96ffa4c466f82feeb4f0816868c67b6f5f14"
+    },
+    "Sources/DaBin/LibraryScreen.swift": {
+      "projectMatchesCandidate": true,
+      "sha256": "b55e14dbd6e64c0c2a93b5024a70a7ad6c15ab36436b513972eccf410d1970f3"
+    },
+    "Sources/DaBin/SettingsScreen.swift": {
+      "projectMatchesCandidate": true,
+      "sha256": "4613ab97384710b8dc495e8b7641eeadb7f3fd0f269534844fbebbfa8993cdd3"
+    }
+  },
+  "sharedFileSnippets": {
+    "AppState.swift": {
+      "projectContainsCandidateFolderChanges": true,
+      "snippetSHA256s": [
+        "b958dd1c2a82624f2f9b8892effa32dba2e712041dd28a19c381e46475772db4",
+        "8d9b8ee07079119e9c3f6a570edd7efb5e26a204efa395de16840ed13674dd3a",
+        "d7ea3b5575d85e0f5a569acbb8f88c290ea1b895b656eab617aca9dd34a0269e",
+        "df498cff20c29c4b576c4790a79515dd032ff8a72e8eb0cb438ecbc96846875a"
+      ],
+      "completeFileMatchExpected": false,
+      "reason": "Project source also contains concurrent date-search work."
+    },
+    "ExplorerScreen.swift": {
+      "projectContainsCandidateFolderChanges": true,
+      "snippetSHA256s": [
+        "3320d5db208c4285da469133f49be6e4c06d76af01d171f0eba8584aab01f9a6",
+        "e655e5f0b093431a5e293a6d78c0ba78e728624bd9a48985c5088eb980703f3c"
+      ],
+      "completeFileMatchExpected": false,
+      "reason": "Project source also contains concurrent date-search work."
+    }
+  }
+}

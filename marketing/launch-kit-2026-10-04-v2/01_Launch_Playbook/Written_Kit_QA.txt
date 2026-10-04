@@ -1,0 +1,14 @@
+DABIN V2 WRITTEN KIT / QA
+
+HTML parse PASS: START_HERE.html
+HTML parse PASS: 01_Launch_Playbook/START_HERE.html
+HTML parse PASS: 01_Launch_Playbook/Creator_and_Publication_Targets.html
+HTML parse PASS: 01_Launch_Playbook/30_Day_Calendar.html
+HTML parse PASS: 02_Copy/Copy_Index.html
+HTML parse PASS: 05_Landing_Page/index.html
+JSON and Python author-source syntax PASS.
+PDF: 9 pages, expected revised tour wording; changed pages1/3 rendered and inspected.
+Original kit preserved; all edits are under launch-kit-2026-10-04-v2.
+Live App Store/contact fields remain unset and download buttons stay disabled until configured.
+Final duration supplied by root:94.4 seconds (1min34); guide avoids a fixed duration.
+Final media integration complete. Local link integrity is verified by06_Source/qa/build_package.py and recorded in SHA256_MANIFEST.json.

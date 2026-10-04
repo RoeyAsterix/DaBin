@@ -1,8 +1,34 @@
 import SwiftUI
 import UniformTypeIdentifiers
 
+extension View {
+    /// Resolve the live saved content when dragging begins. The native session
+    /// owns its pasteboard; starting a drag never replaces the user's clipboard.
+    @MainActor
+    func captureDragSource(state: AppState, capture: Capture) -> some View {
+        captureDragSource(state: state, captures: [capture], label: capture.title)
+    }
+
+    @MainActor
+    func captureDragSource(state: AppState, captures: [Capture], label: String) -> some View {
+        nativeContentDrag(label: label, items: {
+            try ExplorerTransfer.pasteboardWriters(for: captures, store: state.store)
+        }, onError: { state.reportFailure($0.localizedDescription) })
+    }
+
+    /// Static captions transfer their exact text independently of the saved
+    /// capture. Resolving a drag does not replace the general clipboard.
+    @MainActor
+    func readableTextDragSource(text: String, label: String, state: AppState) -> some View {
+        nativeContentDrag(label: label, items: {
+            text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? [] : [text as NSString]
+        }, onError: { state.reportFailure($0.localizedDescription) })
+    }
+}
+
 @MainActor
 struct CaptureRow: View {
+    @Environment(\.workspaceZoom) private var zoom
     @Environment(\.daBinAccent) private var accent
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @ObservedObject var state: AppState
@@ -14,6 +40,8 @@ struct CaptureRow: View {
     var showsCopyButton = true
     var embeddedInCard = false
     var showsProject = true
+    var planningActions: AnyView? = nil
+    var planningMetadata: AnyView? = nil
     @State private var copied = false
     @State private var copyGeneration = 0
     @State private var dropTargeted = false
@@ -22,54 +50,63 @@ struct CaptureRow: View {
     private var projectName: String? { ExplorerQuery.project(of: capture, in: state.store.captures) }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: zoom.value(capture.isTask ? 10 : 12)) {
             if showsProject {
-                CaptureProjectPickerButton(state: state, capture: capture)
+                CaptureProjectPriorityHeader(state: state, capture: capture)
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
             header
             if let isMatch {
                 Label(isMatch ? "Match" : "Nearby capture", systemImage: isMatch ? "magnifyingglass" : "clock")
-                    .font(.system(size: 11, weight: .medium)).foregroundStyle(isMatch ? accent : Palette.muted)
+                    .font(.system(size: zoom.fontSize(11), weight: .medium)).foregroundStyle(isMatch ? accent : Palette.muted)
             }
             if !capture.isTask { content }
             if !capture.isMinimized {
                 if let indexedTextMatch {
                     Label(indexedTextMatch, systemImage: "text.viewfinder")
-                        .font(.system(size: 11)).foregroundStyle(Palette.muted).lineLimit(2)
+                        .font(.system(size: zoom.fontSize(11))).foregroundStyle(Palette.muted).lineLimit(2)
                         .accessibilityLabel("Matched recognized text: \(indexedTextMatch)")
+                        .accessibilityIdentifier("capture-indexed-match-\(capture.id.uuidString)")
+                        .captureDragSource(state: state, capture: capture)
                 }
                 if !capture.comment.isEmpty {
                     Label(capture.comment, systemImage: "text.bubble")
-                        .font(.system(size: 12)).foregroundStyle(Palette.muted).lineLimit(2)
+                        .font(.system(size: zoom.fontSize(12))).foregroundStyle(Palette.muted).lineLimit(2)
+                        .accessibilityIdentifier("capture-comment-\(capture.id.uuidString)")
+                        .readableTextDragSource(text: capture.comment, label: "Comment for \(capture.title)", state: state)
                 }
                 if let reminder = capture.reminderAt {
                     Label(reminder.formatted(date: .abbreviated, time: .shortened), systemImage: capture.isCompleted ? "bell.slash" : "bell")
-                        .font(.system(size: 11, weight: .medium)).foregroundStyle(Palette.muted).lineLimit(1)
+                        .font(.system(size: zoom.fontSize(11), weight: .medium)).foregroundStyle(Palette.muted).lineLimit(1)
                 }
                 if !attachments.isEmpty {
                     Label("\(attachments.count) attachments", systemImage: "paperclip")
-                        .font(.system(size: 11)).foregroundStyle(Palette.muted)
+                        .font(.system(size: zoom.fontSize(11))).foregroundStyle(Palette.muted)
                 }
-                if capture.isTask { CaptureTrailView(state: state, capture: capture) }
+                if capture.isTask, planningActions == nil || capture.kind != .task
+                    || capture.sourceApplicationName != nil || capture.sourceApplicationBundleIdentifier != nil
+                    || !capture.pasteHistory.isEmpty {
+                    CaptureTrailView(state: state, capture: capture)
+                }
                 if let parentID = capture.parentTaskID {
                     Button { state.openCapture(parentID, focus: "task") } label: { Label("Task attachment", systemImage: "arrow.turn.up.left") }
-                        .buttonStyle(.plain).font(.system(size: 11)).foregroundStyle(accent)
+                        .buttonStyle(.plain).font(.system(size: zoom.fontSize(11))).foregroundStyle(accent)
                 }
+                if let planningMetadata { planningMetadata }
                 if capture.isTask {
-                    TaskFocusControls(state: state, capture: capture)
-                        .padding(.top, 10)
+                    TaskFocusControls(state: state, capture: capture, showsSchedule: planningActions == nil)
+                        .padding(.top, 8)
                         .overlay(alignment: .top) { Rectangle().fill(Palette.line).frame(height: 0.7) }
                 }
-                primaryActions
+                if !capture.isTask { primaryActions }
                 CaptureConversionUndo(state: state, capture: capture)
             }
             secondaryActions
         }
-        .padding(embeddedInCard ? 4 : 16)
-        .background {
-            if !embeddedInCard { RoundedRectangle(cornerRadius: 14).fill(Palette.surface) }
-        }
+        .padding(zoom.value(embeddedInCard ? 4 : capture.isTask ? 14 : 16))
+        .workspaceZoomItem("capture:" + capture.id.uuidString)
+        .projectCardBackground(workspace: state.workspace, projectName: projectName,
+                               enabled: !embeddedInCard)
         .projectCardFrame(workspace: state.workspace, projectName: projectName, activeProject: nil,
                           fallbackColor: embeddedInCard ? .clear : dropTargeted ? accent : taskAtTop ? accent.opacity(0.55) : Palette.line,
                           fallbackWidth: embeddedInCard ? 0 : dropTargeted ? 1.5 : 0.7)
@@ -87,16 +124,19 @@ struct CaptureRow: View {
             if capture.isTask { TaskStatusButton(state: state, capture: capture) }
             VStack(alignment: .leading, spacing: 4) {
                 if capture.isTask {
-                    Text(capture.isCompleted ? "COMPLETED" : "TASK")
-                        .font(.system(size: 10, weight: .medium)).tracking(0.7).foregroundStyle(Palette.muted)
+                    if planningActions == nil {
+                        Text(capture.isCompleted ? "COMPLETED" : "TASK")
+                            .font(.system(size: zoom.fontSize(10), weight: .medium)).tracking(0.7).foregroundStyle(Palette.muted)
+                    }
                     title
+                    if !showsProject { CaptureTaskPriorityTag(capture: capture) }
                     CaptureReceiptView(capture: capture, category: captureTypeLabel(capture.kind))
                 } else {
                     CaptureTrailView(state: state, capture: capture)
                     CaptureReceiptView(capture: capture, category: captureTypeLabel(capture.kind))
                 }
             }.frame(maxWidth: .infinity, alignment: .leading)
-            if capture.isPinned { Image(systemName: "pin.fill").font(.system(size: 10)).foregroundStyle(accent).accessibilityLabel("Pinned") }
+            if capture.isPinned { Image(systemName: "pin.fill").font(.system(size: zoom.fontSize(10))).foregroundStyle(accent).accessibilityLabel("Pinned") }
             if showsCopyButton {
                 BuddyIconButton(symbol: copied ? "checkmark" : "doc.on.doc", title: copied ? "Copied" : "Copy \(capture.title)") { copy() }
                     .accessibilityIdentifier(CaptureCopyButton.accessibilityIdentifier(for: [capture]))
@@ -106,17 +146,19 @@ struct CaptureRow: View {
     }
 
     private var content: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: zoom.value(12)) {
             if !capture.isMinimized, ![CaptureKind.text, .task].contains(capture.kind) {
                 Button { state.openCapture(capture.id) } label: {
                     CaptureThumbnail(store: state.store, capture: capture)
-                        .frame(height: capture.kind == .link ? 164 : 208)
+                        .frame(height: zoom.value(capture.kind == .link ? 164 : 208))
                         .clipShape(RoundedRectangle(cornerRadius: 8))
                 }.buttonStyle(.plain).accessibilityLabel("Preview \(capture.title)")
+                    .captureDragSource(state: state, capture: capture)
             }
             title
             if !capture.isMinimized, !capture.previewDescription.isEmpty {
-                Text(capture.previewDescription).font(.system(size: 13)).foregroundStyle(Palette.muted).lineSpacing(3).lineLimit(3)
+                Text(capture.previewDescription).font(.system(size: zoom.fontSize(13))).foregroundStyle(Palette.muted).lineSpacing(zoom.lineSpacing(3)).lineLimit(3)
+                    .captureDragSource(state: state, capture: capture)
             }
         }
     }
@@ -124,13 +166,14 @@ struct CaptureRow: View {
     private var title: some View {
         Button { state.openCapture(capture.id) } label: {
             Text(capture.title.isEmpty ? "Untitled capture" : capture.title)
-                .font(.system(size: 16, weight: .semibold))
+                .font(.system(size: zoom.fontSize(16), weight: .semibold))
                 .strikethrough(capture.isTask && capture.isCompleted, color: Palette.muted)
                 .foregroundStyle(capture.isCompleted ? Palette.muted : Palette.foreground)
                 .lineLimit(capture.isMinimized ? 1 : 4).frame(maxWidth: .infinity, alignment: .leading)
                 .multilineTextAlignment(.leading).contentShape(Rectangle())
         }.buttonStyle(.plain)
             .accessibilityLabel("Open \(capture.title), \(capture.isTask ? "task" : captureTypeLabel(capture.kind)), saved \(prettyDay(capture.captureDay)) at \(captureClock(capture))")
+            .captureDragSource(state: state, capture: capture)
     }
 
     private var primaryActions: some View {
@@ -141,22 +184,32 @@ struct CaptureRow: View {
         }
     }
 
-    private var secondaryActions: some View {
-        ViewThatFits(in: .horizontal) {
-            HStack(spacing: 2) {
-                if !capture.isMinimized {
-                    BuddyIconButton(symbol: "text.bubble", title: "Comment") { state.openCapture(capture.id, focus: "comment") }
-                    BuddyIconButton(symbol: "bell", title: "Reminder") { state.openCapture(capture.id, focus: "reminder") }
-                    if capture.isTask {
-                        BuddyIconButton(symbol: "paperclip", title: "Add task attachments") { state.openCapture(capture.id, focus: "task") }
-                    }
-                }
+    @ViewBuilder private var secondaryActions: some View {
+        if let planningActions {
+            HStack(spacing: 4) {
+                planningActions
                 Spacer(minLength: 0)
                 collapseAndMore
             }
-            HStack {
-                Spacer(minLength: 0)
-                collapseAndMore
+            .accessibilityElement(children: .contain)
+            .accessibilityIdentifier("capture-planning-actions-\(capture.id.uuidString)")
+        } else {
+            ViewThatFits(in: .horizontal) {
+                HStack(spacing: 2) {
+                    if !capture.isMinimized {
+                        BuddyIconButton(symbol: "text.bubble", title: "Comment") { state.openCapture(capture.id, focus: "comment") }
+                        BuddyIconButton(symbol: "bell", title: "Reminder") { state.openCapture(capture.id, focus: "reminder") }
+                        if capture.isTask {
+                            BuddyIconButton(symbol: "paperclip", title: "Add task attachments") { state.openCapture(capture.id, focus: "task") }
+                        }
+                    }
+                    Spacer(minLength: 0)
+                    collapseAndMore
+                }
+                HStack {
+                    Spacer(minLength: 0)
+                    collapseAndMore
+                }
             }
         }
     }
@@ -164,6 +217,7 @@ struct CaptureRow: View {
     private var collapseAndMore: some View {
         HStack(spacing: 2) {
             BuddyIconButton(symbol: capture.isMinimized ? "chevron.down" : "chevron.up", title: capture.isMinimized ? "Expand capture" : "Minimize capture") { state.toggleMinimized(capture) }
+                .accessibilityIdentifier("capture-collapse-\(capture.id.uuidString)")
             CaptureControls(state: state, capture: capture)
         }
     }
@@ -186,6 +240,7 @@ struct CaptureRow: View {
 /// dropping the date or replacing it with an edit timestamp.
 @MainActor
 struct CaptureReceiptView: View {
+    @Environment(\.workspaceZoom) private var zoom
     @ObservedObject var capture: Capture
     let category: String
     var fontSize: CGFloat = 11
@@ -195,7 +250,7 @@ struct CaptureReceiptView: View {
             receiptRow(stacked: false)
             receiptRow(stacked: true)
         }
-        .font(.system(size: fontSize)).foregroundStyle(Palette.muted)
+        .font(.system(size: zoom.fontSize(fontSize))).foregroundStyle(Palette.muted)
         .accessibilityElement(children: .contain)
         .accessibilityIdentifier("capture-receipt-\(capture.id.uuidString)")
     }
@@ -292,10 +347,16 @@ struct CaptureControls: View {
 
     var body: some View {
         Menu { CaptureActionMenuItems(state: state, capture: capture, includesRemoval: includesRemoval) } label: {
-            Image(systemName: "ellipsis").font(.system(size: 16, weight: .semibold)).frame(width: 32, height: 32)
-        }.menuStyle(.borderlessButton).menuIndicator(.hidden).fixedSize().foregroundStyle(accent).buddyHelp("More capture actions")
+            Image(systemName: "ellipsis").font(.system(size: 16, weight: .semibold))
+                .frame(width: 32, height: 32).contentShape(Rectangle())
+        // The borderless native menu shrinks its hit target to the ellipsis
+        // glyph. A plain button menu retains the full matching icon target.
+        }.menuStyle(.button).buttonStyle(.plain).menuIndicator(.hidden).fixedSize()
+            .foregroundStyle(accent).buddyHelp("More capture actions")
             .accessibilityLabel("More actions for \(capture.title)")
+            .accessibilityIdentifier("capture-more-\(capture.id.uuidString)")
             .disabled(state.removingCaptureID == capture.id)
+            .daBinTutorialAnchor(.captureActions)
     }
 }
 

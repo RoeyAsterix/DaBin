@@ -31,6 +31,9 @@ final class TransientMessagePresentation<Message: Equatable>: ObservableObject {
 
     func present(_ value: Message?) {
         guard !isStopped else { return }
+        // Recycling a lazy row with no feedback must not publish another
+        // invalidation into the layout transaction that removed that row.
+        guard value != nil || message != nil || deadline != nil || expiry != nil else { return }
         expiry?.cancel()
         expiry = nil
         revision &+= 1

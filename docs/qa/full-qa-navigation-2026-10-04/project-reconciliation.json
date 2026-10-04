@@ -1,0 +1,10 @@
+{
+  "verifiedAtUTC": "2026-10-04T12:32:29.135295+00:00",
+  "unexpectedAddedPath": "Tests/QAStorageScopedSaveTests 2.swift",
+  "preservedCopy": "../docs/qa/full-qa-navigation-2026-10-04/diagnostics/QAStorageScopedSaveTests-conflicting-old-copy.swift.txt",
+  "copySHA256": "7eff6134e2ca0e1302e67913f5d1c4e22465789458bfed8976dd5687f81192f8",
+  "exactlyMatchesPreQATest": true,
+  "canonicalTestModified": false,
+  "effect": "Extra old test reference made generated Xcode project inventory stale; extra was not compiled into app or Xcode tests",
+  "cause": "not established"
+}

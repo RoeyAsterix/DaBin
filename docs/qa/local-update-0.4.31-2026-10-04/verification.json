@@ -1,0 +1,35 @@
+{
+  "version": "0.4.31",
+  "build": "86",
+  "installedApp": "/Users/roeylibfeld/Applications/DaBin.app",
+  "backup": "/Users/roeylibfeld/Applications/.DaBinBackups/20261004-083205-3d498817.app",
+  "sourceFingerprint": "cda5504ffbd21b7d090c142f54cf635f8d139adedd61be14a3ab85e045ce62c5",
+  "executableSHA256": "b493b2b155f82d52a6be26eb4d18ce2c6c3a5f47b3e94eebcab3c5a424f4ff30",
+  "updaterExecutableSHA256": "1b1363ab3c4bc2bcc7f594071edcc7205ce8c22858c9dc659a06be8449ece3e3",
+  "installedMatchesBuild": true,
+  "strictSignatureVerified": true,
+  "directChannel": "github",
+  "directQA": {
+    "focusedSuites": 5,
+    "checks": 221,
+    "firstRun": "4/5 passed; updater test included excluded tutorial assertions",
+    "rerun": "Updater baseline direct branch restored only in isolated candidate; 34checks passed; production unchanged."
+  },
+  "priorSettingsObserved": {
+    "autoCapture": "paused",
+    "savedItems": 60
+  },
+  "checkedAtUTC": "2026-10-04T05:32:43.444529+00:00",
+  "guiLaunchVerified": true,
+  "installedVersionVisible": "DaBin 0.4.31 (86)",
+  "savedItemsAfter": 60,
+  "savedDateGroupsAfter": 8,
+  "autoCaptureAfter": "paused",
+  "clipboardChannelSelectionPreserved": true,
+  "screenshotChannelSelectionPreserved": true,
+  "linkPreviewsAfter": "off",
+  "existingQuickCaptureDraftPreserved": true,
+  "finalView": "Search, blank query, matching pre-update view",
+  "completedAtUTC": "2026-10-04T05:35:06.715406+00:00",
+  "uiToolNotes": "First post-install AX lookup timed out after5seconds while launch completed; immediate retry and subsequent settings/search verification succeeded. No personal captures or preferences were edited."
+}

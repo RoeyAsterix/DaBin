@@ -60,6 +60,15 @@ private final class FilterResizeNotificationClient: ReminderNotificationClient {
         expect(frames.allSatisfy { near($0.frame.width, anchor.width) }, "\(label): the panel keeps its width")
     }
 
+    @MainActor private static func expectStableSearchFrame(_ frames: [FrameSample], anchor: NSRect,
+                                                           controller: CornerController, applicationCount: Int,
+                                                           label: String) {
+        expectFixedHeader(frames, anchor: anchor, label: label)
+        expect(frames.allSatisfy { $0.frame == anchor }, "\(label): every sampled native frame preserves the complete date-board viewport")
+        expect(controller.boardFrameApplicationCount == applicationCount,
+               "\(label): changing result count never reapplies or animates the native panel frame")
+    }
+
     @MainActor private static func expectTransition(_ frames: [FrameSample], from start: NSRect, to end: NSRect,
                                                     reducedMotion: Bool, label: String) {
         expectFixedHeader(frames, anchor: start, label: label)
@@ -131,7 +140,7 @@ private final class FilterResizeNotificationClient: ReminderNotificationClient {
         for number in 1...4 { _ = try store.capture(text: "Filter fixture note \(number)", at: now) }
         _ = try store.createTask(text: "Filter fixture task")
         let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: now)!
-        _ = try store.capture(text: "https://example.invalid/fixture", at: yesterday)
+        let previousDayLink = try store.capture(text: "https://example.invalid/fixture", at: yesterday)[0]
         let previews = PreviewService(store: store)
         let reminders = ReminderService(store: store, client: FilterResizeNotificationClient())
         let state = AppState(store: store, previews: previews, reminders: reminders)
@@ -231,21 +240,35 @@ private final class FilterResizeNotificationClient: ReminderNotificationClient {
         settle()
         state.query = "fixture"
         controller.openSearch()
+        // Search's date columns retain a stable viewport as matches change.
+        // Include yesterday's lone link to exercise an actual date-page change.
+        state.searchEverything()
         settle()
+        expect(state.searchScope == .all, "Archive-wide resize fixtures explicitly select Search everything")
         let searchFull = controller.board.frame
-        expect(near(searchFull.height, 610), "Search starts with enough matches for a full panel")
-        let searchShrink = sample(controller.board) { state.filter = .links }
-        let searchLink = controller.board.frame
-        expect(state.searchGroups.count == 1 && state.searchGroups.first?.entries.count == 1,
-               "Search Links finds the isolated previous-day link with no adjacent fixtures")
-        expect(near(searchLink.height, 530), "Single-entry search keeps the labeled shell and result actions visible")
-        expectTransition(searchShrink, from: searchFull, to: searchLink, reducedMotion: reducedMotion, label: "Search shrink")
+        expect(near(searchFull.height, 610), "Search reserves its stable date-board viewport plus the outer frame")
+        let searchFrameApplicationCount = controller.boardFrameApplicationCount
+        let searchLinks = sample(controller.board) { state.filter = .links }
+        expect(state.searchDateGroups.count == 1
+               && state.searchDateGroups.first?.day == previousDayLink.captureDay
+               && state.searchDateGroups.first?.matchCount == 1
+               && state.searchDateGroups.first?.captureEntries.map(\.id) == [previousDayLink.id],
+               "Search Links presents exactly the previous-day link in its original receipt-date column")
+        expectStableSearchFrame(searchLinks, anchor: searchFull, controller: controller,
+                                applicationCount: searchFrameApplicationCount, label: "Single-result Search filter")
         let searchEmpty = sample(controller.board) { state.filter = .media }
-        expectFixedHeader(searchEmpty, anchor: searchFull, label: "Empty Search filter")
-        expect(state.searchGroups.isEmpty && near(controller.board.frame.height, 430), "Empty Search fits its status without moving the header")
-        let searchBeforeGrowth = controller.board.frame
-        let searchGrowth = sample(controller.board) { state.filter = .all }
-        expectTransition(searchGrowth, from: searchBeforeGrowth, to: searchFull, reducedMotion: reducedMotion, label: "Search growth")
+        expect(state.searchDateGroups.isEmpty, "The Media filter genuinely produces Search's empty state")
+        expectStableSearchFrame(searchEmpty, anchor: searchFull, controller: controller,
+                                applicationCount: searchFrameApplicationCount, label: "Empty Search filter")
+        let searchRestored = sample(controller.board) { state.filter = .all }
+        expect(state.searchDateGroups.count == 2
+               && state.searchDateGroups.reduce(0, { $0 + $1.matchCount }) == 6
+               && Set(state.searchDateGroups.flatMap(\.captureEntries).map(\.id)) == Set(store.captures.map(\.id)),
+               "Returning to All restores all six matches across both original receipt dates")
+        expectStableSearchFrame(searchRestored, anchor: searchFull, controller: controller,
+                                applicationCount: searchFrameApplicationCount, label: "Restored Search filter")
+        expect(defaults.object(forKey: CornerController.boardPlacementKey) == nil,
+               "Search result-count changes never become a persisted user placement")
 
         state.openDaily()
         controller.openDaily()

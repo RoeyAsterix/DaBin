@@ -1,0 +1,5 @@
+CONTENT PASS:174 canonical words align exactly with independent local STT after resolving decoder-boundary artifacts using bounded rereads.
+Natural generated rate;83.2seconds,48kHz mono PCM16. No time stretch.
+TECHNICAL: WAV decodes; zero clipped samples; peak−0.436dBFS and RMS−15.406dBFS. Reduce gain before compressed final export to allow headroom.
+SRT and word/phrase JSON bounds are local STT estimates, not manual listening proof.
+SUBJECTIVE LISTENING: unsupported in this agent session, no listening pass claimed.

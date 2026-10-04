@@ -8,17 +8,31 @@ import Combine
 final class StatusBarController: NSObject {
     enum Indicator: Equatable {
         case off
-        case enabled
+        case ready
+        case recording
         case paused
         case attention
 
         var symbolName: String {
             switch self {
             case .off: return "archivebox"
-            case .enabled: return "archivebox.fill"
+            case .ready: return "circle.dashed"
+            case .recording: return "record.circle.fill"
             case .paused: return "pause.circle.fill"
             case .attention: return "exclamationmark.triangle.fill"
             }
+        }
+
+        func image() -> NSImage? {
+            let size = NSImage.SymbolConfiguration(pointSize: 14, weight: .medium)
+            let configuration = self == .recording
+                ? size.applying(NSImage.SymbolConfiguration(paletteColors: [.systemRed])) : size
+            let image = NSImage(systemSymbolName: symbolName, accessibilityDescription: nil)?
+                .withSymbolConfiguration(configuration)
+            // Template images lose their explicit color in the menu bar. An
+            // active monitor keeps its red recording mark in both appearances.
+            image?.isTemplate = self != .recording
+            return image
         }
     }
 
@@ -48,12 +62,12 @@ final class StatusBarController: NSObject {
                 return Presentation(indicator: .attention,
                                     statusTitle: "Auto Capture: Needs attention")
             case .sourceApplicationExcluded(let name):
-                return Presentation(indicator: .enabled,
-                                    statusTitle: "Auto Capture: Skipping \(name)")
+                return Presentation(indicator: .recording,
+                                    statusTitle: "Auto Capture: Recording · skipping \(name)")
             case .disabled, .ready:
-                return Presentation(indicator: .enabled, statusTitle: "Auto Capture: Ready")
+                return Presentation(indicator: .ready, statusTitle: "Auto Capture: Ready to start")
             case .monitoring:
-                return Presentation(indicator: .enabled, statusTitle: "Auto Capture: Enabled")
+                return Presentation(indicator: .recording, statusTitle: "Auto Capture: Recording")
             case .paused:
                 return Presentation(indicator: .paused, statusTitle: "Auto Capture: Paused")
             }
@@ -151,12 +165,7 @@ final class StatusBarController: NSObject {
         pauseMenuItem?.title = paused ? "Resume Auto Capture" : "Pause Auto Capture"
 
         guard let button = statusItem?.button else { return }
-        let configuration = NSImage.SymbolConfiguration(pointSize: 14, weight: .medium)
-        let image = NSImage(systemSymbolName: next.indicator.symbolName,
-                            accessibilityDescription: next.accessibilityValue)?
-            .withSymbolConfiguration(configuration)
-        image?.isTemplate = true
-        button.image = image
+        button.image = next.indicator.image()
         button.imagePosition = .imageOnly
         refreshTooltip()
         button.setAccessibilityLabel("DaBin menu")

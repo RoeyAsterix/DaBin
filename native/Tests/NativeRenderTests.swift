@@ -544,6 +544,7 @@ private final class NativeRenderTests: NSObject, NSApplicationDelegate {
             state.route = .search
             state.query = "quiet"
             state.filter = .all
+            state.showSearchContext = true
             state.searchScrollID = nil
             let groups = state.searchGroups
             guard groups.count == 2,
@@ -554,6 +555,7 @@ private final class NativeRenderTests: NSObject, NSApplicationDelegate {
             try await snapshot(state, name: "search-context-top", mode: mode, output: output)
             state.searchScrollID = after.id
             try await snapshot(state, name: "search-context-after", mode: mode, output: output, scrollToBottom: true)
+            state.showSearchContext = false
 
             state.openCapture(image.id)
             try await snapshot(state, name: "detail-top", mode: mode, output: output)

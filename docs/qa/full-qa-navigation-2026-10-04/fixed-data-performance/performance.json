@@ -1,0 +1,156 @@
+{
+  "architecture" : "arm64",
+  "arrivalCadenceSeconds" : 0,
+  "automaticArrivals" : 0,
+  "backingScale" : 2,
+  "baselineTimerP95Milliseconds" : 17.403958365321159,
+  "burstSize" : 0,
+  "cycles" : [
+    {
+      "anchorAfter" : "capture:CFFF66F4-EC5C-450D-8D70-3234C4667F3A",
+      "anchorBefore" : "capture:CFFF66F4-EC5C-450D-8D70-3234C4667F3A",
+      "captures" : 5000,
+      "cycle" : 1,
+      "durationSeconds" : 2.9515027916058898,
+      "rssBytes" : 243122176
+    },
+    {
+      "anchorAfter" : "capture:CFFF66F4-EC5C-450D-8D70-3234C4667F3A",
+      "anchorBefore" : "capture:CFFF66F4-EC5C-450D-8D70-3234C4667F3A",
+      "captures" : 5000,
+      "cycle" : 2,
+      "durationSeconds" : 2.5587578332051635,
+      "rssBytes" : 245153792
+    },
+    {
+      "anchorAfter" : "capture:CFFF66F4-EC5C-450D-8D70-3234C4667F3A",
+      "anchorBefore" : "capture:CFFF66F4-EC5C-450D-8D70-3234C4667F3A",
+      "captures" : 5000,
+      "cycle" : 3,
+      "durationSeconds" : 2.4002537915948778,
+      "rssBytes" : 246071296
+    },
+    {
+      "anchorAfter" : "capture:CFFF66F4-EC5C-450D-8D70-3234C4667F3A",
+      "anchorBefore" : "capture:CFFF66F4-EC5C-450D-8D70-3234C4667F3A",
+      "captures" : 5000,
+      "cycle" : 4,
+      "durationSeconds" : 2.3965947499964386,
+      "rssBytes" : 246136832
+    },
+    {
+      "anchorAfter" : "capture:CFFF66F4-EC5C-450D-8D70-3234C4667F3A",
+      "anchorBefore" : "capture:CFFF66F4-EC5C-450D-8D70-3234C4667F3A",
+      "captures" : 5000,
+      "cycle" : 5,
+      "durationSeconds" : 2.3987180416006595,
+      "rssBytes" : 246120448
+    }
+  ],
+  "durableSaveP95Milliseconds" : 0,
+  "durationSeconds" : 60.024133791681379,
+  "fixedData" : true,
+  "fullTenMinuteRun" : false,
+  "initialRecords" : 5000,
+  "inputSamples" : 160,
+  "inputToLayoutP95Milliseconds" : 70.263166446238756,
+  "limitations" : [
+    "No physical trackpad or mouse-driver coverage",
+    "Offscreen native rendering cannot measure presentation timestamps",
+    "RSS includes the fixed fixture, cache warm-up and retained timing arrays; this is not a heap-leak diagnosis"
+  ],
+  "maximumAvailableNativeRows" : 3,
+  "measurement" : "Synthetic native input-to-layout flush and main-runloop timer intervals; not physical input-to-display latency",
+  "memory" : [
+    {
+      "phase" : "baseline",
+      "rssBytes" : 232734720
+    },
+    {
+      "phase" : "cycle 1",
+      "rssBytes" : 243122176
+    },
+    {
+      "phase" : "cycle 2",
+      "rssBytes" : 245153792
+    },
+    {
+      "phase" : "cycle 3",
+      "rssBytes" : 246071296
+    },
+    {
+      "phase" : "cycle 4",
+      "rssBytes" : 246136832
+    },
+    {
+      "phase" : "cycle 5",
+      "rssBytes" : 246120448
+    },
+    {
+      "phase" : "end of measured run",
+      "rssBytes" : 246169600
+    }
+  ],
+  "observedTimerSamples" : 3248,
+  "os" : "Version 26.6.2 (Build 25G83)",
+  "physicalMemoryBytes" : 51539607552,
+  "processors" : 15,
+  "requestedDurationSeconds" : 60,
+  "retainedCaptureModels" : 5000,
+  "retainedTimerCapacityBytes" : 110848,
+  "seedSeconds" : 0.15590929170139134,
+  "steadyZoomTimerMaxMilliseconds" : 109.77508337236941,
+  "steadyZoomTimerP95Milliseconds" : 77.330374857410789,
+  "timerIntervalsByPhase" : [
+    {
+      "count" : 2782,
+      "intervalsAbove100Milliseconds" : 0,
+      "maximumMilliseconds" : 52.53887502476573,
+      "p95Milliseconds" : 17.124083358794451,
+      "phase" : "idle between inputs"
+    },
+    {
+      "count" : 40,
+      "intervalsAbove100Milliseconds" : 0,
+      "maximumMilliseconds" : 74.120833538472652,
+      "p95Milliseconds" : 62.263833358883858,
+      "phase" : "navigation"
+    },
+    {
+      "count" : 48,
+      "intervalsAbove100Milliseconds" : 0,
+      "maximumMilliseconds" : 60.014791786670685,
+      "p95Milliseconds" : 48.628458520397544,
+      "phase" : "settling"
+    },
+    {
+      "count" : 319,
+      "intervalsAbove100Milliseconds" : 1,
+      "maximumMilliseconds" : 109.77508337236941,
+      "p95Milliseconds" : 77.330374857410789,
+      "phase" : "steady zoom"
+    },
+    {
+      "count" : 59,
+      "intervalsAbove100Milliseconds" : 0,
+      "maximumMilliseconds" : 22.087875055149198,
+      "p95Milliseconds" : 17.403958365321159,
+      "phase" : "warm baseline"
+    }
+  ],
+  "timerPhaseAttribution" : "Every interval is retained including burst, navigation, save, settle and idle phases; labels describe phase at callback delivery, so an interval can span an earlier phase boundary",
+  "timerSamples" : 319,
+  "validatedImageThumbnails" : 1000,
+  "validatedManagedOriginals" : 2000,
+  "warnings" : [
+    "Synthetic input-to-layout p95 exceeds 50 ms",
+    "Steady zoom main-runloop interval p95 exceeds 33 ms",
+    "A steady zoom main-runloop interval exceeds 100 ms; compare baseline and inspect attribution",
+    "Main-runloop interval reached 109.77508337236941 ms in phase 'steady zoom'; delivery-phase labeling can include preceding operation time"
+  ],
+  "wholeRunTimerIntervalsAbove100Milliseconds" : 1,
+  "wholeRunTimerMaximumMilliseconds" : 109.77508337236941,
+  "wholeRunTimerP95Milliseconds" : 48.628458520397544,
+  "wholeRunTimerSamples" : 3248,
+  "workload" : "fixed-data retention experiment"
+}

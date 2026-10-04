@@ -2,6 +2,7 @@ import SwiftUI
 
 @MainActor
 struct WorkspaceItemCard: View {
+    @Environment(\.workspaceZoom) private var zoom
     @ObservedObject var state: AppState
     @ObservedObject var workspace: WorkspaceStore
     @ObservedObject var capture: Capture
@@ -18,13 +19,13 @@ struct WorkspaceItemCard: View {
     private var projectName: String? { ExplorerQuery.project(of: capture, in: state.store.captures) }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            CaptureProjectPickerButton(state: state, capture: capture)
+        VStack(alignment: .leading, spacing: zoom.value(12)) {
+            CaptureProjectPriorityHeader(state: state, capture: capture)
                 .frame(maxWidth: .infinity, alignment: .leading)
             HStack(alignment: .top, spacing: 4) {
                 CaptureTrailView(state: state, capture: capture)
                 Spacer(minLength: 0)
-                if capture.isPinned { Image(systemName: "pin.fill").font(.system(size: 10)).foregroundStyle(accent).accessibilityLabel("Pinned") }
+                if capture.isPinned { Image(systemName: "pin.fill").font(.system(size: zoom.fontSize(10))).foregroundStyle(accent).accessibilityLabel("Pinned") }
                 BuddyIconButton(symbol: copied ? "checkmark" : "doc.on.doc", title: copied ? "Copied" : "Copy \(capture.title)") { copy() }
                 CaptureTrashButton(state: state, capture: capture)
             }
@@ -35,31 +36,32 @@ struct WorkspaceItemCard: View {
                     workspace.selectedCaptureID = capture.id
                     state.openCapture(capture.id)
                 } label: {
-                    VStack(alignment: .leading, spacing: 12) {
+                    VStack(alignment: .leading, spacing: zoom.value(12)) {
                         if !capture.isMinimized, !capture.isTask, ![CaptureKind.text, .task].contains(capture.kind) {
                             CaptureThumbnail(store: state.store, capture: capture)
-                                .frame(height: workspace.mode == .clipboard ? 164 : 208)
+                                .frame(height: zoom.value(workspace.mode == .clipboard ? 164 : 208))
                                 .clipShape(RoundedRectangle(cornerRadius: 8))
                         }
                         if let alias {
                             Label(alias, systemImage: "text.badge.star")
-                                .font(.system(size: 12, weight: .semibold)).foregroundStyle(accent).lineLimit(2)
+                                .font(.system(size: zoom.fontSize(12), weight: .semibold)).foregroundStyle(accent).lineLimit(2)
                         }
                         if capture.isTask {
                             Text(capture.isCompleted ? "COMPLETED" : "TASK")
-                                .font(.system(size: 10, weight: .medium)).tracking(0.7).foregroundStyle(Palette.muted)
+                                .font(.system(size: zoom.fontSize(10), weight: .medium)).tracking(0.7).foregroundStyle(Palette.muted)
                         }
                         Text(capture.title.isEmpty ? "Untitled capture" : capture.title)
-                            .font(.system(size: 16, weight: .semibold)).foregroundStyle(capture.isCompleted ? Palette.muted : Palette.foreground)
+                            .font(.system(size: zoom.fontSize(16), weight: .semibold)).foregroundStyle(capture.isCompleted ? Palette.muted : Palette.foreground)
                             .strikethrough(capture.isTask && capture.isCompleted)
                             .lineLimit(capture.isMinimized ? 1 : 4)
                         if !capture.isMinimized, !capture.isTask, capture.kind == .text,
                            let content = capture.originalText, content.count > capture.title.count {
-                            Text(content).font(.system(size: 14)).foregroundStyle(Palette.muted).lineSpacing(3).lineLimit(4)
+                            Text(content).font(.system(size: zoom.fontSize(14))).foregroundStyle(Palette.muted).lineSpacing(zoom.lineSpacing(3)).lineLimit(4)
                         }
                     }.frame(maxWidth: .infinity, alignment: .leading).multilineTextAlignment(.leading).contentShape(Rectangle())
                 }.buttonStyle(.plain).accessibilityLabel("Open \(alias ?? capture.title)")
                     .accessibilityIdentifier("workspace-item-\(capture.id.uuidString)")
+                    .captureDragSource(state: state, capture: capture)
             }
             if capture.isTask, !capture.isMinimized { TaskFocusControls(state: state, capture: capture) }
             CaptureConversionUndo(state: state, capture: capture)
@@ -74,8 +76,9 @@ struct WorkspaceItemCard: View {
                 }.menuStyle(.borderlessButton).menuIndicator(.hidden).fixedSize().foregroundStyle(Palette.muted)
                     .accessibilityLabel("Actions for \(capture.title)").buddyHelp("Item actions")
             }.padding(.top, 8).overlay(alignment: .top) { Rectangle().fill(Palette.line).frame(height: 0.7) }
-        }.padding(16)
-            .background(Palette.surface, in: RoundedRectangle(cornerRadius: 14))
+        }.padding(zoom.value(16))
+            .workspaceZoomItem("capture:" + capture.id.uuidString)
+            .projectCardBackground(workspace: workspace, projectName: projectName)
             .projectCardFrame(workspace: workspace, projectName: projectName, activeProject: state.libraryProject,
                               fallbackColor: isSelected ? accent.opacity(0.55) : Palette.line,
                               fallbackWidth: isSelected ? 1 : 0.7)

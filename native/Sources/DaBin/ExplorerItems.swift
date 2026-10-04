@@ -17,10 +17,11 @@ enum ExplorerCaptureCardPresentation {
 /// A real width-dependent height without GeometryReader state or a resize loop.
 /// The single cached thumbnail fits its complete content inside this surface.
 struct ExplorerCapturePreviewLayout: Layout {
+    var factor: CGFloat = 1
     func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
         let proposedWidth = proposal.width ?? 320
         let width = proposedWidth.isFinite ? max(0, proposedWidth) : 320
-        return CGSize(width: width, height: ExplorerCaptureCardPresentation.previewHeight(for: width))
+        return CGSize(width: width, height: ExplorerCaptureCardPresentation.previewHeight(for: width / factor) * factor)
     }
 
     func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
@@ -31,7 +32,46 @@ struct ExplorerCapturePreviewLayout: Layout {
     }
 }
 
+/// Measure and place one set of controls. Alternate ViewThatFits branches
+/// created separate trail/popover lifetimes inside the live lazy capture list.
+struct ExplorerCaptureActionsLayout: Layout {
+    private let spacing: CGFloat = 4
+
+    private func arrangement(width proposedWidth: CGFloat?, subviews: Subviews)
+        -> (width: CGFloat, sizes: [CGSize], stacked: Bool) {
+        let ideal = subviews.map { $0.sizeThatFits(.unspecified) }
+        let intrinsic = ideal.reduce(0) { $0 + $1.width } + spacing * CGFloat(max(0, ideal.count - 1))
+        let width = proposedWidth.flatMap { $0.isFinite ? max(0, $0) : nil } ?? intrinsic
+        let stacked = ideal.count > 1 && intrinsic > width
+        let sizes = subviews.enumerated().map { index, view in
+            view.sizeThatFits(ProposedViewSize(width: stacked ? width : min(width, ideal[index].width), height: nil))
+        }
+        return (width, sizes, stacked)
+    }
+
+    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+        let layout = arrangement(width: proposal.width, subviews: subviews)
+        let height = layout.stacked
+            ? layout.sizes.reduce(0) { $0 + $1.height } + spacing * CGFloat(max(0, layout.sizes.count - 1))
+            : layout.sizes.map(\.height).max() ?? 0
+        return CGSize(width: layout.width, height: height)
+    }
+
+    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
+        let layout = arrangement(width: bounds.width, subviews: subviews)
+        var y = bounds.minY
+        for (index, view) in subviews.enumerated() {
+            let size = layout.sizes[index]
+            let x = index == 0 ? bounds.minX : bounds.maxX - size.width
+            view.place(at: CGPoint(x: x, y: layout.stacked ? y : bounds.midY - size.height / 2),
+                       anchor: .topLeading, proposal: ProposedViewSize(size))
+            if layout.stacked { y += size.height + spacing }
+        }
+    }
+}
+
 @MainActor struct ExplorerCaptureRow: View {
+    @Environment(\.workspaceZoom) private var zoom
     @ObservedObject var state: AppState
     @ObservedObject var workspace: WorkspaceStore
     @ObservedObject var capture: Capture
@@ -47,7 +87,7 @@ struct ExplorerCapturePreviewLayout: Layout {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 4) {
-                CaptureProjectPickerButton(state: state, capture: capture)
+                CaptureProjectPriorityHeader(state: state, capture: capture)
                     .frame(maxWidth: .infinity, alignment: .leading)
                 CaptureCopyButton(state: state, captures: [capture])
                 CaptureTrashButton(state: state, capture: capture)
@@ -59,7 +99,7 @@ struct ExplorerCapturePreviewLayout: Layout {
                 Button(action: select) {
                     VStack(alignment: .leading, spacing: 8) {
                         if hasLargePreview {
-                            ExplorerCapturePreviewLayout {
+                            ExplorerCapturePreviewLayout(factor: zoom.factor) {
                                 CaptureThumbnail(store: state.store, capture: capture)
                             }
                             .clipShape(RoundedRectangle(cornerRadius: 10))
@@ -69,41 +109,33 @@ struct ExplorerCapturePreviewLayout: Layout {
                         HStack(alignment: .top, spacing: 8) {
                             if !hasLargePreview && !capture.isTask {
                                 CaptureThumbnail(store: state.store, capture: capture)
-                                    .frame(width: 38, height: 38).clipShape(RoundedRectangle(cornerRadius: 7))
+                                    .frame(width: zoom.value(38), height: zoom.value(38)).clipShape(RoundedRectangle(cornerRadius: 7))
                             }
                             metadata
                         }
                     }.frame(maxWidth: .infinity, alignment: .leading).contentShape(Rectangle())
                 }.buttonStyle(.plain).multilineTextAlignment(.leading)
+                    .focusable()
                     .focused(focus, equals: capture.id)
                     .accessibilityLabel("Open \(title)")
                     .accessibilityValue(captureReceiptText(capture) + ", " + category)
                     .accessibilityIdentifier("workspace-item-\(capture.id.uuidString)")
                     .accessibilityAddTraits(workspace.selectedCaptureID == capture.id ? .isSelected : [])
+                    .captureDragSource(state: state, capture: capture)
             }
-            ViewThatFits(in: .horizontal) {
-                HStack(spacing: 4) {
-                    CaptureTrailView(state: state, capture: capture)
-                    Spacer(minLength: 0)
-                    quickAction
-                }
-                VStack(alignment: .leading, spacing: 4) {
-                    CaptureTrailView(state: state, capture: capture)
-                    HStack { Spacer(minLength: 0); quickAction }
-                }
+            ExplorerCaptureActionsLayout {
+                CaptureTrailView(state: state, capture: capture)
+                quickAction
             }
             CaptureConversionUndo(state: state, capture: capture)
             if capture.isTask { TaskFocusControls(state: state, capture: capture) }
-        }.padding(10)
-            .background(workspace.selectedCaptureID == capture.id ? Palette.soft : Palette.surface, in: RoundedRectangle(cornerRadius: 14))
+        }.padding(zoom.value(10))
+            .projectCardBackground(workspace: workspace, projectName: projectName,
+                                   baseColor: workspace.selectedCaptureID == capture.id ? Palette.soft : Palette.surface)
             .projectCardFrame(workspace: workspace, projectName: projectName, activeProject: state.libraryProject,
                               fallbackColor: workspace.selectedCaptureID == capture.id ? accent.opacity(0.45) : Palette.line,
                               fallbackWidth: 1)
             .contextMenu { ExplorerCaptureActions(state: state, workspace: workspace, capture: capture) }
-            .onDrag {
-                do { return try ExplorerTransfer.itemProvider(for: capture, store: state.store) }
-                catch { state.reportFailure(error.localizedDescription); return NSItemProvider() }
-            }
     }
 
     private var category: String {
@@ -113,17 +145,17 @@ struct ExplorerCapturePreviewLayout: Layout {
     private var metadata: some View {
         VStack(alignment: .leading, spacing: 5) {
             HStack(alignment: .firstTextBaseline, spacing: 5) {
-                Text(title).font(.system(size: 15, weight: .semibold)).lineLimit(2)
+                Text(title).font(.system(size: zoom.fontSize(15), weight: .semibold)).lineLimit(2)
                     .strikethrough(capture.isTask && capture.isCompleted)
                 if capture.isPinned {
-                    Image(systemName: "pin.fill").font(.system(size: 10)).foregroundStyle(accent)
+                    Image(systemName: "pin.fill").font(.system(size: zoom.fontSize(10))).foregroundStyle(accent)
                         .accessibilityLabel("Pinned")
                 }
             }
             CaptureReceiptView(capture: capture, category: category)
             if capture.parentTaskID != nil {
                 Label("Task attachment", systemImage: "paperclip")
-                    .font(.system(size: 11)).foregroundStyle(Palette.muted)
+                    .font(.system(size: zoom.fontSize(11))).foregroundStyle(Palette.muted)
             }
         }.frame(maxWidth: .infinity, alignment: .leading)
     }
@@ -151,6 +183,7 @@ struct ExplorerCapturePreviewLayout: Layout {
     @ObservedObject var workspace: WorkspaceStore
     @ObservedObject var capture: Capture
     let height: CGFloat
+    var compactHeader = false
     @Environment(\.daBinAccent) private var accent
 
     var body: some View {
@@ -159,7 +192,11 @@ struct ExplorerCapturePreviewLayout: Layout {
                 CaptureProjectPickerButton(state: state, capture: capture)
                     .frame(maxWidth: .infinity, alignment: .leading)
                 HStack(alignment: .top) {
-                    Text(capture.title).font(.system(size: 26, weight: .semibold, design: .rounded)).textSelection(.enabled)
+                    Text(capture.title).font(.system(size: compactHeader ? 18 : 26, weight: .semibold, design: .rounded))
+                        .lineLimit(compactHeader ? 3 : nil)
+                        .accessibilityIdentifier("explorer-inspector-title")
+                        .buddyHelp(capture.title)
+                        .captureDragSource(state: state, capture: capture)
                     Spacer(minLength: 6)
                     Menu {
                         ExplorerCaptureActions(state: state, workspace: workspace, capture: capture,
@@ -169,6 +206,7 @@ struct ExplorerCapturePreviewLayout: Layout {
                     }.menuStyle(.borderlessButton).menuIndicator(.hidden).fixedSize()
                         .accessibilityLabel("Actions for selected capture").buddyHelp("Item actions")
                 }
+                CaptureTaskPriorityTag(capture: capture)
                 HStack(spacing: 6) {
                     CaptureTrailView(state: state, capture: capture)
                     Spacer(minLength: 0)
@@ -179,6 +217,7 @@ struct ExplorerCapturePreviewLayout: Layout {
                     if state.store.managedURL(for: capture) != nil {
                         DetailPreview(store: state.store, capture: capture, height: max(120, min(520, height * 0.6)),
                                       onOpenOriginal: { state.openOriginal(capture) })
+                            .captureDragSource(state: state, capture: capture)
                     } else {
                         Label("Saved file unavailable. Your capture details are still here.", systemImage: "doc.badge.ellipsis")
                             .font(.system(size: 13)).foregroundStyle(Palette.muted)
@@ -220,7 +259,7 @@ struct ExplorerCapturePreviewLayout: Layout {
                 }
                 Text("Captured \(prettyDay(capture.captureDay))")
                     .font(.system(size: 11)).foregroundStyle(Palette.muted)
-            }.padding(20).frame(maxWidth: .infinity, alignment: .leading)
+            }.padding(compactHeader ? 14 : 20).frame(maxWidth: .infinity, alignment: .leading)
         }.id(capture.id)
     }
 }
@@ -230,6 +269,7 @@ struct ExplorerCapturePreviewLayout: Layout {
     @ObservedObject var workspace: WorkspaceStore
     @ObservedObject var capture: Capture
     var includesInspectorButtons = true
+    var taskConversion: (() -> Void)? = nil
     var body: some View {
         if includesInspectorButtons {
             Button("Open details", systemImage: "rectangle.and.text.magnifyingglass") { state.openCapture(capture.id) }
@@ -261,7 +301,9 @@ struct ExplorerCapturePreviewLayout: Layout {
             catch { state.reportFailure(error.localizedDescription) }
         }
         if !capture.isTask {
-            Button("Turn into task", systemImage: "checkmark.circle") { state.convertToTask(capture) }
+            Button("Turn into task", systemImage: "checkmark.circle") {
+                if let taskConversion { taskConversion() } else { state.convertToTask(capture) }
+            }
             if capture.parentTaskID == nil { Menu {
                 ForEach(state.store.captures.filter { $0.isTask && !$0.isCompleted }) { task in
                     Button(task.title, systemImage: "paperclip") {
@@ -282,6 +324,7 @@ struct ExplorerCapturePreviewLayout: Layout {
 @MainActor struct ExplorerProjectPicker: View {
     @ObservedObject var state: AppState
     @ObservedObject var workspace: WorkspaceStore
+    @State private var summaryCache: ProjectWorkspaceSummaryCache
     @State private var presented = false
     @State private var dragHovered = false
     @FocusState private var focused: Bool
@@ -289,12 +332,16 @@ struct ExplorerCapturePreviewLayout: Layout {
     private var symbol: String {
         state.libraryProject != nil ? "folder.fill" : workspace.explorerUnfiledOnly ? "tray" : "square.stack.3d.up"
     }
-    private var projectColor: Color? {
-        state.libraryProject.map {
-            ProjectColorChoice.color(for: workspace.projectColorHex(for: $0) ?? WorkspaceStore.defaultProjectColorHex)
-        }
+    init(state: AppState, workspace: WorkspaceStore) {
+        self.state = state; self.workspace = workspace
+        _summaryCache = State(initialValue: ProjectWorkspaceSummaryCache(store: state.store, workspace: workspace))
     }
     var body: some View {
+        let summary = state.libraryProject.map { summaryCache.summary(for: $0) }
+        let projectColor = summary.map { ProjectColorChoice.color(for: $0.colorHex) }
+        let countLabel = workspace.mode == .collection ? summary.map {
+            "\($0.itemCount.formatted()) \($0.itemCount == 1 ? "item" : "items")"
+        } : nil
         Button { presented.toggle() } label: {
             HStack(spacing: 8) {
                 Image(systemName: symbol)
@@ -304,12 +351,20 @@ struct ExplorerCapturePreviewLayout: Layout {
                                 in: RoundedRectangle(cornerRadius: 8))
                     .overlay(RoundedRectangle(cornerRadius: 8)
                         .strokeBorder((projectColor ?? Palette.line).opacity(projectColor == nil ? 1 : 0.7)))
-                Text(title).font(.system(size: 18, weight: .semibold, design: .rounded)).lineLimit(1).minimumScaleFactor(0.72)
-                Image(systemName: "chevron.down").font(.system(size: 9)).foregroundStyle(Palette.muted)
+                VStack(alignment: .leading, spacing: 1) {
+                    HStack(spacing: 6) {
+                        Text(title).font(.system(size: 18, weight: .semibold, design: .rounded)).lineLimit(1).minimumScaleFactor(0.72)
+                        Image(systemName: "chevron.down").font(.system(size: 9)).foregroundStyle(Palette.muted)
+                    }
+                    if let countLabel {
+                        Text(countLabel).font(.system(size: 11)).foregroundStyle(Palette.muted).lineLimit(1)
+                    }
+                }
             }.frame(maxWidth: .infinity, minHeight: 36, alignment: .leading).contentShape(Rectangle())
         }.buttonStyle(.plain).foregroundStyle(Palette.foreground).focused($focused)
             .buddyHelp("Choose a project or drag items onto a project")
             .accessibilityLabel("Project, \(title)").accessibilityIdentifier("workspace-project-picker")
+            .accessibilityValue(countLabel ?? "")
             .onDrop(of: ExplorerTransfer.acceptedTypeIdentifiers, isTargeted: $dragHovered) { _ in false }
             .task(id: dragHovered) {
                 guard dragHovered else { return }
@@ -320,10 +375,11 @@ struct ExplorerCapturePreviewLayout: Layout {
                 ProjectPickerPanel(state: state, selectedProject: state.libraryProject, allowsAll: true,
                     allSelected: state.libraryProject == nil && !workspace.explorerUnfiledOnly, allowsDrop: true,
                     onSelect: { name, all in
-                        state.libraryProject = name; workspace.explorerUnfiledOnly = name == nil && !all
+                        state.navigateProject(name, unfiledOnly: name == nil && !all)
                         if let error = workspace.error { throw WorkspaceError.unavailable(error) }
                     }, onDismiss: { presented = false; focused = true })
                     .hoverTooltips()
             }
+            .daBinTutorialAnchor(.projectPicker)
     }
 }

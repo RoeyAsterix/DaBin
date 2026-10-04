@@ -1,0 +1,38 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild -project DaBin.xcodeproj -scheme DaBin -configuration Debug -destination platform=macOS,arch=arm64 -derivedDataPath /private/tmp/dabin-xcode-full-qa-20261004 -resultBundlePath /private/tmp/dabin-xcode-shortcut-final-results.xcresult test-without-building
+
+Writing result bundle at path:
+	/private/tmp/dabin-xcode-shortcut-final-results.xcresult
+
+2026-10-04 01:25:32.887759+0300 DaBin[37823:24331962] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-10-04 01:25:32.888128+0300 DaBin[37823:24331962] [Application] Error registering app with intents framework: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-10-04 01:25:32.888279+0300 DaBin[37823:24331957] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-10-04 01:25:32.888295+0300 DaBin[37823:24331957] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-10-04 01:25:32.888922+0300 DaBin[37823:24331956] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-10-04 01:25:32.888937+0300 DaBin[37823:24331956] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-10-04 01:25:32.889585+0300 DaBin[37823:24331956] [Connection] Will NOT re-try to establish the connection
+2026-10-04 01:25:32.889629+0300 DaBin[37823:24331962] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-10-04 01:25:32.889642+0300 DaBin[37823:24331962] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+Test Suite 'All tests' started at 2026-10-04 01:25:32.935.
+Test Suite 'DaBinTests.xctest' started at 2026-10-04 01:25:32.935.
+Test Suite 'DaBinTests' started at 2026-10-04 01:25:32.935.
+Test Case '-[DaBinTests.DaBinTests testSearchIncludesOnlySameDayNeighborsAcrossTypeFilter]' started.
+Test Case '-[DaBinTests.DaBinTests testSearchIncludesOnlySameDayNeighborsAcrossTypeFilter]' passed (0.046 seconds).
+Test Case '-[DaBinTests.DaBinTests testStoredOriginalAndDaySurviveReopen]' started.
+Test Case '-[DaBinTests.DaBinTests testStoredOriginalAndDaySurviveReopen]' passed (0.033 seconds).
+Test Suite 'DaBinTests' passed at 2026-10-04 01:25:33.015.
+	 Executed 2 tests, with 0 failures (0 unexpected) in 0.079 (0.080) seconds
+Test Suite 'DaBinTests.xctest' passed at 2026-10-04 01:25:33.015.
+	 Executed 2 tests, with 0 failures (0 unexpected) in 0.079 (0.080) seconds
+Test Suite 'All tests' passed at 2026-10-04 01:25:33.015.
+	 Executed 2 tests, with 0 failures (0 unexpected) in 0.079 (0.080) seconds
+2026-10-04 01:25:33.286 xcodebuild[37813:24331852] [MT] IDETestOperationsObserverDebug: 0.854 elapsed -- Testing started completed.
+2026-10-04 01:25:33.286 xcodebuild[37813:24331852] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-10-04 01:25:33.286 xcodebuild[37813:24331852] [MT] IDETestOperationsObserverDebug: 0.854 sec, +0.854 sec -- end
+
+Test session results, code coverage, and logs:
+	/tmp/dabin-xcode-shortcut-final-results.xcresult
+
+** TEST EXECUTE SUCCEEDED **
+
+Testing started

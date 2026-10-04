@@ -1,0 +1,1603 @@
+{
+  "status": "passed",
+  "coverage": "all_93_registered_suites_across_full_run_and_two_targeted_fixture_repairs",
+  "passedSuites": 93,
+  "failedSuites": 0,
+  "sourceChangedDuringRuns": false,
+  "buildSourceFingerprint": "b85c40ad4c026eae8eb40ba064aefcc3a0fb82be48788187ca816717d640c4a1",
+  "allBuildInputsMatchCandidate": true,
+  "everyPassedTestHashMatchesFinalCandidate": true,
+  "productionSourcesChangedForFixtureRepairs": false,
+  "suites": [
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/ProjectFileArchiveTests-compile.log",
+        "seconds": 1.589,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/ProjectFileArchiveTests.log",
+      "name": "ProjectFileArchiveTests",
+      "reportedSummary": "PASS: 56 project file layout, daily records, move recovery, file ownership, trash, and backup checks",
+      "requiresWindowFocus": false,
+      "seconds": 1.142,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/ExplorerTransferTests-compile.log",
+        "seconds": 3.428,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/ExplorerTransferTests.log",
+      "name": "ExplorerTransferTests",
+      "reportedSummary": "PASS: 99 Explorer transfer checks; native representations, projects, preservation, Undo, asynchronous destinations and failures.",
+      "requiresWindowFocus": false,
+      "seconds": 1.85,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/ExplorerQueryTests-compile.log",
+        "seconds": 1.152,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/ExplorerQueryTests.log",
+      "name": "ExplorerQueryTests",
+      "reportedSummary": "PASS: 24 Explorer filtering, grouping and persistence checks",
+      "requiresWindowFocus": false,
+      "seconds": 0.34,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/CaptureProvenanceTests-compile.log",
+        "seconds": 1.322,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/CaptureProvenanceTests.log",
+      "name": "CaptureProvenanceTests",
+      "reportedSummary": "PASS: 66 provenance checks; legacy records, truthful origins, bounded manual ledger, compact grouping, rollback, conversion, recurrence, restart, backup, day/week exports and readable sidecars.",
+      "requiresWindowFocus": false,
+      "seconds": 0.565,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/TaskFocusTests-compile.log",
+        "seconds": 1.595,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/TaskFocusTests.log",
+      "name": "TaskFocusTests",
+      "reportedSummary": "PASS: 79 task focus, local schedule, lifecycle, recovery and draft checks; synthetic archive only.",
+      "requiresWindowFocus": false,
+      "seconds": 0.615,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/ProjectPickerTests-compile.log",
+        "seconds": 0.783,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/ProjectPickerTests.log",
+      "name": "ProjectPickerTests",
+      "reportedSummary": "PASS: 23 shared project picker and scope checks",
+      "requiresWindowFocus": false,
+      "seconds": 0.345,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/QuickAccessTests-compile.log",
+        "seconds": 0.897,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/QuickAccessTests.log",
+      "name": "QuickAccessTests",
+      "reportedSummary": "PASS: 17 quick access checks",
+      "requiresWindowFocus": false,
+      "seconds": 0.401,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/ProductFoundationTests-compile.log",
+        "seconds": 1.257,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/ProductFoundationTests.log",
+      "name": "ProductFoundationTests",
+      "reportedSummary": "PASS: 65 connected product foundation checks",
+      "requiresWindowFocus": false,
+      "seconds": 0.509,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/ConnectedWorkflowTests-compile.log",
+        "seconds": 1.48,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/ConnectedWorkflowTests.log",
+      "name": "ConnectedWorkflowTests",
+      "reportedSummary": "PASS: 19 connected capture, client collection, clipboard reuse, task planning, restart and backup scenarios",
+      "requiresWindowFocus": false,
+      "seconds": 0.723,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/WorkInboxTests-compile.log",
+        "seconds": 1.319,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/WorkInboxTests.log",
+      "name": "WorkInboxTests",
+      "reportedSummary": "PASS: 45 work inbox checks",
+      "requiresWindowFocus": false,
+      "seconds": 0.514,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/WorkspaceTests-compile.log",
+        "seconds": 1.489,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/WorkspaceTests.log",
+      "name": "WorkspaceTests",
+      "reportedSummary": "PASS: 48 workspace, clipboard, scratchpad, collection and ZIP checks",
+      "requiresWindowFocus": false,
+      "seconds": 0.776,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/ManualCaptureLifecycleTests-compile.log",
+        "seconds": 1.048,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/ManualCaptureLifecycleTests.log",
+      "name": "ManualCaptureLifecycleTests",
+      "reportedSummary": "PASS: 20 manual capture lifecycle checks (private named pasteboards)",
+      "requiresWindowFocus": false,
+      "seconds": 1.471,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/ArchiveRecoveryTests-compile.log",
+        "seconds": 1.648,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/ArchiveRecoveryTests.log",
+      "name": "ArchiveRecoveryTests",
+      "reportedSummary": "PASS: 61 recoverable-trash and archive backup/restore assertions",
+      "requiresWindowFocus": false,
+      "seconds": 0.884,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/ArchiveBackupTests-compile.log",
+        "seconds": 1.008,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/ArchiveBackupTests.log",
+      "name": "ArchiveBackupTests",
+      "reportedSummary": "PASS: 24 workspace backup, conflict, rollback, restart, and legacy checks.",
+      "requiresWindowFocus": false,
+      "seconds": 0.564,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/ThemeSettingsTests-compile.log",
+        "seconds": 1.117,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/ThemeSettingsTests.log",
+      "name": "ThemeSettingsTests",
+      "reportedSummary": "PASS: 621 theme settings checks",
+      "requiresWindowFocus": false,
+      "seconds": 0.348,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/PrivacyInformationTests-compile.log",
+        "seconds": 0.889,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/PrivacyInformationTests.log",
+      "name": "PrivacyInformationTests",
+      "reportedSummary": "PASS: 37 privacy information checks",
+      "requiresWindowFocus": false,
+      "seconds": 0.345,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/DomainTests-compile.log",
+        "seconds": 4.403,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/DomainTests.log",
+      "name": "DomainTests",
+      "reportedSummary": "PASS: 218 assertions; 10 search fixtures; managed-copy reopen, immutable dates, import compensation and interruption recovery.",
+      "requiresWindowFocus": false,
+      "seconds": 0.67,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/ArchiveLayoutTests-compile.log",
+        "seconds": 1.108,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/ArchiveLayoutTests.log",
+      "name": "ArchiveLayoutTests",
+      "reportedSummary": "PASS: 50 archive layout, provenance, exact-content, edit preservation, and path safety checks",
+      "requiresWindowFocus": false,
+      "seconds": 0.401,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/ArchiveStoreTests-compile.log",
+        "seconds": 2.869,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/ArchiveStoreTests.log",
+      "name": "ArchiveStoreTests",
+      "reportedSummary": "PASS: 116 archive-store integration assertions; dated originals, readable records, updates, migration, legacy/current recovery, retryable mirror failure, and single-publication incremental inserts.",
+      "requiresWindowFocus": false,
+      "seconds": 0.674,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/DeferredArchiveRepairTests-compile.log",
+        "seconds": 0.991,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/DeferredArchiveRepairTests.log",
+      "name": "DeferredArchiveRepairTests",
+      "reportedSummary": "PASS: 16 deferred archive readiness, cancellation, recovery, edit, and deletion checks.",
+      "requiresWindowFocus": false,
+      "seconds": 1.643,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/RepositoryBatchTests-compile.log",
+        "seconds": 0.784,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/RepositoryBatchTests.log",
+      "name": "RepositoryBatchTests",
+      "reportedSummary": "PASS: 10 repository batching, duplicate, mixed-update, rollback, and restart checks.",
+      "requiresWindowFocus": false,
+      "seconds": 0.462,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/CaptureRemovalTests-compile.log",
+        "seconds": 1.37,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/CaptureRemovalTests.log",
+      "name": "CaptureRemovalTests",
+      "reportedSummary": "PASS: 76 capture removal/minimize checks",
+      "requiresWindowFocus": false,
+      "seconds": 0.614,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/ServiceTests-compile.log",
+        "seconds": 2.909,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/ServiceTests.log",
+      "name": "ServiceTests",
+      "reportedSummary": "PASS: 61 service checks (isolated store, fake notifications, no network).",
+      "requiresWindowFocus": false,
+      "seconds": 0.718,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/QAStorageScopedSaveTests-compile.log",
+        "seconds": 0.938,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/QAStorageScopedSaveTests.log",
+      "name": "QAStorageScopedSaveTests",
+      "reportedSummary": "PASS: 22 scoped-storage assertions; touched-record saves, no-op previews, transaction rollback, reminder retry, retained archive warnings, and 1,000-record benchmark.",
+      "requiresWindowFocus": false,
+      "seconds": 4.525,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/QALifecycleTests-compile.log",
+        "seconds": 1.371,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/QALifecycleTests.log",
+      "name": "QALifecycleTests",
+      "reportedSummary": "PASS: 22 lifecycle/cache checks; isolated event centers, store and fake notifications, no network.",
+      "requiresWindowFocus": false,
+      "seconds": 0.675,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/ApplicationLifecycleTests-compile.log",
+        "seconds": 2.944,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/ApplicationLifecycleTests.log",
+      "name": "ApplicationLifecycleTests",
+      "reportedSummary": "PASS: 62 application lifecycle checks; isolated preferences, events, pointer samples and fake notifications, no focus or personal data.",
+      "requiresWindowFocus": false,
+      "seconds": 1.578,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/PreviewLifecycleTests-compile.log",
+        "seconds": 1.32,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/PreviewLifecycleTests.log",
+      "name": "PreviewLifecycleTests",
+      "reportedSummary": "PASS: 130 preview cancellation/shutdown checks; isolated callbacks, preferences and archive only",
+      "requiresWindowFocus": false,
+      "seconds": 0.83,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/TaskStateTests-compile.log",
+        "seconds": 4.248,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/TaskStateTests.log",
+      "name": "TaskStateTests",
+      "reportedSummary": "PASS: 131 task workflow checks; isolated store and fake notifications.",
+      "requiresWindowFocus": false,
+      "seconds": 0.874,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/TaskPlanningTests-compile.log",
+        "seconds": 1.165,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/TaskPlanningTests.log",
+      "name": "TaskPlanningTests",
+      "reportedSummary": "PASS: 39 task planning checks; synthetic local archive only.",
+      "requiresWindowFocus": false,
+      "seconds": 0.717,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/CaptureActionTests-compile.log",
+        "seconds": 1.272,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/CaptureActionTests.log",
+      "name": "CaptureActionTests",
+      "reportedSummary": "PASS: 31 capture action checks; confirmation, minimize, search, draft cleanup and delayed reminder deletion in an isolated archive.",
+      "requiresWindowFocus": false,
+      "seconds": 0.461,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/CaptureClipboardTests-compile.log",
+        "seconds": 1.325,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/CaptureClipboardTests.log",
+      "name": "CaptureClipboardTests",
+      "reportedSummary": "PASS: 29 capture clipboard checks; text, links, tasks, files, batches, native types and failures.",
+      "requiresWindowFocus": false,
+      "seconds": 0.446,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/ClipboardRetentionTests-compile.log",
+        "seconds": 2.09,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/ClipboardRetentionTests.log",
+      "name": "ClipboardRetentionTests",
+      "reportedSummary": "PASS: 25 clipboard retention, recovery, protected-work, and note-capture checks.",
+      "requiresWindowFocus": false,
+      "seconds": 2.911,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/CaptureTaskConversionTests-compile.log",
+        "seconds": 3.273,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/CaptureTaskConversionTests.log",
+      "name": "CaptureTaskConversionTests",
+      "reportedSummary": "PASS: 173 capture-to-task checks; originals, legacy data, persistence, atomic failure, drafts, routes, filters, carryover, reminders and receipt exports.",
+      "requiresWindowFocus": false,
+      "seconds": 1.043,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/LocalContentSearchTests-compile.log",
+        "seconds": 3.44,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/LocalContentSearchTests.log",
+      "name": "LocalContentSearchTests",
+      "reportedSummary": "PASS: 91 local content-search checks; schema compatibility, persistence, OCR snippets, filters, scopes, task conversion, queueing, cancellation, shutdown, removal, retry, native Vision/PDF/text extraction and privacy boundaries.",
+      "requiresWindowFocus": false,
+      "seconds": 1.151,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/LocalDOCXTextExtractorTests-compile.log",
+        "seconds": 2.625,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/LocalDOCXTextExtractorTests.log",
+      "name": "LocalDOCXTextExtractorTests",
+      "reportedSummary": "PASS: 138 local DOCX checks; paragraphs/tables/Unicode, strict OOXML, stored/deflated ZIP, descriptors, CRC/size/path guards, bounded inflation/XML, entity rejection, cancellation and no remote/converter loading.",
+      "requiresWindowFocus": false,
+      "seconds": 0.785,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/SearchScopeStateTests-compile.log",
+        "seconds": 3.281,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/SearchScopeStateTests.log",
+      "name": "SearchScopeStateTests",
+      "reportedSummary": "PASS: 126 scoped-search checks; project/type/source intersection, live attachment inheritance, capture-day ranges, scratchpads, DST and Back restoration",
+      "requiresWindowFocus": false,
+      "seconds": 0.674,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/HourlyGroupingTests-compile.log",
+        "seconds": 2.507,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/HourlyGroupingTests.log",
+      "name": "HourlyGroupingTests",
+      "reportedSummary": "PASS: 31 hourly grouping checks; action identity, fourth-action threshold, filters, fixed local hours, stable IDs and accessible collapse.",
+      "requiresWindowFocus": false,
+      "seconds": 0.349,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/DayExportTests-compile.log",
+        "seconds": 1.219,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/DayExportTests.log",
+      "name": "DayExportTests",
+      "reportedSummary": "PASS: 78 day/week export checks; deterministic content, fixed date scopes, cutoff, grouping and UTF-8 identity.",
+      "requiresWindowFocus": false,
+      "seconds": 0.617,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/DayExportUITests-compile.log",
+        "seconds": 0.786,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/DayExportUITests.log",
+      "name": "DayExportUITests",
+      "reportedSummary": "PASS: 30 export UI checks; day/week copy and download, ordered header actions, popover presentation, feedback, cancellation, failure and exact bytes.",
+      "requiresWindowFocus": false,
+      "seconds": 1.647,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/WeeklyStateTests-compile.log",
+        "seconds": 2.729,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/WeeklyStateTests.log",
+      "name": "WeeklyStateTests",
+      "reportedSummary": "PASS: 145 weekly state checks; isolated store, local calendar, fake notifications.",
+      "requiresWindowFocus": false,
+      "seconds": 0.618,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/InputTests-compile.log",
+        "seconds": 3.142,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/InputTests.log",
+      "name": "InputTests",
+      "reportedSummary": "PASS: 136 input lifecycle checks (private named pasteboards; general clipboard untouched)",
+      "requiresWindowFocus": false,
+      "seconds": 1.209,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/AutoCaptureServiceTests-compile.log",
+        "seconds": 3.157,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/AutoCaptureServiceTests.log",
+      "name": "AutoCaptureServiceTests",
+      "reportedSummary": "PASS: 75 auto-capture service checks",
+      "requiresWindowFocus": false,
+      "seconds": 3.733,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/AutoCaptureRobotPresenterTests-compile.log",
+        "seconds": 1.826,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/AutoCaptureRobotPresenterTests.log",
+      "name": "AutoCaptureRobotPresenterTests",
+      "reportedSummary": "PASS: 82 automatic-capture robot presenter checks",
+      "requiresWindowFocus": false,
+      "seconds": 1.545,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/AutoCaptureRobotCelebrationTests-compile.log",
+        "seconds": 2.082,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/AutoCaptureRobotCelebrationTests.log",
+      "name": "AutoCaptureRobotCelebrationTests",
+      "reportedSummary": "PASS: 1397 auto-capture celebration rotation and performance checks",
+      "requiresWindowFocus": false,
+      "seconds": 1.638,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T215628765179Z/SoftwareUpdateTests-compile.log",
+        "seconds": 1.644,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T215628765179Z/SoftwareUpdateTests.log",
+      "name": "SoftwareUpdateTests",
+      "reportedSummary": "PASS: 34 software update checks; no external network, installed app or user archive used.",
+      "requiresWindowFocus": false,
+      "seconds": 0.486,
+      "status": "passed",
+      "verificationRun": "update-suites-final"
+    },
+    {
+      "compile": {
+        "cached": true,
+        "seconds": 0,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T215628765179Z/UpdateConfigurationTests.log",
+      "name": "UpdateConfigurationTests",
+      "reportedSummary": "PASS: 41 update-channel configuration checks",
+      "requiresWindowFocus": false,
+      "seconds": 0.326,
+      "status": "passed",
+      "verificationRun": "update-suites-final"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/RobotMotionTests-compile.log",
+        "seconds": 0.612,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/RobotMotionTests.log",
+      "name": "RobotMotionTests",
+      "reportedSummary": "PASS: 40 robot motion and personality checks",
+      "requiresWindowFocus": false,
+      "seconds": 0.348,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/IslandRobotChoreographyTests-compile.log",
+        "seconds": 1.48,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/IslandRobotChoreographyTests.log",
+      "name": "IslandRobotChoreographyTests",
+      "reportedSummary": "PASS: 28695 island choreography contact, timing, and envelope checks",
+      "requiresWindowFocus": false,
+      "seconds": 0.343,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/RobotLifecycleTests-compile.log",
+        "seconds": 0.623,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/RobotLifecycleTests.log",
+      "name": "RobotLifecycleTests",
+      "reportedSummary": "PASS: 38 robot lifecycle checks",
+      "requiresWindowFocus": false,
+      "seconds": 0.348,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/RobotAppFrameTests-compile.log",
+        "seconds": 1.056,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/RobotAppFrameTests.log",
+      "name": "RobotAppFrameTests",
+      "reportedSummary": "PASS: 88 robot application frame geometry, gaze and lifecycle checks",
+      "requiresWindowFocus": false,
+      "seconds": 0.832,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/QuietOrbitRenderTests-compile.log",
+        "seconds": 1.541,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/QuietOrbitRenderTests.log",
+      "name": "QuietOrbitRenderTests",
+      "reportedSummary": "PASS: 91 Quiet Orbit artwork, idle, reaction, burst-count, cleanup, and Reduce Motion checks passed. /private/tmp/dabin-full-qa-20261004/native/build/qa/quiet-orbit",
+      "requiresWindowFocus": false,
+      "seconds": 1.754,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/RobotProjectSignRenderTests-compile.log",
+        "seconds": 1.161,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/RobotProjectSignRenderTests.log",
+      "name": "RobotProjectSignRenderTests",
+      "reportedSummary": "PASS: 63 native recording-board checks; renders: /private/tmp/dabin-full-qa-20261004/renders/project-sign",
+      "requiresWindowFocus": false,
+      "seconds": 1.862,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/AutoCaptureSignMotionTests-compile.log",
+        "seconds": 1.264,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/AutoCaptureSignMotionTests.log",
+      "name": "AutoCaptureSignMotionTests",
+      "reportedSummary": "Auto capture sign motion checks passed: 2587",
+      "requiresWindowFocus": false,
+      "seconds": 0.341,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/AutoCaptureSignPresenterTests-compile.log",
+        "seconds": 1.748,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/AutoCaptureSignPresenterTests.log",
+      "name": "AutoCaptureSignPresenterTests",
+      "reportedSummary": "PASS: 75 typed Auto Capture sign presenter, queue, interruption, privacy and service receipt checks",
+      "requiresWindowFocus": false,
+      "seconds": 4.396,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/AutoCaptureSignRenderTests-compile.log",
+        "seconds": 0.836,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/AutoCaptureSignRenderTests.log",
+      "name": "AutoCaptureSignRenderTests",
+      "reportedSummary": "PASS: 305 native confirmation-sign checks; renders: /private/tmp/dabin-full-qa-20261004/renders/auto-capture-sign",
+      "requiresWindowFocus": false,
+      "seconds": 0.727,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/CapturePreviewPerformanceTests-compile.log",
+        "seconds": 0.895,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/CapturePreviewPerformanceTests.log",
+      "name": "CapturePreviewPerformanceTests",
+      "reportedSummary": "PASS: 15 bounded background preview/cache checks; no main-thread decode",
+      "requiresWindowFocus": false,
+      "seconds": 0.457,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/BoredRobotArtworkTests-compile.log",
+        "seconds": 0.789,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/BoredRobotArtworkTests.log",
+      "name": "BoredRobotArtworkTests",
+      "reportedSummary": "PASS: 12 canonical empty-state robot hosting, static rendering and cleanup checks",
+      "requiresWindowFocus": false,
+      "seconds": 1.68,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/TooltipBehaviorTests-compile.log",
+        "seconds": 1.103,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/TooltipBehaviorTests.log",
+      "name": "TooltipBehaviorTests",
+      "reportedSummary": "PASS: 158 tooltip delay, cancellation, preference, suppression, active-only anchors and clamped-layout checks",
+      "requiresWindowFocus": false,
+      "seconds": 1.525,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/SearchDateBoardTests-compile.log",
+        "seconds": 1.322,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/SearchDateBoardTests.log",
+      "name": "SearchDateBoardTests",
+      "reportedSummary": "PASS: 44 date search grouping, chronology, note semantics, context counts and bounded paging checks",
+      "requiresWindowFocus": false,
+      "seconds": 0.4,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/SearchResultExcerptTests-compile.log",
+        "seconds": 0.56,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/SearchResultExcerptTests.log",
+      "name": "SearchResultExcerptTests",
+      "reportedSummary": "PASS: 21 search result excerpt bounds, matching evidence, labels and Unicode checks",
+      "requiresWindowFocus": false,
+      "seconds": 0.351,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/ProjectWorkspaceStateTests-compile.log",
+        "seconds": 1.759,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/ProjectWorkspaceStateTests.log",
+      "name": "ProjectWorkspaceStateTests",
+      "reportedSummary": "PASS: 253 project-workspace checks; stable ordering, scoped selection, complete project counts, backup-compatible persistence, atomic task conversion, inherited ownership and guarded undo.",
+      "requiresWindowFocus": false,
+      "seconds": 0.454,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/ProjectWorkspaceExportTests-compile.log",
+        "seconds": 2.021,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/ProjectWorkspaceExportTests.log",
+      "name": "ProjectWorkspaceExportTests",
+      "reportedSummary": "PASS: 49 project ZIP, ordering, metadata, notes, scope, safe publication, missing-original, and private clipboard checks",
+      "requiresWindowFocus": false,
+      "seconds": 0.558,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/ProjectWorkspaceViewTests-compile.log",
+        "seconds": 5.442,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/ProjectWorkspaceViewTests.log",
+      "name": "ProjectWorkspaceViewTests",
+      "reportedSummary": "PASS: 209 project workspace UI checks; 1,000 synthetic text captures plus image and editable project note; native mixed-selection drag payloads on a private pasteboard; no personal archive, network, general clipboard or external opening. At most 25 simultaneously materialized native rows.",
+      "requiresWindowFocus": false,
+      "seconds": 19.568,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/ProjectWorkspaceCardTests-compile.log",
+        "seconds": 1.656,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/ProjectWorkspaceCardTests.log",
+      "name": "ProjectWorkspaceCardTests",
+      "reportedSummary": "PASS: 263 project card checks; Task/Note/Capture semantics, real live task updates, light/dark/grid/320-point compact fixtures, original previews and independent selection; no personal archive, clipboard, network, or external opening.",
+      "requiresWindowFocus": false,
+      "seconds": 4.726,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/RedesignInteractionTests-compile.log",
+        "seconds": 2.083,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/RedesignInteractionTests.log",
+      "name": "RedesignInteractionTests",
+      "reportedSummary": "PASS: 76 native redesign interaction checks",
+      "requiresWindowFocus": true,
+      "seconds": 14.351,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/WindowResizeInteractionTests-compile.log",
+        "seconds": 1.008,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/WindowResizeInteractionTests.log",
+      "name": "WindowResizeInteractionTests",
+      "reportedSummary": "PASS: 32 native window resize and movement interaction checks; 1 attached displays",
+      "requiresWindowFocus": true,
+      "seconds": 0.832,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/WindowTests-compile.log",
+        "seconds": 2.465,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/WindowTests.log",
+      "name": "WindowTests",
+      "reportedSummary": "PASS: 187 window checks across 1 real screen(s); no cursor synthesis, clipboard access, network or notification permission.",
+      "requiresWindowFocus": true,
+      "seconds": 6.454,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/WeeklyWindowTests-compile.log",
+        "seconds": 1.06,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/WeeklyWindowTests.log",
+      "name": "WeeklyWindowTests",
+      "reportedSummary": "",
+      "requiresWindowFocus": true,
+      "seconds": 14.209,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/FilterResizeTests-compile.log",
+        "seconds": 1.477,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/FilterResizeTests.log",
+      "name": "FilterResizeTests",
+      "reportedSummary": "",
+      "requiresWindowFocus": true,
+      "seconds": 15.534,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/RobotDropTests-compile.log",
+        "seconds": 2.629,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/RobotDropTests.log",
+      "name": "RobotDropTests",
+      "reportedSummary": "PASS: 117 robot drop checks (private pasteboards, isolated archive, native destination callbacks and corner panels)",
+      "requiresWindowFocus": true,
+      "seconds": 1.423,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/DailyCaptureTests-compile.log",
+        "seconds": 5.564,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/DailyCaptureTests.log",
+      "name": "DailyCaptureTests",
+      "reportedSummary": "PASS: 156 Daily capture checks (private pasteboards, local archive, native drop callbacks, shortcut/editor routing and controller integration)",
+      "requiresWindowFocus": true,
+      "seconds": 1.21,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/HeaderInteractionTests-compile.log",
+        "seconds": 3.277,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/HeaderInteractionTests.log",
+      "name": "HeaderInteractionTests",
+      "reportedSummary": "PASS: 219 native labeled-header accessibility and interaction checks",
+      "requiresWindowFocus": true,
+      "seconds": 14.294,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/WorkspaceWindowTests-compile.log",
+        "seconds": 3.48,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/WorkspaceWindowTests.log",
+      "name": "WorkspaceWindowTests",
+      "reportedSummary": "PASS: 241 native workspace interaction and responsive layout checks",
+      "requiresWindowFocus": true,
+      "seconds": 30.593,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/RobotWindowTransitionTests-compile.log",
+        "seconds": 2.028,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/RobotWindowTransitionTests.log",
+      "name": "RobotWindowTransitionTests",
+      "reportedSummary": "",
+      "requiresWindowFocus": true,
+      "seconds": 11.096,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/DetailPreviewInteractionTests-compile.log",
+        "seconds": 1.542,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/DetailPreviewInteractionTests.log",
+      "name": "DetailPreviewInteractionTests",
+      "reportedSummary": "PASS: 110 detail-preview native open-action checks; no external app launched",
+      "requiresWindowFocus": true,
+      "seconds": 11.67,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/CaptureTimestampPresentationTests-compile.log",
+        "seconds": 1.426,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/CaptureTimestampPresentationTests.log",
+      "name": "CaptureTimestampPresentationTests",
+      "reportedSummary": "Capture timestamp presentation QA passed: 129 checks; original receipt formatting, compact date-before-category cards, enlarged detail date navigation. Evidence: /private/tmp/dabin-full-qa-20261004/native/build/qa/capture-timestamp",
+      "requiresWindowFocus": true,
+      "seconds": 4.472,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/RobotVisualConsistencyTests-compile.log",
+        "seconds": 2.062,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/RobotVisualConsistencyTests.log",
+      "name": "RobotVisualConsistencyTests",
+      "reportedSummary": "PASS: 106 robot visual consistency, native frame layout, click-through, and Reduce Motion checks. /private/tmp/dabin-full-qa-20261004/native/build/qa/robot-visual-consistency",
+      "requiresWindowFocus": true,
+      "seconds": 6.336,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/NativeTooltipPreferenceTests-compile.log",
+        "seconds": 0.944,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/NativeTooltipPreferenceTests.log",
+      "name": "NativeTooltipPreferenceTests",
+      "reportedSummary": "PASS: 30 native tooltip preference, persistence, accessibility, drag interaction, and lifecycle checks",
+      "requiresWindowFocus": true,
+      "seconds": 0.45,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/TooltipPresentationTests-compile.log",
+        "seconds": 2.795,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/TooltipPresentationTests.log",
+      "name": "TooltipPresentationTests",
+      "reportedSummary": "PASS: 146 native tooltip visibility, actual anchors, preference, focus and click-through checks. /private/tmp/dabin-full-qa-20261004/native/build/qa/tooltips",
+      "requiresWindowFocus": true,
+      "seconds": 20.991,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/RobotCloseVisualTests-compile.log",
+        "seconds": 3.377,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/RobotCloseVisualTests.log",
+      "name": "RobotCloseVisualTests",
+      "reportedSummary": "PASS: 1374 actual robot opening/closing motion, presentation, reversal, cleanup and encoded video checks. /private/tmp/dabin-full-qa-20261004/native/build/qa/robot-close-visual/084735B4-F3D8-4B14-911E-DC183BC94DBD",
+      "requiresWindowFocus": true,
+      "seconds": 37.694,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/CollectionCardPresentationTests-compile.log",
+        "seconds": 2.642,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/CollectionCardPresentationTests.log",
+      "name": "CollectionCardPresentationTests",
+      "reportedSummary": "PASS: 350 collection selection, layout, native preview, theme, AX expansion and data preservation checks. /private/tmp/dabin-full-qa-20261004/native/build/qa/collection-card-presentation/B7B7FA6D-46B3-4138-941E-8E6C1CF3FF54",
+      "requiresWindowFocus": true,
+      "seconds": 11.533,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/TaskTimerRobotTests-compile.log",
+        "seconds": 2.174,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/TaskTimerRobotTests.log",
+      "name": "TaskTimerRobotTests",
+      "reportedSummary": "PASS: 161 task timer title, geometry, presenter, durable expiry, integration, native 2x artwork and acknowledgment checks. /private/tmp/dabin-full-qa-20261004/native/build/qa/task-timer-robot/BD6AE38D-9E43-4300-9BDD-0FFCB071CD5E",
+      "requiresWindowFocus": true,
+      "seconds": 6.135,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/ExplorerCaptureCardPresentationTests-compile.log",
+        "seconds": 2.651,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/ExplorerCaptureCardPresentationTests.log",
+      "name": "ExplorerCaptureCardPresentationTests",
+      "reportedSummary": "PASS: 267 Explorer native preview, complete-image corners, metadata, actions, selection and capture preservation checks. /private/tmp/dabin-full-qa-20261004/native/build/qa/explorer-capture-cards/E46F4D1C-A178-4779-AECA-6170A282BEA3",
+      "requiresWindowFocus": true,
+      "seconds": 10.455,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/AutoCaptureExplorerResponsivenessTests-compile.log",
+        "seconds": 2.551,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/AutoCaptureExplorerResponsivenessTests.log",
+      "name": "AutoCaptureExplorerResponsivenessTests",
+      "reportedSummary": "PASS: 169 Explorer responsiveness checks; production DailyCaptureHostingView and RobotAppFrameView, actual BoardView, 128 automatic captures, late local previews, 16 insertion bursts, selected-middle-image scrolling, mixed paste trails/tasks, exact narrow/wide breakpoint resizing, visible tooltip overlay, native close/reopen and interrupted reversal. Native table had at most 20 simultaneously available row views. Background 8-second run-loop watchdog remained healthy.",
+      "requiresWindowFocus": true,
+      "seconds": 23.875,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/ExplorerKeyboardTests-compile.log",
+        "seconds": 1.887,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/ExplorerKeyboardTests.log",
+      "name": "ExplorerKeyboardTests",
+      "reportedSummary": "PASS: 75 native Explorer keyboard checks; 45 Up/Down transitions, recycled rows, project restoration, incoming capture, viewport-guard cancellation, and Return. Available rows: 5.",
+      "requiresWindowFocus": true,
+      "seconds": 8.308,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/NotificationPresentationTests-compile.log",
+        "seconds": 2.555,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/NotificationPresentationTests.log",
+      "name": "NotificationPresentationTests",
+      "reportedSummary": "PASS: 61 notification presentation checks; exact monotonic expiry, identical restarts, stale cancellation, native Board/Detail/Settings, persistent diagnostics and unchanged captures. Evidence: /private/tmp/dabin-full-qa-20261004/native/build/qa/notification-presentation/78F0083F-A6F3-43BA-865C-439342F0EB58",
+      "requiresWindowFocus": true,
+      "seconds": 9.099,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/WindowChromePresentationTests-compile.log",
+        "seconds": 2.051,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/WindowChromePresentationTests.log",
+      "name": "WindowChromePresentationTests",
+      "reportedSummary": "PASS: 50904 window chrome checks; visible/physical resize grips, direct native drags, smooth shared corner masks and 1x/2x appearance. Evidence: /private/tmp/dabin-full-qa-20261004/native/build/qa/window-chrome/2951284F-24E4-422A-9980-281645756652",
+      "requiresWindowFocus": true,
+      "seconds": 2.559,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/ProjectRecordingRobotTests-compile.log",
+        "seconds": 2.858,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/ProjectRecordingRobotTests.log",
+      "name": "ProjectRecordingRobotTests",
+      "reportedSummary": "PASS: 42 project recording robot checks passed",
+      "requiresWindowFocus": true,
+      "seconds": 5.469,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": true,
+        "seconds": 0,
+        "status": "passed"
+      },
+      "completion": {
+        "checks": 105,
+        "keyboardVerification": "passed: native focus, Tab retained filter focus with Keyboard Navigation disabled, Escape dismissal and Return activates Done",
+        "passed": true
+      },
+      "exitCode": 0,
+      "launchMethod": "temporary_app_bundle",
+      "log": "build/qa/runs/20261003T214546046961Z/SearchWindowTests.log",
+      "name": "SearchWindowTests",
+      "reportedSummary": "PASS: 105 native global Search checks; keyboard verification passed: native focus, Tab retained filter focus with Keyboard Navigation disabled, Escape dismissal and Return activates Done.",
+      "requiresWindowFocus": true,
+      "seconds": 40.532,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/TaskPriorityTagTests-compile.log",
+        "seconds": 1.879,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/TaskPriorityTagTests.log",
+      "name": "TaskPriorityTagTests",
+      "reportedSummary": "PASS: 200 task priority tag checks; real choices/save/persistence and green\u2013amber\u2013red cards at 380/760 in light/dark; fictional local archive only. PNG evidence: /private/tmp/dabin-full-qa-20261004/docs/qa/task-priority-tags-2026-10-03/renders",
+      "requiresWindowFocus": true,
+      "seconds": 8.299,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/LocalFileLocationTests-compile.log",
+        "seconds": 2.336,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/LocalFileLocationTests.log",
+      "name": "LocalFileLocationTests",
+      "reportedSummary": "PASS: 44 local-folder resolution, project scope, native button, read-only byte preservation, and failure-feedback checks",
+      "requiresWindowFocus": true,
+      "seconds": 3.764,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/NativeContentDragTests-compile.log",
+        "seconds": 1.68,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/NativeContentDragTests.log",
+      "name": "NativeContentDragTests",
+      "reportedSummary": "PASS: 38 native content drag checks; clicks, mixed native items, copy-only external transfers and source preservation.",
+      "requiresWindowFocus": true,
+      "seconds": 1.968,
+      "status": "passed",
+      "verificationRun": "full-native"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T214546046961Z/SearchInputTests-compile.log",
+        "seconds": 2.27,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T214546046961Z/SearchInputTests.log",
+      "name": "SearchInputTests",
+      "reportedSummary": "PASS: 65 production Search typing, focus, clear, private direct/Cmd V paste, unrelated-editor and immediate/animated reopen checks",
+      "requiresWindowFocus": true,
+      "seconds": 8.567,
+      "status": "passed",
+      "verificationRun": "full-native"
+    }
+  ],
+  "testedBuildSourceFingerprint": "c12fa982b837de702f440db8524a1f764472456bef12e6dee0e8900ed944e72b",
+  "buildInputsChangedAfterNativeQA": [
+    "scripts/render_island_playground.sh",
+    "scripts/render_privacy_qa.sh"
+  ],
+  "finalBuildProductionAndResourcesIdenticalToNativeQA": true,
+  "toolingFixVerification": "See render-script-compile/report.json and extended-verification.json"
+}

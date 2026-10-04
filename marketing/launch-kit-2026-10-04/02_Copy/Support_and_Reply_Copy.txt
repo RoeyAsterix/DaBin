@@ -1,0 +1,39 @@
+DABIN / SUPPORT & COMMUNITY REPLIES
+UNSENT. Adapt to the actual question. Do not claim to have fixed a problem unless verified.
+
+IS IT FREE?
+DaBin is free on the Mac App Store: [[APP_STORE_URL]]. Requires Apple Silicon and macOS 14 or later. [Use only after Free pricing and publication are verified.]
+
+WHY IS IT FREE?
+[[OWNER_PROVIDED_REASON]]
+No founder motivation or future business model was provided for this kit. Until there is an owner answer, keep it factual: 'DaBin is free in the current listing, with no account, ads or paid unlock in this build.' Do not promise permanent pricing.
+
+WHICH MACS?
+Apple Silicon Macs with macOS 14 or later. The current release does not provide Intel, Windows or iPhone support.
+
+IS THE ROBOT AI?
+The robot is the app's desktop companion and drop target. DaBin uses local text recognition to help search supported content you've saved; it doesn't answer questions with an AI model.
+
+WHERE DOES MY CONTENT GO?
+DaBin keeps saved captures, notes and recognized text on this Mac. It has no account, ads, analytics or cloud sync. Optional previews can contact manually saved websites when enabled. Exports and backups go where you choose; a synced folder may be uploaded by its own service.
+
+DOES IT SEARCH ALL MY FILES?
+It searches supported content saved into DaBin, not every file on your Mac. If recognition misses text, you can inspect the recognized text in the saved capture and rebuild the local index in Settings. Very large documents may be partially indexed.
+
+DOES IT WATCH MY SCREEN?
+Auto Capture is off by default. You can separately enable clipboard monitoring and a screenshot folder you choose. It considers later clipboard changes/new images; it does not record the live screen or import existing screenshots.
+
+IS DATA ENCRYPTED?
+DaBin's archive is not separately encrypted by the app. Your Mac's account access and disk protection apply. The privacy policy explains local storage, deletion and backups: [[PUBLIC_PRIVACY_URL]].
+
+CAN I SYNC OR SHARE A TEAM WORKSPACE?
+The current app stores content locally and has no cloud sync or shared team workspace. You can export content to a location you choose.
+
+BUG REPORT
+Thanks for explaining the issue. Please share your macOS version, DaBin version and the steps that caused it at [[CONTACT_EMAIL]]. Use fictional sample content and don't send your personal capture archive. [[ONLY_ADD_VERIFIED_WORKAROUND_IF_ONE_EXISTS]]
+
+VOLUNTARY FIRST-USE QUESTION
+If you'd like to share feedback: what kind of thing did you save first, and could you find it again? Please describe the workflow rather than sending the actual private content.
+
+WHEN FEATURE REQUESTS ARRIVE
+Thanks - I understand the use case. The current version supports [[VERIFIED_CURRENT_BEHAVIOR]]. I haven't announced [[REQUESTED_FEATURE]]; I'll keep your request in mind. [Do not promise a date or roadmap that doesn't exist.]

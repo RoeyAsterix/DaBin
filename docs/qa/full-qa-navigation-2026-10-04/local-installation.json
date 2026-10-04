@@ -1,0 +1,33 @@
+{
+  "verifiedAtUTC": "2026-10-04T12:37:41.179356+00:00",
+  "installedPath": "/Users/roeylibfeld/Applications/DaBin.app",
+  "version": "0.4.31",
+  "buildNumber": "86",
+  "configuration": "Release",
+  "sourceFingerprint": "82e8c05cd9c454b716ddd72ffe91cacbd3f423dbd894b24a18a68545a2aced98",
+  "executableSHA256": "b0991ea7cfd276642c5ac53c3e13e048fc3c6d86b7c93cf42b4c8a7d7f617c1e",
+  "strictSignatureVerified": true,
+  "matchesBuiltExecutable": true,
+  "onlyOneMainDaBinRunning": true,
+  "runningApp": {
+    "bundlePath": "/Users/roeylibfeld/Applications/DaBin.app",
+    "finishedLaunching": true,
+    "launchTimeUTC": "2026-10-04T12:35:50Z",
+    "pid": 14777
+  },
+  "backupPath": "/Users/roeylibfeld/Applications/.DaBinBackups/20261004-153541-4a096b9b.app",
+  "desktopShortcutTarget": "/Users/roeylibfeld/Applications/DaBin.app",
+  "uiVerification": [
+    "Inbox visible after launch",
+    "Settings opens and displays installed version and Navigation and zoom controls",
+    "Command-[ returns to Inbox",
+    "Command-] returns to Settings",
+    "Command-[ returns to Inbox again"
+  ],
+  "installerModifiedArchive": false,
+  "privateArchiveByteEqualityAudited": false,
+  "published": false,
+  "versionBumped": false,
+  "updaterExecutableSHA256": "1b1363ab3c4bc2bcc7f594071edcc7205ce8c22858c9dc659a06be8449ece3e3",
+  "matchesBuiltUpdater": true
+}

@@ -23,6 +23,27 @@ final class RobotWindowTransitionTests: NSObject, NSApplicationDelegate {
         }
     }
     private static func wait(_ seconds: Double) async { try? await Task.sleep(for: .seconds(seconds)) }
+    private static func frameInScreen(_ view: NSView, window: NSWindow) -> NSRect {
+        window.convertToScreen(view.convert(view.bounds, to: nil))
+    }
+    private static func checkTransitionStage(_ controller: CornerController,
+                                             source: NSRect, destination: NSRect) throws {
+        guard let stage = controller.board.contentView else {
+            throw NSError(domain: "RobotWindowTransitionTests", code: 5,
+                          userInfo: [NSLocalizedDescriptionKey: "A robot transition needs its native stage"])
+        }
+        let padding = RobotAppFrameView.transitionStageOutset
+        try expect(stage !== controller.appFrame && controller.appFrame.superview === stage,
+                   "A separate native stage hosts the existing app frame during movement")
+        try expect(controller.board.frame.contains(source.insetBy(dx: -padding, dy: -padding))
+                   && controller.board.frame.contains(destination.insetBy(dx: -padding, dy: -padding)),
+                   "The real window reserves stroke and overshoot room around both transition endpoints")
+        try expect(frameInScreen(controller.appFrame, window: controller.board) == destination,
+                   "Stage padding does not move the hosted application's intended screen coordinates")
+        try expect(controller.appFrame.frame.size == destination.size
+                   && controller.captureHostingView.frame.size == RobotAppFrameView.contentRect(in: controller.appFrame.bounds).size,
+                   "Staging preserves the final app and content geometry instead of resizing per frame")
+    }
     private static func savePresentation(_ view: NSView, named name: String,
                                           maximumPixelDimension: CGFloat? = nil) throws {
         view.layoutSubtreeIfNeeded()
@@ -96,7 +117,11 @@ final class RobotWindowTransitionTests: NSObject, NSApplicationDelegate {
         controller.onWillOpenBoard = { openCount += 1 }
         controller.onDidCloseBoard = { closeCount += 1 }
         controller.reveal(on: screen, corner: .topRight)
+        let source = controller.bin.convertToScreen(controller.robot.convert(controller.robot.transitionBodyBounds, to: nil))
         controller.robot.onDaily?()
+        let openingDestination = frameInScreen(controller.appFrame, window: controller.board)
+        let openingContentSize = controller.captureHostingView.frame.size
+        try checkTransitionStage(controller, source: source, destination: openingDestination)
         try expect(controller.robotLifecycle.state == .preparingToExpand, "Double-click entry starts preparation")
         try expect(controller.appFrame.isTransitioning, "The real content wrapper animates")
         try expect(!controller.bin.isVisible && controller.board.isVisible, "Exactly one robot/app surface opens")
@@ -104,7 +129,7 @@ final class RobotWindowTransitionTests: NSObject, NSApplicationDelegate {
         try expect(openCount == 1, "Opening suspends capture feedback first")
         await wait(0.12)
         if let stage = controller.board.contentView { try savePresentation(stage, named: "opening-anticipation") }
-        await wait(0.20)
+        await wait(RobotAppFrameView.openingExpansionDelay + 0.05)
         try expect(controller.robotLifecycle.state == .expandingToApp, "Preparation advances into expansion")
         if let stage = controller.board.contentView { try savePresentation(stage, named: "opening-seam") }
         await wait(0.40)
@@ -113,6 +138,9 @@ final class RobotWindowTransitionTests: NSObject, NSApplicationDelegate {
         try expect(controller.robotLifecycle.state == .fullScreen && !controller.appFrame.isTransitioning,
                    "Opening resolves to the existing full view")
         try expect(controller.board.contentView === controller.appFrame, "Temporary staging container is removed")
+        try expect(controller.board.frame == openingDestination
+                   && controller.captureHostingView.frame.size == openingContentSize,
+                   "Opening removes only the stage padding without an endpoint jump or content resize")
         try expect(screen.visibleFrame.contains(controller.board.frame), "Open frame stays on the interaction display")
         try expect(abs(controller.captureHostingView.frame.width - 380) < 1, "Existing 380-point content width is preserved")
         try expect(abs(controller.board.frame.height - controller.captureHostingView.frame.height - 50) < 1,
@@ -141,7 +169,9 @@ final class RobotWindowTransitionTests: NSObject, NSApplicationDelegate {
                    && abs(expandedContentSize.width - screen.visibleFrame.width + RobotAppFrameView.extraWidth) < 1,
                    "The expanded fixture mounts the full-width production capture content")
         try savePresentation(controller.appFrame, named: "closing-expanded-start", maximumPixelDimension: 1_600)
+        let closingDestination = controller.board.frame
         state.onDismiss?()
+        try checkTransitionStage(controller, source: source, destination: closingDestination)
         try expect(controller.robotLifecycle.state == .collapsingApp, "X starts the reverse transformation")
         let closingGeneration = controller.robotLifecycle.generation
         let closeStarted = ProcessInfo.processInfo.systemUptime
@@ -167,10 +197,17 @@ final class RobotWindowTransitionTests: NSObject, NSApplicationDelegate {
         try expect(closingFrames.count == 4, "The expanded close saves every actual staged presentation frame")
         try JSONSerialization.data(withJSONObject: closingFrames, options: [.prettyPrinted, .sortedKeys])
             .write(to: directory.appendingPathComponent("closing-expanded-frames.json"), options: .atomic)
+        let closingStage = controller.board.contentView
+        let closingStageFrame = controller.board.frame
+        let closingAppFrame = controller.appFrame.frame
         controller.openDaily()
         try expect(controller.robotLifecycle.state == .preparingToExpand && controller.appFrame.isTransitioning
                    && controller.robotLifecycle.generation > closingGeneration,
                    "A late-close reopen reverses the visible presentation and invalidates the close generation")
+        try expect(controller.board.contentView === closingStage && controller.board.frame == closingStageFrame
+                   && controller.appFrame.frame == closingAppFrame,
+                   "Reopening reuses the same source-to-destination stage without moving either endpoint")
+        try checkTransitionStage(controller, source: source, destination: closingDestination)
         if let stage = controller.board.contentView {
             try savePresentation(stage, named: "closing-expanded-late-reopen", maximumPixelDimension: 1_600)
         }

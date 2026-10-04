@@ -1,0 +1,24 @@
+2026-10-04 00:48:37.643 ProjectWorkspaceViewTests[31748:24255875] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future.
+2026-10-04 00:48:44.473 ProjectWorkspaceViewTests[31748:24255875] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future.
+2026-10-04 00:48:45.097 ProjectWorkspaceViewTests[31748:24255875] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future.
+2026-10-04 00:48:48.417 ProjectWorkspaceViewTests[31748:24255875] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future.
+2026-10-04 00:48:49.570 ProjectWorkspaceViewTests[31748:24255875] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future.
+2026-10-04 00:48:50.933 ProjectWorkspaceViewTests[31748:24255875] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future.
+2026-10-04 00:48:52.518 ProjectWorkspaceViewTests[31748:24255875] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future.
+2026-10-04 00:48:53.133 ProjectWorkspaceViewTests[31748:24255875] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future.
+ROWS: project grid logical=334, materialized=25
+FIXTURE: /private/tmp/dabin-full-qa-20261004/native/build/qa/project-workspace-view/653F27CF-F826-4CF0-B48C-DA7296D8F0F1/project-grid-wide@2x.png
+FIXTURE: /private/tmp/dabin-full-qa-20261004/native/build/qa/project-workspace-view/653F27CF-F826-4CF0-B48C-DA7296D8F0F1/project-selected-narrow@2x.png
+ROWS: project grid logical=501, materialized=25
+ROWS: project grid logical=1002, materialized=24
+ROWS: project grid logical=1002, materialized=24
+FIXTURE: /private/tmp/dabin-full-qa-20261004/native/build/qa/project-workspace-view/653F27CF-F826-4CF0-B48C-DA7296D8F0F1/project-grid-narrow@2x.png
+ROWS: project grid logical=334, materialized=25
+ROWS: project grid logical=1002, materialized=25
+ROWS: project grid logical=334, materialized=3
+ROWS: project grid logical=335, materialized=3
+ROWS: project grid logical=335, materialized=3
+ROWS: project grid logical=335, materialized=3
+ROWS: project grid logical=336, materialized=4
+ROWS: project grid logical=336, materialized=4
+PASS: 209 project workspace UI checks; 1,000 synthetic text captures plus image and editable project note; native mixed-selection drag payloads on a private pasteboard; no personal archive, network, general clipboard or external opening. At most 25 simultaneously materialized native rows.

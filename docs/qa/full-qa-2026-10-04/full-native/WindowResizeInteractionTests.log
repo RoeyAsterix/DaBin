@@ -1,0 +1,2 @@
+SKIP: physical cross-display gesture requires two attached displays; geometry remains unit-tested
+PASS: 32 native window resize and movement interaction checks; 1 attached displays

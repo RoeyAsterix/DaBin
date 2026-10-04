@@ -119,6 +119,108 @@ private final class ExplorerLatePromiseFixture: InputFilePromise {
         return provider
     }
 
+    /// Exercise real outgoing representations using synthetic originals and a
+    /// private pasteboard. Nothing is written to the user's clipboard or apps.
+    @MainActor private static func outgoingNativeSelection(_ store: CaptureStore, root: URL,
+                                                           note: Capture, link: Capture, file: Capture, task: Capture) async throws {
+        let files = FileManager.default
+        let png = Data(base64Encoded: "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+j8ocAAAAASUVORK5CYII=")!
+        let source = root.appendingPathComponent("Synthetic-drag-image.png")
+        try png.write(to: source)
+        let image = try await store.importFile(source)
+        let managedImage = store.managedURL(for: image)!
+        let provider = try ExplorerTransfer.itemProvider(for: image, store: store)
+        try expect(provider.hasItemConformingToTypeIdentifier(UTType.image.identifier)
+            && provider.hasItemConformingToTypeIdentifier(UTType.fileURL.identifier),
+            "Image drags advertise both native image content and their managed file URL")
+        try files.removeItem(at: source)
+        let imageData = try await load(provider, type: UTType.png.identifier)
+        try expect(imageData == png, "A destination requesting image data receives exact original PNG bytes")
+        let genericImageData = try await load(provider, type: UTType.image.identifier)
+        try expect(genericImageData == png, "A destination requesting generic image content receives the original encoding")
+        let imageFileBytes = try await readFileBytes(provider, type: UTType.png.identifier)
+        try expect(imageFileBytes == png, "Adding image data preserves the existing file representation")
+        let imageIDs = try await ExplorerTransfer.internalCaptureIDs(in: [provider])
+        try expect(imageIDs == [image.id], "Public image content retains the same internal capture identity")
+
+        let pasteboard = NSPasteboard(name: .init("DaBin.NativeOutgoingSelection.\(UUID())"))
+        defer { pasteboard.releaseGlobally() }
+        let captures = [note, file, link, task, image]
+        let writers = try ExplorerTransfer.pasteboardWriters(for: captures, store: store)
+        try expect(writers.count == captures.count, "A mixed native drag publishes one writer per capture in selection order")
+        for (capture, writer) in zip(captures, writers) {
+            let data = writer.pasteboardPropertyList(forType: ExplorerTransfer.pasteboardType) as? Data
+            try expect(data.flatMap { try? ExplorerTransfer.decodeIDs($0) } == [capture.id],
+                "Each native drag item carries only its own capture identity")
+        }
+        let fileURL = store.managedURL(for: file)!
+        let base = fileURL as NSURL
+        let nativeTypes = base.writableTypes(for: pasteboard)
+        try expect(Array(writers[1].writableTypes(for: pasteboard).prefix(nativeTypes.count)) == nativeTypes,
+            "Managed-file writers preserve NSURL's native type priority and sandbox representations")
+        for type in nativeTypes {
+            let actualProperty = writers[1].pasteboardPropertyList(forType: type) as? NSObject
+            let expectedProperty = base.pasteboardPropertyList(forType: type) as? NSObject
+            try expect(actualProperty == expectedProperty,
+                "Managed-file writers retain NSURL's property list for \(type.rawValue)")
+            let expectedOptions = base.writingOptions(forType: type, pasteboard: pasteboard)
+            try expect(writers[1].writingOptions?(forType: type, pasteboard: pasteboard) == expectedOptions,
+                "Managed-file writers retain NSURL's writing options for \(type.rawValue)")
+        }
+        try expect(writers[4].writingOptions?(forType: .png, pasteboard: pasteboard) == .promised,
+            "Native image bytes remain promised rather than loaded while starting a drag")
+        try expect(pasteboard.writeObjects(writers), "macOS accepts the mixed native writers on an isolated pasteboard")
+        let items = pasteboard.pasteboardItems ?? []
+        try expect(items.count == captures.count, "macOS preserves distinct text, file, link, task and image drag items")
+        try expect(items[0].string(forType: .string) == note.originalText,
+            "Native text drags preserve exact original whitespace and multilingual words")
+        try expect(items[1].string(forType: .fileURL) == fileURL.absoluteString,
+            "File drags transfer a real managed file URL rather than a text-only path")
+        try expect(items[2].string(forType: .URL) == link.originalURL
+            && items[2].string(forType: .string) == link.originalURL,
+            "Native link drags offer exact URL and plain-text representations")
+        try expect(items[3].string(forType: .string) == task.originalText,
+            "Native task drags publish readable original task text")
+        try expect(items[4].data(forType: .png) == png,
+            "A native image destination can request the promised exact PNG bytes")
+        let fileReaders = pasteboard.readObjects(forClasses: [NSURL.self], options: [.urlReadingFileURLsOnly: true]) as? [URL] ?? []
+        try expect(Set(fileReaders) == Set([fileURL, managedImage]),
+            "Finder-style NSURL readers retain both managed files in a mixed native drag")
+        let publicWriters = try ExplorerTransfer.pasteboardWriters(for: captures, store: store, includeInternalReference: false)
+        try expect(publicWriters.allSatisfy { !$0.writableTypes(for: pasteboard).contains(ExplorerTransfer.pasteboardType) },
+            "Native public-only transfers omit internal identity while retaining their public representations")
+
+        let disguised = try await store.importData(Data("This is not image content".utf8), filename: "Disguised.png")
+        let disguisedProvider = try ExplorerTransfer.itemProvider(for: disguised, store: store)
+        var rejectedNonImage = false
+        do { _ = try await load(disguisedProvider, type: UTType.png.identifier) } catch { rejectedNonImage = true }
+        try expect(rejectedNonImage, "An image filename does not fabricate image content for non-image bytes")
+
+        try files.removeItem(at: managedImage)
+        // Restore the historical source to prove that no fallback reads it.
+        try png.write(to: source)
+        var rejectedMissingImage = false
+        do { _ = try await load(provider, type: UTType.png.identifier) } catch { rejectedMissingImage = true }
+        try expect(rejectedMissingImage && writers[4].pasteboardPropertyList(forType: .png) == nil,
+            "An original removed after drag start fails both provider and native promised-image materialization")
+        try expect(writers[4].pasteboardPropertyList(forType: .fileURL) == nil,
+            "A vanished native original does not publish a stale file URL on later request")
+        let beforeFailure = pasteboard.pasteboardItems?.count
+        var rejectedSelection = false
+        do { _ = try ExplorerTransfer.pasteboardWriters(for: [note, image, task], store: store) }
+        catch CaptureClipboardError.missingSavedOriginal { rejectedSelection = true }
+        try expect(rejectedSelection && pasteboard.pasteboardItems?.count == beforeFailure,
+            "An unavailable original rejects the complete selection before yielding writers or changing a pasteboard")
+        try files.createSymbolicLink(at: managedImage, withDestinationURL: source)
+        var rejectedSymlink = false
+        do { _ = try await load(provider, type: UTType.png.identifier) } catch { rejectedSymlink = true }
+        try expect(rejectedSymlink && writers[4].pasteboardPropertyList(forType: .png) == nil,
+            "A substituted symbolic image path is never followed by outgoing drag materialization")
+        try expect(try Data(contentsOf: source) == png, "Failed outgoing materialization leaves the historical source untouched")
+        try files.removeItem(at: managedImage)
+        try png.write(to: managedImage)
+    }
+
     @MainActor static func main() async throws {
         let files = FileManager.default
         let root = files.temporaryDirectory.appendingPathComponent("DaBin-ExplorerTransferTests-\(UUID())", isDirectory: true)
@@ -176,6 +278,7 @@ private final class ExplorerLatePromiseFixture: InputFilePromise {
         let taskProvider = try ExplorerTransfer.itemProvider(for: task, store: store)
         let taskBytes = try await load(taskProvider, type: UTType.utf8PlainText.identifier)
         try expect(String(data: taskBytes, encoding: .utf8) == task.originalText, "A task has a readable text representation outside DaBin")
+        try await outgoingNativeSelection(store, root: root, note: note, link: link, file: file, task: task)
 
         let beforeMove = store.captures.count
         let receiptDate = note.capturedAt

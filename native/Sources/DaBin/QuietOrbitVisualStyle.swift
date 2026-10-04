@@ -157,3 +157,83 @@ enum QuietOrbitHeadArtwork {
         shape(seams, in: parent, stroke: 0x584664, width: 1.5 * unit)
     }
 }
+
+/// The compact chest, neck and feet share the island's original geometry.
+/// Coordinates extend below the same 100 × 68 head rectangle used above.
+/// Callers retain the body container and feet layer that own their animations.
+@MainActor
+enum QuietOrbitBodyArtwork {
+    static func install(in parent: CALayer, canvas: CGSize, headRect: CGRect,
+                        topDown: Bool, feet: CAShapeLayer) {
+        let unit = headRect.width / QuietOrbitVisualStyle.headSize.width
+        parent.name = "quietOrbit.body"
+        func path(_ points: [(CGFloat, CGFloat)], closed: Bool = true) -> CGPath {
+            QuietOrbitVisualStyle.polygon(points, in: headRect, topDown: topDown, closed: closed)
+        }
+        func roundedRect(_ x: CGFloat, _ y: CGFloat, _ width: CGFloat, _ height: CGFloat,
+                         radius: CGFloat) -> CGPath {
+            CGPath(roundedRect: QuietOrbitVisualStyle.rectangle(x, y, width, height,
+                in: headRect, topDown: topDown), cornerWidth: radius * unit,
+                cornerHeight: radius * unit, transform: nil)
+        }
+        func shape(_ path: CGPath, name: String? = nil, fill: UInt32? = nil,
+                   stroke: UInt32? = nil, width: CGFloat = 1) {
+            let layer = CAShapeLayer()
+            layer.name = name
+            layer.path = path
+            layer.fillColor = fill.map { QuietOrbitVisualStyle.color($0) }
+            layer.strokeColor = stroke.map { QuietOrbitVisualStyle.color($0) }
+            layer.lineWidth = width
+            layer.lineJoin = .round
+            layer.lineCap = .round
+            parent.addSublayer(layer)
+        }
+        func gradient(_ path: CGPath, colors: [UInt32], in target: CALayer, name: String) {
+            let mask = CAShapeLayer()
+            mask.path = path
+            let layer = CAGradientLayer()
+            layer.name = name
+            layer.frame = CGRect(origin: .zero, size: canvas)
+            layer.colors = colors.map { QuietOrbitVisualStyle.color($0) }
+            layer.locations = colors.indices.map { NSNumber(value: Double($0) / Double(max(1, colors.count - 1))) }
+            let box = path.boundingBoxOfPath
+            layer.startPoint = CGPoint(x: box.minX / canvas.width,
+                                      y: (topDown ? box.minY : box.maxY) / canvas.height)
+            layer.endPoint = CGPoint(x: box.maxX / canvas.width,
+                                    y: (topDown ? box.maxY : box.minY) / canvas.height)
+            layer.mask = mask
+            target.addSublayer(layer)
+        }
+
+        shape(roundedRect(37, 60, 26, 18, radius: 1), name: "quietOrbit.neck",
+              fill: 0x554760, stroke: 0x9986AA, width: unit)
+        let ribs = CGMutablePath()
+        for y: CGFloat in [65, 70] { ribs.addPath(path([(38, y), (62, y)], closed: false)) }
+        shape(ribs, name: "quietOrbit.neck.ribs", stroke: 0xC4B7D0, width: 2 * unit)
+
+        let feetPath = CGMutablePath()
+        feetPath.addPath(roundedRect(20, 98, 19, 9, radius: 3))
+        feetPath.addPath(roundedRect(61, 98, 19, 9, radius: 3))
+        feet.name = "quietOrbit.feet"
+        feet.path = feetPath
+        feet.fillColor = QuietOrbitVisualStyle.color(0xD4CDDC)
+        feet.strokeColor = QuietOrbitVisualStyle.color(0x766285)
+        feet.lineWidth = unit
+        parent.addSublayer(feet)
+        gradient(feetPath, colors: QuietOrbitVisualStyle.silver, in: feet,
+                 name: "quietOrbit.feet.metal")
+
+        let chest = path([(26, 72), (74, 72), (84, 81), (79, 102), (21, 102), (16, 81)])
+        gradient(chest, colors: QuietOrbitVisualStyle.metal, in: parent, name: "quietOrbit.chest")
+        shape(chest, name: "quietOrbit.chest.outline", stroke: 0x7A628D, width: unit)
+        shape(path([(26, 75), (74, 75)], closed: false), name: "quietOrbit.chest.highlight",
+              stroke: 0xEEE5F5, width: 1.5 * unit)
+        shape(roundedRect(33, 83, 34, 10, radius: 2), name: "quietOrbit.intake",
+              fill: 0x282230, stroke: 0x8E7A9F, width: unit)
+        shape(path([(37, 91), (63, 91)], closed: false), name: "quietOrbit.intake.light",
+              stroke: 0xB3E6D9, width: 1.5 * unit)
+        let screws = CGMutablePath()
+        for x: CGFloat in [25, 71] { screws.addPath(path([(x, 95), (x + 4, 95)], closed: false)) }
+        shape(screws, name: "quietOrbit.chest.screws", stroke: 0x544260, width: 1.5 * unit)
+    }
+}

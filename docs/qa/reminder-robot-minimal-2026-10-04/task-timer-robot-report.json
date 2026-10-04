@@ -1,0 +1,8 @@
+{
+  "acknowledgment" : "Native accessibilityPerformPress and own-window mouseDown during active entry",
+  "checksPassed" : 523,
+  "entryDuration" : 0.81999999999999995,
+  "privacy" : "Fictional local tasks, temporary preferences\/archive, offscreen injected displays, own-window AX\/mouse methods; no desktop capture, clipboard, network or global input",
+  "renderMethod" : "Actual production Core Animation presentation tree at native 2x over generic light\/dark backdrops",
+  "returnDuration" : 0.5
+}

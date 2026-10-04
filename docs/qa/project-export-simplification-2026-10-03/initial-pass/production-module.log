@@ -1,0 +1,131 @@
+/private/tmp/dabin-project-export-20261003/native/Sources/DaBin/ProjectWorkspaceView.swift:70:26: warning: call to main actor-isolated initializer 'init()' in a synchronous nonisolated context [#ActorIsolatedCall]
+ 68 |     init(state: AppState, project: String,
+ 69 |          chooseExportDestination: @escaping (ProjectWorkspaceExportDocument) -> URL? = { document in
+ 70 |              let panel = NSSavePanel()
+    |                          `- warning: call to main actor-isolated initializer 'init()' in a synchronous nonisolated context [#ActorIsolatedCall]
+ 71 |              panel.allowedContentTypes = [.zip]
+ 72 |              panel.nameFieldStringValue = document.suggestedFilename
+
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSResponder.h:23:1: note: calls to initializer 'init()' from outside of its actor context are implicitly asynchronous
+ 21 | @interface NSResponder : NSObject <NSCoding>
+ 22 | 
+ 23 | - (instancetype)init NS_DESIGNATED_INITIALIZER;
+    | |- note: calls to initializer 'init()' from outside of its actor context are implicitly asynchronous
+    | `- note: main actor isolation inferred from inheritance from class 'NSPanel'
+ 24 | - (nullable instancetype)initWithCoder:(NSCoder *)coder NS_DESIGNATED_INITIALIZER;
+ 25 | 
+
+/private/tmp/dabin-project-export-20261003/native/Sources/DaBin/ProjectWorkspaceView.swift:71:20: warning: main actor-isolated property 'allowedContentTypes' can not be mutated from a nonisolated context
+ 69 |          chooseExportDestination: @escaping (ProjectWorkspaceExportDocument) -> URL? = { document in
+ 70 |              let panel = NSSavePanel()
+ 71 |              panel.allowedContentTypes = [.zip]
+    |                    `- warning: main actor-isolated property 'allowedContentTypes' can not be mutated from a nonisolated context
+ 72 |              panel.nameFieldStringValue = document.suggestedFilename
+ 73 |              panel.title = document.scope == .project ? "Export project" : "Export selected items"
+
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSSavePanel.h:62:37: note: mutation of this property is only permitted within the actor
+ 60 |  `NSOpenPanel`: This property determines which files should be enabled in the open panel. Using the deprecated methods to show the open panel (the ones that take a "types:" parameter) will overwrite this value, and should not be used. `allowedContentTypes` can be changed while the panel is running (ie: from an accessory view). This is also known as the "enabled file types". Set to `@[]` to specify that all files should be enabled.
+ 61 |  */
+ 62 | @property (copy) NSArray<UTType *> *allowedContentTypes API_AVAILABLE(macos(11.0));
+    |                                     `- note: mutation of this property is only permitted within the actor
+ 63 | 
+ 64 | /**
+
+/private/tmp/dabin-project-export-20261003/native/Sources/DaBin/ProjectWorkspaceView.swift:72:20: warning: main actor-isolated property 'nameFieldStringValue' can not be mutated from a nonisolated context
+ 70 |              let panel = NSSavePanel()
+ 71 |              panel.allowedContentTypes = [.zip]
+ 72 |              panel.nameFieldStringValue = document.suggestedFilename
+    |                    `- warning: main actor-isolated property 'nameFieldStringValue' can not be mutated from a nonisolated context
+ 73 |              panel.title = document.scope == .project ? "Export project" : "Export selected items"
+ 74 |              panel.prompt = "Save ZIP"
+
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSSavePanel.h:149:28: note: mutation of this property is only permitted within the actor
+147 |  `NSOpenPanel`: Not used.
+148 | */
+149 | @property (copy) NSString *nameFieldStringValue API_AVAILABLE(macos(10.6));
+    |                            `- note: mutation of this property is only permitted within the actor
+150 | 
+151 | /**
+
+/private/tmp/dabin-project-export-20261003/native/Sources/DaBin/ProjectWorkspaceView.swift:73:20: warning: main actor-isolated property 'title' can not be mutated from a nonisolated context
+ 71 |              panel.allowedContentTypes = [.zip]
+ 72 |              panel.nameFieldStringValue = document.suggestedFilename
+ 73 |              panel.title = document.scope == .project ? "Export project" : "Export selected items"
+    |                    `- warning: main actor-isolated property 'title' can not be mutated from a nonisolated context
+ 74 |              panel.prompt = "Save ZIP"
+ 75 |              let count = document.itemCount
+
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSSavePanel.h:134:45: note: mutation of this property is only permitted within the actor
+132 |  - Note: The open and save panel does not currently have a titlebar. So the title is not displayed.
+133 |  */
+134 | @property (null_resettable, copy) NSString *title;
+    |                                             `- note: mutation of this property is only permitted within the actor
+135 | 
+136 | /**
+
+/private/tmp/dabin-project-export-20261003/native/Sources/DaBin/ProjectWorkspaceView.swift:74:20: warning: main actor-isolated property 'prompt' can not be mutated from a nonisolated context
+ 72 |              panel.nameFieldStringValue = document.suggestedFilename
+ 73 |              panel.title = document.scope == .project ? "Export project" : "Export selected items"
+ 74 |              panel.prompt = "Save ZIP"
+    |                    `- warning: main actor-isolated property 'prompt' can not be mutated from a nonisolated context
+ 75 |              let count = document.itemCount
+ 76 |              panel.message = "\(document.scope.title) · \(count) \(count == 1 ? "item" : "items") from \(document.project ?? "DaBin").\nIncludes original files, text, links, notes and task details."
+
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSSavePanel.h:128:45: note: mutation of this property is only permitted within the actor
+126 |  `NSSavePanel`/`NSOpenPanel`: Sets the text shown on the Open or Save button. If set to an empty string, it will show a localized "Open" for the NSOpenPanel and "Save" for the NSSavePanel. The default value will be the correct localized prompt for the open or save panel, as appropriate.
+127 |  */
+128 | @property (null_resettable, copy) NSString *prompt;
+    |                                             `- note: mutation of this property is only permitted within the actor
+129 | 
+130 | /**
+
+/private/tmp/dabin-project-export-20261003/native/Sources/DaBin/ProjectWorkspaceView.swift:76:20: warning: main actor-isolated property 'message' can not be mutated from a nonisolated context
+ 74 |              panel.prompt = "Save ZIP"
+ 75 |              let count = document.itemCount
+ 76 |              panel.message = "\(document.scope.title) · \(count) \(count == 1 ? "item" : "items") from \(document.project ?? "DaBin").\nIncludes original files, text, links, notes and task details."
+    |                    `- warning: main actor-isolated property 'message' can not be mutated from a nonisolated context
+ 77 |              return panel.runModal() == .OK ? panel.url : nil
+ 78 |          }) {
+
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSSavePanel.h:154:45: note: mutation of this property is only permitted within the actor
+152 |  `NSSavePanel`/`NSOpenPanel`: Sets and returns the message shown under title of the panel.
+153 |  */
+154 | @property (null_resettable, copy) NSString *message;
+    |                                             `- note: mutation of this property is only permitted within the actor
+155 | 
+156 | /**
+
+/private/tmp/dabin-project-export-20261003/native/Sources/DaBin/ProjectWorkspaceView.swift:77:27: warning: call to main actor-isolated instance method 'runModal()' in a synchronous nonisolated context [#ActorIsolatedCall]
+ 75 |              let count = document.itemCount
+ 76 |              panel.message = "\(document.scope.title) · \(count) \(count == 1 ? "item" : "items") from \(document.project ?? "DaBin").\nIncludes original files, text, links, notes and task details."
+ 77 |              return panel.runModal() == .OK ? panel.url : nil
+    |                           `- warning: call to main actor-isolated instance method 'runModal()' in a synchronous nonisolated context [#ActorIsolatedCall]
+ 78 |          }) {
+ 79 |         self.state = state; self.project = project
+
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSSavePanel.h:207:1: note: calls to instance method 'runModal()' from outside of its actor context are implicitly asynchronous
+205 |   - Returns: `NSModalResponseOK`, `NSModalResponseCancel` or if the panel fails to display, `NSModalResponseAbort`.
+206 | */
+207 | - (NSModalResponse)runModal;
+    | |- note: calls to instance method 'runModal()' from outside of its actor context are implicitly asynchronous
+    | `- note: main actor isolation inferred from inheritance from class 'NSPanel'
+208 | 
+209 | @end
+
+/private/tmp/dabin-project-export-20261003/native/Sources/DaBin/ProjectWorkspaceView.swift:77:53: warning: main actor-isolated property 'url' can not be referenced from a nonisolated context
+ 75 |              let count = document.itemCount
+ 76 |              panel.message = "\(document.scope.title) · \(count) \(count == 1 ? "item" : "items") from \(document.project ?? "DaBin").\nIncludes original files, text, links, notes and task details."
+ 77 |              return panel.runModal() == .OK ? panel.url : nil
+    |                                                     `- warning: main actor-isolated property 'url' can not be referenced from a nonisolated context
+ 78 |          }) {
+ 79 |         self.state = state; self.project = project
+
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSSavePanel.h:39:45: note: property declared here
+ 37 |  `NSOpenPanel`: Returns the single filename selected by the user. Note: if -allowsMultipleSelection is set, you should use the -URLs on NSOpenPanel instead.
+ 38 |  */
+ 39 | @property (nullable, readonly, copy) NSURL *URL;
+    |                                             `- note: property declared here
+ 40 | 
+ 41 | // MARK: - Configuration Properties
+
+[#ActorIsolatedCall]: <https://docs.swift.org/compiler/documentation/diagnostics/actor-isolated-call>

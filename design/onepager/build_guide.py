@@ -4,6 +4,7 @@ from shutil import copy2
 from html import escape
 import hashlib
 import json
+import plistlib
 
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import A4, landscape
@@ -45,7 +46,7 @@ for name, source in FONT_FILES.items():
     pdfmetrics.registerFont(TTFont(name, str(source)))
 
 required_assets = ["DABIN__GUIDE__PROJECTS.png", "DABIN__GUIDE__INBOX.png",
-                   "DABIN__GUIDE__TASK.png", "DABIN__GUIDE__ROBOT.png"]
+                   "DABIN__GUIDE__TASK.png", "DABIN__GUIDE__ROBOT.png", "DABIN__GUIDE__SEARCH.png"]
 for name in required_assets:
     if not (ASSETS / name).is_file():
         raise FileNotFoundError(f"Run export_guide_assets.py first: {name}")
@@ -54,8 +55,29 @@ native_provenance = json.loads((ASSETS / assets["native_source_manifest"]).read_
 for name in required_assets:
     assert hashlib.sha256((ASSETS / name).read_bytes()).hexdigest() == native_provenance["assetsSHA256"][name], name
 assert hashlib.sha256((DESIGN / "ExportGuide.swift").read_bytes()).hexdigest() == native_provenance["exportSourceSHA256"]
-for name, digest in native_provenance["sourceSHA256"].items():
-    assert hashlib.sha256((ROOT / "native" / name).read_bytes()).hexdigest() == digest, f"Re-export stale native guide UI: {name}"
+assert native_provenance["schemaVersion"] == 2, "Re-export with explicit source provenance"
+native_root = (ROOT / native_provenance["nativeRoot"]).resolve()
+assert native_root.is_relative_to(ROOT / "native"), "Native provenance must refer to local project or frozen inputs"
+source_paths = {str(path.relative_to(native_root)) for path in (native_root / "Sources/DaBin").glob("*.swift") if path.name != "DaBinMain.swift"}
+assert source_paths == set(native_provenance["sourceSHA256"]), "Source inventory changed; re-export guide assets"
+for group in ["sourceSHA256", "resourceSHA256"]:
+    for name, digest in native_provenance[group].items():
+        assert hashlib.sha256((native_root / name).read_bytes()).hexdigest() == digest, f"Re-export stale native guide UI: {name}"
+info_path = native_root / "Resources/Info.plist"
+assert hashlib.sha256(info_path.read_bytes()).hexdigest() == native_provenance["infoSHA256"]
+info = plistlib.loads(info_path.read_bytes())
+assert (info["CFBundleShortVersionString"], info["CFBundleVersion"]) == (COPY["version"], COPY["build"])
+assert (native_provenance["version"], native_provenance["build"]) == (COPY["version"], COPY["build"])
+receipt_path = native_root / native_provenance["verifiedModuleReceipt"]
+assert hashlib.sha256(receipt_path.read_bytes()).hexdigest() == native_provenance["verifiedModuleReceiptSHA256"]
+receipt = json.loads(receipt_path.read_text())
+assert receipt["inputs"]["sources"] == native_provenance["sourceSHA256"]
+assert receipt["inputs"]["distribution"] == native_provenance["distribution"]
+assert receipt["outputs"] == native_provenance["moduleOutputs"]
+for name, digest in receipt["outputs"].items():
+    assert hashlib.sha256((receipt_path.parent / name).read_bytes()).hexdigest() == digest
+assert hashlib.sha256((DESIGN / "export_guide_assets.py").read_bytes()).hexdigest() == native_provenance["exportScriptSHA256"]
+assert hashlib.sha256((ASSETS / "guide-native-renders.json").read_bytes()).hexdigest() == native_provenance["nativeRenderManifestSHA256"]
 for folder in [OUT.parent, COPY_OUT.parent, QA_PATH.parent]:
     folder.mkdir(parents=True, exist_ok=True)
 
@@ -63,7 +85,7 @@ for folder in [OUT.parent, COPY_OUT.parent, QA_PATH.parent]:
 for previous in [DOC_COPY, OUT]:
     if previous.is_file():
         digest = hashlib.sha256(previous.read_bytes()).hexdigest()[:12]
-        archive = DESIGN / "archive" / f"DaBin-Quick-Guide__before_robot_walkthrough__{digest}.pdf"
+        archive = DESIGN / "archive" / f"DaBin-Quick-Guide__before_0.4.31_refresh__{digest}.pdf"
         archive.parent.mkdir(parents=True, exist_ok=True)
         if not archive.exists():
             copy2(previous, archive)
@@ -207,21 +229,35 @@ page = 2
 p2 = COPY["page_two"]
 page_header(p2)
 paragraph(escape(p2["subtitle"]), 36, 86, W - 72, 12, 16, BODY, max_height=18)
-gap = 14
-card_width = (W - 72 - 2 * gap) / 3
-step_assets = ["DABIN__GUIDE__INBOX.png", "DABIN__GUIDE__PROJECTS.png", "DABIN__GUIDE__TASK.png"]
-for index, step in enumerate(p2["steps"]):
-    x = 36 + index * (card_width + gap)
-    rect(x, 123, card_width, 315, WHITE, 15, LINE)
-    badge(step["number"], x + 21, 144, 10)
-    paragraph(escape(step["title"]), x + 40, 135, card_width - 52, 12.3, 15,
-              INK, BOLD, max_height=30)
-    name = step_assets[index]
-    image_crop(name, x + 12, 175, card_width - 24, 131, assets["step_crops"][name])
-    used = paragraph(escape(step["body"]), x + 14, 322, card_width - 28, 10.7,
-                     14, BODY, max_height=70)
-    paragraph(escape(step["tip"]), x + 14, 322 + used + 10, card_width - 28,
-              10.2, 13, PURPLE_DARK, max_height=65)
+# Give date columns enough width to read at print size. The smaller habits use
+# clear prose instead of shrinking another whole interface into each card.
+search, save, task = p2["steps"]
+rect(36, 123, W - 72, 174, WHITE, 15, LINE)
+image_crop("DABIN__GUIDE__SEARCH.png", 49, 144, 455, 142,
+           assets["step_crops"]["DABIN__GUIDE__SEARCH.png"])
+badge(search["number"], 533, 146, 10)
+paragraph(escape(search["title"]), 552, 137, W - 602, 12.3, 15, INK, BOLD, max_height=30)
+used = paragraph(escape(search["body"]), 523, 174, W - 575, 10.7, 14, BODY, max_height=56)
+paragraph(escape(search["tip"]), 523, 174 + used + 10, W - 575,
+          10.2, 13, PURPLE_DARK, max_height=52)
+
+card_width = (W - 86) / 2
+for index, step in enumerate([save, task]):
+    x = 36 + index * (card_width + 14)
+    rect(x, 311, card_width, 127, WHITE, 15, LINE)
+    badge(step["number"], x + 21, 332, 10)
+    paragraph(escape(step["title"]), x + 40, 323, card_width - 54,
+              12.3, 15, INK, BOLD, max_height=18)
+    body = escape(step["body"])
+    if step["number"] == 3:
+        for wording, color in [("green (Low)", "#216E3D"), ("amber (Medium)", "#8C4F03"), ("red (High)", "#B52924")]:
+            body = body.replace(wording, f'<font color="{color}">{wording}</font>')
+    used = paragraph(body, x + 14, 350, card_width - 28,
+                     10.7, 14, BODY, max_height=42)
+    tip_top = 350 + used + 8
+    tip_height = paragraph(escape(step["tip"]), x + 14, tip_top, card_width - 28,
+                          10.2, 13, PURPLE_DARK, max_height=39)
+    assert tip_top + tip_height <= 429, (step["title"], tip_top, tip_height)
 
 rect(36, 454, 474, 103, MINT, 14)
 paragraph(escape(p2["auto_title"]), 50, 465, 445, 12, 15, TEAL, BOLD, max_height=18)
@@ -237,7 +273,7 @@ c.showPage()
 c.save()
 
 # A reusable text version shares the PDF's copy source rather than drifting.
-copy_lines = ["DABIN - FRIENDLY PRODUCT COPY", "", COPY["headline"], "", COPY["description"], "",
+copy_lines = ["DABIN - FRIENDLY PRODUCT COPY", "", f"Version {COPY['version']} ({COPY['build']})", "", COPY["headline"], "", COPY["description"], "",
               "ROBOT-LED QUICK GUIDE", "", p1["title"], p1["intro"], "", p1["meet_title"],
               p1["meet_body"], p1["island_note"], ""]
 for item in p1["callouts"]:
@@ -248,15 +284,17 @@ for step in p2["steps"]:
 copy_lines += [p2["auto_title"], p2["auto_body"], p2["auto_tip"], "",
                p2["comfort_title"], p2["comfort_body"], "", p2["privacy_title"], p2["privacy_body"], ""]
 COPY_OUT.write_text("\n".join(copy_lines), encoding="utf-8")
+copy2(COPY_OUT, ROOT / "docs/DaBin-Friendly-Copy.txt")
 
 reader = PdfReader(OUT)
 assert len(reader.pages) == 2
 extracted = "\n".join(p.extract_text() for p in reader.pages)
 searchable_text = " ".join(extracted.split()).lower()
 assert "\ufffd" not in extracted
-required = ["Hi, I'm DaBin.", "Choose a project", "Inbox", "Today", "Projects", "Explorer",
-            "Find it again", "Save now. Sort later.", "Auto Capture", "off by default",
-            "Only new changes are saved", "task stays open", "Show tooltips"]
+required = ["Hi, I'm DaBin.", "Choose a project", "Inbox", "Today", "Projects",
+            "Search all saved work", "Save now. Sort later.", "Auto Capture", "off by default",
+            "date columns", "type or paste", "New task", "green (Low)", "red (High)",
+            "local ZIP", "Finder", "between monitors", "accepts that content", "not a recording of your screen"]
 for phrase in required:
     assert phrase.lower() in searchable_text, phrase
 for block in blocks:
@@ -276,6 +314,7 @@ QA_PATH.write_text(json.dumps(dict(
     embedded_fonts={name: str(path) for name, path in FONT_FILES.items()},
     native_asset_hash_check="PASS",
     current_native_source_hash_check="PASS",
+    native_root=str(native_root), distribution=native_provenance["distribution"],
     copy_output_sha256=hashlib.sha256(COPY_OUT.read_bytes()).hexdigest(),
     required_phrases=required, text=extracted,
     privacy="Actual native views with isolated fictional examples; no personal capture screenshots.",

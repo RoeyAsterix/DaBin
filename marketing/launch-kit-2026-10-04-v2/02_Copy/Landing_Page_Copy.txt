@@ -1,0 +1,69 @@
+DABIN / LANDING PAGE COPY
+Use this to review the local 05_Landing_Page draft. Replace placeholders before deployment. Nothing is hosted by this kit.
+
+PAGE TITLE
+DaBin for Mac - Save now. Find it later.
+
+META DESCRIPTION
+DaBin is a free Mac app for keeping notes, links, images, files and tasks together locally. Save useful bits with a little desktop robot. Apple Silicon, macOS 14+.
+
+HERO
+Eyebrow: DaBin for Mac
+Headline: Save now. Find it later.
+Subheadline: A little robot for the useful bits of your day. Keep notes, links, images, files and tasks together on your Mac.
+Primary action: Get DaBin free
+Destination: [[APP_STORE_URL]]
+Compatibility line: Apple Silicon Macs. macOS 14 or later. No account required.
+Guided tour media: 04_Video/DABIN__UI_TOUR__LANDSCAPE.mp4
+Media label: A guided UI tour using actual native interface states and fictional examples, with composed pointer guidance and conversational DaBin narration.
+
+BENEFIT 1
+Catch the useful bits.
+Drop a reference image, paste a link, or write a note. Give useful things a place while you keep working.
+
+BENEFIT 2
+Find words inside saved screenshots.
+Search the supported content you've saved into DaBin. Local text recognition helps find a screenshot or document even when its filename doesn't contain the word.
+
+BENEFIT 3
+Keep a project together.
+Keep a project's references, notes and tasks close. Organization is optional; save first and sort when it helps.
+
+PRIVACY
+Local by design.
+No account, ads, analytics or cloud sync. Saved captures and recognized text stay on this Mac. Auto Capture is optional and off by default. Website previews are also optional and off by default; enabling them can contact manually saved sites.
+Read privacy details: [[PUBLIC_PRIVACY_URL]]
+
+FINAL CTA
+Give the useful bits a home.
+Get DaBin free: [[APP_STORE_URL]]
+Apple Silicon + macOS 14 or later.
+
+FAQ
+What Macs can run it?
+Apple Silicon Macs with macOS 14 or later.
+
+Does it search my whole Mac?
+No. Search covers supported content saved into DaBin, including recognized text in supported screenshots, images and documents.
+
+Do I need an account?
+No. There is no account or cloud sync.
+
+Does it automatically watch my clipboard or screenshots?
+Only if you opt into Auto Capture. Clipboard and a selected screenshot folder are separate options, off by default. Monitoring considers later clipboard changes and new images after activation; it does not record your screen or import old screenshots.
+
+Can it contact websites?
+Optional previews for manually saved links can contact websites when enabled. Previews start off, and automatically captured links do not fetch previews. Opening a link uses your browser.
+
+How do I get help?
+Contact [[CONTACT_EMAIL]] or visit [[PUBLIC_SUPPORT_URL]].
+
+FOOTER
+DaBin for Mac
+Support: [[PUBLIC_SUPPORT_URL]]
+Privacy: [[PUBLIC_PRIVACY_URL]]
+Contact: [[CONTACT_EMAIL]]
+Copyright: [[OWNER_CONFIRMED_COPYRIGHT]]
+
+DO NOT ADD WITHOUT FACTS
+Founder origin story, 'trusted by' logos, testimonials, download count, 'free forever', future roadmap, Apple featuring badge, encrypted-data claims or quantified time savings.

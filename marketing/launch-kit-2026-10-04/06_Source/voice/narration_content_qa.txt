@@ -1,0 +1,4 @@
+CONTENT PASS — independent transcription exactly matches TTS input.
+Technical: WAV decodes; mono PCM 16-bit, 48 kHz; 14.1641875 seconds original; 15.391375 seconds at 0.92 tempo; peak -5.3 dBFS, no clipping.
+Subjective listening QA was unavailable because this session does not support audio input. Review playback before public posting.
+Four provider-default takes were generated in one run; take 02 selected for its slower pacing.

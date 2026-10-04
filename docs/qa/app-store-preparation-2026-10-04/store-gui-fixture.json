@@ -1,0 +1,34 @@
+{
+  "app": "/private/tmp/DaBin Store QA 0.4.31.app",
+  "identifier": "com.dabin.qa.storecandidate86.20261004",
+  "sourceApp": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/store-preparation-20261004/native/build/store-unsigned-0.4.31-86/derived-data/Build/Products/Release/DaBin.app",
+  "signing": "ad-hoc with production sandbox entitlements",
+  "modifications": [
+    "CFBundleIdentifier",
+    "CFBundleName",
+    "CFBundleDisplayName",
+    "ad-hoc Mach-O signature"
+  ],
+  "personalAppUntouched": true,
+  "freshContainerPrecondition": true,
+  "guiVerified": true,
+  "verifiedAtUTC": "2026-10-04T05:20:28.977565+00:00",
+  "quitVerified": true,
+  "checks": [
+    "Fresh empty Inbox opened",
+    "Auto Capture off on first launch; clipboard and screenshots off",
+    "Website previews off on first launch",
+    "Settings shows 0.4.31(86) and Mac App Store update management; no direct installer actions",
+    "Fictional note saved through native Save note menu",
+    "Typed search amber notebook returned one matching saved note in its date column",
+    "Cmd-Q exited only the isolated QA application"
+  ],
+  "fixtureArchive": "/Users/roeylibfeld/Library/Containers/com.dabin.qa.storecandidate86.20261004/Data/Library/Application Support/DaBin",
+  "fixtureContainerExists": true,
+  "remainingFixtureData": "One fictional note retained in test-only container; personal archive untouched.",
+  "limits": [
+    "Ad-hoc sandboxed copy with unique test bundle identifier, not distribution-signed installed release.",
+    "Desktop tool launch stalled for 6407 seconds; normal subsequent navigation, saving, searching and quit succeeded.",
+    "Save note menu AX click had no effect; native Down/Return selected the observed menu entry. No production change needed."
+  ]
+}

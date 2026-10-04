@@ -25,10 +25,12 @@ import SwiftUI
         return object.perform(selector, with: name as NSString)?.takeUnretainedValue()
     }
     var identifier: String? { (value("accessibilityIdentifier") as? String) ?? (attribute("AXIdentifier") as? String) }
+    var role: String { (value("accessibilityRole") as? String) ?? (attribute("AXRole") as? String) ?? "" }
     var label: String? {
         [value("accessibilityLabel"), value("accessibilityTitle"), attribute("AXTitle"), attribute("AXDescription"),
          value("accessibilityValue"), attribute("AXValue")].compactMap { $0 as? String }.first { !$0.isEmpty }
     }
+    var valueText: String { (value("accessibilityValue") as? String) ?? (attribute("AXValue") as? String) ?? "" }
     var frame: NSRect {
         let selector = NSSelectorFromString("accessibilityFrame")
         guard object.responds(to: selector) else { return .zero }
@@ -111,6 +113,16 @@ import SwiftUI
         let card = try find(view, id: "workspace-item-\(id.uuidString)")
         return card.frame.width > 0 && card.frame.height > 0 && visible.contains(NSPoint(x: card.frame.midX, y: card.frame.midY))
     }
+    @MainActor private static func nativeListDescription(_ scroll: NSScrollView) -> String {
+        let geometry = "offset=\(scroll.contentView.bounds.origin), viewport=\(scroll.contentView.bounds.size), document=\(String(describing: scroll.documentView?.frame))"
+        guard let table = scroll.documentView as? NSTableView else { return geometry }
+        var rows: [String] = []
+        // Diagnostics must not instantiate offscreen rows or request their AX trees.
+        table.enumerateAvailableRowViews { row, index in
+            rows.append("\(index):\(row.frame)")
+        }
+        return geometry + ", logicalRows=\(table.numberOfRows), visibleRange=\(table.rows(in: table.visibleRect)), availableRows=[\(rows.joined(separator: "; "))]"
+    }
     @MainActor private static func nodes(_ view: NSView) -> [WorkspaceAXNode] {
         view.layoutSubtreeIfNeeded()
         var seen = Set<ObjectIdentifier>()
@@ -156,8 +168,13 @@ import SwiftUI
         try data.write(to: url, options: .atomic)
     }
 
-    @MainActor private static func checkExplorer(state: AppState, hosting: NSView, window: NSWindow, evidence: URL) async throws {
+    @MainActor private static func checkExplorer(state: AppState, hosting boardHosting: NSView, window: NSWindow, evidence: URL) async throws {
+        // The global Explorer remains a supported production view. Mount it
+        // directly here so its inspector/viewport regressions stay covered
+        // independently of the new named-project workspace presentation.
+        let hosting = NSHostingView(rootView: ExplorerScreen(state: state))
         window.contentView = hosting
+        defer { window.contentView = boardHosting }
         state.libraryProject = "Explorer review"
         let first = try state.store.createNote(text: "A client follow-up with a clear next step", projectName: "Explorer review")
         _ = try state.store.createNote(text: "A second reference", projectName: "Explorer review")
@@ -173,10 +190,15 @@ import SwiftUI
             "Expanded selection previews in place without leaving the project")
         try expect(try find(hosting, id: "explorer-open-details").isEnabled, "Inspector exposes full details")
         try expect(try find(hosting, id: "explorer-inspector").frame.width > 400, "Expanded preview uses available width")
-        let search = try findLabeled(hosting, label: "Find in this project")
-        try expect(search.setText("follow-up"), "Explorer search accepts keyboard text")
+        try expect(try find(hosting, id: "explorer-search").press(), "Explorer search opens through its accessible button")
         await settleNavigation()
-        try expect(state.workspace.explorerQuery == "follow-up", "Project search binding updates")
+        try expect(state.route == .search && state.searchProject == nil && state.libraryProject == "Explorer review",
+            "Explorer's Search everything button starts global Search without changing its project")
+        state.query = "follow-up"
+        state.back(); await settleNavigation()
+        try expect(state.route == .library && state.workspace.explorerQuery.isEmpty
+            && state.workspace.selectedCaptureID == first.id,
+            "Back from global Search retains the Explorer selection without adding a hidden project query")
         try expect(try find(hosting, id: "explorer-daily-files").press(), "Daily files action is keyboard accessible")
         await settleNavigation()
         let days = try state.store.explorerDocuments(project: "Explorer review")
@@ -187,8 +209,8 @@ import SwiftUI
         try saveImage(hosting, to: evidence.appendingPathComponent("explorer-expanded-daily.png"))
         state.workspace.explorerShowsDailyFiles = false
         window.setContentSize(NSSize(width: 380, height: 430)); await settleNavigation()
-        try expect(state.workspace.selectedCaptureID == first.id && state.workspace.explorerQuery == "follow-up",
-            "Compact resize preserves selection and query")
+        try expect(state.workspace.selectedCaptureID == first.id && state.workspace.explorerQuery.isEmpty,
+            "Compact resize preserves selection without introducing a hidden search filter")
         try expect(try find(hosting, id: "explorer-paste").isEnabled && find(hosting, id: "explorer-add-files").isEnabled,
             "Compact Explorer keeps accessible paste and import alternatives")
         try saveImage(hosting, to: evidence.appendingPathComponent("explorer-compact.png"))
@@ -196,9 +218,103 @@ import SwiftUI
         await settleNavigation()
         try expect(state.route == .detail && state.selectedCapture?.id == first.id, "Compact selection opens the complete capture")
         state.back(); await settleNavigation()
-        try expect(state.route == .library && state.libraryProject == "Explorer review" && state.workspace.explorerQuery == "follow-up",
-            "Back restores Explorer project and search")
+        try expect(state.route == .library && state.libraryProject == "Explorer review" && state.workspace.explorerQuery.isEmpty,
+            "Back restores Explorer project and selection without stale search refinements")
         state.workspace.explorerQuery = ""
+
+        // Keep this in collection mode: the similar Clipboard checks below use
+        // a different browser and cannot validate Explorer's native List IDs.
+        window.setContentSize(NSSize(width: 1000, height: 720))
+        var projectA: [Capture] = [], projectB: [Capture] = []
+        for index in 0..<24 {
+            let at = Date(timeIntervalSince1970: 1_790_000_000 + Double(index))
+            for project in ["Explorer scroll A", "Explorer scroll B"] {
+                let capture = try state.store.capture(text: "Fictional Explorer scrolling \(project) \(index)", at: at)[0]
+                try state.store.setOrganization(capture, pinned: false, projectName: project)
+                if project == "Explorer scroll A" { projectA.append(capture) }
+                else { projectB.append(capture) }
+            }
+        }
+        state.libraryProject = "Explorer scroll A"; state.workspace.selectedCaptureID = projectA[2].id
+        state.libraryProject = "Explorer scroll B"; state.workspace.selectedCaptureID = projectB[4].id
+        await settleNavigation()
+        state.libraryProject = "Explorer scroll A"; await settleNavigation()
+        fputs("Explorer project return A: selected=\(String(describing: state.workspace.selectedCaptureID)), expected=\(projectA[2].id), savedViewport=\(String(describing: state.workspaceViewport)); \(nativeListDescription(try listScrollView(in: hosting)))\n", stderr)
+        try expect(state.workspace.mode == .collection && state.workspace.selectedCaptureID == projectA[2].id
+            && (try selectedCardIsVisible(projectA[2].id, in: hosting, window: window)),
+            "Explorer restores its remembered deep capture into the native List viewport after switching project")
+        state.libraryProject = "Explorer scroll B"; await settleNavigation()
+        fputs("Explorer project return B: selected=\(String(describing: state.workspace.selectedCaptureID)), expected=\(projectB[4].id), savedViewport=\(String(describing: state.workspaceViewport)); \(nativeListDescription(try listScrollView(in: hosting)))\n", stderr)
+        try expect(state.workspace.selectedCaptureID == projectB[4].id
+            && (try selectedCardIsVisible(projectB[4].id, in: hosting, window: window)),
+            "Explorer restores another project's distinct deep selection without opening details")
+        let list = try listScrollView(in: hosting)
+        guard let document = list.documentView else {
+            throw NSError(domain: "WorkspaceWindowTests", code: 8,
+                userInfo: [NSLocalizedDescriptionKey: "Explorer List has no document view"])
+        }
+        let browsingY: CGFloat = document.isFlipped ? 500 : max(0, document.bounds.height - list.contentView.bounds.height - 500)
+        list.contentView.scroll(to: NSPoint(x: 0, y: browsingY)); list.reflectScrolledClipView(list.contentView)
+        await settleNavigation()
+        let viewport = window.convertToScreen(list.contentView.convert(list.contentView.bounds, to: nil))
+        let before = nodes(hosting).filter {
+            $0.identifier?.hasPrefix("workspace-item-") == true && $0.frame.height > 0
+                && viewport.contains(NSPoint(x: $0.frame.midX, y: $0.frame.midY))
+        }.map { ($0.identifier!, $0.frame) }
+        try expect(!before.isEmpty, "Explorer insertion check starts with visible cards away from the top")
+        let geometryBefore = nativeListDescription(list)
+        let selectionBefore = state.workspace.selectedCaptureID
+        let incoming = try state.store.capture(text: "Incoming fictional automatic Explorer capture",
+            receipt: .automatic(.automaticClipboard))[0]
+        try state.store.setOrganization(incoming, pinned: false, projectName: "Explorer scroll B")
+        await settleNavigation()
+        let after = nodes(hosting)
+        let geometryAfter = nativeListDescription(list)
+        let stationary = before.allSatisfy { identifier, frame in
+            guard let current = after.first(where: { $0.identifier == identifier })?.frame else { return false }
+            return abs(current.minY - frame.minY) <= 1 && abs(current.minX - frame.minX) <= 1
+                && abs(current.height - frame.height) <= 1 && abs(current.width - frame.width) <= 1
+        }
+        fputs("Explorer native List insertion: \(before.count) visible card positions preserved=\(stationary)\n", stderr)
+        fputs("Explorer List before: \(geometryBefore)\nExplorer List after: \(geometryAfter)\n", stderr)
+        fputs("Explorer List selection: \(String(describing: selectionBefore)) → \(String(describing: state.workspace.selectedCaptureID)); grouping=\(state.workspace.explorerGrouping.rawValue), route=\(state.route)\n", stderr)
+        for (identifier, previous) in before {
+            guard let current = after.first(where: { $0.identifier == identifier })?.frame else {
+                fputs("Explorer card \(identifier): old=\(previous), new=MISSING\n", stderr)
+                continue
+            }
+            fputs("Explorer card \(identifier): old=\(previous), new=\(current), delta=(x:\(current.minX - previous.minX), y:\(current.minY - previous.minY), w:\(current.width - previous.width), h:\(current.height - previous.height))\n", stderr)
+        }
+        if !stationary {
+            try saveImage(hosting, to: evidence.appendingPathComponent("explorer-insertion-failure.png"))
+            // Diagnose a delayed native height correction without making the
+            // original strict settled-position assertion weaker or retrying it.
+            await settleNavigation()
+            let later = nodes(hosting)
+            fputs("Explorer List diagnostic later: \(nativeListDescription(list))\n", stderr)
+            for (identifier, previous) in before {
+                let current = later.first(where: { $0.identifier == identifier })?.frame
+                fputs("Explorer card later \(identifier): old=\(previous), new=\(String(describing: current))\n", stderr)
+            }
+        }
+        try expect(stationary && state.workspace.selectedCaptureID == projectB[4].id && state.route == .library,
+            "An incoming Explorer capture preserves the cards being read and the remembered selection")
+        // Sample again after the viewport guard's 600ms lifetime, not only
+        // while it is correcting native estimated-height insertion frames.
+        try await Task.sleep(for: .milliseconds(500))
+        let settled = nodes(hosting)
+        let stationaryAfterExpiry = before.allSatisfy { identifier, frame in
+            guard let current = settled.first(where: { $0.identifier == identifier })?.frame else { return false }
+            return abs(current.minY - frame.minY) <= 1 && abs(current.minX - frame.minX) <= 1
+                && abs(current.height - frame.height) <= 1 && abs(current.width - frame.width) <= 1
+        }
+        fputs("Explorer List after anchor expiry: positions preserved=\(stationaryAfterExpiry); \(nativeListDescription(list))\n", stderr)
+        for (identifier, previous) in before {
+            let current = settled.first(where: { $0.identifier == identifier })?.frame
+            fputs("Explorer card after anchor expiry \(identifier): old=\(previous), new=\(String(describing: current))\n", stderr)
+        }
+        try expect(stationaryAfterExpiry && state.workspace.selectedCaptureID == projectB[4].id && state.route == .library,
+            "Explorer visible cards remain within one point after the bounded viewport guard has expired")
     }
 
     @MainActor private static func checkDetailResizing(state: AppState, hosting: NSView,
@@ -282,6 +398,7 @@ import SwiftUI
         await settleNavigation()
         guard let draft = state.selectedDraft else { throw NSError(domain: "WorkspaceWindowTests", code: 9) }
         draft.comment = "Unsaved note survives every resize"
+        draft.commentComposer = "An unposted reply survives every resize"
         draft.reminderDate = savedReminder.addingTimeInterval(3600)
         let pendingStep = "A next step that has not been added yet"
         let input = try findLabeled(hosting, label: "Add a small next step")
@@ -297,11 +414,15 @@ import SwiftUI
             try expect(currentText == pendingStep,
                 "An unfinished checklist entry survives the layout change to \(Int(size.width))×\(Int(size.height))")
             try expect(state.selectedDraft === draft && draft.comment == "Unsaved note survives every resize"
+                && draft.commentComposer == "An unposted reply survives every resize"
                 && draft.reminderDate == savedReminder.addingTimeInterval(3600) && draft.hasChanges,
-                "Resizing preserves the same unsaved note and reminder draft")
-            try expect(nodes(hosting).contains { $0.identifier == "detail-comment-editor" }
-                && nodes(hosting).contains { $0.identifier == "reminder-mode-date" || $0.label == "Date" },
-                "Open note and reminder disclosures retain their editors during resize")
+                "Resizing preserves the same unsaved comment, composer and reminder draft")
+            let detailNodes = nodes(hosting)
+            try expect(detailNodes.contains { $0.identifier == "capture-comment-thread" }
+                && detailNodes.contains { $0.identifier == "capture-comment-composer" }
+                && detailNodes.contains { $0.identifier == "capture-tab-reminder" }
+                && !detailNodes.contains { $0.identifier == "capture-reminder-panel" },
+                "Resizing retains the selected Comments tab and composer; Reminder remains a separate available tab")
             let visible = window.convertToScreen(hosting.convert(hosting.bounds, to: nil))
             let save = try find(hosting, id: "detail-save")
             try expect(save.isEnabled && visible.insetBy(dx: -1, dy: -1).contains(save.frame),
@@ -312,9 +433,40 @@ import SwiftUI
             }
             try saveImage(hosting, to: evidence.appendingPathComponent("detail-task-editing-\(Int(size.width))x\(Int(size.height))-light.png"))
         }
+        // Comments and Reminder are mutually exclusive tabs, not simultaneous
+        // disclosures. Exercise their real actions after the resize/focus checks
+        // and verify neither selecting a tab nor resizing implicitly saves.
+        try expect(try find(hosting, id: "capture-tab-reminder").press(),
+            "The retained Reminder tab opens its actual scheduling panel")
+        await settleNavigation()
+        for size in [expandedSize, compactSize] {
+            window.setContentSize(size)
+            await settleNavigation()
+            let detailNodes = nodes(hosting)
+            try expect(detailNodes.contains { $0.identifier == "capture-reminder-panel" }
+                && detailNodes.contains { $0.identifier == "reminder-mode-date" || $0.label == "Date" }
+                && !detailNodes.contains { $0.identifier == "capture-comment-composer" },
+                "The selected Reminder panel and date controls survive compact/expanded resizing")
+            try expect(state.selectedDraft === draft && draft.comment == "Unsaved note survives every resize"
+                && draft.commentComposer == "An unposted reply survives every resize"
+                && draft.reminderDate == savedReminder.addingTimeInterval(3600) && draft.hasChanges,
+                "Tab selection and resizing retain all unpublished changes in the original draft")
+        }
+        try expect(try find(hosting, id: "capture-tab-comments").press(),
+            "Comments can be reopened without saving or removing the reminder")
+        await settleNavigation()
+        try expect(nodes(hosting).contains { $0.identifier == "capture-comment-composer" }
+            && !nodes(hosting).contains { $0.identifier == "capture-reminder-panel" }
+            && draft.commentComposer == "An unposted reply survives every resize",
+            "Returning to Comments restores its unposted composer")
+        let retainedInput = try findLabeled(hosting, label: "Add a small next step")
+        let retainedInputText = (retainedInput.object as? NSTextField)?.stringValue
+            ?? (retainedInput.value("accessibilityValue") as? String)
+        try expect(retainedInputText == pendingStep,
+            "Switching annotation tabs preserves the unfinished task checklist input")
         try expect(task.comment == "Saved task context" && task.reminderAt == savedReminder
             && task.taskPlanning?.checklist.count == 1 && draft.planning.checklist.count == 1,
-            "Window resizing neither commits draft edits nor adds unfinished checklist input")
+            "Window resizing and annotation tabs neither commit draft edits nor add unfinished checklist input")
     }
 
     @MainActor static func main() async throws {
@@ -365,13 +517,23 @@ import SwiftUI
         }.value
         try expect(accessibility == .success, "Native own-window accessibility tree is available")
         settle()
-        for mode in WorkspaceMode.allCases {
+        try expect(try find(hosting, id: "project-workspace").frame.width > 0,
+            "A named project opens the new unified workspace")
+        try expect(nodes(hosting).contains { $0.identifier?.hasPrefix("project-preview-") == true && $0.frame.height >= 160 },
+            "The named-project workspace exposes a large accessible content preview")
+        // Project view intentionally removes redundant mode tabs. Enter an
+        // auxiliary view, then retain real accessible tab coverage there.
+        state.workspace.mode = .clipboard; settle()
+        for mode in [WorkspaceMode.clipboard, .shelf, .scratchpad, .collection] {
             let button = try find(hosting, id: "workspace-mode-\(mode.rawValue)")
             try expect(button.frame.width >= 28 && button.frame.height >= 28, "Workspace mode \(mode.title) has a usable hit target")
             try expect(button.press(), "Workspace mode \(mode.title) supports accessible activation")
             settle()
             try expect(state.workspace.mode == mode && state.libraryProject == "Client A", "Mode change keeps the selected project")
         }
+        try expect(try find(hosting, id: "project-workspace").frame.width > 0,
+            "Explorer mode returns a named project to the unified preview workspace")
+        state.workspace.mode = .scratchpad; settle()
         try expect(try find(hosting, id: "workspace-scratchpad").frame.height >= 100, "Scratchpad remains writable in the compact window")
         let clipboard = try find(hosting, id: "workspace-mode-clipboard")
         try expect(clipboard.press(), "Clipboard mode opens")
@@ -402,19 +564,70 @@ import SwiftUI
             window.setContentSize(size); settle()
             for mode in WorkspaceMode.allCases {
                 state.workspace.mode = mode; settle()
-                for modeButton in WorkspaceMode.allCases {
-                    let frame = try find(hosting, id: "workspace-mode-\(modeButton.rawValue)").frame
-                    try expect(frame.minX >= window.frame.minX - 1 && frame.maxX <= window.frame.maxX + 1,
-                        "Workspace mode fits \(Int(size.width))-point width")
-                }
                 let visibleContent = window.convertToScreen(hosting.convert(hosting.bounds, to: nil))
-                if mode != .scratchpad {
+                if mode == .collection {
+                    let picker = try find(hosting, id: "workspace-project-picker")
+                    try expect(picker.valueText == "4 items", "Project dropdown includes captures and live notes in its total")
+                    try expect(visibleContent.insetBy(dx: -1, dy: -1).contains(picker.interactionFrame),
+                        "Project name and count remain inside the \(Int(size.width))-point header")
+                    // Card identity belongs to the item viewport. Scope this
+                    // compact-header regression above that viewport rather than
+                    // rejecting the project names intentionally shown on cards.
+                    let projectItems = try find(hosting, id: "project-items")
+                    let headerBottom = projectItems.frame.maxY
+                    try expect(projectItems.frame.width > 0 && projectItems.frame.height > 0
+                        && picker.interactionFrame.minY >= headerBottom - 1,
+                        "Project header is above the populated item viewport")
+                    let visibleHeader = nodes(hosting).filter {
+                        $0.frame.width > 0 && $0.frame.height > 0
+                            && $0.frame.minY >= headerBottom - 1
+                            && visibleContent.intersects($0.frame)
+                    }
+                    try expect(!visibleHeader.contains { $0.label == "Client A" || $0.label?.contains("One place for your project") == true },
+                        "Project header has no duplicate name or tagline; cards may show their project")
+                    try expect(try find(hosting, id: "project-workspace").frame.width > 0,
+                        "Named-project workspace is available at \(Int(size.width))-point width")
+                    try expect(nodes(hosting).contains { $0.identifier?.hasPrefix("project-preview-") == true && $0.frame.height >= 160 },
+                        "Project content retains a large preview at \(Int(size.width))-point width")
+                    for id in ["project-search", "project-export", "project-actions"] {
+                        let action = try find(hosting, id: id)
+                        try expect(action.frame.width > 0 && visibleContent.insetBy(dx: -1, dy: -1).contains(action.frame),
+                            "\(id) remains inside the \(Int(size.width))×\(Int(size.height)) project workspace")
+                    }
+                    try expect(try find(hosting, id: "project-export").label == "Export project",
+                        "Project export keeps its explicit text at \(Int(size.width))-point width")
+                    try expect(!nodes(hosting).contains {
+                        $0.frame.width > 0 && (["project-export-all", "project-export-selection"].contains($0.identifier ?? "")
+                            || ["Export", "Copy project", "Copy", "Export ZIP"].contains($0.label ?? ""))
+                    }, "Projects avoids duplicate day/week export and standalone copy menus at \(Int(size.width))-point width")
+                    try expect(try find(hosting, id: "project-filter-Files").press(), "Project Files filter is usable below the compact header")
+                    settle()
+                    try expect(try find(hosting, id: "workspace-project-picker").valueText == "4 items",
+                        "Filtering the grid never changes the dropdown's whole-project total")
+                    try expect(try find(hosting, id: "project-filter-All").press(), "Restore all project items")
+                    settle()
+                } else {
+                    for modeButton in WorkspaceMode.allCases {
+                        let frame = try find(hosting, id: "workspace-mode-\(modeButton.rawValue)").frame
+                        try expect(frame.minX >= window.frame.minX - 1 && frame.maxX <= window.frame.maxX + 1,
+                            "Workspace mode fits \(Int(size.width))-point width")
+                    }
+                }
+                if mode == .clipboard || mode == .shelf {
                     for filter in CaptureFilter.allCases {
                         let frame = try find(hosting, id: "capture-filter-\(filter.rawValue)").frame
                         try expect(frame.width >= 28 && frame.height >= 28 && visibleContent.contains(frame),
                             "\(filter.title) filter remains visible and usable at \(Int(size.width))×\(Int(size.height))")
                     }
-                } else {
+                    if mode == .shelf {
+                        let export = try find(hosting, id: "workspace-export-shelf")
+                        try expect(export.label == "Export shelf as ZIP" && export.role == "AXButton",
+                            "Shelf export states its ZIP scope through one direct button at \(Int(size.width))-point width")
+                        try expect(export.frame.width > 0 && export.frame.height > 0
+                            && visibleContent.insetBy(dx: -1, dy: -1).contains(export.frame),
+                            "The labeled Shelf export stays wholly within the \(Int(size.width))×\(Int(size.height)) workspace: \(export.frame) in \(visibleContent)")
+                    }
+                } else if mode == .scratchpad {
                     for title in ["Save note", "Make task"] {
                         let action = nodes(hosting).first { $0.label == title && $0.frame.width > 0 }
                         try expect(action.map { visibleContent.contains($0.frame) } == true,
@@ -438,6 +651,20 @@ import SwiftUI
         theme.setDarkMode(false)
         for size in [NSSize(width: 380, height: 430), NSSize(width: 760, height: 680)] {
             window.setContentSize(size); state.openLibrary(); settle()
+            state.workspace.mode = .collection; settle()
+            let projectContent = window.convertToScreen(hosting.convert(hosting.bounds, to: nil))
+            let collectionPicker = try find(hosting, id: "workspace-project-picker")
+            try expect(collectionPicker.valueText == "1 item", "A notes-only project has the singular item count")
+            try expect(collectionPicker.label?.contains(longProject) == true
+                && projectContent.insetBy(dx: -1, dy: -1).contains(collectionPicker.interactionFrame),
+                "Long project name and count fit together at \(Int(size.width))-point width")
+            try saveImage(hosting, to: evidence.appendingPathComponent("workspace-long-project-collection-\(Int(size.width))x\(Int(size.height))-light.png"))
+            let incoming = try store.capture(text: "Fictional incoming project capture", projectName: longProject)[0]
+            settle()
+            try expect(try find(hosting, id: "workspace-project-picker").valueText == "2 items", "Incoming captures refresh the dropdown count immediately")
+            try store.setOrganization(incoming, pinned: false, projectName: "Other count fixture")
+            settle()
+            try expect(try find(hosting, id: "workspace-project-picker").valueText == "1 item", "Moving a capture refreshes the project count")
             state.workspace.mode = .scratchpad; settle()
             let visible = window.convertToScreen(hosting.convert(hosting.bounds, to: nil))
             let projectPicker = try find(hosting, id: "workspace-project-picker")
@@ -491,7 +718,7 @@ import SwiftUI
         }
         state.libraryProject = "Scroll client A"; state.workspace.selectedCaptureID = scrollA[1].id
         state.libraryProject = "Scroll client B"; state.workspace.selectedCaptureID = scrollB[14].id
-        state.workspace.mode = .collection; state.openLibrary(); await settleNavigation()
+        state.workspace.mode = .clipboard; state.openLibrary(); await settleNavigation()
         state.libraryProject = "Scroll client A"; await settleNavigation()
         try expect(try selectedCardIsVisible(scrollA[1].id, in: hosting, window: window),
             "Changing project in place brings its remembered deep card into view")
@@ -501,6 +728,7 @@ import SwiftUI
         let scrollTask = try store.createTask(text: "A task excluded from Clipboard")
         try store.setOrganization(scrollTask, pinned: false, projectName: "Scroll client B")
         state.workspace.selectedCaptureID = scrollTask.id
+        state.workspace.mode = .collection; await settleNavigation()
         state.workspace.mode = .clipboard; await settleNavigation()
         let list = try listScrollView(in: hosting)
         guard let document = list.documentView else { throw NSError(domain: "WorkspaceWindowTests", code: 6) }

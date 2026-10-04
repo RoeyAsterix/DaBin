@@ -2,6 +2,7 @@ import SwiftUI
 
 @MainActor
 struct NewTaskScreen: View {
+    @Environment(\.workspaceZoom) private var zoom
     @ObservedObject var state: AppState
     @ObservedObject var draft: NewTaskDraft
     @FocusState private var textFocused: Bool
@@ -15,8 +16,9 @@ struct NewTaskScreen: View {
                     VStack(alignment: .leading, spacing: 7) {
                         Label("What needs doing?", systemImage: "checkmark.square").font(.system(size: 14, weight: .semibold))
                         TextEditor(text: $draft.text)
-                            .font(.system(size: 20, weight: .medium, design: .rounded)).scrollContentBackground(.hidden)
-                            .padding(8).frame(height: 116).background(Palette.surface)
+                            .background(NavigationEditorRegion(target: .newTask))
+                            .font(.system(size: zoom.fontSize(20), weight: .medium, design: .rounded)).scrollContentBackground(.hidden)
+                            .padding(zoom.value(8)).frame(height: zoom.value(116)).background(Palette.surface)
                             .clipShape(RoundedRectangle(cornerRadius: 11))
                             .overlay(RoundedRectangle(cornerRadius: 11).stroke(Palette.line))
                             .focused($textFocused).accessibilityLabel("Task text")

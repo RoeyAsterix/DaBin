@@ -1,0 +1,13 @@
+CoreData: error: addPersistentStoreWithType:configuration:URL:options:error: returned error NSCocoaErrorDomain (259)
+CoreData: error: userInfo:
+CoreData: error: 	NSFilePath : /var/folders/qy/zfgc4dgx02x2k_c04330ghy00000gn/T/DaBinDomainTests-85CED644-4AAC-468A-A789-D0BD2AFC306B/corrupt-store/metadata.store
+CoreData: error: 	NSSQLiteErrorDomain : 26
+CoreData: error: storeType: SQLite
+CoreData: error: configuration: (null)
+CoreData: error: URL: file:///var/folders/qy/zfgc4dgx02x2k_c04330ghy00000gn/T/DaBinDomainTests-85CED644-4AAC-468A-A789-D0BD2AFC306B/corrupt-store/metadata.store
+CoreData: annotation: options:
+CoreData: annotation: 	NSInferMappingModelAutomaticallyOption : 0
+CoreData: annotation: 	NSMigratePersistentStoresAutomaticallyOption : 0
+CoreData: annotation: 	NSAddStoreAsynchronouslyOption : 0
+CoreData: error: <NSPersistentStoreCoordinator: 0x79a868880>: Attempting recovery from error encountered during addPersistentStore: 0x79b66f9f0 Error Domain=NSCocoaErrorDomain Code=259 "The file “metadata.store” couldn’t be opened because it isn’t in the correct format." UserInfo={NSFilePath=/var/folders/qy/zfgc4dgx02x2k_c04330ghy00000gn/T/DaBinDomainTests-85CED644-4AAC-468A-A789-D0BD2AFC306B/corrupt-store/metadata.store, NSSQLiteErrorDomain=26}
+PASS: 218 assertions; 10 search fixtures; managed-copy reopen, immutable dates, import compensation and interruption recovery.

@@ -1,0 +1,10 @@
+Compiling Release test module (121 production sources)…
+PASSED QuickAccessTests: PASS: 28 quick access checks
+PASSED ConnectedWorkflowTests: PASS: 19 connected capture, client collection, clipboard reuse, task planning, restart and backup scenarios
+PASSED ApplicationLifecycleTests: PASS: 62 application lifecycle checks; isolated preferences, events, pointer samples and fake notifications, no focus or personal data.
+PASSED HeaderInteractionTests: PASS: 219 native labeled-header accessibility and interaction checks
+/var/folders/qy/zfgc4dgx02x2k_c04330ghy00000gn/T/dabin-search-qa-znsudzzt/DaBin Search QA.app/Contents/Frameworks/libDaBinTestCore.dylib: replacing existing signature
+/var/folders/qy/zfgc4dgx02x2k_c04330ghy00000gn/T/dabin-search-qa-znsudzzt/DaBin Search QA.app: replacing existing signature
+PASSED SearchWindowTests: PASS: 105 native global Search checks; keyboard verification passed: native focus, Tab retained filter focus with Keyboard Navigation disabled, Escape dismissal and Return activates Done.
+PASSED SearchInputTests: PASS: 65 production Search typing, focus, clear, private direct/Cmd V paste, unrelated-editor and immediate/animated reopen checks
+QA passed: 6/6 requested suites passed. Report: /private/tmp/dabin-full-qa-20261004/native/build/qa/runs/20261003T224402222487Z/report.json

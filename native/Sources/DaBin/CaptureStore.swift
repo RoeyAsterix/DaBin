@@ -117,6 +117,9 @@ import UniformTypeIdentifiers
                                   sourceFilePath: source.filePath, sourceURL: source.url, receipt: receipt,
                                   parentTaskID: parentTask?.id)
             capture.projectName = effectiveProject
+            // Plain text is already its own preview. Commit that state with
+            // the original instead of making the preview service save twice.
+            if kind == .text { capture.previewState = "ready" }
             return capture
         }
         // URL-only multiline pastes commit as one transaction. Mixed prose remains one exact text original.
@@ -124,8 +127,7 @@ import UniformTypeIdentifiers
         try requireAttachmentParent(parentTask)
         try failureInjector?(.beforeMetadataSave)
         try repository.save(newCaptures)
-        captures.append(contentsOf: newCaptures)
-        try refresh()
+        insertCommittedCaptures(newCaptures)
         synchronizeArchive(newCaptures)
         return newCaptures
     }
@@ -155,6 +157,7 @@ import UniformTypeIdentifiers
         guard !trimmed.isEmpty else { throw CaptureStoreError.emptyInput }
         let note = Capture(capturedAt: at, kind: .text, originalText: text, title: String(trimmed.prefix(100)))
         note.projectName = normalizedProjectName(projectName)
+        note.previewState = "ready"
         try failureInjector?(.beforeMetadataSave)
         try persist(note)
         captures.append(note)
@@ -176,6 +179,7 @@ import UniformTypeIdentifiers
         task.reminderRevision = reminderAt == nil ? 0 : 1
         task.notificationState = reminderAt == nil ? "none" : "pending"
         task.projectName = normalizedProjectName(projectName)
+        task.previewState = "ready"
         if let planning { task.setTaskPlanning(normalizedPlanning(planning, for: task)) }
         // The task and desired reminder are committed together before becoming visible.
         try failureInjector?(.beforeMetadataSave)
@@ -385,7 +389,9 @@ import UniformTypeIdentifiers
                                 originalText: capture.originalText ?? capture.title, title: capture.title,
                                 sourceFilePath: capture.sourceFilePath, sourceURL: capture.sourceURL,
                                 receipt: receipt)
+        successor.previewState = "ready"
         successor.comment = capture.comment
+        successor.setCommentEntries(capture.commentThread)
         successor.projectName = capture.projectName
         successor.setTaskPlanning(next)
         let reminder = shifted(capture.reminderAt)
@@ -727,10 +733,9 @@ import UniformTypeIdentifiers
             try failureInjector?(.beforeMetadataSave)
             try persist(capture)
             committed = true
-            captures.append(capture)
+            insertCommittedCaptures([capture])
             try failureInjector?(.afterMetadataSave)
             cleanupCompleted(journal, journalURL: journalURL)
-            try refresh()
             return capture
         } catch {
             // An interruption fixture models abrupt process exit, leaving the journal for next launch.
@@ -741,9 +746,129 @@ import UniformTypeIdentifiers
             }
             // A committed original remains successful even if housekeeping fails afterwards.
             self.error = "The capture was saved. Import cleanup will be retried when DaBin opens."
-            try refresh()
             return inserted!
         }
+    }
+
+    @discardableResult
+    func appendComment(_ capture: Capture, text: String, at date: Date = Date()) throws -> CaptureCommentEntry {
+        try requireCurrent(capture)
+        try validateCommentText(text, at: date)
+        var entries = capture.commentThread
+        guard entries.count < CaptureCommentThread.maximumEntries else {
+            throw CaptureStoreError.invalidOriginal("This capture has reached its comment limit. Edit an existing comment instead.")
+        }
+        let entry = CaptureCommentEntry(createdAt: date, text: text)
+        entries.append(entry)
+        try persistComments(CaptureCommentThread.ordered(entries), for: capture, at: date)
+        return entry
+    }
+
+    @discardableResult
+    func updateComment(_ capture: Capture, id: UUID, text: String, at date: Date = Date()) throws -> CaptureCommentEntry {
+        try requireCurrent(capture)
+        try validateCommentText(text, at: date)
+        var entries = capture.commentThread
+        guard let index = entries.firstIndex(where: { $0.id == id }) else {
+            throw CaptureStoreError.invalidOriginal("This comment is no longer available. Reopen the capture and try again.")
+        }
+        guard entries[index].text != text else { return entries[index] }
+        entries[index].text = text
+        entries[index].editedAt = max(date, entries[index].createdAt ?? date)
+        try persistComments(entries, for: capture, at: date)
+        return entries[index]
+    }
+
+    private func validateCommentText(_ text: String, at date: Date) throws {
+        guard date.timeIntervalSinceReferenceDate.isFinite,
+              !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+              text.count <= CaptureCommentThread.maximumNewCommentCharacters else {
+            throw CaptureStoreError.invalidOriginal("Write a comment of 1–100,000 characters before saving.")
+        }
+    }
+
+    private func persistComments(_ entries: [CaptureCommentEntry], for capture: Capture, at date: Date) throws {
+        let old = (capture.commentEntries, capture.comment, capture.updatedAt)
+        capture.setCommentEntries(CaptureCommentThread.ordered(entries))
+        capture.comment = CaptureCommentThread.text(entries)
+        capture.updatedAt = date
+        do { try failureInjector?(.beforeMetadataSave); try persist(capture); objectWillChange.send() }
+        catch {
+            capture.setCommentEntries(old.0); capture.comment = old.1; capture.updatedAt = old.2
+            throw error
+        }
+    }
+
+    /// Acknowledges only the exact due occurrences shown by a popup. Stale,
+    /// removed, completed or rescheduled occurrences are safely ignored.
+    /// All eligible acknowledgments commit as one metadata transaction.
+    @discardableResult
+    func acknowledgeReminders(_ occurrences: [CaptureReminderOccurrence], at date: Date = Date()) throws -> Int {
+        try acknowledgeAlerts(reminders: occurrences, focus: [], at: date)
+    }
+
+    /// Persists reminder and focus-completion acknowledgments together. A
+    /// failure leaves every occurrence unacknowledged and available to retry.
+    @discardableResult
+    func acknowledgeAlerts(reminders: [CaptureReminderOccurrence], focus: [CaptureFocusOccurrence],
+                           at date: Date = Date()) throws -> Int {
+        guard date.timeIntervalSinceReferenceDate.isFinite else {
+            throw CaptureStoreError.invalidOriginal("The alert acknowledgment time is invalid.")
+        }
+        let requestedReminders = Set(reminders)
+        let requestedFocus = Set(focus)
+        var updates: [(capture: Capture, reminder: CaptureReminderAcknowledgment?, planning: TaskPlanning?, count: Int)] = []
+        for capture in captures where !capture.isCompleted && capture.deletedAt == nil && !pendingRemovalIDs.contains(capture.id) {
+            var reminder: CaptureReminderAcknowledgment?
+            var planning: TaskPlanning?
+            var count = 0
+            if !capture.isReminderAcknowledged, let occurrence = capture.reminderOccurrence,
+               occurrence.revision >= 0, occurrence.dueAt.timeIntervalSinceReferenceDate.isFinite,
+               occurrence.dueAt <= date, requestedReminders.contains(occurrence) {
+                reminder = CaptureReminderAcknowledgment(revision: occurrence.revision,
+                    dueAt: occurrence.dueAt, acknowledgedAt: date)
+                count += 1
+            }
+            if capture.isTask, let occurrence = capture.focusOccurrence, requestedFocus.contains(occurrence),
+               var value = capture.taskPlanning, var session = value.focusSession,
+               session.acknowledgedAt == nil, let completedAt = session.completedAt,
+               completedAt.timeIntervalSinceReferenceDate.isFinite, completedAt <= date,
+               session.remainingSeconds == 0, session.endAt == nil {
+                session.acknowledgedAt = date
+                value.focusSession = session
+                planning = value
+                count += 1
+            }
+            if count > 0 { updates.append((capture, reminder, planning, count)) }
+        }
+        guard !updates.isEmpty else { return 0 }
+        let old = updates.map { ($0.capture, $0.capture.reminderAcknowledgment, $0.capture.taskPlanning, $0.capture.updatedAt) }
+        for update in updates {
+            if let reminder = update.reminder { update.capture.setReminderAcknowledgment(reminder) }
+            if let planning = update.planning { update.capture.setTaskPlanning(planning) }
+            update.capture.updatedAt = date
+        }
+        do {
+            try failureInjector?(.beforeMetadataSave)
+            try repository.save(updates.map(\.capture))
+            objectWillChange.send()
+            synchronizeArchive(updates.map(\.capture))
+            return updates.reduce(0) { $0 + $1.count }
+        } catch {
+            for (capture, acknowledgment, planning, updatedAt) in old {
+                capture.setReminderAcknowledgment(acknowledgment)
+                capture.setTaskPlanning(planning)
+                capture.updatedAt = updatedAt
+            }
+            throw error
+        }
+    }
+
+    /// Convenience for immediate acknowledgment. A displayed popup should keep
+    /// immutable occurrence values instead, so later edits cannot change its target.
+    @discardableResult
+    func acknowledgeReminders(captures records: [Capture], at date: Date = Date()) throws -> Int {
+        try acknowledgeReminders(records.compactMap(\.reminderOccurrence), at: date)
     }
 
     func update(_ capture: Capture, comment: String, reminderAt: Date?, reminderTimeZoneID: String?,
@@ -758,12 +883,28 @@ import UniformTypeIdentifiers
         }
         let old = (capture.comment, capture.reminderAt, capture.reminderTimeZoneID,
                    capture.reminderRevision, capture.notificationState, capture.updatedAt, capture.taskPlanning, capture.title)
+        let oldCommentEntries = capture.commentEntries
         let zone = reminderAt == nil ? nil : reminderTimeZoneID
         if capture.reminderAt != reminderAt || capture.reminderTimeZoneID != zone {
             capture.reminderRevision += 1
             capture.notificationState = capture.isTask && capture.isCompleted ? "completed" : (reminderAt == nil ? "none" : "pending")
         }
-        capture.comment = comment
+        if capture.comment != comment {
+            // Compatibility for the older single-comment editor. New thread
+            // UI uses appendComment/updateComment and never flattens replies.
+            var replacement: [CaptureCommentEntry] = []
+            if !comment.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                let existing = capture.commentThread
+                if existing.count == 1 {
+                    var entry = existing[0]
+                    entry.text = comment
+                    entry.editedAt = max(Date(), entry.createdAt ?? .distantPast)
+                    replacement = [entry]
+                } else { replacement = [CaptureCommentEntry(createdAt: Date(), text: comment)] }
+            }
+            capture.setCommentEntries(replacement)
+            capture.comment = comment
+        }
         if let editedTitle { capture.title = editedTitle }
         capture.reminderAt = reminderAt
         capture.reminderTimeZoneID = zone
@@ -784,6 +925,7 @@ import UniformTypeIdentifiers
             capture.reminderRevision = old.3; capture.notificationState = old.4; capture.updatedAt = old.5
             capture.setTaskPlanning(old.6)
             capture.title = old.7
+            capture.setCommentEntries(oldCommentEntries)
             throw error
         }
     }
@@ -828,6 +970,34 @@ import UniformTypeIdentifiers
             .sorted { ($0.deletedAt ?? .distantPast) > ($1.deletedAt ?? .distantPast) }
     }
 
+    /// Newly committed records are already the canonical live objects. Merge
+    /// them into the ordered feed once, rather than fetching and decoding the
+    /// entire repository after each automatic capture. Full refresh remains the
+    /// explicit load/recovery path; ordinary inserts do not republish the trash.
+    private func insertCommittedCaptures(_ records: [Capture]) {
+        guard !records.isEmpty else { return }
+        func precedes(_ lhs: Capture, _ rhs: Capture) -> Bool {
+            lhs.capturedAt == rhs.capturedAt ? lhs.id.uuidString < rhs.id.uuidString : lhs.capturedAt > rhs.capturedAt
+        }
+        let incoming = records.sorted(by: precedes)
+        var merged: [Capture] = []
+        merged.reserveCapacity(captures.count + incoming.count)
+        var currentIndex = 0
+        var incomingIndex = 0
+        while currentIndex < captures.count, incomingIndex < incoming.count {
+            if precedes(incoming[incomingIndex], captures[currentIndex]) {
+                merged.append(incoming[incomingIndex])
+                incomingIndex += 1
+            } else {
+                merged.append(captures[currentIndex])
+                currentIndex += 1
+            }
+        }
+        merged.append(contentsOf: captures[currentIndex...])
+        merged.append(contentsOf: incoming[incomingIndex...])
+        captures = merged
+    }
+
     var archiveRoot: URL { root.appendingPathComponent("Archive", isDirectory: true) }
 
     var explorerRootURL: URL { root }
@@ -851,6 +1021,21 @@ import UniformTypeIdentifiers
             return url
         }
         return try archive.ensureDirectory("Archive")
+    }
+
+    /// Finder opens the current saved files, independent of receipt sidecars
+    /// and the historical source path from which a file was imported.
+    func localArchiveFolderURL(for capture: Capture? = nil) throws -> URL {
+        guard let capture else { return try archive.rootFolderURL() }
+        try requireCurrent(capture)
+        if capture.attachmentRelativePath != nil {
+            guard let file = managedURL(for: capture) else {
+                throw CaptureStoreError.invalidOriginal("The saved original is unavailable. Its capture details are still kept.")
+            }
+            return file.deletingLastPathComponent()
+        }
+        return try archive.ensureDirectory(ProjectFileArchive.dayRelativePath(
+            project: explorerProject(for: capture), day: capture.captureDay))
     }
 
     func archiveURL(for capture: Capture) -> URL? {

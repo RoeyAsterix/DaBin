@@ -2,11 +2,11 @@
 
 ## User documentation
 
-Current **App Store preparation** has 73 passing Release suites and source privacy/tooling updates, but is not yet submission-ready. It did not replace the installed app described below. [Current readiness and outstanding gates](../native/APP_STORE_READINESS.md), [final tests](qa/app-store-2026-10-02/tests/README.md).
+The installed local candidate is **0.4.31 (86)**, including project workspaces, global Search, capture-detail previews/reminders, navigation history and adaptive zoom. Typography grows gently while image previews retain full zoom. [Latest local build and eight-suite typography verification](qa/zoom-typography-2026-10-04/README.md).
 
-Approved source, guide and QA docs are on GitHub `main`; the corrected public privacy policy exactly matches the source. [Publication verification](qa/app-store-2026-10-02/publication.json). This is not a downloadable release or App Store upload/submission.
+The preceding [full QA cycle](qa/full-qa-navigation-2026-10-04/README.md) records 110 passing native suite executions against reconciled inputs, 90 offline tests, media/Xcode checks, repairs and remaining performance/platform limits. [App Store preparation and outstanding gates](../native/APP_STORE_READINESS.md) remain separate from local installation and Git publication.
 
-The installed local candidate is **0.4.19 (74)**, with shared continuous window corners, a thin vector rim and easier visible-edge/outer-corner resize grips that preserve header controls. It retains two-second messages, preview-led cards, the click-to-dismiss task alarm, recovery controls and configurable tooltips. All 18 selected Release suites pass across two frozen-input reports: 17 valid passing batch suites and the final focused closing suite's 400 checks. Chrome evidence covers 16 native drags and eight light/dark 1×/2× fixtures; earlier CPU recording failures and corrected sampling are documented, not presented as live FPS. [Local installation verification](qa/local-install-0.4.19-2026-10-02/verification.json) records matching installed hashes and live version/preferences/Expand/Restore checks. No binary release of this candidate is published. The permanent downloads below still contain public **0.3.18**, and public installation still requires distribution signing and notarization.
+This source update does not publish a new downloadable binary or submit to the App Store. The download links below follow public GitHub releases; they are not the newly installed local candidate.
 
 - [Latest in-app update package](https://github.com/RoeyAsterix/DaBin/releases/latest/download/DaBin-Latest-Update.zip) — for an existing DaBin installation
 - [Latest unsigned Apple Silicon test package](https://github.com/RoeyAsterix/DaBin/releases/latest/download/DaBin-Latest-AppleSilicon.zip) — not a notarized public installer
@@ -46,6 +46,7 @@ The installed local candidate is **0.4.19 (74)**, with shared continuous window 
 
 ## Product and design
 
+- [Navigation and adaptive zoom handoff](NAVIGATION_AND_ZOOM_HANDOFF.md) — implemented in the local candidate; see [verification and limits](qa/full-qa-navigation-2026-10-04/README.md)
 - [Product plan](../PRODUCT_PLAN.md)
 - [Current design specification](../design/DESIGN_SPEC.md)
 - [Open Design handoff](../OPEN_DESIGN_HANDOFF.md)
@@ -63,8 +64,8 @@ The prototype and handoff folders preserve the design process. The native app an
 - [QA results](../native/QA_RESULTS.md)
 - [Mac App Store readiness](../native/APP_STORE_READINESS.md)
 - [App Store Connect draft](app-store/APP_STORE_CONNECT_DRAFT.md)
-- [Current full Release tests](qa/app-store-2026-10-02/tests/README.md)
-- [Current Store preparation evidence and unresolved gates](qa/app-store-2026-10-02/README.md)
+- [Current full Release tests](qa/full-qa-navigation-2026-10-04/README.md)
+- [Current Store preparation evidence and unresolved gates](qa/app-store-preparation-2026-10-04/README.md)
 - [Historical 24 September Store preparation](qa/app-store-preflight-2026-09-24/README.md)
 - [Persistence QA notes](../native/Tests/PERSISTENCE_QA.md)
 - [Release process](RELEASING.md)

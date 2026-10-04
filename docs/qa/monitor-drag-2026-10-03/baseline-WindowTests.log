@@ -1,0 +1,7 @@
+FAIL: Empty Daily: starting an expanded drag retains its automatic normal dimensions
+FAIL: Dragging an expanded empty Daily preserves its short automatic frame after release
+FAIL: Expand and restore retains the exact short automatic Daily frame
+FAIL: Restoring an automatic board retains content-driven sizing when opening Settings
+FAIL: Back after dragging an expanded automatic Week restores the compact Daily frame at its moved anchor
+FAIL: Back after expanding and restoring an automatic Week retains content-driven compact Daily sizing
+FAIL: 6 of 255 window checks failed across 2 real screen(s). All independent checks were attempted.

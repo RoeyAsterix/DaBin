@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "status": "EMPTY_MEASUREMENT_TEMPLATE",
+  "launchDate": null,
+  "note": "No results have been collected. null means unavailable/not entered, never zero. No in-app analytics is added or assumed.",
+  "proposedCampaignTokens": [
+    "feed_social_launch",
+    "screenshot_search_social",
+    "reddit_macapps_launch",
+    "producthunt_launch",
+    "website_main",
+    "creator_shortname"
+  ],
+  "records": [],
+  "recordTemplate": {
+    "date": null,
+    "channel": "",
+    "audience": "",
+    "asset": "",
+    "campaignToken": "",
+    "appleGeneratedURL": "",
+    "publicationURL": "",
+    "reportingStart": null,
+    "reportingEnd": null,
+    "minutesSpent": null,
+    "platformViews": null,
+    "platformClicks": null,
+    "appStoreProductPageViews": null,
+    "firstTimeDownloads": null,
+    "outreachReplies": null,
+    "coverageURL": "",
+    "voluntaryFeedbackSummary": "",
+    "metricAvailability": "not entered",
+    "attributionNotes": "",
+    "nextDecision": ""
+  }
+}

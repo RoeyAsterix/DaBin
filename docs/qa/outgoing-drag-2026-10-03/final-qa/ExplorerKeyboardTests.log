@@ -1,0 +1,2 @@
+FOCUS after click: Optional(<_TtGC7SwiftUI15CellHostingViewGVS_15ModifiedContentVS_14_ViewList_ViewVS_19CellContentModifier__: 0xb5fc53200>); active true; native selection 0 indexes; selected 02794970-2868-4560-AF57-57C651BD498C
+PASS: 75 native Explorer keyboard checks; 45 Up/Down transitions, recycled rows, project restoration, incoming capture, viewport-guard cancellation, and Return. Available rows: 5.

@@ -94,6 +94,9 @@ struct WorkspaceSnapshot: Codable, Equatable {
     var explorerGrouping: ExplorerGrouping?
     var explorerQuery: String?
     var explorerShowsDailyFiles: Bool?
+    /// Optional for older workspaces. Each complete project order can include
+    /// both capture identities and that project's scratchpad identity.
+    var projectItemOrders: [String: [String]]?
 
     static func projectKey(_ name: String?) -> String { name.map { "project:" + $0 } ?? "inbox:" }
 
@@ -101,6 +104,7 @@ struct WorkspaceSnapshot: Codable, Equatable {
         guard schemaVersion == 1, scratchpads.count <= 5_000,
               (selectedProject?.count ?? 0) <= 180, (sourceApplication?.count ?? 0) <= 250,
               (explorerQuery?.count ?? 0) <= 2_000,
+              ProjectWorkspaceOrdering.isValid(projectItemOrders),
               (projectSelections?.count ?? 0) <= 5_001,
               projectSelections?.keys.allSatisfy({ $0 == "inbox:" || ($0.hasPrefix("project:") && $0.count <= 188) }) != false,
               (projectColors?.count ?? 0) <= 5_000,
@@ -154,6 +158,15 @@ struct WorkspaceSnapshot: Codable, Equatable {
                 currentColors[name] = color
             }
             result.projectColors = currentColors
+        }
+        if let incomingOrders = incoming.projectItemOrders {
+            var orders = result.projectItemOrders ?? [:]
+            for (scope, incomingIDs) in incomingOrders {
+                let currentIDs = orders[scope] ?? []
+                let existing = Set(currentIDs)
+                orders[scope] = currentIDs + incomingIDs.filter { !existing.contains($0) }
+            }
+            result.projectItemOrders = orders
         }
         return try result.validated()
     }

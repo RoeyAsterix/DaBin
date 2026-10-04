@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>destination</key>
+	<string>export</string>
+	<key>generateAppStoreInformation</key>
+	<false/>
+	<key>installerSigningCertificate</key>
+	<string>Mac Installer Distribution</string>
+	<key>manageAppVersionAndBuildNumber</key>
+	<false/>
+	<key>method</key>
+	<string>app-store-connect</string>
+	<key>provisioningProfiles</key>
+	<dict>
+		<key>com.dabin.mac</key>
+		<string>d9f1e483-830d-4ab5-90ac-6980c42b64d0</string>
+	</dict>
+	<key>signingCertificate</key>
+	<string>7A381F9E6466C3E2CA33AD38660334C08FB30232</string>
+	<key>signingStyle</key>
+	<string>manual</string>
+	<key>teamID</key>
+	<string>8QG4967CSU</string>
+	<key>uploadSymbols</key>
+	<false/>
+</dict>
+</plist>

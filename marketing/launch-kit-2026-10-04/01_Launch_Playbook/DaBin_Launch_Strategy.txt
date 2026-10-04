@@ -1,0 +1,56 @@
+DABIN / LAUNCH STRATEGY
+Prepared 4 October 2026. Use after verified App Store publication.
+
+POSITIONING
+A little desktop robot for the useful bits of your day.
+Lead with: Save now. Find it later. Keep it on your Mac.
+Supporting message: DaBin keeps notes, links, images, files and tasks together on your Mac. Drop something onto the robot, keep it with a project, and find it again.
+
+The robot earns attention. A clear save-and-find demonstration earns the download. Local storage and no account reduce setup friction. Show one useful outcome in every post.
+
+PRIMARY AUDIENCE: DESIGNERS AND CREATIVE FREELANCERS
+Problem: project references live in scattered screenshots, tabs, files and notes.
+Example: a fictional 'Studio Refresh' branding project containing an image, a saved design link, a note and a task.
+First useful action: save three fictional references and find one again by searching a word inside a saved screenshot.
+Creative angle: 'Catch the useful bits between ideas.'
+Avoid presenting DaBin as a shared mood-board service or full design tool. It has no cloud sync or team workspace.
+
+SECONDARY AUDIENCES: TEST AFTER THE FIRST WEEK
+Students: collect lecture screenshots, reading files and notes into a project, then search saved supported content. Use a fictional class; do not claim citation management or study outcomes.
+Developers: collect a documentation link, screenshot, named snippet and task into a project. Do not claim code execution, AI answers or integrations that are not shipped.
+Independent professionals: save a useful link or meeting note and keep the next task beside it. Do not imply automatic meeting capture.
+
+THE THREE DEMOS
+1. Feed DaBin (22 seconds). A playful robot sequence opens the clip; then show a real app view saving and finding fictional content. Animated sequences are brand animation, not a recording of actual app behavior. Use 04_Video/DABIN__FEED_DABIN__LANDSCAPE.mp4 for website/press and the portrait version for short-form social. End with a visible download action after the App Store URL is live.
+2. Where did that screenshot go? Show a saved fictional screenshot with the word 'terracotta', a neutral filename, and a search for that word returning it. Claim: find words in saved supported screenshots. Search is local, not a search of every file on the Mac or semantic AI search.
+3. One project, useful bits together. Put a link, image, note and task into the fictional Studio Refresh project; show the project's resources. Organization is optional.
+
+CHANNEL PRIORITY
+1. App Store product page + landing page. A download should lead to a truthful, readable product page with a functioning support/contact route.
+2. One Mac community launch. Start with r/macapps only if its current rules and account eligibility are met. Disclose the developer relationship and AI involvement accurately. Do not repeat an app promotion inside the cooldown window.
+3. Targeted creator/publication outreach. Start with 3-5 highly relevant routes from Creator_and_Publication_Targets.html, then another small batch in week two. Read recent coverage yourself and add one specific, truthful reason for the fit. All supplied messages are unsent drafts.
+4. Short-form demos on your existing social accounts. Publish 2-3 useful clips a week, with a different problem or audience each time. Replies matter more than repeating the announcement.
+5. Product Hunt. Choose a day when the app, support and maker are ready. Use the feed demo, truthful listing and maker comment. Ask for questions and feedback, never upvotes.
+6. Apple featuring nomination. If publication is at least three weeks away, submit the launch plan early. If already published, use a future meaningful update with an actual date and change; do not invent one to fit the form.
+
+LANDING PAGE
+One headline, one 22-second demonstration, three outcomes, compatibility, concise privacy explanation and an App Store button. Keep the phrase 'DaBin for Mac' in page title and description. Use the local page supplied in 05_Landing_Page as a reviewable draft. Replace placeholders before deployment. Do not invent a founder story, testimonials, download counts or Apple endorsement.
+
+APP STORE ASSETS
+The source submission pack has three real 1440 x 900 native screenshots: Inbox, Projects and Focus. Lead with an outcome and readable UI. A search/OCR screenshot is an additional proposed capture, not a claim that an existing image proves search. Compare all screenshots with the published build. The Blender robot video is a social/website brand film; Apple previews require device-captured app footage and separate specification review.
+
+FIRST MONTH
+Week 1: announce, answer questions, establish a baseline, contact first 3-5 targets.
+Week 2: show saved-screenshot text search, contact the next 3-5 targets, follow up once where welcome.
+Week 3: test a student or developer use case, answer the most common question in a clip.
+Week 4: review the month, retain the strongest message, share only actual fixes or observations, and prepare the next useful demonstration.
+The exact day-by-day plan is in 30_Day_Calendar.html and 30_Day_Calendar.json. Day 1 is verified public availability, not this package's creation date.
+
+MEASUREMENT
+Use Apple campaign links when available, native platform metrics and voluntary feedback. Keep per-channel results distinct and record attribution limits. There is no in-app analytics: do not report inferred product activation or retention as measured facts. Use the supplied empty tracker, not invented goals. A reasonable operational target is 10 carefully selected pitches across the month, with up to 10 more only if fit and response justify it. This is an activity target, not a forecast of downloads.
+
+WORKLOAD AND SPEND
+Plan for 30-45 minutes on publishing days, a short daily reply check in launch week, and one 45-minute weekly review. Start with existing accounts and organic distribution. Paid creator partnerships are optional later and require an explicit budget decision; this kit makes no commitments.
+
+USE THE KIT
+Fill [[APP_STORE_URL]], [[WEBSITE_URL]], [[CONTACT_EMAIL]] and other clearly marked owner fields. Confirm the live build matches the claims. Choose one primary audience and one main clip. Publish only after the release is visible and downloadable in the intended territories. No outreach, post, nomination or website has been submitted by this package.

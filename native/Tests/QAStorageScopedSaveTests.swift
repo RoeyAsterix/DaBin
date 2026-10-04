@@ -1,4 +1,5 @@
 import Foundation
+import Combine
 
 @main struct QAStorageScopedSaveTests {
     static var checks = 0
@@ -22,11 +23,61 @@ import Foundation
         let root = files.temporaryDirectory.appendingPathComponent("QAStorageScopedSaveTests-\(UUID().uuidString)")
         try files.createDirectory(at: root, withIntermediateDirectories: true)
         defer { try? files.removeItem(at: root) }
+        try firstCommitTextPreviews(root.appendingPathComponent("first-commit"))
         try await scopedUpdates(root.appendingPathComponent("scoped"))
         try warningRetention(root.appendingPathComponent("warnings"))
         try await reminderRetry(root.appendingPathComponent("retry"))
         try benchmark(root.appendingPathComponent("scale"))
         print("PASS: \(checks) scoped-storage assertions; touched-record saves, no-op previews, transaction rollback, reminder retry, retained archive warnings, and 1,000-record benchmark.")
+    }
+
+    @MainActor static func firstCommitTextPreviews(_ root: URL) throws {
+        let store = try CaptureStore(root: root)
+        let suite = "DaBin.ReadyTextPreview.\(UUID())"
+        let defaults = UserDefaults(suiteName: suite)!
+        defer { defaults.removePersistentDomain(forName: suite) }
+        let previews = PreviewService(store: store, defaults: defaults)
+        defer { previews.shutdown() }
+        let exactText = "  Copied feedback\nمراجعة · レビュー\n"
+        let text = try store.capture(text: exactText, receipt: .automatic(.automaticClipboard))[0]
+        let note = try store.createNote(text: "https://example.invalid/first\nhttps://example.invalid/second")
+        let task = try store.createTask(text: "Review the draft", planning: TaskPlanning(recurrence: .daily))
+        guard let successor = try store.setTaskCompleted(task, completed: true) else {
+            throw NSError(domain: "QAStorageScopedSaveTests", code: 2,
+                          userInfo: [NSLocalizedDescriptionKey: "The recurring task must create its next occurrence"])
+        }
+        let ready = [text, note, task, successor]
+        try expect(ready.allSatisfy { $0.previewState == "ready" && $0.previewError == nil },
+                   "New text, authored notes, tasks and recurring successors need no derivative transition")
+        try expect(text.originalText == exactText && note.kind == .text,
+                   "Ready preview initialization preserves exact copied text and authored-note classification")
+        let stored = try CaptureRepository(root: root).load()
+        try expect(ready.allSatisfy { capture in stored.first { $0.id == capture.id }?.previewState == "ready" },
+                   "Ready text-preview state is durable in the first committed record")
+        let sidecars = try ready.map { try Data(contentsOf: store.archiveURL(for: $0)!.appendingPathComponent("Capture.json")) }
+        var publications = 0
+        let observation = store.objectWillChange.sink { publications += 1 }
+        defer { observation.cancel() }
+        previews.process(ready)
+        try expect(publications == 0 && ready.allSatisfy { !previews.needsPreview(for: $0) },
+                   "Processing a new ready text batch performs no redundant store publication or archive save")
+        try expect(try ready.enumerated().allSatisfy { index, capture in
+            try Data(contentsOf: store.archiveURL(for: capture)!.appendingPathComponent("Capture.json")) == sidecars[index]
+        }, "No-op preview processing leaves the first-commit sidecars untouched")
+        let reopened = try CaptureStore(root: root, repairArchiveOnOpen: false)
+        try expect(reopened.captures.count == 4 && reopened.captures.allSatisfy { $0.previewState == "ready" },
+                   "Ready text previews survive reopening without additional preview work")
+        let link = try store.capture(text: "https://example.invalid/link")[0]
+        try expect(link.kind == .link && link.previewState == "idle", "Link preview consent and processing remain separate")
+        text.previewState = "idle"
+        task.previewError = "A legacy preview failure"
+        try store.save(captures: [text, task])
+        publications = 0
+        previews.process([text, task])
+        try expect(publications > 0 && text.previewState == "ready" && task.previewError == nil,
+                   "Legacy idle text and failed task previews still repair through the existing service")
+        try expect(try self.stored(store, text).previewState == "ready" && self.stored(store, task).previewError == nil,
+                   "Legacy preview repairs remain durable")
     }
 
     @MainActor static func scopedUpdates(_ root: URL) async throws {
@@ -38,6 +89,7 @@ import Foundation
         try externalEdit.write(to: firstSidecar)
         first.title = "An unrelated unsaved title"
         second.previewDescription = "A durable single-record description"
+        second.previewState = "idle" // A legacy record still needs a derivative-state repair.
         try store.save(captures: [second])
         try expect(try stored(store, first).title == "Unrelated original", "Scoped save does not persist an unrelated in-memory mutation")
         try expect(try stored(store, second).previewDescription == second.previewDescription, "Scoped save durably updates the touched record")

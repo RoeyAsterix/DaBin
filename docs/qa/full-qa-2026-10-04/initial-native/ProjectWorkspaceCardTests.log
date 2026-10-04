@@ -1,0 +1,6 @@
+FIXTURE: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/project-workspace-card/78BA5EBE-EB3F-4614-A050-8E8BDF4BEB2E/completed-image-task-light@2x.png
+FIXTURE: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/project-workspace-card/78BA5EBE-EB3F-4614-A050-8E8BDF4BEB2E/project-types-grid-light@2x.png
+FIXTURE: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/project-workspace-card/78BA5EBE-EB3F-4614-A050-8E8BDF4BEB2E/project-types-compact-320-light@2x.png
+FIXTURE: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/project-workspace-card/78BA5EBE-EB3F-4614-A050-8E8BDF4BEB2E/project-types-grid-dark@2x.png
+FIXTURE: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/project-workspace-card/78BA5EBE-EB3F-4614-A050-8E8BDF4BEB2E/project-types-compact-320-dark@2x.png
+PASS: 263 project card checks; Task/Note/Capture semantics, real live task updates, light/dark/grid/320-point compact fixtures, original previews and independent selection; no personal archive, clipboard, network, or external opening.

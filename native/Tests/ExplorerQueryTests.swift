@@ -40,6 +40,9 @@ import Foundation
         try expect(items().map(\.id) == [text.id], "Search spans mixed language content and comments")
         workspace.explorerQuery = "Proposal"
         try expect(items().map(\.id) == [file.id], "Filename search returns the saved file")
+        try expect(ExplorerQuery.items(all, workspace: workspace, project: "Northstar", filter: .all,
+            pinnedOnly: false, now: now, query: "").count == 4 && workspace.explorerQuery == "Proposal",
+            "The unified-search browser ignores a legacy hidden query while retaining its optional project scope")
         workspace.explorerQuery = "feedback deadline"
         try expect(items().map(\.id) == [text.id], "Search words can span cached original content and editable metadata")
         text.comment = "A revised milestone"

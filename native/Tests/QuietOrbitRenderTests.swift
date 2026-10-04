@@ -129,14 +129,106 @@ struct QuietOrbitRenderTests {
         return files
     }
 
+    @MainActor private static func verifyTransitionArtworkGeometry() throws {
+        func near(_ a: CGFloat, _ b: CGFloat) -> Bool { abs(a - b) < 0.000_001 }
+        let corner = RobotCharacterView.transitionArtworkFrame(
+            in: CGRect(x: 0, y: 0, width: 72, height: 88).insetBy(dx: 4, dy: 4))
+        try expect(near(corner.minX, 9.96) && near(corner.minY, 17.65)
+                   && near(corner.width, 56.7) && near(corner.height, 45.75),
+                   "Corner transition starts from visible artwork, including canvas centering and flipped y")
+        let renderer = CGRect(x: -300, y: 200, width: 128, height: 200)
+        let normal = RobotCharacterView.transitionArtworkFrame(in: renderer)
+        let mirrored = RobotCharacterView.transitionArtworkFrame(in: renderer, mirrored: true)
+        try expect(near(normal.minX, -288.08) && near(normal.minY, 247.3)
+                   && near(normal.width, 113.4) && near(normal.height, 91.5),
+                   "Transition mapping scales uniformly, centers taller canvases, and preserves negative display origins")
+        try expect(near(mirrored.minX, 2 * renderer.midX - normal.maxX)
+                   && near(mirrored.minY, normal.minY) && mirrored.size == normal.size,
+                   "Left perches mirror only the asymmetric artwork's horizontal footprint")
+        let scene = QuietOrbitLayout(cameraIsland: CGRect(x: 94, y: 64, width: 132, height: 32),
+                                     displayFrame: CGRect(x: 0, y: 0, width: 320, height: 96))!
+        for perch in QuietOrbitPerch.allCases {
+            let global = RobotCharacterView.transitionArtworkFrame(in: scene.robotFrame(for: perch),
+                mirrored: perch.isMirrored)
+            let local = RobotCharacterView.transitionArtworkFrame(in: scene.robotFrame(for: perch, local: true),
+                mirrored: perch.isMirrored)
+            try expect(near(global.minX, local.minX + scene.panelFrame.minX)
+                       && near(global.minY, local.minY + scene.panelFrame.minY)
+                       && global.size == local.size,
+                       "\(perch.rawValue) live and hidden-fallback transition endpoints share exact renderer geometry")
+        }
+        try expect(RobotCharacterView.transitionArtworkFrame(in: .zero) == .zero,
+                   "An empty renderer has no visible transition footprint")
+    }
+
+    @MainActor private static func verifyMovingTransitionSource() async throws {
+        func near(_ a: CGFloat, _ b: CGFloat) -> Bool { abs(a - b) < 0.05 }
+        func sameRect(_ a: CGRect, _ b: CGRect) -> Bool {
+            near(a.minX, b.minX) && near(a.minY, b.minY)
+                && near(a.width, b.width) && near(a.height, b.height)
+        }
+        let scene = QuietOrbitLayout(cameraIsland: CGRect(x: 94, y: 64, width: 132, height: 32),
+                                     displayFrame: CGRect(x: 0, y: 0, width: 320, height: 96))!
+        for perch in [QuietOrbitPerch.bottom, .left] {
+            let robot = RobotView(frame: CGRect(origin: .zero, size: scene.panelFrame.size), reduceMotion: { true })
+            robot.configureOrbit(scene, perch: perch)
+            _ = host(robot)
+            robot.layoutSubtreeIfNeeded()
+            guard let renderer = robot.subviews.compactMap({ $0 as? RobotCharacterView }).first,
+                  let layer = renderer.layer else {
+                throw NSError(domain: "DaBinQuietOrbitRenderTests", code: 5,
+                              userInfo: [NSLocalizedDescriptionKey: "The transition source renderer is missing"])
+            }
+            let modelFrame = renderer.frame
+            try expect(sameRect(layer.frame, modelFrame),
+                       "\(perch.rawValue) backing-layer frame uses the renderer's parent coordinates")
+            let modelBody = RobotCharacterView.transitionArtworkFrame(in: modelFrame, mirrored: perch.isMirrored)
+            let position = layer.position
+            let travel = CABasicAnimation(keyPath: "position")
+            travel.fromValue = NSValue(point: position)
+            travel.toValue = NSValue(point: CGPoint(x: position.x + 80, y: position.y + 40))
+            travel.duration = 1
+            travel.timingFunction = CAMediaTimingFunction(name: .linear)
+            travel.speed = 0
+            travel.timeOffset = 0.5
+            travel.fillMode = .both
+            travel.isRemovedOnCompletion = false
+            layer.add(travel, forKey: "qa.frozenOrbitTravel")
+            CATransaction.flush()
+            // The explicit frozen midpoint, not elapsed wall time, determines
+            // the geometry. Yield once for the native presentation tree commit.
+            try await Task.sleep(for: .milliseconds(40))
+            guard let presentedFrame = layer.presentation()?.frame else {
+                throw NSError(domain: "DaBinQuietOrbitRenderTests", code: 6,
+                              userInfo: [NSLocalizedDescriptionKey: "The active transition source has no presentation frame"])
+            }
+            try expect(near(presentedFrame.minX, modelFrame.minX + 40)
+                       && near(presentedFrame.minY, modelFrame.minY + 20),
+                       "\(perch.rawValue) source fixture has a fixed in-flight position distinct from its model frame")
+            let expectedBody = RobotCharacterView.transitionArtworkFrame(in: presentedFrame, mirrored: perch.isMirrored)
+            try expect(sameRect(robot.transitionBodyBounds, expectedBody)
+                       && near(robot.transitionBodyBounds.minX, modelBody.minX + 40)
+                       && near(robot.transitionBodyBounds.minY, modelBody.minY + 20),
+                       "\(perch.rawValue) opening hands off from the currently drawn robot during orbit travel")
+            layer.removeAnimation(forKey: "qa.frozenOrbitTravel")
+            CATransaction.flush()
+            try await Task.sleep(for: .milliseconds(40))
+            try expect(sameRect(robot.transitionBodyBounds, modelBody),
+                       "\(perch.rawValue) settled transition source returns to its ordinary artwork bounds")
+            robot.stopFeedback()
+        }
+    }
+
     @MainActor static func main() async throws {
         _ = NSApplication.shared
         NSApp.setActivationPolicy(.prohibited)
+        try verifyTransitionArtworkGeometry()
         defer {
             for window in windows {
                 window.orderOut(nil); window.contentView = nil; window.close()
             }
         }
+        try await verifyMovingTransitionSource()
         let output = CommandLine.arguments.count > 1
             ? URL(fileURLWithPath: CommandLine.arguments[1], isDirectory: true)
             : URL(fileURLWithPath: FileManager.default.currentDirectoryPath, isDirectory: true)

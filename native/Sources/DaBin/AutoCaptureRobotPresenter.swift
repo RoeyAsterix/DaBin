@@ -177,21 +177,23 @@ private final class AutoCaptureProjectSignView: NSView {
         wantsLayer = true
         layer?.backgroundColor = NSColor(calibratedWhite: 0.08, alpha: 0.94).cgColor
         layer?.cornerRadius = 7
-        layer?.borderWidth = 1.5
+        layer?.borderWidth = 1
         layer?.shadowColor = NSColor.black.cgColor
         layer?.shadowOpacity = 0.28
         layer?.shadowRadius = 3
         layer?.shadowOffset = CGSize(width: 0, height: -1)
 
-        folder.image = NSImage(systemSymbolName: "folder.fill", accessibilityDescription: nil)
-        folder.symbolConfiguration = NSImage.SymbolConfiguration(pointSize: 10, weight: .semibold)
+        folder.image = NSImage(systemSymbolName: "circle.fill", accessibilityDescription: nil)
+        folder.symbolConfiguration = NSImage.SymbolConfiguration(pointSize: 4, weight: .semibold)
         folder.imageScaling = .scaleProportionallyDown
         addSubview(folder)
 
-        label.font = .systemFont(ofSize: 10, weight: .semibold)
+        label.font = RobotProjectSignView.projectFont
         label.textColor = .white
         label.lineBreakMode = .byTruncatingTail
         label.maximumNumberOfLines = 1
+        label.cell?.wraps = false
+        label.cell?.isScrollable = false
         addSubview(label)
 
         isHidden = true
@@ -202,15 +204,14 @@ private final class AutoCaptureProjectSignView: NSView {
 
     override func layout() {
         super.layout()
-        folder.frame = CGRect(x: 7, y: floor((bounds.height - 12) / 2), width: 12, height: 12)
-        label.frame = CGRect(x: 23, y: 3, width: max(0, bounds.width - 29), height: bounds.height - 6)
+        folder.frame = CGRect(x: 6, y: (bounds.height - 4) / 2, width: 4, height: 4)
+        label.frame = CGRect(x: 14, y: (bounds.height - 17) / 2,
+                             width: max(0, bounds.width - 20), height: 17)
     }
 
     func preferredWidth(maximum: CGFloat) -> CGFloat {
-        let measured = ceil((label.stringValue as NSString).size(
-            withAttributes: [.font: label.font!]
-        ).width) + 34
-        return min(max(0, maximum), max(62, measured))
+        let measured = ceil(label.cell?.cellSize.width ?? label.intrinsicContentSize.width) + 20
+        return min(max(0, maximum), measured)
     }
 
     func show(projectName: String, color: NSColor?, waveRepetitions: Int,
@@ -275,6 +276,9 @@ private final class AutoCaptureRobotContentView: NSView {
     private let character: RobotCharacterView
     private let receiptBadge = NSTextField(labelWithString: "✓")
     private let projectSign = AutoCaptureProjectSignView()
+    var projectSignEnabled = true {
+        didSet { if !projectSignEnabled { hideProjectSign() } }
+    }
     private var islandWidth: CGFloat?
     private var orbitLayout: QuietOrbitLayout?
     private var orbitPerch: QuietOrbitPerch = .bottom
@@ -368,7 +372,7 @@ private final class AutoCaptureRobotContentView: NSView {
 
     func updateProjectSign(projectName: String?, color: NSColor?,
                            waveRepetitions: Int, reduceMotion: Bool) {
-        guard let projectName else {
+        guard projectSignEnabled, let projectName else {
             projectSign.hideAndReset()
             return
         }
@@ -394,7 +398,7 @@ private final class AutoCaptureRobotContentView: NSView {
     private func layoutProjectSign() {
         guard !projectSign.isHidden else { return }
         let width = projectSign.preferredWidth(maximum: min(112, max(0, bounds.width - 8)))
-        let height: CGFloat = 23
+        let height = RobotProjectSignView.preferredSize.height
         var frame: CGRect
         if let orbitLayout {
             let artwork = orbitLayout.visibleRobotFrame(for: orbitPerch, local: true)
@@ -700,6 +704,12 @@ final class AutoCaptureRobotPresenter {
         isSuspendedForScreenCapture = active
         if active && !wasSuspended { preserveAndSuspendPresentation() }
         if !active { _ = startPendingPerformanceIfPossible() }
+    }
+
+    /// A save receipt may finish after monitoring pauses. Hide its destination
+    /// immediately while preserving every already-saved capture and burst count.
+    func setProjectRecordingActive(_ active: Bool) {
+        content.projectSignEnabled = active
     }
 
     /// The full board owns the one robot while it opens and remains visible.

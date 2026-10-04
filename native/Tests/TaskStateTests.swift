@@ -164,7 +164,9 @@ struct TaskStateTests {
         try Data("A fictional local file for the task".utf8).write(to: file)
         pasteboard.clearContents()
         try expect(pasteboard.writeObjects([file as NSURL]), "Isolated file fixture writes a private pasteboard")
-        state.openCapture(task.id)
+        state.openCapture(task.id, focus: "comment")
+        let taskViewport = NavigationViewportAnchor(itemID: "capture:" + task.id.uuidString, offset: -37)
+        state.workspaceViewport = taskViewport
         state.pasteAttachments(to: task, from: pasteboard)
         try await waitUntil { !state.isImporting }
         try expect(store.attachments(for: task).count == 2 && state.route == .detail
@@ -176,8 +178,9 @@ struct TaskStateTests {
                    "Selecting a task attachment opens that attachment's actual details")
         state.back()
         try expect(state.route == .detail && state.selectedCapture === task && state.selectedDraft === taskDraft
-                   && state.detailFocus == "task" && taskDraft.comment == "Keep this unfinished task note",
-                   "Back from an attachment restores its parent workspace and unfinished task draft")
+                   && state.detailFocus == "comment" && state.workspaceViewport == taskViewport
+                   && taskDraft.comment == "Keep this unfinished task note" && taskDraft.hasChanges,
+                   "Back from an attachment restores its parent's actual focus, viewport and unfinished task draft")
         let failedCount = store.captures.count
         store.failureInjector = { if $0 == .beforeMetadataSave { throw CaptureStoreError.importVerificationFailed } }
         try setPasteboardText("This attachment must fail")

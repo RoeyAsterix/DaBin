@@ -40,7 +40,10 @@ struct RemindersScreen: View {
                             .buddyHelp("Remind me tomorrow")
                         Spacer(minLength: 0)
                     }.buttonStyle(.plain).font(.system(size: 12)).foregroundStyle(accent).padding(.bottom, 10)
-                }.padding(.horizontal, 11).background(Palette.surface, in: RoundedRectangle(cornerRadius: 12))
+                }.padding(.horizontal, 11)
+                    .projectCardBackground(workspace: state.workspace,
+                                           projectName: ExplorerQuery.project(of: capture, in: state.store.captures),
+                                           cornerRadius: 12)
                     .overlay(RoundedRectangle(cornerRadius: 12).strokeBorder(Palette.line))
             }
         }

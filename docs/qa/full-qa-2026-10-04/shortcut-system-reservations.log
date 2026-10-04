@@ -1,0 +1,7 @@
+Read-only CopySymbolicHotKeys evidence; no hotkey registration, event posting, input-source selection or preference write.
+observedAtUTC=2026-10-03T22:24:49Z
+symbolicHotKeysStatus=0
+controlOption+Space: exactSystemMatches=1, enabled=1
+controlOption+V: exactSystemMatches=0, enabled=0
+controlOptionShift+Space: exactSystemMatches=0, enabled=0
+controlOptionShift+V: exactSystemMatches=0, enabled=0

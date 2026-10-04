@@ -18,7 +18,7 @@ import SwiftUI
     func removeDelivered(_ identifiers: [String]) { }
 }
 
-/// Records actual production presentation layers at native 2x in an isolated
+/// Records actual opening and closing presentation layers at native 2x in an isolated
 /// offscreen window. No screenshot of the desktop, editorial robot motion,
 /// personal archive, global input, general pasteboard, or network is involved.
 @main @MainActor
@@ -30,6 +30,7 @@ private final class RobotCloseVisualTests: NSObject, NSApplicationDelegate {
         let headScale: CGFloat
         let headOpacity: Float
         let rootOpacity: Float
+        let readbackSeconds: Double
         let signature: [UInt8]
     }
     private static var checks = 0
@@ -96,13 +97,15 @@ private final class RobotCloseVisualTests: NSObject, NSApplicationDelegate {
             "schemaVersion": 1, "checksPassed": checks, "fixtures": reports,
             "renderMethod": "Actual production Core Animation presentation layers sampled against real elapsed time in isolated offscreen 2x windows",
             "videoMethod": "Local AVAssetWriter H.264 from live samples at their observed timestamps; no frame repetition, optical flow, or editorial motion",
+            "samplingInterpretation": "Native 2x CPU readback evidence, not compositor FPS. Compact and closing gaps remain below 120ms. Expanded opening may account for measured readback cost plus 25ms scheduling allowance, with an absolute 180ms ceiling; frame/change minimums and direct live timing probes remain required.",
             "privacy": "Fictional production BoardView; isolated store and preferences; no personal archive, desktop screenshots, clipboard, global input or network",
             "closeDurationSeconds": RobotAppFrameView.closeDuration,
+            "openDurationSeconds": RobotAppFrameView.openDuration,
             "reducedDurationSeconds": RobotAppFrameView.reducedDuration
         ]
         try JSONSerialization.data(withJSONObject: report, options: [.prettyPrinted, .sortedKeys])
             .write(to: output.appendingPathComponent("robot-close-visual-report.json"), options: .atomic)
-        print("PASS: \(checks) actual robot close motion, presentation, reversal, cleanup and encoded video checks. \(output.path)")
+        print("PASS: \(checks) actual robot opening/closing motion, presentation, reversal, cleanup and encoded video checks. \(output.path)")
     }
 
     private static func recordClose(size: CGSize, dark: Bool, output: URL) async throws {
@@ -145,7 +148,7 @@ private final class RobotCloseVisualTests: NSObject, NSApplicationDelegate {
             : NSColor(calibratedRed: 0.93, green: 0.92, blue: 0.945, alpha: 1)).cgColor
         frame.frame = CGRect(origin: CGPoint(x: 50, y: 40), size: outer)
         stage.addSubview(frame)
-        let label = NSTextField(labelWithString: "Actual native close · \(fixture) · 2× · fictional content")
+        let label = NSTextField(labelWithString: "Actual native robot · \(fixture) · 2× · fictional content")
         label.font = .systemFont(ofSize: 11, weight: .medium)
         label.textColor = dark ? .lightGray : .darkGray
         label.frame = CGRect(x: 18, y: 13, width: stageSize.width - 36, height: 18)
@@ -183,15 +186,22 @@ private final class RobotCloseVisualTests: NSObject, NSApplicationDelegate {
         guard let head = try named("quietOrbit.headShell", in: frame.layer).superlayer else {
             throw failure("The actual shared head artwork must have a robot parent")
         }
+        let railMasks = try stableRailMasks(frame)
+        let openingEvidence = try await recordOpening(stage: stage, frame: frame, head: head,
+            source: source, contentSize: size, fixture: fixture, railMasks: railMasks, output: output)
+        let recordingContext = try makeRecordingContext(stage)
         let started = CACurrentMediaTime()
-        var samples: [Sample] = [try sample(stage, frame: frame, head: head, started: started, closedAt: nil)]
+        var samples: [Sample] = [try sample(stage, frame: frame, head: head, started: started,
+                                          closedAt: nil, context: recordingContext)]
         try await wait(0.16)
-        samples.append(try sample(stage, frame: frame, head: head, started: started, closedAt: nil))
+        samples.append(try sample(stage, frame: frame, head: head, started: started,
+                                  closedAt: nil, context: recordingContext))
         var completions = 0
         let closedAt = CACurrentMediaTime()
         frame.animateClose(to: source, island: true, reduceMotion: false) { completions += 1 }
         CATransaction.flush()
-        try checkCloseStructure(frame: frame, head: head, fixture: fixture)
+        try checkTransitionStructure(frame: frame, head: head, source: source, opening: false,
+                                     railMasks: railMasks, fixture: fixture)
         let duration = RobotAppFrameView.closeDuration + 0.18
         let sampleInterval = 1.0 / 30.0
         var nextSampleAt = closedAt
@@ -207,7 +217,9 @@ private final class RobotCloseVisualTests: NSObject, NSApplicationDelegate {
             }
             let observedAt = CACurrentMediaTime()
             samples.append(try sample(stage, frame: frame, head: head,
-                                      started: started, closedAt: closedAt))
+                                      started: started, closedAt: closedAt, context: recordingContext))
+            try expect(hosting.frame.size == size,
+                       "\(fixture) closing keeps the full-size hosted content mounted throughout")
             // Schedule from before the live render, not the next grid point
             // after it. Slow 2x renders take only the brief run-loop pause, not
             // an extra frame-grid idle interval; fast renders stay at 30Hz.
@@ -217,7 +229,8 @@ private final class RobotCloseVisualTests: NSObject, NSApplicationDelegate {
         try expect(completions == 1 && frame.isHidden && !frame.isTransitioning && !frame.isFrameVisible,
                    "\(fixture) completes its real close once at a hidden stable endpoint")
         try expect(hosting.isHidden && hosting.frame.size == size && !frame.usesSolidTransitionTorso,
-                   "\(fixture) keeps mounted content geometry and clears temporary solid torso masks")
+                   "\(fixture) keeps mounted content geometry and transparent torso rails")
+        try checkRailMasks(frame, expected: railMasks, fixture: "\(fixture) after close")
         try expect(layers(frame.layer).allSatisfy { layer in
             !(layer.animationKeys() ?? []).contains(where: { $0.hasPrefix("robotFrame.") })
         }, "\(fixture) leaves no close animations behind")
@@ -245,55 +258,160 @@ private final class RobotCloseVisualTests: NSObject, NSApplicationDelegate {
             "pixelWidth": Int(stageSize.width * 2), "pixelHeight": Int(stageSize.height * 2),
             "video": video.lastPathComponent, "frameCount": samples.count,
             "changedCloseFrames": changed, "maximumCloseSampleGapSeconds": maxGap,
+            "opening": openingEvidence,
             "timedOpacityProbe": timedOpacity,
             "frames": samples.enumerated().map { index, value in
                 ["index": index, "actualSeconds": value.time, "actualCloseSeconds": value.closeTime,
                  "headScale": value.headScale, "headOpacity": value.headOpacity,
-                 "rootOpacity": value.rootOpacity] as [String: Any]
+                 "rootOpacity": value.rootOpacity, "cpuReadbackSeconds": value.readbackSeconds] as [String: Any]
             }
         ])
         print("RENDERED \(fixture): \(samples.count) actual presentation frames. \(video.path)")
     }
 
-    private static func sample(_ stage: NSView, frame: RobotAppFrameView, head: CALayer,
-                               started: Double, closedAt: Double?) throws -> Sample {
+    private static func recordOpening(stage: NSView, frame: RobotAppFrameView, head: CALayer,
+                                       source: CGRect, contentSize: CGSize, fixture: String,
+                                       railMasks: [String: CGPath], output: URL) async throws -> [String: Any] {
+        let recordingContext = try makeRecordingContext(stage)
+        // Prepare the full-size CPU readback before the measured animation.
+        // The app was already laid out and visible; this primes glyph/vector
+        // caches without altering a layer or sampling a fabricated pose.
+        _ = try sample(stage, frame: frame, head: head, started: CACurrentMediaTime(),
+                       closedAt: nil, context: recordingContext)
+        frame.cancelTransition(open: false)
+        CATransaction.flush()
+        try await wait(0.05)
+        let started = CACurrentMediaTime()
+        var samples = [try sample(stage, frame: frame, head: head, started: started,
+                                  closedAt: nil, context: recordingContext)]
+        var completions = 0
+        let openedAt = CACurrentMediaTime()
+        frame.animateOpen(from: source, island: true, reduceMotion: false) { completions += 1 }
+        CATransaction.flush()
+        try checkTransitionStructure(frame: frame, head: head, source: source, opening: true,
+                                     railMasks: railMasks, fixture: fixture)
+        let duration = RobotAppFrameView.openDuration
+        let interval = 1.0 / 30.0
+        var nextSampleAt = openedAt
+        while CACurrentMediaTime() - openedAt < duration + 0.18 {
+            let delay = nextSampleAt - CACurrentMediaTime()
+            if delay > 0 { try await wait(delay) }
+            else { try await Task.sleep(for: .milliseconds(1)) }
+            let observedAt = CACurrentMediaTime()
+            // The shared sampler's phase-relative field also records opening;
+            // metadata below labels this explicitly as actual opening time.
+            samples.append(try sample(stage, frame: frame, head: head,
+                                      started: started, closedAt: openedAt, context: recordingContext))
+            try expect(frame.contentView.frame.size == contentSize,
+                       "\(fixture) opening keeps the full-size hosted content mounted throughout")
+            nextSampleAt = max(nextSampleAt + interval, observedAt + interval)
+        }
+        try expect(completions == 1 && !frame.isHidden && !frame.contentView.isHidden
+            && frame.isFrameVisible && !frame.isTransitioning,
+                   "\(fixture) completes its real opening once at an interactive stable endpoint")
+        try checkRailMasks(frame, expected: railMasks, fixture: "\(fixture) after open")
+        let moving = samples.filter { $0.closeTime >= 0 && $0.closeTime < duration }
+        let changed = zip(moving, moving.dropFirst())
+            .filter { changedSamples($0.signature, $1.signature) > 8 }.count
+        let maxGap = zip(moving, moving.dropFirst()).map { $1.time - $0.time }.max() ?? .infinity
+        let maximumReadback = moving.map(\.readbackSeconds).max() ?? .infinity
+        let expanded = contentSize.width > 380
+        let schedulingAllowance = 0.025
+        // A full 2640 × 2020 bitmap is read on the same thread as these
+        // samples. Account only for observed CPU readback work between actual
+        // timestamps, never by slowing the animation or fabricating frames.
+        // Even an explained expensive readback may not leave a gap >=180ms.
+        let acceptableGaps = zip(moving, moving.dropFirst()).allSatisfy { previous, next in
+            let gap = next.time - previous.time
+            let accountedLimit = max(0.12, previous.readbackSeconds + schedulingAllowance)
+            return gap < (expanded ? min(0.18, accountedLimit) : 0.12)
+        }
+        try expect(moving.count >= 14 && changed >= 9 && acceptableGaps,
+                   "\(fixture) records dense changing actual opening (\(moving.count) frames, \(changed) changed, max gap \(maxGap)s, max measured CPU readback \(maximumReadback)s)")
+        try expect(moving.contains { $0.headScale * head.bounds.width >= 90 && $0.headOpacity > 0.95 },
+                   "\(fixture) actual opening visibly presents the recognizable enlarged robot before the board unfolds")
+        let video = output.appendingPathComponent("DaBin-Robot-Open-\(fixture)@2x.mp4")
+        try await encode(samples, to: video)
+        try await verifyVideo(video, expectedCount: samples.count, size: stage.bounds.size)
+        for (name, fraction) in [("source", 0.02), ("hero", 0.35), ("unfold", 0.65), ("settled", 1.05)] {
+            guard let chosen = samples.min(by: { abs($0.closeTime - duration * fraction)
+                < abs($1.closeTime - duration * fraction) }) else { continue }
+            try png(chosen.image, to: output.appendingPathComponent("\(fixture)-opening-\(name)@2x.png"))
+        }
+        print("RENDERED opening \(fixture): \(samples.count) actual presentation frames. \(video.path)")
+        return ["video": video.lastPathComponent, "frameCount": samples.count,
+                "changedOpeningFrames": changed, "maximumOpeningSampleGapSeconds": maxGap,
+                "maximumCPUReadbackSeconds": maximumReadback,
+                "sampleGapPolicy": ["baselineMaximumSeconds": 0.12,
+                    "measuredReadbackSchedulingAllowanceSeconds": expanded ? schedulingAllowance : 0,
+                    "absoluteMaximumSeconds": expanded ? 0.18 : 0.12,
+                    "meaning": "CPU recording continuity; not display compositor FPS"] as [String: Any],
+                "completionCount": completions,
+                "frames": samples.enumerated().map { index, value in
+                    ["index": index, "actualSeconds": value.time, "actualOpenSeconds": value.closeTime,
+                     "headScale": value.headScale, "headOpacity": value.headOpacity,
+                     "rootOpacity": value.rootOpacity, "cpuReadbackSeconds": value.readbackSeconds] as [String: Any]
+                }]
+    }
+
+    private static func makeRecordingContext(_ stage: NSView) throws -> CGContext {
         guard let context = CGContext(data: nil, width: Int(stage.bounds.width * 2),
                 height: Int(stage.bounds.height * 2), bitsPerComponent: 8, bytesPerRow: 0,
                 space: CGColorSpaceCreateDeviceRGB(),
                 bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue) else {
-            throw failure("Live native presentation tree or 2x context is unavailable")
+            throw failure("The native 2x recording context is unavailable")
         }
-        let observed = CACurrentMediaTime()
-        guard let presentation = stage.layer?.presentation() else {
-            throw failure("Live native presentation tree or 2x context is unavailable")
-        }
-        // Metadata belongs to this live presentation sample, not the later
-        // animation state reached while the full-size CPU render is running.
-        let headPresentation = head.presentation() ?? head
-        let transform = headPresentation.transform
-        let headOpacity = headPresentation.opacity
-        let rootOpacity = frame.layer?.presentation()?.opacity ?? frame.layer?.opacity ?? 0
-        context.scaleBy(x: 2, y: 2)
-        presentation.render(in: context)
-        guard let image = context.makeImage(), let bytes = context.data else {
-            throw failure("Cannot extract actual close frame pixels")
-        }
-        let data = bytes.assumingMemoryBound(to: UInt8.self)
-        var signature: [UInt8] = []
-        for y in stride(from: 0, to: image.height, by: max(1, image.height / 72)) {
-            for x in stride(from: 0, to: image.width, by: max(1, image.width / 72)) {
-                let offset = y * context.bytesPerRow + x * 4
-                signature += [data[offset], data[offset + 1], data[offset + 2]]
+        return context
+    }
+
+    private static func sample(_ stage: NSView, frame: RobotAppFrameView, head: CALayer,
+                               started: Double, closedAt: Double?, context: CGContext) throws -> Sample {
+        // Core Graphics snapshots retain their own pixel state. Reusing the
+        // drawing context does not alter earlier images; it avoids recreating
+        // the color space and renderer on every sample. Drain temporary native
+        // render objects before the next live readback, retaining only evidence.
+        try autoreleasepool {
+            let observed = CACurrentMediaTime()
+            guard let presentation = stage.layer?.presentation() else {
+                throw failure("Live native presentation tree or 2x context is unavailable")
             }
+            // Metadata belongs to this live presentation sample, not the later
+            // animation state reached while the full-size CPU render is running.
+            let headPresentation = head.presentation() ?? head
+            let transform = headPresentation.transform
+            let headOpacity = headPresentation.opacity
+            let rootOpacity = frame.layer?.presentation()?.opacity ?? frame.layer?.opacity ?? 0
+            let readbackStarted = CACurrentMediaTime()
+            context.saveGState()
+            context.clear(CGRect(x: 0, y: 0, width: context.width, height: context.height))
+            context.scaleBy(x: 2, y: 2)
+            presentation.render(in: context)
+            context.restoreGState()
+            guard let image = context.makeImage(), let bytes = context.data else {
+                throw failure("Cannot extract actual native frame pixels")
+            }
+            let readbackSeconds = CACurrentMediaTime() - readbackStarted
+            let data = bytes.assumingMemoryBound(to: UInt8.self)
+            var signature: [UInt8] = []
+            signature.reserveCapacity(80 * 80 * 3)
+            for y in stride(from: 0, to: image.height, by: max(1, image.height / 72)) {
+                for x in stride(from: 0, to: image.width, by: max(1, image.width / 72)) {
+                    let offset = y * context.bytesPerRow + x * 4
+                    signature.append(data[offset])
+                    signature.append(data[offset + 1])
+                    signature.append(data[offset + 2])
+                }
+            }
+            try expect(abs(hypot(transform.m11, transform.m12) - hypot(transform.m21, transform.m22)) < 0.0001,
+                       "Every captured head preserves the island character's uniform scale")
+            return Sample(image: image, time: observed - started,
+                          closeTime: closedAt.map { observed - $0 } ?? -1,
+                          headScale: hypot(transform.m11, transform.m12),
+                          headOpacity: headOpacity,
+                          rootOpacity: rootOpacity,
+                          readbackSeconds: readbackSeconds,
+                          signature: signature)
         }
-        try expect(abs(hypot(transform.m11, transform.m12) - hypot(transform.m21, transform.m22)) < 0.0001,
-                   "Every captured head preserves the island character's uniform scale")
-        return Sample(image: image, time: observed - started,
-                      closeTime: closedAt.map { observed - $0 } ?? -1,
-                      headScale: hypot(transform.m11, transform.m12),
-                      headOpacity: headOpacity,
-                      rootOpacity: rootOpacity,
-                      signature: signature)
     }
 
     private static func changedSamples(_ first: [UInt8], _ second: [UInt8]) -> Int {
@@ -302,13 +420,13 @@ private final class RobotCloseVisualTests: NSObject, NSApplicationDelegate {
 
     private static func png(_ image: CGImage, to url: URL) throws {
         guard let data = NSBitmapImageRep(cgImage: image).representation(using: .png, properties: [:]) else {
-            throw failure("Cannot encode native close evidence")
+            throw failure("Cannot encode native motion evidence")
         }
         try data.write(to: url, options: .atomic)
     }
 
     private static func encode(_ samples: [Sample], to url: URL) async throws {
-        guard let first = samples.first else { throw failure("No actual close samples") }
+        guard let first = samples.first else { throw failure("No actual motion samples") }
         let width = first.image.width, height = first.image.height
         let writer = try AVAssetWriter(outputURL: url, fileType: .mp4)
         let input = AVAssetWriterInput(mediaType: .video, outputSettings: [
@@ -323,7 +441,7 @@ private final class RobotCloseVisualTests: NSObject, NSApplicationDelegate {
                                          kCVPixelBufferHeightKey as String: height])
         guard writer.canAdd(input) else { throw failure("Local H.264 writer cannot accept video input") }
         writer.add(input)
-        guard writer.startWriting() else { throw writer.error ?? failure("Cannot start local close video") }
+        guard writer.startWriting() else { throw writer.error ?? failure("Cannot start local motion video") }
         writer.startSession(atSourceTime: .zero)
         for value in samples {
             let deadline = CACurrentMediaTime() + 10
@@ -355,7 +473,7 @@ private final class RobotCloseVisualTests: NSObject, NSApplicationDelegate {
         }
         input.markAsFinished()
         await writer.finishWriting()
-        try expect(writer.status == .completed, "Actual close presentation frames encode into a complete local MP4")
+        try expect(writer.status == .completed, "Actual presentation frames encode into a complete local MP4")
     }
 
     private static func verifyVideo(_ url: URL, expectedCount: Int, size: CGSize) async throws {
@@ -363,106 +481,134 @@ private final class RobotCloseVisualTests: NSObject, NSApplicationDelegate {
         let tracks = try await asset.loadTracks(withMediaType: .video)
         let audio = try await asset.loadTracks(withMediaType: .audio)
         try expect(tracks.count == 1 && audio.isEmpty,
-                   "Native close preview has one video track and no unintended audio")
+                   "Native motion preview has one video track and no unintended audio")
         guard let track = tracks.first else { throw failure("No encoded native video track") }
         let natural = try await track.load(.naturalSize)
         try expect(natural == CGSize(width: size.width * 2, height: size.height * 2),
-                   "Encoded native close preview preserves exact 2x pixel dimensions without resampling")
+                   "Encoded native motion preview preserves exact 2x pixel dimensions without resampling")
         let reader = try AVAssetReader(asset: asset)
         let output = AVAssetReaderTrackOutput(track: track,
             outputSettings: [kCVPixelBufferPixelFormatTypeKey as String: kCVPixelFormatType_32BGRA])
         reader.add(output)
-        guard reader.startReading() else { throw reader.error ?? failure("Cannot decode actual close MP4") }
+        guard reader.startReading() else { throw reader.error ?? failure("Cannot decode actual motion MP4") }
         var count = 0
         var last = CMTime.negativeInfinity
         while let sample = output.copyNextSampleBuffer() {
             let time = CMSampleBufferGetPresentationTimeStamp(sample)
-            try expect(CMTimeCompare(time, last) > 0, "Encoded actual close frame timestamps are strictly increasing")
+            try expect(CMTimeCompare(time, last) > 0, "Encoded actual frame timestamps are strictly increasing")
             last = time; count += 1
         }
         try expect(reader.status == .completed && count == expectedCount,
-                   "Every actual native close frame fully decodes (\(count)/\(expectedCount))")
+                   "Every actual native motion frame fully decodes (\(count)/\(expectedCount))")
     }
 
-    private static func checkCloseStructure(frame: RobotAppFrameView, head: CALayer,
-                                            fixture: String) throws {
-        guard let animation = head.animation(forKey: "robotFrame.close") as? CAKeyframeAnimation,
+    private static func stableRailMasks(_ frame: RobotAppFrameView) throws -> [String: CGPath] {
+        var result: [String: CGPath] = [:]
+        for name in ["robotFrame.leftTorso", "robotFrame.rightTorso"] {
+            guard let path = (try named(name, in: frame.layer).mask as? CAShapeLayer)?.path else {
+                throw failure("The actual window rails must have perimeter masks")
+            }
+            result[name] = path
+        }
+        return result
+    }
+
+    private static func checkRailMasks(_ frame: RobotAppFrameView, expected: [String: CGPath],
+                                       fixture: String) throws {
+        try expect(!frame.usesSolidTransitionTorso,
+                   "\(fixture) keeps window rails transparent instead of creating a solid purple plate")
+        for (name, expectedPath) in expected {
+            guard let mask = try named(name, in: frame.layer).mask as? CAShapeLayer,
+                  let path = mask.path else { throw failure("The window rail lost its stable perimeter mask") }
+            try expect(samePath(path, expectedPath) && (mask.animationKeys() ?? []).isEmpty,
+                       "\(fixture) retains the exact perimeter mask throughout character motion: \(name), actual \(path.boundingBoxOfPath), expected \(expectedPath.boundingBoxOfPath), animations \(mask.animationKeys() ?? [])")
+        }
+    }
+
+    private static func checkTransitionStructure(frame: RobotAppFrameView, head: CALayer,
+                                                 source: CGRect, opening: Bool,
+                                                 railMasks: [String: CGPath], fixture: String) throws {
+        let key = opening ? "robotFrame.open" : "robotFrame.close"
+        guard let animation = head.animation(forKey: key) as? CAKeyframeAnimation,
               let values = animation.values as? [NSValue], let times = animation.keyTimes else {
-            throw failure("\(fixture) must close through production keyframed fold, compact robot and source tuck")
+            throw failure("\(fixture) must animate the actual shared head through character poses")
         }
         try expect(values.count >= 4 && values.count == times.count,
-                   "\(fixture) has distinct close poses rather than one linear shrink")
-        let expectedTimes = [0.0, 0.12, 0.60, 0.72, 0.87, 1.0]
-        try expect(times.count == expectedTimes.count && zip(times, expectedTimes).allSatisfy {
-            abs($0.doubleValue - $1) < 0.000001
-        }, "\(fixture) follows preparation, gather, compact, source and tuck choreography")
-        try expect(abs(animation.duration - RobotAppFrameView.closeDuration) < 0.00001,
-                   "\(fixture) close keyframes use the published duration")
+                   "\(fixture) includes recognizable character poses between its endpoints")
+        try expect(times.first?.doubleValue == 0 && times.last?.doubleValue == 1
+            && zip(times, times.dropFirst()).allSatisfy { $0.doubleValue < $1.doubleValue },
+                   "\(fixture) authored poses cover one continuous monotonic timeline")
+        try expect(abs(animation.duration - (opening ? RobotAppFrameView.openDuration : RobotAppFrameView.closeDuration)) < 0.00001,
+                   "\(fixture) normal motion uses the published duration")
         try expect(values.allSatisfy { value in
             let transform = value.caTransform3DValue
             return transform.m11.isFinite && transform.m22.isFinite && transform.m41.isFinite
                 && transform.m42.isFinite && transform.m11 > 0
                 && abs(transform.m11 - transform.m22) < 0.00001
-        }, "\(fixture) preserves canonical head aspect through every authored close pose")
-        guard let opacity = head.animation(forKey: "robotFrame.closeOpacity") as? CAKeyframeAnimation,
-              let opacityValues = opacity.values as? [NSNumber], let opacityTimes = opacity.keyTimes else {
-            throw failure("\(fixture) must keep the recognisable robot visible until its late source tuck")
-        }
-        try expect(opacityValues.count == 4 && opacityTimes.count == 4
-            && zip(opacityTimes, [0.0, 0.12, 0.80, 1.0]).allSatisfy { abs($0.doubleValue - $1) < 0.000001 }
-            && opacityValues[1].doubleValue == 1 && opacityValues[2].doubleValue == 1
-            && opacityValues[3].doubleValue == 0,
-                   "\(fixture) holds full character opacity through 80% of close before fading")
-        guard let content = frame.contentView.superview?.layer else { throw failure("Missing mounted content layer") }
-        try expect(content.animation(forKey: "robotFrame.content.transform.close") != nil
-            && content.animation(forKey: "robotFrame.content.opacity.close") != nil,
-                   "\(fixture) keeps shrinking and fading on distinct keys so neither animation replaces the other")
-        let parts = try [named("robotFrame.leftTorso", in: frame.layer),
-                         named("robotFrame.rightTorso", in: frame.layer), head,
-                         named("robotFrame.leftArm", in: frame.layer),
-                         named("robotFrame.rightArm", in: frame.layer),
-                         named("robotFrame.legs", in: frame.layer)]
-        for part in parts {
-            try expect(part.animation(forKey: "robotFrame.close") is CAKeyframeAnimation
-                && part.animation(forKey: "robotFrame.closeOpacity") is CAKeyframeAnimation,
-                       "Each actual robot body part participates in coherent close motion and late opacity")
-        }
-        guard let leftPose = parts[0].animation(forKey: "robotFrame.close") as? CAKeyframeAnimation,
-              let rightPose = parts[1].animation(forKey: "robotFrame.close") as? CAKeyframeAnimation,
-              let leftValues = leftPose.values as? [NSValue], let rightValues = rightPose.values as? [NSValue],
-              leftValues.count == 6, rightValues.count == 6, values.count == 6 else {
-            throw failure("Both torso halves and the canonical head need all six coherent closing poses")
-        }
-        let headRect = transformedBounds(head, transform: values[3].caTransform3DValue)
-        let torso = transformedBounds(parts[0], transform: leftValues[3].caTransform3DValue)
-            .union(transformedBounds(parts[1], transform: rightValues[3].caTransform3DValue))
-        try expect(abs(headRect.midX - torso.midX) < torso.width * 0.15
-            && headRect.midY > torso.midY && torso.width < headRect.width * 1.8
-            && torso.height < headRect.width * 2.5,
-                   "\(fixture) compact pose reunites head and two body halves into recognisable robot proportions")
-        try expect(values[5].caTransform3DValue.m11 < values[3].caTransform3DValue.m11 * 0.65,
-                   "\(fixture) finishes with a genuinely tiny source tuck, not an abruptly disappearing full robot")
-        try expect(parts[0].mask != nil && parts[1].mask != nil,
-                   "\(fixture) close starts from retained perimeter masks without an immediate solid backing flash")
-        for torso in parts.prefix(2) {
-            guard let fill = torso.mask?.animation(forKey: "robotFrame.shellFill") as? CABasicAnimation else {
-                throw failure("\(fixture) torso perimeter must morph continuously to its compact solid body")
+        }, "\(fixture) preserves canonical head aspect through every authored pose")
+        let widths = values.map { transformedBounds(head, transform: $0.caTransform3DValue).width }
+        try expect((widths.max() ?? 0) >= 90,
+                   "\(fixture) gives the main character a readable enlarged head before settling")
+        let sourceHeadWidth = 42 * min(source.width / 56.7, source.height / 45.75)
+        if opening {
+            try expect(abs((widths.first ?? 0) - sourceHeadWidth) < 0.001,
+                       "\(fixture) begins at the canonical island head size without a shrunken-head handoff")
+        } else {
+            try expect(widths.dropFirst().dropLast().contains { abs($0 - sourceHeadWidth) < 0.001 },
+                       "\(fixture) returns to the original island head size before docking")
+            guard let opacity = head.animation(forKey: "robotFrame.closeOpacity") as? CAKeyframeAnimation,
+                  let opacityValues = opacity.values as? [NSNumber], let opacityTimes = opacity.keyTimes else {
+                throw failure("\(fixture) must hold the recognisable robot until the final docking fade")
             }
-            let from = try animationPath(fill.fromValue), to = try animationPath(fill.toValue)
-            try expect(pathElements(from).map(\.kind) == pathElements(to).map(\.kind)
-                && pathElements(from).count == 20,
-                       "\(fixture) rail and solid torso masks share their complete four-rectangle topology")
-            try expect(abs(fill.duration - 0.29) < 0.00001
-                && fill.beginTime - animation.beginTime > 0.20
-                && fill.beginTime - animation.beginTime < 0.24 && fill.fillMode == .backwards,
-                       "\(fixture) perimeter filling waits for content contraction and retains the old mask during its delay")
-            try expect(!samePath(from, to), "\(fixture) mask actually grows from rails rather than starting filled")
+            try expect(opacityValues.last?.doubleValue == 0 && zip(opacityTimes, opacityValues).contains {
+                $0.doubleValue >= 0.85 && $1.doubleValue == 1
+            }, "\(fixture) keeps the character visible through the source arrival")
         }
+        guard let content = frame.contentView.superview?.layer else { throw failure("Missing mounted content layer") }
+        try expect(content.animation(forKey: opening ? "robotFrame.open" : "robotFrame.content.transform.close") != nil
+            && content.animation(forKey: opening ? "robotFrame.content.open" : "robotFrame.content.opacity.close") != nil,
+                   "\(fixture) keeps shrinking and fading on distinct keys so neither animation replaces the other")
+        let body = try named("quietOrbit.body", in: frame.layer)
+        guard let bodyMotion = body.animation(forKey: key) as? CAKeyframeAnimation,
+              let bodyValues = bodyMotion.values as? [NSValue], bodyValues.count == values.count,
+              let chest = try named("quietOrbit.chest", in: body).mask as? CAShapeLayer,
+              let chestPath = chest.path else { throw failure("A canonical compact body must travel with the shared head") }
+        try expect(abs(chestPath.boundingBoxOfPath.width / head.bounds.width - 0.68) < 0.001
+            && abs(chestPath.boundingBoxOfPath.height / head.bounds.width - 0.30) < 0.001,
+                   "\(fixture) uses the island's small mechanical chest below its much wider head")
+        try expect(zip(values, bodyValues).allSatisfy {
+            let a = $0.caTransform3DValue, b = $1.caTransform3DValue
+            return abs(a.m11 - b.m11) < 0.001 && abs(a.m22 - b.m22) < 0.001
+                && abs(a.m41 - b.m41) < 0.001 && abs(a.m42 - b.m42) < 0.001
+        }, "\(fixture) head and compact body move as one connected character")
+        let globalStart = head.convertTime(animation.beginTime, to: nil)
+        for layer in layers(frame.layer) {
+            for name in layer.animationKeys() ?? [] where name.hasPrefix("robotFrame.") {
+                guard let track = layer.animation(forKey: name) else { continue }
+                try expect(abs(layer.convertTime(track.beginTime, to: nil) - globalStart) < 0.00001
+                    && abs(track.duration - animation.duration) < 0.00001,
+                           "\(fixture) all character, expression, content and rim tracks share one animation clock")
+            }
+        }
+        for name in ["robotFrame.leftArm", "robotFrame.rightArm"] {
+            let arm = try named(name, in: frame.layer)
+            guard let pathTrack = arm.animation(forKey: "robotFrame.arm.path") as? CAKeyframeAnimation,
+                  let paths = pathTrack.values,
+                  let widthTrack = arm.animation(forKey: "robotFrame.arm.width") as? CAKeyframeAnimation,
+                  let armWidths = widthTrack.values as? [NSNumber] else {
+                throw failure("\(fixture) arms must articulate their actual paths and stroke widths")
+            }
+            let topology = try paths.map { pathElements(try animationPath($0)).map(\.kind) }
+            try expect(topology.count == values.count && topology.allSatisfy { $0 == topology.first }
+                && armWidths.count == values.count && armWidths.allSatisfy { $0.doubleValue > 0 && $0.doubleValue.isFinite },
+                       "\(fixture) synchronized arm geometry interpolates without topology swaps or invalid strokes")
+        }
+        try checkRailMasks(frame, expected: railMasks, fixture: "\(fixture) \(opening ? "opening" : "closing") start")
     }
 
     private static func animationPath(_ value: Any?) throws -> CGPath {
         guard let value, CFGetTypeID(value as CFTypeRef) == CGPath.typeID else {
-            throw failure("Production torso animation must carry an actual Core Graphics path")
+            throw failure("Production arm animation must carry an actual Core Graphics path")
         }
         return value as! CGPath
     }
@@ -511,7 +657,7 @@ private final class RobotCloseVisualTests: NSObject, NSApplicationDelegate {
                       height: (points.map(\.y).max() ?? 0) - minY)
     }
 
-    /// Full-stage 2x CPU recording can miss the 78ms late-fade window even
+    /// Full-stage 2x CPU recording can miss the short late-fade window even
     /// while satisfying its density/gap checks. Probe a second real close
     /// directly, without rendering work, changing animation time, interpolating
     /// frames or weakening either recording or temporal assertions.
@@ -535,11 +681,13 @@ private final class RobotCloseVisualTests: NSObject, NSApplicationDelegate {
         let heldOpacity = heldPresentation.opacity
         let heldScale = hypot(heldTransform.m11, heldTransform.m12)
         try expect(heldAt > duration * 0.60 && heldAt < duration * 0.78,
-                   "\(fixture) observes its real compact pose inside the original hold band (\(heldAt)s)")
+                   "\(fixture) observes its real compact pose inside the character hold (\(heldAt)s)")
         try expect(heldScale.isFinite && heldScale > 0
             && abs(heldScale - hypot(heldTransform.m21, heldTransform.m22)) < 0.0001,
                    "\(fixture) timed compact probe preserves the real head's finite uniform scale")
-        try expect(heldOpacity > 0.95,
+        let body = try named("quietOrbit.body", in: frame.layer)
+        try expect(heldOpacity > 0.95 && heldScale * head.bounds.width >= 90
+            && (body.presentation()?.opacity ?? body.opacity) > 0.95,
                    "\(fixture) holds a readable compact robot (\(heldAt)s, opacity \(heldOpacity))")
 
         try await wait(closedAt + duration * 0.94 - CACurrentMediaTime())
@@ -574,19 +722,40 @@ private final class RobotCloseVisualTests: NSObject, NSApplicationDelegate {
         CATransaction.flush()
         try await wait(0.05)
         var staleClosed = 0, reopened = 0
+        let closedAt = CACurrentMediaTime()
         frame.animateClose(to: source, island: true, reduceMotion: false) { staleClosed += 1 }
         CATransaction.flush()
-        try await wait(RobotAppFrameView.closeDuration * 0.91)
-        let before = head.presentation()?.transform ?? head.transform
-        let opacityBefore = head.presentation()?.opacity ?? head.opacity
-        try expect(opacityBefore > 0 && opacityBefore < 0.9,
-                   "\(fixture) reversal fixture actually reaches the late fade, not an earlier opaque pose")
+        let duration = RobotAppFrameView.closeDuration
+        try await wait(closedAt + duration * 0.88 - CACurrentMediaTime())
+        var observedFade: (transform: CATransform3D, opacity: Float)?
+        var elapsed = CACurrentMediaTime() - closedAt
+        var lastOpacity = head.presentation()?.opacity ?? head.opacity
+        while elapsed <= duration + 0.06 {
+            guard frame.isTransitioning else { break }
+            if let presented = head.presentation() {
+                lastOpacity = presented.opacity
+                if lastOpacity > 0 && lastOpacity < 0.9 {
+                    observedFade = (presented.transform, lastOpacity)
+                    break
+                }
+            }
+            try await wait(0.005)
+            elapsed = CACurrentMediaTime() - closedAt
+        }
+        guard let observedFade else {
+            throw failure("\(fixture) missed the actual late fade before completion: elapsed \(elapsed)s, opacity \(lastOpacity), transitioning \(frame.isTransitioning)")
+        }
+        let before = observedFade.transform
+        let opacityBefore = observedFade.opacity
+        try expect(opacityBefore > 0 && opacityBefore < 0.9 && frame.isTransitioning,
+                   "\(fixture) reversal fixture actually observes the late fade (\(elapsed)s, opacity \(opacityBefore))")
         frame.animateOpen(from: source, island: true, reduceMotion: false) { reopened += 1 }
         guard let opening = head.animation(forKey: "robotFrame.open") as? CAKeyframeAnimation,
               let start = (opening.values as? [NSValue])?.first?.caTransform3DValue else {
             throw failure("Late reopening must continue through actual production keyframes")
         }
-        try expect(abs(start.m11 - before.m11) < 0.015 && abs(start.m41 - before.m41) < 2,
+        try expect(abs(start.m11 - before.m11) < 0.015 && abs(start.m41 - before.m41) < 2
+            && abs(start.m42 - before.m42) < 2,
                    "\(fixture) late reopening starts from the visible head transform, not an endpoint jump")
         let opacityAnimations = (head.animationKeys() ?? []).compactMap { head.animation(forKey: $0) }
         let opacityStart = opacityAnimations.compactMap { value -> Double? in
@@ -600,45 +769,90 @@ private final class RobotCloseVisualTests: NSObject, NSApplicationDelegate {
         }.first
         try expect(opacityStart.map { abs($0 - Double(opacityBefore)) < 0.06 } == true,
                    "\(fixture) late reopening preserves visible per-part opacity instead of flashing fully opaque")
-        try await wait(RobotAppFrameView.openDuration + 0.12)
+        try expect(opening.duration < RobotAppFrameView.openDuration,
+                   "\(fixture) reversal resumes promptly instead of replaying the full entrance")
+        try await wait(opening.duration + 0.12)
         try expect(staleClosed == 0 && reopened == 1 && !frame.isHidden
             && frame.isFrameVisible && !frame.isTransitioning,
                    "\(fixture) late close cancellation cannot hide or complete over a reopened app")
         frame.cancelTransition(open: false)
         try expect(!frame.hasActiveEyeMotion && frame.isHidden,
                    "\(fixture) cleanup stops the renderer without leaving interactive content")
-        try await checkMidFillReversal(frame: frame, source: source, fixture: fixture)
+        try await checkMidHeroReversal(frame: frame, source: source, fixture: fixture)
+        try await checkInterruptedEntrance(frame: frame, source: source, fixture: fixture)
     }
 
-    private static func checkMidFillReversal(frame: RobotAppFrameView, source: CGRect,
+    private static func checkMidHeroReversal(frame: RobotAppFrameView, source: CGRect,
                                              fixture: String) async throws {
         frame.setVisible(true)
         CATransaction.flush()
         try await wait(0.04)
         var stale = 0
+        let railMasks = try stableRailMasks(frame)
         frame.animateClose(to: source, island: true, reduceMotion: false) { stale += 1 }
         CATransaction.flush()
-        try await wait(0.37)
-        let torso = try named("robotFrame.leftTorso", in: frame.layer)
-        guard let mask = torso.mask as? CAShapeLayer,
-              let visible = mask.presentation()?.path,
-              let model = mask.path else { throw failure("Missing actual partially-filled torso presentation") }
-        try expect(!samePath(visible, model),
-                   "\(fixture) mask reversal samples a genuinely intermediate rail-to-solid presentation")
+        try await wait(RobotAppFrameView.closeDuration * 0.60)
+        let body = try named("quietOrbit.body", in: frame.layer)
+        guard let arm = try named("robotFrame.leftArm", in: frame.layer) as? CAShapeLayer,
+              let presented = arm.presentation(),
+              let visible = presented.path else { throw failure("Missing actual articulated arm presentation") }
+        let width = presented.lineWidth
+        let bodyOpacity = body.presentation()?.opacity ?? body.opacity
+        try expect(bodyOpacity > 0.95,
+                   "\(fixture) samples a genuinely visible canonical compact character before reversal")
         frame.animateOpen(from: source, island: true, reduceMotion: false) { stale += 1 }
-        guard let reopen = torso.mask?.animation(forKey: "robotFrame.shellFill") as? CABasicAnimation else {
-            throw failure("Interrupted torso filling must resume from its actual presentation path")
+        guard let reopen = arm.animation(forKey: "robotFrame.arm.path") as? CAKeyframeAnimation,
+              let firstPath = reopen.values?.first,
+              let widths = arm.animation(forKey: "robotFrame.arm.width") as? CAKeyframeAnimation,
+              let firstWidth = widths.values?.first as? NSNumber,
+              let opacity = body.animation(forKey: "robotFrame.body.opacity") as? CAKeyframeAnimation,
+              let firstOpacity = opacity.values?.first as? NSNumber else {
+            throw failure("Interrupted character motion must resume from actual presented paths, widths and opacity")
         }
-        let start = try animationPath(reopen.fromValue)
-        try expect(samePath(start, visible),
-                   "\(fixture) reopening mid-fill resumes the visible mask without a rail or solid flash")
+        let start = try animationPath(firstPath)
+        try expect(samePath(start, visible) && abs(firstWidth.doubleValue - Double(width)) < 0.001
+            && abs(firstOpacity.doubleValue - Double(bodyOpacity)) < 0.001,
+                   "\(fixture) reopening the compact robot preserves actual arm geometry and body opacity")
+        try checkRailMasks(frame, expected: railMasks, fixture: fixture)
         frame.cancelTransition(open: true)
         try await wait(RobotAppFrameView.closeDuration + 0.06)
         try expect(stale == 0 && frame.isFrameVisible && !frame.isTransitioning
             && !frame.usesSolidTransitionTorso,
-                   "\(fixture) canceled callbacks remain invalidated and restore transparent stable rails")
+                   "\(fixture) canceled callbacks remain invalidated and retain transparent stable rails")
         try expect(layers(frame.layer).allSatisfy { ($0.animationKeys() ?? []).isEmpty },
                    "\(fixture) cancellation removes torso mask, opacity and transform animations")
         frame.cancelTransition(open: false)
+    }
+
+    private static func checkInterruptedEntrance(frame: RobotAppFrameView, source: CGRect,
+                                                  fixture: String) async throws {
+        frame.cancelTransition(open: false)
+        CATransaction.flush()
+        try await wait(0.04)
+        var opened = 0, closed = 0
+        frame.animateOpen(from: source, island: true, reduceMotion: false) { opened += 1 }
+        CATransaction.flush()
+        try await wait(0.10)
+        guard let content = frame.contentView.superview?.layer else { throw failure("Missing mounted content") }
+        let body = try named("quietOrbit.body", in: frame.layer)
+        let beforeContent = content.presentation()?.opacity ?? content.opacity
+        let beforeBody = body.presentation()?.opacity ?? body.opacity
+        try expect(beforeContent < 0.05 && beforeBody > 0.95,
+                   "\(fixture) cancellation fixture reaches the visible entrance before hidden content unfolds")
+        frame.animateClose(to: source, island: true, reduceMotion: false) { closed += 1 }
+        CATransaction.flush()
+        guard let close = body.animation(forKey: "robotFrame.close") else {
+            throw failure("Interrupted entrance needs a real character return")
+        }
+        for _ in 0..<3 {
+            try await wait(0.06)
+            let contentOpacity = content.presentation()?.opacity ?? content.opacity
+            let bodyOpacity = body.presentation()?.opacity ?? body.opacity
+            try expect(contentOpacity <= beforeContent + 0.01 && bodyOpacity >= beforeBody - 0.05,
+                       "\(fixture) early close never flashes the hidden board or makes the visible robot disappear")
+        }
+        try await wait(close.duration + 0.10)
+        try expect(opened == 0 && closed == 1 && frame.isHidden && !frame.isTransitioning,
+                   "\(fixture) an interrupted entrance cancels its stale completion and returns once")
     }
 }

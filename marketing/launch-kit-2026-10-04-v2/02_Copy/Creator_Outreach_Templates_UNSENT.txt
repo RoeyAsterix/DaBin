@@ -1,0 +1,103 @@
+DABIN / OUTREACH TEMPLATES
+ALL MESSAGES ARE UNSENT. No recipient has been contacted.
+Use Creator_and_Publication_Targets.html to select a route; read the recipient's recent work yourself before sending. Do not claim you watched an episode, read an article or know a recipient unless you did. Fill all brackets. No mass mailing, tracking pixels, fabricated personalization or paid commitments.
+
+01 / MAC APP CREATOR / FIRST PITCH
+Subject: DaBin for Mac: save references, then search saved screenshot text
+
+Hi [[RECIPIENT_NAME]],
+
+Your [[SPECIFIC_ARTICLE_OR_VIDEO_TITLE_AND_URL]] covers [[ACTUAL_RELEVANT_WORKFLOW]]. I thought DaBin's save-and-find workflow might fit that topic.
+
+DaBin is a free Apple Silicon Mac app with a little desktop robot you can drop things onto. It keeps notes, links, images, files and tasks locally. The guided UI tour uses a fictional design project, then shows finding a saved screenshot by a word inside it.
+
+No account, ads, analytics or cloud sync. Website previews are optional and can contact manually saved sites when enabled. Requires macOS 14 or later.
+
+App: [[APP_STORE_URL]]
+Demo and facts: [[WEBSITE_URL]]
+
+If it looks useful for your audience, you're welcome to try it and share your independent opinion. I can answer product questions; no coverage is expected.
+
+[[DEVELOPER_NAME]]
+[[CONTACT_EMAIL]]
+
+02 / MACSTORIES / INDEPENDENT REVIEW PITCH
+Subject: DaBin: a local Mac capture board with a desktop robot
+
+Hi [[MACSTORIES_EDITOR_NAME]],
+
+DaBin is a free Mac app for keeping useful notes, links, images, files and tasks together locally. It runs on Apple Silicon Macs with macOS 14 or later.
+
+The angle I thought might suit MacStories is a small native capture workflow: drop a reference onto the robot, keep it with a project, and find text in saved supported screenshots and documents using local recognition. Search covers DaBin's saved content. It has no account, ads, analytics or cloud sync; optional manual-link previews can contact websites.
+
+[[ONE_SENTENCE_FROM_YOUR_OWN_READING_OF_A_RELEVANT_MACSTORIES_ARTICLE]]
+
+The public app is here: [[APP_STORE_URL]]. A short demo and factual press kit are here: [[WEBSITE_URL]]. The examples are fictional. You're welcome to test the app and reach your own conclusions; I can answer questions about the implementation and its limits.
+
+[[DEVELOPER_NAME]]
+[[CONTACT_EMAIL]]
+
+03 / DESIGN WORKFLOW CREATOR
+Subject: A local reference-catching workflow for Mac designers
+
+Hi [[RECIPIENT_NAME]],
+
+In [[REAL_RECENT_POST_TITLE_AND_URL]], you showed [[SPECIFIC_DESIGN_WORKFLOW]]. DaBin may be a useful small addition when references arrive between project tasks.
+
+It's a free Mac app that lets you drop images, save links, write notes and keep tasks with a project. The desktop robot is the drop target. Search can find words in supported content saved into DaBin, using local Apple frameworks.
+
+A fictional 'Studio Refresh' project demonstrates it here: [[WEBSITE_URL]]. App Store: [[APP_STORE_URL]]. It requires Apple Silicon and macOS 14 or later, has no account or cloud sync, and optional manual-link previews can contact websites.
+
+If this fits your workflow coverage, I'd be glad to answer questions. No obligation to cover it.
+
+[[DEVELOPER_NAME]] / [[CONTACT_EMAIL]]
+
+04 / TIDBITS / REQUIRES OWNER READING AND EDITING
+Subject: PITCH: DaBin - Mac app for saving and searching local captures
+
+Hi Adam,
+
+DaBin is a free Apple Silicon Mac app for saving screenshots, links, files, notes and tasks in a local board. It requires macOS 14 or later.
+
+Its distinguishing interaction is a desktop robot drop target paired with project resources and local text search of saved supported screenshots and documents. The short example saves a fictional screenshot with a neutral filename, then finds a word inside it. It does not scan the whole Mac or use an external AI service.
+
+[[ADD_A_SHORT_SPECIFIC_REASON_FROM_YOUR_OWN_READING_OF_TIDBITS_AND_EXPLAIN_WHY_THE_WORKFLOW_IS_DISTINCT_ENOUGH_TO_COVER]]
+
+Public app: [[APP_STORE_URL]]
+Product/support/privacy details: [[WEBSITE_URL]]
+
+There is no account, advertising, analytics or cloud sync. Optional manual-link previews contact websites when enabled. I can answer questions about capture permissions, local storage and the limits of recognition.
+
+[[DEVELOPER_NAME]]
+[[CONTACT_EMAIL]]
+
+Do not send the press release to TidBITS. The publisher asks for individually considered pitches and a real conversation with the developer. Read the linked pitching guide yourself and rewrite this in your own words.
+
+05 / ONE FOLLOW-UP / SAME THREAD / ABOUT A WEEK LATER
+Hi [[RECIPIENT_NAME]],
+
+One useful detail I left out: [[ONE_NEW_VERIFIED_DETAIL_RELEVANT_TO_THEIR_AUDIENCE]]. Here's the short demo: [[WEBSITE_URL]].
+
+If DaBin isn't a fit, no problem. I'll leave it here.
+
+[[DEVELOPER_NAME]]
+
+Send once only where appropriate; stop after no reply or a decline. Do not follow up on a route whose policy rejects app pitches.
+
+06 / OPTIONAL PAID PARTNERSHIP INQUIRY / NO COMMITMENT
+Subject: DaBin for Mac - fit and rates for a practical workflow demo
+
+Hi [[RECIPIENT_OR_TEAM]],
+
+I'm considering a small, capped marketing experiment for DaBin, a free Mac app for saving project references locally. The demo angle is finding a word inside a saved screenshot. It requires Apple Silicon + macOS 14 or later.
+
+Would this be a fit for your [[OFFICIAL_FORMAT]]? Please share current rates, deliverables, usage rights, disclosure policy and the measurement you can provide.
+
+App: [[APP_STORE_URL]]
+Demo: [[WEBSITE_URL]]
+
+This is an inquiry, not a booking. I'll review the fit and budget before any commitment.
+
+[[DEVELOPER_NAME]] / [[CONTACT_EMAIL]]
+
+Do not send unless the owner chooses a paid experiment. No pricing, guaranteed review, audience size or result has been assumed.

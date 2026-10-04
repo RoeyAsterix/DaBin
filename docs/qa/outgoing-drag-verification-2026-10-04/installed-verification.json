@@ -1,0 +1,19 @@
+{
+  "verifiedAtUTC": "2026-10-04T03:02:20.120697+00:00",
+  "version": "0.4.30",
+  "build": "85",
+  "path": "/Users/roeylibfeld/Applications/DaBin.app",
+  "sourceFingerprint": "f706a1e494d0cd21a76fbff9cdd60cc5733b489c01b9a019da31c1a3fff65613",
+  "mainSHA256": "034c3c17b92386b1fc404ea88b71d950cfda72927e80fd7eb79f58365d3f2e49",
+  "updaterSHA256": "7dbf2fe2b33967a9efc5bb275aa75a250404a24c725f3d4e5667fb2426f61833",
+  "strictSignature": "passed",
+  "installerOutput": "Previous app preserved at /Users/roeylibfeld/Applications/.DaBinBackups/20261004-060220-c0a76a83.app\nInstalled /Users/roeylibfeld/Applications/DaBin.app\nYour archive was not modified. Open DaBin to use the installed version.\n",
+  "liveCheck": {
+    "opened": true,
+    "capture": "Paused \u00b7 existing captures remain",
+    "savedItems": 60,
+    "search": "Empty and focused after Command-K",
+    "existingQuickCaptureDraft": "preserved",
+    "userCaptureSettingsChanged": false
+  }
+}

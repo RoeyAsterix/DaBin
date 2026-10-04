@@ -1,0 +1,69 @@
+{
+  "utc": "2026-10-04T11:16:36.217910+00:00",
+  "checks": [
+    {
+      "name": "python-tests",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "Tests",
+        "-p",
+        "test_*.py",
+        "-v"
+      ],
+      "exitCode": 0,
+      "seconds": 0.31
+    },
+    {
+      "name": "python-preflight",
+      "command": [
+        "python3",
+        "scripts/test_app_store_preflight.py"
+      ],
+      "exitCode": 0,
+      "seconds": 0.05
+    },
+    {
+      "name": "packaging",
+      "command": [
+        "python3",
+        "scripts/app_store_preflight.py",
+        "--static-only"
+      ],
+      "exitCode": 0,
+      "seconds": 0.083
+    },
+    {
+      "name": "metadata",
+      "command": [
+        "python3",
+        "scripts/validate_app_store_metadata.py"
+      ],
+      "exitCode": 0,
+      "seconds": 0.032
+    },
+    {
+      "name": "project",
+      "command": [
+        "python3",
+        "scripts/generate_project.py",
+        "--check"
+      ],
+      "exitCode": 0,
+      "seconds": 0.036
+    },
+    {
+      "name": "diff-check",
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exitCode": 0,
+      "seconds": 0.072
+    }
+  ]
+}

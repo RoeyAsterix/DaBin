@@ -28,8 +28,8 @@ struct ExplorerProjectDay: Hashable, Sendable {
     }
 
     static func items(_ captures: [Capture], workspace: WorkspaceStore, project: String?,
-                      filter: CaptureFilter, pinnedOnly: Bool, now: Date = Date()) -> [Capture] {
-        let words = CaptureSearch.normalized(workspace.explorerQuery).split(whereSeparator: \.isWhitespace).map(String.init)
+                      filter: CaptureFilter, pinnedOnly: Bool, now: Date = Date(), query: String? = nil) -> [Capture] {
+        let words = CaptureSearch.normalized(query ?? workspace.explorerQuery).split(whereSeparator: \.isWhitespace).map(String.init)
         let parents = Dictionary(uniqueKeysWithValues: captures.map { ($0.id, $0) })
         return captures.filter { capture in
             let parent = capture.parentTaskID.flatMap { parents[$0] }

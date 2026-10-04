@@ -1,0 +1,26 @@
+{
+  "status": "PASS",
+  "images": [
+    {
+      "file": "privacy-policy-dark-bottom.png",
+      "identicalToVisuallyReviewedProbe": true,
+      "sha256": "218baeed6c3eba502f5c19f0deaea8dc40e944f6e3ed11bbcc3ceeaceff75a2b"
+    },
+    {
+      "file": "privacy-policy-dark-top.png",
+      "identicalToVisuallyReviewedProbe": true,
+      "sha256": "87f3d524bc614a2e6a16bdaadd13707ffcfbd636f771eab24bd0ca7098d8d5aa"
+    },
+    {
+      "file": "privacy-policy-light-bottom.png",
+      "identicalToVisuallyReviewedProbe": true,
+      "sha256": "dc23dfb1f7d2eba92417856ab5d22ac8a48735ca816d1c7dcf0d87d0f51a9a98"
+    },
+    {
+      "file": "privacy-policy-light-top.png",
+      "identicalToVisuallyReviewedProbe": true,
+      "sha256": "b8926de6da9cc8f78aae82fc242032b927153b45f112439f06cf63387a7b1a28"
+    }
+  ],
+  "review": "All four 350\u00d7440 native top/bottom renders were visually inspected. Both light and dark themes have readable headings/body, a visible fixed Done control, and a fully visible Show DaBin data folder button at the bottom. Text continues through the scroll viewport without overlapping fixed header controls."
+}

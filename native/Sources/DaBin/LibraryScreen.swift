@@ -7,6 +7,7 @@ struct LibraryScreen: View {
     @ObservedObject private var workspace: WorkspaceStore
     @StateObject private var shelfCapture: ShelfCaptureController
     @Environment(\.daBinAccent) private var accent
+    @Environment(\.daBinTutorialTargets) private var tutorialTargets
     @State private var targeted = false
     @State private var exporting = false
 
@@ -36,7 +37,8 @@ struct LibraryScreen: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            controls
+            if workspace.mode != .collection || state.libraryProject == nil
+                || tutorialTargets.contains(.projectModes) { controls }
             if let error = workspace.error {
                 Label(error, systemImage: "exclamationmark.triangle")
                     .font(.system(size: 11)).foregroundStyle(Palette.task)
@@ -45,7 +47,11 @@ struct LibraryScreen: View {
             if workspace.mode == .scratchpad {
                 ScratchpadView(state: state, workspace: workspace)
             } else if workspace.mode == .collection {
-                ExplorerScreen(state: state)
+                if let project = state.libraryProject {
+                    ProjectWorkspaceView(state: state, project: project).id(project)
+                } else {
+                    ExplorerScreen(state: state)
+                }
             } else {
                 itemList
             }
@@ -72,6 +78,7 @@ struct LibraryScreen: View {
                 }
             }
             .padding(3).background(Palette.soft, in: RoundedRectangle(cornerRadius: 9))
+            .daBinTutorialAnchor(.projectModes)
             if workspace.mode != .scratchpad {
                 HStack(spacing: 4) {
                     ForEach(CaptureFilter.allCases) { filter in
@@ -136,20 +143,34 @@ struct LibraryScreen: View {
 
     private var shelfToolbar: some View {
         VStack(alignment: .leading, spacing: 7) {
-            HStack(spacing: 12) {
-                Button("Paste", systemImage: "doc.on.clipboard") { shelfCapture.paste() }
-                Button("Files", systemImage: "plus") { shelfCapture.chooseFiles() }
+            HStack(spacing: 8) {
+                Button("Paste", systemImage: "doc.on.clipboard") { shelfCapture.paste() }.fixedSize()
+                Button("Files", systemImage: "folder") { state.showProjectFiles() }
+                    .fixedSize()
+                    .accessibilityLabel("Files")
+                    .accessibilityIdentifier("workspace-open-files")
+                Button("Add files", systemImage: "plus") { shelfCapture.chooseFiles() }
+                    .fixedSize()
+                    .accessibilityLabel("Add files")
+                    .accessibilityIdentifier("workspace-add-files")
                 Spacer(minLength: 0)
-                Button { exportShelf() } label: { Label(exporting ? "Exporting…" : "ZIP", systemImage: "arrow.down.doc") }
-                    .disabled(shelfItems.isEmpty || exporting)
-                    .buddyHelp("Export \(shelfItems.count) shelf items for this project as a ZIP")
             }.font(.system(size: 12)).disabled(shelfCapture.isBusy)
-            Text(shelfCapture.isBusy ? "Saving your items…" : "Drop materials here. Shelf items are saved locally until you remove them from the shelf.")
-                .font(.system(size: 11)).foregroundStyle(Palette.muted).fixedSize(horizontal: false, vertical: true)
+            HStack(alignment: .firstTextBaseline, spacing: 8) {
+                Text(shelfCapture.isBusy ? "Saving your items…" : "Drop materials here. Shelf items are saved locally until you remove them from the shelf.")
+                    .font(.system(size: 11)).foregroundStyle(Palette.muted).fixedSize(horizontal: false, vertical: true)
+                Spacer(minLength: 0)
+                Button { exportShelf() } label: { Label(exporting ? "Exporting…" : "Export shelf", systemImage: "arrow.down.to.line") }
+                    .font(.system(size: 12)).fixedSize()
+                    .disabled(shelfItems.isEmpty || exporting)
+                    .accessibilityLabel("Export shelf as ZIP")
+                    .accessibilityIdentifier("workspace-export-shelf")
+                    .buddyHelp("Export \(shelfItems.count) shelf items for this project as a ZIP")
+            }.disabled(shelfCapture.isBusy)
         }.padding(12).background(accent.opacity(targeted ? 0.13 : 0.04), in: RoundedRectangle(cornerRadius: 12))
             .overlay(RoundedRectangle(cornerRadius: 12).strokeBorder(accent.opacity(targeted ? 0.7 : 0.2), style: StrokeStyle(lineWidth: 1, dash: [4, 4])))
             .padding(.horizontal, 16).padding(.bottom, 8)
             .onDrop(of: TaskAttachmentTypes.identifiers, isTargeted: $targeted) { shelfCapture.receive($0) }
+            .accessibilityElement(children: .contain)
             .accessibilityLabel("Collection shelf. Drop, paste or add files.")
     }
 
@@ -215,7 +236,9 @@ struct LibraryScreen: View {
             let picker = NSSavePanel()
             picker.allowedContentTypes = [.zip]
             picker.nameFieldStringValue = "DaBin-Collection.zip"
-            picker.message = "Exports the full shelf for this project. Your saved items and original files are kept. Choose a new filename."
+            picker.title = "Export shelf"
+            picker.prompt = "Save ZIP"
+            picker.message = "Entire shelf · \(shelfItems.count) \(shelfItems.count == 1 ? "item" : "items"). Includes saved files and text."
             guard picker.runModal() == .OK, let destination = picker.url else { return }
             exporting = true
             Task { @MainActor in

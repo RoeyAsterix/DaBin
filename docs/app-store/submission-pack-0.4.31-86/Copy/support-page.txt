@@ -1,0 +1,30 @@
+DaBin support
+
+Contact support
+Email: [PUBLIC SUPPORT EMAIL]
+Support page: [PUBLIC SUPPORT URL]
+Include your DaBin version, macOS version and the steps that led to the issue. Use fictional examples and remove private material from any screenshots. Do not send your capture archive, passwords or sensitive clipboard contents.
+
+Getting started
+Open DaBin from its menu-bar item or double-click the desktop robot. Paste text or a link into Inbox, or drop in a file. Use the upper + button to create a task directly. Keep related work in a project and use Search to find it again.
+
+What does Search cover
+Search finds content saved into DaBin, across projects and dates. You can type, use the context-menu Paste action or press Command-V in the search field. Results appear in date columns. Local text recognition also indexes supported saved images and documents; it does not search every file on your Mac.
+
+Does Auto Capture record my screen
+No. Auto Capture is optional and starts off. After you enable it, DaBin can save later clipboard changes and new images added to the screenshot folder you choose. Existing clipboard contents and existing images are not imported when monitoring starts. The red menu-bar symbol indicates active monitoring. Pause or switch it off whenever you need to.
+
+Where is my content stored
+On this Mac. DaBin has no account, cloud sync, advertising or analytics. Optional website previews are off by default and can contact websites for manually saved links. Automatic captures never fetch link previews. Exports and backups are stored in the location you choose; a cloud-synced destination may upload them through that service.
+
+How do I move content to another app
+Drag a card or caption to a destination that accepts its text, link, image or file representation. The receiving app controls what it can accept. You can also copy and paste or export. DaBin keeps its saved content, and original source files remain in place.
+
+How do I back up or remove content
+Use More > Back up archive to create a local backup. Recently Deleted lets you restore removed captures or delete them permanently. Turning Auto Capture off stops new monitoring but keeps earlier captures. See Settings > Privacy policy & data controls for complete deletion instructions.
+
+Which Macs are supported
+DaBin 0.4.31 requires an Apple Silicon Mac with macOS 14 or later. The Mac App Store version receives updates through the App Store.
+
+Privacy policy
+https://github.com/RoeyAsterix/DaBin/blob/main/native/Resources/PrivacyPolicy.md

@@ -239,10 +239,11 @@ struct RobotAppFrameTests {
         try expect(frame.hitTest(controlPoint) == nil,
                    "A hidden frame cannot intercept a stale content hit")
 
-        try expect(RobotAppFrameView.openDuration == 1.15 &&
-                   RobotAppFrameView.closeDuration == 0.78 &&
-                   RobotAppFrameView.reducedDuration == 0.14,
-                   "Continuous open, deliberate fold-and-tuck close and reduced fade durations stay explicit")
+        try expect(RobotAppFrameView.openDuration > RobotAppFrameView.closeDuration &&
+                   RobotAppFrameView.closeDuration < 1.2 &&
+                   RobotAppFrameView.openingExpansionDelay > RobotAppFrameView.reducedDuration &&
+                   RobotAppFrameView.openingExpansionDelay < RobotAppFrameView.openDuration * 0.5,
+                   "The robot gets a readable entrance before unfolding while closing remains responsive")
 
         var opened = 0
         frame.animateOpen(from: CGRect(x: 600, y: 740, width: 72, height: 88),
@@ -280,8 +281,8 @@ struct RobotAppFrameTests {
         var cancelledCompletion = 0
         frame.animateOpen(from: CGRect(x: 40, y: 700, width: 72, height: 88),
                           island: false, reduceMotion: false) { cancelledCompletion += 1 }
-        try expect(frame.usesSolidTransitionTorso,
-                   "Animated transitions use a filled robot body instead of a hollow outline")
+        try expect(!frame.usesSolidTransitionTorso,
+                   "Animated transitions retain transparent window rails while the canonical robot body performs")
         frame.cancelTransition(open: true)
         spinMainRunLoop(for: 0.03)
         try expect(cancelledCompletion == 0 && frame.isFrameVisible && !frame.isTransitioning,

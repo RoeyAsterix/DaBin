@@ -18,3 +18,8 @@ native/DaBin-*.abi.json
 output/
 tmp/
 *.zip
+
+# Local authoring caches and automatic Blender backups.
+.work/
+.build/
+*.blend1

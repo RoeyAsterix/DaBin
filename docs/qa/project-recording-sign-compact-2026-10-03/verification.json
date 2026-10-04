@@ -1,0 +1,38 @@
+{
+  "verifiedAtUTC": "2026-10-03T13:25:33.163825+00:00",
+  "qaStatus": "passed",
+  "passedSuites": 4,
+  "checks": 349,
+  "testCommand": "./scripts/test.sh --only AutoCaptureRobotPresenterTests --only TaskTimerRobotTests --only ProjectRecordingRobotTests --only RobotProjectSignRenderTests",
+  "buildCommand": "./scripts/build.sh",
+  "appPath": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/DaBin.app",
+  "installedApplicationReplaced": false,
+  "published": false,
+  "visualReview": {
+    "status": "pass",
+    "scales": [
+      1,
+      2
+    ],
+    "inspected": [
+      "corner-recording",
+      "corner-short-name",
+      "corner-paused",
+      "corner-long-title",
+      "orbit-bottom",
+      "orbit-upper-left",
+      "orbit-upper-right",
+      "compact-chrome",
+      "full-board-recording",
+      "timer-paused"
+    ],
+    "findings": "Short names fit fully after measuring native cell insets; one-line rounded 12pt plates; no project label while paused; long names truncate safely; notch and held hands preserve legibility."
+  },
+  "behavior": [
+    "Requires named project, enabled and unpaused capture, running service and monitoring status",
+    "Suppresses ready, permission unavailable and excluded source labels",
+    "Healthy clipboard channel remains active when screenshot channel lacks permission",
+    "Retains project preference while hiding the sign",
+    "Queued saved receipt counts survive sign suppression"
+  ]
+}

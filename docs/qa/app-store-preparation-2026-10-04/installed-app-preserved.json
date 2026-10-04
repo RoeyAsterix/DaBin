@@ -1,0 +1,8 @@
+{
+  "version": "0.4.30",
+  "build": "85",
+  "sourceFingerprint": "f706a1e494d0cd21a76fbff9cdd60cc5733b489c01b9a019da31c1a3fff65613",
+  "executableSHA256": "034c3c17b92386b1fc404ea88b71d950cfda72927e80fd7eb79f58365d3f2e49",
+  "expectedUntouchedInstalledVersion": "0.4.30",
+  "matchesPriorExecutable": true
+}

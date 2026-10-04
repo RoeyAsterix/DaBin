@@ -1,0 +1,66 @@
+{
+  "Sources/DaBin/ProjectWorkspaceCard.swift": {
+    "fonts": 13,
+    "lineSpacing": 3
+  },
+  "Sources/DaBin/CollectionPreviewMosaic.swift": {
+    "fonts": 8,
+    "lineSpacing": 1
+  },
+  "Sources/DaBin/SearchResultCard.swift": {
+    "fonts": 14,
+    "lineSpacing": 2
+  },
+  "Sources/DaBin/TaskPlanningEditor.swift": {
+    "fonts": 1,
+    "lineSpacing": 0
+  },
+  "Sources/DaBin/ProjectPickerView.swift": {
+    "fonts": 3,
+    "lineSpacing": 0
+  },
+  "Sources/DaBin/TaskEditorScreen.swift": {
+    "fonts": 1,
+    "lineSpacing": 0
+  },
+  "Sources/DaBin/WeeklyScreen.swift": {
+    "fonts": 6,
+    "lineSpacing": 0
+  },
+  "Sources/DaBin/ExplorerItems.swift": {
+    "fonts": 3,
+    "lineSpacing": 0
+  },
+  "Sources/DaBin/ScratchpadView.swift": {
+    "fonts": 7,
+    "lineSpacing": 1
+  },
+  "Sources/DaBin/GroupedCaptureCard.swift": {
+    "fonts": 12,
+    "lineSpacing": 0
+  },
+  "Sources/DaBin/CaptureCards.swift": {
+    "fonts": 11,
+    "lineSpacing": 1
+  },
+  "Sources/DaBin/CapturePreviews.swift": {
+    "fonts": 4,
+    "lineSpacing": 1
+  },
+  "Sources/DaBin/WorkspaceItemCard.swift": {
+    "fonts": 5,
+    "lineSpacing": 1
+  },
+  "Sources/DaBin/DetailScreen.swift": {
+    "fonts": 25,
+    "lineSpacing": 1
+  },
+  "Sources/DaBin/HourlyCaptureCard.swift": {
+    "fonts": 7,
+    "lineSpacing": 0
+  },
+  "Sources/DaBin/NewNoteScreen.swift": {
+    "fonts": 3,
+    "lineSpacing": 1
+  }
+}

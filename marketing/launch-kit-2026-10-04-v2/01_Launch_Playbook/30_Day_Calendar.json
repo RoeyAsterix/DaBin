@@ -1,0 +1,354 @@
+{
+  "schemaVersion": 1,
+  "prepared": "2026-10-04",
+  "status": "LOCAL_PLAN_NOT_SCHEDULED",
+  "day1Definition": "The day DaBin is verified publicly downloadable on the Mac App Store in the intended territories.",
+  "launchDate": null,
+  "timezone": "Set the publication timezone explicitly when dates are assigned.",
+  "prelaunch": [
+    {
+      "offset": -21,
+      "action": "Nominate the actual launch for Apple featuring where practical; Apple recommends at least three weeks lead time."
+    },
+    {
+      "offset": -7,
+      "action": "Finish live-link fields, support/privacy routes, final-build comparison and fictional sample media."
+    },
+    {
+      "offset": -1,
+      "action": "Watch final exports, check captions/crops, reread platform rules and prepare a staffed launch."
+    }
+  ],
+  "days": [
+    {
+      "day": 1,
+      "phase": "Launch",
+      "action": "Verify the live App Store listing, Free price and supported territories. Publish the landing page and one guided UI tour social announcement.",
+      "asset": "Guided UI tour + Launch post",
+      "completionEvidence": "Actual public availability and working links",
+      "suggestedEffort": "45 min",
+      "status": "planned",
+      "actualDate": null,
+      "notes": ""
+    },
+    {
+      "day": 2,
+      "phase": "Launch",
+      "action": "Publish one r/macapps post if current rules and account eligibility are met. Reply to questions.",
+      "asset": "Reddit_MacApps_Post.txt",
+      "completionEvidence": "Required disclosure, changelog and promotion timing completed",
+      "suggestedEffort": "40 min",
+      "status": "planned",
+      "actualDate": null,
+      "notes": ""
+    },
+    {
+      "day": 3,
+      "phase": "Launch",
+      "action": "Read recent work from three relevant targets; send individually tailored pitches if chosen by the owner.",
+      "asset": "Creator target shortlist + unsent template",
+      "completionEvidence": "Real relevance sentence and final live links",
+      "suggestedEffort": "45 min",
+      "status": "planned",
+      "actualDate": null,
+      "notes": ""
+    },
+    {
+      "day": 4,
+      "phase": "Launch",
+      "action": "Check App Store Connect for campaign-link availability and record the first baseline. Keep unavailable values blank.",
+      "asset": "Campaign_Measurement.txt",
+      "completionEvidence": "Live download data; real Apple-generated links",
+      "suggestedEffort": "30 min",
+      "status": "planned",
+      "actualDate": null,
+      "notes": ""
+    },
+    {
+      "day": 5,
+      "phase": "Launch",
+      "action": "Publish the designer project-reference example and answer one workflow question.",
+      "asset": "Designer post + Projects graphic",
+      "completionEvidence": "Actual UI with fictional Studio Refresh data",
+      "suggestedEffort": "30 min",
+      "status": "planned",
+      "actualDate": null,
+      "notes": ""
+    },
+    {
+      "day": 6,
+      "phase": "Launch",
+      "action": "Prepare the Product Hunt gallery and maker comment; choose a staffed publication day.",
+      "asset": "Product_Hunt_Copy.txt",
+      "completionEvidence": "Working app/site/support and accurate screenshots",
+      "suggestedEffort": "45 min",
+      "status": "planned",
+      "actualDate": null,
+      "notes": ""
+    },
+    {
+      "day": 7,
+      "phase": "Review",
+      "action": "Review week one: support questions, channel reach, available downloads and outreach responses.",
+      "asset": "campaign-tracker.json",
+      "completionEvidence": "Comparable date ranges; no inferred retention",
+      "suggestedEffort": "45 min",
+      "status": "planned",
+      "actualDate": null,
+      "notes": ""
+    },
+    {
+      "day": 8,
+      "phase": "Search",
+      "action": "Record or finish the real saved-screenshot text-search demo using a neutral filename.",
+      "asset": "Video_Scripts_and_Shotlist.txt / Brief B",
+      "completionEvidence": "Word appears in saved image and actual search result",
+      "suggestedEffort": "45 min",
+      "status": "planned",
+      "actualDate": null,
+      "notes": ""
+    },
+    {
+      "day": 9,
+      "phase": "Search",
+      "action": "Publish screenshot-search demo with one clear benefit and compatibility.",
+      "asset": "Search social post + real demo",
+      "completionEvidence": "No whole-Mac or semantic search claim",
+      "suggestedEffort": "25 min",
+      "status": "planned",
+      "actualDate": null,
+      "notes": ""
+    },
+    {
+      "day": 10,
+      "phase": "Search",
+      "action": "Tailor pitches to two more relevant targets, leading with the saved-screenshot workflow.",
+      "asset": "Outreach template 01 or 03",
+      "completionEvidence": "Read recipient work and route policy",
+      "suggestedEffort": "40 min",
+      "status": "planned",
+      "actualDate": null,
+      "notes": ""
+    },
+    {
+      "day": 11,
+      "phase": "Community",
+      "action": "Launch on Product Hunt if ready and stay available for questions; otherwise keep it in draft.",
+      "asset": "PH listing + maker comment",
+      "completionEvidence": "No upvote request; truthful personal maker identity",
+      "suggestedEffort": "45 min + replies",
+      "status": "planned",
+      "actualDate": null,
+      "notes": ""
+    },
+    {
+      "day": 12,
+      "phase": "Community",
+      "action": "Answer compatibility and local-storage questions; update public FAQ if needed.",
+      "asset": "Support_and_Reply_Copy.txt",
+      "completionEvidence": "Actual question or verified explanation",
+      "suggestedEffort": "25 min",
+      "status": "planned",
+      "actualDate": null,
+      "notes": ""
+    },
+    {
+      "day": 13,
+      "phase": "Community",
+      "action": "One short follow-up to first-week pitches where appropriate, with a new relevant detail.",
+      "asset": "Outreach template 05",
+      "completionEvidence": "About a week elapsed; no decline/policy exclusion",
+      "suggestedEffort": "20 min",
+      "status": "planned",
+      "actualDate": null,
+      "notes": ""
+    },
+    {
+      "day": 14,
+      "phase": "Review",
+      "action": "Compare the capture and search hooks using observed metrics and qualitative replies.",
+      "asset": "Tracker + weekly review",
+      "completionEvidence": "Matching reporting window and metric scope",
+      "suggestedEffort": "45 min",
+      "status": "planned",
+      "actualDate": null,
+      "notes": ""
+    },
+    {
+      "day": 15,
+      "phase": "Audience test",
+      "action": "Prepare the student use case with fictional course notes and one saved screenshot.",
+      "asset": "Student social copy",
+      "completionEvidence": "Actual saved-content workflow, no study-outcome promise",
+      "suggestedEffort": "35 min",
+      "status": "planned",
+      "actualDate": null,
+      "notes": ""
+    },
+    {
+      "day": 16,
+      "phase": "Audience test",
+      "action": "Publish the student test on one suitable existing channel.",
+      "asset": "Student post + real example",
+      "completionEvidence": "Compatibility and searchable-saved-content limit",
+      "suggestedEffort": "25 min",
+      "status": "planned",
+      "actualDate": null,
+      "notes": ""
+    },
+    {
+      "day": 17,
+      "phase": "Outreach",
+      "action": "Read recent work and tailor pitches to two more relevant publication/creator routes.",
+      "asset": "Targets + outreach template",
+      "completionEvidence": "No claim of prior familiarity without reading",
+      "suggestedEffort": "40 min",
+      "status": "planned",
+      "actualDate": null,
+      "notes": ""
+    },
+    {
+      "day": 18,
+      "phase": "How-to",
+      "action": "Publish a short answer to a real common question, or a factual local-search explainer.",
+      "asset": "Support reply + short clip/card",
+      "completionEvidence": "Only call it common if evidence exists",
+      "suggestedEffort": "30 min",
+      "status": "planned",
+      "actualDate": null,
+      "notes": ""
+    },
+    {
+      "day": 19,
+      "phase": "Audience test",
+      "action": "Prepare the developer example: documentation link, saved snippet and next task.",
+      "asset": "Developer social copy",
+      "completionEvidence": "No integration or code-execution claim",
+      "suggestedEffort": "35 min",
+      "status": "planned",
+      "actualDate": null,
+      "notes": ""
+    },
+    {
+      "day": 20,
+      "phase": "Audience test",
+      "action": "Publish the developer example; ask for optional workflow feedback.",
+      "asset": "Developer post + real project view",
+      "completionEvidence": "No request for private saved files",
+      "suggestedEffort": "25 min",
+      "status": "planned",
+      "actualDate": null,
+      "notes": ""
+    },
+    {
+      "day": 21,
+      "phase": "Review",
+      "action": "Review audience response and shortlist remaining targets. Select the strongest observed angle.",
+      "asset": "Weekly review + tracker",
+      "completionEvidence": "Avoid conclusions from withheld metrics",
+      "suggestedEffort": "45 min",
+      "status": "planned",
+      "actualDate": null,
+      "notes": ""
+    },
+    {
+      "day": 22,
+      "phase": "Outreach",
+      "action": "Send up to three final high-fit organic pitches if the owner chooses; reach ten total only if appropriate.",
+      "asset": "Tailored unsent templates",
+      "completionEvidence": "Route policy, real fit and no bulk send",
+      "suggestedEffort": "45 min",
+      "status": "planned",
+      "actualDate": null,
+      "notes": ""
+    },
+    {
+      "day": 23,
+      "phase": "Project",
+      "action": "Publish the one-project demo showing references, a note and the next task.",
+      "asset": "Video_Scripts_and_Shotlist.txt / Brief C",
+      "completionEvidence": "Actual app view, fictional examples",
+      "suggestedEffort": "25 min",
+      "status": "planned",
+      "actualDate": null,
+      "notes": ""
+    },
+    {
+      "day": 24,
+      "phase": "Follow-up",
+      "action": "Follow up once on second-week outreach where welcome; log replies or declines.",
+      "asset": "Outreach template 05",
+      "completionEvidence": "Same thread; one follow-up maximum",
+      "suggestedEffort": "20 min",
+      "status": "planned",
+      "actualDate": null,
+      "notes": ""
+    },
+    {
+      "day": 25,
+      "phase": "Proof",
+      "action": "Share actual independent coverage with a short accurate description if any exists; otherwise publish a useful tip.",
+      "asset": "Coverage follow-up social draft",
+      "completionEvidence": "Actual coverage URL; no fabricated endorsement",
+      "suggestedEffort": "25 min",
+      "status": "planned",
+      "actualDate": null,
+      "notes": ""
+    },
+    {
+      "day": 26,
+      "phase": "Clarity",
+      "action": "Check website/product-page questions and improve one unclear caption or FAQ answer.",
+      "asset": "Landing/Screenshot copy",
+      "completionEvidence": "Current shipping behavior; no unsupported new promise",
+      "suggestedEffort": "35 min",
+      "status": "planned",
+      "actualDate": null,
+      "notes": ""
+    },
+    {
+      "day": 27,
+      "phase": "Planning",
+      "action": "Review Apple nomination draft for a real future release or enhancement; keep dates truthful.",
+      "asset": "Apple_Featuring_Nomination_DRAFT.txt",
+      "completionEvidence": "Real feature/date and lead time where practical",
+      "suggestedEffort": "30 min",
+      "status": "planned",
+      "actualDate": null,
+      "notes": ""
+    },
+    {
+      "day": 28,
+      "phase": "Review",
+      "action": "Review all campaign/date-range data and time spent; keep missing data explicit.",
+      "asset": "campaign-tracker.json",
+      "completionEvidence": "Apple threshold/attribution limits recorded",
+      "suggestedEffort": "45 min",
+      "status": "planned",
+      "actualDate": null,
+      "notes": ""
+    },
+    {
+      "day": 29,
+      "phase": "Refresh",
+      "action": "Refresh the strongest demo with a new fictional example or verified answer; do not repeat a subreddit promotion early.",
+      "asset": "Best-performing supported message",
+      "completionEvidence": "Current platform rules and public build",
+      "suggestedEffort": "30 min",
+      "status": "planned",
+      "actualDate": null,
+      "notes": ""
+    },
+    {
+      "day": 30,
+      "phase": "Decision",
+      "action": "Write a month-end observation note and choose one audience, one hook and next month's two demos.",
+      "asset": "Monthly decision note",
+      "completionEvidence": "Observed facts only; optional paid spend requires budget decision",
+      "suggestedEffort": "45 min",
+      "status": "planned",
+      "actualDate": null,
+      "notes": ""
+    }
+  ]
+}

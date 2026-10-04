@@ -1,0 +1,173 @@
+[
+  {
+    "start": 54.0,
+    "end": 57.84,
+    "text": " When time's up, I'll nudge you. You decide when it's done.",
+    "words": [
+      {
+        "start": 54.0,
+        "end": 54.44,
+        "word": " When",
+        "probability": 0.9525689482688904
+      },
+      {
+        "start": 54.44,
+        "end": 54.82,
+        "word": " time's",
+        "probability": 0.8294184803962708
+      },
+      {
+        "start": 54.82,
+        "end": 54.94,
+        "word": " up,",
+        "probability": 0.9978933930397034
+      },
+      {
+        "start": 55.28,
+        "end": 55.52,
+        "word": " I'll",
+        "probability": 0.9904866814613342
+      },
+      {
+        "start": 55.52,
+        "end": 55.8,
+        "word": " nudge",
+        "probability": 0.9947071373462677
+      },
+      {
+        "start": 55.8,
+        "end": 55.98,
+        "word": " you.",
+        "probability": 0.9988762736320496
+      },
+      {
+        "start": 56.8,
+        "end": 56.84,
+        "word": " You",
+        "probability": 0.9927063584327698
+      },
+      {
+        "start": 56.84,
+        "end": 57.12,
+        "word": " decide",
+        "probability": 0.9949384927749634
+      },
+      {
+        "start": 57.12,
+        "end": 57.46,
+        "word": " when",
+        "probability": 0.9954376816749573
+      },
+      {
+        "start": 57.46,
+        "end": 57.64,
+        "word": " it's",
+        "probability": 0.995282381772995
+      },
+      {
+        "start": 57.64,
+        "end": 57.84,
+        "word": " done.",
+        "probability": 0.9997465014457703
+      }
+    ]
+  },
+  {
+    "start": 58.82,
+    "end": 61.32,
+    "text": " Want automatic capture? It starts off.",
+    "words": [
+      {
+        "start": 58.82,
+        "end": 59.0,
+        "word": " Want",
+        "probability": 0.9909163117408752
+      },
+      {
+        "start": 59.0,
+        "end": 59.38,
+        "word": " automatic",
+        "probability": 0.9687778949737549
+      },
+      {
+        "start": 59.38,
+        "end": 59.82,
+        "word": " capture?",
+        "probability": 0.9956886172294617
+      },
+      {
+        "start": 60.7,
+        "end": 60.78,
+        "word": " It",
+        "probability": 0.9869943261146545
+      },
+      {
+        "start": 60.78,
+        "end": 60.980000000000004,
+        "word": " starts",
+        "probability": 0.9941107630729675
+      },
+      {
+        "start": 60.980000000000004,
+        "end": 61.32,
+        "word": " off.",
+        "probability": 0.9978697299957275
+      }
+    ]
+  },
+  {
+    "start": 62.3,
+    "end": 64.92,
+    "text": " Choose new clipboard changes or a screenshot full.",
+    "words": [
+      {
+        "start": 62.3,
+        "end": 62.3,
+        "word": " Choose",
+        "probability": 0.9927585124969482
+      },
+      {
+        "start": 62.3,
+        "end": 62.66,
+        "word": " new",
+        "probability": 0.990413248538971
+      },
+      {
+        "start": 62.66,
+        "end": 63.019999999999996,
+        "word": " clipboard",
+        "probability": 0.9329668283462524
+      },
+      {
+        "start": 63.019999999999996,
+        "end": 63.54,
+        "word": " changes",
+        "probability": 0.9988613128662109
+      },
+      {
+        "start": 63.54,
+        "end": 64.06,
+        "word": " or",
+        "probability": 0.8480271100997925
+      },
+      {
+        "start": 64.06,
+        "end": 64.22,
+        "word": " a",
+        "probability": 0.9919232726097107
+      },
+      {
+        "start": 64.22,
+        "end": 64.53999999999999,
+        "word": " screenshot",
+        "probability": 0.9609257578849792
+      },
+      {
+        "start": 64.53999999999999,
+        "end": 64.92,
+        "word": " full.",
+        "probability": 0.5946193337440491
+      }
+    ]
+  }
+]

@@ -1,0 +1,37 @@
+test_app_identifier_added_by_signing_is_allowed (__main__.AppStorePreflightTests.test_app_identifier_added_by_signing_is_allowed) ... ok
+test_archive_never_enables_provisioning_downloads (__main__.AppStorePreflightTests.test_archive_never_enables_provisioning_downloads) ... ok
+test_basic_development_archive_does_not_require_store_app_id_claims (__main__.AppStorePreflightTests.test_basic_development_archive_does_not_require_store_app_id_claims) ... ok
+test_candidate_accepts_new_build_leaf (__main__.AppStorePreflightTests.test_candidate_accepts_new_build_leaf) ... ok
+test_candidate_refuses_existing_output (__main__.AppStorePreflightTests.test_candidate_refuses_existing_output) ... ok
+test_candidate_refuses_parent_directory_traversal (__main__.AppStorePreflightTests.test_candidate_refuses_parent_directory_traversal) ... ok
+test_candidate_refuses_workspace_root_and_nonbuild_destination (__main__.AppStorePreflightTests.test_candidate_refuses_workspace_root_and_nonbuild_destination) ... ok
+test_code_signing_exception_is_rejected (__main__.AppStorePreflightTests.test_code_signing_exception_is_rejected) ... ok
+test_current_matching_store_profile_passes (__main__.AppStorePreflightTests.test_current_matching_store_profile_passes) ... ok
+test_debugger_entitlement_is_rejected (__main__.AppStorePreflightTests.test_debugger_entitlement_is_rejected) ... ok
+test_distribution_does_require_matching_signed_app_id_claims (__main__.AppStorePreflightTests.test_distribution_does_require_matching_signed_app_id_claims) ... ok
+test_every_required_capability_is_checked (__main__.AppStorePreflightTests.test_every_required_capability_is_checked) ... ok
+test_expired_profile_fails (__main__.AppStorePreflightTests.test_expired_profile_fails) ... ok
+test_integer_one_is_not_a_boolean_capability (__main__.AppStorePreflightTests.test_integer_one_is_not_a_boolean_capability) ... ok
+test_malformed_manifest_reasons_fail (__main__.AppStorePreflightTests.test_malformed_manifest_reasons_fail) ... ok
+test_manifest_covers_current_required_reasons (__main__.AppStorePreflightTests.test_manifest_covers_current_required_reasons) ... ok
+test_minimal_source_entitlements_pass (__main__.AppStorePreflightTests.test_minimal_source_entitlements_pass) ... ok
+test_mismatched_profile_team_or_app_fails (__main__.AppStorePreflightTests.test_mismatched_profile_team_or_app_fails) ... ok
+test_missing_owned_file_timestamp_reason_fails (__main__.AppStorePreflightTests.test_missing_owned_file_timestamp_reason_fails) ... ok
+test_missing_store_stub_is_rejected (__main__.AppStorePreflightTests.test_missing_store_stub_is_rejected) ... ok
+test_nonstore_device_or_debug_profile_fails (__main__.AppStorePreflightTests.test_nonstore_device_or_debug_profile_fails) ... ok
+test_normal_resources_are_not_direct_payloads (__main__.AppStorePreflightTests.test_normal_resources_are_not_direct_payloads) ... ok
+test_placeholder_urls_do_not_pass (__main__.AppStorePreflightTests.test_placeholder_urls_do_not_pass) ... ok
+test_recursive_direct_payload_is_rejected (__main__.AppStorePreflightTests.test_recursive_direct_payload_is_rejected) ... ok
+test_release_metadata_is_explicit_and_not_direct (__main__.AppStorePreflightTests.test_release_metadata_is_explicit_and_not_direct) ... ok
+test_store_stub_and_absence_of_direct_binary_marker (__main__.AppStorePreflightTests.test_store_stub_and_absence_of_direct_binary_marker) ... ok
+test_temporary_sandbox_exception_is_rejected (__main__.AppStorePreflightTests.test_temporary_sandbox_exception_is_rejected) ... ok
+test_tracking_or_collection_change_requires_review (__main__.AppStorePreflightTests.test_tracking_or_collection_change_requires_review) ... ok
+test_unreadable_binary_is_rejected (__main__.AppStorePreflightTests.test_unreadable_binary_is_rejected) ... ok
+test_unreviewed_source_entitlement_is_rejected (__main__.AppStorePreflightTests.test_unreviewed_source_entitlement_is_rejected) ... ok
+test_unsigned_build_has_no_archive_account_or_upload_operation (__main__.AppStorePreflightTests.test_unsigned_build_has_no_archive_account_or_upload_operation) ... ok
+test_xcode_resolves_source_configuration_marker (__main__.AppStorePreflightTests.test_xcode_resolves_source_configuration_marker) ... ok
+
+----------------------------------------------------------------------
+Ran 32 tests in 0.004s
+
+OK

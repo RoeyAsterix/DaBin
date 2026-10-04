@@ -1,0 +1,27 @@
+{
+  "verifiedAtUTC": "2026-10-03T14:28:23.017526+00:00",
+  "method": "Native cua_repl actions in the installed app and Finder accessibility observations",
+  "projectFiles": {
+    "selectedProject": "Kari",
+    "buttonID": "explorer-open-files",
+    "finderWindowTitle": "Kari — 1262ca620719",
+    "folderPath": "/Users/roeylibfeld/Library/Containers/com.dabin.mac/Data/Library/Application Support/DaBin/Projects/Kari — 1262ca620719/",
+    "visibleChildDirectory": "2026",
+    "passed": true
+  },
+  "openLocalArchive": {
+    "buttonID": "settings-open-local-archive",
+    "finderWindowTitle": "DaBin",
+    "folderPath": "/Users/roeylibfeld/Library/Containers/com.dabin.mac/Data/Library/Application Support/DaBin/",
+    "visibleDirectoryNames": [
+      "Archive",
+      "Projects",
+      "Unfiled"
+    ],
+    "passed": true
+  },
+  "autoCaptureRemainedPaused": true,
+  "personalCapturesCreatedEditedOrDeleted": false,
+  "finalDaBinView": "Projects Explorer",
+  "separateImporterButtonID": "explorer-add-files"
+}

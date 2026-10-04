@@ -1,0 +1,21 @@
+{
+  "captures": {
+    "dailyInbox": "title, preview, preview description, indexed-match caption",
+    "weekly": "content card and comment caption",
+    "projects": "preview/title with ordered multi-selection and live project note text",
+    "clipboardShelf": "title and preview",
+    "explorer": "row content and inspector title",
+    "search": "result title, thumbnail and excerpt",
+    "detail": "display title, task label and saved preview",
+    "taskAttachments": "title and preview"
+  },
+  "captions": "Static comments carry their exact full text independently of capture originals. Truncation does not truncate drag data.",
+  "collections": "Collapsed summaries and expanded batch/hour metadata carry every saved capture as distinct native items.",
+  "intentionalExclusions": [
+    "Editable fields retain normal editing and selection; selected text uses native text behavior.",
+    "Copy, completion, project, menu, collapse and other action controls remain independent.",
+    "Recently Deleted captures must be restored before their saved content can be transferred."
+  ],
+  "externalContract": "Text, URL, native saved-file URLs and original encoded image bytes; copy-only external operation, source records and general clipboard unchanged.",
+  "physicalDropCompletion": "pending manual check; automated source gesture did not reach receiver callbacks"
+}

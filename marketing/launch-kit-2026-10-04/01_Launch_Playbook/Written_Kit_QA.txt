@@ -1,0 +1,15 @@
+DABIN WRITTEN KIT / QA
+Prepared 4 October 2026.
+
+HTML PARSE PASS: 01_Launch_Playbook/30_Day_Calendar.html; relative missing now: []
+JSON PASS: 01_Launch_Playbook/30_Day_Calendar.json
+HTML PARSE PASS: 01_Launch_Playbook/Creator_and_Publication_Targets.html; relative missing now: []
+HTML PARSE PASS: 01_Launch_Playbook/START_HERE.html; relative missing now: []
+JSON PASS: 01_Launch_Playbook/campaign-tracker.json
+JSON PASS: 01_Launch_Playbook/creator-targets.json
+HTML PARSE PASS: 02_Copy/Copy_Index.html; relative missing now: []
+Short description word count: 43
+App Store fields: name 5/30, subtitle 24/30, promotional text 152/170, keywords 86/100.
+Publication/contact placeholders remain intentionally explicit; no fabricated App Store, site or contact destination.
+All outreach drafts remain unsent; creator routes are official source URLs with no guessed emails.
+No product source, user archive, desktop install or KARI canon was changed.

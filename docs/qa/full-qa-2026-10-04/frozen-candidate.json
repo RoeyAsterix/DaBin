@@ -1,0 +1,18 @@
+{
+  "candidate": "/private/tmp/dabin-full-qa-20261004/native",
+  "buildSourceFingerprint": "f5e26cf555bdf477f2d4874a6c7e631f16edbcd3c4fd2aca57d3c717ec9a8d10",
+  "all152BuildInputsMatch": true,
+  "retainedPreTutorialFiles": [
+    "Sources/DaBin/BoardView.swift",
+    "Sources/DaBin/SettingsScreen.swift"
+  ],
+  "concurrentWorkspaceEditsPreserved": true,
+  "initialBuildSourceFingerprint": "c12fa982b837de702f440db8524a1f764472456bef12e6dee0e8900ed944e72b",
+  "finalScriptRepairs": [
+    "scripts/render_island_playground.sh",
+    "scripts/render_privacy_qa.sh"
+  ],
+  "finalProductionRepair": "Sources/DaBin/QuickAccess.swift",
+  "concurrentWorkspaceEdits": "concurrent-workspace-edits.json",
+  "finalVerification": "native-verification.json"
+}

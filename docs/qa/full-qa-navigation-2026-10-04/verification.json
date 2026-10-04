@@ -1,0 +1,72 @@
+{
+  "verifiedAtUTC": "2026-10-04T12:39:21.314326+00:00",
+  "result": "functional_checks_passed_with_documented_performance_limits",
+  "native": {
+    "passedSuites": 110,
+    "failedSuites": 0,
+    "rawRunnerStatus": "invalidated_by_source_changes",
+    "current257InputsMatchRunStart": true,
+    "independentArtifactAudit": "source-artifact-audit.json",
+    "sourceReconciliation": "source-reconciliation.json"
+  },
+  "pythonTestsPassed": 90,
+  "mediaIntegrationChecksPassed": 39,
+  "xcodeSmokeTestsPassed": 2,
+  "storeReleaseCompilePassed": true,
+  "storePackagingPassed": true,
+  "storeInputsUnchanged": true,
+  "directReleaseBuildPassed": true,
+  "currentBuildInputsMatchReceipt": true,
+  "warningsAsErrors": true,
+  "stress": {
+    "seconds": 600.0164807918482,
+    "savedArrivals": 399,
+    "finalRecordCount": 5399,
+    "zoomCycles": 5,
+    "inputToLayoutP95Milliseconds": 56.06120824813843,
+    "steadyZoomTimerP95Milliseconds": 71.0095833055675,
+    "performanceTargetsMet": false
+  },
+  "installedApp": {
+    "verifiedAtUTC": "2026-10-04T12:37:41.179356+00:00",
+    "installedPath": "/Users/roeylibfeld/Applications/DaBin.app",
+    "version": "0.4.31",
+    "buildNumber": "86",
+    "configuration": "Release",
+    "sourceFingerprint": "82e8c05cd9c454b716ddd72ffe91cacbd3f423dbd894b24a18a68545a2aced98",
+    "executableSHA256": "b0991ea7cfd276642c5ac53c3e13e048fc3c6d86b7c93cf42b4c8a7d7f617c1e",
+    "strictSignatureVerified": true,
+    "matchesBuiltExecutable": true,
+    "onlyOneMainDaBinRunning": true,
+    "runningApp": {
+      "bundlePath": "/Users/roeylibfeld/Applications/DaBin.app",
+      "finishedLaunching": true,
+      "launchTimeUTC": "2026-10-04T12:35:50Z",
+      "pid": 14777
+    },
+    "backupPath": "/Users/roeylibfeld/Applications/.DaBinBackups/20261004-153541-4a096b9b.app",
+    "desktopShortcutTarget": "/Users/roeylibfeld/Applications/DaBin.app",
+    "uiVerification": [
+      "Inbox visible after launch",
+      "Settings opens and displays installed version and Navigation and zoom controls",
+      "Command-[ returns to Inbox",
+      "Command-] returns to Settings",
+      "Command-[ returns to Inbox again"
+    ],
+    "installerModifiedArchive": false,
+    "privateArchiveByteEqualityAudited": false,
+    "published": false,
+    "versionBumped": false,
+    "updaterExecutableSHA256": "1b1363ab3c4bc2bcc7f594071edcc7205ce8c22858c9dc659a06be8449ece3e3",
+    "matchesBuiltUpdater": true
+  },
+  "remainingLimits": [
+    "Large-archive forced-layout zoom misses proposed smoothness targets",
+    "Nonfatal AppKit estimated-row-height warnings remain",
+    "One physical display only; no physical mouse-driver/trackpad settings or VoiceOver verification",
+    "Minimum macOS 14 runtime not tested",
+    "No external website preview/network integration or arbitrary external physical drop test",
+    "Unsigned Store compile is not sandbox entitlement enforcement, distribution signing, notarization or Apple approval"
+  ],
+  "published": false
+}

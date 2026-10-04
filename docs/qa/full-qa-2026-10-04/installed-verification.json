@@ -1,0 +1,29 @@
+{
+  "status": "installed_verified",
+  "utc": "2026-10-03T22:50:03.843018+00:00",
+  "app": "/Users/roeylibfeld/Applications/DaBin.app",
+  "version": "0.4.28",
+  "build": "83",
+  "sourceFingerprint": "f5e26cf555bdf477f2d4874a6c7e631f16edbcd3c4fd2aca57d3c717ec9a8d10",
+  "mainSHA256": "1065fa2dcc1daf91a3eabb097033ef61a3f8112f417eba0cda5dc83b576771a9",
+  "updaterSHA256": "53722b05cf33f4cfdc30e84aabbcafc6630f81370133cc287bb3d4486461a185",
+  "strictSignaturePassed": true,
+  "previousCandidateBackup": "/Users/roeylibfeld/Applications/.DaBinBackups/20261004-014749-5699742a.app",
+  "originalInstalledAppBackup": "/Users/roeylibfeld/Applications/.DaBinBackups/20261004-011428-ae62d438.app",
+  "personalCapturesEdited": false,
+  "autoCapturePausedBeforeAndAfter": true,
+  "quickCaptureDraftPreserved": true,
+  "queryRestoredEmpty": true,
+  "displayedSavedCountBeforeAndAfter": 60,
+  "clipboardRestoration": "CUA native paste temporarily uses and restores the clipboard; native regression tests use private pasteboards.",
+  "liveChecks": [
+    "Settings shows0.4.28(83), Search\u2303\u2325K, capture\u2303\u2325V and no registration error",
+    "Command-K opens Search with native field focus",
+    "Typed final typing qa visibly entered",
+    "Selected query replaced by native paste DaBin-QA-7be9-final-paste",
+    "Clear empties query and returns editor focus",
+    "Latin typing after the K chord succeeds; keyboard language unchanged",
+    "Saved count unchanged and Auto Capture paused"
+  ],
+  "globalShortcutActivation": "Not confirmed by per-application CUA key injection: CtrlOptionK did not navigate from Settings. Native registration labels/no-error state, read-only reservations and28 registrar/navigation checks pass; physical OS-level hotkey dispatch remains a manual check."
+}

@@ -1,0 +1,30 @@
+{
+  "checks": [
+    {
+      "name": "store-release-final",
+      "command": [
+        "python3",
+        "scripts/build_store_candidate.py",
+        "--output-directory",
+        "build/store-qa-navigation-20261004-final"
+      ],
+      "startedAtUTC": "2026-10-04T12:32:33.797520+00:00",
+      "finishedAtUTC": "2026-10-04T12:33:32.038977+00:00",
+      "exitCode": 0,
+      "log": "store-release-final.log"
+    },
+    {
+      "name": "direct-release",
+      "command": [
+        "bash",
+        "scripts/build.sh",
+        "--configuration",
+        "Release"
+      ],
+      "startedAtUTC": "2026-10-04T12:33:32.039227+00:00",
+      "finishedAtUTC": "2026-10-04T12:34:49.144597+00:00",
+      "exitCode": 0,
+      "log": "direct-release.log"
+    }
+  ]
+}

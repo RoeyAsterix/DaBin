@@ -1,0 +1,39 @@
+/private/tmp/dabin-full-qa-20261004/native/Sources/DaBin/RobotCharacterView.swift:406:40: error: cannot find 'QuietOrbitVisualStyle' in scope
+ 404 |                cornerHeight: radius * orbitUnit, transform: nil)
+ 405 |     }
+ 406 |     private var orbitMetal: [UInt32] { QuietOrbitVisualStyle.metal }
+     |                                        `- error: cannot find 'QuietOrbitVisualStyle' in scope
+ 407 |     private var orbitSilver: [UInt32] { QuietOrbitVisualStyle.silver }
+ 408 | 
+
+/private/tmp/dabin-full-qa-20261004/native/Sources/DaBin/RobotCharacterView.swift:407:41: error: cannot find 'QuietOrbitVisualStyle' in scope
+ 405 |     }
+ 406 |     private var orbitMetal: [UInt32] { QuietOrbitVisualStyle.metal }
+ 407 |     private var orbitSilver: [UInt32] { QuietOrbitVisualStyle.silver }
+     |                                         `- error: cannot find 'QuietOrbitVisualStyle' in scope
+ 408 | 
+ 409 |     @discardableResult
+
+/private/tmp/dabin-full-qa-20261004/native/Sources/DaBin/RobotCharacterView.swift:490:9: error: cannot find 'QuietOrbitBodyArtwork' in scope
+ 488 | 
+ 489 |     private func configureShell() {
+ 490 |         QuietOrbitBodyArtwork.install(in: shellLayer, canvas: Self.designSize,
+     |         `- error: cannot find 'QuietOrbitBodyArtwork' in scope
+ 491 |             headRect: orbitRect(150, 57, 100, 68), topDown: true, feet: feetLayer)
+ 492 |     }
+
+/private/tmp/dabin-full-qa-20261004/native/Sources/DaBin/RobotCharacterView.swift:495:9: error: cannot find 'QuietOrbitHeadArtwork' in scope
+ 493 | 
+ 494 |     private func configureFace() {
+ 495 |         QuietOrbitHeadArtwork.install(in: faceLayer, canvas: Self.designSize,
+     |         `- error: cannot find 'QuietOrbitHeadArtwork' in scope
+ 496 |             headRect: orbitRect(150, 57, 100, 68), topDown: true,
+ 497 |             visor: faceScreenLayer, leftEye: leftEyeLayer, rightEye: rightEyeLayer, mouth: mouthLayer)
+
+/private/tmp/dabin-full-qa-20261004/native/Sources/DaBin/RobotCharacterView.swift:1889:20: error: cannot find 'QuietOrbitVisualStyle' in scope
+1887 |             path.addLine(to: CGPoint(x: 34.5, y: 42))
+1888 |         default:
+1889 |             return QuietOrbitVisualStyle.idleMouthPath(in: orbitRect(150, 57, 100, 68), topDown: true)
+     |                    `- error: cannot find 'QuietOrbitVisualStyle' in scope
+1890 |         }
+1891 |         return path

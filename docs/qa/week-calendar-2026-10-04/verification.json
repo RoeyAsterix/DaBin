@@ -1,0 +1,60 @@
+{
+  "feature": "Calendar picker and selected-day Week view",
+  "date": "2026-10-04",
+  "status": "passed",
+  "checks": 1233,
+  "suites": {
+    "SearchScopeStateTests": 126,
+    "DayExportTests": 126,
+    "DayExportUITests": 30,
+    "WeeklyStateTests": 184,
+    "WindowResizeInteractionTests": 32,
+    "WindowTests": 187,
+    "WeeklyWindowTests": 114,
+    "FilterResizeTests": 112,
+    "HeaderInteractionTests": 290,
+    "TimelineCalendarTests": 32
+  },
+  "productionSourcesMatchTestsAndBuild": true,
+  "app": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/DaBin.app",
+  "buildVersion": "0.4.31",
+  "buildNumber": "86",
+  "implemented": [
+    "Compact local-calendar picker with theme colors, activity dots, today outline, month navigation and occupied month rows only",
+    "Stage one to seven dates, including nonconsecutive dates; Apply, Cancel, Clear and Last 7 days",
+    "Exact selected dates used by Week display, search, copy and export",
+    "Window fits populated selected dates, hides empty dates and preserves normal window size and header anchor",
+    "Manual Week resizing remains available; returning to Week from Day or Inbox restores automatic fitting"
+  ],
+  "verification": [
+    "Native calendar accessibility actions, selection cap, apply/cancel, month browsing, local DST/leap calendar arithmetic",
+    "Actual native popover opening, date selection and Escape dismissal",
+    "Native window expansion, selected subsets, capture addition/removal, filter stability, manual resize and normal-size restoration",
+    "Release ARM64 build with warnings as errors and strict local signature verification",
+    "git diff --check, Python runner compile, generated Xcode project and plutil validation"
+  ],
+  "testHarnessNote": "The integration run passed nine suites. The calendar harness initially read the AX label of static text instead of its AX value. The corrected harness then passed all 32 checks against the same production source. The initial receipt is retained unchanged.",
+  "limitations": [
+    "Native window checks used one attached display; other geometry is simulated",
+    "Physical VoiceOver and keyboard-navigation preferences were not changed",
+    "This is a local development build; the installed application was not replaced and no release was published"
+  ],
+  "changedFiles": {
+    "Sources/DaBin/AppState.swift": "f9ad10d511030ea4780740f0ec5216baa9d1a086e61e1a10e013fc0d8d0f01d6",
+    "Sources/DaBin/BoardView.swift": "6697b5fa69bb4ae9cbe6c9f9f186ec448edc471b3575ed1346a137bb2cfca555",
+    "Sources/DaBin/CornerController.swift": "02cd2546eb513eb252a384eee3c4ac9c92fd2f530613a309a7f79bdb73985af7",
+    "Sources/DaBin/DayExport.swift": "604f447a16ac6a67bd1e170d9779fe35c929e686a67dd6ea70e6ca363cd2a2a9",
+    "Sources/DaBin/DayExportUI.swift": "713a6ffb7501342aa9d022c599328d38784618d5af9011e0e2ccfde9184ee4c3",
+    "Sources/DaBin/WeeklyScopeActions.swift": "37e617e5aaa2a0d7c77caf311bd65478ac17007720666dccf5313551110eb494",
+    "Sources/DaBin/WeeklyScreen.swift": "a4c27577629e88ffb5e458af5d66fe8297504b15a98d5970043eda4c490539ad",
+    "Sources/DaBin/WeeklyDateSelection.swift": "1945fdd2318500ac794a75a392130a63d82e6f77bdc0aef741ab2b23aa725159",
+    "Sources/DaBin/TimelineCalendarPicker.swift": "1603f5fa33573c4cf748b1a2a85d2576f756e4bb0587796ff018063871835a72",
+    "Tests/WeeklyStateTests.swift": "65426f18f4daa1618c896372f77670ae814f37b1d21d3e9bbb9c6d4559818ce0",
+    "Tests/WeeklyWindowTests.swift": "7287dd0724dafce5e2d276df1ca178ab63d4cb2fbd9a74f16c4a89adbf68c288",
+    "Tests/DayExportTests.swift": "b1c1125745280b19eaea2561b831c023611d131f8cc20ce351cda31d49a579f7",
+    "Tests/HeaderInteractionTests.swift": "f7670ac958c10ce488a9e1813738212b2f87560bb2425ff7f27198474bad813b",
+    "Tests/TimelineCalendarTests.swift": "c1e1e56aa9b94997bdd0d0ef7c0b1f2fcb519834f00e6d18c31557e92efff925",
+    "scripts/run_qa.py": "93d1fd8e638077792f0a15cb84c47eed1f6f547c9442f59b3c4e68bf52de7da1",
+    "DaBin.xcodeproj/project.pbxproj": "331425e4eb7e19e084740b55a2d2125ba22686aa43f66b1895a7e970aad58838"
+  }
+}

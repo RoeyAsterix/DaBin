@@ -15,6 +15,8 @@ final class ApplicationCoordinator {
     let autoCapture: AutoCaptureService
     let autoCaptureRobot: AutoCaptureRobotPresenter
     let taskTimerRobot: TaskTimerRobotPresenter
+    let reminderAlerts: ReminderAlertCoordinator
+    let extendedView: CaptureExtendedWindowController
     let state: AppState
     let theme: ThemeSettings
     let robotPlacement: RobotPlacementSettings
@@ -69,11 +71,16 @@ final class ApplicationCoordinator {
             })
         let state = AppState(store: store, previews: previews, contentIndex: contentIndex, reminders: reminders,
                              updates: updates, robotPlacement: robotPlacement,
-                             autoCapture: autoCapture, quickAccessSettings: quickAccess)
+                             autoCapture: autoCapture, quickAccessSettings: quickAccess,
+                             workspaceZoom: WorkspaceZoomSettings(defaults: defaults))
         autoCapture.projectProvider = { [weak state] in
             state?.libraryProject
         }
         let corners = CornerController(state: state, input: input, placementDefaults: defaults, theme: theme)
+        let reminderAlerts = ReminderAlertCoordinator(store: store)
+        let extendedView = CaptureExtendedWindowController(state: state, theme: theme)
+        self.reminderAlerts = reminderAlerts
+        self.extendedView = extendedView
         self.previews = previews
         self.contentIndex = contentIndex
         self.reminders = reminders
@@ -86,11 +93,55 @@ final class ApplicationCoordinator {
         self.theme = theme
         self.robotPlacement = robotPlacement
         self.corners = corners
+        autoCaptureRobot.setProjectRecordingActive(false)
+        corners.onProjectRecordingChanged = { [weak taskTimerRobot, weak autoCaptureRobot] project, paused in
+            taskTimerRobot?.content.setProjectRecording(projectName: project, isPaused: paused)
+            autoCaptureRobot?.setProjectRecordingActive(project != nil && !paused)
+        }
         state.onTaskCompleted = { [weak corners] in corners?.celebrateTaskCompletion() }
-        state.onTaskTimerExpired = { [weak taskTimerRobot] captures in
-            for capture in captures {
-                _ = taskTimerRobot?.present(task: TaskTimerCompletion(taskID: capture.id, title: capture.title))
+        state.onTaskTimerExpired = { [weak reminderAlerts] _ in reminderAlerts?.reconcile() }
+        state.onOpenExtendedCapture = { [weak extendedView] capture, draft in
+            extendedView?.show(capture: capture, draft: draft)
+        }
+        extendedView.onReturn = { [weak corners] in corners?.showBoard(immediate: true) }
+        reminderAlerts.onAlertsChanged = { [weak taskTimerRobot] alerts, captureIDs in
+            taskTimerRobot?.reconcile(validTaskIDs: captureIDs,
+                validReminderReceiptIDs: Set(alerts.filter { $0.reminderRevision != nil }.map(\.id)),
+                validFocusReceiptIDs: Set(alerts.filter { $0.reminderRevision == nil }.map(\.id)))
+            for alert in alerts { _ = taskTimerRobot?.present(task: alert) }
+        }
+        taskTimerRobot.onAcknowledge = { [weak store, weak state] receipts in
+            guard let store else { return false }
+            let reminders = receipts.compactMap { receipt -> CaptureReminderOccurrence? in
+                guard let revision = receipt.reminderRevision, let due = receipt.dueAt else { return nil }
+                return CaptureReminderOccurrence(captureID: receipt.taskID, revision: revision, dueAt: due)
             }
+            let focus = receipts.filter { $0.reminderRevision == nil }.map {
+                CaptureFocusOccurrence(captureID: $0.taskID, completionID: $0.id)
+            }
+            do {
+                _ = try store.acknowledgeAlerts(reminders: reminders, focus: focus)
+                let remains = store.captures.contains { capture in
+                    guard capture.deletedAt == nil, !capture.isTask || !capture.isCompleted else { return false }
+                    let reminderPending = capture.reminderOccurrence.map { reminders.contains($0) } == true
+                        && !capture.isReminderAcknowledged
+                    let focusPending = capture.focusOccurrence.map { focus.contains($0) } == true
+                        && capture.taskPlanning?.focusSession?.acknowledgedAt == nil
+                    return reminderPending || focusPending
+                }
+                if remains { state?.reportFailure("The reminder could not be acknowledged yet. It remains available.") }
+                return !remains
+            } catch {
+                state?.reportFailure("Could not acknowledge the reminder. Your alert is still available. \(error.localizedDescription)")
+                return false
+            }
+        }
+        taskTimerRobot.onAcknowledged = { [weak state, weak corners, weak extendedView] receipts in
+            // The alert itself never activates the app. This follows an explicit click.
+            guard let state, !receipts.isEmpty else { return }
+            if receipts.count == 1 { state.openCapture(receipts[0].taskID) }
+            corners?.showBoard(immediate: true)
+            extendedView?.showCompletedReminders(receipts)
         }
         state.onToggleExpandedWindow = { [weak corners] in corners?.toggleExpandedWindow() }
         lifecycle = ReminderLifecycle { await reminders.reconcile() }
@@ -98,6 +149,7 @@ final class ApplicationCoordinator {
         corners.onDidCloseBoard = { [weak autoCaptureRobot] in autoCaptureRobot?.resumeAfterBoard() }
         autoCaptureRobot.onPresentationChanged = { [weak corners] visible in
             if visible { corners?.captureAnimationWillAppear() }
+            else { corners?.refreshProjectRecording() }
         }
         corners.onRobotInteractionBegan = { [weak autoCaptureRobot, weak taskTimerRobot] in
             autoCaptureRobot?.suspendForInteraction()
@@ -115,6 +167,7 @@ final class ApplicationCoordinator {
                 corners?.captureAnimationWillAppear()
             } else {
                 autoCaptureRobot?.resumeAfterTaskTimer()
+                corners?.refreshProjectRecording()
             }
         }
         autoCapture.onCommitted = { [weak state] action in
@@ -142,7 +195,7 @@ final class ApplicationCoordinator {
                 state?.updates.checkForUpdates()
             },
             showSettings: { [weak state, weak corners] in state?.showSettings(); corners?.showBoard() },
-            autoCapture: autoCapture
+            autoCapture: autoCapture, workspaceZoom: state.workspaceZoom
         )
         statusBar = StatusBarController(
             openDaily: { [weak corners] in corners?.openDaily() },
@@ -190,6 +243,7 @@ final class ApplicationCoordinator {
         autoCapture.start()
         installCaptureToolObservers()
         lifecycle.start(applicationEvents: applicationEvents, workspaceEvents: workspaceEvents)
+        reminderAlerts.start(applicationEvents: applicationEvents, workspaceEvents: workspaceEvents)
         if showDaily { corners.openDaily() }
         prepareStartupDerivatives()
         store.startArchiveRepair()
@@ -230,6 +284,9 @@ final class ApplicationCoordinator {
         pendingStartupDerivativeCount = 0
         store.cancelArchiveRepair()
         lifecycle.stop()
+        reminderAlerts.stop()
+        state.onOpenExtendedCapture = nil
+        extendedView.shutdown()
         autoCapture.shutdown()
         shortcuts.stop()
         quietSubscription?.cancel(); quietSubscription = nil

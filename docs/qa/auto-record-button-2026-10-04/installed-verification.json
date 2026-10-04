@@ -1,0 +1,21 @@
+{
+  "verifiedAtUTC": "2026-10-03T23:09:05.607516+00:00",
+  "installedPath": "/Users/roeylibfeld/Applications/DaBin.app",
+  "version": "0.4.29",
+  "build": "84",
+  "sourceFingerprint": "1d4d056ef71ad042f07fad54dc54cb9198e82aa0462ea748a433d493b681ceb0",
+  "mainSHA256": "d5e13bcaf0114b6c24e739cc30373a04e3c8c1f874fa5f85fa8458d5ebb8d7b0",
+  "updaterSHA256": "c39188f739e9977d2d08e70007c621d57e5f236c2b2473c03bdad1d5ddcb7c5a",
+  "strictSignature": "passed",
+  "installerOutput": "Previous app preserved at /Users/roeylibfeld/Applications/.DaBinBackups/20261004-020905-ee7289d5.app\nInstalled /Users/roeylibfeld/Applications/DaBin.app\nYour archive was not modified. Open DaBin to use the installed version.\n",
+  "liveCheck": {
+    "captureState": "Paused \u00b7 existing captures remain",
+    "recordButton": "Resume Auto Capture",
+    "search": "Empty and focused after Command-K",
+    "savedItems": 60,
+    "quickCaptureDraft": "Preserved",
+    "settingsChanged": false,
+    "screenshot": "Blank due to app capture exclusion; visual QA uses isolated native renders",
+    "activeAnimation": "Verified in own-process compositor fixture, not by enabling user capture"
+  }
+}

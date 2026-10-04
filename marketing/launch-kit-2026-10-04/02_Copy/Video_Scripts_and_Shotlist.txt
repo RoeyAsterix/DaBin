@@ -1,0 +1,38 @@
+DABIN / THREE DEMO BRIEFS
+The produced 22-second Feed DaBin film has its exact voice script and timing in 04_Video. This file is an editable brief for follow-up real-app captures. Check final subtitles against the actual spoken audio.
+
+A / FEED DABIN / 22 SECOND BRAND INTRODUCTION
+Aim: make the robot memorable and connect it to saving and finding useful content.
+0-3s: DaBin robot arrives; text 'Feed DaBin the useful bits.'
+3-9s: clearly fictional image, link and note move into the robot/capture board. Animated interaction may be stylized.
+9-14s: actual app screenshot or native recording shows a fictional project and saved items; distinguish real interface from brand animation.
+14-17s: show finding a saved item; only depict OCR search if it is a real verified search recording.
+17-22s: 'Save now. Find it later. Keep it on your Mac.' Then 'Free for Apple Silicon Macs. macOS 14+.' Use a real download link in the surrounding post/website once public.
+Suggested voice wording, subject to the final produced script: 'Meet DaBin, a little robot for the useful bits of your day. Drop in a link, an image or a note. Keep them with a project and find them again. Free for Mac. No account required.'
+Final: 04_Video/DABIN__FEED_DABIN__LANDSCAPE.mp4
+Social: 04_Video/DABIN__FEED_DABIN__PORTRAIT.mp4
+Silent: 04_Video/DABIN__FEED_DABIN__LANDSCAPE_SILENT.mp4
+Sidecar: 04_Video/DABIN__FEED_DABIN__SUBTITLES.srt
+
+B / WHERE DID THAT SCREENSHOT GO? / 15-20 SECOND NATIVE CAPTURE
+Create a fictional screenshot containing 'terracotta' within readable design-note content. Save with neutral filename 'reference_03.png'; don't put the query in its title or comment. Manually save into DaBin. Confirm recognized text and the actual result before recording.
+0-3s: show fictional screenshot and the question 'Where did that screenshot go?'
+3-7s: save it into DaBin using real app controls.
+7-13s: open Search, type 'terracotta', show actual result and matching line.
+13-17s: open the result; on-screen 'Find words in saved screenshots. Recognition runs on your Mac.'
+17-20s: 'Get DaBin free. Apple Silicon + macOS 14 or later.'
+Suggested voice: 'Saved a screenshot and forgot its name? Save it in DaBin, then search a word inside it. Text recognition runs on your Mac, across supported content you've saved. DaBin is free. No account required.'
+Status: follow-up recording brief; not represented as produced footage by this file.
+
+C / ONE PROJECT, USEFUL BITS TOGETHER / 20-30 SECOND NATIVE CAPTURE
+Use fictional 'Studio Refresh' project: sample image, example.com design link, 'Try the warmer palette' note and 'Review palette' task.
+0-4s: 'A useful reference always arrives at the wrong time.'
+4-13s: save three items through actual paste/drop/note actions.
+13-21s: show the project resources and next task, with readable real UI.
+21-26s: open the saved reference again; 'Keep a project's useful bits together.'
+26-30s: download CTA + compatibility.
+Suggested voice: 'A reference image, a useful link, and one idea for later. Keep them with a project in DaBin, beside the next task. Save while you're working. Find it when you need it. Free for Mac.'
+Status: follow-up recording brief.
+
+PRODUCTION
+Fictional sample content only. Hide notifications/personal desktop/clipboard. Keep sound-off meaning complete with readable text. Use accurate subtitles; do not advertise a silent clip as voiced. Keep a clean ending instead of a tiny URL unreadable at social size. For actual App Store previews, use device-captured footage and a separate Apple-specification check.

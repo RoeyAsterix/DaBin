@@ -1,0 +1,43 @@
+DaBin UI Tour v2 — editable source and local rebuild
+
+The packed Blender files include all UI, robot and guide textures:
+DABIN__UI_TOUR__LANDSCAPE.blend / DABIN__UI_TOUR__PORTRAIT.blend
+All media is local. No KARI material is included. No publishing or paid API
+calls are performed by the rebuild scripts. Existing ElevenLabs takes suffice.
+
+Requirements: Blender 5.2+, Python 3.11+ with Pillow/numpy, and FFmpeg.
+The author's runtime paths are conveniences, not package dependencies.
+Use DABIN_FFMPEG to supply an FFmpeg executable when it is not on PATH.
+
+Order from this directory:
+1. python3 make_tour_edit.py
+   Creates the natural-speed narration mix, 94.4-second tour_edit.json and
+   synchronized English SRT/VTT. Source pause positions were waveform-audited.
+2. python3 prepare_tour.py
+   Creates editorial title/speech-guide/cursor textures. Native UI is not drawn.
+3. blender -b --python build_ui_tour.py -- --layout landscape --render
+4. blender -b --python build_ui_tour.py -- --layout portrait --render
+5. python3 encode_tour.py --layout all
+   Encodes H.264/AAC and silent versions, fully decodes them, extracts QA views
+   and posters, and writes metadata. Do not run before all frames are present.
+
+Use --frames 90,170,810 on the Blender builder for source-resolution checks.
+Frames are temporary under the kit's .work/ directory and excluded from ZIP.
+Review final MP4 frames plus complete playback when revising voice/layout.
+Rendering source stills does not replace final-video QA.
+
+Native fixture rebuild is optional; all source PNGs are already included.
+Read ../assets/DABIN__NATIVE_ASSETS__READ_ME.txt and use ReproduceNativeAssets.py
+then FinalizeNativeAssets.py only against the hash-verified frozen production
+QA module. This creates safe temporary fictional data; never launch the live
+archive or enable real clipboard/screenshot monitoring to rebuild the film.
+
+Authoritative final edit map: tour_edit.json. The long storyboard is the creative
+plan; actual final views, times and crops are listed in tour_edit.json.
+Source voice word times are estimates verified against local rereads. The splice
+waveforms and exact caption transform are audited in ../../07_QA/AUDIO_QA.json.
+
+Package finalization: copy the new landscape MP4/poster to landing-page media,
+remove superseded media there, render local HTML at desktop/mobile sizes, then
+run ../qa/build_package.py. It validates links, PNG/JSON files and ZIP CRC/hash
+parity. Excluded scratch folders: .work, .build and __pycache__.

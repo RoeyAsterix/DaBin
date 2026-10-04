@@ -1,0 +1,111 @@
+{
+  "prepared": "2026-10-04",
+  "status": "RESEARCH_ONLY_NO_CONTACT",
+  "fitNote": "Fit and priority are our marketing judgment; routes/policies are verified on official sources. Recheck before outreach.",
+  "targets": [
+    {
+      "name": "MacStories",
+      "priority": "1 / organic editorial",
+      "route": "Official team email links on About page",
+      "url": "https://www.macstories.net/about/",
+      "fit": "Native Mac workflow, project references and local recognition.",
+      "opening": "MacStories focuses on detailed app testing; offer the public build, factual limits and a short demo.",
+      "policy": "Independent review only; the site says it does not do paid reviews. Read recent relevant coverage yourself."
+    },
+    {
+      "name": "The Sweet Setup",
+      "priority": "1 / organic inquiry",
+      "route": "Contact-page email link or official social account",
+      "url": "https://thesweetsetup.com/contact/",
+      "fit": "Keeping creative ideas and project references together.",
+      "opening": "Lead with one calm capture-to-project workflow rather than the robot alone.",
+      "policy": "Contact route welcomes feedback/questions; advertising has a separate sponsorship route. No coverage acceptance is assumed."
+    },
+    {
+      "name": "The Mac Observer",
+      "priority": "1 / organic editorial",
+      "route": "Contact us form; subject Suggestion for an article",
+      "url": "https://www.macobserver.com/contact/",
+      "fit": "A practical free Mac app with a distinct save/find interaction.",
+      "opening": "Give the public app link and a concrete local saved-screenshot search example.",
+      "policy": "Use the general/editorial form rather than advertising unless a paid inquiry is intended."
+    },
+    {
+      "name": "TidBITS",
+      "priority": "1 / individually considered pitch",
+      "route": "Publisher contact on official Contact page",
+      "url": "https://tidbits.com/about/contact/",
+      "fit": "Local Apple-platform utility; needs a clear distinction from a crowded capture category.",
+      "opening": "PITCH: DaBin - Mac app for saving and searching local captures. Read the publisher's app-pitch article yourself.",
+      "policy": "No press releases, guest/sponsored posts or link insertions. Send a concise, personally edited pitch; do not claim research you have not done.",
+      "extra": "https://tidbits.com/2026/07/23/how-to-pitch-apps-to-tidbits-in-the-ai-era/"
+    },
+    {
+      "name": "Created Tech",
+      "priority": "2 / organic inquiry",
+      "route": "Official contact form",
+      "url": "https://createdtech.com/contact",
+      "fit": "Design/Apple workflow; current official site includes Figma and image-editing guides.",
+      "opening": "Offer the fictional Studio Refresh project-reference workflow and real interface views.",
+      "policy": "Contact form verified. Check current coverage/activity and policy before sending; some visible articles are older. No response or review is assumed."
+    },
+    {
+      "name": "9to5Mac",
+      "priority": "2 / organic newsroom pitch",
+      "route": "News Tips email link on official Contact page",
+      "url": "https://9to5mac.com/contact/",
+      "fit": "Mac app launch and native/local design details.",
+      "opening": "Lead with the Mac app's concrete capture/search behavior and a downloadable public build.",
+      "policy": "Use News Tips, not advertising, for an editorial pitch. The form says tips may be published/syndicated; provide only public information."
+    },
+    {
+      "name": "MacRumors",
+      "priority": "2 / organic newsroom pitch",
+      "route": "Official tips address on About page",
+      "url": "https://www.macrumors.com/about/",
+      "fit": "Potential small Mac-app roundup or practical software discovery.",
+      "opening": "Concise facts: free, Apple Silicon/macOS 14+, local saved-content text recognition and desktop drop target.",
+      "policy": "Official general tips route verified. Interest and coverage are uncertain; avoid a generic oversized press-release attachment."
+    },
+    {
+      "name": "MacSparky / David Sparks",
+      "priority": "2 / short editorial note",
+      "route": "To Reach David address on current About page",
+      "url": "https://www.macsparky.com/about/",
+      "fit": "Practical Apple productivity and keyboard capture/project workflow.",
+      "opening": "Use a clear subject and one real workflow; do not pitch a podcast guest or paid link deal.",
+      "policy": "About page provides a general address and warns replies are limited. Sponsorship is separate; listed availability on its sponsorship page may be stale."
+    },
+    {
+      "name": "Better Creating",
+      "priority": "3 / optional partnership inquiry",
+      "route": "Official partnerships form/email",
+      "url": "https://bettercreating.com/partnerships",
+      "fit": "Intentional technology and creative/productive software.",
+      "opening": "A design-reference workflow that shows a useful outcome with a small, clearly scoped demo.",
+      "policy": "The official page offers sponsorship/product features/reviews. Rates and whether coverage is paid must be clarified. No booking or budget is approved by this kit."
+    },
+    {
+      "name": "Jeff Su",
+      "priority": "3 / optional paid partnership inquiry",
+      "route": "Start a partnership link on official Partnerships page",
+      "url": "https://www.jeffsu.org/partnerships/",
+      "fit": "Working professionals collecting references and next actions.",
+      "opening": "A specific save/find workflow; ask for fit, rates, deliverables and measurement if the owner chooses a paid test.",
+      "policy": "Official route is a partnership intake with scoped rates; do not treat it as guaranteed free editorial coverage."
+    }
+  ],
+  "doNotPitch": [
+    {
+      "name": "MacMost",
+      "url": "https://macmost.com/contact",
+      "reason": "Official page explicitly rejects product reviews, free products for review and marketing partnerships; its topic form must not be used to ask it to review or link a product."
+    }
+  ],
+  "notIncluded": [
+    {
+      "name": "DailyTekk",
+      "reason": "Official contact page could not be fetched during this check; no route or email is guessed."
+    }
+  ]
+}

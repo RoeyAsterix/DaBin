@@ -1,0 +1,18 @@
+SIGN TEXT METRICS Optional(".AppleSystemUIFontRounded-Semibold 12.00 pt. P [] (0xc3f224500) fobj=0xc3f224500, spc=2.94") (78.0, 15.0) Optional((81.53985905647278, 15.0)) (14.0, 3.5, 76.0, 17.0) [__C.NSAttributedStringKey(_rawValue: NSParagraphStyle): Alignment Center, LineSpacing 0, ParagraphSpacing 0, ParagraphSpacingBefore 0, HeadIndent 0, TailIndent 0, FirstLineHeadIndent 0, LineHeight 0/0, LineHeightMultiple 0 LineBreakMode TruncatingTail, Tabs (
+    28L,
+    56L,
+    84L,
+    112L,
+    140L,
+    168L,
+    196L,
+    224L,
+    252L,
+    280L,
+    308L,
+    336L
+), DefaultTabInterval 0, Blocks (
+), Lists (
+), BaseWritingDirection Natural, HyphenationFactor 0, TighteningForTruncation NO, HeaderLevel 0 LineBreakStrategy 0 PresentationIntents (
+) ListIntentOrdinal 0 CodeBlockIntentLanguageHint '', __C.NSAttributedStringKey(_rawValue: NSOriginalFont): ".AppleSystemUIFontRounded-Semibold 12.00 pt. P [] (0xc3f224500) fobj=0xc3f224500, spc=2.94", __C.NSAttributedStringKey(_rawValue: NSFont): ".AppleSystemUIFontRounded-Semibold 12.00 pt. P [] (0xc3f224500) fobj=0xc3f224500, spc=2.94", __C.NSAttributedStringKey(_rawValue: NSColor): Generic RGB colorspace 0.960784 0.945098 0.972549 1]
+PASS: 61 native recording-board checks; renders: /private/tmp/dabin-monitor-drag-20261003/docs/qa/project-recording-sign-compact-2026-10-03/renders

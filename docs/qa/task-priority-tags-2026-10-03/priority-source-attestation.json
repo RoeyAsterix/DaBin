@@ -1,0 +1,42 @@
+{
+  "TaskPlanningEditor.swift": {
+    "workspaceSHA256": "744d8e0d05bc468677f9f537fcc454a1ec80e4072254fa862bcbe049fc1a7a15",
+    "testedAndBuiltSHA256": "744d8e0d05bc468677f9f537fcc454a1ec80e4072254fa862bcbe049fc1a7a15",
+    "matches": true
+  },
+  "CaptureCards.swift": {
+    "workspaceSHA256": "1008d5ac82c899c1716902ca7a1e5c1360f8dd7d6fff72cbe6094d8b7693e5dc",
+    "testedAndBuiltSHA256": "1008d5ac82c899c1716902ca7a1e5c1360f8dd7d6fff72cbe6094d8b7693e5dc",
+    "matches": true
+  },
+  "WeeklyScreen.swift": {
+    "workspaceSHA256": "d10bb0d8f72ec4fe4323d08a1dad53a83087ae6a52139f5f5849c89dd9f0019d",
+    "testedAndBuiltSHA256": "d10bb0d8f72ec4fe4323d08a1dad53a83087ae6a52139f5f5849c89dd9f0019d",
+    "matches": true
+  },
+  "GroupedCaptureCard.swift": {
+    "workspaceSHA256": "c521cd10848b9f8ecc34538c4a39cea2486d6447f8ca0e0ed8182ce214776699",
+    "testedAndBuiltSHA256": "c521cd10848b9f8ecc34538c4a39cea2486d6447f8ca0e0ed8182ce214776699",
+    "matches": true
+  },
+  "WorkspaceItemCard.swift": {
+    "workspaceSHA256": "de7ceec9374cbb713bf7d4259ec11b8a4db2619c73a76678d8cb3ef29b0825a9",
+    "testedAndBuiltSHA256": "de7ceec9374cbb713bf7d4259ec11b8a4db2619c73a76678d8cb3ef29b0825a9",
+    "matches": true
+  },
+  "ExplorerItems.swift": {
+    "workspaceSHA256": "b415f0b1748f01e93774170f525f9e6bcd289a68e67ef2e0a73548b71e7759ca",
+    "testedAndBuiltSHA256": "b415f0b1748f01e93774170f525f9e6bcd289a68e67ef2e0a73548b71e7759ca",
+    "matches": true
+  },
+  "DetailScreen.swift": {
+    "workspaceSHA256": "d9424d48723d25e711f672352c52220f60f4bb3a01e6cfeb9dbcc23a2f2f2611",
+    "testedAndBuiltSHA256": "d9424d48723d25e711f672352c52220f60f4bb3a01e6cfeb9dbcc23a2f2f2611",
+    "matches": true
+  },
+  "TodayPlanningScreen.swift": {
+    "workspaceSHA256": "92fe337778a0add46004c1b5ef2330615a6f04d15fd3e8a5da522da11d2ace0a",
+    "testedAndBuiltSHA256": "92fe337778a0add46004c1b5ef2330615a6f04d15fd3e8a5da522da11d2ace0a",
+    "matches": true
+  }
+}

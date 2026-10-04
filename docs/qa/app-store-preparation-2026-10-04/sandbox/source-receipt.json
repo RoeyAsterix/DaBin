@@ -1,0 +1,12 @@
+[
+  {
+    "candidate": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/store-preparation-20261004/native/Tests/StoreSandboxSmokeTests.swift",
+    "shared": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/Tests/StoreSandboxSmokeTests.swift",
+    "sha256": "383ce1b8c32b6adf890afc6d236f2a6e5e5b62e7376e061f5ea7a5c8b8770563"
+  },
+  {
+    "candidate": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/store-preparation-20261004/native/Tests/store_sandbox_smoke.py",
+    "shared": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/Tests/store_sandbox_smoke.py",
+    "sha256": "64c62a37a49b68a9877defe02d4f48293194efbea94ab9a6e240a8bf3df182aa"
+  }
+]

@@ -73,9 +73,15 @@ import Foundation
         restartedAgain.openCapture(feedback.id)
         try expect(restartedAgain.selectedDraft?.hasChanges == false, "Committed drafts do not reappear as unsaved")
         state.convertToTask(feedback)
-        state.selectedDraft?.comment = "Unsaved comment survives completion"
+        state.openCapture(feedback.id)
+        let completionDraft = state.selectedDraft!
+        let savedCommentBeforeCompletion = feedback.comment
+        completionDraft.comment = "Unsaved comment survives completion"
         state.toggleTaskCompletion(feedback)
-        try expect(state.selectedDraft?.hasChanges == true, "Completing a task cannot mark its unsaved comment as saved")
+        try expect(state.selectedDraft === completionDraft && completionDraft.hasChanges
+            && completionDraft.comment == "Unsaved comment survives completion"
+            && feedback.comment == savedCommentBeforeCompletion,
+            "Completing a task retains its dirty draft and cannot commit the unsaved comment")
         let planningTask = try store.createTask(text: "A planning-only draft")
         state.openCapture(planningTask.id)
         let unfinishedDeadline = Date().addingTimeInterval(172_800)
@@ -147,11 +153,22 @@ import Foundation
             try expect(navigation.route == .library, "Nested composer search cannot cycle back into its old search session")
         }
         navigation.showSettings(); navigation.showTrash(); navigation.showSettings(); navigation.back()
-        try expect(navigation.route == .library, "Switching Settings and Recently Deleted returns to the original library")
+        try expect(navigation.route == .trash, "Back retraces the most recently visited auxiliary page")
+        navigation.back()
+        try expect(navigation.route == .settings, "Back retains the earlier Settings visit")
+        navigation.back()
+        try expect(navigation.route == .library, "The auxiliary history returns to its original library")
         navigation.openCapture(planningTask.id)
+        let navigationTaskDraft = navigation.selectedDraft!
         navigation.showTrash(); navigation.showSettings(); navigation.showTrash(); navigation.back()
+        try expect(navigation.route == .settings, "Task auxiliary history retraces Settings")
+        navigation.back()
+        try expect(navigation.route == .trash, "Task auxiliary history retraces Recently Deleted")
+        navigation.back()
         try expect(navigation.route == .detail && navigation.selectedCapture?.id == planningTask.id,
-            "Switching Recently Deleted and Settings keeps the original task as their back destination")
+            "The auxiliary history returns to its original task")
+        try expect(navigation.selectedDraft === navigationTaskDraft && navigationTaskDraft.hasChanges,
+            "Retracing auxiliary pages preserves the same dirty task draft")
         for useTrash in [false, true] {
             navigation.openLibrary(); navigation.performSearchCommand()
             if useTrash { navigation.showTrash() } else { navigation.showSettings() }
@@ -177,13 +194,29 @@ import Foundation
             try expect(navigation.route == .library, "A nested return-route chain leaves search without cycling")
         }
         navigation.openLibrary(); navigation.showSettings(); navigation.openNewTask(); navigation.showSettings(); navigation.back()
-        try expect(navigation.route == .library, "Reopening Settings through a composer cannot overwrite its earlier return destination")
+        try expect(navigation.route == .newTask, "Settings retraces the task composer that opened it")
+        navigation.back()
+        try expect(navigation.route == .settings, "The task composer retains its preceding Settings visit")
+        navigation.back()
+        try expect(navigation.route == .library, "Composer and auxiliary history returns to Library")
         navigation.openNewTask(); navigation.showSettings(); navigation.openNewNote(); navigation.back()
-        try expect(navigation.route == .library, "Switching composers through Settings keeps the original work destination")
+        try expect(navigation.route == .settings, "Note composer retraces its preceding Settings visit")
+        navigation.back()
+        try expect(navigation.route == .newTask, "Switching composers retains the earlier task composer visit")
+        navigation.back()
+        try expect(navigation.route == .library, "Both composer visits return to the original work destination")
         navigation.openNewTask(); navigation.openNewNote(); navigation.back()
-        try expect(navigation.route == .library, "Switching Task and Note composers cannot create a self-return loop")
+        try expect(navigation.route == .newTask, "Back from Note retraces the visited Task composer")
+        navigation.back()
+        try expect(navigation.route == .library, "Composer history reaches Library without a self-return loop")
         navigation.openCapture(planningTask.id); navigation.showSettings(); navigation.openCapture(feedback.id); navigation.back()
-        try expect(navigation.route == .library, "Opening another capture through Settings preserves the original detail back destination")
+        try expect(navigation.route == .settings, "A capture opened through Settings returns to that visited page")
+        navigation.back()
+        try expect(navigation.route == .detail && navigation.selectedCapture?.id == planningTask.id
+            && navigation.selectedDraft === navigationTaskDraft && navigationTaskDraft.hasChanges,
+            "Back restores the original task and its same unfinished draft")
+        navigation.back()
+        try expect(navigation.route == .library, "The capture and Settings history returns to its original Library")
         navigation.openNewTask(); navigation.newTaskDraft.text = "Original composer before a lookup"
         navigation.performSearchCommand(); navigation.openCapture(feedback.id)
         navigation.openNewNote(); navigation.newNoteText = "New idea during the lookup"

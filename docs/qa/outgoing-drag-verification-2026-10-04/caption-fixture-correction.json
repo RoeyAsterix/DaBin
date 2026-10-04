@@ -1,0 +1,11 @@
+{
+  "correctedUTC": "2026-10-04T02:53:43.051741+00:00",
+  "cause": "Fixture terminal ready index kept default version0, rejected by normal metadata validation.",
+  "fix": "Set contentIndexVersion to ContentIndexService.currentVersion before first store.save.",
+  "shared": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/Tests/CaptionDragTests.swift",
+  "frozen": "/private/tmp/dabin-drag-verification-20261004/native/Tests/CaptionDragTests.swift",
+  "beforeSHA256": "221b8d0bd44e05d531d2649c7aa3a7f581d631c0782076852979e58d6d4b7a69",
+  "afterSHA256": "52530e950f9e08739aad9f7d7fd8f75c780d947bccbb6d1fc01e6fae5fea5b3e",
+  "productionChanged": false,
+  "guiExecuted": false
+}

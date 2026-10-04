@@ -1,0 +1,164 @@
+[
+  {
+    "clip": [
+      22,
+      28.2
+    ],
+    "text": " References, auto-saving notes, named snippets, saved clipboard history, all...",
+    "words": [
+      {
+        "start": 22.0,
+        "end": 22.74,
+        "word": " References,",
+        "probability": 0.4247579574584961
+      },
+      {
+        "start": 23.2,
+        "end": 23.38,
+        "word": " auto",
+        "probability": 0.7973642349243164
+      },
+      {
+        "start": 23.38,
+        "end": 23.74,
+        "word": "-saving",
+        "probability": 0.8312878310680389
+      },
+      {
+        "start": 23.74,
+        "end": 24.1,
+        "word": " notes,",
+        "probability": 0.9911500215530396
+      },
+      {
+        "start": 24.88,
+        "end": 24.88,
+        "word": " named",
+        "probability": 0.9324588775634766
+      },
+      {
+        "start": 24.88,
+        "end": 25.32,
+        "word": " snippets,",
+        "probability": 0.9696367979049683
+      },
+      {
+        "start": 26.259999999999998,
+        "end": 26.259999999999998,
+        "word": " saved",
+        "probability": 0.9158350825309753
+      },
+      {
+        "start": 26.259999999999998,
+        "end": 26.72,
+        "word": " clipboard",
+        "probability": 0.983309805393219
+      },
+      {
+        "start": 26.72,
+        "end": 27.2,
+        "word": " history,",
+        "probability": 0.9968211650848389
+      },
+      {
+        "start": 28.1,
+        "end": 28.18,
+        "word": " all...",
+        "probability": 0.44609762728214264
+      }
+    ]
+  },
+  {
+    "clip": [
+      67,
+      74
+    ],
+    "text": " Export a project, make a local backup, or rescue a capture from recently deleted.",
+    "words": [
+      {
+        "start": 67.0,
+        "end": 68.1,
+        "word": " Export",
+        "probability": 0.6454570293426514
+      },
+      {
+        "start": 68.1,
+        "end": 68.3,
+        "word": " a",
+        "probability": 0.9960929751396179
+      },
+      {
+        "start": 68.3,
+        "end": 68.72,
+        "word": " project,",
+        "probability": 0.9973112344741821
+      },
+      {
+        "start": 69.2,
+        "end": 69.4,
+        "word": " make",
+        "probability": 0.9965749382972717
+      },
+      {
+        "start": 69.4,
+        "end": 69.52,
+        "word": " a",
+        "probability": 0.9986163377761841
+      },
+      {
+        "start": 69.52,
+        "end": 69.68,
+        "word": " local",
+        "probability": 0.9950836896896362
+      },
+      {
+        "start": 69.68,
+        "end": 70.06,
+        "word": " backup,",
+        "probability": 0.9384411573410034
+      },
+      {
+        "start": 70.68,
+        "end": 70.74,
+        "word": " or",
+        "probability": 0.9972519278526306
+      },
+      {
+        "start": 70.74,
+        "end": 71.06,
+        "word": " rescue",
+        "probability": 0.996124804019928
+      },
+      {
+        "start": 71.06,
+        "end": 71.32,
+        "word": " a",
+        "probability": 0.9976269602775574
+      },
+      {
+        "start": 71.32,
+        "end": 71.6,
+        "word": " capture",
+        "probability": 0.9645822048187256
+      },
+      {
+        "start": 71.6,
+        "end": 72.04,
+        "word": " from",
+        "probability": 0.9957221746444702
+      },
+      {
+        "start": 72.04,
+        "end": 72.36,
+        "word": " recently",
+        "probability": 0.9519796967506409
+      },
+      {
+        "start": 72.36,
+        "end": 73.06,
+        "word": " deleted.",
+        "probability": 0.9761362075805664
+      }
+    ]
+  }
+]

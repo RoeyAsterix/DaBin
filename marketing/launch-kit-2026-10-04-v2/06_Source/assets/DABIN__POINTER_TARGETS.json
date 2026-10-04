@@ -1,0 +1,390 @@
+{
+  "coordinates": "Source pixels; 2360 \u00d7 1404; top-left origin",
+  "status": "VISUALLY AUDITED CONTROL CENTERS",
+  "notes": [
+    "Coordinates denote visible control or label centers, not AX hit testing.",
+    "Board More is the header circular ellipsis at 2162,110; project collection More is separate at 2283,281.",
+    "In the paused Auto Capture state the action reads Resume capture; point at Paused status for a pause explanation.",
+    "Pointer target must be transformed through the same source crop and scale as its UI snapshot."
+  ],
+  "assets": {
+    "DABIN__UI__01_INBOX_EMPTY.png": {
+      "Paste": [
+        103,
+        501
+      ],
+      "Files": [
+        231,
+        501
+      ],
+      "Task": [
+        376,
+        501
+      ],
+      "Drop area": [
+        1180,
+        820
+      ]
+    },
+    "DABIN__UI__02_INBOX_TYPED.png": {
+      "Save quick capture arrow": [
+        2268,
+        426
+      ]
+    },
+    "DABIN__UI__03_INBOX_SAVED.png": {
+      "To organize": [
+        170,
+        258
+      ],
+      "Saved note title": [
+        805,
+        909
+      ]
+    },
+    "DABIN__UI__04_INBOX_DAY.png": {
+      "Day": [
+        2156,
+        258
+      ],
+      "Week": [
+        2264,
+        258
+      ]
+    },
+    "DABIN__UI__05_INBOX_WEEK.png": {
+      "Day": [
+        2156,
+        258
+      ],
+      "Week": [
+        2264,
+        258
+      ]
+    },
+    "DABIN__UI__06_STUDIO_COLLECTION.png": {
+      "Projects header tab": [
+        1936,
+        188
+      ],
+      "Export project": [
+        2115,
+        280
+      ],
+      "Board More options": [
+        2162,
+        110
+      ],
+      "Project collection More": [
+        2283,
+        281
+      ]
+    },
+    "DABIN__UI__07_STUDIO_NOTES.png": {
+      "Notes tab": [
+        2030,
+        287
+      ],
+      "Autosaved status": [
+        1860,
+        366
+      ],
+      "Editor text": [
+        1050,
+        680
+      ],
+      "Save note": [
+        550,
+        436
+      ],
+      "Make task": [
+        767,
+        436
+      ]
+    },
+    "DABIN__UI__08A_CLIPBOARD_HISTORY.png": {
+      "Clipboard tab": [
+        904,
+        287
+      ],
+      "History or named snippet mode": [
+        2205,
+        372
+      ],
+      "Saved note body": [
+        340,
+        813
+      ]
+    },
+    "DABIN__UI__08_NAMED_SNIPPETS.png": {
+      "Clipboard tab": [
+        904,
+        287
+      ],
+      "History or named snippet mode": [
+        2205,
+        372
+      ],
+      "Snippet alias": [
+        231,
+        697
+      ],
+      "Snippet text": [
+        340,
+        813
+      ]
+    },
+    "DABIN__UI__09_SHELF.png": {
+      "Shelf tab": [
+        1485,
+        287
+      ],
+      "Export shelf": [
+        2190,
+        504
+      ]
+    },
+    "DABIN__UI__10_OCR_SEARCH.png": {
+      "Search input": [
+        420,
+        183
+      ],
+      "Filters button": [
+        2244,
+        183
+      ],
+      "OCR extracted text": [
+        246,
+        1117
+      ],
+      "Image result": [
+        484,
+        873
+      ]
+    },
+    "DABIN__UI__11_OCR_PREVIEW.png": {
+      "Preview image": [
+        1940,
+        840
+      ],
+      "Preview heading": [
+        1670,
+        329
+      ]
+    },
+    "DABIN__UI__12_FILTERED_SEARCH.png": {
+      "Filters button": [
+        2244,
+        183
+      ],
+      "Project chip": [
+        180,
+        323
+      ],
+      "Media chip": [
+        407,
+        323
+      ],
+      "Saved day chip": [
+        650,
+        323
+      ]
+    },
+    "DABIN__UI__13_TASK_PLAN.png": {
+      "Task title": [
+        400,
+        309
+      ],
+      "Today shortcut": [
+        128,
+        639
+      ],
+      "Plan a day toggle": [
+        252,
+        707
+      ],
+      "Work on date": [
+        254,
+        774
+      ],
+      "High priority": [
+        553,
+        1055
+      ],
+      "Focus duration toggle": [
+        305,
+        1135
+      ],
+      "Add task": [
+        2238,
+        1254
+      ]
+    },
+    "DABIN__UI__14_TASK_REPEAT_REMINDER.png": {
+      "Checked first step": [
+        92,
+        292
+      ],
+      "Second checklist step": [
+        92,
+        348
+      ],
+      "Third checklist step": [
+        92,
+        404
+      ],
+      "Every week": [
+        934,
+        734
+      ],
+      "Reminder enabled toggle": [
+        2240,
+        918
+      ],
+      "Countdown mode": [
+        330,
+        986
+      ],
+      "Reminder30minutes": [
+        407,
+        1064
+      ],
+      "Add task": [
+        2238,
+        1254
+      ]
+    },
+    "DABIN__UI__15_TODAY.png": {
+      "Today header tab": [
+        1190,
+        184
+      ],
+      "Task title": [
+        665,
+        704
+      ],
+      "Task checkbox": [
+        421,
+        688
+      ],
+      "Focus Start button": [
+        575,
+        1036
+      ],
+      "Reminder text": [
+        557,
+        850
+      ],
+      "Task Today marker": [
+        1910,
+        1036
+      ]
+    },
+    "DABIN__UI__16_FOCUS_READY.png": {
+      "Focus Start button": [
+        273,
+        1042
+      ],
+      "Timer": [
+        1180,
+        936
+      ],
+      "Task remains unchecked": [
+        101,
+        384
+      ],
+      "Reset": [
+        2245,
+        1115
+      ]
+    },
+    "DABIN__UI__17_FOCUS_RUNNING.png": {
+      "Focus Pause button": [
+        273,
+        1042
+      ],
+      "Timer": [
+        1180,
+        936
+      ],
+      "Task remains open caption": [
+        281,
+        1117
+      ],
+      "Reset": [
+        2245,
+        1115
+      ]
+    },
+    "DABIN__UI__18_AUTO_CAPTURE_OFF.png": {
+      "Clipboard switch": [
+        721,
+        586
+      ],
+      "Screenshots switch": [
+        759,
+        692
+      ],
+      "Off status": [
+        713,
+        792
+      ]
+    },
+    "DABIN__UI__19_AUTO_CAPTURE_PAUSED.png": {
+      "Clipboard switch": [
+        721,
+        586
+      ],
+      "Screenshots switch": [
+        759,
+        692
+      ],
+      "Paused status": [
+        780,
+        794
+      ],
+      "Choose screenshot folder": [
+        723,
+        844
+      ],
+      "Resume capture action": [
+        637,
+        895
+      ]
+    },
+    "DABIN__UI__20_PROJECT_EXPORT.png": {
+      "Export project": [
+        2115,
+        280
+      ],
+      "Board More options": [
+        2162,
+        110
+      ]
+    },
+    "DABIN__UI__21_RECENTLY_DELETED.png": {
+      "Deleted capture title": [
+        231,
+        404
+      ],
+      "Restore button": [
+        146,
+        504
+      ],
+      "Undo": [
+        2280,
+        255
+      ]
+    },
+    "DABIN__UI__22_RESTORED.png": {
+      "Restored capture contents": [
+        328,
+        680
+      ],
+      "Restored capture title": [
+        211,
+        986
+      ]
+    }
+  }
+}

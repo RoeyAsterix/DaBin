@@ -1,0 +1,74 @@
+QA DIAGNOSTIC: WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future.
+0   DaBin-QA-ReentrancyStack.dylib      0x00000001005b4848 diagnosticNSLog + 152
+1   AppKit                              0x00000001905bd3d4 -[NSTableRowHeightData _cacheRowSpansInRange:heightProvider:] + 92
+2   AppKit                              0x00000001905bbb48 -[NSTableRowHeightData _cacheRowSpansInRange:] + 100
+3   Foundation                          0x000000018cbc9d14 __NSINDEXSET_IS_CALLING_OUT_TO_A_RANGE_BLOCK__ + 24
+4   Foundation                          0x000000018cbe2ef4 __NSIndexSetEnumerate + 1312
+5   AppKit                              0x00000001905bd81c -[NSTableRowHeightData _estimatedSpanForRow:cacheIfNecessary:] + 256
+6   AppKit                              0x00000001905bad14 -[NSTableRowHeightData _estimatedSpanForRowsInRange:] + 72
+7   AppKit                              0x00000001905badcc -[NSTableRowHeightData computeTotalRowsSpanAssumingNumberOfRows:] + 140
+8   AppKit                              0x000000018f84ad7c -[NSTableView _totalHeightOfTableView] + 72
+9   AppKit                              0x000000018f84abe8 -[NSTableView _minimumFrameSize] + 72
+10  AppKit                              0x00000001903d99e0 -[NSTableView _updateTableViewSize] + 60
+11  AppKit                              0x00000001905bd9ac -[NSTableRowHeightData _adjustRowSpansStartingAtRow:] + 136
+12  AppKit                              0x00000001905bd66c -[NSTableRowHeightData _cacheRowSpansInRange:heightProvider:] + 756
+13  AppKit                              0x00000001905bbb48 -[NSTableRowHeightData _cacheRowSpansInRange:] + 100
+14  Foundation                          0x000000018cbc9d14 __NSINDEXSET_IS_CALLING_OUT_TO_A_RANGE_BLOCK__ + 24
+15  Foundation                          0x000000018cbe2ef4 __NSIndexSetEnumerate + 1312
+16  AppKit                              0x00000001905bd81c -[NSTableRowHeightData _estimatedSpanForRow:cacheIfNecessary:] + 256
+17  AppKit                              0x00000001905bacfc -[NSTableRowHeightData _estimatedSpanForRowsInRange:] + 48
+18  AppKit                              0x00000001905bae30 -[NSTableRowHeightData computeTotalRowsSpan] + 68
+19  AppKit                              0x00000001905bb040 -[NSTableRowHeightData _estimatedRowAtOffset:] + 36
+20  AppKit                              0x000000018f85ddd8 -[NSTableView rowAtPoint:] + 204
+21  AppKit                              0x000000019064f53c -[NSTableRowData _keepTopRowStableAtLeastOnce:andDoWorkUntilDone:] + 192
+22  AppKit                              0x000000018f86c0e8 -[NSTableRowData _updateVisibleViewsBasedOnUpdateItems] + 1332
+23  AppKit                              0x000000018f855250 -[NSTableRowData endUpdates] + 352
+24  AppKit                              0x000000018f8550ac -[NSTableView _endUpdateWithTile:] + 108
+25  AppKit                              0x000000018f906de4 -[NSTableView endUpdates] + 28
+26  SwiftUI                             0x00000001c12f9cec $s7SwiftUI22OutlineListCoordinatorC8diffRows2of2toyAA0a9UIOutlineD4ViewC_AA0kD4TreeVtF + 96
+27  SwiftUI                             0x00000001c12f5998 $s7SwiftUI22OutlineListCoordinatorC6update4diff04viewD4Tree13configureRows18idSelectionChanged010navigationm4SeedN0011templateRowN011transactionySb_AA04ViewdI0VS4bAA11TransactionVtFyycfU_yyXEfU_ + 176
+28  SwiftUI                             0x00000001c12ef6d4 $s7SwiftUI22OutlineListCoordinatorC24withSelectionUpdateGuard33_BE7B171B0BEE2A9E27ED12968C3771F8LLyySS_yyXEtF + 1168
+29  SwiftUI                             0x00000001c12f5688 $s7SwiftUI22OutlineListCoordinatorC6update4diff04viewD4Tree13configureRows18idSelectionChanged010navigationm4SeedN0011templateRowN011transactionySb_AA04ViewdI0VS4bAA11TransactionVtFyycfU_ + 900
+30  SwiftUICore                         0x0000000238c94d44 $s7SwiftUI6UpdateO15dispatchActionsyyFZ + 1660
+31  SwiftUICore                         0x0000000238c93b68 $s7SwiftUI6UpdateO3endyyFZ + 72
+32  SwiftUI                             0x00000001c0f8e98c $s7SwiftUI13NSHostingViewC13responderNodeAA09ResponderF0CSgvg + 272
+33  SwiftUI                             0x00000001c0aeb890 $s7SwiftUI14FocusNavigatorV8allItemsAA0C18NavigationSequenceVSgvg + 364
+34  SwiftUI                             0x00000001c0ef3f64 $s7SwiftUI11FocusBridgeC24updateDefaultKeyViewLoopSo6NSViewCSgyF + 1160
+35  SwiftUI                             0x00000001c0faeba0 $s7SwiftUI13NSHostingViewC023_recursiveSetDefaultKeyD4LoopSo6NSViewCSgyFTm + 76
+36  SwiftUI                             0x00000001c0fae250 $s7SwiftUI13NSHostingViewC023_recursiveSetDefaultKeyD4LoopSo6NSViewCSgyFTo + 48
+37  AppKit                              0x000000018f864ea8 -[NSView _setDefaultKeyViewLoop] + 240
+38  AppKit                              0x000000018f8d0da0 -[NSWindow recalculateKeyViewLoop] + 72
+39  AppKit                              0x000000018f8d0b34 -[NSWindow _setUpFirstResponder] + 168
+40  AppKit                              0x000000018f8cdfb4 -[NSWindow _doWindowWillBeVisibleAsSheet:] + 108
+41  AppKit                              0x000000019051e57c -[NSWindow _reallyDoOrderWindowAboveOrBelow:] + 1092
+42  AppKit                              0x000000019051f138 -[NSWindow _reallyDoOrderWindow:] + 64
+43  AppKit                              0x000000019051fb10 __27-[NSWindow _doOrderWindow:]_block_invoke.750 + 44
+44  AppKit                              0x000000018f8172d8 NSPerformVisuallyAtomicChange + 128
+45  AppKit                              0x000000019051f62c -[NSWindow _doOrderWindow:] + 924
+46  ProjectWorkspaceViewTests           0x000000010052ec88 $s25ProjectWorkspaceViewTestsAA33_36E5A91EF594616EE8D7F603CD43A886LLC3runyyYaKFZTY4_ + 8700
+47  ProjectWorkspaceViewTests           0x000000010052a82d $s25ProjectWorkspaceViewTestsAA33_36E5A91EF594616EE8D7F603CD43A886LLC29applicationDidFinishLaunchingyy10Foundation12NotificationVFyyYacfU_TQ0_ + 1
+48  ProjectWorkspaceViewTests           0x0000000100564c19 $sxIeAgHr_xs5Error_pIegHrzo_s8SendableRzs5NeverORs_r0_lTRSo7AXErrorV_TG5TA.151TQ0_ + 1
+49  ProjectWorkspaceViewTests           0x000000010056b811 $sxIeAgHr_xs5Error_pIegHrzo_s8SendableRzs5NeverORs_r0_lTRyt_Tg5TQ0_ + 1
+50  ProjectWorkspaceViewTests           0x000000010056b80d $sxIeAgHr_xs5Error_pIegHrzo_s8SendableRzs5NeverORs_r0_lTRyt_Tg5TA.10TQ0_ + 1
+51  libswift_Concurrency.dylib          0x00000002909ffec5 _ZL23completeTaskWithClosurePN5swift12AsyncContextEPNS_10SwiftErrorE + 1
+2026-10-04 14:27:43.792 ProjectWorkspaceViewTests[5471:25327806] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future.
+2026-10-04 14:27:51.059 ProjectWorkspaceViewTests[5471:25327806] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future.
+2026-10-04 14:27:53.748 ProjectWorkspaceViewTests[5471:25327806] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future.
+2026-10-04 14:27:54.130 ProjectWorkspaceViewTests[5471:25327806] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future.
+2026-10-04 14:27:55.230 ProjectWorkspaceViewTests[5471:25327806] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future.
+ROWS: project grid logical=334, materialized=25
+FIXTURE: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/project-workspace-view/D68544CA-B7C8-4EC7-93FB-F876A75C453A/project-grid-wide@2x.png
+FIXTURE: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/project-workspace-view/D68544CA-B7C8-4EC7-93FB-F876A75C453A/project-selected-narrow@2x.png
+ROWS: project grid logical=501, materialized=3
+ROWS: project grid logical=1002, materialized=3
+ROWS: project grid logical=1002, materialized=3
+FIXTURE: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/project-workspace-view/D68544CA-B7C8-4EC7-93FB-F876A75C453A/project-grid-narrow@2x.png
+ROWS: project grid logical=334, materialized=3
+ROWS: project grid logical=1002, materialized=8
+ROWS: project grid logical=334, materialized=3
+ROWS: project grid logical=335, materialized=3
+ROWS: project grid logical=335, materialized=3
+ROWS: project grid logical=335, materialized=3
+ROWS: project grid logical=336, materialized=4
+ROWS: project grid logical=336, materialized=4
+PASS: 209 project workspace UI checks; 1,000 synthetic text captures plus image and editable project note; native mixed-selection drag payloads on a private pasteboard; no personal archive, network, general clipboard or external opening. At most 25 simultaneously materialized native rows.

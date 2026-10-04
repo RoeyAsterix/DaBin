@@ -1,0 +1,58 @@
+DABIN MARKETING PACKAGE — FINAL QA
+Prepared 4 October 2026
+
+Written content: PASS. All eight original marketing ideas are represented in
+the strategy and ready-to-edit launch assets. Ten official outreach routes
+were checked. Drafts do not invent App Store publication, ratings, founder
+motivation, permanent free pricing, Apple featuring or download metrics.
+Public App Store/contact fields remain marked. No outreach was sent.
+
+PDF: PASS. Nine pages rendered with Poppler and inspected. Final cover uses
+the exact current desktop robot. Body layout, tables, footer and text pass.
+See 01_Launch_Playbook/PDF_QA.txt for full record.
+
+Graphics: CONTINUITY PASS. Current native desktop robot and official app icon
+are preserved in their respective roles. Artwork and native UI are scaled
+proportionally. Social and outcome graphics inspected at original resolution.
+The Studio refresh example contains matching fictional image, link and note.
+
+Video: PASS. Landscape 1920x1080 and portrait 1080x1920, 30 fps, 22.0 seconds,
+660 frames per export. H.264/yuv420p for broad playback compatibility. Narrated
+versions use AAC. Silent versions contain no audio track. All four MP4 files
+were fully decoded with FFmpeg; no decode errors. Original-resolution decoded
+project/search/final frames and both scene contact sheets visually reviewed.
+Token landing positions match the native hungry mouth. Final CTA is held
+through the last frame. Portrait labels have clear spacing.
+
+Video identity/content: CONTINUITY PASS. Same exact native DaBin robot across
+poses; no redesign. The fed palette image, Studio refresh project and actual
+local OCR search result match. Interface views are from the isolated frozen
+0.4.31 (86) production module. It is an editorial film, not a continuous screen
+recording. Saved-content search is not presented as a whole-Mac or AI search.
+
+Voice: PASS technically. ElevenLabs existing library voice; selected take02.
+Independent provider transcription exactly matches the script. Tempo0.92.
+Added pauses fall inside measured silence and do not truncate syllables.
+Mixed WAV22.0s, mono48k, peak approximately-5.88dBFS, no clipping. Spoken
+words finish around18.49s. No claim of subjective listening judgment is made.
+SRT uses waveform-supported editorial phrase timing; preview captions in the
+chosen platform before posting. No licensed music is included.
+
+Landing page: PASS. Responsive desktop/mobile layouts and kit index rendered
+locally in a fresh headless browser, with external network requests blocked.
+All native images retain their correct aspect ratio. No horizontal overflow,
+broken images or JavaScript exceptions. Download buttons stay disabled until
+a real apps.apple.com URL is set. Public deployment subset is self-contained.
+
+Package: local HTML references, PNG decode, JSON parse, required outputs,
+SHA256 file inventory, ZIP CRC and compressed-byte parity checks are run by
+06_Source/qa/build_package.py immediately before delivery.
+
+Scope: Only DaBin marketing assets and fictional records were used. User app
+archive, clipboard and live settings were not read or modified. App source,
+original artwork and screenshot masters were preserved. Media was rendered
+locally; only the authorized public DaBin narration went to ElevenLabs.
+
+Launch-specific remaining fields: real App Store and website URLs, public
+contact, release date and recipient personalization. Compare claims and UI
+with the final released app. These are publication fields, not missing media.

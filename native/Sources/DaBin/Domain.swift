@@ -117,6 +117,7 @@ final class Capture: ObservableObject, Identifiable {
     @Published var contentIndexVersion: Int
     @Published var contentIndexCanRetry: Bool
     @Published var comment: String
+    @Published private(set) var commentEntries: [CaptureCommentEntry] = []
     @Published private(set) var convertedToTask = false
     @Published var isCompleted: Bool
     @Published var isMinimized: Bool
@@ -131,6 +132,7 @@ final class Capture: ObservableObject, Identifiable {
     @Published var reminderAt: Date?
     @Published var reminderTimeZoneID: String?
     @Published var reminderRevision: Int
+    @Published private(set) var reminderAcknowledgment: CaptureReminderAcknowledgment?
     @Published var notificationState: String
     private(set) var createdAt: Date
     @Published var updatedAt: Date
@@ -139,6 +141,20 @@ final class Capture: ObservableObject, Identifiable {
     var kind: CaptureKind { CaptureKind(rawValue: kindRaw) ?? .file }
     var isTask: Bool { kind == .task || convertedToTask }
     var captureOrigin: CaptureOrigin { CaptureOrigin(rawValue: captureOriginRaw) ?? .manual }
+    var commentThread: [CaptureCommentEntry] {
+        CaptureCommentThread.resolved(commentEntries, legacyText: comment, captureID: id)
+    }
+    var commentCount: Int { commentThread.count }
+    var reminderOccurrence: CaptureReminderOccurrence? {
+        reminderAt.map { CaptureReminderOccurrence(captureID: id, revision: reminderRevision, dueAt: $0) }
+    }
+    var isReminderAcknowledged: Bool {
+        guard let reminderAt, let reminderAcknowledgment else { return false }
+        return reminderAcknowledgment.revision == reminderRevision && reminderAcknowledgment.dueAt == reminderAt
+    }
+    var focusOccurrence: CaptureFocusOccurrence? {
+        taskPlanning?.focusSession?.completedAlertID.map { CaptureFocusOccurrence(captureID: id, completionID: $0) }
+    }
     var normalizedIndexedTextForSearch: String {
         if let cached = normalizedIndexedTextCache { return cached }
         let normalized = CaptureSearch.normalized(indexedText)
@@ -209,6 +225,8 @@ final class Capture: ObservableObject, Identifiable {
     func setParentTaskID(_ value: UUID?) { parentTaskID = value }
     func setTaskPlanning(_ value: TaskPlanning?) { taskPlanning = value }
     func setPasteHistory(_ value: [CapturePasteEvent]) { pasteHistory = value }
+    func setCommentEntries(_ value: [CaptureCommentEntry]) { commentEntries = value }
+    func setReminderAcknowledgment(_ value: CaptureReminderAcknowledgment?) { reminderAcknowledgment = value }
 
     convenience init(snapshot: CaptureSnapshot) {
         self.init(id: snapshot.id, capturedAt: snapshot.capturedAt,
@@ -235,6 +253,7 @@ final class Capture: ObservableObject, Identifiable {
         self.contentIndexVersion = snapshot.contentIndexVersion ?? 0
         self.contentIndexCanRetry = snapshot.contentIndexCanRetry ?? false
         self.comment = snapshot.comment
+        self.commentEntries = snapshot.commentEntries ?? []
         self.convertedToTask = snapshot.convertedToTask ?? false
         self.isCompleted = self.isTask && (snapshot.isCompleted ?? false)
         self.isMinimized = snapshot.isMinimized ?? false
@@ -246,6 +265,7 @@ final class Capture: ObservableObject, Identifiable {
         self.reminderAt = snapshot.reminderAt
         self.reminderTimeZoneID = snapshot.reminderTimeZoneID
         self.reminderRevision = snapshot.reminderRevision
+        self.reminderAcknowledgment = snapshot.reminderAcknowledgment
         self.notificationState = snapshot.notificationState
         self.createdAt = snapshot.createdAt
         self.updatedAt = snapshot.updatedAt
@@ -290,6 +310,8 @@ struct CaptureSnapshot: Codable {
     let contentIndexVersion: Int?
     let contentIndexCanRetry: Bool?
     let comment: String
+    /// Additive in schema 11. The aggregate `comment` remains compatible with old consumers.
+    let commentEntries: [CaptureCommentEntry]?
     // Missing in schema 1–4: only legacy kind=task records were tasks.
     let convertedToTask: Bool?
     // Older payloads omit task state; ordinary captures remain ordinary captures.
@@ -307,12 +329,13 @@ struct CaptureSnapshot: Codable {
     let reminderAt: Date?
     let reminderTimeZoneID: String?
     let reminderRevision: Int
+    let reminderAcknowledgment: CaptureReminderAcknowledgment?
     let notificationState: String
     let createdAt: Date
     let updatedAt: Date
 
     init(_ capture: Capture) {
-        schemaVersion = 10
+        schemaVersion = 11
         id = capture.id
         capturedAt = capture.capturedAt
         captureDay = capture.captureDay
@@ -343,6 +366,7 @@ struct CaptureSnapshot: Codable {
         contentIndexVersion = capture.contentIndexVersion
         contentIndexCanRetry = capture.contentIndexCanRetry
         comment = capture.comment
+        commentEntries = capture.commentThread
         convertedToTask = capture.convertedToTask
         isCompleted = capture.isCompleted
         isMinimized = capture.isMinimized
@@ -354,6 +378,7 @@ struct CaptureSnapshot: Codable {
         reminderAt = capture.reminderAt
         reminderTimeZoneID = capture.reminderTimeZoneID
         reminderRevision = capture.reminderRevision
+        reminderAcknowledgment = capture.reminderAcknowledgment
         notificationState = capture.notificationState
         createdAt = capture.createdAt
         updatedAt = capture.updatedAt
@@ -372,7 +397,7 @@ enum CaptureCalendar {
 
 enum CaptureClassifier {
     static let locallySearchableDocumentExtensions: Set<String> = [
-        "txt", "md", "markdown", "csv", "tsv", "json", "log", "xml", "yaml", "yml", "rtf",
+        "txt", "md", "markdown", "csv", "tsv", "json", "log", "xml", "yaml", "yml", "rtf", "docx",
         "swift", "m", "mm", "h", "c", "cc", "cpp", "js", "jsx", "ts", "tsx", "py", "rb", "go", "rs",
         "java", "kt", "css", "scss", "sh", "zsh", "sql"
     ]
@@ -436,6 +461,8 @@ enum CaptureSearchScope: Hashable {
     case all
     case day(String)
     case week(Set<String>)
+    /// Inclusive ISO calendar-day bounds, not elapsed 24-hour intervals.
+    case range(startDay: String, endDay: String)
 
     func includes(captureDay: String) -> Bool {
         switch self {
@@ -445,6 +472,8 @@ enum CaptureSearchScope: Hashable {
             return captureDay == day
         case .week(let days):
             return days.contains(captureDay)
+        case .range(let start, let end):
+            return captureDay >= min(start, end) && captureDay <= max(start, end)
         }
     }
 }
@@ -462,9 +491,14 @@ enum CaptureSearch {
 
     static func groups(captures: [Capture], query: String, filter: CaptureFilter,
                        scope: CaptureSearchScope = .all,
-                       includeContext: Bool = true, additionalText: [UUID: String] = [:]) -> [SearchGroup] {
+                       includeContext: Bool = true, includeEmptyQuery: Bool = false,
+                       additionalText: [UUID: String] = [:],
+                       effectiveProjectNames: [UUID: String] = [:]) -> [SearchGroup] {
         let words = normalized(query).split(whereSeparator: { $0.isWhitespace }).map(String.init)
-        guard !words.isEmpty else { return [] }
+        // Most callers use an empty query to mean "no search". The global
+        // Search board opts in so its empty state can browse recent captures
+        // through the exact same filtering, grouping and cache path.
+        guard includeEmptyQuery || !words.isEmpty else { return [] }
         let days = Dictionary(grouping: captures.filter { $0.deletedAt == nil && scope.includes(captureDay: $0.captureDay) },
                               by: \.captureDay)
         return days.keys.sorted(by: >).compactMap { day in
@@ -472,12 +506,13 @@ enum CaptureSearch {
             let hits = Set(items.indices.filter { index in
                 let item = items[index]
                 guard filter.includes(item) else { return false }
+                if words.isEmpty { return true }
                 let metadata = normalized([item.title, item.previewDescription, item.originalURL ?? "",
                                            item.originalFilename ?? "", item.comment,
                                            item.kind.rawValue, item.isTask ? "task" : "", item.captureDay,
                                            item.sourceApplicationName ?? "",
                                            item.sourceApplicationBundleIdentifier ?? "",
-                                           item.captureOrigin.displayName, item.projectName ?? "",
+                                           item.captureOrigin.displayName, effectiveProjectNames[item.id] ?? item.projectName ?? "",
                                            item.captureOrigin == .automaticClipboard ? "copied clipboard" : "",
                                            item.captureOrigin == .automaticScreenshot ? "screenshot screen capture" : "",
                                            additionalText[item.id] ?? "",
@@ -496,7 +531,8 @@ enum CaptureSearch {
             return SearchGroup(day: day, entries: included.sorted().map {
                 let isMatch = hits.contains($0)
                 return SearchEntry(capture: items[$0], isMatch: isMatch,
-                    indexedTextMatch: isMatch ? indexedTextSnippet(items[$0].indexedText, words: words) : nil)
+                    indexedTextMatch: isMatch && !words.isEmpty
+                        ? indexedTextSnippet(items[$0].indexedText, words: words) : nil)
             })
         }
     }
@@ -516,6 +552,18 @@ enum CaptureSearch {
             lhs.1 == rhs.1 ? lhs.0.count > rhs.0.count : lhs.1 < rhs.1
         })?.0 else { return nil }
         let compact = best.split(whereSeparator: { $0.isWhitespace }).joined(separator: " ")
-        return compact.count > 180 ? String(compact.prefix(177)) + "…" : compact
+        guard compact.count > 180 else { return compact }
+        // A long PDF paragraph or TXT line can match far beyond its opening.
+        // Keep the actual hit visible instead of always showing the first words.
+        let match = words.compactMap {
+            compact.range(of: $0, options: [.caseInsensitive, .diacriticInsensitive],
+                          locale: Locale(identifier: "en_US_POSIX"))
+        }.min { $0.lowerBound < $1.lowerBound }
+        let offset = match.map { compact.distance(from: compact.startIndex, to: $0.lowerBound) } ?? 0
+        let startOffset = max(0, min(offset - 45, compact.count - 178))
+        let start = compact.index(compact.startIndex, offsetBy: startOffset)
+        let end = compact.index(start, offsetBy: 178)
+        return (start > compact.startIndex ? "…" : "") + String(compact[start..<end])
+            + (end < compact.endIndex ? "…" : "")
     }
 }

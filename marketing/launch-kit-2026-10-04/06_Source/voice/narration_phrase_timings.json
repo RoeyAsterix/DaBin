@@ -1,0 +1,56 @@
+{
+  "method": "Estimated sentence/phrase alignment from measured silence boundaries and exact verified transcript. No provider word timestamps supplied.",
+  "original_take": "02",
+  "phrases": [
+    {
+      "start": 0,
+      "end": 0.906583,
+      "text": "Meet DaBin."
+    },
+    {
+      "start": 1.373146,
+      "end": 3.656333,
+      "text": "A little robot for the useful bits of your day."
+    },
+    {
+      "start": 4.068521,
+      "end": 4.830083,
+      "text": "Drop in a link,"
+    },
+    {
+      "start": 5.030979,
+      "end": 5.459875,
+      "text": "a note,"
+    },
+    {
+      "start": 5.718667,
+      "end": 6.365354,
+      "text": "or an image."
+    },
+    {
+      "start": 6.945917,
+      "end": 7.789146,
+      "text": "Keep them together,"
+    },
+    {
+      "start": 8.059542,
+      "end": 9.567438,
+      "text": "and find them when you need them."
+    },
+    {
+      "start": 10.116583,
+      "end": 10.467417,
+      "text": "Free."
+    },
+    {
+      "start": 11.054187,
+      "end": 11.784375,
+      "text": "No account."
+    },
+    {
+      "start": 12.420063,
+      "end": 13.788083,
+      "text": "Saved on your Mac."
+    }
+  ]
+}

@@ -1,0 +1,5 @@
+DABIN UI TOUR V2 / COPY STATUS
+The continuous spoken script is approved by the root agent for the user-authorized revision. It was sent to eleven_voice before voice generation.
+The storyboard has 14 chapters to give actual app actions their own visible beats. Approximate cuts must be replaced with actual voice phrase timing after narration generation.
+Native state filenames/evidence will be added after launch_assets finishes its frozen 0.4.31 fixture renders. No live user data, clipboard or app settings are changed by this copy work.
+The original launch-kit-2026-10-04 is preserved. No PDF, live marketing URL, message, Apple form or publication has been changed by this v2 copy pass.

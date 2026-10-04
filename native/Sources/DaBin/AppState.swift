@@ -3,7 +3,7 @@ import Combine
 import Foundation
 
 enum BoardRoute: Equatable {
-    case inbox, daily, weekly, library, search, detail, reminders, settings, newTask, newNote, trash
+    case inbox, daily, weekly, library, search, searchNote, detail, reminders, settings, newTask, newNote, trash
 }
 
 enum BoardTimelineMode: Hashable {
@@ -39,7 +39,9 @@ private struct SearchCacheKey: Equatable {
     let scope: CaptureSearchScope
     let context: Bool
     let project: String?
+    let unfiledOnly: Bool
     let source: String?
+    let timeZoneIdentifier: String
     let revision: UInt
 }
 
@@ -54,6 +56,17 @@ final class NewTaskDraft: ObservableObject {
     @Published var reminderDate = Date().addingTimeInterval(3600)
     @Published var message: String?
     @Published var destination: ComposerDestination?
+    @Published var validationFailed = false
+
+    var hasUnresolvedValidation: Bool {
+        guard validationFailed else { return false }
+        if text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || !planning.isValid { return true }
+        if reminderEnabled {
+            return (try? ReminderSchedule.resolve(mode: reminderMode, date: reminderDate,
+                hours: countdownHours, minutes: countdownMinutes)) == nil
+        }
+        return false
+    }
 
     var hasChanges: Bool { !text.isEmpty || reminderEnabled || planning != TaskPlanning() }
 
@@ -67,6 +80,7 @@ final class NewTaskDraft: ObservableObject {
         reminderDate = Date().addingTimeInterval(3600)
         message = nil
         destination = nil
+        validationFailed = false
     }
 }
 
@@ -76,6 +90,8 @@ final class CaptureDraft: ObservableObject {
     @Published var title: String
     private var savedTitle: String
     @Published var comment: String
+    @Published var commentComposer = ""
+    @Published var editingCommentID: UUID?
     @Published var reminderEnabled: Bool
     @Published var reminderMode: ReminderScheduleMode = .date
     @Published var countdownHours = 0
@@ -85,6 +101,20 @@ final class CaptureDraft: ObservableObject {
         didSet { feedback.present(message) }
     }
     @Published var hasError = false
+    enum ValidationIssue { case title, planning, reminder }
+    @Published var validationIssue: ValidationIssue?
+    var hasUnresolvedValidation: Bool {
+        switch validationIssue {
+        case .title:
+            let name = title.trimmingCharacters(in: .whitespacesAndNewlines)
+            return name.isEmpty || name.count > 2_000
+        case .planning: return !planning.isValid
+        case .reminder:
+            guard reminderChanged else { return false }
+            do { _ = try resolvedReminder(); return false } catch { return true }
+        case nil: return false
+        }
+    }
     let feedback = TransientMessagePresentation<String>()
     private var feedbackSubscription: AnyCancellable?
     @Published var planning: TaskPlanning
@@ -125,6 +155,16 @@ final class CaptureDraft: ObservableObject {
         savedComment = comment
         savedReminder = reminder
         message = "Changes saved."
+        hasError = false
+        validationIssue = nil
+    }
+
+    func adoptSavedComments(from capture: Capture) {
+        comment = capture.comment
+        savedComment = capture.comment
+        commentComposer = ""
+        editingCommentID = nil
+        message = "Comment saved."
         hasError = false
     }
 
@@ -208,6 +248,7 @@ final class AppState: ObservableObject {
     let autoCapture: AutoCaptureService
     let captureClipboard: CaptureClipboardService
     let quickAccessSettings: QuickAccessSettings
+    let workspaceZoom: WorkspaceZoomSettings
     let workspace: WorkspaceStore
     lazy var explorerInput: ExplorerCaptureController = {
         let input = ExplorerCaptureController(state: self, input: manualInput)
@@ -226,6 +267,7 @@ final class AppState: ObservableObject {
     private let draftArchive: DraftArchive
     @Published private(set) var draftPersistenceError: String?
     private let manualInput: InputService
+    private let folderOpener: (URL) -> Bool
     let newTaskDraft = NewTaskDraft()
     @Published var newNoteText = "" {
         didSet {
@@ -242,8 +284,24 @@ final class AppState: ObservableObject {
     @Published var libraryProject: String? {
         didSet { if workspace.selectedProject != libraryProject { workspace.selectedProject = libraryProject } }
     }
+    @Published var todayPlanningScope = "today"
+    @Published var workspaceViewport: NavigationViewportAnchor?
+    @Published var projectPresentation: [String: ProjectNavigationPresentation] = [:]
+    @Published private(set) var navigationHistory = NavigationHistory()
+    @Published var navigationWindowInteractionBlocked = false
+    @Published var navigationValidationBlocked = false
+    @Published private(set) var navigationRestorationRevision: UInt = 0
+    private(set) var navigationTransitionRevision: UInt = 0
+    var onCaptureNavigationFocus: (() -> String?)?
+    var onRestoreNavigationFocus: ((String?) -> Void)?
+    private var navigationFocusTarget: String?
+    private var navigationDepth = 0
+    private var isRestoringNavigation = false
+    private var projectRenames: [String: String] = [:]
     @Published var libraryPinnedOnly = false
-    @Published var showSearchContext = false
+    @Published var showSearchContext = false {
+        didSet { if showSearchContext != oldValue { resetSearchPosition() } }
+    }
     @Published var globalSearchFocusRequest = 0
     @Published private(set) var isArchiveOperationRunning = false
     @Published private var isFileImporting = false
@@ -260,14 +318,37 @@ final class AppState: ObservableObject {
         didSet { if selectedDay != oldValue { captureNavigationRevision &+= 1 } }
     }
     @Published var weekEndingDay = Date()
+    @Published private(set) var customWeeklyDays: [Date]?
     @Published var weeklyExpansionDirection: WeeklyExpansionDirection = .right
     @Published var filter: CaptureFilter = .all {
-        didSet { if filter != oldValue { captureNavigationRevision &+= 1 } }
+        didSet {
+            if filter != oldValue {
+                captureNavigationRevision &+= 1
+                resetSearchPosition()
+            }
+        }
     }
-    @Published var query = ""
-    @Published var searchProject: String?
-    @Published var searchSource: String?
-    @Published private(set) var searchScope: CaptureSearchScope = .all
+    @Published var query = "" {
+        didSet { if query != oldValue { resetSearchPosition() } }
+    }
+    @Published var searchProject: String? {
+        didSet {
+            let changed = searchProject != oldValue || searchUnfiledOnly
+            searchUnfiledOnly = false
+            if changed { resetSearchPosition() }
+        }
+    }
+    @Published private(set) var searchUnfiledOnly = false
+    @Published var searchSource: String? {
+        didSet { if searchSource != oldValue { resetSearchPosition() } }
+    }
+    @Published private(set) var searchScope: CaptureSearchScope = .all {
+        didSet { if searchScope != oldValue { resetSearchPosition() } }
+    }
+    @Published private(set) var searchDay = Date()
+    @Published private(set) var searchWeekEndingDay = Date()
+    @Published private(set) var searchRangeStartDay = Date()
+    @Published private(set) var searchRangeEndDay = Date()
     @Published var weeklySearchActionsPresented = false
     @Published private(set) var autoCaptureSetupRequested = false
     @Published var selectedCapture: Capture?
@@ -293,8 +374,23 @@ final class AppState: ObservableObject {
     @Published var selectedDraft: CaptureDraft?
     @Published var dailyScrollID: CaptureFeedCardID?
     @Published var searchScrollID: UUID?
+    /// The leftmost date currently presented by the chronological Search board.
+    /// It is search-session state, so resizing and result-detail round trips do
+    /// not jump back to the newest day.
+    @Published var searchDateAnchor: String?
+    /// Search result IDs are presentation IDs (for example capture:<UUID> and
+    /// note:<project key>) because captures and scratchpads share one board.
+    @Published var searchSelectedResultID: String?
+    /// Each date column retains its own vertical position while paging or
+    /// opening a result. Values use the same presentation IDs as selection.
+    @Published var searchColumnScrollIDs: [String: String] = [:]
+    @Published var searchColumnViewports: [String: NavigationViewportAnchor] = [:]
+    @Published var weeklyColumnViewports: [String: NavigationViewportAnchor] = [:]
+    private(set) var searchPositionRevision: UInt = 0
+    @Published private(set) var selectedSearchNote: WorkspaceScratchpad?
     @Published private(set) var expandedAutomaticHours: Set<AutomaticHourKey> = []
     @Published var isBoardVisible = false
+    @Published private(set) var isTutorialPresented = false
     @Published var isDailyDropTargeted = false
     private(set) var captureNavigationRevision: UInt = 0
     private var attachmentReturnTaskID: UUID?
@@ -302,13 +398,17 @@ final class AppState: ObservableObject {
     var onTaskCompleted: (() -> Void)?
     var onTaskTimerExpired: (([Capture]) -> Void)?
     var onToggleExpandedWindow: (() -> Void)?
+    var onOpenExtendedCapture: ((Capture, CaptureDraft) -> Void)?
     var onBoardDragStarted: (() -> Void)?
     var onBoardDragEnded: ((CGPoint) -> Void)?
+    var onTutorialEscape: (() -> Bool)?
     private var origin: BoardRoute = .daily
     private var searchReturnRoute: BoardRoute = .daily
+    private var searchSessionEnded = false
     private var searchReturnFilter: CaptureFilter = .all
     private var searchReturnCreationRoute: BoardRoute = .inbox
     private var searchReturnAuxiliaryRoute: BoardRoute = .inbox
+    private var searchReturnCaptureID: UUID?
     private struct SearchDetailContext {
         let captureID: UUID
         let origin: BoardRoute
@@ -325,6 +425,8 @@ final class AppState: ObservableObject {
     private var searchRevision: UInt = 0
     private var searchCacheKey: SearchCacheKey?
     private var searchCache: [SearchGroup] = []
+    private var searchDateCacheKey: SearchCacheKey?
+    private var searchDateCache: [SearchDateGroup] = []
 
     init(store: CaptureStore, previews: PreviewService, contentIndex: ContentIndexService? = nil,
          reminders: ReminderService,
@@ -332,7 +434,9 @@ final class AppState: ObservableObject {
          autoCapture: AutoCaptureService? = nil,
          captureClipboard: CaptureClipboardService? = nil,
          quickAccessSettings: QuickAccessSettings? = nil,
-         manualInput: InputService? = nil) {
+         workspaceZoom: WorkspaceZoomSettings? = nil,
+         manualInput: InputService? = nil,
+         folderOpener: @escaping (URL) -> Bool = { NSWorkspace.shared.open($0) }) {
         self.store = store
         self.previews = previews
         self.contentIndex = contentIndex
@@ -343,12 +447,14 @@ final class AppState: ObservableObject {
             settings: AutoCaptureSettings(defaults: nil), input: InputService(store: store))
         self.captureClipboard = captureClipboard ?? CaptureClipboardService()
         self.quickAccessSettings = quickAccessSettings ?? QuickAccessSettings(defaults: nil)
+        self.workspaceZoom = workspaceZoom ?? WorkspaceZoomSettings(defaults: nil)
         self.workspace = WorkspaceStore(root: store.root)
         self.clipboardRetention = ClipboardRetentionService(store: store, workspace: self.workspace)
         self.focusSessions = TaskFocusCoordinator(store: store)
         self.draftArchive = DraftArchive(root: store.root)
         self.libraryProject = self.workspace.selectedProject
         self.manualInput = manualInput ?? InputService(store: store)
+        self.folderOpener = folderOpener
         self.clipboardRetention.onWillTrash = { [weak previews, weak contentIndex] capture in
             await previews?.cancel(for: capture.id)
             await contentIndex?.cancel(for: capture.id)
@@ -403,6 +509,7 @@ final class AppState: ObservableObject {
         newTaskDraft.objectWillChange.sink { [weak self] _ in
             self?.objectWillChange.send()
         }.store(in: &subscriptions)
+        self.workspaceZoom.objectWillChange.sink { [weak self] _ in self?.objectWillChange.send() }.store(in: &subscriptions)
         self.quickAccessSettings.objectWillChange.sink { [weak self] _ in
             self?.objectWillChange.send()
         }.store(in: &subscriptions)
@@ -444,12 +551,13 @@ final class AppState: ObservableObject {
             reminderDate: newTaskDraft.reminderDate,
             destination: newTaskDraft.destination ?? ComposerDestination(projectName: composerProjectContext))
         snapshot.details = drafts.compactMap { id, draft in
-            guard draft.hasChanges else { return nil }
+            guard draft.hasChanges || !draft.commentComposer.isEmpty || draft.editingCommentID != nil else { return nil }
             return DetailDraftSnapshot(captureID: id, title: draft.title, comment: draft.comment, planning: draft.planning,
                 committedPlanning: draft.committedPlanningForRecovery,
                 committedReminderRevision: draft.committedReminderRevisionForRecovery,
                 reminderEnabled: draft.reminderEnabled, reminderMode: draft.reminderMode.rawValue,
-                countdownHours: draft.countdownHours, countdownMinutes: draft.countdownMinutes, reminderDate: draft.reminderDate)
+                countdownHours: draft.countdownHours, countdownMinutes: draft.countdownMinutes, reminderDate: draft.reminderDate,
+                commentComposer: draft.commentComposer, editingCommentID: draft.editingCommentID)
         }
         do { try draftArchive.save(snapshot); draftPersistenceError = nil }
         catch { draftPersistenceError = "Drafts are still in memory. \(error.localizedDescription)" }
@@ -474,6 +582,8 @@ final class AppState: ObservableObject {
             let draft = CaptureDraft(capture: capture)
             draft.title = saved.title ?? capture.title
             draft.comment = saved.comment
+            draft.commentComposer = saved.commentComposer ?? ""
+            draft.editingCommentID = saved.editingCommentID
             draft.restorePlanning(saved.planning, baseline: saved.committedPlanning, from: capture)
             // Clear and Snooze commit before the debounced draft sidecar. A
             // stale sidecar must not turn that successful action back into an
@@ -495,11 +605,10 @@ final class AppState: ObservableObject {
     }
     var dailyCaptures: [Capture] { captures(for: selectedDay) }
     var weeklyDays: [Date] {
-        let calendar = Calendar.current
-        let end = calendar.startOfDay(for: min(weekEndingDay, Date()))
-        return (-6...0).compactMap { calendar.date(byAdding: .day, value: $0, to: end) }
+        customWeeklyDays ?? WeeklyDateSelection.trailingWeek(ending: weekEndingDay)
     }
-    /// The seven-day range remains the navigation source of truth, while the
+    var isCustomWeekSelection: Bool { customWeeklyDays != nil }
+    /// The chosen dates remain the navigation source of truth, while the
     /// Weekly board only presents dates that contain activity. Filters change
     /// the cards inside those dates without making the date columns jump.
     /// Carried and reminder-day tasks are included by `allCaptures(for:)`.
@@ -543,24 +652,80 @@ final class AppState: ObservableObject {
             dailyScrollID = nil
         }
         let weekEnd = CaptureCalendar.dayString(weekEndingDay)
-        if weekEnd == currentDayKey || weekEnd > nextDay { weekEndingDay = now }
+        if customWeeklyDays == nil && (weekEnd == currentDayKey || weekEnd > nextDay) { weekEndingDay = now }
         currentDayKey = nextDay
     }
+
+    /// Results may change without user intent while extraction or capture
+    /// indexing finishes. Only a changed query or refinement calls this helper;
+    /// store revisions deliberately leave the user's board position intact.
+    private func resetSearchPosition() {
+        searchPositionRevision &+= 1
+        searchDateAnchor = nil
+        searchSelectedResultID = nil
+        searchColumnScrollIDs.removeAll(keepingCapacity: true)
+        searchColumnViewports.removeAll(keepingCapacity: true)
+        searchScrollID = nil
+    }
+
+    private var currentSearchCacheKey: SearchCacheKey {
+        SearchCacheKey(query: query, filter: filter, scope: searchScope, context: showSearchContext,
+                       project: searchProject, unfiledOnly: searchUnfiledOnly,
+                       source: searchSource, timeZoneIdentifier: TimeZone.current.identifier,
+                       revision: searchRevision)
+    }
+
     var searchGroups: [SearchGroup] {
-        let key = SearchCacheKey(query: query, filter: filter, scope: searchScope, context: showSearchContext,
-                                 project: searchProject, source: searchSource, revision: searchRevision)
+        let key = currentSearchCacheKey
         if searchCacheKey == key { return searchCache }
-        let groups = CaptureSearch.groups(captures: store.captures.filter {
-            (searchProject == nil || $0.projectName == searchProject)
-            && (searchSource == nil || $0.sourceApplicationName == searchSource)
+        let capturesByID = Dictionary(uniqueKeysWithValues: store.captures.map { ($0.id, $0) })
+        // A task owns its attachments' project. Resolve against the live parent
+        // rather than trusting a child's organization snapshot after a move.
+        let effectiveProjects = Dictionary(uniqueKeysWithValues: store.captures.map { capture in
+            let parent = capture.parentTaskID.flatMap { capturesByID[$0] }
+            let project = parent?.isTask == true ? parent?.projectName : capture.projectName
+            return (capture.id, project ?? "")
+        })
+        let groups = CaptureSearch.groups(captures: store.captures.filter { capture in
+            let project = effectiveProjects[capture.id] ?? ""
+            return (searchProject == nil || project == searchProject)
+                && (!searchUnfiledOnly || project.isEmpty)
+                && (searchSource == nil || WorkspaceQuery.sourceName(capture) == searchSource)
         }, query: query, filter: filter,
                              scope: searchScope, includeContext: showSearchContext,
+                             includeEmptyQuery: true,
                              additionalText: Dictionary(workspace.snapshot.snippetNames.compactMap {
                                  guard let id = UUID(uuidString: $0.key) else { return nil }; return (id, $0.value)
-                             }, uniquingKeysWith: { first, _ in first }))
+                             }, uniquingKeysWith: { first, _ in first }),
+                             effectiveProjectNames: effectiveProjects)
         searchCacheKey = key
         searchCache = groups
         return groups
+    }
+
+    /// Captures and project scratchpads share the chronological Search board.
+    /// The model keeps notes on their edited day and captures on their immutable
+    /// receipt day while preserving match/context semantics.
+    var searchDateGroups: [SearchDateGroup] {
+        let captureGroups = searchGroups
+        let key = currentSearchCacheKey
+        if searchDateCacheKey == key { return searchDateCache }
+        let groups = SearchDateBoard.groups(captureGroups: captureGroups, notes: searchScratchpads,
+                                            includeContext: showSearchContext)
+        searchDateCacheKey = key
+        searchDateCache = groups
+        return groups
+    }
+
+    var searchScratchpads: [WorkspaceScratchpad] {
+        let words = CaptureSearch.normalized(query).split(whereSeparator: { $0.isWhitespace }).map(String.init)
+        guard searchSource == nil, filter == .all || filter == .text else { return [] }
+        return workspace.scratchpads.filter { note in
+            (searchProject == nil || note.projectName == searchProject)
+                && (!searchUnfiledOnly || note.projectName == nil)
+                && searchScope.includes(captureDay: CaptureCalendar.dayString(note.updatedAt))
+                && words.allSatisfy { CaptureSearch.normalized(note.text + " " + (note.projectName ?? "")).contains($0) }
+        }
     }
     var searchScopeTitle: String {
         switch searchScope {
@@ -571,6 +736,18 @@ final class AppState: ObservableObject {
         case .week(let days):
             let ordered = days.sorted()
             guard let first = ordered.first, let last = ordered.last else { return "Selected week" }
+            if first == last { return prettyDay(first) }
+            var calendar = Calendar(identifier: .gregorian)
+            calendar.timeZone = .current
+            if let start = TaskPlanningPolicy.date(for: first, calendar: calendar),
+               let end = TaskPlanningPolicy.date(for: last, calendar: calendar),
+               calendar.dateComponents([.day], from: start, to: end).day != ordered.count - 1 {
+                return "\(ordered.count) selected days"
+            }
+            return "\(prettyDay(first, includeWeekday: false))–\(prettyDay(last, includeWeekday: false))"
+        case .range(let start, let end):
+            let first = min(start, end), last = max(start, end)
+            if first == last { return prettyDay(first) }
             return "\(prettyDay(first, includeWeekday: false))–\(prettyDay(last, includeWeekday: false))"
         }
     }
@@ -618,14 +795,22 @@ final class AppState: ObservableObject {
     }
     var canUndoRemoval: Bool { store.trashedCaptures.contains { undoRemovalIDs.contains($0.id) } }
 
-    func openLibrary() { route = .library }
-    func openInbox() { route = .inbox }
+    func setTutorialPresented(_ presented: Bool) { isTutorialPresented = presented }
+
+    func openLibrary() { navigate(to: .library) }
+    func openInbox() { navigate(to: .inbox) }
     func showTrash() {
+        guard !isNavigationBlocked else { return }
+        beginNavigation(); defer { endNavigation() }
+        guard !isTutorialPresented else { return }
         if !returnRouteChain(from: route).contains(where: { $0 == .settings || $0 == .trash }) { auxiliaryReturnRoute = route }
         route = .trash
     }
 
     func openDaily() {
+        guard !isNavigationBlocked else { return }
+        beginNavigation(); defer { endNavigation() }
+        guard !isTutorialPresented else { return }
         refreshCurrentDay()
         selectedDay = Date()
         filter = .all
@@ -634,7 +819,10 @@ final class AppState: ObservableObject {
     }
 
     func openWeekly() {
-        weekEndingDay = min(selectedDay, Date())
+        guard !isNavigationBlocked else { return }
+        beginNavigation(); defer { endNavigation() }
+        guard !isTutorialPresented else { return }
+        if customWeeklyDays == nil { weekEndingDay = min(selectedDay, Date()) }
         route = .weekly
     }
 
@@ -645,6 +833,9 @@ final class AppState: ObservableObject {
     var isInboxRoute: Bool { route == .inbox || route == .daily || route == .weekly }
 
     func selectTimelineMode(_ mode: BoardTimelineMode) {
+        guard !isNavigationBlocked else { return }
+        beginNavigation(); defer { endNavigation() }
+        guard !isTutorialPresented else { return }
         switch (route, mode) {
         case (.inbox, .weekly), (.daily, .weekly):
             openWeekly()
@@ -656,6 +847,9 @@ final class AppState: ObservableObject {
     }
 
     func selectWeeklyDay(_ day: Date) {
+        guard !isNavigationBlocked else { return }
+        beginNavigation(); defer { endNavigation() }
+        guard !isTutorialPresented else { return }
         selectedDay = min(day, Date())
         dailyScrollID = nil
         route = .daily
@@ -668,18 +862,49 @@ final class AppState: ObservableObject {
     }
 
     func setWeekEndingDay(_ day: Date) {
+        guard !isNavigationBlocked else { return }
+        beginNavigation(); defer { endNavigation() }
+        customWeeklyDays = nil
         weekEndingDay = min(day, Date())
     }
 
+    /// Apply the picker atomically. A rejected empty, oversized or future
+    /// selection leaves the existing board and its scroll context untouched.
+    @discardableResult
+    func setWeeklyDays(_ days: [Date]) -> Bool {
+        guard !isNavigationBlocked else { return false }
+        beginNavigation(); defer { endNavigation() }
+        guard !isTutorialPresented, let selection = WeeklyDateSelection(days: days),
+              let last = selection.days.last else { return false }
+        customWeeklyDays = selection.days
+        weekEndingDay = last
+        return true
+    }
+
     func moveWeek(_ amount: Int) {
-        guard let end = Calendar.current.date(byAdding: .day, value: amount * 7, to: weekEndingDay) else { return }
+        guard !isNavigationBlocked else { return }
+        beginNavigation(); defer { endNavigation() }
+        if let days = customWeeklyDays {
+            guard let selection = WeeklyDateSelection(days: days),
+                  let shifted = selection.shifted(weeks: amount) else { return }
+            customWeeklyDays = shifted.days
+            if let last = shifted.days.last { weekEndingDay = last }
+            return
+        }
+        let delta = amount.multipliedReportingOverflow(by: 7)
+        guard !delta.overflow,
+              let end = Calendar.current.date(byAdding: .day, value: delta.partialValue, to: weekEndingDay) else { return }
         setWeekEndingDay(end)
     }
 
     func showCurrentWeek() {
+        guard !isNavigationBlocked else { return }
+        beginNavigation(); defer { endNavigation() }
+        guard !isTutorialPresented else { return }
         refreshCurrentDay()
         let today = Date()
         selectedDay = today
+        customWeeklyDays = nil
         weekEndingDay = today
         route = .weekly
     }
@@ -693,6 +918,7 @@ final class AppState: ObservableObject {
             visited.append(current)
             switch current {
             case .detail: current = origin
+            case .searchNote: current = .search
             case .settings, .trash: current = auxiliaryReturnRoute
             case .newTask, .newNote: current = creationReturnRoute
             default: return visited
@@ -702,49 +928,129 @@ final class AppState: ObservableObject {
     }
 
     func openSearch() {
+        guard !isNavigationBlocked else { return }
+        beginNavigation(); defer { endNavigation() }
+        guard !isTutorialPresented else { return }
         // Returning to Search from a result is part of the same search session.
         // Keep the original working context instead of creating a detail/search loop.
         // This also applies to composers and auxiliary pages over that result.
         let returnChain = returnRouteChain(from: route)
-        if !returnChain.contains(.search) {
-            searchReturnRoute = route
-            searchReturnFilter = filter
-            searchReturnCreationRoute = creationReturnRoute
-            searchReturnAuxiliaryRoute = auxiliaryReturnRoute
-            searchDetailContext = returnChain.contains(.detail) ? selectedCapture.map {
-                SearchDetailContext(captureID: $0.id, origin: origin,
-                    attachmentReturnTaskID: attachmentReturnTaskID, focus: detailFocus)
-            } : nil
+        if searchSessionEnded || !returnChain.contains(.search) {
+            if !returnChain.contains(.search) {
+                searchReturnRoute = route
+                searchReturnFilter = filter
+                searchReturnCreationRoute = creationReturnRoute
+                searchReturnAuxiliaryRoute = auxiliaryReturnRoute
+                searchReturnCaptureID = workspace.selectedCaptureID
+                searchDetailContext = returnChain.contains(.detail) ? selectedCapture.map {
+                    SearchDetailContext(captureID: $0.id, origin: origin,
+                        attachmentReturnTaskID: attachmentReturnTaskID, focus: detailFocus)
+                } : nil
+            }
+            // A newly opened Search is global regardless of the project,
+            // timeline, source or type currently visible. Those views remain
+            // untouched so Back restores the exact originating context and
+            // capture/composer destinations do not change.
+            clearSearchRefinements()
+            selectedSearchNote = nil
+            resetSearchPosition()
         }
-        searchScope = .all
-        searchProject = nil
-        searchSource = nil
-        filter = .all
+        searchSessionEnded = false
         weeklySearchActionsPresented = false
-        searchScrollID = nil
+        if returnChain.contains(.search) {
+            selectedSearchNote = nil
+            if route != .search { navigationHistory.returnToPreviousSearch() }
+        }
         route = .search
     }
 
-    /// Every general Search entry point searches the full archive. Explicit
-    /// scoped commands remain available but cannot silently scope this action.
+    /// A general command starts a global search, or refocuses the current
+    /// session without broadening its deliberate refinements.
     func performSearchCommand() {
+        guard !isNavigationBlocked else { return }
+        guard !isTutorialPresented else { return }
         openSearch()
         globalSearchFocusRequest &+= 1
     }
 
-    /// Results are live. Return keeps deliberate refinements; only the global
-    /// Search command starts a new archive-wide search.
+    /// Normal window close ends refinements; occlusion, resizing and result
+    /// navigation do not. Keep the original Back destination for the next
+    /// search command even when the hidden window still has a Search route.
+    func endSearchSession() { searchSessionEnded = true }
+
+    /// Results are live. Return keeps deliberate refinements.
     func submitSearch() {
-        guard route == .search else { return }
+        guard !isTutorialPresented, route == .search else { return }
         globalSearchFocusRequest &+= 1
     }
 
     func searchAllDates() {
         searchScope = .all
-        searchScrollID = nil
+    }
+
+    /// Keep the current words while removing every deliberate refinement.
+    func searchEverything() {
+        guard !isTutorialPresented else { return }
+        openSearch()
+        clearSearchFilters()
+        globalSearchFocusRequest &+= 1
+    }
+
+    /// Clear visible Search chips without navigating or changing the query.
+    /// This is used by the filters UI inside an existing search session.
+    func clearSearchFilters() {
+        clearSearchRefinements()
+    }
+
+    private func clearSearchRefinements() {
+        // Assigning nil also exits the distinct Unfiled refinement through the
+        // searchProject observer without touching the selected Library project.
+        searchProject = nil
+        searchSource = nil
+        filter = .all
+        searchScope = .all
+        showSearchContext = false
+    }
+
+    func selectSearchProject(_ project: String?) {
+        searchProject = project
+    }
+
+    func searchUnfiledProject() {
+        if searchProject != nil { searchProject = nil }
+        guard !searchUnfiledOnly else { return }
+        searchUnfiledOnly = true
+        resetSearchPosition()
+    }
+
+    func setSearchDay(_ day: Date, timeZone: TimeZone = .current) {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = timeZone
+        searchDay = calendar.startOfDay(for: day)
+        searchScope = .day(CaptureCalendar.dayString(day, timeZone: timeZone))
+    }
+
+    func setSearchWeek(ending day: Date, calendar: Calendar = .current) {
+        var civilCalendar = Calendar(identifier: .gregorian)
+        civilCalendar.timeZone = calendar.timeZone
+        let end = civilCalendar.startOfDay(for: day)
+        searchWeekEndingDay = end
+        let days = (-6...0).compactMap { civilCalendar.date(byAdding: .day, value: $0, to: end) }
+        searchScope = .week(Set(days.map { CaptureCalendar.dayString($0, timeZone: civilCalendar.timeZone) }))
+    }
+
+    func setSearchRange(start: Date, end: Date, timeZone: TimeZone = .current) {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = timeZone
+        searchRangeStartDay = calendar.startOfDay(for: min(start, end))
+        searchRangeEndDay = calendar.startOfDay(for: max(start, end))
+        searchScope = .range(startDay: CaptureCalendar.dayString(searchRangeStartDay, timeZone: timeZone),
+                             endDay: CaptureCalendar.dayString(searchRangeEndDay, timeZone: timeZone))
     }
 
     func updateGlobalSearch(_ text: String) {
+        guard route == .search || !isNavigationBlocked else { return }
+        guard !isTutorialPresented else { return }
         // SwiftUI can write a field's empty display value when it mounts or
         // loses focus. Navigating between views must not initiate a search.
         guard route == .search || !text.isEmpty else { return }
@@ -753,41 +1059,45 @@ final class AppState: ObservableObject {
     }
 
     func openSearch(day: Date) {
-        if route != .search {
-            searchReturnFilter = filter
-            searchReturnCreationRoute = creationReturnRoute
-            searchReturnAuxiliaryRoute = auxiliaryReturnRoute
-        }
-        searchProject = nil; searchSource = nil
-        weeklySearchActionsPresented = false
-        searchScope = .day(CaptureCalendar.dayString(day))
-        searchReturnRoute = .weekly
-        searchDetailContext = nil
-        searchScrollID = nil
-        route = .search
+        guard !isNavigationBlocked else { return }
+        beginNavigation(); defer { endNavigation() }
+        guard !isTutorialPresented else { return }
+        openSearch()
+        setSearchDay(day)
     }
 
     func openSearch(week days: [Date]) {
-        if route != .search {
-            searchReturnFilter = filter
-            searchReturnCreationRoute = creationReturnRoute
-            searchReturnAuxiliaryRoute = auxiliaryReturnRoute
-        }
-        searchProject = nil; searchSource = nil
-        weeklySearchActionsPresented = false
+        guard !isNavigationBlocked else { return }
+        beginNavigation(); defer { endNavigation() }
+        guard !isTutorialPresented else { return }
+        openSearch()
+        if let end = days.max() { searchWeekEndingDay = end }
         searchScope = .week(Set(days.map { CaptureCalendar.dayString($0) }))
-        searchReturnRoute = .weekly
-        searchDetailContext = nil
-        searchScrollID = nil
-        route = .search
     }
-    func showReminders() { route = .reminders }
+
+    /// Open an editable scratchpad result without changing the Library project,
+    /// Workspace selection, or any capture/composer destination. Back returns
+    /// to the same Search session and chronological board position.
+    func openSearchNote(_ note: WorkspaceScratchpad) {
+        guard !isNavigationBlocked else { return }
+        beginNavigation(); defer { endNavigation() }
+        guard route == .search else { return }
+        searchSelectedResultID = SearchDateItem.note(note).id
+        navigationHistory.updateCurrent(navigationSnapshot())
+        selectedSearchNote = note
+        route = .searchNote
+    }
+    func showReminders() { navigate(to: .reminders) }
     func showSettings() {
+        guard !isNavigationBlocked else { return }
+        beginNavigation(); defer { endNavigation() }
+        guard !isTutorialPresented else { return }
         if !returnRouteChain(from: route).contains(where: { $0 == .settings || $0 == .trash }) { auxiliaryReturnRoute = route }
         route = .settings
     }
 
     func toggleAutoCaptureFromHeader() {
+        guard !isTutorialPresented else { return }
         let settings = autoCapture.settings
         if settings.isEnabled {
             autoCapture.setPaused(!settings.isPaused)
@@ -809,6 +1119,9 @@ final class AppState: ObservableObject {
     }
 
     func openNewTask() {
+        guard !isNavigationBlocked else { return }
+        beginNavigation(); defer { endNavigation() }
+        guard !isTutorialPresented else { return }
         if !newTaskDraft.hasChanges || newTaskDraft.destination == nil {
             newTaskDraft.destination = ComposerDestination(projectName: composerProjectContext)
         }
@@ -819,6 +1132,9 @@ final class AppState: ObservableObject {
     }
 
     func openNewNote() {
+        guard !isNavigationBlocked else { return }
+        beginNavigation(); defer { endNavigation() }
+        guard !isTutorialPresented else { return }
         if newNoteDestination == nil || (newNoteText.isEmpty && !returnRouteChain(from: route).contains(.newNote)) {
             newNoteDestination = ComposerDestination(projectName: composerProjectContext)
         }
@@ -830,8 +1146,9 @@ final class AppState: ObservableObject {
         newNoteText = ""
         newNoteDestination = nil
     }
-    func cancelNewNote() { clearNewNoteDraft(); route = creationReturnRoute }
+    func cancelNewNote() { beginNavigation(); defer { endNavigation() }; clearNewNoteDraft(); route = creationReturnRoute }
     func saveNewNote() {
+        beginNavigation(); defer { endNavigation() }
         do {
             let saved = try store.createNote(text: newNoteText, projectName: newNoteProject)
             clearNewNoteDraft()
@@ -841,7 +1158,7 @@ final class AppState: ObservableObject {
     }
 
     func pasteClipboard(from pasteboard: NSPasteboard = .general) {
-        guard !isImporting, !isArchiveOperationRunning else { return }
+        guard !isTutorialPresented, !isImporting, !isArchiveOperationRunning else { return }
         if route == .library, workspace.mode == .collection {
             explorerInput.paste(project: libraryProject, from: pasteboard)
             return
@@ -855,7 +1172,7 @@ final class AppState: ObservableObject {
     }
 
     func importFiles() {
-        guard !isImporting, !isArchiveOperationRunning else { return }
+        guard !isTutorialPresented, !isImporting, !isArchiveOperationRunning else { return }
         if route == .library, workspace.mode == .collection {
             explorerInput.chooseFiles(project: libraryProject)
             return
@@ -960,13 +1277,16 @@ final class AppState: ObservableObject {
     }
 
     func cancelNewTask() {
+        beginNavigation(); defer { endNavigation() }
         newTaskDraft.reset()
         route = creationReturnRoute
     }
 
     func saveNewTask() {
+        beginNavigation(); defer { endNavigation() }
         guard !newTaskDraft.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
             newTaskDraft.message = "Give your task a name."
+            newTaskDraft.validationFailed = true
             return
         }
         let reminder: Date?
@@ -974,11 +1294,18 @@ final class AppState: ObservableObject {
             reminder = newTaskDraft.reminderEnabled ? try ReminderSchedule.resolve(
                 mode: newTaskDraft.reminderMode, date: newTaskDraft.reminderDate,
                 hours: newTaskDraft.countdownHours, minutes: newTaskDraft.countdownMinutes, now: Date()) : nil
-        } catch { newTaskDraft.message = error.localizedDescription; return }
+        } catch { newTaskDraft.message = error.localizedDescription; newTaskDraft.validationFailed = true; return }
         if let reminder, reminder <= Date() {
             newTaskDraft.message = "Choose a reminder time in the future."
+            newTaskDraft.validationFailed = true
             return
         }
+        guard newTaskDraft.planning.isValid else {
+            newTaskDraft.message = "Check the task dates, estimate, and checklist before saving."
+            newTaskDraft.validationFailed = true
+            return
+        }
+        newTaskDraft.validationFailed = false
         do {
             let project = newTaskProject
             let capture = try store.createTask(text: newTaskDraft.text, reminderAt: reminder,
@@ -1036,6 +1363,28 @@ final class AppState: ObservableObject {
             captureLayoutRevision &+= 1
             status = AppStatusMessage(text: "Kept as a capture.", severity: .success)
         } catch { reportFailure(error.localizedDescription) }
+    }
+
+    /// Bulk undo must also respect unfinished detail edits, not just saved
+    /// metadata. Reordering the project does not invalidate this receipt.
+    @discardableResult
+    func undoProjectTaskConversion(_ receipt: ProjectTaskConversionReceipt) -> Bool {
+        guard !receipt.captureIDs.contains(where: { drafts[$0]?.hasChanges == true }) else {
+            reportFailure("Save or discard task edits before undoing the conversion.")
+            return false
+        }
+        do {
+            try store.undoProjectTaskConversion(receipt)
+            captureLayoutRevision &+= 1
+            status = AppStatusMessage(text: "Kept as captures.", severity: .success)
+            return true
+        } catch { reportFailure(error.localizedDescription); return false }
+    }
+
+    func convertProjectItemsToTasks(_ captures: [Capture]) throws -> ProjectTaskConversionReceipt {
+        let receipt = try store.convertProjectItemsToTasks(captures)
+        if !receipt.isEmpty { captureLayoutRevision &+= 1 }
+        return receipt
     }
 
     @discardableResult
@@ -1147,6 +1496,17 @@ final class AppState: ObservableObject {
         }
     }
 
+    @discardableResult
+    func copySearchNote(_ note: WorkspaceScratchpad) -> Bool {
+        do {
+            try captureClipboard.copyText(workspace.scratchpad(project: note.projectName))
+            return true
+        } catch {
+            reportFailure("Couldn’t copy this note: \(error.localizedDescription)")
+            return false
+        }
+    }
+
     func requestRemoval(_ capture: Capture) {
         guard removingCaptureID == nil, store.captures.contains(where: { $0 === capture }) else { return }
         pendingRemoval = capture
@@ -1170,6 +1530,24 @@ final class AppState: ObservableObject {
             await contentIndex?.cancel(for: item.id)
             await previews.cancel(for: item.id)
         }
+        // Cancellation can yield while the user visits another page. Only
+        // restore a destination if the removed detail is still being shown.
+        let removesDisplayedDetail = route == .detail && selectedCapture.map { familyIDs.contains($0.id) } == true
+        var removalParent: NavigationSnapshot?
+        if removesDisplayedDetail {
+            var parent = navigationSnapshot()
+            let taskID = attachmentReturnTaskID.flatMap { id in
+                !familyIDs.contains(id) && store.captures.contains(where: { $0.id == id }) ? id : nil
+            }
+            parent.route = taskID == nil ? (origin == .detail ? .inbox : origin) : .detail
+            parent.selectedCaptureID = taskID
+            parent.workspace.selectedID = taskID
+            parent.focus = taskID == nil ? nil : "task"
+            parent.focusTarget = nil
+            parent.workspaceViewport = nil
+            parent.returnContext.attachmentTaskID = nil
+            removalParent = parent
+        }
         do {
             try store.moveToTrash(capture)
             undoRemovalIDs = [capture.id]
@@ -1184,7 +1562,14 @@ final class AppState: ObservableObject {
                 selectedCapture = nil
                 selectedDraft = nil
                 detailFocus = nil
-                if route == .detail { route = origin }
+            }
+            reconcileNavigationHistory()
+            if removesDisplayedDetail, let destination = navigationHistory.current ?? removalParent {
+                // A removed visit is pruned, so the surviving task keeps its
+                // own viewport, focus and live draft rather than the deleted
+                // attachment's presentation. Direct opens use their parent.
+                navigationHistory.updateCurrent(destination)
+                restoreNavigation(destination)
             }
             status = AppStatusMessage(text: "Moved to Recently Deleted. You can undo this.", severity: .success)
             for item in family { await reminders.clearForCapture(item.id) }
@@ -1303,9 +1688,16 @@ final class AppState: ObservableObject {
     }
 
     func openCapture(_ id: UUID, focus: String? = nil) {
+        guard !isNavigationBlocked else { return }
+        guard !isTutorialPresented else { return }
         guard let capture = store.captures.first(where: { $0.id == id }) else {
             reportFailure("This capture could not be found.")
             return
+        }
+        beginNavigation(); defer { endNavigation() }
+        if route == .search {
+            searchSelectedResultID = "capture:" + id.uuidString
+            navigationHistory.updateCurrent(navigationSnapshot())
         }
         if route == .detail, let current = selectedCapture, current.isTask, capture.parentTaskID == current.id {
             attachmentReturnTaskID = current.id
@@ -1323,45 +1715,343 @@ final class AppState: ObservableObject {
         route = .detail
     }
 
-    func back() {
-        if route == .detail {
-            if let parentID = attachmentReturnTaskID, store.captures.contains(where: { $0.id == parentID }) {
-                attachmentReturnTaskID = nil
-                openCapture(parentID, focus: "task")
-                return
-            }
-            attachmentReturnTaskID = nil
-            route = origin
-        } else if route == .search {
-            filter = searchReturnFilter
-            creationReturnRoute = searchReturnCreationRoute
-            auxiliaryReturnRoute = searchReturnAuxiliaryRoute
-            if let context = searchDetailContext,
-               let capture = store.captures.first(where: { $0.id == context.captureID }) {
-                selectedCapture = capture
-                workspace.selectedCaptureID = capture.id
-                selectedDraft = drafts[capture.id]
-                origin = context.origin
-                attachmentReturnTaskID = context.attachmentReturnTaskID
-                detailFocus = context.focus
-                searchDetailContext = nil
-                route = searchReturnRoute
-                return
-            }
-            // The previous task may have been removed while browsing results.
-            route = searchReturnRoute == .detail ? (searchDetailContext?.origin ?? .inbox) : searchReturnRoute
-            searchDetailContext = nil
-        } else if route == .newTask || route == .newNote {
-            route = creationReturnRoute
-        } else if route == .settings || route == .trash {
-            route = auxiliaryReturnRoute
-        } else {
-            route = .daily
+    func openExtendedCapture(_ id: UUID) {
+        guard !isNavigationBlocked else { return }
+        guard !isTutorialPresented else { return }
+        if selectedCapture?.id != id || route != .detail { openCapture(id) }
+        guard route == .detail, let capture = selectedCapture, capture.id == id,
+              let draft = selectedDraft else { return }
+        onOpenExtendedCapture?(capture, draft)
+    }
+
+    @discardableResult
+    func postDetailComment(_ capture: Capture, draft: CaptureDraft) -> Bool {
+        guard !draft.commentComposer.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return false }
+        guard draft.comment == capture.comment else {
+            draft.message = "Save your recovered comment edit before posting a new comment."
+            draft.hasError = true
+            return false
         }
-        detailFocus = nil
+        do {
+            if let id = draft.editingCommentID {
+                try store.updateComment(capture, id: id, text: draft.commentComposer)
+            } else {
+                _ = try store.appendComment(capture, text: draft.commentComposer)
+            }
+            draft.adoptSavedComments(from: capture)
+            persistDrafts()
+            return true
+        } catch {
+            draft.message = "Could not save the comment: \(error.localizedDescription)"
+            draft.hasError = true
+            return false
+        }
+    }
+
+    @discardableResult
+    func setDetailReminder(_ capture: Capture, date: Date?) -> Bool {
+        do {
+            try store.update(capture, comment: capture.comment, reminderAt: date,
+                             reminderTimeZoneID: date == nil ? nil : TimeZone.current.identifier)
+            drafts[capture.id]?.adoptSavedReminder(from: capture)
+            drafts[capture.id]?.message = date == nil ? "Reminder removed." : "Reminder saved."
+            drafts[capture.id]?.hasError = false
+            if date == nil { clearReminderFeedback(for: capture) }
+            Task {
+                if date == nil { await reminders.clearForCapture(capture.id) }
+                else { await saveReminderAndReport(for: capture) }
+            }
+            return true
+        } catch {
+            let message = "Could not update this reminder: \(error.localizedDescription)"
+            drafts[capture.id]?.message = message
+            drafts[capture.id]?.hasError = true
+            reportFailure(message)
+            return false
+        }
+    }
+
+    var canGoBack: Bool {
+        navigationHistory.canGoBack || (navigationHistory.entries.isEmpty && route == .detail && selectedCapture != nil)
+    }
+    var canGoForward: Bool { navigationHistory.canGoForward }
+    var isWorkspaceInputBlocked: Bool {
+        isTutorialPresented || pendingRemoval != nil || isArchiveOperationRunning || isDailyDropTargeted
+            || navigationWindowInteractionBlocked || navigationValidationBlocked
+            || (route == .detail && selectedDraft?.hasUnresolvedValidation == true)
+            || (route == .newTask && newTaskDraft.hasUnresolvedValidation)
+    }
+    var isNavigationBlocked: Bool { isWorkspaceInputBlocked || workspaceZoom.isInteracting }
+    var navigationInputBlocked: Bool { isNavigationBlocked }
+
+    /// The single navigation command path. Native input adds responder/modal
+    /// protection; views use these same methods and enabled state.
+    func back() { moveInHistory(forward: false) }
+    func forward() { moveInHistory(forward: true) }
+
+    func navigate(to destination: BoardRoute) {
+        guard !isNavigationBlocked, destination != route else { return }
+        beginNavigation(); defer { endNavigation() }
+        route = destination
+    }
+
+    func navigateProject(_ project: String?, unfiledOnly: Bool = false) {
+        guard !isNavigationBlocked else { return }
+        beginNavigation(); defer { endNavigation() }
+        libraryProject = project
+        workspace.explorerUnfiledOnly = unfiledOnly
+    }
+
+    func navigateWorkspaceMode(_ mode: WorkspaceMode) {
+        guard !isNavigationBlocked else { return }
+        beginNavigation(); defer { endNavigation() }
+        workspace.mode = mode
+    }
+
+    /// Nestable so an explicit date action that opens Search records one visit.
+    func beginNavigation() {
+        guard !isRestoringNavigation else { return }
+        if navigationDepth == 0 {
+            navigationTransitionRevision &+= 1
+            WorkspaceZoomViewport.flushHistory()
+            navigationFocusTarget = onCaptureNavigationFocus?()
+            navigationHistory.updateCurrent(navigationSnapshot())
+        }
+        navigationDepth += 1
+    }
+
+    func endNavigation() {
+        guard !isRestoringNavigation, navigationDepth > 0 else { return }
+        navigationDepth -= 1
+        if navigationDepth == 0 {
+            navigationFocusTarget = nil
+            var destination = navigationSnapshot()
+            if navigationHistory.current?.hasSameDestination(as: destination) == false {
+                workspaceViewport = nil
+                destination.workspaceViewport = nil
+                if destination.route == .weekly {
+                    weeklyColumnViewports = [:]
+                    destination.weeklyColumnViewports = [:]
+                }
+            }
+            navigationHistory.visit(destination)
+        }
+    }
+
+    private func moveInHistory(forward: Bool) {
+        guard !isNavigationBlocked, navigationDepth == 0 else { return }
+        WorkspaceZoomViewport.flushHistory()
+        navigationFocusTarget = onCaptureNavigationFocus?()
+        // A system/direct-open detail has one known parent. Never fabricate a
+        // next day or a Forward destination at an otherwise empty root.
+        if navigationHistory.entries.isEmpty, route == .detail {
+            var parent = navigationSnapshot()
+            parent.route = origin == .detail ? .inbox : origin
+            parent.selectedCaptureID = nil
+            parent.focus = nil
+            navigationHistory.updateCurrent(parent)
+            navigationHistory.visit(navigationSnapshot())
+        } else { navigationHistory.updateCurrent(navigationSnapshot()) }
+        reconcileNavigationHistory()
+        guard let snapshot = forward ? navigationHistory.forward() : navigationHistory.back() else { return }
+        restoreNavigation(snapshot)
+    }
+
+    /// Call only after a successful rename. Projects currently use exact names
+    /// as identity; never guess which new project replaced a missing name.
+    func projectWasRenamed(from oldName: String, to newName: String) {
+        guard oldName != newName else { return }
+        projectRenames[oldName] = newName
+        if let presentation = projectPresentation.removeValue(forKey: oldName) {
+            projectPresentation[newName] = presentation
+        }
+        if libraryProject == oldName { libraryProject = newName }
+        if searchProject == oldName { searchProject = newName }
+        reconcileNavigationHistory()
+    }
+
+    private struct NavigationLiveIdentities {
+        var captureIDs: Set<UUID>
+        var projects: Set<String>
+        var presentationIDs: Set<String>
+        var noteKeys: Set<String>
+        var projectItemIDs: [String: Set<String>]
+    }
+
+    func reconcileNavigationHistory() {
+        // Resolve the live archive once per command, not once per history
+        // entry. A hundred visits over a large archive remain one linear scan.
+        let captures = store.captures
+        let byID = Dictionary(uniqueKeysWithValues: captures.map { ($0.id, $0) })
+        let captureIDs = Set(byID.keys)
+        let noteKeys = Set(workspace.snapshot.scratchpads.keys).union(workspace.pendingScratchpads.keys)
+        var projectItemIDs: [String: Set<String>] = [:]
+        for capture in captures {
+            let parent = capture.parentTaskID.flatMap { byID[$0] }
+            let project = parent == nil ? capture.projectName : parent?.projectName
+            projectItemIDs[WorkspaceSnapshot.projectKey(project), default: []].insert(ProjectWorkspaceIdentity.capture(capture.id))
+        }
+        for key in noteKeys {
+            let text = workspace.pendingScratchpads[key] ?? workspace.snapshot.scratchpads[key]?.text ?? ""
+            if !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                projectItemIDs[key, default: []].insert("note:" + key)
+            }
+        }
+        let live = NavigationLiveIdentities(captureIDs: captureIDs,
+            projects: Set(captures.compactMap(\.projectName)).union(workspace.projectNames),
+            presentationIDs: Set(captureIDs.map(ProjectWorkspaceIdentity.capture)).union(noteKeys.map { "note:" + $0 }),
+            noteKeys: noteKeys, projectItemIDs: projectItemIDs)
+        navigationHistory.reconcile { resolveNavigation($0, live: live) }
+    }
+
+    private func navigationSnapshot() -> NavigationSnapshot {
+        var result = NavigationSnapshot()
+        result.route = route; result.project = libraryProject
+        result.selectedCaptureID = selectedCapture?.id
+        result.selectedNoteProjectKey = selectedSearchNote.map { WorkspaceSnapshot.projectKey($0.projectName) }
+        result.day = selectedDay; result.weekEndingDay = weekEndingDay; result.weeklyDays = customWeeklyDays
+        result.filter = filter; result.pinnedOnly = libraryPinnedOnly
+        result.query = String(query.prefix(2_000)); result.searchProject = searchProject
+        result.searchUnfiledOnly = searchUnfiledOnly; result.searchSource = searchSource
+        result.searchScope = searchScope; result.searchDay = searchDay
+        result.searchWeekEndingDay = searchWeekEndingDay; result.searchRangeStartDay = searchRangeStartDay
+        result.searchRangeEndDay = searchRangeEndDay; result.searchContext = showSearchContext
+        result.dailyScrollID = dailyScrollID; result.searchScrollID = searchScrollID
+        result.searchDateAnchor = searchDateAnchor; result.searchSelectedResultID = searchSelectedResultID
+        result.searchColumnScrollIDs = searchColumnScrollIDs; result.expandedHours = expandedAutomaticHours
+        result.searchColumnViewports = searchColumnViewports; result.weeklyColumnViewports = weeklyColumnViewports
+        result.focus = detailFocus; result.focusTarget = navigationFocusTarget
+        result.workspace = NavigationWorkspacePresentation(mode: workspace.mode,
+            selectedID: workspace.selectedCaptureID, source: workspace.sourceApplication,
+            dateFilter: workspace.dateFilter, originFilter: workspace.originFilter,
+            snippetsOnly: workspace.snippetsOnly, unfiledOnly: workspace.explorerUnfiledOnly,
+            grouping: workspace.explorerGrouping, query: workspace.explorerQuery,
+            dailyFiles: workspace.explorerShowsDailyFiles)
+        result.workspaceViewport = workspaceViewport; result.todayPlanningScope = todayPlanningScope
+        result.projectPresentation = libraryProject.flatMap { projectPresentation[$0] }
+        result.returnContext = NavigationReturnContext(origin: origin, attachmentTaskID: attachmentReturnTaskID,
+            creation: creationReturnRoute, auxiliary: auxiliaryReturnRoute, search: searchReturnRoute,
+            searchFilter: searchReturnFilter, searchCreation: searchReturnCreationRoute,
+            searchAuxiliary: searchReturnAuxiliaryRoute, searchCaptureID: searchReturnCaptureID,
+            searchDetailID: searchDetailContext?.captureID, searchDetailOrigin: searchDetailContext?.origin ?? .daily,
+            searchDetailAttachmentID: searchDetailContext?.attachmentReturnTaskID, searchDetailFocus: searchDetailContext?.focus)
+        return result
+    }
+
+    private func resolveNavigation(_ snapshot: NavigationSnapshot, live: NavigationLiveIdentities) -> NavigationSnapshot? {
+        var next = snapshot
+        let captureIDs = live.captureIDs
+        let projects = live.projects
+        func project(_ name: String?) -> String? {
+            guard var name else { return nil }
+            var seen = Set<String>()
+            while let renamed = projectRenames[name], seen.insert(name).inserted { name = renamed }
+            return projects.contains(name) ? name : nil
+        }
+        func noteKey(_ key: String) -> String {
+            guard key.hasPrefix("project:"), let name = project(String(key.dropFirst(8))) else { return key }
+            return WorkspaceSnapshot.projectKey(name)
+        }
+        func itemID(_ id: String) -> String {
+            guard id.hasPrefix("note:") else { return id }
+            return "note:" + noteKey(String(id.dropFirst(5)))
+        }
+        func anchor(_ value: NavigationViewportAnchor) -> NavigationViewportAnchor {
+            NavigationViewportAnchor(itemID: itemID(value.itemID), offset: value.offset, neighbors: value.neighbors.map(itemID))
+        }
+        next.project = project(next.project); next.searchProject = project(next.searchProject)
+        next.selectedNoteProjectKey = next.selectedNoteProjectKey.map(noteKey)
+        next.searchSelectedResultID = next.searchSelectedResultID.map(itemID)
+        next.searchColumnScrollIDs = next.searchColumnScrollIDs.mapValues(itemID)
+        next.workspaceViewport = next.workspaceViewport.map(anchor)
+        next.searchColumnViewports = next.searchColumnViewports.mapValues(anchor)
+        next.weeklyColumnViewports = next.weeklyColumnViewports.mapValues(anchor)
+        if var presentation = next.projectPresentation {
+            presentation.selectedIDs = Set(presentation.selectedIDs.map(itemID))
+            presentation.selectionAnchor = presentation.selectionAnchor.map(itemID)
+            presentation.focusedID = presentation.focusedID.map(itemID)
+            presentation.viewport = presentation.viewport.map(anchor)
+            next.projectPresentation = presentation
+        }
+        if let id = next.selectedCaptureID, !captureIDs.contains(id) {
+            if next.route == .detail { return nil }
+            next.selectedCaptureID = nil; next.focus = nil
+        }
+        if let id = next.workspace.selectedID, !captureIDs.contains(id) { next.workspace.selectedID = nil }
+        if let id = next.searchScrollID, !captureIDs.contains(id) { next.searchScrollID = nil }
+        let presentationIDs = live.presentationIDs
+        if let selected = next.searchSelectedResultID, !presentationIDs.contains(selected) { next.searchSelectedResultID = nil }
+        next.searchColumnScrollIDs = next.searchColumnScrollIDs.filter { presentationIDs.contains($0.value) }
+        next.searchColumnViewports = next.searchColumnViewports.compactMapValues { $0.resolving(against: presentationIDs) }
+        next.weeklyColumnViewports = next.weeklyColumnViewports.compactMapValues { $0.resolving(against: presentationIDs) }
+        next.workspaceViewport = next.workspaceViewport?.resolving(against: presentationIDs)
+        if let key = next.selectedNoteProjectKey, !live.noteKeys.contains(key) {
+            next.selectedNoteProjectKey = nil
+            if next.route == .searchNote { next.route = .search }
+        }
+        if var presentation = next.projectPresentation {
+            let projectIDs = live.projectItemIDs[WorkspaceSnapshot.projectKey(next.project)] ?? []
+            presentation.selectedIDs.formIntersection(projectIDs)
+            if let id = presentation.selectionAnchor, !projectIDs.contains(id) { presentation.selectionAnchor = nil }
+            if let id = presentation.focusedID, !projectIDs.contains(id) { presentation.focusedID = nil }
+            presentation.viewport = presentation.viewport?.resolving(against: projectIDs)
+            next.projectPresentation = presentation
+        }
+        return next
+    }
+
+    private func restoreNavigation(_ snapshot: NavigationSnapshot) {
+        isRestoringNavigation = true
+        defer {
+            isRestoringNavigation = false
+            navigationTransitionRevision &+= 1
+            navigationRestorationRevision &+= 1
+            onRestoreNavigationFocus?(snapshot.focusTarget)
+        }
+        libraryProject = snapshot.project; libraryPinnedOnly = snapshot.pinnedOnly
+        selectedDay = snapshot.day; weekEndingDay = snapshot.weekEndingDay; customWeeklyDays = snapshot.weeklyDays
+        filter = snapshot.filter
+        if snapshot.belongsToSearchSession {
+            query = snapshot.query; searchProject = snapshot.searchProject
+            searchUnfiledOnly = snapshot.searchUnfiledOnly; searchSource = snapshot.searchSource
+            searchScope = snapshot.searchScope; searchDay = snapshot.searchDay
+            searchWeekEndingDay = snapshot.searchWeekEndingDay; searchRangeStartDay = snapshot.searchRangeStartDay
+            searchRangeEndDay = snapshot.searchRangeEndDay; showSearchContext = snapshot.searchContext
+            // Restore positions last: refinement observers intentionally clear them.
+            searchScrollID = snapshot.searchScrollID
+            searchDateAnchor = snapshot.searchDateAnchor; searchSelectedResultID = snapshot.searchSelectedResultID
+            searchColumnScrollIDs = snapshot.searchColumnScrollIDs
+            searchColumnViewports = snapshot.searchColumnViewports
+        }
+        dailyScrollID = snapshot.dailyScrollID; expandedAutomaticHours = snapshot.expandedHours
+        weeklyColumnViewports = snapshot.weeklyColumnViewports
+        workspace.mode = snapshot.workspace.mode; workspace.sourceApplication = snapshot.workspace.source
+        workspace.dateFilter = snapshot.workspace.dateFilter; workspace.originFilter = snapshot.workspace.originFilter
+        workspace.snippetsOnly = snapshot.workspace.snippetsOnly; workspace.explorerUnfiledOnly = snapshot.workspace.unfiledOnly
+        workspace.explorerGrouping = snapshot.workspace.grouping; workspace.explorerQuery = snapshot.workspace.query
+        workspace.explorerShowsDailyFiles = snapshot.workspace.dailyFiles
+        workspace.selectedCaptureID = snapshot.workspace.selectedID
+        workspaceViewport = snapshot.workspaceViewport; todayPlanningScope = snapshot.todayPlanningScope
+        if let project = snapshot.project, let presentation = snapshot.projectPresentation { projectPresentation[project] = presentation }
+        selectedCapture = snapshot.selectedCaptureID.flatMap { id in store.captures.first { $0.id == id } }
+        selectedDraft = selectedCapture.flatMap { drafts[$0.id] }
+        selectedSearchNote = snapshot.selectedNoteProjectKey.flatMap { workspace.snapshot.scratchpads[$0] }
+        detailFocus = snapshot.focus; navigationFocusTarget = snapshot.focusTarget
+        let context = snapshot.returnContext
+        origin = context.origin; attachmentReturnTaskID = context.attachmentTaskID
+        creationReturnRoute = context.creation; auxiliaryReturnRoute = context.auxiliary
+        searchReturnRoute = context.search; searchReturnFilter = context.searchFilter
+        searchReturnCreationRoute = context.searchCreation; searchReturnAuxiliaryRoute = context.searchAuxiliary
+        searchReturnCaptureID = context.searchCaptureID
+        searchDetailContext = context.searchDetailID.map { SearchDetailContext(captureID: $0,
+            origin: context.searchDetailOrigin, attachmentReturnTaskID: context.searchDetailAttachmentID,
+            focus: context.searchDetailFocus) }
+        route = snapshot.route
     }
 
     func showCaptureDay(_ capture: Capture) {
+        guard !isNavigationBlocked else { return }
+        beginNavigation(); defer { endNavigation() }
         let parser = DateFormatter()
         parser.locale = Locale(identifier: "en_US_POSIX")
         parser.dateFormat = "yyyy-MM-dd"
@@ -1379,6 +2069,8 @@ final class AppState: ObservableObject {
     }
 
     func moveDay(_ amount: Int) {
+        guard !isNavigationBlocked else { return }
+        beginNavigation(); defer { endNavigation() }
         guard let day = Calendar.current.date(byAdding: .day, value: amount, to: selectedDay),
               Calendar.current.startOfDay(for: day) <= Calendar.current.startOfDay(for: Date()) else { return }
         selectedDay = day
@@ -1463,14 +2155,40 @@ final class AppState: ObservableObject {
 
     func saveDetail() {
         guard let capture = selectedCapture, let draft = selectedDraft else { return }
+        saveDetail(capture: capture, draft: draft)
+    }
+
+    func saveDetail(capture: Capture, draft: CaptureDraft) {
+        guard store.captures.contains(where: { $0 === capture }) else {
+            draft.message = "This capture is no longer available."
+            draft.hasError = true
+            return
+        }
+        if capture.isTask {
+            let title = draft.title.trimmingCharacters(in: .whitespacesAndNewlines)
+            if title.isEmpty || title.count > 2_000 {
+                draft.validationIssue = .title
+                draft.message = "Use a task title of 1–2,000 characters."
+                draft.hasError = true
+                return
+            }
+            guard draft.planning.isValid else {
+                draft.validationIssue = .planning
+                draft.message = "Check the task dates, estimate, and checklist before saving."
+                draft.hasError = true
+                return
+            }
+        }
         let resolvedReminder: Date?
         do { resolvedReminder = draft.reminderChanged ? try draft.resolvedReminder() : draft.reminder }
-        catch { draft.message = error.localizedDescription; draft.hasError = true; return }
+        catch { draft.validationIssue = .reminder; draft.message = error.localizedDescription; draft.hasError = true; return }
         if draft.reminderChanged, let reminder = resolvedReminder, reminder <= Date() {
+            draft.validationIssue = .reminder
             draft.message = "Choose a reminder time in the future."
             draft.hasError = true
             return
         }
+        draft.validationIssue = nil
         let changedReminder = draft.reminderChanged
         do {
             try store.update(capture, comment: draft.comment, reminderAt: resolvedReminder,
@@ -1511,9 +2229,17 @@ final class AppState: ObservableObject {
 
     func showArchiveFolder(for capture: Capture? = nil) {
         do {
-            let folder = try store.prepareArchiveFolder(for: capture)
-            if !NSWorkspace.shared.open(folder) { reportFailure("macOS could not open the local archive folder.") }
+            let folder = try store.localArchiveFolderURL(for: capture)
+            if !folderOpener(folder) { reportFailure("macOS could not open the local archive folder.") }
         } catch { reportFailure("Could not open the local archive: \(error.localizedDescription)") }
+    }
+
+    func showProjectFiles() {
+        do {
+            let folder = libraryProject == nil && !workspace.explorerUnfiledOnly
+                ? try store.localArchiveFolderURL() : try store.explorerFolderURL(project: libraryProject)
+            if !folderOpener(folder) { reportFailure("Finder couldn’t open this project folder.") }
+        } catch { reportFailure("Could not open project files: \(error.localizedDescription)") }
     }
 
     func retryReminder(_ capture: Capture) {

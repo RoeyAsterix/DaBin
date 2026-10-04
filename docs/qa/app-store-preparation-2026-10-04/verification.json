@@ -1,0 +1,35 @@
+{
+  "status": "LOCAL_PREPARATION_VERIFIED_SUBMISSION_BLOCKED",
+  "candidate": {
+    "version": "0.4.31",
+    "build": "86",
+    "source": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/store-preparation-20261004/native",
+    "unsignedApp": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/store-preparation-20261004/native/build/store-unsigned-0.4.31-86/derived-data/Build/Products/Release/DaBin.app",
+    "sourceFingerprint": "cda5504ffbd21b7d090c142f54cf635f8d139adedd61be14a3ab85e045ce62c5",
+    "executableSHA256": "8bd6e628b0efffb2bfd339f84723234aea2e1a03b6b11fb0ceb4eb82895afc3b",
+    "frozenInputsStillMatch": true
+  },
+  "nativeQA": {
+    "distribution": "app-store",
+    "registeredSuites": 96,
+    "firstRunPassed": 95,
+    "firstRunFailed": 1,
+    "failure": "UpdateConfigurationTests: missing sibling repository workflow/documentation fixtures in isolated assembly; no production defect.",
+    "correctiveAction": "Copied .github workflows, docs/RELEASING.md and root README from shared repo; same suite reran and passed41checks.",
+    "rerunPassedSuites": 1,
+    "allRegisteredSuitesHavePassingResults": true,
+    "productionChangedBetweenRuns": false
+  },
+  "offlineTests": 90,
+  "unsignedPackagingChecks": 51,
+  "sandboxSmokeAssertions": 31,
+  "sandboxScope": "Ad-hoc separate fixture across two processes; actual denial, save/reopen/search/export, not distribution binary.",
+  "liveStoreGUI": "Ad-hoc test copy: fresh start, defaults, Store updates, fictional save/search and quit passed.",
+  "screenshots": "3 source-matched opaque RGB 1440x900 native drafts, original-resolution visual review passed.",
+  "signedArchiveCreated": false,
+  "distributionPackageCreated": false,
+  "uploaded": false,
+  "submitted": false,
+  "installedPersonalAppChanged": false,
+  "completedAtUTC": "2026-10-04T05:21:28.192522+00:00"
+}

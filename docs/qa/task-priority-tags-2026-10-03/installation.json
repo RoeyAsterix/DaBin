@@ -1,0 +1,16 @@
+{
+  "verifiedAtUTC": "2026-10-03T14:00:06.953246+00:00",
+  "installedApp": "/Users/roeylibfeld/Applications/DaBin.app",
+  "version": "0.4.24",
+  "buildNumber": "79",
+  "sourceFingerprint": "b5f862da46d9d335cd73eb921df7ff1227bd90d4349902b1e73f47fa01727b4d",
+  "executableSHA256": "0603b788ca908d844496e013c8e8a4b39ccb06afb5876c2efdf02f3cc46da441",
+  "strictSignatureVerified": true,
+  "allProductionSourcesMatchPassingQA": true,
+  "previousAppBackup": "/Users/roeylibfeld/Applications/.DaBinBackups/20261003-165928-31bea044.app",
+  "personalTasksEnteredOrSaved": false,
+  "liveVerifiedAtUTC": "2026-10-03T14:01:29.701399+00:00",
+  "reopenedInstalledApp": true,
+  "newTaskHasLabeledPriorityButtons": true,
+  "autoCaptureRemainedPaused": true
+}

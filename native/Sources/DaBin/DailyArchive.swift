@@ -33,6 +33,15 @@ import CryptoKit
         self.resolvedRoot = root.standardizedFileURL.resolvingSymlinksInPath()
     }
 
+    nonisolated func rootFolderURL() throws -> URL {
+        try validateRoot()
+        var isDirectory: ObjCBool = false
+        guard files.fileExists(atPath: root.path, isDirectory: &isDirectory), isDirectory.boolValue else {
+            throw ArchiveError.notDirectory(root.path)
+        }
+        return root
+    }
+
     /// Fixed English names and Gregorian dates do not change when macOS locale changes.
     nonisolated static func dayRelativePath(captureDay: String) throws -> String {
         let day = try parsedDay(captureDay)
@@ -275,13 +284,22 @@ import CryptoKit
             lines.append("- Reminder: \(iso.string(from: reminder))")
             if let zone = capture.reminderTimeZoneID { lines.append("- Reminder time zone: \(zone)") }
             lines.append("- Reminder state: \(capture.notificationState)")
+            if capture.isReminderAcknowledged, let acknowledgment = capture.reminderAcknowledgment {
+                lines.append("- Reminder acknowledged: \(iso.string(from: acknowledgment.acknowledgedAt))")
+            }
         } else { lines.append("- Reminder: None") }
         if let original = capture.originalURL { lines += ["", "## Link", "", fenced(original)] }
         if let text = capture.originalText { lines += ["", "## Content", "", fenced(text)] }
         if !capture.indexedText.isEmpty {
             lines += ["", "## Searchable text", "", fenced(capture.indexedText)]
         }
-        lines += ["", "## Comment", "", capture.comment.isEmpty ? "No comment." : fenced(capture.comment), ""]
+        lines += ["", "## Comment", ""]
+        if capture.commentThread.count > 1 {
+            for entry in capture.commentThread {
+                let label = entry.createdAt.map { iso.string(from: $0) } ?? "Earlier comment — date unavailable"
+                lines += ["### \(label)", "", fenced(entry.text), ""]
+            }
+        } else { lines += [capture.comment.isEmpty ? "No comment." : fenced(capture.comment), ""] }
         return lines.joined(separator: "\n")
     }
 

@@ -26,7 +26,7 @@ struct ContentIndexExtraction: Sendable, Equatable {
 final class ContentIndexService: ObservableObject {
     typealias Extractor = @Sendable (URL, CaptureKind, String?) async -> ContentIndexExtraction
 
-    static let currentVersion = 1
+    static let currentVersion = 2
     private let store: CaptureStore
     private let extractor: Extractor
     private var queue: [IndexJob] = []
@@ -50,11 +50,18 @@ final class ContentIndexService: ObservableObject {
         [.image, .pdf, .document, .ai].contains(kind)
     }
 
+    /// DOCX support is the only extraction change in version 2. Keep an
+    /// unchanged image/PDF/text index instead of needlessly repeating OCR.
+    static func requiredVersion(for capture: Capture) -> Int {
+        let ext = ((capture.originalFilename ?? "") as NSString).pathExtension.lowercased()
+        return capture.kind == .document && ext == "docx" ? 2 : 1
+    }
+
     func needsIndex(_ capture: Capture) -> Bool {
         guard Self.isEligible(capture.kind) else { return false }
         let terminal = capture.contentIndexState == ContentIndexExtraction.Status.ready.rawValue
             || capture.contentIndexState == ContentIndexExtraction.Status.unavailable.rawValue
-        return capture.contentIndexVersion != Self.currentVersion || !terminal
+        return capture.contentIndexVersion < Self.requiredVersion(for: capture) || !terminal
     }
 
     func process(_ captures: [Capture]) {
@@ -384,8 +391,9 @@ enum ContentTextExtractor {
     private static func readDocument(_ url: URL, filename: String?) -> ContentIndexExtraction {
         let ext = ((filename ?? url.lastPathComponent) as NSString).pathExtension.lowercased()
         let richTypes: Set<String> = ["rtf"]
-        let textTypes = CaptureClassifier.locallySearchableDocumentExtensions.subtracting(richTypes)
-        guard richTypes.contains(ext) || textTypes.contains(ext) else {
+        let packageTypes: Set<String> = ["docx"]
+        let textTypes = CaptureClassifier.locallySearchableDocumentExtensions.subtracting(richTypes.union(packageTypes))
+        guard richTypes.contains(ext) || textTypes.contains(ext) || packageTypes.contains(ext) else {
             return .unavailable("Text search is not available yet for this document format.", canRetry: false)
         }
         guard let attributes = try? FileManager.default.attributesOfItem(atPath: url.path),
@@ -397,6 +405,19 @@ enum ContentTextExtractor {
         }
         guard let data = try? Data(contentsOf: url, options: [.mappedIfSafe]) else {
             return .unavailable("This document could not be read for text search.")
+        }
+        if packageTypes.contains(ext) {
+            do {
+                let result = try LocalDOCXTextExtractor.extract(data: data,
+                    maximumBytes: maximumTextFileBytes, maximumCharacters: maximumCharacters)
+                return .ready(result.text, message: result.truncated
+                    ? "Indexed the first \(maximumCharacters.formatted()) characters of the DOCX document."
+                    : nil)
+            } catch let failure as LocalDOCXTextExtractor.Failure {
+                return .unavailable(failure.message, canRetry: failure == .cancelled)
+            } catch {
+                return .unavailable("This DOCX document could not be read for text search.")
+            }
         }
         if richTypes.contains(ext) {
             guard let value = try? NSAttributedString(data: data, options: [.documentType: NSAttributedString.DocumentType.rtf],

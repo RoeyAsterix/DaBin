@@ -1,0 +1,25 @@
+DaBin landing page — local draft, not published
+
+Open index.html after extracting the whole marketing ZIP. All media paths are
+relative, and the page uses system fonts. No network font, tracker, analytics,
+form submission, or automatic upload is installed.
+
+After the app is available:
+1. Set appStoreURL to the real https://apps.apple.com/... link in config.js.
+2. Set contactEmail to the public support email you wish to use.
+3. Verify privacyURL is published, maintained and matches the shipping app.
+4. Recheck the product statements against the released build.
+5. Deploy only when you choose a hosting destination. Copy only index.html,
+   config.js, captions.vtt and the media/ directory into a separate public
+   deployment folder. These paths are self-contained. Do not publish the whole
+   marketing kit, editable source, provider IDs, outreach or QA records.
+
+With a valid App Store URL, download buttons activate and the draft banner is
+removed. The page does not invent an App Store ID or route to an unrelated app.
+
+The provided English captions.vtt works best when served over HTTP/HTTPS;
+some browsers restrict external caption files when opened via file://.
+
+The video is the guided DaBin UI tour with conversational Andre Rene narration, synchronized robot speech/gaze and pointer guidance over actual native states. The main media filenames use DABIN__UI_TOUR__. The matching94.4-second MP4, poster and English captions are integrated in this draft.
+
+This page is an editable HTML marketing asset. It was not hosted or submitted.

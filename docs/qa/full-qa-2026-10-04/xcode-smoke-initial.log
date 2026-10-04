@@ -1,0 +1,54 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild -project DaBin.xcodeproj -scheme DaBin -configuration Debug -destination platform=macOS,arch=arm64 -derivedDataPath /private/tmp/dabin-xcode-full-qa-20261004 -resultBundlePath /private/tmp/dabin-xcode-full-qa-20261004-results.xcresult test-without-building
+
+Writing result bundle at path:
+	/private/tmp/dabin-xcode-full-qa-20261004-results.xcresult
+
+2026-10-04 01:01:36.754184+0300 DaBin[34427:24294823] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-10-04 01:01:36.754465+0300 DaBin[34427:24294823] [Application] Error registering app with intents framework: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-10-04 01:01:36.754710+0300 DaBin[34427:24294822] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-10-04 01:01:36.754723+0300 DaBin[34427:24294822] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-10-04 01:01:36.755269+0300 DaBin[34427:24294829] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-10-04 01:01:36.755278+0300 DaBin[34427:24294829] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-10-04 01:01:36.755789+0300 DaBin[34427:24294829] [Connection] Will NOT re-try to establish the connection
+2026-10-04 01:01:36.755811+0300 DaBin[34427:24294823] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-10-04 01:01:36.755850+0300 DaBin[34427:24294823] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+Test Suite 'All tests' started at 2026-10-04 01:01:36.930.
+Test Suite 'DaBinTests.xctest' started at 2026-10-04 01:01:36.931.
+Test Suite 'DaBinTests' started at 2026-10-04 01:01:36.931.
+Test Case '-[DaBinTests.DaBinTests testSearchIncludesOnlySameDayNeighborsAcrossTypeFilter]' started.
+2026-10-04 01:01:36.977587+0300 DaBin[34427:24294822] [logging] BUG IN CLIENT OF libsqlite3.dylib: database integrity compromised by API violation: vnode unlinked while in use: /Users/roeylibfeld/Library/Containers/com.dabin.mac/Data/tmp/DaBin-XCTest-E8947CAA-EC05-40EB-B8CC-F46176E74AB3/metadata.store
+2026-10-04 01:01:36.977605+0300 DaBin[34427:24294822] [logging] invalidated open fd: 6 (0x11)
+2026-10-04 01:01:36.977687+0300 DaBin[34427:24294822] [logging] BUG IN CLIENT OF libsqlite3.dylib: database integrity compromised by API violation: vnode unlinked while in use: /Users/roeylibfeld/Library/Containers/com.dabin.mac/Data/tmp/DaBin-XCTest-E8947CAA-EC05-40EB-B8CC-F46176E74AB3/metadata.store-shm
+2026-10-04 01:01:36.977690+0300 DaBin[34427:24294822] [logging] invalidated open fd: 8 (0x11)
+2026-10-04 01:01:36.977854+0300 DaBin[34427:24294822] [logging] BUG IN CLIENT OF libsqlite3.dylib: database integrity compromised by API violation: vnode unlinked while in use: /Users/roeylibfeld/Library/Containers/com.dabin.mac/Data/tmp/DaBin-XCTest-E8947CAA-EC05-40EB-B8CC-F46176E74AB3/metadata.store-wal
+2026-10-04 01:01:36.977876+0300 DaBin[34427:24294822] [logging] invalidated open fd: 7 (0x11)
+Test Case '-[DaBinTests.DaBinTests testSearchIncludesOnlySameDayNeighborsAcrossTypeFilter]' passed (0.048 seconds).
+Test Case '-[DaBinTests.DaBinTests testStoredOriginalAndDaySurviveReopen]' started.
+2026-10-04 01:01:37.009274+0300 DaBin[34427:24294822] [logging] BUG IN CLIENT OF libsqlite3.dylib: database integrity compromised by API violation: vnode unlinked while in use: /Users/roeylibfeld/Library/Containers/com.dabin.mac/Data/tmp/DaBin-XCTest-9C17A3FF-118E-4BA5-9AD3-402A4D2C22A9/metadata.store
+2026-10-04 01:01:37.009274+0300 DaBin[34427:24294823] [logging] BUG IN CLIENT OF libsqlite3.dylib: database integrity compromised by API violation: vnode unlinked while in use: /Users/roeylibfeld/Library/Containers/com.dabin.mac/Data/tmp/DaBin-XCTest-9C17A3FF-118E-4BA5-9AD3-402A4D2C22A9/metadata.store
+2026-10-04 01:01:37.009300+0300 DaBin[34427:24294822] [logging] invalidated open fd: 6 (0x11)
+2026-10-04 01:01:37.009300+0300 DaBin[34427:24294823] [logging] invalidated open fd: 9 (0x11)
+2026-10-04 01:01:37.009338+0300 DaBin[34427:24294823] [logging] BUG IN CLIENT OF libsqlite3.dylib: database integrity compromised by API violation: vnode unlinked while in use: /Users/roeylibfeld/Library/Containers/com.dabin.mac/Data/tmp/DaBin-XCTest-9C17A3FF-118E-4BA5-9AD3-402A4D2C22A9/metadata.store-shm
+2026-10-04 01:01:37.009351+0300 DaBin[34427:24294823] [logging] invalidated open fd: 8 (0x11)
+2026-10-04 01:01:37.009408+0300 DaBin[34427:24294823] [logging] BUG IN CLIENT OF libsqlite3.dylib: database integrity compromised by API violation: vnode unlinked while in use: /Users/roeylibfeld/Library/Containers/com.dabin.mac/Data/tmp/DaBin-XCTest-9C17A3FF-118E-4BA5-9AD3-402A4D2C22A9/metadata.store-wal
+2026-10-04 01:01:37.009412+0300 DaBin[34427:24294823] [logging] invalidated open fd: 10 (0x11)
+2026-10-04 01:01:37.009413+0300 DaBin[34427:24294822] [logging] BUG IN CLIENT OF libsqlite3.dylib: database integrity compromised by API violation: vnode unlinked while in use: /Users/roeylibfeld/Library/Containers/com.dabin.mac/Data/tmp/DaBin-XCTest-9C17A3FF-118E-4BA5-9AD3-402A4D2C22A9/metadata.store-wal
+2026-10-04 01:01:37.009417+0300 DaBin[34427:24294822] [logging] invalidated open fd: 7 (0x11)
+Test Case '-[DaBinTests.DaBinTests testStoredOriginalAndDaySurviveReopen]' passed (0.031 seconds).
+Test Suite 'DaBinTests' passed at 2026-10-04 01:01:37.010.
+	 Executed 2 tests, with 0 failures (0 unexpected) in 0.079 (0.079) seconds
+Test Suite 'DaBinTests.xctest' passed at 2026-10-04 01:01:37.010.
+	 Executed 2 tests, with 0 failures (0 unexpected) in 0.079 (0.080) seconds
+Test Suite 'All tests' passed at 2026-10-04 01:01:37.010.
+	 Executed 2 tests, with 0 failures (0 unexpected) in 0.079 (0.080) seconds
+2026-10-04 01:01:37.284 xcodebuild[34414:24294508] [MT] IDETestOperationsObserverDebug: 1.464 elapsed -- Testing started completed.
+2026-10-04 01:01:37.284 xcodebuild[34414:24294508] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-10-04 01:01:37.284 xcodebuild[34414:24294508] [MT] IDETestOperationsObserverDebug: 1.464 sec, +1.464 sec -- end
+
+Test session results, code coverage, and logs:
+	/tmp/dabin-xcode-full-qa-20261004-results.xcresult
+
+** TEST EXECUTE SUCCEEDED **
+
+Testing started

@@ -1,0 +1,24 @@
+DaBin revised marketing package v2 — delivery QA
+Prepared 4 October 2026
+
+The new 94.4-second guided UI tour replaces the short introduction. Landscape and portrait edits both use exact native UI view states, the current native robot, natural-speed ElevenLabs Andre Rene narration, mouth/gaze/blink animation, a guided pointer and short speech bubbles.
+
+VIDEO — PASS
+All four MP4s fully decoded without FFmpeg errors: 1920 x 1080 and 1080 x 1920, 30 fps, 2,832 frames, H.264 yuv420p. Narrated versions include AAC; silent versions contain no audio. Workflow/prompt metadata is excluded. Exact output hashes and metadata are in video-verification.json.
+
+VISUAL — PASS
+Both formats reviewed at all 29 shot midpoints, with original-resolution checks of critical UI states. Two material crop findings were repaired: portrait To organize and landscape named snippets. Both repairs were checked in decoded final video frames. Independent audit and limits: VISUAL_QA.json/txt. The small head/side appendages/feet decorating the native window are part of actual RobotAppFrameView pixels, not an added composition defect.
+
+AUDIO/CAPTIONS — TECHNICAL AND CONTENT PASS
+Local transcription matched all 174 canonical words. The accepted take remains at its original speed. Eleven measured quiet joins accommodate 8.9 seconds of reading pauses; no word is cut. Zero clipped mix samples, peak -2.935 dBFS. Thirty exact script captions have no overlaps and match SRT/VTT timing. No subjective listening pass is claimed. Details: AUDIO_QA.json/txt and voice alignment/provenance.
+
+HTML/PDF — PASS
+Desktop and mobile landing page plus kit index load all assets, preserve image aspect ratios and have no horizontal overflow or JavaScript exceptions. Final landing media matches the video export byte for byte. All video metadata loads at 94.4 seconds. Unconfigured App Store buttons stay disabled. The edited nine-page PDF was text-checked and its changed pages rendered and visually inspected; other pages retain their previously approved layout. See html-layout-verification.json and 01_Launch_Playbook/PDF_QA.txt.
+
+PACKAGE — validation at ZIP build
+06_Source/qa/build_package.py verifies required outputs, parses JSON, decodes PNGs and checks local HTML references. It creates a SHA256 inventory and tests the final ZIP CRC and archive-to-source byte parity. Intermediate frames, logs, binaries, build caches and Blender backups are excluded. The original v1 kit/ZIP is preserved.
+
+PROVENANCE AND LIMITS
+UI states come from an isolated fictional Studio Refresh fixture linked to the frozen 0.4.31 (86) module. Pointer actions and state transitions are composed; this is not continuous live-input footage. The focus alarm is labeled as a timer-end example, and the task remains open. Backup demonstrates the verified More > Back up archive route rather than a fabricated success screen. Auto Capture fixture settings do not monitor a real clipboard or folder. No KARI material or personal capture archive was sent to ElevenLabs.
+
+The App Store URL, launch date and public contact details remain marked fields. This package has not published a website, sent pitches, posted to social platforms or submitted to Apple. Review the final playback and compare the interface with the distributed build before selecting launch materials.

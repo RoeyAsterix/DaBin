@@ -1,0 +1,242 @@
+{
+  "schemaVersion": 1,
+  "status": "verified_local_installation_with_documented_native_warning",
+  "version": "0.4.23",
+  "buildNumber": "78",
+  "date": "2026-10-02",
+  "request": "Fix the issues found in stability/stress testing so the user experience is smooth, light and fast",
+  "completionClaim": true,
+  "changes": [
+    "Incrementally merge newly committed captures into deterministic receipt-date/UUID order with one live-list publication, preserving canonical objects and unchanged trash",
+    "Defer hidden day/week export grouping and text formatting until the user invokes the action; share eligibility predicates with lightweight menu availability checks",
+    "Publish tooltip bounds only for hovered, focused or explicitly visible controls",
+    "Use action-only AppState references in capture-copy and content-trail controls while retaining capture-specific observation",
+    "Use a native viewport-scoped Explorer list with stable identities and a bounded visible-row anchor during incoming captures; deliberate input, selection, filter, project and size changes release the anchor",
+    "Explicitly focus clicked Explorer cards so real Up/Down and Return events reach their scoped handlers, including recycled rows",
+    "Recreate only the native List subtree for deliberate type/date regrouping while restoring the selected capture"
+  ],
+  "stressEvidence": {
+    "classification": "historical_baseline_and_final_source_stress",
+    "currentFinalSourcesVerified": true,
+    "fixture": {
+      "totalCaptures": 1000,
+      "initialCaptures": 100,
+      "liveBursts": 90,
+      "capturesPerBurst": 10,
+      "imageCaptures": 200,
+      "capturesWithPasteHistory": 334,
+      "maximumAllowedMainQueueLatencySeconds": 1,
+      "hardMainQueueWatchdogSeconds": 8,
+      "coverage": "Durable automatic receipts through CaptureStore and AppState.didAutoCapture in the production native host, with synthetic previews and an isolated archive",
+      "limits": "The Explorer soak does not exercise the macOS clipboard polling source and does not reproduce the previously sampled hang. Main-queue probe delay is not an animation frame-rate measurement."
+    },
+    "baseline": {
+      "runID": "20261002T084630774701Z",
+      "report": "native/build/qa/stability-2026-10-02/runs/20261002T084630774701Z/report.json",
+      "metrics": "native/build/qa/stability-2026-10-02/runs/20261002T084630774701Z/ExplorerSoakTests/metrics.json",
+      "status": "failed_main_queue_latency_limit",
+      "maximumMainQueueLatencySeconds": 1.672447457909584,
+      "samplesAboveOneSecond": 5,
+      "peakRSSBytes": 830554112,
+      "elapsedSeconds": 271.95744037488475,
+      "durableCapturesReopened": 1000
+    },
+    "preliminaryNativeListCandidate": {
+      "runID": "20261002T092215540466Z",
+      "report": "native/build/qa/stability-2026-10-02/runs/20261002T092215540466Z/report.json",
+      "metrics": "native/build/qa/stability-2026-10-02/runs/20261002T092215540466Z/ExplorerSoakTests/metrics.json",
+      "status": "passed_preliminary_sources_only",
+      "checksCompleted": 398,
+      "maximumMainQueueLatencySeconds": 0.33632525010034442,
+      "samplesAboveOneSecond": 0,
+      "peakRSSBytes": 249380864,
+      "elapsedSeconds": 137.72306549991481,
+      "durableCapturesReopened": 1000,
+      "productionInputsChangedDuringRun": false,
+      "finalViewportFixCovered": false
+    },
+    "finalCandidate": {
+      "runID": "20261002T100542811653Z",
+      "report": "native/build/qa/stability-2026-10-02/runs/20261002T100542811653Z/report.json",
+      "metrics": "native/build/qa/stability-2026-10-02/runs/20261002T100542811653Z/ExplorerSoakTests/metrics.json",
+      "status": "passed",
+      "checksCompleted": 518,
+      "elapsedSeconds": 137.51419520797208,
+      "durableCapturesReopened": 1000,
+      "completedImagePreviews": 200,
+      "liveBurstsCompleted": 90,
+      "postLoadScrollIterations": 16,
+      "fullCloseReopenCycles": 4,
+      "interruptedReversals": 5,
+      "peakRSSBytes": 235372544,
+      "mainQueueLatency": {
+        "probeCount": 2048,
+        "maximumSeconds": 0.35027979081496596,
+        "p95Seconds": 0.10846391716040671,
+        "p99Seconds": 0.20710083306767046,
+        "meanSeconds": 0.0306495498126651,
+        "samplesAboveOneSecond": 0
+      },
+      "maximumLayoutSettleSeconds": 0.54425387503579259,
+      "maximumSaveLatencySeconds": 0.12454491690732539,
+      "productionInputsChangedDuringRun": false,
+      "sourceMatchedCompiledModule": true,
+      "limitsWeakened": false,
+      "harnessRevision": {
+        "previousSHA256": "74a31ff119b66fda4cfd5ddfdf3267b4c9aed0f150a6e74e066011991d1a7cff",
+        "finalSHA256": "9a002c55f0883ebdd99ca2ec11cbb8a5754982e0c6bfe099d05cb0f3eb75a8ec",
+        "change": "Reacquire the currently attached native scroll view before each existing burst/postload scroll and assert its window identity, because deliberate regrouping now replaces the table",
+        "unchanged": "Capture count/mix, grouping/resize/scroll/transition sequences, controlled sleeps, minimum exercise time, responsiveness limits and measurement methodology"
+      }
+    },
+    "finalQueueStress": {
+      "runID": "20261002T100542811653Z",
+      "metrics": "native/build/qa/stability-2026-10-02/runs/20261002T100542811653Z/AutoCaptureQueueStressTests/metrics.json",
+      "status": "passed",
+      "checks": 2199,
+      "observedEvents": 296,
+      "durableCaptures": 206,
+      "intentionallyCanceledEvents": 80,
+      "expectedFailedEvents": 10,
+      "maximumHeartbeatGapSeconds": 0.084216583520174026,
+      "harnessSHA256": "c78a534f243d83d0113a565465d1c8de2ca3fcb1cdb1cb53a3ec2f056230ab2c"
+    },
+    "preliminaryQueueStress": {
+      "runID": "20261002T092215540466Z",
+      "metrics": "native/build/qa/stability-2026-10-02/runs/20261002T092215540466Z/AutoCaptureQueueStressTests/metrics.json",
+      "status": "passed_preliminary_sources_only",
+      "checks": 2199,
+      "observedEvents": 296,
+      "durableCaptures": 206,
+      "intentionallyCanceledEvents": 80,
+      "expectedFailedEvents": 10,
+      "maximumHeartbeatGapSeconds": 0.085970083251595497
+    }
+  },
+  "focusedNavigationRegression": {
+    "status": "passed",
+    "report": "native/build/qa/runs/20261002T100312945548Z/report.json",
+    "workspaceChecks": 214,
+    "responsivenessChecks": 169,
+    "keyboardChecks": 75,
+    "maximumMaterializedRows": 20,
+    "passiveCaptureViewportDriftPoints": 0,
+    "viewportCheckedAfterGuardExpiry": true,
+    "actualKeyboardArrowTransitions": 45,
+    "regroupingRestoresSelectedCaptureBothDirections": true,
+    "productionInputsChangedDuringRun": false
+  },
+  "fullNativeRegression": {
+    "status": "passed",
+    "passedSuites": 77,
+    "failedSuites": 0,
+    "coverage": "full_registered_suite",
+    "report": "docs/qa/performance-0.4.23-2026-10-02/native-report.json",
+    "rawReport": "native/build/qa/runs/20261002T101520156824Z/report.json",
+    "startedAtUTC": "2026-10-02T10:15:20.156824+00:00",
+    "finishedAtUTC": "2026-10-02T10:22:38.510174+00:00",
+    "sourceChangedDuringRun": false,
+    "currentInputsMatched": 196,
+    "sourceFingerprint": "6310b5c3b2c12c89e9d11a9bc18b0a8177754878fb195260d5e3f2070f963dab"
+  },
+  "nativeWarning": {
+    "status": "remaining_nonfatal_framework_diagnostic",
+    "occurrencesInFinalStress": 9,
+    "text": "Application performed a reentrant operation in its NSTableView delegate",
+    "stack": "docs/qa/performance-0.4.23-2026-10-02/native-table-warning.txt",
+    "observedPath": "Stress settle/layoutSubtreeIfNeeded -> SwiftUI NSHostingView/OutlineListCoordinator.diffRows -> NSTableView endUpdates/top-row stabilization -> NSTableRowHeightData recursive height/total-span cache calculation",
+    "daBinViewportCallbackInCapturedRecursiveStack": false,
+    "diagnosticMethod": "A test-only logging interposer captured the first actual warning and exited 86 intentionally; it is not included in production sources, the project or app",
+    "limitations": "The warning is not claimed eliminated. This forced-layout stack does not prove it cannot occur during normal AppKit layout. No crash, hang or failed performance limit occurred in the final uninstrumented stress run."
+  },
+  "installedPreviousVersionDiagnosis": {
+    "version": "0.4.22 (77)",
+    "observedCPUPercent": 99,
+    "sample": "native/build/qa/performance-0.4.23-2026-10-02/installed-0.4.22-hang.sample.txt",
+    "finding": "Main thread occupied by SwiftUI lazy-stack geometry/layout transactions; normal quit timed out, then the exact verified app PID received SIGTERM",
+    "exactHangDeterministicallyReproduced": false
+  },
+  "offlineChecks": {
+    "status": "passed",
+    "evidenceDirectory": "native/build/qa/performance-0.4.23-2026-10-02/offline",
+    "pythonMetadataAndDistribution": {
+      "passed": 45,
+      "failed": 0,
+      "skipped": 0,
+      "log": "python-tests.log"
+    },
+    "pythonStorePreflightAndBuilder": {
+      "passed": 32,
+      "failed": 0,
+      "skipped": 0,
+      "log": "store-preflight-tests.log"
+    },
+    "staticSourcePackaging": {
+      "passed": 30,
+      "log": "static-preflight.log"
+    },
+    "metadataDraft": {
+      "passed": 13,
+      "errors": 0,
+      "submissionReady": false,
+      "report": "metadata-validation.json"
+    },
+    "sourceInventory": {
+      "boundInputCount": 11,
+      "inputsChangedDuringRun": false,
+      "before": "inputs-before.sha256",
+      "after": "inputs-after.sha256",
+      "scope": "Offline Python tests, packaging scripts, version plist and metadata; not the complete Swift production inventory"
+    },
+    "safety": "Temporary fixtures and mocked signing/notary/installer operations only; no network, native build, installation, UI, clipboard or personal archive access"
+  },
+  "pendingVerification": [],
+  "build": {
+    "status": "passed",
+    "receipt": "docs/qa/performance-0.4.23-2026-10-02/build-receipt.json",
+    "sourceFingerprint": "c4021c43bfd965ae85325e38867b359e31cd4137c6b0cdb5ecc8fef022538911",
+    "currentInputsMatched": 139,
+    "strictSignatureVerifiedOnCleanCopy": true,
+    "mainExecutableSHA256": "c7109021f1ae3d384f11072e41db1a721708c0b29c56527abf2542326ff7f821",
+    "updaterExecutableSHA256": "42e22b91dd51323e463fd62c2e5d9891491caa16449cd5d44adc1cce7170d288"
+  },
+  "installation": {
+    "status": "passed",
+    "targetPath": "/Users/roeylibfeld/Applications/DaBin.app",
+    "backupPath": "/Users/roeylibfeld/Applications/.DaBinBackups/20261002-132303-50151fae.app",
+    "version": "0.4.23",
+    "buildNumber": "78",
+    "strictSignatureVerified": true,
+    "sourceFingerprintMatched": true,
+    "mainExecutableHashMatched": true,
+    "updaterExecutableHashMatched": true,
+    "processIDAtVerification": 34803,
+    "singlePostInteractionCPUPercent": 0.1,
+    "liveChecks": [
+      "Settings visibly reports DaBin 0.4.23 (78)",
+      "Settings/Back and Projects/Explorer navigation respond",
+      "Actual Explorer scroll bar advances during a scroll action",
+      "Expand reveals the inspector; Restore returns to compact layout",
+      "Auto Capture remains paused; tooltips remain enabled",
+      "Original Inbox/To organize view restored"
+    ],
+    "liveCloseLimit": "Hide was invoked, but accessibility retained the window tree; live hidden-state completion is not claimed. Native close/reopen behavior passes the isolated full suite and stress tests.",
+    "personalCaptureOpenCopyEditActions": false,
+    "personalArchiveUsedAsTestFixture": false,
+    "generalClipboardUsed": false,
+    "personalArchiveIndependentlyByteInventoried": false,
+    "archiveReplacementByInstaller": false
+  },
+  "distribution": {
+    "committed": false,
+    "pushed": false,
+    "publicBinaryReleased": false,
+    "appStoreApproved": false
+  },
+  "limitations": [
+    "Passing isolated tests cannot guarantee that the application will never freeze",
+    "The remaining native row-height diagnostic is documented, not suppressed or claimed fixed",
+    "Large-payload/OCR pressure, hours-long operation and macOS 14 runtime are not covered by the synthetic stress result",
+    "Local tests and source packaging checks do not establish Apple signing, distribution readiness or App Store approval"
+  ]
+}

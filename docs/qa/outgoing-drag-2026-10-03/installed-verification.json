@@ -1,0 +1,13 @@
+{
+  "installedAtUTC": "2026-10-03T20:35:11.543087+00:00",
+  "path": "/Users/roeylibfeld/Applications/DaBin.app",
+  "version": "0.4.27",
+  "build": "82",
+  "sourceFingerprint": "f5447804ff05fb3ce49c460c23615e9c51cd456fe7003cabfad26bb9ddc9970d",
+  "executableSHA256": "01ebe8e06de65dc096c6784609240c241d57cdc0b443507f4a5f75dde3c19976",
+  "strictSignatureVerified": true,
+  "matchesTestedBuild": true,
+  "backup": "/Users/roeylibfeld/Applications/.DaBinBackups/20261003-233442-55089f63.app",
+  "reopenedAndProjectUIVerified": true,
+  "verifiedAtUTC": "2026-10-03T20:53:39.265976+00:00"
+}

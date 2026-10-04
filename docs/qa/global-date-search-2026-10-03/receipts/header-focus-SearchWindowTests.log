@@ -1,0 +1,19 @@
+PASS: 97 native global Search window, routing, paging, filter, note, recycling, render and performance checks. Keyboard verification excluded: desktop focus unavailable.
+[SearchWindowTests] fixture: create isolated records
+[SearchWindowTests] matching: indexed text, checklist, snippets and empty browse
+[SearchWindowTests] window: mount and activate native Board
+[SearchWindowTests] entry: Project workspace Search is global
+2026-10-03 18:59:52.280 DaBinSearchQA[95681:23815536] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future.
+[SearchWindowTests] paging: responsive one, two and three date columns
+[SearchWindowTests] viewport: independent native date columns
+[SearchWindowTests] viewport: stale deferred write invalidation
+[SearchWindowTests] routing: compact details and expanded preview
+[SearchWindowTests] routing: editable project note and Back
+[SearchWindowTests] filters: controls, keyboard or explicit Done, chips and clear
+[SearchWindowTests] recycling: 2000 rows, live insertion and detail restoration
+2026-10-03 19:00:04.444 DaBinSearchQA[95681:23815536] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future.
+2026-10-03 19:00:14.391 DaBinSearchQA[95681:23815536] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future.
+[SearchWindowTests] evidence: light and dark native renders
+[SearchWindowTests] performance: 5000-record cold and cached Search
+CoreData: debug: WAL checkpoint: Database did checkpoint. Log size: 1203 checkpointed: 1203
+[SearchWindowTests] complete

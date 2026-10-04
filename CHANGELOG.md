@@ -1,5 +1,102 @@
 # Changelog
 
+## 0.4.31 (86) - 2026-10-04, installed local build and App Store preparation
+
+- Adds navigation history and adaptive workspace zoom, with editor/selection/scroll restoration and native input handling. Full QA repairs and platform/performance limits are recorded in the [navigation QA report](docs/qa/full-qa-navigation-2026-10-04/README.md).
+- Keeps zoomed typography natural: workspace fonts grow at most 20%, preview geometry retains full scaling, and capture-detail heading/body sizes stay capped. Eight targeted native suites pass; the matching Release app is installed locally. [Typography verification](docs/qa/zoom-typography-2026-10-04/README.md).
+- Refreshes the robot-led PDF guide, App Store preparation materials and local marketing source assets.
+
+- Makes active recording unmistakable in the menu bar, even with the board closed or tooltips disabled, and distinguishes Ready/Paused/Off states.
+- Corrects privacy wording and adds Store-channel QA with updater network-inactivity checks and an isolated enforced-sandbox smoke harness.
+- Prepares current listing/reviewer copy and three native screenshot drafts; 96 native suites have passing results, 90 offline tests and 51 unsigned packaging checks pass. Signed distribution, owner declarations and final-device acceptance remain pending. The local/direct build is installed with matching app/updater hashes, a rollback backup, 221 focused checks and live version/data verification; Auto Capture remains paused. [Local installation](docs/qa/local-update-0.4.31-2026-10-04/README.md). No upload or public release. [Evidence](docs/qa/app-store-preparation-2026-10-04/README.md).
+
+
+## 0.4.30 (85) - 2026-10-04, installed local candidate
+
+- Makes previously inactive comment captions draggable as their exact full text, preserving whitespace and Unicode. Recognized-text captions drag the saved original rather than their truncated excerpt.
+- Adds full-capture dragging to detail/inspector display titles and saved-task labels. Expanded batch and hourly headers now transfer their complete collections, just like collapsed cards.
+- Preserves text editing and body selection, independent copy/collapse/completion controls, the general clipboard and all saved originals. Passes 1,753 checks across 13 suites, including mounted production surfaces and cross-process native payload reads. Physical external-app/browser drops remain pending manual verification. [Verification and remaining external-drop limits](docs/qa/outgoing-drag-verification-2026-10-04/README.md).
+
+## 0.4.29 (84) - 2026-10-04, installed local candidate
+
+- Replaces the Auto Capture sparkle icon with a red record dot inside a thin ring. The dot grows from 8 to 16 points and makes two gentle alternating hops while a capture channel is running.
+- Stops motion when paused, waiting for access, hidden or detached. Reduce Motion keeps the active dot large and stationary. Compositor animation avoids repeated timeline updates.
+- Retains setup/pause/resume, the 40×34 hit target, keyboard focus styling, tooltips and the accessible capture status. [Native recording-control QA](docs/qa/auto-record-button-2026-10-04/README.md).
+
+## 0.4.28 (83) - 2026-10-04, installed local candidate
+
+- Restores Search typing focus after immediate and animated opening, reopening, and clearing the query. Command-V and native Paste recover the query editor when a Search control owns focus, while other text editors keep their normal paste behavior.
+- Moves global Search from Space to K (Control–Option–K by default), avoiding macOS input-language switching, and checks enabled system shortcuts before registration. Saved modifier choices are preserved; conflicts are reported in Settings.
+- Adds 65 native Search input regressions, including selection-aware paste, refinements, wrong-window protection, and proof that Search paste never saves a capture.
+- Completes all 93 registered native Release suites, 39 media checks, 16 native render modes, walkthrough/privacy/animation checks, and 85 offline Python tests. Repairs outdated fixtures, the temporary Search test app launcher, render-script dependencies, and Xcode fixture database cleanup.
+- Verifies a frozen candidate that preserves the separate, ongoing tutorial work in the shared source tree. [Full QA, local installation evidence, and limits](docs/qa/full-qa-2026-10-04/README.md).
+
+## 0.4.27 (82) - 2026-10-03, prepared locally; installation pending
+
+- Gives project cards distinct Task, Note and Capture badges and treatments: task status rails/checklists, warm ruled project notes, and neutral captured-content previews.
+- Preserves large file/image previews after task conversion. Square task completion controls remain separate from circular multi-selection, with clear completed styling.
+- Keeps role labels visible in compact view and light/dark appearances. Original content and project-colored frames are retained.
+- Passes 852 existing regression checks and 263 dedicated card checks against the retained tested native module. Another chat changed robot sources during the app build; the build stopped and the installed 0.4.26 app was preserved. Combined-source QA and installation remain pending. [Evidence](docs/qa/project-card-types-0.4.27-2026-10-03/README.md).
+
+## 0.4.26 (81) - 2026-10-03, project header cleanup
+
+- Shows the project name once in its dropdown, with a quiet whole-project item count beneath it. Removes the repeated folder/title row and “One place for your project” tagline, leaving more room for previews.
+- Keeps Search, the single scoped Export action, and Project actions on one compact row. Long names and the minimum-width window remain usable.
+- Shares the grid's membership rules with the header count: current parent-task ownership, active captures, and one nonempty live note; filters and selection do not alter the total.
+- Passes five focused native Release suites (921 checks). [Verification](docs/qa/project-header-0.4.26-2026-10-03/README.md).
+
+## 0.4.25 (80) - 2026-10-03, installed local candidate
+
+- Ships the preview-first named-project workspace with larger previews, subtle project-color frames, fewer permanent controls and responsive grid/compact layouts. Includes live project notes and inherited task attachments without duplicating them.
+- Adds visible-only multi-selection, per-project saved ordering, range selection and scoped search. File previews open saved originals; titles open details.
+- Converts selected captures to tasks atomically while preserving original content and inherited ownership. Guarded batch undo remains valid after ordering changes and protects later task edits.
+- Copies native items or an ordered readable summary. Complete project and selected-item ZIP exports include originals, text, links, task metadata, notes, a manifest and content hashes; missing files abort, and existing destinations are never overwritten.
+- Preserves native viewport recycling and stable row groups during incoming captures. Passes 16 focused Release suites (1,630 checks), including a 1,000-item project fixture and native auto-capture responsiveness checks.
+- Installs with a recoverable prior-app backup, matching source/build/installed executable hashes and strict signature verification. Live project selection controls respond; Auto Capture stays paused. No remote Git push, public release or App Store submission. [Verification](docs/qa/project-workspace-0.4.25-2026-10-03/README.md).
+
+## 0.4.24 (79) - 2026-10-03, installed local candidate
+
+- Keeps a held project sign visible throughout enabled project Auto Capture, with fixed 10-point text. Pointer departure no longer dismisses the robot; switching both channels off clears the sign.
+- Retains the project with a Paused status, updates on destination changes, and reports ready/access states accurately. Expanded chrome and the waiting timer robot retain the project name.
+- Keeps the camera-island recording robot below the hardware with connected arms and grips; transparent margins remain click-through. Saved-capture feedback no longer replaces the project board.
+- Passes 11 focused native Release suites, including 84 new controller/render checks. Installs and verifies the local bundle with a previous-app backup; live active/paused states pass and the original paused preference is restored. [Verification and scope](docs/qa/project-recording-sign-2026-10-03/README.md).
+
+## 0.4.23 (78) - 2026-10-02, installed local candidate
+
+- Merges newly committed captures into the ordered feed once, preserving live object identities and unchanged trash instead of reloading the complete repository after each automatic capture.
+- Defers full day/week export grouping and text formatting until the user invokes an export or copy action; menu availability uses the same eligibility rules with an early-exit check.
+- Publishes tooltip geometry only for hovered, focused or explicitly presented controls; capture-copy and content-trail controls no longer subscribe to unrelated application-state changes.
+- Moves Explorer's rich capture cards into a native viewport-scoped list, retaining stable row identities. A bounded native anchor preserves the cards being read during incoming captures and releases immediately for deliberate navigation or resizing.
+- Restores actual keyboard focus on the selected Explorer card so Up/Down navigation works through recycled rows and Return opens the correct capture.
+- Gives deliberate type/date regrouping a fresh native table and restores the selected capture. Ordinary capture insertion retains the existing table. A remaining non-fatal row-height warning was traced inside AppKit during forced test layout; it is documented, not claimed eliminated.
+- Passes the final 1,000-capture stress run: all receipts reopen and all 200 previews complete. Maximum main-queue delay falls from 1.672447 to 0.350280 seconds; peak observed RSS from 830,554,112 to 235,372,544 bytes. Capture mix, timing limits and measurement methods remain unchanged; the harness now verifies it scrolls the current table after regrouping.
+- Passes all 77 registered native Release suites, 77 offline Python tests, 30 static packaging checks and 13 draft metadata checks. Installs and verifies the source-bound local app, backs up the previous bundle and checks live Settings/Explorer navigation without editing captures or capture preferences. No commit, push, public release or App Store submission. [Verification and known limits](docs/qa/performance-0.4.23-2026-10-02/verification.json).
+
+## 0.4.22 (77) - 2026-10-02, local candidate
+
+- Hardens the Explorer lazy-layout path sampled in the frozen Auto Capture app: flat stable row identities, a single responsive action subtree and no publication when already-empty feedback is dismissed.
+- Adds a background-watchdog regression covering 128 fictional automatic captures in the production robot window, delayed previews, selected-item preservation, scrolling/resizing, and close/reopen/reversal.
+- Passes twelve targeted Release suites plus the final 114-check native-host stress run. Synthetic pre-fix baselines also passed; the exact live hang was not deterministically reproduced. [Evidence and limitations](docs/RELEASE_NOTES_0.4.22.md).
+- Stops the unresponsive process, installs the verified Release build with the old bundle backed up, and verifies live Settings/Explorer scrolling and expand/restore. Saved captures and preferences are not edited; Auto Capture remains paused. No commit, push or public release.
+
+## 0.4.21 (76) - 2026-10-02, local candidate
+
+- Reworks full-view opening and closing around a readable enlarged robot: preparation, articulated hands, workspace reveal, compact gathering and a shrinking return to the island or corner.
+- Shares the island's canonical neck, chest, intake and feet; keeps the face uniformly scaled and replaces the old tall split-panel body with transparent perimeter rails.
+- Synchronizes all transition tracks and preserves presented geometry, arm paths, expression and opacity across rapid reversals; fixes transformed rail-mask calculation and hidden-content flashes.
+- Uses the visible robot's current position for moving-island handoffs, including mirrored perches, and pads the native transition stage without resizing hosted content per frame.
+- Retains Quiet mode, Reduce Motion, stable resize geometry and existing capture/search behavior. [Motion release notes](docs/RELEASE_NOTES_0.4.21.md).
+- Installs and verifies the ARM64 Release app locally after focused native motion/window checks; the previous app bundle is backed up. No commit/push, public binary release or Store submission.
+
+## 0.4.20 (75) - 2026-10-02, local candidate
+
+- Adds independent project/Unfiled and all/day/week/inclusive-range controls to Search, with contextual Command-K and an explicit Search everything reset.
+- Keeps query refinements across result navigation and restores originating work on Back. Task attachment membership and searchable project metadata follow the live parent, including moved and unfiled tasks; source filters use the same resolved labels as Explorer.
+- Adds bounded, local-only Word `.docx` main-body ZIP/XML text extraction and targeted migration of old DOCX indexes without re-OCRing unchanged images/PDFs.
+- Preserves completed v1 text indexes when reopening and restoring older archives; only DOCX needs the newer extractor version. Invalid and future index versions still fail safely without rewriting the store.
+- Centers long document snippets around matching words instead of omitting distant hits; labels scratchpad dates as edited dates. Project/date/source boundaries also apply to optional nearby context.
+- Installs and verifies 0.4.20 (75) locally after all 75 registered Release suites pass. Verification and format limitations: [search release notes](docs/RELEASE_NOTES_0.4.20.md). No binary publication or App Store submission.
+
 ## 0.4.19 (74) - 2026-10-02, local candidate
 
 - Aligns the board, native reveal mask and metal rim to one continuous rounded-corner profile; removes the mismatched circular host clip and fills gaps in the corner rim.

@@ -39,6 +39,12 @@ import Foundation
         try expect(pure.remaining(at: now.addingTimeInterval(-300)) == 60, "Backward clock change never exceeds started duration")
         try expect(pure.remaining(at: now.addingTimeInterval(600)) == 0, "Sleep or a forward clock jump expires by persisted deadline")
         try expect(!TaskFocusSession(remainingSeconds: .infinity).isValid, "Nonfinite focus state is rejected")
+        try expect(!TaskFocusSession(remainingSeconds: 0, completedAlertID: UUID()).isValid,
+                   "Completion identity and date must be paired")
+        try expect(!TaskFocusSession(remainingSeconds: 60, completedAlertID: UUID(), completedAt: now).isValid,
+                   "Completed focus cannot retain running time")
+        try expect(!TaskFocusSession(remainingSeconds: 0, completedAlertID: UUID(), completedAt: now,
+                   acknowledgedAt: now.addingTimeInterval(-1)).isValid, "Acknowledgement cannot precede completion")
         let task = try store.createTask(text: "Fictional research follow-up")
         try expect(state.configureTaskFocus(task, hours: 0, minutes: 25, start: true, at: now), "Start persists a configured duration")
         let end = now.addingTimeInterval(1500)
@@ -57,7 +63,11 @@ import Foundation
         let lifecycle = TaskFocusCoordinator(store: store)
         lifecycle.onExpired = { expiryEvents += $0.count }
         lifecycle.reconcile(at: now.addingTimeInterval(1800))
-        try expect(task.taskPlanning?.focusSession == TaskFocusSession(remainingSeconds: 0) && !task.isCompleted, "Expiry is durable and does not complete task")
+        try expect(task.taskPlanning?.focusSession?.remainingSeconds == 0
+                   && task.taskPlanning?.focusSession?.endAt == nil
+                   && task.taskPlanning?.focusSession?.completedAlertID != nil
+                   && task.taskPlanning?.focusSession?.completedAt == now.addingTimeInterval(1769.5)
+                   && !task.isCompleted, "Expiry durably records an unacknowledged occurrence without completing the task")
         try expect(second.taskPlanning?.focusSession?.isRunning == true, "Independent longer task remains running")
         lifecycle.reconcile(at: now.addingTimeInterval(1801))
         try expect(expiryEvents == 1, "Repeated reconciliation does not write or announce expired sessions again")

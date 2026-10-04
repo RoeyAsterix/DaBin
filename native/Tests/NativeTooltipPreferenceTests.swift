@@ -143,17 +143,19 @@ private final class NativeTooltipPreferenceTests: NSObject, NSApplicationDelegat
                    "Disabling visual help preserves native robot and status accessibility semantics")
         coordinator.autoCapture.settings.setClipboardEnabled(true)
         coordinator.autoCapture.settings.setStatus(.monitoring)
-        try expect(coordinator.statusBar.presentation.indicator == .enabled
-            && coordinator.statusBar.statusMenuItem?.title == "Auto Capture: Enabled",
+        try expect(coordinator.statusBar.presentation.indicator == .recording
+            && coordinator.statusBar.statusMenuItem?.title == "Auto Capture: Recording",
                    "Updating status metadata remains functional while hover help is disabled")
         try expect(statusButton.toolTip == nil,
                    "An Auto Capture refresh cannot silently re-enable disabled native tooltips")
-        try expect(axText(statusButton, "accessibilityValue") == "Enabled",
+        try expect(statusButton.image?.isTemplate == false,
+                   "The active menu-bar recording symbol retains its color while tooltips are disabled")
+        try expect(axText(statusButton, "accessibilityValue") == "Recording",
                    "Status accessibility still reports the current capture state while tooltips are off")
         coordinator.theme.setShowTooltips(true)
         try expect(coordinator.corners.robot.showTooltips
             && coordinator.corners.robot.toolTip == robotTooltip
-            && statusButton.toolTip == "DaBin — Enabled",
+            && statusButton.toolTip == "DaBin — Recording",
                    "Re-enabling the single shared preference restores current native hover help")
         coordinator.autoCapture.settings.setStatus(.permissionRevoked)
         try expect(statusButton.toolTip == "DaBin — Permission needs attention",

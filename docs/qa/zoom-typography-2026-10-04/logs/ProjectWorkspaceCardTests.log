@@ -1,0 +1,9 @@
+FIXTURE: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/project-workspace-card/1BF6CC6F-E234-4C2A-BAED-9A164B31BDBF/completed-image-task-light@2x.png
+FIXTURE: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/project-workspace-card/1BF6CC6F-E234-4C2A-BAED-9A164B31BDBF/project-types-grid-light@2x.png
+FIXTURE: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/project-workspace-card/1BF6CC6F-E234-4C2A-BAED-9A164B31BDBF/project-types-compact-320-light@2x.png
+FIXTURE: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/project-workspace-card/1BF6CC6F-E234-4C2A-BAED-9A164B31BDBF/project-types-grid-dark@2x.png
+FIXTURE: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/project-workspace-card/1BF6CC6F-E234-4C2A-BAED-9A164B31BDBF/project-types-compact-320-dark@2x.png
+FIXTURE: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/project-workspace-card/1BF6CC6F-E234-4C2A-BAED-9A164B31BDBF/project-tasks-content-height-light@2x.png
+FIXTURE: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/project-workspace-card/1BF6CC6F-E234-4C2A-BAED-9A164B31BDBF/project-tasks-content-height-dark@2x.png
+FIXTURE: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/project-workspace-card/1BF6CC6F-E234-4C2A-BAED-9A164B31BDBF/project-task-compact-medium-light@2x.png
+PASS: 379 project card checks; Task/Note/Capture semantics, real live task updates, light/dark/grid/320-point compact fixtures, original previews and independent selection; no personal archive, clipboard, network, or external opening.

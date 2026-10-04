@@ -1,0 +1,62 @@
+{
+  "status": "functional checks and local build passed; release gates remain open",
+  "distinctPassingSuites": 24,
+  "suites": [
+    "TaskPlanningTests",
+    "CaptureTaskConversionTests",
+    "SearchScopeStateTests",
+    "WeeklyStateTests",
+    "CaptureZoomStateTests",
+    "SearchDateBoardTests",
+    "ProjectWorkspaceStateTests",
+    "ProjectWorkspaceViewTests",
+    "ProjectWorkspaceCardTests",
+    "NavigationHistoryTests",
+    "WindowResizeInteractionTests",
+    "DailyCaptureTests",
+    "HeaderInteractionTests",
+    "RobotWindowTransitionTests",
+    "DetailPreviewInteractionTests",
+    "CaptureExtendedInteractionTests",
+    "AutoCaptureExplorerResponsivenessTests",
+    "ExplorerKeyboardTests",
+    "SearchInputTests",
+    "TodayTaskCardTests",
+    "WorkspaceZoomTests",
+    "WorkspaceZoomLayoutTests",
+    "WorkspaceInputTests",
+    "WorkspaceZoomPerformanceTests"
+  ],
+  "sourceChecks": [
+    {
+      "receipt": "regressions",
+      "allApplicableInputsMatchCurrentSource": true
+    },
+    {
+      "receipt": "performance",
+      "allApplicableInputsMatchCurrentSource": true
+    }
+  ],
+  "productionSourceFiles": 137,
+  "buildSourceFingerprint": "4edc428c70392a99c0a112c5227f2b4b02dd6a21c9f369d3040e739cd133aacd",
+  "executableSHA256": "5f9f9043aefdab552453995785036a3349a2980e531756a6c421fbc6ab853333",
+  "version": "0.4.31",
+  "buildNumber": "86",
+  "target": "arm64-apple-macosx14.0",
+  "configuration": "Debug",
+  "strictSignatureVerifiedOnCleanCopy": true,
+  "fullTenMinuteRun": true,
+  "automaticArrivalsPreserved": 399,
+  "validatedManagedOriginals": 2000,
+  "validatedImageThumbnails": 1000,
+  "proposedPerformanceTargetsMet": false,
+  "remainingGates": [
+    "Physical mouse/trackpad and display-device coverage",
+    "Input-to-layout and native presentation performance",
+    "AppKit table reentrancy diagnostic",
+    "Fixed-data allocation/retention check"
+  ],
+  "installed": false,
+  "published": false,
+  "supersededPerformanceEntry": "regression-report.json performance test terminated with SIGTERM to correct invalid media fixture paths; replacement performance-report.json passed"
+}

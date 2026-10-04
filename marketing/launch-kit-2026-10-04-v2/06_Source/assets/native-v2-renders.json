@@ -1,0 +1,409 @@
+{
+  "assets" : [
+    {
+      "autoCaptureRuntime" : false,
+      "autoCaptureStatus" : "Off · choose what to capture",
+      "captureCount" : 0,
+      "file" : "DABIN__UI__01_INBOX_EMPTY.png",
+      "height" : 1404,
+      "linkPreviews" : false,
+      "nativeContentSize" : [
+        1160,
+        652
+      ],
+      "pixelScale" : 2,
+      "route" : "inbox",
+      "scroll" : "current\/top",
+      "width" : 2360
+    },
+    {
+      "autoCaptureRuntime" : false,
+      "autoCaptureStatus" : "Off · choose what to capture",
+      "captureCount" : 1,
+      "file" : "DABIN__UI__02A_INBOX_IMAGE_CAPTURE.png",
+      "height" : 1404,
+      "linkPreviews" : false,
+      "nativeContentSize" : [
+        1160,
+        652
+      ],
+      "pixelScale" : 2,
+      "route" : "inbox",
+      "scroll" : "current\/top",
+      "width" : 2360
+    },
+    {
+      "autoCaptureRuntime" : false,
+      "autoCaptureStatus" : "Off · choose what to capture",
+      "captureCount" : 2,
+      "file" : "DABIN__UI__02B_INBOX_LINK_CAPTURE.png",
+      "height" : 1404,
+      "linkPreviews" : false,
+      "nativeContentSize" : [
+        1160,
+        652
+      ],
+      "pixelScale" : 2,
+      "route" : "inbox",
+      "scroll" : "current\/top",
+      "width" : 2360
+    },
+    {
+      "autoCaptureRuntime" : false,
+      "autoCaptureStatus" : "Off · choose what to capture",
+      "captureCount" : 2,
+      "file" : "DABIN__UI__02_INBOX_TYPED.png",
+      "height" : 1404,
+      "linkPreviews" : false,
+      "nativeContentSize" : [
+        1160,
+        652
+      ],
+      "pixelScale" : 2,
+      "route" : "inbox",
+      "scroll" : "current\/top",
+      "width" : 2360
+    },
+    {
+      "autoCaptureRuntime" : false,
+      "autoCaptureStatus" : "Off · choose what to capture",
+      "captureCount" : 5,
+      "file" : "DABIN__UI__03_INBOX_SAVED.png",
+      "height" : 1404,
+      "linkPreviews" : false,
+      "nativeContentSize" : [
+        1160,
+        652
+      ],
+      "pixelScale" : 2,
+      "route" : "inbox",
+      "scroll" : "current\/top",
+      "width" : 2360
+    },
+    {
+      "autoCaptureRuntime" : false,
+      "autoCaptureStatus" : "Off · choose what to capture",
+      "captureCount" : 5,
+      "file" : "DABIN__UI__04_INBOX_DAY.png",
+      "height" : 1404,
+      "linkPreviews" : false,
+      "nativeContentSize" : [
+        1160,
+        652
+      ],
+      "pixelScale" : 2,
+      "route" : "daily",
+      "scroll" : "current\/top",
+      "width" : 2360
+    },
+    {
+      "autoCaptureRuntime" : false,
+      "autoCaptureStatus" : "Off · choose what to capture",
+      "captureCount" : 5,
+      "file" : "DABIN__UI__05_INBOX_WEEK.png",
+      "height" : 1404,
+      "linkPreviews" : false,
+      "nativeContentSize" : [
+        1160,
+        652
+      ],
+      "pixelScale" : 2,
+      "route" : "weekly",
+      "scroll" : "current\/top",
+      "width" : 2360
+    },
+    {
+      "autoCaptureRuntime" : false,
+      "autoCaptureStatus" : "Off · choose what to capture",
+      "captureCount" : 5,
+      "file" : "DABIN__UI__06_STUDIO_COLLECTION.png",
+      "height" : 1404,
+      "linkPreviews" : false,
+      "nativeContentSize" : [
+        1160,
+        652
+      ],
+      "pixelScale" : 2,
+      "route" : "library",
+      "scroll" : "current\/top",
+      "width" : 2360
+    },
+    {
+      "autoCaptureRuntime" : false,
+      "autoCaptureStatus" : "Off · choose what to capture",
+      "captureCount" : 5,
+      "file" : "DABIN__UI__07_STUDIO_NOTES.png",
+      "height" : 1404,
+      "linkPreviews" : false,
+      "nativeContentSize" : [
+        1160,
+        652
+      ],
+      "pixelScale" : 2,
+      "route" : "library",
+      "scroll" : "current\/top",
+      "width" : 2360
+    },
+    {
+      "autoCaptureRuntime" : false,
+      "autoCaptureStatus" : "Off · choose what to capture",
+      "captureCount" : 5,
+      "file" : "DABIN__UI__08A_CLIPBOARD_HISTORY.png",
+      "height" : 1404,
+      "linkPreviews" : false,
+      "nativeContentSize" : [
+        1160,
+        652
+      ],
+      "pixelScale" : 2,
+      "route" : "library",
+      "scroll" : "current\/top",
+      "width" : 2360
+    },
+    {
+      "autoCaptureRuntime" : false,
+      "autoCaptureStatus" : "Off · choose what to capture",
+      "captureCount" : 5,
+      "file" : "DABIN__UI__08_NAMED_SNIPPETS.png",
+      "height" : 1404,
+      "linkPreviews" : false,
+      "nativeContentSize" : [
+        1160,
+        652
+      ],
+      "pixelScale" : 2,
+      "route" : "library",
+      "scroll" : "current\/top",
+      "width" : 2360
+    },
+    {
+      "autoCaptureRuntime" : false,
+      "autoCaptureStatus" : "Off · choose what to capture",
+      "captureCount" : 5,
+      "file" : "DABIN__UI__09_SHELF.png",
+      "height" : 1404,
+      "linkPreviews" : false,
+      "nativeContentSize" : [
+        1160,
+        652
+      ],
+      "pixelScale" : 2,
+      "route" : "library",
+      "scroll" : "current\/top",
+      "width" : 2360
+    },
+    {
+      "autoCaptureRuntime" : false,
+      "autoCaptureStatus" : "Off · choose what to capture",
+      "captureCount" : 5,
+      "file" : "DABIN__UI__10_OCR_SEARCH.png",
+      "height" : 1404,
+      "linkPreviews" : false,
+      "nativeContentSize" : [
+        1160,
+        652
+      ],
+      "pixelScale" : 2,
+      "route" : "search",
+      "scroll" : "current\/top",
+      "width" : 2360
+    },
+    {
+      "autoCaptureRuntime" : false,
+      "autoCaptureStatus" : "Off · choose what to capture",
+      "captureCount" : 5,
+      "file" : "DABIN__UI__11_OCR_PREVIEW.png",
+      "height" : 1404,
+      "linkPreviews" : false,
+      "nativeContentSize" : [
+        1160,
+        652
+      ],
+      "pixelScale" : 2,
+      "route" : "search",
+      "scroll" : "current\/top",
+      "width" : 2360
+    },
+    {
+      "autoCaptureRuntime" : false,
+      "autoCaptureStatus" : "Off · choose what to capture",
+      "captureCount" : 5,
+      "file" : "DABIN__UI__12_FILTERED_SEARCH.png",
+      "height" : 1404,
+      "linkPreviews" : false,
+      "nativeContentSize" : [
+        1160,
+        652
+      ],
+      "pixelScale" : 2,
+      "route" : "search",
+      "scroll" : "current\/top",
+      "width" : 2360
+    },
+    {
+      "autoCaptureRuntime" : false,
+      "autoCaptureStatus" : "Off · choose what to capture",
+      "captureCount" : 5,
+      "file" : "DABIN__UI__13_TASK_PLAN.png",
+      "height" : 1404,
+      "linkPreviews" : false,
+      "nativeContentSize" : [
+        1160,
+        652
+      ],
+      "pixelScale" : 2,
+      "route" : "newTask",
+      "scroll" : "current\/top",
+      "width" : 2360
+    },
+    {
+      "autoCaptureRuntime" : false,
+      "autoCaptureStatus" : "Off · choose what to capture",
+      "captureCount" : 5,
+      "file" : "DABIN__UI__14_TASK_REPEAT_REMINDER.png",
+      "height" : 1404,
+      "linkPreviews" : false,
+      "nativeContentSize" : [
+        1160,
+        652
+      ],
+      "pixelScale" : 2,
+      "route" : "newTask",
+      "scroll" : "bottom",
+      "width" : 2360
+    },
+    {
+      "autoCaptureRuntime" : false,
+      "autoCaptureStatus" : "Off · choose what to capture",
+      "captureCount" : 6,
+      "file" : "DABIN__UI__15_TODAY.png",
+      "height" : 1404,
+      "linkPreviews" : false,
+      "nativeContentSize" : [
+        1160,
+        652
+      ],
+      "pixelScale" : 2,
+      "route" : "reminders",
+      "scroll" : "current\/top",
+      "width" : 2360
+    },
+    {
+      "autoCaptureRuntime" : false,
+      "autoCaptureStatus" : "Off · choose what to capture",
+      "captureCount" : 6,
+      "file" : "DABIN__UI__16_FOCUS_READY.png",
+      "height" : 1404,
+      "linkPreviews" : false,
+      "nativeContentSize" : [
+        1160,
+        652
+      ],
+      "pixelScale" : 2,
+      "route" : "detail",
+      "scroll" : "current\/top",
+      "width" : 2360
+    },
+    {
+      "autoCaptureRuntime" : false,
+      "autoCaptureStatus" : "Off · choose what to capture",
+      "captureCount" : 6,
+      "file" : "DABIN__UI__17_FOCUS_RUNNING.png",
+      "height" : 1404,
+      "linkPreviews" : false,
+      "nativeContentSize" : [
+        1160,
+        652
+      ],
+      "pixelScale" : 2,
+      "route" : "detail",
+      "scroll" : "current\/top",
+      "width" : 2360
+    },
+    {
+      "autoCaptureRuntime" : false,
+      "autoCaptureStatus" : "Off · choose what to capture",
+      "captureCount" : 6,
+      "file" : "DABIN__UI__18_AUTO_CAPTURE_OFF.png",
+      "height" : 1404,
+      "linkPreviews" : false,
+      "nativeContentSize" : [
+        1160,
+        652
+      ],
+      "pixelScale" : 2,
+      "route" : "settings",
+      "scroll" : "current\/top",
+      "width" : 2360
+    },
+    {
+      "autoCaptureRuntime" : false,
+      "autoCaptureStatus" : "Paused · existing captures remain",
+      "captureCount" : 6,
+      "file" : "DABIN__UI__19_AUTO_CAPTURE_PAUSED.png",
+      "height" : 1404,
+      "linkPreviews" : false,
+      "nativeContentSize" : [
+        1160,
+        652
+      ],
+      "pixelScale" : 2,
+      "route" : "settings",
+      "scroll" : "current\/top",
+      "width" : 2360
+    },
+    {
+      "autoCaptureRuntime" : false,
+      "autoCaptureStatus" : "Off · choose what to capture",
+      "captureCount" : 6,
+      "file" : "DABIN__UI__20_PROJECT_EXPORT.png",
+      "height" : 1404,
+      "linkPreviews" : false,
+      "nativeContentSize" : [
+        1160,
+        652
+      ],
+      "pixelScale" : 2,
+      "route" : "library",
+      "scroll" : "current\/top",
+      "width" : 2360
+    },
+    {
+      "autoCaptureRuntime" : false,
+      "autoCaptureStatus" : "Off · choose what to capture",
+      "captureCount" : 6,
+      "file" : "DABIN__UI__21_RECENTLY_DELETED.png",
+      "height" : 1404,
+      "linkPreviews" : false,
+      "nativeContentSize" : [
+        1160,
+        652
+      ],
+      "pixelScale" : 2,
+      "route" : "trash",
+      "scroll" : "current\/top",
+      "width" : 2360
+    },
+    {
+      "autoCaptureRuntime" : false,
+      "autoCaptureStatus" : "Off · choose what to capture",
+      "captureCount" : 7,
+      "file" : "DABIN__UI__22_RESTORED.png",
+      "height" : 1404,
+      "linkPreviews" : false,
+      "nativeContentSize" : [
+        1160,
+        652
+      ],
+      "pixelScale" : 2,
+      "route" : "library",
+      "scroll" : "current\/top",
+      "width" : 2360
+    }
+  ],
+  "build" : "86",
+  "privacy" : "Isolated temporary local archive, isolated preferences, offscreen non-key windows. No real clipboard, network, permission requests, live app actions or OS notifications. Auto Capture settings are paused and its runtime never starts.",
+  "realLocalOCR" : "Riverside studio\nWarm clay. Deep teal. Soft cream.\nClay\nTeal\nCream",
+  "status" : "NATIVE_FICTIONAL_GUIDED_DEMO_STATES",
+  "version" : "0.4.31"
+}

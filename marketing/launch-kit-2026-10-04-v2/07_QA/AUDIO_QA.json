@@ -1,0 +1,228 @@
+{
+  "status": "TECHNICAL_AND_CONTENT_PASS",
+  "checked_at_utc": "2026-10-04T09:11:01.456905+00:00",
+  "audio": {
+    "source": "04_Video/audio/DABIN__UI_TOUR__NARRATION.wav",
+    "mix": "04_Video/audio/DABIN__UI_TOUR__MIX.wav",
+    "source_duration_seconds": 83.2,
+    "mix_duration_seconds": 94.4,
+    "sample_rate": 48000,
+    "channels": 1,
+    "pcm_bytes_per_sample": 2,
+    "gain": 0.75,
+    "peak_dbfs": -2.935,
+    "rms_dbfs": -18.453,
+    "clipped_samples": 0,
+    "rate_altered": false,
+    "reading_pauses_total_seconds": 8.9,
+    "intro_seconds": 0.5,
+    "tail_seconds": 1.8,
+    "expected_duration_seconds": 94.4,
+    "source_samples_preserved_in_order": true,
+    "unexpected_residual_samples_outside_declared_taps": 0,
+    "max_soft_tap_residual_samples": 160,
+    "source_sha256": "41146a4a7ef4e4a1b9b416975334b7c9d2ad2f6493630a4f1997d9032acea32e",
+    "mix_sha256": "efab956bdec57bfbd8c510772c47d9a2b8fbeda7b9aa8bf5ed1303256824c168"
+  },
+  "pause_checks": [
+    {
+      "source_at_seconds": 14.3,
+      "insert_seconds": 0.7,
+      "mix_insert_start_seconds": 14.8,
+      "quiet_interval_-40dbfs": [
+        14.127187,
+        14.854229
+      ],
+      "intersects_aligned_word": [],
+      "peak_in_10ms_dbfs": -68.03,
+      "source_adjacent_samples": [
+        2,
+        1
+      ],
+      "gain_scaled_max_join_step_dbfs": -86.787,
+      "pass": true
+    },
+    {
+      "source_at_seconds": 24.54,
+      "insert_seconds": 1.1,
+      "mix_insert_start_seconds": 25.74,
+      "quiet_interval_-40dbfs": [
+        24.488708,
+        24.589042
+      ],
+      "intersects_aligned_word": [],
+      "peak_in_10ms_dbfs": -48.371,
+      "source_adjacent_samples": [
+        -12,
+        -13
+      ],
+      "gain_scaled_max_join_step_dbfs": -70.529,
+      "pass": true
+    },
+    {
+      "source_at_seconds": 25.7,
+      "insert_seconds": 0.9,
+      "mix_insert_start_seconds": 28.0,
+      "quiet_interval_-40dbfs": [
+        25.688937,
+        25.720792
+      ],
+      "intersects_aligned_word": [],
+      "peak_in_10ms_dbfs": -42.281,
+      "source_adjacent_samples": [
+        151,
+        161
+      ],
+      "gain_scaled_max_join_step_dbfs": -48.671,
+      "pass": true
+    },
+    {
+      "source_at_seconds": 29.5,
+      "insert_seconds": 0.5,
+      "mix_insert_start_seconds": 32.7,
+      "quiet_interval_-40dbfs": [
+        29.19125,
+        30.06775
+      ],
+      "intersects_aligned_word": [],
+      "peak_in_10ms_dbfs": -72.247,
+      "source_adjacent_samples": [
+        -1,
+        -4
+      ],
+      "gain_scaled_max_join_step_dbfs": -80.767,
+      "pass": true
+    },
+    {
+      "source_at_seconds": 42.95,
+      "insert_seconds": 0.8,
+      "mix_insert_start_seconds": 46.65,
+      "quiet_interval_-40dbfs": [
+        42.744521,
+        43.768104
+      ],
+      "intersects_aligned_word": [],
+      "peak_in_10ms_dbfs": -71.224,
+      "source_adjacent_samples": [
+        -4,
+        -3
+      ],
+      "gain_scaled_max_join_step_dbfs": -80.767,
+      "pass": true
+    },
+    {
+      "source_at_seconds": 49.9,
+      "insert_seconds": 1.6,
+      "mix_insert_start_seconds": 54.4,
+      "quiet_interval_-40dbfs": [
+        49.745792,
+        50.659687
+      ],
+      "intersects_aligned_word": [],
+      "peak_in_10ms_dbfs": -65.7,
+      "source_adjacent_samples": [
+        14,
+        13
+      ],
+      "gain_scaled_max_join_step_dbfs": -69.885,
+      "pass": true
+    },
+    {
+      "source_at_seconds": 53.9,
+      "insert_seconds": 0.8,
+      "mix_insert_start_seconds": 60.0,
+      "quiet_interval_-40dbfs": [
+        53.550562,
+        54.360833
+      ],
+      "intersects_aligned_word": [],
+      "peak_in_10ms_dbfs": -76.33,
+      "source_adjacent_samples": [
+        -2,
+        -2
+      ],
+      "gain_scaled_max_join_step_dbfs": -86.787,
+      "pass": true
+    },
+    {
+      "source_at_seconds": 67.05,
+      "insert_seconds": 0.4,
+      "mix_insert_start_seconds": 73.95,
+      "quiet_interval_-40dbfs": [
+        66.985896,
+        67.854104
+      ],
+      "intersects_aligned_word": [],
+      "peak_in_10ms_dbfs": -60.206,
+      "source_adjacent_samples": [
+        -21,
+        -23
+      ],
+      "gain_scaled_max_join_step_dbfs": -65.573,
+      "pass": true
+    },
+    {
+      "source_at_seconds": 68.9,
+      "insert_seconds": 0.6,
+      "mix_insert_start_seconds": 76.2,
+      "quiet_interval_-40dbfs": [
+        68.880042,
+        68.918375
+      ],
+      "intersects_aligned_word": [],
+      "peak_in_10ms_dbfs": -47.898,
+      "source_adjacent_samples": [
+        -9,
+        -7
+      ],
+      "gain_scaled_max_join_step_dbfs": -73.723,
+      "pass": true
+    },
+    {
+      "source_at_seconds": 70.33,
+      "insert_seconds": 0.5,
+      "mix_insert_start_seconds": 78.23,
+      "quiet_interval_-40dbfs": [
+        70.303833,
+        70.360896
+      ],
+      "intersects_aligned_word": [],
+      "peak_in_10ms_dbfs": -51.927,
+      "source_adjacent_samples": [
+        20,
+        17
+      ],
+      "gain_scaled_max_join_step_dbfs": -66.787,
+      "pass": true
+    },
+    {
+      "source_at_seconds": 73.4,
+      "insert_seconds": 1.0,
+      "mix_insert_start_seconds": 81.8,
+      "quiet_interval_-40dbfs": [
+        73.31275,
+        74.350458
+      ],
+      "intersects_aligned_word": [],
+      "peak_in_10ms_dbfs": -68.725,
+      "source_adjacent_samples": [
+        10,
+        8
+      ],
+      "gain_scaled_max_join_step_dbfs": -72.808,
+      "pass": true
+    }
+  ],
+  "subtitles": {
+    "count": 30,
+    "expected_count": 30,
+    "transform": "source_time+0.5s+sum(reading pause durations inserted before that source time)",
+    "text_unchanged": true,
+    "intervals_ordered_without_overlap": true,
+    "srt_vtt_match": true,
+    "errors": [],
+    "last_spoken_caption_end_seconds": 92.3
+  },
+  "content": "174 canonical words matched independent local STT before editing; no voice words removed or repeated by the mix. Only silent reading intervals and14 quiet original tap effects added.",
+  "limitations": "No subjective listening pass claimed. Local STT word timing is approximate; every splice was also checked against the actual PCM waveform and a measured -40dBFS quiet interval. Narrow gaps at25.7/68.9 are safe low-amplitude joins; no speech fades required. No paid generation used in this QA."
+}

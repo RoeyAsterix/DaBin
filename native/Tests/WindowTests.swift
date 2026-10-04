@@ -32,6 +32,168 @@ private final class WindowNotificationClient: ReminderNotificationClient {
                 y: corner.isTop ? frame.maxY - 1 : frame.minY + 1)
     }
 
+    @MainActor private static func verifyExpandedAutomaticDragging(screen: NSScreen, root: URL) throws {
+        let suite = "DaBinAutomaticDragTests.\(UUID().uuidString)"
+        let defaults = UserDefaults(suiteName: suite)!
+        defer { defaults.removePersistentDomain(forName: suite) }
+        let store = try CaptureStore(root: root.appendingPathComponent("AutomaticDragging"))
+        let previews = PreviewService(store: store)
+        defer { previews.cancelNetwork() }
+        let state = AppState(store: store, previews: previews,
+                             reminders: ReminderService(store: store, client: WindowNotificationClient()))
+        let anchor = NSPoint(x: screen.visibleFrame.minX + 30, y: screen.visibleFrame.maxY - 35)
+        defaults.set([Double(anchor.x), Double(anchor.y)], forKey: CornerController.boardPlacementKey)
+        var controller = CornerController(state: state, input: InputService(store: store),
+                                          placementDefaults: defaults, animateRobotTransitions: false)
+        defer { controller.shutdown() }
+        func freshController() {
+            controller.shutdown()
+            controller = CornerController(state: state, input: InputService(store: store),
+                                          placementDefaults: defaults, animateRobotTransitions: false)
+            state.openDaily()
+            controller.showBoard(immediate: true)
+            RunLoop.main.run(until: Date().addingTimeInterval(0.12))
+        }
+
+        func handles(in view: NSView) -> [WindowDragHandleView] {
+            ((view as? WindowDragHandleView).map { [$0] } ?? [])
+                + view.subviews.flatMap { handles(in: $0) }
+        }
+        func event(_ type: NSEvent.EventType, screenPoint: NSPoint) -> NSEvent {
+            NSEvent.mouseEvent(with: type, location: controller.board.convertPoint(fromScreen: screenPoint),
+                              modifierFlags: [], timestamp: 30, windowNumber: controller.board.windowNumber,
+                              context: nil, eventNumber: 3, clickCount: 1, pressure: 1)!
+        }
+        func dragExpanded(label: String) throws -> NSRect {
+            let normal = controller.board.frame
+            controller.toggleExpandedWindow()
+            RunLoop.main.run(until: Date().addingTimeInterval(0.12))
+            guard let rootView = controller.board.contentView,
+                  let handle = handles(in: rootView).max(by: { $0.bounds.width < $1.bounds.width }) else {
+                throw NSError(domain: "DaBinWindowTests", code: 4,
+                              userInfo: [NSLocalizedDescriptionKey: "Automatic expanded board retains its native drag handle"])
+            }
+            let pointer = NSPoint(x: controller.board.frame.midX, y: controller.board.frame.maxY - 42)
+            // Own-view delivery uses the event's pointer, never the system cursor.
+            let previousCallback = handle.onDragStarted
+            defer { handle.onDragStarted = previousCallback }
+            handle.onDragStarted = { controller.beginBoardDrag(pointer: pointer) }
+            handle.mouseDown(with: event(.leftMouseDown, screenPoint: pointer))
+            let restored = controller.board.frame
+            try expect(restored.size == normal.size,
+                       "\(label): starting an expanded drag retains its automatic normal dimensions")
+            let requested = restored.offsetBy(dx: 12, dy: -24)
+            let expected = BoardResizeGeometry.fitted(requested, visible: screen.visibleFrame, minimum: .zero)
+            let release = NSPoint(x: pointer.x + expected.minX - restored.minX,
+                                  y: pointer.y + expected.minY - restored.minY)
+            handle.mouseDragged(with: event(.leftMouseDragged, screenPoint: release))
+            handle.mouseUp(with: event(.leftMouseUp, screenPoint: release))
+            controller.finishBoardDragIfReleased(pressedMouseButtons: 0, pointer: release)
+            RunLoop.main.run(until: Date().addingTimeInterval(0.12))
+            try expect(defaults.object(forKey: CornerController.boardSizeKey) == nil,
+                       "\(label): moving an automatic board does not create a manual size preference")
+            return controller.board.frame
+        }
+
+        state.openDaily()
+        controller.showBoard(immediate: true)
+        RunLoop.main.run(until: Date().addingTimeInterval(0.12))
+        let short = controller.board.frame
+        try expect(short.height < BoardResizeGeometry.minimumSize.height,
+                   "Empty Daily exercises a valid automatic height below the manual resize minimum")
+        let movedShort = try dragExpanded(label: "Empty Daily")
+        try expect(movedShort.size == short.size,
+                   "Dragging an expanded empty Daily preserves its short automatic frame after release")
+        freshController()
+        let shortBeforeRestore = controller.board.frame
+        controller.toggleExpandedWindow()
+        controller.toggleExpandedWindow()
+        try expect(controller.board.frame == shortBeforeRestore,
+                   "Expand and restore retains the exact short automatic Daily frame")
+        let restoredShort = controller.board.frame
+        state.showSettings()
+        controller.showBoard(immediate: true)
+        RunLoop.main.run(until: Date().addingTimeInterval(0.12))
+        let expectedSettings = CornerGeometry.movedPanelFrame(topLeft: NSPoint(x: restoredShort.minX, y: restoredShort.maxY),
+                                                             visible: screen.visibleFrame, preferredHeight: 670)
+        try expect(controller.board.frame == expectedSettings,
+                   "Restoring an automatic board retains content-driven sizing when opening Settings")
+
+        for offset in -6...0 {
+            let stamp = Calendar.current.date(byAdding: .day, value: offset, to: Date())!
+            _ = try store.capture(text: "Isolated automatic Week drag fixture \(offset)", at: stamp)
+        }
+        freshController()
+        let compact = controller.board.frame
+        state.openWeekly()
+        controller.showBoard(immediate: true)
+        RunLoop.main.run(until: Date().addingTimeInterval(0.40))
+        let direction = state.weeklyExpansionDirection
+        try expect(state.weeklyVisibleDays.count == 7 && controller.board.frame.width > compact.width,
+                   "Automatic Week drag fixture opens populated date columns wider than Daily")
+        let movedWeek = try dragExpanded(label: "Populated Week")
+        let compactAnchor = CornerGeometry.compactTopLeft(weeklyFrame: movedWeek, compactWidth: compact.width,
+                                                         direction: direction)
+        state.back()
+        controller.showBoard(immediate: true)
+        RunLoop.main.run(until: Date().addingTimeInterval(0.40))
+        let expectedCompact = CornerGeometry.movedPanelFrame(topLeft: compactAnchor, visible: screen.visibleFrame,
+                                                            preferredHeight: compact.height)
+        try expect(state.route == .daily && controller.board.frame == expectedCompact,
+                   "Back after dragging an expanded automatic Week restores the compact Daily frame at its moved anchor")
+        freshController()
+        let beforeWeekRestore = controller.board.frame
+        state.openWeekly()
+        controller.showBoard(immediate: true)
+        RunLoop.main.run(until: Date().addingTimeInterval(0.40))
+        let automaticWeek = controller.board.frame
+        controller.toggleExpandedWindow()
+        controller.toggleExpandedWindow()
+        try expect(controller.board.frame == automaticWeek,
+                   "Expand and restore retains the exact automatic Week frame")
+        state.back()
+        controller.showBoard(immediate: true)
+        RunLoop.main.run(until: Date().addingTimeInterval(0.40))
+        try expect(state.route == .daily && controller.board.frame == beforeWeekRestore,
+                   "Back after expanding and restoring an automatic Week retains content-driven compact Daily sizing")
+
+        let rightAnchor = NSPoint(x: screen.visibleFrame.maxX - compact.width,
+                                  y: screen.visibleFrame.maxY - 35)
+        defaults.set([Double(rightAnchor.x), Double(rightAnchor.y)], forKey: CornerController.boardPlacementKey)
+        freshController()
+        let rightCompact = controller.board.frame
+        state.openWeekly()
+        controller.showBoard(immediate: true)
+        RunLoop.main.run(until: Date().addingTimeInterval(0.40))
+        let leftOpeningWeek = controller.board.frame
+        try expect(state.weeklyExpansionDirection == .left && leftOpeningWeek.maxX == rightCompact.maxX,
+                   "Right-side automatic Week fixture expands left from the compact right-edge anchor")
+        controller.toggleExpandedWindow()
+        controller.toggleExpandedWindow()
+        try expect(controller.board.frame == leftOpeningWeek,
+                   "Expand and restore retains the exact left-opening automatic Week frame")
+        state.back()
+        controller.showBoard(immediate: true)
+        RunLoop.main.run(until: Date().addingTimeInterval(0.40))
+        try expect(state.route == .daily && controller.board.frame == rightCompact,
+                   "Back after restoring a left-opening automatic Week preserves the compact right-side anchor")
+
+        state.openWeekly()
+        controller.showBoard(immediate: true)
+        RunLoop.main.run(until: Date().addingTimeInterval(0.40))
+        controller.toggleExpandedWindow()
+        state.showSettings()
+        controller.showBoard(immediate: true)
+        RunLoop.main.run(until: Date().addingTimeInterval(0.12))
+        controller.toggleExpandedWindow()
+        controller.showBoard(immediate: true)
+        RunLoop.main.run(until: Date().addingTimeInterval(0.12))
+        let rightSettings = CornerGeometry.movedPanelFrame(topLeft: NSPoint(x: rightCompact.minX, y: rightCompact.maxY),
+                                                          visible: screen.visibleFrame, preferredHeight: 670)
+        try expect(state.route == .settings && controller.board.frame == rightSettings,
+                   "Opening Settings while an automatic left-opening Week is expanded retains the compact right-side anchor after restore")
+    }
+
     @MainActor static func main() throws {
         let application = NSApplication.shared
         application.setActivationPolicy(.accessory)
@@ -348,8 +510,16 @@ private final class WindowNotificationClient: ReminderNotificationClient {
         try expect(controller.board.frame == draggedFrame, "Content changes cannot snap the board during a native drag")
         flexibleHandle.mouseUp(with: dragEvent(.leftMouseUp, point: pointer))
         controller.finishBoardDragIfReleased(pressedMouseButtons: 0)
+        try expect(state.route != .settings && controller.board.frame == draggedFrame,
+                   "Release keeps the chosen position and never replays navigation rejected during a drag")
+        state.showSettings()
+        let settingsResizeDeadline = Date().addingTimeInterval(1.5)
         let expectedSettings = CornerGeometry.movedPanelFrame(topLeft: chosenTopLeft, visible: screen.visibleFrame, preferredHeight: 670)
-        try expect(controller.board.frame == expectedSettings, "Release keeps the chosen position and applies pending height changes")
+        while controller.board.frame != expectedSettings && Date() < settingsResizeDeadline {
+            RunLoop.main.run(until: Date().addingTimeInterval(0.02))
+        }
+        try expect(state.route == .settings && controller.board.frame == expectedSettings,
+                   "A fresh Settings command after release resizes at the chosen position")
         try expect(placementDefaults.array(forKey: CornerController.boardPlacementKey) as? [Double] == [Double(chosenTopLeft.x), Double(chosenTopLeft.y)], "Manual board position is saved separately from captures")
         state.openNewTask()
         let taskComposerResizeDeadline = Date().addingTimeInterval(1.5)
@@ -513,6 +683,7 @@ private final class WindowNotificationClient: ReminderNotificationClient {
         invalidPlacement.openDaily()
         try expect(screens.contains { $0.visibleFrame.contains(invalidPlacement.board.frame) }, "Malformed saved placement safely falls back to a visible corner")
         invalidPlacement.dismiss()
+        try verifyExpandedAutomaticDragging(screen: screen, root: root)
         try expect(store.captures.isEmpty && !input.isBusy, "Window testing creates no captures or paste operations")
         try expect(notificationClient.permissionRequests == 0 && notificationClient.additions == 0,
                    "Window testing requests no real or fake notification permission/schedules")

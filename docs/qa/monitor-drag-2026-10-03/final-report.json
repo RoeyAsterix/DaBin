@@ -1,0 +1,581 @@
+{
+  "architecture": "arm64",
+  "configuration": "Release",
+  "coverage": "selected_suites",
+  "failedSuites": 0,
+  "finishedAtUTC": "2026-10-03T13:23:04.727609+00:00",
+  "guiSessionRequirement": "Window suites require an unlocked, logged-in macOS session; focus failures remain failures.",
+  "inputs": {
+    "Resources/AppIcon.icns": "9ba9c0e655b1b9956a016d9d1a547d5fa598522664d1d21d2caf292ef6a1dadd",
+    "Resources/DaBin.entitlements": "10612525a986757263c6905a0c3bdd19bb214235b0d83e58cc8e4a756f8ff14a",
+    "Resources/Info.plist": "d5f42a0a250657123a6b1f82a0710e2651fd45d67cfcf1ecfda4afb3e25fa1b8",
+    "Resources/PrivacyInfo.xcprivacy": "a9863c850f76e33c454b61aea834e1a9980db80a6d1d659b0d7a68ae835ee014",
+    "Resources/PrivacyPolicy.md": "78ba4109f4caf2759ecfaedc0c2a15257772e40b4628b0092913db9590052bc7",
+    "Resources/robot.svg": "20bd5c1de92dd5e79ef259430c441e2b9a1d3608812ae79e5b2999a64eaf8a7a",
+    "Sources/DaBin/AccessibilityAnnouncement.swift": "c9083061b9a5078cf27d3b9e343dde407c9773624807dc3393e5cbd84ed779d9",
+    "Sources/DaBin/AppDelegate.swift": "e2ca8fe70692b6ce7e7ae71dc455490dbad1e727f23ce61f6666df2e0c77362d",
+    "Sources/DaBin/AppState.swift": "e48cce4f1e9d16c31399f966850d73b6f19b5d35185e98174d54b3bf38e3d672",
+    "Sources/DaBin/ApplicationCoordinator.swift": "1d9e3224b24b4dce6cf9070a9f0aa80de826f6ec9bfad7e1dad1e3b45129b5c0",
+    "Sources/DaBin/ApplicationMenu.swift": "a24f63065e79eea8eea4d58ebbbc95ecd9860b1f9eaece3b4bf529aac34c8dea",
+    "Sources/DaBin/ArchiveBackup.swift": "f551d5b1710ec375902f32fa4cab14752a8bf9c7b1683e715f96da93c4555e69",
+    "Sources/DaBin/AutoCaptureFingerprint.swift": "0320a731330888a7ff57c8074fd8338cabf06a863d17af06d6dd099ba1a7a1cd",
+    "Sources/DaBin/AutoCaptureRobotCelebration.swift": "40d2885824e9e862d3e2ae693dd4e7319be518b3f5b2d9bd95aab1142029db7f",
+    "Sources/DaBin/AutoCaptureRobotPresenter.swift": "a173ce7381fa3dc2ffb68b11b242e6782883cef6d897087dae676e285450fcf6",
+    "Sources/DaBin/AutoCaptureService.swift": "4fc07bf2adf559ea6bc814cc1f4fd58475ddccb2a1e47846580b4aaad59cede7",
+    "Sources/DaBin/AutoCaptureSettings.swift": "f5e53774d1bf9421261feef5852e51a6954ba6a831172c46481c539c8cb2b2d0",
+    "Sources/DaBin/BoardComponents.swift": "9392dbe85d18b461092f3424c21537aeb83e0b866fa2e962d47819d7fc589fee",
+    "Sources/DaBin/BoardResizeGeometry.swift": "e0292eaee1f5df8a1ab75c5f03c891e35ce10e5b7622d49ab3652dea29f92bf6",
+    "Sources/DaBin/BoardView.swift": "3a8dbb0997248204251592ac99e13af463b9b64cace63e31400beb3768500da6",
+    "Sources/DaBin/BoardWindowChrome.swift": "b6e2796780c467cdba4555bbede7d0d0ad95eedc5ed82b2742eb55d0987be1ac",
+    "Sources/DaBin/BoredRobotView.swift": "056c0c103cd3eb756d441e85df7ae6cd66906abb2ae00baa848cde94414fdb82",
+    "Sources/DaBin/BuddyControls.swift": "dd88d037c6385d32a1d2f63f70fd922fdc77cf64813c621dda07cc3b31a8649d",
+    "Sources/DaBin/CaptureCardGroup.swift": "c02ee506059dfb885dc7db6ff1f87afdaa7d9538d45aeca2bc223e359cd7d503",
+    "Sources/DaBin/CaptureCards.swift": "910da35715d2e8060060b70946e78b64f3e46226fa0d0c7486f64d9735e9e2f3",
+    "Sources/DaBin/CaptureClipboard.swift": "73c2a94f7f0abb99d6d50a7419f24433a31bb68685ae354a3c582914464783d5",
+    "Sources/DaBin/CaptureCopyButton.swift": "698775c8df7a2ba0fcefd961ba4f0b57df90ef3776f281dba3d4ea788463cc9a",
+    "Sources/DaBin/CaptureFilterStrip.swift": "f1d521c200ea93897fa00642d34cec8c3ae96b3fccd1db2be76da834669fa8f2",
+    "Sources/DaBin/CapturePresentation.swift": "3a73426a784f9850391b3e5e66cc7f4212e0105b6d3d64da4417472bb221e360",
+    "Sources/DaBin/CapturePreviews.swift": "fd78d109828488b9e4049c0dd836c47286ac7f4277bccfef53a2645803d49f32",
+    "Sources/DaBin/CaptureProvenance.swift": "d1ac5b8dccde9651f4d569bef4e348f2740097b6aec73bd72196a2e068ec3e5e",
+    "Sources/DaBin/CaptureRemoval.swift": "8b60e54b541d7a722c236d7fd0e98b1a86062cb08a4a18667dc0e02ed809709f",
+    "Sources/DaBin/CaptureRepository.swift": "1b05245e65f444d714901127f196e92661124d07b8cf9441553c3cc0ae54f78e",
+    "Sources/DaBin/CaptureSourceView.swift": "a24b5f0bd375b7d38cb456e41711ebf05f3d444d2545ac207e749c85b38062cd",
+    "Sources/DaBin/CaptureStore.swift": "1c05485e4983c96c3c911fccbf0ed4e105a71cce75aad667743b3c47524a9640",
+    "Sources/DaBin/CaptureTrailView.swift": "0bcebce8c4ff6cbc28b0dcf95014ef2bb8e7cdfaea95ac4d0d23c462a15d3af9",
+    "Sources/DaBin/ClipboardRetentionService.swift": "b106a3054918d47378f7bc2b6407d8aa71b678c359e8bd50e6ba512e4a44ae3a",
+    "Sources/DaBin/ClipboardRetentionSettings.swift": "ddbf828492a12a7d9218d4b64458e585df3aa66f6fb19130baebf4f03edc8988",
+    "Sources/DaBin/CollectionPreviewMosaic.swift": "c7fce9c3c77d0ca233be9738cc97ec09126f7ce6811c5048cd9fa094b9fe372f",
+    "Sources/DaBin/ContentIndexService.swift": "c1d27d28092c9e97b5fac1ebe8bdac511701b55eb1027eb4ab80b860a3ec6f6b",
+    "Sources/DaBin/CornerController.swift": "b7918ec21f01577bd27d36db35524c609cb17c4640861edc5edcb7031d743098",
+    "Sources/DaBin/DaBinLogo.swift": "443656366ed7172baa53a4f589861e9617ffcc0710e659ab58cb4f4dbbeada56",
+    "Sources/DaBin/DaBinMain.swift": "0bdbdff249504ca21e983291a691b44765c9e97f2e652301229499002e8920a6",
+    "Sources/DaBin/DailyArchive.swift": "859b010c2ca8fc423c88936802a094322ab8b1d1fcb9ab5a3af86627c8244b99",
+    "Sources/DaBin/DailyCaptureView.swift": "b389a7c92a4c0f8ffbf9424d08bc87770b846963a6a5b66fb22c227f65891cc4",
+    "Sources/DaBin/DailyScreen.swift": "c9d401e5905c26dca63639bd4f0747c6b7b070ca15d0fc8f094fdebc09fecff0",
+    "Sources/DaBin/DayExport.swift": "75851ca5cad07a56ffb6ee6461aa7ee7dc1a91efcb10f09e75ec4ab175ef171b",
+    "Sources/DaBin/DayExportUI.swift": "197b077291d47fa215f4723303627375ad445e493432b33281ff34f174b25290",
+    "Sources/DaBin/DetailScreen.swift": "4f07c651aba44a1bc7d6f5d71056b0faef27e9d79a9871ad4c84c8b6b150b3bd",
+    "Sources/DaBin/Domain.swift": "562a4d6fff7ac233531604c19659f117f628b052b183b0bdd46ed9674f32eef1",
+    "Sources/DaBin/DraftArchive.swift": "7c28cfaefbb0bca3659c3f50f44fd32c653bdf2312ad3ad76735d4c198d462a0",
+    "Sources/DaBin/ExplorerItems.swift": "430b4396f29fb9a470136696b8e8f248acfacafc8d9da9b8e02da22b74d4ea0f",
+    "Sources/DaBin/ExplorerQuery.swift": "3bde61ff886afd49ff62a139f2426e04375703a1fb7af4fb08eb22b8ed800c01",
+    "Sources/DaBin/ExplorerScreen.swift": "5b8dafec4a6304a0da3f43c40475b2dcbb9a6e11d2cfd25e07427249a2fecb88",
+    "Sources/DaBin/ExplorerTransfer.swift": "38a7fd5946748160b984237def58527812201236cb60a821c568cf8c4e3082e9",
+    "Sources/DaBin/ExplorerViewport.swift": "7231a6191b8d251e32567a321f032c673e9344255c46b733921cca65017ee927",
+    "Sources/DaBin/FittedPDFPreview.swift": "1d4dcbd97e6181c5b207aac6aee652208f16b45a7cfd29cef3e49fa5a3f5972e",
+    "Sources/DaBin/GroupedCaptureCard.swift": "f174ea562ac22becc11526039136795297dc0ebc01e33698c7d46233e7c597d2",
+    "Sources/DaBin/HourlyCaptureCard.swift": "8b2b5c0750ca561127a55deb68fa1beafcedb9e054d1c8b596a08f2213ab394c",
+    "Sources/DaBin/HourlyCaptureFeed.swift": "3571fea72a92986b27e7ce644d29189f5bc938ef32af76354546e258820bc484",
+    "Sources/DaBin/HoverTooltips.swift": "9a88e8df2ec0a418087a28fa085212b38d5a37411def53d917e07c0d16789c71",
+    "Sources/DaBin/InboxScreen.swift": "166fc7cdde88eca42dd63594e802af58e494b705ff6d7a08ef6522956314004c",
+    "Sources/DaBin/InputService.swift": "f461a08ffc71034d53e63d582e1ad0d6e020fde643cdb0a79d6af344ddd27239",
+    "Sources/DaBin/IslandRobotChoreography.swift": "169d408033ca94901c6dcf34d97097acd16f3a3481c24060621a31535b1ac68a",
+    "Sources/DaBin/LibraryScreen.swift": "1c1f775e92bd5dfab545c18669ea47b7adb7d7b03c886424aeb3a60bf36dc39d",
+    "Sources/DaBin/LocalDOCXTextExtractor.swift": "ac67d00b2cb58bd96c7e110963b9da57c300eea70df23beb72a9399735a100cb",
+    "Sources/DaBin/NewNoteScreen.swift": "3a17a921798c7a0c25464e4b5b22f6837d887a73e2ef798c65286d32647b0934",
+    "Sources/DaBin/OriginalFileStorage.swift": "0374224915bf5ec6997ed692ec8b43288f70bc7455d54a78a2ac72237ed0df73",
+    "Sources/DaBin/PreviewRequest.swift": "10ce1b308afd4000b3362585bae85bd1c643f900a8e7132bbefefb4049cec14e",
+    "Sources/DaBin/PreviewService.swift": "9fdc470a83ed03aeaa1adfd62a9065ade23fbc6ab167a670d6d870bce5b0a4b4",
+    "Sources/DaBin/PrivacyInformation.swift": "ddbaf27f5a1f2fd1abbeb7dab67719e9631a974b67e93a9822ce7c6fd08df2e3",
+    "Sources/DaBin/ProjectFileArchive.swift": "f09beae00eeb1bd3af8f92e2beb571bfea25d83d7067b0a656fccc2b72bd76d1",
+    "Sources/DaBin/ProjectPickerView.swift": "7b51e2d51cceb49af74abf45e92bbb17425937c7f049095fd9fe4fae3642c8d4",
+    "Sources/DaBin/QuickAccess.swift": "579c3df267fbf3c7987e6050baa871b477a644d0c260ca247e8b55911e0bb4f6",
+    "Sources/DaBin/QuietOrbitGeometry.swift": "36b3f90f64f747d03243c37e897b37d611a1ffc818a61bd587c296ea73fcf293",
+    "Sources/DaBin/QuietOrbitVisualStyle.swift": "07c1ae899900482f87b2a8a55d8978b91f862ffa1d4b394b44fea98d8f1224ae",
+    "Sources/DaBin/ReminderClockEditor.swift": "1aadc2773e235bca0fa94c9677b2708689f01ce34dbd311f72eef1a448d47676",
+    "Sources/DaBin/ReminderLifecycle.swift": "ad737601ca776d7b5a3b4fe2ea1e80b36d06ea006330f98907b8b9fd4f9141f2",
+    "Sources/DaBin/ReminderSchedule.swift": "e73797fe946c24b4297b379e61a54a21ff9e41ccbd99992c699b99c55782eee6",
+    "Sources/DaBin/ReminderService.swift": "de94b19e5a4ad194a19737d9cde3e409c3e26c7a8f8546658dd653c2c45c9a0a",
+    "Sources/DaBin/RemindersScreen.swift": "5c423815ff31262ab96524b6fa2536982da679de0813bee50f364b5262d651bf",
+    "Sources/DaBin/RobotAppFrameView.swift": "0edbd249a3998343c5e1f83cf412833597f3e74e7e02f70914792e1c23cf8809",
+    "Sources/DaBin/RobotCharacterView.swift": "d6cb063426f6b9357c491153ea29e4b5c4dd16a89b71327de92c0465801c8912",
+    "Sources/DaBin/RobotLifecycle.swift": "22843ec1cb73d3d47ef002c0e861779bdb1c8fb05dbaa7f08f5731f334472e56",
+    "Sources/DaBin/RobotMotion.swift": "f2321a5d2bbbd73cbfc9dca81cf1d763b59ff08b6fcee0f1d34f2f2f6c51ab37",
+    "Sources/DaBin/RobotPlacementSettings.swift": "407722bd2be418ef5b7a7544519cdb46abb2e4e7bad8abea7173eca15ce1c4e7",
+    "Sources/DaBin/RobotProjectSignView.swift": "2db658d6245abf0c33a56eb50b4aa1d00bc519fc47c921bf5dfcb6e2a52ff917",
+    "Sources/DaBin/RobotView.swift": "ad21eb0ce63d79d725dd7db66c422efdb3bf37374141de350d812b56fd07d0ee",
+    "Sources/DaBin/ScratchpadView.swift": "7f2b4cd823a00feac81fa4eb3df39ceb2fde27f033e9c3d4191ec1aa78a27569",
+    "Sources/DaBin/ScreenshotFolderMonitor.swift": "7057f0aff481db96009f0ba9a7ec06262fc3c987744c59d00646e208be0b48df",
+    "Sources/DaBin/SearchScreen.swift": "1b93dcc2ceab3c18de170f38da73fdf8922de7f96fd9a629b2a66fcbde3b70c9",
+    "Sources/DaBin/SettingsScreen.swift": "c5fdc3eef4d82fe76d76b163b1526ee796457d441698b463d0a1fc8253db17ab",
+    "Sources/DaBin/ShelfCaptureController.swift": "b6f191ed4b75be328e8c523122238a5711ea3df631e82e02cea6a45ddf8e84ee",
+    "Sources/DaBin/ShelfExport.swift": "67589f74ba21c927ca0358ea37110e802ddd7fa16a1bba29faf4ca0c01b0b8b3",
+    "Sources/DaBin/SoftwareUpdateService.swift": "3b088ea8deff38bf5085370c06e4c32e02d2d7933622eb0f0f9eae18f1dd6623",
+    "Sources/DaBin/StatusBarController.swift": "5a946723211582b6eeb93b02ae0cb214f275180d248be0af6b48cc5266c15fab",
+    "Sources/DaBin/TaskAttachmentsView.swift": "d4a469a992691f4b0160d1187c648ec7189ffd4e53c17fd69fe836d0cdd1bfbd",
+    "Sources/DaBin/TaskEditorScreen.swift": "2f24430ece7da659c965162ed56a08949e831e060a16c1ae2eb0dbb0bfd91af6",
+    "Sources/DaBin/TaskFocusControls.swift": "535dd8089f903e3a8462e5a351a167a956706f43cb43c008f23c0e8c7e88fdc7",
+    "Sources/DaBin/TaskFocusSession.swift": "8e33156b1a0cf532d187251ba9559ce0c893d8f3f0adbc4ffae8c9b7a1c8a5c3",
+    "Sources/DaBin/TaskPlanning.swift": "2bb41688aac453364b545cf1074a344dc306f701ae54d23ae23f8ebdca44c94a",
+    "Sources/DaBin/TaskPlanningEditor.swift": "2c02618cd066085b122677da9b60b796556651babfe64660e19acdfea91fe17b",
+    "Sources/DaBin/TaskTimerRobotPresenter.swift": "18991ce17a2a0fc22ab68b2c227ae85664a759add441d7e17eefad520dac0340",
+    "Sources/DaBin/TaskTimerRobotView.swift": "11a6b8a9612308d5b5e837151e50c16cab6957540689509759718d81a4d37837",
+    "Sources/DaBin/ThemeSettings.swift": "4201ea8ef5a06c254ae7600e980d51f8aaa605fd79871221d67d120375549a8d",
+    "Sources/DaBin/TodayPlanningScreen.swift": "fedbec3673dcb4ab856661416dec6172aed7dfb2ed7bfc90b23e0782c4251017",
+    "Sources/DaBin/TransientMessagePresentation.swift": "eb8a50bcbd2f86d9d6ae4c1a787c9f0bb6284bc75b24d0223c3098abed0da4f9",
+    "Sources/DaBin/TrashScreen.swift": "867409a9486b1d91618aaec197c3481f6e80154b22ff71be6c026f6466e4fb83",
+    "Sources/DaBin/UpdateHandoff.swift": "aa8fadb66cc79ea16080dae270b1748b2b002ad36e3466e0bdb47b681654602a",
+    "Sources/DaBin/WeeklyScopeActions.swift": "65ccc7a2bf48cc0080804762f038ef32b517ae51b01ee5817ff314cf6ad3347c",
+    "Sources/DaBin/WeeklyScreen.swift": "6392d3e2a0d8e9320e72d480620e75fc3fb033848f7f1abf3c54732e06f9d1d7",
+    "Sources/DaBin/WindowDragHandle.swift": "9ee0df83a6c93cbf4b18a10ff081b0a4afa11e12ab55520c0da3beab20e509d3",
+    "Sources/DaBin/WorkspaceClipboard.swift": "5a218b19565697b003e708d071fced032cefd6e8d6a11a5c99ab9c6364668f94",
+    "Sources/DaBin/WorkspaceItemCard.swift": "baf1b5ec58b65e19137bf7b384e0788c4eb0051d3a4602c7b48dc329f79474f1",
+    "Sources/DaBin/WorkspaceQuery.swift": "406a22328b8e2569ccaa62f8116bddd45bbcf8fb9d7b7e3336f426f25f66e366",
+    "Sources/DaBin/WorkspaceStore.swift": "35be632e7c495d1b6e5b4c48da77bc8131d2cd3a9ba7a5b250dc2a9daa6324ab",
+    "Tests/AutoCaptureRobotPresenterTests.swift": "860c56728e0dcd6bd741b7136126719756759bdbb6efbc3213f0fe11513e6b3e",
+    "Tests/FilterResizeTests.swift": "3bd1a3c0f728a4dd808c0d888f83e40d9be26a8089be44cf843bcec0ce23ed7e",
+    "Tests/ProjectRecordingRobotTests.swift": "3a6825ac42c29d88cd156f3e50836a53fb3c72c71e22585dd12ca2405b971e8a",
+    "Tests/RobotProjectSignRenderTests.swift": "c0eb01ed4156ce8f147bfe69519051b6af90528a875284230d4152eb0d9d0799",
+    "Tests/RobotWindowTransitionTests.swift": "c7668c5a0fdbd135c9f5c2a28d882abb7186f60cca72f8042bd982d6a8adeabe",
+    "Tests/WeeklyWindowTests.swift": "97efe8ed5c50db18ffaf94342d6690edc6dae1c2a22927d625e11b3a692f09c3",
+    "Tests/WindowResizeInteractionTests.swift": "7a029e7077fb5563955734f926158d0d993fefc9e5c24b5a87bf37f94c529739",
+    "Tests/WindowTests.swift": "29804db946baf1761fe960c48860d13fc9c93c49be1ad833cbf34fb33efab7cb",
+    "Tests/WorkspaceWindowTests.swift": "37dc6dbff2a479ded9b2544fa9a1e587e07959e82f18e6415d44c85b58bc24cb",
+    "scripts/project_inventory.py": "61ff17ea4115057b458ecf27a255847fa374b5048a5dc857781625c4b461b5e8",
+    "scripts/run_qa.py": "f0f5b2c4abb274ca7f9f939476c027e6ce6fafaf23e76390b404ccb3d1e1589f",
+    "scripts/test.sh": "b87d3b8126077f31de30e6f29cf353e390583e0d55a5cda9de2abfcab5b6ba4e"
+  },
+  "os": "ProductName:\t\tmacOS\nProductVersion:\t\t26.6.2\nBuildVersion:\t\t25G83",
+  "passedSuites": 9,
+  "productionModule": {
+    "cached": false,
+    "exitCode": 0,
+    "log": "build/qa/runs/20261003T132028782344Z/production-module.log",
+    "seconds": 54.768,
+    "status": "passed"
+  },
+  "schemaVersion": 1,
+  "sdkVersion": "27.0",
+  "sourceChangedDuringRun": false,
+  "sourceFingerprint": "0cce6827f6a23e9d7dc7da6cbf979bc0b24eb00af36d1f20c9c8dd16c6737881",
+  "startedAtUTC": "2026-10-03T13:20:28.782344+00:00",
+  "status": "passed",
+  "suites": [
+    {
+      "name": "ProjectFileArchiveTests",
+      "status": "not_requested"
+    },
+    {
+      "name": "ExplorerTransferTests",
+      "status": "not_requested"
+    },
+    {
+      "name": "ExplorerQueryTests",
+      "status": "not_requested"
+    },
+    {
+      "name": "CaptureProvenanceTests",
+      "status": "not_requested"
+    },
+    {
+      "name": "TaskFocusTests",
+      "status": "not_requested"
+    },
+    {
+      "name": "ProjectPickerTests",
+      "status": "not_requested"
+    },
+    {
+      "name": "QuickAccessTests",
+      "status": "not_requested"
+    },
+    {
+      "name": "ProductFoundationTests",
+      "status": "not_requested"
+    },
+    {
+      "name": "ConnectedWorkflowTests",
+      "status": "not_requested"
+    },
+    {
+      "name": "WorkInboxTests",
+      "status": "not_requested"
+    },
+    {
+      "name": "WorkspaceTests",
+      "status": "not_requested"
+    },
+    {
+      "name": "ManualCaptureLifecycleTests",
+      "status": "not_requested"
+    },
+    {
+      "name": "ArchiveRecoveryTests",
+      "status": "not_requested"
+    },
+    {
+      "name": "ArchiveBackupTests",
+      "status": "not_requested"
+    },
+    {
+      "name": "ThemeSettingsTests",
+      "status": "not_requested"
+    },
+    {
+      "name": "PrivacyInformationTests",
+      "status": "not_requested"
+    },
+    {
+      "name": "DomainTests",
+      "status": "not_requested"
+    },
+    {
+      "name": "ArchiveLayoutTests",
+      "status": "not_requested"
+    },
+    {
+      "name": "ArchiveStoreTests",
+      "status": "not_requested"
+    },
+    {
+      "name": "DeferredArchiveRepairTests",
+      "status": "not_requested"
+    },
+    {
+      "name": "RepositoryBatchTests",
+      "status": "not_requested"
+    },
+    {
+      "name": "CaptureRemovalTests",
+      "status": "not_requested"
+    },
+    {
+      "name": "ServiceTests",
+      "status": "not_requested"
+    },
+    {
+      "name": "QAStorageScopedSaveTests",
+      "status": "not_requested"
+    },
+    {
+      "name": "QALifecycleTests",
+      "status": "not_requested"
+    },
+    {
+      "name": "ApplicationLifecycleTests",
+      "status": "not_requested"
+    },
+    {
+      "name": "PreviewLifecycleTests",
+      "status": "not_requested"
+    },
+    {
+      "name": "TaskStateTests",
+      "status": "not_requested"
+    },
+    {
+      "name": "TaskPlanningTests",
+      "status": "not_requested"
+    },
+    {
+      "name": "CaptureActionTests",
+      "status": "not_requested"
+    },
+    {
+      "name": "CaptureClipboardTests",
+      "status": "not_requested"
+    },
+    {
+      "name": "ClipboardRetentionTests",
+      "status": "not_requested"
+    },
+    {
+      "name": "CaptureTaskConversionTests",
+      "status": "not_requested"
+    },
+    {
+      "name": "LocalContentSearchTests",
+      "status": "not_requested"
+    },
+    {
+      "name": "LocalDOCXTextExtractorTests",
+      "status": "not_requested"
+    },
+    {
+      "name": "SearchScopeStateTests",
+      "status": "not_requested"
+    },
+    {
+      "name": "HourlyGroupingTests",
+      "status": "not_requested"
+    },
+    {
+      "name": "DayExportTests",
+      "status": "not_requested"
+    },
+    {
+      "name": "DayExportUITests",
+      "status": "not_requested"
+    },
+    {
+      "name": "WeeklyStateTests",
+      "status": "not_requested"
+    },
+    {
+      "name": "InputTests",
+      "status": "not_requested"
+    },
+    {
+      "name": "AutoCaptureServiceTests",
+      "status": "not_requested"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T132028782344Z/AutoCaptureRobotPresenterTests-compile.log",
+        "seconds": 1.49,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T132028782344Z/AutoCaptureRobotPresenterTests.log",
+      "name": "AutoCaptureRobotPresenterTests",
+      "reportedSummary": "PASS: 82 automatic-capture robot presenter checks",
+      "requiresWindowFocus": false,
+      "seconds": 1.966,
+      "status": "passed"
+    },
+    {
+      "name": "AutoCaptureRobotCelebrationTests",
+      "status": "not_requested"
+    },
+    {
+      "name": "SoftwareUpdateTests",
+      "status": "not_requested"
+    },
+    {
+      "name": "UpdateConfigurationTests",
+      "status": "not_requested"
+    },
+    {
+      "name": "RobotMotionTests",
+      "status": "not_requested"
+    },
+    {
+      "name": "IslandRobotChoreographyTests",
+      "status": "not_requested"
+    },
+    {
+      "name": "RobotLifecycleTests",
+      "status": "not_requested"
+    },
+    {
+      "name": "RobotAppFrameTests",
+      "status": "not_requested"
+    },
+    {
+      "name": "QuietOrbitRenderTests",
+      "status": "not_requested"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T132028782344Z/RobotProjectSignRenderTests-compile.log",
+        "seconds": 1.212,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T132028782344Z/RobotProjectSignRenderTests.log",
+      "name": "RobotProjectSignRenderTests",
+      "reportedSummary": "PASS: 61 native recording-board checks; renders: /private/tmp/dabin-monitor-drag-20261003/docs/qa/project-recording-sign-compact-2026-10-03/renders",
+      "requiresWindowFocus": false,
+      "seconds": 1.814,
+      "status": "passed"
+    },
+    {
+      "name": "CapturePreviewPerformanceTests",
+      "status": "not_requested"
+    },
+    {
+      "name": "BoredRobotArtworkTests",
+      "status": "not_requested"
+    },
+    {
+      "name": "TooltipBehaviorTests",
+      "status": "not_requested"
+    },
+    {
+      "name": "RedesignInteractionTests",
+      "status": "not_requested"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T132028782344Z/WindowResizeInteractionTests-compile.log",
+        "seconds": 1.058,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T132028782344Z/WindowResizeInteractionTests.log",
+      "name": "WindowResizeInteractionTests",
+      "reportedSummary": "PASS: 37 native window resize and movement interaction checks; 2 attached displays",
+      "requiresWindowFocus": true,
+      "seconds": 0.831,
+      "status": "passed"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T132028782344Z/WindowTests-compile.log",
+        "seconds": 2.62,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T132028782344Z/WindowTests.log",
+      "name": "WindowTests",
+      "reportedSummary": "PASS: 259 window checks across 2 real screen(s); no cursor synthesis, clipboard access, network or notification permission.",
+      "requiresWindowFocus": true,
+      "seconds": 6.392,
+      "status": "passed"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T132028782344Z/WeeklyWindowTests-compile.log",
+        "seconds": 1.149,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T132028782344Z/WeeklyWindowTests.log",
+      "name": "WeeklyWindowTests",
+      "reportedSummary": "",
+      "requiresWindowFocus": true,
+      "seconds": 14.308,
+      "status": "passed"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T132028782344Z/FilterResizeTests-compile.log",
+        "seconds": 1.282,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T132028782344Z/FilterResizeTests.log",
+      "name": "FilterResizeTests",
+      "reportedSummary": "",
+      "requiresWindowFocus": true,
+      "seconds": 15.451,
+      "status": "passed"
+    },
+    {
+      "name": "RobotDropTests",
+      "status": "not_requested"
+    },
+    {
+      "name": "DailyCaptureTests",
+      "status": "not_requested"
+    },
+    {
+      "name": "HeaderInteractionTests",
+      "status": "not_requested"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T132028782344Z/WorkspaceWindowTests-compile.log",
+        "seconds": 3.249,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T132028782344Z/WorkspaceWindowTests.log",
+      "name": "WorkspaceWindowTests",
+      "reportedSummary": "PASS: 214 native workspace interaction and responsive layout checks",
+      "requiresWindowFocus": true,
+      "seconds": 26.726,
+      "status": "passed"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T132028782344Z/RobotWindowTransitionTests-compile.log",
+        "seconds": 1.974,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T132028782344Z/RobotWindowTransitionTests.log",
+      "name": "RobotWindowTransitionTests",
+      "reportedSummary": "",
+      "requiresWindowFocus": true,
+      "seconds": 11.202,
+      "status": "passed"
+    },
+    {
+      "name": "DetailPreviewInteractionTests",
+      "status": "not_requested"
+    },
+    {
+      "name": "CaptureTimestampPresentationTests",
+      "status": "not_requested"
+    },
+    {
+      "name": "RobotVisualConsistencyTests",
+      "status": "not_requested"
+    },
+    {
+      "name": "NativeTooltipPreferenceTests",
+      "status": "not_requested"
+    },
+    {
+      "name": "TooltipPresentationTests",
+      "status": "not_requested"
+    },
+    {
+      "name": "RobotCloseVisualTests",
+      "status": "not_requested"
+    },
+    {
+      "name": "CollectionCardPresentationTests",
+      "status": "not_requested"
+    },
+    {
+      "name": "TaskTimerRobotTests",
+      "status": "not_requested"
+    },
+    {
+      "name": "ExplorerCaptureCardPresentationTests",
+      "status": "not_requested"
+    },
+    {
+      "name": "AutoCaptureExplorerResponsivenessTests",
+      "status": "not_requested"
+    },
+    {
+      "name": "ExplorerKeyboardTests",
+      "status": "not_requested"
+    },
+    {
+      "name": "NotificationPresentationTests",
+      "status": "not_requested"
+    },
+    {
+      "name": "WindowChromePresentationTests",
+      "status": "not_requested"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T132028782344Z/ProjectRecordingRobotTests-compile.log",
+        "seconds": 2.801,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T132028782344Z/ProjectRecordingRobotTests.log",
+      "name": "ProjectRecordingRobotTests",
+      "reportedSummary": "PASS: 42 project recording robot checks passed",
+      "requiresWindowFocus": true,
+      "seconds": 5.521,
+      "status": "passed"
+    }
+  ],
+  "swiftVersion": "swift-driver version: 1.168.6 Apple Swift version 6.4 (swiftlang-6.4.0.34.1 clang-2100.3.34.1)\nTarget: arm64-apple-macosx26.0",
+  "target": "arm64-apple-macosx14.0"
+}

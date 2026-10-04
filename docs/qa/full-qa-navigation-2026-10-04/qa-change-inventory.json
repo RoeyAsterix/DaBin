@@ -1,0 +1,132 @@
+[
+  {
+    "path": "Sources/DaBin/AppState.swift",
+    "before": "a186041964b8e1e251456e5dd068cc569647d8c0a1f1db7c72e33db1b280e772",
+    "after": "ba8e544fa1efcddc60586d4e2bc5fa512a334681e8c5737d7f0f4cd7469f393e"
+  },
+  {
+    "path": "Sources/DaBin/CaptureDetailPanels.swift",
+    "before": "99efb7f29beb2f8ef7dfde4402894a2ed001cc25195dc521b6eaa1c32825dbcb",
+    "after": "d75f8e6484cd941ea91e009c3855c447b03ea5029c136def6a5ee6671a2f9ab4"
+  },
+  {
+    "path": "Sources/DaBin/CaptureStore.swift",
+    "before": "b4f17ad6d34fcaf770660b3a86264df72ec05508ab699bcbd621c0878c9c20f7",
+    "after": "4050da3f388369dc72c07cb84e87b8aa4d380de8d264e5c3d9b7851de729c230"
+  },
+  {
+    "path": "Sources/DaBin/DailyCaptureView.swift",
+    "before": "b339b37dd3f0ac365784864fc72669d12242f339bbd404e2282d5bbf9d828087",
+    "after": "75f2478a37e03a2148a3f9cceab0b20f707b24c5f14fd830f7996992a63d20b2"
+  },
+  {
+    "path": "Sources/DaBin/DetailScreen.swift",
+    "before": "420b8489ad87c6b9255807f8982199f325cf71ce3dee3ccddfbc443e59afc316",
+    "after": "312d5df1ec985b9f5c63b44827e014cb7dc9fcf97f2da7dd70a3e4f062fd3333"
+  },
+  {
+    "path": "Sources/DaBin/ExplorerScreen.swift",
+    "before": "47dc6038d7725de2fae03e36afdc149d3b5bea62ff8400a1a6615983109f9193",
+    "after": "3c58b56bdbe3cd636e5a91b649a419e7f4313139cf434521c3feb530979faddf"
+  },
+  {
+    "path": "Sources/DaBin/ExplorerViewport.swift",
+    "before": "690062713300776968897c7e90c266bbc8b1d123d3d46a3fdec099375e75bd50",
+    "after": "e106d7aa1e79aea0938b842d4513c8d54ab021ad43add30e053b93bad7e28889"
+  },
+  {
+    "path": "Sources/DaBin/NewNoteScreen.swift",
+    "before": "760d333c59bd938908d2da80738af904ccfdced01905d74dbc78cd6abc935501",
+    "after": "fa6fc13b01f48a9a08a4870306ca09e78b9483ee89e1ae5c09fa84163e236bd0"
+  },
+  {
+    "path": "Sources/DaBin/TaskEditorScreen.swift",
+    "before": "d97511f974d6f88328d0ea32e1e08f65b89439b72f878f0c204965f9aa4dbe23",
+    "after": "e18b0b57fb9ee11f517d3d94084bc6926c0444aac83ebc083d3cbeb50dd17332"
+  },
+  {
+    "path": "Sources/DaBin/WeeklyScreen.swift",
+    "before": "2911a7e19848c3734d34862b2ab49e0efd01360c56b7ccef26040548fa5e1dcb",
+    "after": "8e3faa8c3355e7d8c4d7c92adf53d4fc951163f07a8812d187e5d2ea9f8b1de2"
+  },
+  {
+    "path": "Sources/DaBin/WorkspaceZoomLayout.swift",
+    "before": "5852f67e1cab27f214784473bd2ea827792883b90a836e688236e7927d1ba6a2",
+    "after": "f3e05152568212b6584bcce4b0b3907f93b6fc8475873221bd25066986909be4"
+  },
+  {
+    "path": "Sources/DaBin/WorkspaceZoomScrollAnchor.swift",
+    "before": "6ac84848b5cac7e8c35b2d9f0b76d5660d6a14fa49991cc09d47ce56ac8a3d14",
+    "after": "29b041c3a8dbdcdf28e1caaa5d90723ecc4854db0b0f501961a68f1deca7f6e1"
+  },
+  {
+    "path": "Tests/ApplicationLifecycleTests.swift",
+    "before": "fd3f0a0bb74948361a038191821691328029cb37e811e7be88387929cecd896c",
+    "after": "ce0cc957e2ec1dd7e2876f32b33acc90cfb2b699de90ee04b5a58ef60433fef3"
+  },
+  {
+    "path": "Tests/CaptionDragTests.swift",
+    "before": "52530e950f9e08739aad9f7d7fd8f75c780d947bccbb6d1fc01e6fae5fea5b3e",
+    "after": "22f4c72186bc2437a0f51e455892314b8be21067f72d9ca56ae1568e3f1043e8"
+  },
+  {
+    "path": "Tests/DailyCaptureTests.swift",
+    "before": "8e7160c24c885d54e1f25af691082a55b229a8df9a85fe8d0edd1cfae4f9d9c4",
+    "after": "a47e8ea8281ac55a67f30e3bb34ab881920fbf3b8f42f4370d725d75d1a91d7a"
+  },
+  {
+    "path": "Tests/NavigationHistoryTests.swift",
+    "before": "c26c3a50cd4c483d81c59acb26e001f68f93e3c60b4485f2b146b60a36cb93a2",
+    "after": "6de8847b1e47c72c769cd9417e0db1117c2db5fb47c8e3d3335ef8982cc4b35d"
+  },
+  {
+    "path": "Tests/ProductFoundationTests.swift",
+    "before": "0d5a52702893abea6a361a0cc07ce0aea8304dc9dac329e4961f2ca635842bc2",
+    "after": "df5220fc2f624594c4067bc22088b9db8e60314757fb76f840866e2a632194dc"
+  },
+  {
+    "path": "Tests/QAStorageScopedSaveTests.swift",
+    "before": "7eff6134e2ca0e1302e67913f5d1c4e22465789458bfed8976dd5687f81192f8",
+    "after": "e41fbf714204ad9c08e0ce5cee3de50fa89e81bc2412b7bd8480ce68a33596af"
+  },
+  {
+    "path": "Tests/SearchWindowTests.swift",
+    "before": "c2a1c89fe3b433626ecefb0cdaaaf2f1e70785ff67c440dffd3e08204328fbf9",
+    "after": "ea7454f077cec4277115a40ed8507ba12164355d15a0142a73d52cca55086f9b"
+  },
+  {
+    "path": "Tests/TaskStateTests.swift",
+    "before": "53d994cffd3a706bfb32ed4de0ac97375ffff154ed842e2b3897d9cd8022cb79",
+    "after": "ae4230a54d1167c065deaa429f59330c1c01b36e6da528608a5db76f32fd862d"
+  },
+  {
+    "path": "Tests/WindowTests.swift",
+    "before": "29804db946baf1761fe960c48860d13fc9c93c49be1ad833cbf34fb33efab7cb",
+    "after": "e57951cc8c53dd86cf2d68cb087e0c1920d9e0bcc90216ad94c1e2606c500b23"
+  },
+  {
+    "path": "Tests/WorkspaceWindowTests.swift",
+    "before": "d05ad6ad54eb97a39c82472fe64fb35406b53b4c2c03ce91032083db6c14aae9",
+    "after": "f1c18f8c2a70ac334c0e7afa8c6e0e9b0c307fc9abf040686223a8a110e29895"
+  },
+  {
+    "path": "Tests/WorkspaceZoomLayoutTests.swift",
+    "before": "cf54745ac827f11bb55e9b86317fa36f1da9c7adfc1c3d9d4934025b0b249ba1",
+    "after": "e94db296dc58216e11e02e6eccaf2a170d76401367048c841ad7f89193297499"
+  },
+  {
+    "path": "Tests/WorkspaceZoomPerformanceTests.swift",
+    "before": "46763e906836457fe0eb7bcef405847c196c97d194ef930be6cf0558aa992e87",
+    "after": "2526ccb280cc8b312dbebe26649749fbd593775221fdd4024a2a5fac95d7d3b9"
+  },
+  {
+    "path": "scripts/run_qa.py",
+    "before": "84ff0f5e251b57a1841574d111d9d38be285c1f0c4512029ecf1e2be78c28330",
+    "after": "27eef8a7d3a2d35cb79f67cce6a3b8accb0e7bd1a57a1240a799208a60f15923"
+  },
+  {
+    "path": "Tests/ViewportLifecycleTests.swift",
+    "before": null,
+    "after": "e4961f23384200d7e890cd2b1d67d53bcbfe1d66ab853a3b02a35af8b7a05ad2"
+  }
+]

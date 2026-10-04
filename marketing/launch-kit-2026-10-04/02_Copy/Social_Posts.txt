@@ -1,0 +1,92 @@
+DABIN / SOCIAL POSTS
+UNSENT. Use after public availability. Fill live URLs and check platform limits with the real link. Every post has one job. Use 03_Graphics and 04_Video assets; do not expose personal saved content.
+
+01 / LAUNCH / SHORT (X, BLUESKY, MASTODON)
+Meet DaBin: a little robot for the useful bits of your day.
+Save notes, links, images, files and tasks on your Mac - then find them again.
+Free. No account. Apple Silicon, macOS 14+.
+[[APP_STORE_URL]]
+Attach: feed film, landscape or portrait as supported.
+
+02 / SCREENSHOT SEARCH / SHORT
+Where did that screenshot go?
+Save it into DaBin, then find a word inside it with local text search.
+Free for Apple Silicon Macs, macOS 14+.
+[[APP_STORE_URL]]
+Attach: real saved-screenshot search demo; neutral filename, visible matching word.
+
+03 / DESIGNER / SHORT
+A reference image. A useful link. A note for later.
+Keep a project's useful bits together in DaBin, a free local Mac app with a little desktop robot.
+Apple Silicon, macOS 14+.
+[[APP_STORE_URL]]
+Attach: real fictional Studio Refresh Projects view.
+
+04 / LOCAL / SHORT
+No account, ads, analytics or cloud sync.
+DaBin keeps your saved captures and recognized text on your Mac. Optional manual-link previews can contact websites.
+Free. Apple Silicon, macOS 14+.
+[[APP_STORE_URL]]
+Attach: local-storage card.
+
+05 / FOCUS / SHORT
+Keep the next task beside the reference that inspired it.
+DaBin brings saved content, projects and a focus timer together on your Mac.
+Free. Apple Silicon, macOS 14+.
+[[APP_STORE_URL]]
+Attach: real Focus view.
+
+06 / STUDENT TEST / SHORT
+Reading notes, a saved lecture screenshot, and the next task - one local project.
+Try DaBin with fictional sample content first. Search finds words in supported content you've saved.
+Free for Apple Silicon Macs, macOS 14+.
+[[APP_STORE_URL]]
+
+07 / DEVELOPER TEST / SHORT
+Save the documentation link, the useful snippet and the next step with a project.
+DaBin is a free local Mac app for those useful bits between tasks.
+Apple Silicon, macOS 14+.
+[[APP_STORE_URL]]
+
+08 / LINKEDIN LAUNCH
+Useful references often arrive while you're busy doing something else.
+
+DaBin gives them a place on your Mac. Drop an image, paste a link or write a note. Keep related captures and tasks with a project, then find them again with local search - including words in saved supported screenshots and documents.
+
+The little desktop robot makes saving approachable; the app keeps the content local. No account, ads, analytics or cloud sync. Optional manual-link previews are off by default and can contact websites when enabled.
+
+DaBin is free on the Mac App Store for Apple Silicon Macs with macOS 14 or later.
+[[APP_STORE_URL]]
+
+If you collect design references, I'd value your feedback: was it easy to save three useful things and find one again?
+Attach: feed film + actual Projects screenshot.
+
+09 / INSTAGRAM OR REELS CAPTION
+Feed DaBin the useful bits.
+A screenshot. A link. A note. Keep them with a project and find them again on your Mac.
+
+Free Mac app. No account required.
+Apple Silicon + macOS 14 or later.
+Download: [[APP_STORE_URL]] (place the working link in your profile if the platform doesn't make captions clickable).
+
+#DaBin #MacApps #DesignWorkflow #Productivity
+Attach: DABIN__FEED_DABIN__PORTRAIT.mp4. On-screen text must explain the benefit with sound off.
+
+10 / YOUTUBE SHORTS
+Title: Feed DaBin: save it now, find it later on your Mac
+Description: Meet DaBin, a free Mac app that keeps notes, links, images, files and tasks together locally. Search words in supported content saved into DaBin. No account, ads, analytics or cloud sync. Optional manual-link previews can contact websites. Requires Apple Silicon + macOS 14 or later. Download: [[APP_STORE_URL]]
+Attach: portrait feed film. Do not title it an App Store preview.
+
+11 / CREATOR COVERAGE FOLLOW-UP
+[[CREATOR_NAME]] tried DaBin and showed [[ACTUAL_WORKFLOW_SHOWN]]. Here's their independent take: [[COVERAGE_URL]]
+Only use after actual coverage; quote briefly and accurately, with permission where required. Never prefill endorsements or imply they were paid unless that is true and disclosed.
+
+12 / MONTH-END UPDATE
+One question that came up after DaBin's launch was [[ACTUAL_QUESTION]]. This short demo shows [[VERIFIED_ANSWER_OR_FIX]].
+DaBin is free for Apple Silicon Macs with macOS 14 or later: [[APP_STORE_URL]]
+Do not invent a popular question, download count or update. If no such evidence exists, publish the simple saved-screenshot demo instead.
+
+ALT TEXT EXAMPLES
+Feed film poster: DaBin's metallic desktop robot beside three fictional saved items: a reference image, a link and a note. Caption: Save now. Find it later. Keep it on your Mac.
+Project screenshot: DaBin Projects view for the fictional Studio Refresh project, with a saved image, note, link and task.
+Search screenshot: DaBin search results for riverside, showing matching content from a fictional saved screenshot.

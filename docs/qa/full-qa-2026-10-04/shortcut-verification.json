@@ -1,0 +1,12 @@
+{
+  "status": "passed",
+  "source": "Sources/DaBin/QuickAccess.swift",
+  "testSHA256": "99ff31357f44d3eb5259cda4248e14427dfbeef10db29467052b63b2f01e7985",
+  "nativeReadOnlyProbe": "shortcut-k-system-reservations.log",
+  "checks": "28 QuickAccess checks pass; final Search key is K, capture key remains V. No user preference or input-source setting was written by code.",
+  "initialReservedReaderReview": "No actionable findings; source ownership/main-actor correctness, enabled Space/V reservations, read failures, disabled/unrelated reservations, explicit preferences, rollback and recovery reviewed.",
+  "reviewedBaselineSourceSHA256": "c4c211a683db71051f64c2b067e64cce20b1abf85cb2b0208c4e760d6b1baf2e",
+  "sourceSHA256": "02709d3b0024cf4bec0aab85f58cff9d7352c2647bf7c2c49dda538bc4b18c94",
+  "finalDeltaReview": "Root reviewed four-line production delta: K labels, original default modifiers, K/V preflight and K registration.",
+  "liveDiscovery": "Both Control-Option-Space and Control-Option-Shift-Space changed this Mac from English to Hebrew; exact symbolic reservation lookup did not catch the Shift variant. Search moved away from Space entirely. Original language restored."
+}

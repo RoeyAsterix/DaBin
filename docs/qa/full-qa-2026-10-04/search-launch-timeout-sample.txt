@@ -1,0 +1,55 @@
+Analysis of sampling DaBinSearchQA (pid 23303) every 1 millisecond
+Process:         DaBinSearchQA [23303]
+Path:            ???
+Load Address:    0x10472c000
+Identifier:      DaBinSearchQA
+Version:         ???
+Code Type:       ARM64
+Platform:        macOS
+Parent Process:  launchd [1]
+Target Type:     live task
+
+Date/Time:       2026-10-04 00:28:31.621 +0300
+Launch Time:     2026-10-04 00:23:50.177 +0300
+OS Version:      macOS 26.6.2 (25G83)
+Report Version:  7
+Analysis Tool:   /usr/bin/sample
+
+Physical footprint:         192K
+Physical footprint (peak):  304K
+Idle exit:                  untracked
+----
+
+Call graph:
+    848 Thread_24192319: Main Thread   DispatchQueue_<multiple>
+      848 start  (in dyld) + 6904  [0x18af1848c]
+        848 dyld4::start(dyld4::KernelArgs*, void*, void*, unsigned long long)::$_1::operator()() const  (in dyld) + 320  [0x18af18b30]
+          848 dyld4::prepare(dyld4::APIs&, mach_o::UnsafeHeader const*)  (in dyld) + 1132  [0x18af18fb8]
+            848 dyld4::JustInTimeLoader::loadDependents(Diagnostics&, dyld4::RuntimeState&, dyld4::Loader::LoadOptions const&)  (in dyld) + 164  [0x18af38978]
+              848 mach_o::UnsafeHeader::forEachLinkedDylib(void (char const*, mach_o::LinkedDylibAttributes, mach_o::Version32, mach_o::Version32, bool, bool&) block_pointer) const  (in dyld) + 172  [0x18af907a0]
+                848 mach_o::UnsafeHeader::forEachLoadCommand(void (load_command const*, bool&) block_pointer) const  (in dyld) + 208  [0x18af8e9a4]
+                  848 invocation function for block in mach_o::UnsafeHeader::forEachLinkedDylib(void (char const*, mach_o::LinkedDylibAttributes, mach_o::Version32, mach_o::Version32, bool, bool&) block_pointer) const  (in dyld) + 136  [0x18af90a68]
+                    848 invocation function for block in dyld4::JustInTimeLoader::loadDependents(Diagnostics&, dyld4::RuntimeState&, dyld4::Loader::LoadOptions const&)  (in dyld) + 576  [0x18af38ce0]
+                      848 dyld4::Loader::getLoader(Diagnostics&, dyld4::RuntimeState&, char const*, dyld4::Loader::LoadOptions const&)  (in dyld) + 1020  [0x18af3d720]
+                        848 dyld4::Loader::forEachPath(Diagnostics&, dyld4::RuntimeState&, char const*, dyld4::Loader::LoadOptions const&, void (char const*, dyld4::ProcessConfig::PathOverrides::Type, bool&) block_pointer)  (in dyld) + 260  [0x18af3ce2c]
+                          848 dyld4::ProcessConfig::PathOverrides::forEachPathVariant(char const*, mach_o::Platform, bool, bool, bool&, void (char const*, dyld4::ProcessConfig::PathOverrides::Type, bool&) block_pointer) const  (in dyld) + 556  [0x18af1bb28]
+                            848 dyld4::Loader::forEachResolvedAtPathVar(dyld4::RuntimeState&, char const*, dyld4::Loader::LoadOptions const&, dyld4::ProcessConfig::PathOverrides::Type, bool&, void (char const*, dyld4::ProcessConfig::PathOverrides::Type, bool&) block_pointer)  (in dyld) + 696  [0x18af3d2a8]
+                              848 mach_o::UnsafeHeader::forEachRPath(void (char const*, bool&) block_pointer) const  (in dyld) + 100  [0x18af8edd8]
+                                848 mach_o::UnsafeHeader::forEachLoadCommand(void (load_command const*, bool&) block_pointer) const  (in dyld) + 208  [0x18af8e9a4]
+                                  848 invocation function for block in dyld4::Loader::forEachResolvedAtPathVar(dyld4::RuntimeState&, char const*, dyld4::Loader::LoadOptions const&, dyld4::ProcessConfig::PathOverrides::Type, bool&, void (char const*, dyld4::ProcessConfig::PathOverrides::Type, bool&) block_pointer)  (in dyld) + 444  [0x18af3ed70]
+                                    848 invocation function for block in dyld4::Loader::getLoader(Diagnostics&, dyld4::RuntimeState&, char const*, dyld4::Loader::LoadOptions const&)  (in dyld) + 3136  [0x18af3e764]
+                                      848 dyld4::Loader::makeDiskLoader(Diagnostics&, dyld4::RuntimeState&, char const*, dyld4::Loader::LoadOptions const&, bool, unsigned int, mach_o::Layout const*)  (in dyld) + 176  [0x18af3cbc4]
+                                        848 dyld4::JustInTimeLoader::makeJustInTimeLoaderDisk(Diagnostics&, dyld4::RuntimeState&, char const*, dyld4::Loader::LoadOptions const&, bool, unsigned int, mach_o::Layout const*)  (in dyld) + 176  [0x18af3afa8]
+                                          848 dyld4::SyscallDelegate::mapFileReadOnly(Diagnostics&, char const*, int*, unsigned long*, dyld4::FileID*, bool*, char*) const  (in dyld) + 108  [0x18af15ee4]
+                                            848 dyld3::open(char const*, int, int)  (in dyld) + 52  [0x18af565fc]
+                                              848 open_with_subsystem  (in dyld) + 60  [0x18af7c5d8]
+                                                848 open  (in dyld) + 40  [0x18aefa664]
+                                                  848 __open  (in dyld) + 8  [0x18aefdf70]
+
+Total number in stack (recursive counted multiple, when >=5):
+
+Sort by top of stack, same collapsed (when >= 5):
+        __open  (in dyld)        848
+
+Binary images description not available
+

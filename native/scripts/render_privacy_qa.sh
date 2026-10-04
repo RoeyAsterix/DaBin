@@ -19,9 +19,14 @@ cat > "$app/Contents/Info.plist" <<'PLIST'
 <key>LSUIElement</key><true/>
 </dict></plist>
 PLIST
+# The policy's shared help controls depend on BoardComponents and AppState.
+# Use the production inventory so this fixture keeps their complete dependency
+# closure while supplying its own isolated application entry point.
+sources=()
+while IFS= read -r source; do sources+=("$source"); done < <(python3 scripts/project_inventory.py --without-main)
 xcrun swiftc -swift-version 5 -O -whole-module-optimization -target arm64-apple-macosx14.0 \
   -warnings-as-errors -module-cache-path build/ModuleCache -parse-as-library \
-  Sources/DaBin/ThemeSettings.swift Sources/DaBin/PrivacyInformation.swift Tests/PrivacyRenderTests.swift \
+  "${sources[@]}" Tests/PrivacyRenderTests.swift \
   -o "$app/Contents/MacOS/PrivacyRenderTests"
 "$app/Contents/MacOS/PrivacyRenderTests" "$output" > "$output/privacy-render.log" 2>&1
 cat "$output/privacy-render.log"

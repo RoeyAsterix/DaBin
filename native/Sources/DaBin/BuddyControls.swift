@@ -17,6 +17,7 @@ private struct BuddyHelpModifier: ViewModifier {
     @Environment(\.daBinTooltipsEnabled) private var enabled
     @Environment(\.isEnabled) private var controlEnabled
     @Environment(\.timelineTooltipController) private var controller
+    @Environment(\.hoverTooltipActiveID) private var visibleTooltipID
     @State private var generatedID = UUID().uuidString
     @State private var hovered = false
     let title: String
@@ -27,13 +28,23 @@ private struct BuddyHelpModifier: ViewModifier {
     private var descriptor: TimelineTooltipDescriptor {
         TimelineTooltipDescriptor(id: id, text: title, index: 0, itemCount: 1)
     }
+    private var publishesAnchor: Bool {
+        HoverTooltipAnchorPolicy.shouldPublish(id: id, visibleID: visibleTooltipID,
+            enabled: enabled, controlEnabled: controlEnabled, hovered: hovered, focused: isFocused)
+    }
 
     @ViewBuilder
     func body(content: Content) -> some View {
         if let controller {
             content
                 .accessibilityHint(title)
-                .anchorPreference(key: HoverTooltipAnchorKey.self, value: .bounds) { [id: $0] }
+                // Idle lazy rows do not contribute bounds to the board's
+                // global overlay. Hover/focus publishes before the dwell
+                // finishes; the visible descriptor keeps explicit QA/show
+                // requests working without materializing every row's anchor.
+                .anchorPreference(key: HoverTooltipAnchorKey.self, value: .bounds) {
+                    publishesAnchor ? [id: $0] : [:]
+                }
                 .onHover { hovered = $0; update(controller) }
                 .onChange(of: isFocused) { _, _ in update(controller) }
                 .onChange(of: enabled) { _, _ in update(controller) }

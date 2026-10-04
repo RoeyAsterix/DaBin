@@ -183,6 +183,43 @@ private actor MessageFixtureSleeper {
         await sleeper.finish()
     }
 
+    private static func emptyDismissalChecks() async throws {
+        let clock = MessageFixtureClock(), sleeper = MessageFixtureSleeper()
+        let presenter = TransientMessagePresentation<String>(now: { clock.instant }, sleep: { try await sleeper.sleep($0) })
+        var changes = 0
+        let subscription = presenter.objectWillChange.sink { changes += 1 }
+        for _ in 0..<500 { presenter.dismiss(); presenter.present(nil) }
+        try expect(changes == 0 && presenter.revision == 0,
+                   "Empty lifecycle cleanup publishes no layout invalidations and creates no receipt revisions")
+        let idleSleepers = await sleeper.count
+        try expect(idleSleepers == 0, "Empty cleanup schedules no expiry work")
+
+        presenter.present("Visible row feedback"); try await wait(sleeper, count: 1)
+        let shownChanges = changes, shownRevision = presenter.revision
+        presenter.dismiss()
+        try expect(presenter.message == nil && presenter.visibleMessage == nil
+                   && presenter.revision > shownRevision && changes > shownChanges,
+                   "Dismissing a real receipt still publishes removal and invalidates its expiry")
+        let dismissedChanges = changes, dismissedRevision = presenter.revision
+        for _ in 0..<500 { presenter.dismiss(); presenter.present(nil) }
+        try expect(changes == dismissedChanges && presenter.revision == dismissedRevision,
+                   "Repeated disappearance after dismissal remains a publication-free no-op")
+        await sleeper.resume(0); await pump()
+        try expect(changes == dismissedChanges && presenter.message == nil,
+                   "Canceled receipt completion cannot publish after its dismissal")
+
+        presenter.present("Later row feedback"); try await wait(sleeper, count: 2)
+        try expect(presenter.visibleMessage == "Later row feedback" && presenter.revision > dismissedRevision,
+                   "No-op cleanup does not stop a later receipt from appearing")
+        clock.advance(.seconds(2)); await sleeper.resume(1); await pump()
+        let expiredChanges = changes, expiredRevision = presenter.revision
+        presenter.dismiss(); presenter.present(nil); presenter.shutdown()
+        try expect(presenter.message == nil && changes == expiredChanges && presenter.revision == expiredRevision,
+                   "Cleanup and shutdown after ordinary expiry publish no redundant empty state")
+        withExtendedLifetime(subscription) { }
+        await sleeper.finish()
+    }
+
     private static func nodes(_ view: NSView) -> [MessageAXNode] {
         var result: [MessageAXNode] = [], seen = Set<ObjectIdentifier>()
         func visit(_ candidate: Any, depth: Int) {
@@ -371,6 +408,7 @@ private actor MessageFixtureSleeper {
     private static func run() async throws {
         try await deadlineChecks()
         try await replacementChecks()
+        try await emptyDismissalChecks()
         let output = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
             .appendingPathComponent("build/qa/notification-presentation/\(UUID().uuidString)")
         try FileManager.default.createDirectory(at: output, withIntermediateDirectories: true)

@@ -1,0 +1,53 @@
+{
+  "checks": [
+    {
+      "name": "media-integration",
+      "command": [
+        "bash",
+        "scripts/test_media_integration.sh"
+      ],
+      "startedAtUTC": "2026-10-04T12:27:30.524188+00:00",
+      "finishedAtUTC": "2026-10-04T12:28:42.041839+00:00",
+      "exitCode": 0,
+      "log": "media-integration.log"
+    },
+    {
+      "name": "xcode-smoke",
+      "command": [
+        "xcrun",
+        "xcodebuild",
+        "-project",
+        "DaBin.xcodeproj",
+        "-scheme",
+        "DaBin",
+        "-configuration",
+        "Debug",
+        "-destination",
+        "platform=macOS,arch=arm64",
+        "-derivedDataPath",
+        "/private/tmp/dabin-xcode-full-qa-20261004",
+        "-resultBundlePath",
+        "/private/tmp/dabin-navigation-qa-20261004-1227.xcresult",
+        "-disableAutomaticPackageResolution",
+        "test"
+      ],
+      "startedAtUTC": "2026-10-04T12:28:42.042580+00:00",
+      "finishedAtUTC": "2026-10-04T12:29:28.480060+00:00",
+      "exitCode": 0,
+      "log": "xcode-smoke.log"
+    },
+    {
+      "name": "store-release",
+      "command": [
+        "python3",
+        "scripts/build_store_candidate.py",
+        "--output-directory",
+        "build/store-qa-navigation-20261004-1227"
+      ],
+      "startedAtUTC": "2026-10-04T12:29:28.480407+00:00",
+      "finishedAtUTC": "2026-10-04T12:30:27.209748+00:00",
+      "exitCode": 1,
+      "log": "store-release.log"
+    }
+  ]
+}

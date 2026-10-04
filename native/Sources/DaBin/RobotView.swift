@@ -15,6 +15,20 @@ final class RobotView: NSView {
     var onHoverChange: (() -> Void)?
     private let character: RobotCharacterView
     private let indicator = NSTextField(labelWithString: "")
+    private let recordingSign: RobotProjectSignView
+    /// The controller can reserve a readable board without scaling the robot.
+    var cornerCharacterFrame: CGRect? {
+        didSet { needsLayout = true; layoutSubtreeIfNeeded(); updateTrackingAreas() }
+    }
+    /// Extra stage space leaves the physical camera and its mouse targets fixed.
+    var orbitContentOffset = CGPoint.zero {
+        didSet { needsLayout = true; layoutSubtreeIfNeeded(); updateTrackingAreas() }
+    }
+    var recordingProjectName: String? { recordingSign.projectName }
+    var recordingStatusLabel: String? { recordingSign.projectName == nil ? nil : recordingSign.statusText }
+    var recordingSignIsVisible: Bool { !recordingSign.isHidden }
+    var recordingSignFrame: CGRect { recordingSign.boardFrame }
+    var recordingSignFontSize: CGFloat { recordingSign.fontSize }
     private var feedbackTask: Task<Void, Never>?
     private var hoverTrackingArea: NSTrackingArea?
     private var lastPasteEvent: NSEvent?
@@ -30,15 +44,23 @@ final class RobotView: NSView {
     private(set) var isIslandStage = false
     var interactionBounds: NSRect {
         if let orbitLayout {
-            return orbitLayout.interactionRegions(for: orbitPerch, local: true).reduce(.null) { $0.union($1) }
+            return orbitLayout.interactionRegions(for: orbitPerch, local: true).map(offsetOrbitFrame)
+                .reduce(.null) { $0.union($1) }
         }
+        if let cornerCharacterFrame { return cornerCharacterFrame }
         return CornerGeometry.robotInteractionFrame(in: bounds, target: isIslandStage ? .cameraIsland : .corner(.topRight))
     }
     var bodyBounds: NSRect {
-        if let orbitLayout { return orbitLayout.visibleRobotFrame(for: orbitPerch, local: true) }
+        if let orbitLayout { return offsetOrbitFrame(orbitLayout.visibleRobotFrame(for: orbitPerch, local: true)) }
+        if let cornerCharacterFrame { return cornerCharacterFrame }
         return CornerGeometry.robotBodyFrame(in: bounds, target: isIslandStage ? .cameraIsland : .corner(.topRight))
     }
-    var hoverBounds: NSRect { isIslandStage ? interactionBounds : bounds.insetBy(dx: 4, dy: 4) }
+    var transitionBodyBounds: NSRect {
+        let rendererFrame = character.layer?.presentation()?.frame ?? character.frame
+        return RobotCharacterView.transitionArtworkFrame(in: rendererFrame,
+            mirrored: orbitLayout != nil && orbitPerch.isMirrored)
+    }
+    var hoverBounds: NSRect { isIslandStage || cornerCharacterFrame != nil ? interactionBounds : bounds.insetBy(dx: 4, dy: 4) }
     var mood: RobotMood { character.mood }
     var motionState: RobotMotionState { character.motionState }
     var hasActiveAmbientMotion: Bool { character.hasActiveAmbientMotion }
@@ -59,12 +81,20 @@ final class RobotView: NSView {
         NSWorkspace.shared.accessibilityDisplayShouldReduceMotion
     }) {
         self.reduceMotion = reduceMotion
-        character = RobotCharacterView(frame: frameRect.insetBy(dx: 4, dy: 4), reduceMotion: reduceMotion)
+        let sign = RobotProjectSignView()
+        recordingSign = sign
+        // A held-prop pose has one rigid body. The whole native stage can still
+        // reveal/retreat together, while a greeting or digest cannot pull the
+        // robot's shoulders away from its hands and board.
+        character = RobotCharacterView(frame: frameRect.insetBy(dx: 4, dy: 4), reduceMotion: {
+            reduceMotion() || sign.projectName != nil
+        })
         super.init(frame: frameRect)
         wantsLayer = true
         layer?.backgroundColor = NSColor.clear.cgColor
         layer?.masksToBounds = true
         addSubview(character)
+        addSubview(recordingSign)
         indicator.frame = NSRect(x: 43, y: 61, width: 25, height: 22)
         indicator.font = .systemFont(ofSize: 14, weight: .semibold)
         indicator.alignment = .center
@@ -86,18 +116,20 @@ final class RobotView: NSView {
     override func layout() {
         super.layout()
         if let orbitLayout {
-            if orbitTask == nil { character.frame = orbitLayout.robotFrame(for: orbitPerch, local: true) }
+            if orbitTask == nil { character.frame = offsetOrbitFrame(orbitLayout.robotFrame(for: orbitPerch, local: true)) }
             orbitMask.frame = bounds
             let path = CGMutablePath()
             path.addRect(bounds)
-            path.addRect(orbitLayout.cameraFrameInPanel)
+            path.addRect(offsetOrbitFrame(orbitLayout.cameraFrameInPanel))
             orbitMask.path = path
             orbitMask.fillRule = .evenOdd
             layer?.mask = orbitMask
         } else {
             layer?.mask = nil
-            character.frame = isIslandStage ? bounds : bounds.insetBy(dx: 4, dy: 4)
+            character.frame = cornerCharacterFrame ?? (isIslandStage ? bounds : bounds.insetBy(dx: 4, dy: 4))
         }
+        recordingSign.frame = bounds
+        updateRecordingSignAttachment()
         if let orbitLayout {
             indicator.font = .systemFont(ofSize: 11, weight: .semibold)
             let body = bodyBounds
@@ -105,8 +137,9 @@ final class RobotView: NSView {
                                y: body.minY - 3, width: 18, height: 18)
             badge.origin.x = min(max(badge.minX, 0), max(0, bounds.width - badge.width))
             badge.origin.y = min(max(badge.minY, 0), max(0, bounds.height - badge.height))
-            if badge.intersects(orbitLayout.cameraFrameInPanel) {
-                badge.origin.y = max(0, orbitLayout.cameraFrameInPanel.minY - badge.height - 2)
+            let camera = offsetOrbitFrame(orbitLayout.cameraFrameInPanel)
+            if badge.intersects(camera) {
+                badge.origin.y = max(0, camera.minY - badge.height - 2)
             }
             indicator.frame = badge
             indicator.layer?.cornerRadius = 9
@@ -115,8 +148,56 @@ final class RobotView: NSView {
             indicator.layer?.cornerRadius = 10
             indicator.frame = isIslandStage
             ? NSRect(x: bodyBounds.maxX - 22, y: bodyBounds.maxY - 23, width: 25, height: 22)
-            : NSRect(x: 43, y: 61, width: 25, height: 22)
+            : NSRect(x: (cornerCharacterFrame?.minX ?? 0) + 43,
+                     y: (cornerCharacterFrame?.minY ?? 0) + 61, width: 25, height: 22)
         }
+    }
+
+    /// The caller supplies a destination only while its capture service is monitoring.
+    /// Pausing clears this presentation without changing the saved destination.
+    func setProjectRecording(projectName: String?, color: NSColor?, isEnabled: Bool,
+                             isPaused: Bool = false, statusText: String? = nil) {
+        recordingSign.configure(projectName: isEnabled ? projectName : nil, color: color,
+                                isPaused: isPaused, statusText: statusText)
+        character.refreshMotionPreference()
+        character.setNativeArmsHidden(recordingSign.projectName != nil)
+        let destination = recordingSign.projectName.map {
+            ", \(recordingSign.statusText.lowercased()) \($0)"
+        } ?? ""
+        setAccessibilityLabel("DaBin purple robot" + destination)
+        needsLayout = true
+        layoutSubtreeIfNeeded()
+    }
+
+    private func offsetOrbitFrame(_ frame: CGRect) -> CGRect {
+        frame.offsetBy(dx: orbitContentOffset.x, dy: orbitContentOffset.y)
+    }
+
+    private func updateRecordingSignAttachment(rendererFrame: CGRect? = nil,
+                                               duration: TimeInterval = 0) {
+        guard recordingSign.projectName != nil else { recordingSign.isHidden = true; return }
+        recordingSign.isHidden = !isPresented
+        character.setNativeArmsHidden(true)
+        let renderer = rendererFrame ?? character.frame
+        let mirrored = orbitLayout != nil && orbitPerch.isMirrored
+        let artwork = RobotCharacterView.transitionArtworkFrame(in: renderer, mirrored: mirrored)
+        let size = recordingSign.preferredSize(maximumWidth:
+            min(RobotProjectSignView.preferredSize.width, max(0, bounds.width - 8)))
+        var board = CGRect(x: min(max(4, artwork.midX - size.width / 2), max(4, bounds.width - size.width - 4)),
+                           y: max(4, artwork.minY - size.height + 3), width: size.width, height: size.height)
+        if let orbitLayout {
+            let camera = offsetOrbitFrame(orbitLayout.cameraFrameInPanel)
+            if board.intersects(camera) { board.origin.y = max(4, camera.minY - size.height - 2) }
+        }
+        let scale = min(renderer.width / 64, renderer.height / 78)
+        // These are the canonical vector renderer's shoulder anchors, transformed
+        // into y-up stage coordinates. Only their positions mirror, never text.
+        let shoulderY = renderer.midY + (39 - 40.58) * scale
+        let offset = 19.74 * scale
+        let left = CGPoint(x: renderer.midX - offset, y: shoulderY)
+        let right = CGPoint(x: renderer.midX + offset, y: shoulderY)
+        recordingSign.updateAttachment(boardFrame: board, leftShoulder: left, rightShoulder: right,
+                                       armWidth: max(2.4, 4.62 * scale), duration: duration)
     }
 
     // The artwork and badge are decoration. Keep one stable destination around
@@ -257,19 +338,23 @@ final class RobotView: NSView {
         configureIslandStage(false)
         isPresented = true
         character.send(.reveal(entrance))
+        updateRecordingSignAttachment()
     }
 
     func hideCharacter() {
         cancelOrbitTransition()
         isPresented = false
         character.send(.hide)
+        recordingSign.isHidden = true
     }
 
     @discardableResult
     func peekFromIsland() -> TimeInterval {
         configureIslandStage(true)
         isPresented = true
-        return character.playIslandPeek()
+        let duration = character.playIslandPeek()
+        updateRecordingSignAttachment()
+        return duration
     }
 
     func climbFromIsland() {
@@ -280,6 +365,7 @@ final class RobotView: NSView {
         configureIslandStage(true)
         isPresented = true
         _ = character.playIslandClimb()
+        updateRecordingSignAttachment()
     }
 
     private func configureIslandStage(_ enabled: Bool) {
@@ -298,6 +384,7 @@ final class RobotView: NSView {
         feedback = nil; isSaving = false; isOverDrop = false
         isPresented = false
         character.stopMotion()
+        recordingSign.isHidden = true
         updateIndicator()
     }
 
@@ -322,7 +409,10 @@ final class RobotView: NSView {
     /// Only the small usable target accepts input; measured hardware is excluded.
     func containsInteraction(_ localPoint: NSPoint) -> Bool {
         guard !isOrbitRetreating else { return false }
-        if let orbitLayout { return orbitLayout.containsInteraction(localPoint, perch: orbitPerch, local: true) }
+        if let orbitLayout {
+            let point = CGPoint(x: localPoint.x - orbitContentOffset.x, y: localPoint.y - orbitContentOffset.y)
+            return orbitLayout.containsInteraction(point, perch: orbitPerch, local: true)
+        }
         return interactionBounds.contains(localPoint)
     }
 
@@ -344,9 +434,11 @@ final class RobotView: NSView {
         configureOrbit(layout, perch: perch)
         isPresented = true
         character.send(.reveal(.top))
-        character.frame = layout.robotFrame(for: perch, hidden: !reduceMotion(), local: true)
+        character.frame = offsetOrbitFrame(layout.robotFrame(for: perch, hidden: !reduceMotion(), local: true))
         character.alphaValue = reduceMotion() ? 0 : 1
-        animateOrbit(to: layout.robotFrame(for: perch, local: true), alpha: 1,
+        updateRecordingSignAttachment()
+        recordingSign.alphaValue = character.alphaValue
+        animateOrbit(to: offsetOrbitFrame(layout.robotFrame(for: perch, local: true)), alpha: 1,
                      duration: reduceMotion() ? 0.15 : 0.48)
     }
 
@@ -358,7 +450,7 @@ final class RobotView: NSView {
         let generation = orbitGeneration
         let oldPerch = orbitPerch
         let reduced = reduceMotion()
-        animateOrbit(to: reduced ? character.frame : layout.robotFrame(for: oldPerch, hidden: true, local: true),
+        animateOrbit(to: reduced ? character.frame : offsetOrbitFrame(layout.robotFrame(for: oldPerch, hidden: true, local: true)),
                      alpha: 0, duration: reduced ? 0.15 : 0.32)
         orbitTask = Task { @MainActor [weak self] in
             try? await Task.sleep(for: .seconds(reduced ? 0.15 : 0.32))
@@ -366,8 +458,9 @@ final class RobotView: NSView {
             self.orbitTask = nil
             self.orbitPerch = perch
             self.character.layer?.setAffineTransform(CGAffineTransform(scaleX: perch.isMirrored ? -1 : 1, y: 1))
-            self.character.frame = layout.robotFrame(for: perch, hidden: !reduced, local: true)
-            self.animateOrbit(to: layout.robotFrame(for: perch, local: true), alpha: 1,
+            self.character.frame = self.offsetOrbitFrame(layout.robotFrame(for: perch, hidden: !reduced, local: true))
+            self.updateRecordingSignAttachment()
+            self.animateOrbit(to: self.offsetOrbitFrame(layout.robotFrame(for: perch, local: true)), alpha: 1,
                               duration: reduced ? 0.15 : 0.48)
             // Receipt feedback is laid out by the destination view, rather
             // than by its animated character. Keep that badge attached to the
@@ -384,7 +477,7 @@ final class RobotView: NSView {
         isOrbitRetreating = true
         let generation = orbitGeneration
         let duration = reduceMotion() ? 0.15 : 0.44
-        animateOrbit(to: reduceMotion() ? character.frame : layout.robotFrame(for: orbitPerch, hidden: true, local: true),
+        animateOrbit(to: reduceMotion() ? character.frame : offsetOrbitFrame(layout.robotFrame(for: orbitPerch, hidden: true, local: true)),
                      alpha: 0, duration: duration)
         orbitTask = Task { @MainActor [weak self] in
             try? await Task.sleep(for: .seconds(duration))
@@ -393,16 +486,19 @@ final class RobotView: NSView {
             self.isOrbitRetreating = false
             self.isPresented = false
             self.character.send(.hide)
+            self.recordingSign.isHidden = true
             completion()
         }
     }
 
     private func animateOrbit(to frame: NSRect, alpha: CGFloat, duration: TimeInterval) {
+        updateRecordingSignAttachment(rendererFrame: frame, duration: duration)
         NSAnimationContext.runAnimationGroup { context in
             context.duration = duration
             context.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
             character.animator().frame = frame
             character.animator().alphaValue = alpha
+            recordingSign.animator().alphaValue = alpha
         }
     }
 
@@ -412,13 +508,16 @@ final class RobotView: NSView {
         isOrbitRetreating = false
         character.layer?.removeAllAnimations()
         character.alphaValue = 1
+        recordingSign.cancelAttachmentMotion()
+        recordingSign.alphaValue = 1
     }
 
     private func settleOrbitForCapture() {
         guard let layout = orbitLayout else { return }
         cancelOrbitTransition()
         requestedOrbitPerch = orbitPerch
-        character.frame = layout.robotFrame(for: orbitPerch, local: true)
+        character.frame = offsetOrbitFrame(layout.robotFrame(for: orbitPerch, local: true))
+        updateRecordingSignAttachment()
     }
 
     private func normalizedPointer(for event: NSEvent) -> CGPoint {

@@ -1,0 +1,297 @@
+{
+  "schemaVersion": 1,
+  "recordedAtUTC": "2026-10-03T16:22:18.850893+00:00",
+  "status": "implemented_with_verification_limits",
+  "scope": "Native global Search redesign from the user-supplied date-column concept",
+  "implemented": [
+    "Fresh toolbar, Command K, global shortcut and Projects entries search all saved DaBin content; same-session refinements persist.",
+    "One search field, one optional Filters popover, removable project/type/source/date chips and Clear filters.",
+    "Empty-query browsing and unified captures/tasks/local indexed text/snippet aliases/checklists/comments/project notes.",
+    "Newest matching saved dates and captures first; notes explicitly use edited dates; compact date paging covers the full archive.",
+    "One, two or three date columns; compact details and wide previews; query, date anchor, per-column scroll and capture destination preserved.",
+    "Existing copy/open/contextual actions and native drag providers; nearby captures are contextual and excluded from match counts.",
+    "Local indexing progress/unavailable feedback; tested 320-point minimum width and bounded long titles."
+  ],
+  "architecture": {
+    "state": "AppState search session and cached search presentation; no capture migration.",
+    "grouping": "SearchDateBoard is a pure presentation model shared by logic tests and native UI.",
+    "presentation": "SwiftUI native List per visible date, shared AppKit viewport helpers, existing Explorer inspector and note editor.",
+    "privacy": "Fictional temporary archives and generated fixture pixels; no personal archive, external content, network or system clipboard needed by QA."
+  },
+  "filesContributedTo": [
+    "native/Sources/DaBin/AppState.swift",
+    "native/Sources/DaBin/BoardView.swift",
+    "native/Sources/DaBin/CaptureClipboard.swift",
+    "native/Sources/DaBin/CornerController.swift",
+    "native/Sources/DaBin/Domain.swift",
+    "native/Sources/DaBin/ExplorerItems.swift",
+    "native/Sources/DaBin/ExplorerQuery.swift",
+    "native/Sources/DaBin/ExplorerScreen.swift",
+    "native/Sources/DaBin/ExplorerViewport.swift",
+    "native/Sources/DaBin/ProjectWorkspaceView.swift",
+    "native/Sources/DaBin/ScratchpadView.swift",
+    "native/Sources/DaBin/SearchColumnViewport.swift",
+    "native/Sources/DaBin/SearchDateBoard.swift",
+    "native/Sources/DaBin/SearchResultCard.swift",
+    "native/Sources/DaBin/SearchScreen.swift",
+    "native/Tests/SearchScopeStateTests.swift",
+    "native/Tests/SearchDateBoardTests.swift",
+    "native/Tests/SearchResultExcerptTests.swift",
+    "native/Tests/SearchWindowTests.swift",
+    "native/scripts/run_qa.py",
+    "native/DaBin.xcodeproj/project.pbxproj",
+    "README.md",
+    "native/README.md"
+  ],
+  "fileSHA256": {
+    "native/Sources/DaBin/AppState.swift": "732c550407b73d5ec78923cbba90b3fc88f84a659048783e6d1241a68b903185",
+    "native/Sources/DaBin/BoardView.swift": "48996271a96bd45a917825ea23c2c399edf04db0408d674351af6673bf7ecd32",
+    "native/Sources/DaBin/CaptureClipboard.swift": "2be98006bc0acc65893e45e55496bea9bac36dad143385ca04e88a7a96d9adef",
+    "native/Sources/DaBin/CornerController.swift": "17c5ee884b4fbb3de787a81798f99f00e44f14e755f05770c1bcb33c4ec96b0d",
+    "native/Sources/DaBin/Domain.swift": "704bc150d28dc4c0e85a5a16a9857c6b98fa8115cbafe892920722d19605b5df",
+    "native/Sources/DaBin/ExplorerItems.swift": "9c5676f42543f8f8c6ffb42dd8524b2208fcd1b5dd2c07b8ae1df6918e41d341",
+    "native/Sources/DaBin/ExplorerQuery.swift": "491d1ca752db038c2e877df94b15cc1242c64a1d472bd80d04d581a31f019e96",
+    "native/Sources/DaBin/ExplorerScreen.swift": "af3d8e1c5410cf91919d08e8ed4489efda116bbb280c30e967fa543df4604469",
+    "native/Sources/DaBin/ExplorerViewport.swift": "44c3baab2b1548f057d14ec21ce3aa01902c5ce3dbb9dfb5984989f18ec9b7db",
+    "native/Sources/DaBin/ProjectWorkspaceView.swift": "17a1ef79217e183ed5f03d4c3b6526c0357482b67120da82e8659aedb3a87080",
+    "native/Sources/DaBin/ScratchpadView.swift": "0423876d7dacb94b99c2bf753e84d6ab39a4e9a68759874fb9309d6d542a4401",
+    "native/Sources/DaBin/SearchColumnViewport.swift": "fada52f713da212bea1371e0143afa76ce05ec7e91bc9988ed43e5e1dc5be4f5",
+    "native/Sources/DaBin/SearchDateBoard.swift": "701238360bc2a78bca2c0d79e1dbe8c7586a730dfe1183edbd45468244ed36e5",
+    "native/Sources/DaBin/SearchResultCard.swift": "73311b1c00ba1f382bcfe8117d70a808124ce5eef42f079a56c4999ecf79f190",
+    "native/Sources/DaBin/SearchScreen.swift": "56344559bd962b04ac5ca789693cce024b4c670e3367dc82d52ab3205aad7eea",
+    "native/Tests/SearchScopeStateTests.swift": "331b1d7767388b6c2f6d514abe8159c3fe1640a3eccb67db1bd4ff088d53b0d9",
+    "native/Tests/SearchDateBoardTests.swift": "f9b3930e959efb6889a31c96e0a769f32392de308905566331a51da6a38f689c",
+    "native/Tests/SearchResultExcerptTests.swift": "b87eddf21a02649d10bc1a90078c2649d161706e43fd82a8c42d1d1c7e3286d5",
+    "native/Tests/SearchWindowTests.swift": "2b8fe63267d9e4a6d6be0c1572e234f0af34072f8fb1d911cf283be38b9bc29d",
+    "native/scripts/run_qa.py": "4556fb63ea2d592e1fcdab7e7d183da1220cbbd7acc137722653f9824f9981db",
+    "native/DaBin.xcodeproj/project.pbxproj": "0369d25c3d4971ed19f9d1d0c7f8d105df7b9db2aae0c689c065237468963d1a",
+    "README.md": "9c64e5481eed2b359ecde78fa4fcb06fbb73e5d18815b376d23a312d58895df2",
+    "native/README.md": "4cf91d5329685ffba67d96a90a14d84ba04cefb6968f3c7c7401185db00b400d"
+  },
+  "verification": {
+    "passedSearchAndDataChecks": 667,
+    "additionalSearchFixtures": 10,
+    "nativeChecks": 97,
+    "logicAndDataChecks": 570,
+    "reports": {
+      "native-search": {
+        "status": "passed",
+        "sourceFingerprint": "30b0a98e76119fe0cecddb7f220045f1b4748e1229f139ca243bbc294bccbd6f",
+        "suites": [
+          {
+            "name": "SearchWindowTests",
+            "status": "passed",
+            "reportedSummary": "PASS: 97 native global Search window, routing, paging, filter, note, recycling, render and performance checks. Keyboard verification excluded: desktop focus unavailable.",
+            "completion": {
+              "checks": 97,
+              "keyboardVerification": "not run: desktop focus unavailable",
+              "passed": true
+            }
+          }
+        ],
+        "report": "receipts/native-search-report.json"
+      },
+      "search-data": {
+        "status": "passed",
+        "sourceFingerprint": "ba7b59afa0dbdf62f2b10f35fd1eaa1952fbfc3097fc6438e99da219137b1aa9",
+        "suites": [
+          {
+            "name": "ExplorerQueryTests",
+            "status": "passed",
+            "reportedSummary": "PASS: 24 Explorer filtering, grouping and persistence checks"
+          },
+          {
+            "name": "QuickAccessTests",
+            "status": "passed",
+            "reportedSummary": "PASS: 17 quick access checks"
+          },
+          {
+            "name": "DomainTests",
+            "status": "passed",
+            "reportedSummary": "PASS: 218 assertions; 10 search fixtures; managed-copy reopen, immutable dates, import compensation and interruption recovery."
+          },
+          {
+            "name": "CaptureClipboardTests",
+            "status": "passed",
+            "reportedSummary": "PASS: 29 capture clipboard checks; text, links, tasks, files, batches, native types and failures."
+          },
+          {
+            "name": "LocalContentSearchTests",
+            "status": "passed",
+            "reportedSummary": "PASS: 91 local content-search checks; schema compatibility, persistence, OCR snippets, filters, scopes, task conversion, queueing, cancellation, shutdown, removal, retry, native Vision/PDF/text extraction and privacy boundaries."
+          },
+          {
+            "name": "SearchScopeStateTests",
+            "status": "passed",
+            "reportedSummary": "PASS: 126 scoped-search checks; project/type/source intersection, live attachment inheritance, capture-day ranges, scratchpads, DST and Back restoration"
+          },
+          {
+            "name": "SearchDateBoardTests",
+            "status": "passed",
+            "reportedSummary": "PASS: 44 date search grouping, chronology, note semantics, context counts and bounded paging checks"
+          },
+          {
+            "name": "SearchResultExcerptTests",
+            "status": "passed",
+            "reportedSummary": "PASS: 21 search result excerpt bounds, matching evidence, labels and Unicode checks"
+          }
+        ],
+        "report": "receipts/search-data-report.json"
+      },
+      "header-focus": {
+        "status": "failed",
+        "sourceFingerprint": "728871ff73cdb5a377b617e2e7bcdb4e8e908af64f086260ffea27b662aff474",
+        "suites": [
+          {
+            "name": "HeaderInteractionTests",
+            "status": "failed",
+            "reportedSummary": ""
+          },
+          {
+            "name": "SearchWindowTests",
+            "status": "passed",
+            "reportedSummary": "PASS: 97 native global Search window, routing, paging, filter, note, recycling, render and performance checks. Keyboard verification excluded: desktop focus unavailable.",
+            "completion": {
+              "checks": 97,
+              "keyboardVerification": "not run: desktop focus unavailable",
+              "passed": true
+            }
+          }
+        ],
+        "report": "receipts/header-focus-report.json"
+      },
+      "related-viewport-stress": {
+        "status": "failed",
+        "sourceFingerprint": "b6a6289ddc28b53a50588dd3dc9dd4cfa7c24c22727034056e374b34b797749a",
+        "suites": [
+          {
+            "name": "AutoCaptureExplorerResponsivenessTests",
+            "status": "passed",
+            "reportedSummary": "PASS: 169 Explorer responsiveness checks; production DailyCaptureHostingView and RobotAppFrameView, actual BoardView, 128 automatic captures, late local previews, 16 insertion bursts, selected-middle-image scrolling, mixed paste trails/tasks, exact narrow/wide breakpoint resizing, visible tooltip overlay, native close/reopen and interrupted reversal. Native table had at most 20 simultaneously available row views. Background 8-second run-loop watchdog remained healthy."
+          },
+          {
+            "name": "SearchWindowTests",
+            "status": "failed",
+            "reportedSummary": ""
+          }
+        ],
+        "report": "receipts/related-viewport-stress-report.json"
+      },
+      "rejected-focus-experiment": {
+        "status": "passed",
+        "sourceFingerprint": "0ac8437bfac2c07c3145a76a3a758130cb859bec60d8a9c1c3ea2a714fa430c4",
+        "suites": [
+          {
+            "name": "SearchWindowTests",
+            "status": "passed",
+            "reportedSummary": "PASS: 97 native global Search window, routing, paging, filter, note, recycling, render and performance checks. Keyboard verification excluded: desktop focus unavailable.",
+            "completion": {
+              "checks": 97,
+              "keyboardVerification": "not run: desktop focus unavailable",
+              "passed": true
+            }
+          }
+        ],
+        "report": "receipts/rejected-focus-experiment-report.json"
+      }
+    },
+    "releaseBuild": {
+      "version": "0.4.26",
+      "buildNumber": "81",
+      "configuration": "Release",
+      "target": "arm64-apple-macosx14.0",
+      "sourceFingerprint": "94b375d9e8f616bc3e8066173ac9066c9c17dda1afd4b3e429c8aba5f1377ec8",
+      "strictSignatureVerifiedOnCleanCopy": true,
+      "distributionValidated": false,
+      "appStoreApproved": false
+    },
+    "buildReceipt": "receipts/build-receipt.json",
+    "staticChecks": [
+      "git diff --check passed",
+      "python3 -m py_compile native/scripts/run_qa.py native/scripts/generate_project.py passed",
+      "Swift production and test compilation with warnings-as-errors passed"
+    ],
+    "compiler": "Apple Swift version 6.4 (swiftlang-6.4.0.34.1 clang-2100.3.34.1)\nTarget: arm64-apple-macosx26.0",
+    "sdk": "27.0",
+    "timings": {
+      "cached500Seconds": 0.0012354583013802767,
+      "cachedAverageMicroseconds": 2.4709166027605534,
+      "cachedReadCount": 500,
+      "coldSearchSeconds": 0.030530666699633002,
+      "matches": 295,
+      "records": 5000,
+      "repositoryBatchSeconds": 0.10267041670158505
+    },
+    "renderCount": 18,
+    "widthsChecked": [
+      320,
+      380,
+      736,
+      1060
+    ],
+    "snapshotHashes": {
+      "global-date-search-light-320x720@2x.png": "5c2ae8f0c206b34b20763e1555c5f7fca14b24dc409f64506b98e3cccb605064",
+      "global-date-search-light-380x720@2x.png": "c259cfbcce6e0a4ecc18f656be792b64ec8c767995fe8c600cf6a26e773c45f3",
+      "global-date-search-light-736x720@2x.png": "20ba85d1554a0d349dfae589262acb62650b5d804775b6a3ea280098dd1d1150",
+      "global-date-search-light-1060x720@2x.png": "d7615104dddb9b94f99c0b0391a873d67f2e07ea8b74429b69388bce8da90f44",
+      "global-date-search-compact-short-light-380x520@2x.png": "ffec371e3f61bd6bd88b962faec5d8a45788af9e4fb824ee9beea23efbfd72de",
+      "global-date-search-selected-preview-light-1060x720@2x.png": "d23ece2b433111638b46608572fca9830f0cbb900bc2d3461973ede2ae2f0675",
+      "global-date-search-filters-popover-light@2x.png": "127962a8ee8badd7d404f4fb29e449587552f5d15054840c8c729b0e2ebec404",
+      "global-date-search-note-editor-light-736x720@2x.png": "09bfb77422035fcbe50579e7ebe6b7b2d81d1ae6a1c44ebc8b753414cacce3c2",
+      "global-date-search-local-photo-light-380x720@2x.png": "150bee9b084b74fb4c6796ae3017afdeaf8b9bcde88586d233f7c2e0c4916f3a",
+      "global-date-search-dark-320x720@2x.png": "5de4778fc4915cbaa5d28253fb53abcf08a99b6320fd296f082b452e42e3c19b",
+      "global-date-search-dark-380x720@2x.png": "e6401c25adadd4beec264455c0c92b3fd55629c6c7ad1c4185d55ed90141bdb0",
+      "global-date-search-dark-736x720@2x.png": "45f4e6c4f9d9707f5b6d7c305d8ba14f077e9e753c6d518d0caee28e4e04e818",
+      "global-date-search-dark-1060x720@2x.png": "8ca3a97f2b92cd3dd7261f96fbd51dad56a18311a14a0d2368fbe7f1b4d08d89",
+      "global-date-search-compact-short-dark-380x520@2x.png": "5dd37136a19fa80897ed1d59568be434d27cf787bb824411ba5aa165b33ad7ac",
+      "global-date-search-selected-preview-dark-1060x720@2x.png": "03a294eb542366e755888b8b8218d2c9787f9aca93d6bd0b52d8624dbc1296d9",
+      "global-date-search-filters-popover-dark@2x.png": "497bd095e651221ad0f790007bddfd183e7c03224139b473366252ec6b9f48be",
+      "global-date-search-note-editor-dark-736x720@2x.png": "dec00ecd90ac246e19a341ebf8fefccdf45c43140cea12092121101903b3cf91",
+      "global-date-search-local-photo-dark-380x720@2x.png": "2be656a72ea02ed3591f771e2359de135d2ae1e89329cf3824329b59033248f8"
+    },
+    "baseline": "../work-inbox-2026-09-29/screenshots/native-view-simpler-search-matches-light-380x480.png",
+    "baselineCaveat": "Historical native layout with a different fixture, not a controlled user study or like-for-like timing comparison.",
+    "currentCompact": "renders/global-date-search-dark-320x720@2x.png",
+    "currentExpanded": "renders/global-date-search-selected-preview-light-1060x720@2x.png"
+  },
+  "remainingLimitations": [
+    "Strict desktop focus could not be obtained. HeaderInteractionTests failed its immediate search-focus assertion; native Search keyboard checks were explicitly skipped. Tab, Escape and end-to-end VoiceOver need desktop verification.",
+    "The 2000-item single-day stress scenario completes all viewport and restoration assertions but emits three AppKit NSTableView reentrant warnings. Initial large-day mounting took about 2.2 seconds and the deep Back flow about 7.2 seconds including test settling. Cause is unresolved; investigate before a performance-gated release.",
+    "Removing redundant Button focusable modifiers in a separate probe preserved 97 passing checks but did not remove warnings or improve timing. The experiment was rejected; it was not applied to live source.",
+    "Search covers DaBin-managed saved metadata and supported local extraction, not the whole Mac, semantic matching, or audio/video transcription.",
+    "Native renders and tests are developer verification on this ARM64 Mac; no recruited usability study, other OS versions or multi-display manual run was performed in this search task."
+  ],
+  "sourceProvenance": {
+    "snapshot": "receipts/source-snapshot.json",
+    "liveDifferencesAfterSnapshot": [
+      {
+        "file": "native/Sources/DaBin/ProjectWorkspaceView.swift",
+        "category": "concurrent unrelated edit",
+        "matchesTestedSourceIgnoringWhitespace": true
+      },
+      {
+        "file": "native/Tests/WorkspaceWindowTests.swift",
+        "category": "concurrent unrelated edit"
+      },
+      {
+        "file": "native/Tests/ProjectWorkspaceStateTests.swift",
+        "category": "concurrent unrelated edit"
+      },
+      {
+        "file": "native/Tests/ProjectWorkspaceViewTests.swift",
+        "category": "concurrent unrelated edit"
+      },
+      {
+        "file": "native/Tests/HeaderInteractionTests.swift",
+        "category": "concurrent unrelated edit"
+      }
+    ],
+    "note": "Independent work changed Projects tests and whitespace formatting during this task. Search QA used a frozen source tree. The sole production-source difference is whitespace-only in ProjectWorkspaceView.swift."
+  },
+  "delivery": {
+    "installedByThisTask": false,
+    "publishedByThisTask": false,
+    "committedByThisTask": false,
+    "note": "Source, local build and verification evidence only. Publication remains paused at the user request."
+  }
+}

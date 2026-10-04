@@ -7,9 +7,12 @@ import json
 import os
 from pathlib import Path
 import platform
+import plistlib
 import re
+import signal
 import shutil
 import subprocess
+import tempfile
 import time
 from project_inventory import ROOT, TARGET, sources, resources, hashes, fingerprint
 
@@ -17,11 +20,14 @@ NONFOCUS = ["ProjectFileArchiveTests", "ExplorerTransferTests", "ExplorerQueryTe
             "ArchiveStoreTests", "DeferredArchiveRepairTests", "RepositoryBatchTests", "CaptureRemovalTests", "ServiceTests", "QAStorageScopedSaveTests",
             "QALifecycleTests", "ApplicationLifecycleTests", "PreviewLifecycleTests", "TaskStateTests", "TaskPlanningTests", "CaptureActionTests",
             "CaptureClipboardTests", "ClipboardRetentionTests", "CaptureTaskConversionTests",
-            "LocalContentSearchTests",
+            "LocalContentSearchTests", "LocalDOCXTextExtractorTests", "SearchScopeStateTests",
             "HourlyGroupingTests", "DayExportTests", "DayExportUITests", "WeeklyStateTests", "InputTests", "AutoCaptureServiceTests", "AutoCaptureRobotPresenterTests", "AutoCaptureRobotCelebrationTests",
             "SoftwareUpdateTests", "UpdateConfigurationTests", "RobotMotionTests", "IslandRobotChoreographyTests", "RobotLifecycleTests", "RobotAppFrameTests", "QuietOrbitRenderTests"]
 WINDOW = ["RedesignInteractionTests", "WindowResizeInteractionTests", "WindowTests", "WeeklyWindowTests", "FilterResizeTests", "RobotDropTests", "DailyCaptureTests", "HeaderInteractionTests", "WorkspaceWindowTests", "RobotWindowTransitionTests"]
 WINDOW.append("DetailPreviewInteractionTests")
+WINDOW.append("CaptureExtendedInteractionTests")
+WINDOW.append("ExtendedMediaInteractionTests")
+NONFOCUS.append("CaptureZoomStateTests")
 WINDOW.append("CaptureTimestampPresentationTests")
 WINDOW.append("RobotVisualConsistencyTests")
 WINDOW.append("NativeTooltipPreferenceTests")
@@ -30,13 +36,34 @@ WINDOW.append("RobotCloseVisualTests")
 WINDOW.append("CollectionCardPresentationTests")
 WINDOW.append("TaskTimerRobotTests")
 WINDOW.append("ExplorerCaptureCardPresentationTests")
+WINDOW.append("AutoCaptureExplorerResponsivenessTests")
+WINDOW.append("ExplorerKeyboardTests")
 WINDOW.append("NotificationPresentationTests")
 WINDOW.append("WindowChromePresentationTests")
+WINDOW.append("ProjectRecordingRobotTests")
+NONFOCUS.append("RobotProjectSignRenderTests")
 NONFOCUS += ["AutoCaptureSignMotionTests", "AutoCaptureSignPresenterTests", "AutoCaptureSignRenderTests"]
 MODULE = "DaBinTestCore"
 NONFOCUS.append("CapturePreviewPerformanceTests")
 NONFOCUS.append("BoredRobotArtworkTests")
 NONFOCUS.append("TooltipBehaviorTests")
+NONFOCUS.append("SearchDateBoardTests")
+NONFOCUS.append("SearchResultExcerptTests")
+NONFOCUS += ["CaptureAnnotationTests", "ReminderAlertCoordinatorTests", "CommentDraftArchiveTests"]
+NONFOCUS.append("ExternalTransferProcessTests")
+NONFOCUS += ["ProjectWorkspaceStateTests", "ProjectWorkspaceExportTests", "ProjectWorkspaceViewTests"]
+NONFOCUS.append("ProjectWorkspaceCardTests")
+WINDOW.append("SearchWindowTests")
+WINDOW.append("TaskPriorityTagTests")
+WINDOW.append("LocalFileLocationTests")
+WINDOW.append("NativeContentDragTests")
+WINDOW.append("CaptionDragTests")
+WINDOW.append("SearchInputTests")
+WINDOW.append("AutoRecordIndicatorTests")
+WINDOW.append("TimelineCalendarTests")
+WINDOW.append("TodayTaskCardTests")
+NONFOCUS.append("NavigationHistoryTests")
+WINDOW += ["WorkspaceZoomTests", "WorkspaceZoomLayoutTests", "WorkspaceInputTests", "WorkspaceZoomPerformanceTests", "ViewportLifecycleTests"]
 
 
 def capture(arguments):
@@ -72,6 +99,76 @@ def input_snapshot(selected):
             for path in sorted(set(paths))}
 
 
+def search_window_operation(executable, library, log, timeout):
+    """Give native keyboard QA a Launch Services identity and a real app event loop.
+
+    `open` does not forward the child's exit status. Require the test's unique
+    result sentinel as well, so a crash or incomplete run cannot report success.
+    """
+    with tempfile.TemporaryDirectory(prefix="dabin-search-qa-") as staging:
+        stage = Path(staging)
+        app = stage / "DaBin Search QA.app"
+        binary = app / "Contents/MacOS/DaBinSearchQA"
+        asset_directory = app / "Contents/Resources"
+        frameworks = app / "Contents/Frameworks"
+        binary.parent.mkdir(parents=True)
+        asset_directory.mkdir()
+        frameworks.mkdir()
+        shutil.copy2(executable, binary)
+        bundled_library = frameworks / library.name
+        shutil.copyfile(library, bundled_library)
+        # A Launch Services child has its own Documents privacy context. Keep
+        # its code and runtime output inside the temporary fixture bundle/root,
+        # rather than asking dyld to open a module in the user's Documents.
+        subprocess.run(["install_name_tool", "-rpath", str(library.parent),
+                        "@executable_path/../Frameworks", str(binary)], check=True)
+        for resource in resources():
+            shutil.copyfile(resource, asset_directory / resource.name)
+        info = {"CFBundleIdentifier": "com.dabin.qa.searchwindow", "CFBundleName": "DaBin Search QA",
+                "CFBundleExecutable": binary.name, "CFBundlePackageType": "APPL", "CFBundleVersion": "1",
+                "NSPrincipalClass": "NSApplication", "NSHighResolutionCapable": True}
+        (app / "Contents/Info.plist").write_bytes(plistlib.dumps(info))
+        subprocess.run(["codesign", "--force", "--sign", "-", str(bundled_library)], check=True)
+        subprocess.run(["codesign", "--force", "--sign", "-", str(app)], check=True)
+        sentinel = stage / "result.json"
+        stdout, stderr = stage / "stdout.log", stage / "stderr.log"
+        evidence = os.environ.get("DABIN_SEARCH_QA_DIR", str(ROOT.parent / "docs/qa/global-date-search-2026-10-03"))
+        fixture_evidence = stage / "evidence"
+        arguments = ["/usr/bin/open", "-n", "-W", "--stdout", stdout, "--stderr", stderr,
+                     "--env", f"DABIN_QA_RESULT_PATH={sentinel}", "--env", f"DABIN_SEARCH_QA_DIR={fixture_evidence}"]
+        if os.environ.get("DABIN_SEARCH_QA_SKIP_KEYBOARD") == "1":
+            arguments += ["--env", "DABIN_SEARCH_QA_SKIP_KEYBOARD=1"]
+        arguments.append(app)
+        result = operation(arguments, log, timeout)
+        if result["status"] == "timed_out":
+            # `open -W` is only a launcher; a timeout must also stop this exact
+            # owned fixture before its temporary bundle is removed.
+            rows = subprocess.check_output(["/bin/ps", "-axo", "pid=,uid=,comm="], text=True).splitlines()
+            for row in rows:
+                values = row.strip().split(None, 2)
+                if len(values) == 3 and int(values[1]) == os.getuid() and values[2] == str(binary):
+                    try:
+                        os.kill(int(values[0]), signal.SIGTERM)
+                    except ProcessLookupError:
+                        pass
+        if fixture_evidence.is_dir():
+            shutil.copytree(fixture_evidence, evidence, dirs_exist_ok=True)
+        output = log.read_text()
+        output += stdout.read_text(errors="replace") if stdout.exists() else ""
+        output += stderr.read_text(errors="replace") if stderr.exists() else ""
+        try:
+            completion = json.loads(sentinel.read_text())
+        except (OSError, ValueError):
+            completion = {"passed": False, "error": "The native test app did not write its completion receipt."}
+        if result["status"] == "passed" and completion.get("passed") is not True:
+            result.update(status="failed", exitCode=1)
+            output += f"\nNative Search QA failed: {completion.get('error', 'Incomplete test run')}\n"
+        result["launchMethod"] = "temporary_app_bundle"
+        result["completion"] = completion
+        log.write_text(output)
+        return result
+
+
 def cache_valid(stamp, outputs, inputs):
     try:
         saved = json.loads(stamp.read_text())
@@ -84,10 +181,21 @@ def cache_save(stamp, outputs, inputs):
     stamp.write_text(json.dumps({"inputs": inputs, "outputs": {path.name: hashlib.sha256(path.read_bytes()).hexdigest() for path in outputs}}, sort_keys=True))
 
 
+def compilation_conditions(distribution, configuration):
+    if distribution not in ("direct", "app-store") or configuration not in ("Release", "Debug"):
+        raise ValueError("Unsupported QA distribution or configuration")
+    result = ["DABIN_DIRECT_UPDATES"] if distribution == "direct" else []
+    if configuration == "Debug":
+        result.append("DEBUG")
+    return result
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--storage-only", action="store_true", help="Run all non-focus suites, including isolated lifecycle integration")
     parser.add_argument("--configuration", choices=["Release", "Debug"], default="Release")
+    parser.add_argument("--distribution", choices=["direct", "app-store"], default="direct",
+                        help="Compile production and tests for this channel; app-store does not sign or verify sandbox runtime")
     parser.add_argument("--only", action="append", choices=NONFOCUS + WINDOW, help="Run named suite(s); report is explicitly partial")
     parser.add_argument("--timeout", type=int, default=180, help="Seconds allowed per executable")
     parser.add_argument("--list", action="store_true")
@@ -102,14 +210,17 @@ def main():
     selected = args.only or (NONFOCUS if args.storage_only else NONFOCUS + WINDOW)
     selected = list(dict.fromkeys(selected))
     started = datetime.datetime.now(datetime.timezone.utc)
-    run_dir = ROOT / "build/qa/runs" / started.strftime("%Y%m%dT%H%M%S%fZ")
+    run_dir = ROOT / "build/qa/runs" / (started.strftime("%Y%m%dT%H%M%S%fZ") + "-" + args.distribution)
     run_dir.mkdir(parents=True)
     inputs = input_snapshot(selected)
     initial_fingerprint = fingerprint(inputs)
     compiler = capture(["xcrun", "swiftc", "--version"])
     sdk_version = capture(["xcrun", "--sdk", "macosx", "--show-sdk-version"])
+    definitions = compilation_conditions(args.distribution, args.configuration)
     report = {"schemaVersion": 1, "startedAtUTC": started.isoformat(),
               "configuration": args.configuration, "target": TARGET,
+              "distribution": args.distribution, "compileDefinitions": definitions,
+              "runtimeScope": "Native test executables; no distribution signing, sandbox entitlement enforcement, installer, or App Store validation.",
               "coverage": "selected_suites" if args.only else "non_focus_suites" if args.storage_only else "full_registered_suite",
               "sourceFingerprint": initial_fingerprint, "inputs": inputs,
               "swiftVersion": compiler, "sdkVersion": sdk_version,
@@ -118,22 +229,24 @@ def main():
               "suites": []}
     module_inputs = {"sources": hashes(sources(False)), "compiler": compiler,
                      "sdk": sdk_version, "target": TARGET, "configuration": args.configuration,
+                     "distribution": args.distribution, "compileDefinitions": definitions,
                      "runner": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
                      "inventory": hashlib.sha256((ROOT / "scripts/project_inventory.py").read_bytes()).hexdigest()}
-    cache = ROOT / "build/qa-cache" / fingerprint(module_inputs)
+    cache = ROOT / "build/qa-cache" / (args.distribution + "-" + fingerprint(module_inputs))
     cache.mkdir(parents=True, exist_ok=True)
     (ROOT / "build/ModuleCache").mkdir(exist_ok=True)
     library = cache / f"lib{MODULE}.dylib"
     module = cache / f"{MODULE}.swiftmodule"
     cache_stamp = cache / "module-ready.json"
-    optimization = ["-O", "-whole-module-optimization"] if args.configuration == "Release" else ["-Onone", "-D", "DEBUG"]
+    optimization = ["-O", "-whole-module-optimization"] if args.configuration == "Release" else ["-Onone"]
+    definition_flags = [flag for value in definitions for flag in ("-D", value)]
     common = ["xcrun", "swiftc", "-swift-version", "5", "-target", TARGET,
               "-module-cache-path", ROOT / "build/ModuleCache", "-warnings-as-errors",
-              "-D", "DABIN_DIRECT_UPDATES", "-parse-as-library", *optimization]
+              *definition_flags, "-parse-as-library", *optimization]
     if cache_valid(cache_stamp, [library, module], module_inputs):
         module_result = {"status": "passed", "cached": True, "seconds": 0}
     else:
-        print(f"Compiling {args.configuration} test module ({len(sources(False))} production sources)…", flush=True)
+        print(f"Compiling {args.distribution} {args.configuration} test module ({len(sources(False))} production sources)…", flush=True)
         module_result = operation([*common, "-emit-library", "-emit-module", "-enable-testing",
                                    "-module-name", MODULE, "-emit-module-path", module,
                                    "-Xlinker", "-install_name", "-Xlinker", f"@rpath/lib{MODULE}.dylib",
@@ -190,7 +303,9 @@ def main():
         else:
             arguments = [executable]
             if name == "DomainTests": arguments.append(ROOT / "Handoff/implementation/search-cases.json")
-            result = operation(arguments, run_dir / f"{name}.log", args.timeout)
+            result = (search_window_operation(executable, library, run_dir / f"{name}.log", args.timeout)
+                      if name == "SearchWindowTests"
+                      else operation(arguments, run_dir / f"{name}.log", args.timeout))
             suite.update(result)
             output = (ROOT / result["log"]).read_text(errors="replace")
             suite["reportedSummary"] = next((line for line in reversed(output.splitlines())
@@ -206,8 +321,9 @@ def main():
     report["status"] = "invalidated_by_source_changes" if current != inputs else "failed" if report["failedSuites"] else "passed"
     payload = json.dumps(report, indent=2, sort_keys=True) + "\n"
     (run_dir / "report.json").write_text(payload)
+    (ROOT / f"build/qa/latest-run-{args.distribution}.json").write_text(payload)
     (ROOT / "build/qa/latest-run.json").write_text(payload)
-    print(f"QA {report['status']}: {report['passedSuites']}/{len(requested)} requested suites passed. Report: {run_dir / 'report.json'}", flush=True)
+    print(f"QA {args.distribution} {report['status']}: {report['passedSuites']}/{len(requested)} requested suites passed. Report: {run_dir / 'report.json'}", flush=True)
     return 0 if report["status"] == "passed" else 1
 
 if __name__ == "__main__":

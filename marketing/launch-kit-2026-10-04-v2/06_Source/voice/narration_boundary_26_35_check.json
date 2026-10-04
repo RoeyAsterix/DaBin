@@ -1,0 +1,119 @@
+[
+  {
+    "start": 26.0,
+    "end": 29.04,
+    "text": " Saved clipboard history, all close at hand.",
+    "words": [
+      {
+        "start": 26.0,
+        "end": 26.48,
+        "word": " Saved",
+        "probability": 0.7476246803998947
+      },
+      {
+        "start": 26.48,
+        "end": 26.72,
+        "word": " clipboard",
+        "probability": 0.9109126925468445
+      },
+      {
+        "start": 26.72,
+        "end": 27.2,
+        "word": " history,",
+        "probability": 0.9884301424026489
+      },
+      {
+        "start": 27.88,
+        "end": 28.28,
+        "word": " all",
+        "probability": 0.9922715425491333
+      },
+      {
+        "start": 28.28,
+        "end": 28.6,
+        "word": " close",
+        "probability": 0.9862555265426636
+      },
+      {
+        "start": 28.6,
+        "end": 28.82,
+        "word": " at",
+        "probability": 0.9951318502426147
+      },
+      {
+        "start": 28.82,
+        "end": 29.04,
+        "word": " hand.",
+        "probability": 0.9993740916252136
+      }
+    ]
+  },
+  {
+    "start": 30.06,
+    "end": 31.34,
+    "text": " And here's your collection shelf.",
+    "words": [
+      {
+        "start": 30.06,
+        "end": 30.14,
+        "word": " And",
+        "probability": 0.9818785786628723
+      },
+      {
+        "start": 30.14,
+        "end": 30.5,
+        "word": " here's",
+        "probability": 0.9530969262123108
+      },
+      {
+        "start": 30.5,
+        "end": 30.62,
+        "word": " your",
+        "probability": 0.9981389045715332
+      },
+      {
+        "start": 30.62,
+        "end": 30.92,
+        "word": " collection",
+        "probability": 0.947665810585022
+      },
+      {
+        "start": 30.92,
+        "end": 31.34,
+        "word": " shelf.",
+        "probability": 0.9023658633232117
+      }
+    ]
+  },
+  {
+    "start": 32.3,
+    "end": 33.68,
+    "text": " Now where's that screenshot?",
+    "words": [
+      {
+        "start": 32.3,
+        "end": 32.56,
+        "word": " Now",
+        "probability": 0.9921722412109375
+      },
+      {
+        "start": 32.56,
+        "end": 33.12,
+        "word": " where's",
+        "probability": 0.7903959453105927
+      },
+      {
+        "start": 33.12,
+        "end": 33.28,
+        "word": " that",
+        "probability": 0.9972483515739441
+      },
+      {
+        "start": 33.28,
+        "end": 33.68,
+        "word": " screenshot?",
+        "probability": 0.9455455541610718
+      }
+    ]
+  }
+]

@@ -80,6 +80,12 @@ final class CaptureClipboardService {
         return payload
     }
 
+    /// Notes use the same injectable, local-only writer as saved captures.
+    func copyText(_ text: String) throws {
+        guard !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { throw CaptureClipboardError.noContent }
+        guard writer(CaptureClipboardPayload(items: [.text(text)])) else { throw CaptureClipboardError.writeFailed }
+    }
+
     private func firstNonempty(_ values: String?...) -> String? {
         values.first { value in
             guard let value else { return false }

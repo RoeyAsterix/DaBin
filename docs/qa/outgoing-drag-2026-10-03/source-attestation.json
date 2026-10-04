@@ -1,0 +1,90 @@
+{
+  "candidateRoot": "/private/tmp/dabin-outgoing-drag-20261003/native",
+  "sourceFingerprint": "f5447804ff05fb3ce49c460c23615e9c51cd456fe7003cabfad26bb9ddc9970d",
+  "installedBaselineFingerprint": "f01f64268576724968417eec151d74632ba743b0f31f2bc1c290442575a07ba8",
+  "changesFromBaseline": {
+    "Resources/Info.plist": {
+      "baseline": "bb4d606c84009234aef8b11385249224ff16887cf36b34f48703ac9115d23696",
+      "candidate": "7eb01bd92aa26544037795d1b125e316c5b05b08408512e53087325bf17df7f9"
+    },
+    "Sources/DaBin/CaptureCards.swift": {
+      "baseline": "1008d5ac82c899c1716902ca7a1e5c1360f8dd7d6fff72cbe6094d8b7693e5dc",
+      "candidate": "cc93dca4405096ac993a418bbecb08313a385a396bd99df864cb6959bf047244"
+    },
+    "Sources/DaBin/DetailScreen.swift": {
+      "baseline": "d9424d48723d25e711f672352c52220f60f4bb3a01e6cfeb9dbcc23a2f2f2611",
+      "candidate": "7fcf6c056932460cd9e31abe7ed3a06c3b3cd0a6aaf7d4ba8bac7b5be2f357bd"
+    },
+    "Sources/DaBin/ExplorerItems.swift": {
+      "baseline": "9c5676f42543f8f8c6ffb42dd8524b2208fcd1b5dd2c07b8ae1df6918e41d341",
+      "candidate": "afad5ed755541870a1ff6e04ecfe007bebfb7e16216b23d5d593df2a892fc4aa"
+    },
+    "Sources/DaBin/ExplorerTransfer.swift": {
+      "baseline": "38a7fd5946748160b984237def58527812201236cb60a821c568cf8c4e3082e9",
+      "candidate": "df65d1ebcba64aeaae568f61d1cfc1063830ae706856467e92f501f158ef7b64"
+    },
+    "Sources/DaBin/GroupedCaptureCard.swift": {
+      "baseline": "c521cd10848b9f8ecc34538c4a39cea2486d6447f8ca0e0ed8182ce214776699",
+      "candidate": "5f206bd51efdf8f86104077732a9b3300b231050ba66a0a4d5c6fd8f184b47ee"
+    },
+    "Sources/DaBin/HourlyCaptureCard.swift": {
+      "baseline": "8b2b5c0750ca561127a55deb68fa1beafcedb9e054d1c8b596a08f2213ab394c",
+      "candidate": "e14ce559fbaeb1efd102c202f87832d5815d0cd54f08680df76e24941b8695b8"
+    },
+    "Sources/DaBin/NativeContentDrag.swift": {
+      "baseline": null,
+      "candidate": "67ea1e9c8e14bc39fd593f370429615ab88e7ad8a5379afd52796642bee62d45"
+    },
+    "Sources/DaBin/ProjectWorkspaceCard.swift": {
+      "baseline": "0d359261d9c009b3ebcfeb8f0865c52b2cc13670e46f59f5736462f15f267851",
+      "candidate": "05e7b2d6b5593d73e32f12bb8cb2fd152a564a60eb1449583ae12c300223c88b"
+    },
+    "Sources/DaBin/ProjectWorkspaceView.swift": {
+      "baseline": "17a1ef79217e183ed5f03d4c3b6526c0357482b67120da82e8659aedb3a87080",
+      "candidate": "c1eefe16cb1668b9eee677fe0b594eb55d27e610651e8d8a40534c45b4b31e6b"
+    },
+    "Sources/DaBin/ScratchpadView.swift": {
+      "baseline": "0423876d7dacb94b99c2bf753e84d6ab39a4e9a68759874fb9309d6d542a4401",
+      "candidate": "9b15e671c8b93d01b24c25aa4c0d92ab741b940da64a515cf8a3a6b887962dd0"
+    },
+    "Sources/DaBin/SearchResultCard.swift": {
+      "baseline": "73311b1c00ba1f382bcfe8117d70a808124ce5eef42f079a56c4999ecf79f190",
+      "candidate": "388868e6cb0e8ae3da9630b42c2c791a0246697dfda3bf7d3a42b2f71320a92a"
+    },
+    "Sources/DaBin/TaskAttachmentsView.swift": {
+      "baseline": "d4a469a992691f4b0160d1187c648ec7189ffd4e53c17fd69fe836d0cdd1bfbd",
+      "candidate": "5db337ce90abc6d37a538f523d858256e1e1522df4cfe9c585feb2d1df4ac1b6"
+    },
+    "Sources/DaBin/WeeklyScreen.swift": {
+      "baseline": "d10bb0d8f72ec4fe4323d08a1dad53a83087ae6a52139f5f5849c89dd9f0019d",
+      "candidate": "a14493bd80f372534f15f6e69b4582102600a7e9b013653cac069964d837bc28"
+    },
+    "Sources/DaBin/WorkspaceItemCard.swift": {
+      "baseline": "de7ceec9374cbb713bf7d4259ec11b8a4db2619c73a76678d8cb3ef29b0825a9",
+      "candidate": "858c9f36436226ed8566da5390e52de0b75df46622a450ec15fdbd391bdd784a"
+    },
+    "scripts/run_qa.py": {
+      "baseline": "4556fb63ea2d592e1fcdab7e7d183da1220cbbd7acc137722653f9824f9981db",
+      "candidate": "cc552c6b4d4d1e1e57762d9c4333c0d0789f095b088a13ee03b4ddb0621723b7"
+    }
+  },
+  "preservedConcurrentWorkspaceDifferences": {
+    "Sources/DaBin/ApplicationCoordinator.swift": {
+      "candidate": "1d9e3224b24b4dce6cf9070a9f0aa80de826f6ec9bfad7e1dad1e3b45129b5c0",
+      "workspace": "5648365a8bf2f42a4f694286edf962e3788d4d2582e823a607dd8b9eeb555932"
+    },
+    "Sources/DaBin/AutoCaptureRobotPresenter.swift": {
+      "candidate": "d1e6efa9ef628ec9d44b5f80da05be70bc72f228a1a89ae464a38e4b8031541e",
+      "workspace": "0c47a79c4f501d487dda0ae2c45fe362a78ee0fc65dfb7cce77ee1819a6b015e"
+    },
+    "Sources/DaBin/RobotCharacterView.swift": {
+      "candidate": "d6cb063426f6b9357c491153ea29e4b5c4dd16a89b71327de92c0465801c8912",
+      "workspace": "efacf4bcad0b7b9dd201d31889e890090e21a13eb693113f207700b5bd630af3"
+    }
+  },
+  "excludedConcurrentNewSources": [
+    "Sources/DaBin/AutoCaptureSignMotion.swift",
+    "Sources/DaBin/AutoCaptureSignRouting.swift",
+    "Sources/DaBin/AutoCaptureSignView.swift"
+  ]
+}

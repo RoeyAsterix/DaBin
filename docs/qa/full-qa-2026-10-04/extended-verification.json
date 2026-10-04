@@ -1,0 +1,289 @@
+{
+  "status": "passed",
+  "coverage": "39 media checks, 16 NativeRender modes, walkthrough, privacy and native island MP4",
+  "results": [
+    {
+      "name": "media",
+      "status": "passed",
+      "exitCode": 0,
+      "seconds": 2.389,
+      "log": "extended/media.log",
+      "command": [
+        "/private/tmp/dabin-extended-qa-20261004/MediaIntegrationTests/MediaIntegrationTests"
+      ],
+      "reportedSummary": "39/39 media integration checks passed; 0 failed"
+    },
+    {
+      "name": "render-default",
+      "status": "passed",
+      "exitCode": 0,
+      "seconds": 7.759,
+      "log": "extended/render-default-fixed.log",
+      "command": [
+        "/private/tmp/dabin-extended-qa-20261004/NativeRenderTests/NativeRenderTests",
+        "/private/tmp/dabin-extended-qa-20261004/renders/default"
+      ],
+      "correction": "Fixture now explicitly opts into neighboring context before testing it",
+      "compileReceipt": "extended/default-fixed-compile-receipt.json",
+      "reportedSummary": "PASS: 62 native-view renders from real persistent fixtures, including compact 380 \u00d7 290 points. Output: /private/tmp/dabin-extended-qa-20261004/renders/default-fixed"
+    },
+    {
+      "name": "render-open-design",
+      "status": "passed",
+      "exitCode": 0,
+      "seconds": 12.587,
+      "log": "extended/render-open-design.log",
+      "command": [
+        "/private/tmp/dabin-extended-qa-20261004/NativeRenderTests/NativeRenderTests",
+        "/private/tmp/dabin-extended-qa-20261004/renders/open-design",
+        "--open-design"
+      ],
+      "reportedSummary": "PASS: 40 Open Design production renders"
+    },
+    {
+      "name": "render-explorer",
+      "status": "passed",
+      "exitCode": 0,
+      "seconds": 5.616,
+      "log": "extended/render-explorer.log",
+      "command": [
+        "/private/tmp/dabin-extended-qa-20261004/NativeRenderTests/NativeRenderTests",
+        "/private/tmp/dabin-extended-qa-20261004/renders/explorer",
+        "--explorer"
+      ],
+      "reportedSummary": "PASS: 20 Explorer production renders"
+    },
+    {
+      "name": "render-robot-empty-state",
+      "status": "passed",
+      "exitCode": 0,
+      "seconds": 2.898,
+      "log": "extended/render-robot-empty-state.log",
+      "command": [
+        "/private/tmp/dabin-extended-qa-20261004/NativeRenderTests/NativeRenderTests",
+        "/private/tmp/dabin-extended-qa-20261004/renders/robot-empty-state",
+        "--robot-empty-state"
+      ],
+      "reportedSummary": "PASS: Canonical native robot rendered; active motion changed 15226 raster bytes; inactive changed 0 bytes."
+    },
+    {
+      "name": "render-responsive-detail",
+      "status": "passed",
+      "exitCode": 0,
+      "seconds": 9.909,
+      "log": "extended/render-responsive-detail.log",
+      "command": [
+        "/private/tmp/dabin-extended-qa-20261004/NativeRenderTests/NativeRenderTests",
+        "/private/tmp/dabin-extended-qa-20261004/renders/responsive-detail",
+        "--responsive-detail"
+      ],
+      "reportedSummary": "PASS: 24 responsive detail production renders"
+    },
+    {
+      "name": "render-buddy-redesign",
+      "status": "passed",
+      "exitCode": 0,
+      "seconds": 14.837,
+      "log": "extended/render-buddy-redesign.log",
+      "command": [
+        "/private/tmp/dabin-extended-qa-20261004/NativeRenderTests/NativeRenderTests",
+        "/private/tmp/dabin-extended-qa-20261004/renders/buddy-redesign",
+        "--buddy-redesign"
+      ],
+      "reportedSummary": "PASS: 40 buddy redesign production renders in light and dark appearance"
+    },
+    {
+      "name": "render-simpler-ui",
+      "status": "passed",
+      "exitCode": 0,
+      "seconds": 7.44,
+      "log": "extended/render-simpler-ui.log",
+      "command": [
+        "/private/tmp/dabin-extended-qa-20261004/NativeRenderTests/NativeRenderTests",
+        "/private/tmp/dabin-extended-qa-20261004/renders/simpler-ui",
+        "--simpler-ui"
+      ],
+      "reportedSummary": "PASS: 26 simpler native UI renders in light and dark appearance"
+    },
+    {
+      "name": "render-task-conversion",
+      "status": "passed",
+      "exitCode": 0,
+      "seconds": 4.023,
+      "log": "extended/render-task-conversion.log",
+      "command": [
+        "/private/tmp/dabin-extended-qa-20261004/NativeRenderTests/NativeRenderTests",
+        "/private/tmp/dabin-extended-qa-20261004/renders/task-conversion",
+        "--task-conversion"
+      ],
+      "reportedSummary": "PASS: 10 native capture-to-task renders in light and dark appearance"
+    },
+    {
+      "name": "render-content-search",
+      "status": "passed",
+      "exitCode": 0,
+      "seconds": 3.016,
+      "log": "extended/render-content-search.log",
+      "command": [
+        "/private/tmp/dabin-extended-qa-20261004/NativeRenderTests/NativeRenderTests",
+        "/private/tmp/dabin-extended-qa-20261004/renders/content-search",
+        "--content-search"
+      ],
+      "reportedSummary": "PASS: 10 local content-search renders in light and dark appearance"
+    },
+    {
+      "name": "render-robot-personality",
+      "status": "passed",
+      "exitCode": 0,
+      "seconds": 23.756,
+      "log": "extended/render-robot-personality.log",
+      "command": [
+        "/private/tmp/dabin-extended-qa-20261004/NativeRenderTests/NativeRenderTests",
+        "/private/tmp/dabin-extended-qa-20261004/renders/robot-personality",
+        "--robot-personality"
+      ],
+      "reportedSummary": "PASS: 40 native 2x robot personality renders with raster, motion, Reduce Motion and cleanup checks"
+    },
+    {
+      "name": "render-release-ui",
+      "status": "passed",
+      "exitCode": 0,
+      "seconds": 41.934,
+      "log": "extended/render-release-ui.log",
+      "command": [
+        "/private/tmp/dabin-extended-qa-20261004/NativeRenderTests/NativeRenderTests",
+        "/private/tmp/dabin-extended-qa-20261004/renders/release-ui",
+        "--release-ui"
+      ],
+      "reportedSummary": "PASS: 52 release UI renders, including compact and 2x samples"
+    },
+    {
+      "name": "render-theme",
+      "status": "passed",
+      "exitCode": 0,
+      "seconds": 5.567,
+      "log": "extended/render-theme.log",
+      "command": [
+        "/private/tmp/dabin-extended-qa-20261004/NativeRenderTests/NativeRenderTests",
+        "/private/tmp/dabin-extended-qa-20261004/renders/theme",
+        "--theme"
+      ],
+      "reportedSummary": "PASS: 19 native theme renders from isolated production views and persistent fixtures. Output: /private/tmp/dabin-extended-qa-20261004/renders/theme"
+    },
+    {
+      "name": "render-preview-fit",
+      "status": "passed",
+      "exitCode": 0,
+      "seconds": 11.712,
+      "log": "extended/render-preview-fit.log",
+      "command": [
+        "/private/tmp/dabin-extended-qa-20261004/NativeRenderTests/NativeRenderTests",
+        "/private/tmp/dabin-extended-qa-20261004/renders/preview-fit",
+        "--preview-fit"
+      ],
+      "reportedSummary": "PASS: 24 preview-fit renders; all four corner markers visible in 16 image/document renders. 8 PDF renders are layout only because NSView.cacheDisplay omits PDFKit page tiles. Output: /private/tmp/dabin-extended-qa-20261004/renders/preview-fit"
+    },
+    {
+      "name": "render-weekly-empty",
+      "status": "passed",
+      "exitCode": 0,
+      "seconds": 3.391,
+      "log": "extended/render-weekly-empty.log",
+      "command": [
+        "/private/tmp/dabin-extended-qa-20261004/NativeRenderTests/NativeRenderTests",
+        "/private/tmp/dabin-extended-qa-20261004/renders/weekly-empty",
+        "--weekly-empty"
+      ],
+      "reportedSummary": "PASS: 6 compact empty Daily/Week renders across both appearances"
+    },
+    {
+      "name": "render-recovery-guidance",
+      "status": "passed",
+      "exitCode": 0,
+      "seconds": 3.341,
+      "log": "extended/render-recovery-guidance.log",
+      "command": [
+        "/private/tmp/dabin-extended-qa-20261004/NativeRenderTests/NativeRenderTests",
+        "/private/tmp/dabin-extended-qa-20261004/renders/recovery-guidance",
+        "--recovery-guidance"
+      ],
+      "reportedSummary": "PASS: 6 recovery guidance renders in light and dark appearances"
+    },
+    {
+      "name": "render-capture-actions",
+      "status": "passed",
+      "exitCode": 0,
+      "seconds": 9.241,
+      "log": "extended/render-capture-actions.log",
+      "command": [
+        "/private/tmp/dabin-extended-qa-20261004/NativeRenderTests/NativeRenderTests",
+        "/private/tmp/dabin-extended-qa-20261004/renders/capture-actions",
+        "--capture-actions"
+      ],
+      "reportedSummary": "PASS: 22 capture action renders in light and dark appearances"
+    },
+    {
+      "name": "walkthrough",
+      "status": "passed",
+      "exitCode": 0,
+      "seconds": 11.62,
+      "log": "extended/walkthrough.log",
+      "command": [
+        "/private/tmp/dabin-extended-qa-20261004/WalkthroughRenderTests/WalkthroughRenderTests",
+        "/private/tmp/dabin-extended-qa-20261004/renders/walkthrough",
+        "/private/tmp/dabin-full-qa-20261004/design/walkthrough/assets/Launch-plan.txt"
+      ],
+      "reportedSummary": "PASS: 31 production UI/robot assets. PDF extraction, search, comment save, task conversion/completion, export and archive reload verified."
+    },
+    {
+      "name": "privacy",
+      "status": "passed",
+      "exitCode": 0,
+      "seconds": 0.433,
+      "log": "extended/privacy/full-script.log",
+      "command": [
+        "bash",
+        "scripts/render_privacy_qa.sh"
+      ],
+      "verification": "extended/privacy/full-script-report.json",
+      "reportedSummary": "13 privacy checks, four native renders; foreground preserved"
+    },
+    {
+      "name": "island-playground",
+      "status": "passed",
+      "exitCode": 0,
+      "seconds": 2.845,
+      "log": "extended/island-playground-fixed.log",
+      "command": [
+        "bash",
+        "scripts/render_island_playground.sh",
+        "/private/tmp/dabin-extended-qa-20261004/renders/island-playground"
+      ],
+      "reportedSummary": "327 native frames; full MP4 decode, dimensions, timing and sample count passed"
+    }
+  ],
+  "originalRun": "extended/execution-report.json",
+  "note": "Initial failures retained; corrected default fixture and render scripts rerun.",
+  "passedJobs": 20,
+  "failedJobs": 0,
+  "productionSourcesMatchPreShortcutBuild": true,
+  "testedBuildSourceFingerprint": "b85c40ad4c026eae8eb40ba064aefcc3a0fb82be48788187ca816717d640c4a1",
+  "productionSourceChangesAfterExtendedRun": [
+    "Sources/DaBin/QuickAccess.swift"
+  ],
+  "finalShortcutFollowup": {
+    "status": "passed",
+    "quickAccessChecks": 26,
+    "nativeSuites": 93,
+    "nativeDefaultRenders": 62,
+    "renderEvidence": "extended/final-default-render",
+    "finalBuildSourceFingerprint": "391a270765f669a913cf9e3f2be1c8285cd9c3807e01dcaf5374eb2d6871f8e4"
+  },
+  "finalKMappingFollowup": {
+    "status": "passed",
+    "focusedSuites": 6,
+    "quickAccessChecks": 28,
+    "productionDelta": "QuickAccess.swift: Search K labels/default modifier fallback and K keycode; reserved reader unchanged",
+    "report": "final-k-regressions/report.json"
+  }
+}

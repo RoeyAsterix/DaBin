@@ -4,6 +4,7 @@ import SwiftUI
 /// `CaptureFeedCard`, so changing this body never replaces the scroll target.
 @MainActor
 struct HourlyCaptureCard: View {
+    @Environment(\.workspaceZoom) private var zoom
     @Environment(\.daBinAccent) private var accent
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @ObservedObject var state: AppState
@@ -52,7 +53,7 @@ struct HourlyCaptureCard: View {
                             collectionMetadata
                             Spacer(minLength: 4)
                             Image(systemName: "chevron.down")
-                                .font(.system(size: 11, weight: .semibold))
+                                .font(.system(size: zoom.fontSize(11), weight: .semibold))
                                 .foregroundStyle(accent)
                                 .frame(width: compact ? 26 : 30, height: compact ? 26 : 30)
                                 .background(accent.opacity(0.09), in: RoundedRectangle(cornerRadius: 8))
@@ -67,12 +68,12 @@ struct HourlyCaptureCard: View {
                 .accessibilityValue(group.captureCountLabel)
                 .accessibilityHint("Displays every automatic action saved during this hour")
                 .accessibilityIdentifier("collection-hour-summary")
+                .captureDragSource(state: state, captures: group.captures, label: summaryTitle)
                 .buddyHelp("Open collection")
             }
         }
         .padding(compact ? 8 : 14)
-        .background(Palette.surface,
-                    in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+        .projectCardBackground(workspace: state.workspace, projectName: resolvedProject)
         .overlay {
             RoundedRectangle(cornerRadius: 14, style: .continuous)
                 .strokeBorder(Palette.line, lineWidth: 0.7)
@@ -84,10 +85,11 @@ struct HourlyCaptureCard: View {
     private var expandedHeader: some View {
         HStack(alignment: .center, spacing: 8) {
             collectionMetadata
+                .captureDragSource(state: state, captures: group.captures, label: summaryTitle)
             Spacer(minLength: 6)
             Button(action: toggleExpansion) {
                 Image(systemName: "minus")
-                    .font(.system(size: 11, weight: .semibold))
+                    .font(.system(size: zoom.fontSize(11), weight: .semibold))
                     .frame(width: 32, height: 32)
                     .background(accent.opacity(0.11),
                                 in: RoundedRectangle(cornerRadius: 7, style: .continuous))
@@ -106,7 +108,7 @@ struct HourlyCaptureCard: View {
             HStack(spacing: 6) {
                 Image(systemName: action.primary.captureOrigin == .automaticScreenshot
                       ? "camera.viewfinder" : "doc.on.clipboard")
-                    .font(.system(size: compact ? 9 : 10, weight: .medium))
+                    .font(.system(size: zoom.fontSize(compact ? 9 : 10), weight: .medium))
                     .foregroundStyle(accent)
                     .accessibilityHidden(true)
                 CaptureReceiptView(capture: action.primary,
@@ -119,7 +121,7 @@ struct HourlyCaptureCard: View {
             .padding(.top, compact ? 6 : 8)
             if let application = action.primary.sourceApplicationName {
                 Text(application)
-                    .font(.system(size: compact ? 9 : 10))
+                    .font(.system(size: zoom.fontSize(compact ? 9 : 10)))
                     .foregroundStyle(Palette.muted)
                     .lineLimit(1)
                     .padding(.horizontal, compact ? 2 : 9)
@@ -137,14 +139,19 @@ struct HourlyCaptureCard: View {
                 }
             }
         }
-        .background(Palette.surface.opacity(0.74),
-                    in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .projectCardBackground(workspace: state.workspace, projectName: project(for: action),
+                               cornerRadius: 10, baseColor: Palette.surface.opacity(0.74))
         .overlay {
             RoundedRectangle(cornerRadius: 10, style: .continuous)
                 .strokeBorder(Palette.line.opacity(0.76), lineWidth: 0.5)
         }
         .accessibilityElement(children: .contain)
         .accessibilityLabel("\(action.primary.captureOrigin.displayName) at \(captureClock(action.primary))")
+    }
+
+    private func project(for action: AutomaticCaptureAction) -> String? {
+        let projects = Set(action.captures.map { ExplorerQuery.project(of: $0, in: state.store.captures) })
+        return projects.count == 1 ? (projects.first ?? nil) : nil
     }
 
     private func toggleExpansion() {
@@ -160,12 +167,12 @@ struct HourlyCaptureCard: View {
     private var collectionMetadata: some View {
         VStack(alignment: .leading, spacing: compact ? 3 : 4) {
             Text(group.captureCountLabel)
-                .font(.system(size: compact ? 13 : 16, weight: .semibold))
+                .font(.system(size: zoom.fontSize(compact ? 13 : 16), weight: .semibold))
                 .foregroundStyle(Palette.foreground)
                 .lineLimit(2)
                 .accessibilityIdentifier("collection-hour-count")
             Text(receiptTime)
-                .font(.system(size: compact ? 10 : 11, weight: .medium))
+                .font(.system(size: zoom.fontSize(compact ? 10 : 11), weight: .medium))
                 .foregroundStyle(Palette.muted)
                 .monospacedDigit()
                 .lineLimit(2)
@@ -173,7 +180,7 @@ struct HourlyCaptureCard: View {
                 .accessibilityIdentifier("collection-hour-time")
             if showsActionCount {
                 Text(group.actionCountLabel)
-                    .font(.system(size: compact ? 9 : 10))
+                    .font(.system(size: zoom.fontSize(compact ? 9 : 10)))
                     .foregroundStyle(Palette.muted)
                     .lineLimit(2)
             }

@@ -1,0 +1,11 @@
+{
+  "source": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/store-preparation-20261004/native",
+  "sourceMatchesVerifiedStoreInputs": true,
+  "targetVersion": "0.4.31",
+  "targetBuild": "86",
+  "localChannel": "github",
+  "previousVersion": "0.4.30",
+  "previousBuild": "85",
+  "previousExecutableSHA256": "034c3c17b92386b1fc404ea88b71d950cfda72927e80fd7eb79f58365d3f2e49",
+  "preservesIndependentSharedEdits": true
+}

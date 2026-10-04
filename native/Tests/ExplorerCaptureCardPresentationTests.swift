@@ -215,7 +215,7 @@ import SwiftUI
             $0.frame.width > 0 && $0.frame.height > 0 && card.frame.insetBy(dx: -1, dy: -1).contains($0.frame)
         }
         try expect(visible.filter { $0.identifier == "capture-trail-\(capture.id.uuidString)" }.count == 1,
-                   "ViewThatFits exposes only one visible content-trail footer action")
+                   "The stable footer layout exposes only one visible content-trail action")
         let quickLabel = capture.isTask ? "Complete task" : "Turn into task"
         let quickCount = visible.filter { $0.label == quickLabel }.count
         try expect(quickCount == (capture.isTask || capture.parentTaskID == nil ? 1 : 0),

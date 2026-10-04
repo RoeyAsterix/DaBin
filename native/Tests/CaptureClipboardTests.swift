@@ -70,6 +70,14 @@ struct CaptureClipboardTests {
         try expect(firstURL == store.managedURL(for: fileOne) && secondURL == store.managedURL(for: fileTwo),
                    "File copy uses DaBin-managed originals in action order")
         try expect(written.count == 4, "Every successful request writes once")
+        try service.copyText(exactNote)
+        try expect(written.last?.items == [.text(exactNote)], "Project-note copy preserves its exact plain text without creating a capture")
+        do {
+            try service.copyText(" \n ")
+            try expect(false, "Blank project-note copy must fail")
+        } catch CaptureClipboardError.noContent {
+            try expect(written.count == 5, "Blank note copy leaves the clipboard untouched")
+        }
 
         let privateBoard = NSPasteboard(name: .init("DaBin.ClipboardTests.\(UUID().uuidString)"))
         let nativeService = CaptureClipboardService(pasteboard: privateBoard)
@@ -105,7 +113,7 @@ struct CaptureClipboardTests {
             _ = try service.copy([], managedURL: store.managedURL(for:))
             try expect(false, "An empty action cannot overwrite the clipboard")
         } catch CaptureClipboardError.noContent {
-            try expect(written.count == 4, "An empty action never reaches the writer")
+            try expect(written.count == 5, "An empty action never reaches the writer")
         }
 
         try FileManager.default.removeItem(at: firstURL)
@@ -113,7 +121,7 @@ struct CaptureClipboardTests {
             _ = try service.copy([fileOne], managedURL: store.managedURL(for:))
             try expect(false, "A missing saved original cannot report a successful copy")
         } catch CaptureClipboardError.missingSavedOriginal {
-            try expect(written.count == 4, "A missing original leaves the clipboard untouched")
+            try expect(written.count == 5, "A missing original leaves the clipboard untouched")
         }
 
         let validBeforeBrokenBatch = written.count

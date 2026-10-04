@@ -1,0 +1,774 @@
+{
+  "created": "2026-10-04",
+  "brand": "DaBin",
+  "appVersion": "0.4.31 (86)",
+  "status": "READY FOR GUIDED DEMO EDIT",
+  "method": "Production native SwiftUI/AppKit components rendered offscreen from a hash-verified frozen QA module, with isolated fictional local sample data. Editorial PNG state snapshots, not a live screen recording.",
+  "privacy": "Isolated temporary local archive, isolated preferences, offscreen non-key windows. No real clipboard, network, permission requests, live app actions or OS notifications. Auto Capture settings are paused and its runtime never starts.",
+  "uiAssets": [
+    {
+      "autoCaptureRuntime": false,
+      "autoCaptureStatus": "Off · choose what to capture",
+      "captureCount": 0,
+      "file": "DABIN__UI__01_INBOX_EMPTY.png",
+      "height": 1404,
+      "linkPreviews": false,
+      "nativeContentSize": [
+        1160,
+        652
+      ],
+      "pixelScale": 2,
+      "route": "inbox",
+      "scroll": "current/top",
+      "width": 2360,
+      "sha256": "157349de4d2f2f26c29b1679e290122f746218487733bca10114e944bc73b2bb",
+      "description": "Empty native Inbox; Paste, Files and Task controls, local drop hint, To organize, Day/Week.",
+      "qa": "PASS: native actual interface; fictional data; readable at source resolution; frame and robot identity preserved."
+    },
+    {
+      "autoCaptureRuntime": false,
+      "autoCaptureStatus": "Off · choose what to capture",
+      "captureCount": 1,
+      "file": "DABIN__UI__02A_INBOX_IMAGE_CAPTURE.png",
+      "height": 1404,
+      "linkPreviews": false,
+      "nativeContentSize": [
+        1160,
+        652
+      ],
+      "pixelScale": 2,
+      "route": "inbox",
+      "scroll": "current/top",
+      "width": 2360,
+      "sha256": "32d72da7c7fdb71ebc30e1d982b9f266966c3680187f4fa08549265bb64fc46c",
+      "description": "One newly imported fictional image shown in actual Inbox. Riverside studio palette remains visible.",
+      "qa": "PASS: native actual interface; fictional data; readable at source resolution; frame and robot identity preserved."
+    },
+    {
+      "autoCaptureRuntime": false,
+      "autoCaptureStatus": "Off · choose what to capture",
+      "captureCount": 2,
+      "file": "DABIN__UI__02B_INBOX_LINK_CAPTURE.png",
+      "height": 1404,
+      "linkPreviews": false,
+      "nativeContentSize": [
+        1160,
+        652
+      ],
+      "pixelScale": 2,
+      "route": "inbox",
+      "scroll": "current/top",
+      "width": 2360,
+      "sha256": "e6589059948d09c5dbf90e9377dda36f22ce2cacf5d2497a154eec6bb8511e97",
+      "description": "Same Inbox after safe link capture; example.com/studio visible. No link preview fetched.",
+      "qa": "PASS: native actual interface; fictional data; readable at source resolution; frame and robot identity preserved."
+    },
+    {
+      "autoCaptureRuntime": false,
+      "autoCaptureStatus": "Off · choose what to capture",
+      "captureCount": 2,
+      "file": "DABIN__UI__02_INBOX_TYPED.png",
+      "height": 1404,
+      "linkPreviews": false,
+      "nativeContentSize": [
+        1160,
+        652
+      ],
+      "pixelScale": 2,
+      "route": "inbox",
+      "scroll": "current/top",
+      "width": 2360,
+      "sha256": "f3390a291c74fa1e780ac3cd1425eb68810431061c081679a9b4ea91cd61975b",
+      "description": "Same Inbox with a typed unsaved quick note and saved link behind it.",
+      "qa": "PASS: native actual interface; fictional data; readable at source resolution; frame and robot identity preserved."
+    },
+    {
+      "autoCaptureRuntime": false,
+      "autoCaptureStatus": "Off · choose what to capture",
+      "captureCount": 5,
+      "file": "DABIN__UI__03_INBOX_SAVED.png",
+      "height": 1404,
+      "linkPreviews": false,
+      "nativeContentSize": [
+        1160,
+        652
+      ],
+      "pixelScale": 2,
+      "route": "inbox",
+      "scroll": "current/top",
+      "width": 2360,
+      "sha256": "d1dc36fb78b0ce9c4488f623526eb937e5152c7a5f6554b41a635a56e0fc9be5",
+      "description": "Actual saved note from AppState.saveNewNote; original captured text is its visible native title.",
+      "qa": "PASS: native actual interface; fictional data; readable at source resolution; frame and robot identity preserved."
+    },
+    {
+      "autoCaptureRuntime": false,
+      "autoCaptureStatus": "Off · choose what to capture",
+      "captureCount": 5,
+      "file": "DABIN__UI__04_INBOX_DAY.png",
+      "height": 1404,
+      "linkPreviews": false,
+      "nativeContentSize": [
+        1160,
+        652
+      ],
+      "pixelScale": 2,
+      "route": "daily",
+      "scroll": "current/top",
+      "width": 2360,
+      "sha256": "cf868fa25f6664a0173fc88c1787072536de9f3120f64475e3e849163e555c58",
+      "description": "Native capture Day view for fictional current day, with the same saved note.",
+      "qa": "PASS: native actual interface; fictional data; readable at source resolution; frame and robot identity preserved."
+    },
+    {
+      "autoCaptureRuntime": false,
+      "autoCaptureStatus": "Off · choose what to capture",
+      "captureCount": 5,
+      "file": "DABIN__UI__05_INBOX_WEEK.png",
+      "height": 1404,
+      "linkPreviews": false,
+      "nativeContentSize": [
+        1160,
+        652
+      ],
+      "pixelScale": 2,
+      "route": "weekly",
+      "scroll": "current/top",
+      "width": 2360,
+      "sha256": "35764fe89ae969c243a8f954960f6ed18c928459a97c6b0afaf39b1c8b8d7c2c",
+      "description": "Native Week view with three active fictional capture days.",
+      "qa": "PASS: native actual interface; fictional data; readable at source resolution; frame and robot identity preserved."
+    },
+    {
+      "autoCaptureRuntime": false,
+      "autoCaptureStatus": "Off · choose what to capture",
+      "captureCount": 5,
+      "file": "DABIN__UI__06_STUDIO_COLLECTION.png",
+      "height": 1404,
+      "linkPreviews": false,
+      "nativeContentSize": [
+        1160,
+        652
+      ],
+      "pixelScale": 2,
+      "route": "library",
+      "scroll": "current/top",
+      "width": 2360,
+      "sha256": "b1dfa6735eb00dc6c0f0ddf841583838455b2a5307c57e85daa90f11d183eb31",
+      "description": "Native collection in Studio refresh project, actual image, link and note assigned via AppState.",
+      "qa": "PASS: native actual interface; fictional data; readable at source resolution; frame and robot identity preserved."
+    },
+    {
+      "autoCaptureRuntime": false,
+      "autoCaptureStatus": "Off · choose what to capture",
+      "captureCount": 5,
+      "file": "DABIN__UI__07_STUDIO_NOTES.png",
+      "height": 1404,
+      "linkPreviews": false,
+      "nativeContentSize": [
+        1160,
+        652
+      ],
+      "pixelScale": 2,
+      "route": "library",
+      "scroll": "current/top",
+      "width": 2360,
+      "sha256": "3107586d1507baf5bd6e8a2cb41b947c65beddc6b1047abe86a37595059e2ca7",
+      "description": "Actual persistent project scratchpad with fictional text; native Autosaved, Save note, Make task controls.",
+      "qa": "PASS: native actual interface; fictional data; readable at source resolution; frame and robot identity preserved."
+    },
+    {
+      "autoCaptureRuntime": false,
+      "autoCaptureStatus": "Off · choose what to capture",
+      "captureCount": 5,
+      "file": "DABIN__UI__08A_CLIPBOARD_HISTORY.png",
+      "height": 1404,
+      "linkPreviews": false,
+      "nativeContentSize": [
+        1160,
+        652
+      ],
+      "pixelScale": 2,
+      "route": "library",
+      "scroll": "current/top",
+      "width": 2360,
+      "sha256": "3f9623c49f49953debb73890027e4f7c52842d95061b02aa539492c6c40b7f8e",
+      "description": "Native Clipboard view with history filter; shows safe saved note and link.",
+      "qa": "PASS: native actual interface; fictional data; readable at source resolution; frame and robot identity preserved."
+    },
+    {
+      "autoCaptureRuntime": false,
+      "autoCaptureStatus": "Off · choose what to capture",
+      "captureCount": 5,
+      "file": "DABIN__UI__08_NAMED_SNIPPETS.png",
+      "height": 1404,
+      "linkPreviews": false,
+      "nativeContentSize": [
+        1160,
+        652
+      ],
+      "pixelScale": 2,
+      "route": "library",
+      "scroll": "current/top",
+      "width": 2360,
+      "sha256": "59762ca5914386d079e052f7323028771bb26905270f50b0fac5fee8cd802f71",
+      "description": "Native Clipboard named-snippet filter; actual Studio palette alias and captured text.",
+      "qa": "PASS: native actual interface; fictional data; readable at source resolution; frame and robot identity preserved."
+    },
+    {
+      "autoCaptureRuntime": false,
+      "autoCaptureStatus": "Off · choose what to capture",
+      "captureCount": 5,
+      "file": "DABIN__UI__09_SHELF.png",
+      "height": 1404,
+      "linkPreviews": false,
+      "nativeContentSize": [
+        1160,
+        652
+      ],
+      "pixelScale": 2,
+      "route": "library",
+      "scroll": "current/top",
+      "width": 2360,
+      "sha256": "de89b6fd3fbc03ee62d3f9d3d5c94f65307c685b3317143fa127973ffcdc622a",
+      "description": "Actual project Shelf containing the same three safe records; native drag/drop and Export shelf controls.",
+      "qa": "PASS: native actual interface; fictional data; readable at source resolution; frame and robot identity preserved."
+    },
+    {
+      "autoCaptureRuntime": false,
+      "autoCaptureStatus": "Off · choose what to capture",
+      "captureCount": 5,
+      "file": "DABIN__UI__10_OCR_SEARCH.png",
+      "height": 1404,
+      "linkPreviews": false,
+      "nativeContentSize": [
+        1160,
+        652
+      ],
+      "pixelScale": 2,
+      "route": "search",
+      "scroll": "current/top",
+      "width": 2360,
+      "sha256": "56ae5109ab4778a5f3de7ae2aed8db0e8a520b6280fa38b2dc906f8f528381e0",
+      "description": "Actual saved-content search for riverside. The image matches real local Apple Vision OCR, alongside a note and project scratchpad.",
+      "qa": "PASS: native actual interface; fictional data; readable at source resolution; frame and robot identity preserved."
+    },
+    {
+      "autoCaptureRuntime": false,
+      "autoCaptureStatus": "Off · choose what to capture",
+      "captureCount": 5,
+      "file": "DABIN__UI__11_OCR_PREVIEW.png",
+      "height": 1404,
+      "linkPreviews": false,
+      "nativeContentSize": [
+        1160,
+        652
+      ],
+      "pixelScale": 2,
+      "route": "search",
+      "scroll": "current/top",
+      "width": 2360,
+      "sha256": "b9e6c648325b1ac54026db89af8c7ee9cdbfdbc046a325e53c5da7e1d3571a6a",
+      "description": "Same real search with native image preview panel open.",
+      "qa": "PASS: native actual interface; fictional data; readable at source resolution; frame and robot identity preserved."
+    },
+    {
+      "autoCaptureRuntime": false,
+      "autoCaptureStatus": "Off · choose what to capture",
+      "captureCount": 5,
+      "file": "DABIN__UI__12_FILTERED_SEARCH.png",
+      "height": 1404,
+      "linkPreviews": false,
+      "nativeContentSize": [
+        1160,
+        652
+      ],
+      "pixelScale": 2,
+      "route": "search",
+      "scroll": "current/top",
+      "width": 2360,
+      "sha256": "b88445f79ef6a407ebb797a419ea3ee08a62ec9b016ce335da2dd6ee495525f9",
+      "description": "Actual search limited to Studio refresh, Media and current saved day; one image match remains.",
+      "qa": "PASS: native actual interface; fictional data; readable at source resolution; frame and robot identity preserved."
+    },
+    {
+      "autoCaptureRuntime": false,
+      "autoCaptureStatus": "Off · choose what to capture",
+      "captureCount": 5,
+      "file": "DABIN__UI__13_TASK_PLAN.png",
+      "height": 1404,
+      "linkPreviews": false,
+      "nativeContentSize": [
+        1160,
+        652
+      ],
+      "pixelScale": 2,
+      "route": "newTask",
+      "scroll": "current/top",
+      "width": 2360,
+      "sha256": "4c9816e1328a0de30d9f19741027a5095e7f43c0910cfa78faeadaa7a331eabb",
+      "description": "Native new task editor with fictional title, planned current day, High priority and focus duration.",
+      "qa": "PASS: native actual interface; fictional data; readable at source resolution; frame and robot identity preserved."
+    },
+    {
+      "autoCaptureRuntime": false,
+      "autoCaptureStatus": "Off · choose what to capture",
+      "captureCount": 5,
+      "file": "DABIN__UI__14_TASK_REPEAT_REMINDER.png",
+      "height": 1404,
+      "linkPreviews": false,
+      "nativeContentSize": [
+        1160,
+        652
+      ],
+      "pixelScale": 2,
+      "route": "newTask",
+      "scroll": "bottom",
+      "width": 2360,
+      "sha256": "8020c03b709dfc66064b590b558d36acb3288de05976442a0d6d1eefe9d44b8e",
+      "description": "Same native task editor scrolled to checklist 1/3, weekly repeat and 30-minute reminder draft.",
+      "qa": "PASS: native actual interface; fictional data; readable at source resolution; frame and robot identity preserved."
+    },
+    {
+      "autoCaptureRuntime": false,
+      "autoCaptureStatus": "Off · choose what to capture",
+      "captureCount": 6,
+      "file": "DABIN__UI__15_TODAY.png",
+      "height": 1404,
+      "linkPreviews": false,
+      "nativeContentSize": [
+        1160,
+        652
+      ],
+      "pixelScale": 2,
+      "route": "reminders",
+      "scroll": "current/top",
+      "width": 2360,
+      "sha256": "9e13b078daeca405615e566d8c6a185a6a93188aae37236e5d52a22b9f6a7b5d",
+      "description": "Native Today plan containing the same fictional task; OS notification scheduling was deliberately bypassed in fixture.",
+      "qa": "PASS: native actual interface; fictional data; readable at source resolution; frame and robot identity preserved."
+    },
+    {
+      "autoCaptureRuntime": false,
+      "autoCaptureStatus": "Off · choose what to capture",
+      "captureCount": 6,
+      "file": "DABIN__UI__16_FOCUS_READY.png",
+      "height": 1404,
+      "linkPreviews": false,
+      "nativeContentSize": [
+        1160,
+        652
+      ],
+      "pixelScale": 2,
+      "route": "detail",
+      "scroll": "current/top",
+      "width": 2360,
+      "sha256": "c2fd4efc8b00fe78d2df9de1afbf5a59c309f3c2fdaf62c92660ee592696659d",
+      "description": "Actual task detail with configured 25-minute focus session, Start control and task unchecked.",
+      "qa": "PASS: native actual interface; fictional data; readable at source resolution; frame and robot identity preserved."
+    },
+    {
+      "autoCaptureRuntime": false,
+      "autoCaptureStatus": "Off · choose what to capture",
+      "captureCount": 6,
+      "file": "DABIN__UI__17_FOCUS_RUNNING.png",
+      "height": 1404,
+      "linkPreviews": false,
+      "nativeContentSize": [
+        1160,
+        652
+      ],
+      "pixelScale": 2,
+      "route": "detail",
+      "scroll": "current/top",
+      "width": 2360,
+      "sha256": "fa49ec7e363d9aa688a8395eef4e9de1f05ea68df5490e4ef59e7a5a26dfc027",
+      "description": "Same actual task after native focus start two seconds earlier, timer 00:24:58, Pause and task remains open.",
+      "qa": "PASS: native actual interface; fictional data; readable at source resolution; frame and robot identity preserved."
+    },
+    {
+      "autoCaptureRuntime": false,
+      "autoCaptureStatus": "Off · choose what to capture",
+      "captureCount": 6,
+      "file": "DABIN__UI__18_AUTO_CAPTURE_OFF.png",
+      "height": 1404,
+      "linkPreviews": false,
+      "nativeContentSize": [
+        1160,
+        652
+      ],
+      "pixelScale": 2,
+      "route": "settings",
+      "scroll": "current/top",
+      "width": 2360,
+      "sha256": "0427843da9923c01456c10d5604ee5d96cfd6ce2f0ca97698491b33153169047",
+      "description": "Actual Settings, both capture preferences initially off. Bundle version belongs to fixture executable.",
+      "qa": "PASS: native actual interface; fictional data; readable at source resolution; frame and robot identity preserved."
+    },
+    {
+      "autoCaptureRuntime": false,
+      "autoCaptureStatus": "Paused · existing captures remain",
+      "captureCount": 6,
+      "file": "DABIN__UI__19_AUTO_CAPTURE_PAUSED.png",
+      "height": 1404,
+      "linkPreviews": false,
+      "nativeContentSize": [
+        1160,
+        652
+      ],
+      "pixelScale": 2,
+      "route": "settings",
+      "scroll": "current/top",
+      "width": 2360,
+      "sha256": "20d2652c6b2aed4ec3e4ef24df45512826ed57bbd6d8aa668ea6baa1c5431518",
+      "description": "Actual Settings with both source preferences opted in and status Paused; monitoring runtime is never started.",
+      "qa": "PASS: native actual interface; fictional data; readable at source resolution; frame and robot identity preserved."
+    },
+    {
+      "autoCaptureRuntime": false,
+      "autoCaptureStatus": "Off · choose what to capture",
+      "captureCount": 6,
+      "file": "DABIN__UI__20_PROJECT_EXPORT.png",
+      "height": 1404,
+      "linkPreviews": false,
+      "nativeContentSize": [
+        1160,
+        652
+      ],
+      "pixelScale": 2,
+      "route": "library",
+      "scroll": "current/top",
+      "width": 2360,
+      "sha256": "ed7cc8ad7e274d115dfcaeb14cc1ee78f0cd82017badaeba44a4dfca67a78c5d",
+      "description": "Actual project collection with Export project button and board More control visible. No file dialog or export executed.",
+      "qa": "PASS: native actual interface; fictional data; readable at source resolution; frame and robot identity preserved."
+    },
+    {
+      "autoCaptureRuntime": false,
+      "autoCaptureStatus": "Off · choose what to capture",
+      "captureCount": 6,
+      "file": "DABIN__UI__21_RECENTLY_DELETED.png",
+      "height": 1404,
+      "linkPreviews": false,
+      "nativeContentSize": [
+        1160,
+        652
+      ],
+      "pixelScale": 2,
+      "route": "trash",
+      "scroll": "current/top",
+      "width": 2360,
+      "sha256": "524df28d9ca60b2054a689d3da58806f91f6e25b1c3bc0cd1a7714d18f11330d",
+      "description": "Actual temporary archive removal result, recoverable Earlier palette idea and native Restore control.",
+      "qa": "PASS: native actual interface; fictional data; readable at source resolution; frame and robot identity preserved."
+    },
+    {
+      "autoCaptureRuntime": false,
+      "autoCaptureStatus": "Off · choose what to capture",
+      "captureCount": 7,
+      "file": "DABIN__UI__22_RESTORED.png",
+      "height": 1404,
+      "linkPreviews": false,
+      "nativeContentSize": [
+        1160,
+        652
+      ],
+      "pixelScale": 2,
+      "route": "library",
+      "scroll": "current/top",
+      "width": 2360,
+      "sha256": "25499e9dbd7a1bd3a8fdbcb875692b0140edf136fe48054de42917401f112815",
+      "description": "Actual archive restoration result; Earlier palette idea is visibly first in project order.",
+      "qa": "PASS: native actual interface; fictional data; readable at source resolution; frame and robot identity preserved."
+    }
+  ],
+  "robotAssets": [
+    {
+      "file": "DABIN__ROBOT__BLINK.png",
+      "size": [
+        902,
+        728
+      ],
+      "alpha": true,
+      "sha256": "e40bc9f7bfbd03b045807d0c66bc51f048611f25f4f593efff40b1656cef0de5",
+      "continuity": "CONTINUITY PASS",
+      "source": "Actual frozen production RobotCharacterView or TaskTimerRobotView; no redesign, generated reconstruction or redrawn geometry."
+    },
+    {
+      "file": "DABIN__ROBOT__CURIOUS_LEFT.png",
+      "size": [
+        902,
+        728
+      ],
+      "alpha": true,
+      "sha256": "be0f6b988a1efe29564abf323424b33e0cb09abb08ae1d1f8e309e7875e4f826",
+      "continuity": "CONTINUITY PASS",
+      "source": "Actual frozen production RobotCharacterView or TaskTimerRobotView; no redesign, generated reconstruction or redrawn geometry."
+    },
+    {
+      "file": "DABIN__ROBOT__CURIOUS_RIGHT.png",
+      "size": [
+        902,
+        728
+      ],
+      "alpha": true,
+      "sha256": "be0f6b988a1efe29564abf323424b33e0cb09abb08ae1d1f8e309e7875e4f826",
+      "continuity": "CONTINUITY PASS",
+      "source": "Actual frozen production RobotCharacterView or TaskTimerRobotView; no redesign, generated reconstruction or redrawn geometry."
+    },
+    {
+      "file": "DABIN__ROBOT__DELIGHTED.png",
+      "size": [
+        902,
+        728
+      ],
+      "alpha": true,
+      "sha256": "45708253c25f8b8a26f5daa386d3d6f41edfdc5548792b995f1f82dbc3cb27c2",
+      "continuity": "CONTINUITY PASS",
+      "source": "Actual frozen production RobotCharacterView or TaskTimerRobotView; no redesign, generated reconstruction or redrawn geometry."
+    },
+    {
+      "file": "DABIN__ROBOT__FOCUS_ALARM.png",
+      "size": [
+        302,
+        159
+      ],
+      "alpha": true,
+      "sha256": "1d2fe68ccee40aa48669dc7dfab912ac29b1a93d4d24943bbf566066763bccb3",
+      "continuity": "CONTINUITY PASS",
+      "source": "Actual frozen production RobotCharacterView or TaskTimerRobotView; no redesign, generated reconstruction or redrawn geometry."
+    },
+    {
+      "file": "DABIN__ROBOT__HUNGRY.png",
+      "size": [
+        902,
+        728
+      ],
+      "alpha": true,
+      "sha256": "80c6cfaa1ec1719e40f188b24c754cdf273cd6253718908f7e9b2bac4cedd257",
+      "continuity": "CONTINUITY PASS",
+      "source": "Actual frozen production RobotCharacterView or TaskTimerRobotView; no redesign, generated reconstruction or redrawn geometry."
+    },
+    {
+      "file": "DABIN__ROBOT__IDLE.png",
+      "size": [
+        902,
+        728
+      ],
+      "alpha": true,
+      "sha256": "be0f6b988a1efe29564abf323424b33e0cb09abb08ae1d1f8e309e7875e4f826",
+      "continuity": "CONTINUITY PASS",
+      "source": "Actual frozen production RobotCharacterView or TaskTimerRobotView; no redesign, generated reconstruction or redrawn geometry."
+    },
+    {
+      "file": "DABIN__ROBOT__PUZZLED.png",
+      "size": [
+        902,
+        728
+      ],
+      "alpha": true,
+      "sha256": "6a6110e7cb92593b5b5282f8ecd65188f951ae44ef0140eea2f2d2a89997949b",
+      "continuity": "CONTINUITY PASS",
+      "source": "Actual frozen production RobotCharacterView or TaskTimerRobotView; no redesign, generated reconstruction or redrawn geometry."
+    }
+  ],
+  "mouthPatches": {
+    "files": [
+      "DABIN__MOUTH__IDLE.png",
+      "DABIN__MOUTH__HUNGRY.png",
+      "DABIN__MOUTH__DELIGHTED.png"
+    ],
+    "canvas": [
+      902,
+      728
+    ],
+    "nativeRect": [
+      351,
+      311,
+      477,
+      391
+    ],
+    "method": "Crop exact native pixels from three production semantic mouth poses; same transparent canvas; no drawn mouth."
+  },
+  "sourceFiles": [
+    {
+      "file": "DaBin/native/build/store-preparation-20261004/native/Sources/DaBin/BoardView.swift",
+      "sha256": "a8ee65c0dc401aa566964d81b6ef6c3249c449ae72b783ea2d6521b0544ff801",
+      "access": "read only"
+    },
+    {
+      "file": "DaBin/native/build/store-preparation-20261004/native/Sources/DaBin/InboxScreen.swift",
+      "sha256": "166fc7cdde88eca42dd63594e802af58e494b705ff6d7a08ef6522956314004c",
+      "access": "read only"
+    },
+    {
+      "file": "DaBin/native/build/store-preparation-20261004/native/Sources/DaBin/CaptureCards.swift",
+      "sha256": "05d4aff99c711e295b446a0851ededf788a841d31ab2fc85e4278b6d4c1b7a54",
+      "access": "read only"
+    },
+    {
+      "file": "DaBin/native/build/store-preparation-20261004/native/Sources/DaBin/AppState.swift",
+      "sha256": "732c550407b73d5ec78923cbba90b3fc88f84a659048783e6d1241a68b903185",
+      "access": "read only"
+    },
+    {
+      "file": "DaBin/native/build/store-preparation-20261004/native/Sources/DaBin/CaptureStore.swift",
+      "sha256": "05e7f56af879fee9038dcef28c3603ec082aae8f1eec9973ed2159b35beeb90d",
+      "access": "read only"
+    },
+    {
+      "file": "DaBin/native/build/store-preparation-20261004/native/Sources/DaBin/WorkspaceStore.swift",
+      "sha256": "d566b571ff130cfc5f5abadd0d1a8d36f858df2bbe1149b288509be545a8982b",
+      "access": "read only"
+    },
+    {
+      "file": "DaBin/native/build/store-preparation-20261004/native/Sources/DaBin/WorkspaceQuery.swift",
+      "sha256": "406a22328b8e2569ccaa62f8116bddd45bbcf8fb9d7b7e3336f426f25f66e366",
+      "access": "read only"
+    },
+    {
+      "file": "DaBin/native/build/store-preparation-20261004/native/Sources/DaBin/ProjectWorkspaceView.swift",
+      "sha256": "c1eefe16cb1668b9eee677fe0b594eb55d27e610651e8d8a40534c45b4b31e6b",
+      "access": "read only"
+    },
+    {
+      "file": "DaBin/native/build/store-preparation-20261004/native/Sources/DaBin/ProjectWorkspaceExport.swift",
+      "sha256": "5126852a7222ebfd20252034202e2fd1aebe690c163cd2e8c520a268e323a11a",
+      "access": "read only"
+    },
+    {
+      "file": "DaBin/native/build/store-preparation-20261004/native/Sources/DaBin/ContentIndexService.swift",
+      "sha256": "c1d27d28092c9e97b5fac1ebe8bdac511701b55eb1027eb4ab80b860a3ec6f6b",
+      "access": "read only"
+    },
+    {
+      "file": "DaBin/native/build/store-preparation-20261004/native/Sources/DaBin/SearchScreen.swift",
+      "sha256": "56344559bd962b04ac5ca789693cce024b4c670e3367dc82d52ab3205aad7eea",
+      "access": "read only"
+    },
+    {
+      "file": "DaBin/native/build/store-preparation-20261004/native/Sources/DaBin/SearchResultCard.swift",
+      "sha256": "388868e6cb0e8ae3da9630b42c2c791a0246697dfda3bf7d3a42b2f71320a92a",
+      "access": "read only"
+    },
+    {
+      "file": "DaBin/native/build/store-preparation-20261004/native/Sources/DaBin/TaskPlanningEditor.swift",
+      "sha256": "744d8e0d05bc468677f9f537fcc454a1ec80e4072254fa862bcbe049fc1a7a15",
+      "access": "read only"
+    },
+    {
+      "file": "DaBin/native/build/store-preparation-20261004/native/Sources/DaBin/TaskFocusSession.swift",
+      "sha256": "8e33156b1a0cf532d187251ba9559ce0c893d8f3f0adbc4ffae8c9b7a1c8a5c3",
+      "access": "read only"
+    },
+    {
+      "file": "DaBin/native/build/store-preparation-20261004/native/Sources/DaBin/TaskFocusControls.swift",
+      "sha256": "535dd8089f903e3a8462e5a351a167a956706f43cb43c008f23c0e8c7e88fdc7",
+      "access": "read only"
+    },
+    {
+      "file": "DaBin/native/build/store-preparation-20261004/native/Sources/DaBin/SettingsScreen.swift",
+      "sha256": "4613ab97384710b8dc495e8b7641eeadb7f3fd0f269534844fbebbfa8993cdd3",
+      "access": "read only"
+    },
+    {
+      "file": "DaBin/native/build/store-preparation-20261004/native/Sources/DaBin/AutoCaptureSettings.swift",
+      "sha256": "f5e53774d1bf9421261feef5852e51a6954ba6a831172c46481c539c8cb2b2d0",
+      "access": "read only"
+    },
+    {
+      "file": "DaBin/native/build/store-preparation-20261004/native/Sources/DaBin/RobotCharacterView.swift",
+      "sha256": "efacf4bcad0b7b9dd201d31889e890090e21a13eb693113f207700b5bd630af3",
+      "access": "read only"
+    },
+    {
+      "file": "DaBin/native/build/store-preparation-20261004/native/Sources/DaBin/QuietOrbitVisualStyle.swift",
+      "sha256": "07c1ae899900482f87b2a8a55d8978b91f862ffa1d4b394b44fea98d8f1224ae",
+      "access": "read only"
+    },
+    {
+      "file": "DaBin/native/build/store-preparation-20261004/native/Sources/DaBin/QuietOrbitGeometry.swift",
+      "sha256": "36b3f90f64f747d03243c37e897b37d611a1ffc818a61bd587c296ea73fcf293",
+      "access": "read only"
+    },
+    {
+      "file": "DaBin/native/build/store-preparation-20261004/native/Sources/DaBin/TaskTimerRobotView.swift",
+      "sha256": "11a6b8a9612308d5b5e837151e50c16cab6957540689509759718d81a4d37837",
+      "access": "read only"
+    },
+    {
+      "file": "DaBin/native/build/store-preparation-20261004/native/Sources/DaBin/RobotAppFrameView.swift",
+      "sha256": "0edbd249a3998343c5e1f83cf412833597f3e74e7e02f70914792e1c23cf8809",
+      "access": "read only"
+    },
+    {
+      "file": "RenderGuidedDemoAssets.swift",
+      "sha256": "ca697a2322ed1ab8729e37c29238dc32b9002e7231e897af506f463ecc381b03",
+      "access": "marketing asset renderer source"
+    },
+    {
+      "file": "ReproduceNativeAssets.py",
+      "sha256": "71483c2cc53a520a0c9e5855896af0bc075770572cfdb5a7ab213f00065acc8c",
+      "access": "marketing asset renderer source"
+    },
+    {
+      "file": "FinalizeNativeAssets.py",
+      "sha256": "f67015ea2789e63aafd3587bae229bde3d9cdc7971821e806ce19a44c298e4d2",
+      "access": "marketing asset renderer source"
+    }
+  ],
+  "sampleContent": {
+    "project": "Studio refresh",
+    "projectColor": "D87552",
+    "image": "Original local vector raster fixture: Riverside studio, Warm clay. Deep teal. Soft cream., three palette swatches.",
+    "note": "Warm clay. Deep teal. Soft cream.",
+    "snippetName": "Studio palette",
+    "link": "https://example.com/studio",
+    "task": "Finish the studio palette",
+    "restoredNote": "An earlier palette idea",
+    "realOCR": "Riverside studio\nWarm clay. Deep teal. Soft cream.\nClay\nTeal\nCream"
+  },
+  "verifiedFeatureRoutes": {
+    "manualCapture": "Inbox → Paste/Files/Drop/quick text; safe fixture imports use actual CaptureStore backend, not the real clipboard.",
+    "dayWeek": "Inbox → Day/Week; native capture date views.",
+    "organize": "Assign a capture to a project, or Keep in Projects from Inbox.",
+    "notes": "Project → Notes, native autosaving scratchpad.",
+    "snippet": "Project → Clipboard → Named snippets filter; actual alias persisted.",
+    "shelf": "Project → Shelf; actual persisted capture IDs.",
+    "search": "Native saved-content query and OCR index; Project, Type, Source application and saved-day filters exist. This scene demonstrates Project, Media and saved day.",
+    "task": "Task planning, checklist, priority, planned day, recurrence and reminder drafts.",
+    "focus": "Configured 25 minutes → Start → Pause; task remains open. Alarm is a separate actual native timer-end example.",
+    "autoCapture": "Settings → Automatic capture → separate opt-in Clipboard and Screenshots → Pause. Preferences demo only; runtime inert.",
+    "export": "Projects collection → Export project. UI affordance shown; export not executed.",
+    "backup": "Board header More options → Back up archive… / Restore archive backup… (BoardView.swift lines262-263). Verified source; no open-menu capture or backup operation.",
+    "recover": "More → Recently Deleted → Restore; actual fictional delete/restore completed."
+  },
+  "limitations": [
+    "Native Settings shows DaBin 0.0.0 (0) because Bundle.main is the fixture executable. Video should crop the actual Automatic capture section below that version panel; do not redraw version text.",
+    "Archive backup native menu was not opened: system tracking may move an offscreen menu onto the live desktop. Use the actual board More control and an editorial route cue.",
+    "Clipboard History contains fixture captures, not a real clipboard capture history. No clipboard is read or written.",
+    "Reminders in the fixture are draft/persisted data; no OS notification is scheduled.",
+    "Focus alarm PNG is a hypothetical timer-end example, not evidence that 25 minutes elapsed during capture; a focus session does not complete the task.",
+    "These PNGs document safe native states. Transitions in the marketing video are editorial animation, not recorded interaction footage."
+  ],
+  "visualQA": {
+    "contactSheet": "DABIN__QA__V2_NATIVE_STATES.png",
+    "status": "PASS",
+    "checks": [
+      "All 25 state images consistent native 2360×1404 output.",
+      "Safe screenshot → link → typed note → saved note sequence visibly changes the actual archive.",
+      "Same Studio refresh sample image, note, link, task and OCR match across scenes.",
+      "Native robot identity and shape unmodified; transparent fixed canvases align.",
+      "Critical captures, OCR, task detail, named snippet and restore states inspected at original resolution; complete state contact sheet inspected."
+    ]
+  },
+  "pointerQA": {
+    "status": "PASS",
+    "coordinateOrigin": "top left of actual2360×1404 source PNG",
+    "mapping": "DABIN__POINTER_TARGETS.json",
+    "crosshairContactSheet": "DABIN__QA__POINTER_TARGETS.png",
+    "continuity": "CONTINUITY PASS: actual native images copied unchanged into explicitly labeledQA derivative, with coordinate overlays; source PNGs unmodified.",
+    "mappingSHA256": "c381da5acd30d0f4fe7170f8b19e1f820f43df7627befe1442924f654e1ac224",
+    "sheetSHA256": "81c6344c4152ea36bd916c6e521e201435930c5c4b84e44a5259dedfd8820fb5"
+  }
+}

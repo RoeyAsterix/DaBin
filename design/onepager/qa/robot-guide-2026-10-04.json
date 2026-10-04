@@ -1,0 +1,74 @@
+{
+  "date": "2026-10-04",
+  "result": "PASS",
+  "version": "0.4.31",
+  "build": "86",
+  "scope": "Updated friendly two-page guide and reusable copy only. No production app source, installed app, personal captures or user settings changed.",
+  "outputs": {
+    "docs/DaBin-Quick-Guide.pdf": "74b04eab53733fe91fbeb20c871042dbdef31406b7201f344f57692920a756de",
+    "output/pdf/DaBin-Quick-Guide.pdf": "74b04eab53733fe91fbeb20c871042dbdef31406b7201f344f57692920a756de",
+    "docs/DaBin-Friendly-Copy.txt": "c592dc017c63a0800d1da4bdc57be88b9abb2623bc47aefe1316873608090440",
+    "output/copy/DaBin-Friendly-Copy.txt": "c592dc017c63a0800d1da4bdc57be88b9abb2623bc47aefe1316873608090440"
+  },
+  "authoring_inputs": {
+    "design/onepager/copy.json": "4084c3ab9ae452df1cdf1bce1bd125d1d32d39a9bd908f56dae493b59a6264db",
+    "design/onepager/build_guide.py": "253bb87aaae58edab2e972d7caab3e0fa9afb4a30f4071c681b8d2a2bd67277c",
+    "design/onepager/ExportGuide.swift": "e27e414c6a6b0cf535b6795b23921fb5fb32b7beea08b5107fb1f631f9c9f8f1",
+    "design/onepager/export_guide_assets.py": "364effe01147fa78433b27da74ede484b0a6c362b844bb0189d7aac927de3d06",
+    "design/onepager/assets/guide-assets.json": "3c4ae60a347aff09b6d19ad72635b682e1f335c056eff86cb6e475315a483937",
+    "design/onepager/assets/guide-native-source-manifest.json": "3d6a4d80ec5236d8b2979c1fb5f38fdcbafc6cc4468ed58ff7bce47e33ba691e",
+    "design/onepager/assets/guide-native-renders.json": "71f975f5ce283cdc4588d55601e4faa806af4e03a2a8a23568d209f090379142",
+    "design/onepager/README.md": "1c2b96c28e1d3d3d4a6c6993270e31ab9a39b979c5c70260bf655eeb7d630469"
+  },
+  "structure": {
+    "page_count": 2,
+    "page_size": "A4 landscape",
+    "pdf_word_count": 409,
+    "selectable_text": "PASS",
+    "matching_delivery_and_output_copies": "PASS",
+    "required_claims": "PASS",
+    "text_image_and_annotation_bounds": "PASS",
+    "embedded_fonts": {
+      "/AAAAAA+Arial-BoldMT": "embedded TrueType",
+      "/AAAAAA+ArialMT": "embedded TrueType"
+    },
+    "authored_unicode_dashes": "none"
+  },
+  "native_provenance": {
+    "manifest": "../assets/guide-native-source-manifest.json",
+    "render_manifest": "../assets/guide-native-renders.json",
+    "source_root": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/store-preparation-20261004/native",
+    "distribution": "app-store",
+    "complete_source_inventory_hashes": "PASS",
+    "resource_info_receipt_module_exporter_and_asset_hashes": "PASS",
+    "fixture_privacy": "Fictional temporary archive and isolated preferences. No personal captures, clipboard reads/writes, network requests, installed-app actions or notifications. Code-drawn landscape fixture, no KARI material.",
+    "render_execution": "Initial sandbox run could not connect to macOS window services and timed out. Scoped host-access retry exported five assets and exited successfully; own windows were closed."
+  },
+  "visual_review": {
+    "result": "PASS",
+    "method": "Both final PDF pages rendered by Poppler at 180 dpi and inspected at original 2105x1489 resolution after the final copy/layout changes.",
+    "render_sha256": {
+      "tmp/pdfs/robot-guide-0.4.31-1.png": "9db665429c8766fa7fd100b846dfd8c3000b2a13b34b4a0a871e7a845a578b5d",
+      "tmp/pdfs/robot-guide-0.4.31-2.png": "a5b33e9c3cb96d1efe23ebfa2c7c0860d1ff113d1b7e47be14301f01699e3f5b"
+    },
+    "checks": [
+      "No authored text overlap, clipping or overflow.",
+      "Numbered page-one badges avoid native controls and remain inside page margins.",
+      "Wide native Search excerpt shows two dates, query and filters clearly; image card is intentionally cropped by the PDF.",
+      "Priority wording is color-coded and retains readable Low/Medium/High labels.",
+      "Consistent headings, embedded typography, footer version, page numbering and friendly robot artwork.",
+      "Optional Auto Capture and Reduce Motion behavior are distinct from first steps; no universal drag or App Store availability promise."
+    ]
+  },
+  "preservation": {
+    "directory": "../archive/guide-before-0.4.31-20261004",
+    "files_verified": 15,
+    "manifest_sha256": "b62604e10fe77b483771ef8b10306de925d9057f01062a65f65ace544c48ffc4"
+  },
+  "limitations": [
+    "Native assets are linked to the verified Store QA module, not compared to a distribution-signed upload.",
+    "Physical external drag completion is not established by this guide; copy limits the claim to destinations accepting the content.",
+    "This is a two-page quick guide, not a full feature manual or App Store approval."
+  ],
+  "rebuild_note": "Any later PDF or authoring input change invalidates this review until both pages are rendered and inspected again."
+}

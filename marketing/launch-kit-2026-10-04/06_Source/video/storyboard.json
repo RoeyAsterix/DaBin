@@ -1,0 +1,56 @@
+{
+  "title": "Feed DaBin",
+  "duration_seconds": 22,
+  "fps": 30,
+  "scenes": [
+    {
+      "time": [
+        0,
+        5.1
+      ],
+      "action": "Exact current native robot enters with gentle settle; promise"
+    },
+    {
+      "time": [
+        5.1,
+        8.25
+      ],
+      "action": "Fictional link/note/palette-image tokens fly into exact hungry robot, then saved reaction"
+    },
+    {
+      "time": [
+        8.25,
+        10.9
+      ],
+      "action": "Actual native Studio refresh project (fictional captures)"
+    },
+    {
+      "time": [
+        10.9,
+        14.3
+      ],
+      "action": "Actual native riverside query and OCR result; saved content only"
+    },
+    {
+      "time": [
+        14.3,
+        22
+      ],
+      "action": "Save now / Find it later; Free / No account / Saved on your Mac appear with voice"
+    }
+  ],
+  "audio": {
+    "provider": "ElevenLabs",
+    "selected_take": 2,
+    "pace": 0.92,
+    "intro_delay_seconds": 1,
+    "added_pauses_seconds": [
+      1,
+      1.5
+    ],
+    "music": "none",
+    "effects": "three original code-generated quiet ticks"
+  },
+  "disclosure": "Editorial promo, not continuous screen recording. Native product UI and real saved-content OCR are captured in isolated fixtures. Flying tokens and pointer highlights are editorial animation.",
+  "captions": "Separate SRT timed using measured waveform phrase boundaries; text recognition verified; timing remains editorial estimates."
+}

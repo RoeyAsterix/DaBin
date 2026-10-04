@@ -1,0 +1,27 @@
+{
+  "sourceCanvas": [
+    1024,
+    1248
+  ],
+  "fixedCrop": [
+    98,
+    315,
+    1000,
+    1043
+  ],
+  "robotSize": [
+    902,
+    728
+  ],
+  "mouthPatchRect": [
+    351,
+    311,
+    477,
+    391
+  ],
+  "mouthPatchSize": [
+    902,
+    728
+  ],
+  "method": "Existing semantic production native idle/open-mouth/smile poses. Patch retains exact native face pixels so old mouth is replaced cleanly, with no drawn or generated replacement."
+}

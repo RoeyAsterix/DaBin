@@ -42,6 +42,7 @@ struct TaskAttachmentsView: View {
                                     Text(item.title).font(.system(size: 12, weight: .medium)).lineLimit(2)
                                 }.frame(maxWidth: .infinity, alignment: .leading).contentShape(Rectangle())
                             }.buttonStyle(.plain).accessibilityLabel("Open attachment \(item.title)")
+                                .captureDragSource(state: state, capture: item)
                             HStack {
                                 CaptureSourceIcon(capture: item, size: 14)
                                 Text(captureClock(item)).font(.system(size: 10)).foregroundStyle(Palette.muted)

@@ -1,0 +1,139 @@
+{
+  "status": "FAIL",
+  "submissionReady": false,
+  "checks": [
+    {
+      "result": "PASS",
+      "check": "name contains 1-30 characters"
+    },
+    {
+      "result": "PASS",
+      "check": "subtitle contains 1-30 characters"
+    },
+    {
+      "result": "PASS",
+      "check": "promotionalText contains 1-170 characters"
+    },
+    {
+      "result": "PASS",
+      "check": "description contains 1-4000 characters"
+    },
+    {
+      "result": "PASS",
+      "check": "keywords fit Apple's 100-byte limit"
+    },
+    {
+      "result": "PASS",
+      "check": "each keyword is longer than two characters"
+    },
+    {
+      "result": "PASS",
+      "check": "review notes fit Apple's 4000-byte limit"
+    },
+    {
+      "result": "PASS",
+      "check": "draft matches the no-account implementation"
+    },
+    {
+      "result": "PASS",
+      "check": "candidate bundleIdentifier matches source Info.plist"
+    },
+    {
+      "result": "PASS",
+      "check": "candidate version matches source Info.plist"
+    },
+    {
+      "result": "PASS",
+      "check": "candidate build matches source Info.plist"
+    },
+    {
+      "result": "PASS",
+      "check": "draft privacy URL matches source bundle configuration"
+    },
+    {
+      "result": "PASS",
+      "check": "description is plain text, without HTML"
+    },
+    {
+      "result": "FAIL",
+      "check": "owner confirmed supportURL"
+    },
+    {
+      "result": "FAIL",
+      "check": "owner confirmed copyright"
+    },
+    {
+      "result": "FAIL",
+      "check": "owner confirmed review contactName"
+    },
+    {
+      "result": "FAIL",
+      "check": "owner confirmed review contactEmail"
+    },
+    {
+      "result": "FAIL",
+      "check": "owner confirmed review contactPhone"
+    },
+    {
+      "result": "FAIL",
+      "check": "owner confirmed legalRightsHolder"
+    },
+    {
+      "result": "FAIL",
+      "check": "owner confirmed supportEmail"
+    },
+    {
+      "result": "FAIL",
+      "check": "owner confirmed price"
+    },
+    {
+      "result": "FAIL",
+      "check": "owner confirmed territories"
+    },
+    {
+      "result": "FAIL",
+      "check": "owner confirmed releaseMethod"
+    },
+    {
+      "result": "FAIL",
+      "check": "owner confirmed EUTraderStatus"
+    },
+    {
+      "result": "FAIL",
+      "check": "all externally verified submission gates are resolved"
+    }
+  ],
+  "errors": [
+    "owner confirmed supportURL",
+    "owner confirmed copyright",
+    "owner confirmed review contactName",
+    "owner confirmed review contactEmail",
+    "owner confirmed review contactPhone",
+    "owner confirmed legalRightsHolder",
+    "owner confirmed supportEmail",
+    "owner confirmed price",
+    "owner confirmed territories",
+    "owner confirmed releaseMethod",
+    "owner confirmed EUTraderStatus",
+    "all externally verified submission gates are resolved"
+  ],
+  "pendingGates": [
+    "Confirm app-name availability, Bundle ID ownership and App Store Connect app record",
+    "Confirm legal publisher/copyright, real support URL/contact, price and territories",
+    "Validate exact distribution-signed archive and upload processing in Xcode/App Store Connect",
+    "Test the exact signed sandboxed candidate on macOS 14 and current macOS",
+    "Verify clean-install/update, file permissions/bookmark revocation, Auto Capture network isolation and IPv6-only/offline preview behavior",
+    "Evaluate VoiceOver, keyboard operation, motion/transparency settings, multiple displays and signed-build idle/active energy, CPU, memory and disk behavior",
+    "Capture or compare current screenshots against the exact signed candidate before upload",
+    "Complete current age-rating, privacy, export-compliance and accessibility declarations",
+    "Complete applicable agreements, tax/banking and EU trader verification",
+    "Complete a signed clean-install/update QA route (TestFlight recommended, not mandatory), upload processing and Apple's App Review"
+  ],
+  "limits": {
+    "descriptionCharacters": 1967,
+    "promotionalTextCharacters": 152,
+    "keywordBytes": 86,
+    "reviewNoteBytes": 2927
+  },
+  "boundary": "This offline check does not verify Apple approval, declarations, signing, screenshots, public URLs or owner identity."
+}

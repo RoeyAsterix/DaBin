@@ -56,7 +56,17 @@ private final class PrivacyRenderTests: NSObject, NSApplicationDelegate {
         try expect(Bundle.main.url(forResource: "PrivacyPolicy", withExtension: "md") != nil, "Real policy resource is present in the isolated app bundle")
         try expect(Set(sections.map(\.title)).isSuperset(of: requiredSections),
                    "Full current privacy policy is loaded with every required topic")
-        try expect(document.contains("Choose Remove") && document.contains("Minimize only collapses"), "Policy includes current removal and minimize behavior")
+        let removal = sections.first { $0.title == "Keeping and removing your data" }?.paragraphs.joined(separator: " ") ?? ""
+        try expect(removal.contains("Choose Move to Recently Deleted")
+                    && removal.contains("available for Undo or Restore")
+                    && removal.contains("Recently Deleted has no automatic expiry"),
+                   "Policy describes recoverable removal and its current control label")
+        try expect(removal.contains("Choose Delete permanently")
+                    && removal.contains("Permanent deletion cannot be undone")
+                    && removal.contains("Source files in their original locations are kept"),
+                   "Policy distinguishes permanent deletion from the preserved source files")
+        try expect(removal.contains("Minimize only collapses a capture on the board; it keeps the saved content"),
+                   "Policy explains that minimizing preserves saved content")
         try expect(PrivacyInformation.configuredURL(for: PrivacyInformation.policyURLKey) == nil &&
                    PrivacyInformation.configuredURL(for: PrivacyInformation.supportURLKey) == nil, "Unconfigured public policy/support links are absent")
         var renders: [[String: Any]] = []

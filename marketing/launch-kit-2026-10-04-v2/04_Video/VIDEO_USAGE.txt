@@ -1,0 +1,58 @@
+DaBin explains the UI — final revised guided tour, 94.4 seconds
+
+DABIN__UI_TOUR__LANDSCAPE.mp4 — 1920 x 1080, 30 fps, H.264/AAC
+DABIN__UI_TOUR__PORTRAIT.mp4 — 1080 x 1920, 30 fps, H.264/AAC
+Matching _SILENT.mp4 files contain no audio track.
+DABIN__UI_TOUR__SUBTITLES.srt — optional English caption sidecar.
+DABIN__UI_TOUR__POSTER.png / __PORTRAIT_POSTER.png — video covers.
+
+This revision replaces the earlier 22-second introduction with a guided native
+UI tour. The robot explains saving a screenshot, pasting a link, writing a note,
+Inbox Day/Week and To organize, Projects, autosaving notes, named snippets,
+saved clipboard history, Shelf, local OCR search/preview/filters, task priority,
+checklist/reminder/repeat, Today, Focus, optional Auto Capture and Pause,
+project export, the backup route and Recently Deleted recovery.
+
+Narration: ElevenLabs Andre Rene — Warm, Real & Conversational, eleven_v3,
+selected take 02 at its natural 83.2-second rate. No atempo or metallic effects.
+The 94.4-second final edit adds 0.5 seconds before speech, 8.9 seconds of reading
+pauses at measured quiet boundaries and 1.8 seconds after it. Narration gain is
+0.75 for AAC headroom. Quiet original synthesized action taps support the edit.
+No third-party music, stock footage or generated replacement UI.
+
+Blender composes the actual native UI views with the native robot, voice-linked
+mouth, gaze/blinks, pointer emphasis, an illustrative screenshot drag and short
+speech guides. Native pixel views use isolated fictional Studio Refresh data
+from the frozen 0.4.31 (86) production QA module. These are edited view states,
+not continuous live screen recording or proof of recorded input events.
+The robot's guide and cursor are editorial layers, separate from app controls.
+
+Actual local OCR recognizes Riverside studio inside the palette image. The
+filename Studio reference.png and capture title Palette inspiration are neutral.
+Notes also match the query; the real image/project/date filters narrow it to one
+result. The focus alarm is visibly labeled Timer-end example, rather than
+pretending a 25-minute session passed during the film. The task stays open.
+Auto Capture starts Off; configured Paused settings are inert fictional states.
+The runtime never monitors a real clipboard or folder.
+
+Export is shown by its real project button. Backup is explained with the
+verified native More > Back up archive… route; no opened-menu or backup-success
+screen is fabricated. A fictional deleted capture is restored in the actual
+local fixture and is visibly present in the following Projects view.
+
+The vertical version uses individual native detail crops for readable controls;
+it is not a center crop of the landscape movie. English speech captions remain
+separate from the pixels. Use the caption sidecar or platform caption upload.
+The landing page includes the matching WebVTT track.
+
+Editable packed Blender projects, exact timing, scripts, native fixtures and all
+four original voice takes are included. Rebuild instructions: 06_Source/video.
+Technical decoding, sample/word timing, caption and visual-state checks are in
+07_QA. Audio taste should be assessed by playback; no subjective listening pass
+is asserted by the automated QA records.
+
+No posts, pitches, App Store uploads or website publication were performed.
+Use a separately recorded and validated device-captured preview if submitting
+an Apple App Store app preview. This marketing tour is not automatically an
+upload-ready App Store preview. Confirm visible UI against the shipping build.
+The original v1 kit and ZIP remain preserved outside this revised package.

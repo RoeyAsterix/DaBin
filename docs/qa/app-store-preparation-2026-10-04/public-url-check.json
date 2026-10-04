@@ -1,0 +1,27 @@
+{
+  "checkedAtUTC": "2026-10-04T03:13:52.248241+00:00",
+  "requestsWereUnauthenticated": true,
+  "results": [
+    {
+      "url": "https://github.com/RoeyAsterix/DaBin/issues",
+      "status": 200,
+      "finalURL": "https://github.com/RoeyAsterix/DaBin/issues",
+      "sha256": "f1918d8831544b30aa6d55c7d9a6fc262ecc37ce4d29be9a16b01a86a68a069e",
+      "bytes": 247583
+    },
+    {
+      "url": "https://github.com/RoeyAsterix/DaBin/blob/main/native/Resources/PrivacyPolicy.md",
+      "status": 200,
+      "finalURL": "https://github.com/RoeyAsterix/DaBin/blob/main/native/Resources/PrivacyPolicy.md",
+      "sha256": "790e701f3e65f8c22327e380dde32250fc4c082f109fe6cb16c4b96e991283e5",
+      "bytes": 296265
+    },
+    {
+      "url": "https://raw.githubusercontent.com/RoeyAsterix/DaBin/main/native/Resources/PrivacyPolicy.md",
+      "status": 200,
+      "finalURL": "https://raw.githubusercontent.com/RoeyAsterix/DaBin/main/native/Resources/PrivacyPolicy.md",
+      "sha256": "78ba4109f4caf2759ecfaedc0c2a15257772e40b4628b0092913db9590052bc7",
+      "bytes": 12633
+    }
+  ]
+}

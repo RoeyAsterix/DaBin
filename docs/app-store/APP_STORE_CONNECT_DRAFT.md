@@ -1,5 +1,24 @@
 # DaBin App Store Connect preparation
 
+## Current candidate — 0.4.31 (86), 4 October 2026
+
+This is a local preparation draft. Nothing has been uploaded, submitted or released by this preparation. The canonical current copy is [metadata-en-US.json](metadata-en-US.json); use it instead of the historical copy below.
+
+- [Current QA and blocking gates](../qa/app-store-preparation-2026-10-04/README.md)
+- [Apple requirements audit](APPLE_REQUIREMENTS_2026-10-04.md)
+- [Current native screenshot drafts](screenshots/0.4.31-86/README.md)
+- [Signing/export options](../qa/app-store-preparation-2026-10-04/ExportOptions-PENDING-SIGNING.plist)
+
+The owner still needs to supply the legal/copyright holder, public support contact, private App Review contact, price, territories, release method and EU trader status. Do not infer these from the signing certificate. Check agreements, app record/build availability, age rating, privacy, encryption and rights in App Store Connect. Do not enter private App Review contact information into a public repository.
+
+The current editable [App Store content document](submission-pack-0.4.31-86/DaBin-App-Store-Content.docx) assembles the listing, reviewer notes, native screenshot pages, owner fields, support copy and full privacy policy. Its [companion folder](submission-pack-0.4.31-86/) contains the original PNGs and plain text fields. The [updated Quick Guide](../DaBin-Quick-Guide.pdf) explains the 0.4.31 interface. These are prepared content assets; the release gates below remain open.
+
+The bundled 4 October policy needs publication before submission; existing privacy/support URLs are reachable, but contact adequacy remains pending. Complete signed-app acceptance, distribution export/validation and screenshot comparison before upload. The pending export options specify local export and no upload.
+
+## Historical preparation — superseded copy and evidence
+
+Historical target: **0.4.23 (78), TestFlight beta review only**, authorized on 3 October 2026. No upload or submission has occurred. Use the [beta handoff draft](TESTFLIGHT_0.4.23.md) and [latest checks/blockers](../qa/testflight-0.4.23-2026-10-03/README.md); the 0.4.19 preparation below is historical. Production-listing owner fields are not all prerequisites for a TestFlight beta, but real beta feedback/review contacts and current compliance answers must be supplied or confirmed in Connect.
+
 Updated 2 October 2026 for source 0.4.19 (74). This is a local submission draft, not an uploaded app or an Apple approval.
 
 The approved source and docs are now on GitHub `main` (`650ecf6`). The public privacy policy returned HTTP 200 and exactly matches the corrected local source. [Publication receipt](../qa/app-store-2026-10-02/publication.json). No binary release, App Store upload or submission was made.

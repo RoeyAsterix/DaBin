@@ -1,0 +1,159 @@
+{
+  "scope": "Files changed from the preserved start-of-task native snapshot; pre-existing work remains in the repository.",
+  "files": [
+    {
+      "path": "native/Sources/DaBin/AppState.swift",
+      "change": "modified",
+      "sha256": "27b8ab8ba8811e5be2b65f1aa0856ad248d8f60de67f675eac3831f2ddf5444d"
+    },
+    {
+      "path": "native/Sources/DaBin/ApplicationCoordinator.swift",
+      "change": "modified",
+      "sha256": "2fad4189cce90fc6f61e967f7bfa7c321fab78ccd54951f33d276544c9d34c91"
+    },
+    {
+      "path": "native/Sources/DaBin/CaptureAnnotations.swift",
+      "change": "added",
+      "sha256": "8a1fd8bd6188e3c782ad848447ff3876e27d077671fe5e051bc4f094b595d208"
+    },
+    {
+      "path": "native/Sources/DaBin/CaptureDetailPanels.swift",
+      "change": "added",
+      "sha256": "99efb7f29beb2f8ef7dfde4402894a2ed001cc25195dc521b6eaa1c32825dbcb"
+    },
+    {
+      "path": "native/Sources/DaBin/CaptureExtendedCanvas.swift",
+      "change": "added",
+      "sha256": "109de19a568984e54de8cba058176cee69d6ab8265ed570356f6ee64b267892e"
+    },
+    {
+      "path": "native/Sources/DaBin/CaptureExtendedWindow.swift",
+      "change": "added",
+      "sha256": "8594c3fbcca4f3436a4d53cb5bd6505c781bbc33a2c7d180d487c182e7e76946"
+    },
+    {
+      "path": "native/Sources/DaBin/CapturePreviews.swift",
+      "change": "modified",
+      "sha256": "fcb94bb7ed886e9ece3b0f57c7aaeccd797293b83a960c0d56fb77533d5d253b"
+    },
+    {
+      "path": "native/Sources/DaBin/CaptureRepository.swift",
+      "change": "modified",
+      "sha256": "51e0bf85feb85c01c498f2403479ac33fa0bf6cb41f265860d2ffaa533d4b318"
+    },
+    {
+      "path": "native/Sources/DaBin/CaptureStore.swift",
+      "change": "modified",
+      "sha256": "b4f17ad6d34fcaf770660b3a86264df72ec05508ab699bcbd621c0878c9c20f7"
+    },
+    {
+      "path": "native/Sources/DaBin/DailyArchive.swift",
+      "change": "modified",
+      "sha256": "f9097332732a44e2a705c02eda1df9628cde45b8c16a80ecd3d43c7b1ef7fafa"
+    },
+    {
+      "path": "native/Sources/DaBin/DetailScreen.swift",
+      "change": "modified",
+      "sha256": "c52f9c3d5120a804deb3cb4e7dc1d74774fa773eb99a09c1c4c9ac52e8aa7a03"
+    },
+    {
+      "path": "native/Sources/DaBin/Domain.swift",
+      "change": "modified",
+      "sha256": "2b56ee47dc9d54ac40adf4d419b6073361330eefb3a8eb8d29759ca2c9e3a526"
+    },
+    {
+      "path": "native/Sources/DaBin/DraftArchive.swift",
+      "change": "modified",
+      "sha256": "51b35ec7e0c5f16fa2f4d6f2a1afb4dd96373299ca047361cb7f6190f5b3345f"
+    },
+    {
+      "path": "native/Sources/DaBin/ReminderAlertCoordinator.swift",
+      "change": "added",
+      "sha256": "3e90479eba606f37e2d87f47ee360267c55efa60623e1d8113a3a85d1d09ded1"
+    },
+    {
+      "path": "native/Sources/DaBin/TaskFocusSession.swift",
+      "change": "modified",
+      "sha256": "de294c1282271b95047d0794a35b98341cc95eff6c7db663cfce2e2b790e42c2"
+    },
+    {
+      "path": "native/Sources/DaBin/TaskTimerAlarmMotion.swift",
+      "change": "added",
+      "sha256": "be1b0246a89002c16121aedae36f3f97c96339f49249ba54e20460654ecc427e"
+    },
+    {
+      "path": "native/Sources/DaBin/TaskTimerRobotPresenter.swift",
+      "change": "modified",
+      "sha256": "36f232e6f824fe802113d4f3198a15c833e69dc42a145bc1bff14bc2f475784f"
+    },
+    {
+      "path": "native/Sources/DaBin/TaskTimerRobotView.swift",
+      "change": "modified",
+      "sha256": "587e597007ee550a91002abdb305839c6f1b221afd2e5631fadacf5008513d4e"
+    },
+    {
+      "path": "native/Tests/CaptureAnnotationTests.swift",
+      "change": "added",
+      "sha256": "8f06f48dfbd03405f1e1a14014c5802418ab5399bbd1f2f82fcd4cb3d80e43b3"
+    },
+    {
+      "path": "native/Tests/CaptureExtendedInteractionTests.swift",
+      "change": "added",
+      "sha256": "0cc2f721e0e89bfb93b0dd9403cac53ab2a8cdbbf50061c7e71bd3c70f0a71ea"
+    },
+    {
+      "path": "native/Tests/CaptureZoomStateTests.swift",
+      "change": "added",
+      "sha256": "3b5b6fd25e5b3b234e40be4f4f9d367cb919f8f55d64268293b62bc70928a0e7"
+    },
+    {
+      "path": "native/Tests/CommentDraftArchiveTests.swift",
+      "change": "added",
+      "sha256": "3bc790ea74e9899171ba8565096e6f90bd5d409e6e74f6025abcf293907a839b"
+    },
+    {
+      "path": "native/Tests/DomainTests.swift",
+      "change": "modified",
+      "sha256": "a4cc52797d70e4a2b4096e5cda6cb0e878cb891f8d731d5380946f8ba7fa5805"
+    },
+    {
+      "path": "native/Tests/ExtendedMediaInteractionTests.swift",
+      "change": "added",
+      "sha256": "09eda092ea54bffb9264676c3cf0d9b3867c397e8cae534e1acd580903bcc180"
+    },
+    {
+      "path": "native/Tests/LocalContentSearchTests.swift",
+      "change": "modified",
+      "sha256": "a9e697891a5395e3d1851b0bd1c08f1277cee712e99eb32aa0620efb8e95c14a"
+    },
+    {
+      "path": "native/Tests/ReminderAlertCoordinatorTests.swift",
+      "change": "added",
+      "sha256": "69acf2dfe61dab9e84f9730db00635ba8ea351a21c5837b73815a2e6555a1221"
+    },
+    {
+      "path": "native/Tests/TaskFocusTests.swift",
+      "change": "modified",
+      "sha256": "29204a75196c9f34634dbc67a40932cc9ad3495b3af2ef88c15514d68e3e94a2"
+    },
+    {
+      "path": "native/Tests/TaskTimerRobotTests.swift",
+      "change": "modified",
+      "sha256": "2cb55e40f10ef0cd4410dad7e79a32f6cd9b5ef862d2a76c790f9717cbdf306c"
+    },
+    {
+      "path": "native/scripts/run_qa.py",
+      "change": "modified",
+      "sha256": "1af7fa940744d4f29ddc1144f23799d5cc04a8d1264a3564cae07489f012c212"
+    }
+  ],
+  "xcodeProjectRegenerated": true,
+  "finalProductionSourcesMatchTestAndAppBuild": true,
+  "executableSHA256": "f86d7019c088ad52170be9ce4e498cc84f39e17432dbaa6e6dd1d62dc98d95ae",
+  "sourceChangeAfterInitialRegression": {
+    "Sources/DaBin/CaptureExtendedCanvas.swift": {
+      "initial": "dfec365eb85930e625edf87d0c0ac60f808f07afb83f09835cf36b2dc3986195",
+      "final": "109de19a568984e54de8cba058176cee69d6ab8265ed570356f6ee64b267892e"
+    }
+  }
+}

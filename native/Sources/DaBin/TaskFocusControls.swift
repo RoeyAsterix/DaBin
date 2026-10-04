@@ -7,6 +7,7 @@ struct TaskFocusControls: View {
     @ObservedObject var state: AppState
     @ObservedObject var capture: Capture
     var compact = true
+    var showsSchedule = true
     @Environment(\.daBinAccent) private var accent
     @State private var showDuration = false
     @State private var showSchedule = false
@@ -34,8 +35,8 @@ struct TaskFocusControls: View {
                 countdown(large: true).frame(maxWidth: .infinity).padding(.vertical, 5)
             }
             ViewThatFits(in: .horizontal) {
-                HStack(spacing: 8) { focusControl; Spacer(minLength: 0); scheduleControl }
-                VStack(alignment: .leading, spacing: 6) { focusControl; scheduleControl }
+                HStack(spacing: 8) { focusControl; Spacer(minLength: 0); if showsSchedule { scheduleControl } }
+                VStack(alignment: .leading, spacing: 6) { focusControl; if showsSchedule { scheduleControl } }
             }
             if !compact {
                 HStack {

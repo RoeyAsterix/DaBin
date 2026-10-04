@@ -1,0 +1,82 @@
+{
+  "date": "2026-10-03",
+  "verifiedAtUTC": "2026-10-03T17:15:46.708759+00:00",
+  "status": "passed_with_documented_platform_limit",
+  "scope": "Auto Capture robot-and-sign confirmations; targeted native regression, not a full product/release QA cycle",
+  "testSuites": 9,
+  "checksPassed": 4663,
+  "sourceChangedDuringTests": false,
+  "testReport": "native-test-report.json",
+  "buildReceipt": "build-receipt.json",
+  "build": {
+    "configuration": "Release",
+    "target": "arm64-apple-macosx14.0",
+    "version": "0.4.27",
+    "buildNumber": "82",
+    "strictSignatureVerifiedOnCleanCopy": true,
+    "signing": "local ad-hoc",
+    "appPath": "/private/tmp/DaBin-auto-capture-sign-qa-20261003/native/build/DaBin.app"
+  },
+  "sourceAndTestFilesMatchFrozenSnapshot": {
+    "Sources/DaBin/AutoCaptureSignMotion.swift": true,
+    "Sources/DaBin/AutoCaptureSignRouting.swift": true,
+    "Sources/DaBin/AutoCaptureSignView.swift": true,
+    "Sources/DaBin/RobotCharacterView.swift": true,
+    "Sources/DaBin/AutoCaptureRobotPresenter.swift": true,
+    "Sources/DaBin/ApplicationCoordinator.swift": true,
+    "Tests/AutoCaptureSignMotionTests.swift": true,
+    "Tests/AutoCaptureSignPresenterTests.swift": true,
+    "Tests/AutoCaptureSignRenderTests.swift": true,
+    "Tests/AutoCaptureRobotPresenterTests.swift": true,
+    "scripts/run_qa.py": true,
+    "DaBin.xcodeproj/project.pbxproj": true
+  },
+  "otherConcurrentSourceDifferencesFromBuild": [
+    "Sources/DaBin/NativeContentDrag.swift"
+  ],
+  "visualQA": {
+    "nativeRenders": 79,
+    "contactSheets": 4,
+    "inspected": [
+      "renders/light-reaction-contact-sheet.png",
+      "renders/dark-hold-contact-sheet.png",
+      "renders/external-reduced-motion.png",
+      "renders/mixed-count-9223372036854775807.png"
+    ],
+    "result": "All twelve reactions distinct; grips connected; readable holds; no sign-edge clipping; large counts fit; light/dark and static reduced-motion fixtures inspected. Synthetic display geometry; not physical hardware screenshots."
+  },
+  "animation": {
+    "reactions": 12,
+    "selection": "shuffled rotation; exclude last three",
+    "normalDurationSeconds": [
+      1.8048,
+      1.9968
+    ],
+    "normalReadableHoldMinimumSeconds": 0.685824,
+    "reducedMotion": "static peek and opacity fade",
+    "queue": "one active sign and one pending aggregate",
+    "privateCaptureDataDisplayed": false,
+    "soundAdded": false
+  },
+  "additionalChecks": [
+    "Swift compilation with warnings as errors",
+    "ARM64 Release build",
+    "strict code signature on clean copy",
+    "deterministic Xcode project --check",
+    "Info/entitlements/privacy plutil lint",
+    "git diff --check"
+  ],
+  "bugsFixed": [
+    "early merged count consumed before readable hold",
+    "native view reset of animated transforms",
+    "detached-layer animation cleanup",
+    "late burst not included in accessibility announcement",
+    "confirmation toggle canceled legacy feedback",
+    "wide/rotated sign clipping"
+  ],
+  "limitations": [
+    "The saved screenshot precedes its confirmation, but macOS cannot guarantee excluding an already-visible overlay from a subsequent screenshot by another tool/API. System Screenshot UI and launcher activity provide best-effort suspension.",
+    "Physical notch and monitor unplugging were simulated; VoiceOver audio listening was not performed.",
+    "Candidate only: not installed, published, notarized or submitted to TestFlight."
+  ]
+}

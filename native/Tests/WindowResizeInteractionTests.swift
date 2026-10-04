@@ -162,11 +162,14 @@ import Foundation
         try expect(board.frame == moved, "The robot's top chrome moves the actual window in both axes")
         state.showSettings()
         controller.showBoard(immediate: true)
-        try expect(board.frame == moved, "A route change during top-chrome drag stays under pointer control")
+        try expect(board.frame == moved && state.route == .daily,
+                   "Navigation during a top-chrome drag is rejected while pointer control is retained")
         frame.mouseUp(with: event(.leftMouseUp, at: finish, in: board))
         settle()
-        try expect(board.frame == moved && state.route == .settings,
-                   "Releasing a chrome drag preserves the moved frame and requested route")
+        try expect(board.frame == moved && state.route == .daily,
+                   "Releasing a chrome drag preserves the moved frame without replaying rejected navigation")
+        state.showSettings()
+        try expect(state.route == .settings, "A fresh navigation command succeeds after the drag ends")
         try expect(defaults.array(forKey: CornerController.boardPlacementKey) as? [Double]
                    == [Double(moved.minX), Double(moved.maxY)], "Top-chrome release persists the moved position")
 

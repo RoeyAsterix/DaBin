@@ -1,0 +1,1 @@
+PASS: 24 preview-fit renders; all four corner markers visible in 16 image/document renders. 8 PDF renders are layout only because NSView.cacheDisplay omits PDFKit page tiles. Output: /private/tmp/dabin-extended-qa-20261004/renders/preview-fit

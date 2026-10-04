@@ -1,5 +1,51 @@
 import SwiftUI
 
+/// Priority is readable without interpreting a symbol or relying on color alone.
+struct TaskPriorityTag: View {
+    @Environment(\.workspaceZoom) private var zoom
+    let priority: TaskPriority
+    var isSelected = false
+    @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.colorSchemeContrast) private var contrast
+
+    private var color: Color {
+        let dark = colorScheme == .dark
+        switch priority {
+        case .none: return Palette.muted
+        case .low: return dark ? Color(red: 0.49, green: 0.80, blue: 0.59) : Color(red: 0.13, green: 0.43, blue: 0.24)
+        case .medium: return dark ? Color(red: 1.0, green: 0.73, blue: 0.28) : Color(red: 0.55, green: 0.31, blue: 0.01)
+        case .high: return dark ? Color(red: 1.0, green: 0.55, blue: 0.51) : Color(red: 0.71, green: 0.16, blue: 0.14)
+        }
+    }
+
+    var body: some View {
+        HStack(spacing: 5) {
+            if priority != .none { Circle().fill(color).frame(width: 6, height: 6).accessibilityHidden(true) }
+            Text(priority.title).font(.system(size: zoom.fontSize(11), weight: .semibold)).lineLimit(1)
+        }
+        .padding(.horizontal, 8).padding(.vertical, 4).fixedSize()
+        .foregroundStyle(color)
+        .background(color.opacity(isSelected ? 0.20 : 0.10), in: Capsule())
+        .overlay(Capsule().strokeBorder(color.opacity(isSelected || contrast == .increased ? 1 : 0.35),
+                                       lineWidth: isSelected ? 1.5 : 0.75))
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(priority == .none ? priority.title : "\(priority.title) priority")
+    }
+}
+
+/// Observe the task so saving a changed priority updates every mounted card.
+@MainActor
+struct CaptureTaskPriorityTag: View {
+    @ObservedObject var capture: Capture
+
+    var body: some View {
+        if capture.isTask, let priority = capture.taskPlanning?.priority, priority != .none {
+            TaskPriorityTag(priority: priority)
+                .accessibilityIdentifier("task-priority-tag-\(capture.id.uuidString)")
+        }
+    }
+}
+
 /// A draft editor shared by new tasks and captured-content tasks. Its host
 /// commits the whole draft, so changing a deadline never silently sets a reminder.
 @MainActor
@@ -49,21 +95,21 @@ struct TaskPlanningEditor: View {
                 .font(.system(size: 11)).foregroundStyle(Palette.muted).fixedSize(horizontal: false, vertical: true)
             }
             Divider()
-            HStack(spacing: 6) {
+            VStack(alignment: .leading, spacing: 6) {
                 Text("Priority").foregroundStyle(Palette.muted)
-                Spacer(minLength: 0)
+                HStack(spacing: 6) {
                 ForEach(TaskPriority.allCases) { priority in
                     Button { planning.priority = priority } label: {
-                        Image(systemName: priority.symbol).font(.system(size: 15))
-                            .frame(width: 32, height: 32)
-                            .background(planning.priority == priority ? accent.opacity(0.13) : Color.clear, in: RoundedRectangle(cornerRadius: 7))
-                            .overlay(RoundedRectangle(cornerRadius: 7).stroke(planning.priority == priority ? accent : Color.clear, lineWidth: 0.7))
-                    }.buttonStyle(.plain).foregroundStyle(planning.priority == priority ? accent : Palette.muted)
-                        .accessibilityLabel(priority.title)
+                        TaskPriorityTag(priority: priority, isSelected: planning.priority == priority)
+                            .frame(minHeight: 32).contentShape(Capsule())
+                    }.buttonStyle(.plain)
+                        .accessibilityLabel(priority == .none ? priority.title : "\(priority.title) priority")
+                        .accessibilityIdentifier("task-priority-choice-\(priority.rawValue)")
                         .accessibilityAddTraits(planning.priority == priority ? .isSelected : [])
                         .buddyHelp(priority.title)
                 }
-            }.accessibilityIdentifier("task-priority")
+                }
+            }.accessibilityElement(children: .contain).accessibilityIdentifier("task-priority")
             if showsSchedule {
                 Toggle("Focus duration", isOn: estimateEnabled).toggleStyle(.switch).controlSize(.small)
                 if planning.effortMinutes != nil {

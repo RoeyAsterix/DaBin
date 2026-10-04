@@ -1,0 +1,165 @@
+{
+  "architecture" : "arm64",
+  "arrivalCadenceSeconds" : 2,
+  "automaticArrivals" : 114,
+  "backingScale" : 2,
+  "baselineTimerP95Milliseconds" : 20.029791630804539,
+  "burstSize" : 100,
+  "cycles" : [
+    {
+      "anchorAfter" : "capture:6FBC6C4F-CC87-49E3-927F-FE26745FB489",
+      "anchorBefore" : "capture:6FBC6C4F-CC87-49E3-927F-FE26745FB489",
+      "captures" : 5102,
+      "cycle" : 1,
+      "durationSeconds" : 5.9247208333108574,
+      "rssBytes" : 222920704
+    },
+    {
+      "anchorAfter" : "capture:6FBC6C4F-CC87-49E3-927F-FE26745FB489",
+      "anchorBefore" : "capture:6FBC6C4F-CC87-49E3-927F-FE26745FB489",
+      "captures" : 5104,
+      "cycle" : 2,
+      "durationSeconds" : 2.6023294583428651,
+      "rssBytes" : 223084544
+    },
+    {
+      "anchorAfter" : "capture:6FBC6C4F-CC87-49E3-927F-FE26745FB489",
+      "anchorBefore" : "capture:6FBC6C4F-CC87-49E3-927F-FE26745FB489",
+      "captures" : 5107,
+      "cycle" : 3,
+      "durationSeconds" : 2.411298458231613,
+      "rssBytes" : 223133696
+    },
+    {
+      "anchorAfter" : "capture:6FBC6C4F-CC87-49E3-927F-FE26745FB489",
+      "anchorBefore" : "capture:6FBC6C4F-CC87-49E3-927F-FE26745FB489",
+      "captures" : 5110,
+      "cycle" : 4,
+      "durationSeconds" : 2.3246025000698864,
+      "rssBytes" : 223264768
+    },
+    {
+      "anchorAfter" : "capture:6FBC6C4F-CC87-49E3-927F-FE26745FB489",
+      "anchorBefore" : "capture:6FBC6C4F-CC87-49E3-927F-FE26745FB489",
+      "captures" : 5113,
+      "cycle" : 5,
+      "durationSeconds" : 2.3508367082104087,
+      "rssBytes" : 223395840
+    }
+  ],
+  "durableSaveP95Milliseconds" : 27.885999996215105,
+  "durationSeconds" : 30.014588583493605,
+  "fullTenMinuteRun" : false,
+  "initialRecords" : 5000,
+  "inputSamples" : 160,
+  "inputToLayoutP95Milliseconds" : 68.567166803404689,
+  "limitations" : [
+    "No physical trackpad or mouse-driver coverage",
+    "Offscreen native rendering cannot measure presentation timestamps",
+    "RSS includes the growing fixture archive and caches"
+  ],
+  "maximumAvailableNativeRows" : 3,
+  "measurement" : "Synthetic native input-to-layout flush and main-runloop timer intervals; not physical input-to-display latency",
+  "memory" : [
+    {
+      "phase" : "baseline",
+      "rssBytes" : 207028224
+    },
+    {
+      "phase" : "cycle 1",
+      "rssBytes" : 222920704
+    },
+    {
+      "phase" : "cycle 2",
+      "rssBytes" : 223084544
+    },
+    {
+      "phase" : "cycle 3",
+      "rssBytes" : 223133696
+    },
+    {
+      "phase" : "cycle 4",
+      "rssBytes" : 223264768
+    },
+    {
+      "phase" : "cycle 5",
+      "rssBytes" : 223395840
+    }
+  ],
+  "observedTimerSamples" : 1245,
+  "os" : "Version 26.6.2 (Build 25G83)",
+  "physicalMemoryBytes" : 51539607552,
+  "processors" : 15,
+  "requestedDurationSeconds" : 30,
+  "seedSeconds" : 0.12437574984505773,
+  "steadyZoomTimerMaxMilliseconds" : 151.65704186074436,
+  "steadyZoomTimerP95Milliseconds" : 73.935624910518527,
+  "timerIntervalsByPhase" : [
+    {
+      "count" : 20,
+      "intervalsAbove100Milliseconds" : 20,
+      "maximumMilliseconds" : 174.47545821778476,
+      "p95Milliseconds" : 159.09766661934555,
+      "phase" : "100 durable arrivals during zoom"
+    },
+    {
+      "count" : 6,
+      "intervalsAbove100Milliseconds" : 1,
+      "maximumMilliseconds" : 101.2491665314883,
+      "p95Milliseconds" : 87.378625059500337,
+      "phase" : "durable arrival"
+    },
+    {
+      "count" : 773,
+      "intervalsAbove100Milliseconds" : 4,
+      "maximumMilliseconds" : 132.83883314579725,
+      "p95Milliseconds" : 20.549916662275791,
+      "phase" : "idle between inputs"
+    },
+    {
+      "count" : 40,
+      "intervalsAbove100Milliseconds" : 4,
+      "maximumMilliseconds" : 118.52816655300558,
+      "p95Milliseconds" : 100.44070845469832,
+      "phase" : "navigation"
+    },
+    {
+      "count" : 49,
+      "intervalsAbove100Milliseconds" : 0,
+      "maximumMilliseconds" : 55.649750167503953,
+      "p95Milliseconds" : 51.146750105544925,
+      "phase" : "settling"
+    },
+    {
+      "count" : 297,
+      "intervalsAbove100Milliseconds" : 1,
+      "maximumMilliseconds" : 151.65704186074436,
+      "p95Milliseconds" : 73.935624910518527,
+      "phase" : "steady zoom"
+    },
+    {
+      "count" : 60,
+      "intervalsAbove100Milliseconds" : 0,
+      "maximumMilliseconds" : 20.511791575700045,
+      "p95Milliseconds" : 20.029791630804539,
+      "phase" : "warm baseline"
+    }
+  ],
+  "timerPhaseAttribution" : "Every interval is retained including burst, navigation, save, settle and idle phases; labels describe phase at callback delivery, so an interval can span an earlier phase boundary",
+  "timerSamples" : 297,
+  "warnings" : [
+    "Synthetic input-to-layout p95 exceeds 50 ms",
+    "Steady zoom main-runloop interval p95 exceeds 33 ms",
+    "A steady zoom main-runloop interval exceeds 100 ms; compare baseline and inspect attribution",
+    "Main-runloop interval reached 174.47545821778476 ms in phase '100 durable arrivals during zoom'; delivery-phase labeling can include preceding operation time",
+    "Main-runloop interval reached 101.2491665314883 ms in phase 'durable arrival'; delivery-phase labeling can include preceding operation time",
+    "Main-runloop interval reached 132.83883314579725 ms in phase 'idle between inputs'; delivery-phase labeling can include preceding operation time",
+    "Main-runloop interval reached 118.52816655300558 ms in phase 'navigation'; delivery-phase labeling can include preceding operation time",
+    "Main-runloop interval reached 151.65704186074436 ms in phase 'steady zoom'; delivery-phase labeling can include preceding operation time",
+    "RSS increased at every checkpoint; archive arrivals and thumbnail caches grow too, so isolate retention before attributing a leak"
+  ],
+  "wholeRunTimerIntervalsAbove100Milliseconds" : 30,
+  "wholeRunTimerMaximumMilliseconds" : 174.47545821778476,
+  "wholeRunTimerP95Milliseconds" : 71.431416785344481,
+  "wholeRunTimerSamples" : 1245
+}

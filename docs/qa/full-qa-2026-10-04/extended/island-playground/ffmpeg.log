@@ -1,0 +1,38 @@
+Input #0, image2, from '/private/tmp/dabin-full-qa-20261004/native/build/island-preview/run.3dgFTm/frames/frame-%05d.png':
+  Duration: 00:00:10.90, start: 0.000000, bitrate: N/A
+  Stream #0:0: Video: png, rgba(pc, gbr/bt709/iec61966-2-1), 900x600, 30 fps, 30 tbr, 30 tbn
+Stream mapping:
+  Stream #0:0 -> #0:0 (png (native) -> h264 (libx264))
+Press [q] to stop, [?] for help
+[libx264 @ 0x12561d000] using cpu capabilities: ARMv8 NEON
+[libx264 @ 0x12561d000] profile High, level 3.1, 4:2:0, 8-bit
+[libx264 @ 0x12561d000] 264 - core 164 r3190 7ed753b - H.264/MPEG-4 AVC codec - Copyleft 2003-2024 - http://www.videolan.org/x264.html - options: cabac=1 ref=3 deblock=1:0:0 analyse=0x3:0x113 me=hex subme=7 psy=1 psy_rd=1.00:0.00 mixed_ref=1 me_range=16 chroma_me=1 trellis=1 8x8dct=1 cqm=0 deadzone=21,11 fast_pskip=1 chroma_qp_offset=-2 threads=19 lookahead_threads=3 sliced_threads=0 nr=0 decimate=1 interlaced=0 bluray_compat=0 constrained_intra=0 bframes=3 b_pyramid=2 b_adapt=1 b_bias=0 direct=1 weightb=1 open_gop=0 weightp=2 keyint=250 keyint_min=25 scenecut=40 intra_refresh=0 rc_lookahead=40 rc=crf mbtree=1 crf=18.0 qcomp=0.60 qpmin=0 qpmax=69 qpstep=4 ip_ratio=1.40 aq=1:1.00
+Output #0, mp4, to '/private/tmp/dabin-full-qa-20261004/native/build/island-preview/run.3dgFTm/DaBin-Island-Playground.mp4':
+  Metadata:
+    encoder         : Lavf61.7.100
+  Stream #0:0: Video: h264 (avc1 / 0x31637661), yuv420p(tv, unknown/bt709/iec61966-2-1, progressive), 900x600, q=2-31, 30 fps, 15360 tbn
+      Metadata:
+        encoder         : Lavc61.19.100 libx264
+      Side data:
+        cpb: bitrate max/min/avg: 0/0/0 buffer size: 0 vbv_delay: N/A
+[mp4 @ 0x12561a9d0] Starting second pass: moving the moov atom to the beginning of the file
+[out#0/mp4 @ 0x12561cba0] video:482KiB audio:0KiB subtitle:0KiB other streams:0KiB global headers:0KiB muxing overhead: 0.953594%
+frame=  327 fps=0.0 q=-1.0 Lsize=     486KiB time=00:00:10.83 bitrate= 367.7kbits/s speed=  41x    
+[libx264 @ 0x12561d000] frame I:2     Avg QP: 9.59  size: 26988
+[libx264 @ 0x12561d000] frame P:94    Avg QP:11.97  size:  3040
+[libx264 @ 0x12561d000] frame B:231   Avg QP:17.24  size:   661
+[libx264 @ 0x12561d000] consecutive B-frames:  4.3%  1.8%  8.3% 85.6%
+[libx264 @ 0x12561d000] mb I  I16..4: 53.6% 30.3% 16.2%
+[libx264 @ 0x12561d000] mb P  I16..4:  0.6%  1.6%  1.5%  P16..4:  4.7%  1.8%  1.4%  0.0%  0.0%    skip:88.4%
+[libx264 @ 0x12561d000] mb B  I16..4:  0.1%  0.1%  0.1%  B16..8:  4.5%  1.1%  0.3%  direct: 0.4%  skip:93.4%  L0:44.8% L1:42.9% BI:12.3%
+[libx264 @ 0x12561d000] 8x8 transform intra:37.1% inter:62.5%
+[libx264 @ 0x12561d000] coded y,uvDC,uvAC intra: 47.6% 42.9% 29.5% inter: 1.8% 0.7% 0.1%
+[libx264 @ 0x12561d000] i16 v,h,dc,p: 44% 44%  8%  5%
+[libx264 @ 0x12561d000] i8 v,h,dc,ddl,ddr,vr,hd,vl,hu: 14% 11% 67%  3%  1%  1%  1%  2%  1%
+[libx264 @ 0x12561d000] i4 v,h,dc,ddl,ddr,vr,hd,vl,hu: 28% 34% 18%  4%  4%  2%  3%  4%  3%
+[libx264 @ 0x12561d000] i8c dc,h,v,p: 58% 28% 13%  2%
+[libx264 @ 0x12561d000] Weighted P-Frames: Y:0.0% UV:0.0%
+[libx264 @ 0x12561d000] ref P L0: 67.0%  5.5% 14.7% 12.8%
+[libx264 @ 0x12561d000] ref B L0: 76.9% 17.4%  5.7%
+[libx264 @ 0x12561d000] ref B L1: 93.7%  6.3%
+[libx264 @ 0x12561d000] kb/s:361.47

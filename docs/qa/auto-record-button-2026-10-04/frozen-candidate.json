@@ -1,0 +1,71 @@
+{
+  "candidate": "/private/tmp/dabin-record-control-20261004/native",
+  "baseline": "/private/tmp/dabin-full-qa-20261004/native",
+  "baselineVersion": "0.4.28 (83)",
+  "candidateVersion": "0.4.29 (84)",
+  "productionDelta": [
+    {
+      "path": "Sources/DaBin/AutoRecordIndicator.swift",
+      "testedSHA256": "4779953834173163b8df464ef66c2e80f4a0f64b899640f04013403527ed8518",
+      "baselineSHA256": null
+    },
+    {
+      "path": "Sources/DaBin/BoardComponents.swift",
+      "testedSHA256": "f137f82296c5f417c2e4a3b65662f68833c4440b22dcdcb6511dac030ebec857",
+      "baselineSHA256": "9392dbe85d18b461092f3424c21537aeb83e0b866fa2e962d47819d7fc589fee"
+    }
+  ],
+  "concurrentSharedDifferences": [
+    {
+      "path": "Sources/DaBin/AppState.swift",
+      "testedSHA256": "732c550407b73d5ec78923cbba90b3fc88f84a659048783e6d1241a68b903185",
+      "sharedSHA256": "9e35f9c1577ea179f44398bb53868ff3d6e030330e3e4359fb205cff47094d63"
+    },
+    {
+      "path": "Sources/DaBin/BoardView.swift",
+      "testedSHA256": "a8ee65c0dc401aa566964d81b6ef6c3249c449ae72b783ea2d6521b0544ff801",
+      "sharedSHA256": "6557c4219e4c9cc867e85160da0524a566cd47ce5a3745174519c3f5f563abe6"
+    },
+    {
+      "path": "Sources/DaBin/CaptureCards.swift",
+      "testedSHA256": "cc93dca4405096ac993a418bbecb08313a385a396bd99df864cb6959bf047244",
+      "sharedSHA256": "63b7358fc6cde89a0955259d5ebbbc205c06b26e1462299e2a56453a6603609c"
+    },
+    {
+      "path": "Sources/DaBin/CaptureFilterStrip.swift",
+      "testedSHA256": "f1d521c200ea93897fa00642d34cec8c3ae96b3fccd1db2be76da834669fa8f2",
+      "sharedSHA256": "6f0370249b28a7d2cb5e3273699f371db6d5044eaa2b0bade67e687f0a982bc8"
+    },
+    {
+      "path": "Sources/DaBin/CornerController.swift",
+      "testedSHA256": "777a8441dec233d1098566ee0d10377d786d7efb37a7cc5d08297a8da0209cc7",
+      "sharedSHA256": "4499c9cc0448810c63f6dcf03067a77d664d2097167711440aca9b3d4a0021c7"
+    },
+    {
+      "path": "Sources/DaBin/ExplorerItems.swift",
+      "testedSHA256": "afad5ed755541870a1ff6e04ecfe007bebfb7e16216b23d5d593df2a892fc4aa",
+      "sharedSHA256": "97a788f18f85c88c2c8b5d76f8b2b4915688065eb5a99092c1383efd938c023f"
+    },
+    {
+      "path": "Sources/DaBin/InboxScreen.swift",
+      "testedSHA256": "166fc7cdde88eca42dd63594e802af58e494b705ff6d7a08ef6522956314004c",
+      "sharedSHA256": "28dec7bf1ead965e0a68ad7b741d2af3f132ad7f41e4b20f955242da6a3c83f1"
+    },
+    {
+      "path": "Sources/DaBin/LibraryScreen.swift",
+      "testedSHA256": "66ac75df3030bae5d47622c39bfe2d7a11da79baf86551c5426bd281bdb8b5a2",
+      "sharedSHA256": "d5ddb9cabf528dcea7207ac68fe782522e52a39a3ce276f94d7474ddaeb9f4cb"
+    },
+    {
+      "path": "Sources/DaBin/SettingsScreen.swift",
+      "testedSHA256": "4613ab97384710b8dc495e8b7641eeadb7f3fd0f269534844fbebbfa8993cdd3",
+      "sharedSHA256": "47e7508b260334400de59f9ea0f5a01571eed14c3359d2db0d945a24cb0e21c3"
+    },
+    {
+      "path": "Sources/DaBin/TodayPlanningScreen.swift",
+      "testedSHA256": "92fe337778a0add46004c1b5ef2330615a6f04d15fd3e8a5da522da11d2ace0a",
+      "sharedSHA256": "a6d27b1d6f138ee16b07cb1fe47728f9a0104387eae2cacbde1770a60576d458"
+    }
+  ],
+  "scope": "Retains installed verified baseline with only recording-control production changes; separate shared tutorial work remains preserved and excluded."
+}

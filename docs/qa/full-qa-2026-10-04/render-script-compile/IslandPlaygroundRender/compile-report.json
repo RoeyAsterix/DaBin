@@ -1,0 +1,43 @@
+{
+  "name": "IslandPlaygroundRender",
+  "exitCode": 0,
+  "seconds": 6.307,
+  "cwd": "/private/tmp/dabin-full-qa-20261004/native",
+  "command": [
+    "xcrun",
+    "swiftc",
+    "-swift-version",
+    "5",
+    "-O",
+    "-whole-module-optimization",
+    "-target",
+    "arm64-apple-macosx14.0",
+    "-warnings-as-errors",
+    "-module-cache-path",
+    "/private/tmp/dabin-render-script-compile-20261004/IslandPlaygroundRender/ModuleCache",
+    "-parse-as-library",
+    "Sources/DaBin/RobotMotion.swift",
+    "Sources/DaBin/AutoCaptureRobotCelebration.swift",
+    "Sources/DaBin/IslandRobotChoreography.swift",
+    "Sources/DaBin/QuietOrbitVisualStyle.swift",
+    "Sources/DaBin/RobotCharacterView.swift",
+    "Tests/IslandPlaygroundRender.swift",
+    "-o",
+    "/private/tmp/dabin-render-script-compile-20261004/IslandPlaygroundRender/IslandPlaygroundRender"
+  ],
+  "inputHashes": {
+    "Sources/DaBin/RobotMotion.swift": "f2321a5d2bbbd73cbfc9dca81cf1d763b59ff08b6fcee0f1d34f2f2f6c51ab37",
+    "Sources/DaBin/AutoCaptureRobotCelebration.swift": "40d2885824e9e862d3e2ae693dd4e7319be518b3f5b2d9bd95aab1142029db7f",
+    "Sources/DaBin/IslandRobotChoreography.swift": "169d408033ca94901c6dcf34d97097acd16f3a3481c24060621a31535b1ac68a",
+    "Sources/DaBin/QuietOrbitVisualStyle.swift": "07c1ae899900482f87b2a8a55d8978b91f862ffa1d4b394b44fea98d8f1224ae",
+    "Sources/DaBin/RobotCharacterView.swift": "efacf4bcad0b7b9dd201d31889e890090e21a13eb693113f207700b5bd630af3",
+    "Tests/IslandPlaygroundRender.swift": "ff3afc2f684f3505adbd940d0dd0bcdafb6754b5f0226b0d4f062caf757726cb",
+    "scripts/render_island_playground.sh": "0177a150778734ae9df86e39e61a9ffaaa42e41853115bfd91dfb4d321009366"
+  },
+  "sourceStable": true,
+  "productionSourceCount": 5,
+  "binary": "/private/tmp/dabin-render-script-compile-20261004/IslandPlaygroundRender/IslandPlaygroundRender",
+  "log": "/private/tmp/dabin-render-script-compile-20261004/IslandPlaygroundRender/compile.log",
+  "executed": false,
+  "binarySHA256": "4c20661bf46d15fc6547bfd310e60032c3ef6ba3ef1d6d0100bad10c55f87e87"
+}

@@ -1,0 +1,147 @@
+{
+  "title": "Independent final-composition visual audit",
+  "reviewer": "launch_copy",
+  "date": "2026-10-04",
+  "status": "PASS",
+  "scope": {
+    "source": "06_Source/video/tour_edit.json",
+    "source_sha256": "fe6dcae567f9181de3aab2d8f1f54982525f70f4607a2ec248a880f4df14b504",
+    "duration_seconds": 94.4,
+    "shots": 29,
+    "method": "All 29 shot midpoints for both formats inspected in six contact sheets; 13 critical frames opened individually. Midpoint frame formula: round(((start + end) / 2) * 30) + 1. Repair verification: portrait frames 536, 848, 860 and 880 and landscape frame 848 opened at original resolution; corresponding native source images also inspected.",
+    "full_frame_samples": [
+      {
+        "variant": "portrait",
+        "frame": 536
+      },
+      {
+        "variant": "landscape",
+        "frame": 848
+      },
+      {
+        "variant": "portrait",
+        "frame": 774
+      },
+      {
+        "variant": "portrait",
+        "frame": 1630
+      },
+      {
+        "variant": "portrait",
+        "frame": 2071
+      },
+      {
+        "variant": "portrait",
+        "frame": 2343
+      },
+      {
+        "variant": "portrait",
+        "frame": 2368
+      },
+      {
+        "variant": "landscape",
+        "frame": 2368
+      },
+      {
+        "variant": "portrait",
+        "frame": 581
+      },
+      {
+        "variant": "landscape",
+        "frame": 878
+      },
+      {
+        "variant": "landscape",
+        "frame": 2319
+      },
+      {
+        "variant": "landscape",
+        "frame": 2334
+      },
+      {
+        "variant": "landscape",
+        "frame": 2349
+      }
+    ],
+    "audio_reviewed": false,
+    "mp4_decode_reviewed": true,
+    "limits": "Review verifies visible composition and feature coverage, including two repaired decoded output samples. It does not verify audio quality, lip sync in motion, continuous input recording, or backup/export execution.",
+    "decoded_frame_review_scope": "Two root-extracted final MP4 frames opened at original resolution: LANDSCAPE_11 and PORTRAIT_08. Both show the repaired composition and pass. This is a sampled decoded-frame review, not an independent full-video decode."
+  },
+  "findings": [
+    {
+      "id": "VQA-01",
+      "severity": "material",
+      "variant": "portrait",
+      "shot": 8,
+      "time_seconds": 17.82,
+      "frame": 536,
+      "issue": "The native To organize control and pointer target are outside the left crop during the To organize narration. Unfiled cards and the count remain visible, but the named control cannot be read.",
+      "evidence": ".work/frames_portrait/DABIN__FRAME__0536.png",
+      "recommended_fix": "Keep the left edge of the native view in this shot so the To organize control is readable.",
+      "status": "RESOLVED",
+      "resolution": "To organize is now readable, the pointer pulse emphasizes its actual native control, and unfiled cards remain visible.",
+      "reinspection_frame_sha256": "dac48bfbeee25949d5188f2d725230a1f1edbf27feacf56f9e0fa91a44e605cc"
+    },
+    {
+      "id": "VQA-02",
+      "severity": "material",
+      "variant": "landscape",
+      "shot": 11,
+      "time_seconds": 28.23,
+      "frame": 848,
+      "issue": "The only named-snippet card is clipped at its left edge. Its green snippet title and Palette notes label are cut, weakening the demonstration of named snippets.",
+      "evidence": ".work/frames_landscape/DABIN__FRAME__0848.png",
+      "recommended_fix": "Use full native view or align this crop to the left edge so the snippet name and card text are visible.",
+      "status": "RESOLVED",
+      "resolution": "The complete Studio palette snippet name, Palette notes label and body are now readable. The Clipboard tab and whole card remain visible.",
+      "reinspection_frame_sha256": "4d78592963389e061d3f74e45f7ca6efc6b64987691774676b2fbd4ee7d3c9f8"
+    }
+  ],
+  "verified_visible": [
+    "Inbox manual capture area plus saved image, link and note states",
+    "Day and Week timeline views",
+    "Project collection and project note editor",
+    "Clipboard tab and saved history cards",
+    "Shelf tab, selected captures and Export shelf control",
+    "OCR riverside query, image result, extracted-text label and preview",
+    "Applied project, Media and date filter chips",
+    "Task priority, checklist, repeat and reminder controls",
+    "Today planned task and focus Start/Pause timer states",
+    "Timer-end example explicitly labeled as leaving the task open",
+    "Automatic capture off by default, separate Clipboard/Screenshots controls, paused status and Resume capture",
+    "Export project control",
+    "Native top More ellipsis targeted during backup route cue (frame 2349); no menu or backup-success state claimed",
+    "Recently Deleted Restore control and restored capture state",
+    "Current native robot artwork, separate guide bubble, chapter heading and compatibility footer"
+  ],
+  "nonblocking_notes": [
+    "Cropped context is acceptable where the narrated feature and its controls remain visible. Small incidental card text was not used as a delivery blocker.",
+    "The backup cursor reaches the correct top More ellipsis at frame 2349; nearby midpoint/end positions are transitional movement, not a wrong target.",
+    "Portrait frames 848 and 880 keep the full named-snippet card visible. Frame 860 shows the pointer pulse on the card selection area; root confirms the cue intentionally emphasizes the card as a whole, without a separate label-click instruction.",
+    "The thin side appendages and small feet seen around the native window are present in unchanged source PNGs 03_INBOX_SAVED and 08_NAMED_SNIPPETS, together with the head above the window. They are native rendered product chrome, not introduced composition artifacts."
+  ],
+  "contact_sheets": [
+    "07_QA/DABIN__INDEPENDENT_QA__LANDSCAPE_1.png",
+    "07_QA/DABIN__INDEPENDENT_QA__LANDSCAPE_2.png",
+    "07_QA/DABIN__INDEPENDENT_QA__LANDSCAPE_3.png",
+    "07_QA/DABIN__INDEPENDENT_QA__PORTRAIT_1.png",
+    "07_QA/DABIN__INDEPENDENT_QA__PORTRAIT_2.png",
+    "07_QA/DABIN__INDEPENDENT_QA__PORTRAIT_3.png"
+  ],
+  "pending": "No remaining material visual finding. Root handles separate full encoded-media/audio and package checks.",
+  "remaining_material_findings": [],
+  "contact_sheet_note": "All six independent contact sheets regenerated from current rendered frames after repairs. Resolved full-frame paths and hashes document individual repair verification.",
+  "decoded_samples": [
+    {
+      "path": "07_QA/DABIN__QA__LANDSCAPE_11.png",
+      "sha256": "6a0bee957a9a7fdfed9da6b3932be96660ee87cf8ded4b92d72840d1a84bacc6",
+      "result": "PASS"
+    },
+    {
+      "path": "07_QA/DABIN__QA__PORTRAIT_08.png",
+      "sha256": "603409b1318aa0bf5f04a83269851ae8a874e3c67a5426aac8a307e7c75b37c4",
+      "result": "PASS"
+    }
+  ]
+}

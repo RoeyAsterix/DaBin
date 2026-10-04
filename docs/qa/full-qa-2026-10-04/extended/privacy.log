@@ -1,0 +1,7 @@
+Sources/DaBin/PrivacyInformation.swift:111:26: error: value of type 'some View' has no member 'buddyHelp'
+109 |                         Label("Show DaBin data folder", systemImage: "folder")
+110 |                     }.buttonStyle(.plain).foregroundStyle(accent)
+111 |                         .buddyHelp("Reveal the complete local data folder in Finder")
+    |                          `- error: value of type 'some View' has no member 'buddyHelp'
+112 |                     if let url = PrivacyInformation.configuredURL(for: PrivacyInformation.policyURLKey) {
+113 |                         Link("Privacy policy online", destination: url).foregroundStyle(accent)

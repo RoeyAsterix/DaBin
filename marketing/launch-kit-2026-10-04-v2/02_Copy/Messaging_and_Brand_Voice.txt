@@ -1,0 +1,47 @@
+DABIN / MESSAGING & BRAND VOICE
+Ready for owner review. Replace live-link fields before use.
+
+PRIMARY LINE
+Save now. Find it later. Keep it on your Mac.
+
+BRAND LINE
+A little robot for the useful bits of your day.
+
+ONE SENTENCE
+DaBin is a free Mac app that keeps your notes, links, images, files and tasks together locally, with a little robot you can drop things onto.
+
+SHORT DESCRIPTION (43 WORDS)
+Meet DaBin, a little robot for the useful bits of your day. Save notes, links, images, files and tasks on your Mac, keep related items with a project, and find them again with local search. Free. No account required. Apple Silicon, macOS 14+.
+
+MEDIUM DESCRIPTION
+Useful things turn up while you're doing something else: a design reference, a link, a screenshot, an idea. DaBin gives them a place on your Mac. Drop content onto the desktop robot, paste into the board, or create a note or task. Keep related captures with a project and search saved supported images and documents for their text. DaBin is free, with no account, ads, analytics or cloud sync. Optional website previews are off by default and can contact manually saved sites when enabled. Requires an Apple Silicon Mac with macOS 14 or later.
+
+AUDIENCE OPENERS
+Designers: Keep a project's useful references close.
+Students: Keep reading notes and saved screenshots together.
+Developers: Save the link, snippet and next step with the project.
+General: Where did that useful screenshot go?
+
+OUTCOME HEADLINES
+Catch the useful bits.
+Find words inside saved screenshots.
+Keep a project together.
+Give one task your attention.
+Your little desktop companion.
+
+CTA OPTIONS
+Get DaBin for Mac.
+Download free on the Mac App Store.
+Try saving three useful things.
+Save it. Search it. Get back to work.
+
+VOICE
+Say 'save', 'drop', 'find' and 'keep'. Use concrete examples. A little warmth is welcome; never make the robot sound like it can think, answer questions or search the whole computer. One benefit per post. Describe the local model plainly; no exaggerated security or productivity promises.
+
+PRIVACY LINE
+No account, ads, analytics or cloud sync. Saved captures and recognized text stay on this Mac. Optional manual-link previews can contact websites.
+
+LINKS
+App Store: [[APP_STORE_URL]]
+Website: [[WEBSITE_URL]]
+Contact: [[CONTACT_EMAIL]]

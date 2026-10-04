@@ -1,0 +1,46 @@
+{
+  "python": [
+    "Tests/test_app_store_archive_location.py",
+    "Tests/test_app_store_metadata.py",
+    "Tests/test_notarized_distribution.py",
+    "UpdateTools/package_update.py",
+    "scripts/app_store_archive_location.py",
+    "scripts/app_store_preflight.py",
+    "scripts/build_app.py",
+    "scripts/build_store_candidate.py",
+    "scripts/generate_project.py",
+    "scripts/install_app.py",
+    "scripts/install_desktop.py",
+    "scripts/package_notarized_distribution.py",
+    "scripts/package_standalone.py",
+    "scripts/project_inventory.py",
+    "scripts/run_qa.py",
+    "scripts/stage_release_assets.py",
+    "scripts/test_app_store_preflight.py",
+    "scripts/validate_app_store_metadata.py"
+  ],
+  "shell": [
+    "scripts/archive_app_store.sh",
+    "scripts/build.sh",
+    "scripts/build_drop_qa.sh",
+    "scripts/render_island_playground.sh",
+    "scripts/render_privacy_qa.sh",
+    "scripts/render_qa.sh",
+    "scripts/render_walkthrough.sh",
+    "scripts/test.sh",
+    "scripts/test_media_integration.sh"
+  ],
+  "propertyLists": [
+    "Resources/Info.plist",
+    "Resources/DaBin.entitlements",
+    "Resources/PrivacyInfo.xcprivacy"
+  ],
+  "configJSON": [
+    "Config/AppStoreSigning.json"
+  ],
+  "errors": [],
+  "pythonPassed": 18,
+  "shellPassed": 9,
+  "propertyListsPassed": 3,
+  "configJSONPassed": 1
+}

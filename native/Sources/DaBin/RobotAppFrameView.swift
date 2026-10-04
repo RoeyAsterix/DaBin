@@ -50,12 +50,19 @@ public final class RobotAppFrameView: NSView {
 
     private enum Phase { case hidden, opening, open, closing }
 
-    static let openDuration: TimeInterval = 1.15
-    static let closeDuration: TimeInterval = 0.78
+    static let openDuration: TimeInterval = 1.10
+    static let closeDuration: TimeInterval = 0.96
     static let reducedDuration: TimeInterval = 0.14
+    static let openingExpansionDelay: TimeInterval = 0.32
+    static let transitionStageOutset: CGFloat = 18
 
     private let contentContainer = NSView(frame: .zero)
     private let contentRevealMask = CAShapeLayer()
+    private let projectRecordingSign = RobotProjectSignView()
+    var recordingProjectName: String? { projectRecordingSign.projectName }
+    var recordingSignIsVisible: Bool { !projectRecordingSign.isHidden }
+    var recordingSignFrame: CGRect { projectRecordingSign.boardFrame }
+    var recordingSignFontSize: CGFloat { projectRecordingSign.fontSize }
 
     private let leftTorsoLayer = CAGradientLayer()
     private let rightTorsoLayer = CAGradientLayer()
@@ -67,6 +74,8 @@ public final class RobotAppFrameView: NSView {
     private let transitionSeamLayer = CAShapeLayer()
 
     private let headLayer = CALayer()
+    private let compactBodyLayer = CALayer()
+    private let compactFeetLayer = CAShapeLayer()
     private let faceScreenLayer = CAShapeLayer()
     private let leftEyeLayer = CAShapeLayer()
     private let rightEyeLayer = CAShapeLayer()
@@ -94,15 +103,11 @@ public final class RobotAppFrameView: NSView {
     private var nextBlinkTime: CFTimeInterval = .greatestFiniteMagnitude
     private var blinkSequence: UInt = 0
     private var reduceMotionActive = false
-    private var torsoMaskIsFilled = false
     private var leftEyeHome = CGPoint.zero
     private var rightEyeHome = CGPoint.zero
 
-    private enum RobotPart { case leftTorso, rightTorso, head, leftArm, rightArm, legs }
-    private enum SourcePose: Equatable { case climb, brace }
-
     private var decorationLayers: [CALayer] {
-        [leftTorsoLayer, rightTorsoLayer, headLayer, leftArmLayer, rightArmLayer, legsLayer]
+        [leftTorsoLayer, rightTorsoLayer, headLayer, leftArmLayer, rightArmLayer, legsLayer, compactBodyLayer]
     }
 
     public init(contentView: NSView) {
@@ -116,8 +121,9 @@ public final class RobotAppFrameView: NSView {
 
         configureContent()
         configureRobotLayers()
+        addSubview(projectRecordingSign)
         for (robotLayer, name) in zip(decorationLayers,
-            ["leftTorso", "rightTorso", "head", "leftArm", "rightArm", "legs"]) {
+            ["leftTorso", "rightTorso", "head", "leftArm", "rightArm", "legs", "compactBody"]) {
             if robotLayer.name == nil { robotLayer.name = "robotFrame.\(name)" }
         }
         contentContainer.layer?.name = "robotFrame.content"
@@ -150,6 +156,7 @@ public final class RobotAppFrameView: NSView {
             layoutLegs()
             layoutOutlineAndSeam()
             updateChromeBackingScale()
+            layoutProjectRecordingSign()
         }
         window?.invalidateCursorRects(for: self)
     }
@@ -162,6 +169,32 @@ public final class RobotAppFrameView: NSView {
     public override func viewDidChangeBackingProperties() {
         super.viewDidChangeBackingProperties()
         updateChromeBackingScale()
+    }
+
+    func setProjectRecording(projectName: String?, color: NSColor?, isEnabled: Bool,
+                             isPaused: Bool = false, statusText: String? = nil) {
+        projectRecordingSign.configure(projectName: isEnabled ? projectName : nil,
+                                       color: color, isPaused: isPaused, statusText: statusText)
+        projectRecordingSign.setAccessibilityElement(projectRecordingSign.projectName != nil)
+        projectRecordingSign.setAccessibilityRole(.staticText)
+        projectRecordingSign.setAccessibilityLabel(projectRecordingSign.projectName.map {
+            "\(projectRecordingSign.statusText): \($0)"
+        })
+        layoutProjectRecordingSign()
+    }
+
+    private func layoutProjectRecordingSign() {
+        projectRecordingSign.frame = bounds
+        projectRecordingSign.isHidden = projectRecordingSign.projectName == nil || phase != .open
+        guard !projectRecordingSign.isHidden else { return }
+        // The plate and both hands fit in the existing reserved top chrome.
+        // Keep the application header, resize rim and center face unobstructed.
+        let size = projectRecordingSign.preferredSize(maximumWidth: min(116, max(0, bounds.width / 2 - 38)))
+        let board = CGRect(x: bounds.maxX - size.width - 16, y: bounds.maxY - 28,
+                           width: size.width, height: size.height)
+        projectRecordingSign.updateAttachment(boardFrame: board,
+            leftShoulder: CGPoint(x: board.minX + 12, y: bounds.maxY - 31),
+            rightShoulder: CGPoint(x: board.maxX - 12, y: bounds.maxY - 31), armWidth: 2.5)
     }
 
     private func updateChromeBackingScale() {
@@ -186,7 +219,7 @@ public final class RobotAppFrameView: NSView {
     /// Visible corners resize; the reserved top chrome moves the window.
     /// All controls inside the application keep their own hit testing.
     public override func hitTest(_ point: NSPoint) -> NSView? {
-        guard !isHidden, !contentView.isHidden else { return nil }
+        guard !isHidden, !contentView.isHidden, !isTransitioning else { return nil }
         // AppKit passes `point` in the receiver's superview coordinates. The
         // hosted view's hitTest in turn expects content-container coordinates.
         let localPoint = superview.map { convert(point, from: $0) } ?? point
@@ -342,246 +375,27 @@ public final class RobotAppFrameView: NSView {
 
     public func animateOpen(from sourceRectInScreen: CGRect,
                             island: Bool,
+                            sourceMirrored: Bool = false,
                             reduceMotion: Bool,
                             completion: (() -> Void)? = nil) {
-        reduceMotionActive = reduceMotion
-        let sourceRect = localSourceRect(for: sourceRectInScreen)
-        let continuing = isTransitioning
-        let currentTransforms = continuing ? presentationTransforms() : [:]
-        let currentOpacities = continuing ? presentationOpacities() : [:]
-        let currentTorsoMasks = continuing ? presentationTorsoMasks() : [:]
-        let currentContentTransform = continuing
-            ? (contentContainer.layer?.presentation()?.transform
-                ?? contentContainer.layer?.transform ?? CATransform3DIdentity) : nil
-        let currentContentOpacity = continuing
-            ? (contentContainer.layer?.presentation()?.opacity ?? contentContainer.layer?.opacity ?? 0) : nil
-        let currentOutlineTransform = continuing
-            ? (frameOutlineLayer.presentation()?.transform ?? frameOutlineLayer.transform) : nil
-        let currentOutlineOpacity = continuing
-            ? (frameOutlineLayer.presentation()?.opacity ?? frameOutlineLayer.opacity) : nil
-        let currentCenterSeamTransform = continuing
-            ? (centerSeamLayer.presentation()?.transform ?? centerSeamLayer.transform) : nil
-        let currentCenterSeamOpacity = continuing
-            ? (centerSeamLayer.presentation()?.opacity ?? centerSeamLayer.opacity) : nil
-        let currentTransitionSeamOpacity = continuing
-            ? (transitionSeamLayer.presentation()?.opacity ?? transitionSeamLayer.opacity) : nil
-        let currentTransitionSeamTransform = continuing
-            ? (transitionSeamLayer.presentation()?.transform ?? transitionSeamLayer.transform) : nil
-
-        let generation = beginTransition(.opening)
-        isHidden = false
-        contentContainer.isHidden = false
-        contentView.isHidden = false
-        layoutSubtreeIfNeeded()
-        removeTransitionAnimations()
-
-        if reduceMotion {
-            applyOpenModelState()
-            animateReducedFade(open: true, duration: Self.reducedDuration)
-            finish(after: Self.reducedDuration, generation: generation, open: true,
-                   completion: completion)
-            return
-        }
-
-        withoutActions {
-            layer?.opacity = 1
-            if !continuing { setTorsoSolid(true) }
-        }
-        if continuing { animateTorsoFill(from: currentTorsoMasks, delay: 0, duration: 0.20) }
-        for (index, robotLayer) in decorationLayers.enumerated() {
-            let climb = sourcePoseTransform(for: robotLayer, sourceRect: sourceRect,
-                                            pose: .climb, island: island)
-            let brace = sourcePoseTransform(for: robotLayer, sourceRect: sourceRect,
-                                            pose: .brace, island: island)
-            let start = currentTransforms[ObjectIdentifier(robotLayer)] ?? climb
-            withoutActions { robotLayer.transform = CATransform3DIdentity; robotLayer.opacity = 1 }
-            addOpeningTransform(to: robotLayer, from: start, brace: brace,
-                                outward: splitDirection(for: robotLayer),
-                                delay: Double(index) * 0.006,
-                                continuing: continuing)
-            if let opacity = currentOpacities[ObjectIdentifier(robotLayer)], opacity < 1 {
-                animateOpacity(robotLayer, from: opacity, to: 1, duration: 0.20, delay: 0,
-                               key: "robotFrame.reopenOpacity")
-            }
-        }
-
-        let contentClimb = bodySurfaceTransform(for: contentContainer.layer,
-                                                sourceRect: sourceRect,
-                                                pose: .climb, island: island)
-        let contentBrace = bodySurfaceTransform(for: contentContainer.layer,
-                                                sourceRect: sourceRect,
-                                                pose: .brace, island: island)
-        let outlineClimb = bodySurfaceTransform(for: frameOutlineLayer,
-                                                sourceRect: sourceRect,
-                                                pose: .climb, island: island)
-        let outlineBrace = bodySurfaceTransform(for: frameOutlineLayer,
-                                                sourceRect: sourceRect,
-                                                pose: .brace, island: island)
-        let centerSeamClimb = bodySurfaceTransform(for: centerSeamLayer,
-                                                   sourceRect: sourceRect,
-                                                   pose: .climb, island: island)
-        let centerSeamBrace = bodySurfaceTransform(for: centerSeamLayer,
-                                                   sourceRect: sourceRect,
-                                                   pose: .brace, island: island)
-        withoutActions {
-            contentRevealMask.transform = CATransform3DIdentity
-            contentContainer.layer?.transform = CATransform3DIdentity
-            contentContainer.layer?.opacity = 1
-            frameOutlineLayer.transform = CATransform3DIdentity
-            frameOutlineLayer.opacity = 1
-            centerSeamLayer.transform = CATransform3DIdentity
-            centerSeamLayer.opacity = 1
-            transitionSeamLayer.transform = CATransform3DIdentity
-            transitionSeamLayer.opacity = 0
-        }
-        if let contentLayer = contentContainer.layer {
-            addOpeningTransform(to: contentLayer,
-                                from: currentContentTransform ?? contentClimb,
-                                brace: contentBrace, outward: 0, delay: 0,
-                                continuing: continuing)
-        }
-        addOpeningTransform(to: frameOutlineLayer,
-                            from: currentOutlineTransform ?? outlineClimb,
-                            brace: outlineBrace, outward: 0, delay: 0,
-                            continuing: continuing)
-        addOpeningTransform(to: centerSeamLayer,
-                            from: currentCenterSeamTransform ?? centerSeamClimb,
-                            brace: centerSeamBrace, outward: 0, delay: 0,
-                            continuing: continuing)
-        let transitionSeamStart = currentTransitionSeamTransform
-            ?? sourcePoseTransform(for: transitionSeamLayer,
-                                   sourceRect: sourceRect, pose: .climb, island: island)
-        let transitionSeamBrace = sourcePoseTransform(for: transitionSeamLayer,
-                                                      sourceRect: sourceRect,
-                                                      pose: .brace, island: island)
-        addOpeningTransform(to: transitionSeamLayer, from: transitionSeamStart,
-                            brace: transitionSeamBrace, outward: 0, delay: 0,
-                            continuing: continuing)
-        animateOpacity(transitionSeamLayer, from: currentTransitionSeamOpacity ?? 1, to: 0,
-                       duration: 0.78, delay: 0.17, key: "robotFrame.splitSeam.open")
-        animateOpacity(frameOutlineLayer, from: currentOutlineOpacity ?? 0, to: 1,
-                       duration: 0.22, delay: 0.82, key: "robotFrame.outline.open")
-        animateOpacity(centerSeamLayer, from: currentCenterSeamOpacity ?? 0, to: 1,
-                       duration: 0.18, delay: 0.86, key: "robotFrame.seam.open")
-        animateOpacity(contentContainer.layer, from: currentContentOpacity ?? 0, to: 1,
-                       duration: 0.68, delay: 0.24, key: "robotFrame.content.open")
-
-        finish(after: Self.openDuration, generation: generation, open: true,
-               completion: completion)
+        animateCharacterTransition(source: sourceRectInScreen, island: island, sourceMirrored: sourceMirrored,
+                                   opening: true, reduceMotion: reduceMotion, completion: completion)
     }
 
     public func animateClose(to sourceRectInScreen: CGRect,
                              island: Bool,
+                             sourceMirrored: Bool = false,
                              reduceMotion: Bool,
                              completion: (() -> Void)? = nil) {
-        reduceMotionActive = reduceMotion
-        let sourceRect = localSourceRect(for: sourceRectInScreen)
-        let continuing = isTransitioning
-        let currentTransforms = presentationTransforms()
-        let currentOpacities = presentationOpacities()
-        let currentTorsoMasks = presentationTorsoMasks()
-        let currentContentTransform = contentContainer.layer?.presentation()?.transform
-            ?? contentContainer.layer?.transform ?? CATransform3DIdentity
-        let currentContentOpacity = contentContainer.layer?.presentation()?.opacity
-            ?? contentContainer.layer?.opacity ?? 1
-        let currentOutlineTransform = frameOutlineLayer.presentation()?.transform
-            ?? frameOutlineLayer.transform
-        let currentOutlineOpacity = frameOutlineLayer.presentation()?.opacity ?? frameOutlineLayer.opacity
-        let currentCenterSeamTransform = centerSeamLayer.presentation()?.transform
-            ?? centerSeamLayer.transform
-        let currentCenterSeamOpacity = centerSeamLayer.presentation()?.opacity ?? centerSeamLayer.opacity
-        let currentTransitionSeamOpacity = transitionSeamLayer.presentation()?.opacity
-            ?? transitionSeamLayer.opacity
-        let currentTransitionSeamTransform = transitionSeamLayer.presentation()?.transform
-            ?? transitionSeamLayer.transform
-        let generation = beginTransition(.closing)
-        isHidden = false
-        contentContainer.isHidden = false
-        contentView.isHidden = false
-        layoutSubtreeIfNeeded()
-        removeTransitionAnimations()
-
-        if reduceMotion {
-            applyOpenModelState()
-            animateReducedFade(open: false, duration: Self.reducedDuration)
-            finish(after: Self.reducedDuration, generation: generation, open: false,
-                   completion: completion)
-            return
-        }
-
-        withoutActions {
-            layer?.opacity = 1
-        }
-        // Keep the stable perimeter at first. The shell fills continuously
-        // only as the content contracts, instead of flashing a backing plate.
-        animateTorsoFill(from: currentTorsoMasks, delay: 0.22, duration: 0.29)
-        let gather = closingGatherRect(source: sourceRect)
-        let coiled = scaledRect(gather, by: 0.92, center: CGPoint(x: gather.midX, y: gather.midY + 3))
-        let tuckCenter = CGPoint(x: sourceRect.midX,
-                                 y: island ? sourceRect.maxY - sourceRect.height * 0.06 : sourceRect.midY)
-        let tucked = scaledRect(sourceRect, by: 0.12, center: tuckCenter)
-        let beginTime = CACurrentMediaTime()
-        for robotLayer in decorationLayers {
-            let start = currentTransforms[ObjectIdentifier(robotLayer)] ?? CATransform3DIdentity
-            addClosingTransform(to: robotLayer, from: start, source: sourceRect,
-                                gather: gather, coiled: coiled, tucked: tucked,
-                                island: island, continuing: continuing, beginTime: beginTime,
-                                surface: false, key: "robotFrame.close")
-            addClosingOpacity(to: robotLayer,
-                              from: currentOpacities[ObjectIdentifier(robotLayer)] ?? 1,
-                              beginTime: beginTime)
-        }
-
-        withoutActions {
-            contentRevealMask.transform = CATransform3DIdentity
-            contentContainer.layer?.opacity = 0
-            frameOutlineLayer.opacity = 0
-            centerSeamLayer.opacity = 0
-            transitionSeamLayer.opacity = 0
-        }
-        if let contentLayer = contentContainer.layer {
-            addClosingTransform(to: contentLayer, from: currentContentTransform, source: sourceRect,
-                                gather: gather, coiled: coiled, tucked: tucked,
-                                island: island, continuing: continuing, beginTime: beginTime,
-                                surface: true, key: "robotFrame.content.transform.close")
-        }
-        // Transform and opacity need different keys. Reusing a key silently
-        // replaces the shrink with a fade, leaving the board full-size.
-        animateOpacity(contentContainer.layer, from: currentContentOpacity, to: 0,
-                       duration: 0.30, delay: 0.20, key: "robotFrame.content.opacity.close")
-        animateOpacity(frameOutlineLayer, from: currentOutlineOpacity, to: 0,
-                       duration: 0.36, delay: 0.18, key: "robotFrame.outline.close")
-        addClosingTransform(to: frameOutlineLayer, from: currentOutlineTransform, source: sourceRect,
-                            gather: gather, coiled: coiled, tucked: tucked,
-                            island: island, continuing: continuing, beginTime: beginTime,
-                            surface: true, key: "robotFrame.outline.transform.close")
-        animateOpacity(centerSeamLayer, from: currentCenterSeamOpacity, to: 0,
-                       duration: 0.35, delay: 0.20, key: "robotFrame.seam.close")
-        addClosingTransform(to: centerSeamLayer, from: currentCenterSeamTransform, source: sourceRect,
-                            gather: gather, coiled: coiled, tucked: tucked,
-                            island: island, continuing: continuing, beginTime: beginTime,
-                            surface: true, key: "robotFrame.centerSeam.transform.close")
-        addClosingTransform(to: transitionSeamLayer, from: currentTransitionSeamTransform,
-                            source: sourceRect, gather: gather, coiled: coiled, tucked: tucked,
-                            island: island, continuing: continuing, beginTime: beginTime,
-                            surface: false, key: "robotFrame.splitSeam.close")
-        let seam = CAKeyframeAnimation(keyPath: "opacity")
-        seam.values = [currentTransitionSeamOpacity, 0, 0.9, 0.9, 0]
-        seam.keyTimes = [0, 0.18, 0.60, 0.80, 1]
-        seam.duration = Self.closeDuration
-        seam.beginTime = beginTime
-        seam.timingFunctions = Array(repeating: CAMediaTimingFunction(name: .easeInEaseOut), count: 4)
-        transitionSeamLayer.add(seam, forKey: "robotFrame.splitSeam.opacity.close")
-
-        finish(after: Self.closeDuration, generation: generation, open: false,
-               completion: completion)
+        animateCharacterTransition(source: sourceRectInScreen, island: island, sourceMirrored: sourceMirrored,
+                                   opening: false, reduceMotion: reduceMotion, completion: completion)
     }
 
     /// Called by the owning controller's existing pointer poll. This schedules
     /// no timer: it only eases the mint eyes to the latest clamped target and uses
     /// the same tick to trigger an occasional blink.
     public func updatePointer(screenPoint: CGPoint?, displayFrame: CGRect) {
-        guard isFrameVisible || isTransitioning else { return }
+        guard isFrameVisible, phase == .open else { return }
         guard !reduceMotionActive else { resetEyes(); return }
         let eyeCenter = eyeCenterInScreen()
         let offset = RobotAppFrameGaze.offset(pointer: screenPoint,
@@ -638,9 +452,8 @@ public final class RobotAppFrameView: NSView {
         frameOutlineLayer.zPosition = 21
         root.addSublayer(frameOutlineLayer)
 
-        // Fill the complete continuous corner rim. The existing four-rectangle
-        // torso masks stay intact for the rail-to-solid closing choreography.
-        // As an outline child this rim shares its shrink/fade, not a new timer.
+        // The continuous rim shares the board's transform and fade. The
+        // underlying rails keep their transparent center throughout motion.
         continuousRimLayer.name = "robotFrame.continuousRim"
         // A direct hollow vector fill avoids compositing a full-board gradient
         // and mask for a rim only a few points wide. The torso rails retain
@@ -701,6 +514,16 @@ public final class RobotAppFrameView: NSView {
             leftEye: leftEyeLayer, rightEye: rightEyeLayer, mouth: mouthLayer)
         leftEyeHome = leftEyeLayer.position
         rightEyeHome = rightEyeLayer.position
+        let bodySize = CGSize(width: Self.headSize.width, height: Self.headSize.width * 1.07)
+        compactBodyLayer.bounds = CGRect(origin: .zero, size: bodySize)
+        compactBodyLayer.anchorPoint = CGPoint(x: 0.5, y: 1 - Self.headSize.height / (2 * bodySize.height))
+        compactBodyLayer.masksToBounds = false
+        QuietOrbitBodyArtwork.install(in: compactBodyLayer, canvas: bodySize,
+            headRect: CGRect(x: 0, y: bodySize.height - Self.headSize.height,
+                             width: Self.headSize.width, height: Self.headSize.height),
+            topDown: false, feet: compactFeetLayer)
+        compactBodyLayer.zPosition = 12
+        layer?.addSublayer(compactBodyLayer)
     }
 
     private func configureLegs() {
@@ -749,8 +572,12 @@ public final class RobotAppFrameView: NSView {
                                  for torso: CALayer,
                                  content: CGRect) {
         mask.frame = torso.bounds
-        let contentInTorso = CGRect(x: content.minX - torso.frame.minX,
-                                    y: content.minY - torso.frame.minY,
+        // A reversing transition still has a transformed model layer. Its
+        // frame is that transformed bounding box, not the mask's local origin.
+        let origin = CGPoint(x: torso.position.x - torso.bounds.width * torso.anchorPoint.x,
+                             y: torso.position.y - torso.bounds.height * torso.anchorPoint.y)
+        let contentInTorso = CGRect(x: content.minX - origin.x,
+                                    y: content.minY - origin.y,
                                     width: content.width, height: content.height)
         let rails = [
             CGRect(x: torso.bounds.minX, y: torso.bounds.minY,
@@ -762,7 +589,7 @@ public final class RobotAppFrameView: NSView {
             CGRect(x: torso.bounds.minX, y: min(torso.bounds.maxY, contentInTorso.maxY),
                    width: torso.bounds.width, height: max(0, torso.bounds.maxY - contentInTorso.maxY))
         ]
-        mask.path = torsoMaskIsFilled ? solidTorsoMaskPath(for: torso) : rectangleMaskPath(rails)
+        mask.path = rectangleMaskPath(rails)
         mask.fillColor = NSColor.black.cgColor
     }
 
@@ -773,35 +600,22 @@ public final class RobotAppFrameView: NSView {
                           y: bounds.maxY - height - 3,
                           width: width, height: height)
         headLayer.frame = rect
+        compactBodyLayer.position = headLayer.position
     }
 
     private func layoutArms() {
-        let content = Self.contentRect(in: bounds)
-        leftArmLayer.frame = bounds
-        rightArmLayer.frame = bounds
-
-        let left = CGMutablePath()
-        left.move(to: CGPoint(x: content.minX - 2, y: content.midY + 28))
-        left.addCurve(to: CGPoint(x: max(bounds.minX + 1, content.minX - 7), y: content.midY - 22),
-                      control1: CGPoint(x: content.minX - 8, y: content.midY + 20),
-                      control2: CGPoint(x: content.minX - 9, y: content.midY - 13))
-        leftArmLayer.path = left
-        leftArmHighlight.path = left
-
-        let right = CGMutablePath()
-        right.move(to: CGPoint(x: content.maxX + 2, y: content.midY + 28))
-        right.addCurve(to: CGPoint(x: min(bounds.maxX - 1, content.maxX + 7), y: content.midY - 22),
-                       control1: CGPoint(x: content.maxX + 8, y: content.midY + 20),
-                       control2: CGPoint(x: content.maxX + 9, y: content.midY - 13))
-        rightArmLayer.path = right
-        rightArmHighlight.path = right
-        for (hardware, x, direction) in [(leftArmHardware, content.minX - 7, CGFloat(-1)),
-                                         (rightArmHardware, content.maxX + 7, CGFloat(1))] {
-            let joints = CGMutablePath()
-            joints.addEllipse(in: CGRect(x: x - 2.6, y: content.midY - 2.6, width: 5.2, height: 5.2))
-            joints.addRoundedRect(in: CGRect(x: x - 2.5 + direction * 0.3, y: content.midY - 26,
-                                            width: 5, height: 7), cornerWidth: 1.5, cornerHeight: 1.5)
-            hardware.path = joints
+        let pose = stablePose()
+        for (arm, highlight, hardware, geometry) in [
+            (leftArmLayer, leftArmHighlight, leftArmHardware, pose.left),
+            (rightArmLayer, rightArmHighlight, rightArmHardware, pose.right)
+        ] {
+            arm.frame = bounds
+            arm.path = armPath(geometry)
+            highlight.path = armPath(geometry)
+            hardware.path = armHardwarePath(geometry)
+            arm.lineWidth = geometry.unit * 11
+            highlight.lineWidth = geometry.unit * 7
+            hardware.lineWidth = geometry.unit
         }
     }
 
@@ -856,8 +670,348 @@ public final class RobotAppFrameView: NSView {
 
     // MARK: - Transition choreography
 
-    /// Four rectangles keep identical path topology in both rail and filled
-    /// states. The fill can therefore grow smoothly without swapping masks.
+    private struct ArmPose {
+        let shoulder: CGPoint
+        let elbow: CGPoint
+        let hand: CGPoint
+        let unit: CGFloat
+    }
+
+    private struct CharacterPose {
+        let surface: CGRect
+        let head: CGRect
+        let left: ArmPose
+        let right: ArmPose
+    }
+
+    private var transitionLayers: [CALayer] {
+        decorationLayers + [frameOutlineLayer, centerSeamLayer, transitionSeamLayer]
+            + [contentContainer.layer].compactMap { $0 }
+    }
+
+    private var armShapeLayers: [CAShapeLayer] {
+        [leftArmLayer, rightArmLayer, leftArmHighlight, rightArmHighlight,
+         leftArmHardware, rightArmHardware]
+    }
+
+    private func animateCharacterTransition(source sourceInScreen: CGRect, island: Bool, sourceMirrored: Bool,
+                                            opening: Bool, reduceMotion: Bool,
+                                            completion: (() -> Void)?) {
+        let continuing = isTransitioning
+        let source = localSourceRect(for: sourceInScreen)
+        let transforms = Dictionary(uniqueKeysWithValues: transitionLayers.map {
+            (ObjectIdentifier($0), $0.presentation()?.transform ?? $0.transform)
+        })
+        let opacities = Dictionary(uniqueKeysWithValues: transitionLayers.map {
+            (ObjectIdentifier($0), $0.presentation()?.opacity ?? $0.opacity)
+        })
+        let paths = Dictionary(uniqueKeysWithValues: armShapeLayers.compactMap { shape -> (ObjectIdentifier, CGPath)? in
+            guard let path = shape.presentation()?.path ?? shape.path else { return nil }
+            return (ObjectIdentifier(shape), path)
+        })
+        let widths = Dictionary(uniqueKeysWithValues: armShapeLayers.map {
+            (ObjectIdentifier($0), $0.presentation()?.lineWidth ?? $0.lineWidth)
+        })
+        let rootOpacity = layer?.presentation()?.opacity ?? layer?.opacity ?? (opening ? 0 : 1)
+        let eyeScales = Dictionary(uniqueKeysWithValues: [leftEyeLayer, rightEyeLayer].map {
+            let transform = $0.presentation()?.transform ?? $0.transform
+            return (ObjectIdentifier($0), max(0.08, hypot(transform.m21, transform.m22)))
+        })
+        let eyePositions = Dictionary(uniqueKeysWithValues: [leftEyeLayer, rightEyeLayer].map {
+            (ObjectIdentifier($0), $0.presentation()?.position ?? $0.position)
+        })
+        let generation = beginTransition(opening ? .opening : .closing)
+        reduceMotionActive = reduceMotion
+        isHidden = false
+        contentContainer.isHidden = false
+        contentView.isHidden = false
+        layoutSubtreeIfNeeded()
+        removeTransitionAnimations()
+
+        if reduceMotion {
+            applyOpenModelState()
+            withoutActions { layer?.opacity = opening ? 1 : 0 }
+            let fade = CABasicAnimation(keyPath: "opacity")
+            fade.fromValue = continuing ? rootOpacity : (opening ? 0 : 1)
+            fade.toValue = opening ? 1 : 0
+            fade.duration = Self.reducedDuration
+            layer?.add(fade, forKey: "robotFrame.reduced")
+            finish(after: Self.reducedDuration, generation: generation, open: opening, completion: completion)
+            return
+        }
+
+        let hero = heroRect(source: source)
+        let stable = stablePose()
+        let arrival = compactPose(in: hero, handsReady: false)
+        let ready = compactPose(in: hero.offsetBy(dx: 0, dy: -3), handsReady: true)
+        let coil = compactPose(in: scaledRect(hero, by: 0.95,
+            center: CGPoint(x: hero.midX, y: hero.midY - 6)), handsReady: true)
+        let sourcePose = compactPose(in: source, handsReady: false, mirrored: sourceMirrored)
+        let tuck = compactPose(in: scaledRect(source, by: 0.22,
+            center: CGPoint(x: source.midX, y: source.midY + (island ? source.height * 0.34 : 0))),
+            handsReady: false, mirrored: sourceMirrored)
+
+        let poses: [CharacterPose]
+        let times: [Double]
+        let duration: TimeInterval
+        if opening && continuing {
+            // Reversal resumes from the exact presented geometry, without
+            // replaying the entrance or visiting a different compact pose.
+            poses = [stable, stable]
+            times = [0, 1]
+            duration = 0.42
+        } else if opening {
+            poses = [sourcePose,
+                compactPose(in: scaledRect(source, by: 0.94,
+                    center: CGPoint(x: source.midX, y: source.midY - 2)), handsReady: false, mirrored: sourceMirrored),
+                arrival, ready, unfoldingPose(0.91, hero: ready), unfoldingPose(0.995, hero: ready), stable]
+            times = [0, 0.12, 0.29, 0.44, 0.82, 0.94, 1]
+            duration = Self.openDuration
+        } else if continuing {
+            poses = [stable, ready, coil, sourcePose, tuck]
+            times = [0, 0.44, 0.64, 0.88, 1]
+            duration = 0.72
+        } else {
+            poses = [stable, unfoldingPose(0.985, hero: ready), unfoldingPose(0.38, hero: ready),
+                     ready, coil, sourcePose, tuck]
+            times = [0, 0.12, 0.38, 0.52, 0.72, 0.90, 1]
+            duration = Self.closeDuration
+        }
+        let started = CACurrentMediaTime()
+        withoutActions {
+            layer?.opacity = 1
+            restoreTorsoRails()
+            contentRevealMask.transform = CATransform3DIdentity
+        }
+        for target in transitionLayers {
+            var values = poses.map { pose -> CATransform3D in
+                if target === headLayer || target === compactBodyLayer {
+                    return headTransform(for: target, rect: pose.head)
+                }
+                if target === leftArmLayer || target === rightArmLayer { return CATransform3DIdentity }
+                return surfaceTransform(for: target, rect: pose.surface)
+            }
+            if continuing || !opening, let presented = transforms[ObjectIdentifier(target)] {
+                values[0] = presented
+            }
+            withoutActions { target.transform = values.last! }
+            let key: String
+            if target === contentContainer.layer { key = opening ? "robotFrame.open" : "robotFrame.content.transform.close" }
+            else if target === frameOutlineLayer { key = opening ? "robotFrame.open" : "robotFrame.outline.transform.close" }
+            else if target === centerSeamLayer { key = opening ? "robotFrame.open" : "robotFrame.centerSeam.transform.close" }
+            else { key = opening ? "robotFrame.open" : "robotFrame.close" }
+            addTrack(to: target, keyPath: "transform", values: values.map { NSValue(caTransform3D: $0) },
+                     times: times, duration: duration, started: started, key: key)
+        }
+
+        for (arm, highlight, hardware, left) in [
+            (leftArmLayer, leftArmHighlight, leftArmHardware, true),
+            (rightArmLayer, rightArmHighlight, rightArmHardware, false)
+        ] {
+            let armPoses = poses.map { left ? $0.left : $0.right }
+            for (shape, hardwarePath) in [(arm, false), (highlight, false), (hardware, true)] {
+                var values = armPoses.map { hardwarePath ? armHardwarePath($0) : armPath($0) }
+                var lineWidths = armPoses.map { $0.unit * (hardwarePath ? 1 : (shape === arm ? 11 : 7)) }
+                if continuing || !opening {
+                    if let presented = paths[ObjectIdentifier(shape)] { values[0] = presented }
+                    if let width = widths[ObjectIdentifier(shape)] { lineWidths[0] = width }
+                }
+                withoutActions { shape.path = values.last; shape.lineWidth = lineWidths.last! }
+                addTrack(to: shape, keyPath: "path", values: values, times: times, duration: duration,
+                         started: started, key: "robotFrame.arm.path")
+                addTrack(to: shape, keyPath: "lineWidth", values: lineWidths.map { NSNumber(value: Double($0)) },
+                         times: times, duration: duration, started: started, key: "robotFrame.arm.width")
+            }
+        }
+
+        func opacity(_ target: CALayer?, _ values: [Float], _ stops: [Double], _ key: String) {
+            guard let target else { return }
+            var values = values
+            if continuing || !opening { values[0] = opacities[ObjectIdentifier(target)] ?? values[0] }
+            withoutActions { target.opacity = values.last! }
+            addTrack(to: target, keyPath: "opacity", values: values.map { NSNumber(value: $0) },
+                     times: stops, duration: duration, started: started, key: key)
+        }
+        let characterLayers = [headLayer, leftArmLayer, rightArmLayer]
+        if opening && continuing {
+            for target in characterLayers + [leftTorsoLayer, rightTorsoLayer, legsLayer, frameOutlineLayer, centerSeamLayer] {
+                opacity(target, [1, 1], [0, 1], "robotFrame.reopenOpacity")
+            }
+            opacity(compactBodyLayer, [1, 0], [0, 1], "robotFrame.body.opacity")
+            opacity(contentContainer.layer, [0, 1], [0, 1], "robotFrame.content.open")
+        } else if opening {
+            for target in characterLayers { opacity(target, [1, 1], [0, 1], "robotFrame.character.open") }
+            opacity(compactBodyLayer, [1, 1, 0, 0], [0, 0.46, 0.69, 1], "robotFrame.body.opacity")
+            for target in [leftTorsoLayer, rightTorsoLayer, legsLayer, frameOutlineLayer, centerSeamLayer] {
+                opacity(target, [0, 0, 1, 1], [0, 0.46, 0.86, 1], "robotFrame.rails.open")
+            }
+            opacity(contentContainer.layer, [0, 0, 1, 1], [0, 0.52, 0.88, 1], "robotFrame.content.open")
+        } else {
+            for target in characterLayers {
+                opacity(target, [1, 1, 1, 0], [0, 0.12, 0.90, 1], "robotFrame.closeOpacity")
+            }
+            if continuing {
+                opacity(compactBodyLayer, [0, 1, 1, 0], [0, 0.44, 0.90, 1], "robotFrame.body.opacity")
+            } else {
+                opacity(compactBodyLayer, [0, 0, 1, 1, 0], [0, 0.32, 0.52, 0.90, 1], "robotFrame.body.opacity")
+            }
+            for target in [leftTorsoLayer, rightTorsoLayer, legsLayer, frameOutlineLayer, centerSeamLayer] {
+                let held = continuing ? opacities[ObjectIdentifier(target)] ?? 0 : 1
+                opacity(target, [held, held, 0, 0], [0, 0.22, continuing ? 0.44 : 0.52, 1], "robotFrame.closeOpacity")
+            }
+            let heldContent = continuing ? contentContainer.layer.flatMap { opacities[ObjectIdentifier($0)] } ?? 0 : 1
+            opacity(contentContainer.layer, [heldContent, heldContent, 0, 0],
+                    [0, 0.10, continuing ? 0.34 : 0.42, 1], "robotFrame.content.opacity.close")
+        }
+        withoutActions { transitionSeamLayer.opacity = 0 }
+        animateCharacterEyes(opening: opening, continuing: continuing, duration: duration, started: started,
+                             scales: eyeScales, positions: eyePositions)
+        finish(after: duration, generation: generation, open: opening, completion: completion)
+    }
+
+    private func addTrack(to target: CALayer, keyPath: String, values: [Any], times: [Double],
+                          duration: TimeInterval, started: CFTimeInterval, key: String) {
+        let animation = CAKeyframeAnimation(keyPath: keyPath)
+        animation.values = values
+        animation.keyTimes = times.map { NSNumber(value: $0) }
+        animation.duration = duration
+        animation.beginTime = target.convertTime(started, from: nil)
+        animation.timingFunctions = (0..<(times.count - 1)).map { index in
+            // The big unfold uses one continuous acceleration; smaller
+            // anticipation, grip and docking beats ease into their contacts.
+            if times.count > 2 && index == (phase == .opening ? 3 : 1) {
+                return CAMediaTimingFunction(controlPoints: 0.22, 0.74, 0.24, 1)
+            }
+            return CAMediaTimingFunction(name: .easeInEaseOut)
+        }
+        animation.fillMode = .both
+        animation.isRemovedOnCompletion = false
+        target.add(animation, forKey: key)
+    }
+
+    private func animateCharacterEyes(opening: Bool, continuing: Bool,
+                                      duration: TimeInterval, started: CFTimeInterval,
+                                      scales: [ObjectIdentifier: CGFloat], positions: [ObjectIdentifier: CGPoint]) {
+        for eye in [leftEyeLayer, rightEyeLayer] {
+            let scale = scales[ObjectIdentifier(eye)] ?? 1
+            let position = positions[ObjectIdentifier(eye)] ?? eye.position
+            let home = eye === leftEyeLayer ? leftEyeHome : rightEyeHome
+            eye.removeAllAnimations()
+            withoutActions { eye.transform = CATransform3DIdentity; eye.position = home }
+            let values: [CGFloat] = continuing ? [scale, 1] : [scale, 0.28, 1, 1]
+            let times: [Double] = continuing ? [0, 1] : [0, 0.10, opening ? 0.23 : 0.26, 1]
+            addTrack(to: eye, keyPath: "transform.scale.y",
+                     values: values.map { NSNumber(value: Double($0)) }, times: times,
+                     duration: duration, started: started, key: "robotFrame.expression")
+            addTrack(to: eye, keyPath: "position", values: [NSValue(point: position), NSValue(point: home), NSValue(point: home)],
+                     times: [0, 0.24, 1], duration: duration, started: started, key: "robotFrame.expression.position")
+        }
+    }
+
+    private func compactPose(in rect: CGRect, handsReady: Bool, mirrored: Bool = false) -> CharacterPose {
+        // Exact visible-artwork mapping from RobotCharacterView: the original
+        // 42pt head lives inside a 56.7 × 45.75 footprint, with its asymmetric
+        // greeting hand included. No squashed head or replacement torso.
+        let unit = min(rect.width / 56.7, rect.height / 45.75)
+        let head = CGRect(x: rect.midX + (mirrored ? -18.69 : -23.31) * unit, y: rect.maxY - 28.96 * unit,
+                          width: 42 * unit, height: 28.56 * unit)
+        func point(_ x: CGFloat, _ y: CGFloat) -> CGPoint {
+            QuietOrbitVisualStyle.point(mirrored ? 100 - x : x, y, in: head, topDown: false)
+        }
+        let left = ArmPose(shoulder: point(3, 49),
+            elbow: point(handsReady ? -12 : 1, handsReady ? 67 : 33),
+            hand: point(handsReady ? 18 : 1, handsReady ? 81 : 9), unit: head.width / 100)
+        let right = ArmPose(shoulder: point(97, 49),
+            elbow: point(handsReady ? 112 : 114, handsReady ? 67 : 56),
+            hand: point(handsReady ? 82 : 109, 81), unit: head.width / 100)
+        let surface = QuietOrbitVisualStyle.rectangle(16, 72, 68, 30, in: head, topDown: false)
+        return CharacterPose(surface: surface, head: head, left: mirrored ? right : left, right: mirrored ? left : right)
+    }
+
+    private func stablePose() -> CharacterPose {
+        let content = Self.contentRect(in: bounds)
+        let left = ArmPose(shoulder: CGPoint(x: content.minX - 2, y: content.midY + 28),
+            elbow: CGPoint(x: content.minX - 6, y: content.midY),
+            hand: CGPoint(x: content.minX - 5, y: content.midY - 22), unit: 0.25)
+        let right = ArmPose(shoulder: CGPoint(x: content.maxX + 2, y: content.midY + 28),
+            elbow: CGPoint(x: content.maxX + 6, y: content.midY),
+            hand: CGPoint(x: content.maxX + 5, y: content.midY - 22), unit: 0.25)
+        return CharacterPose(surface: content,
+            head: CGRect(x: bounds.midX - Self.headSize.width / 2,
+                         y: bounds.maxY - Self.headSize.height - 3,
+                         width: Self.headSize.width, height: Self.headSize.height),
+            left: left, right: right)
+    }
+
+    private func unfoldingPose(_ progress: CGFloat, hero: CharacterPose) -> CharacterPose {
+        let full = stablePose()
+        let p = min(1, max(0, progress))
+        func mix(_ a: CGFloat, _ b: CGFloat) -> CGFloat { a + (b - a) * p }
+        let faceProgress = max(0, (p - 0.22) / 0.78)
+        let width = hero.head.width + (full.head.width - hero.head.width) * faceProgress
+        let height = width * Self.headSize.height / Self.headSize.width
+        let head = CGRect(x: mix(hero.head.midX, full.head.midX) - width / 2,
+                          y: mix(hero.head.maxY, full.head.maxY) - height,
+                          width: width, height: height)
+        let bottom = mix(hero.surface.minY, full.surface.minY)
+        let gap = mix(hero.head.minY - hero.surface.maxY, full.head.minY - full.surface.maxY)
+        let surface = CGRect(x: mix(hero.surface.minX, full.surface.minX), y: bottom,
+            width: mix(hero.surface.width, full.surface.width), height: max(1, head.minY - gap - bottom))
+        func arm(_ small: ArmPose, _ large: ArmPose) -> ArmPose {
+            func point(_ a: CGPoint, _ b: CGPoint) -> CGPoint { CGPoint(x: mix(a.x, b.x), y: mix(a.y, b.y)) }
+            return ArmPose(shoulder: point(small.shoulder, large.shoulder),
+                           elbow: point(small.elbow, large.elbow),
+                           hand: point(small.hand, large.hand), unit: mix(small.unit, large.unit))
+        }
+        return CharacterPose(surface: surface, head: head, left: arm(hero.left, full.left),
+                             right: arm(hero.right, full.right))
+    }
+
+    private func heroRect(source: CGRect) -> CGRect {
+        let width = min(156, max(132, bounds.width * 0.34))
+        let height = width * 45.75 / 56.7
+        let center = CGPoint(x: bounds.midX,
+            y: bounds.maxY - min(230, max(150, bounds.height * 0.29)))
+        return CGRect(x: center.x - width / 2, y: center.y - height / 2, width: width, height: height)
+    }
+
+    private func headTransform(for target: CALayer, rect: CGRect) -> CATransform3D {
+        let scale = max(0.001, rect.width / Self.headSize.width)
+        var transform = CATransform3DMakeScale(scale, scale, 1)
+        transform.m41 = rect.midX - target.position.x
+        transform.m42 = rect.midY - target.position.y
+        return transform
+    }
+
+    private func surfaceTransform(for target: CALayer, rect: CGRect) -> CATransform3D {
+        let content = Self.contentRect(in: bounds)
+        let sx = max(0.001, rect.width / max(1, content.width))
+        let sy = max(0.001, rect.height / max(1, content.height))
+        var transform = CATransform3DMakeScale(sx, sy, 1)
+        let position = target.position
+        transform.m41 = rect.minX + (position.x - content.minX) * sx - position.x
+        transform.m42 = rect.minY + (position.y - content.minY) * sy - position.y
+        return transform
+    }
+
+    private func armPath(_ pose: ArmPose) -> CGPath {
+        let path = CGMutablePath()
+        path.move(to: pose.shoulder)
+        path.addLine(to: pose.elbow)
+        path.addLine(to: pose.hand)
+        return path
+    }
+
+    private func armHardwarePath(_ pose: ArmPose) -> CGPath {
+        let path = CGMutablePath()
+        let u = pose.unit
+        path.addEllipse(in: CGRect(x: pose.elbow.x - 7 * u, y: pose.elbow.y - 7 * u, width: 14 * u, height: 14 * u))
+        path.addRoundedRect(in: CGRect(x: pose.hand.x - 12.5 * u, y: pose.hand.y - 9 * u,
+                                      width: 25 * u, height: 18 * u),
+                            cornerWidth: 5 * u, cornerHeight: 5 * u)
+        return path
+    }
+
     private func rectangleMaskPath(_ rectangles: [CGRect]) -> CGPath {
         let path = CGMutablePath()
         for rect in rectangles {
@@ -870,38 +1024,12 @@ public final class RobotAppFrameView: NSView {
         return path
     }
 
-    private func solidTorsoMaskPath(for torso: CALayer) -> CGPath {
-        let empty = CGRect(origin: torso.bounds.origin, size: .zero)
-        return rectangleMaskPath([torso.bounds, empty, empty, empty])
-    }
-
-    private func presentationTorsoMasks() -> [ObjectIdentifier: CGPath] {
-        Dictionary(uniqueKeysWithValues: [leftTorsoLayer, rightTorsoLayer].map { torso in
-            let mask = torso.mask as? CAShapeLayer
-            let path = (mask?.presentation() as? CAShapeLayer)?.path ?? mask?.path
-                ?? solidTorsoMaskPath(for: torso)
-            return (ObjectIdentifier(torso), path)
-        })
-    }
-
-    private func animateTorsoFill(from paths: [ObjectIdentifier: CGPath],
-                                 delay: TimeInterval, duration: TimeInterval) {
-        withoutActions {
-            setTorsoSolid(false)
-            torsoMaskIsFilled = true
-        }
-        for (torso, mask) in [(leftTorsoLayer, leftTorsoMask), (rightTorsoLayer, rightTorsoMask)] {
-            let end = solidTorsoMaskPath(for: torso)
-            withoutActions { mask.path = end }
-            let fill = CABasicAnimation(keyPath: "path")
-            fill.fromValue = paths[ObjectIdentifier(torso)] ?? end
-            fill.toValue = end
-            fill.duration = duration
-            fill.beginTime = CACurrentMediaTime() + delay
-            fill.fillMode = .backwards
-            fill.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
-            mask.add(fill, forKey: "robotFrame.shellFill")
-        }
+    private func restoreTorsoRails() {
+        leftTorsoLayer.mask = leftTorsoMask
+        rightTorsoLayer.mask = rightTorsoMask
+        let content = Self.contentRect(in: bounds)
+        layoutTorsoMask(leftTorsoMask, for: leftTorsoLayer, content: content)
+        layoutTorsoMask(rightTorsoMask, for: rightTorsoLayer, content: content)
     }
 
     private func scaledRect(_ rect: CGRect, by scale: CGFloat, center: CGPoint) -> CGRect {
@@ -909,72 +1037,16 @@ public final class RobotAppFrameView: NSView {
                width: rect.width * scale, height: rect.height * scale)
     }
 
-    private func closingGatherRect(source: CGRect) -> CGRect {
-        let width = min(92, max(62, source.width * 1.20))
-        let height = min(118, max(90, source.height * 1.12))
-        let center = CGPoint(x: bounds.midX + (source.midX - bounds.midX) * 0.18,
-                             y: max(bounds.minY + height / 2, bounds.maxY - height * 1.08))
-        return CGRect(x: center.x - width / 2, y: center.y - height / 2,
-                      width: width, height: height)
-    }
-
-    private func closingPreparation(from start: CATransform3D, for target: CALayer,
-                                    surface: Bool, continuing: Bool) -> CATransform3D {
-        guard !continuing else { return start }
-        var result = start
-        if surface || target === transitionSeamLayer || target === leftTorsoLayer || target === rightTorsoLayer {
-            result.m11 *= 0.992
-            result.m22 *= 0.975
-            result.m42 += 3
-        } else if target === headLayer {
-            result.m11 *= 0.97
-            result.m22 *= 0.97
-            result.m42 -= 3
-        } else if target === legsLayer {
-            result.m22 *= 0.93
-            result.m42 += 3
-        } else {
-            result.m41 += target === leftArmLayer ? 4 : -4
-            result.m42 += 4
-        }
-        return result
-    }
-
-    private func addClosingTransform(to target: CALayer, from start: CATransform3D,
-                                     source: CGRect, gather: CGRect, coiled: CGRect, tucked: CGRect,
-                                     island: Bool, continuing: Bool, beginTime: CFTimeInterval,
-                                     surface: Bool, key: String) {
-        func pose(_ rect: CGRect, _ pose: SourcePose = .brace) -> CATransform3D {
-            surface ? bodySurfaceTransform(for: target, sourceRect: rect, pose: pose, island: island)
-                : sourcePoseTransform(for: target, sourceRect: rect, pose: pose, island: island)
-        }
-        let end = pose(tucked, island ? .climb : .brace)
-        let animation = CAKeyframeAnimation(keyPath: "transform")
-        animation.values = [start, closingPreparation(from: start, for: target, surface: surface,
-                                                      continuing: continuing),
-                            pose(gather), pose(coiled), pose(source, island ? .climb : .brace), end]
-            .map { NSValue(caTransform3D: $0) }
-        animation.keyTimes = [0, 0.12, 0.60, 0.72, 0.87, 1]
-        animation.timingFunctions = [CAMediaTimingFunction(name: .easeOut),
-            CAMediaTimingFunction(controlPoints: 0.32, 0.04, 0.16, 1),
-            CAMediaTimingFunction(name: .easeInEaseOut),
-            CAMediaTimingFunction(controlPoints: 0.42, 0, 0.58, 1),
-            CAMediaTimingFunction(name: .easeIn)]
-        animation.duration = Self.closeDuration
-        animation.beginTime = beginTime
-        withoutActions { target.transform = end }
-        target.add(animation, forKey: key)
-    }
-
-    private func addClosingOpacity(to target: CALayer, from opacity: Float, beginTime: CFTimeInterval) {
-        let animation = CAKeyframeAnimation(keyPath: "opacity")
-        animation.values = [opacity, 1, 1, 0]
-        animation.keyTimes = [0, 0.12, 0.80, 1]
-        animation.timingFunctions = Array(repeating: CAMediaTimingFunction(name: .easeInEaseOut), count: 3)
-        animation.duration = Self.closeDuration
-        animation.beginTime = beginTime
-        withoutActions { target.opacity = 0 }
-        target.add(animation, forKey: "robotFrame.closeOpacity")
+    private func localSourceRect(for sourceRectInScreen: CGRect) -> CGRect {
+        let fallback = CGRect(x: bounds.midX - 28.35, y: bounds.maxY + 4, width: 56.7, height: 45.75)
+        guard !sourceRectInScreen.isNull, !sourceRectInScreen.isInfinite,
+              sourceRectInScreen.width.isFinite, sourceRectInScreen.height.isFinite,
+              sourceRectInScreen.midX.isFinite, sourceRectInScreen.midY.isFinite,
+              sourceRectInScreen.width > 0, sourceRectInScreen.height > 0, let window else { return fallback }
+        let lower = convert(window.convertPoint(fromScreen: sourceRectInScreen.origin), from: nil)
+        let upper = convert(window.convertPoint(fromScreen: CGPoint(x: sourceRectInScreen.maxX,
+                                                                    y: sourceRectInScreen.maxY)), from: nil)
+        return CGRect(x: lower.x, y: lower.y, width: max(1, upper.x - lower.x), height: max(1, upper.y - lower.y))
     }
 
     private func beginTransition(_ newPhase: Phase) -> UInt {
@@ -984,6 +1056,7 @@ public final class RobotAppFrameView: NSView {
         phase = newPhase
         isTransitioning = true
         isFrameVisible = true
+        projectRecordingSign.isHidden = true
         return transitionGeneration
     }
 
@@ -994,10 +1067,8 @@ public final class RobotAppFrameView: NSView {
         isTransitioning = false
     }
 
-    private func finish(after duration: TimeInterval,
-                        generation: UInt,
-                        open: Bool,
-                        completion: (() -> Void)?) {
+    private func finish(after duration: TimeInterval, generation: UInt,
+                        open: Bool, completion: (() -> Void)?) {
         transitionTask = Task { @MainActor [weak self] in
             try? await Task.sleep(for: .seconds(duration))
             guard let self, !Task.isCancelled, generation == self.transitionGeneration else { return }
@@ -1009,22 +1080,10 @@ public final class RobotAppFrameView: NSView {
     }
 
     private func applyStableState(open: Bool) {
+        applyOpenModelState()
         withoutActions {
+            for target in transitionLayers { target.opacity = open ? target.opacity : 0 }
             layer?.opacity = 1
-            for robotLayer in decorationLayers {
-                robotLayer.transform = CATransform3DIdentity
-                robotLayer.opacity = open ? 1 : 0
-            }
-            contentRevealMask.transform = CATransform3DIdentity
-            contentContainer.layer?.transform = CATransform3DIdentity
-            contentContainer.layer?.opacity = open ? 1 : 0
-            frameOutlineLayer.transform = CATransform3DIdentity
-            frameOutlineLayer.opacity = open ? 1 : 0
-            centerSeamLayer.transform = CATransform3DIdentity
-            centerSeamLayer.opacity = open ? 1 : 0
-            transitionSeamLayer.opacity = 0
-            transitionSeamLayer.transform = CATransform3DIdentity
-            setTorsoSolid(false)
         }
         phase = open ? .open : .hidden
         isTransitioning = false
@@ -1032,316 +1091,36 @@ public final class RobotAppFrameView: NSView {
         contentContainer.isHidden = !open
         contentView.isHidden = !open
         isHidden = !open
-        nextBlinkTime = open && !reduceMotionActive
-            ? CACurrentMediaTime() + 4.6 : .greatestFiniteMagnitude
+        nextBlinkTime = open && !reduceMotionActive ? CACurrentMediaTime() + 4.6 : .greatestFiniteMagnitude
         if !open { resetEyes() }
+        layoutProjectRecordingSign()
     }
 
     private func applyOpenModelState() {
         withoutActions {
-            for robotLayer in decorationLayers {
-                robotLayer.transform = CATransform3DIdentity
-                robotLayer.opacity = 1
+            for target in transitionLayers {
+                target.transform = CATransform3DIdentity
+                target.opacity = 1
             }
-            contentRevealMask.transform = CATransform3DIdentity
-            contentContainer.layer?.transform = CATransform3DIdentity
-            contentContainer.layer?.opacity = 1
-            frameOutlineLayer.transform = CATransform3DIdentity
-            frameOutlineLayer.opacity = 1
-            centerSeamLayer.transform = CATransform3DIdentity
-            centerSeamLayer.opacity = 1
+            compactBodyLayer.opacity = 0
             transitionSeamLayer.opacity = 0
-            transitionSeamLayer.transform = CATransform3DIdentity
-            setTorsoSolid(false)
+            contentRevealMask.transform = CATransform3DIdentity
+            restoreTorsoRails()
+            layoutArms()
         }
-    }
-
-    private func animateReducedFade(open: Bool, duration: TimeInterval) {
-        let root = layer
-        withoutActions { root?.opacity = open ? 1 : 0 }
-        animateOpacity(root, from: open ? 0 : 1, to: open ? 1 : 0,
-                       duration: duration, delay: 0, key: "robotFrame.reduced")
-    }
-
-    private func addOpeningTransform(to target: CALayer,
-                                     from start: CATransform3D,
-                                     brace: CATransform3D,
-                                     outward: CGFloat,
-                                     delay: TimeInterval,
-                                     continuing: Bool) {
-        var expanded = CATransform3DIdentity
-        expanded.m11 = 1.012
-        expanded.m22 = 1.006
-        expanded.m41 = outward
-        let animation = CAKeyframeAnimation(keyPath: "transform")
-        if continuing {
-            animation.values = [NSValue(caTransform3D: start),
-                                NSValue(caTransform3D: interpolatedTransform(from: start, to: expanded, progress: 0.76)),
-                                NSValue(caTransform3D: expanded),
-                                NSValue(caTransform3D: CATransform3DIdentity)]
-            animation.keyTimes = [0, 0.67, 0.87, 1]
-            animation.timingFunctions = [
-                CAMediaTimingFunction(controlPoints: 0.18, 0.84, 0.28, 1),
-                CAMediaTimingFunction(name: .easeOut),
-                CAMediaTimingFunction(name: .easeInEaseOut)
-            ]
-        } else {
-            // The compact source becomes a recognizable robot first: hands
-            // release the island, feet drop, and the two torso halves brace.
-            // Only then does that same body split continuously into the app.
-            animation.values = [NSValue(caTransform3D: start),
-                                NSValue(caTransform3D: brace),
-                                NSValue(caTransform3D: brace),
-                                NSValue(caTransform3D: interpolatedTransform(from: brace, to: expanded, progress: 0.73)),
-                                NSValue(caTransform3D: expanded),
-                                NSValue(caTransform3D: CATransform3DIdentity)]
-            animation.keyTimes = [0, 0.19, 0.23, 0.70, 0.88, 1]
-            animation.timingFunctions = [
-                CAMediaTimingFunction(name: .easeOut),
-                CAMediaTimingFunction(name: .linear),
-                CAMediaTimingFunction(controlPoints: 0.18, 0.84, 0.28, 1),
-                CAMediaTimingFunction(name: .easeOut),
-                CAMediaTimingFunction(name: .easeInEaseOut)
-            ]
-        }
-        animation.duration = Self.openDuration - delay
-        animation.beginTime = CACurrentMediaTime() + delay
-        animation.fillMode = .backwards
-        animation.isRemovedOnCompletion = true
-        target.add(animation, forKey: "robotFrame.open")
-    }
-
-    private func animateTransform(_ target: CALayer,
-                                  from: CATransform3D,
-                                  to: CATransform3D,
-                                  duration: TimeInterval,
-                                  delay: TimeInterval,
-                                  timing: CAMediaTimingFunction,
-                                  key: String) {
-        let animation = CABasicAnimation(keyPath: "transform")
-        animation.fromValue = NSValue(caTransform3D: from)
-        animation.toValue = NSValue(caTransform3D: to)
-        animation.duration = duration
-        animation.beginTime = CACurrentMediaTime() + delay
-        animation.fillMode = .backwards
-        animation.timingFunction = timing
-        target.add(animation, forKey: key)
-    }
-
-    private func animateOpacity(_ target: CALayer?,
-                                from: Float,
-                                to: Float,
-                                duration: TimeInterval,
-                                delay: TimeInterval,
-                                key: String) {
-        guard let target else { return }
-        let animation = CABasicAnimation(keyPath: "opacity")
-        animation.fromValue = from
-        animation.toValue = to
-        animation.duration = duration
-        animation.beginTime = CACurrentMediaTime() + delay
-        animation.fillMode = .backwards
-        animation.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
-        target.add(animation, forKey: key)
-    }
-
-    private func sourcePoseTransform(for target: CALayer,
-                                     sourceRect: CGRect,
-                                     pose: SourcePose,
-                                     island: Bool) -> CATransform3D {
-        let source = normalizedSourceRect(sourceRect)
-        let climbing = pose == .climb && island
-        let content = Self.contentRect(in: bounds)
-
-        if target === transitionSeamLayer {
-            let feature = CGPoint(x: bounds.midX, y: content.midY)
-            let destination = CGPoint(x: source.midX,
-                                      y: source.minY + source.height * (climbing ? 0.58 : 0.43))
-            return mappedTransform(for: target, feature: feature, destination: destination,
-                                   scaleX: source.width * (climbing ? 0.48 : 0.68) / max(1, bounds.width),
-                                   scaleY: source.height * (climbing ? 0.34 : 0.52) /
-                                       max(1, content.height + 14))
-        }
-
-        switch part(for: target) {
-        case .head:
-            let feature = CGPoint(x: target.bounds.midX, y: target.bounds.midY)
-            let destination = CGPoint(x: source.midX,
-                                      y: source.minY + source.height * (climbing ? 0.84 : 0.78))
-            // Preserve the canonical head's aspect ratio while it travels
-            // between the island and the application, not a flattened bin.
-            let scale = source.width * (climbing ? 0.47 : 0.55) / max(1, target.bounds.width)
-            return mappedTransform(for: target, feature: feature, destination: destination,
-                                   scaleX: scale, scaleY: scale)
-
-        case .leftTorso, .rightTorso:
-            let isLeft = target === leftTorsoLayer
-            let direction: CGFloat = isLeft ? -1 : 1
-            let feature = CGPoint(x: target.bounds.midX, y: target.bounds.midY)
-            let destination = CGPoint(
-                x: source.midX + direction * source.width * (climbing ? 0.10 : 0.18),
-                y: source.minY + source.height * (climbing ? 0.58 : 0.43))
-            return mappedTransform(for: target, feature: feature, destination: destination,
-                                   scaleX: source.width * (climbing ? 0.24 : 0.34) /
-                                       max(1, target.bounds.width),
-                                   scaleY: source.height * (climbing ? 0.34 : 0.52) /
-                                       max(1, target.bounds.height))
-
-        case .leftArm, .rightArm:
-            let isLeft = target === leftArmLayer
-            let direction: CGFloat = isLeft ? -1 : 1
-            // The free rounded endpoint is the robot's hand. It grips the
-            // island lip first, then slides down to the source body's side.
-            let feature = CGPoint(x: isLeft ? max(bounds.minX + 1, content.minX - 7)
-                                            : min(bounds.maxX - 1, content.maxX + 7),
-                                  y: content.midY - 22)
-            let destination = CGPoint(
-                x: source.midX + direction * source.width * (climbing ? 0.20 : 0.43),
-                y: source.minY + source.height * (climbing ? 0.94 : 0.50))
-            let scale = source.height * (climbing ? 0.25 : 0.31) / 55
-            return mappedTransform(for: target, feature: feature, destination: destination,
-                                   scaleX: scale, scaleY: scale)
-
-        case .legs:
-            let spread = min(35, max(22, bounds.width * 0.075))
-            let feature = CGPoint(x: bounds.midX, y: 5)
-            let destination = CGPoint(x: source.midX,
-                                      y: source.minY + source.height * (climbing ? 0.35 : 0.07))
-            let scale = source.width * (climbing ? 0.38 : 0.58) / max(1, spread * 2 + 14)
-            return mappedTransform(for: target, feature: feature, destination: destination,
-                                   scaleX: scale, scaleY: scale)
-        }
-    }
-
-    private func part(for target: CALayer) -> RobotPart {
-        if target === leftTorsoLayer { return .leftTorso }
-        if target === rightTorsoLayer { return .rightTorso }
-        if target === headLayer { return .head }
-        if target === leftArmLayer { return .leftArm }
-        if target === rightArmLayer { return .rightArm }
-        return .legs
-    }
-
-    private func mappedTransform(for target: CALayer,
-                                 feature: CGPoint,
-                                 destination: CGPoint,
-                                 scaleX: CGFloat,
-                                 scaleY: CGFloat) -> CATransform3D {
-        let anchor = CGPoint(x: target.bounds.minX + target.bounds.width * target.anchorPoint.x,
-                             y: target.bounds.minY + target.bounds.height * target.anchorPoint.y)
-        var transform = CATransform3DMakeScale(max(0.015, scaleX), max(0.015, scaleY), 1)
-        transform.m41 = destination.x - target.position.x - (feature.x - anchor.x) * transform.m11
-        transform.m42 = destination.y - target.position.y - (feature.y - anchor.y) * transform.m22
-        return transform
-    }
-
-    /// Maps the live board and its finishing strokes onto the same compact
-    /// torso rectangle. Because all three use this transform, the content can
-    /// fade through the shell without a detached rectangle or sliding mask.
-    private func bodySurfaceTransform(for target: CALayer?,
-                                      sourceRect: CGRect,
-                                      pose: SourcePose,
-                                      island: Bool) -> CATransform3D {
-        guard let target else { return CATransform3DIdentity }
-        let source = normalizedSourceRect(sourceRect)
-        let climbing = pose == .climb && island
-        let content = Self.contentRect(in: bounds)
-        let targetIsContent = target === contentContainer.layer
-        let feature = targetIsContent
-            ? CGPoint(x: target.bounds.midX, y: target.bounds.midY)
-            : CGPoint(x: content.midX, y: content.midY)
-        let destination = CGPoint(x: source.midX,
-                                  y: source.minY + source.height * (climbing ? 0.58 : 0.43))
-        return mappedTransform(for: target, feature: feature, destination: destination,
-                               scaleX: source.width * (climbing ? 0.48 : 0.68) /
-                                   max(1, content.width),
-                               scaleY: source.height * (climbing ? 0.34 : 0.52) /
-                                   max(1, content.height))
-    }
-
-    /// Transition frames need a solid robot body. Stable frames restore the
-    /// rail masks so a transparent BoardView still shows the desktop through
-    /// its center instead of a purple backing plate.
-    private func setTorsoSolid(_ solid: Bool) {
-        torsoMaskIsFilled = solid
-        leftTorsoLayer.mask = solid ? nil : leftTorsoMask
-        rightTorsoLayer.mask = solid ? nil : rightTorsoMask
-        let content = Self.contentRect(in: bounds)
-        layoutTorsoMask(leftTorsoMask, for: leftTorsoLayer, content: content)
-        layoutTorsoMask(rightTorsoMask, for: rightTorsoLayer, content: content)
-    }
-
-    private func splitDirection(for target: CALayer) -> CGFloat {
-        if target === leftTorsoLayer { return -4 }
-        if target === rightTorsoLayer { return 4 }
-        if target === leftArmLayer { return -2 }
-        if target === rightArmLayer { return 2 }
-        return 0
-    }
-
-    private func localSourceRect(for sourceRectInScreen: CGRect) -> CGRect {
-        let fallback = CGRect(x: bounds.midX - 36, y: bounds.maxY + 8,
-                              width: 72, height: 88)
-        guard !sourceRectInScreen.isNull, !sourceRectInScreen.isInfinite,
-              sourceRectInScreen.midX.isFinite, sourceRectInScreen.midY.isFinite,
-              let window else { return fallback }
-        let screenRect = normalizedSourceRect(sourceRectInScreen)
-        let lowerWindow = window.convertPoint(fromScreen: screenRect.origin)
-        let upperWindow = window.convertPoint(fromScreen: CGPoint(x: screenRect.maxX, y: screenRect.maxY))
-        let lower = convert(lowerWindow, from: nil)
-        let upper = convert(upperWindow, from: nil)
-        return normalizedSourceRect(CGRect(x: lower.x, y: lower.y,
-                                           width: upper.x - lower.x,
-                                           height: upper.y - lower.y))
-    }
-
-    private func normalizedSourceRect(_ rect: CGRect) -> CGRect {
-        let standardized = rect.standardized
-        guard standardized.width.isFinite, standardized.height.isFinite,
-              standardized.minX.isFinite, standardized.minY.isFinite else {
-            return CGRect(x: bounds.midX - 36, y: bounds.maxY + 8, width: 72, height: 88)
-        }
-        let width = max(1, standardized.width)
-        let height = max(1, standardized.height)
-        return CGRect(x: standardized.midX - width / 2,
-                      y: standardized.midY - height / 2,
-                      width: width, height: height)
-    }
-
-    private func presentationTransforms() -> [ObjectIdentifier: CATransform3D] {
-        Dictionary(uniqueKeysWithValues: decorationLayers.map {
-            (ObjectIdentifier($0), $0.presentation()?.transform ?? $0.transform)
-        })
-    }
-
-    private func presentationOpacities() -> [ObjectIdentifier: Float] {
-        Dictionary(uniqueKeysWithValues: decorationLayers.map {
-            (ObjectIdentifier($0), $0.presentation()?.opacity ?? $0.opacity)
-        })
-    }
-
-    private func interpolatedTransform(from: CATransform3D,
-                                       to: CATransform3D,
-                                       progress: CGFloat) -> CATransform3D {
-        var result = CATransform3DIdentity
-        result.m11 = from.m11 + (to.m11 - from.m11) * progress
-        result.m22 = from.m22 + (to.m22 - from.m22) * progress
-        result.m33 = 1
-        result.m41 = from.m41 + (to.m41 - from.m41) * progress
-        result.m42 = from.m42 + (to.m42 - from.m42) * progress
-        return result
     }
 
     private func removeTransitionAnimations() {
         layer?.removeAnimation(forKey: "robotFrame.reduced")
-        contentContainer.layer?.removeAllAnimations()
+        transitionLayers.forEach { $0.removeAllAnimations() }
+        armShapeLayers.forEach { $0.removeAllAnimations() }
         contentRevealMask.removeAllAnimations()
         leftTorsoMask.removeAllAnimations()
         rightTorsoMask.removeAllAnimations()
-        decorationLayers.forEach { $0.removeAllAnimations() }
-        frameOutlineLayer.removeAllAnimations()
-        centerSeamLayer.removeAllAnimations()
-        transitionSeamLayer.removeAllAnimations()
+        leftEyeLayer.removeAnimation(forKey: "robotFrame.expression")
+        rightEyeLayer.removeAnimation(forKey: "robotFrame.expression")
+        leftEyeLayer.removeAnimation(forKey: "robotFrame.expression.position")
+        rightEyeLayer.removeAnimation(forKey: "robotFrame.expression.position")
     }
 
     // MARK: - Gaze and blink

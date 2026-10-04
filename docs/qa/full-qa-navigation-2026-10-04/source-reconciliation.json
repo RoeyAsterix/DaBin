@@ -1,0 +1,17 @@
+{
+  "verifiedAtUTC": "2026-10-04T12:26:52.850856+00:00",
+  "originalReportStatus": "invalidated_by_source_changes",
+  "passingSuites": 110,
+  "rawReportPreserved": true,
+  "unexpectedAddedPath": "Sources/DaBin/CaptureStore 2.swift",
+  "duplicateSHA256": "b4f17ad6d34fcaf770660b3a86264df72ec05508ab699bcbd621c0878c9c20f7",
+  "matchesBeforeQACaptureStore": true,
+  "preservedCopy": "docs/qa/full-qa-navigation-2026-10-04/diagnostics/CaptureStore-conflicting-old-copy.swift.txt",
+  "duplicateMtimeUTC": "2026-10-04T07:27:11+00:00",
+  "duplicateBirthTimeUTC": "2026-09-22T16:59:46+00:00",
+  "resolution": "Preserved the exact duplicate outside compiled Sources; retained tested canonical CaptureStore.swift unchanged",
+  "currentInputInventoryExactlyMatchesRunStart": true,
+  "currentInputCount": 257,
+  "testedCanonicalSourcesModified": false,
+  "copyCreationCause": "not established"
+}

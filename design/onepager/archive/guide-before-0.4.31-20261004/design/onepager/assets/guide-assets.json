@@ -1,0 +1,22 @@
+{
+  "native_render_manifest": "guide-native-renders.json",
+  "native_source_manifest": "guide-native-source-manifest.json",
+  "project_callout_anchors": {
+    "1": [0.27, 0.042],
+    "2": [0.50, 0.19],
+    "3": [0.80, 0.032],
+    "4": [0.935, 0.628]
+  },
+  "project_callout_targets": {
+    "1": [0.242, 0.086],
+    "2": [0.50, 0.1677],
+    "3": [0.8012, 0.086],
+    "4": [0.846, 0.650]
+  },
+  "step_crops": {
+    "DABIN__GUIDE__INBOX.png": [0.04, 0.325, 0.96, 0.60],
+    "DABIN__GUIDE__PROJECTS.png": [0.026, 0.438, 0.398, 0.866],
+    "DABIN__GUIDE__TASK.png": [0.035, 0.559, 0.965, 0.827]
+  },
+  "coordinate_note": "Normalized top-left PNG coordinates. Badge placements avoid readable controls; thin leaders point to measured native regions. PDF crops are clipping only and do not modify the source PNGs."
+}

@@ -1,0 +1,48 @@
+DABIN / CAMPAIGN MEASUREMENT
+Use only observed values. campaign-tracker.json is empty by design.
+
+AIM
+Find which demonstration and audience bring relevant downloads and useful feedback. DaBin has no in-app analytics, so saving/searching a first item or continued use is not measured inside the app.
+
+SOURCES
+App Store Connect: first-time downloads, product page views and campaign data when available. Apple's campaign feature may appear only after live analytics/download data; Apple advises checking after at least 24 hours. Individual metrics have minimum thresholds; unavailable or withheld values are not zero.
+Native social platforms: views/impressions and engagement using their own definitions. A video view is not a website visit or download.
+Outreach: number of tailored pitches, replies, evaluations and actual coverage. A recipient's acceptance of a pitch is not a download.
+Voluntary feedback: ask one optional question in a reply or email - 'What did you save first, and could you find it again?' Store only what people knowingly share; do not request their actual files or private screenshots.
+
+CAMPAIGN NAMING
+Use simple short tokens generated in App Store Connect, for example:
+feed_social_launch
+screenshot_search_social
+reddit_macapps_launch
+producthunt_launch
+creator_[shortname]
+website_main
+These are proposed campaign names, not working links. Obtain real links/provider token from App Store Connect. Use the Apple-generated link exactly. Do not fabricate IDs, provider tokens or a functioning attribution URL.
+
+DAY 1 BEFORE LINKS APPEAR
+Use the real untagged App Store URL. Log publication time and destination. Mark measurement 'untagged launch / source attribution unavailable'. A download spike on the same day is association, not proven channel attribution.
+
+WEEKLY ROUTINE (45 MINUTES)
+1. Fix one reporting window, e.g. Day 1-7; use the same date range for comparable campaigns.
+2. Record each channel/asset, minutes spent, live link, views, App Store page views/downloads if available, replies and issues.
+3. For a channel with both available page views and first-time downloads, calculate downloads / product page views. Keep the numerator/denominator scope identical. Do not call it a causal conversion rate if scopes differ.
+4. For limited organic time, compare downloads / hours spent where both are known. This is an operational efficiency estimate, not customer acquisition cost or a forecast.
+5. Read qualitative replies. Pick one audience/problem to repeat and one unclear claim to improve.
+6. Leave null values as null; note 'not available', 'below threshold', 'untagged' or 'not collected'.
+
+ATTRIBUTION LIMITS
+Apple's guide counts first-time downloads within 24 hours of campaign-link use and describes last-link credit when several campaign links were clicked. Read current definitions before reporting. Different platforms use different view/click definitions, and campaign results do not include every indirect discovery path. No telemetry SDK is required by this plan.
+
+MONTH-END DECISIONS
+Strong reach / few App Store page views: make the benefit and CTA clearer.
+Page views / few observed downloads: verify compatibility, Free price, product screenshots and support trust.
+Downloads / confused feedback: prioritize onboarding explanation and fix the repeated problem.
+Too little available data: keep the experiment small and collect more voluntary feedback; do not claim failure or success from missing values.
+
+DO NOT REPORT
+Invented download forecasts; activation/retention without a real data source; average time saved; worldwide support from a few replies; guaranteed creator coverage; or 'zero downloads' when Apple withholds the metric.
+
+SOURCE
+Apple campaign links: https://developer.apple.com/help/app-store-connect-analytics/acquisition/campaign-links
+Checked 4 October 2026. Reporting rules can change; recheck during launch.

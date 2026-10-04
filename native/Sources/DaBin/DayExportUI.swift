@@ -312,7 +312,7 @@ struct TimelineExportButton: View {
         .onChange(of: state.selectedDay) { _, _ in
             if state.route == .daily { controller.dismiss() }
         }
-        .onChange(of: state.weekEndingDay) { _, _ in controller.dismiss() }
+        .onChange(of: state.weeklyDays) { _, _ in controller.dismiss() }
         .onDisappear { controller.dismiss() }
     }
 }
@@ -453,7 +453,7 @@ struct WeeklyExportPopover: View {
 
     private var weekDocument: WeekExportDocument {
         WeekExportDocument.make(captures: state.store.captures,
-                                weekEndingDate: state.weekEndingDay)
+                                selectedDays: state.weeklyDays)
     }
 
     var body: some View {
@@ -482,13 +482,13 @@ struct WeeklyExportPopover: View {
             exportChoice(title: "Copy Week", symbol: "doc.on.doc.fill", choice: .copyWeek,
                          disabled: weekDocument.isEmpty,
                          shortcut: "7", shortcutModifiers: .command, shortcutLabel: "⌘7",
-                         hint: "Copies all seven displayed days as plain text") {
+                         hint: "Copies every selected date as plain text, including filtered captures") {
                 copyDisplayedWeek()
             }
             exportChoice(title: "Download Week", symbol: "doc.text.fill", choice: .downloadWeek,
                          disabled: weekDocument.isEmpty,
                          shortcut: "8", shortcutModifiers: .command, shortcutLabel: "⌘8",
-                         hint: "Saves all seven displayed days as a UTF-8 text file") {
+                         hint: "Saves every selected date as a UTF-8 text file, including filtered captures") {
                 downloadDisplayedWeek()
             }
 
@@ -547,12 +547,12 @@ struct WeeklyExportPopover: View {
 
     private func copyDisplayedWeek() {
         controller.copy(WeekExportDocument.make(captures: state.store.captures,
-                                                weekEndingDate: state.weekEndingDay))
+                                                selectedDays: state.weeklyDays))
     }
 
     private func downloadDisplayedWeek() {
         report(controller.save(WeekExportDocument.make(captures: state.store.captures,
-                                                       weekEndingDate: state.weekEndingDay)))
+                                                       selectedDays: state.weeklyDays)))
     }
 
     private func exportChoice(title: String, symbol: String, choice: Choice,

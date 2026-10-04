@@ -1,0 +1,5 @@
+V2 COPY AUTHORING
+Written copy is directly editable as TXT/HTML/JSON. The original launch kit remains preserved.
+build_copy.py contains a reviewed v2 prose snapshot and writes only to an explicitly chosen new or empty --output-dir. It refuses a nonempty destination so it cannot silently overwrite local final edits. This snapshot excludes media, captions, PDFs and QA records.
+build_pdf.py targets this v2 directory and reproduces the revised nine-page guide with the exact current native robot. Its local runtime/source-pack paths must be adjusted on another computer. Any PDF regeneration requires current dependencies and a fresh render/visual review.
+Opening this kit runs neither script. Publishing URLs/contact must still be deliberately configured after actual release.

@@ -1,0 +1,41 @@
+PASS: PDF, RTF and MOV imports receive their correct types
+PASS: Local-media tests keep website requests disabled
+PASS: PDFKit PDF system preview completed (ready; no error)
+PASS: PDFKit PDF PNG is nonempty and bounded to 600 pixels
+PASS: PDFKit PDF thumbnail contains rendered content, not a uniform blank image
+PASS: PDF thumbnail keeps first-page portrait proportions
+PASS: PDF preview records the actual two-page count
+PASS: QuickLook RTF system preview completed (ready; no error)
+PASS: QuickLook RTF PNG is nonempty and bounded to 600 pixels
+PASS: QuickLook RTF thumbnail contains rendered content, not a uniform blank image
+PASS: AVFoundation MOV system preview completed (ready; no error)
+PASS: AVFoundation MOV PNG is nonempty and bounded to 600 pixels
+PASS: AVFoundation MOV thumbnail contains rendered content, not a uniform blank image
+PASS: Video thumbnail retains the source aspect ratio
+PASS: Video card records the actual two-second duration
+PASS: PDF source bytes stay unchanged
+PASS: PDF managed original matches source exactly
+PASS: RTF source bytes stay unchanged
+PASS: RTF managed original matches source exactly
+PASS: MOV source bytes stay unchanged
+PASS: MOV managed original matches source exactly
+PASS: AVFoundation decodes early and later frames at the expected size
+PASS: Decoded video frames differ over time
+PASS: PDF geometry integration window stays hidden and never takes focus
+PASS: Production PDF view loads both synthetic pages
+PASS: portrait complete PDF width fits the production preview
+PASS: portrait complete PDF height fits the production preview
+PASS: portrait retains fitted single-page navigation
+PASS: landscape complete PDF width fits the production preview
+PASS: landscape complete PDF height fits the production preview
+PASS: landscape retains fitted single-page navigation
+PASS: narrow landscape complete PDF width fits the production preview
+PASS: narrow landscape complete PDF height fits the production preview
+PASS: narrow landscape retains fitted single-page navigation
+PASS: narrow portrait complete PDF width fits the production preview
+PASS: narrow portrait complete PDF height fits the production preview
+PASS: narrow portrait retains fitted single-page navigation
+PASS: All three successful preview records survive an archive reopen
+PASS: Real-media processing leaves no storage error
+NOT RUN: External website preview; use --link-smoke for the generic Apple homepage only
+39/39 media integration checks passed; 0 failed

@@ -1,5 +1,6 @@
 import Foundation
 import CryptoKit
+import Combine
 
 /// Integration checks use only disposable stores. No user archive, clipboard,
 /// network, notification permission, or GUI is involved.
@@ -43,7 +44,8 @@ import CryptoKit
         try legacyMigration(root.appendingPathComponent("legacy-conflict"), conflictingDestination: true)
         try await journalRecovery(root.appendingPathComponent("journals"))
         try mirrorFailure(root.appendingPathComponent("mirror-failure"))
-        print("PASS: \(checks) archive-store integration assertions; dated originals, readable records, updates, migration, legacy/current recovery, and retryable mirror failure.")
+        try await incrementalInsertionChecks(root.appendingPathComponent("incremental-inserts"))
+        print("PASS: \(checks) archive-store integration assertions; dated originals, readable records, updates, migration, legacy/current recovery, retryable mirror failure, and single-publication incremental inserts.")
     }
 
     @MainActor static func currentArchive(_ root: URL) async throws {
@@ -249,5 +251,131 @@ import CryptoKit
         try expect(try readable(repaired, repairedNote).comment == saved.comment, "Relaunch regenerates the latest readable comment")
         try expect(try readable(repaired, repairedTask).isCompleted == true, "Relaunch regenerates the completed task record")
         try expect(try bytes(root.appendingPathComponent("preserved-user-file.txt")) == preserved, "Repair leaves the conflicting user's file intact")
+    }
+
+    @MainActor static func incrementalInsertionChecks(_ root: URL) async throws {
+        try files.createDirectory(at: root, withIntermediateDirectories: true)
+        let stamp = instant("2026-09-22T12:00:00Z")
+        let zone = TimeZone(secondsFromGMT: 0)!
+        let seeded = (0..<256).map { index in
+            let capture = Capture(capturedAt: stamp.addingTimeInterval(Double(index % 5)), timeZone: zone,
+                                  kind: .text, originalText: "Existing fixture \(index)", title: "Existing \(index)")
+            capture.projectName = "Existing fixture project"
+            return capture
+        }
+        let trashed = Capture(capturedAt: stamp, timeZone: zone, kind: .text,
+                              originalText: "Retained trash fixture", title: "Retained trash")
+        trashed.deletedAt = stamp.addingTimeInterval(100)
+        try CaptureRepository(root: root).save(seeded + [trashed])
+        let store = try CaptureStore(root: root, repairArchiveOnOpen: false)
+        let originalObjects = Dictionary(uniqueKeysWithValues: store.captures.map { ($0.id, $0) })
+        let originalTrash = store.trashedCaptures[0]
+        // A pending preview may already be mutating a canonical object. New
+        // capture insertion must not replace any of the existing references.
+        let inFlight = store.captures[0]
+        inFlight.previewDescription = "Unrelated pending preview state"
+        var publications: [[UUID]] = []
+        var trashPublications = 0
+        let captureObserver = store.$captures.dropFirst().sink { publications.append($0.map(\.id)) }
+        let trashObserver = store.$trashedCaptures.dropFirst().sink { _ in trashPublications += 1 }
+        defer { captureObserver.cancel(); trashObserver.cancel() }
+
+        func expectedOrder() -> [UUID] {
+            store.captures.sorted {
+                $0.capturedAt == $1.capturedAt ? $0.id.uuidString < $1.id.uuidString : $0.capturedAt > $1.capturedAt
+            }.map(\.id)
+        }
+        func checkSinglePublication(after previous: Int, _ name: String) throws {
+            try expect(publications.count == previous + 1, "\(name) publishes the live capture list exactly once")
+            try expect(publications.last == expectedOrder() && store.captures.map(\.id) == expectedOrder(),
+                       "\(name) publishes only final receipt/UUID order, never an unsorted intermediate feed")
+            try expect(trashPublications == 0 && store.trashedCaptures.count == 1
+                       && store.trashedCaptures[0] === originalTrash,
+                       "\(name) does not replace or republish unchanged trash")
+            try expect(originalObjects.allSatisfy { id, record in store.captures.first { $0.id == id } === record },
+                       "\(name) preserves every pre-existing capture object")
+        }
+
+        var previous = publications.count
+        let newest = try store.capture(text: "Latest automatic fixture", at: stamp.addingTimeInterval(10),
+                                       timeZone: zone, receipt: CaptureReceiptContext(origin: .automaticClipboard,
+                                        automaticActionID: UUID(), sourceApplicationName: "Synthetic source",
+                                        sourceApplicationBundleIdentifier: "invalid.example.fixture"),
+                                       projectName: "New fixture project")[0]
+        try checkSinglePublication(after: previous, "Newest text insertion")
+        try expect(store.captures.first === newest, "A newer receipt is placed at the front")
+        previous = publications.count
+        let tied = try store.capture(text: "https://example.invalid/first\nhttps://example.invalid/second\nhttps://example.invalid/third",
+                                     at: stamp.addingTimeInterval(2), timeZone: zone, projectName: "New fixture project")
+        try checkSinglePublication(after: previous, "Equal-date multiline insertion")
+        try expect(tied.count == 3 && tied.allSatisfy { added in store.captures.contains { $0 === added } },
+                   "One multiline paste preserves all returned canonical objects in its single publication")
+        previous = publications.count
+        let older = try store.capture(text: "Older observed receipt", at: stamp.addingTimeInterval(-10),
+                                      timeZone: zone, projectName: "New fixture project")[0]
+        try checkSinglePublication(after: previous, "Older receipt insertion")
+        try expect(store.captures.last === older, "A delayed older receipt is placed at the end")
+
+        previous = publications.count
+        let originalBytes = Data("Synthetic original bytes for incremental import".utf8)
+        let original = try await store.importData(originalBytes, filename: "incremental.txt",
+                                                  at: stamp.addingTimeInterval(2), timeZone: zone,
+                                                  projectName: "New fixture project")
+        try checkSinglePublication(after: previous, "Verified file insertion")
+        try expect(try bytes(store.managedURL(for: original)!) == originalBytes,
+                   "Incremental insertion follows durable original verification")
+        try expect(inFlight.previewDescription == "Unrelated pending preview state",
+                   "Inserting a capture never discards unrelated in-flight model state")
+
+        let idsBeforeFailure = store.captures.map(\.id)
+        previous = publications.count
+        store.failureInjector = { if $0 == .beforeMetadataSave { throw CaptureStoreError.invalidOriginal("Synthetic precommit failure") } }
+        var rejectedText = false
+        do { _ = try store.capture(text: "Must not appear", at: stamp, timeZone: zone) }
+        catch { rejectedText = true }
+        var rejectedFile = false
+        do { _ = try await store.importData(Data("Rejected file".utf8), filename: "rejected.txt", at: stamp, timeZone: zone) }
+        catch { rejectedFile = true }
+        store.failureInjector = nil
+        var canceledFile = false
+        do { _ = try await store.importData(Data("Canceled file".utf8), filename: "canceled.txt",
+                                            at: stamp, timeZone: zone, commitGuard: { false }) }
+        catch CaptureStoreError.captureCancelled { canceledFile = true }
+        try expect(rejectedText && rejectedFile && canceledFile && publications.count == previous
+                   && store.captures.map(\.id) == idsBeforeFailure && trashPublications == 0,
+                   "Failed or canceled metadata commits publish neither phantom records nor unchanged trash")
+        try expect(try files.contentsOfDirectory(atPath: root.appendingPathComponent("Imports").path).isEmpty
+                   && files.contentsOfDirectory(atPath: root.appendingPathComponent("Staging").path).isEmpty,
+                   "Precommit failures still compensate their journals and staged originals")
+
+        previous = publications.count
+        store.failureInjector = { if $0 == .afterMetadataSave { throw CaptureStoreError.invalidOriginal("Synthetic postcommit housekeeping failure") } }
+        let committed = try await store.importData(Data("Committed before cleanup failure".utf8), filename: "committed.txt",
+                                                   at: stamp.addingTimeInterval(20), timeZone: zone,
+                                                   projectName: "New fixture project")
+        store.failureInjector = nil
+        try checkSinglePublication(after: previous, "Postcommit housekeeping failure")
+        try expect(store.captures.first === committed && store.error != nil && store.managedURL(for: committed) != nil,
+                   "Postcommit cleanup failure retains the one ordered, successful canonical record")
+
+        previous = publications.count
+        store.failureInjector = { if $0 == .afterMetadataSave { throw CaptureStoreError.injectedInterruption } }
+        var interrupted = false
+        do { _ = try await store.importData(Data("Committed before simulated exit".utf8), filename: "interrupted.txt",
+                                            at: stamp.addingTimeInterval(30), timeZone: zone,
+                                            projectName: "New fixture project") }
+        catch CaptureStoreError.injectedInterruption { interrupted = true }
+        store.failureInjector = nil
+        try checkSinglePublication(after: previous, "Postcommit process interruption")
+        try expect(interrupted && store.captures.first?.originalFilename == "interrupted.txt",
+                   "Even an interrupted committed import is already in deterministic feed order")
+
+        let expectedIDs = Set(store.captures.map(\.id))
+        let reopened = try CaptureStore(root: root, repairArchiveOnOpen: false)
+        try expect(Set(reopened.captures.map(\.id)) == expectedIDs && reopened.captures.map(\.id) == expectedOrder(),
+                   "Explicit repository reopen preserves exactly the incremental insertions and their order")
+        try expect(reopened.trashedCaptures.map(\.id) == [trashed.id], "Reopen retains untouched trash separately")
+        try expect(try files.contentsOfDirectory(atPath: root.appendingPathComponent("Imports").path).isEmpty,
+                   "Reopen still recovers both committed housekeeping/interruption journals without duplicating records")
     }
 }

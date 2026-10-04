@@ -1,0 +1,6 @@
+{
+  "reason": "Exclude concurrent tutorial assertions and supply the existing workflow fixture in the isolated candidate",
+  "softwareUpdateTestSHA256": "7795cf27a76b93dd57c0651cfdd22ee53d1590a87c732e16498bddcfb4781c7a",
+  "workflowSHA256": "d6fa6a3abb772e07ca72f2319ed41ee463aed824a86015f1b55f1b7849fe1a18",
+  "productionSourcesChanged": false
+}

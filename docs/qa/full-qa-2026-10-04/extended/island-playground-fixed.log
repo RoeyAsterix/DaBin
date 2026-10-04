@@ -1,0 +1,8 @@
+RENDERED swing-snack: 84 frames; 74 visibly changing
+RENDERED slip-catch: 84 frames; 74 visibly changing
+RENDERED ledge-shimmy: 84 frames; 74 visibly changing
+RENDERED upside-down-peek: 75 frames; 65 visibly changing
+PASS: 327 native frames at 30 fps
+PASS: encoded MP4 dimensions, timing, frame count and full decode
+Preview: /private/tmp/dabin-extended-qa-20261004/renders/island-playground-fixed/DaBin-Island-Playground.mp4
+Encoded contact sheet: /private/tmp/dabin-extended-qa-20261004/renders/island-playground-fixed/encoded-qa/contact-sheet.png

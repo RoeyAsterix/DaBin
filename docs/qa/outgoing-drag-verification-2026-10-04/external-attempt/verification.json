@@ -1,0 +1,12 @@
+{
+  "status": "pending_manual_verification",
+  "automation": "Source native drag begins and ends without opening a preview; global mouse position stays unchanged; separate receiver has no performDragOperation callback.",
+  "completedReceiverReceipts": 0,
+  "sourceWindow": "DaBin Native Drag Source Verification \u2014 fictional samples",
+  "receiverWindow": "DaBin External Drop Receiver Verification \u2014 fictional samples",
+  "sourceApp": "/private/tmp/DaBin Drag Source Verification.app",
+  "receiverApp": "/private/tmp/DaBin Drag Receiver Verification.app",
+  "receiverOutput": "/private/tmp/dabin-native-drop-receiver-fixed-5B8EE616-0253-4CD1-B0BD-C6D9694BCB2C",
+  "manualQuestion": "Awaiting user physical Fixture.txt drop into outlined separate-app receiver.",
+  "browser": "Local-only browser target prepared at fixtures/browser-drop.html; no browser drop performed."
+}

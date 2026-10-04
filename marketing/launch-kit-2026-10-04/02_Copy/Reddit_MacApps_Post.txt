@@ -1,0 +1,32 @@
+DABIN / R-MACAPPS LAUNCH POST
+UNSENT DRAFT. Use only after verified publication. Read current subreddit rules and account eligibility first. The checked developer format requires problem, named comparison, price/link, changelog or roadmap, and accurate AI disclosure. Respect the promotion cooldown. The body below is deliberately concise; fill its fields before posting.
+
+TITLE
+I made DaBin: a free local Mac app for saving useful bits, with a desktop robot
+
+BODY
+Developer here - I'm [[DEVELOPER_NAME]], the maker of DaBin.
+
+Problem: Useful screenshots, links and notes are easy to save and hard to find again when they're scattered.
+
+Compare: Apple Notes and Finder already cover notes and files. DaBin's approach puts saved screenshots, links, files, project resources and tasks in one local capture board, with a robot drop target and text search across saved supported content. It's an alternative workflow, not a claim that those tools lack text search.
+
+Price + link: Free for Apple Silicon Macs running macOS 14 or later. [[APP_STORE_URL]]
+
+Changelog: [[RELEASE_NOTES_URL]]
+AI disclosure: [[SELECT_TRUTHFUL_CURRENT_RULE_CATEGORY]]
+
+The 22-second demo shows a fictional project: drop in a reference, keep it with a project, then find it again. Text recognition runs on your Mac. Search covers things saved into DaBin. Auto Capture and website previews start off; enabled manual-link previews can contact sites. No account, ads, analytics or cloud sync.
+
+I'd value feedback on saving and finding project references. What felt clear, and what was confusing?
+
+ATTACH
+04_Video/DABIN__FEED_DABIN__LANDSCAPE.mp4, or one clear real screenshot if video posts are unavailable.
+Do not ask for upvotes. If the current rules require a different format, adapt before posting.
+
+AI DISCLOSURE FIELD
+Do not infer the category from marketing assets or select 'None' by default. The source rule uses Vibe Coded, Human Validated, Code Completion and None. The developer must pick a truthful category under the current definitions.
+
+SOURCE
+https://www.reddit.com/r/macapps/comments/1r6d06r/new_post_requirements_to_combat_low_quality/
+Checked 4 October 2026; the notice describes an experiment, so reread current rules on posting day.

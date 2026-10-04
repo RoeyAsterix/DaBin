@@ -189,14 +189,24 @@ struct DayExportDocument: Equatable {
     var filename: String { "DaBin-\(day).txt" }
     var utf8Data: Data { Data(text.utf8) }
 
+    /// Menu availability must not group captures, format timestamps or build
+    /// their complete text on every screen refresh. Stop at the first match.
+    static func hasCaptures(captures: [Capture], selectedDate: Date,
+                            now: Date = Date(), calendarTimeZone: TimeZone = .current) -> Bool {
+        let day = CaptureCalendar.dayString(selectedDate, timeZone: calendarTimeZone)
+        let today = CaptureCalendar.dayString(now, timeZone: calendarTimeZone)
+        return captures.contains { eligible($0, day: day, today: today, now: now) }
+    }
+
+    private static func eligible(_ capture: Capture, day: String, today: String, now: Date) -> Bool {
+        capture.captureDay == day && (day != today || capture.capturedAt <= now)
+    }
+
     static func make(captures: [Capture], selectedDate: Date,
                      now: Date = Date(), calendarTimeZone: TimeZone = .current) -> DayExportDocument {
         let day = CaptureCalendar.dayString(selectedDate, timeZone: calendarTimeZone)
         let today = CaptureCalendar.dayString(now, timeZone: calendarTimeZone)
-        let eligible = captures.filter { capture in
-            guard capture.captureDay == day else { return false }
-            return day != today || capture.capturedAt <= now
-        }
+        let eligible = captures.filter { Self.eligible($0, day: day, today: today, now: now) }
         let actions = CaptureTextExport.actions(from: eligible)
 
         var lines = [
@@ -210,9 +220,10 @@ struct DayExportDocument: Equatable {
     }
 }
 
-/// A deterministic export of seven fixed local calendar days ending on the
-/// selected date. Only immutable stored receipt dates determine membership;
-/// carried tasks and active board filters cannot add or remove actions.
+/// A deterministic export of the exact dates selected in Week. Only immutable
+/// stored receipt dates determine membership; gaps, carried tasks and active
+/// board filters cannot add or remove actions. The week-ending overload keeps
+/// the original seven-consecutive-day API for existing integrations.
 struct WeekExportDocument: Equatable {
     let startDay: String
     let endDay: String
@@ -220,36 +231,90 @@ struct WeekExportDocument: Equatable {
     let text: String
 
     var isEmpty: Bool { actionCount == 0 }
-    var filename: String { "DaBin-Week-\(startDay)-to-\(endDay).txt" }
+    var filename: String {
+        startDay.isEmpty ? "DaBin-Week-No-Days.txt" : "DaBin-Week-\(startDay)-to-\(endDay).txt"
+    }
     var utf8Data: Data { Data(text.utf8) }
+
+    static func hasCaptures(captures: [Capture], weekEndingDate: Date,
+                            now: Date = Date(), calendarTimeZone: TimeZone = .current) -> Bool {
+        let allowedDays = Set(days(ending: weekEndingDate, timeZone: calendarTimeZone))
+        let today = CaptureCalendar.dayString(now, timeZone: calendarTimeZone)
+        return captures.contains { eligible($0, allowedDays: allowedDays, today: today, now: now) }
+    }
+
+    /// Availability and generation share the same exact date set. In
+    /// particular, an action between two selected dates is not selected.
+    static func hasCaptures(captures: [Capture], selectedDays: [Date],
+                            now: Date = Date(), calendarTimeZone: TimeZone = .current) -> Bool {
+        let allowedDays = Set(selectedDayKeys(selectedDays, timeZone: calendarTimeZone))
+        let today = CaptureCalendar.dayString(now, timeZone: calendarTimeZone)
+        return captures.contains { eligible($0, allowedDays: allowedDays, today: today, now: now) }
+    }
+
+    private static func selectedDayKeys(_ dates: [Date], timeZone: TimeZone) -> [String] {
+        Array(Set(dates.map { CaptureCalendar.dayString($0, timeZone: timeZone) })).sorted()
+    }
+
+    private static func days(ending date: Date, timeZone: TimeZone) -> [String] {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.locale = Locale(identifier: "en_US_POSIX")
+        calendar.timeZone = timeZone
+        let end = calendar.startOfDay(for: date)
+        return (-6...0).compactMap { calendar.date(byAdding: .day, value: $0, to: end) }
+            .map { CaptureCalendar.dayString($0, timeZone: timeZone) }
+    }
+
+    private static func eligible(_ capture: Capture, allowedDays: Set<String>, today: String, now: Date) -> Bool {
+        guard allowedDays.contains(capture.captureDay) else { return false }
+        return capture.captureDay == today ? capture.capturedAt <= now : capture.captureDay < today
+    }
 
     static func make(captures: [Capture], weekEndingDate: Date,
                      now: Date = Date(), calendarTimeZone: TimeZone = .current) -> WeekExportDocument {
-        var calendar = Calendar(identifier: .gregorian)
-        calendar.locale = Locale(identifier: "en_US_POSIX")
-        calendar.timeZone = calendarTimeZone
-        let end = calendar.startOfDay(for: weekEndingDate)
-        let dates = (-6...0).compactMap { calendar.date(byAdding: .day, value: $0, to: end) }
-        let dayKeys = dates.map { CaptureCalendar.dayString($0, timeZone: calendarTimeZone) }
-        let startDay = dayKeys.first ?? CaptureCalendar.dayString(end, timeZone: calendarTimeZone)
+        let dayKeys = days(ending: weekEndingDate, timeZone: calendarTimeZone)
+        return make(captures: captures, dayKeys: dayKeys, now: now, calendarTimeZone: calendarTimeZone)
+    }
+
+    static func make(captures: [Capture], selectedDays: [Date],
+                     now: Date = Date(), calendarTimeZone: TimeZone = .current) -> WeekExportDocument {
+        make(captures: captures,
+             dayKeys: selectedDayKeys(selectedDays, timeZone: calendarTimeZone),
+             now: now, calendarTimeZone: calendarTimeZone)
+    }
+
+    private static func make(captures: [Capture], dayKeys: [String],
+                             now: Date, calendarTimeZone: TimeZone) -> WeekExportDocument {
+        let startDay = dayKeys.first ?? ""
         let endDay = dayKeys.last ?? startDay
         let allowedDays = Set(dayKeys)
         let today = CaptureCalendar.dayString(now, timeZone: calendarTimeZone)
-        let eligible = captures.filter { capture in
-            guard allowedDays.contains(capture.captureDay) else { return false }
-            if capture.captureDay == today { return capture.capturedAt <= now }
-            return capture.captureDay < today
-        }
+        let eligible = captures.filter { Self.eligible($0, allowedDays: allowedDays, today: today, now: now) }
         let actions = CaptureTextExport.actions(from: eligible)
 
-        var lines = [
-            "DaBin Week Export",
-            "Week: \(startDay) to \(endDay)",
-            "Actions: \(actions.count)"
-        ]
+        var lines = ["DaBin Week Export"]
+        if !dayKeys.isEmpty {
+            lines.append("Week: \(startDay) to \(endDay)")
+        }
+        // Preserve the legacy complete-week output. Every partial or scattered
+        // selection names its actual dates instead of implying a solid range.
+        if dayKeys.count != 7 || dayKeys != days(ending: localDate(endDay, timeZone: calendarTimeZone) ?? now,
+                                                timeZone: calendarTimeZone) {
+            lines.append("Selected dates: \(dayKeys.isEmpty ? "None" : dayKeys.joined(separator: ", "))")
+        }
+        lines.append("Actions: \(actions.count)")
         CaptureTextExport.append(actions, to: &lines)
         return WeekExportDocument(startDay: startDay, endDay: endDay,
                                   actionCount: actions.count,
                                   text: lines.joined(separator: "\n") + "\n")
+    }
+
+    private static func localDate(_ day: String, timeZone: TimeZone) -> Date? {
+        let formatter = DateFormatter()
+        formatter.calendar = Calendar(identifier: .gregorian)
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.timeZone = timeZone
+        formatter.dateFormat = "yyyy-MM-dd"
+        return formatter.date(from: day)
     }
 }

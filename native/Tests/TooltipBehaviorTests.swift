@@ -212,11 +212,40 @@ struct TooltipBehaviorTests {
         }
     }
 
+    @MainActor private static func anchorPublicationChecks() throws {
+        let id = "visible-control"
+        for enabled in [false, true] {
+            for controlEnabled in [false, true] {
+                for hovered in [false, true] {
+                    for focused in [false, true] {
+                        for visibleID in [nil, "another-control", id] as [String?] {
+                            let expected = enabled && controlEnabled && (hovered || focused || visibleID == id)
+                            try expect(HoverTooltipAnchorPolicy.shouldPublish(id: id, visibleID: visibleID,
+                                enabled: enabled, controlEnabled: controlEnabled, hovered: hovered, focused: focused) == expected,
+                                "Anchor publication follows enabled control hover, focus, and exact visible identity")
+                        }
+                    }
+                }
+            }
+        }
+        let idleIDs = (0..<1_000).map { "idle-control-\($0)" }
+        try expect(idleIDs.filter {
+            HoverTooltipAnchorPolicy.shouldPublish(id: $0, visibleID: nil, enabled: true,
+                controlEnabled: true, hovered: false, focused: false)
+        }.isEmpty, "A thousand idle controls publish no global tooltip geometry")
+        let selectedID = idleIDs[473]
+        try expect(idleIDs.filter {
+            HoverTooltipAnchorPolicy.shouldPublish(id: $0, visibleID: selectedID, enabled: true,
+                controlEnabled: true, hovered: false, focused: false)
+        } == [selectedID], "Explicit presentation requests geometry only for their exact control")
+    }
+
     @MainActor static func main() async throws {
         _ = NSApplication.shared
         NSApp.setActivationPolicy(.prohibited)
         try await controllerChecks()
         try layoutChecks()
-        print("PASS: \(checks) tooltip delay, cancellation, preference, suppression and clamped-layout checks")
+        try anchorPublicationChecks()
+        print("PASS: \(checks) tooltip delay, cancellation, preference, suppression, active-only anchors and clamped-layout checks")
     }
 }

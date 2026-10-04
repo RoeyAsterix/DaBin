@@ -77,15 +77,16 @@ import SwiftUI
         defer { defaults.removePersistentDomain(forName: suite); try? FileManager.default.removeItem(at: root) }
         defaults.set(false, forKey: PreviewService.linkPreviewPreference)
         let store = try CaptureStore(root: root)
-        let stamp = ISO8601DateFormatter().date(from: "2026-10-02T06:40:00Z")!
+        let stamp = ISO8601DateFormatter().date(from: "2026-10-04T06:40:00Z")!
         let project = "Weekend ideas"
         let note = try store.createNote(text: "A little fresh air\nPack a snack, pick a quiet path, and leave time to explore.",
-            at: stamp.addingTimeInterval(-300), projectName: project)
-        note.title = "A little fresh air"
+            at: stamp.addingTimeInterval(-172800), projectName: project)
+        note.title = "A little fresh air for the weekend"
+        var planning = TaskPlanning(); planning.priority = .medium; planning.effortMinutes = 25
         let task = try store.createTask(text: "Plan a weekend walk", at: stamp.addingTimeInterval(-120),
-            projectName: project)
+            planning: planning, projectName: project)
         let image = try await store.importData(landscapePNG(), filename: "Weekend trail.png", at: stamp)
-        image.title = "A trail worth saving"
+        image.title = "A weekend trail worth saving"
         image.previewDescription = "A quiet path, a bright morning, and a little room to wander."
         try store.setOrganization(image, pinned: false, projectName: project)
         image.thumbnailRelativePath = "Previews/\(image.id.uuidString)/thumbnail.png"
@@ -93,14 +94,16 @@ import SwiftUI
         try FileManager.default.createDirectory(at: thumbnail.deletingLastPathComponent(), withIntermediateDirectories: true)
         try landscapePNG().write(to: thumbnail, options: .atomic)
         image.previewState = "ready"
-        _ = try store.createNote(text: "Try the riverside path on Saturday.", at: stamp.addingTimeInterval(60))
+        _ = try store.createNote(text: "Weekend idea: try the riverside path on Saturday.", at: stamp.addingTimeInterval(-86400))
         try store.save()
         let previews = PreviewService(store: store, defaults: defaults)
         let auto = AutoCaptureService(settings: AutoCaptureSettings(defaults: defaults), input: InputService(store: store),
             pasteboardProvider: { fatalError("Guide export cannot read the clipboard") }, sourceApplicationProvider: { nil })
         let state = AppState(store: store, previews: previews,
-            reminders: ReminderService(store: store, client: GuideNotificationClient()), autoCapture: auto,
-            captureClipboard: CaptureClipboardService(writer: { _ in fatalError("Guide export cannot write the clipboard") }))
+            reminders: ReminderService(store: store, client: GuideNotificationClient()),
+            robotPlacement: RobotPlacementSettings(defaults: defaults), autoCapture: auto,
+            captureClipboard: CaptureClipboardService(writer: { _ in fatalError("Guide export cannot write the clipboard") }),
+            quickAccessSettings: QuickAccessSettings(defaults: defaults))
         defer { state.shutdownNotificationPresentation(); state.focusSessions.shutdown(); auto.shutdown(); previews.shutdown() }
         let theme = ThemeSettings(defaults: defaults, systemDarkMode: false)
         theme.setBoardOpacity(1); theme.setDarkMode(false); theme.select(.teal); theme.setShowTooltips(false)
@@ -113,6 +116,8 @@ import SwiftUI
         try await board(state, theme: theme, filename: "DABIN__GUIDE__PROJECTS.png", contentSize: CGSize(width: 800, height: 600), output: output)
         state.clearNewNoteDraft(); state.openInbox(); state.newNoteText = "An idea for the weekend…"; state.status = nil
         try await board(state, theme: theme, filename: "DABIN__GUIDE__INBOX.png", contentSize: CGSize(width: 380, height: 430), output: output)
+        state.clearNewNoteDraft(); state.openSearch(); state.query = "weekend"; state.status = nil
+        try await board(state, theme: theme, filename: "DABIN__GUIDE__SEARCH.png", contentSize: CGSize(width: 900, height: 540), output: output)
         _ = state.configureTaskFocus(task, hours: 0, minutes: 25)
         state.openCapture(task.id); state.detailFocus = nil; state.status = nil
         try await board(state, theme: theme, filename: "DABIN__GUIDE__TASK.png", contentSize: CGSize(width: 380, height: 560), output: output)
@@ -167,7 +172,7 @@ import SwiftUI
         window.fixtureScale = 2; window.isReleasedWhenClosed = false; window.isOpaque = false; window.backgroundColor = .clear
         window.contentView = view; view.autoresizingMask = [.width, .height]
         CornerController.applyBoardAppearance(darkMode: false, to: window, frame: view, hosting: hosting)
-        window.orderFront(nil); view.setVisible(true); view.viewDidChangeBackingProperties()
+        window.orderFront(nil); view.cancelTransition(open: true); view.viewDidChangeBackingProperties()
         defer { view.setVisible(false); window.orderOut(nil); window.contentView = nil; window.close() }
         for _ in 0..<6 { view.layoutSubtreeIfNeeded(); try await Task.sleep(for: .milliseconds(90)) }
         if state.route == .library, let scroll = scrollViews(in: hosting).first,

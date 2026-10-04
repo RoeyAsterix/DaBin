@@ -78,6 +78,7 @@ struct CollectionPreviewMosaicLayout {
 /// own, so a parent collection can make the whole preview its expansion target.
 @MainActor
 struct CollectionPreviewMosaic: View {
+    @Environment(\.workspaceZoom) private var zoom
     let store: CaptureStore
     let captures: [Capture]
     var compact = false
@@ -107,7 +108,7 @@ struct CollectionPreviewMosaic: View {
                 .overlay(alignment: .bottomTrailing) {
                     if selection.omittedCount > 0 {
                         Text("+\(selection.omittedCount) more")
-                            .font(.system(size: compact ? 10 : 11, weight: .semibold))
+                            .font(.system(size: zoom.fontSize(compact ? 10 : 11), weight: .semibold))
                             .foregroundStyle(Palette.foreground)
                             .padding(.horizontal, compact ? 7 : 9).padding(.vertical, 5)
                             .background(Palette.surface.opacity(0.96),
@@ -118,7 +119,7 @@ struct CollectionPreviewMosaic: View {
                     }
                 }
             }
-            .frame(height: CollectionPreviewLayout.previewHeight(compact: compact))
+            .frame(height: zoom.value(CollectionPreviewLayout.previewHeight(compact: compact)))
             .accessibilityElement(children: .ignore)
             .accessibilityLabel("Collection contents preview")
             .accessibilityIdentifier("collection-preview-mosaic")
@@ -128,6 +129,7 @@ struct CollectionPreviewMosaic: View {
 
 @MainActor
 private struct CollectionPreviewCell: View {
+    @Environment(\.workspaceZoom) private var zoom
     @Environment(\.daBinAccent) private var accent
     let store: CaptureStore
     @ObservedObject var capture: Capture
@@ -166,10 +168,10 @@ private struct CollectionPreviewCell: View {
 
     private var thumbnailCaption: some View {
         VStack(alignment: .leading, spacing: 2) {
-            Text(title).font(.system(size: small ? 9 : 11, weight: .medium))
+            Text(title).font(.system(size: zoom.fontSize(small ? 9 : 11), weight: .medium))
                 .lineLimit(1).truncationMode(.middle)
             if !small {
-                Text(captureTypeLabel(capture.kind)).font(.system(size: 9))
+                Text(captureTypeLabel(capture.kind)).font(.system(size: zoom.fontSize(9)))
                     .foregroundStyle(Palette.muted).lineLimit(1)
             }
         }
@@ -183,24 +185,24 @@ private struct CollectionPreviewCell: View {
         VStack(alignment: .leading, spacing: small ? 4 : 8) {
             HStack(spacing: 4) {
                 Image(systemName: kindSymbol(capture.kind))
-                    .font(.system(size: small ? 11 : 16, weight: .medium))
+                    .font(.system(size: zoom.fontSize(small ? 11 : 16), weight: .medium))
                 if !small {
                     Text(captureTypeLabel(capture.kind))
-                        .font(.system(size: 9, weight: .semibold)).lineLimit(1)
+                        .font(.system(size: zoom.fontSize(9), weight: .semibold)).lineLimit(1)
                 }
                 Spacer(minLength: 0)
             }
             .foregroundStyle(accent)
             Text(title)
-                .font(.system(size: small ? 10 : 13, weight: .semibold))
+                .font(.system(size: zoom.fontSize(small ? 10 : 13), weight: .semibold))
                 .foregroundStyle(Palette.foreground)
                 .lineLimit(small ? 2 : 3).truncationMode(.middle)
             if !small && !excerpt.isEmpty {
-                Text(excerpt).font(.system(size: compact ? 10 : 11))
-                    .lineSpacing(2).foregroundStyle(Palette.muted)
+                Text(excerpt).font(.system(size: zoom.fontSize(compact ? 10 : 11)))
+                    .lineSpacing(zoom.lineSpacing(2)).foregroundStyle(Palette.muted)
                     .lineLimit(size.height > 170 ? 7 : 3)
             } else if !small, let url = capture.originalURL, !url.isEmpty {
-                Text(url).font(.system(size: 10)).foregroundStyle(Palette.muted).lineLimit(3)
+                Text(url).font(.system(size: zoom.fontSize(10))).foregroundStyle(Palette.muted).lineLimit(3)
             }
             Spacer(minLength: 0)
         }

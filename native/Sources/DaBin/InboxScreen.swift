@@ -2,8 +2,10 @@ import SwiftUI
 
 @MainActor
 struct InboxScreen: View {
+    @Environment(\.workspaceZoom) private var zoom
     @ObservedObject var state: AppState
     @Environment(\.daBinAccent) private var accent
+    @Environment(\.daBinTutorialTargets) private var tutorialTargets
     private var items: [Capture] {
         state.store.captures.filter {
             $0.parentTaskID == nil && $0.projectName == nil && !$0.isCompleted
@@ -36,6 +38,7 @@ struct InboxScreen: View {
                     Spacer(minLength: 0)
                     CaptureFilterMenu(selection: $state.filter)
                 }.buttonStyle(.plain).font(.system(size: 12)).foregroundStyle(accent)
+                    .daBinTutorialAnchor(.inboxActions)
                 if let project = state.newNoteProject, !state.newNoteText.isEmpty {
                     Label("Draft for \(project)", systemImage: "folder")
                         .font(.system(size: 11)).foregroundStyle(Palette.muted).lineLimit(1)
@@ -45,20 +48,37 @@ struct InboxScreen: View {
                         .font(.system(size: 11)).foregroundStyle(Palette.muted)
                 }
             }.padding(14)
-            if items.isEmpty {
-                EmptyMessage(symbol: "tray", title: state.filter == .all ? "Room for your next idea" : "No matching items",
-                             message: "Paste, drop a file, or jot a note above. Day and Week show everything you captured by date.")
-            } else {
-                ScrollView {
-                    LazyVStack(alignment: .leading, spacing: 9) {
-                        Text("\(items.count) to organize").font(.system(size: 11)).foregroundStyle(Palette.muted)
-                        ForEach(items) { item in
-                            CaptureRow(state: state, capture: item, featured: false)
+                .daBinTutorialAnchor(.inboxComposer)
+            Group {
+                if items.isEmpty {
+                    if tutorialTargets.contains(.captureActions) {
+                        DaBinTutorialSampleCaptureCard()
+                    } else {
+                        EmptyMessage(symbol: "tray", title: state.filter == .all ? "Room for your next idea" : "No matching items",
+                                     message: "Paste, drop a file, or jot a note above. Day and Week show everything you captured by date.")
+                    }
+                } else {
+                    ScrollViewReader { proxy in
+                    ScrollView {
+                        LazyVStack(alignment: .leading, spacing: zoom.value(9)) {
+                            Text("\(items.count) to organize").font(.system(size: 11)).foregroundStyle(Palette.muted)
+                            ForEach(items) { item in
+                                CaptureRow(state: state, capture: item, featured: false)
+                                    .id("capture:" + item.id.uuidString)
 
-                        }
-                    }.padding(.horizontal, 14).padding(.bottom, 14).frame(maxWidth: 860).frame(maxWidth: .infinity)
+                            }
+                        }.padding(.horizontal, 14).padding(.bottom, 14).frame(maxWidth: zoom.value(860)).frame(maxWidth: .infinity)
+                    }.background {
+                        WorkspaceScrollHistory(anchor: state.workspaceViewport, contextID: "inbox",
+                            onAnchor: { state.workspaceViewport = $0 }).allowsHitTesting(false).accessibilityHidden(true)
+                    }
+                    .onAppear { if let anchor = state.workspaceViewport { proxy.scrollTo(anchor.itemID, anchor: .top) } }
+                    .onChange(of: state.navigationRestorationRevision) { _, _ in
+                        if let anchor = state.workspaceViewport { proxy.scrollTo(anchor.itemID, anchor: .top) }
+                    }
+                    }
                 }
-            }
+            }.daBinTutorialAnchor(.captureFeed)
         }
     }
     private func saveQuick(asTask: Bool) {
@@ -72,5 +92,36 @@ struct InboxScreen: View {
             let destination = project ?? "Inbox"
             state.status = AppStatusMessage(text: asTask ? "Task added to \(destination)." : "Note saved to \(destination).", severity: .success)
         } catch { state.reportFailure(error.localizedDescription) }
+    }
+}
+
+@MainActor
+private struct DaBinTutorialSampleCaptureCard: View {
+    @Environment(\.daBinAccent) private var accent
+
+    var body: some View {
+        HStack(spacing: 12) {
+            Image(systemName: "doc.text")
+                .font(.system(size: 18, weight: .medium)).foregroundStyle(accent)
+                .frame(width: 34, height: 34).background(accent.opacity(0.1), in: RoundedRectangle(cornerRadius: 9))
+                .accessibilityHidden(true)
+            VStack(alignment: .leading, spacing: 3) {
+                Text("Tutorial example · not saved").font(.system(size: 13, weight: .semibold))
+                Text("Every saved capture gets a More menu for its next action.")
+                    .font(.system(size: 11)).foregroundStyle(Palette.muted)
+            }
+            Spacer(minLength: 6)
+            Image(systemName: "ellipsis")
+                .font(.system(size: 16, weight: .semibold)).foregroundStyle(accent)
+                .frame(width: 32, height: 32)
+                .background(Palette.soft, in: RoundedRectangle(cornerRadius: 8))
+                .accessibilityLabel("Example More capture actions")
+                .daBinTutorialAnchor(.captureActions)
+        }
+        .padding(14)
+        .background(Palette.surface, in: RoundedRectangle(cornerRadius: 14))
+        .overlay(RoundedRectangle(cornerRadius: 14).strokeBorder(Palette.line, lineWidth: 0.7))
+        .padding(.horizontal, 14)
+        .accessibilityElement(children: .contain)
     }
 }

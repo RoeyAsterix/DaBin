@@ -1,0 +1,14 @@
+DABIN V2 LAUNCH GUIDE / PDF QA
+
+PDF: DaBin_Launch_Guide.pdf; 9 pages.
+Root: launch-kit-2026-10-04-v2. Original kit preserved.
+
+Updated three explanatory paragraphs on pages 1 and 3 and the main-tour heading. The guide describes the conversational guided UI tour, actual native fixture views, composed pointer actions and the separate Apple-preview requirement. No fixed duration is claimed in the PDF.
+
+The cover retains the exact current native DABIN__ROBOT__DELIGHTED.png with its aspect ratio preserved.
+
+Render: bundled Poppler, changed pages 1 and 3 at 120 dpi. Both visually inspected; PASS for text, spacing, image alignment, legibility and footer margin. The other seven pages retain their previously approved content and layout.
+
+All pages contain readable text; 9-page count confirmed with pypdf. Current tour description and voice references verified. Lowest authoring body bottom: 70.19 pt.
+
+No user capture archive, KARI material or invented public-release link is embedded.

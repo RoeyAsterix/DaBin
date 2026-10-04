@@ -1,0 +1,236 @@
+{
+  "dateCount" : 6,
+  "description" : "Native chronological global Search at compact and expanded widths, using only generated fictional local fixtures.",
+  "keyboardVerification" : "not run: desktop focus unavailable",
+  "privacy" : "Temporary private archives, generated text and a code-drawn 10x10 PNG. No clipboard, network, personal archive or external app content.",
+  "screenshots" : [
+    {
+      "appearance" : "light",
+      "file" : "global-date-search-light-320x720@2x.png",
+      "logicalHeight" : 720,
+      "logicalWidth" : 320,
+      "pixelHeight" : 1440,
+      "pixelScale" : 2,
+      "pixelWidth" : 640,
+      "query" : "saffron atlas",
+      "visibleDates" : [
+        "2026-10-03"
+      ]
+    },
+    {
+      "appearance" : "light",
+      "file" : "global-date-search-light-380x720@2x.png",
+      "logicalHeight" : 720,
+      "logicalWidth" : 380,
+      "pixelHeight" : 1440,
+      "pixelScale" : 2,
+      "pixelWidth" : 760,
+      "query" : "saffron atlas",
+      "visibleDates" : [
+        "2026-10-03"
+      ]
+    },
+    {
+      "appearance" : "light",
+      "file" : "global-date-search-light-736x720@2x.png",
+      "logicalHeight" : 720,
+      "logicalWidth" : 736,
+      "pixelHeight" : 1440,
+      "pixelScale" : 2,
+      "pixelWidth" : 1472,
+      "query" : "saffron atlas",
+      "visibleDates" : [
+        "2026-10-03",
+        "2026-10-02"
+      ]
+    },
+    {
+      "appearance" : "light",
+      "file" : "global-date-search-light-1060x720@2x.png",
+      "logicalHeight" : 720,
+      "logicalWidth" : 1060,
+      "pixelHeight" : 1440,
+      "pixelScale" : 2,
+      "pixelWidth" : 2120,
+      "query" : "saffron atlas",
+      "visibleDates" : [
+        "2026-10-03",
+        "2026-10-02",
+        "2026-10-01"
+      ]
+    },
+    {
+      "appearance" : "light",
+      "file" : "global-date-search-compact-short-light-380x520@2x.png",
+      "logicalHeight" : 520,
+      "logicalWidth" : 380,
+      "pixelHeight" : 1040,
+      "pixelScale" : 2,
+      "pixelWidth" : 760,
+      "query" : "saffron atlas",
+      "visibleDates" : [
+        "2026-10-03"
+      ]
+    },
+    {
+      "appearance" : "light",
+      "file" : "global-date-search-selected-preview-light-1060x720@2x.png",
+      "logicalHeight" : 720,
+      "logicalWidth" : 1060,
+      "pixelHeight" : 1440,
+      "pixelScale" : 2,
+      "pixelWidth" : 2120,
+      "query" : "saffron atlas",
+      "selectedResult" : "capture:E53C1BA8-3874-4E98-B728-033BB59C10A8"
+    },
+    {
+      "appearance" : "light",
+      "file" : "global-date-search-filters-popover-light@2x.png",
+      "logicalHeight" : 328,
+      "logicalWidth" : 314,
+      "pixelHeight" : 656,
+      "pixelScale" : 2,
+      "pixelWidth" : 628,
+      "surface" : "native Search filters popover"
+    },
+    {
+      "appearance" : "light",
+      "file" : "global-date-search-note-editor-light-736x720@2x.png",
+      "logicalHeight" : 720,
+      "logicalWidth" : 736,
+      "pixelHeight" : 1440,
+      "pixelScale" : 2,
+      "pixelWidth" : 1472,
+      "surface" : "editable Search note route"
+    },
+    {
+      "appearance" : "light",
+      "file" : "global-date-search-local-photo-light-380x720@2x.png",
+      "logicalHeight" : 720,
+      "logicalWidth" : 380,
+      "pixelHeight" : 1440,
+      "pixelScale" : 2,
+      "pixelWidth" : 760,
+      "query" : "local indexed-text fixture"
+    },
+    {
+      "appearance" : "dark",
+      "file" : "global-date-search-dark-320x720@2x.png",
+      "logicalHeight" : 720,
+      "logicalWidth" : 320,
+      "pixelHeight" : 1440,
+      "pixelScale" : 2,
+      "pixelWidth" : 640,
+      "query" : "saffron atlas",
+      "visibleDates" : [
+        "2026-10-03"
+      ]
+    },
+    {
+      "appearance" : "dark",
+      "file" : "global-date-search-dark-380x720@2x.png",
+      "logicalHeight" : 720,
+      "logicalWidth" : 380,
+      "pixelHeight" : 1440,
+      "pixelScale" : 2,
+      "pixelWidth" : 760,
+      "query" : "saffron atlas",
+      "visibleDates" : [
+        "2026-10-03"
+      ]
+    },
+    {
+      "appearance" : "dark",
+      "file" : "global-date-search-dark-736x720@2x.png",
+      "logicalHeight" : 720,
+      "logicalWidth" : 736,
+      "pixelHeight" : 1440,
+      "pixelScale" : 2,
+      "pixelWidth" : 1472,
+      "query" : "saffron atlas",
+      "visibleDates" : [
+        "2026-10-03",
+        "2026-10-02"
+      ]
+    },
+    {
+      "appearance" : "dark",
+      "file" : "global-date-search-dark-1060x720@2x.png",
+      "logicalHeight" : 720,
+      "logicalWidth" : 1060,
+      "pixelHeight" : 1440,
+      "pixelScale" : 2,
+      "pixelWidth" : 2120,
+      "query" : "saffron atlas",
+      "visibleDates" : [
+        "2026-10-03",
+        "2026-10-02",
+        "2026-10-01"
+      ]
+    },
+    {
+      "appearance" : "dark",
+      "file" : "global-date-search-compact-short-dark-380x520@2x.png",
+      "logicalHeight" : 520,
+      "logicalWidth" : 380,
+      "pixelHeight" : 1040,
+      "pixelScale" : 2,
+      "pixelWidth" : 760,
+      "query" : "saffron atlas",
+      "visibleDates" : [
+        "2026-10-03"
+      ]
+    },
+    {
+      "appearance" : "dark",
+      "file" : "global-date-search-selected-preview-dark-1060x720@2x.png",
+      "logicalHeight" : 720,
+      "logicalWidth" : 1060,
+      "pixelHeight" : 1440,
+      "pixelScale" : 2,
+      "pixelWidth" : 2120,
+      "query" : "saffron atlas",
+      "selectedResult" : "capture:E53C1BA8-3874-4E98-B728-033BB59C10A8"
+    },
+    {
+      "appearance" : "dark",
+      "file" : "global-date-search-filters-popover-dark@2x.png",
+      "logicalHeight" : 328,
+      "logicalWidth" : 314,
+      "pixelHeight" : 656,
+      "pixelScale" : 2,
+      "pixelWidth" : 628,
+      "surface" : "native Search filters popover"
+    },
+    {
+      "appearance" : "dark",
+      "file" : "global-date-search-note-editor-dark-736x720@2x.png",
+      "logicalHeight" : 720,
+      "logicalWidth" : 736,
+      "pixelHeight" : 1440,
+      "pixelScale" : 2,
+      "pixelWidth" : 1472,
+      "surface" : "editable Search note route"
+    },
+    {
+      "appearance" : "dark",
+      "file" : "global-date-search-local-photo-dark-380x720@2x.png",
+      "logicalHeight" : 720,
+      "logicalWidth" : 380,
+      "pixelHeight" : 1440,
+      "pixelScale" : 2,
+      "pixelWidth" : 760,
+      "query" : "local indexed-text fixture"
+    }
+  ],
+  "stressResultCount" : 2000,
+  "timings" : {
+    "cached500Seconds" : 0.0012354583013802767,
+    "cachedAverageMicroseconds" : 2.4709166027605534,
+    "cachedReadCount" : 500,
+    "coldSearchSeconds" : 0.030530666699633002,
+    "matches" : 295,
+    "records" : 5000,
+    "repositoryBatchSeconds" : 0.10267041670158505
+  }
+}

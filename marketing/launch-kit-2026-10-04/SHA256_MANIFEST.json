@@ -1,0 +1,914 @@
+{
+  "package": "DaBin Marketing Package",
+  "prepared_date": "2026-10-04",
+  "publication": "Prepared locally; not published or sent",
+  "validation": {
+    "local_html_references": 71,
+    "broken_local_references": 0,
+    "decoded_png_files": 98,
+    "parsed_json_files": 10,
+    "required_outputs": "PASS"
+  },
+  "files": [
+    {
+      "path": "01_Launch_Playbook/30_Day_Calendar.html",
+      "bytes": 12631,
+      "sha256": "42ff79ab1a647cbd69abc3b116f03ae344bd66130633a109f8ad358174bd1501"
+    },
+    {
+      "path": "01_Launch_Playbook/30_Day_Calendar.json",
+      "bytes": 12662,
+      "sha256": "08b3c7bbdb6ea529c0fbdc6bafe2d44d59b212b2a7d2bda8e8dfc3918b1fb4e6"
+    },
+    {
+      "path": "01_Launch_Playbook/Campaign_Measurement.txt",
+      "bytes": 3884,
+      "sha256": "130c15a42a066942b9df0a1a513c1927925c0bd923aaa2ce0a865bf9b64168cf"
+    },
+    {
+      "path": "01_Launch_Playbook/Claim_Guardrails.txt",
+      "bytes": 3822,
+      "sha256": "f1d68a660660e6f844e24f8cf8dd7995bb3ad485457e2e4d3fe8d9c57c68fb0a"
+    },
+    {
+      "path": "01_Launch_Playbook/Creator_and_Publication_Targets.html",
+      "bytes": 9920,
+      "sha256": "bc0ea0b3048c883c12091ab9c96536b7b4cdbfa023e6fad90f35a28562d63d47"
+    },
+    {
+      "path": "01_Launch_Playbook/DaBin_Launch_Guide.pdf",
+      "bytes": 729335,
+      "sha256": "c128089c4e792f04e648da4f39483f55a98e2b17daf15895c3ec1aaf26395454"
+    },
+    {
+      "path": "01_Launch_Playbook/DaBin_Launch_Strategy.txt",
+      "bytes": 6409,
+      "sha256": "f7c530c5f290f115b9d9a7276f28dc1ab116f671cdfb35f044504f090e913221"
+    },
+    {
+      "path": "01_Launch_Playbook/Launch_Checklist.txt",
+      "bytes": 4025,
+      "sha256": "5a77b76efe7462bc8605174a6b240a4063bce2fe2f3e9ed4840252a4351e3253"
+    },
+    {
+      "path": "01_Launch_Playbook/PDF_QA.txt",
+      "bytes": 1390,
+      "sha256": "38a352cef52d0ed370e8bca6aceba96bc4608923c18dbccca46bd73467f2fa33"
+    },
+    {
+      "path": "01_Launch_Playbook/START_HERE.html",
+      "bytes": 4525,
+      "sha256": "1d49b837e2572bc7d76c8fff66e46ed40a36b781fb6d4e0c2e8e8f3f35f31623"
+    },
+    {
+      "path": "01_Launch_Playbook/Sources_and_Provenance.txt",
+      "bytes": 4883,
+      "sha256": "aa93e4f9a16f83ee75ec9a3b22d5909fd59c49ada6feaa24dc80eb2866c5650e"
+    },
+    {
+      "path": "01_Launch_Playbook/Written_Kit_QA.txt",
+      "bytes": 944,
+      "sha256": "457005a3a87262e3ad61ffcaf3ed4f3b7b22e80a4c89e880fd3b9072b356abff"
+    },
+    {
+      "path": "01_Launch_Playbook/campaign-tracker.json",
+      "bytes": 998,
+      "sha256": "bb49c14ac8f35d6f5d59f91c4545562b6e2bbbfda5c3fd0fc426e4eb91e8b43e"
+    },
+    {
+      "path": "01_Launch_Playbook/creator-targets.json",
+      "bytes": 6260,
+      "sha256": "2e5b2bbcb8f5a3e3a2438e1b36325dd2635e4ec2b6247c3e11a8af942241e07f"
+    },
+    {
+      "path": "02_Copy/App_Store_Listing_Copy.txt",
+      "bytes": 2839,
+      "sha256": "17468e309ec4ea6794ac4ad29a971713fef85e538101461396b0eb4dc701532e"
+    },
+    {
+      "path": "02_Copy/Apple_Featuring_Nomination_DRAFT.txt",
+      "bytes": 3529,
+      "sha256": "5c8f670cd8ecb311c1f93c4c8cf12d32084d8de70d07ba90a764cf032c52d97f"
+    },
+    {
+      "path": "02_Copy/Copy_Index.html",
+      "bytes": 3673,
+      "sha256": "65e043fae4b71affa6f06aac9f712381e2f2f7d4a6cff5bf48b70e36e7daf5a3"
+    },
+    {
+      "path": "02_Copy/Creator_Outreach_Templates_UNSENT.txt",
+      "bytes": 5788,
+      "sha256": "0f63e40cc246511a27f01300ff5e152c91f5ba2335e4e2130dc24348e81dcecd"
+    },
+    {
+      "path": "02_Copy/Landing_Page_Copy.txt",
+      "bytes": 3036,
+      "sha256": "3b6fd9184b1366d2461f3f9930e6928587b7bea7d7ffac34111494c07858ecb1"
+    },
+    {
+      "path": "02_Copy/Messaging_and_Brand_Voice.txt",
+      "bytes": 2299,
+      "sha256": "374702e50742318edc91e88f3a3fdbe035581a4acbadadd070777718f3390a6a"
+    },
+    {
+      "path": "02_Copy/Press_Release_AFTER_PUBLICATION.txt",
+      "bytes": 2433,
+      "sha256": "4021d0da3ad2df4fc8a66a8869f7d1c7345531111d37e5e94a621a354ba3db46"
+    },
+    {
+      "path": "02_Copy/Product_Factsheet.txt",
+      "bytes": 2660,
+      "sha256": "a5eb26bf8e6c33ba7cc4f567a78f510860989adb2337b6eb5a7473d9d9a1a279"
+    },
+    {
+      "path": "02_Copy/Product_Hunt_Copy.txt",
+      "bytes": 2612,
+      "sha256": "97d4047505a2358dd39ce408a7aafc7d335d2618e6453a506b4020cc1ca54632"
+    },
+    {
+      "path": "02_Copy/Reddit_MacApps_Post.txt",
+      "bytes": 2223,
+      "sha256": "28b8d03dce912ee2334998dcd2b7cccfa4cc53d862c6b0b640f2a61d0cca466c"
+    },
+    {
+      "path": "02_Copy/Screenshot_Captions_and_Order.txt",
+      "bytes": 3054,
+      "sha256": "2d22bc49f1cbc03a639a09cebba6c503d4fccb747c308f2af9646189db37ae0b"
+    },
+    {
+      "path": "02_Copy/Social_Posts.txt",
+      "bytes": 4932,
+      "sha256": "70e30afe05d653180ed20c46081234cac535e079e3c197d49f99adfd4d5657a7"
+    },
+    {
+      "path": "02_Copy/Support_and_Reply_Copy.txt",
+      "bytes": 2885,
+      "sha256": "bc40e873f270a41a7ad59a6d9827666bed9f23e24d4cb29e1d91b074566add4e"
+    },
+    {
+      "path": "02_Copy/Video_Scripts_and_Shotlist.txt",
+      "bytes": 3553,
+      "sha256": "3c2777b134f6e33facd6342cf46f16b7b411e831080fc95c7fee23b2aca11a26"
+    },
+    {
+      "path": "03_Graphics/DABIN__APP_ICON__1024.png",
+      "bytes": 280161,
+      "sha256": "44ad308890153268409b08ee22050d66557327c92cbd3f9bb8d0f071c03e72b5"
+    },
+    {
+      "path": "03_Graphics/DABIN__OUTCOME__01_INBOX_1920x1080.png",
+      "bytes": 135172,
+      "sha256": "4addd7a04ac654d6f6c1949d32e28866fdcf2ae345f11613b50eabf8d740fcb1"
+    },
+    {
+      "path": "03_Graphics/DABIN__OUTCOME__02_SEARCH_1920x1080.png",
+      "bytes": 121623,
+      "sha256": "68cb71be6c5b0948b25b0d6eead143b2bf2b0188aa1360ec5b3c53713b195df0"
+    },
+    {
+      "path": "03_Graphics/DABIN__OUTCOME__03_STUDIO_PROJECT_1920x1080.png",
+      "bytes": 179151,
+      "sha256": "e19e74a9c6edbb15a831049faebd057f9b2dd45d03cf23a99d3db9b00767d2d7"
+    },
+    {
+      "path": "03_Graphics/DABIN__ROBOT__TRANSPARENT.png",
+      "bytes": 324021,
+      "sha256": "be0f6b988a1efe29564abf323424b33e0cb09abb08ae1d1f8e309e7875e4f826"
+    },
+    {
+      "path": "03_Graphics/DABIN__SOCIAL__LANDSCAPE_1200x630.png",
+      "bytes": 123486,
+      "sha256": "dc3365495ed40ee7d7e01e63ad14e803727068805ee615191417c6dba3d1c164"
+    },
+    {
+      "path": "03_Graphics/DABIN__SOCIAL__SQUARE_1080x1080.png",
+      "bytes": 224511,
+      "sha256": "20c373b5594154b339ea03ddb49dc6cb057abe2256abb2a36424fecd1d80ed34"
+    },
+    {
+      "path": "03_Graphics/DABIN__SOCIAL__VERTICAL_1080x1920.png",
+      "bytes": 358666,
+      "sha256": "c748906d97876286ca9dfdb75c6662bdc8776c050f8fe65e44ba01c8c6d239f2"
+    },
+    {
+      "path": "03_Graphics/Graphics-Gallery.html",
+      "bytes": 2353,
+      "sha256": "b91095cc7a077466932f8e44098c9bca4db8d5598e7f2c3781adb7434271831b"
+    },
+    {
+      "path": "03_Graphics/Usage.txt",
+      "bytes": 925,
+      "sha256": "8e9b97cccedbb24a4064b7960f7c291e2df9387a03f2d318a78a8f74f9c49258"
+    },
+    {
+      "path": "04_Video/DABIN__FEED_DABIN__LANDSCAPE.mp4",
+      "bytes": 1649613,
+      "sha256": "e1b1403334533341dbc9b039ad673d957b509cedcf7e9dd605958f9cc8152fd2"
+    },
+    {
+      "path": "04_Video/DABIN__FEED_DABIN__LANDSCAPE_SILENT.mp4",
+      "bytes": 1313263,
+      "sha256": "9b94b331ca0d3f542d1c04c3781c2d1638be743a42002e157d9bdeac3a66ebdf"
+    },
+    {
+      "path": "04_Video/DABIN__FEED_DABIN__PORTRAIT.mp4",
+      "bytes": 1656589,
+      "sha256": "200b9bf576113ecb71895f157aa4c94b50fe1e6ea92e5eab596768a3e2314cc6"
+    },
+    {
+      "path": "04_Video/DABIN__FEED_DABIN__PORTRAIT_POSTER.png",
+      "bytes": 520308,
+      "sha256": "60d0e05c482f3b394497e61a1aa54cd6501acf0925da37eb701076407f8c0e5e"
+    },
+    {
+      "path": "04_Video/DABIN__FEED_DABIN__PORTRAIT_SILENT.mp4",
+      "bytes": 1320239,
+      "sha256": "9ce172e379633be97018e2d6fbb683cb06bdfba93197218983cb5c8047ef3667"
+    },
+    {
+      "path": "04_Video/DABIN__FEED_DABIN__POSTER.png",
+      "bytes": 525957,
+      "sha256": "2fd11a99362c5c8b1cf4e2f1de6fdd00e5d2ab62ff915328bb2ebabba72290a1"
+    },
+    {
+      "path": "04_Video/DABIN__FEED_DABIN__SUBTITLES.srt",
+      "bytes": 518,
+      "sha256": "7a06a9c67df3d11ee58d94742f948cb5f8ea78c9de980f074b7c7b9cbcf82007"
+    },
+    {
+      "path": "04_Video/DaBin_Feed_Narration_Original.srt",
+      "bytes": 518,
+      "sha256": "50d5d5b14885775ac9d1ac445bb84c16b669dac2f803e51afc7af352b6efaf78"
+    },
+    {
+      "path": "04_Video/DaBin_Feed_Narration_Paced_092_Offset_1s.srt",
+      "bytes": 518,
+      "sha256": "ca30ac554f91e7ebf6c32bc2a6f47aeb4f7adefa7ac75251b7e5a0d9f5d74e54"
+    },
+    {
+      "path": "04_Video/VIDEO_USAGE.txt",
+      "bytes": 2120,
+      "sha256": "99ed898b89e8106e41e4831d0f6886ee529b097c1482d712ac0df76fd046c990"
+    },
+    {
+      "path": "04_Video/audio/DABIN__FEED_DABIN__MIX.wav",
+      "bytes": 2112044,
+      "sha256": "7efbe8031fb17357feb9d60c8ac4d4be8aa6bc6e994f9b80d10480f0cb732fa6"
+    },
+    {
+      "path": "04_Video/audio/DaBin_Feed_Narration_Paced_092.wav",
+      "bytes": 1477650,
+      "sha256": "d16a93bb5ad46ac4e966f0ac57d6b96db39397576766f5a372dedcaccc9cd48c"
+    },
+    {
+      "path": "04_Video/audio/DaBin_Feed_Narration_Selected.mp3",
+      "bytes": 244957,
+      "sha256": "14c8165f68530866e3f99e01d4a56b097eb9558b6c89bffe38d3538ebd8d1d09"
+    },
+    {
+      "path": "04_Video/audio/DaBin_Feed_Narration_Selected.wav",
+      "bytes": 1359840,
+      "sha256": "5eead00129eeca5e796f29bca44dda239a344c217c2de7bfbfd244d1a9a9a184"
+    },
+    {
+      "path": "05_Landing_Page/SETUP.txt",
+      "bytes": 1256,
+      "sha256": "e3c5786db9cb96294a5f86f5c0665f3677cfb380b3c3e657800633e87d419c6a"
+    },
+    {
+      "path": "05_Landing_Page/captions.vtt",
+      "bytes": 526,
+      "sha256": "e4cb96e593a40814109cd2ce11937dbfb97ea1f3ca65816cfc847811483e09b6"
+    },
+    {
+      "path": "05_Landing_Page/config.js",
+      "bytes": 240,
+      "sha256": "0e083799af29a7dcd9b6a4c3f643392d7cb681f7a80336f5ba6f9c1ff8400aae"
+    },
+    {
+      "path": "05_Landing_Page/index.html",
+      "bytes": 9359,
+      "sha256": "472155b93a0495965a73fd21281bd38c954e561d19bcd98db02fba81b7f40127"
+    },
+    {
+      "path": "05_Landing_Page/media/DABIN__FEED_DABIN__LANDSCAPE.mp4",
+      "bytes": 1649613,
+      "sha256": "e1b1403334533341dbc9b039ad673d957b509cedcf7e9dd605958f9cc8152fd2"
+    },
+    {
+      "path": "05_Landing_Page/media/DABIN__FEED_DABIN__POSTER.png",
+      "bytes": 525957,
+      "sha256": "2fd11a99362c5c8b1cf4e2f1de6fdd00e5d2ab62ff915328bb2ebabba72290a1"
+    },
+    {
+      "path": "05_Landing_Page/media/DABIN__ROBOT__DELIGHTED.png",
+      "bytes": 325040,
+      "sha256": "45708253c25f8b8a26f5daa386d3d6f41edfdc5548792b995f1f82dbc3cb27c2"
+    },
+    {
+      "path": "05_Landing_Page/media/DABIN__UI__STUDIO_PROJECT.png",
+      "bytes": 249281,
+      "sha256": "692a9a75d07489c8d468095ed9980571be4b2dc329bafb4db40fcc98af91f41c"
+    },
+    {
+      "path": "06_Source/assets/DABIN__APP_ICON__1024.png",
+      "bytes": 280161,
+      "sha256": "44ad308890153268409b08ee22050d66557327c92cbd3f9bb8d0f071c03e72b5"
+    },
+    {
+      "path": "06_Source/assets/DABIN__NATIVE_RENDER__FOCUS.png",
+      "bytes": 346466,
+      "sha256": "fb53d10558da7f9b692a7618abe5e70f2ae1a8138761c966ca3cf47adc791319"
+    },
+    {
+      "path": "06_Source/assets/DABIN__NATIVE_RENDER__INBOX.png",
+      "bytes": 350005,
+      "sha256": "9967f76785e57e9da72b665d62d4166d39309cb510aebfe3edd95a1106c90bfd"
+    },
+    {
+      "path": "06_Source/assets/DABIN__NATIVE_RENDER__PROJECTS.png",
+      "bytes": 419484,
+      "sha256": "1e60462910b19fe82827654c27f28535f5013917622211159a8bf3504854fa87"
+    },
+    {
+      "path": "06_Source/assets/DABIN__NATIVE_RENDER__SEARCH.png",
+      "bytes": 328004,
+      "sha256": "aa6594d50975a74bf6552cbc4c43d3f0f8250f60e094a46a84289e5d4a727824"
+    },
+    {
+      "path": "06_Source/assets/DABIN__NATIVE_RENDER__STUDIO_PROJECT.png",
+      "bytes": 408123,
+      "sha256": "2c88ca98b7cdbc91576ac2deb43642020ced530b2bbbe9623e539882461ae5e2"
+    },
+    {
+      "path": "06_Source/assets/DABIN__QA__GRAPHICS_CONTACT_SHEET.png",
+      "bytes": 298180,
+      "sha256": "9ecea3c79d4d8260f6df56b0dd4db4a76345064615ef7be731df5343732cb2fa"
+    },
+    {
+      "path": "06_Source/assets/DABIN__ROBOT_CANVAS__DELIGHTED.png",
+      "bytes": 451062,
+      "sha256": "72420b29b0c0f53d746c1c6fe487ec5044e26f3e5ebb5f1b5ee13c944bea7a28"
+    },
+    {
+      "path": "06_Source/assets/DABIN__ROBOT_CANVAS__HUNGRY.png",
+      "bytes": 448948,
+      "sha256": "dda558003dda8e86716871fad151c0e8511cb361d6ceafc3019797468942ceed"
+    },
+    {
+      "path": "06_Source/assets/DABIN__ROBOT_CANVAS__IDLE.png",
+      "bytes": 450030,
+      "sha256": "2613336765a371d2dec19b9cf507de405eb2cf6e87e2ccb2e9800d2aec38bde7"
+    },
+    {
+      "path": "06_Source/assets/DABIN__ROBOT__DELIGHTED.png",
+      "bytes": 325040,
+      "sha256": "45708253c25f8b8a26f5daa386d3d6f41edfdc5548792b995f1f82dbc3cb27c2"
+    },
+    {
+      "path": "06_Source/assets/DABIN__ROBOT__HUNGRY.png",
+      "bytes": 323246,
+      "sha256": "80c6cfaa1ec1719e40f188b24c754cdf273cd6253718908f7e9b2bac4cedd257"
+    },
+    {
+      "path": "06_Source/assets/DABIN__ROBOT__IDLE.png",
+      "bytes": 324021,
+      "sha256": "be0f6b988a1efe29564abf323424b33e0cb09abb08ae1d1f8e309e7875e4f826"
+    },
+    {
+      "path": "06_Source/assets/DABIN__SAMPLE__STUDIO_REFERENCE.png",
+      "bytes": 38833,
+      "sha256": "2329df4aa7c73730d415c2f06eb51025a73bbe561214923e97cc4b2d27bfcaec"
+    },
+    {
+      "path": "06_Source/assets/DABIN__TOKEN__LINK.png",
+      "bytes": 13731,
+      "sha256": "34b3649058222f12a2638a1b675728f5c9f6cca6f22e77e696b25f5f042c38a1"
+    },
+    {
+      "path": "06_Source/assets/DABIN__TOKEN__NOTE.png",
+      "bytes": 17332,
+      "sha256": "ca0f75edb107cb789951e1e639601ea80734c2a4cfb69b337debdeccb08553b6"
+    },
+    {
+      "path": "06_Source/assets/DABIN__TOKEN__SCREENSHOT.png",
+      "bytes": 30295,
+      "sha256": "a00d771ed86a54d742cdfe3f47aecb20adc8cb3ae81d8ad27e1a59c4f63a671c"
+    },
+    {
+      "path": "06_Source/assets/DABIN__UI__FOCUS.png",
+      "bytes": 191256,
+      "sha256": "f450146b9d76e0406da401acbd59591440bf2154946291b069d359dabe4792f8"
+    },
+    {
+      "path": "06_Source/assets/DABIN__UI__INBOX.png",
+      "bytes": 195965,
+      "sha256": "1aeeb32b7eeeefc186ba18e92b8be810ae8f03f74aff88b2a9913b3904c9b100"
+    },
+    {
+      "path": "06_Source/assets/DABIN__UI__PROJECTS.png",
+      "bytes": 249930,
+      "sha256": "2f1e15bbd92913826c2000f5ed60c5999a2e9abc83928b93971600f51881370d"
+    },
+    {
+      "path": "06_Source/assets/DABIN__UI__SEARCH.png",
+      "bytes": 171648,
+      "sha256": "3bdd636a6a033776f34f066a5747605964936d0e2f5a9d574c91cc2a64e3364c"
+    },
+    {
+      "path": "06_Source/assets/DABIN__UI__STUDIO_PROJECT.png",
+      "bytes": 249281,
+      "sha256": "692a9a75d07489c8d468095ed9980571be4b2dc329bafb4db40fcc98af91f41c"
+    },
+    {
+      "path": "06_Source/assets/DABIN__VIDEO__BACKGROUND_1920x1080.png",
+      "bytes": 8594,
+      "sha256": "06e9ce21ce7aa431010a9250d80d46254a68473fd929b91a9f5bb6f1b53810f6"
+    },
+    {
+      "path": "06_Source/assets/GenerateGraphics.py",
+      "bytes": 9654,
+      "sha256": "822001387fae7f8829c6ff04ab19cc4a209ba02ed94a46be73e108ec6f5f1c0d"
+    },
+    {
+      "path": "06_Source/assets/RenderMarketingAssets.swift",
+      "bytes": 24188,
+      "sha256": "9fbd82b6d79c0168bfa09f09be41089cc2ba6cc6afa16eb30f078b5ff97dc1b5"
+    },
+    {
+      "path": "06_Source/assets/ReproduceNativeAssets.py",
+      "bytes": 1582,
+      "sha256": "6443fad6d5f6956ee7076df1f1f21fce400fbf0d8bb803396e1d37a4b9a8b176"
+    },
+    {
+      "path": "06_Source/assets/Source-Usage.txt",
+      "bytes": 1188,
+      "sha256": "2f03bcbbad32748aee709bb8620bdf528e0af697f21c3c6dd6b887b852fd5f18"
+    },
+    {
+      "path": "06_Source/assets/graphics-provenance.json",
+      "bytes": 14589,
+      "sha256": "908ed9bcd3d55aec376a6a4b60fc8543af3fc0edcdeabc161e74f136d3b349bf"
+    },
+    {
+      "path": "06_Source/assets/native-marketing-renders.json",
+      "bytes": 5601,
+      "sha256": "e7f9ef62b8fd88905a9bc20ed141cde43ba6b8049ae547392b407de986c579a8"
+    },
+    {
+      "path": "06_Source/copy/AUTHORING.txt",
+      "bytes": 386,
+      "sha256": "9cee9c89ec8225af3b0d31af511b31f3291c0885390f1cbe09c015c27c3b2399"
+    },
+    {
+      "path": "06_Source/copy/build_copy.py",
+      "bytes": 89487,
+      "sha256": "55fe58e1e4b35aa984cf94a2947e25b54e4785edacc0493496530d586174aeeb"
+    },
+    {
+      "path": "06_Source/copy/build_pdf.py",
+      "bytes": 19445,
+      "sha256": "6b3eb781ae3123e4b7b2756249e8cf0ae047ed9899e36d5118ff286008e1c57a"
+    },
+    {
+      "path": "06_Source/qa/build_package.py",
+      "bytes": 3620,
+      "sha256": "2af9a570c69da8864ae11fbf654f9e8ad6d4d14886ee48433eeae6d6ae635fdf"
+    },
+    {
+      "path": "06_Source/qa/preview_html.cjs",
+      "bytes": 2906,
+      "sha256": "ccfe8afaaffee472bc416a864dd99b659e515b26b1e9b8ff0f669c8612b7c824"
+    },
+    {
+      "path": "06_Source/video/DABIN__FEED_DABIN__LANDSCAPE.blend",
+      "bytes": 1397612,
+      "sha256": "726ef781338f4316ee2671ff4f1591823290250bda79195e84ca3c2764681a1b"
+    },
+    {
+      "path": "06_Source/video/DABIN__FEED_DABIN__PORTRAIT.blend",
+      "bytes": 1407730,
+      "sha256": "697265b86c8b0ae07834a15b74331ed48b49ea32c8ed0dacac4566e9f163652a"
+    },
+    {
+      "path": "06_Source/video/REBUILD.txt",
+      "bytes": 1235,
+      "sha256": "ffba4511c6dde42a1b4754f0fa225a41c1de2a5b40b67aa77078fb199c26c4aa"
+    },
+    {
+      "path": "06_Source/video/build_feed_dabin.py",
+      "bytes": 9367,
+      "sha256": "6fbfcde4363ada969ab5fd13ed156ee4027bf0727072c45a65b4a3f4648ddea1"
+    },
+    {
+      "path": "06_Source/video/encode_video.py",
+      "bytes": 4633,
+      "sha256": "e1a426dc3181199056451593df58d91dab66bee20d407f6e1ff113a48e46b4dd"
+    },
+    {
+      "path": "06_Source/video/prepare_video.py",
+      "bytes": 8771,
+      "sha256": "e059a1ae6062b9d1b50caa4c6a550fe6b635237d0401d0ab86d2a559ecbad7ea"
+    },
+    {
+      "path": "06_Source/video/storyboard.json",
+      "bytes": 1459,
+      "sha256": "c9630421e7d848311cd0bb819fffb95c9cf23abfaef2f16af84e9c379ea026c5"
+    },
+    {
+      "path": "06_Source/video/textures/DABIN__BACKDROP__LANDSCAPE.png",
+      "bytes": 10752,
+      "sha256": "2a909dfa4103852eb12ccbb02491718a5278f4861fb902ffdb91e4b76f5d75f3"
+    },
+    {
+      "path": "06_Source/video/textures/DABIN__BACKDROP__PORTRAIT.png",
+      "bytes": 12725,
+      "sha256": "4550a67723dffc791b2a0a8f605e24230dde48c1801063390010b0bb080bcb5d"
+    },
+    {
+      "path": "06_Source/video/textures/DABIN__PILL__ACCOUNT.png",
+      "bytes": 2972,
+      "sha256": "efd8f9a896ba5d70e8d21e18e22dd6d551591d3df1b7011774d3424648644ab8"
+    },
+    {
+      "path": "06_Source/video/textures/DABIN__PILL__CAPTURE.png",
+      "bytes": 5323,
+      "sha256": "c14668d064e9e652f7e5ef1950a0d1dfbfd1ee2ae262cbbc5f58db5d474b3171"
+    },
+    {
+      "path": "06_Source/video/textures/DABIN__PILL__FREE.png",
+      "bytes": 1310,
+      "sha256": "7c1712992dfa526b51ec695a783ab2a2cf76cb771dde81021204e3db8a458e05"
+    },
+    {
+      "path": "06_Source/video/textures/DABIN__PILL__LOCAL.png",
+      "bytes": 5114,
+      "sha256": "97d8bf2ff051740ed4396c9d4a916fc8e82eaa3dae6f66e466d600b7efb99e0f"
+    },
+    {
+      "path": "06_Source/video/textures/DABIN__PILL__SUCCESS.png",
+      "bytes": 2898,
+      "sha256": "3a17227f62de7e08af783df022ee57522caa557b5340e0d1d6267bd83bb47ed4"
+    },
+    {
+      "path": "06_Source/video/textures/DABIN__SHADOW__ROBOT.png",
+      "bytes": 20853,
+      "sha256": "8ae0d17848897fe69a92788f20296fcb98511868f134293f84b7784ffe235225"
+    },
+    {
+      "path": "06_Source/video/textures/DABIN__TEXT__BRAND.png",
+      "bytes": 2155,
+      "sha256": "5ce0288e085187f4ebb2c482069c8f1b49f1fd8bacdccdaf6d5558f89e367e09"
+    },
+    {
+      "path": "06_Source/video/textures/DABIN__TEXT__COMPAT_L.png",
+      "bytes": 3660,
+      "sha256": "851a517f8ba27efb33ace34ef7d47811e47ec891c8c0995a40f4e283712ac256"
+    },
+    {
+      "path": "06_Source/video/textures/DABIN__TEXT__COMPAT_P.png",
+      "bytes": 4662,
+      "sha256": "1b0759d1929cfe1f2f6ad0a3e43af11514fc4513dbbc1a4b8f8f0395de10fa55"
+    },
+    {
+      "path": "06_Source/video/textures/DABIN__TEXT__END_L.png",
+      "bytes": 14281,
+      "sha256": "853b4a40474d3c427d4e44e88ddd8e32787c9186a0b60a43158867e052c7db90"
+    },
+    {
+      "path": "06_Source/video/textures/DABIN__TEXT__END_P.png",
+      "bytes": 15692,
+      "sha256": "7ce83a3b8c39054aeaf8231859f8bdd1a38f0b707b1af2e7033f60bd9c217516"
+    },
+    {
+      "path": "06_Source/video/textures/DABIN__TEXT__FEED_L.png",
+      "bytes": 6403,
+      "sha256": "b0a36a2d9c78ec71aabac77f347569b145454fc0428f0103b57b379c8826076b"
+    },
+    {
+      "path": "06_Source/video/textures/DABIN__TEXT__FEED_P.png",
+      "bytes": 7086,
+      "sha256": "57913cb3be56557f85831553bbd6fdde0e5d0390a0755f0d4650e5151b855ec8"
+    },
+    {
+      "path": "06_Source/video/textures/DABIN__TEXT__FEED_SUB_L.png",
+      "bytes": 3479,
+      "sha256": "25aea89a17ef7cf8b9384f82de337ae3b4582f124b85d7272fa10abb4fee2613"
+    },
+    {
+      "path": "06_Source/video/textures/DABIN__TEXT__FEED_SUB_P.png",
+      "bytes": 4509,
+      "sha256": "49237539777453c070df173f16be09d95e121d96826a0c36a78fcdcc8da02e99"
+    },
+    {
+      "path": "06_Source/video/textures/DABIN__TEXT__FOR_MAC.png",
+      "bytes": 1313,
+      "sha256": "b4ff9492c57e540f6e756747cb56bfd0c59742572187b092bce7ca8932f3c952"
+    },
+    {
+      "path": "06_Source/video/textures/DABIN__TEXT__INTRO_L.png",
+      "bytes": 14377,
+      "sha256": "3f559c8e5fd44e125114b86fdc0374e3e10d10219f096b5db5031bda0098983b"
+    },
+    {
+      "path": "06_Source/video/textures/DABIN__TEXT__INTRO_P.png",
+      "bytes": 14037,
+      "sha256": "49eb6d96ea8aeaf284ea92f39ba8a5d86035020590aba061fd4ab159c5094253"
+    },
+    {
+      "path": "06_Source/video/textures/DABIN__TEXT__INTRO_SUB_L.png",
+      "bytes": 4080,
+      "sha256": "f55e593ccce33e9c428be3eac79bdadcf896169652afde2ac78fe65746c0753f"
+    },
+    {
+      "path": "06_Source/video/textures/DABIN__TEXT__INTRO_SUB_P.png",
+      "bytes": 4429,
+      "sha256": "4027b9462c83fe722058f54977c7b5a12c02772cb26c83ad5ad4ab563616c0af"
+    },
+    {
+      "path": "06_Source/video/textures/DABIN__TEXT__PROJECT_L.png",
+      "bytes": 11925,
+      "sha256": "553431950a67a125ed8d5ab4007a77b59366e2944d4210f234d2fe47277a698c"
+    },
+    {
+      "path": "06_Source/video/textures/DABIN__TEXT__PROJECT_P.png",
+      "bytes": 13220,
+      "sha256": "9ea8c79e3b2fbdd29ae053547b74e6bb1a9414719e47c1ec482a5b10e86e9a6b"
+    },
+    {
+      "path": "06_Source/video/textures/DABIN__TEXT__SEARCH_L.png",
+      "bytes": 12799,
+      "sha256": "2fe1adacb0faad6c1cbd6d81dc3984c9dd51a81afa38c1a3b189883ef73cb8aa"
+    },
+    {
+      "path": "06_Source/video/textures/DABIN__TEXT__SEARCH_NOTE_L.png",
+      "bytes": 2718,
+      "sha256": "3d643594369a96ea759a174de18667db0414669bbca99ed06e34c29641a734d8"
+    },
+    {
+      "path": "06_Source/video/textures/DABIN__TEXT__SEARCH_NOTE_P.png",
+      "bytes": 3977,
+      "sha256": "726d0cd01ae3c06464ec4c99a2ef643a78f17bb5c4b171ec54695e07d2a72704"
+    },
+    {
+      "path": "06_Source/video/textures/DABIN__TEXT__SEARCH_P.png",
+      "bytes": 14460,
+      "sha256": "d79a553ba626563f8dbcb5476accee3eb50600a4c70ebdd6abd353021820bac7"
+    },
+    {
+      "path": "06_Source/video/textures/DABIN__TEXT__TAG_L.png",
+      "bytes": 3951,
+      "sha256": "09c2b4631a8b843c13ae01c60b3952c8ddaa9a6f53a7c79f3bd6fe8dbf69bb02"
+    },
+    {
+      "path": "06_Source/video/textures/DABIN__TEXT__TAG_P.png",
+      "bytes": 5564,
+      "sha256": "22b834f435ae1f1383078d35fc956350a9c3302e5bfef06a0980a1ecb5203b0f"
+    },
+    {
+      "path": "06_Source/video/textures/DABIN__TEXT__UI_NOTE_L.png",
+      "bytes": 3225,
+      "sha256": "26162f863c2ba5e7dd1f8a31a172fc5c76dec546831d6f4f882dee0ed3d5b187"
+    },
+    {
+      "path": "06_Source/video/textures/DABIN__TEXT__UI_NOTE_P.png",
+      "bytes": 4403,
+      "sha256": "dfa452129870baf7390d822a05881f0c7d8344b024cd65568130c2090fba87dc"
+    },
+    {
+      "path": "06_Source/video/textures/DABIN__TOKEN__IMAGE.png",
+      "bytes": 23752,
+      "sha256": "f118ecc9c87f4d1d091ea0330347ab06e4cc7484d8bcf3f91a1b16be74680e3f"
+    },
+    {
+      "path": "06_Source/video/textures/DABIN__TOKEN__LINK.png",
+      "bytes": 15038,
+      "sha256": "222e405cfb0dfbd4a6594489569c3ec1fd6b6fd80a0fd602f91e6feaaae93894"
+    },
+    {
+      "path": "06_Source/video/textures/DABIN__TOKEN__NOTE.png",
+      "bytes": 13880,
+      "sha256": "e513f8ae347e93b2408cc400c43ec15b5e9fd1bfabd99ed2547db7f79fb5209a"
+    },
+    {
+      "path": "06_Source/voice/DaBin_Feed_Narration_Take_01.mp3",
+      "bytes": 238688,
+      "sha256": "3c1669043cfb29e5cb6666d7c44f385a6b457565797433f8a34e7fd104046d02"
+    },
+    {
+      "path": "06_Source/voice/DaBin_Feed_Narration_Take_02.mp3",
+      "bytes": 244957,
+      "sha256": "14c8165f68530866e3f99e01d4a56b097eb9558b6c89bffe38d3538ebd8d1d09"
+    },
+    {
+      "path": "06_Source/voice/DaBin_Feed_Narration_Take_03.mp3",
+      "bytes": 235762,
+      "sha256": "1df97357f79528490ff75831c46335cccbddca41f9607947b6fdb1e3e8095460"
+    },
+    {
+      "path": "06_Source/voice/DaBin_Feed_Narration_Take_04.mp3",
+      "bytes": 249137,
+      "sha256": "3aba5b0662a6fa23c2c0ec080e21bb359e0fcd8307f91fa9edb0be923f987bf1"
+    },
+    {
+      "path": "06_Source/voice/narration_content_qa.txt",
+      "bytes": 435,
+      "sha256": "b10db5b712399b05c6d390bc4157fcc118a5764238256761f0960a65d37e7307"
+    },
+    {
+      "path": "06_Source/voice/narration_phrase_timings.json",
+      "bytes": 1157,
+      "sha256": "bf373ac21f03db1b9910396e58bb9eedd8138c96e951fba5444d487390cb9f96"
+    },
+    {
+      "path": "06_Source/voice/narration_provenance.json",
+      "bytes": 3513,
+      "sha256": "eb480d943fe3c579baf5b29ab8d99d08f3a85c7dca166ad2a9e54b28dd4eefae"
+    },
+    {
+      "path": "06_Source/voice/narration_script.txt",
+      "bytes": 485,
+      "sha256": "8de496c168d94e8e519f675fc1a54765ef16b00d803c3cbcbae27449cb698f01"
+    },
+    {
+      "path": "07_QA/DABIN__FEED_DABIN__LANDSCAPE_SILENT_metadata.txt",
+      "bytes": 706,
+      "sha256": "d7ade302b6fbe35762921404011a63c270360d26bba0472023627297bfdd3398"
+    },
+    {
+      "path": "07_QA/DABIN__FEED_DABIN__LANDSCAPE_metadata.txt",
+      "bytes": 944,
+      "sha256": "ebbe346d4f8434848d0f535861e3a719ae8c2f2992e8d736987bc7e871273774"
+    },
+    {
+      "path": "07_QA/DABIN__FEED_DABIN__PORTRAIT_SILENT_metadata.txt",
+      "bytes": 705,
+      "sha256": "3690d9bab69fff5e6efb185bdfe195b3586b85e9d982e0a1c12f77f9bd344e9d"
+    },
+    {
+      "path": "07_QA/DABIN__FEED_DABIN__PORTRAIT_metadata.txt",
+      "bytes": 943,
+      "sha256": "0ff6f68bf62d4d85b973958171e1451517ee77e64f6620c0674e143fa090f673"
+    },
+    {
+      "path": "07_QA/DABIN__QA__KIT_INDEX.png",
+      "bytes": 493829,
+      "sha256": "19ef5f002d6bbb754a2661499452be72290102df26e912e2bda50177547a7d2a"
+    },
+    {
+      "path": "07_QA/DABIN__QA__LANDING_DESKTOP.png",
+      "bytes": 678829,
+      "sha256": "f7c8f2f874697bfb2e040e4fcf9974877531b53ec78866b8461de97cc3e85391"
+    },
+    {
+      "path": "07_QA/DABIN__QA__LANDING_MOBILE.png",
+      "bytes": 354635,
+      "sha256": "b00b174ccda379c88b7885e5e508c21fa8e5c790aa43ecf670879ed596cdf159"
+    },
+    {
+      "path": "07_QA/DABIN__QA__LANDSCAPE_01.png",
+      "bytes": 470717,
+      "sha256": "fd28f9cbcbb4543cf97a26e6a4938951088cee374f5ff30995ec050ab7147148"
+    },
+    {
+      "path": "07_QA/DABIN__QA__LANDSCAPE_02.png",
+      "bytes": 422652,
+      "sha256": "25934f92316fd405a2783bed13de046290b97e1d2f92ecf1757f962e75044327"
+    },
+    {
+      "path": "07_QA/DABIN__QA__LANDSCAPE_03.png",
+      "bytes": 395315,
+      "sha256": "385a8e2686ddda490475ab7d9e5ce999be57178beaebc986da0fd48477f26d5e"
+    },
+    {
+      "path": "07_QA/DABIN__QA__LANDSCAPE_04.png",
+      "bytes": 397484,
+      "sha256": "9f2ebab2339ab46bba83e6b94a0c04ba94776a18024a73060d3ced2a8f7769fe"
+    },
+    {
+      "path": "07_QA/DABIN__QA__LANDSCAPE_05.png",
+      "bytes": 418876,
+      "sha256": "c79be05e441d7402280b132f92d84b783cfc17474bbedef8f45d9c873290e55a"
+    },
+    {
+      "path": "07_QA/DABIN__QA__LANDSCAPE_06.png",
+      "bytes": 436673,
+      "sha256": "32e4d9f8fc82ba45639f60725dba2d7fc1583928752cce367b02cd10ce17a71e"
+    },
+    {
+      "path": "07_QA/DABIN__QA__LANDSCAPE_07.png",
+      "bytes": 409014,
+      "sha256": "7e0a7d7ab1e285bf3edae2a78f7958ce1c8497105264e2914d2aa9492ff837bd"
+    },
+    {
+      "path": "07_QA/DABIN__QA__LANDSCAPE_08.png",
+      "bytes": 409779,
+      "sha256": "eccb58b71e93b658414ef879281281c244077e7e14dfc164f71a3426b4ca06d7"
+    },
+    {
+      "path": "07_QA/DABIN__QA__LANDSCAPE_09.png",
+      "bytes": 517812,
+      "sha256": "ff43507542b5ee19ad501271eff96568123d0c49d4354c926ea5800569608ca4"
+    },
+    {
+      "path": "07_QA/DABIN__QA__LANDSCAPE_10.png",
+      "bytes": 525670,
+      "sha256": "478c8bff89387db1ad5d0b41657e01cb2aa5ac90865b6db62b75376149e4de8c"
+    },
+    {
+      "path": "07_QA/DABIN__QA__LANDSCAPE_11.png",
+      "bytes": 542971,
+      "sha256": "e7577dd4b728a75c4b15dbf49ef1b5a896e2e5923599f6ae2901f4f1f2b9d05e"
+    },
+    {
+      "path": "07_QA/DABIN__QA__LANDSCAPE_CONTACT_SHEET.png",
+      "bytes": 374223,
+      "sha256": "61a12cd9e328c07d95e798a21ae66fa0aa4f04369b2f0f8a06fa21ead20a0662"
+    },
+    {
+      "path": "07_QA/DABIN__QA__PORTRAIT_01.png",
+      "bytes": 448864,
+      "sha256": "05e19c176936aebc6bf4f981dc4a6c23f311eb8c172d36d52e3500168e7af3bd"
+    },
+    {
+      "path": "07_QA/DABIN__QA__PORTRAIT_02.png",
+      "bytes": 402286,
+      "sha256": "29f1f9999ba47f7965063a191f08cf57a581bf889a42a7ddfbfd2793970689e4"
+    },
+    {
+      "path": "07_QA/DABIN__QA__PORTRAIT_03.png",
+      "bytes": 392293,
+      "sha256": "dc48ac71ff46e417df2d7b8e6023a5136154f4c866de082f30e25420333a26db"
+    },
+    {
+      "path": "07_QA/DABIN__QA__PORTRAIT_04.png",
+      "bytes": 388913,
+      "sha256": "dafb0635fb66550a5e279d07413779aea3f00a8ce91dbbe569220c93d24b653b"
+    },
+    {
+      "path": "07_QA/DABIN__QA__PORTRAIT_05.png",
+      "bytes": 396381,
+      "sha256": "5c8e4d148ed801cfa17c70253657450496e3680697fc5fece90af0febe3e4a29"
+    },
+    {
+      "path": "07_QA/DABIN__QA__PORTRAIT_06.png",
+      "bytes": 393020,
+      "sha256": "c9ddd748420175550817dc876bdc5d897040c0116543fdc246a5bb933adaee13"
+    },
+    {
+      "path": "07_QA/DABIN__QA__PORTRAIT_07.png",
+      "bytes": 372619,
+      "sha256": "fbd79be91c28f6a5bf5f699e0a60d3bbae132e9f620fd186f4e91c3742c3a3a4"
+    },
+    {
+      "path": "07_QA/DABIN__QA__PORTRAIT_08.png",
+      "bytes": 375825,
+      "sha256": "516ae9d44eb5f97db9768e7dfa62b8792a04db01166e9ede038dfb5d929a729e"
+    },
+    {
+      "path": "07_QA/DABIN__QA__PORTRAIT_09.png",
+      "bytes": 512521,
+      "sha256": "5bc4ccacdd0de8a3b874c946b3328ab10249dbd749522a2647f9e01bc5a38a55"
+    },
+    {
+      "path": "07_QA/DABIN__QA__PORTRAIT_10.png",
+      "bytes": 519150,
+      "sha256": "9c8517568027227c0c08ff2e085556f7800f23a3b4ef19ca328a9d83adfec9c1"
+    },
+    {
+      "path": "07_QA/DABIN__QA__PORTRAIT_11.png",
+      "bytes": 539307,
+      "sha256": "4a9a657a4528089c022cca3e3755d845bf03441c8895b3d480165aa17dd761a3"
+    },
+    {
+      "path": "07_QA/DABIN__QA__PORTRAIT_CONTACT_SHEET.png",
+      "bytes": 213241,
+      "sha256": "18589aa3b11eacead3b497f0d44c07768386d41cd97ce6b1d6cfeafd63df7bcb"
+    },
+    {
+      "path": "07_QA/FINAL_QA.txt",
+      "bytes": 3501,
+      "sha256": "afa9b80061b589208c299449f3013bc2169cf2da9354c30b519621391d8eef1c"
+    },
+    {
+      "path": "07_QA/html-layout-verification.json",
+      "bytes": 2901,
+      "sha256": "66109f79b6e2aa2ae03b98fc998e5825e3b96735b80f37feeca01711ecbf76e0"
+    },
+    {
+      "path": "07_QA/video-verification.json",
+      "bytes": 2777,
+      "sha256": "e8d19fdf26cc0982125867e38ee60df432e57da1b741476ddd12b8abda06efdb"
+    },
+    {
+      "path": "README.txt",
+      "bytes": 2486,
+      "sha256": "c6bf7a8dc787058fb9880a053d9d15daf70f0d00dcdbc6278c44388f4806d802"
+    },
+    {
+      "path": "START_HERE.html",
+      "bytes": 6379,
+      "sha256": "75d205e0ca505dbf88fd4f67b658da31bd66b213b135ab9bba849f765a6adc8e"
+    }
+  ]
+}

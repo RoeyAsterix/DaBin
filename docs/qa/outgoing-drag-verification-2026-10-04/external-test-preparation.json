@@ -1,0 +1,25 @@
+{
+  "source": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/Tests/ExternalTransferProcessTests.swift",
+  "sourceSHA256": "f2607cbcf52a22c047e70ce7ca76badcbe10752912b40ff0ee98e16cdcbc3370",
+  "module": "/private/tmp/dabin-drag-verification-20261004/native/build/qa-cache/41ef8c8a27127e977d974d4e38144c1eff79e8b4fd66df74057920e71a8e9e10",
+  "command": [
+    "xcrun",
+    "swiftc",
+    "-typecheck",
+    "-swift-version",
+    "5",
+    "-target",
+    "arm64-apple-macosx14.0",
+    "-module-cache-path",
+    "/private/tmp/dabin-drag-verification-20261004/native/build/ModuleCache",
+    "-warnings-as-errors",
+    "-D",
+    "DABIN_DIRECT_UPDATES",
+    "-parse-as-library",
+    "-I",
+    "/private/tmp/dabin-drag-verification-20261004/native/build/qa-cache/41ef8c8a27127e977d974d4e38144c1eff79e8b4fd66df74057920e71a8e9e10",
+    "/private/tmp/dabin-external-transfer-process-20261004/ExternalTransferProcessTests.swift"
+  ],
+  "exitCode": 0,
+  "executed": false
+}

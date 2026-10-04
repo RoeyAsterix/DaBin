@@ -1,0 +1,704 @@
+{
+  "title": "DaBin explains the UI",
+  "version": 2,
+  "fps": 30,
+  "duration_seconds": 94.4,
+  "narration_seconds": 83.2,
+  "narration_offset_seconds": 0.5,
+  "reading_pauses": [
+    {
+      "source_at": 14.3,
+      "seconds": 0.7
+    },
+    {
+      "source_at": 24.54,
+      "seconds": 1.1
+    },
+    {
+      "source_at": 25.7,
+      "seconds": 0.9
+    },
+    {
+      "source_at": 29.5,
+      "seconds": 0.5
+    },
+    {
+      "source_at": 42.95,
+      "seconds": 0.8
+    },
+    {
+      "source_at": 49.9,
+      "seconds": 1.6
+    },
+    {
+      "source_at": 53.9,
+      "seconds": 0.8
+    },
+    {
+      "source_at": 67.05,
+      "seconds": 0.4
+    },
+    {
+      "source_at": 68.9,
+      "seconds": 0.6
+    },
+    {
+      "source_at": 70.33,
+      "seconds": 0.5
+    },
+    {
+      "source_at": 73.4,
+      "seconds": 1.0
+    }
+  ],
+  "chapters": [
+    {
+      "id": 1,
+      "title": "Keep the screenshot.",
+      "bubble": "Drop it here.",
+      "start": 0,
+      "end": 6.02
+    },
+    {
+      "id": 2,
+      "title": "Catch the link. Save the thought.",
+      "bubble": "Before it escapes.",
+      "start": 6.02,
+      "end": 11.8
+    },
+    {
+      "id": 3,
+      "title": "Save first. Sort when you\u2019re ready.",
+      "bubble": "Save first. Sort later.",
+      "start": 11.8,
+      "end": 19.58
+    },
+    {
+      "id": 4,
+      "title": "Bring a project together.",
+      "bubble": "One project. Useful bits close.",
+      "start": 19.58,
+      "end": 27.06
+    },
+    {
+      "id": 5,
+      "title": "Keep the handy bits close.",
+      "bubble": "The handy little things.",
+      "start": 27.06,
+      "end": 36.0
+    },
+    {
+      "id": 6,
+      "title": "Find words inside saved images.",
+      "bubble": "Try \u201criverside\u201d.",
+      "start": 36.0,
+      "end": 44.78
+    },
+    {
+      "id": 7,
+      "title": "Narrow the search.",
+      "bubble": "Just this project. Just images.",
+      "start": 44.78,
+      "end": 48.12
+    },
+    {
+      "id": 8,
+      "title": "Give that idea a next step.",
+      "bubble": "Give it a next step.",
+      "start": 48.12,
+      "end": 56.38
+    },
+    {
+      "id": 9,
+      "title": "Plan today.",
+      "bubble": "This is the plan.",
+      "start": 56.38,
+      "end": 58.08
+    },
+    {
+      "id": 10,
+      "title": "One task. A little focus.",
+      "bubble": "Start. Pause. Reset.",
+      "start": 58.08,
+      "end": 65.72
+    },
+    {
+      "id": 11,
+      "title": "Automatic capture. Your choice.",
+      "bubble": "You choose. You can pause.",
+      "start": 65.72,
+      "end": 74.96
+    },
+    {
+      "id": 12,
+      "title": "Take the project with you.",
+      "bubble": "Keep a copy where you choose.",
+      "start": 74.96,
+      "end": 77.08
+    },
+    {
+      "id": 13,
+      "title": "Back up. Bring a capture back.",
+      "bubble": "That one wasn\u2019t lost.",
+      "start": 77.08,
+      "end": 83.7
+    },
+    {
+      "id": 14,
+      "title": "Your little local companion.",
+      "bubble": "Free. Here when you need me.",
+      "start": 83.7,
+      "end": 94.4
+    }
+  ],
+  "shots": [
+    {
+      "start": 0,
+      "end": 5.1,
+      "asset": "DABIN__UI__01_INBOX_EMPTY.png",
+      "focus": [
+        1180,
+        702,
+        2360
+      ],
+      "portrait_focus": [
+        710,
+        420,
+        1404
+      ],
+      "pointer": [
+        1180,
+        610
+      ]
+    },
+    {
+      "start": 5.1,
+      "end": 6.02,
+      "asset": "DABIN__UI__02A_INBOX_IMAGE_CAPTURE.png",
+      "focus": [
+        1180,
+        702,
+        2360
+      ],
+      "portrait_focus": [
+        1050,
+        702,
+        1404
+      ],
+      "pointer": null
+    },
+    {
+      "start": 6.02,
+      "end": 7.85,
+      "asset": "DABIN__UI__02B_INBOX_LINK_CAPTURE.png",
+      "focus": [
+        1180,
+        702,
+        2360
+      ],
+      "portrait_focus": [
+        1050,
+        702,
+        1404
+      ],
+      "pointer": [
+        110,
+        501
+      ]
+    },
+    {
+      "start": 7.85,
+      "end": 10.8,
+      "asset": "DABIN__UI__02_INBOX_TYPED.png",
+      "focus": [
+        1180,
+        702,
+        2360
+      ],
+      "portrait_focus": [
+        702,
+        702,
+        1404
+      ],
+      "pointer": [
+        2268,
+        426
+      ]
+    },
+    {
+      "start": 10.8,
+      "end": 11.8,
+      "asset": "DABIN__UI__03_INBOX_SAVED.png",
+      "focus": [
+        1180,
+        702,
+        2360
+      ],
+      "portrait_focus": [
+        702,
+        702,
+        1404
+      ],
+      "pointer": [
+        880,
+        910
+      ]
+    },
+    {
+      "start": 11.8,
+      "end": 13.95,
+      "asset": "DABIN__UI__04_INBOX_DAY.png",
+      "focus": [
+        1180,
+        702,
+        2360
+      ],
+      "portrait_focus": [
+        1050,
+        702,
+        1404
+      ],
+      "pointer": [
+        2157,
+        259
+      ]
+    },
+    {
+      "start": 13.95,
+      "end": 16.06,
+      "asset": "DABIN__UI__05_INBOX_WEEK.png",
+      "focus": [
+        1180,
+        702,
+        2360
+      ],
+      "portrait_focus": [
+        1880,
+        570,
+        960
+      ],
+      "pointer": [
+        2266,
+        259
+      ]
+    },
+    {
+      "start": 16.06,
+      "end": 19.58,
+      "asset": "DABIN__UI__03_INBOX_SAVED.png",
+      "focus": [
+        1180,
+        702,
+        2360
+      ],
+      "portrait_focus": [
+        702,
+        702,
+        1404
+      ],
+      "pointer": [
+        170,
+        265
+      ]
+    },
+    {
+      "start": 19.58,
+      "end": 24.45,
+      "asset": "DABIN__UI__06_STUDIO_COLLECTION.png",
+      "focus": [
+        1180,
+        702,
+        2360
+      ],
+      "portrait_focus": [
+        1640,
+        720,
+        1404
+      ],
+      "pointer": [
+        1943,
+        188
+      ]
+    },
+    {
+      "start": 24.45,
+      "end": 27.06,
+      "asset": "DABIN__UI__07_STUDIO_NOTES.png",
+      "focus": [
+        1160,
+        750,
+        2000
+      ],
+      "portrait_focus": [
+        1100,
+        702,
+        1404
+      ],
+      "pointer": [
+        2033,
+        287
+      ]
+    },
+    {
+      "start": 27.06,
+      "end": 29.4,
+      "asset": "DABIN__UI__08_NAMED_SNIPPETS.png",
+      "focus": [
+        840.5,
+        650,
+        1681
+      ],
+      "portrait_focus": [
+        702,
+        702,
+        1404
+      ],
+      "pointer": [
+        150,
+        550
+      ]
+    },
+    {
+      "start": 29.4,
+      "end": 33.76,
+      "asset": "DABIN__UI__08A_CLIPBOARD_HISTORY.png",
+      "focus": [
+        840.5,
+        650,
+        1681
+      ],
+      "portrait_focus": [
+        702,
+        702,
+        1404
+      ],
+      "pointer": [
+        904,
+        287
+      ]
+    },
+    {
+      "start": 33.76,
+      "end": 36.0,
+      "asset": "DABIN__UI__09_SHELF.png",
+      "focus": [
+        1180,
+        702,
+        2360
+      ],
+      "portrait_focus": [
+        1880,
+        670,
+        960
+      ],
+      "pointer": [
+        1485,
+        287
+      ]
+    },
+    {
+      "start": 36.0,
+      "end": 40.76,
+      "asset": "DABIN__UI__10_OCR_SEARCH.png",
+      "focus": [
+        1180,
+        702,
+        2360
+      ],
+      "portrait_focus": [
+        702,
+        702,
+        1404
+      ],
+      "pointer": [
+        300,
+        185
+      ]
+    },
+    {
+      "start": 40.76,
+      "end": 44.78,
+      "asset": "DABIN__UI__11_OCR_PREVIEW.png",
+      "focus": [
+        1180,
+        702,
+        2360
+      ],
+      "portrait_focus": [
+        1770,
+        720,
+        1180
+      ],
+      "pointer": [
+        1780,
+        900
+      ]
+    },
+    {
+      "start": 44.78,
+      "end": 48.12,
+      "asset": "DABIN__UI__12_FILTERED_SEARCH.png",
+      "focus": [
+        1180,
+        702,
+        2360
+      ],
+      "portrait_focus": [
+        702,
+        702,
+        1404
+      ],
+      "pointer": [
+        408,
+        323
+      ]
+    },
+    {
+      "start": 48.12,
+      "end": 52.2,
+      "asset": "DABIN__UI__13_TASK_PLAN.png",
+      "focus": [
+        1180,
+        800,
+        2200
+      ],
+      "portrait_focus": [
+        702,
+        702,
+        1404
+      ],
+      "pointer": [
+        552,
+        1054
+      ]
+    },
+    {
+      "start": 52.2,
+      "end": 56.38,
+      "asset": "DABIN__UI__14_TASK_REPEAT_REMINDER.png",
+      "focus": [
+        1180,
+        800,
+        2200
+      ],
+      "portrait_focus": [
+        702,
+        702,
+        1404
+      ],
+      "pointer": [
+        934,
+        734
+      ]
+    },
+    {
+      "start": 56.38,
+      "end": 58.08,
+      "asset": "DABIN__UI__15_TODAY.png",
+      "focus": [
+        1180,
+        760,
+        2100
+      ],
+      "portrait_focus": [
+        1130,
+        700,
+        1300
+      ],
+      "pointer": [
+        660,
+        704
+      ]
+    },
+    {
+      "start": 58.08,
+      "end": 59.6,
+      "asset": "DABIN__UI__16_FOCUS_READY.png",
+      "focus": [
+        1180,
+        890,
+        2100
+      ],
+      "portrait_focus": [
+        702,
+        702,
+        1404
+      ],
+      "pointer": [
+        273,
+        1042
+      ]
+    },
+    {
+      "start": 59.6,
+      "end": 63.52,
+      "asset": "DABIN__UI__17_FOCUS_RUNNING.png",
+      "focus": [
+        1180,
+        890,
+        2100
+      ],
+      "portrait_focus": [
+        702,
+        702,
+        1404
+      ],
+      "pointer": [
+        273,
+        1042
+      ]
+    },
+    {
+      "start": 63.52,
+      "end": 65.72,
+      "asset": "DABIN__UI__15_TODAY.png",
+      "focus": [
+        1180,
+        760,
+        2100
+      ],
+      "portrait_focus": [
+        1120,
+        800,
+        1350
+      ],
+      "pointer": [
+        660,
+        704
+      ]
+    },
+    {
+      "start": 65.72,
+      "end": 72.3,
+      "asset": "DABIN__UI__18_AUTO_CAPTURE_OFF.png",
+      "focus": [
+        1220,
+        906,
+        1600
+      ],
+      "portrait_focus": [
+        975,
+        925,
+        950
+      ],
+      "pointer": [
+        720,
+        586
+      ]
+    },
+    {
+      "start": 72.3,
+      "end": 74.96,
+      "asset": "DABIN__UI__19_AUTO_CAPTURE_PAUSED.png",
+      "focus": [
+        1220,
+        906,
+        1600
+      ],
+      "portrait_focus": [
+        975,
+        925,
+        950
+      ],
+      "pointer": [
+        764,
+        794
+      ]
+    },
+    {
+      "start": 74.96,
+      "end": 77.08,
+      "asset": "DABIN__UI__20_PROJECT_EXPORT.png",
+      "focus": [
+        1180,
+        702,
+        2360
+      ],
+      "portrait_focus": [
+        1750,
+        650,
+        1350
+      ],
+      "pointer": [
+        2115,
+        280
+      ]
+    },
+    {
+      "start": 77.08,
+      "end": 79.02,
+      "asset": "DABIN__UI__20_PROJECT_EXPORT.png",
+      "focus": [
+        1180,
+        702,
+        2360
+      ],
+      "portrait_focus": [
+        1640,
+        600,
+        1350
+      ],
+      "pointer": [
+        2162,
+        110
+      ]
+    },
+    {
+      "start": 79.02,
+      "end": 82.8,
+      "asset": "DABIN__UI__21_RECENTLY_DELETED.png",
+      "focus": [
+        1180,
+        702,
+        2360
+      ],
+      "portrait_focus": [
+        702,
+        702,
+        1404
+      ],
+      "pointer": [
+        146,
+        504
+      ]
+    },
+    {
+      "start": 82.8,
+      "end": 83.7,
+      "asset": "DABIN__UI__22_RESTORED.png",
+      "focus": [
+        1180,
+        720,
+        2300
+      ],
+      "portrait_focus": [
+        702,
+        702,
+        1404
+      ],
+      "pointer": [
+        350,
+        680
+      ]
+    },
+    {
+      "start": 83.7,
+      "end": 94.4,
+      "asset": "DABIN__UI__22_RESTORED.png",
+      "focus": [
+        1180,
+        720,
+        2360
+      ],
+      "portrait_focus": [
+        1660,
+        710,
+        1404
+      ],
+      "pointer": null
+    }
+  ],
+  "editorial_disclosure": "Actual native view states with fictional data. Composed guide, cursor and transitions; not continuous input recording.",
+  "audio_peak_dbfs": -2.94,
+  "native_art": "Same source robot; mouth, blink and gaze derive from native artwork."
+}

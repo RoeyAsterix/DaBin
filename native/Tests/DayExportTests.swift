@@ -59,7 +59,33 @@ private enum DayExportTests {
         try checkWeekRangeAndChronology()
         try checkWeekCutoffAndActionGrouping()
         try checkWeekFilterIndependenceAndEmptyOutput()
-        print("PASS: \(checks) day/week export checks; deterministic content, fixed date scopes, cutoff, grouping and UTF-8 identity.")
+        try checkSelectedWeekDateSet()
+        try checkSelectedWeekCalendarNormalization()
+        try checkSelectedWeekEmptyAndAvailability()
+        try checkAvailabilityMatchesExports()
+        print("PASS: \(checks) day/week export checks; deterministic content, exact selected date scopes, cutoff, grouping and UTF-8 identity.")
+    }
+
+    @MainActor private static func checkAvailabilityMatchesExports() throws {
+        let now = date("2026-09-24 12:00:00")
+        let records = [
+            capture(id: 901, at: "2026-09-17 12:00:00", day: "2026-09-17", title: "Before week"),
+            capture(id: 902, at: "2026-09-18 00:00:00", day: "2026-09-18", title: "Week boundary"),
+            capture(id: 903, at: "2026-09-24 12:00:00", title: "Exact now"),
+            capture(id: 904, at: "2026-09-24 12:00:01", title: "After now"),
+            capture(id: 905, at: "2026-09-25 08:00:00", day: "2026-09-25", title: "Future day")
+        ]
+        for selected in ["2026-09-17 12:00:00", "2026-09-24 12:00:00", "2026-09-25 12:00:00"] {
+            for subset in [[]] + records.map({ [$0] }) + [records] {
+                let day = date(selected)
+                try expect(DayExportDocument.hasCaptures(captures: subset, selectedDate: day, now: now, calendarTimeZone: plusTwo)
+                    == !DayExportDocument.make(captures: subset, selectedDate: day, now: now, calendarTimeZone: plusTwo).isEmpty,
+                    "Lightweight day eligibility matches actual output for empty, boundary and future receipts")
+                try expect(WeekExportDocument.hasCaptures(captures: subset, weekEndingDate: day, now: now, calendarTimeZone: plusTwo)
+                    == !WeekExportDocument.make(captures: subset, weekEndingDate: day, now: now, calendarTimeZone: plusTwo).isEmpty,
+                    "Lightweight week eligibility matches actual output and current-time cutoff")
+            }
+        }
     }
 
     @MainActor private static func checkExactFormattingAndOrder() throws {
@@ -348,5 +374,92 @@ private enum DayExportTests {
                    && document.utf8Data == Data(document.text.utf8)
                    && String(data: empty.utf8Data, encoding: .utf8) == empty.text,
                    "Week downloads are exact UTF-8 representations of copied text")
+    }
+
+    @MainActor private static func checkSelectedWeekDateSet() throws {
+        let now = date("2026-09-24 12:00:00")
+        let selected = [date("2026-09-24 09:00:00"), date("2026-09-20 15:00:00"),
+                        date("2026-09-20 08:00:00")]
+        let first = capture(id: 1_001, at: "2026-09-20 10:00:00", day: "2026-09-20", title: "Selected first")
+        let gap = capture(id: 1_002, at: "2026-09-21 10:00:00", day: "2026-09-21", title: "Unselected gap")
+        let last = capture(id: 1_003, at: "2026-09-24 12:00:00", title: "Selected now")
+        let later = capture(id: 1_004, at: "2026-09-24 12:00:01", title: "After current moment")
+        let all = [later, last, gap, first]
+        let document = WeekExportDocument.make(captures: all, selectedDays: selected,
+                                               now: now, calendarTimeZone: plusTwo)
+        try expect(document.actionCount == 2, "Selected Week includes exactly the chosen calendar dates through now")
+        try expect(document.startDay == "2026-09-20" && document.endDay == "2026-09-24",
+                   "Selected Week derives chronological bounds from unsorted selection")
+        try expect(document.text.contains("Selected dates: 2026-09-20, 2026-09-24\n"),
+                   "Partial Week output names actual dates and deduplicates times within a local day")
+        try expect(!document.text.contains("Unselected gap") && !document.text.contains("After current moment"),
+                   "Scattered Week selections never expand to include date gaps or future times")
+        try expect(document.text.range(of: "Selected first")!.lowerBound < document.text.range(of: "Selected now")!.lowerBound,
+                   "Selected Week actions are ordered chronologically regardless of selection order")
+        try expect(document.utf8Data == Data(document.text.utf8), "Selected Week copies and file data are byte-equivalent")
+        try expect(WeekExportDocument.hasCaptures(captures: [gap], selectedDays: selected,
+                                                  now: now, calendarTimeZone: plusTwo) == false,
+                   "Unselected gap records do not enable Week export")
+        let single = WeekExportDocument.make(captures: all, selectedDays: [selected[0]],
+                                             now: now, calendarTimeZone: plusTwo)
+        try expect(single.actionCount == 1 && single.text.contains("Selected dates: 2026-09-24\n"),
+                   "Week can export a single selected calendar date")
+
+        let consecutive = (18...24).map { date("2026-09-\($0) 12:00:00") }
+        let original = WeekExportDocument.make(captures: all, weekEndingDate: now,
+                                               now: now, calendarTimeZone: plusTwo)
+        let compatible = WeekExportDocument.make(captures: all, selectedDays: Array(consecutive.reversed()),
+                                                 now: now, calendarTimeZone: plusTwo)
+        try expect(compatible == original, "A full seven-day selection retains existing Week export bytes and filenames")
+
+        let sevenScattered = [1, 3, 5, 7, 9, 20, 24].map { date(String(format: "2026-09-%02d 12:00:00", $0)) }
+        let scattered = WeekExportDocument.make(captures: all, selectedDays: sevenScattered,
+                                                now: now, calendarTimeZone: plusTwo)
+        try expect(scattered.text.contains("Selected dates: 2026-09-01, 2026-09-03, 2026-09-05, 2026-09-07, 2026-09-09, 2026-09-20, 2026-09-24\n"),
+                   "Even seven dates disclose gaps rather than claiming a continuous week")
+        try expect(scattered.actionCount == 2 && !scattered.text.contains("Unselected gap"),
+                   "Seven scattered dates retain exact membership")
+    }
+
+    @MainActor private static func checkSelectedWeekCalendarNormalization() throws {
+        let zone = TimeZone(identifier: "Europe/Berlin")!
+        let iso = ISO8601DateFormatter()
+        let beforeJump = iso.date(from: "2026-03-28T23:30:00Z")!
+        let afterJump = iso.date(from: "2026-03-29T21:30:00Z")!
+        let nextDate = iso.date(from: "2026-03-29T22:30:00Z")!
+        let now = iso.date(from: "2026-04-01T12:00:00Z")!
+        let record = capture(id: 1_020, at: "2026-03-29 10:00:00", day: "2026-03-29", title: "DST Sunday")
+        let excluded = capture(id: 1_021, at: "2026-03-30 10:00:00", day: "2026-03-30", title: "DST Monday")
+        let document = WeekExportDocument.make(captures: [record, excluded], selectedDays: [afterJump, beforeJump],
+                                               now: now, calendarTimeZone: zone)
+        try expect(document.startDay == "2026-03-29" && document.endDay == "2026-03-29",
+                   "Local day identity stays stable across the daylight-saving transition")
+        try expect(document.actionCount == 1 && !document.text.contains("DST Monday"),
+                   "Selection membership uses local dates, not elapsed 24-hour ranges")
+        let both = WeekExportDocument.make(captures: [record, excluded], selectedDays: [beforeJump, nextDate],
+                                          now: now, calendarTimeZone: zone)
+        try expect(both.actionCount == 2 && both.text.contains("Selected dates: 2026-03-29, 2026-03-30"),
+                   "A UTC evening on the next local date is exported in its correct day")
+    }
+
+    @MainActor private static func checkSelectedWeekEmptyAndAvailability() throws {
+        let now = date("2026-09-24 12:00:00")
+        let record = capture(id: 1_040, at: "2026-09-24 10:00:00", title: "Eligible selected date")
+        let future = capture(id: 1_041, at: "2026-09-25 10:00:00", day: "2026-09-25", title: "Future receipt")
+        let empty = WeekExportDocument.make(captures: [record], selectedDays: [],
+                                            now: now, calendarTimeZone: plusTwo)
+        try expect(empty.isEmpty && empty.text == "DaBin Week Export\nSelected dates: None\nActions: 0\n",
+                   "An empty selection cannot accidentally export today's records")
+        try expect(empty.filename == "DaBin-Week-No-Days.txt", "Empty selection has no misleading date range in its filename")
+        for selected in [[], [now], [date("2026-09-25 12:00:00")], [now, date("2026-09-25 12:00:00")]] {
+            for records in [[], [record], [future], [record, future]] {
+                let output = WeekExportDocument.make(captures: records, selectedDays: selected,
+                                                    now: now, calendarTimeZone: plusTwo)
+                try expect(WeekExportDocument.hasCaptures(captures: records, selectedDays: selected,
+                                                         now: now, calendarTimeZone: plusTwo) == !output.isEmpty,
+                           "Selected-date Week eligibility matches its generated output including empty and future scopes")
+                try expect(!output.text.contains("Future receipt"), "Future dates cannot add unsaved future Week actions")
+            }
+        }
     }
 }

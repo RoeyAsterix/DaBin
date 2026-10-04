@@ -1,0 +1,7 @@
+Local file location QA failed: Error Domain=LocalFileLocationTests Code=1 "Shelf preserves the separate Add files importer. Selected ID node hierarchy:
+AccessibilityNode role=AXButton id=workspace-add-files resolvedLabel="Collection shelf. Drop, paste or add files." press=true [accessibilityLabel="Collection shelf. Drop, paste or add files."]
+All matching ID nodes:
+AccessibilityNode role=AXButton id=workspace-add-files resolvedLabel="Collection shelf. Drop, paste or add files." press=true [accessibilityLabel="Collection shelf. Drop, paste or add files."]" UserInfo={NSLocalizedDescription=Shelf preserves the separate Add files importer. Selected ID node hierarchy:
+AccessibilityNode role=AXButton id=workspace-add-files resolvedLabel="Collection shelf. Drop, paste or add files." press=true [accessibilityLabel="Collection shelf. Drop, paste or add files."]
+All matching ID nodes:
+AccessibilityNode role=AXButton id=workspace-add-files resolvedLabel="Collection shelf. Drop, paste or add files." press=true [accessibilityLabel="Collection shelf. Drop, paste or add files."]}

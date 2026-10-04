@@ -1,0 +1,7 @@
+f2321a5d2bbbd73cbfc9dca81cf1d763b59ff08b6fcee0f1d34f2f2f6c51ab37  /private/tmp/dabin-full-qa-20261004/native/Sources/DaBin/RobotMotion.swift
+40d2885824e9e862d3e2ae693dd4e7319be518b3f5b2d9bd95aab1142029db7f  /private/tmp/dabin-full-qa-20261004/native/Sources/DaBin/AutoCaptureRobotCelebration.swift
+169d408033ca94901c6dcf34d97097acd16f3a3481c24060621a31535b1ac68a  /private/tmp/dabin-full-qa-20261004/native/Sources/DaBin/IslandRobotChoreography.swift
+07c1ae899900482f87b2a8a55d8978b91f862ffa1d4b394b44fea98d8f1224ae  /private/tmp/dabin-full-qa-20261004/native/Sources/DaBin/QuietOrbitVisualStyle.swift
+efacf4bcad0b7b9dd201d31889e890090e21a13eb693113f207700b5bd630af3  /private/tmp/dabin-full-qa-20261004/native/Sources/DaBin/RobotCharacterView.swift
+ff3afc2f684f3505adbd940d0dd0bcdafb6754b5f0226b0d4f062caf757726cb  /private/tmp/dabin-full-qa-20261004/native/Tests/IslandPlaygroundRender.swift
+0177a150778734ae9df86e39e61a9ffaaa42e41853115bfd91dfb4d321009366  /private/tmp/dabin-full-qa-20261004/native/scripts/render_island_playground.sh

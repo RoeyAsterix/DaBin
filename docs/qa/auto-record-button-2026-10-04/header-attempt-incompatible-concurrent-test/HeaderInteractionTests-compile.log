@@ -1,0 +1,31 @@
+/private/tmp/dabin-record-control-20261004/native/build/qa-cache/1cacd50ed44d2fbbf290d592ebedccb7e5b56e5cd35b4ad2b1d0ce8758fe56b9/HeaderInteractionTests-b7f7700455c53100/HeaderInteractionTests.swift:501:54: error: cannot convert value of type '_' to expected argument type 'Bool'
+499 |         try press(hosting, identifier: "settings-run-tutorial")
+500 |         _ = try element(hosting, identifier: "dabin-tutorial-overlay")
+501 |         try expect(state.route == .settings && state.isTutorialPresented,
+    |                                                      `- error: cannot convert value of type '_' to expected argument type 'Bool'
+502 |                    "Run tutorial starts over the real Settings screen")
+503 |         try press(hosting, identifier: "tutorial-next")
+
+/private/tmp/dabin-record-control-20261004/native/build/qa-cache/1cacd50ed44d2fbbf290d592ebedccb7e5b56e5cd35b4ad2b1d0ce8758fe56b9/HeaderInteractionTests-b7f7700455c53100/HeaderInteractionTests.swift:501:54: error: value of type 'AppState' has no member 'isTutorialPresented'
+499 |         try press(hosting, identifier: "settings-run-tutorial")
+500 |         _ = try element(hosting, identifier: "dabin-tutorial-overlay")
+501 |         try expect(state.route == .settings && state.isTutorialPresented,
+    |                                                      `- error: value of type 'AppState' has no member 'isTutorialPresented'
+502 |                    "Run tutorial starts over the real Settings screen")
+503 |         try press(hosting, identifier: "tutorial-next")
+
+/private/tmp/dabin-record-control-20261004/native/build/qa-cache/1cacd50ed44d2fbbf290d592ebedccb7e5b56e5cd35b4ad2b1d0ce8758fe56b9/HeaderInteractionTests-b7f7700455c53100/HeaderInteractionTests.swift:521:23: error: cannot convert value of type '_' to expected argument type 'Bool'
+519 |         try press(hosting, identifier: "tutorial-next")
+520 |         try expect(state.route == .settings
+521 |                    && !state.isTutorialPresented
+    |                       `- error: cannot convert value of type '_' to expected argument type 'Bool'
+522 |                    && !elements(in: hosting).contains { $0.accessibilityIdentifier() == "dabin-tutorial-overlay" },
+523 |                    "Finish closes the walkthrough and returns to its Settings origin")
+
+/private/tmp/dabin-record-control-20261004/native/build/qa-cache/1cacd50ed44d2fbbf290d592ebedccb7e5b56e5cd35b4ad2b1d0ce8758fe56b9/HeaderInteractionTests-b7f7700455c53100/HeaderInteractionTests.swift:521:30: error: value of type 'AppState' has no member 'isTutorialPresented'
+519 |         try press(hosting, identifier: "tutorial-next")
+520 |         try expect(state.route == .settings
+521 |                    && !state.isTutorialPresented
+    |                              `- error: value of type 'AppState' has no member 'isTutorialPresented'
+522 |                    && !elements(in: hosting).contains { $0.accessibilityIdentifier() == "dabin-tutorial-overlay" },
+523 |                    "Finish closes the walkthrough and returns to its Settings origin")

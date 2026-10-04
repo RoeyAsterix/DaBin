@@ -4,26 +4,30 @@ import Combine
 /// Native macOS commands use the responder chain for editing, so text editors
 /// retain standard cut/copy/paste, undo and keyboard behavior.
 @MainActor
-final class ApplicationMenu: NSObject {
+final class ApplicationMenu: NSObject, NSMenuItemValidation {
     private let openDailyAction: () -> Void
     private let openSearchAction: () -> Void
     private let focusRobotAction: () -> Void
     private let checkForUpdatesAction: () -> Void
     private let showSettingsAction: () -> Void
     private weak var autoCapture: AutoCaptureService?
+    private weak var workspaceZoom: WorkspaceZoomSettings?
+    private weak var zoomPercentageItem: NSMenuItem?
     private var installedMenu: NSMenu?
     private weak var autoCaptureItem: NSMenuItem?
     private var subscriptions = Set<AnyCancellable>()
 
     init(openDaily: @escaping () -> Void, openSearch: @escaping () -> Void,
          focusRobot: @escaping () -> Void, checkForUpdates: @escaping () -> Void = {},
-         showSettings: @escaping () -> Void, autoCapture: AutoCaptureService? = nil) {
+         showSettings: @escaping () -> Void, autoCapture: AutoCaptureService? = nil,
+         workspaceZoom: WorkspaceZoomSettings? = nil) {
         openDailyAction = openDaily
         openSearchAction = openSearch
         focusRobotAction = focusRobot
         checkForUpdatesAction = checkForUpdates
         showSettingsAction = showSettings
         self.autoCapture = autoCapture
+        self.workspaceZoom = workspaceZoom
     }
 
     func install() {
@@ -67,6 +71,23 @@ final class ApplicationMenu: NSObject {
         edit.addItem(withTitle: "Paste", action: #selector(NSText.paste(_:)), keyEquivalent: "v")
         edit.addItem(withTitle: "Select All", action: #selector(NSText.selectAll(_:)), keyEquivalent: "a")
         editRoot.submenu = edit
+        let viewRoot = menu.addItem(withTitle: "View", action: nil, keyEquivalent: "")
+        let view = NSMenu(title: "View")
+        view.addItem(withTitle: "Back", action: #selector(DailyCapturePanel.navigateBack(_:)), keyEquivalent: "[")
+        view.addItem(withTitle: "Forward", action: #selector(DailyCapturePanel.navigateForward(_:)), keyEquivalent: "]")
+        view.addItem(.separator())
+        zoomPercentageItem = view.addItem(withTitle: "Workspace Zoom: \(workspaceZoom?.percentage ?? 100)%", action: nil, keyEquivalent: "")
+        add("Zoom Workspace In", #selector(zoomWorkspaceIn), key: "", to: view)
+        add("Zoom Workspace Out", #selector(zoomWorkspaceOut), key: "", to: view)
+        add("Reset Workspace Zoom", #selector(resetWorkspaceZoom), key: "", to: view)
+        // Generic zoom keys are handled after document/editor first refusal at
+        // the content window. Explicit menu commands never target a document.
+        viewRoot.submenu = view
+        if let workspaceZoom {
+            workspaceZoom.$factor.sink { [weak self] factor in
+                self?.zoomPercentageItem?.title = "Workspace Zoom: \(Int((factor * 100).rounded()))%"
+            }.store(in: &subscriptions)
+        }
         installedMenu = menu
         NSApp.mainMenu = menu
     }
@@ -84,6 +105,22 @@ final class ApplicationMenu: NSObject {
         item.target = self
         item.keyEquivalentModifierMask = modifiers
         return item
+    }
+
+    private var workspacePanel: DailyCapturePanel? {
+        NSApp.windows.compactMap { $0 as? DailyCapturePanel }.first { $0.isVisible }
+    }
+    @objc private func zoomWorkspaceIn() { workspacePanel?.dispatch(.zoomIn) }
+    @objc private func zoomWorkspaceOut() { workspacePanel?.dispatch(.zoomOut) }
+    @objc private func resetWorkspaceZoom() { workspacePanel?.dispatch(.resetZoom) }
+    func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
+        switch menuItem.action {
+        case #selector(zoomWorkspaceIn): return workspacePanel?.canPerformWorkspaceCommand(.zoomIn) == true
+        case #selector(zoomWorkspaceOut): return workspacePanel?.canPerformWorkspaceCommand(.zoomOut) == true
+        case #selector(resetWorkspaceZoom): return workspacePanel?.canPerformWorkspaceCommand(.resetZoom) == true
+        case #selector(toggleAutoCapturePause): return autoCapture?.settings.isEnabled == true
+        default: return true
+        }
     }
 
     @objc private func openDaily() { openDailyAction() }

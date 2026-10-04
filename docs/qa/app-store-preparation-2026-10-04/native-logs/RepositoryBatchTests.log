@@ -1,0 +1,2 @@
+BENCHMARK: 1000-record metadata batch save 0.0212 seconds
+PASS: 10 repository batching, duplicate, mixed-update, rollback, and restart checks.

@@ -194,6 +194,15 @@ private struct Fixtures: Decodable { let entries: [FixtureEntry]; let cases: [Fi
         try expect(CaptureSearch.groups(captures: captures, query: "needle", filter: .all,
                                        scope: .week([])).isEmpty,
                    "An empty week scope produces no search results")
+        let range = CaptureSearchScope.range(startDay: "2026-12-31", endDay: "2027-01-02")
+        let ranged = CaptureSearch.groups(captures: captures, query: "needle", filter: .all,
+                                          scope: range, includeContext: false)
+        try expect(ranged.map(\.day) == ["2027-01-02", "2027-01-01", "2026-12-31"],
+                   "Custom ranges include both endpoint dates across year boundaries")
+        let reversed = CaptureSearch.groups(captures: captures, query: "needle", filter: .all,
+            scope: .range(startDay: "2027-01-02", endDay: "2026-12-31"), includeContext: false)
+        try expect(reversed.flatMap(\.entries).map(\.id) == ranged.flatMap(\.entries).map(\.id),
+                   "Reversed custom endpoints normalize without leaking outside their inclusive range")
     }
 
     @MainActor static func main() async throws {
@@ -292,7 +301,7 @@ private struct Fixtures: Decodable { let entries: [FixtureEntry]; let cases: [Fi
         let taskStamp = (task.id, task.capturedAt, task.captureDay, task.captureTimeZoneID, task.captureUTCOffsetSeconds)
         try expect(task.isTask && !task.isCompleted && task.originalText == "Send studio brief" && task.title == "Send studio brief", "Explicit task keeps trimmed task text and defaults to open")
         try expect(task.reminderAt == taskReminder && task.reminderTimeZoneID == "Asia/Jerusalem" && task.reminderRevision == 1, "Task and initial reminder commit together")
-        try expect(CaptureSnapshot(task).schemaVersion == 10, "Capture snapshots use schema 10")
+        try expect(CaptureSnapshot(task).schemaVersion == 11, "Capture snapshots use schema 11")
         try expect(CaptureFilter.all.includes(.task) && !CaptureFilter.text.includes(.task) && !CaptureFilter.files.includes(.task) && !CaptureFilter.links.includes(.task) && !CaptureFilter.media.includes(.task), "Tasks appear in All without changing text/file/link/media filters")
         try expect(CaptureSearch.groups(captures: [task], query: "studio brief", filter: .all).first?.entries.first?.id == task.id, "Task text is searchable")
         try taskStore.setTaskCompleted(task, completed: true)

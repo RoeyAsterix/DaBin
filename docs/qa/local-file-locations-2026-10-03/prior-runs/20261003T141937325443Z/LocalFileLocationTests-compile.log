@@ -1,0 +1,54 @@
+/private/tmp/dabin-local-file-locations-20261003/native/build/qa-cache/ffa4c172a70642e5419e1cabc7d25c84f6c4f3de7a66adff23eb36cf8f881c84/LocalFileLocationTests-490e6ebd9f07f8aa/LocalFileLocationTests.swift:77:31: warning: call to main actor-isolated instance method 'orderOut' in a synchronous nonisolated context [#ActorIsolatedCall]
+ 75 |         let hosting: NSHostingView<AnyView>
+ 76 |         let window: NSWindow
+ 77 |         func close() { window.orderOut(nil); window.contentView = nil; window.close() }
+    |              |                `- warning: call to main actor-isolated instance method 'orderOut' in a synchronous nonisolated context [#ActorIsolatedCall]
+    |              `- note: add '@MainActor' to make instance method 'close()' part of global actor 'MainActor'
+ 78 |     }
+ 79 | 
+
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSWindow.h:425:1: note: calls to instance method 'orderOut' from outside of its actor context are implicitly asynchronous
+ 423 | - (void)orderFront:(nullable id)sender;
+ 424 | - (void)orderBack:(nullable id)sender;
+ 425 | - (void)orderOut:(nullable id)sender;
+     | |- note: calls to instance method 'orderOut' from outside of its actor context are implicitly asynchronous
+     | `- note: main actor isolation inferred from inheritance from class 'NSResponder'
+ 426 | - (void)orderWindow:(NSWindowOrderingMode)place relativeTo:(NSInteger)otherWin;
+ 427 | - (void)orderFrontRegardless;
+
+/private/tmp/dabin-local-file-locations-20261003/native/build/qa-cache/ffa4c172a70642e5419e1cabc7d25c84f6c4f3de7a66adff23eb36cf8f881c84/LocalFileLocationTests-490e6ebd9f07f8aa/LocalFileLocationTests.swift:77:53: warning: main actor-isolated property 'contentView' can not be mutated from a nonisolated context
+ 75 |         let hosting: NSHostingView<AnyView>
+ 76 |         let window: NSWindow
+ 77 |         func close() { window.orderOut(nil); window.contentView = nil; window.close() }
+    |              |                                      `- warning: main actor-isolated property 'contentView' can not be mutated from a nonisolated context
+    |              `- note: add '@MainActor' to make instance method 'close()' part of global actor 'MainActor'
+ 78 |     }
+ 79 | 
+
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSWindow.h:337:47: note: mutation of this property is only permitted within the actor
+ 335 | - (void)setTitleWithRepresentedFilename:(NSString *)filename;
+ 336 | @property (getter=isExcludedFromWindowsMenu) BOOL excludedFromWindowsMenu;
+ 337 | @property (nullable, strong) __kindof NSView *contentView;
+     |                                               `- note: mutation of this property is only permitted within the actor
+ 338 | @property (nullable, weak) id<NSWindowDelegate> delegate;
+ 339 | @property (readonly) NSInteger windowNumber;
+
+/private/tmp/dabin-local-file-locations-20261003/native/build/qa-cache/ffa4c172a70642e5419e1cabc7d25c84f6c4f3de7a66adff23eb36cf8f881c84/LocalFileLocationTests-490e6ebd9f07f8aa/LocalFileLocationTests.swift:77:79: warning: call to main actor-isolated instance method 'close()' in a synchronous nonisolated context [#ActorIsolatedCall]
+ 75 |         let hosting: NSHostingView<AnyView>
+ 76 |         let window: NSWindow
+ 77 |         func close() { window.orderOut(nil); window.contentView = nil; window.close() }
+    |              |                                                                `- warning: call to main actor-isolated instance method 'close()' in a synchronous nonisolated context [#ActorIsolatedCall]
+    |              `- note: add '@MainActor' to make instance method 'close()' part of global actor 'MainActor'
+ 78 |     }
+ 79 | 
+
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSWindow.h:392:1: note: calls to instance method 'close()' from outside of its actor context are implicitly asynchronous
+ 390 | 
+ 391 | @property (readonly) NSEventModifierFlags resizeFlags;
+ 392 | - (void)close;
+     | |- note: calls to instance method 'close()' from outside of its actor context are implicitly asynchronous
+     | `- note: main actor isolation inferred from inheritance from class 'NSResponder'
+ 393 | @property (getter=isReleasedWhenClosed) BOOL releasedWhenClosed;
+ 394 | - (void)miniaturize:(nullable id)sender;
+
+[#ActorIsolatedCall]: <https://docs.swift.org/compiler/documentation/diagnostics/actor-isolated-call>

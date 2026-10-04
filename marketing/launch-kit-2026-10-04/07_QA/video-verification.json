@@ -1,0 +1,77 @@
+{
+  "renders": [
+    {
+      "file": "04_Video/DABIN__FEED_DABIN__LANDSCAPE.mp4",
+      "bytes": 1649613,
+      "sha256": "e1b1403334533341dbc9b039ad673d957b509cedcf7e9dd605958f9cc8152fd2",
+      "full_decode": "PASS",
+      "audio": "ElevenLabs narration and three original ticks",
+      "frames": 660,
+      "fps": 30,
+      "duration_seconds": 22,
+      "dimensions": [
+        1920,
+        1080
+      ],
+      "pixel_format": "yuv420p",
+      "codec": "H.264",
+      "metadata": "authored prompt/workflow metadata excluded"
+    },
+    {
+      "file": "04_Video/DABIN__FEED_DABIN__LANDSCAPE_SILENT.mp4",
+      "bytes": 1313263,
+      "sha256": "9b94b331ca0d3f542d1c04c3781c2d1638be743a42002e157d9bdeac3a66ebdf",
+      "full_decode": "PASS",
+      "audio": "none",
+      "frames": 660,
+      "fps": 30,
+      "duration_seconds": 22,
+      "dimensions": [
+        1920,
+        1080
+      ],
+      "pixel_format": "yuv420p",
+      "codec": "H.264",
+      "metadata": "authored prompt/workflow metadata excluded"
+    },
+    {
+      "file": "04_Video/DABIN__FEED_DABIN__PORTRAIT.mp4",
+      "bytes": 1656589,
+      "sha256": "200b9bf576113ecb71895f157aa4c94b50fe1e6ea92e5eab596768a3e2314cc6",
+      "full_decode": "PASS",
+      "audio": "ElevenLabs narration and three original ticks",
+      "frames": 660,
+      "fps": 30,
+      "duration_seconds": 22,
+      "dimensions": [
+        1080,
+        1920
+      ],
+      "pixel_format": "yuv420p",
+      "codec": "H.264",
+      "metadata": "authored prompt/workflow metadata excluded"
+    },
+    {
+      "file": "04_Video/DABIN__FEED_DABIN__PORTRAIT_SILENT.mp4",
+      "bytes": 1320239,
+      "sha256": "9ce172e379633be97018e2d6fbb683cb06bdfba93197218983cb5c8047ef3667",
+      "full_decode": "PASS",
+      "audio": "none",
+      "frames": 660,
+      "fps": 30,
+      "duration_seconds": 22,
+      "dimensions": [
+        1080,
+        1920
+      ],
+      "pixel_format": "yuv420p",
+      "codec": "H.264",
+      "metadata": "authored prompt/workflow metadata excluded"
+    }
+  ],
+  "visual_review": "PASS: both encoded contact sheets and original-resolution decoded project/search/final frames inspected; current native robot and same fictional palette/project/OCR result match across the film; final claims legible and portrait pills clear. All 660 frames decode in every export.",
+  "audio_review": "provider transcript exactly matched; waveform and full decode passed; no subjective listening claim",
+  "render_engine": "local Blender 5.2.1 EEVEE, emission planes, exact native art",
+  "publication": "not published; no posts or pitches sent",
+  "continuity": "CONTINUITY PASS: exact current native DaBin poses, aspect ratios preserved, fictional same-shot link/note/palette content; no named screenplay character featured."
+}

@@ -34,6 +34,77 @@ private enum UpdateConfigurationTests {
         return (process.terminationStatus, output)
     }
 
+    private static func verifyReleaseIdentity(info: [String: Any], project: String) throws {
+        let version = info["CFBundleShortVersionString"] as? String ?? ""
+        let build = info["CFBundleVersion"] as? String ?? ""
+        try expect(version.range(of: "^[0-9]+(?:\\.[0-9]+){0,2}$", options: .regularExpression) != nil
+                    && version.split(separator: ".").allSatisfy { Int($0) != nil },
+                   "The shared Info.plist has a numeric release version with one to three components")
+        try expect(build.range(of: "^[1-9][0-9]*$", options: .regularExpression) != nil
+                    && (Int(build) ?? 0) > 0,
+                   "The shared Info.plist has a positive integer build number")
+
+        let document = try PropertyListSerialization.propertyList(from: Data(project.utf8), format: nil)
+            as? [String: Any] ?? [:]
+        let objects = document["objects"] as? [String: [String: Any]] ?? [:]
+        let projectObject = objects[document["rootObject"] as? String ?? ""] ?? [:]
+        try expect(projectObject["isa"] as? String == "PBXProject",
+                   "The generated Xcode project has a valid root project object")
+        let targets = (projectObject["targets"] as? [String] ?? []).compactMap { objects[$0] }.filter {
+            $0["isa"] as? String == "PBXNativeTarget"
+                && $0["name"] as? String == "DaBin"
+                && $0["productType"] as? String == "com.apple.product-type.application"
+        }
+        try expect(targets.count == 1, "The generated Xcode project contains one DaBin application target")
+
+        func configurations(_ owner: [String: Any], scope: String) throws -> [(String, [String: Any])] {
+            let list = objects[owner["buildConfigurationList"] as? String ?? ""] ?? [:]
+            let identifiers = list["buildConfigurations"] as? [String] ?? []
+            try expect(list["isa"] as? String == "XCConfigurationList" && !identifiers.isEmpty,
+                       "The \(scope) has a valid build configuration list")
+            return try identifiers.map { identifier in
+                let configuration = objects[identifier] ?? [:]
+                let name = configuration["name"] as? String ?? ""
+                let settings = configuration["buildSettings"] as? [String: Any]
+                try expect(configuration["isa"] as? String == "XCBuildConfiguration"
+                            && !name.isEmpty && settings != nil,
+                           "The \(scope) build configuration \(identifier) has a name and settings")
+                return ("\(scope) \(name)", settings ?? [:])
+            }
+        }
+
+        let projectConfigurations = try configurations(projectObject, scope: "project")
+        let appConfigurations = try configurations(targets[0], scope: "DaBin")
+        try expect(Set(appConfigurations.map { $0.0 }).isSuperset(of: ["DaBin Debug", "DaBin Release"]),
+                   "The DaBin target has both Debug and Release configurations")
+        for (name, settings) in appConfigurations {
+            try expect(settings["INFOPLIST_FILE"] as? String == "Resources/Info.plist",
+                       "\(name) uses the shared versioned Info.plist")
+            for (key, value) in settings where key.split(separator: "[").first == "INFOPLIST_FILE" {
+                try expect(value as? String == "Resources/Info.plist",
+                           "\(name) \(key) preserves the shared Info.plist")
+            }
+        }
+
+        let versionSettings = [
+            "MARKETING_VERSION": version, "INFOPLIST_KEY_CFBundleShortVersionString": version,
+            "CURRENT_PROJECT_VERSION": build, "INFOPLIST_KEY_CFBundleVersion": build,
+        ]
+        for (name, settings) in projectConfigurations + appConfigurations {
+            for (key, value) in settings {
+                let baseKey = String(key.split(separator: "[").first ?? "")
+                if let expected = versionSettings[baseKey] {
+                    try expect(value as? String == expected,
+                               "\(name) \(key) agrees with the shared Info.plist release identity")
+                }
+                if baseKey == "GENERATE_INFOPLIST_FILE" {
+                    try expect(value as? String == "NO",
+                               "\(name) does not replace the shared Info.plist with a generated plist")
+                }
+            }
+        }
+    }
+
     private static func verifyStableReleaseStaging() throws {
         let files = FileManager.default
         let root = files.temporaryDirectory.appendingPathComponent("DaBinLatestReleaseTests-\(UUID().uuidString)")
@@ -256,9 +327,7 @@ private enum UpdateConfigurationTests {
         try expect(privacy.contains("checks for updates only when you choose")
                     && privacy.contains("does not check or download updates silently"),
                    "The bundled privacy policy explains GitHub contact and user control")
-        try expect(info["CFBundleShortVersionString"] as? String == "0.4.19"
-                    && info["CFBundleVersion"] as? String == "74",
-                   "The release version and monotonically increasing build are configured")
+        try verifyReleaseIdentity(info: info, project: project)
         try expect(info["ITSAppUsesNonExemptEncryption"] as? Bool == false,
                    "The Store build declares that its OS networking and file hashes use no non-exempt encryption")
         try verifyStableReleaseStaging()

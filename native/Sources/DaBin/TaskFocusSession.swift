@@ -7,10 +7,20 @@ import Foundation
 struct TaskFocusSession: Codable, Equatable, Sendable {
     var remainingSeconds: TimeInterval
     var endAt: Date?
+    /// Expiry is a durable occurrence, independent of whether the app remains
+    /// open long enough for the user to acknowledge its robot.
+    var completedAlertID: UUID? = nil
+    var completedAt: Date? = nil
+    var acknowledgedAt: Date? = nil
 
     var isValid: Bool {
-        remainingSeconds.isFinite && (0...604_800).contains(remainingSeconds)
+        guard (completedAlertID == nil) == (completedAt == nil),
+              completedAlertID == nil || (remainingSeconds == 0 && endAt == nil),
+              acknowledgedAt == nil || (completedAt != nil && acknowledgedAt! >= completedAt!) else { return false }
+        return remainingSeconds.isFinite && (0...604_800).contains(remainingSeconds)
         && (endAt.map { $0.timeIntervalSinceReferenceDate.isFinite } ?? true)
+        && (completedAt.map { $0.timeIntervalSinceReferenceDate.isFinite } ?? true)
+        && (acknowledgedAt.map { $0.timeIntervalSinceReferenceDate.isFinite } ?? true)
     }
     var isRunning: Bool { endAt != nil }
     func remaining(at now: Date) -> TimeInterval {
@@ -18,7 +28,14 @@ struct TaskFocusSession: Codable, Equatable, Sendable {
         // last started. Forward changes and sleep follow the persisted end date.
         max(0, min(remainingSeconds, endAt.map { $0.timeIntervalSince(now) } ?? remainingSeconds))
     }
-    func paused(at now: Date) -> Self { Self(remainingSeconds: remaining(at: now), endAt: nil) }
+    func paused(at now: Date) -> Self {
+        let seconds = remaining(at: now)
+        if seconds == 0, let deadline = endAt {
+            return Self(remainingSeconds: 0, endAt: nil, completedAlertID: UUID(), completedAt: deadline)
+        }
+        return Self(remainingSeconds: seconds, endAt: nil, completedAlertID: completedAlertID,
+                    completedAt: completedAt, acknowledgedAt: acknowledgedAt)
+    }
     func started(at now: Date, durationMinutes: Int) -> Self {
         let seconds = remaining(at: now)
         let target = seconds > 0 ? seconds : TimeInterval(durationMinutes * 60)

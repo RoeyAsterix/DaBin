@@ -208,9 +208,12 @@ struct WeeklyStateTests {
         state.query = "Weekly fictional note"
         state.selectedDay = date("2024-01-03 12:00")
         state.openWeekly()
+        let visibleWeek = keys(state.weeklyDays)
         state.performSearchCommand()
-        try expect(state.route == .search && state.searchScope == .all && !state.weeklySearchActionsPresented,
-                   "The shared Search command searches every date immediately")
+        try expect(state.route == .search && state.searchScope == .all && state.searchProject == nil
+                   && state.searchSource == nil && state.filter == .all && !state.showSearchContext
+                   && keys(state.weeklyDays) == visibleWeek && !state.weeklySearchActionsPresented,
+                   "The shared Search command starts globally without changing the visible seven-day context")
         state.back()
         try expect(CaptureCalendar.dayString(state.weeklyActionDay) == "2024-01-03",
                    "Weekly day actions use the preserved selected day when it is inside the range")
@@ -233,8 +236,8 @@ struct WeeklyStateTests {
         try expect(state.searchGroups.map(\.day) == ["2024-01-03"],
                    "Search Day returns matches only from the selected day")
         state.performSearchCommand()
-        try expect(state.route == .search && state.searchScope == .all,
-                   "A general search command clears an explicit date scope")
+        try expect(state.route == .search && state.searchScope == .day("2024-01-03"),
+                   "Refocusing Search preserves an explicitly chosen receipt date")
         state.back()
         try expect(state.route == .weekly && CaptureCalendar.dayString(state.weekEndingDay) == "2024-01-03",
                    "Back from a day-scoped search restores the same Weekly range")
@@ -251,11 +254,18 @@ struct WeeklyStateTests {
                    "Back from a week-scoped search returns to Weekly")
 
         state.openSearch()
-        try expect(state.searchScope == .all && state.route == .search,
-                   "The existing unscoped Search action still searches the full archive")
+        try expect(state.searchScope == .all && state.route == .search && state.searchProject == nil
+                   && state.searchSource == nil && state.filter == .all && !state.showSearchContext
+                   && Set(keys(state.weeklyDays)) == weekKeys,
+                   "A new Search session starts globally while preserving the Weekly return context")
+        state.setSearchWeek(ending: state.weekEndingDay)
+        try expect(state.searchScope == .week(weekKeys), "A deliberate week refinement narrows the current search")
+        state.searchEverything()
+        try expect(state.searchScope == .all && state.searchProject == nil && state.filter == .all,
+                   "Search Everything explicitly broadens the search to the whole archive")
         state.back()
         try expect(state.route == .weekly,
-                   "An unscoped search opened from Weekly also restores Weekly")
+                   "An explicitly broadened search opened from Weekly also restores Weekly")
     }
 
     @MainActor private static func checkEmptyWeek() throws {
@@ -336,6 +346,131 @@ struct WeeklyStateTests {
         }
     }
 
+    @MainActor private static func checkDateSelectionModel() throws {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(identifier: "America/New_York")!
+        func localDate(_ day: Int, hour: Int = 12) -> Date {
+            calendar.date(from: DateComponents(year: 2024, month: 3, day: day, hour: hour))!
+        }
+        let now = localDate(31)
+        let selection = WeeklyDateSelection(days: [localDate(11), localDate(9), localDate(10), localDate(9, hour: 8)],
+                                            calendar: calendar, now: now)!
+        try expect(selection.days.count == 3 && selection.days == selection.days.sorted(),
+                   "The selection normalizes duplicate timestamps to unique sorted local dates")
+        try expect(selection.days.allSatisfy { calendar.startOfDay(for: $0) == $0 },
+                   "Custom dates use local day boundaries rather than receipt times")
+        let intervals = zip(selection.days, selection.days.dropFirst()).map { $1.timeIntervalSince($0) }
+        try expect(intervals.contains(23 * 3600), "Selections retain distinct dates through spring DST")
+        let forward = selection.shifted(weeks: 1, calendar: calendar, now: now)!
+        try expect(forward.days.map { calendar.component(.day, from: $0) } == [16, 17, 18],
+                   "Next week shifts each chosen date by seven local calendar days across DST")
+        try expect(forward.shifted(weeks: -1, calendar: calendar, now: now) == selection,
+                   "Backward navigation exactly restores a chosen pattern across DST")
+        let sparse = WeeklyDateSelection(days: [localDate(24), localDate(28), localDate(30)], calendar: calendar, now: now)!
+        let clamped = sparse.shifted(weeks: 1, calendar: calendar, now: now)!
+        try expect(clamped.days.map { calendar.component(.day, from: $0) } == [25, 29, 31],
+                   "Clamping at today shifts all selected dates equally and preserves their gaps")
+        try expect(clamped.shifted(weeks: 1, calendar: calendar, now: now) == clamped,
+                   "Advancing a custom selection ending today is idempotent")
+        try expect(WeeklyDateSelection(days: [], calendar: calendar, now: now) == nil,
+                   "The calendar model rejects an empty selection")
+        try expect(WeeklyDateSelection(days: (1...8).map { localDate($0) }, calendar: calendar, now: now) == nil,
+                   "The calendar model rejects more than seven unique days")
+        try expect(WeeklyDateSelection(days: (1...7).map { localDate($0) }, calendar: calendar, now: now)?.days.count == 7,
+                   "The calendar model accepts exactly seven days")
+        try expect(WeeklyDateSelection(days: [localDate(32)], calendar: calendar, now: now) == nil,
+                   "Future dates cannot be added to capture history")
+        try expect(WeeklyDateSelection(days: [Date(timeIntervalSinceReferenceDate: .infinity)], calendar: calendar, now: now) == nil,
+                   "Nonfinite dates are rejected without calendar arithmetic")
+        try expect(selection.shifted(weeks: Int.max, calendar: calendar, now: now) == nil,
+                   "An overflowing navigation amount leaves the valid selection available")
+    }
+
+    @MainActor private static func checkCustomDates(root: URL) throws {
+        let store = try CaptureStore(root: root)
+        let first = try store.capture(text: "Custom first receipt", at: date("2024-01-01 09:00"))[0]
+        _ = try store.capture(text: "Excluded gap receipt", at: date("2024-01-02 09:00"))
+        let last = try store.capture(text: "Custom last receipt", at: date("2024-01-04 09:00"))[0]
+        let client = WeeklyNotificationClient()
+        let state = AppState(store: store, previews: PreviewService(store: store),
+                             reminders: ReminderService(store: store, client: client))
+        let before = try encodedCaptures(store)
+        state.selectedDay = date("2024-01-04 12:00")
+        state.filter = .text
+        state.newTaskDraft.text = "Keep this unfinished draft"
+        state.dailyScrollID = .capture(.capture(last.id))
+        state.openWeekly()
+        let picked = [date("2024-01-04 09:00"), date("2024-01-01 12:00"), date("2024-01-03 08:00"), date("2024-01-01 17:00")]
+        try expect(state.setWeeklyDays(picked), "The picker can apply nonconsecutive dates with duplicate timestamps")
+        let expected = ["2024-01-01", "2024-01-03", "2024-01-04"]
+        try expect(state.isCustomWeekSelection && keys(state.weeklyDays) == expected
+                   && CaptureCalendar.dayString(state.weekEndingDay) == "2024-01-04",
+                   "The selected date set becomes the week source of truth with its latest day as anchor")
+        try expect(keys(state.weeklyVisibleDays) == ["2024-01-01", "2024-01-04"],
+                   "Only selected dates with captures render; an unselected active day and selected empty day stay hidden")
+        for filter in CaptureFilter.allCases {
+            state.filter = filter
+            try expect(keys(state.weeklyVisibleDays) == ["2024-01-01", "2024-01-04"],
+                       "\(filter.title) filtering does not alter the selected active-date layout")
+        }
+        state.filter = .text
+        try expect(CaptureCalendar.dayString(state.weeklyActionDay) == "2024-01-04",
+                   "Day-scoped actions retain an included selected day")
+        state.selectTimelineMode(.daily)
+        state.selectTimelineMode(.weekly)
+        try expect(keys(state.weeklyDays) == expected && state.filter == .text
+                   && state.dailyScrollID == .capture(.capture(last.id)) && state.newTaskDraft.hasChanges,
+                   "Day/Week toggling preserves chosen dates, filtering, drafts and daily position")
+        state.selectWeeklyDay(date("2024-01-01 12:00"))
+        state.openWeekly()
+        try expect(keys(state.weeklyDays) == expected && CaptureCalendar.dayString(state.weeklyActionDay) == "2024-01-01",
+                   "Opening a selected day and returning to Week preserves the date collection")
+        try expect(!state.setWeeklyDays([]) && keys(state.weeklyDays) == expected,
+                   "Rejecting an empty picker selection leaves the current week untouched")
+        try expect(!state.setWeeklyDays((1...8).map { date("2024-01-\(String(format: "%02d", $0)) 12:00") })
+                   && keys(state.weeklyDays) == expected,
+                   "An eighth selected date cannot silently remove another date")
+        let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: Date())!
+        try expect(!state.setWeeklyDays([tomorrow]) && keys(state.weeklyDays) == expected,
+                   "A future-only selection is rejected without changing the board")
+        state.query = "receipt"
+        state.openSearch(week: state.weeklyDays)
+        try expect(state.searchScope == .week(Set(expected))
+                   && Set(state.searchGroups.flatMap(\.entries).map { $0.capture.id }) == Set([first.id, last.id]),
+                   "Search selected days covers exactly the selected dates and excludes captures in the gaps")
+        try expect(state.searchScopeTitle == "3 selected days",
+                   "A sparse search scope names the selected day count rather than implying a continuous range")
+        state.back()
+        try expect(state.route == .weekly && keys(state.weeklyDays) == expected,
+                   "Returning from scoped search keeps the selected dates")
+        state.moveWeek(-1)
+        try expect(keys(state.weeklyDays) == ["2023-12-25", "2023-12-27", "2023-12-28"],
+                   "Previous week shifts a sparse selection across the year boundary without filling gaps")
+        state.moveWeek(1)
+        try expect(keys(state.weeklyDays) == expected, "Next week restores the same sparse dates")
+        state.refreshCurrentDay(at: date("2024-01-04 23:59"))
+        state.refreshCurrentDay(at: date("2024-01-05 00:01"))
+        try expect(keys(state.weeklyDays) == expected && CaptureCalendar.dayString(state.weekEndingDay) == "2024-01-04",
+                   "Midnight never moves an explicitly chosen collection of dates")
+        state.setWeekEndingDay(date("2024-01-04 12:00"))
+        try expect(!state.isCustomWeekSelection && state.weeklyDays.count == 7,
+                   "Choosing a conventional week ending resets explicit dates to a trailing seven-day range")
+        try expect(state.setWeeklyDays([date("2024-01-03 12:00")]) && state.weeklyDays.count == 1
+                   && state.weeklyVisibleDays.isEmpty,
+                   "One chosen empty day remains a valid scope with no empty column")
+        state.openSearch(week: state.weeklyDays)
+        try expect(state.searchScopeTitle == prettyDay("2024-01-03"),
+                   "A single selected day has one readable search date without a repeated range")
+        state.back()
+        state.showCurrentWeek()
+        try expect(!state.isCustomWeekSelection && state.weeklyDays.count == 7
+                   && Calendar.current.isDateInToday(state.weeklyDays.last!),
+                   "Last seven days restores the current default range after a custom selection")
+        let after = try encodedCaptures(store)
+        try expect(before == after && client.permissionRequests == 0 && client.scheduled.isEmpty,
+                   "Custom week selection never mutates captures or requests notifications")
+    }
+
     @MainActor static func main() async throws {
         let root = FileManager.default.temporaryDirectory.appendingPathComponent("DaBinWeeklyState-\(UUID().uuidString)")
         defer { try? FileManager.default.removeItem(at: root) }
@@ -414,6 +549,8 @@ struct WeeklyStateTests {
         try checkRollover(state)
         try checkEmptyWeek()
         try checkSparseWeek(root: root.appendingPathComponent("Sparse"))
+        try checkDateSelectionModel()
+        try checkCustomDates(root: root.appendingPathComponent("Custom"))
         let snapshotsAfterBrowsing = try encodedCaptures(store)
         try expect(snapshotsAfterBrowsing == savedSnapshots, "Weekly browsing leaves every persisted capture field unchanged")
         try expect(store.captures.allSatisfy { store.archiveURL(for: $0) == folders[$0.id]! },

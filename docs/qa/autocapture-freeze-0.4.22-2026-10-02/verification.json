@@ -1,0 +1,76 @@
+{
+  "schemaVersion": 1,
+  "version": "0.4.22",
+  "buildNumber": "77",
+  "date": "2026-10-02",
+  "request": "Recover and fix the reported Auto Capture freeze",
+  "diagnosis": {
+    "sample": "native/build/qa/autocapture-freeze-2026-10-02/frozen-process.sample.txt",
+    "oldPID": 17079,
+    "oldVersion": "0.4.21 (76)",
+    "observedCPUPercent": 99.1,
+    "mainThread": "SwiftUI graph transactions / Explorer LazyStack sizing and placement",
+    "deterministicallyReproduced": false,
+    "baselineNotes": "Both 60-capture and expanded 128-capture pre-fix synthetic baselines passed. Changes address concrete layout/lifecycle hazards in the sampled path; no universal freeze-prevention claim."
+  },
+  "changes": [
+    "One stable identity per Explorer heading/capture row",
+    "One action subtree per Explorer footer instead of alternate interactive ViewThatFits branches",
+    "No publication on already-empty transient feedback dismissal"
+  ],
+  "qa": {
+    "coverage": "selected_suites",
+    "distinctPassingSuites": 12,
+    "mainReport": "native/build/qa/runs/20261002T082359108448Z/report.json",
+    "finalNativeHostReport": "native/build/qa/runs/20261002T082948691261Z/report.json",
+    "mainReportSupersededTestOnly": "AutoCaptureExplorerResponsivenessTests",
+    "otherElevenSuitesInputsMatch": true,
+    "finalStressChecks": 114,
+    "syntheticAutomaticCaptures": 128,
+    "insertionBursts": 16,
+    "backgroundWatchdogSeconds": 8,
+    "productionNativeHost": true,
+    "closeReopenAndReversal": true,
+    "isolatedArchiveReopenVerified": true,
+    "personalArchiveUsedAsFixture": false,
+    "systemClipboardUsedAsFixture": false,
+    "projectCheck": "passed",
+    "diffCheck": "passed",
+    "nativeCardRenderingReviewed": true
+  },
+  "build": {
+    "configuration": "Release",
+    "sourceFingerprint": "23ceca70bd263beb60b3eebef84615d23796532ff2fc0d2c9b97b2c506424467",
+    "inputCount": 138,
+    "allBuildInputsMatch": true,
+    "executableSHA256": "6b6d0de31b14efae9078604947b47aca890fc8d798f5052518eb071a266a91d1",
+    "updaterExecutableSHA256": "b7e0ad8a6e8e7ca6e58fb2f12e906236011bc1d89cda250937cc6582f826965c"
+  },
+  "installation": {
+    "path": "/Users/roeylibfeld/Applications/DaBin.app",
+    "backup": "/Users/roeylibfeld/Applications/.DaBinBackups/20261002-112816-f4e2f4d4.app",
+    "oldProcessStop": "Exact executable checked; SIGTERM after native UI timeout; no SIGKILL needed",
+    "strictSignatureVerified": true,
+    "versionAndSourceFingerprintMatch": true,
+    "bothExecutableHashesMatch": true,
+    "installedPID": 20406,
+    "finalCPUPercent": 0.1,
+    "finalRSSKiB": 160864,
+    "liveChecks": [
+      "Settings version 0.4.22 (77)",
+      "Projects / Explorer",
+      "Scrolled existing project without opening any capture",
+      "Expanded inspector / restored compact Explorer"
+    ],
+    "autoCapture": "Paused as found; channels left unchanged",
+    "tooltips": "Enabled as found",
+    "captureDataEditsForVerification": false,
+    "personalArchiveByteInventoried": false
+  },
+  "distribution": {
+    "committed": false,
+    "pushed": false,
+    "publicBinaryReleased": false,
+    "appStoreApproved": false
+  }
+}

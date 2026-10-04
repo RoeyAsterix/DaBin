@@ -1,0 +1,13 @@
+DABIN LAUNCH GUIDE / PDF QA
+Prepared 4 October 2026.
+PDF: DaBin_Launch_Guide.pdf
+Pages: 9
+Authoring: local ReportLab, bundled Python runtime.
+Rendering: bundled Poppler pdftoppm, 110 dpi PNGs; all nine pages opened and visually reviewed. Studio Refresh revisions rechecked on both changed pages. Final cover artwork replacement rendered at 130 dpi and visually inspected.
+Visual result: PASS. No clipping, overlap, unreadable glyphs, malformed tables or footer collisions. Headers, page numbers, source links, screenshots and typography remain consistent and legible.
+Cover illustration: exact current desktop robot source 06_Source/assets/DABIN__ROBOT__DELIGHTED.png, aspect ratio preserved. The official app icon remains a separate valid kit asset.
+Text extraction: all pages contain expected readable text; exact page count confirmed with pypdf after final export.
+Authoring layout checks: all body elements fit above the footer margin; lowest measured body element bottom 70.19 pt.
+Media wording: supplied Feed DaBin film is 22 seconds; it includes actual riverside search. Proposed follow-up real-app demos are separately labeled. The Blender film is not labeled a certified App Store preview.
+No fillable fields. No personal capture data or KARI material is embedded.
+Final public links and release claims must be completed/verified before launch; this PDF is a local prepared guide.

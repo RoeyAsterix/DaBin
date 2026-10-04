@@ -2,6 +2,7 @@ import SwiftUI
 
 @MainActor
 struct WeeklyScreen: View {
+    @Environment(\.workspaceZoom) private var zoom
     @ObservedObject var state: AppState
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var columnsSettled = false
@@ -26,13 +27,14 @@ struct WeeklyScreen: View {
                     let days = state.weeklyVisibleDays
                     let gaps = CGFloat(max(0, days.count - 1)) * 8
                     let available = max(0, geometry.size.width - 32 - gaps)
-                    let columnWidth = min(680, max(170, available / CGFloat(max(1, days.count))))
+                    let columnWidth = min(zoom.value(680), max(zoom.value(170), available / CGFloat(max(1, days.count))))
                     ScrollViewReader { proxy in
                         ScrollView(.horizontal) {
                             HStack(alignment: .top, spacing: 8) {
                                 ForEach(Array(days.enumerated()), id: \.element) { index, day in
                                     WeeklyDayColumn(state: state, day: day)
                                         .frame(width: columnWidth, height: max(0, geometry.size.height - 20))
+                                        .workspaceZoomItem("week-day:" + CaptureCalendar.dayString(day), axis: .horizontal)
                                         .offset(x: columnsSettled || reduceMotion ? 0 : (state.weeklyExpansionDirection == .left ? 22 : -22))
                                         .animation(reduceMotion ? nil : .easeOut(duration: 0.24)
                                             .delay(Double(state.weeklyExpansionDirection == .left ? days.count - 1 - index : index) * 0.028), value: columnsSettled)
@@ -46,7 +48,8 @@ struct WeeklyScreen: View {
                             columnsSettled = true
                             scrollToLatestVisibleDay(proxy)
                         }
-                        .onChange(of: state.weekEndingDay) { _, _ in scrollToLatestVisibleDay(proxy) }
+                        .onChange(of: state.weeklyDays) { _, _ in scrollToLatestVisibleDay(proxy) }
+                        .onChange(of: state.weeklyVisibleDays) { _, _ in scrollToLatestVisibleDay(proxy) }
                         .onChange(of: state.filter) { _, _ in scrollToLatestVisibleDay(proxy) }
                     }
                 }
@@ -54,7 +57,7 @@ struct WeeklyScreen: View {
             HStack {
                 Text(footerCount)
                 Spacer(minLength: 8)
-                Text(state.weeklyVisibleDays.isEmpty ? "Browse another week" : "Select a day to open Daily")
+                Text(state.weeklyVisibleDays.isEmpty ? "Choose other dates" : "Select a day to open Daily")
             }.font(.system(size: 11)).foregroundStyle(Palette.muted)
                 .padding(.horizontal, 17).padding(.vertical, 9)
                 .overlay(alignment: .top) { Rectangle().fill(Palette.line).frame(height: 1) }
@@ -62,16 +65,16 @@ struct WeeklyScreen: View {
     }
 
     private var emptyTitle: String {
-        "No captures or tasks this week"
+        "No captures or tasks on these dates"
     }
 
     private var emptyMessage: String {
-        "Only days with activity appear in Weekly."
+        "Choose up to 7 dates. Days without activity stay hidden."
     }
 
     private var footerCount: String {
         let count = state.weeklyVisibleDays.count
-        return count == 0 ? "No active days" : "\(count) active \(count == 1 ? "day" : "days")"
+        return "\(count) of \(state.weeklyDays.count) \(state.weeklyDays.count == 1 ? "day" : "days") with activity"
     }
 
     private func scrollToLatestVisibleDay(_ proxy: ScrollViewProxy) {
@@ -129,6 +132,7 @@ private struct WeeklyDayColumn: View {
                         .font(.system(size: 11)).foregroundStyle(Palette.muted)
                 }.frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
+                ScrollViewReader { proxy in
                 ScrollView {
                     LazyVStack(spacing: 8) {
                         ForEach(cards) { card in
@@ -136,16 +140,34 @@ private struct WeeklyDayColumn: View {
                             case .capture(let captureCard):
                                 if captureCard.isImportedBatch {
                                     GroupedCaptureCard(state: state, group: captureCard, compact: true)
+                                        .workspaceZoomItem("capture:" + captureCard.primary.id.uuidString)
+                                        .id("capture:" + captureCard.primary.id.uuidString)
                                 } else {
                                     WeeklyCaptureCard(state: state, capture: captureCard.primary,
                                                       taskAtTop: state.isTaskAtTop(captureCard.primary, on: day))
+                                        .id("capture:" + captureCard.primary.id.uuidString)
                                 }
                             case .automaticHour(let group):
                                 HourlyCaptureCard(state: state, group: group, compact: true)
+                                    .workspaceZoomItem("capture:" + (group.captures.first?.id.uuidString ?? ""))
+                                    .id("capture:" + (group.captures.first?.id.uuidString ?? ""))
                             }
                         }
                     }.padding(8)
                 }.scrollIndicators(.automatic)
+                    .background {
+                        WorkspaceScrollHistory(anchor: state.weeklyColumnViewports[CaptureCalendar.dayString(day)],
+                            contextID: "weekly-" + CaptureCalendar.dayString(day),
+                            onAnchor: { state.weeklyColumnViewports[CaptureCalendar.dayString(day)] = $0 })
+                            .allowsHitTesting(false).accessibilityHidden(true)
+                    }
+                    .onAppear {
+                        if let anchor = state.weeklyColumnViewports[CaptureCalendar.dayString(day)] { proxy.scrollTo(anchor.itemID, anchor: .top) }
+                    }
+                    .onChange(of: state.navigationRestorationRevision) { _, _ in
+                        if let anchor = state.weeklyColumnViewports[CaptureCalendar.dayString(day)] { proxy.scrollTo(anchor.itemID, anchor: .top) }
+                    }
+                }
             }
         }.background(isSelected ? accent.opacity(0.045) : Palette.soft.opacity(0.55))
             .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
@@ -156,6 +178,7 @@ private struct WeeklyDayColumn: View {
 
 @MainActor
 private struct WeeklyCaptureCard: View {
+    @Environment(\.workspaceZoom) private var zoom
     @Environment(\.daBinAccent) private var accent
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @ObservedObject var state: AppState
@@ -171,6 +194,7 @@ private struct WeeklyCaptureCard: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
             CaptureReceiptView(capture: capture, category: captureTypeLabel(capture.kind))
                 .frame(maxWidth: .infinity, alignment: .leading)
+            CaptureTaskPriorityTag(capture: capture)
             HStack(spacing: 3) {
                 Spacer(minLength: 0)
                 CaptureCopyButton(state: state, captures: [capture], compact: true)
@@ -184,30 +208,33 @@ private struct WeeklyCaptureCard: View {
                     VStack(alignment: .leading, spacing: 8) {
                         if showsPreview && !capture.isMinimized {
                             CaptureThumbnail(store: state.store, capture: capture)
-                                .frame(height: 104).clipShape(RoundedRectangle(cornerRadius: 8))
+                                .frame(height: zoom.value(104)).clipShape(RoundedRectangle(cornerRadius: 8))
                         }
                         if capture.isTask {
                             Text(capture.isCompleted ? "COMPLETED" : "TASK")
-                                .font(.system(size: 10, weight: .medium)).tracking(0.5).foregroundStyle(Palette.muted)
+                                .font(.system(size: zoom.fontSize(10), weight: .medium)).tracking(0.5).foregroundStyle(Palette.muted)
                         }
                         if !capture.isMinimized, let host = captureLinkHost(capture) {
-                            Text(host).font(.system(size: 10)).foregroundStyle(Palette.muted).lineLimit(1)
+                            Text(host).font(.system(size: zoom.fontSize(10))).foregroundStyle(Palette.muted).lineLimit(1)
                         }
                         Text(capture.title.isEmpty ? "Untitled capture" : capture.title)
-                            .font(.system(size: 16, weight: .semibold)).lineLimit(capture.isMinimized ? 2 : 4)
+                            .font(.system(size: zoom.fontSize(16), weight: .semibold)).lineLimit(capture.isMinimized ? 2 : 4)
                             .foregroundStyle(capture.isCompleted ? Palette.muted : Palette.foreground)
                             .strikethrough(capture.isTask && capture.isCompleted, color: Palette.muted)
                             .multilineTextAlignment(.leading).frame(maxWidth: .infinity, alignment: .leading)
                         if !capture.isMinimized, !capture.isTask, !capture.previewDescription.isEmpty {
-                            Text(capture.previewDescription).font(.system(size: 12)).foregroundStyle(Palette.muted)
+                            Text(capture.previewDescription).font(.system(size: zoom.fontSize(12))).foregroundStyle(Palette.muted)
                                 .lineLimit(2).multilineTextAlignment(.leading)
                         }
                     }.contentShape(Rectangle())
                 }.buttonStyle(.plain).accessibilityLabel("Open \(capture.title), captured at \(captureClock(capture))")
+                    .captureDragSource(state: state, capture: capture)
             }
             if !capture.isMinimized {
                 if !capture.comment.isEmpty {
-                    Text(capture.comment).font(.system(size: 12)).foregroundStyle(Palette.muted).lineLimit(2)
+                    Text(capture.comment).font(.system(size: zoom.fontSize(12))).foregroundStyle(Palette.muted).lineLimit(2)
+                        .accessibilityIdentifier("capture-comment-\(capture.id.uuidString)")
+                        .readableTextDragSource(text: capture.comment, label: "Comment for \(capture.title)", state: state)
                 }
                 if capture.isTask { TaskFocusControls(state: state, capture: capture) }
                 CaptureConversionUndo(state: state, capture: capture)
@@ -225,11 +252,11 @@ private struct WeeklyCaptureCard: View {
                 }.padding(.top, 6).overlay(alignment: .top) { Rectangle().fill(Palette.line).frame(height: 0.7) }
                 if let reminder = capture.reminderAt {
                     Label("\(capture.isTask && capture.isCompleted ? "Paused · " : "")\(reminder.formatted(.dateTime.month(.abbreviated).day().hour().minute()))", systemImage: "bell")
-                        .font(.system(size: 11)).foregroundStyle(Palette.muted).fixedSize(horizontal: false, vertical: true)
+                        .font(.system(size: zoom.fontSize(11))).foregroundStyle(Palette.muted).fixedSize(horizontal: false, vertical: true)
                 }
             }
-        }.padding(10).frame(maxWidth: .infinity, alignment: .leading)
-            .background(Palette.surface, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+        }.padding(zoom.value(10)).workspaceZoomItem("capture:" + capture.id.uuidString).frame(maxWidth: .infinity, alignment: .leading)
+            .projectCardBackground(workspace: state.workspace, projectName: projectName)
             .projectCardFrame(workspace: state.workspace, projectName: projectName, activeProject: nil,
                               fallbackColor: taskAtTop ? accent.opacity(0.55) : Palette.line)
             .contextMenu {

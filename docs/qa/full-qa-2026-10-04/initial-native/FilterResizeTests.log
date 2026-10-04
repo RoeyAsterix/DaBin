@@ -1,0 +1,5 @@
+FAIL: Single-entry search keeps the labeled shell and result actions visible
+FAIL: Search shrink: resizing visibly passes through intermediate native frames
+FAIL: Empty Search fits its status without moving the header
+FAIL: Search growth: resizing visibly passes through intermediate native frames
+Filter resize checks: 111, failures: 4

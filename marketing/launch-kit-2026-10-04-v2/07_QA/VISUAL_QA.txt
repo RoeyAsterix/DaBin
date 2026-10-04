@@ -1,0 +1,15 @@
+DABIN UI TOUR / INDEPENDENT VISUAL QA
+
+Result: PASS for inspected rendered-frame composition. No remaining material findings.
+
+Scope: all 29 shot midpoints in landscape and portrait were inspected in contact sheets, plus 13 initial critical frames. Repaired portrait frames 536, 848, 860 and 880 and landscape frame 848 were inspected at original resolution.
+
+Resolved: portrait To organize control and pointer target are readable. Landscape named-snippet title, Palette notes label and body are fully visible. The portrait snippet card is also readable; its pointer cue intentionally emphasizes the whole card.
+
+The narrow side appendages and small feet around the app window are present in the unchanged native source PNGs, with the small head above the window. They are native rendered product chrome, not a guide-overlay artifact.
+
+Capture, timelines, projects, notes, snippets/history, shelf, local OCR/filters/preview, task planning/checklist/repeat/reminder, focus, optional automatic capture, export and recovery are visibly represented. The backup route targets the native More control without claiming an executed backup.
+
+Final encoded samples: root-extracted LANDSCAPE_11 and PORTRAIT_08 were opened at original resolution and pass with the repaired crops. All six independent contact sheets were regenerated from current rendered frames.
+
+Limits: no audio listening, motion lip-sync judgement or independent full-video decode was performed. Root performs broader encoded-media verification separately. Resolved full-frame paths and hashes in VISUAL_QA.json record the repair checks.

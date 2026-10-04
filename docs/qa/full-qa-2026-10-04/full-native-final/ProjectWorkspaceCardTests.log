@@ -1,0 +1,6 @@
+FIXTURE: /private/tmp/dabin-full-qa-20261004/native/build/qa/project-workspace-card/C0DF7A57-5580-4F5A-A9DE-5C7AE11999C1/completed-image-task-light@2x.png
+FIXTURE: /private/tmp/dabin-full-qa-20261004/native/build/qa/project-workspace-card/C0DF7A57-5580-4F5A-A9DE-5C7AE11999C1/project-types-grid-light@2x.png
+FIXTURE: /private/tmp/dabin-full-qa-20261004/native/build/qa/project-workspace-card/C0DF7A57-5580-4F5A-A9DE-5C7AE11999C1/project-types-compact-320-light@2x.png
+FIXTURE: /private/tmp/dabin-full-qa-20261004/native/build/qa/project-workspace-card/C0DF7A57-5580-4F5A-A9DE-5C7AE11999C1/project-types-grid-dark@2x.png
+FIXTURE: /private/tmp/dabin-full-qa-20261004/native/build/qa/project-workspace-card/C0DF7A57-5580-4F5A-A9DE-5C7AE11999C1/project-types-compact-320-dark@2x.png
+PASS: 263 project card checks; Task/Note/Capture semantics, real live task updates, light/dark/grid/320-point compact fixtures, original previews and independent selection; no personal archive, clipboard, network, or external opening.

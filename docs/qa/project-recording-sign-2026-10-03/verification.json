@@ -1,0 +1,74 @@
+{
+  "buildInputRecord": "build-attestation.json",
+  "buildNumber": "79",
+  "installationRecord": "installation.json",
+  "installedSourceFingerprint": "a888d106326a2bf3a09660f1b338b10408cb04a564b23f03af473d77a3341096",
+  "limitations": [
+    "ARM64 macOS 26.6.2 with SDK 27; no macOS 14 runtime claim.",
+    "Eleven focused suites passed. The entire 79-suite registry was not rerun for this feature.",
+    "Shared production views changed after the tested build. This evidence remains tied to the installed fingerprint.",
+    "No personal capture was opened, edited or copied for verification. The personal archive was not independently byte-inventoried."
+  ],
+  "liveUI": {
+    "capturingAX": "Capturing to: Tester Uno; DaBin purple robot, capturing to Tester Uno",
+    "enabledActiveStateVerified": true,
+    "expandedFrameVerified": true,
+    "lastObservedControls": [
+      "Resume Auto Capture",
+      "Auto Capture: Paused \u00b7 existing captures remain",
+      "Auto Capture destination: Tester Uno",
+      "Paused: Tester Uno"
+    ],
+    "lastObservedWindow": "DaBin Daily",
+    "originalPausedPreferenceRestored": true,
+    "pausedAX": "Paused: Tester Uno; DaBin purple robot, paused Tester Uno",
+    "pausedStateVerified": true,
+    "persistentCornerAfterBoardCloseVerified": true,
+    "pixelCaptureLimitation": "The native robot panel requests exclusion from window capture. The live screenshot appeared white; native rendered fixtures provide visual evidence, and live accessibility confirms state. Capture exclusion was preserved."
+  },
+  "nativeQA": {
+    "coverage": "11 selected Release suites, not the complete 79-suite regression",
+    "failedSuites": 0,
+    "newChecks": {
+      "ProjectRecordingRobotTests": 31,
+      "RobotProjectSignRenderTests": 53
+    },
+    "passedSuites": 11,
+    "report": "native-report.json",
+    "sourceChangedDuringRun": false,
+    "suiteNames": [
+      "ApplicationLifecycleTests",
+      "AutoCaptureServiceTests",
+      "AutoCaptureRobotPresenterTests",
+      "RobotMotionTests",
+      "QuietOrbitRenderTests",
+      "RobotProjectSignRenderTests",
+      "RobotDropTests",
+      "RobotWindowTransitionTests",
+      "RobotVisualConsistencyTests",
+      "TaskTimerRobotTests",
+      "ProjectRecordingRobotTests"
+    ]
+  },
+  "recordedAtUTC": "2026-10-03T13:01:58.955948+00:00",
+  "result": "passed",
+  "schemaVersion": 1,
+  "version": "0.4.24",
+  "visualQA": {
+    "artifactsDirectory": "renders",
+    "liveRecordingPerch": "bottom of camera island; other-perch fixtures exercise renderer but are not the live recording policy",
+    "projectNameFontSizePoints": 10,
+    "renderer": "Native AppKit/Core Animation",
+    "reviewed": [
+      "corner-recording@2x.png",
+      "corner-paused@2x.png",
+      "corner-long-title@2x.png",
+      "orbit-bottom@2x.png",
+      "compact-chrome@2x.png",
+      "full-board-recording@2x.png",
+      "timer-recording@2x.png",
+      "timer-paused@2x.png",
+      "timer-recording-off@2x.png"
+    ]
+  }
+}

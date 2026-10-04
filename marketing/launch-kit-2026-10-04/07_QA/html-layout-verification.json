@@ -1,0 +1,126 @@
+{
+  "local_only": true,
+  "results": [
+    {
+      "name": "LANDING_DESKTOP",
+      "facts": {
+        "width": 1440,
+        "contentWidth": 1440,
+        "images": [
+          {
+            "src": "media/DABIN__ROBOT__DELIGHTED.png",
+            "loaded": true,
+            "naturalWidth": 902,
+            "naturalHeight": 728,
+            "renderWidth": 488.046875,
+            "renderHeight": 393.890625
+          },
+          {
+            "src": "media/DABIN__UI__STUDIO_PROJECT.png",
+            "loaded": true,
+            "naturalWidth": 2360,
+            "naturalHeight": 1404,
+            "renderWidth": 1096,
+            "renderHeight": 652.828125
+          }
+        ],
+        "video": [
+          {
+            "readyState": 4,
+            "duration": 22,
+            "videoWidth": 1920,
+            "videoHeight": 1080
+          }
+        ],
+        "downloads": [
+          {
+            "disabled": "true",
+            "href": null
+          },
+          {
+            "disabled": "true",
+            "href": null
+          }
+        ]
+      },
+      "errors": []
+    },
+    {
+      "name": "LANDING_MOBILE",
+      "facts": {
+        "width": 390,
+        "contentWidth": 390,
+        "images": [
+          {
+            "src": "media/DABIN__ROBOT__DELIGHTED.png",
+            "loaded": true,
+            "naturalWidth": 902,
+            "naturalHeight": 728,
+            "renderWidth": 316,
+            "renderHeight": 255.03125
+          },
+          {
+            "src": "media/DABIN__UI__STUDIO_PROJECT.png",
+            "loaded": true,
+            "naturalWidth": 2360,
+            "naturalHeight": 1404,
+            "renderWidth": 346,
+            "renderHeight": 206.640625
+          }
+        ],
+        "video": [
+          {
+            "readyState": 4,
+            "duration": 22,
+            "videoWidth": 1920,
+            "videoHeight": 1080
+          }
+        ],
+        "downloads": [
+          {
+            "disabled": "true",
+            "href": null
+          },
+          {
+            "disabled": "true",
+            "href": null
+          }
+        ]
+      },
+      "errors": []
+    },
+    {
+      "name": "KIT_INDEX",
+      "facts": {
+        "width": 1440,
+        "contentWidth": 1440,
+        "images": [
+          {
+            "src": "06_Source/assets/DABIN__ROBOT__DELIGHTED.png",
+            "loaded": true,
+            "naturalWidth": 902,
+            "naturalHeight": 728,
+            "renderWidth": 370,
+            "renderHeight": 298.625
+          }
+        ],
+        "video": [
+          {
+            "readyState": 4,
+            "duration": 22,
+            "videoWidth": 1920,
+            "videoHeight": 1080
+          },
+          {
+            "readyState": 4,
+            "duration": 22,
+            "videoWidth": 1080,
+            "videoHeight": 1920
+          }
+        ],
+        "downloads": []
+      },
+      "errors": []
+    }
+  ]
+}

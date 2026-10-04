@@ -1,0 +1,9 @@
+{
+  "status": "PASS",
+  "ordinaryExternalDestinationAccepted": true,
+  "parentTraversalDestinationRefused": true,
+  "acceptedTraversalResolvesIntoProject": false,
+  "fixtureCreatedArchive": false,
+  "fileProviderAttributeProbe": "mocked; this checks path containment only",
+  "finding": "A destination through a nonexistent component followed by '..' can resolve into the forbidden source repository unless traversal is rejected or the complete destination is normalized before containment checks."
+}

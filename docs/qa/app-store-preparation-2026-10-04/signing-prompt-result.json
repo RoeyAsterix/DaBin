@@ -1,0 +1,5 @@
+{
+  "atUTC": "2026-10-04T03:31:05.775104+00:00",
+  "stoppedOnlyVerifiedOwnCodesign": true,
+  "reason": "Protected key-use prompt cannot be controlled by this tool; no user answer arrived during independent preparation. End this pending local archive attempt so it cannot sign later unnoticed. The unsigned Store candidate and logs remain."
+}

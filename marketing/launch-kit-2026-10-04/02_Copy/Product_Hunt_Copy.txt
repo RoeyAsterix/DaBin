@@ -1,0 +1,46 @@
+DABIN / PRODUCT HUNT COPY
+UNSENT DRAFT. Publish after the product is downloadable and links are complete.
+
+NAME
+DaBin
+
+TAGLINE
+A little Mac robot for saving and finding useful bits
+
+DESCRIPTION
+Save notes, links, images, files and tasks on your Mac. Drop things onto DaBin's desktop robot, keep them with a project, and search words in saved supported screenshots and documents locally. Free. No account, ads or cloud sync. Apple Silicon, macOS 14+.
+
+WEBSITE / DOWNLOAD
+[[WEBSITE_URL]]
+[[APP_STORE_URL]]
+
+FIRST MAKER COMMENT
+Hi Product Hunt - I'm [[DEVELOPER_NAME]], the maker of DaBin.
+
+DaBin gives the useful bits of your day a place on your Mac: a screenshot, a reference link, a note or the next task. The desktop robot is a drop target; the board keeps saved content and project resources together.
+
+The demo uses a fictional design project. Save a few references, then search a word inside a saved screenshot. Recognition happens locally and search covers supported content saved into DaBin.
+
+It's free, requires no account and has no ads, analytics or cloud sync. Auto Capture is optional and off by default. Optional previews for manually saved links can contact the linked sites when enabled.
+
+It runs on Apple Silicon Macs with macOS 14 or later. I'd like to hear whether the save-and-find workflow feels useful, especially for design references. Ask anything about capture, projects or local search; I'll be here to reply.
+
+[[APP_STORE_URL]]
+
+GALLERY ORDER
+1. Outcome-led capture/Inbox image.
+2. Feed DaBin brand film; label it as an animated introduction where context is needed.
+3. Real Projects view with fictional references.
+4. Real saved-screenshot search recording/screenshot once captured from the public build.
+5. Real Focus view only if room; one clear benefit beats a feature collage.
+
+LAUNCH NOTE FOR YOUR OWN CHANNELS
+DaBin is on Product Hunt today. It's a free Mac app for saving and finding useful bits, with a little desktop robot. Take a look and tell me what you think: [[PRODUCT_HUNT_URL]]
+
+REPLIES
+Compatibility: Apple Silicon Macs with macOS 14 or later.
+Data: Saved captures and recognized text are local. No account, ads, analytics or cloud sync. Optional manual-link previews can contact websites.
+Search: It searches supported content saved into DaBin; it doesn't search the entire Mac or answer with AI.
+
+Do not ask for upvotes. Use your own maker account, verify the current field limits in the submission form, and choose a day when you can answer questions. No ranking or featuring outcome is promised.
+SOURCE: https://www.producthunt.com/launch (checked 4 October 2026).

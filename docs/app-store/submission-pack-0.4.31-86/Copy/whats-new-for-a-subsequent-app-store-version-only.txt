@@ -1,0 +1,1 @@
+Auto Capture is easier to recognize at a glance. A red recording symbol in the menu bar shows when monitoring is active, with distinct Ready, Paused and Off states. We have also clarified the privacy policy and the controls for your saved data.

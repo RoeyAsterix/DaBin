@@ -143,11 +143,21 @@ import Foundation
         state.openInbox()
         try expect(state.route == .inbox, "Inbox remains available independently of the Activity calendar")
         state.route = .weekly; state.filter = .files
+        let weeklyDates = state.weeklyDays.map { CaptureCalendar.dayString($0) }
         state.performSearchCommand(); state.query = "typography"
-        try expect(state.route == .search && state.searchScope == .all && state.filter == .all && !state.weeklySearchActionsPresented, "Weekly/global search opens the whole archive without a scope prompt")
+        try expect(state.route == .search && state.searchScope == .all && state.filter == .all
+            && state.searchProject == nil && state.searchSource == nil && !state.showSearchContext
+            && state.libraryProject == "Website launch" && !state.weeklySearchActionsPresented
+            && state.weeklyDays.map { CaptureCalendar.dayString($0) } == weeklyDates,
+            "Fresh Weekly Search starts globally while preserving its dates and project destination")
+        state.filter = .files
+        try expect(state.searchGroups.isEmpty, "A selected Files filter does not silently return text captures")
+        state.filter = .all
         try expect(state.searchGroups.flatMap(\.entries).map { $0.capture.id } == [reference.id], "Default search contains only matches")
+        state.selectSearchProject("Website launch")
         state.showSearchContext = true
-        try expect(state.searchGroups.flatMap(\.entries).contains { $0.capture.id == earlier.id && !$0.isMatch }, "Neighbor context is available by deliberate opt-in")
+        try expect(!state.searchGroups.flatMap(\.entries).contains { $0.capture.id == earlier.id },
+                   "Opt-in nearby context never leaks a capture outside the selected project")
         let focus = state.globalSearchFocusRequest
         state.performSearchCommand()
         try expect(state.globalSearchFocusRequest == focus + 1, "Search command refocuses an already-open search")
@@ -157,6 +167,7 @@ import Foundation
         try expect(state.route == .weekly && state.filter == .files, "Global search restores the weekly Activity filter")
         state.filter = .media
         state.openSearch(day: yesterday)
+        state.filter = .media
         state.searchProject = "Website launch"; state.searchSource = "Notes"
         state.searchScrollID = reference.id
         let submitFocus = state.globalSearchFocusRequest
@@ -170,6 +181,7 @@ import Foundation
         try expect(state.route == .weekly && state.filter == .media, "Day-scoped search restores the current weekly filter")
         state.filter = .links
         state.openSearch(week: state.weeklyDays)
+        state.filter = .links
         let scope = state.searchScope
         state.submitSearch()
         try expect(state.searchScope == scope && state.filter == .links, "Return also preserves an explicitly scoped week search")

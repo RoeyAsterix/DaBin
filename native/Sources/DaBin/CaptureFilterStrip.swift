@@ -27,5 +27,6 @@ struct CaptureFilterStrip: View {
             }
         }.frame(maxWidth: .infinity)
             .accessibilityElement(children: .contain).accessibilityLabel("Capture filters")
+            .daBinTutorialAnchor(.captureFilters)
     }
 }

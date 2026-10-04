@@ -1,0 +1,52 @@
+DABIN / LAUNCH CHECKLIST
+Prepared locally. Nothing has been posted, sent, submitted or deployed.
+
+BEFORE PUBLICATION
+[ ] Final distributed app/build is verified; Apple approval and the planned release method are complete.
+[ ] Price is Free in intended territories. Avoid 'free forever' unless there is an explicit permanent commitment.
+[ ] App Store URL, supported territories and publication date are confirmed.
+[ ] Website URL, public support route and contact email are working.
+[ ] Replace [[APP_STORE_URL]], [[WEBSITE_URL]], [[CONTACT_EMAIL]], [[DEVELOPER_NAME]], [[LAUNCH_DATE]], [[RELEASE_NOTES_URL]] and all channel-specific fields.
+[ ] Final screenshots and demonstrations match the shipping app. Fictional examples only; no private capture archive or KARI material.
+[ ] Any stylized robot animation is described as brand animation rather than a literal app recording.
+[ ] Show Apple Silicon + macOS 14 or later where compatibility affects the download choice.
+[ ] Review privacy wording: no account, advertising, analytics or cloud sync; local recognition of saved supported content; optional manual-link previews can contact websites.
+[ ] Verify any fonts, artwork, music and voice licensing; keep their provenance with the source files.
+[ ] Read r/macapps rules again; check promotion timing/account eligibility and choose the truthful AI disclosure.
+[ ] Read Product Hunt launch guidance again and use a personal maker account.
+[ ] Watch all video exports with sound and muted; check subtitles, legibility, CTA and crop on a phone.
+[ ] Check social copy with the actual URL; shorten if a platform's current limit requires it.
+[ ] If seeking launch featuring, nominate at least three weeks ahead where practical; otherwise prepare an actual future update nomination.
+
+DAY 1: AFTER THE RELEASE IS VERIFIED PUBLIC
+[ ] Open the App Store listing from an ordinary browser/device and confirm the download is available.
+[ ] Replace 'coming soon' or draft labels on the public landing page and set its primary download link.
+[ ] Publish the main feed clip on one primary social channel, with the approved post copy.
+[ ] Publish one rule-compliant community announcement; be present for questions.
+[ ] Share the factsheet and app link with the first small set of targets using tailored messages.
+[ ] Record campaign/channel, exact asset, timestamp, destination URL and minutes spent.
+[ ] Answer compatibility and privacy questions using Support_and_Reply_Copy.txt.
+
+FIRST 7 DAYS
+[ ] Check whether App Store Connect campaign links are available after the app has live download data; do not fabricate provider tokens.
+[ ] Give each major channel an Apple-generated campaign link as soon as available.
+[ ] Log the earliest posts as untagged if campaign links were not yet available.
+[ ] Make the saved-screenshot text-search clip from the real shipping app.
+[ ] Collect voluntary feedback; ask what users saved and whether they could find it again without asking for private content.
+[ ] Reply once to each meaningful question; do not pressure users for ratings or upvotes.
+[ ] Reconcile support FAQ with actual questions.
+
+WEEKLY
+[ ] Compare like date ranges; preserve unavailable/withheld metrics as such.
+[ ] Record impressions/views and product-page/download metrics separately.
+[ ] Review time spent per useful reply, campaign download and qualified outreach response.
+[ ] Follow up once after about a week only where appropriate; stop when declined or unanswered after that.
+[ ] Publish a useful answer or workflow, not another identical launch message.
+[ ] Pause promotion of a broken feature and fix the claim or app before reusing the clip.
+
+END OF MONTH
+[ ] Review observed results without inventing attribution, retention or a success story.
+[ ] Keep the best-supported audience/message for month two.
+[ ] Decide whether any paid experiment deserves a capped budget.
+[ ] Refresh claims and screenshots against the currently public build.
+[ ] Archive the final copy, assets, source URLs and real campaign results.

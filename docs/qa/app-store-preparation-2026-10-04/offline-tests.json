@@ -1,0 +1,27 @@
+{
+  "firstAttempt": "58 tests ran; 15 metadata tests errored because the isolated source snapshot omitted its sibling docs/app-store/metadata-en-US.json. Added the current metadata fixture without changing production/test code.",
+  "runs": [
+    {
+      "name": "python-tests",
+      "exitCode": 0,
+      "summary": [
+        "..........................................................",
+        "----------------------------------------------------------------------",
+        "Ran 58 tests in 0.064s",
+        "",
+        "OK"
+      ]
+    },
+    {
+      "name": "preflight-tests",
+      "exitCode": 0,
+      "summary": [
+        "",
+        "----------------------------------------------------------------------",
+        "Ran 32 tests in 0.003s",
+        "",
+        "OK"
+      ]
+    }
+  ]
+}

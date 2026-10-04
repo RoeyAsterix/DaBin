@@ -1,0 +1,8 @@
+{
+  "reason": "Shared tutorial assertions accidentally carried into isolated updater test direct branch, but tutorial production source intentionally excluded. Restore verified baseline direct branch; retain Store branch unchanged.",
+  "productionChanged": false,
+  "sharedTestChanged": false,
+  "storeTestBranchUnchanged": true,
+  "beforeSHA256": "2818c8430df3b583f4b34a83f8a97c17562617dfc164d701d9f0929dc13ad3ba",
+  "afterSHA256": "68983358affe754d71ca9e2f5205b4b199be03e9d6d0fa23b559bcae9fdf2cef"
+}

@@ -1,0 +1,238 @@
+[
+  {
+    "name": "media",
+    "status": "passed",
+    "exitCode": 0,
+    "seconds": 2.389,
+    "log": "/private/tmp/dabin-extended-qa-20261004/media.log",
+    "command": [
+      "/private/tmp/dabin-extended-qa-20261004/MediaIntegrationTests/MediaIntegrationTests"
+    ]
+  },
+  {
+    "name": "render-default",
+    "status": "failed",
+    "exitCode": 1,
+    "seconds": 7.759,
+    "log": "/private/tmp/dabin-extended-qa-20261004/render-default.log",
+    "command": [
+      "/private/tmp/dabin-extended-qa-20261004/NativeRenderTests/NativeRenderTests",
+      "/private/tmp/dabin-extended-qa-20261004/renders/default"
+    ]
+  },
+  {
+    "name": "render-open-design",
+    "status": "passed",
+    "exitCode": 0,
+    "seconds": 12.587,
+    "log": "/private/tmp/dabin-extended-qa-20261004/render-open-design.log",
+    "command": [
+      "/private/tmp/dabin-extended-qa-20261004/NativeRenderTests/NativeRenderTests",
+      "/private/tmp/dabin-extended-qa-20261004/renders/open-design",
+      "--open-design"
+    ]
+  },
+  {
+    "name": "render-explorer",
+    "status": "passed",
+    "exitCode": 0,
+    "seconds": 5.616,
+    "log": "/private/tmp/dabin-extended-qa-20261004/render-explorer.log",
+    "command": [
+      "/private/tmp/dabin-extended-qa-20261004/NativeRenderTests/NativeRenderTests",
+      "/private/tmp/dabin-extended-qa-20261004/renders/explorer",
+      "--explorer"
+    ]
+  },
+  {
+    "name": "render-robot-empty-state",
+    "status": "passed",
+    "exitCode": 0,
+    "seconds": 2.898,
+    "log": "/private/tmp/dabin-extended-qa-20261004/render-robot-empty-state.log",
+    "command": [
+      "/private/tmp/dabin-extended-qa-20261004/NativeRenderTests/NativeRenderTests",
+      "/private/tmp/dabin-extended-qa-20261004/renders/robot-empty-state",
+      "--robot-empty-state"
+    ]
+  },
+  {
+    "name": "render-responsive-detail",
+    "status": "passed",
+    "exitCode": 0,
+    "seconds": 9.909,
+    "log": "/private/tmp/dabin-extended-qa-20261004/render-responsive-detail.log",
+    "command": [
+      "/private/tmp/dabin-extended-qa-20261004/NativeRenderTests/NativeRenderTests",
+      "/private/tmp/dabin-extended-qa-20261004/renders/responsive-detail",
+      "--responsive-detail"
+    ]
+  },
+  {
+    "name": "render-buddy-redesign",
+    "status": "passed",
+    "exitCode": 0,
+    "seconds": 14.837,
+    "log": "/private/tmp/dabin-extended-qa-20261004/render-buddy-redesign.log",
+    "command": [
+      "/private/tmp/dabin-extended-qa-20261004/NativeRenderTests/NativeRenderTests",
+      "/private/tmp/dabin-extended-qa-20261004/renders/buddy-redesign",
+      "--buddy-redesign"
+    ]
+  },
+  {
+    "name": "render-simpler-ui",
+    "status": "passed",
+    "exitCode": 0,
+    "seconds": 7.44,
+    "log": "/private/tmp/dabin-extended-qa-20261004/render-simpler-ui.log",
+    "command": [
+      "/private/tmp/dabin-extended-qa-20261004/NativeRenderTests/NativeRenderTests",
+      "/private/tmp/dabin-extended-qa-20261004/renders/simpler-ui",
+      "--simpler-ui"
+    ]
+  },
+  {
+    "name": "render-task-conversion",
+    "status": "passed",
+    "exitCode": 0,
+    "seconds": 4.023,
+    "log": "/private/tmp/dabin-extended-qa-20261004/render-task-conversion.log",
+    "command": [
+      "/private/tmp/dabin-extended-qa-20261004/NativeRenderTests/NativeRenderTests",
+      "/private/tmp/dabin-extended-qa-20261004/renders/task-conversion",
+      "--task-conversion"
+    ]
+  },
+  {
+    "name": "render-content-search",
+    "status": "passed",
+    "exitCode": 0,
+    "seconds": 3.016,
+    "log": "/private/tmp/dabin-extended-qa-20261004/render-content-search.log",
+    "command": [
+      "/private/tmp/dabin-extended-qa-20261004/NativeRenderTests/NativeRenderTests",
+      "/private/tmp/dabin-extended-qa-20261004/renders/content-search",
+      "--content-search"
+    ]
+  },
+  {
+    "name": "render-robot-personality",
+    "status": "passed",
+    "exitCode": 0,
+    "seconds": 23.756,
+    "log": "/private/tmp/dabin-extended-qa-20261004/render-robot-personality.log",
+    "command": [
+      "/private/tmp/dabin-extended-qa-20261004/NativeRenderTests/NativeRenderTests",
+      "/private/tmp/dabin-extended-qa-20261004/renders/robot-personality",
+      "--robot-personality"
+    ]
+  },
+  {
+    "name": "render-release-ui",
+    "status": "passed",
+    "exitCode": 0,
+    "seconds": 41.934,
+    "log": "/private/tmp/dabin-extended-qa-20261004/render-release-ui.log",
+    "command": [
+      "/private/tmp/dabin-extended-qa-20261004/NativeRenderTests/NativeRenderTests",
+      "/private/tmp/dabin-extended-qa-20261004/renders/release-ui",
+      "--release-ui"
+    ]
+  },
+  {
+    "name": "render-theme",
+    "status": "passed",
+    "exitCode": 0,
+    "seconds": 5.567,
+    "log": "/private/tmp/dabin-extended-qa-20261004/render-theme.log",
+    "command": [
+      "/private/tmp/dabin-extended-qa-20261004/NativeRenderTests/NativeRenderTests",
+      "/private/tmp/dabin-extended-qa-20261004/renders/theme",
+      "--theme"
+    ]
+  },
+  {
+    "name": "render-preview-fit",
+    "status": "passed",
+    "exitCode": 0,
+    "seconds": 11.712,
+    "log": "/private/tmp/dabin-extended-qa-20261004/render-preview-fit.log",
+    "command": [
+      "/private/tmp/dabin-extended-qa-20261004/NativeRenderTests/NativeRenderTests",
+      "/private/tmp/dabin-extended-qa-20261004/renders/preview-fit",
+      "--preview-fit"
+    ]
+  },
+  {
+    "name": "render-weekly-empty",
+    "status": "passed",
+    "exitCode": 0,
+    "seconds": 3.391,
+    "log": "/private/tmp/dabin-extended-qa-20261004/render-weekly-empty.log",
+    "command": [
+      "/private/tmp/dabin-extended-qa-20261004/NativeRenderTests/NativeRenderTests",
+      "/private/tmp/dabin-extended-qa-20261004/renders/weekly-empty",
+      "--weekly-empty"
+    ]
+  },
+  {
+    "name": "render-recovery-guidance",
+    "status": "passed",
+    "exitCode": 0,
+    "seconds": 3.341,
+    "log": "/private/tmp/dabin-extended-qa-20261004/render-recovery-guidance.log",
+    "command": [
+      "/private/tmp/dabin-extended-qa-20261004/NativeRenderTests/NativeRenderTests",
+      "/private/tmp/dabin-extended-qa-20261004/renders/recovery-guidance",
+      "--recovery-guidance"
+    ]
+  },
+  {
+    "name": "render-capture-actions",
+    "status": "passed",
+    "exitCode": 0,
+    "seconds": 9.241,
+    "log": "/private/tmp/dabin-extended-qa-20261004/render-capture-actions.log",
+    "command": [
+      "/private/tmp/dabin-extended-qa-20261004/NativeRenderTests/NativeRenderTests",
+      "/private/tmp/dabin-extended-qa-20261004/renders/capture-actions",
+      "--capture-actions"
+    ]
+  },
+  {
+    "name": "walkthrough",
+    "status": "passed",
+    "exitCode": 0,
+    "seconds": 11.62,
+    "log": "/private/tmp/dabin-extended-qa-20261004/walkthrough.log",
+    "command": [
+      "/private/tmp/dabin-extended-qa-20261004/WalkthroughRenderTests/WalkthroughRenderTests",
+      "/private/tmp/dabin-extended-qa-20261004/renders/walkthrough",
+      "/private/tmp/dabin-full-qa-20261004/design/walkthrough/assets/Launch-plan.txt"
+    ]
+  },
+  {
+    "name": "privacy",
+    "status": "failed",
+    "exitCode": 1,
+    "seconds": 0.433,
+    "log": "/private/tmp/dabin-extended-qa-20261004/privacy.log",
+    "command": [
+      "bash",
+      "scripts/render_privacy_qa.sh"
+    ]
+  },
+  {
+    "name": "island-playground",
+    "status": "failed",
+    "exitCode": 1,
+    "seconds": 2.845,
+    "log": "/private/tmp/dabin-extended-qa-20261004/island-playground.log",
+    "command": [
+      "bash",
+      "scripts/render_island_playground.sh",
+      "/private/tmp/dabin-extended-qa-20261004/renders/island-playground"
+    ]
+  }
+]

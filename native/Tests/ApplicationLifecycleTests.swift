@@ -60,8 +60,40 @@ private final class ApplicationLifecycleTests: NSObject, NSApplicationDelegate {
         }
         return value
     }
+    private func hasRedPixels(_ image: NSImage, appearance: NSAppearance.Name) -> Bool {
+        var found = false
+        NSAppearance(named: appearance)?.performAsCurrentDrawingAppearance {
+            guard let data = image.tiffRepresentation,
+                  let bitmap = NSBitmapImageRep(data: data) else { return }
+            for y in 0..<bitmap.pixelsHigh {
+                for x in 0..<bitmap.pixelsWide {
+                    guard let color = bitmap.colorAt(x: x, y: y)?.usingColorSpace(.deviceRGB) else { continue }
+                    if color.alphaComponent > 0.5 && color.redComponent > 0.7
+                        && color.redComponent - max(color.greenComponent, color.blueComponent) > 0.25 {
+                        found = true
+                        return
+                    }
+                }
+            }
+        }
+        return found
+    }
     private func run() async throws {
-        let frontmost = NSWorkspace.shared.frontmostApplication?.processIdentifier
+        // Other applications may legitimately become active while this suite
+        // runs. Observe this process taking focus instead of requiring the
+        // user's foreground application to stay unchanged for the whole run.
+        var activatedFixture = NSApp.isActive
+        var acquiredKeyWindow = NSApp.keyWindow != nil
+        let activation = NotificationCenter.default.addObserver(
+            forName: NSApplication.didBecomeActiveNotification, object: NSApp, queue: .main
+        ) { _ in MainActor.assumeIsolated { activatedFixture = true } }
+        let keyWindow = NotificationCenter.default.addObserver(
+            forName: NSWindow.didBecomeKeyNotification, object: nil, queue: .main
+        ) { _ in MainActor.assumeIsolated { acquiredKeyWindow = true } }
+        defer {
+            NotificationCenter.default.removeObserver(activation)
+            NotificationCenter.default.removeObserver(keyWindow)
+        }
         var reopenRequests = 0
         let appDelegate = AppDelegate { reopenRequests += 1 }
         try expect(!appDelegate.applicationShouldHandleReopen(NSApp, hasVisibleWindows: true),
@@ -174,6 +206,52 @@ private final class ApplicationLifecycleTests: NSObject, NSApplicationDelegate {
                    "The menu presents a noninteractive Auto Capture status row")
         try expect(statusBar.pauseMenuItem?.isHidden == true,
                    "Pause and Resume stay absent while Auto Capture is disabled")
+        let ready = StatusBarController.Presentation.make(enabled: true, paused: false, status: .ready)
+        try expect(ready.indicator == .ready && ready.statusTitle == "Auto Capture: Ready to start"
+                   && ready.indicator.symbolName != statusBar.presentation.indicator.symbolName,
+                   "Ready is visually distinct from Off and does not claim that monitoring is running")
+        let recording = StatusBarController.Presentation.make(enabled: true, paused: false, status: .monitoring)
+        try expect(recording.indicator == .recording && recording.accessibilityValue == "Recording"
+                   && recording.indicator.symbolName != ready.indicator.symbolName,
+                   "A running monitor has a dedicated recording symbol and an explicit accessible label")
+        let excluded = StatusBarController.Presentation.make(enabled: true, paused: false,
+                                                             status: .sourceApplicationExcluded("Fictional Passwords"))
+        try expect(excluded.indicator == .recording && excluded.accessibilityValue == "Recording · skipping Fictional Passwords",
+                   "Excluding the active application does not conceal the ongoing monitor")
+        for indicator in [StatusBarController.Indicator.off, .ready, .paused, .attention] {
+            try expect(indicator.image()?.isTemplate == true,
+                       "Inactive, waiting and attention symbols keep the system's menu-bar appearance")
+        }
+        for appearance in [NSAppearance.Name.aqua, .darkAqua] {
+            let image = try unwrap(StatusBarController.Indicator.recording.image(), "The native recording symbol is available")
+            try expect(!image.isTemplate && hasRedPixels(image, appearance: appearance),
+                       "Recording remains visibly red in both menu-bar appearances, without relying on hover or motion")
+        }
+        let partialSuite = "DaBinPartialMonitorQA.\(UUID())"
+        let partialDefaults = UserDefaults(suiteName: partialSuite)!
+        defer { partialDefaults.removePersistentDomain(forName: partialSuite) }
+        let partialSettings = AutoCaptureSettings(defaults: partialDefaults)
+        partialSettings.setClipboardEnabled(true)
+        partialSettings.setScreenshotsEnabled(true)
+        partialSettings.setScreenshotFolderBookmark(Data([1]))
+        let partialPasteboard = NSPasteboard(name: .init("DaBinPartialMonitorQA.\(UUID())"))
+        defer { partialPasteboard.releaseGlobally() }
+        let partialMonitor = AutoCaptureService(settings: partialSettings, input: InputService(store: store),
+            pasteboardProvider: { partialPasteboard }, sourceApplicationProvider: { nil },
+            bookmarkResolver: { _ in (url: root, isStale: true) })
+        defer { partialMonitor.shutdown() }
+        partialMonitor.start()
+        try expect(partialMonitor.isClipboardRunning && !partialMonitor.isScreenshotsRunning
+                   && partialMonitor.screenshotStatus == .permissionRevoked
+                   && StatusBarController.Presentation.make(enabled: partialSettings.isEnabled,
+                        paused: partialSettings.isPaused, status: partialSettings.status).indicator == .recording,
+                   "Revoked screenshot permission never hides recording while the actual clipboard channel remains active")
+        partialSettings.setScreenshotFolderBookmark(nil)
+        partialMonitor.start()
+        try expect(partialMonitor.isClipboardRunning && partialMonitor.screenshotStatus == .permissionRequired
+                   && StatusBarController.Presentation.make(enabled: partialSettings.isEnabled,
+                        paused: partialSettings.isPaused, status: partialSettings.status).indicator == .recording,
+                   "A screenshot channel waiting for a folder also retains the active clipboard recording indication")
         try expect(statusMenu.items.map(\.title).contains("Open DaBin")
                    && statusMenu.items.map(\.title).contains("Settings…")
                    && statusMenu.items.map(\.title).contains("Quit DaBin"),
@@ -191,12 +269,15 @@ private final class ApplicationLifecycleTests: NSObject, NSApplicationDelegate {
         coordinator!.autoCapture.settings.setClipboardEnabled(true)
         coordinator!.autoCapture.settings.setStatus(.monitoring)
         try await wait("Status item updates live when Auto Capture is enabled") {
-            statusBar.presentation.indicator == .enabled
-                && statusBar.statusMenuItem?.title == "Auto Capture: Enabled"
+            statusBar.presentation.indicator == .recording
+                && statusBar.statusMenuItem?.title == "Auto Capture: Recording"
                 && statusBar.pauseMenuItem?.isHidden == false
         }
-        try expect(statusBar.statusItem?.button?.toolTip == "DaBin — Enabled",
+        try expect(statusBar.statusItem?.button?.toolTip == "DaBin — Recording",
                    "The enabled menu bar icon exposes its state without opening DaBin")
+        let activeImage = try unwrap(statusBar.statusItem?.button?.image, "The installed status item displays its recording image")
+        try expect(!coordinator!.corners.board.isVisible && !activeImage.isTemplate && hasRedPixels(activeImage, appearance: .aqua),
+                   "The real installed menu-bar button uses the colored recording image while the board stays closed")
         let pause = statusBar.pauseMenuItem!
         try expect(NSApp.sendAction(pause.action!, to: pause.target, from: pause),
                    "The enabled status menu dispatches Pause Auto Capture")
@@ -261,8 +342,8 @@ private final class ApplicationLifecycleTests: NSObject, NSApplicationDelegate {
         try await wait("Application and panel owner are released after shutdown") { weakCoordinator.value == nil && weakCorners.value == nil }
         try await wait("Presentation state is released after native view teardown") { weakState.value == nil }
         try await startupDerivatives(root: root.appendingPathComponent("StartupDerivatives"), defaults: defaults)
-        try expect(NSWorkspace.shared.frontmostApplication?.processIdentifier == frontmost,
-                   "Native lifecycle QA never changes the foreground application")
+        try expect(!activatedFixture && !acquiredKeyWindow && !NSApp.isActive && NSApp.keyWindow == nil,
+                   "Native lifecycle QA never activates itself or takes keyboard focus")
         print("PASS: \(checks) application lifecycle checks; isolated preferences, events, pointer samples and fake notifications, no focus or personal data.")
     }
 

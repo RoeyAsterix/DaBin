@@ -1,0 +1,34 @@
+DABIN / PRESS RELEASE
+CONDITIONAL DRAFT: RELEASE ONLY AFTER VERIFIED PUBLICATION.
+Replace every bracketed field. No press release has been distributed.
+
+HEADLINE
+DaBin launches as a free local Mac app for saving and finding useful bits
+
+SUBHEAD
+A desktop robot drop target brings notes, links, images, files and tasks into a local capture board.
+
+[[LAUNCH_DATE]] - DaBin is now available free on the Mac App Store for Apple Silicon Macs running macOS 14 or later. It helps people save useful content during the day, keep related items with a project, and find it again on their Mac.
+
+DaBin accepts pasted content, dropped files, notes and tasks. A small desktop robot offers a visible place to drop a reference; the board provides Inbox, Today and Projects views. Users can keep project resources together and plan tasks with a focus timer.
+
+Local text recognition helps search find words in supported screenshots, images and documents saved into DaBin, even when the filename does not contain the query. Search covers saved DaBin content, not every file on the Mac. Recognition uses local Apple frameworks rather than an external AI service.
+
+DaBin has no account, advertising, analytics or cloud sync. Auto Capture is optional and off by default, with independent clipboard and selected screenshot-folder controls. Website previews are also optional and off by default; enabling them can contact manually saved websites. Automatically captured links do not fetch previews.
+
+The launch demonstrations use fictional project content. An animated 'Feed DaBin' introduction presents the robot, while actual screenshots show the app interface. The product is designed for local individual use and does not provide a shared cloud workspace.
+
+Availability
+Free on the Mac App Store: [[APP_STORE_URL]]
+Requires Apple Silicon and macOS 14 or later.
+Available territories: [[CONFIRMED_TERRITORIES_OR_REMOVE_THIS_LINE]]
+
+About DaBin
+DaBin is a little robot for the useful bits of your day. It keeps notes, links, images, files and tasks together on a Mac, with quick capture, project organization and local search.
+
+Media contact
+[[DEVELOPER_NAME]]
+[[CONTACT_EMAIL]]
+Website and press assets: [[WEBSITE_URL]]
+
+No founder quote, motivation, user count, endorsement or future roadmap is included. Add those only with verified owner-provided facts. Do not send this release to publications whose policy rejects press releases, including TidBITS.

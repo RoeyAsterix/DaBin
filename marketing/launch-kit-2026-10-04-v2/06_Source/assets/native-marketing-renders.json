@@ -1,0 +1,148 @@
+{
+  "assets": [
+    {
+      "autoCaptureEnabled": false,
+      "exportConversion": "Native opaque RGBA fixture render; UI cutout made by GenerateGraphics.py without repainting app controls.",
+      "file": "DABIN__NATIVE_RENDER__INBOX.png",
+      "fixtureCaptures": 11,
+      "fixtureImageProvenance": "Original code-drawn landscapes adapted from ExportGuide.swift; no personal/copyrighted third-party imagery.",
+      "headline": "Keep the useful bits.",
+      "height": 1800,
+      "mascot": "Canonical production Quiet Orbit RobotCharacterView",
+      "nativeBoardRectFromTopLeft": [
+        130,
+        164,
+        1180,
+        702
+      ],
+      "nativeBuffer": "RGBA",
+      "nativeContentSize": [
+        1160,
+        652
+      ],
+      "pixelScale": 2,
+      "route": "inbox",
+      "subtitle": "Save notes, images and files. Sort them when you're ready.",
+      "websitePreviewsEnabled": false,
+      "width": 2880
+    },
+    {
+      "autoCaptureEnabled": false,
+      "exportConversion": "Native opaque RGBA fixture render; UI cutout made by GenerateGraphics.py without repainting app controls.",
+      "file": "DABIN__NATIVE_RENDER__PROJECTS.png",
+      "fixtureCaptures": 11,
+      "fixtureImageProvenance": "Original code-drawn landscapes adapted from ExportGuide.swift; no personal/copyrighted third-party imagery.",
+      "headline": "A home for every project.",
+      "height": 1800,
+      "mascot": "Canonical production Quiet Orbit RobotCharacterView",
+      "nativeBoardRectFromTopLeft": [
+        130,
+        164,
+        1180,
+        702
+      ],
+      "nativeBuffer": "RGBA",
+      "nativeContentSize": [
+        1160,
+        652
+      ],
+      "pixelScale": 2,
+      "route": "library",
+      "subtitle": "Choose a color. Keep your previews, notes and tasks together.",
+      "websitePreviewsEnabled": false,
+      "width": 2880
+    },
+    {
+      "autoCaptureEnabled": false,
+      "exportConversion": "Native opaque RGBA fixture render; UI cutout made by GenerateGraphics.py without repainting app controls.",
+      "file": "DABIN__NATIVE_RENDER__FOCUS.png",
+      "fixtureCaptures": 11,
+      "fixtureImageProvenance": "Original code-drawn landscapes adapted from ExportGuide.swift; no personal/copyrighted third-party imagery.",
+      "headline": "Make room for one task.",
+      "height": 1800,
+      "mascot": "Canonical production Quiet Orbit RobotCharacterView",
+      "nativeBoardRectFromTopLeft": [
+        130,
+        164,
+        1180,
+        702
+      ],
+      "nativeBuffer": "RGBA",
+      "nativeContentSize": [
+        1160,
+        652
+      ],
+      "pixelScale": 2,
+      "route": "detail",
+      "subtitle": "Choose a duration and start a focus timer when you're ready.",
+      "websitePreviewsEnabled": false,
+      "width": 2880
+    },
+    {
+      "autoCaptureEnabled": false,
+      "exportConversion": "Native opaque RGBA fixture render; UI cutout made by GenerateGraphics.py without repainting app controls.",
+      "file": "DABIN__NATIVE_RENDER__STUDIO_PROJECT.png",
+      "fixtureCaptures": 11,
+      "fixtureImageProvenance": "Original code-drawn landscapes adapted from ExportGuide.swift; no personal/copyrighted third-party imagery.",
+      "headline": "Keep a project together.",
+      "height": 1800,
+      "mascot": "Canonical production Quiet Orbit RobotCharacterView",
+      "nativeBoardRectFromTopLeft": [
+        130,
+        164,
+        1180,
+        702
+      ],
+      "nativeBuffer": "RGBA",
+      "nativeContentSize": [
+        1160,
+        652
+      ],
+      "pixelScale": 2,
+      "route": "library",
+      "subtitle": "Your image, link and note in one place.",
+      "websitePreviewsEnabled": false,
+      "width": 2880
+    },
+    {
+      "autoCaptureEnabled": false,
+      "exportConversion": "Native opaque RGBA fixture render; UI cutout made by GenerateGraphics.py without repainting app controls.",
+      "file": "DABIN__NATIVE_RENDER__SEARCH.png",
+      "fixtureCaptures": 11,
+      "fixtureImageProvenance": "Original code-drawn landscapes adapted from ExportGuide.swift; no personal/copyrighted third-party imagery.",
+      "headline": "Find words in saved screenshots.",
+      "height": 1800,
+      "mascot": "Canonical production Quiet Orbit RobotCharacterView",
+      "nativeBoardRectFromTopLeft": [
+        130,
+        164,
+        1180,
+        702
+      ],
+      "nativeBuffer": "RGBA",
+      "nativeContentSize": [
+        1160,
+        652
+      ],
+      "pixelScale": 2,
+      "route": "search",
+      "subtitle": "Search supported images with local text recognition.",
+      "websitePreviewsEnabled": false,
+      "width": 2880
+    }
+  ],
+  "build": "86",
+  "fixturePrivacy": "Temporary fictional archive and isolated preference domain, own offscreen non-key windows, no actual clipboard/network/permission/notification/global-input access.",
+  "renderMethod": "Actual current-production BoardView and RobotAppFrameView, canonical RobotCharacterView, native 2x cacheDisplay on opaque canvas. Marketing headline/subtitle/backdrop are not app controls.",
+  "status": "DRAFT",
+  "version": "0.4.31",
+  "description": "Five actual production native views with fictional local records, plus three transparent current character poses.",
+  "localOCRVerified": {
+    "query": "riverside",
+    "file": "DABIN__SAMPLE__STUDIO_REFERENCE.png",
+    "captureTitle": "Palette inspiration",
+    "recognizedText": "Riverside studio\nWarm clay. Deep teal. Soft cream.\nClay\nTeal\nCream",
+    "resultCount": 1,
+    "extractor": "Real local Apple Vision via production ContentIndexService, no mocked index or network."
+  }
+}

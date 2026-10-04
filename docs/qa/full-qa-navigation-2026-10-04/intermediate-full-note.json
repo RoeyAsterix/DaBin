@@ -1,0 +1,13 @@
+{
+  "run": "native/build/qa/runs/20261004T114521247436Z-direct/report.json",
+  "passed": 107,
+  "requested": 110,
+  "failures": [
+    "DailyCaptureTests: fixture did not let departing text editor unmount before synthetic background drop",
+    "ExplorerKeyboardTests: selection changes erroneously replayed saved viewport"
+  ],
+  "intentionallyTerminated": [
+    "WorkspaceZoomPerformanceTests: stopped exact stress child PID9879 with SIGTERM after discovering production keyboard regression; did not complete ten minute measurement"
+  ],
+  "sourceUnchangedDuringRun": true
+}

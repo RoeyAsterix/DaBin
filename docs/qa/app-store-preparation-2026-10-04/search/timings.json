@@ -1,0 +1,9 @@
+{
+  "cached500Seconds" : 0.001221958314999938,
+  "cachedAverageMicroseconds" : 2.443916629999876,
+  "cachedReadCount" : 500,
+  "coldSearchSeconds" : 0.028841458261013031,
+  "matches" : 295,
+  "records" : 5000,
+  "repositoryBatchSeconds" : 0.10455241659656167
+}

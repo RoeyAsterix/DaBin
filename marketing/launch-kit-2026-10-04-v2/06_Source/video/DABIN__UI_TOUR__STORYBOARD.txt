@@ -1,0 +1,147 @@
+DABIN / UI TOUR V2 - STORYBOARD
+Creative storyboard. Final state filenames,94.4-second timing and native crops: tour_edit.json.
+Word count: 174
+Target: 70-90 seconds. The draft ranges below total 87.5 seconds; final chapter cuts follow the actual voice phrase timing, with breathing room.
+UI is the hero. Use actual native state endpoints; composed cursor choreography does not prove live mouse/input events.
+Original launch kit is preserved.
+
+VOICE DIRECTION
+Warm, helpful, slightly wry desktop friend. Natural question inflections and short breaths. No metallic effects, forced robotic cadence or repeated catchphrase. Mouth follows speech; gaze follows the UI action.
+
+STORYBOARD
+
+01 / 0-6.5s / Hey, I’m DaBin - save that screenshot
+Voice: Hey, I’m DaBin. You know that screenshot you’ll need later? Drop it here.
+Bubble: Drop it here.
+Native states needed: inbox_before_manual_save, inbox_after_image_and_file_save
+Action: Open on the actual native Inbox. Robot is already beside the UI and greets the viewer, looks to the fictional palette screenshot, then to the robot drop target. Pointer brings the screenshot to the target; cut to the actual native saved-image state. A small document-file save is a separate visible subbeat in the same capture family.
+Evidence/limits: Show the saved image/file preview in actual Inbox, not only a floating token. The composed drag is illustrative unless a real input trace is captured.
+Robot performance: One small wave, then attentive gaze toward the target. Mouth follows real speech; no continuous bounce.
+End beat: End with the newly saved card visible.
+
+02 / 6.5-13s / Paste the link, write the thought
+Voice: A link? Paste it. A thought you’ll forget in five minutes? Write it down.
+Bubble: Before it escapes.
+Native states needed: manual_paste_link, manual_note_composer, inbox_saved_link_note
+Action: Pointer chooses the actual Paste entry; show the saved fictional example.com link. Next choose New note, reveal the note composer, and show the saved short design thought.
+Evidence/limits: Use actual before/after native states for separate link and note saves. Rendered keystrokes are composited demonstration, not a system-clipboard read.
+Robot performance: Glance from saved link to note field; mild amused brow on the forgetting line.
+End beat: Saved link and note are readable for one beat.
+
+03 / 13-20.5s / See the catch by date
+Voice: Your Inbox groups the catch by day or week. To organize holds the bits you haven’t filed yet.
+Bubble: Save first. Sort later.
+Native states needed: inbox_day, inbox_week, inbox_to_organize
+Action: Highlight and select Day, then Week, with the matching actual timeline states. Select To organize to show unfiled items from more than one date.
+Evidence/limits: Do not label Today as Day. Day/Week are Inbox history views; Today is task planning later. To organize is not limited to the selected date.
+Robot performance: Looks to each control only when the pointer approaches it.
+End beat: To organize ends with the newly saved note visible.
+
+04 / 20.5-26.5s / Give Studio Refresh a project
+Voice: Let’s give this studio refresh a project. References, autosaving notes,
+Bubble: One project. Useful bits close.
+Native states needed: projects_studio_collection, projects_studio_notes
+Action: Pointer chooses Studio Refresh in Projects. Show actual Collection resources, then the project Notes mode with a short fictional autosaving note.
+Evidence/limits: Show the project selection and real resource previews. Autosave wording is verified app behavior; only portray an autosave event if the state/output verifies it.
+Robot performance: Turns toward the project title and leans slightly into the note explanation.
+End beat: Note text and its native status remain legible.
+
+05 / 26.5-33s / Snippets, clipboard and shelf
+Voice: named snippets, saved clipboard history... all close at hand. And here’s your collection shelf.
+Bubble: The handy little things.
+Native states needed: projects_clipboard_named_snippets, projects_clipboard_history, projects_shelf
+Action: Show the native Clipboard mode, a named snippet and saved clipboard item. Switch to Shelf and show the actual collected references. Give each mode its own brief visible subbeat rather than a feature list over one screenshot.
+Evidence/limits: Label this saved clipboard history. Do not imply all past clipboard content is already imported or that Auto Capture is on.
+Robot performance: Points once toward a named snippet, then follows the Shelf tab with gaze.
+End beat: One shelf reference preview opens if an actual state is available.
+
+06 / 33-42s / Find a word inside the screenshot
+Voice: Now, where’s that screenshot? Search a word inside it. I recognize text locally in supported content you’ve saved.
+Bubble: Try “riverside”.
+Native states needed: search_empty, search_riverside_results, search_riverside_preview
+Action: Open the native Search interface. Type riverside, show a real matching saved-image result, then show the selected capture preview containing that word.
+Evidence/limits: The palette screenshot must contain riverside in image pixels. Its filename/title/comment must not be the sole match. Keep searchable-text provenance showing the image OCR result. Search covers saved supported DaBin content only.
+Robot performance: Curious expression at the question, then pleased recognition on the result. Gaze stays on the result rather than the viewer.
+End beat: Matching line plus screenshot preview remains visible.
+
+07 / 42-45s / Narrow the hunt
+Voice: Use filters to narrow the hunt.
+Bubble: Just this project.
+Native states needed: search_filters_open, search_project_image_filtered
+Action: Open real Filters. Select Studio Refresh and image type where verified; show removable native filter chips and narrowed results.
+Evidence/limits: Use at least one actual result refinement. Project/type/source/date choices may be visible, but do not imply each was applied if only one state changes.
+Robot performance: Small nod when the filtered result stays in view.
+End beat: The query and active filter chips are both readable.
+
+08 / 45-52.5s / Make the idea a task
+Voice: Turn an idea into a task. Add a priority, checklist, reminder, or repeat.
+Bubble: Give it a next step.
+Native states needed: capture_convert_to_task, task_priority_checklist, task_reminder, task_repeat_details
+Action: Convert the saved idea into the Review palette task. Show a native priority choice and two checklist steps. Reveal a reminder choice and repeat rule in separate close-up subbeats with their real controls.
+Evidence/limits: Reminder, planned workday and focus duration are distinct. A repeat rule creates the next occurrence upon completion; do not show a duplicate task spawning merely from saving the rule.
+Robot performance: Looks at the checklist, then the detail controls; helpful emphasis without another large wave.
+End beat: Task title, priority and checklist are visible together.
+
+09 / 52.5-55s / Put it in Today
+Voice: Plan it in Today,
+Bubble: This is the plan.
+Native states needed: task_plan_today, today_planned_task
+Action: Choose the actual Today planning control, then show the task in the native Today view.
+Evidence/limits: Do not conflate planning for Today with a due date or notification reminder. Use the same task identity and title across states.
+Robot performance: Follows the task as it appears in Today.
+End beat: The planned task and its identity remain visible.
+
+10 / 55-62.5s / Focus, then decide
+Voice: then start a focus timer. When time’s up, I’ll nudge you. You decide when it’s done.
+Bubble: Time’s up. Task’s still yours.
+Native states needed: focus_configured, focus_running, focus_alarm_task_incomplete
+Action: Show the actual start control and running timer. Use an explicit “Timer-end example” transition before the alarm state. Show that the task remains incomplete when the alarm is dismissed.
+Evidence/limits: Never imply the whole focus duration elapsed in a few video seconds. Dismissing the robot alarm does not complete the task. If only a static alarm state exists, describe it as an example, not a recorded timer event.
+Robot performance: Attentive quiet pose while focus runs; one visible nudge/alarm only at the timer-end example.
+End beat: Leave the incomplete task status in view after dismissal.
+
+11 / 62.5-71.5s / Automatic capture, only if you choose
+Voice: Want automatic capture? It starts off. Choose new clipboard changes or a screenshot folder. Pause whenever you like.
+Bubble: You choose. You can pause.
+Native states needed: auto_capture_both_off, auto_capture_independent_consent, auto_capture_paused
+Action: Show native Clipboard and Screenshots options both Off. Point to their independent controls, show the selected-folder requirement for screenshot capture, then an explicitly labeled configured/paused example.
+Evidence/limits: Do not activate real user capture or select a real personal folder. Fixture states may illustrate consent/options and Pause. Monitoring covers later changes/new images, not old screenshots or live screen recording.
+Robot performance: Checks in with viewer, then looks to the Off controls. No celebratory active-capture gag.
+End beat: Paused state is clearly legible.
+
+12 / 71.5-74s / Take the project with you
+Voice: Export a project,
+Bubble: Keep a copy where you choose.
+Native states needed: project_export_menu, project_export_formats
+Action: Open the real export action in Projects and show actual available options or native destination choice if a safe fixture state exists.
+Evidence/limits: Do not create a false “export complete” toast, downloaded ZIP or successful write unless it is actually generated and verified using fictional data. A visible menu demonstrates the option.
+Robot performance: Looks toward the export menu; stays clear of its items.
+End beat: Export controls remain unobscured.
+
+13 / 74-79.5s / Back up and rescue
+Voice: make a local backup, or rescue a capture from Recently Deleted.
+Bubble: That one wasn’t lost.
+Native states needed: archive_backup_menu, recently_deleted_before_restore, recently_deleted_after_restore
+Action: Show the real More/archive-backup action. Then open Recently Deleted, choose Restore on a fictional capture, and show its actual restored state.
+Evidence/limits: Only show a backup-success claim if a backup was written and verified. Do not click Delete permanently as a flourish. Preserve the same capture identity before/after Restore.
+Robot performance: Small relieved expression as the rescued capture returns.
+End beat: Restored fictional capture is visible in its proper active view.
+
+14 / 79.5-87.5s / Your little local companion
+Voice: I’m free. No account, ads, analytics, or cloud sync. Your saved captures stay on this Mac.
+Bubble: Here when you need me.
+Native states needed: projects_studio_collection_or_today_final
+Action: Return to the populated actual Studio Refresh view, with the robot calmly beside it. Use a short closing facts line: Free / Apple Silicon / macOS 14+. Keep the UI visible through the ending.
+Evidence/limits: No App Store publication/download URL is invented. Saved captures are local; optional manual-link previews can contact websites, so avoid absolute offline or “nothing ever leaves” wording.
+Robot performance: Gentle glance back to viewer and one small smile; no slogan loop or large product-only card.
+End beat: Finish on useful saved content and robot, not an empty branding plate.
+
+COMPLETION CHECKS
+[ ] Every narrated feature appears on screen in an actual matching UI state.
+[ ] State endpoints and composited pointer actions are distinguished from real recorded interactions.
+[ ] OCR query matches image pixels; task/capture identity persists through the sequence.
+[ ] Day/Week history is distinct from Today planning; reminders distinct from focus and workday.
+[ ] Focus end is explicitly an example/time transition; task completion is not implied.
+[ ] Auto Capture begins Off and screenshot-folder access is user selected; no real user settings changed.
+[ ] No unverified export/backup completion, published store link or global offline claim.
+[ ] Watch full video at normal speed with sound and muted; verify natural delivery, breathing room, readable UI and subtitles.

@@ -1,0 +1,2 @@
+2026-10-03 18:19:12.841 SearchWindowTests[88825:23760919] *** Illegal NSTableView data source (<_TtC17SearchWindowTestsP33_C4FE1FB04A4E62C97AB733C6F44D615727SearchWindowTableDataSource: 0x7ec9a5de0>).  Must implement numberOfRowsInTableView: and tableView:objectValueForTableColumn:row:
+Swift/ErrorType.swift:254: Fatal error: Error raised at top level: Error Domain=SearchWindowTests Code=1 "Escape closes the Search filter popover" UserInfo={NSLocalizedDescription=Escape closes the Search filter popover}

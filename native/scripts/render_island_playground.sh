@@ -16,6 +16,7 @@ sources=(
   "$native_root/Sources/DaBin/RobotMotion.swift"
   "$native_root/Sources/DaBin/AutoCaptureRobotCelebration.swift"
   "$native_root/Sources/DaBin/IslandRobotChoreography.swift"
+  "$native_root/Sources/DaBin/QuietOrbitVisualStyle.swift"
   "$native_root/Sources/DaBin/RobotCharacterView.swift"
 )
 shasum -a 256 "${sources[@]}" "$native_root/Tests/IslandPlaygroundRender.swift" \

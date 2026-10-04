@@ -29,6 +29,8 @@ struct DetailDraftSnapshot: Codable {
     let countdownHours: Int
     let countdownMinutes: Int
     let reminderDate: Date
+    var commentComposer: String? = nil
+    var editingCommentID: UUID? = nil
 }
 struct DraftArchiveSnapshot: Codable {
     var version = 1

@@ -1,0 +1,76 @@
+{
+  "automatedStatus": "passed",
+  "physicalExternalDropStatus": "pending_manual_verification",
+  "installedVersion": "0.4.30 (85)",
+  "suites": [
+    {
+      "name": "ExplorerTransferTests",
+      "status": "passed",
+      "reportedSummary": "PASS: 99 Explorer transfer checks; native representations, projects, preservation, Undo, asynchronous destinations and failures."
+    },
+    {
+      "name": "CaptureActionTests",
+      "status": "passed",
+      "reportedSummary": "PASS: 31 capture action checks; confirmation, minimize, search, draft cleanup and delayed reminder deletion in an isolated archive."
+    },
+    {
+      "name": "CaptureClipboardTests",
+      "status": "passed",
+      "reportedSummary": "PASS: 29 capture clipboard checks; text, links, tasks, files, batches, native types and failures."
+    },
+    {
+      "name": "ProjectWorkspaceViewTests",
+      "status": "passed",
+      "reportedSummary": "PASS: 209 project workspace UI checks; 1,000 synthetic text captures plus image and editable project note; native mixed-selection drag payloads on a private pasteboard; no personal archive, network, general clipboard or external opening. At most 25 simultaneously materialized native rows."
+    },
+    {
+      "name": "ProjectWorkspaceCardTests",
+      "status": "passed",
+      "reportedSummary": "PASS: 263 project card checks; Task/Note/Capture semantics, real live task updates, light/dark/grid/320-point compact fixtures, original previews and independent selection; no personal archive, clipboard, network, or external opening."
+    },
+    {
+      "name": "DetailPreviewInteractionTests",
+      "status": "passed",
+      "reportedSummary": "PASS: 110 detail-preview native open-action checks; no external app launched"
+    },
+    {
+      "name": "CollectionCardPresentationTests",
+      "status": "passed",
+      "reportedSummary": "PASS: 350 collection selection, layout, native preview, theme, AX expansion and data preservation checks. /private/tmp/dabin-drag-verification-20261004/native/build/qa/collection-card-presentation/85E3A0BA-48DD-459A-9B6C-1AC84B765505"
+    },
+    {
+      "name": "ExplorerCaptureCardPresentationTests",
+      "status": "passed",
+      "reportedSummary": "PASS: 267 Explorer native preview, complete-image corners, metadata, actions, selection and capture preservation checks. /private/tmp/dabin-drag-verification-20261004/native/build/qa/explorer-capture-cards/B052E533-B23A-400F-A6F3-BA09D23CD3F3"
+    },
+    {
+      "name": "NativeContentDragTests",
+      "status": "passed",
+      "reportedSummary": "PASS: 38 native content drag checks; clicks, mixed native items, copy-only external transfers and source preservation."
+    },
+    {
+      "name": "CaptionDragTests",
+      "status": "passed",
+      "reportedSummary": "PASS: 135 production caption drag checks; full capture/collection payloads, exact comment text, independent controls and editors."
+    },
+    {
+      "name": "SearchInputTests",
+      "status": "passed",
+      "reportedSummary": "PASS: 65 production Search typing, focus, clear, private direct/Cmd V paste, unrelated-editor and immediate/animated reopen checks"
+    },
+    {
+      "name": "AutoRecordIndicatorTests",
+      "status": "passed",
+      "reportedSummary": "PASS: 117 Auto Record state, native geometry, compositor motion, reduced-motion and lifecycle checks"
+    },
+    {
+      "name": "ExternalTransferProcessTests",
+      "status": "passed",
+      "reportedSummary": "PASS: 40 external transfer process checks; 6 mixed production items, exact Unicode text/URL, PNG/JPEG promised bytes and file hashes. Cross-process data availability only; physical drops, sandboxed destinations and browsers are not exercised."
+    }
+  ],
+  "checks": 1753,
+  "testedProductionHashesMatchBuildReceipt": true,
+  "inputsChangedDuringRuns": false,
+  "baselineScope": "0.4.29 frozen installed baseline plus six caption/header surface changes; separate shared tutorial edits preserved and excluded"
+}

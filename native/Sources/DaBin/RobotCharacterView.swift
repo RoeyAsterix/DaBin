@@ -73,6 +73,21 @@ final class RobotCharacterView: NSView {
     /// visible artwork rather than treating the animation canvas as its body.
     static let quietOrbitArtworkBounds = CGRect(x: 5.96, y: 19.6, width: 56.7, height: 45.75)
 
+    /// Visible character bounds in the renderer's parent coordinates. The
+    /// 64 × 78 canvas is centered uniformly and its artwork uses flipped y.
+    /// Interaction targets intentionally keep their larger independent bounds.
+    static func transitionArtworkFrame(in rendererFrame: CGRect, mirrored: Bool = false) -> CGRect {
+        guard rendererFrame.minX.isFinite, rendererFrame.minY.isFinite,
+              rendererFrame.width.isFinite, rendererFrame.height.isFinite,
+              rendererFrame.width > 0, rendererFrame.height > 0 else { return .zero }
+        let scale = min(rendererFrame.width / designSize.width, rendererFrame.height / designSize.height)
+        let art = quietOrbitArtworkBounds
+        let minimumX = mirrored ? designSize.width - art.maxX : art.minX
+        return CGRect(x: rendererFrame.midX + (minimumX - designSize.width / 2) * scale,
+                      y: rendererFrame.midY + (designSize.height / 2 - art.maxY) * scale,
+                      width: art.width * scale, height: art.height * scale)
+    }
+
     /// Quiet Orbit has no idle animation timer. Pointer gaze, capture feedback,
     /// and deliberate greeting tracks still use the existing event renderer.
     func configureQuietOrbit(_ enabled: Bool) {
@@ -472,38 +487,8 @@ final class RobotCharacterView: NSView {
     }
 
     private func configureShell() {
-        let neck = orbitRoundRect(187, 117, 26, 18, radius: 1)
-        addOrbitShape(neck, to: shellLayer, fill: 0x554760, stroke: 0x9986AA, width: orbitUnit)
-        let neckRibs = CGMutablePath()
-        for y: CGFloat in [122, 127] {
-            neckRibs.move(to: orbitPoint(188, y)); neckRibs.addLine(to: orbitPoint(212, y))
-        }
-        addOrbitShape(neckRibs, to: shellLayer, stroke: 0xC4B7D0, width: 2 * orbitUnit)
-
-        let feetPath = CGMutablePath()
-        feetPath.addPath(orbitRoundRect(170, 155, 19, 9, radius: 3))
-        feetPath.addPath(orbitRoundRect(211, 155, 19, 9, radius: 3))
-        feetLayer.path = feetPath
-        feetLayer.fillColor = Self.color(0xD4CDDC)
-        feetLayer.strokeColor = Self.color(0x766285)
-        feetLayer.lineWidth = orbitUnit
-        shellLayer.addSublayer(feetLayer)
-        addOrbitGradient(feetPath, colors: orbitSilver, to: feetLayer)
-
-        let torso = orbitPolygon([(176, 129), (224, 129), (234, 138), (229, 159), (171, 159), (166, 138)])
-        addOrbitGradient(torso, colors: orbitMetal, to: shellLayer)
-        addOrbitShape(torso, to: shellLayer, stroke: 0x7A628D, width: orbitUnit)
-        addOrbitShape(orbitPolygon([(176, 132), (224, 132)], close: false), to: shellLayer,
-                      stroke: 0xEEE5F5, width: 1.5 * orbitUnit)
-        addOrbitShape(orbitRoundRect(183, 140, 34, 10, radius: 2), to: shellLayer,
-                      fill: 0x282230, stroke: 0x8E7A9F, width: orbitUnit)
-        addOrbitShape(orbitPolygon([(187, 148), (213, 148)], close: false), to: shellLayer,
-                      stroke: 0xB3E6D9, width: 1.5 * orbitUnit)
-        let screws = CGMutablePath()
-        for x: CGFloat in [175, 221] {
-            screws.move(to: orbitPoint(x, 152)); screws.addLine(to: orbitPoint(x + 4, 152))
-        }
-        addOrbitShape(screws, to: shellLayer, stroke: 0x544260, width: 1.5 * orbitUnit)
+        QuietOrbitBodyArtwork.install(in: shellLayer, canvas: Self.designSize,
+            headRect: orbitRect(150, 57, 100, 68), topDown: true, feet: feetLayer)
     }
 
     private func configureFace() {

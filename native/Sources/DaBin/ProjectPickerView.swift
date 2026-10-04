@@ -57,6 +57,7 @@ struct ProjectColorChoice: Identifiable, Hashable {
 
 @MainActor
 struct ProjectChipLabel: View {
+    @Environment(\.workspaceZoom) private var zoom
     let name: String?
     let colorHex: String?
     var inherited = false
@@ -67,10 +68,10 @@ struct ProjectChipLabel: View {
     var body: some View {
         HStack(spacing: 7) {
             Image(systemName: name == nil ? "tray" : "folder.fill")
-                .font(.system(size: 11, weight: .semibold)).foregroundStyle(color)
-            Text(title).font(.system(size: 12, weight: .semibold)).lineLimit(1)
+                .font(.system(size: zoom.fontSize(11), weight: .semibold)).foregroundStyle(color)
+            Text(title).font(.system(size: zoom.fontSize(12), weight: .semibold)).lineLimit(1)
             if inherited {
-                Image(systemName: "link").font(.system(size: 8, weight: .semibold)).foregroundStyle(Palette.muted)
+                Image(systemName: "link").font(.system(size: zoom.fontSize(8), weight: .semibold)).foregroundStyle(Palette.muted)
                     .accessibilityHidden(true)
             }
         }
@@ -81,6 +82,34 @@ struct ProjectChipLabel: View {
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(inherited ? "Parent task project" : "Project")
         .accessibilityValue(title)
+    }
+}
+
+@MainActor
+private struct ProjectCardBackgroundModifier: ViewModifier {
+    @Environment(\.colorScheme) private var colorScheme
+    @ObservedObject var workspace: WorkspaceStore
+    let projectName: String?
+    let cornerRadius: CGFloat
+    let baseColor: Color
+    let enabled: Bool
+
+    func body(content: Content) -> some View {
+        content.background {
+            if enabled {
+                RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                    .fill(baseColor)
+                    .overlay {
+                        if let projectName {
+                            RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                                .fill(ProjectColorChoice.color(for: workspace.projectColorHex(for: projectName)
+                                    ?? WorkspaceStore.defaultProjectColorHex)
+                                    .opacity(colorScheme == .dark ? 0.10 : 0.08))
+                        }
+                    }
+                    .allowsHitTesting(false)
+            }
+        }
     }
 }
 
@@ -107,6 +136,17 @@ private struct ProjectCardFrameModifier: ViewModifier {
 }
 
 extension View {
+    /// Color belongs to the capture's project, including inherited task filing,
+    /// independently of the browsing scope. Keep the tint behind all content.
+    @MainActor
+    func projectCardBackground(workspace: WorkspaceStore, projectName: String?,
+                               cornerRadius: CGFloat = 14, baseColor: Color = Palette.surface,
+                               enabled: Bool = true) -> some View {
+        modifier(ProjectCardBackgroundModifier(workspace: workspace, projectName: projectName,
+                                               cornerRadius: cornerRadius, baseColor: baseColor,
+                                               enabled: enabled))
+    }
+
     @MainActor
     func projectCardFrame(workspace: WorkspaceStore, projectName: String?, activeProject: String?,
                           cornerRadius: CGFloat = 14, fallbackColor: Color = Palette.line,
@@ -404,6 +444,25 @@ struct ProjectPickerPanel: View {
             .background(targeted ? accent.opacity(0.12) : selected || highlighted ? Palette.soft : Color.clear,
                         in: RoundedRectangle(cornerRadius: 9))
             .onDrop(of: receive == nil ? [] : ExplorerTransfer.acceptedTypeIdentifiers, isTargeted: $targeted) { receive?($0) ?? false }
+    }
+}
+
+/// Project and priority form one identity row. The project can truncate while
+/// the priority keeps its readable label, including in narrow task cards.
+@MainActor struct CaptureProjectPriorityHeader: View {
+    @ObservedObject var state: AppState
+    @ObservedObject var capture: Capture
+
+    var body: some View {
+        HStack(spacing: 6) {
+            CaptureProjectPickerButton(state: state, capture: capture)
+                .layoutPriority(-1)
+                .accessibilityIdentifier("capture-project-picker-\(capture.id.uuidString)")
+            CaptureTaskPriorityTag(capture: capture).fixedSize()
+            Spacer(minLength: 0)
+        }
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier("capture-project-priority-\(capture.id.uuidString)")
     }
 }
 

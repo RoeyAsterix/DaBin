@@ -1,0 +1,12 @@
+{
+  "status": "passed",
+  "tests": 2,
+  "failures": 0,
+  "sqliteUnlinkWarnings": 0,
+  "log": "xcode-shortcut-final-test.log",
+  "resultBundle": "/private/tmp/dabin-xcode-shortcut-final-results.xcresult",
+  "fixtureSHA256": "6c2f4885ad9f02ccc91498172bb3b87ccec6fddf800ddca4f29452334b4b71d1",
+  "productionSourcesChanged": false,
+  "note": "macOS linkd autoShortcut connection diagnostics remain in XCTest host; both tests pass.",
+  "finalShortcutSourceSHA256": "c4c211a683db71051f64c2b067e64cce20b1abf85cb2b0208c4e760d6b1baf2e"
+}

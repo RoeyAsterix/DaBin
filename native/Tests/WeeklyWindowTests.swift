@@ -26,6 +26,17 @@ private final class WeeklyWindowNotificationClient: ReminderNotificationClient {
         RunLoop.main.run(until: Date().addingTimeInterval(0.40))
     }
 
+    @MainActor private static func render(_ window: NSWindow, name: String) throws {
+        guard let view = window.contentView else { throw CocoaError(.fileWriteUnknown) }
+        view.layoutSubtreeIfNeeded()
+        guard let bitmap = view.bitmapImageRepForCachingDisplay(in: view.bounds) else { throw CocoaError(.fileWriteUnknown) }
+        view.cacheDisplay(in: view.bounds, to: bitmap)
+        guard let data = bitmap.representation(using: .png, properties: [:]) else { throw CocoaError(.fileWriteUnknown) }
+        let directory = URL(fileURLWithPath: FileManager.default.currentDirectoryPath).appendingPathComponent("build/qa/week-calendar")
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        try data.write(to: directory.appendingPathComponent(name + ".png"))
+    }
+
     @MainActor private static func checkEmptyWeeklyPanel(root: URL, defaults: UserDefaults) throws {
         let store = try CaptureStore(root: root.appendingPathComponent("Empty"))
         let previews = PreviewService(store: store)
@@ -76,6 +87,107 @@ private final class WeeklyWindowNotificationClient: ReminderNotificationClient {
         let reopened = try CaptureStore(root: root.appendingPathComponent("Empty"))
         expect(store.captures.isEmpty && reopened.captures.isEmpty,
                "Empty native weekly navigation never adds or persists captures")
+    }
+
+    @MainActor private static func checkSelectedDateSizing(root: URL, screen: NSScreen) throws {
+        let store = try CaptureStore(root: root.appendingPathComponent("SelectedDates"))
+        let days = (-6...0).map { Calendar.current.startOfDay(for: Calendar.current.date(byAdding: .day, value: $0, to: Date())!) }
+        for index in [0, 2, 4, 6] {
+            _ = try store.capture(text: "Selected-day window fixture \(index)", at: days[index].addingTimeInterval(60))
+        }
+        let suite = "DaBinWeeklySelectedDates.\(UUID().uuidString)"
+        let defaults = UserDefaults(suiteName: suite)!
+        defer { defaults.removePersistentDomain(forName: suite) }
+        let previews = PreviewService(store: store)
+        let state = AppState(store: store, previews: previews,
+            reminders: ReminderService(store: store, client: WeeklyWindowNotificationClient()))
+        let controller = CornerController(state: state, input: InputService(store: store),
+            placementDefaults: defaults, animateRobotTransitions: false)
+        defer { controller.dismiss(); previews.cancelNetwork() }
+        state.openDaily()
+        controller.showBoard(immediate: true)
+        settle()
+        let requested = NSRect(x: screen.visibleFrame.minX + 20, y: screen.visibleFrame.maxY - 620,
+                               width: min(740, screen.visibleFrame.width - 40), height: 600)
+        controller.resizeBoardFromUser(to: requested)
+        controller.finishBoardResize()
+        settle()
+        let normal = controller.board.frame
+        let savedSize = defaults.array(forKey: CornerController.boardSizeKey) as? [Double]
+        state.openWeekly()
+        controller.showBoard()
+        settle()
+        let direction = state.weeklyExpansionDirection
+        func expected(_ count: Int) -> NSRect {
+            CornerGeometry.weeklyPanelFrame(compact: normal, visible: screen.visibleFrame, direction: direction,
+                activeDayCount: count, preferredHeight: normal.height)
+        }
+        expect(state.weeklyVisibleDays.count == 4 && controller.board.frame == expected(4),
+               "Entering Week fits its populated dates even when Daily was manually resized")
+        expect(defaults.array(forKey: CornerController.boardSizeKey) as? [Double] == savedSize,
+               "Automatic Week expansion preserves the normal saved window dimensions")
+        try render(controller.board, name: "week-four-active-days")
+
+        expect(state.setWeeklyDays([days[0], days[5], days[6]]), "Three selected dates are accepted")
+        settle()
+        expect(state.weeklyDays.count == 3 && state.weeklyVisibleDays.count == 2
+               && controller.board.frame == expected(2),
+               "A selected empty date stays hidden and only two active dates set the width")
+        expect(controller.board.frame.maxY == normal.maxY,
+               "Changing the selection retains the user's header position")
+        try render(controller.board, name: "week-two-active-days")
+        let inserted = try store.capture(text: "A newly populated selected day", at: days[5].addingTimeInterval(60))[0]
+        settle()
+        expect(state.weeklyVisibleDays.count == 3 && controller.board.frame == expected(3),
+               "Saving the first capture on a selected empty date adds its column and expands the window")
+        _ = try store.remove(inserted)
+        settle()
+        expect(state.weeklyVisibleDays.count == 2 && controller.board.frame == expected(2),
+               "Removing the last capture from a selected date removes its column and folds the window")
+
+        state.filter = .files
+        settle()
+        expect(controller.board.frame == expected(2),
+               "Content filters do not collapse populated date columns or move the header")
+        controller.resizeBoardFromUser(to: NSRect(x: normal.minX, y: normal.maxY - 570,
+                                                  width: 700, height: 570))
+        controller.finishBoardResize()
+        settle()
+        let stretchedWeek = controller.board.frame
+        state.filter = .all
+        settle()
+        expect(controller.board.frame == stretchedWeek,
+               "A deliberate Week resize remains usable while filters change")
+        expect(defaults.array(forKey: CornerController.boardSizeKey) as? [Double] == savedSize,
+               "A temporary Week resize never overwrites the normal saved size")
+        state.showSettings()
+        settle()
+        state.back()
+        settle()
+        expect(controller.board.frame == stretchedWeek,
+               "Returning from Settings preserves the current Week's deliberate size")
+        state.selectTimelineMode(.daily)
+        settle()
+        expect(controller.board.frame.size == normal.size,
+               "Leaving a manually resized Week restores the normal window size")
+        state.selectTimelineMode(.weekly)
+        settle()
+        expect(controller.board.frame.size == expected(2).size,
+               "Choosing Week again fits populated dates even when its dates have not changed")
+        controller.resizeBoardFromUser(to: NSRect(x: normal.minX, y: normal.maxY - 570,
+                                                  width: 700, height: 570))
+        controller.finishBoardResize()
+        settle()
+        expect(state.setWeeklyDays([days[0], days[2], days[4], days[6]]), "Four custom populated dates are accepted")
+        settle()
+        expect(controller.board.frame.size == expected(4).size,
+               "Choosing other dates restores automatic sizing after a manual Week resize")
+        state.selectTimelineMode(.daily)
+        settle()
+        expect(controller.board.frame.size == normal.size,
+               "Returning to Daily restores its exact user-selected size")
+        expect(defaults.array(forKey: CornerController.boardSizeKey) as? [Double] == savedSize,
+               "Date selection and Weekly resize leave persisted normal dimensions intact")
     }
 
     @MainActor static func main() throws {
@@ -251,6 +363,7 @@ private final class WeeklyWindowNotificationClient: ReminderNotificationClient {
             expect(!controller.board.isVisible && !controller.bin.isVisible, "Weekly checks leave no visible test panels")
         }
         try checkEmptyWeeklyPanel(root: root, defaults: defaults)
+        try checkSelectedDateSizing(root: root, screen: screen)
         previews.cancelNetwork()
         print("Weekly window checks: \(checks), failures: \(failures.count)")
         if !failures.isEmpty { exit(1) }

@@ -1,0 +1,18 @@
+{
+  "version": "0.4.31",
+  "build": "86",
+  "documentPages": 13,
+  "documentSHA256": "2a0aed6d4ba240af86fd08e4d1c358014b682727c949db90bf3bac6e3bfdf258",
+  "visualReview": "PASS: root inspected all 13 pages from latest rendered DOCX at original image resolution; no clipped text, blank pages, broken tables, or image overflow. Screenshot pages are landscape.",
+  "sourceCopyParity": "PASS: exact public fields, review-note paragraphs, full privacy-policy body and all three source PNGs verified in document OOXML and standalone copies.",
+  "titleAndHeadings": "PASS: black title and heading colors, title borders removed.",
+  "fieldCounts": {
+    "name": 5,
+    "subtitle": 24,
+    "promotionalText": 152,
+    "description": 1716
+  },
+  "keywordUTF8Bytes": 86,
+  "reviewNotesUTF8Bytes": 2531,
+  "pending": "Owner details, public policy/support publication, distribution signing, final signed-app acceptance and Apple submission/review. No submission made."
+}

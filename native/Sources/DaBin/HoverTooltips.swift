@@ -1,6 +1,26 @@
 import AppKit
 import SwiftUI
 
+private struct HoverTooltipActiveIDKey: EnvironmentKey {
+    static let defaultValue: String? = nil
+}
+
+extension EnvironmentValues {
+    /// The scope's already visible descriptor also supports deterministic
+    /// presentation without asking every idle control to publish geometry.
+    var hoverTooltipActiveID: String? {
+        get { self[HoverTooltipActiveIDKey.self] }
+        set { self[HoverTooltipActiveIDKey.self] = newValue }
+    }
+}
+
+enum HoverTooltipAnchorPolicy {
+    static func shouldPublish(id: String, visibleID: String?, enabled: Bool,
+                              controlEnabled: Bool, hovered: Bool, focused: Bool) -> Bool {
+        enabled && controlEnabled && (hovered || focused || visibleID == id)
+    }
+}
+
 /// Resolve real control bounds at the board's overlay, not stale row offsets.
 struct HoverTooltipAnchorKey: PreferenceKey {
     static let defaultValue: [String: Anchor<CGRect>] = [:]
@@ -38,6 +58,7 @@ private struct HoverTooltipScope: ViewModifier {
     func body(content: Content) -> some View {
         content
             .environment(\.timelineTooltipController, controller)
+            .environment(\.hoverTooltipActiveID, controller.visible?.id)
             .overlayPreferenceValue(HoverTooltipAnchorKey.self) { anchors in
                 HoverTooltipOverlay(controller: controller, anchors: anchors, isEnabled: enabled)
             }

@@ -1,0 +1,85 @@
+{
+  "renders": [
+    {
+      "file": "04_Video/DABIN__UI_TOUR__LANDSCAPE.mp4",
+      "bytes": 10190427,
+      "sha256": "0fcb261918fe8c8fd4eb9f63bf25a9cf0a7487391921371d825a9c416fb57ad7",
+      "full_decode": "PASS",
+      "audio": "Natural-speed ElevenLabs Andre Rene narration with reading pauses and quiet original action taps",
+      "frames": 2832,
+      "fps": 30,
+      "duration_seconds": 94.4,
+      "dimensions": [
+        1920,
+        1080
+      ],
+      "pixel_format": "yuv420p",
+      "codec": "H.264",
+      "metadata": "authored prompt/workflow metadata excluded"
+    },
+    {
+      "file": "04_Video/DABIN__UI_TOUR__LANDSCAPE_SILENT.mp4",
+      "bytes": 8344376,
+      "sha256": "313e1e3c9632b9a763fe3e9a5c442d778678e8afef1b57bb587812c81880dee6",
+      "full_decode": "PASS",
+      "audio": "none",
+      "frames": 2832,
+      "fps": 30,
+      "duration_seconds": 94.4,
+      "dimensions": [
+        1920,
+        1080
+      ],
+      "pixel_format": "yuv420p",
+      "codec": "H.264",
+      "metadata": "authored prompt/workflow metadata excluded"
+    },
+    {
+      "file": "04_Video/DABIN__UI_TOUR__PORTRAIT.mp4",
+      "bytes": 7830895,
+      "sha256": "0ec478760c936e182590b279be7606def4df8889ee6ea2c7fced1dce7ab2ad93",
+      "full_decode": "PASS",
+      "audio": "Natural-speed ElevenLabs Andre Rene narration with reading pauses and quiet original action taps",
+      "frames": 2832,
+      "fps": 30,
+      "duration_seconds": 94.4,
+      "dimensions": [
+        1080,
+        1920
+      ],
+      "pixel_format": "yuv420p",
+      "codec": "H.264",
+      "metadata": "authored prompt/workflow metadata excluded"
+    },
+    {
+      "file": "04_Video/DABIN__UI_TOUR__PORTRAIT_SILENT.mp4",
+      "bytes": 5984812,
+      "sha256": "e615c19a7cf1be7ed4696d26899c0acd72750399e0eb4c46e266bef360481a3c",
+      "full_decode": "PASS",
+      "audio": "none",
+      "frames": 2832,
+      "fps": 30,
+      "duration_seconds": 94.4,
+      "dimensions": [
+        1080,
+        1920
+      ],
+      "pixel_format": "yuv420p",
+      "codec": "H.264",
+      "metadata": "authored prompt/workflow metadata excluded"
+    }
+  ],
+  "visual_review": "PASS: independent 58-shot-midpoint review plus original-resolution critical frames; two crop findings repaired and rechecked in decoded final MP4 frames. See VISUAL_QA.json.",
+  "audio_review": "Local STT matched174/174 canonical words; waveform, splice and caption audit passed; no subjective listening claim",
+  "render_engine": "local Blender5.2.1 EEVEE, exact native UI textures, composited robot mouth/gaze/blink and pointer choreography",
+  "publication": "not published; no posts or pitches sent",
+  "root_final_review": {
+    "decoded_contact_sheets": "Both final encoded formats inspected at all 29 shot midpoints",
+    "original_resolution_repair_checks": [
+      "07_QA/DABIN__QA__LANDSCAPE_11.png",
+      "07_QA/DABIN__QA__PORTRAIT_08.png"
+    ],
+    "html_checks": "Desktop/mobile/index asset loading, layout, aspect ratios and 94.4-second video metadata passed; root opened all three resulting full-page captures",
+    "landing_media_byte_parity": true
+  }
+}

@@ -1,0 +1,1 @@
+PASS: 61 notification presentation checks; exact monotonic expiry, identical restarts, stale cancellation, native Board/Detail/Settings, persistent diagnostics and unchanged captures. Evidence: /private/tmp/dabin-full-qa-20261004/native/build/qa/notification-presentation/78F0083F-A6F3-43BA-865C-439342F0EB58

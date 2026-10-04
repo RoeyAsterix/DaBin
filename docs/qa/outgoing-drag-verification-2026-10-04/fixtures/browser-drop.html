@@ -1,0 +1,31 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; connect-src 'none'; img-src 'none'">
+<title>DaBin — local browser drop check</title>
+<style>
+:root{color-scheme:light dark;font:16px system-ui}body{max-width:800px;margin:40px auto;padding:24px}h1{font-size:26px}p{line-height:1.5;color:GrayText}#drop{border:2px dashed #6985c8;border-radius:16px;padding:36px;text-align:center;background:#6985c80d}#drop.over{background:#6985c82d}textarea{box-sizing:border-box;width:100%;min-height:100px;padding:14px;margin:12px 0;border:1px solid #8888;border-radius:10px;font:inherit}pre{white-space:pre-wrap;overflow-wrap:anywhere;padding:20px;background:#8881;border-radius:10px;font-size:12px}h2{font-size:18px;margin-top:30px}.pass{color:#238843}
+</style>
+<h1>DaBin browser drag check</h1>
+<p>Use fictional test samples only. This page works locally, sends no requests, uploads nothing, and changes no clipboard content.</p>
+<div id="drop" tabindex="0" role="region" aria-label="File and mixed content drop target">Drop a file, image, link, caption or mixed selection here</div>
+<h2>Ordinary text field</h2>
+<p>Drop text here to check the browser’s normal text insertion. This field has no custom drop handler.</p>
+<textarea aria-label="Ordinary browser text drop field" placeholder="Drop text or a URL here"></textarea>
+<h2 id="status">No drop received</h2>
+<pre id="output">Waiting for a physical drop.</pre>
+<script>
+const zone=document.getElementById('drop'),status=document.getElementById('status'),output=document.getElementById('output');
+let count=0;
+zone.addEventListener('dragover',event=>{event.preventDefault();event.dataTransfer.dropEffect='copy';zone.classList.add('over')});
+zone.addEventListener('dragleave',()=>zone.classList.remove('over'));
+zone.addEventListener('drop',async event=>{
+ event.preventDefault();zone.classList.remove('over');
+ const data=event.dataTransfer;
+ const receipt={drop:++count,at:new Date().toISOString(),types:[...data.types],text:data.getData('text/plain'),url:data.getData('text/uri-list'),items:[...data.items].map(item=>({kind:item.kind,type:item.type})),files:[]};
+ for(const file of data.files){let sha256=null;try{const digest=await crypto.subtle.digest('SHA-256',await file.arrayBuffer());sha256=[...new Uint8Array(digest)].map(value=>value.toString(16).padStart(2,'0')).join('')}catch(error){sha256='Hash unavailable: '+error.message}receipt.files.push({name:file.name,type:file.type,size:file.size,sha256})}
+ const accepted=receipt.files.length>0||receipt.text.length>0||receipt.url.length>0;
+ status.textContent=accepted?'Drop received — '+receipt.files.length+' file(s)':'Drop event received without readable public content';status.className=accepted?'pass':'';
+ output.textContent=JSON.stringify(receipt,null,2);
+});
+</script>

@@ -4,7 +4,9 @@ import SwiftUI
 struct CaptureCopyButton: View {
     @Environment(\.daBinAccent) private var accent
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    @ObservedObject var state: AppState
+    // Used only to dispatch the copy action. Listening to the entire archive
+    // here invalidates every retained copy button whenever any capture arrives.
+    let state: AppState
     let captures: [Capture]
     var compact = false
 

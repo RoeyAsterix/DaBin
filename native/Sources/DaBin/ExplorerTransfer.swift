@@ -1,5 +1,6 @@
 import AppKit
 import Combine
+import ImageIO
 import UniformTypeIdentifiers
 
 enum ExplorerTransferError: LocalizedError, Equatable {
@@ -25,6 +26,47 @@ enum ExplorerTransfer {
     static let acceptedTypes = [captureType, UTType.fileURL.identifier, UTType.url.identifier,
                                 UTType.plainText.identifier, UTType.image.identifier, UTType.data.identifier]
     static let acceptedTypeIdentifiers = acceptedTypes
+
+    /// One native drag item per capture, in the caller's selection order. The
+    /// original NSURL writer is retained for file drags, including its sandbox
+    /// representations; a string containing the path is never a substitute.
+    /// Validate the entire selection before handing any writers to AppKit.
+    @MainActor
+    static func pasteboardWriters(for captures: [Capture], store: CaptureStore,
+                                 includeInternalReference: Bool = true) throws -> [NSPasteboardWriting] {
+        let current = Dictionary(uniqueKeysWithValues: store.captures.map { ($0.id, $0) })
+        guard Set(captures.map(\.id)).count == captures.count,
+              captures.allSatisfy({ capture in
+                  capture.deletedAt == nil && current[capture.id] === capture
+              }) else {
+            throw ExplorerTransferError.unavailableCapture
+        }
+        let payload = try CaptureClipboardService(writer: { _ in true }).payload(for: captures, managedURL: store.managedURL(for:))
+        return try zip(captures, payload.items).map { capture, item in
+            let base: NSPasteboardWriting
+            var image: LazyImageRepresentation?
+            var fileURL: URL?
+            switch item {
+            case .text(let text): base = text as NSString
+            case .webURL(let value):
+                guard let url = URL(string: value), ["https", "http"].contains(url.scheme?.lowercased() ?? ""), url.host != nil else {
+                    throw CaptureClipboardError.noContent
+                }
+                let item = NSPasteboardItem()
+                item.setString(value, forType: .URL)
+                item.setString(value, forType: .string)
+                base = item
+            case .file(let url):
+                do { _ = try freshRegularFile(url) }
+                catch { throw CaptureClipboardError.missingSavedOriginal(capture.originalFilename ?? capture.title) }
+                base = url as NSURL
+                fileURL = url
+                image = LazyImageRepresentation(url: url)
+            }
+            let identity = includeInternalReference ? try JSONEncoder().encode([capture.id]) : nil
+            return NativeCaptureWriter(base: base, identity: identity, image: image, fileURL: fileURL)
+        }
+    }
 
     @MainActor
     static func itemProvider(for capture: Capture, store: CaptureStore, includeInternalReference: Bool = true) throws -> NSItemProvider {
@@ -66,19 +108,116 @@ enum ExplorerTransfer {
     /// Used for generated daily Markdown and saved originals. Never fabricates a
     /// placeholder file or falls back to the source application's original path.
     static func documentProvider(url: URL) throws -> NSItemProvider {
-        do { try OriginalFileStorage.validateRegularFile(url) }
+        do { _ = try freshRegularFile(url) }
         catch { throw ExplorerTransferError.missingDocument(url.lastPathComponent) }
         let provider = NSItemProvider(object: url as NSURL)
         provider.suggestedName = url.lastPathComponent
         let type = UTType(filenameExtension: url.pathExtension) ?? .data
         provider.registerFileRepresentation(forTypeIdentifier: type.identifier, fileOptions: [], visibility: .all) { completion in
             do {
-                try OriginalFileStorage.validateRegularFile(url)
-                completion(url, false, nil)
+                let current = try freshRegularFile(url)
+                completion(current, false, nil)
             } catch { completion(nil, false, ExplorerTransferError.missingDocument(url.lastPathComponent)) }
             return nil
         }
+        if let image = LazyImageRepresentation(url: url) {
+            // Registering a drag performs no image read or decoding. Destination
+            // apps request the exact encoded original only when accepting it.
+            provider.registerDataRepresentation(forTypeIdentifier: image.type.identifier, visibility: .all) { completion in
+                DispatchQueue.global(qos: .utility).async {
+                    do { completion(try image.read(), nil) }
+                    catch { completion(nil, error) }
+                }
+                return nil
+            }
+        }
         return provider
+    }
+
+    /// A retained URL can cache resource values from drag start. Every promised
+    /// read checks the current directory entry, so a replaced symbolic link is
+    /// rejected rather than followed using a stale regular-file result.
+    private static func freshRegularFile(_ url: URL) throws -> URL {
+        var current = url
+        current.removeAllCachedResourceValues()
+        let attributes = try FileManager.default.attributesOfItem(atPath: current.path)
+        guard attributes[.type] as? FileAttributeType == .typeRegular else {
+            throw ExplorerTransferError.missingDocument(current.lastPathComponent)
+        }
+        try OriginalFileStorage.validateRegularFile(current)
+        return current
+    }
+
+    private struct LazyImageRepresentation: Sendable {
+        let url: URL
+        let type: UTType
+        init?(url: URL) {
+            guard let type = UTType(filenameExtension: url.pathExtension), type.conforms(to: .image) else { return nil }
+            self.url = url; self.type = type
+        }
+        func read() throws -> Data {
+            do {
+                let current = try ExplorerTransfer.freshRegularFile(url)
+                let data = try Data(contentsOf: current, options: .mappedIfSafe)
+                guard let source = CGImageSourceCreateWithData(data as CFData,
+                    [kCGImageSourceShouldCache: false] as CFDictionary),
+                      CGImageSourceGetCount(source) > 0,
+                      CGImageSourceGetStatus(source) == .statusComplete,
+                      let identifier = CGImageSourceGetType(source),
+                      let actual = UTType(identifier as String), actual.conforms(to: type) else {
+                    throw ExplorerTransferError.missingDocument(url.lastPathComponent)
+                }
+                return data
+            } catch { throw ExplorerTransferError.missingDocument(url.lastPathComponent) }
+        }
+    }
+
+    /// Additional native representations surround rather than replace Apple's
+    /// URL/string writers. Image data is promised and materialized only when a
+    /// receiving application asks for it. AppKit's callback is synchronous and
+    /// waits for its requested data; no image bytes are read at drag start.
+    private final class NativeCaptureWriter: NSObject, NSPasteboardWriting {
+        private final class ImageReadResult: @unchecked Sendable {
+            private let lock = NSLock()
+            private var data: Data?
+            func store(_ value: Data?) { lock.lock(); data = value; lock.unlock() }
+            func value() -> Data? { lock.lock(); defer { lock.unlock() }; return data }
+        }
+        private let base: NSPasteboardWriting
+        private let identity: Data?
+        private let image: LazyImageRepresentation?
+        private let fileURL: URL?
+        private static let imageQueue = DispatchQueue(label: "com.dabin.drag-image", qos: .utility)
+        init(base: NSPasteboardWriting, identity: Data?, image: LazyImageRepresentation?, fileURL: URL?) {
+            self.base = base; self.identity = identity; self.image = image; self.fileURL = fileURL
+        }
+        func writableTypes(for pasteboard: NSPasteboard) -> [NSPasteboard.PasteboardType] {
+            var types = base.writableTypes(for: pasteboard)
+            if let image {
+                let type = NSPasteboard.PasteboardType(image.type.identifier)
+                if !types.contains(type) { types.append(type) }
+            }
+            if identity != nil, !types.contains(ExplorerTransfer.pasteboardType) { types.append(ExplorerTransfer.pasteboardType) }
+            return types
+        }
+        func writingOptions(forType type: NSPasteboard.PasteboardType, pasteboard: NSPasteboard) -> NSPasteboard.WritingOptions {
+            if identity != nil, type == ExplorerTransfer.pasteboardType { return [] }
+            if let image, type.rawValue == image.type.identifier { return .promised }
+            return base.writingOptions?(forType: type, pasteboard: pasteboard)
+                ?? (base.writableTypes(for: pasteboard).first == type ? [] : .promised)
+        }
+        func pasteboardPropertyList(forType type: NSPasteboard.PasteboardType) -> Any? {
+            if type == ExplorerTransfer.pasteboardType { return identity }
+            if let image, type.rawValue == image.type.identifier {
+                let result = ImageReadResult()
+                let finished = DispatchSemaphore(value: 0)
+                Self.imageQueue.async { result.store(try? image.read()); finished.signal() }
+                finished.wait()
+                return result.value()
+            }
+            if let fileURL { do { _ = try ExplorerTransfer.freshRegularFile(fileURL) } catch { return nil } }
+            return base.pasteboardPropertyList(forType: type)
+        }
     }
 
     private static func registerText(_ value: String, on provider: NSItemProvider) {

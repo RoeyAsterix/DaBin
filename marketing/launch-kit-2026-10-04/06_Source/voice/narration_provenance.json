@@ -1,0 +1,84 @@
+{
+  "provider": "ElevenLabs",
+  "connector": "mcp__elevenlabs__creative_generate_speech",
+  "model": "eleven_multilingual_v2",
+  "created_date": "2026-10-04",
+  "voice": {
+    "name": "Emma - Youthful, Upbeat Commercial (new)",
+    "voice_id": "YEENOUza6MPsbkc1De9E",
+    "selection": "Existing professional library voice; friendly clear American English commercial delivery."
+  },
+  "flow_id": "mQIgwq3UiJo7G0ZpjbFi",
+  "node_id": "QVlDPIYpR7NtmYJcsM7b",
+  "exact_tts_script": "Meet Day Bin. A little robot for the useful bits of your day. Drop in a link, a note, or an image. Keep them together, and find them when you need them. Free. No account. Saved on your Mac.",
+  "canonical_display_script": "Meet DaBin. A little robot for the useful bits of your day. Drop in a link, a note, or an image. Keep them together, and find them when you need them. Free. No account. Saved on your Mac.",
+  "pronunciation": {
+    "tts_spelling": "Day Bin",
+    "note": "Editorial default chosen for this first package, not asserted as user-confirmed canonical pronunciation."
+  },
+  "generations": [
+    {
+      "take": 1,
+      "generation_id": "PZHTTlCg5D3POQf7nitp",
+      "status": "completed",
+      "duration_seconds": 13.79265306122449,
+      "credits": 189,
+      "price_usd_cents": 3.7800000000000002,
+      "filename": "DaBin_Feed_Narration_Take_01.mp3"
+    },
+    {
+      "take": 2,
+      "generation_id": "lh14nsFdM0VC8bC6QP8b",
+      "status": "completed",
+      "duration_seconds": 14.164172335600908,
+      "credits": 189,
+      "price_usd_cents": 3.7800000000000002,
+      "filename": "DaBin_Feed_Narration_Take_02.mp3"
+    },
+    {
+      "take": 3,
+      "generation_id": "tnSTJLSIFwA6Xuyfd2lD",
+      "status": "completed",
+      "duration_seconds": 13.606893424036281,
+      "credits": 189,
+      "price_usd_cents": 3.7800000000000002,
+      "filename": "DaBin_Feed_Narration_Take_03.mp3"
+    },
+    {
+      "take": 4,
+      "generation_id": "TEsepLhzaL4IsTCQ9Rhu",
+      "status": "completed",
+      "duration_seconds": 14.44281179138322,
+      "credits": 189,
+      "price_usd_cents": 3.7800000000000002,
+      "filename": "DaBin_Feed_Narration_Take_04.mp3"
+    }
+  ],
+  "selected_take": 2,
+  "selected_generation_id": "lh14nsFdM0VC8bC6QP8b",
+  "selected_wav_duration_seconds": 14.1641875,
+  "paced_derivative": {
+    "filename": "DaBin_Feed_Narration_Paced_092.wav",
+    "ffmpeg_filter": "atempo=0.92",
+    "duration_seconds": 15.391375,
+    "sample_rate": 48000,
+    "channels": 1,
+    "codec": "pcm_s16le"
+  },
+  "content_qa": {
+    "method": "Independent ElevenLabs Scribe v1 transcription of synthesized take 02, not user assets.",
+    "transcription_generation_id": "hPZ845vXCPiEnBFhqm3E",
+    "transcription_session_id": "nuVJxvPdKSEkF1wJRTdu",
+    "text": "Meet Day Bin. A little robot for the useful bits of your day. Drop in a link, a note, or an image. Keep them together, and find them when you need them. Free. No account. Saved on your Mac.",
+    "script_exact_match": true,
+    "spoken_duration_seconds": 14.16,
+    "listening_review": "Unavailable in this agent session: audio input unsupported. No subjective listening pass claimed.",
+    "technical_checks": {
+      "file_decodes": true,
+      "peak_dbfs": -5.3,
+      "mean_dbfs": -22.3,
+      "clipping_detected": false
+    }
+  },
+  "privacy": "Only this DaBin narration text and its synthesized audio were sent to the user-authorized ElevenLabs destination. No KARI content, user private screenshots, or other project assets sent."
+}

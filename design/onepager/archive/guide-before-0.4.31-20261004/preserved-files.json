@@ -1,0 +1,17 @@
+{
+  "docs/DaBin-Quick-Guide.pdf": "a96e33be9e03db262e9961a722b7950d7aafa87ac16e3faf9e040c5f0e5a6d33",
+  "docs/DaBin-Friendly-Copy.txt": "3a8905faab8c42641f8a5d281a5346c96d818d2a135e6db52103afe2cd13f2cf",
+  "design/onepager/build_guide.py": "fe2297b76f3eaaf3c13ed9e131bdb5a67f66fa4075aa59cabeb60e4752daeb79",
+  "design/onepager/copy.json": "761c0c4ed5c49b1fc442599ac2555a7d366c34bdae6e198c8bb46af2f8dff8a2",
+  "design/onepager/ExportGuide.swift": "7bed5aa5769a006e3b35f1c751a5cf3d350aded9a68e87d96313639b8c76968a",
+  "design/onepager/export_guide_assets.py": "67b702d64e1fc24c4f38706f763391bea7303f547c17754d5543b62a1d327e67",
+  "design/onepager/README.md": "ec6120df24bdcafdecd31eea0a4571a6df4a99923c78ad4176d61262dd3cb229",
+  "design/onepager/assets/DABIN__GUIDE__INBOX.png": "ab36d422fe32ac8f5cb2c2ffc8fdfa0cfa5a2f98ca748027dc6f30c9d75c3e6d",
+  "design/onepager/assets/DABIN__GUIDE__PROJECTS.png": "393ae6e3f810b0459dcde4a952828e82a9dab9fbb07e4a385c521a8a02d102f9",
+  "design/onepager/assets/DABIN__GUIDE__ROBOT.png": "ee95624ca95102af33f8ed3507f6ca0509c101cb5ea8fc880a2ff07fc07f5432",
+  "design/onepager/assets/DABIN__GUIDE__TASK.png": "2b55c624477505fe68790dbd9efeb5d1502f8b017c7d44781690ca296db7a530",
+  "design/onepager/assets/DaBin-logo.png": "5997fb512c7399023d7e9f6fa0ba50119697ba1bd1607582c5d85ec481eb71f1",
+  "design/onepager/assets/guide-assets.json": "a358bb63b4ea7fa4ca337e00f56a434666ae2c303fec9449aed1a05664ae3a53",
+  "design/onepager/assets/guide-native-renders.json": "06cb71bc2461de70727dd1a11df213f5272d2db0855dee5cbeb636b5b8c9ef81",
+  "design/onepager/assets/guide-native-source-manifest.json": "5848e9a81181cb7dc1814109086b365c8fff4f6fbc87d4ab6e389e14867520d1"
+}

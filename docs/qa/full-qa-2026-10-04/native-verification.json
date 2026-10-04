@@ -1,0 +1,563 @@
+{
+  "status": "passed",
+  "coverage": "full_93_suite_run_plus_six_affected_final_K_mapping_reruns",
+  "passedSuites": 93,
+  "failedSuites": 0,
+  "sourceChangedDuringRuns": false,
+  "buildSourceFingerprint": "f5e26cf555bdf477f2d4874a6c7e631f16edbcd3c4fd2aca57d3c717ec9a8d10",
+  "allBuildInputsMatchCandidate": true,
+  "nativeRun": "full-native-final/report.json",
+  "suites": [
+    {
+      "name": "ProjectFileArchiveTests",
+      "status": "not_requested",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "name": "ExplorerTransferTests",
+      "status": "not_requested",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "name": "ExplorerQueryTests",
+      "status": "not_requested",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "name": "CaptureProvenanceTests",
+      "status": "not_requested",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "name": "TaskFocusTests",
+      "status": "not_requested",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "name": "ProjectPickerTests",
+      "status": "not_requested",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T224402222487Z/QuickAccessTests-compile.log",
+        "seconds": 1.046,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T224402222487Z/QuickAccessTests.log",
+      "name": "QuickAccessTests",
+      "reportedSummary": "PASS: 28 quick access checks",
+      "requiresWindowFocus": false,
+      "seconds": 0.928,
+      "status": "passed",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "name": "ProductFoundationTests",
+      "status": "not_requested",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T224402222487Z/ConnectedWorkflowTests-compile.log",
+        "seconds": 1.494,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T224402222487Z/ConnectedWorkflowTests.log",
+      "name": "ConnectedWorkflowTests",
+      "reportedSummary": "PASS: 19 connected capture, client collection, clipboard reuse, task planning, restart and backup scenarios",
+      "requiresWindowFocus": false,
+      "seconds": 0.728,
+      "status": "passed",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "name": "WorkInboxTests",
+      "status": "not_requested",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "name": "WorkspaceTests",
+      "status": "not_requested",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "name": "ManualCaptureLifecycleTests",
+      "status": "not_requested",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "name": "ArchiveRecoveryTests",
+      "status": "not_requested",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "name": "ArchiveBackupTests",
+      "status": "not_requested",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "name": "ThemeSettingsTests",
+      "status": "not_requested",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "name": "PrivacyInformationTests",
+      "status": "not_requested",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "name": "DomainTests",
+      "status": "not_requested",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "name": "ArchiveLayoutTests",
+      "status": "not_requested",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "name": "ArchiveStoreTests",
+      "status": "not_requested",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "name": "DeferredArchiveRepairTests",
+      "status": "not_requested",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "name": "RepositoryBatchTests",
+      "status": "not_requested",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "name": "CaptureRemovalTests",
+      "status": "not_requested",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "name": "ServiceTests",
+      "status": "not_requested",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "name": "QAStorageScopedSaveTests",
+      "status": "not_requested",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "name": "QALifecycleTests",
+      "status": "not_requested",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T224402222487Z/ApplicationLifecycleTests-compile.log",
+        "seconds": 2.854,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T224402222487Z/ApplicationLifecycleTests.log",
+      "name": "ApplicationLifecycleTests",
+      "reportedSummary": "PASS: 62 application lifecycle checks; isolated preferences, events, pointer samples and fake notifications, no focus or personal data.",
+      "requiresWindowFocus": false,
+      "seconds": 1.686,
+      "status": "passed",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "name": "PreviewLifecycleTests",
+      "status": "not_requested",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "name": "TaskStateTests",
+      "status": "not_requested",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "name": "TaskPlanningTests",
+      "status": "not_requested",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "name": "CaptureActionTests",
+      "status": "not_requested",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "name": "CaptureClipboardTests",
+      "status": "not_requested",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "name": "ClipboardRetentionTests",
+      "status": "not_requested",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "name": "CaptureTaskConversionTests",
+      "status": "not_requested",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "name": "LocalContentSearchTests",
+      "status": "not_requested",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "name": "LocalDOCXTextExtractorTests",
+      "status": "not_requested",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "name": "SearchScopeStateTests",
+      "status": "not_requested",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "name": "HourlyGroupingTests",
+      "status": "not_requested",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "name": "DayExportTests",
+      "status": "not_requested",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "name": "DayExportUITests",
+      "status": "not_requested",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "name": "WeeklyStateTests",
+      "status": "not_requested",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "name": "InputTests",
+      "status": "not_requested",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "name": "AutoCaptureServiceTests",
+      "status": "not_requested",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "name": "AutoCaptureRobotPresenterTests",
+      "status": "not_requested",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "name": "AutoCaptureRobotCelebrationTests",
+      "status": "not_requested",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "name": "SoftwareUpdateTests",
+      "status": "not_requested",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "name": "UpdateConfigurationTests",
+      "status": "not_requested",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "name": "RobotMotionTests",
+      "status": "not_requested",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "name": "IslandRobotChoreographyTests",
+      "status": "not_requested",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "name": "RobotLifecycleTests",
+      "status": "not_requested",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "name": "RobotAppFrameTests",
+      "status": "not_requested",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "name": "QuietOrbitRenderTests",
+      "status": "not_requested",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "name": "RobotProjectSignRenderTests",
+      "status": "not_requested",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "name": "AutoCaptureSignMotionTests",
+      "status": "not_requested",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "name": "AutoCaptureSignPresenterTests",
+      "status": "not_requested",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "name": "AutoCaptureSignRenderTests",
+      "status": "not_requested",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "name": "CapturePreviewPerformanceTests",
+      "status": "not_requested",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "name": "BoredRobotArtworkTests",
+      "status": "not_requested",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "name": "TooltipBehaviorTests",
+      "status": "not_requested",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "name": "SearchDateBoardTests",
+      "status": "not_requested",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "name": "SearchResultExcerptTests",
+      "status": "not_requested",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "name": "ProjectWorkspaceStateTests",
+      "status": "not_requested",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "name": "ProjectWorkspaceExportTests",
+      "status": "not_requested",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "name": "ProjectWorkspaceViewTests",
+      "status": "not_requested",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "name": "ProjectWorkspaceCardTests",
+      "status": "not_requested",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "name": "RedesignInteractionTests",
+      "status": "not_requested",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "name": "WindowResizeInteractionTests",
+      "status": "not_requested",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "name": "WindowTests",
+      "status": "not_requested",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "name": "WeeklyWindowTests",
+      "status": "not_requested",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "name": "FilterResizeTests",
+      "status": "not_requested",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "name": "RobotDropTests",
+      "status": "not_requested",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "name": "DailyCaptureTests",
+      "status": "not_requested",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T224402222487Z/HeaderInteractionTests-compile.log",
+        "seconds": 3.5,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T224402222487Z/HeaderInteractionTests.log",
+      "name": "HeaderInteractionTests",
+      "reportedSummary": "PASS: 219 native labeled-header accessibility and interaction checks",
+      "requiresWindowFocus": true,
+      "seconds": 14.223,
+      "status": "passed",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "name": "WorkspaceWindowTests",
+      "status": "not_requested",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "name": "RobotWindowTransitionTests",
+      "status": "not_requested",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "name": "DetailPreviewInteractionTests",
+      "status": "not_requested",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "name": "CaptureTimestampPresentationTests",
+      "status": "not_requested",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "name": "RobotVisualConsistencyTests",
+      "status": "not_requested",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "name": "NativeTooltipPreferenceTests",
+      "status": "not_requested",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "name": "TooltipPresentationTests",
+      "status": "not_requested",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "name": "RobotCloseVisualTests",
+      "status": "not_requested",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "name": "CollectionCardPresentationTests",
+      "status": "not_requested",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "name": "TaskTimerRobotTests",
+      "status": "not_requested",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "name": "ExplorerCaptureCardPresentationTests",
+      "status": "not_requested",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "name": "AutoCaptureExplorerResponsivenessTests",
+      "status": "not_requested",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "name": "ExplorerKeyboardTests",
+      "status": "not_requested",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "name": "NotificationPresentationTests",
+      "status": "not_requested",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "name": "WindowChromePresentationTests",
+      "status": "not_requested",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "name": "ProjectRecordingRobotTests",
+      "status": "not_requested",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T224402222487Z/SearchWindowTests-compile.log",
+        "seconds": 4.908,
+        "status": "passed"
+      },
+      "completion": {
+        "checks": 105,
+        "keyboardVerification": "passed: native focus, Tab retained filter focus with Keyboard Navigation disabled, Escape dismissal and Return activates Done",
+        "passed": true
+      },
+      "exitCode": 0,
+      "launchMethod": "temporary_app_bundle",
+      "log": "build/qa/runs/20261003T224402222487Z/SearchWindowTests.log",
+      "name": "SearchWindowTests",
+      "reportedSummary": "PASS: 105 native global Search checks; keyboard verification passed: native focus, Tab retained filter focus with Keyboard Navigation disabled, Escape dismissal and Return activates Done.",
+      "requiresWindowFocus": true,
+      "seconds": 40.858,
+      "status": "passed",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "name": "TaskPriorityTagTests",
+      "status": "not_requested",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "name": "LocalFileLocationTests",
+      "status": "not_requested",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "name": "NativeContentDragTests",
+      "status": "not_requested",
+      "verificationRun": "final-k-regressions"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261003T224402222487Z/SearchInputTests-compile.log",
+        "seconds": 2.411,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261003T224402222487Z/SearchInputTests.log",
+      "name": "SearchInputTests",
+      "reportedSummary": "PASS: 65 production Search typing, focus, clear, private direct/Cmd V paste, unrelated-editor and immediate/animated reopen checks",
+      "requiresWindowFocus": true,
+      "seconds": 8.511,
+      "status": "passed",
+      "verificationRun": "final-k-regressions"
+    }
+  ],
+  "fullRunBuildFingerprint": "391a270765f669a913cf9e3f2be1c8285cd9c3807e01dcaf5374eb2d6871f8e4",
+  "finalFocusedRun": "final-k-regressions/report.json",
+  "finalFocusedPassedSuites": 6,
+  "productionDeltaSinceFullRun": [
+    "Sources/DaBin/QuickAccess.swift"
+  ],
+  "finalDelta": "Four lines: Search K labels, original modifier fallback, K/V reservation match and K registration",
+  "all128SharedProductionAndResourceHashesMatchFinalFocusedRun": true
+}

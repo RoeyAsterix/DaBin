@@ -1,0 +1,53 @@
+DABIN / APPLE FEATURING NOMINATION
+LOCAL DRAFT. Not submitted. Map this prose into the current App Store Connect form; field labels and limits may change.
+
+NOMINATION NAME
+DaBin for Mac - a local home for useful captures
+
+TYPE
+App Launch, if the first publication is still ahead.
+If already public: App Enhancements only for an actual significant future update, with its real features and date. Do not backdate a launch or invent upcoming features.
+
+PLATFORM
+macOS. Apple Silicon; minimum macOS 14.
+
+PUBLICATION WINDOW
+[[ACTUAL_LAUNCH_DATE_OR_RANGE]]
+Apple recommends plans be submitted as early as possible with at least three weeks' lead time. Choose an accurate future window when practical. Nomination does not guarantee featuring.
+
+DESCRIPTION
+DaBin gives useful notes, links, images, files and tasks a local place on a Mac. The app pairs a small desktop robot drop target with a native board for quick capture, project resources and deliberate task focus.
+
+A typical example is a design project: save a reference image, a link and a note, keep them with the project, then search a word inside a saved screenshot. Local Apple frameworks recognize text in supported saved images and documents; search covers DaBin's saved content rather than the whole Mac.
+
+DaBin is intended to launch free, with no account, advertising, analytics or cloud sync. Auto Capture starts off and offers independent clipboard and user-selected screenshot-folder controls. Optional website previews are off by default and can contact manually saved sites when enabled. The approach is useful for people who want to collect project material without creating a service account.
+
+The launch materials show the real Mac interface with fictional examples. A guided UI tour uses a conversational robot presenter, synced speech and pointer guidance to explain native before/after states. The composed walkthrough is distinct from device-captured App Store preview footage. The app supports light/dark appearance, configurable global shortcuts and macOS Reduce Motion behavior. Accessibility claims and labels will be limited to what has been evaluated on the exact distributed build.
+
+[[ADD_ONLY_ACTUAL_RELEASE_OR_TEAM_DETAILS_THE_OWNER_WANTS_APPLE_TO_CONSIDER]]
+
+HELPFUL DETAILS
+- Audience: designers and independent creative professionals first; students and developers can use the same saved-content workflow.
+- Native Mac interaction: menu-bar/desktop access, paste/drop capture, keyboard search, project organization and task focus.
+- Local recognition: supported saved content; no external AI/OCR service.
+- All review examples are fictional; no login or paid unlock is required in the reviewed source.
+- No user numbers, performance claim, award, founder story or guaranteed accessibility support is asserted.
+
+SUPPLEMENTAL MATERIALS (UP TO CURRENT FORM LIMIT)
+[[WEBSITE_URL]]
+[[APP_STORE_URL]] when public
+[[PUBLIC_SUPPORT_URL]]
+[[PUBLIC_DEMO_URL]]
+Only provide actually accessible URLs. The local ZIP and local file paths are not valid supplemental public URLs. Do not include private account contacts in the public press kit.
+
+REGIONS / LOCALIZATIONS
+[[ACTUAL_RELEASE_TERRITORIES]]
+[[ACTUAL_SHIPPED_LOCALIZATIONS]]
+Do not copy the whole-world or English-only assumptions from this draft without checking the release settings.
+
+OWNER COMPLETION
+Confirm build, price, dates, territories, rights, contact and accessibility evidence. Save as Draft if facts are still pending. Submit only after deliberate final review. This package has not accessed or changed App Store Connect.
+
+SOURCE
+https://developer.apple.com/help/app-store-connect/manage-featuring-nominations/nominate-your-app-for-featuring/
+Checked 4 October 2026.

@@ -1,0 +1,58 @@
+{
+  "request": "Simplify reminder robot to a clock and task-name sign; remove Time is up panel",
+  "changes": [
+    "Removed detached timer/instruction panel and redundant single-reminder heading",
+    "Content-sized task-name sign, complete normalized title retained with visible ellipsis for long names",
+    "Smaller320x160 native stage, connected robot/clock/hands and safe growth clearance",
+    "Kept multiple-reminder count, active project status and acknowledgement failure feedback on the same sign"
+  ],
+  "filesChanged": [
+    "native/Sources/DaBin/TaskTimerRobotView.swift",
+    "native/Tests/TaskTimerRobotTests.swift"
+  ],
+  "verification": {
+    "suitesPassed": 3,
+    "checksPassed": 612,
+    "nativeRenderReview": "Short, long, multilingual and multiple reminder names; light/dark; Reduce Motion; growth; failure with active project recording",
+    "build": "Release ARM64 passed",
+    "sourceAndExecutableMatchBuild": true,
+    "strictSignatureVerified": true,
+    "whitespaceCheck": "passed"
+  },
+  "scope": "Fictional temporary archives and native offscreen windows. Display safe areas are tested through injected screen geometry. Installed app and personal reminders unchanged.",
+  "buildPath": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/DaBin.app",
+  "artifacts": {
+    "sign-long-dark@2x.png": "a1dc4d436fa1e646f0f6b3f87ca96a9a8fe435e791d75b33e03806d3a2faf518",
+    "sign-mixed-language-dark@2x.png": "2a58acaf411c2b53c9c2d08f5bcbe266fd12c2966b746ac903d6ee168afabd01",
+    "sign-combined-stage-1-sample-5@2x.png": "a732f76e85a05b5c6966d751e2f06e65193387073edc8fddbbac16f83fe794aa",
+    "build-receipt.json": "d27b71f4ea0ff3e844a33662976ccf413318c7fb5904443e29423bb4bfc9f6de",
+    "sign-mixed-language-light@2x.png": "0e96afb42061e34edf86d79b0aa535bb3137dc28b0538ecfb6a506b61811438c",
+    "sign-combined-stage-1-sample-24@2x.png": "c810e31d216c9dfc9c8b7fa663f9193a7e558bd588a1ca7d71d1dd5c9f8d16d9",
+    "sign-short-dark@2x.png": "9e1cd5864386cf616e959ac5ca819607440330f0b96c4cca5a00294ea5b6d3b0",
+    "dark-normal-stage-1@2x.png": "3982143e584e78bb6e93b53373c23e8c2630094f1f6c10d8af71380e082d93e7",
+    "dark-normal-entry@2x.png": "08ab16ebac9123adbff707904e4da20d0c7f039bfe32e4c3bdafd9da5e23dd87",
+    "light-normal-stage-3@2x.png": "bc8a88688a797d6d938614d7b3839a0052456893466f647ed0507270bc5f06a8",
+    "sign-long-light@2x.png": "32221455cb84d2d1d2079db8cf4f53f2645d5f8e96ec57fb3a10b66c97c8ea35",
+    "light-normal-stage-1@2x.png": "5242b4f39feeaacdf3ec1f39890738234be57813677df7733802caa5571dd27c",
+    "light-normal-hold@2x.png": "9e6b933fd8c25e40702c0a6cc3f36cdd14b2d96f0281ecba872aa7e53bdb3f24",
+    "dark-normal-stage-3@2x.png": "530eb5e7accc94e65afdfe40059b7d84ef44be318a9237a13c95713f68b13111",
+    "light-reduced-hold@2x.png": "3cf050f81832c4fcd32cd0a5238de5ecdf455faccf24e921605fb75764345304",
+    "light-normal-entry@2x.png": "3a3e0883b51d4f8fcd0636e891f549be1d0256c07d1404ae30269623c401f789",
+    "sign-multiple-light@2x.png": "3d60589346831f286f4d0599f946e6128055972cbc42d364bcbfb3bcca1d819f",
+    "dark-normal-hold@2x.png": "ed24ff9f61323581bc73b77cd754033c843bbd2804a0db31f554e9189af9fdc2",
+    "sign-combined-stage-3-sample-24@2x.png": "ed9404fc3ba56764608e6a418b36d3c963e25f713c6bc146f0784b2c6a1ab08d",
+    "dark-reduced-hold@2x.png": "88b7e691a3757bc342c32f463d2802de368b2d0cf95b9f0b4477e275082bbd42",
+    "sign-combined-stage-2-sample-5@2x.png": "2b283034456cf1b610411c60b9b12cba212099730e45b289e6f1ebba3e9d4960",
+    "sign-retry-dark@2x.png": "652280274858c7e7f0befec615501fe47c038009d50265896b604111a51e7739",
+    "light-normal-stage-2@2x.png": "6103b44306910930eca486f883c2760e63f997c5e270554141b77d2459d890ce",
+    "qa-report.json": "8f6d943b6b9728db7f4aa280fdfcec23e2d9fefb22f0aadcd0dcde04043f48ac",
+    "sign-short-light@2x.png": "d29d5dd29af2e8841ae3150062454cb2e65bda5bfb87c524894002168bb2c40d",
+    "task-timer-robot-report.json": "e5b9e1f20a97a152dcdb50b9257e4c405d28ce31fea761d1dd8dd11c2ec29d4b",
+    "sign-retry-light@2x.png": "d09b0d5d3455a31f78a728a13759ad8369e370399f35930f7e3267c84804340a",
+    "sign-combined-stage-3-sample-5@2x.png": "69f71278fddec4286747bb040e2c46646bc22efc03a8831d6f984c1d58f333e4",
+    "sign-combined-stage-2-sample-24@2x.png": "730810e2c2b6efb2c25e5dda9e234517c86dcb26a2a70eab02661714e7edde81",
+    "dark-normal-stage-2@2x.png": "25f17c137e93f6e4ff6110b077d1b2e1982a30747e4c46ebbe2e74be27c2a02f",
+    "before-user-reference.jpg": "69581163810ecc209bf8b8c19a1acaf61c5602dc8f6eaf1774fef0b9a2475a05",
+    "sign-multiple-dark@2x.png": "57f65c76e2370e052160d1250576a2749c425e5d52cd57839e3074b160af39aa"
+  }
+}

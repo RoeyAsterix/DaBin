@@ -33,6 +33,9 @@ struct PrivacyInformationTests {
                    && automaticText.contains("someone viewing your screen")
                    && automaticText.contains("not guarantee"),
                    "Automatic-save policy discloses local project labels without a capture-exclusion guarantee")
+        try expect(automaticText.contains("red recording symbol")
+                   && automaticText.contains("when the board is closed"),
+                   "The policy explains the persistent active-recording indication independently of confirmations")
         let reminders = sections.first { $0.title == "Reminders" }?.paragraphs.joined(separator: " ") ?? ""
         try expect(reminders.contains("first three words of the task title")
                    && reminders.contains("without marking the task completed")
@@ -91,7 +94,7 @@ struct PrivacyInformationTests {
                    "Support URL is read from the build's configuration")
         try expect(PrivacyInformation.configuredURL(for: "MissingKey", bundle: bundle) == nil, "Missing owner links never use an invented fallback")
         try expect(PrivacyInformation.document(bundle: bundle) == policy, "Bundled policy is loaded without network access")
-        try expect(PrivacyInformation.updatedLine(in: PrivacyInformation.document(bundle: bundle)) == "Updated 2 October 2026",
+        try expect(PrivacyInformation.updatedLine(in: PrivacyInformation.document(bundle: bundle)) == "Updated 4 October 2026",
                    "The isolated bundled policy exposes its current update date rather than the retired sheet date")
         try expect(PrivacyInformation.updatedLine(in: PrivacyInformation.document(bundle: emptyBundle)) == nil,
                    "A missing policy resource never claims the full policy's update date")

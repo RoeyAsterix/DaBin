@@ -1,0 +1,1291 @@
+{
+  "duration_seconds": 83.2,
+  "offset_seconds": 0,
+  "method": "Canonical sentences aligned to local STT word estimates with bounded rereads at29s/59s decoder boundaries. No atempo or editorial silence insertion.",
+  "phrases": [
+    {
+      "index": 1,
+      "start": 0.0,
+      "end": 1.16,
+      "text": "Hey, I\u2019m DaBin.",
+      "words": [
+        {
+          "word": "Hey,",
+          "start": 0.0,
+          "end": 0.18,
+          "recognition_probability": 0.8798980116844177
+        },
+        {
+          "word": "I\u2019m",
+          "start": 0.6,
+          "end": 0.88,
+          "recognition_probability": 0.9970175921916962
+        },
+        {
+          "word": "DaBin.",
+          "start": 0.88,
+          "end": 1.16,
+          "recognition_probability": 0.45567030397554237
+        }
+      ]
+    },
+    {
+      "index": 2,
+      "start": 1.88,
+      "end": 3.52,
+      "text": "You know that screenshot you\u2019ll need later?",
+      "words": [
+        {
+          "word": "You",
+          "start": 1.88,
+          "end": 2.12,
+          "recognition_probability": 0.9926682114601135
+        },
+        {
+          "word": "know",
+          "start": 2.12,
+          "end": 2.22,
+          "recognition_probability": 0.9983458518981934
+        },
+        {
+          "word": "that",
+          "start": 2.22,
+          "end": 2.36,
+          "recognition_probability": 0.9934090375900269
+        },
+        {
+          "word": "screenshot",
+          "start": 2.36,
+          "end": 2.62,
+          "recognition_probability": 0.9361308813095093
+        },
+        {
+          "word": "you\u2019ll",
+          "start": 2.62,
+          "end": 3.1,
+          "recognition_probability": 0.9921974837779999
+        },
+        {
+          "word": "need",
+          "start": 3.1,
+          "end": 3.28,
+          "recognition_probability": 0.9978681802749634
+        },
+        {
+          "word": "later?",
+          "start": 3.28,
+          "end": 3.52,
+          "recognition_probability": 0.9958717226982117
+        }
+      ]
+    },
+    {
+      "index": 3,
+      "start": 4.18,
+      "end": 4.72,
+      "text": "Drop it here.",
+      "words": [
+        {
+          "word": "Drop",
+          "start": 4.18,
+          "end": 4.32,
+          "recognition_probability": 0.9906733632087708
+        },
+        {
+          "word": "it",
+          "start": 4.32,
+          "end": 4.52,
+          "recognition_probability": 0.9988775849342346
+        },
+        {
+          "word": "here.",
+          "start": 4.52,
+          "end": 4.72,
+          "recognition_probability": 0.9964938759803772
+        }
+      ]
+    },
+    {
+      "index": 4,
+      "start": 5.52,
+      "end": 5.74,
+      "text": "A link?",
+      "words": [
+        {
+          "word": "A",
+          "start": 5.52,
+          "end": 5.58,
+          "recognition_probability": 0.9900662899017334
+        },
+        {
+          "word": "link?",
+          "start": 5.58,
+          "end": 5.74,
+          "recognition_probability": 0.9972866773605347
+        }
+      ]
+    },
+    {
+      "index": 5,
+      "start": 6.48,
+      "end": 6.78,
+      "text": "Paste it.",
+      "words": [
+        {
+          "word": "Paste",
+          "start": 6.48,
+          "end": 6.52,
+          "recognition_probability": 0.6661099791526794
+        },
+        {
+          "word": "it.",
+          "start": 6.52,
+          "end": 6.78,
+          "recognition_probability": 0.9984443783760071
+        }
+      ]
+    },
+    {
+      "index": 6,
+      "start": 7.46,
+      "end": 8.98,
+      "text": "A thought you\u2019ll forget in five minutes?",
+      "words": [
+        {
+          "word": "A",
+          "start": 7.46,
+          "end": 7.54,
+          "recognition_probability": 0.9955796599388123
+        },
+        {
+          "word": "thought",
+          "start": 7.54,
+          "end": 7.72,
+          "recognition_probability": 0.9940351843833923
+        },
+        {
+          "word": "you\u2019ll",
+          "start": 7.72,
+          "end": 7.98,
+          "recognition_probability": 0.9894803464412689
+        },
+        {
+          "word": "forget",
+          "start": 7.98,
+          "end": 8.28,
+          "recognition_probability": 0.9982187151908875
+        },
+        {
+          "word": "in",
+          "start": 8.28,
+          "end": 8.46,
+          "recognition_probability": 0.9962855577468872
+        },
+        {
+          "word": "five",
+          "start": 8.46,
+          "end": 8.68,
+          "recognition_probability": 0.7986961007118225
+        },
+        {
+          "word": "minutes?",
+          "start": 8.68,
+          "end": 8.98,
+          "recognition_probability": 0.9991600513458252
+        }
+      ]
+    },
+    {
+      "index": 7,
+      "start": 9.66,
+      "end": 10.22,
+      "text": "Write it down.",
+      "words": [
+        {
+          "word": "Write",
+          "start": 9.66,
+          "end": 9.82,
+          "recognition_probability": 0.9894060492515564
+        },
+        {
+          "word": "it",
+          "start": 9.82,
+          "end": 10.0,
+          "recognition_probability": 0.9991163611412048
+        },
+        {
+          "word": "down.",
+          "start": 10.0,
+          "end": 10.22,
+          "recognition_probability": 0.9998534917831421
+        }
+      ]
+    },
+    {
+      "index": 8,
+      "start": 11.3,
+      "end": 13.86,
+      "text": "Your Inbox groups the catch by day or week.",
+      "words": [
+        {
+          "word": "Your",
+          "start": 11.3,
+          "end": 11.38,
+          "recognition_probability": 0.9841697216033936
+        },
+        {
+          "word": "Inbox",
+          "start": 11.38,
+          "end": 11.7,
+          "recognition_probability": 0.8826942443847656
+        },
+        {
+          "word": "groups",
+          "start": 11.7,
+          "end": 12.12,
+          "recognition_probability": 0.9697917103767395
+        },
+        {
+          "word": "the",
+          "start": 12.12,
+          "end": 12.44,
+          "recognition_probability": 0.9967235922813416
+        },
+        {
+          "word": "catch",
+          "start": 12.44,
+          "end": 12.64,
+          "recognition_probability": 0.9702003002166748
+        },
+        {
+          "word": "by",
+          "start": 12.64,
+          "end": 12.92,
+          "recognition_probability": 0.9204408526420593
+        },
+        {
+          "word": "day",
+          "start": 12.92,
+          "end": 13.18,
+          "recognition_probability": 0.9980393052101135
+        },
+        {
+          "word": "or",
+          "start": 13.18,
+          "end": 13.62,
+          "recognition_probability": 0.9846737384796143
+        },
+        {
+          "word": "week.",
+          "start": 13.62,
+          "end": 13.86,
+          "recognition_probability": 0.9978042244911194
+        }
+      ]
+    },
+    {
+      "index": 9,
+      "start": 14.86,
+      "end": 17.3,
+      "text": "To organize holds the bits you haven\u2019t filed yet.",
+      "words": [
+        {
+          "word": "To",
+          "start": 14.86,
+          "end": 14.9,
+          "recognition_probability": 0.9925853610038757
+        },
+        {
+          "word": "organize",
+          "start": 14.9,
+          "end": 15.2,
+          "recognition_probability": 0.9826977849006653
+        },
+        {
+          "word": "holds",
+          "start": 15.2,
+          "end": 15.78,
+          "recognition_probability": 0.7960905432701111
+        },
+        {
+          "word": "the",
+          "start": 15.78,
+          "end": 16.12,
+          "recognition_probability": 0.9986616373062134
+        },
+        {
+          "word": "bits",
+          "start": 16.12,
+          "end": 16.28,
+          "recognition_probability": 0.9972884654998779
+        },
+        {
+          "word": "you",
+          "start": 16.28,
+          "end": 16.52,
+          "recognition_probability": 0.9955416321754456
+        },
+        {
+          "word": "haven\u2019t",
+          "start": 16.52,
+          "end": 16.8,
+          "recognition_probability": 0.9992950558662415
+        },
+        {
+          "word": "filed",
+          "start": 16.8,
+          "end": 16.98,
+          "recognition_probability": 0.9939121007919312
+        },
+        {
+          "word": "yet.",
+          "start": 16.98,
+          "end": 17.3,
+          "recognition_probability": 0.9929445385932922
+        }
+      ]
+    },
+    {
+      "index": 10,
+      "start": 18.38,
+      "end": 21.08,
+      "text": "Let\u2019s give this studio refresh a project.",
+      "words": [
+        {
+          "word": "Let\u2019s",
+          "start": 18.38,
+          "end": 18.66,
+          "recognition_probability": 0.9982192516326904
+        },
+        {
+          "word": "give",
+          "start": 18.66,
+          "end": 18.8,
+          "recognition_probability": 0.9981778860092163
+        },
+        {
+          "word": "this",
+          "start": 18.8,
+          "end": 19.04,
+          "recognition_probability": 0.9944275617599487
+        },
+        {
+          "word": "studio",
+          "start": 19.04,
+          "end": 19.52,
+          "recognition_probability": 0.5398747324943542
+        },
+        {
+          "word": "refresh",
+          "start": 19.52,
+          "end": 20.0,
+          "recognition_probability": 0.3628178536891937
+        },
+        {
+          "word": "a",
+          "start": 20.0,
+          "end": 20.72,
+          "recognition_probability": 0.9908087253570557
+        },
+        {
+          "word": "project.",
+          "start": 20.72,
+          "end": 21.08,
+          "recognition_probability": 0.997913658618927
+        }
+      ]
+    },
+    {
+      "index": 11,
+      "start": 22.74,
+      "end": 27.16,
+      "text": "References, autosaving notes, named snippets, saved clipboard history...",
+      "words": [
+        {
+          "word": "References,",
+          "start": 22.74,
+          "end": 22.74,
+          "recognition_probability": 0.9803300499916077
+        },
+        {
+          "word": "autosaving",
+          "start": 23.3,
+          "end": 23.74,
+          "recognition_probability": 0.6807428002357483
+        },
+        {
+          "word": "notes,",
+          "start": 23.74,
+          "end": 24.08,
+          "recognition_probability": 0.7320607900619507
+        },
+        {
+          "word": "named",
+          "start": 24.76,
+          "end": 24.88,
+          "recognition_probability": 0.896181583404541
+        },
+        {
+          "word": "snippets,",
+          "start": 24.88,
+          "end": 25.28,
+          "recognition_probability": 0.9746755957603455
+        },
+        {
+          "word": "saved",
+          "start": 26.2,
+          "end": 26.48,
+          "recognition_probability": 0.9827931821346283
+        },
+        {
+          "word": "clipboard",
+          "start": 26.48,
+          "end": 26.72,
+          "recognition_probability": 0.9612519145011902
+        },
+        {
+          "word": "history...",
+          "start": 26.72,
+          "end": 27.16,
+          "recognition_probability": 0.9905509948730469
+        }
+      ]
+    },
+    {
+      "index": 12,
+      "start": 27.88,
+      "end": 29.04,
+      "text": "all close at hand.",
+      "words": [
+        {
+          "word": "all",
+          "start": 27.88,
+          "end": 28.28,
+          "recognition_probability": 0.9922715425491333
+        },
+        {
+          "word": "close",
+          "start": 28.28,
+          "end": 28.6,
+          "recognition_probability": 0.9862555265426636
+        },
+        {
+          "word": "at",
+          "start": 28.6,
+          "end": 28.82,
+          "recognition_probability": 0.9951318502426147
+        },
+        {
+          "word": "hand.",
+          "start": 28.82,
+          "end": 29.04,
+          "recognition_probability": 0.9993740916252136
+        }
+      ]
+    },
+    {
+      "index": 13,
+      "start": 30.06,
+      "end": 31.34,
+      "text": "And here\u2019s your collection shelf.",
+      "words": [
+        {
+          "word": "And",
+          "start": 30.06,
+          "end": 30.14,
+          "recognition_probability": 0.9818785786628723
+        },
+        {
+          "word": "here\u2019s",
+          "start": 30.14,
+          "end": 30.5,
+          "recognition_probability": 0.9530969262123108
+        },
+        {
+          "word": "your",
+          "start": 30.5,
+          "end": 30.62,
+          "recognition_probability": 0.9981389045715332
+        },
+        {
+          "word": "collection",
+          "start": 30.62,
+          "end": 30.92,
+          "recognition_probability": 0.947665810585022
+        },
+        {
+          "word": "shelf.",
+          "start": 30.92,
+          "end": 31.34,
+          "recognition_probability": 0.9023658633232117
+        }
+      ]
+    },
+    {
+      "index": 14,
+      "start": 32.3,
+      "end": 33.68,
+      "text": "Now, where\u2019s that screenshot?",
+      "words": [
+        {
+          "word": "Now,",
+          "start": 32.3,
+          "end": 32.56,
+          "recognition_probability": 0.9921722412109375
+        },
+        {
+          "word": "where\u2019s",
+          "start": 32.56,
+          "end": 33.12,
+          "recognition_probability": 0.7903959453105927
+        },
+        {
+          "word": "that",
+          "start": 33.12,
+          "end": 33.28,
+          "recognition_probability": 0.9972483515739441
+        },
+        {
+          "word": "screenshot?",
+          "start": 33.28,
+          "end": 33.68,
+          "recognition_probability": 0.9455455541610718
+        }
+      ]
+    },
+    {
+      "index": 15,
+      "start": 35.0,
+      "end": 36.28,
+      "text": "Search a word inside it.",
+      "words": [
+        {
+          "word": "Search",
+          "start": 35.0,
+          "end": 35.24,
+          "recognition_probability": 0.6951776742935181
+        },
+        {
+          "word": "a",
+          "start": 35.24,
+          "end": 35.4,
+          "recognition_probability": 0.9977472424507141
+        },
+        {
+          "word": "word",
+          "start": 35.4,
+          "end": 35.6,
+          "recognition_probability": 0.9973124265670776
+        },
+        {
+          "word": "inside",
+          "start": 35.6,
+          "end": 35.94,
+          "recognition_probability": 0.9971720576286316
+        },
+        {
+          "word": "it.",
+          "start": 35.94,
+          "end": 36.28,
+          "recognition_probability": 0.9974256157875061
+        }
+      ]
+    },
+    {
+      "index": 16,
+      "start": 37.06,
+      "end": 40.26,
+      "text": "I recognize text locally in supported content you\u2019ve saved.",
+      "words": [
+        {
+          "word": "I",
+          "start": 37.06,
+          "end": 37.16,
+          "recognition_probability": 0.9190425872802734
+        },
+        {
+          "word": "recognize",
+          "start": 37.16,
+          "end": 37.46,
+          "recognition_probability": 0.9708380699157715
+        },
+        {
+          "word": "text",
+          "start": 37.46,
+          "end": 37.84,
+          "recognition_probability": 0.9676754474639893
+        },
+        {
+          "word": "locally",
+          "start": 37.84,
+          "end": 38.32,
+          "recognition_probability": 0.9919576644897461
+        },
+        {
+          "word": "in",
+          "start": 38.32,
+          "end": 38.8,
+          "recognition_probability": 0.9584523439407349
+        },
+        {
+          "word": "supported",
+          "start": 38.8,
+          "end": 39.12,
+          "recognition_probability": 0.9860358238220215
+        },
+        {
+          "word": "content",
+          "start": 39.12,
+          "end": 39.6,
+          "recognition_probability": 0.9982485771179199
+        },
+        {
+          "word": "you\u2019ve",
+          "start": 39.6,
+          "end": 39.98,
+          "recognition_probability": 0.9876412451267242
+        },
+        {
+          "word": "saved.",
+          "start": 39.98,
+          "end": 40.26,
+          "recognition_probability": 0.9958005547523499
+        }
+      ]
+    },
+    {
+      "index": 17,
+      "start": 41.08,
+      "end": 42.6,
+      "text": "Use filters to narrow the hunt.",
+      "words": [
+        {
+          "word": "Use",
+          "start": 41.08,
+          "end": 41.2,
+          "recognition_probability": 0.9859083294868469
+        },
+        {
+          "word": "filters",
+          "start": 41.2,
+          "end": 41.56,
+          "recognition_probability": 0.9805989265441895
+        },
+        {
+          "word": "to",
+          "start": 41.56,
+          "end": 41.94,
+          "recognition_probability": 0.9988967180252075
+        },
+        {
+          "word": "narrow",
+          "start": 41.94,
+          "end": 42.16,
+          "recognition_probability": 0.9986501336097717
+        },
+        {
+          "word": "the",
+          "start": 42.16,
+          "end": 42.42,
+          "recognition_probability": 0.9988598823547363
+        },
+        {
+          "word": "hunt.",
+          "start": 42.42,
+          "end": 42.6,
+          "recognition_probability": 0.991183876991272
+        }
+      ]
+    },
+    {
+      "index": 18,
+      "start": 43.62,
+      "end": 45.52,
+      "text": "Turn an idea into a task.",
+      "words": [
+        {
+          "word": "Turn",
+          "start": 43.62,
+          "end": 43.92,
+          "recognition_probability": 0.9931241869926453
+        },
+        {
+          "word": "an",
+          "start": 43.92,
+          "end": 44.06,
+          "recognition_probability": 0.9954167604446411
+        },
+        {
+          "word": "idea",
+          "start": 44.06,
+          "end": 44.42,
+          "recognition_probability": 0.9950661659240723
+        },
+        {
+          "word": "into",
+          "start": 44.42,
+          "end": 45.04,
+          "recognition_probability": 0.9951804876327515
+        },
+        {
+          "word": "a",
+          "start": 45.04,
+          "end": 45.14,
+          "recognition_probability": 0.9962992072105408
+        },
+        {
+          "word": "task.",
+          "start": 45.14,
+          "end": 45.52,
+          "recognition_probability": 0.997649610042572
+        }
+      ]
+    },
+    {
+      "index": 19,
+      "start": 46.3,
+      "end": 49.48,
+      "text": "Add a priority, checklist, reminder, or repeat.",
+      "words": [
+        {
+          "word": "Add",
+          "start": 46.3,
+          "end": 46.44,
+          "recognition_probability": 0.9781278371810913
+        },
+        {
+          "word": "a",
+          "start": 46.44,
+          "end": 46.54,
+          "recognition_probability": 0.9990429282188416
+        },
+        {
+          "word": "priority,",
+          "start": 46.54,
+          "end": 46.94,
+          "recognition_probability": 0.9875187277793884
+        },
+        {
+          "word": "checklist,",
+          "start": 46.94,
+          "end": 47.62,
+          "recognition_probability": 0.23623299598693848
+        },
+        {
+          "word": "reminder,",
+          "start": 47.62,
+          "end": 48.44,
+          "recognition_probability": 0.8885394930839539
+        },
+        {
+          "word": "or",
+          "start": 48.44,
+          "end": 49.08,
+          "recognition_probability": 0.9016728401184082
+        },
+        {
+          "word": "repeat.",
+          "start": 49.08,
+          "end": 49.48,
+          "recognition_probability": 0.9941592216491699
+        }
+      ]
+    },
+    {
+      "index": 20,
+      "start": 50.28,
+      "end": 53.3,
+      "text": "Plan it in Today, then start a focus timer.",
+      "words": [
+        {
+          "word": "Plan",
+          "start": 50.28,
+          "end": 50.8,
+          "recognition_probability": 0.9266246557235718
+        },
+        {
+          "word": "it",
+          "start": 50.8,
+          "end": 51.04,
+          "recognition_probability": 0.9951660633087158
+        },
+        {
+          "word": "in",
+          "start": 51.04,
+          "end": 51.36,
+          "recognition_probability": 0.9415154457092285
+        },
+        {
+          "word": "Today,",
+          "start": 51.36,
+          "end": 51.62,
+          "recognition_probability": 0.9863744974136353
+        },
+        {
+          "word": "then",
+          "start": 52.24,
+          "end": 52.34,
+          "recognition_probability": 0.9826346039772034
+        },
+        {
+          "word": "start",
+          "start": 52.34,
+          "end": 52.6,
+          "recognition_probability": 0.9613977670669556
+        },
+        {
+          "word": "a",
+          "start": 52.6,
+          "end": 52.76,
+          "recognition_probability": 0.9955856800079346
+        },
+        {
+          "word": "focus",
+          "start": 52.76,
+          "end": 53.02,
+          "recognition_probability": 0.9808087348937988
+        },
+        {
+          "word": "timer.",
+          "start": 53.02,
+          "end": 53.3,
+          "recognition_probability": 0.9834330081939697
+        }
+      ]
+    },
+    {
+      "index": 21,
+      "start": 54.28,
+      "end": 56.02,
+      "text": "When time\u2019s up, I\u2019ll nudge you.",
+      "words": [
+        {
+          "word": "When",
+          "start": 54.28,
+          "end": 54.44,
+          "recognition_probability": 0.9698085188865662
+        },
+        {
+          "word": "time\u2019s",
+          "start": 54.44,
+          "end": 54.82,
+          "recognition_probability": 0.9003862738609314
+        },
+        {
+          "word": "up,",
+          "start": 54.82,
+          "end": 54.94,
+          "recognition_probability": 0.9983646273612976
+        },
+        {
+          "word": "I\u2019ll",
+          "start": 55.32,
+          "end": 55.52,
+          "recognition_probability": 0.9943466782569885
+        },
+        {
+          "word": "nudge",
+          "start": 55.52,
+          "end": 55.8,
+          "recognition_probability": 0.9941312074661255
+        },
+        {
+          "word": "you.",
+          "start": 55.8,
+          "end": 56.02,
+          "recognition_probability": 0.997894823551178
+        }
+      ]
+    },
+    {
+      "index": 22,
+      "start": 56.62,
+      "end": 57.82,
+      "text": "You decide when it\u2019s done.",
+      "words": [
+        {
+          "word": "You",
+          "start": 56.62,
+          "end": 56.84,
+          "recognition_probability": 0.9936636686325073
+        },
+        {
+          "word": "decide",
+          "start": 56.84,
+          "end": 57.1,
+          "recognition_probability": 0.9962583780288696
+        },
+        {
+          "word": "when",
+          "start": 57.1,
+          "end": 57.46,
+          "recognition_probability": 0.9966829419136047
+        },
+        {
+          "word": "it\u2019s",
+          "start": 57.46,
+          "end": 57.64,
+          "recognition_probability": 0.9974100589752197
+        },
+        {
+          "word": "done.",
+          "start": 57.64,
+          "end": 57.82,
+          "recognition_probability": 0.9996446371078491
+        }
+      ]
+    },
+    {
+      "index": 23,
+      "start": 58.82,
+      "end": 59.82,
+      "text": "Want automatic capture?",
+      "words": [
+        {
+          "word": "Want",
+          "start": 58.82,
+          "end": 59.0,
+          "recognition_probability": 0.9909163117408752
+        },
+        {
+          "word": "automatic",
+          "start": 59.0,
+          "end": 59.38,
+          "recognition_probability": 0.9687778949737549
+        },
+        {
+          "word": "capture?",
+          "start": 59.38,
+          "end": 59.82,
+          "recognition_probability": 0.9956886172294617
+        }
+      ]
+    },
+    {
+      "index": 24,
+      "start": 60.72,
+      "end": 61.32,
+      "text": "It starts off.",
+      "words": [
+        {
+          "word": "It",
+          "start": 60.72,
+          "end": 60.78,
+          "recognition_probability": 0.9845587611198425
+        },
+        {
+          "word": "starts",
+          "start": 60.78,
+          "end": 61.0,
+          "recognition_probability": 0.9957625269889832
+        },
+        {
+          "word": "off.",
+          "start": 61.0,
+          "end": 61.32,
+          "recognition_probability": 0.9976752400398254
+        }
+      ]
+    },
+    {
+      "index": 25,
+      "start": 62.4,
+      "end": 65.02,
+      "text": "Choose new clipboard changes or a screenshot folder.",
+      "words": [
+        {
+          "word": "Choose",
+          "start": 62.4,
+          "end": 62.4,
+          "recognition_probability": 0.9941734671592712
+        },
+        {
+          "word": "new",
+          "start": 62.4,
+          "end": 62.66,
+          "recognition_probability": 0.978919506072998
+        },
+        {
+          "word": "clipboard",
+          "start": 62.66,
+          "end": 63.02,
+          "recognition_probability": 0.9499499201774597
+        },
+        {
+          "word": "changes",
+          "start": 63.02,
+          "end": 63.46,
+          "recognition_probability": 0.9991245865821838
+        },
+        {
+          "word": "or",
+          "start": 63.46,
+          "end": 64.06,
+          "recognition_probability": 0.8492500185966492
+        },
+        {
+          "word": "a",
+          "start": 64.06,
+          "end": 64.24,
+          "recognition_probability": 0.99284428358078
+        },
+        {
+          "word": "screenshot",
+          "start": 64.24,
+          "end": 64.52,
+          "recognition_probability": 0.9282955527305603
+        },
+        {
+          "word": "folder.",
+          "start": 64.52,
+          "end": 65.02,
+          "recognition_probability": 0.9994593262672424
+        }
+      ]
+    },
+    {
+      "index": 26,
+      "start": 65.74,
+      "end": 66.82,
+      "text": "Pause whenever you like.",
+      "words": [
+        {
+          "word": "Pause",
+          "start": 65.74,
+          "end": 66.06,
+          "recognition_probability": 0.9841007590293884
+        },
+        {
+          "word": "whenever",
+          "start": 66.06,
+          "end": 66.34,
+          "recognition_probability": 0.9940173625946045
+        },
+        {
+          "word": "you",
+          "start": 66.34,
+          "end": 66.62,
+          "recognition_probability": 0.999626636505127
+        },
+        {
+          "word": "like.",
+          "start": 66.62,
+          "end": 66.82,
+          "recognition_probability": 0.9943564534187317
+        }
+      ]
+    },
+    {
+      "index": 27,
+      "start": 67.66,
+      "end": 73.02,
+      "text": "Export a project, make a local backup, or rescue a capture from Recently Deleted.",
+      "words": [
+        {
+          "word": "Export",
+          "start": 67.66,
+          "end": 68.06,
+          "recognition_probability": 0.9749753475189209
+        },
+        {
+          "word": "a",
+          "start": 68.06,
+          "end": 68.32,
+          "recognition_probability": 0.9984179735183716
+        },
+        {
+          "word": "project,",
+          "start": 68.32,
+          "end": 68.72,
+          "recognition_probability": 0.997368574142456
+        },
+        {
+          "word": "make",
+          "start": 69.18,
+          "end": 69.4,
+          "recognition_probability": 0.997081458568573
+        },
+        {
+          "word": "a",
+          "start": 69.4,
+          "end": 69.52,
+          "recognition_probability": 0.999405026435852
+        },
+        {
+          "word": "local",
+          "start": 69.52,
+          "end": 69.7,
+          "recognition_probability": 0.9942213296890259
+        },
+        {
+          "word": "backup,",
+          "start": 69.7,
+          "end": 70.08,
+          "recognition_probability": 0.9596469402313232
+        },
+        {
+          "word": "or",
+          "start": 70.62,
+          "end": 70.74,
+          "recognition_probability": 0.9984357953071594
+        },
+        {
+          "word": "rescue",
+          "start": 70.74,
+          "end": 71.06,
+          "recognition_probability": 0.9881231188774109
+        },
+        {
+          "word": "a",
+          "start": 71.06,
+          "end": 71.3,
+          "recognition_probability": 0.9985961318016052
+        },
+        {
+          "word": "capture",
+          "start": 71.3,
+          "end": 71.62,
+          "recognition_probability": 0.9850171804428101
+        },
+        {
+          "word": "from",
+          "start": 71.62,
+          "end": 72.02,
+          "recognition_probability": 0.9966805577278137
+        },
+        {
+          "word": "Recently",
+          "start": 72.02,
+          "end": 72.32,
+          "recognition_probability": 0.9736872911453247
+        },
+        {
+          "word": "Deleted.",
+          "start": 72.32,
+          "end": 73.02,
+          "recognition_probability": 0.9842616319656372
+        }
+      ]
+    },
+    {
+      "index": 28,
+      "start": 74.3,
+      "end": 74.78,
+      "text": "I\u2019m free.",
+      "words": [
+        {
+          "word": "I\u2019m",
+          "start": 74.3,
+          "end": 74.56,
+          "recognition_probability": 0.9783334732055664
+        },
+        {
+          "word": "free.",
+          "start": 74.56,
+          "end": 74.78,
+          "recognition_probability": 0.9914653897285461
+        }
+      ]
+    },
+    {
+      "index": 29,
+      "start": 75.82,
+      "end": 79.32,
+      "text": "No account, ads, analytics, or cloud sync.",
+      "words": [
+        {
+          "word": "No",
+          "start": 75.82,
+          "end": 75.84,
+          "recognition_probability": 0.9888941645622253
+        },
+        {
+          "word": "account,",
+          "start": 75.84,
+          "end": 76.08,
+          "recognition_probability": 0.9644744396209717
+        },
+        {
+          "word": "ads,",
+          "start": 76.84,
+          "end": 76.98,
+          "recognition_probability": 0.9063639640808105
+        },
+        {
+          "word": "analytics,",
+          "start": 78.06,
+          "end": 78.06,
+          "recognition_probability": 0.9742360711097717
+        },
+        {
+          "word": "or",
+          "start": 78.72,
+          "end": 78.74,
+          "recognition_probability": 0.6972575187683105
+        },
+        {
+          "word": "cloud",
+          "start": 78.74,
+          "end": 78.98,
+          "recognition_probability": 0.6167660355567932
+        },
+        {
+          "word": "sync.",
+          "start": 78.98,
+          "end": 79.32,
+          "recognition_probability": 0.8934424519538879
+        }
+      ]
+    },
+    {
+      "index": 30,
+      "start": 80.34,
+      "end": 82.9,
+      "text": "Your saved captures stay on this Mac.",
+      "words": [
+        {
+          "word": "Your",
+          "start": 80.34,
+          "end": 80.46,
+          "recognition_probability": 0.9942188262939453
+        },
+        {
+          "word": "saved",
+          "start": 80.46,
+          "end": 80.84,
+          "recognition_probability": 0.9667561650276184
+        },
+        {
+          "word": "captures",
+          "start": 80.84,
+          "end": 81.32,
+          "recognition_probability": 0.8836115598678589
+        },
+        {
+          "word": "stay",
+          "start": 81.32,
+          "end": 81.94,
+          "recognition_probability": 0.9439926743507385
+        },
+        {
+          "word": "on",
+          "start": 81.94,
+          "end": 82.34,
+          "recognition_probability": 0.9988829493522644
+        },
+        {
+          "word": "this",
+          "start": 82.34,
+          "end": 82.64,
+          "recognition_probability": 0.991883397102356
+        },
+        {
+          "word": "Mac.",
+          "start": 82.64,
+          "end": 82.9,
+          "recognition_probability": 0.9627627730369568
+        }
+      ]
+    }
+  ]
+}

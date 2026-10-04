@@ -1,0 +1,39 @@
+--- a/native/Tests/DailyCaptureTests.swift
++++ b/native/Tests/DailyCaptureTests.swift
+@@ -431,8 +431,19 @@
+         defer { controller.dismiss(); controller.bin.orderOut(nil); controller.board.orderOut(nil) }
+         try expect(controller.board.responds(to: #selector(DailyCapturePanel.paste(_:))), "Controller installs a native Paste responder")
+         let wired = try unwrap(controller.board.captureHostingView, "Controller installs Daily capture hosting")
++        func prepareDailyBackgroundDrop() async throws {
++            // Synthetic route changes omit the native control interaction
++            // that ends text editing. Wait for a departing composer to unmount
++            // before establishing the intended background-drop responder.
++            try await wait("Daily content replaces the departing production editor") {
++                wired.layoutSubtreeIfNeeded()
++                return state.route == .daily && NavigationEditorRegionView.regions(in: wired).isEmpty
++            }
++            try expect(controller.board.makeFirstResponder(wired) && controller.board.firstResponder === wired,
++                       "Synthetic Daily background drop starts with native background focus")
++        }
+         controller.openDaily()
+-        try expect(controller.board.makeFirstResponder(wired), "Controller background receives focus before a board capture gesture")
++        try await prepareDailyBackgroundDrop()
+         state.selectedDay = Calendar.current.date(byAdding: .day, value: -7, to: Date())!
+         state.filter = .files
+         _ = wired.draggingEntered(textDrag)
+@@ -466,6 +477,7 @@
+                    "A finishing import does not pull the user out of a new task draft")
+         state.newTaskDraft.text = ""
+         state.openDaily()
++        try await prepareDailyBackgroundDrop()
+         state.selectedDay = oldDay; state.filter = .files
+         try expect(wired.performDragOperation(textDrag), "Another Daily import starts before a date selection")
+         let differentDay = Calendar.current.date(byAdding: .day, value: -2, to: oldDay)!
+@@ -484,6 +496,7 @@
+         try await wait("Daily import finishes after leaving and returning") { store.captures.count == 9 && !input.isBusy }
+         try expect(state.selectedDay == differentDay && state.filter == .tasks,
+                    "A finishing import preserves a view the user left and deliberately revisited")
++        try await prepareDailyBackgroundDrop()
+         _ = wired.draggingEntered(textDrag)
+         try expect(state.isDailyDropTargeted, "Controller receives next hover feedback")
+         state.showSettings()
