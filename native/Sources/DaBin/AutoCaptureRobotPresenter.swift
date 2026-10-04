@@ -28,6 +28,20 @@ enum AutoCaptureRobotGeometry {
     static let islandPanelSize = CGSize(width: 232, height: 150)
     static let edgeInset: CGFloat = 8
 
+    /// Confirmation text needs a little more room than the legacy eating token.
+    /// Its artwork remains beneath the housing/menu bar; the window is passive.
+    static func signPanelFrame(on screen: AutoCaptureRobotScreen) -> CGRect {
+        let display = screen.frame.standardized
+        let visible = screen.visibleFrame.standardized.intersection(display)
+        guard !visible.isEmpty, !visible.isNull else { return .zero }
+        if let island = cameraIsland(on: screen), screen.isBuiltIn {
+            let size = CGSize(width: min(224, display.width), height: min(166, display.height))
+            return CGRect(x: min(max(display.minX, island.midX - size.width / 2), display.maxX - size.width),
+                          y: max(display.minY, island.maxY - size.height), width: size.width, height: size.height)
+        }
+        return panelFrame(on: screen, size: CGSize(width: 220, height: 154))
+    }
+
     static func cameraIsland(on screen: AutoCaptureRobotScreen) -> CGRect? {
         guard let island = screen.cameraIslandRect?.standardized.intersection(screen.frame.standardized),
               !island.isNull, !island.isEmpty else { return nil }
@@ -464,6 +478,7 @@ private struct AutoCaptureRobotPendingBurst {
     var count: Int
     var projectSignWaveCount: Int
     var destination: AutoCaptureRobotDestination
+    var confirmation: AutoCaptureSignReceipt? = nil
 }
 
 /// Shows successful automatic captures without activating DaBin or accepting
@@ -476,13 +491,24 @@ final class AutoCaptureRobotPresenter {
     private(set) var state = AutoCaptureRobotBurstState()
     private(set) var lifecycle = RobotLifecycle()
     private(set) var currentPerformance: AutoCaptureRobotPerformance?
+    private(set) var currentSignPerformance: AutoCaptureSignPerformance?
+    private(set) var currentSignReceipt: AutoCaptureSignReceipt?
+    private(set) var confirmationEnabled = true
+    private(set) var isSuspendedForScreenCapture = false
     private(set) var performanceStartCount = 0
     private(set) var isSuspendedForBoard = false
     private(set) var isSuspendedForInteraction = false
     private(set) var isSuspendedForTaskTimer = false
-    private var isSuspended: Bool { isSuspendedForBoard || isSuspendedForInteraction || isSuspendedForTaskTimer }
+    private var isSuspended: Bool { isSuspendedForBoard || isSuspendedForInteraction || isSuspendedForTaskTimer || isSuspendedForScreenCapture }
     let panel: NSPanel
-    var badgeText: String? { content.badgeText }
+    var badgeText: String? {
+        if let receipt = currentSignReceipt { return receipt.count > 1 ? "×\(receipt.count)" : nil }
+        return content.badgeText
+    }
+    var signMessage: String? { currentSignReceipt?.message }
+    var pendingConfirmationCount: Int { pendingBursts.compactMap(\.confirmation).reduce(0) { Self.saturatingAdd($0, $1.count) } }
+    var pendingConfirmationPerformances: Int { pendingBursts.filter { $0.confirmation != nil }.count }
+    var signHasActiveAnimations: Bool { signContent.hasActiveAnimations }
     var currentProjectName: String? { content.projectName }
     var projectSignWaveCount: Int { content.projectSignWaveCount }
     var projectSignIsVisible: Bool { content.projectSignIsVisible }
@@ -495,11 +521,17 @@ final class AutoCaptureRobotPresenter {
     var onPresentationChanged: ((Bool) -> Void)?
 
     private let content: AutoCaptureRobotContentView
+    private let signContent: AutoCaptureSignView
     private let primaryScreenProvider: PrimaryScreenProvider
     private let reduceMotionProvider: ReduceMotionProvider
     private let currentDateProvider: () -> Date
     private let dismissDelayOverride: TimeInterval?
     private var reactionDeck: AutoCaptureRobotReactionDeck
+    private var signDeck: AutoCaptureSignDeck
+    private let accentProvider: () -> NSColor
+    private let appearanceProvider: () -> NSAppearance?
+    private let announce: @MainActor (String) -> Void
+    private var announcementTask: Task<Void, Never>?
     private var performanceTask: Task<Void, Never>?
     private var lifecycleTask: Task<Void, Never>?
     private var hideTask: Task<Void, Never>?
@@ -521,12 +553,20 @@ final class AutoCaptureRobotPresenter {
              NSWorkspace.shared.accessibilityDisplayShouldReduceMotion
          },
          reactionDeck: AutoCaptureRobotReactionDeck = AutoCaptureRobotReactionDeck(),
-         currentDate: @escaping () -> Date = { Date() }) {
+         currentDate: @escaping () -> Date = { Date() },
+         signDeck: AutoCaptureSignDeck = AutoCaptureSignDeck(),
+         accent: @escaping () -> NSColor = { ThemeSettings.accentNSColor(for: ThemeSettings.defaultHex) },
+         appearance: @escaping () -> NSAppearance? = { nil },
+         announce: @escaping @MainActor (String) -> Void = { AccessibilityAnnouncement.post($0, priority: .low) }) {
         dismissDelayOverride = dismissDelay.map { max(0, $0) }
         primaryScreenProvider = primaryScreen
         reduceMotionProvider = reduceMotion
         currentDateProvider = currentDate
         self.reactionDeck = reactionDeck
+        self.signDeck = signDeck
+        accentProvider = accent
+        appearanceProvider = appearance
+        self.announce = announce
 
         let frame = CGRect(origin: .zero, size: AutoCaptureRobotGeometry.panelSize)
         let panel = AutoCaptureRobotPanel(contentRect: frame,
@@ -535,6 +575,7 @@ final class AutoCaptureRobotPresenter {
         let content = AutoCaptureRobotContentView(frame: frame, reduceMotion: reduceMotion)
         self.panel = panel
         self.content = content
+        signContent = AutoCaptureSignView(frame: frame)
 
         panel.contentView = content
         panel.isOpaque = false
@@ -545,6 +586,9 @@ final class AutoCaptureRobotPresenter {
         panel.hidesOnDeactivate = false
         panel.isReleasedWhenClosed = false
         panel.isMovableByWindowBackground = false
+        // Legacy protection only. Modern macOS does not guarantee that another
+        // application's screenshot excludes this window. Confirmation starts
+        // after the completed image is durably saved, never before that receipt.
         panel.sharingType = .none
         panel.animationBehavior = .none
         panel.becomesKeyOnlyIfNeeded = false
@@ -565,13 +609,20 @@ final class AutoCaptureRobotPresenter {
     @discardableResult
     func present(additionalCaptureCount: Int = 1, projectName: String? = nil,
                  projectColor: NSColor? = nil) -> Bool {
+        enqueuePresentation(additionalCaptureCount: additionalCaptureCount,
+                            projectName: projectName, projectColor: projectColor, confirmation: nil)
+    }
+
+    private func enqueuePresentation(additionalCaptureCount: Int, projectName: String?,
+                                     projectColor: NSColor?, confirmation: AutoCaptureSignReceipt?) -> Bool {
         guard !isShutDown, additionalCaptureCount > 0 else { return false }
+        guard confirmation == nil || confirmationEnabled else { return false }
         let destination = AutoCaptureRobotDestination(projectName: projectName,
                                                       projectColor: projectColor)
         let pending = AutoCaptureRobotPendingBurst(
             count: additionalCaptureCount,
             projectSignWaveCount: destination.projectName == nil ? 0 : 1,
-            destination: destination
+            destination: destination, confirmation: confirmation
         )
         if isSuspended {
             enqueuePending(pending)
@@ -585,18 +636,26 @@ final class AutoCaptureRobotPresenter {
         if state.isVisible {
             if let activeDestination,
                activeDestination.isSameProject(as: destination),
+               (currentSignReceipt != nil) == (confirmation != nil),
                let deadline = updateDeadline, currentDateProvider() <= deadline {
                 guard state.present(additionalCount: additionalCaptureCount) != nil else { return false }
                 _ = lifecycle.send(.captureSaved(count: additionalCaptureCount))
                 let resolvedDestination = activeDestination.preferringColor(from: destination)
                 self.activeDestination = resolvedDestination
-                content.updateCount(state.visibleCount)
-                content.updateProjectSign(
-                    projectName: resolvedDestination.projectName,
-                    color: resolvedDestination.projectColor,
-                    waveRepetitions: pending.projectSignWaveCount,
-                    reduceMotion: reduceMotionProvider()
-                )
+                if let confirmation, let current = currentSignReceipt {
+                    let combined = current.merging(confirmation)
+                    currentSignReceipt = combined
+                    signContent.updateReceipt(combined)
+                    // An interruption must not discard a count that was only
+                    // just added to an otherwise already-readable sign.
+                    let updatedCountDeadline = currentDateProvider().addingTimeInterval(0.25)
+                    consumptionDeadline = max(consumptionDeadline ?? updatedCountDeadline, updatedCountDeadline)
+                } else {
+                    content.updateCount(state.visibleCount)
+                    content.updateProjectSign(projectName: resolvedDestination.projectName,
+                        color: resolvedDestination.projectColor, waveRepetitions: pending.projectSignWaveCount,
+                        reduceMotion: reduceMotionProvider())
+                }
             } else {
                 // A destination change must never relabel a still-active
                 // capture. Keep it as a separate performance; late arrivals
@@ -611,6 +670,36 @@ final class AutoCaptureRobotPresenter {
             return false
         }
         return startPendingPerformanceIfPossible(on: screen)
+    }
+
+    /// Live Auto Capture uses only a typed, privacy-safe receipt. A grouped
+    /// multi-file paste is one action, regardless of the number of saved files.
+    @discardableResult
+    func present(confirmation receipt: AutoCaptureSignReceipt) -> Bool {
+        enqueuePresentation(additionalCaptureCount: receipt.count, projectName: nil,
+                            projectColor: nil, confirmation: receipt)
+    }
+
+    func setConfirmationEnabled(_ enabled: Bool) {
+        confirmationEnabled = enabled
+        guard !enabled else { return }
+        pendingBursts.removeAll { $0.confirmation != nil }
+        // This preference gates automatic receipts. Existing manual/legacy
+        // feedback keeps its own lifecycle; Quiet mode can dismiss both paths.
+        if currentSignReceipt != nil || panel.contentView === signContent {
+            stopActivePresentation(clearPending: false, closePanel: false)
+            _ = startPendingPerformanceIfPossible()
+        }
+    }
+
+    /// Can also be called by a future DaBin-owned capture operation before it
+    /// samples pixels. System screenshot-tool activation uses the same gate.
+    func setScreenCaptureInProgress(_ active: Bool) {
+        guard !isShutDown, active != isSuspendedForScreenCapture else { return }
+        let wasSuspended = isSuspended
+        isSuspendedForScreenCapture = active
+        if active && !wasSuspended { preserveAndSuspendPresentation() }
+        if !active { _ = startPendingPerformanceIfPossible() }
     }
 
     /// The full board owns the one robot while it opens and remains visible.
@@ -664,7 +753,7 @@ final class AutoCaptureRobotPresenter {
                 count: state.visibleCount,
                 projectSignWaveCount: 0,
                 destination: activeDestination ?? AutoCaptureRobotDestination(
-                    projectName: nil, projectColor: nil)
+                    projectName: nil, projectColor: nil), confirmation: currentSignReceipt
             ))
         }
         stopActivePresentation(clearPending: false, closePanel: false)
@@ -681,7 +770,7 @@ final class AutoCaptureRobotPresenter {
                     count: state.visibleCount,
                     projectSignWaveCount: 0,
                     destination: activeDestination ?? AutoCaptureRobotDestination(
-                        projectName: nil, projectColor: nil)
+                        projectName: nil, projectColor: nil), confirmation: currentSignReceipt
                 ))
             }
             stopActivePresentation(clearPending: false, closePanel: false)
@@ -698,7 +787,7 @@ final class AutoCaptureRobotPresenter {
                     count: state.visibleCount,
                     projectSignWaveCount: 0,
                     destination: activeDestination ?? AutoCaptureRobotDestination(
-                        projectName: nil, projectColor: nil)
+                        projectName: nil, projectColor: nil), confirmation: currentSignReceipt
                 ))
             }
             stopActivePresentation(clearPending: false, closePanel: false)
@@ -725,6 +814,7 @@ final class AutoCaptureRobotPresenter {
         panel.alphaValue = 0
         panel.orderOut(nil)
         content.hideCharacter()
+        signContent.stop()
         reportPresentation(false)
         panel.close()
     }
@@ -732,6 +822,7 @@ final class AutoCaptureRobotPresenter {
     private func beginPerformance(_ pending: AutoCaptureRobotPendingBurst,
                                   on screen: AutoCaptureRobotScreen) -> Bool {
         guard pending.count > 0 else { return false }
+        if let confirmation = pending.confirmation { return beginSignPerformance(confirmation, on: screen) }
         let frame = AutoCaptureRobotGeometry.panelFrame(on: screen)
         guard !frame.isEmpty, state.present(additionalCount: pending.count) != nil else {
             prependPending(pending)
@@ -765,6 +856,8 @@ final class AutoCaptureRobotPresenter {
         consumptionDeadline = now.addingTimeInterval(min(delay, consumptionTime(in: performance)))
 
         (panel as? AutoCaptureRobotPanel)?.cameraStageDisplayFrame = orbit == nil ? nil : screen.frame
+        signContent.stop()
+        panel.contentView = content
         panel.setFrame(frame, display: true)
         content.begin(performance, count: pending.count, orbitLayout: orbit,
                       projectName: pending.destination.projectName,
@@ -785,6 +878,72 @@ final class AutoCaptureRobotPresenter {
             self.performanceTask = nil
             self.finishPerformance(token: token)
         }
+    }
+
+    private func beginSignPerformance(_ receipt: AutoCaptureSignReceipt,
+                                      on screen: AutoCaptureRobotScreen) -> Bool {
+        guard confirmationEnabled else { return false }
+        let frame = AutoCaptureRobotGeometry.signPanelFrame(on: screen)
+        guard !frame.isEmpty, state.present(additionalCount: receipt.count) != nil else { return false }
+        hideTask?.cancel(); hideTask = nil
+        performanceTask?.cancel(); lifecycleTask?.cancel(); announcementTask?.cancel()
+        performanceToken &+= 1
+        let token = performanceToken
+        let island = screen.isBuiltIn ? AutoCaptureRobotGeometry.cameraIsland(on: screen) : nil
+        let performance = signDeck.nextPerformance(entrance: island == nil ? .right : .top,
+            reduceMotion: reduceMotionProvider(), captureCount: receipt.count)
+        currentPerformance = nil
+        currentSignPerformance = performance
+        currentSignReceipt = receipt
+        performanceScreen = screen
+        activeDestination = AutoCaptureRobotDestination(projectName: nil, projectColor: nil)
+        performanceStartCount += 1
+        lifecycle = RobotLifecycle()
+        _ = lifecycle.send(.captureSaved(count: receipt.count))
+        let delay = dismissDelayOverride ?? performance.totalDuration
+        let now = currentDateProvider()
+        let updateDuration = max(0, min(delay * 0.65, performance.readableEndTime - 0.25))
+        updateDeadline = now.addingTimeInterval(updateDuration)
+        consumptionDeadline = now.addingTimeInterval(min(delay,
+            max(performance.readableStartTime + 0.30, updateDuration + 0.02)))
+
+        content.hideCharacter()
+        panel.contentView = signContent
+        panel.appearance = appearanceProvider()
+        (panel as? AutoCaptureRobotPanel)?.cameraStageDisplayFrame = island == nil ? nil : screen.frame
+        panel.setFrame(frame, display: true)
+        signContent.frame = CGRect(origin: .zero, size: panel.frame.size)
+        let localIsland = island.map { $0.offsetBy(dx: -panel.frame.minX, dy: -panel.frame.minY) }
+        signContent.begin(performance: performance, receipt: receipt, islandRect: localIsland, accent: accentProvider())
+        panel.alphaValue = 1
+        panel.orderFrontRegardless()
+        reportPresentation(true)
+
+        // One low-priority announcement after the merge window closes. Every
+        // count on this sign is represented; later saves belong to the next
+        // sign and its own announcement. No AX focus change or private content.
+        announcementTask = Task { @MainActor [weak self] in
+            try? await Task.sleep(for: .seconds(min(delay, updateDuration + 0.01)))
+            guard !Task.isCancelled, let self, self.performanceToken == token,
+                  let current = self.currentSignReceipt else { return }
+            self.announce(current.accessibilityText)
+        }
+        let milestones: [(TimeInterval, RobotLifecycle.State)] = [
+            (performance.entranceEndTime * 0.35, .climbingOut),
+            (performance.readableStartTime, .captureReaction),
+            (performance.exitStartTime, .returningToIsland)
+        ]
+        lifecycleTask = Task { @MainActor [weak self] in
+            var cursor: TimeInterval = 0
+            for (time, target) in milestones where time <= delay {
+                try? await Task.sleep(for: .seconds(max(0, time - cursor)))
+                guard !Task.isCancelled, let self, self.performanceToken == token else { return }
+                self.advanceLifecycle(to: target)
+                cursor = time
+            }
+        }
+        scheduleCompletion(token: token, delay: delay)
+        return true
     }
 
     private func scheduleLifecycle(_ performance: AutoCaptureRobotPerformance,
@@ -808,9 +967,12 @@ final class AutoCaptureRobotPresenter {
     private func finishPerformance(token: UInt64) {
         guard performanceToken == token else { return }
         lifecycleTask?.cancel(); lifecycleTask = nil
+        announcementTask?.cancel(); announcementTask = nil
         _ = state.dismissNow()
         _ = lifecycle.send(.interrupt(toward: .hidden))
         currentPerformance = nil
+        currentSignPerformance = nil
+        currentSignReceipt = nil
         performanceScreen = nil
         activeDestination = nil
         updateDeadline = nil
@@ -836,10 +998,13 @@ final class AutoCaptureRobotPresenter {
         performanceTask?.cancel(); performanceTask = nil
         lifecycleTask?.cancel(); lifecycleTask = nil
         hideTask?.cancel(); hideTask = nil
+        announcementTask?.cancel(); announcementTask = nil
         performanceToken &+= 1
         _ = state.dismissNow()
         _ = lifecycle.send(.interrupt(toward: .hidden))
         currentPerformance = nil
+        currentSignPerformance = nil
+        currentSignReceipt = nil
         performanceScreen = nil
         activeDestination = nil
         updateDeadline = nil
@@ -854,6 +1019,7 @@ final class AutoCaptureRobotPresenter {
             panel.alphaValue = 0
             panel.orderOut(nil)
             content.hideCharacter()
+            signContent.stop()
             reportPresentation(false)
             return
         }
@@ -867,6 +1033,7 @@ final class AutoCaptureRobotPresenter {
                   !self.state.isVisible else { return }
             self.panel.orderOut(nil)
             self.content.hideCharacter()
+            self.signContent.stop()
             self.hideTask = nil
             self.reportPresentation(false)
         }
@@ -886,7 +1053,15 @@ final class AutoCaptureRobotPresenter {
 
     private func enqueuePending(_ pending: AutoCaptureRobotPendingBurst) {
         guard pending.count > 0 else { return }
+        if let receipt = pending.confirmation,
+           let index = pendingBursts.firstIndex(where: { $0.confirmation != nil }) {
+            let combined = pendingBursts[index].confirmation!.merging(receipt)
+            pendingBursts[index].confirmation = combined
+            pendingBursts[index].count = combined.count
+            return
+        }
         if let last = pendingBursts.indices.last,
+           pending.confirmation == nil, pendingBursts[last].confirmation == nil,
            pendingBursts[last].destination.isSameProject(as: pending.destination) {
             pendingBursts[last].count = Self.saturatingAdd(pendingBursts[last].count, pending.count)
             pendingBursts[last].projectSignWaveCount = Self.saturatingAdd(
@@ -900,7 +1075,18 @@ final class AutoCaptureRobotPresenter {
 
     private func prependPending(_ pending: AutoCaptureRobotPendingBurst) {
         guard pending.count > 0 else { return }
+        if let receipt = pending.confirmation {
+            // One bounded pending confirmation stores an exact aggregate; it
+            // never allocates a queue entry for each rapid capture or project.
+            let index = pendingBursts.firstIndex(where: { $0.confirmation != nil })
+            var combined = receipt
+            if let index { combined = receipt.merging(pendingBursts.remove(at: index).confirmation!) }
+            pendingBursts.insert(AutoCaptureRobotPendingBurst(count: combined.count, projectSignWaveCount: 0,
+                destination: AutoCaptureRobotDestination(projectName: nil, projectColor: nil), confirmation: combined), at: 0)
+            return
+        }
         if !pendingBursts.isEmpty,
+           pendingBursts[0].confirmation == nil,
            pending.destination.isSameProject(as: pendingBursts[0].destination) {
             pendingBursts[0].count = Self.saturatingAdd(pending.count, pendingBursts[0].count)
             pendingBursts[0].projectSignWaveCount = Self.saturatingAdd(

@@ -48,6 +48,8 @@ Open **DaBin.app in your personal Applications folder** (`~/Applications/DaBin.a
 
 ## What is included
 
+The source now includes **Auto Capture confirmation signs**: twelve shuffled robot performances, screenshot/clipboard messages, exact burst counts, Reduce Motion and interruption cleanup. [Focused source verification and platform limits](../docs/qa/auto-capture-sign-publication-2026-10-04/README.md).
+
 Native SwiftUI content in AppKit panels; Core Data metadata; a dated local archive with readable records and managed originals; drag/paste, note and file-promise intake; PDF/image/video/system previews; global text search with optional nearby context; optional project workspaces, pins and named snippets; a collection shelf and autosaving notes; workday planning, deadlines, recurring tasks and UserNotifications reminders; Recently Deleted and Undo; verified local archive backup/restore; separate automatic capture channels; global shortcuts and Quiet mode; light/dark colors; a native layer-based robot character with Reduce Motion behavior; an Xcode project, source, tests, and the unchanged handoff.
 
 The supplied robot SVG is preserved as an original handoff resource. The transient robot is drawn with native macOS layers so its face, lid, arms, intake and body can react independently. Normal app storage starts empty; review fixtures are isolated from it.

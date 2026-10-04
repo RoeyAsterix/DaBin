@@ -1,6 +1,16 @@
 import AppKit
 import QuartzCore
 
+/// A held-sign scene supplies only public, decorative part poses. Captured
+/// content never enters the character renderer, and all timing is finite.
+struct RobotCaptureSignPartPose {
+    let normalizedTime: Double
+    let gaze: CGPoint
+    let headOpacity: Float
+    let torsoOpacity: Float
+    let eyeScaleY: CGFloat
+}
+
 /// Small native character renderer used inside an existing interaction surface.
 /// It owns no pasteboard or window behavior; callers send semantic motion events.
 @MainActor
@@ -83,6 +93,82 @@ final class RobotCharacterView: NSView {
     }
 
     var nativeArmsAreHidden: Bool { leftArmLayer.opacity == 0 && rightArmLayer.opacity == 0 }
+
+    /// A dedicated confirmation view owns the scene-space arms and plaque.
+    /// Keep the existing vector character, without ambient or intake animation.
+    func prepareForCaptureSign() {
+        stopMotion()
+        configureQuietOrbit(true)
+        configureIslandStage(false)
+        motionState.send(.reveal(.top))
+        withoutActions {
+            artLayer.opacity = 1
+            bodyLayer.opacity = 1
+            bodyLayer.transform = CATransform3DIdentity
+            shellLayer.transform = CATransform3DIdentity
+            faceLayer.transform = CATransform3DIdentity
+            feetLayer.transform = CATransform3DIdentity
+            shellLayer.opacity = 1
+            faceLayer.opacity = 1
+            feetLayer.opacity = 1
+            leftArmLayer.opacity = 0
+            rightArmLayer.opacity = 0
+            shadowLayer.opacity = 0
+            mouthLayer.path = mouthPath(for: .idle)
+        }
+    }
+
+    /// A held-sign scene animates a pure layer container. AppKit owns an
+    /// NSView's backing-layer geometry and can reset its transform during
+    /// layout; mounting the canonical art avoids that conflicting ownership.
+    func mountCaptureSignArtwork(in container: CALayer) {
+        guard artLayer.superlayer !== container else { return }
+        artLayer.removeFromSuperlayer()
+        container.addSublayer(artLayer)
+        needsLayout = true
+        layoutSubtreeIfNeeded()
+    }
+
+    func applyCaptureSignPartPose(_ pose: RobotCaptureSignPartPose) {
+        let gaze = CGPoint(x: min(2, max(-2, pose.gaze.x)), y: -min(2, max(-2, pose.gaze.y)))
+        withoutActions {
+            faceLayer.opacity = min(1, max(0, pose.headOpacity))
+            shellLayer.opacity = min(1, max(0, pose.torsoOpacity))
+            feetLayer.opacity = min(1, max(0, pose.torsoOpacity))
+            for eye in [leftEyeLayer, rightEyeLayer] {
+                eye.transform = transform(RobotPartTransform(translation: gaze,
+                    scaleY: min(1.2, max(0.08, pose.eyeScaleY))))
+            }
+        }
+    }
+
+    /// All body-part tracks share the overlay clock. They interpolate on the
+    /// compositor; no timer continuously changes layout or redraws the robot.
+    func animateCaptureSignParts(_ poses: [RobotCaptureSignPartPose],
+                                 duration: TimeInterval, beginTime: CFTimeInterval) {
+        guard duration > 0, let final = poses.last else { return }
+        applyCaptureSignPartPose(final)
+        func track(_ target: CALayer, keyPath: String, values: [Any], suffix: String) {
+            let animation = CAKeyframeAnimation(keyPath: keyPath)
+            animation.values = values
+            animation.keyTimes = poses.map { NSNumber(value: $0.normalizedTime) }
+            animation.duration = duration
+            animation.beginTime = target.convertTime(beginTime, from: nil)
+            animation.calculationMode = .linear
+            target.add(animation, forKey: "robot.captureSign.\(suffix)")
+        }
+        track(faceLayer, keyPath: "opacity", values: poses.map(\.headOpacity), suffix: "head")
+        track(shellLayer, keyPath: "opacity", values: poses.map(\.torsoOpacity), suffix: "torso")
+        track(feetLayer, keyPath: "opacity", values: poses.map(\.torsoOpacity), suffix: "feet")
+        for (index, eye) in [leftEyeLayer, rightEyeLayer].enumerated() {
+            let values = poses.map { pose in
+                NSValue(caTransform3D: transform(RobotPartTransform(
+                    translation: CGPoint(x: min(2, max(-2, pose.gaze.x)), y: -min(2, max(-2, pose.gaze.y))),
+                    scaleY: min(1.2, max(0.08, pose.eyeScaleY)))))
+            }
+            track(eye, keyPath: "transform", values: values, suffix: "eye-\(index)")
+        }
+    }
 
     init(frame frameRect: NSRect,
          reduceMotion: @escaping ReduceMotionProvider = {

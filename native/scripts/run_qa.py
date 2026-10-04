@@ -32,6 +32,7 @@ WINDOW.append("TaskTimerRobotTests")
 WINDOW.append("ExplorerCaptureCardPresentationTests")
 WINDOW.append("NotificationPresentationTests")
 WINDOW.append("WindowChromePresentationTests")
+NONFOCUS += ["AutoCaptureSignMotionTests", "AutoCaptureSignPresenterTests", "AutoCaptureSignRenderTests"]
 MODULE = "DaBinTestCore"
 NONFOCUS.append("CapturePreviewPerformanceTests")
 NONFOCUS.append("BoredRobotArtworkTests")

@@ -23,6 +23,8 @@ final class ApplicationCoordinator {
     let statusBar: StatusBarController
     let shortcuts: GlobalShortcutService
     private var quietSubscription: AnyCancellable?
+    private var confirmationSubscription: AnyCancellable?
+    private var captureToolObservers: [NSObjectProtocol] = []
     private var startupDerivativeTask: Task<Void, Never>?
     private(set) var pendingStartupDerivativeCount = 0
     private let lifecycle: ReminderLifecycle
@@ -55,7 +57,10 @@ final class ApplicationCoordinator {
         let autoInput = InputService(store: store)
         let autoCaptureSettings = AutoCaptureSettings(defaults: defaults)
         let autoCapture = AutoCaptureService(settings: autoCaptureSettings, input: autoInput)
-        let autoCaptureRobot = AutoCaptureRobotPresenter()
+        let theme = ThemeSettings(defaults: defaults)
+        let autoCaptureRobot = AutoCaptureRobotPresenter(
+            accent: { [weak theme] in ThemeSettings.accentNSColor(for: theme?.selectedHex ?? ThemeSettings.defaultHex) },
+            appearance: { [weak theme] in NSAppearance(named: theme?.darkModeEnabled == true ? .darkAqua : .aqua) })
         let robotPlacement = RobotPlacementSettings(defaults: defaults)
         let quickAccess = QuickAccessSettings(defaults: defaults)
         let taskTimerRobot = TaskTimerRobotPresenter(primaryScreen: taskTimerPrimaryScreen,
@@ -68,7 +73,6 @@ final class ApplicationCoordinator {
         autoCapture.projectProvider = { [weak state] in
             state?.libraryProject
         }
-        let theme = ThemeSettings(defaults: defaults)
         let corners = CornerController(state: state, input: input, placementDefaults: defaults, theme: theme)
         self.previews = previews
         self.contentIndex = contentIndex
@@ -116,19 +120,14 @@ final class ApplicationCoordinator {
         autoCapture.onCommitted = { [weak state] action in
             state?.didAutoCapture(action.captures)
         }
-        autoCapture.onSaved = { [weak autoCaptureRobot, weak quickAccess,
-                                 weak workspace = state.workspace] action in
+        autoCapture.onSaved = { [weak autoCaptureRobot, weak quickAccess, weak autoCapture] action in
             // One receipt is one action, including a grouped multi-file paste.
-            guard quickAccess?.quietMode != true else { return }
-            let projectColor = action.projectName
-                .flatMap { workspace?.projectColorHex(for: $0) }
-                .map { ProjectColorChoice.nsColor(for: $0) }
-            _ = autoCaptureRobot?.present(additionalCaptureCount: 1,
-                                          projectName: action.projectName,
-                                          projectColor: projectColor)
-            if let project = action.projectName {
-                AccessibilityAnnouncement.post("Saved to \(project)")
-            }
+            guard quickAccess?.quietMode != true, let autoCapture,
+                  autoCapture.isRunning, autoCapture.settings.isEnabled, !autoCapture.settings.isPaused,
+                  let confirmation = AutoCaptureSignReceipt(savedAction: action) else { return }
+            autoCaptureRobot?.setScreenCaptureInProgress(AutoCaptureScreenshotActivity.isSystemCaptureTool(
+                NSWorkspace.shared.frontmostApplication?.bundleIdentifier))
+            _ = autoCaptureRobot?.present(confirmation: confirmation)
         }
         autoCapture.onFailure = { [weak state] message in
             state?.status = AppStatusMessage(text: "Auto Capture: \(message)", severity: .warning)
@@ -165,6 +164,11 @@ final class ApplicationCoordinator {
                 taskTimerRobot?.refreshMotionPreference()
             }
         }
+        confirmationSubscription = Publishers.CombineLatest4(autoCaptureSettings.$isEnabled,
+            autoCaptureSettings.$isPaused, autoCapture.$isRunning, quickAccess.$quietMode)
+            .sink { [weak autoCaptureRobot] enabled, paused, running, quiet in
+                autoCaptureRobot?.setConfirmationEnabled(enabled && running && !paused && !quiet)
+            }
     }
 
     /// Returns true once for this preference domain. AppDelegate uses the result
@@ -184,6 +188,7 @@ final class ApplicationCoordinator {
         if installStatusItem { statusBar.install() }
         corners.start(pointerPosition: pointerPosition)
         autoCapture.start()
+        installCaptureToolObservers()
         lifecycle.start(applicationEvents: applicationEvents, workspaceEvents: workspaceEvents)
         if showDaily { corners.openDaily() }
         prepareStartupDerivatives()
@@ -228,6 +233,9 @@ final class ApplicationCoordinator {
         autoCapture.shutdown()
         shortcuts.stop()
         quietSubscription?.cancel(); quietSubscription = nil
+        confirmationSubscription?.cancel(); confirmationSubscription = nil
+        for observer in captureToolObservers { workspaceEvents.removeObserver(observer) }
+        captureToolObservers.removeAll()
         state.onTaskTimerExpired = nil
         state.onTaskCompleted = nil
         state.focusSessions.shutdown()
@@ -246,5 +254,27 @@ final class ApplicationCoordinator {
     var terminationBlock: String? {
         if state.isArchiveOperationRunning || state.isImporting { return "DaBin is saving your archive. Give it a moment to finish, then quit again." }
         return state.removingCaptureID == nil ? nil : "The capture and its reminder are being updated. Give DaBin a moment to finish, then quit again."
+    }
+
+    private func installCaptureToolObservers() {
+        guard captureToolObservers.isEmpty else { return }
+        autoCaptureRobot.setScreenCaptureInProgress(AutoCaptureScreenshotActivity.isSystemCaptureTool(
+            NSWorkspace.shared.frontmostApplication?.bundleIdentifier))
+        for name in [NSWorkspace.didActivateApplicationNotification, NSWorkspace.didLaunchApplicationNotification,
+                     NSWorkspace.didTerminateApplicationNotification] {
+            let observer = workspaceEvents.addObserver(forName: name, object: nil, queue: .main) { [weak self] event in
+                MainActor.assumeIsolated {
+                    guard let self, !self.isStopped,
+                          let app = event.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication else { return }
+                    let isTool = AutoCaptureScreenshotActivity.isSystemCaptureTool(app.bundleIdentifier)
+                    if name == NSWorkspace.didActivateApplicationNotification {
+                        self.autoCaptureRobot.setScreenCaptureInProgress(isTool)
+                    } else if isTool {
+                        self.autoCaptureRobot.setScreenCaptureInProgress(name != NSWorkspace.didTerminateApplicationNotification)
+                    }
+                }
+            }
+            captureToolObservers.append(observer)
+        }
     }
 }

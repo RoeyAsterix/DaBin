@@ -1,0 +1,91 @@
+{
+  "date": "2026-10-04",
+  "verifiedAtUTC": "2026-10-04T05:30:53.476705+00:00",
+  "status": "passed",
+  "scope": "Focused Auto Capture sign source publication on GitHub main; not a binary release or full working-tree publication",
+  "baseCommit": "48fb359c1b2779b4815dff1dca25a6dcf4f6a28c",
+  "testSuitesPassed": 8,
+  "checksPassed": 4615,
+  "sourceChangedDuringTests": false,
+  "testReport": "native-test-report.json",
+  "buildReceipt": "build-receipt.json",
+  "build": {
+    "configuration": "Release",
+    "target": "arm64-apple-macosx14.0",
+    "versionMetadataRetained": "0.4.19",
+    "buildNumberRetained": "74",
+    "signing": "local ad-hoc",
+    "strictSignatureVerifiedOnCleanCopy": true
+  },
+  "reviewedFiles": {
+    "native/DaBin.xcodeproj/project.pbxproj": {
+      "sha256": "3b7767a3d4e2481dca275e62492aacb64ce5511ed50025a7ba91676abb7dc708",
+      "bytes": 60396
+    },
+    "native/README.md": {
+      "sha256": "a4dda6354d89f9a86c600ce15326fb7eb5f7489a031f866a0d40488a37d243f4",
+      "bytes": 33247
+    },
+    "native/scripts/run_qa.py": {
+      "sha256": "cfaf746defbe3f60f4d74c726708d0d33ef110513977aecb5776785cef2e5f6c",
+      "bytes": 12715
+    },
+    "native/Sources/DaBin/ApplicationCoordinator.swift": {
+      "sha256": "a82323da3498b8800586af147ebd433c47459748288d3058692260bf6b275fc1",
+      "bytes": 14485
+    },
+    "native/Sources/DaBin/AutoCaptureRobotPresenter.swift": {
+      "sha256": "cedaee988a350054ed0abfe2571b1813b3d682015b06a3fec3e4d77d7b9d3015",
+      "bytes": 53111
+    },
+    "native/Sources/DaBin/RobotCharacterView.swift": {
+      "sha256": "b6d130deb62541a7310519f5bf73e858515a966b4cd6887018c73ee8d3d14de1",
+      "bytes": 100716
+    },
+    "native/Sources/DaBin/AutoCaptureSignMotion.swift": {
+      "sha256": "ec71875c13e196d044eb356d82cb3a5a79974ffe9fb102ec0db18dfaef37e3d6",
+      "bytes": 31033
+    },
+    "native/Sources/DaBin/AutoCaptureSignRouting.swift": {
+      "sha256": "36c3135cf388a31589a1e873f885a8a83de3b9a1245d79a4f4a3d8ad2877020f",
+      "bytes": 1083
+    },
+    "native/Sources/DaBin/AutoCaptureSignView.swift": {
+      "sha256": "8e32fbf38aaded7852f35cdcbc5c10d2a9e98e0da5747e3793f1f68d34ac045c",
+      "bytes": 33174
+    },
+    "native/Tests/AutoCaptureSignMotionTests.swift": {
+      "sha256": "80aabbc82c88626d64e97a972d795d31af69670778f77e9f6fb55e75a561199c",
+      "bytes": 19672
+    },
+    "native/Tests/AutoCaptureSignPresenterTests.swift": {
+      "sha256": "f462f734dc19cdf638c833b21604b249247a44dfb70f3a533d5c9e66dddc7e9a",
+      "bytes": 43544
+    },
+    "native/Tests/AutoCaptureSignRenderTests.swift": {
+      "sha256": "f931bc12204adb4caa94b9365044a3196c9fa75f07c9eea996411810385aa79d",
+      "bytes": 7818
+    }
+  },
+  "visualQA": {
+    "nativeFixturesGenerated": 79,
+    "reviewedFixtures": [
+      "renders/light-proud-raise-hold.png",
+      "renders/dark-proud-bow-hold.png",
+      "renders/external-reduced-motion.png"
+    ],
+    "result": "Text legible, sign grips connected, artwork intact, static reduced-motion fixture. Synthetic native fixtures, not desktop captures."
+  },
+  "checks": [
+    "Swift Release compilation with warnings as errors",
+    "Eight targeted native regression suites",
+    "ARM64 Release build and strict clean-copy code-signature check",
+    "Deterministic Xcode project inventory check",
+    "Info, entitlements and privacy property-list lint"
+  ],
+  "limitations": [
+    "An existing sign can appear in a later screenshot by another application/API; triggering screenshot completes before its own confirmation.",
+    "Physical notch, monitor unplugging and VoiceOver listening were not repeated.",
+    "No local installation, new installer release, notarization or TestFlight upload."
+  ]
+}
