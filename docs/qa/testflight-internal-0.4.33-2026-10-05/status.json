@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "updatedAtUTC": "2026-10-05T04:31:08.221910+00:00",
-  "status": "source_pushed_signing_failed_interactive_handoff_required",
+  "updatedAtUTC": "2026-10-05T05:33:32.535589+00:00",
+  "status": "source_pushed_tool_pty_archive_waiting_at_codesign",
   "version": "0.4.33",
   "build": "88",
   "bundleIdentifier": "com.dabin.mac",
@@ -23,11 +23,11 @@
       "Framework-reproduced native table warnings"
     ]
   },
-  "requestedArchivePath": "/Users/roeylibfeld/Library/Developer/Xcode/Archives/2026-10-05/DaBin-0.4.33-88-TestFlight-internal-20261005T040949Z.xcarchive",
+  "requestedArchivePath": "/Users/roeylibfeld/Library/Developer/Xcode/Archives/2026-10-05/DaBin-0.4.33-88-TestFlight-tool-pty-20261005T052545Z.xcarchive",
   "archiveComplete": false,
-  "archiveExecSession": null,
-  "archiveHelperPID": null,
-  "archiveLogPath": "/private/tmp/dabin-testflight-internal-20261005T040949Z.log",
+  "archiveExecSession": 58613,
+  "archiveHelperPID": 2242,
+  "archiveLogPath": "/private/tmp/dabin-testflight-tool-pty-20261005T052545Z.log",
   "compilationReached": "CodeSign",
   "signed": false,
   "uploaded": false,
@@ -35,7 +35,7 @@
   "internalTestingVerified": false,
   "requestedDistribution": "Normal App Store Connect upload, assign current build to existing internal testers",
   "requiredUserInput": [
-    "Run the prepared helper from the signed-in Mac interactive Terminal and complete the normal macOS signing prompt; then reply done"
+    "Complete any normal macOS signing authentication prompt for the currently running archive; no authentication UI is inspected or controlled by the agent"
   ],
   "authenticationBoundary": "Protected SecurityAgent control was rejected by automatic approval review earlier; no authentication UI is inspected or operated",
   "manualBoundaries": [
@@ -92,5 +92,40 @@
     "usesExistingArchiveHelper": true,
     "checksExactSourceFingerprint": true,
     "status": "prepared_not_executed"
+  },
+  "currentArchiveAttempt": {
+    "attempt": 3,
+    "executionContext": "Codex exec_command allocated PTY; no native Terminal or authentication UI control",
+    "receiptPath": "/private/tmp/dabin-testflight-tool-pty-20261005T052545Z-receipt.json",
+    "runnerPID": 2235,
+    "helperPID": 2242,
+    "requestedArchivePath": "/Users/roeylibfeld/Library/Developer/Xcode/Archives/2026-10-05/DaBin-0.4.33-88-TestFlight-tool-pty-20261005T052545Z.xcarchive",
+    "logPath": "/private/tmp/dabin-testflight-tool-pty-20261005T052545Z.log",
+    "status": "running",
+    "authenticationUIControlled": false,
+    "securitySettingsChanged": false,
+    "snapshotReceiptFile": "archive-attempt-3-running-snapshot.json",
+    "snapshotLogFile": "archive-attempt-3-running-snapshot.log",
+    "snapshotLogSHA256": "6f8f57156399f0f617b7c7cf57fac7af2ff8c98170ac57b58c553ed7b7b9ce3b",
+    "snapshotAtUTC": "2026-10-05T05:33:32.535589+00:00"
+  },
+  "invitation": {
+    "requestedByUser": true,
+    "recipient": "Existing owner internal tester in Personal Testing",
+    "existingInvitationAccepted": true,
+    "observedInstalledVersion": "0.4.31 (86)",
+    "currentBuildEmailRequested": false,
+    "currentBuildEmailSentVerified": false,
+    "plannedAction": "After processing, add 0.4.33 (88) to Personal Testing; Apple emails selected group testers when the internal build is added",
+    "appleDocumentation": "https://developer.apple.com/help/app-store-connect/test-a-beta-version/add-internal-testers/"
+  },
+  "latestAppStoreConnectCheck": {
+    "checkedAtUTC": "2026-10-05T05:29:19.820897+00:00",
+    "latestUploadedVersion": "0.4.31",
+    "latestUploadedBuild": "86",
+    "latestUploadState": "Complete",
+    "currentBuild88Uploaded": false,
+    "internalGroupOldBuildState": "Testing",
+    "currentInternalTesterInstalledVersion": "0.4.31 (86)"
   }
 }
