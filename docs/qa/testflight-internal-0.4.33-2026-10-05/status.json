@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAtUTC": "2026-10-05T15:57:49.907126+00:00",
+  "updatedAtUTC": "2026-10-05T16:10:05.168811+00:00",
   "status": "organize_and_pin_actions_removed_verified_pushed_awaiting_human_signing",
   "version": "0.4.33",
   "build": "88",
@@ -919,5 +919,25 @@
     "fullCurrentRegisteredCampaignRun": false,
     "qaVerificationPath": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/remove-organize-pin-2026-10-05/verification.json",
     "currentHumanArchiveCommandAvailable": true
+  },
+  "localInstallation": {
+    "status": "latest_local_release_installed_reopened_live_settings_verified",
+    "sourceFingerprint": "dae2228aa8ea9dcd4e3dd556ccc8aeb7273e230b1471340feb3eebb1fa2cc8a1",
+    "version": "0.4.33",
+    "build": "88",
+    "sourceCommit": "b89e73d2e27907d3677f3478a56e067c58fdcd89",
+    "path": "/Users/roeylibfeld/Applications/DaBin.app",
+    "installedBinaryHashesMatchBuildReceipt": true,
+    "strictDeepSignatureVerified": true,
+    "appSandboxAndExactSourceEntitlementsVerified": true,
+    "reopened": true,
+    "autoCaptureRemainsPaused": true,
+    "verificationPath": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/local-update-actions-2026-10-05/verification.json",
+    "verificationSHA256": "658b091b2faf9baf3d99975e070203fa07d68b45ad05a00f00ea9f5a59f61923",
+    "previousAppBackup": "/Users/roeylibfeld/Applications/.DaBinBackups/20261005-190728-8f511e41.app",
+    "distributionChannel": "github",
+    "signature": "local_ad_hoc",
+    "appStoreArchiveCreated": false,
+    "appStoreUploaded": false
   }
 }
