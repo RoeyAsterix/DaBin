@@ -1,0 +1,40 @@
+{
+  "fixtureAXFrame" : "{{-9988, -7745}, {200, 120.5}}",
+  "mosaicAXFrame" : "{{-9988, -7745}, {200, 89}}",
+  "nativeGeometryBounds" : "{{0, 0}, {200, 89}}",
+  "nativeGeometryFrame" : "{{0, 0}, {200, 89}}",
+  "nativeGeometryMounted" : true,
+  "omittedCount" : 1,
+  "requestedGridHeightPoints" : 72,
+  "selectedCaptures" : [
+    {
+      "canonicalThumbnail" : "Previews\/0920BF4D-9FB7-4B71-9358-8E8955A143B5\/thumbnail.png",
+      "id" : "0920BF4D-9FB7-4B71-9358-8E8955A143B5",
+      "kind" : "image",
+      "thumbnailFileExists" : true,
+      "title" : "Batch sample 1.png"
+    },
+    {
+      "canonicalThumbnail" : "Previews\/CFE6E006-E0EA-4FFF-A88B-C5FC4BE27CC3\/thumbnail.png",
+      "id" : "CFE6E006-E0EA-4FFF-A88B-C5FC4BE27CC3",
+      "kind" : "image",
+      "thumbnailFileExists" : true,
+      "title" : "Batch sample 2.png"
+    },
+    {
+      "canonicalThumbnail" : "Previews\/2CA72835-1AEC-4DCC-AFF0-6B477915063A\/thumbnail.png",
+      "id" : "2CA72835-1AEC-4DCC-AFF0-6B477915063A",
+      "kind" : "image",
+      "thumbnailFileExists" : true,
+      "title" : "Batch sample 3.png"
+    },
+    {
+      "canonicalThumbnail" : "none",
+      "id" : "088AA982-843C-4E73-8ADB-4EB396F97372",
+      "kind" : "file",
+      "thumbnailFileExists" : false,
+      "title" : "Batch record 1.bin"
+    }
+  ],
+  "zoomFactor" : 1
+}

@@ -4,13 +4,12 @@ import SwiftUI
 /// to tasks. Text-only notes remain compact rather than gaining an empty hero.
 enum ExplorerCaptureCardPresentation {
     @MainActor static func hasLargePreview(capture: Capture, store: CaptureStore) -> Bool {
-        [.image, .video, .pdf, .document, .ai].contains(capture.kind)
-            || CapturePreviewFileReference.thumbnail(store: store, capture: capture) != nil
+        CapturePreviewFileReference.thumbnail(store: store, capture: capture) != nil
     }
 
     static func previewHeight(for width: CGFloat) -> CGFloat {
-        guard width.isFinite, width > 0 else { return 160 }
-        return min(300, max(160, width * 0.8))
+        guard width.isFinite, width > 0 else { return 112 }
+        return min(160, max(96, width * 0.5))
     }
 }
 
@@ -21,7 +20,9 @@ struct ExplorerCapturePreviewLayout: Layout {
     func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
         let proposedWidth = proposal.width ?? 320
         let width = proposedWidth.isFinite ? max(0, proposedWidth) : 320
-        return CGSize(width: width, height: ExplorerCaptureCardPresentation.previewHeight(for: width / factor) * factor)
+        let safeFactor = factor.isFinite && factor > 0 ? factor : 1
+        let height = ExplorerCaptureCardPresentation.previewHeight(for: width / safeFactor) * safeFactor
+        return CGSize(width: width, height: min(192, height))
     }
 
     func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
@@ -32,10 +33,49 @@ struct ExplorerCapturePreviewLayout: Layout {
     }
 }
 
+/// Keeps the title readable and preserves one lifetime for the native actions
+/// when a narrow card needs a second header row.
+struct CaptureCardHeaderLayout: Layout {
+    var minimumLeadingWidth: CGFloat = 120
+    var spacing: CGFloat = 6
+
+    private func arrangement(width proposed: CGFloat?, subviews: Subviews)
+        -> (width: CGFloat, leading: CGSize, actions: CGSize, stacked: Bool) {
+        guard subviews.count == 2 else {
+            return (proposed.flatMap { $0.isFinite ? max(0, $0) : nil } ?? 0, .zero, .zero, false)
+        }
+        let idealActions = subviews[1].sizeThatFits(.unspecified)
+        let width = proposed.flatMap { $0.isFinite ? max(0, $0) : nil }
+            ?? (minimumLeadingWidth + spacing + idealActions.width)
+        let stacked = width - idealActions.width - spacing < minimumLeadingWidth
+        let actions = subviews[1].sizeThatFits(ProposedViewSize(width: min(width, idealActions.width), height: nil))
+        let leading = subviews[0].sizeThatFits(ProposedViewSize(
+            width: stacked ? width : max(0, width - actions.width - spacing), height: nil))
+        return (width, leading, actions, stacked)
+    }
+
+    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+        let value = arrangement(width: proposal.width, subviews: subviews)
+        return CGSize(width: value.width, height: value.stacked
+            ? value.leading.height + spacing + value.actions.height
+            : max(value.leading.height, value.actions.height))
+    }
+
+    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
+        guard subviews.count == 2 else { return }
+        let value = arrangement(width: bounds.width, subviews: subviews)
+        subviews[0].place(at: CGPoint(x: bounds.minX, y: bounds.minY), anchor: .topLeading,
+                          proposal: ProposedViewSize(value.leading))
+        subviews[1].place(at: CGPoint(x: bounds.maxX - value.actions.width,
+                                     y: value.stacked ? bounds.minY + value.leading.height + spacing : bounds.minY),
+                          anchor: .topLeading, proposal: ProposedViewSize(value.actions))
+    }
+}
+
 /// Measure and place one set of controls. Alternate ViewThatFits branches
 /// created separate trail/popover lifetimes inside the live lazy capture list.
 struct ExplorerCaptureActionsLayout: Layout {
-    private let spacing: CGFloat = 4
+    private let spacing: CGFloat = 6
 
     private func arrangement(width proposedWidth: CGFloat?, subviews: Subviews)
         -> (width: CGFloat, sizes: [CGSize], stacked: Bool) {
@@ -86,54 +126,72 @@ struct ExplorerCaptureActionsLayout: Layout {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            HStack(spacing: 4) {
-                CaptureProjectPriorityHeader(state: state, capture: capture)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                CaptureCopyButton(state: state, captures: [capture])
-                CaptureTrashButton(state: state, capture: capture)
-            }
-            HStack(alignment: .top, spacing: 8) {
-                if capture.isTask {
-                    if !hasLargePreview { taskCompletion }
+            CaptureCardHeaderLayout(minimumLeadingWidth: 120 + (capture.isTask ? 38 : 0) + (capture.isPinned ? 16 : 0)) {
+                HStack(alignment: .top, spacing: 4) {
+                    if capture.isTask { taskCompletion }
+                    Button(action: select) {
+                        HStack(alignment: .firstTextBaseline, spacing: 5) {
+                            Text(title).font(.system(size: zoom.fontSize(15), weight: .semibold)).lineLimit(2)
+                                .strikethrough(capture.isTask && capture.isCompleted)
+                            if capture.isPinned {
+                                Image(systemName: "pin.fill").font(.system(size: zoom.fontSize(10)))
+                                    .foregroundStyle(accent).accessibilityLabel("Pinned")
+                            }
+                        }.padding(.top, max(0, (32 - zoom.fontSize(15) * 1.2) / 2))
+                            .frame(maxWidth: .infinity, minHeight: 32, alignment: .topLeading)
+                            .contentShape(Rectangle())
+                    }.buttonStyle(.plain).multilineTextAlignment(.leading).focusable()
+                        .focused(focus, equals: capture.id)
+                        .accessibilityLabel("Open \(title)")
+                        .accessibilityValue(captureReceiptText(capture) + ", " + category)
+                        .accessibilityIdentifier("workspace-item-\(capture.id.uuidString)")
+                        .accessibilityAddTraits(workspace.selectedCaptureID == capture.id ? .isSelected : [])
+                        .captureDragSource(state: state, capture: capture)
                 }
+                HStack(alignment: .top, spacing: 4) {
+                    CaptureCopyButton(state: state, captures: [capture])
+                    CaptureTrashButton(state: state, capture: capture)
+                    Menu { ExplorerCaptureActions(state: state, workspace: workspace, capture: capture) } label: {
+                        Image(systemName: "ellipsis").font(.system(size: 14, weight: .medium))
+                            .frame(width: 32, height: 32).contentShape(Rectangle())
+                    }.menuStyle(.button).buttonStyle(.plain).menuIndicator(.hidden)
+                        .foregroundStyle(Palette.muted).accessibilityLabel("Actions for \(title)")
+                        .accessibilityIdentifier("explorer-more-\(capture.id.uuidString)").buddyHelp("Item actions")
+                }
+            }
+            CaptureProjectPriorityHeader(state: state, capture: capture)
+                .frame(maxWidth: .infinity, alignment: .leading)
+            ExplorerCaptureActionsLayout {
+                CaptureReceiptView(capture: capture, category: category)
+                CaptureTrailView(state: state, capture: capture)
+            }
+            if hasLargePreview {
                 Button(action: select) {
-                    VStack(alignment: .leading, spacing: 8) {
-                        if hasLargePreview {
-                            ExplorerCapturePreviewLayout(factor: zoom.factor) {
-                                CaptureThumbnail(store: state.store, capture: capture)
-                            }
-                            .clipShape(RoundedRectangle(cornerRadius: 10))
-                            .overlay(RoundedRectangle(cornerRadius: 10).strokeBorder(Palette.line, lineWidth: 0.5))
-                            .accessibilityHidden(true)
-                        }
-                        HStack(alignment: .top, spacing: 8) {
-                            if !hasLargePreview && !capture.isTask {
-                                CaptureThumbnail(store: state.store, capture: capture)
-                                    .frame(width: zoom.value(38), height: zoom.value(38)).clipShape(RoundedRectangle(cornerRadius: 7))
-                            }
-                            metadata
-                        }
-                    }.frame(maxWidth: .infinity, alignment: .leading).contentShape(Rectangle())
-                }.buttonStyle(.plain).multilineTextAlignment(.leading)
-                    .focusable()
-                    .focused(focus, equals: capture.id)
-                    .accessibilityLabel("Open \(title)")
-                    .accessibilityValue(captureReceiptText(capture) + ", " + category)
-                    .accessibilityIdentifier("workspace-item-\(capture.id.uuidString)")
-                    .accessibilityAddTraits(workspace.selectedCaptureID == capture.id ? .isSelected : [])
+                    ExplorerCapturePreviewLayout(factor: zoom.factor) {
+                        CaptureThumbnail(store: state.store, capture: capture)
+                    }.clipShape(RoundedRectangle(cornerRadius: 8))
+                        .overlay(RoundedRectangle(cornerRadius: 8).strokeBorder(Palette.line, lineWidth: 0.5))
+                        .contentShape(Rectangle())
+                }.buttonStyle(.plain).accessibilityLabel("Preview \(title)")
+                    .accessibilityIdentifier("explorer-preview-\(capture.id.uuidString)")
                     .captureDragSource(state: state, capture: capture)
             }
-            ExplorerCaptureActionsLayout {
-                CaptureTrailView(state: state, capture: capture)
-                quickAction
+            if capture.parentTaskID != nil {
+                Label("Task attachment", systemImage: "paperclip")
+                    .font(.system(size: zoom.fontSize(11))).foregroundStyle(Palette.muted)
+            }
+            if !capture.isTask, capture.parentTaskID == nil {
+                BuddyIconButton(symbol: "checklist", title: "Turn into task", visualLabel: "Make task") {
+                    state.convertToTask(capture)
+                }
             }
             CaptureConversionUndo(state: state, capture: capture)
-            if capture.isTask { TaskFocusControls(state: state, capture: capture) }
-        }.padding(zoom.value(10))
-            .projectCardBackground(workspace: workspace, projectName: projectName,
+            if capture.isTask { TaskFocusControls(state: state, capture: capture, taskCardStyle: true) }
+        }.padding(12)
+            .projectCardBackground(workspace: workspace, projectName: projectName, cornerRadius: 12,
                                    baseColor: workspace.selectedCaptureID == capture.id ? Palette.soft : Palette.surface)
             .projectCardFrame(workspace: workspace, projectName: projectName, activeProject: state.libraryProject,
-                              fallbackColor: workspace.selectedCaptureID == capture.id ? accent.opacity(0.45) : Palette.line,
+                              cornerRadius: 12, fallbackColor: workspace.selectedCaptureID == capture.id ? accent.opacity(0.45) : Palette.line,
                               fallbackWidth: 1)
             .contextMenu { ExplorerCaptureActions(state: state, workspace: workspace, capture: capture) }
     }
@@ -142,39 +200,13 @@ struct ExplorerCaptureActionsLayout: Layout {
         capture.isTask ? (capture.isCompleted ? "Completed" : "Task") : captureTypeLabel(capture.kind)
     }
 
-    private var metadata: some View {
-        VStack(alignment: .leading, spacing: 5) {
-            HStack(alignment: .firstTextBaseline, spacing: 5) {
-                Text(title).font(.system(size: zoom.fontSize(15), weight: .semibold)).lineLimit(2)
-                    .strikethrough(capture.isTask && capture.isCompleted)
-                if capture.isPinned {
-                    Image(systemName: "pin.fill").font(.system(size: zoom.fontSize(10))).foregroundStyle(accent)
-                        .accessibilityLabel("Pinned")
-                }
-            }
-            CaptureReceiptView(capture: capture, category: category)
-            if capture.parentTaskID != nil {
-                Label("Task attachment", systemImage: "paperclip")
-                    .font(.system(size: zoom.fontSize(11))).foregroundStyle(Palette.muted)
-            }
-        }.frame(maxWidth: .infinity, alignment: .leading)
-    }
-
     private var taskCompletion: some View {
         Button { state.toggleTaskCompletion(capture) } label: {
             Image(systemName: capture.isCompleted ? "checkmark.square.fill" : "square")
-                .font(.system(size: 20, weight: .medium))
-                .foregroundStyle(capture.isCompleted ? Palette.completed : Palette.muted)
-                .frame(width: 32, height: 32)
+                .font(.system(size: 18)).foregroundStyle(capture.isCompleted ? Palette.completed : Palette.muted)
+                .frame(width: 32, height: 32).contentShape(Rectangle())
         }.buttonStyle(.plain).accessibilityLabel(capture.isCompleted ? "Reopen task" : "Complete task")
-    }
-
-    @ViewBuilder private var quickAction: some View {
-        if capture.isTask {
-            if hasLargePreview { taskCompletion }
-        } else if capture.parentTaskID == nil {
-                    BuddyIconButton(symbol: "checklist", title: "Turn into task") { state.convertToTask(capture) }
-        }
+            .accessibilityIdentifier("explorer-task-status-\(capture.id.uuidString)")
     }
 }
 

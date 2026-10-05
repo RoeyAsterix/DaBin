@@ -1,0 +1,762 @@
+{
+  "reason": "Current native fixtures defaulted to historical QA directories. Retained only this run generated files here and restored exact historical tracked paths; unrelated local-update folder excluded.",
+  "files": [
+    {
+      "original": "docs/qa/capture-detail-fix-2026-10-04/detail-integration-380-zoom100-light@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/capture-detail-fix-2026-10-04/detail-integration-380-zoom100-light@2x.png",
+      "sha256": "db205c093b55d003e66aed2aae4b8081780778e4cc6dc7dbfa84dc81068d154e",
+      "previouslyTracked": true
+    },
+    {
+      "original": "docs/qa/capture-detail-fix-2026-10-04/native-readability-report.json",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/capture-detail-fix-2026-10-04/native-readability-report.json",
+      "sha256": "3d06c096408bab3975e2fff6a74083253e672d8fbae4990426a562c587307405",
+      "previouslyTracked": true
+    },
+    {
+      "original": "docs/qa/capture-detail-fix-2026-10-04/reminder-label-target@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/capture-detail-fix-2026-10-04/reminder-label-target@2x.png",
+      "sha256": "1169a8bf5088e9339efd7893d086af9808af44ef2775837ed4294417ee2e9fd6",
+      "previouslyTracked": true
+    },
+    {
+      "original": "docs/qa/capture-detail-redesign-2026-10-04/navigation/full-board-380-zoom200-long-title@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/capture-detail-redesign-2026-10-04/navigation/full-board-380-zoom200-long-title@2x.png",
+      "sha256": "38a1934f96622c42c289112419221e4c28c1ce9aaa274b0c2ef4ae9844d3a3cd",
+      "previouslyTracked": true
+    },
+    {
+      "original": "docs/qa/capture-detail-redesign-2026-10-04/navigation/native-navigation-report.json",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/capture-detail-redesign-2026-10-04/navigation/native-navigation-report.json",
+      "sha256": "3b2cbdc64373fbeb530d56f77ef13f4ef0403ac5500bbacff39206f0f9f9d364",
+      "previouslyTracked": true
+    },
+    {
+      "original": "docs/qa/capture-detail-redesign-2026-10-04/navigation/navigation-1200-zoom100-comments@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/capture-detail-redesign-2026-10-04/navigation/navigation-1200-zoom100-comments@2x.png",
+      "sha256": "a87fd280e7ffa9c6eb7f0eefb5c9043daa198e8ded63ecff7b5d070c79de72e3",
+      "previouslyTracked": true
+    },
+    {
+      "original": "docs/qa/capture-detail-redesign-2026-10-04/navigation/navigation-1200-zoom100-reminder@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/capture-detail-redesign-2026-10-04/navigation/navigation-1200-zoom100-reminder@2x.png",
+      "sha256": "c260d7222cff8650007ba69213c1eaae8159728837e48bf6a3a6fd155f2c27c8",
+      "previouslyTracked": true
+    },
+    {
+      "original": "docs/qa/capture-detail-redesign-2026-10-04/navigation/navigation-1200-zoom100-task@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/capture-detail-redesign-2026-10-04/navigation/navigation-1200-zoom100-task@2x.png",
+      "sha256": "b013e6ecee290bf9ee26b53a0ecc0c10d0ed5d45ac1644f5fe9577c2065f86b3",
+      "previouslyTracked": true
+    },
+    {
+      "original": "docs/qa/capture-detail-redesign-2026-10-04/navigation/navigation-1200-zoom100-text@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/capture-detail-redesign-2026-10-04/navigation/navigation-1200-zoom100-text@2x.png",
+      "sha256": "b8c60fc3440777c32fa823a5b3c9e7fc574e8d880ac4f5170b5c5cef862a43c2",
+      "previouslyTracked": true
+    },
+    {
+      "original": "docs/qa/capture-detail-redesign-2026-10-04/navigation/navigation-1200-zoom100@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/capture-detail-redesign-2026-10-04/navigation/navigation-1200-zoom100@2x.png",
+      "sha256": "0c0b17b70d175313b62989ce40cfc1a5b1d77c9c58fddbf6da76d7ccc0913cfb",
+      "previouslyTracked": true
+    },
+    {
+      "original": "docs/qa/capture-detail-redesign-2026-10-04/navigation/navigation-1200-zoom200@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/capture-detail-redesign-2026-10-04/navigation/navigation-1200-zoom200@2x.png",
+      "sha256": "19e1255edecc23da0946d5d81d7561fcc69e359e02515ef14c75fa9ead9dba63",
+      "previouslyTracked": true
+    },
+    {
+      "original": "docs/qa/capture-detail-redesign-2026-10-04/navigation/navigation-1200-zoom75@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/capture-detail-redesign-2026-10-04/navigation/navigation-1200-zoom75@2x.png",
+      "sha256": "ed71940429b067bed0fa9fc83e9ec5c6347a03cc4f5166bb1e482bd541fa6c26",
+      "previouslyTracked": true
+    },
+    {
+      "original": "docs/qa/capture-detail-redesign-2026-10-04/navigation/navigation-380-zoom100-before-menu@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/capture-detail-redesign-2026-10-04/navigation/navigation-380-zoom100-before-menu@2x.png",
+      "sha256": "3133b8b7a2fb4f2389f8aa7e0d51c661dff943c2d9c4b488e4c319d131f3e41a",
+      "previouslyTracked": true
+    },
+    {
+      "original": "docs/qa/capture-detail-redesign-2026-10-04/navigation/navigation-380-zoom100-comments@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/capture-detail-redesign-2026-10-04/navigation/navigation-380-zoom100-comments@2x.png",
+      "sha256": "a99fa64a981513d465d0331e540122d4ff11a7adcb558209ffcd658520bf2205",
+      "previouslyTracked": true
+    },
+    {
+      "original": "docs/qa/capture-detail-redesign-2026-10-04/navigation/navigation-380-zoom100-reminder@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/capture-detail-redesign-2026-10-04/navigation/navigation-380-zoom100-reminder@2x.png",
+      "sha256": "55ba7e1de0fc5f21564246329d07ecd3234dc3dc7f53e8a51c5fb8dea7f7a181",
+      "previouslyTracked": true
+    },
+    {
+      "original": "docs/qa/capture-detail-redesign-2026-10-04/navigation/navigation-380-zoom100-task@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/capture-detail-redesign-2026-10-04/navigation/navigation-380-zoom100-task@2x.png",
+      "sha256": "3133b8b7a2fb4f2389f8aa7e0d51c661dff943c2d9c4b488e4c319d131f3e41a",
+      "previouslyTracked": true
+    },
+    {
+      "original": "docs/qa/capture-detail-redesign-2026-10-04/navigation/navigation-380-zoom100-text@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/capture-detail-redesign-2026-10-04/navigation/navigation-380-zoom100-text@2x.png",
+      "sha256": "2baa440b2de4d24b06e7d5295ce4491e47c2de20d322e71d6a76a227a7e1e6bd",
+      "previouslyTracked": true
+    },
+    {
+      "original": "docs/qa/capture-detail-redesign-2026-10-04/navigation/navigation-380-zoom100@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/capture-detail-redesign-2026-10-04/navigation/navigation-380-zoom100@2x.png",
+      "sha256": "7f03700cbab0f75482ce3cb686907a60b144c2b442daa1c49581ffe77a18fd48",
+      "previouslyTracked": true
+    },
+    {
+      "original": "docs/qa/capture-detail-redesign-2026-10-04/navigation/navigation-380-zoom200-before-menu@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/capture-detail-redesign-2026-10-04/navigation/navigation-380-zoom200-before-menu@2x.png",
+      "sha256": "5993577ddd1293ae2625f246c25b52ed105490b2464682334b82b333f78f9dbb",
+      "previouslyTracked": true
+    },
+    {
+      "original": "docs/qa/capture-detail-redesign-2026-10-04/navigation/navigation-380-zoom200@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/capture-detail-redesign-2026-10-04/navigation/navigation-380-zoom200@2x.png",
+      "sha256": "e015b0fa7437313b26d5e9ffeedd5b341519a9dbecb24bd3482d55f319cea92e",
+      "previouslyTracked": true
+    },
+    {
+      "original": "docs/qa/capture-detail-redesign-2026-10-04/navigation/navigation-380-zoom75-before-menu@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/capture-detail-redesign-2026-10-04/navigation/navigation-380-zoom75-before-menu@2x.png",
+      "sha256": "3a280049b312f4b7c315a3a6a00c05f82f829fe32d62697db647b744c49f6383",
+      "previouslyTracked": true
+    },
+    {
+      "original": "docs/qa/capture-detail-redesign-2026-10-04/navigation/navigation-380-zoom75@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/capture-detail-redesign-2026-10-04/navigation/navigation-380-zoom75@2x.png",
+      "sha256": "f46e5521a443a083fdb24fca51bbf0096c02afde311ffcfb30f1c1983f64897b",
+      "previouslyTracked": true
+    },
+    {
+      "original": "docs/qa/capture-detail-redesign-2026-10-04/navigation/navigation-600-zoom100@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/capture-detail-redesign-2026-10-04/navigation/navigation-600-zoom100@2x.png",
+      "sha256": "89d042ccf9dcdb29246e634048832915a08e1fbf3c0da957b9d580f05c392a6c",
+      "previouslyTracked": true
+    },
+    {
+      "original": "docs/qa/capture-detail-redesign-2026-10-04/navigation/navigation-600-zoom200@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/capture-detail-redesign-2026-10-04/navigation/navigation-600-zoom200@2x.png",
+      "sha256": "cb83c56fdd8afd68280c72e4c0f000f118be168dc6b9e89845a2adefd42829ce",
+      "previouslyTracked": true
+    },
+    {
+      "original": "docs/qa/capture-detail-redesign-2026-10-04/navigation/navigation-600-zoom75@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/capture-detail-redesign-2026-10-04/navigation/navigation-600-zoom75@2x.png",
+      "sha256": "facfe665f111895628bc6384f9bf9c75477c5e30a1b715c69802554512aa3f38",
+      "previouslyTracked": true
+    },
+    {
+      "original": "docs/qa/capture-detail-redesign-2026-10-04/navigation/navigation-drafts-and-ocr-resume@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/capture-detail-redesign-2026-10-04/navigation/navigation-drafts-and-ocr-resume@2x.png",
+      "sha256": "3ec7418b9aa024c62703ceecf801c1bcfe4e4e0626a21e405a331f1fb0f88ca8",
+      "previouslyTracked": true
+    },
+    {
+      "original": "docs/qa/global-date-search-2026-10-03/manifest.json",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/global-date-search-2026-10-03/manifest.json",
+      "sha256": "4d050c05061431396b085a798e0cb8f92e6ca836eb1e80f3efe341a5c92111f9",
+      "previouslyTracked": true
+    },
+    {
+      "original": "docs/qa/global-date-search-2026-10-03/renders/global-date-search-compact-short-dark-380x520@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/global-date-search-2026-10-03/renders/global-date-search-compact-short-dark-380x520@2x.png",
+      "sha256": "e2b6fb5e4dad8e6aa580aac3fb2fe84f0224c69cb429037d2c228a1b00473527",
+      "previouslyTracked": true
+    },
+    {
+      "original": "docs/qa/global-date-search-2026-10-03/renders/global-date-search-compact-short-light-380x520@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/global-date-search-2026-10-03/renders/global-date-search-compact-short-light-380x520@2x.png",
+      "sha256": "da0600924df2161cc8a00b99a1cc89a75e342ffc0d59861f1e68c176c4587188",
+      "previouslyTracked": true
+    },
+    {
+      "original": "docs/qa/global-date-search-2026-10-03/renders/global-date-search-dark-1060x720@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/global-date-search-2026-10-03/renders/global-date-search-dark-1060x720@2x.png",
+      "sha256": "34a1af7e8f75fc1d112794aca412cf139923034b72a82bb1b5648b1bc8a05e29",
+      "previouslyTracked": true
+    },
+    {
+      "original": "docs/qa/global-date-search-2026-10-03/renders/global-date-search-dark-320x720@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/global-date-search-2026-10-03/renders/global-date-search-dark-320x720@2x.png",
+      "sha256": "9db4d4f55649c0b2fafe9cf15cd00a97434d4af6c5220b08e8fc87cd55abfe32",
+      "previouslyTracked": true
+    },
+    {
+      "original": "docs/qa/global-date-search-2026-10-03/renders/global-date-search-dark-380x720@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/global-date-search-2026-10-03/renders/global-date-search-dark-380x720@2x.png",
+      "sha256": "78b99f70d1199cc89c8635bd247f1614990700b4fd0d216c214d6d26b7a3dc83",
+      "previouslyTracked": true
+    },
+    {
+      "original": "docs/qa/global-date-search-2026-10-03/renders/global-date-search-dark-736x720@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/global-date-search-2026-10-03/renders/global-date-search-dark-736x720@2x.png",
+      "sha256": "fce52b6f07101d8ca70f0000acbfd4cfdff167a078a45e921c8b724308ddb8e9",
+      "previouslyTracked": true
+    },
+    {
+      "original": "docs/qa/global-date-search-2026-10-03/renders/global-date-search-light-1060x720@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/global-date-search-2026-10-03/renders/global-date-search-light-1060x720@2x.png",
+      "sha256": "cd2dff32e59380fec96dea4b6d737eda056e9be6842a6a3760f1b68f706dd4e6",
+      "previouslyTracked": true
+    },
+    {
+      "original": "docs/qa/global-date-search-2026-10-03/renders/global-date-search-light-320x720@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/global-date-search-2026-10-03/renders/global-date-search-light-320x720@2x.png",
+      "sha256": "30e0390e8b1bedca3a9458606111e8db7f710ba0c9f14e8785ef88d06b3c8b55",
+      "previouslyTracked": true
+    },
+    {
+      "original": "docs/qa/global-date-search-2026-10-03/renders/global-date-search-light-380x720@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/global-date-search-2026-10-03/renders/global-date-search-light-380x720@2x.png",
+      "sha256": "fa40f11a8df8648724f0ebb1b6b455db7efab56c6204e82079625c9d554e4289",
+      "previouslyTracked": true
+    },
+    {
+      "original": "docs/qa/global-date-search-2026-10-03/renders/global-date-search-light-736x720@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/global-date-search-2026-10-03/renders/global-date-search-light-736x720@2x.png",
+      "sha256": "586b4c79ec79f8d12a5ff575e6f3a03eb0ec0cb642e7cfc1e0e78a26e0946036",
+      "previouslyTracked": true
+    },
+    {
+      "original": "docs/qa/global-date-search-2026-10-03/renders/global-date-search-local-photo-dark-380x720@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/global-date-search-2026-10-03/renders/global-date-search-local-photo-dark-380x720@2x.png",
+      "sha256": "41bfca2da938d98301ef7dab19be6d83f64431f9c7c931fc768957bfe49cc6de",
+      "previouslyTracked": true
+    },
+    {
+      "original": "docs/qa/global-date-search-2026-10-03/renders/global-date-search-local-photo-light-380x720@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/global-date-search-2026-10-03/renders/global-date-search-local-photo-light-380x720@2x.png",
+      "sha256": "408d5b878a4597f3f67d848bcb325d4c1c5e4d8fbfb536999eb2fd7620e34e15",
+      "previouslyTracked": true
+    },
+    {
+      "original": "docs/qa/global-date-search-2026-10-03/renders/global-date-search-note-editor-dark-736x720@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/global-date-search-2026-10-03/renders/global-date-search-note-editor-dark-736x720@2x.png",
+      "sha256": "62535c8512d36e0a1183f65b61aac188474383a84fd5b4dc851cdc834c3ac75d",
+      "previouslyTracked": true
+    },
+    {
+      "original": "docs/qa/global-date-search-2026-10-03/renders/global-date-search-note-editor-light-736x720@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/global-date-search-2026-10-03/renders/global-date-search-note-editor-light-736x720@2x.png",
+      "sha256": "038767a51e171505daad76ab6a5f693a8e9b555940fa716f7400addaa7bdcb17",
+      "previouslyTracked": true
+    },
+    {
+      "original": "docs/qa/global-date-search-2026-10-03/renders/global-date-search-selected-preview-dark-1060x720@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/global-date-search-2026-10-03/renders/global-date-search-selected-preview-dark-1060x720@2x.png",
+      "sha256": "9486ae9ed8ca2f8c7c5e21db0c5aee2f7bd2434b456facb67c57fc7472bda5fb",
+      "previouslyTracked": true
+    },
+    {
+      "original": "docs/qa/global-date-search-2026-10-03/renders/global-date-search-selected-preview-light-1060x720@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/global-date-search-2026-10-03/renders/global-date-search-selected-preview-light-1060x720@2x.png",
+      "sha256": "9fcac7fb7c638a4236e80f5e6bbd9dc44ff0cea84c1a098e2222ef6e1c8df7b6",
+      "previouslyTracked": true
+    },
+    {
+      "original": "docs/qa/global-date-search-2026-10-03/timings.json",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/global-date-search-2026-10-03/timings.json",
+      "sha256": "6e2a6a5d3ec37a8742690c8a259127033ae04a526462a8b6dac57182eaf9ccba",
+      "previouslyTracked": true
+    },
+    {
+      "original": "docs/qa/capture-detail-fix-2026-10-04/continuous-1200-zoom100-light@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/capture-detail-fix-2026-10-04/continuous-1200-zoom100-light@2x.png",
+      "sha256": "6d21b3101eaaf6a7c9730942140767a867f9a1f5c1a018f06c24082b6f10f8ca",
+      "previouslyTracked": false
+    },
+    {
+      "original": "docs/qa/capture-detail-fix-2026-10-04/continuous-1200-zoom200-dark@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/capture-detail-fix-2026-10-04/continuous-1200-zoom200-dark@2x.png",
+      "sha256": "f1ee30603cc7c0f8b2f1f8a5bcbd8240dad6a9b01917fa098fe2ffdc7e79f8b3",
+      "previouslyTracked": false
+    },
+    {
+      "original": "docs/qa/capture-detail-fix-2026-10-04/continuous-380-zoom100-light@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/capture-detail-fix-2026-10-04/continuous-380-zoom100-light@2x.png",
+      "sha256": "3cedf39f96379674c429a91b1dcae22f1b5c6d0788443308a7980152eb186951",
+      "previouslyTracked": false
+    },
+    {
+      "original": "docs/qa/capture-detail-fix-2026-10-04/continuous-380-zoom200-dark@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/capture-detail-fix-2026-10-04/continuous-380-zoom200-dark@2x.png",
+      "sha256": "3de97bd769302847d390e08588a72a78027405332f805a651d066511dff264c6",
+      "previouslyTracked": false
+    },
+    {
+      "original": "docs/qa/capture-detail-fix-2026-10-04/continuous-600-zoom100-light@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/capture-detail-fix-2026-10-04/continuous-600-zoom100-light@2x.png",
+      "sha256": "551d40076d507cf593ba8262ebbc47859d35557aa344228b3d5bc64becb28ae7",
+      "previouslyTracked": false
+    },
+    {
+      "original": "docs/qa/capture-detail-fix-2026-10-04/continuous-600-zoom200-dark@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/capture-detail-fix-2026-10-04/continuous-600-zoom200-dark@2x.png",
+      "sha256": "0fd97a5e755a35bc82b2efe0e5d55188aa311e37b2d031e92fe92c24f66fdb12",
+      "previouslyTracked": false
+    },
+    {
+      "original": "docs/qa/capture-detail-fix-2026-10-04/detail-integration-1200-zoom100-light@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/capture-detail-fix-2026-10-04/detail-integration-1200-zoom100-light@2x.png",
+      "sha256": "03de3669bfc69d41fa60c10c3f2a268da15d10909cdee14d877fb5690976f47b",
+      "previouslyTracked": false
+    },
+    {
+      "original": "docs/qa/capture-detail-fix-2026-10-04/detail-integration-600-zoom200-dark@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/capture-detail-fix-2026-10-04/detail-integration-600-zoom200-dark@2x.png",
+      "sha256": "f2c4997cf316357bfb4ced67881d71b50e96bc0747e247ffe37196ca28c54f6e",
+      "previouslyTracked": false
+    },
+    {
+      "original": "docs/qa/capture-detail-fix-2026-10-04/labeled-copy-and-icon-default@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/capture-detail-fix-2026-10-04/labeled-copy-and-icon-default@2x.png",
+      "sha256": "80d58d2f8efc63f3ad041c211a56387a3cddd826f81f762922811ac74bd44034",
+      "previouslyTracked": false
+    },
+    {
+      "original": "docs/qa/capture-detail-fix-2026-10-04/recognized-1200-zoom100-dark-preview@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/capture-detail-fix-2026-10-04/recognized-1200-zoom100-dark-preview@2x.png",
+      "sha256": "994c08f29cc638485df4b20ffe1cc480d171d8650a0ad1425afe7751a37085bd",
+      "previouslyTracked": false
+    },
+    {
+      "original": "docs/qa/capture-detail-fix-2026-10-04/recognized-1200-zoom100-light-expanded@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/capture-detail-fix-2026-10-04/recognized-1200-zoom100-light-expanded@2x.png",
+      "sha256": "7beb6312f7cb9f199c39b2ac1485a145cf95b33200252c21530f20fbd76fc039",
+      "previouslyTracked": false
+    },
+    {
+      "original": "docs/qa/capture-detail-fix-2026-10-04/recognized-1200-zoom100-light-preview@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/capture-detail-fix-2026-10-04/recognized-1200-zoom100-light-preview@2x.png",
+      "sha256": "9df897eb937c4f24de078354e1446675f09bebf134068e04d91990c36bde1ba6",
+      "previouslyTracked": false
+    },
+    {
+      "original": "docs/qa/capture-detail-fix-2026-10-04/recognized-1200-zoom200-dark-expanded@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/capture-detail-fix-2026-10-04/recognized-1200-zoom200-dark-expanded@2x.png",
+      "sha256": "4952ce5d20daf99e477292e3194fd964525438447e79341476c45292e37bbd7f",
+      "previouslyTracked": false
+    },
+    {
+      "original": "docs/qa/capture-detail-fix-2026-10-04/recognized-1200-zoom200-dark-preview@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/capture-detail-fix-2026-10-04/recognized-1200-zoom200-dark-preview@2x.png",
+      "sha256": "ae6fabef5e65c45a850633f799516ebf676bbeef64f82c278a4420abfe6599b6",
+      "previouslyTracked": false
+    },
+    {
+      "original": "docs/qa/capture-detail-fix-2026-10-04/recognized-1200-zoom200-light-expanded@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/capture-detail-fix-2026-10-04/recognized-1200-zoom200-light-expanded@2x.png",
+      "sha256": "a9ab1302d5c74c2db7cdedc9ef7491c7b230d632badb657631b7cf2b6d5a5253",
+      "previouslyTracked": false
+    },
+    {
+      "original": "docs/qa/capture-detail-fix-2026-10-04/recognized-1200-zoom200-light-preview@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/capture-detail-fix-2026-10-04/recognized-1200-zoom200-light-preview@2x.png",
+      "sha256": "4c3dd488326e653b720e799f4315d0100304bc352cd106fe6f219d2bcf3b12bf",
+      "previouslyTracked": false
+    },
+    {
+      "original": "docs/qa/capture-detail-fix-2026-10-04/recognized-1200-zoom75-dark-expanded@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/capture-detail-fix-2026-10-04/recognized-1200-zoom75-dark-expanded@2x.png",
+      "sha256": "debb70b754a2b3fd215659ce447f664faeb1eb2576c1aea533ac71254856b36c",
+      "previouslyTracked": false
+    },
+    {
+      "original": "docs/qa/capture-detail-fix-2026-10-04/recognized-1200-zoom75-dark-preview@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/capture-detail-fix-2026-10-04/recognized-1200-zoom75-dark-preview@2x.png",
+      "sha256": "7577e5998d0e8675d1b1bd4e408022c452abf5508e7da79b06f4778a0c9857aa",
+      "previouslyTracked": false
+    },
+    {
+      "original": "docs/qa/capture-detail-fix-2026-10-04/recognized-1200-zoom75-light-expanded@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/capture-detail-fix-2026-10-04/recognized-1200-zoom75-light-expanded@2x.png",
+      "sha256": "216eee3cd0ffea2f9f1089da58fbf0e9836ffe0a56fea673220dc0ca8475d904",
+      "previouslyTracked": false
+    },
+    {
+      "original": "docs/qa/capture-detail-fix-2026-10-04/recognized-1200-zoom75-light-preview@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/capture-detail-fix-2026-10-04/recognized-1200-zoom75-light-preview@2x.png",
+      "sha256": "4c02d338320aa3d8d9d8380680636f7f052c74ab56b4dc3bf76d6c3bcf16b81e",
+      "previouslyTracked": false
+    },
+    {
+      "original": "docs/qa/capture-detail-fix-2026-10-04/recognized-380-zoom100-dark-expanded@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/capture-detail-fix-2026-10-04/recognized-380-zoom100-dark-expanded@2x.png",
+      "sha256": "ba17e27bd22d83514deda2e3cbb18a99c05a95ba8706d01b9f5a23e4d087696f",
+      "previouslyTracked": false
+    },
+    {
+      "original": "docs/qa/capture-detail-fix-2026-10-04/recognized-380-zoom100-dark-preview@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/capture-detail-fix-2026-10-04/recognized-380-zoom100-dark-preview@2x.png",
+      "sha256": "eef8ca59edb4793e31376fa7e2bb697c34ed2d6ca32963cbd3c2fb23c7ed9eb9",
+      "previouslyTracked": false
+    },
+    {
+      "original": "docs/qa/capture-detail-fix-2026-10-04/recognized-380-zoom100-light-expanded@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/capture-detail-fix-2026-10-04/recognized-380-zoom100-light-expanded@2x.png",
+      "sha256": "5d790defc487d25e98542a4cd02127095b397a6db9f909d07b72878648142ee5",
+      "previouslyTracked": false
+    },
+    {
+      "original": "docs/qa/capture-detail-fix-2026-10-04/recognized-380-zoom100-light-preview@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/capture-detail-fix-2026-10-04/recognized-380-zoom100-light-preview@2x.png",
+      "sha256": "3cedf39f96379674c429a91b1dcae22f1b5c6d0788443308a7980152eb186951",
+      "previouslyTracked": false
+    },
+    {
+      "original": "docs/qa/capture-detail-fix-2026-10-04/recognized-380-zoom200-dark-expanded@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/capture-detail-fix-2026-10-04/recognized-380-zoom200-dark-expanded@2x.png",
+      "sha256": "6a3025360e6f685611ced7e607167a9cef8c65d57264409b3717cd4611d12b67",
+      "previouslyTracked": false
+    },
+    {
+      "original": "docs/qa/capture-detail-fix-2026-10-04/recognized-380-zoom200-dark-preview@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/capture-detail-fix-2026-10-04/recognized-380-zoom200-dark-preview@2x.png",
+      "sha256": "3de97bd769302847d390e08588a72a78027405332f805a651d066511dff264c6",
+      "previouslyTracked": false
+    },
+    {
+      "original": "docs/qa/capture-detail-fix-2026-10-04/recognized-380-zoom200-light-expanded@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/capture-detail-fix-2026-10-04/recognized-380-zoom200-light-expanded@2x.png",
+      "sha256": "2d655e59ae2ddf25888f1d5b886e547d9d4dc082dcf2dd86f547f65f031bc21d",
+      "previouslyTracked": false
+    },
+    {
+      "original": "docs/qa/capture-detail-fix-2026-10-04/recognized-380-zoom75-dark-expanded@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/capture-detail-fix-2026-10-04/recognized-380-zoom75-dark-expanded@2x.png",
+      "sha256": "0743b53c5242b969b38b957f18e2859e258ac5a5ce87eabefcd6b948fd950320",
+      "previouslyTracked": false
+    },
+    {
+      "original": "docs/qa/capture-detail-fix-2026-10-04/recognized-380-zoom75-dark-preview@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/capture-detail-fix-2026-10-04/recognized-380-zoom75-dark-preview@2x.png",
+      "sha256": "8cb3885ea0212078f646b77b9e6fcebc1c83956dc246ff64a6023781472d15dd",
+      "previouslyTracked": false
+    },
+    {
+      "original": "docs/qa/capture-detail-fix-2026-10-04/recognized-380-zoom75-light-expanded@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/capture-detail-fix-2026-10-04/recognized-380-zoom75-light-expanded@2x.png",
+      "sha256": "a9c78453e25bc61240c88ac39a392951d4c7dda8bd3f42fd4dc65377abaff151",
+      "previouslyTracked": false
+    },
+    {
+      "original": "docs/qa/capture-detail-fix-2026-10-04/recognized-380-zoom75-light-preview@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/capture-detail-fix-2026-10-04/recognized-380-zoom75-light-preview@2x.png",
+      "sha256": "2d5555b11895cef13d2ab41105beeb6693c948923a851d8ba73c323fa95d78cd",
+      "previouslyTracked": false
+    },
+    {
+      "original": "docs/qa/capture-detail-fix-2026-10-04/recognized-600-zoom100-dark-expanded@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/capture-detail-fix-2026-10-04/recognized-600-zoom100-dark-expanded@2x.png",
+      "sha256": "4a394851ad9666647e4f80ebd371c4ad99364c260a0c528ad8a85446e90460b2",
+      "previouslyTracked": false
+    },
+    {
+      "original": "docs/qa/capture-detail-fix-2026-10-04/recognized-600-zoom100-dark-preview@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/capture-detail-fix-2026-10-04/recognized-600-zoom100-dark-preview@2x.png",
+      "sha256": "43bd099abec2a308051456579f4f4df365d7f784a1d93926af545336749cf4a3",
+      "previouslyTracked": false
+    },
+    {
+      "original": "docs/qa/capture-detail-fix-2026-10-04/recognized-600-zoom100-light-expanded@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/capture-detail-fix-2026-10-04/recognized-600-zoom100-light-expanded@2x.png",
+      "sha256": "43af31075397d62fe0a000d9b20bac089e131d90e7cafcc301b2510346918d52",
+      "previouslyTracked": false
+    },
+    {
+      "original": "docs/qa/capture-detail-fix-2026-10-04/recognized-600-zoom100-light-preview@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/capture-detail-fix-2026-10-04/recognized-600-zoom100-light-preview@2x.png",
+      "sha256": "c38340fa9ce9448c183d1400eea99780432f021c3d13e1e31a5318c22e1e5661",
+      "previouslyTracked": false
+    },
+    {
+      "original": "docs/qa/capture-detail-fix-2026-10-04/recognized-600-zoom200-dark-expanded@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/capture-detail-fix-2026-10-04/recognized-600-zoom200-dark-expanded@2x.png",
+      "sha256": "8c99d2eab986374b9a4c1a18f57b5b4cf28026b68a409ce59829cd69f75b2a09",
+      "previouslyTracked": false
+    },
+    {
+      "original": "docs/qa/capture-detail-fix-2026-10-04/recognized-600-zoom200-dark-preview@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/capture-detail-fix-2026-10-04/recognized-600-zoom200-dark-preview@2x.png",
+      "sha256": "3096c951a9ead6446994e35423a85704e374ef767ed22022c5cbfc728e75aeb4",
+      "previouslyTracked": false
+    },
+    {
+      "original": "docs/qa/capture-detail-fix-2026-10-04/recognized-600-zoom200-light-expanded@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/capture-detail-fix-2026-10-04/recognized-600-zoom200-light-expanded@2x.png",
+      "sha256": "62c2e7d86644b15294b16ba16dfec9606cd44499def4d3f17cad38f0653a2124",
+      "previouslyTracked": false
+    },
+    {
+      "original": "docs/qa/capture-detail-fix-2026-10-04/recognized-600-zoom200-light-preview@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/capture-detail-fix-2026-10-04/recognized-600-zoom200-light-preview@2x.png",
+      "sha256": "eb6f7522644f2ddd1f5766e0ce8e222e4a92902b68e4cbc6c7b8c2483fdb08e7",
+      "previouslyTracked": false
+    },
+    {
+      "original": "docs/qa/capture-detail-fix-2026-10-04/recognized-600-zoom75-dark-expanded@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/capture-detail-fix-2026-10-04/recognized-600-zoom75-dark-expanded@2x.png",
+      "sha256": "eaeac4fefd647118b10b7f521ac6ec41dfd965ec92fc8874d33ba87ebb0e0ed9",
+      "previouslyTracked": false
+    },
+    {
+      "original": "docs/qa/capture-detail-fix-2026-10-04/recognized-600-zoom75-dark-preview@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/capture-detail-fix-2026-10-04/recognized-600-zoom75-dark-preview@2x.png",
+      "sha256": "4000af11bdd9bd8a03163749944188a87c11143508c44d161e96eeb3cd42dae7",
+      "previouslyTracked": false
+    },
+    {
+      "original": "docs/qa/capture-detail-fix-2026-10-04/recognized-600-zoom75-light-expanded@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/capture-detail-fix-2026-10-04/recognized-600-zoom75-light-expanded@2x.png",
+      "sha256": "d95a5d9b39dd833ac99557e14ce00eccd7e132c4d17f9e16cebb61f4118ce785",
+      "previouslyTracked": false
+    },
+    {
+      "original": "docs/qa/capture-detail-fix-2026-10-04/recognized-600-zoom75-light-preview@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/capture-detail-fix-2026-10-04/recognized-600-zoom75-light-preview@2x.png",
+      "sha256": "dc4ef98fc92129628a75b49e4d6f2fb27dabb3a17be0549a7f1f04d3dbd4dbde",
+      "previouslyTracked": false
+    },
+    {
+      "original": "docs/qa/capture-detail-fix-2026-10-04/reminder-before-label-click@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/capture-detail-fix-2026-10-04/reminder-before-label-click@2x.png",
+      "sha256": "1169a8bf5088e9339efd7893d086af9808af44ef2775837ed4294417ee2e9fd6",
+      "previouslyTracked": false
+    },
+    {
+      "original": "docs/qa/stability-stress-2026-10-05/graphics/burst-appkit-contrast-dark-reduced-380@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/stability-stress-2026-10-05/graphics/burst-appkit-contrast-dark-reduced-380@2x.png",
+      "sha256": "1a0142039e6f7d707d8d119df2a23a4514a004171485f3a154bf8d470df5c0e0",
+      "previouslyTracked": false
+    },
+    {
+      "original": "docs/qa/stability-stress-2026-10-05/graphics/burst-appkit-contrast-dark-reduced-760@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/stability-stress-2026-10-05/graphics/burst-appkit-contrast-dark-reduced-760@2x.png",
+      "sha256": "d0f1576e8b6a439e57f813e2b96ead563c30bf7e393851fcac5651a8a42fdb05",
+      "previouslyTracked": false
+    },
+    {
+      "original": "docs/qa/stability-stress-2026-10-05/graphics/burst-appkit-contrast-light-reduced-380@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/stability-stress-2026-10-05/graphics/burst-appkit-contrast-light-reduced-380@2x.png",
+      "sha256": "ef9f229c4e7b7249458bccca5ae3ee4003111e12f4190a1f47c112440fe0feaf",
+      "previouslyTracked": false
+    },
+    {
+      "original": "docs/qa/stability-stress-2026-10-05/graphics/burst-appkit-contrast-light-reduced-760@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/stability-stress-2026-10-05/graphics/burst-appkit-contrast-light-reduced-760@2x.png",
+      "sha256": "8d450ce05dfc8de86344e5fe547aaa60d498c09cc50e3a95c7d80af20051db38",
+      "previouslyTracked": false
+    },
+    {
+      "original": "docs/qa/stability-stress-2026-10-05/graphics/burst-dark-380@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/stability-stress-2026-10-05/graphics/burst-dark-380@2x.png",
+      "sha256": "6ca2c712327824cd8c0912980ab3e160f515f599f316b364313f13988d2da9e8",
+      "previouslyTracked": false
+    },
+    {
+      "original": "docs/qa/stability-stress-2026-10-05/graphics/burst-dark-760@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/stability-stress-2026-10-05/graphics/burst-dark-760@2x.png",
+      "sha256": "a6b3cee7d1c4f1e54df937235735f17b182d4a00a4162884428d15ea85d73708",
+      "previouslyTracked": false
+    },
+    {
+      "original": "docs/qa/stability-stress-2026-10-05/graphics/burst-light-380@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/stability-stress-2026-10-05/graphics/burst-light-380@2x.png",
+      "sha256": "ff70149e888809ab92790509e34a8779f4a124cc1d383e298bcdb26b5a332381",
+      "previouslyTracked": false
+    },
+    {
+      "original": "docs/qa/stability-stress-2026-10-05/graphics/burst-light-760@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/stability-stress-2026-10-05/graphics/burst-light-760@2x.png",
+      "sha256": "aa2795a9dc01d596a21872770763c424f1670624ed14c29fe3a372f4a5265dbd",
+      "previouslyTracked": false
+    },
+    {
+      "original": "docs/qa/stability-stress-2026-10-05/graphics/visual-animation-stress-report.json",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/stability-stress-2026-10-05/graphics/visual-animation-stress-report.json",
+      "sha256": "d735a8a6f0dfb3e8c45d99bb2c74bd6d53c25713641bcc64cadcf2f59a887ba7",
+      "previouslyTracked": false
+    },
+    {
+      "original": "docs/qa/task-plan-redesign-2026-10-05/native/detail-380-reminder-applied@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/task-plan-redesign-2026-10-05/native/detail-380-reminder-applied@2x.png",
+      "sha256": "6129e69a68363a0c1409a78fa8eeecda57481388e39cfc465157ead86b73a968",
+      "previouslyTracked": false
+    },
+    {
+      "original": "docs/qa/task-plan-redesign-2026-10-05/native/detail-380-task-pending@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/task-plan-redesign-2026-10-05/native/detail-380-task-pending@2x.png",
+      "sha256": "7522d4afcfbf793e8cb7db57a27c2ec227d77b91be2dd175c59681783dea7c62",
+      "previouslyTracked": false
+    },
+    {
+      "original": "docs/qa/task-plan-redesign-2026-10-05/native/full-board-380-reminder-date-zoom100@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/task-plan-redesign-2026-10-05/native/full-board-380-reminder-date-zoom100@2x.png",
+      "sha256": "b451572f1e3b6945b48aad8d6bb1fc45711fbcba920da95186235295ce3828dd",
+      "previouslyTracked": false
+    },
+    {
+      "original": "docs/qa/task-plan-redesign-2026-10-05/native/full-board-380-reminder-date-zoom200@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/task-plan-redesign-2026-10-05/native/full-board-380-reminder-date-zoom200@2x.png",
+      "sha256": "7bb92d5140e05390e21c211e9fa0378c6a29b5f062248bfc883b9b1060be6530",
+      "previouslyTracked": false
+    },
+    {
+      "original": "docs/qa/task-plan-redesign-2026-10-05/native/full-board-380-reminder-zoom100@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/task-plan-redesign-2026-10-05/native/full-board-380-reminder-zoom100@2x.png",
+      "sha256": "eee962c0ede67af550815e0ecb39894a26e539002fa9228f24d54221b023aebf",
+      "previouslyTracked": false
+    },
+    {
+      "original": "docs/qa/task-plan-redesign-2026-10-05/native/full-board-380-reminder-zoom200@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/task-plan-redesign-2026-10-05/native/full-board-380-reminder-zoom200@2x.png",
+      "sha256": "20d852ed686da8a4f02865cf98fc8e769fcf642c5a28e5b27e540ebd62e79597",
+      "previouslyTracked": false
+    },
+    {
+      "original": "docs/qa/task-plan-redesign-2026-10-05/native/full-board-380-task-zoom100@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/task-plan-redesign-2026-10-05/native/full-board-380-task-zoom100@2x.png",
+      "sha256": "5b234fc07cc26ccabb04b5c3ee837fc2d819eb1f4202c0fea855ed4978240579",
+      "previouslyTracked": false
+    },
+    {
+      "original": "docs/qa/task-plan-redesign-2026-10-05/native/full-board-380-task-zoom200@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/task-plan-redesign-2026-10-05/native/full-board-380-task-zoom200@2x.png",
+      "sha256": "c9ed971481f292913dadfaa4e9dff2598bd7a909056643998f48c9cd78ac4e7a",
+      "previouslyTracked": false
+    },
+    {
+      "original": "docs/qa/task-plan-redesign-2026-10-05/native/native-task-plan-report.json",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/task-plan-redesign-2026-10-05/native/native-task-plan-report.json",
+      "sha256": "fc5d3af3c38e068390486170b15b1ff23856416fc353ce4bd7f70d4940cea6f5",
+      "previouslyTracked": false
+    },
+    {
+      "original": "docs/qa/task-plan-redesign-2026-10-05/native/native-title-edit-resize-save@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/task-plan-redesign-2026-10-05/native/native-title-edit-resize-save@2x.png",
+      "sha256": "669fab0efb2624a2139357b9e072ef61e00937e40bc0a19d065de6b473ce62b7",
+      "previouslyTracked": false
+    },
+    {
+      "original": "docs/qa/task-plan-redesign-2026-10-05/native/plan-380-deadline@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/task-plan-redesign-2026-10-05/native/plan-380-deadline@2x.png",
+      "sha256": "623e4074aa809ede1584f81eedaf352fa6eb857a87c74421cea1a9fb1f096242",
+      "previouslyTracked": false
+    },
+    {
+      "original": "docs/qa/task-plan-redesign-2026-10-05/native/plan-380-default@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/task-plan-redesign-2026-10-05/native/plan-380-default@2x.png",
+      "sha256": "c3a8dee0a1cf3af15c3bcf6e76ffdb9b1a5d9c5641269d93cb50a9155a8a620f",
+      "previouslyTracked": false
+    },
+    {
+      "original": "docs/qa/task-plan-redesign-2026-10-05/native/plan-760-deadline@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/task-plan-redesign-2026-10-05/native/plan-760-deadline@2x.png",
+      "sha256": "42809c2956df00c77d2dbcdeb18c2161668ea30eebdcec7309163cc447e2f5b7",
+      "previouslyTracked": false
+    },
+    {
+      "original": "docs/qa/task-plan-redesign-2026-10-05/native/plan-760-default@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/task-plan-redesign-2026-10-05/native/plan-760-default@2x.png",
+      "sha256": "68cfc8fe20a1eaa38ccbe7e863a8932111b4c87587aab5f2e08fcebe0a3a2782",
+      "previouslyTracked": false
+    },
+    {
+      "original": "docs/qa/task-plan-redesign-2026-10-05/native/plan-760-native-actions@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/task-plan-redesign-2026-10-05/native/plan-760-native-actions@2x.png",
+      "sha256": "aaa8259ddfbd2764d6bf01a9cf0693a061a2b56631a0384c56f72a433afe1312",
+      "previouslyTracked": false
+    },
+    {
+      "original": "docs/qa/task-plan-redesign-2026-10-05/native/reminder-380-countdown@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/task-plan-redesign-2026-10-05/native/reminder-380-countdown@2x.png",
+      "sha256": "d2d76de69446626afdd728b3089faea80b19933e40cb1a360e839aa3fb3c41fb",
+      "previouslyTracked": false
+    },
+    {
+      "original": "docs/qa/task-plan-redesign-2026-10-05/native/reminder-380-date@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/task-plan-redesign-2026-10-05/native/reminder-380-date@2x.png",
+      "sha256": "6ae1da4d133b7f553e22660f4b71acd3af7c052193074f84954e2100ed59b77f",
+      "previouslyTracked": false
+    },
+    {
+      "original": "docs/qa/task-plan-redesign-2026-10-05/native/reminder-760-countdown@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/task-plan-redesign-2026-10-05/native/reminder-760-countdown@2x.png",
+      "sha256": "d510c6b3f9034fafbb46edfe5b7779d8eb1392e2f6d46b981754abd9aa7f7df6",
+      "previouslyTracked": false
+    },
+    {
+      "original": "docs/qa/task-plan-redesign-2026-10-05/native/reminder-760-date@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/task-plan-redesign-2026-10-05/native/reminder-760-date@2x.png",
+      "sha256": "d46df4d1179508327c129a90aeba2a3bd0dc41700fb520d20f7f2dbd9aa69871",
+      "previouslyTracked": false
+    },
+    {
+      "original": "docs/qa/task-plan-redesign-2026-10-05/native/title-geometry-zoom100.json",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/task-plan-redesign-2026-10-05/native/title-geometry-zoom100.json",
+      "sha256": "45d71ab6a2dde4e66e0f26924f72ec796eae0c36651e4a49782939641b4b106d",
+      "previouslyTracked": false
+    },
+    {
+      "original": "docs/qa/task-plan-redesign-2026-10-05/native/title-geometry-zoom100@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/task-plan-redesign-2026-10-05/native/title-geometry-zoom100@2x.png",
+      "sha256": "5b234fc07cc26ccabb04b5c3ee837fc2d819eb1f4202c0fea855ed4978240579",
+      "previouslyTracked": false
+    },
+    {
+      "original": "docs/qa/task-plan-redesign-2026-10-05/native/title-geometry-zoom200.json",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/task-plan-redesign-2026-10-05/native/title-geometry-zoom200.json",
+      "sha256": "1bd65a8d42ac4ba8116a93be33758de809bd51ff1c226add7ca2a0a8cbfe1458",
+      "previouslyTracked": false
+    },
+    {
+      "original": "docs/qa/task-plan-redesign-2026-10-05/native/title-geometry-zoom200@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/task-plan-redesign-2026-10-05/native/title-geometry-zoom200@2x.png",
+      "sha256": "c9ed971481f292913dadfaa4e9dff2598bd7a909056643998f48c9cd78ac4e7a",
+      "previouslyTracked": false
+    },
+    {
+      "original": "docs/qa/task-plan-redesign-2026-10-05/native/title-resize-1200.json",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/task-plan-redesign-2026-10-05/native/title-resize-1200.json",
+      "sha256": "a9b0096a22776b647616ab9850d7a579ec8507dd29b5ae37d55bf1240b07eddc",
+      "previouslyTracked": false
+    },
+    {
+      "original": "docs/qa/task-plan-redesign-2026-10-05/native/title-resize-1200@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/task-plan-redesign-2026-10-05/native/title-resize-1200@2x.png",
+      "sha256": "5fdaee9b26e5d4a93349c6f0b14af31f3cfb8043f12029a804e730934ec0d29e",
+      "previouslyTracked": false
+    },
+    {
+      "original": "docs/qa/task-plan-redesign-2026-10-05/native/title-resize-380.json",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/task-plan-redesign-2026-10-05/native/title-resize-380.json",
+      "sha256": "52461932b1f22de6faad17ceba1393941b5e147603ca473d661f5ad965e318a4",
+      "previouslyTracked": false
+    },
+    {
+      "original": "docs/qa/task-plan-redesign-2026-10-05/native/title-resize-380@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/task-plan-redesign-2026-10-05/native/title-resize-380@2x.png",
+      "sha256": "3c206bdee9f43abae3ffb6fb869f2a612dd941c7e66afca6dbd017af89a643cb",
+      "previouslyTracked": false
+    },
+    {
+      "original": "docs/qa/task-plan-redesign-2026-10-05/native/title-resize-600.json",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/task-plan-redesign-2026-10-05/native/title-resize-600.json",
+      "sha256": "0db00c196f13d16c9f939e3f56b7ee46d4a5f913d8a60f809d333286564c1876",
+      "previouslyTracked": false
+    },
+    {
+      "original": "docs/qa/task-plan-redesign-2026-10-05/native/title-resize-600@2x.png",
+      "retained": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-first-run-retained-20261005/task-plan-redesign-2026-10-05/native/title-resize-600@2x.png",
+      "sha256": "cd7b4c662ad55b7a606448d9b4f821f829455d2d12ea2fe3f47e6fb1e43c184d",
+      "previouslyTracked": false
+    }
+  ],
+  "retention": "Complete first-run fictional renders retained locally under ignored native/build; final selected native fixtures will be committed separately."
+}

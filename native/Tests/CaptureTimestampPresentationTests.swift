@@ -32,6 +32,9 @@ import SwiftUI
          attribute("AXTitle"), attribute("AXDescription"), attribute("AXValue")]
             .compactMap { $0 as? String }.first { !$0.isEmpty } ?? ""
     }
+    var stringValue: String {
+        (value("accessibilityValue") as? String) ?? (attribute("AXValue") as? String) ?? ""
+    }
     var frame: NSRect {
         let selector = NSSelectorFromString("accessibilityFrame")
         guard object.responds(to: selector) else { return .zero }
@@ -52,6 +55,16 @@ import SwiftUI
         if let values = attribute("AXChildren") as? [Any] { children += values }
         if let view = object as? NSView { children += view.subviews }
         return children
+    }
+}
+
+@MainActor private struct TimestampSearchCardFixture: View {
+    @ObservedObject var state: AppState
+    let item: SearchDateItem
+    @FocusState private var selected: String?
+
+    var body: some View {
+        SearchResultCard(state: state, item: item, expanded: true, focus: $selected)
     }
 }
 
@@ -155,7 +168,7 @@ import SwiftUI
     }
 
     private static func assertReceipt(_ capture: Capture, in view: NSView, window: NSWindow,
-                                      category: String, context: String) async throws -> CGFloat {
+                                      category: String, context: String, fontSize: CGFloat = 11) async throws -> CGFloat {
         let time = try await find(view, id: "capture-receipt-time-\(capture.id.uuidString)")
         let kind = try await find(view, id: "capture-receipt-category-\(capture.id.uuidString)")
         let receipt = captureReceiptText(capture)
@@ -171,13 +184,159 @@ import SwiftUI
         // AX exposes full strings even when Text visually truncates. Comparing
         // the real frame against the complete string's wrapped glyph height
         // catches a clipped one-line date or a two-line receipt that needs more.
-        let font = NSFont.monospacedDigitSystemFont(ofSize: 11, weight: .regular)
+        let font = NSFont.monospacedDigitSystemFont(ofSize: fontSize, weight: .regular)
         let completeHeight = (receipt as NSString).boundingRect(
             with: NSSize(width: time.frame.width + 0.5, height: 1_000),
             options: [.usesLineFragmentOrigin, .usesFontLeading], attributes: [.font: font]).height
         try expect(time.frame.height + 1 >= completeHeight,
                    "\(context): complete date/time has enough rendered height, not a clipped line (\(time.frame), required \(completeHeight))")
         return time.frame.height
+    }
+
+    private static func assertTarget(_ view: NSView, window: NSWindow, id: String,
+                                     context: String) async throws -> TimestampAXNode {
+        let node = try await find(view, id: id)
+        try expect(node.frame.width >= 31.5 && node.frame.height >= 31.5,
+                   "\(context): actual native control retains a 32-point target: \(node.frame)")
+        try expect(node.frame.minX >= window.frame.minX - 1 && node.frame.maxX <= window.frame.maxX + 1
+            && node.frame.minY >= window.frame.minY - 1 && node.frame.maxY <= window.frame.maxY + 1,
+                   "\(context): control fits the narrow visible fixture: \(node.frame)")
+        return node
+    }
+
+    private static func checkCollectionsAndSearch(_ state: AppState, evidence: URL) async throws {
+        let stamp = date("2026-09-30T22:17:00Z")
+        let zone = TimeZone(secondsFromGMT: 10_800)!
+        let first = try await state.store.importData(Data("Fictional first batch original".utf8),
+            filename: "Fictional first batch.dat", at: stamp, timeZone: zone)
+        let second = try await state.store.importData(Data("Fictional second batch original".utf8),
+            filename: "Fictional second batch.dat", at: stamp, timeZone: zone)
+        for item in [first, second] { try state.store.setMinimized(item, minimized: true) }
+        guard let batch = CaptureCardGroup.cards(from: [first, second]).first else {
+            throw NSError(domain: "CaptureTimestampPresentationTests", code: 6)
+        }
+        let automatic = (0..<4).map { index in
+            Capture(capturedAt: stamp.addingTimeInterval(Double(index * 60)), timeZone: zone, kind: .text,
+                    originalText: "Fictional hourly observation \(index)", title: "Fictional hourly observation \(index)",
+                    receipt: .automatic(.automaticClipboard, actionID: UUID(), sourceApplicationName: "Fixture App",
+                                        sourceApplicationBundleIdentifier: "com.dabin.fixture"))
+        }
+        guard case .automaticHour(let hour)? = HourlyCaptureFeed.cards(from: automatic, filter: .all,
+            today: stamp, calendarTimeZone: zone).first else {
+            throw NSError(domain: "CaptureTimestampPresentationTests", code: 7)
+        }
+        let body = "Fictional orbit observations " + String(repeating: "with useful matching context and decisions ", count: 12)
+        let searchCapture = try state.store.capture(text: body, at: stamp, timeZone: zone,
+            projectName: "Fictional long project name for responsive search action wrapping")[0]
+        let searchItem = SearchDateItem.capture(SearchEntry(capture: searchCapture, isMatch: true, indexedTextMatch: nil))
+        let note = WorkspaceScratchpad(text: body,
+            projectName: "Fictional long project notes for responsive actions", updatedAt: stamp)
+        let noteItem = SearchDateItem.note(note)
+        let original = (searchCapture.capturedAt, searchCapture.captureDay, searchCapture.originalText, searchCapture.projectName)
+
+        for width in [CGFloat(260), CGFloat(380)] {
+            for factor in [CGFloat(1), CGFloat(2)] {
+                let zoom = WorkspaceZoomLayout(factor: factor)
+                let suffix = "\(Int(width))-\(Int(factor * 100))"
+                let size = NSSize(width: width, height: 550)
+                try await withView(GroupedCaptureCard(state: state, group: batch, compact: true)
+                    .environment(\.workspaceZoom, zoom), size: size) { view, window in
+                    let summary = try await assertTarget(view, window: window, id: "collection-batch-summary", context: "Batch expand \(suffix)")
+                    // The native summary Button combines its label children.
+                    // Its exact action label supplies the batch category, and
+                    // its value must retain the complete original receipt.
+                    try expect(summary.label == "Expand batch items", "Batch category remains accessible on its actual expansion action")
+                    try expect(summary.stringValue == "\(batch.captures.count) captures, \(captureReceiptText(first))",
+                               "Collapsed batch \(suffix) exposes its exact count and complete saved date/clock")
+                    _ = try await assertTarget(view, window: window, id: "capture-copy-batch-\(first.id.uuidString)", context: "Batch copy \(suffix)")
+                    _ = try await assertTarget(view, window: window, id: "capture-more-batch-\(first.id.uuidString)", context: "Batch More \(suffix)")
+                    try snapshot(view, to: evidence.appendingPathComponent("batch-\(suffix).png"))
+                    try expect(summary.press(), "Collapsed batch expands through its real native control")
+                    await settle(view)
+                    try expect([first, second].allSatisfy { !$0.isMinimized },
+                               "Batch expansion changes each persisted presentation flag")
+                    let childLabel = "Open \(second.title), \(captureTypeLabel(second.kind))"
+                    guard let child = nodes(view).first(where: { $0.label == childLabel }) else {
+                        throw NSError(domain: "CaptureTimestampPresentationTests", code: 9,
+                            userInfo: [NSLocalizedDescriptionKey: "Missing compact expanded native item \(childLabel)"])
+                    }
+                    try expect(child.label == childLabel && child.stringValue == captureReceiptText(second),
+                               "Compact expanded item exposes its exact full title/category and original date/clock")
+                    try expect(child.frame.width >= 31.5 && child.frame.height >= 31.5,
+                               "Compact expanded item keeps its real native 32-point activation target")
+                    try expect(child.frame.minX >= window.frame.minX - 1 && child.frame.maxX <= window.frame.maxX + 1
+                        && child.frame.minY >= window.frame.minY - 1 && child.frame.maxY <= window.frame.maxY + 1,
+                               "Compact expanded item remains inside the narrow/high-zoom fixture: \(child.frame)")
+                }
+                try await withView(GroupedCaptureCard(state: state, group: batch)
+                    .environment(\.workspaceZoom, zoom), size: NSSize(width: width, height: 680)) { view, window in
+                    // Use the non-primary child: the group header legitimately
+                    // reuses the primary receipt with its Batch category.
+                    _ = try await assertReceipt(second, in: view, window: window, category: captureTypeLabel(second.kind),
+                        context: "Expanded batch child \(suffix)", fontSize: zoom.fontSize(11))
+                    guard let collapse = nodes(view).first(where: { $0.label == "Collapse batch items" }) else {
+                        throw NSError(domain: "CaptureTimestampPresentationTests", code: 8,
+                            userInfo: [NSLocalizedDescriptionKey: "Expanded batch has no native Collapse action"])
+                    }
+                    try expect(collapse.frame.width >= 31.5 && collapse.frame.height >= 31.5,
+                               "Expanded batch retains its native 32-point Collapse target")
+                    try snapshot(view, to: evidence.appendingPathComponent("batch-expanded-\(suffix).png"))
+                    try expect(collapse.press(), "Expanded batch collapses through its real native control")
+                    await settle(view)
+                    try expect([first, second].allSatisfy(\.isMinimized),
+                               "Batch Collapse returns every member to the saved summary state")
+                    let restored = try await find(view, id: "collection-batch-summary")
+                    try expect(restored.stringValue == "\(batch.captures.count) captures, \(captureReceiptText(first))",
+                               "Collapsing preserves the exact saved receipt and count")
+                }
+                try await withView(HourlyCaptureCard(state: state, group: hour, compact: true)
+                    .environment(\.workspaceZoom, zoom), size: size) { view, window in
+                    let summary = try await assertTarget(view, window: window, id: "collection-hour-summary", context: "Hour expand \(suffix)")
+                    let title = hour.displaysDate ? hour.summaryTitle
+                        : "\(prettyDay(hour.id.captureDay, includeWeekday: false)) · \(hour.summaryTitle)"
+                    try expect(summary.label == "Expand actions, \(title)",
+                               "Combined hourly summary exposes its exact action, original local date and complete hour range")
+                    try expect(summary.stringValue == hour.captureCountLabel,
+                               "Combined hourly summary exposes its exact visible capture count")
+                    try snapshot(view, to: evidence.appendingPathComponent("hour-\(suffix).png"))
+                }
+                state.openSearch()
+                state.query = "orbit"
+                state.searchSelectedResultID = nil
+                try await withView(TimestampSearchCardFixture(state: state, item: searchItem)
+                    .environment(\.workspaceZoom, zoom), size: size) { view, window in
+                    let select = try await assertTarget(view, window: window, id: "search-select-\(searchCapture.id.uuidString)", context: "Search select \(suffix)")
+                    try expect(select.stringValue.contains("orbit"), "Search \(suffix) preserves matching evidence in its accessible value")
+                    let open = try await assertTarget(view, window: window, id: "search-open-\(searchCapture.id.uuidString)", context: "Search Open \(suffix)")
+                    _ = try await assertTarget(view, window: window, id: "capture-copy-\(searchCapture.id.uuidString)", context: "Search Copy \(suffix)")
+                    try snapshot(view, to: evidence.appendingPathComponent("search-capture-\(suffix).png"))
+                    try expect(select.press(), "Search selection is a real native action")
+                    await settle(view)
+                    try expect(state.route == .search && state.searchSelectedResultID == searchItem.id,
+                               "Selecting an expanded search result preserves the Search route and selects its identity")
+                    try expect(open.press(), "Search Open remains a real native supporting action")
+                    await settle(view)
+                    try expect(state.route == .detail && state.selectedCapture?.id == searchCapture.id,
+                               "Search Open reaches the same capture details after layout refinement")
+                }
+                state.openSearch()
+                try await withView(TimestampSearchCardFixture(state: state, item: noteItem)
+                    .environment(\.workspaceZoom, zoom), size: size) { view, window in
+                    let edit = try await assertTarget(view, window: window, id: "search-edit-\(noteItem.id)", context: "Search note Edit \(suffix)")
+                    let copy = try await assertTarget(view, window: window, id: "search-copy-\(noteItem.id)", context: "Search note Copy \(suffix)")
+                    try expect(copy.label == "Copy \(note.projectName!) notes to clipboard", "Note copy retains its full contextual label")
+                    try snapshot(view, to: evidence.appendingPathComponent("search-note-\(suffix).png"))
+                    try expect(edit.press(), "Search note Edit remains a real native action")
+                    await settle(view)
+                    try expect(state.route == .searchNote && state.selectedSearchNote?.projectName == note.projectName,
+                               "Note Edit opens the existing note destination")
+                }
+            }
+        }
+        try expect(searchCapture.capturedAt == original.0 && searchCapture.captureDay == original.1
+            && searchCapture.originalText == original.2 && searchCapture.projectName == original.3,
+                   "Card selection and navigation preserve original content, receipt and project")
+        try expect([first, second].allSatisfy(\.isMinimized), "Geometry checks never alter saved batch presentation")
     }
 
     private static func snapshot(_ view: NSView, to url: URL) throws {
@@ -234,8 +393,10 @@ import SwiftUI
         defer { autoCapture.shutdown() }
         let state = AppState(store: store, previews: PreviewService(store: store, defaults: defaults),
             reminders: ReminderService(store: store, client: TimestampReminderClient()), autoCapture: autoCapture)
-        let evidence = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
-            .appendingPathComponent("build/qa/capture-timestamp", isDirectory: true)
+        let evidence = ProcessInfo.processInfo.environment["DABIN_TIMESTAMP_QA_DIR"].map {
+            URL(fileURLWithPath: $0, isDirectory: true)
+        } ?? URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
+            .appendingPathComponent("build/qa/capture-timestamp-density", isDirectory: true)
         try FileManager.default.createDirectory(at: evidence, withIntermediateDirectories: true)
         var smallestCardHeight: CGFloat = .greatestFiniteMagnitude
 
@@ -261,6 +422,8 @@ import SwiftUI
             }
         }
 
+        try await checkCollectionsAndSearch(state, evidence: evidence)
+
         for width in [CGFloat(260), CGFloat(380), CGFloat(900)] {
             state.openCapture(capture.id)
             guard let draft = state.selectedDraft else { throw NSError(domain: "CaptureTimestampPresentationTests", code: 5) }
@@ -283,6 +446,6 @@ import SwiftUI
                            "Clicking capture date returns to the original day, not today or the edit date")
             }
         }
-        print("Capture timestamp presentation QA passed: \(checks) checks; original receipt formatting, compact date-before-category cards, enlarged detail date navigation. Evidence: \(evidence.path)")
+        print("Capture timestamp presentation QA passed: \(checks) checks; original receipt formatting, narrow/high-zoom collection and search actions, compact date-before-category cards, enlarged detail date navigation. Evidence: \(evidence.path)")
     }
 }

@@ -1,0 +1,1 @@
+Swift/ErrorType.swift:254: Fatal error: Error raised at top level: Error Domain=WorkspaceWindowTests Code=1 "The named-project workspace exposes a large accessible content preview" UserInfo={NSLocalizedDescription=The named-project workspace exposes a large accessible content preview}

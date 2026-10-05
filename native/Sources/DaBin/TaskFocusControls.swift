@@ -9,8 +9,8 @@ struct TaskFocusControls: View {
     var compact = true
     var showsSchedule = true
     var emphasizesCountdown = true
-    /// Today's task cards opt into one readable focus action; other hosts keep
-    /// the existing compact or detailed controls.
+    /// Compact work and capture cards opt into one readable focus action;
+    /// detailed editors keep their existing controls.
     var taskCardStyle = false
     @Environment(\.daBinAccent) private var accent
     @Environment(\.workspaceZoom) private var zoom
@@ -63,9 +63,9 @@ struct TaskFocusControls: View {
                     }
                 }
             }
-            ViewThatFits(in: .horizontal) {
-                HStack(spacing: 8) { focusControl; Spacer(minLength: 0); if showsSchedule { scheduleControl } }
-                VStack(alignment: .leading, spacing: 6) { focusControl; if showsSchedule { scheduleControl } }
+            ExplorerCaptureActionsLayout {
+                focusControl
+                if showsSchedule { scheduleControl }
             }
             if !compact {
                 HStack {

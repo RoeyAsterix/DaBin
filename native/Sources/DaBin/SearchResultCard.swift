@@ -74,22 +74,19 @@ struct SearchResultCard: View {
                 state.searchSelectedResultID = item.id
                 if !expanded { state.openCapture(capture.id) }
             } label: {
-                VStack(alignment: .leading, spacing: 8) {
-                    if ExplorerCaptureCardPresentation.hasLargePreview(capture: capture, store: state.store) || capture.kind == .link {
-                        CaptureThumbnail(store: state.store, capture: capture).frame(height: zoom.value(124))
-                            .clipShape(RoundedRectangle(cornerRadius: 8)).accessibilityHidden(true)
-                    }
-                    HStack(alignment: .firstTextBaseline, spacing: 5) {
-                        Image(systemName: capture.isTask ? "checkmark.circle" : SearchFiltersControl.symbol(filter(for: capture)))
-                            .foregroundStyle(capture.isCompleted ? Palette.completed : accent).accessibilityHidden(true)
-                        Text(capture.isTask ? (capture.isCompleted ? "Completed task" : "Task") : captureTypeLabel(capture.kind))
-                        Spacer(minLength: 0)
-                        Text(captureClock(capture)).monospacedDigit()
-                    }.font(.system(size: zoom.fontSize(11))).foregroundStyle(Palette.muted)
+                VStack(alignment: .leading, spacing: 6) {
                     Text(capture.title.isEmpty ? "Untitled capture" : capture.title)
-                        .font(.system(size: zoom.fontSize(15), weight: .semibold)).lineLimit(2)
+                        .font(.system(size: zoom.fontSize(14), weight: .semibold)).lineLimit(2)
                         .strikethrough(capture.isTask && capture.isCompleted)
                         .foregroundStyle(capture.isCompleted ? Palette.muted : Palette.foreground)
+                    CaptureReceiptView(capture: capture,
+                        category: capture.isTask ? (capture.isCompleted ? "Completed task" : "Task") : captureTypeLabel(capture.kind),
+                        fontSize: 10)
+                    if CapturePreviewFileReference.thumbnail(store: state.store, capture: capture) != nil {
+                        CaptureThumbnail(store: state.store, capture: capture)
+                            .frame(height: min(zoom.value(104), 144))
+                            .clipShape(RoundedRectangle(cornerRadius: 8)).accessibilityHidden(true)
+                    }
                     if let alias = state.workspace.snippetName(for: capture.id) {
                         Label(alias, systemImage: "text.badge.star").font(.system(size: zoom.fontSize(11), weight: .medium)).foregroundStyle(accent).lineLimit(1)
                     }
@@ -112,22 +109,23 @@ struct SearchResultCard: View {
                             .font(.system(size: zoom.fontSize(10))).foregroundStyle(Palette.muted).lineLimit(2)
                             .buddyHelp(capture.contentIndexError ?? "Text extraction is unavailable for this item. Saved metadata is searchable.")
                     }
-                }.frame(maxWidth: .infinity, alignment: .leading).contentShape(Rectangle()).multilineTextAlignment(.leading)
+                }.frame(maxWidth: .infinity, minHeight: 32, alignment: .leading)
+                    .contentShape(Rectangle()).multilineTextAlignment(.leading)
             }.buttonStyle(.plain).focusable().focused(focus, equals: item.id)
                 .accessibilityIdentifier("search-select-\(capture.id.uuidString)")
                 .accessibilityLabel("\(expanded ? "Preview" : "Open") \(capture.title), \(project ?? "Unfiled"), saved \(captureReceiptText(capture))")
                 .accessibilityValue([excerpt?.label, excerpt?.text, WorkspaceQuery.sourceName(capture)].compactMap { $0 }.joined(separator: ". "))
                 .accessibilityAddTraits(selected ? .isSelected : [])
                 .captureDragSource(state: state, capture: capture)
-            CaptureTaskPriorityTag(capture: capture)
-            HStack(spacing: 4) {
+            BuddyActionFlow(spacing: 6) {
                 ProjectChipLabel(name: project, colorHex: project.flatMap { state.workspace.projectColorHex(for: $0) }, inherited: capture.parentTaskID != nil)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                SmallIcon(symbol: "arrow.up.forward.square", label: "Open details", size: 28) { state.openCapture(capture.id) }
+                CaptureTaskPriorityTag(capture: capture)
+                BuddyIconButton(symbol: "arrow.up.forward.square", title: "Open details for \(capture.title.isEmpty ? "Untitled capture" : capture.title)",
+                                visualLabel: "Open") { state.openCapture(capture.id) }
                     .accessibilityIdentifier("search-open-\(capture.id.uuidString)")
                 CaptureCopyButton(state: state, captures: [capture])
             }
-        }.padding(zoom.value(10))
+        }.padding(10)
             .projectCardBackground(workspace: state.workspace, projectName: project, cornerRadius: 12,
                                    baseColor: selected ? Palette.soft : Palette.surface)
             .overlay(RoundedRectangle(cornerRadius: 12).strokeBorder(selected ? accent.opacity(0.7) : Palette.line, lineWidth: selected ? 1.2 : 0.7))
@@ -153,32 +151,34 @@ struct SearchResultCard: View {
         VStack(alignment: .leading, spacing: 8) {
             Button { state.openSearchNote(note) } label: {
                 VStack(alignment: .leading, spacing: 7) {
-                    HStack {
-                        Label("Project note", systemImage: "note.text")
-                        Spacer(minLength: 0)
+                    BuddyActionFlow(spacing: 6) {
+                        Text("Project note")
                         Text("Edited \(note.updatedAt.formatted(date: .omitted, time: .shortened))")
                     }.font(.system(size: zoom.fontSize(11))).foregroundStyle(Palette.muted)
                     Text(note.projectName.map { "\($0) notes" } ?? "Scratchpad")
-                        .font(.system(size: zoom.fontSize(15), weight: .semibold)).lineLimit(2)
+                        .font(.system(size: zoom.fontSize(14), weight: .semibold)).lineLimit(2)
                     Text(SearchResultExcerpt.excerpt(note.text, words: state.query.split(whereSeparator: \.isWhitespace).map(String.init), requiresMatch: false) ?? "")
                         .font(.system(size: zoom.fontSize(12))).foregroundStyle(Palette.muted).lineSpacing(zoom.lineSpacing(2)).lineLimit(4)
-                }.frame(maxWidth: .infinity, alignment: .leading).contentShape(Rectangle()).multilineTextAlignment(.leading)
+                }.frame(maxWidth: .infinity, minHeight: 32, alignment: .leading)
+                    .contentShape(Rectangle()).multilineTextAlignment(.leading)
             }.buttonStyle(.plain).focusable().focused(focus, equals: item.id)
                 .accessibilityLabel("Open \(note.projectName ?? "Unfiled") notes, edited \(note.updatedAt.formatted(date: .complete, time: .shortened))")
                 .accessibilityValue(SearchResultExcerpt.excerpt(note.text, words: state.query.split(whereSeparator: \.isWhitespace).map(String.init), requiresMatch: false) ?? "")
                 .nativeContentDrag(label: "Project notes", items: { [note.text as NSString] },
                                    onError: { state.reportFailure($0.localizedDescription) })
-            HStack {
+            BuddyActionFlow(spacing: 6) {
                 ProjectChipLabel(name: note.projectName, colorHex: note.projectName.flatMap { state.workspace.projectColorHex(for: $0) })
-                Spacer(minLength: 0)
-                SmallIcon(symbol: "square.and.pencil", label: "Edit note", size: 28) { state.openSearchNote(note) }
-                    .accessibilityIdentifier("search-edit-\(item.id)")
-                SmallIcon(symbol: copiedNote ? "checkmark" : "doc.on.doc", label: copiedNote ? "Note copied" : "Copy note", size: 28) {
+                BuddyIconButton(symbol: "square.and.pencil", title: "Edit \(note.projectName ?? "Unfiled") notes", visualLabel: "Edit") {
+                    state.openSearchNote(note)
+                }.accessibilityIdentifier("search-edit-\(item.id)")
+                BuddyIconButton(symbol: copiedNote ? "checkmark" : "doc.on.doc",
+                                title: copiedNote ? "\(note.projectName ?? "Unfiled") notes copied" : "Copy \(note.projectName ?? "Unfiled") notes to clipboard",
+                                visualLabel: copiedNote ? "Copied" : "Copy") {
                     guard state.copySearchNote(note) else { return }
                     copiedNote = true
                 }.accessibilityIdentifier("search-copy-\(item.id)")
             }
-        }.padding(zoom.value(10)).projectCardBackground(workspace: state.workspace, projectName: note.projectName, cornerRadius: 12)
+        }.padding(10).projectCardBackground(workspace: state.workspace, projectName: note.projectName, cornerRadius: 12)
             .overlay(RoundedRectangle(cornerRadius: 12).strokeBorder(Palette.line, lineWidth: 0.7))
             .task(id: copiedNote) {
                 guard copiedNote else { return }
@@ -186,15 +186,6 @@ struct SearchResultCard: View {
                 guard !Task.isCancelled else { return }
                 copiedNote = false
             }
-    }
-
-    private func filter(for capture: Capture) -> CaptureFilter {
-        switch capture.kind {
-        case .link: .links
-        case .text, .task: .text
-        case .image, .video: .media
-        default: .files
-        }
     }
 }
 

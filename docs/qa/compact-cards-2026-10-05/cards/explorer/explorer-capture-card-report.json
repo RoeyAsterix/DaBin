@@ -1,0 +1,425 @@
+{
+  "checksPassed" : 726,
+  "fixtures" : [
+    {
+      "cornerMarkerSampleCounts" : [
+        96,
+        104,
+        96,
+        104
+      ],
+      "file" : "landscape-220-zoom100-light@2x.png",
+      "heightPoints" : 355,
+      "largePreview" : true,
+      "previewHeightPoints" : 98,
+      "readableTitleWidthPoints" : 196,
+      "receipt" : "1 Oct 2026 · 14:26, Image",
+      "selectionCallbackCount" : 1,
+      "stackedHeaderActions" : true,
+      "titleWidthPoints" : 196,
+      "widthPoints" : 220,
+      "zoomFactor" : 1
+    },
+    {
+      "cornerMarkerSampleCounts" : [
+        96,
+        104,
+        96,
+        104
+      ],
+      "file" : "landscape-220-zoom100-dark@2x.png",
+      "heightPoints" : 355,
+      "largePreview" : true,
+      "previewHeightPoints" : 98,
+      "readableTitleWidthPoints" : 196,
+      "receipt" : "1 Oct 2026 · 14:26, Image",
+      "selectionCallbackCount" : 1,
+      "stackedHeaderActions" : true,
+      "titleWidthPoints" : 196,
+      "widthPoints" : 220,
+      "zoomFactor" : 1
+    },
+    {
+      "cornerMarkerSampleCounts" : [
+        247,
+        260,
+        228,
+        228
+      ],
+      "file" : "landscape-320-zoom100-light@2x.png",
+      "heightPoints" : 347,
+      "largePreview" : true,
+      "previewHeightPoints" : 148,
+      "readableTitleWidthPoints" : 186,
+      "receipt" : "1 Oct 2026 · 14:26, Image",
+      "selectionCallbackCount" : 1,
+      "stackedHeaderActions" : false,
+      "titleWidthPoints" : 186,
+      "widthPoints" : 320,
+      "zoomFactor" : 1
+    },
+    {
+      "cornerMarkerSampleCounts" : [
+        247,
+        260,
+        228,
+        228
+      ],
+      "file" : "landscape-320-zoom100-dark@2x.png",
+      "heightPoints" : 347,
+      "largePreview" : true,
+      "previewHeightPoints" : 148,
+      "readableTitleWidthPoints" : 186,
+      "receipt" : "1 Oct 2026 · 14:26, Image",
+      "selectionCallbackCount" : 1,
+      "stackedHeaderActions" : false,
+      "titleWidthPoints" : 186,
+      "widthPoints" : 320,
+      "zoomFactor" : 1
+    },
+    {
+      "cornerMarkerSampleCounts" : [
+        260,
+        273,
+        280,
+        294
+      ],
+      "file" : "landscape-380-zoom100-light@2x.png",
+      "heightPoints" : 346,
+      "largePreview" : true,
+      "previewHeightPoints" : 160,
+      "readableTitleWidthPoints" : 246,
+      "receipt" : "1 Oct 2026 · 14:26, Image",
+      "selectionCallbackCount" : 1,
+      "stackedHeaderActions" : false,
+      "titleWidthPoints" : 246,
+      "widthPoints" : 380,
+      "zoomFactor" : 1
+    },
+    {
+      "cornerMarkerSampleCounts" : [
+        260,
+        273,
+        280,
+        294
+      ],
+      "file" : "landscape-380-zoom100-dark@2x.png",
+      "heightPoints" : 346,
+      "largePreview" : true,
+      "previewHeightPoints" : 160,
+      "readableTitleWidthPoints" : 246,
+      "receipt" : "1 Oct 2026 · 14:26, Image",
+      "selectionCallbackCount" : 1,
+      "stackedHeaderActions" : false,
+      "titleWidthPoints" : 246,
+      "widthPoints" : 380,
+      "zoomFactor" : 1
+    },
+    {
+      "cornerMarkerSampleCounts" : [
+        40,
+        40,
+        40,
+        40
+      ],
+      "file" : "portrait-220-zoom100-dark@2x.png",
+      "heightPoints" : 342,
+      "largePreview" : true,
+      "previewHeightPoints" : 98,
+      "readableTitleWidthPoints" : 196,
+      "receipt" : "1 Oct 2026 · 14:26, Image",
+      "selectionCallbackCount" : 1,
+      "stackedHeaderActions" : true,
+      "titleWidthPoints" : 196,
+      "widthPoints" : 220,
+      "zoomFactor" : 1
+    },
+    {
+      "cornerMarkerSampleCounts" : [
+        117,
+        117,
+        126,
+        126
+      ],
+      "file" : "portrait-380-zoom100-light@2x.png",
+      "heightPoints" : 346,
+      "largePreview" : true,
+      "previewHeightPoints" : 160,
+      "readableTitleWidthPoints" : 246,
+      "receipt" : "1 Oct 2026 · 14:26, Image",
+      "selectionCallbackCount" : 1,
+      "stackedHeaderActions" : false,
+      "titleWidthPoints" : 246,
+      "widthPoints" : 380,
+      "zoomFactor" : 1
+    },
+    {
+      "cornerMarkerSampleCounts" : [
+        247,
+        260,
+        228,
+        228
+      ],
+      "file" : "image-task-320-zoom100-light@2x.png",
+      "heightPoints" : 389,
+      "largePreview" : true,
+      "previewHeightPoints" : 148,
+      "readableTitleWidthPoints" : 150,
+      "receipt" : "1 Oct 2026 · 14:26, Task",
+      "selectionCallbackCount" : 1,
+      "stackedHeaderActions" : false,
+      "titleWidthPoints" : 150,
+      "widthPoints" : 320,
+      "zoomFactor" : 1
+    },
+    {
+      "cornerMarkerSampleCounts" : [
+        247,
+        260,
+        228,
+        228
+      ],
+      "file" : "image-task-320-zoom100-dark@2x.png",
+      "heightPoints" : 389,
+      "largePreview" : true,
+      "previewHeightPoints" : 148,
+      "readableTitleWidthPoints" : 150,
+      "receipt" : "1 Oct 2026 · 14:26, Task",
+      "selectionCallbackCount" : 1,
+      "stackedHeaderActions" : false,
+      "titleWidthPoints" : 150,
+      "widthPoints" : 320,
+      "zoomFactor" : 1
+    },
+    {
+      "cornerMarkerSampleCounts" : [
+        0,
+        0,
+        0,
+        0
+      ],
+      "file" : "text-220-zoom100-dark@2x.png",
+      "heightPoints" : 249,
+      "largePreview" : false,
+      "previewHeightPoints" : 0,
+      "readableTitleWidthPoints" : 196,
+      "receipt" : "1 Oct 2026 · 14:26, Note",
+      "selectionCallbackCount" : 1,
+      "stackedHeaderActions" : true,
+      "titleWidthPoints" : 196,
+      "widthPoints" : 220,
+      "zoomFactor" : 1
+    },
+    {
+      "cornerMarkerSampleCounts" : [
+        0,
+        0,
+        0,
+        0
+      ],
+      "file" : "text-380-zoom100-light@2x.png",
+      "heightPoints" : 178,
+      "largePreview" : false,
+      "previewHeightPoints" : 0,
+      "readableTitleWidthPoints" : 246,
+      "receipt" : "1 Oct 2026 · 14:26, Note",
+      "selectionCallbackCount" : 1,
+      "stackedHeaderActions" : false,
+      "titleWidthPoints" : 246,
+      "widthPoints" : 380,
+      "zoomFactor" : 1
+    },
+    {
+      "cornerMarkerSampleCounts" : [
+        0,
+        0,
+        0,
+        0
+      ],
+      "file" : "missing-thumbnail-220-zoom100-light@2x.png",
+      "heightPoints" : 249,
+      "largePreview" : false,
+      "previewHeightPoints" : 0,
+      "readableTitleWidthPoints" : 196,
+      "receipt" : "1 Oct 2026 · 14:26, Image",
+      "selectionCallbackCount" : 1,
+      "stackedHeaderActions" : true,
+      "titleWidthPoints" : 196,
+      "widthPoints" : 220,
+      "zoomFactor" : 1
+    },
+    {
+      "cornerMarkerSampleCounts" : [
+        40,
+        40,
+        40,
+        40
+      ],
+      "file" : "child-long-labels-220-zoom100-dark@2x.png",
+      "heightPoints" : 334,
+      "largePreview" : true,
+      "previewHeightPoints" : 98,
+      "readableTitleWidthPoints" : 196,
+      "receipt" : "1 Oct 2026 · 14:26, Image",
+      "selectionCallbackCount" : 1,
+      "stackedHeaderActions" : true,
+      "titleWidthPoints" : 196,
+      "widthPoints" : 220,
+      "zoomFactor" : 1
+    },
+    {
+      "cornerMarkerSampleCounts" : [
+        70,
+        70,
+        70,
+        70
+      ],
+      "file" : "responsive-child-320-zoom75-light@2x.png",
+      "heightPoints" : 295,
+      "largePreview" : true,
+      "previewHeightPoints" : 120,
+      "readableTitleWidthPoints" : 186,
+      "receipt" : "1 Oct 2026 · 14:26, Image",
+      "selectionCallbackCount" : 1,
+      "stackedHeaderActions" : false,
+      "titleWidthPoints" : 186,
+      "widthPoints" : 320,
+      "zoomFactor" : 0.75
+    },
+    {
+      "cornerMarkerSampleCounts" : [
+        0,
+        0,
+        0,
+        0
+      ],
+      "file" : "responsive-text-320-zoom75-light@2x.png",
+      "heightPoints" : 190,
+      "largePreview" : false,
+      "previewHeightPoints" : 0,
+      "readableTitleWidthPoints" : 186,
+      "receipt" : "1 Oct 2026 · 14:26, Note",
+      "selectionCallbackCount" : 1,
+      "stackedHeaderActions" : false,
+      "titleWidthPoints" : 186,
+      "widthPoints" : 320,
+      "zoomFactor" : 0.75
+    },
+    {
+      "cornerMarkerSampleCounts" : [
+        187,
+        187,
+        176,
+        176
+      ],
+      "file" : "responsive-child-220-zoom200-dark@2x.png",
+      "heightPoints" : 435,
+      "largePreview" : true,
+      "previewHeightPoints" : 192,
+      "readableTitleWidthPoints" : 196,
+      "receipt" : "1 Oct 2026 · 14:26, Image",
+      "selectionCallbackCount" : 1,
+      "stackedHeaderActions" : true,
+      "titleWidthPoints" : 196,
+      "widthPoints" : 220,
+      "zoomFactor" : 2
+    },
+    {
+      "cornerMarkerSampleCounts" : [
+        0,
+        0,
+        0,
+        0
+      ],
+      "file" : "responsive-text-220-zoom200-dark@2x.png",
+      "heightPoints" : 253,
+      "largePreview" : false,
+      "previewHeightPoints" : 0,
+      "readableTitleWidthPoints" : 196,
+      "receipt" : "1 Oct 2026 · 14:26, Note",
+      "selectionCallbackCount" : 1,
+      "stackedHeaderActions" : true,
+      "titleWidthPoints" : 196,
+      "widthPoints" : 220,
+      "zoomFactor" : 2
+    },
+    {
+      "cornerMarkerSampleCounts" : [
+        187,
+        187,
+        176,
+        176
+      ],
+      "file" : "responsive-child-380-zoom200-light@2x.png",
+      "heightPoints" : 375,
+      "largePreview" : true,
+      "previewHeightPoints" : 192,
+      "readableTitleWidthPoints" : 246,
+      "receipt" : "1 Oct 2026 · 14:26, Image",
+      "selectionCallbackCount" : 1,
+      "stackedHeaderActions" : false,
+      "titleWidthPoints" : 246,
+      "widthPoints" : 380,
+      "zoomFactor" : 2
+    },
+    {
+      "cornerMarkerSampleCounts" : [
+        0,
+        0,
+        0,
+        0
+      ],
+      "file" : "responsive-text-380-zoom200-light@2x.png",
+      "heightPoints" : 178,
+      "largePreview" : false,
+      "previewHeightPoints" : 0,
+      "readableTitleWidthPoints" : 246,
+      "receipt" : "1 Oct 2026 · 14:26, Note",
+      "selectionCallbackCount" : 1,
+      "stackedHeaderActions" : false,
+      "titleWidthPoints" : 246,
+      "widthPoints" : 380,
+      "zoomFactor" : 2
+    },
+    {
+      "cornerMarkerSampleCounts" : [
+        0,
+        0,
+        0,
+        0
+      ],
+      "file" : "pinned-high-priority-260-zoom200-dark@2x.png",
+      "heightPoints" : 293,
+      "largePreview" : false,
+      "previewHeightPoints" : 0,
+      "readableTitleWidthPoints" : 184,
+      "receipt" : "5 Oct 2026 · 13:53, Task",
+      "selectionCallbackCount" : 1,
+      "stackedHeaderActions" : true,
+      "titleWidthPoints" : 200,
+      "widthPoints" : 260,
+      "zoomFactor" : 2
+    },
+    {
+      "cornerMarkerSampleCounts" : [
+        0,
+        0,
+        0,
+        0
+      ],
+      "file" : "pinned-high-priority-320-zoom200-light@2x.png",
+      "heightPoints" : 195,
+      "largePreview" : false,
+      "previewHeightPoints" : 0,
+      "readableTitleWidthPoints" : 134,
+      "receipt" : "5 Oct 2026 · 13:53, Task",
+      "selectionCallbackCount" : 1,
+      "stackedHeaderActions" : false,
+      "titleWidthPoints" : 150,
+      "widthPoints" : 320,
+      "zoomFactor" : 2
+    }
+  ],
+  "privacy" : "Isolated fictional archive\/preferences; locally drawn four-corner images; no clipboard, network, external applications, desktop capture or global events",
+  "renderMethod" : "Actual production ExplorerCaptureRow in native 2x offscreen NSHostingViews"
+}

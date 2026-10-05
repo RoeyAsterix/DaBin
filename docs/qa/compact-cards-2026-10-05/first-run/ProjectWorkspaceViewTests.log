@@ -1,0 +1,4 @@
+2026-10-05 12:54:06.673 ProjectWorkspaceViewTests[30006:27501747] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future.
+Project workspace view QA failed: Error Domain=ProjectWorkspaceViewTests Code=17 "Grid file preview receives at least 200 points of visible height" UserInfo={NSLocalizedDescription=Grid file preview receives at least 200 points of visible height}
+ROWS: project grid logical=334, materialized=25
+FIXTURE: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/project-workspace-view/EE195AA1-D776-471B-82F3-32CC8E8BB72B/project-grid-wide@2x.png

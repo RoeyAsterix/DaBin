@@ -1,0 +1,294 @@
+{
+  "checks" : 1121,
+  "fixtures" : [
+    {
+      "card" : "{{-9986, -9567.5}, {292, 187.5}}",
+      "controls" : {
+        "capture-more-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9738, -9424}, {32, 32}}",
+        "capture-task-status-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9974, -9424}, {32, 32}}",
+        "task-focus-duration-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9974.5, -9556}, {92, 33}}",
+        "task-focus-play-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9877, -9555.5}, {67, 32}}",
+        "today-plan-day-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9796.5, -9555.5}, {90.5, 32}}",
+        "today-plan-task-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9934, -9435.5}, {188, 43.5}}",
+        "today-task-checklist-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9810, -9511.5}, {64, 32}}"
+      },
+      "heightBudget" : 245,
+      "title" : "{{-9934, -9435.5}, {188, 43.5}}",
+      "width" : 320,
+      "zoom" : 0.75
+    },
+    {
+      "card" : "{{-9986, -9567.5}, {292, 187.5}}",
+      "controls" : {
+        "capture-more-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9738, -9424}, {32, 32}}",
+        "capture-task-status-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9974, -9424}, {32, 32}}",
+        "task-focus-duration-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9974.5, -9556}, {92, 33}}",
+        "task-focus-play-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9877, -9555.5}, {67, 32}}",
+        "today-plan-day-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9796.5, -9555.5}, {90.5, 32}}",
+        "today-plan-task-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9934, -9435.5}, {188, 43.5}}",
+        "today-task-checklist-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9810, -9511.5}, {64, 32}}"
+      },
+      "heightBudget" : 245,
+      "title" : "{{-9934, -9435.5}, {188, 43.5}}",
+      "width" : 320,
+      "zoom" : 0.75
+    },
+    {
+      "card" : "{{-9986, -9569}, {292, 189}}",
+      "controls" : {
+        "capture-more-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9738, -9424}, {32, 32}}",
+        "capture-task-status-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9974, -9424}, {32, 32}}",
+        "task-focus-duration-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9974.5, -9557.5}, {95.5, 33}}",
+        "task-focus-play-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9873.5, -9557}, {68.5, 32}}",
+        "today-plan-day-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9799, -9557}, {93, 32}}",
+        "today-plan-task-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9934, -9437}, {188, 45}}",
+        "today-task-checklist-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9803, -9513}, {66, 32}}"
+      },
+      "heightBudget" : 245,
+      "title" : "{{-9934, -9437}, {188, 45}}",
+      "width" : 320,
+      "zoom" : 1
+    },
+    {
+      "card" : "{{-9986, -9569}, {292, 189}}",
+      "controls" : {
+        "capture-more-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9738, -9424}, {32, 32}}",
+        "capture-task-status-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9974, -9424}, {32, 32}}",
+        "task-focus-duration-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9974.5, -9557.5}, {95.5, 33}}",
+        "task-focus-play-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9873.5, -9557}, {68.5, 32}}",
+        "today-plan-day-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9799, -9557}, {93, 32}}",
+        "today-plan-task-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9934, -9437}, {188, 45}}",
+        "today-task-checklist-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9803, -9513}, {66, 32}}"
+      },
+      "heightBudget" : 245,
+      "title" : "{{-9934, -9437}, {188, 45}}",
+      "width" : 320,
+      "zoom" : 1
+    },
+    {
+      "card" : "{{-9986, -9649}, {292, 269}}",
+      "controls" : {
+        "capture-more-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9738, -9424}, {32, 32}}",
+        "capture-task-status-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9974, -9424}, {32, 32}}",
+        "task-focus-duration-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9974.5, -9599.5}, {111, 33}}",
+        "task-focus-play-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9858, -9599}, {76.5, 32}}",
+        "today-plan-day-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9809.5, -9637}, {103.5, 32}}",
+        "today-plan-task-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9934, -9439}, {188, 47}}",
+        "today-task-checklist-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9974, -9555}, {74.5, 32}}"
+      },
+      "heightBudget" : 330,
+      "title" : "{{-9934, -9439}, {188, 47}}",
+      "width" : 320,
+      "zoom" : 2
+    },
+    {
+      "card" : "{{-9986, -9649}, {292, 269}}",
+      "controls" : {
+        "capture-more-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9738, -9424}, {32, 32}}",
+        "capture-task-status-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9974, -9424}, {32, 32}}",
+        "task-focus-duration-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9974.5, -9599.5}, {111, 33}}",
+        "task-focus-play-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9858, -9599}, {76.5, 32}}",
+        "today-plan-day-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9809.5, -9637}, {103.5, 32}}",
+        "today-plan-task-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9934, -9439}, {188, 47}}",
+        "today-task-checklist-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9974, -9555}, {74.5, 32}}"
+      },
+      "heightBudget" : 330,
+      "title" : "{{-9934, -9439}, {188, 47}}",
+      "width" : 320,
+      "zoom" : 2
+    },
+    {
+      "card" : "{{-9986, -9567.5}, {352, 187.5}}",
+      "controls" : {
+        "capture-more-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9678, -9424}, {32, 32}}",
+        "capture-task-status-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9974, -9424}, {32, 32}}",
+        "task-focus-duration-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9974.5, -9556}, {92, 33}}",
+        "task-focus-play-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9877, -9555.5}, {67, 32}}",
+        "today-plan-day-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9736.5, -9555.5}, {90.5, 32}}",
+        "today-plan-task-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9934, -9435.5}, {248, 43.5}}",
+        "today-task-checklist-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9810, -9511.5}, {64, 32}}"
+      },
+      "heightBudget" : 245,
+      "title" : "{{-9934, -9435.5}, {248, 43.5}}",
+      "width" : 380,
+      "zoom" : 0.75
+    },
+    {
+      "card" : "{{-9986, -9567.5}, {352, 187.5}}",
+      "controls" : {
+        "capture-more-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9678, -9424}, {32, 32}}",
+        "capture-task-status-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9974, -9424}, {32, 32}}",
+        "task-focus-duration-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9974.5, -9556}, {92, 33}}",
+        "task-focus-play-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9877, -9555.5}, {67, 32}}",
+        "today-plan-day-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9736.5, -9555.5}, {90.5, 32}}",
+        "today-plan-task-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9934, -9435.5}, {248, 43.5}}",
+        "today-task-checklist-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9810, -9511.5}, {64, 32}}"
+      },
+      "heightBudget" : 245,
+      "title" : "{{-9934, -9435.5}, {248, 43.5}}",
+      "width" : 380,
+      "zoom" : 0.75
+    },
+    {
+      "card" : "{{-9986, -9569}, {352, 189}}",
+      "controls" : {
+        "capture-more-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9678, -9424}, {32, 32}}",
+        "capture-task-status-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9974, -9424}, {32, 32}}",
+        "task-focus-duration-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9974.5, -9557.5}, {95.5, 33}}",
+        "task-focus-play-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9873.5, -9557}, {68.5, 32}}",
+        "today-plan-day-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9739, -9557}, {93, 32}}",
+        "today-plan-task-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9934, -9437}, {248, 45}}",
+        "today-task-checklist-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9803, -9513}, {66, 32}}"
+      },
+      "heightBudget" : 245,
+      "title" : "{{-9934, -9437}, {248, 45}}",
+      "width" : 380,
+      "zoom" : 1
+    },
+    {
+      "card" : "{{-9986, -9569}, {352, 189}}",
+      "controls" : {
+        "capture-more-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9678, -9424}, {32, 32}}",
+        "capture-task-status-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9974, -9424}, {32, 32}}",
+        "task-focus-duration-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9974.5, -9557.5}, {95.5, 33}}",
+        "task-focus-play-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9873.5, -9557}, {68.5, 32}}",
+        "today-plan-day-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9739, -9557}, {93, 32}}",
+        "today-plan-task-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9934, -9437}, {248, 45}}",
+        "today-task-checklist-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9803, -9513}, {66, 32}}"
+      },
+      "heightBudget" : 245,
+      "title" : "{{-9934, -9437}, {248, 45}}",
+      "width" : 380,
+      "zoom" : 1
+    },
+    {
+      "card" : "{{-9986, -9571}, {352, 191}}",
+      "controls" : {
+        "capture-more-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9678, -9424}, {32, 32}}",
+        "capture-task-status-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9974, -9424}, {32, 32}}",
+        "task-focus-duration-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9974.5, -9559.5}, {111, 33}}",
+        "task-focus-play-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9858, -9559}, {76.5, 32}}",
+        "today-plan-day-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9749.5, -9559}, {103.5, 32}}",
+        "today-plan-task-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9934, -9439}, {248, 47}}",
+        "today-task-checklist-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9776.5, -9515}, {74.5, 32}}"
+      },
+      "heightBudget" : 330,
+      "title" : "{{-9934, -9439}, {248, 47}}",
+      "width" : 380,
+      "zoom" : 2
+    },
+    {
+      "card" : "{{-9986, -9571}, {352, 191}}",
+      "controls" : {
+        "capture-more-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9678, -9424}, {32, 32}}",
+        "capture-task-status-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9974, -9424}, {32, 32}}",
+        "task-focus-duration-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9974.5, -9559.5}, {111, 33}}",
+        "task-focus-play-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9858, -9559}, {76.5, 32}}",
+        "today-plan-day-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9749.5, -9559}, {103.5, 32}}",
+        "today-plan-task-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9934, -9439}, {248, 47}}",
+        "today-task-checklist-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9776.5, -9515}, {74.5, 32}}"
+      },
+      "heightBudget" : 330,
+      "title" : "{{-9934, -9439}, {248, 47}}",
+      "width" : 380,
+      "zoom" : 2
+    },
+    {
+      "card" : "{{-9986, -9556}, {732, 176}}",
+      "controls" : {
+        "capture-more-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9298, -9424}, {32, 32}}",
+        "capture-task-status-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9974, -9424}, {32, 32}}",
+        "task-focus-duration-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9974.5, -9544.5}, {92, 33}}",
+        "task-focus-play-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9877, -9544}, {67, 32}}",
+        "today-plan-day-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9356.5, -9544}, {90.5, 32}}",
+        "today-plan-task-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9934, -9424}, {628, 32}}",
+        "today-task-checklist-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9810, -9500}, {64, 32}}"
+      },
+      "heightBudget" : 245,
+      "title" : "{{-9934, -9424}, {628, 32}}",
+      "width" : 760,
+      "zoom" : 0.75
+    },
+    {
+      "card" : "{{-9986, -9556}, {732, 176}}",
+      "controls" : {
+        "capture-more-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9298, -9424}, {32, 32}}",
+        "capture-task-status-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9974, -9424}, {32, 32}}",
+        "task-focus-duration-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9974.5, -9544.5}, {92, 33}}",
+        "task-focus-play-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9877, -9544}, {67, 32}}",
+        "today-plan-day-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9356.5, -9544}, {90.5, 32}}",
+        "today-plan-task-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9934, -9424}, {628, 32}}",
+        "today-task-checklist-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9810, -9500}, {64, 32}}"
+      },
+      "heightBudget" : 245,
+      "title" : "{{-9934, -9424}, {628, 32}}",
+      "width" : 760,
+      "zoom" : 0.75
+    },
+    {
+      "card" : "{{-9986, -9556}, {732, 176}}",
+      "controls" : {
+        "capture-more-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9298, -9424}, {32, 32}}",
+        "capture-task-status-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9974, -9424}, {32, 32}}",
+        "task-focus-duration-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9974.5, -9544.5}, {95.5, 33}}",
+        "task-focus-play-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9873.5, -9544}, {68.5, 32}}",
+        "today-plan-day-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9359, -9544}, {93, 32}}",
+        "today-plan-task-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9934, -9424}, {628, 32}}",
+        "today-task-checklist-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9803, -9500}, {66, 32}}"
+      },
+      "heightBudget" : 245,
+      "title" : "{{-9934, -9424}, {628, 32}}",
+      "width" : 760,
+      "zoom" : 1
+    },
+    {
+      "card" : "{{-9986, -9556}, {732, 176}}",
+      "controls" : {
+        "capture-more-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9298, -9424}, {32, 32}}",
+        "capture-task-status-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9974, -9424}, {32, 32}}",
+        "task-focus-duration-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9974.5, -9544.5}, {95.5, 33}}",
+        "task-focus-play-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9873.5, -9544}, {68.5, 32}}",
+        "today-plan-day-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9359, -9544}, {93, 32}}",
+        "today-plan-task-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9934, -9424}, {628, 32}}",
+        "today-task-checklist-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9803, -9500}, {66, 32}}"
+      },
+      "heightBudget" : 245,
+      "title" : "{{-9934, -9424}, {628, 32}}",
+      "width" : 760,
+      "zoom" : 1
+    },
+    {
+      "card" : "{{-9986, -9556}, {732, 176}}",
+      "controls" : {
+        "capture-more-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9298, -9424}, {32, 32}}",
+        "capture-task-status-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9974, -9424}, {32, 32}}",
+        "task-focus-duration-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9974.5, -9544.5}, {111, 33}}",
+        "task-focus-play-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9858, -9544}, {76.5, 32}}",
+        "today-plan-day-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9369.5, -9544}, {103.5, 32}}",
+        "today-plan-task-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9934, -9424}, {628, 32}}",
+        "today-task-checklist-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9776.5, -9500}, {74.5, 32}}"
+      },
+      "heightBudget" : 330,
+      "title" : "{{-9934, -9424}, {628, 32}}",
+      "width" : 760,
+      "zoom" : 2
+    },
+    {
+      "card" : "{{-9986, -9556}, {732, 176}}",
+      "controls" : {
+        "capture-more-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9298, -9424}, {32, 32}}",
+        "capture-task-status-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9974, -9424}, {32, 32}}",
+        "task-focus-duration-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9974.5, -9544.5}, {111, 33}}",
+        "task-focus-play-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9858, -9544}, {76.5, 32}}",
+        "today-plan-day-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9369.5, -9544}, {103.5, 32}}",
+        "today-plan-task-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9934, -9424}, {628, 32}}",
+        "today-task-checklist-FFD29B7F-A30F-4579-9EDD-1AA47136D3A3" : "{{-9776.5, -9500}, {74.5, 32}}"
+      },
+      "heightBudget" : 330,
+      "title" : "{{-9934, -9424}, {628, 32}}",
+      "width" : 760,
+      "zoom" : 2
+    }
+  ],
+  "scope" : "Fictional own-process native task cards; private copy writer; bounded owned More menu tracking; no general clipboard, global input or notifications"
+}

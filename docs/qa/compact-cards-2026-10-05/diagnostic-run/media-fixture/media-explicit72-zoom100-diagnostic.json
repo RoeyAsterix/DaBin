@@ -1,0 +1,39 @@
+{
+  "fixtureAXFrame" : "{{-9988, -7735.5}, {200, 111}}",
+  "mosaicAXFrame" : "{{-9988, -7735.5}, {200, 79.5}}",
+  "nativeGeometryBounds" : "{{0, 0}, {200, 72}}",
+  "nativeGeometryFrame" : "{{0, 0}, {200, 72}}",
+  "nativeGeometryMounted" : true,
+  "requestedHeightPoints" : 72,
+  "selectedCaptures" : [
+    {
+      "canonicalThumbnail" : "Previews\/660A5FD4-CD1A-4214-9EF2-422CB3323361\/thumbnail.png",
+      "id" : "660A5FD4-CD1A-4214-9EF2-422CB3323361",
+      "kind" : "image",
+      "thumbnailFileExists" : true,
+      "title" : "Batch sample 1.png"
+    },
+    {
+      "canonicalThumbnail" : "Previews\/D21EAADC-B100-412A-974E-872FF1A940DA\/thumbnail.png",
+      "id" : "D21EAADC-B100-412A-974E-872FF1A940DA",
+      "kind" : "image",
+      "thumbnailFileExists" : true,
+      "title" : "Batch sample 2.png"
+    },
+    {
+      "canonicalThumbnail" : "Previews\/8181DFB0-170A-4C83-A3CF-905788974F06\/thumbnail.png",
+      "id" : "8181DFB0-170A-4C83-A3CF-905788974F06",
+      "kind" : "image",
+      "thumbnailFileExists" : true,
+      "title" : "Batch sample 3.png"
+    },
+    {
+      "canonicalThumbnail" : "none",
+      "id" : "1B79CFDB-6FE1-4B06-8E73-EB5314A0CCDF",
+      "kind" : "file",
+      "thumbnailFileExists" : false,
+      "title" : "Batch record 1.bin"
+    }
+  ],
+  "zoomFactor" : 1
+}

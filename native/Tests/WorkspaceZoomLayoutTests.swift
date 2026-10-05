@@ -375,6 +375,7 @@ import SwiftUI
         let output = ProcessInfo.processInfo.environment["DABIN_ZOOM_LAYOUT_QA_OUTPUT"].map { URL(fileURLWithPath: $0) }
             ?? root.appendingPathComponent("renders")
         try FileManager.default.createDirectory(at: output, withIntermediateDirectories: true)
+        try await renderCompactCaptureProfiles(state: state, output: output)
         for factor in [CGFloat(0.75), 1, 1.5, 2] {
             for dark in [false, true] {
                 let width = max(380, 420 * factor), height = 600 * factor
@@ -412,6 +413,103 @@ import SwiftUI
                     .map { $0 + task.id.uuidString }, name: "today-\(Int(width))-200", height: 720, output: output, width: width)
         }
     }
+    /// The shared card must fit its actual content rather than reserving a
+    /// large preview for a note or a file without a saved thumbnail. Inspect
+    /// real native targets and capture only the production card bounds.
+    private static func renderCompactCaptureProfiles(state: AppState, output: URL) async throws {
+        let note = try state.store.createNote(text: "Review the client feedback and keep the original wording", projectName: nil)
+        let file = Capture(capturedAt: note.capturedAt, kind: .pdf,
+                           title: "Quarterly proposal.pdf", captureDay: note.captureDay)
+        var geometry: [[String: Any]] = []
+        for capture in [note, file] {
+            for width in [CGFloat(260), 380, 760] {
+                for factor in [CGFloat(0.75), 1, 2] {
+                    for dark in [false, true] {
+                        let content = VStack(spacing: 0) {
+                            CaptureRow(state: state, capture: capture, featured: false)
+                            Spacer(minLength: 0)
+                        }.padding(8).frame(width: width, height: 420, alignment: .topLeading)
+                            .environment(\.workspaceZoom, WorkspaceZoomLayout(factor: factor))
+                            .environment(\.displayScale, 2).environment(\.daBinTooltipsEnabled, false)
+                            .preferredColorScheme(dark ? .dark : .light).background(Palette.background)
+                        let host = NSHostingView(rootView: content)
+                        let window = ZoomLayoutWindow(contentRect: NSRect(x: -10000, y: -10000, width: width, height: 420),
+                            styleMask: [.borderless], backing: .buffered, defer: false)
+                        window.isReleasedWhenClosed = false; window.contentView = host; window.orderFront(nil)
+                        defer { window.orderOut(nil); window.contentView = nil; window.close() }
+                        await settle(); host.layoutSubtreeIfNeeded()
+                        // SwiftUI materializes its native accessibility tree after
+                        // the process receives an AX query, as in the existing
+                        // narrow-card fixtures below. Query only this QA process.
+                        _ = await Task.detached {
+                            let process = AXUIElementCreateApplication(ProcessInfo.processInfo.processIdentifier)
+                            AXUIElementSetMessagingTimeout(process, 3)
+                            var windows: CFTypeRef?
+                            return AXUIElementCopyAttributeValue(process, kAXWindowsAttribute as CFString, &windows)
+                        }.value
+                        await settle()
+                        var seen = Set<ObjectIdentifier>(), nodes: [ZoomLayoutAX] = []
+                        func visit(_ candidate: Any, depth: Int) {
+                            guard depth < 50, let object = candidate as? NSObject,
+                                  seen.insert(ObjectIdentifier(object)).inserted else { return }
+                            let node = ZoomLayoutAX(object: object); nodes.append(node)
+                            node.children.forEach { visit($0, depth: depth + 1) }
+                        }
+                        visit(host, depth: 0)
+                        NSAccessibility.unignoredChildren(from: [host]).forEach { visit($0, depth: 0) }
+                        let suffix = capture.id.uuidString
+                        guard let card = nodes.first(where: { $0.identifier == "capture-card-" + suffix && $0.frame.height > 0 }) else {
+                            throw NSError(domain: "CardDensity", code: 1,
+                                userInfo: [NSLocalizedDescriptionKey: "Missing native card bounds; available \(nodes.compactMap(\.identifier))"])
+                        }
+                        try expect(host.fittingSize.width <= width + 1 && window.frame.insetBy(dx: -1, dy: -1).contains(card.frame),
+                                   "Shared card fits \(width) points at \(factor) in both appearances")
+                        let targets = ["capture-open-", "capture-copy-", "capture-trash-", "capture-more-", "capture-project-picker-"]
+                            .compactMap { prefix in nodes.first { $0.identifier == prefix + suffix } }
+                        try expect(targets.count == 5, "Title, copy, trash, More and project assignment remain reachable")
+                        for target in targets {
+                            try expect(target.frame.width >= 31.5 && target.frame.height >= 31.5
+                                && card.frame.insetBy(dx: -1, dy: -1).contains(target.frame),
+                                "Compact native action stays at least 32 points and inside the card: \(target.identifier ?? "")")
+                        }
+                        let open = targets.first { $0.identifier == "capture-open-" + suffix }!
+                        let copy = targets.first { $0.identifier == "capture-copy-" + suffix }!
+                        let stackedHeader = copy.frame.maxY <= open.frame.minY + 1
+                        let baselineBudget: CGFloat = width < 300 ? 232 : 204
+                        let readableHeaderRow = stackedHeader ? copy.frame.height + 6 : 0
+                        try expect(open.frame.width >= 119.5,
+                                   "Every narrow card preserves readable title width at every zoom")
+                        try expect(card.frame.height <= baselineBudget + readableHeaderRow,
+                                   "No empty preview slot; a narrow card allows only its measured readable action row: \(card.frame.height), budget \(baselineBudget + readableHeaderRow)")
+                        let icons = targets.filter { $0.identifier != "capture-open-" + suffix && $0.identifier != "capture-project-picker-" + suffix }
+                        try expect(icons.map(\.frame.midY).max()! - icons.map(\.frame.midY).min()! < 1,
+                                   "Header action icons share one aligned row")
+                        let ids = ["capture-receipt-time-", "capture-receipt-category-"].map { $0 + suffix }
+                        try expect(ids.allSatisfy { id in nodes.contains { $0.identifier == id && card.frame.insetBy(dx: -1, dy: -1).contains($0.frame) } },
+                                   "The compact card still shows original receipt date/time and category")
+                        let rect = host.convert(window.convertFromScreen(card.frame), from: nil).intersection(host.bounds)
+                        guard let bitmap = NSBitmapImageRep(bitmapDataPlanes: nil,
+                            pixelsWide: Int(ceil(rect.width * 2)), pixelsHigh: Int(ceil(rect.height * 2)),
+                            bitsPerSample: 8, samplesPerPixel: 4, hasAlpha: true, isPlanar: false,
+                            colorSpaceName: .deviceRGB, bytesPerRow: 0, bitsPerPixel: 0) else {
+                            throw NSError(domain: "CardDensityBitmap", code: 1)
+                        }
+                        bitmap.size = rect.size; host.cacheDisplay(in: rect, to: bitmap)
+                        guard let png = bitmap.representation(using: .png, properties: [:]) else { throw NSError(domain: "CardDensityPNG", code: 1) }
+                        let name = "compact-\(capture.kind.rawValue)-\(Int(width))-\(Int(factor * 100))-\(dark ? "dark" : "light")"
+                        try png.write(to: output.appendingPathComponent(name + ".png"))
+                        geometry.append(["kind": capture.kind.rawValue, "width": width, "zoom": factor,
+                                         "appearance": dark ? "dark" : "light", "cardWidth": card.frame.width,
+                                         "cardHeight": card.frame.height, "titleWidth": open.frame.width,
+                                         "stackedHeader": stackedHeader, "file": name + ".png"])
+                    }
+                }
+            }
+        }
+        try JSONSerialization.data(withJSONObject: geometry, options: [.prettyPrinted, .sortedKeys])
+            .write(to: output.appendingPathComponent("compact-card-geometry.json"))
+    }
+
     private static func narrowFixture(_ card: AnyView, identifiers: [String], name: String, height: CGFloat, output: URL, width: CGFloat = 380) async throws {
         let content = VStack { card; Spacer(minLength: 0) }.padding(12).frame(width: width, height: height, alignment: .topLeading)
             .environment(\.workspaceZoom, WorkspaceZoomLayout(factor: 2))

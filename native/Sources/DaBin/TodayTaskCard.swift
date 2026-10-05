@@ -28,7 +28,7 @@ struct TodayTaskCard: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: zoom.lineSpacing(8)) {
+        VStack(alignment: .leading, spacing: 6) {
             HStack(alignment: .top, spacing: 8) {
                 completion
                 Button { state.openCapture(capture.id, focus: capture.isTask ? "task" : nil) } label: {
@@ -54,7 +54,7 @@ struct TodayTaskCard: View {
                     Button { state.openCapture(capture.id, focus: "comment") } label: {
                         Text(capture.comment).font(.system(size: zoom.fontSize(11)))
                             .foregroundStyle(Palette.muted).lineLimit(1)
-                            .frame(maxWidth: .infinity, minHeight: 28, alignment: .leading)
+                            .frame(maxWidth: .infinity, minHeight: 32, alignment: .leading)
                             .contentShape(Rectangle())
                     }.buttonStyle(.plain)
                         .accessibilityLabel("Comment: \(capture.comment)")
@@ -65,14 +65,14 @@ struct TodayTaskCard: View {
             }
             if !capture.isCompleted && (!capture.isMinimized || running || !capture.isTask) {
                 actionRail
-                    .padding(.top, 8)
+                    .padding(.top, 6)
                     .overlay(alignment: .top) { Rectangle().fill(Palette.line.opacity(0.7)).frame(height: 0.5) }
             }
         }
-        .padding(zoom.lineSpacing(12))
-        .background(Palette.surface, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+        .padding(12)
+        .background(Palette.surface, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
         .overlay {
-            RoundedRectangle(cornerRadius: 14, style: .continuous)
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
                 .strokeBorder(dropTargeted ? accent : running ? accent.opacity(0.55) : Palette.line,
                               lineWidth: dropTargeted ? 1.5 : running ? 1 : 0.7)
         }
@@ -122,8 +122,9 @@ struct TodayTaskCard: View {
                     .accessibilityLabel("Planned for \(prettyDay(day))")
                     .accessibilityIdentifier("today-task-planned-day-\(capture.id.uuidString)")
             } else if let time = capture.taskPlanning?.plannedTime {
-                Text(time).lineLimit(1).fixedSize().frame(minHeight: 32)
+                Text("Today \(time)").lineLimit(1).fixedSize().frame(minHeight: 32)
                     .accessibilityLabel("Planned today at \(time)")
+                    .accessibilityIdentifier("today-task-planned-time-\(capture.id.uuidString)")
             }
             if !checklist.isEmpty {
                 summaryAction("\(checklist.filter(\.isCompleted).count)/\(checklist.count) steps", symbol: "checklist",
@@ -155,10 +156,7 @@ struct TodayTaskCard: View {
     }
 
     private var actionRail: some View {
-        ViewThatFits(in: .horizontal) {
-            HStack(spacing: 8) { focus; Spacer(minLength: 0); dayAction }
-            VStack(alignment: .leading, spacing: 6) { focus; dayAction }
-        }.accessibilityElement(children: .contain)
+        ExplorerCaptureActionsLayout { focus; dayAction }.accessibilityElement(children: .contain)
             .accessibilityIdentifier("today-task-action-rail-\(capture.id.uuidString)")
     }
 

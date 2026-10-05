@@ -52,80 +52,123 @@ struct CaptureRow: View {
     private var attachments: [Capture] { state.store.attachments(for: capture) }
     private var projectName: String? { ExplorerQuery.project(of: capture, in: state.store.captures) }
 
+    private var showsTrail: Bool {
+        !capture.isTask || planningActions == nil || capture.kind != .task
+            || capture.sourceApplicationName != nil || capture.sourceApplicationBundleIdentifier != nil
+            || !capture.pasteHistory.isEmpty
+    }
+    private var hasPreview: Bool {
+        !capture.isTask && ![CaptureKind.text, .task].contains(capture.kind) && !capture.isMinimized
+            && CapturePreviewFileReference.thumbnail(store: state.store, capture: capture) != nil
+    }
+
     var body: some View {
         Group {
-        if compactReceipt {
-            compactReceiptContent
-        } else {
-        VStack(alignment: .leading, spacing: zoom.value(capture.isTask ? 10 : 12)) {
-            if showsProject {
-                CaptureProjectPriorityHeader(state: state, capture: capture)
-                    .frame(maxWidth: .infinity, alignment: .leading)
+            if compactReceipt {
+                compactReceiptContent
+            } else {
+                VStack(alignment: .leading, spacing: 6) {
+                    header
+                    if showsProject {
+                        CaptureProjectPriorityHeader(state: state, capture: capture)
+                    } else {
+                        CaptureTaskPriorityTag(capture: capture)
+                    }
+                    receiptAndTrail
+                    if let isMatch {
+                        Label(isMatch ? "Match" : "Nearby capture", systemImage: isMatch ? "magnifyingglass" : "clock")
+                            .font(.system(size: zoom.fontSize(11), weight: .medium))
+                            .foregroundStyle(isMatch ? accent : Palette.muted)
+                    }
+                    if !capture.isTask { content }
+                    if !capture.isMinimized {
+                        if let indexedTextMatch {
+                            Label(indexedTextMatch, systemImage: "text.viewfinder")
+                                .font(.system(size: zoom.fontSize(11))).foregroundStyle(Palette.muted).lineLimit(2)
+                                .accessibilityLabel("Matched recognized text: \(indexedTextMatch)")
+                                .accessibilityIdentifier("capture-indexed-match-\(capture.id.uuidString)")
+                                .captureDragSource(state: state, capture: capture)
+                        }
+                        if !capture.comment.isEmpty {
+                            Button { state.openCapture(capture.id, focus: "comment") } label: {
+                                Label(capture.comment, systemImage: "text.bubble")
+                                    .font(.system(size: zoom.fontSize(12))).foregroundStyle(Palette.muted).lineLimit(2)
+                                    .frame(maxWidth: .infinity, minHeight: 32, alignment: .leading)
+                                    .contentShape(Rectangle()).multilineTextAlignment(.leading)
+                            }.buttonStyle(.plain)
+                                .accessibilityLabel("Comment: \(capture.comment)")
+                                .accessibilityIdentifier("capture-comment-\(capture.id.uuidString)")
+                                .readableTextDragSource(text: capture.comment, label: "Comment for \(capture.title)", state: state)
+                        }
+                        if capture.reminderAt != nil || !attachments.isEmpty || capture.parentTaskID != nil {
+                            supportingActions
+                        }
+                        if let planningMetadata { planningMetadata }
+                        if let planningActions {
+                            planningActions
+                                .accessibilityElement(children: .contain)
+                                .accessibilityIdentifier("capture-planning-actions-\(capture.id.uuidString)")
+                        }
+                        if !capture.isTask { primaryActions }
+                        CaptureConversionUndo(state: state, capture: capture)
+                    }
+                    if capture.isTask && (!capture.isMinimized
+                        || (capture.taskPlanning?.focusSession?.isRunning == true && !capture.isCompleted)) {
+                        TaskFocusControls(state: state, capture: capture, showsSchedule: planningActions == nil,
+                                          taskCardStyle: true)
+                            .padding(.top, 6)
+                            .overlay(alignment: .top) { Rectangle().fill(Palette.line.opacity(0.7)).frame(height: 0.5) }
+                    }
+                }
             }
-            header
-            if let isMatch {
-                Label(isMatch ? "Match" : "Nearby capture", systemImage: isMatch ? "magnifyingglass" : "clock")
-                    .font(.system(size: zoom.fontSize(11), weight: .medium)).foregroundStyle(isMatch ? accent : Palette.muted)
-            }
-            if !capture.isTask { content }
-            if !capture.isMinimized {
-                if let indexedTextMatch {
-                    Label(indexedTextMatch, systemImage: "text.viewfinder")
-                        .font(.system(size: zoom.fontSize(11))).foregroundStyle(Palette.muted).lineLimit(2)
-                        .accessibilityLabel("Matched recognized text: \(indexedTextMatch)")
-                        .accessibilityIdentifier("capture-indexed-match-\(capture.id.uuidString)")
-                        .captureDragSource(state: state, capture: capture)
-                }
-                if !capture.comment.isEmpty {
-                    Label(capture.comment, systemImage: "text.bubble")
-                        .font(.system(size: zoom.fontSize(12))).foregroundStyle(Palette.muted).lineLimit(2)
-                        .accessibilityIdentifier("capture-comment-\(capture.id.uuidString)")
-                        .readableTextDragSource(text: capture.comment, label: "Comment for \(capture.title)", state: state)
-                }
-                if let reminder = capture.reminderAt {
-                    Label(reminder.formatted(date: .abbreviated, time: .shortened), systemImage: capture.isCompleted ? "bell.slash" : "bell")
-                        .font(.system(size: zoom.fontSize(11), weight: .medium)).foregroundStyle(Palette.muted).lineLimit(1)
-                }
-                if !attachments.isEmpty {
-                    Label("\(attachments.count) attachments", systemImage: "paperclip")
-                        .font(.system(size: zoom.fontSize(11))).foregroundStyle(Palette.muted)
-                }
-                if capture.isTask, planningActions == nil || capture.kind != .task
-                    || capture.sourceApplicationName != nil || capture.sourceApplicationBundleIdentifier != nil
-                    || !capture.pasteHistory.isEmpty {
-                    CaptureTrailView(state: state, capture: capture)
-                }
-                if let parentID = capture.parentTaskID {
-                    Button { state.openCapture(parentID, focus: "task") } label: { Label("Task attachment", systemImage: "arrow.turn.up.left") }
-                        .buttonStyle(.plain).font(.system(size: zoom.fontSize(11))).foregroundStyle(accent)
-                }
-                if let planningMetadata { planningMetadata }
-                if capture.isTask {
-                    TaskFocusControls(state: state, capture: capture, showsSchedule: planningActions == nil)
-                        .padding(.top, 8)
-                        .overlay(alignment: .top) { Rectangle().fill(Palette.line).frame(height: 0.7) }
-                }
-                if !capture.isTask { primaryActions }
-                CaptureConversionUndo(state: state, capture: capture)
-            }
-            secondaryActions
         }
-        }
-        }
-        .padding(zoom.value(embeddedInCard ? 4 : compactReceipt ? 8 : capture.isTask ? 14 : 16))
+        .padding(embeddedInCard ? 2 : compactReceipt ? 8 : 12)
         .workspaceZoomItem(navigationItemID ?? "capture:" + capture.id.uuidString)
         .projectCardBackground(workspace: state.workspace, projectName: projectName,
-                               enabled: !embeddedInCard)
+                               cornerRadius: 12, enabled: !embeddedInCard)
         .projectCardFrame(workspace: state.workspace, projectName: projectName, activeProject: nil,
+                          cornerRadius: 12,
                           fallbackColor: embeddedInCard ? .clear : dropTargeted ? accent : taskAtTop ? accent.opacity(0.55) : Palette.line,
                           fallbackWidth: embeddedInCard ? 0 : dropTargeted ? 1.5 : 0.7)
-        .padding(.vertical, embeddedInCard ? 0 : compactReceipt ? 4 : 6)
+        .padding(.vertical, embeddedInCard ? 0 : 2)
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier("capture-card-\(capture.id.uuidString)")
         .contextMenu { CaptureActionMenuItems(state: state, capture: capture, includesRemoval: true, allowsMinimization: !compactReceipt, showsParentTask: compactReceipt) }
         .onDrop(of: TaskAttachmentTypes.identifiers, isTargeted: $dropTargeted) { providers in
             guard capture.isTask else { return false }
             return state.receiveTaskAttachments(providers, to: capture)
         }
         .animation(reduceMotion ? nil : .easeOut(duration: 0.18), value: capture.isTask)
+    }
+
+    private var receiptAndTrail: some View {
+        ExplorerCaptureActionsLayout {
+            CaptureReceiptView(capture: capture, category: captureTypeLabel(capture.kind))
+            if showsTrail { CaptureTrailView(state: state, capture: capture) }
+        }
+    }
+
+    private var supportingActions: some View {
+        BuddyActionFlow(spacing: 8) {
+            if let reminder = capture.reminderAt {
+                Button { state.openCapture(capture.id, focus: "reminder") } label: {
+                    Label(reminder.formatted(date: .abbreviated, time: .shortened),
+                          systemImage: capture.isCompleted ? "bell.slash" : "bell")
+                        .lineLimit(1).frame(minHeight: 32).contentShape(Rectangle())
+                }.buttonStyle(.plain).accessibilityLabel("Reminder, \(reminder.formatted(date: .complete, time: .shortened))")
+            }
+            if !attachments.isEmpty {
+                Button { state.openCapture(capture.id, focus: "task") } label: {
+                    Label("\(attachments.count) \(attachments.count == 1 ? "attachment" : "attachments")", systemImage: "paperclip")
+                        .frame(minHeight: 32).contentShape(Rectangle())
+                }.buttonStyle(.plain).accessibilityIdentifier("capture-attachments-\(capture.id.uuidString)")
+            }
+            if let parentID = capture.parentTaskID {
+                Button { state.openCapture(parentID, focus: "task") } label: {
+                    Label("Task attachment", systemImage: "arrow.turn.up.left").frame(minHeight: 32)
+                }.buttonStyle(.plain)
+            }
+        }.font(.system(size: zoom.fontSize(11))).foregroundStyle(Palette.muted)
     }
 
     private var compactReceiptContent: some View {
@@ -184,105 +227,65 @@ struct CaptureRow: View {
     }
 
     private var header: some View {
-        HStack(alignment: capture.isTask ? .top : .center, spacing: 8) {
-            if capture.isTask { TaskStatusButton(state: state, capture: capture) }
-            VStack(alignment: .leading, spacing: 4) {
-                if capture.isTask {
-                    if planningActions == nil {
-                        Text(capture.isCompleted ? "COMPLETED" : "TASK")
-                            .font(.system(size: zoom.fontSize(10), weight: .medium)).tracking(0.7).foregroundStyle(Palette.muted)
-                    }
-                    title
-                    if !showsProject { CaptureTaskPriorityTag(capture: capture) }
-                    CaptureReceiptView(capture: capture, category: captureTypeLabel(capture.kind))
-                } else {
-                    CaptureTrailView(state: state, capture: capture)
-                    CaptureReceiptView(capture: capture, category: captureTypeLabel(capture.kind))
+        CaptureCardHeaderLayout(minimumLeadingWidth: 120 + (capture.isTask ? 38 : 0) + (capture.isPinned ? 16 : 0)) {
+            HStack(alignment: .top, spacing: 6) {
+                if capture.isTask { TaskStatusButton(state: state, capture: capture) }
+                title.layoutPriority(1)
+                if capture.isPinned {
+                    Image(systemName: "pin.fill").font(.system(size: zoom.fontSize(10)))
+                        .foregroundStyle(accent).frame(height: 32).accessibilityLabel("Pinned")
                 }
-            }.frame(maxWidth: .infinity, alignment: .leading)
-            if capture.isPinned { Image(systemName: "pin.fill").font(.system(size: zoom.fontSize(10))).foregroundStyle(accent).accessibilityLabel("Pinned") }
-            if showsCopyButton {
-                BuddyIconButton(symbol: copied ? "checkmark" : "doc.on.doc", title: copied ? "Copied" : "Copy \(capture.title)") { copy() }
-                    .accessibilityIdentifier(CaptureCopyButton.accessibilityIdentifier(for: [capture]))
             }
-            CaptureTrashButton(state: state, capture: capture)
+            HStack(spacing: 6) {
+                if showsCopyButton {
+                    BuddyIconButton(symbol: copied ? "checkmark" : "doc.on.doc", title: copied ? "Copied" : "Copy \(capture.title)") { copy() }
+                        .accessibilityIdentifier(CaptureCopyButton.accessibilityIdentifier(for: [capture]))
+                }
+                CaptureTrashButton(state: state, capture: capture)
+                CaptureControls(state: state, capture: capture)
+            }
         }
     }
 
-    private var content: some View {
-        VStack(alignment: .leading, spacing: zoom.value(12)) {
-            if !capture.isMinimized, ![CaptureKind.text, .task].contains(capture.kind) {
-                Button { state.openCapture(capture.id) } label: {
-                    CaptureThumbnail(store: state.store, capture: capture)
-                        .frame(height: zoom.value(capture.kind == .link ? 164 : 208))
-                        .clipShape(RoundedRectangle(cornerRadius: 8))
-                }.buttonStyle(.plain).accessibilityLabel("Preview \(capture.title)")
-                    .captureDragSource(state: state, capture: capture)
-            }
-            title
-            if !capture.isMinimized, !capture.previewDescription.isEmpty {
-                Text(capture.previewDescription).font(.system(size: zoom.fontSize(13))).foregroundStyle(Palette.muted).lineSpacing(zoom.lineSpacing(3)).lineLimit(3)
-                    .captureDragSource(state: state, capture: capture)
-            }
+    @ViewBuilder private var content: some View {
+        if hasPreview {
+            Button { state.openCapture(capture.id) } label: {
+                CaptureThumbnail(store: state.store, capture: capture)
+                    .frame(height: min(176, zoom.value(capture.kind == .link ? 104 : 132)))
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
+            }.buttonStyle(.plain).accessibilityLabel("Preview \(capture.title)")
+                .captureDragSource(state: state, capture: capture)
+        }
+        if !capture.isMinimized, !capture.previewDescription.isEmpty {
+            Text(capture.previewDescription).font(.system(size: zoom.fontSize(12)))
+                .foregroundStyle(Palette.muted).lineSpacing(zoom.lineSpacing(2)).lineLimit(3)
+                .captureDragSource(state: state, capture: capture)
         }
     }
 
     private var title: some View {
         Button { state.openCapture(capture.id) } label: {
             Text(capture.title.isEmpty ? "Untitled capture" : capture.title)
-                .font(.system(size: zoom.fontSize(16), weight: .semibold))
+                .font(.system(size: zoom.fontSize(15), weight: .semibold))
                 .strikethrough(capture.isTask && capture.isCompleted, color: Palette.muted)
                 .foregroundStyle(capture.isCompleted ? Palette.muted : Palette.foreground)
-                .lineLimit(capture.isMinimized ? 1 : 4).frame(maxWidth: .infinity, alignment: .leading)
+                .lineLimit(capture.isMinimized ? 1 : 2).fixedSize(horizontal: false, vertical: true)
+                .padding(.top, max(0, (32 - zoom.fontSize(15) * 1.2) / 2))
+                .frame(maxWidth: .infinity, minHeight: 32, alignment: .topLeading)
                 .multilineTextAlignment(.leading).contentShape(Rectangle())
         }.buttonStyle(.plain)
             .accessibilityLabel("Open \(capture.title), \(capture.isTask ? "task" : captureTypeLabel(capture.kind)), saved \(prettyDay(capture.captureDay)) at \(captureClock(capture))")
+            .accessibilityIdentifier("capture-open-\(capture.id.uuidString)")
             .captureDragSource(state: state, capture: capture)
+            .buddyHelp(capture.title)
     }
 
     private var primaryActions: some View {
-        HStack(spacing: 4) {
-            Spacer(minLength: 0)
-            if !capture.isTask { CaptureTaskConversionButton(state: state, capture: capture) }
-            if !capture.isTask, capture.parentTaskID == nil { CaptureKeepButton(state: state, capture: capture) }
-        }
-    }
-
-    @ViewBuilder private var secondaryActions: some View {
-        if let planningActions {
-            HStack(spacing: 4) {
-                planningActions
-                Spacer(minLength: 0)
-                collapseAndMore
+        BuddyActionFlow(spacing: 6) {
+            CaptureTaskConversionButton(state: state, capture: capture, visualLabel: "Task")
+            if capture.parentTaskID == nil {
+                CaptureKeepButton(state: state, capture: capture, visualLabel: "Keep")
             }
-            .accessibilityElement(children: .contain)
-            .accessibilityIdentifier("capture-planning-actions-\(capture.id.uuidString)")
-        } else {
-            ViewThatFits(in: .horizontal) {
-                HStack(spacing: 2) {
-                    if !capture.isMinimized {
-                        BuddyIconButton(symbol: "text.bubble", title: "Comment") { state.openCapture(capture.id, focus: "comment") }
-                        BuddyIconButton(symbol: "bell", title: "Reminder") { state.openCapture(capture.id, focus: "reminder") }
-                        if capture.isTask {
-                            BuddyIconButton(symbol: "paperclip", title: "Add task attachments") { state.openCapture(capture.id, focus: "task") }
-                        }
-                    }
-                    Spacer(minLength: 0)
-                    collapseAndMore
-                }
-                HStack {
-                    Spacer(minLength: 0)
-                    collapseAndMore
-                }
-            }
-        }
-    }
-
-    private var collapseAndMore: some View {
-        HStack(spacing: 2) {
-            BuddyIconButton(symbol: capture.isMinimized ? "chevron.down" : "chevron.up", title: capture.isMinimized ? "Expand capture" : "Minimize capture") { state.toggleMinimized(capture) }
-                .accessibilityIdentifier("capture-collapse-\(capture.id.uuidString)")
-            CaptureControls(state: state, capture: capture)
         }
     }
 
@@ -369,17 +372,15 @@ struct CaptureConversionUndo: View {
     @ObservedObject var capture: Capture
     var body: some View {
         if state.lastConvertedCaptureID == capture.id, state.canUndoTaskConversion {
-            ViewThatFits(in: .horizontal) {
-                HStack {
-                    Label("Task ready", systemImage: "checkmark").foregroundStyle(Palette.muted)
-                    Spacer(minLength: 0)
-                    Button("Undo") { state.undoTaskConversion() }.buttonStyle(.plain)
-                }
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Task ready").foregroundStyle(Palette.muted)
-                    Button("Undo") { state.undoTaskConversion() }.buttonStyle(.plain)
-                }
-            }.font(.system(size: 11)).accessibilityIdentifier("capture-conversion-undo-\(capture.id.uuidString)")
+            ExplorerCaptureActionsLayout {
+                Label("Task ready", systemImage: "checkmark").foregroundStyle(Palette.muted)
+                Button { state.undoTaskConversion() } label: {
+                    Text("Undo").frame(minWidth: 32, minHeight: 32).contentShape(Rectangle())
+                }.buttonStyle(.plain)
+                    .accessibilityIdentifier("capture-conversion-undo-action-\(capture.id.uuidString)")
+            }.font(.system(size: 11))
+                .accessibilityElement(children: .contain)
+                .accessibilityIdentifier("capture-conversion-undo-\(capture.id.uuidString)")
         }
     }
 }
@@ -388,18 +389,20 @@ struct CaptureConversionUndo: View {
 struct CaptureKeepButton: View {
     @ObservedObject var state: AppState
     @ObservedObject var capture: Capture
+    var visualLabel: String? = nil
     @ObservedObject private var workspace: WorkspaceStore
     private var kept: Bool { workspace.processedInboxIDs.contains(capture.id) }
 
-    init(state: AppState, capture: Capture) {
+    init(state: AppState, capture: Capture, visualLabel: String? = nil) {
         self.state = state
         self.capture = capture
+        self.visualLabel = visualLabel
         self.workspace = state.workspace
     }
 
     var body: some View {
         if state.route == .inbox, capture.parentTaskID == nil, !kept {
-            BuddyIconButton(symbol: "checkmark", title: "Keep in Projects") {
+            BuddyIconButton(symbol: "checkmark", title: "Keep in Projects", visualLabel: visualLabel) {
                 do {
                     try workspace.markInboxProcessed([capture.id], processed: true)
                     state.status = AppStatusMessage(text: "Kept in Projects. Your original capture day stays the same.", severity: .success)
@@ -508,7 +511,7 @@ struct TaskStatusButton: View {
                 if capture.isCompleted {
                     Image(systemName: "checkmark").font(.system(size: 12, weight: .semibold)).foregroundStyle(Palette.surface)
                 }
-            }.frame(width: 21, height: 21).frame(width: 34, height: 36).contentShape(Rectangle())
+            }.frame(width: 21, height: 21).frame(width: 32, height: 32).contentShape(Rectangle())
         }.buttonStyle(.plain).buddyHelp(capture.isCompleted ? "Mark incomplete" : "Mark completed")
             .accessibilityLabel("\(label): \(capture.title)")
             .accessibilityHint(capture.isCompleted ? "Mark this task incomplete" : "Mark this task completed")

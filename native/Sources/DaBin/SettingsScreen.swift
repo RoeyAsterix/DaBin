@@ -42,11 +42,11 @@ struct SettingsScreen: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 18) {
+            VStack(alignment: .leading, spacing: 8) {
                 SettingsSoftwareUpdateSection(updates: updates)
                 SettingsTutorialSection(runTutorial: runTutorial)
                 Divider()
-                VStack(alignment: .leading, spacing: 9) {
+                VStack(alignment: .leading, spacing: 8) {
                     Label("Navigation and zoom", systemImage: "arrow.left.arrow.right")
                         .font(.system(size: 16, weight: .semibold, design: .rounded))
                     Toggle("Trackpad Back and Forward", isOn: $workspaceZoom.trackpadNavigationEnabled)
@@ -66,7 +66,7 @@ struct SettingsScreen: View {
                         .fixedSize(horizontal: false, vertical: true)
                 }.font(.system(size: 14))
                 Divider()
-                VStack(alignment: .leading, spacing: 9) {
+                VStack(alignment: .leading, spacing: 8) {
                     Text("Automatic capture").font(.system(size: 16, weight: .semibold, design: .rounded))
                     Text("Choose what to save. Both are off until you turn them on.")
                         .font(.system(size: 14)).foregroundStyle(Palette.muted)
@@ -103,20 +103,28 @@ struct SettingsScreen: View {
                                 Label(folder, systemImage: "folder")
                                     .font(.system(size: 12)).foregroundStyle(Palette.muted).lineLimit(1)
                             }
-                            Button(needsScreenshotPermission ? "Choose screenshot folder…" : "Change folder…") {
+                            Button {
                                 chooseScreenshotFolder(enableAfterSelection: false)
+                            } label: {
+                                Text(needsScreenshotPermission ? "Choose screenshot folder…" : "Change folder…")
+                                    .frame(minHeight: 32).contentShape(Rectangle())
                             }
                             .buttonStyle(.plain).font(.system(size: 14)).foregroundStyle(accent)
                         }
                     }
                     if autoCaptureSettings.isEnabled {
-                        Button(autoCaptureSettings.isPaused ? "Resume capture" : "Pause capture") {
+                        Button {
                             autoCapture.setPaused(!autoCaptureSettings.isPaused)
+                        } label: {
+                            Text(autoCaptureSettings.isPaused ? "Resume capture" : "Pause capture")
+                                .frame(minHeight: 32).contentShape(Rectangle())
                         }
                         .buttonStyle(.plain).font(.system(size: 13, weight: .medium)).foregroundStyle(accent)
                         .buddyHelp("Pause or resume your selected capture sources together")
                     }
-                    Button("Excluded applications…") { showExcludedApplications = true }
+                    Button { showExcludedApplications = true } label: {
+                        Text("Excluded applications…").frame(minHeight: 32).contentShape(Rectangle())
+                    }
                         .buttonStyle(.plain).font(.system(size: 14)).foregroundStyle(accent)
                     Text("Existing clipboard contents and screenshots are never imported when capture starts. DaBin and common password managers are excluded by default. Captures stay in your local archive.")
                         .font(.system(size: 12)).foregroundStyle(Palette.muted)
@@ -128,7 +136,7 @@ struct SettingsScreen: View {
                 Divider()
                 quickAccessSection
                 Divider()
-                VStack(alignment: .leading, spacing: 12) {
+                VStack(alignment: .leading, spacing: 8) {
                     Text("Appearance").font(.system(size: 16, weight: .semibold, design: .rounded))
                     Toggle("Dark mode", isOn: Binding(
                         get: { theme.darkModeEnabled },
@@ -177,20 +185,23 @@ struct SettingsScreen: View {
                             .font(.system(size: 14)).foregroundStyle(Palette.muted)
                             .fixedSize(horizontal: false, vertical: true)
                         if theme.boardOpacity < 1 {
-                            Button("Use solid background", systemImage: "circle.fill") { theme.setBoardOpacity(1) }
+                            Button { theme.setBoardOpacity(1) } label: {
+                                Label("Use solid background", systemImage: "circle.fill")
+                                    .frame(minHeight: 32).contentShape(Rectangle())
+                            }
                                 .buttonStyle(.plain).font(.system(size: 14)).foregroundStyle(accent)
                                 .accessibilityIdentifier("settings-solid-background")
                         }
                     }
                 }
                 Divider()
-                VStack(alignment: .leading, spacing: 10) {
+                VStack(alignment: .leading, spacing: 8) {
                     HStack {
                         Text("Theme color").font(.system(size: 16, weight: .semibold, design: .rounded))
                         Spacer()
                         Text(selectedName).font(.system(size: 14)).foregroundStyle(Palette.muted)
                     }
-                    HStack(spacing: 10) {
+                    HStack(spacing: 8) {
                         ForEach(ThemePreset.allCases) { preset in
                             let selected = theme.selectedHex == preset.hex
                             Button { theme.select(preset) } label: {
@@ -200,7 +211,8 @@ struct SettingsScreen: View {
                                         Circle().strokeBorder(selected ? accent : .clear, lineWidth: 2)
                                     }
                                     .frame(width: 28, height: 28)
-                                    .contentShape(Circle())
+                                    .frame(width: 32, height: 32)
+                                    .contentShape(Rectangle())
                             }
                             .buttonStyle(.plain)
                             .buddyHelp(preset.name)
@@ -210,11 +222,13 @@ struct SettingsScreen: View {
                             .accessibilityRemoveTraits(selected ? [] : .isSelected)
                         }
                     }
-                    HStack(spacing: 12) {
+                    HStack(spacing: 8) {
                         ColorPicker("Custom color", selection: Binding(get: { theme.selection }, set: { theme.setColor($0) }), supportsOpacity: false)
                             .font(.system(size: 14)).controlSize(.small)
                             .accessibilityLabel("Custom theme color")
-                        Button("Reset") { theme.select(.purple) }
+                        Button { theme.select(.purple) } label: {
+                            Text("Reset").frame(minHeight: 32).contentShape(Rectangle())
+                        }
                             .font(.system(size: 14)).buttonStyle(.plain).foregroundStyle(accent)
                             .disabled(theme.selectedHex == ThemeSettings.defaultHex)
                             .buddyHelp("Reset theme color to Purple")
@@ -226,7 +240,7 @@ struct SettingsScreen: View {
                     Text("Saved on this Mac, organized by year, month and day. Images, PDFs and supported text documents are made searchable on this Mac; recognized text is never sent to a service.")
                         .font(.system(size: 14)).foregroundStyle(Palette.muted).fixedSize(horizontal: false, vertical: true)
                     ViewThatFits(in: .horizontal) {
-                        HStack(spacing: 16) { localArchiveActions }
+                        HStack(spacing: 8) { localArchiveActions }
                         VStack(alignment: .leading, spacing: 8) { localArchiveActions }
                     }
                     .buttonStyle(.plain).font(.system(size: 14)).foregroundStyle(accent)
@@ -255,9 +269,12 @@ struct SettingsScreen: View {
                         .font(.system(size: 14)).foregroundStyle(Palette.muted).fixedSize(horizontal: false, vertical: true)
                     Button { showPrivacyPolicy = true } label: {
                         Label("Privacy policy & data controls", systemImage: "hand.raised")
+                            .frame(minHeight: 32).contentShape(Rectangle())
                     }.buttonStyle(.plain).font(.system(size: 14)).foregroundStyle(accent)
                     if let url = PrivacyInformation.configuredURL(for: PrivacyInformation.supportURLKey) {
-                        Link("Contact & support", destination: url)
+                        Link(destination: url) {
+                            Text("Contact & support").frame(minHeight: 32).contentShape(Rectangle())
+                        }
                             .font(.system(size: 14)).foregroundStyle(accent)
                     }
                 }
@@ -267,8 +284,10 @@ struct SettingsScreen: View {
                     Text(state.reminders.visibleStatus ?? "Permission is requested when you first save a reminder. Alerts keep capture contents private.")
                         .font(.system(size: 14)).foregroundStyle(Palette.muted).fixedSize(horizontal: false, vertical: true)
                         .accessibilityIdentifier("settings-reminder-feedback")
-                    Button("Open notification settings") {
+                    Button {
                         if let url = URL(string: "x-apple.systempreferences:com.apple.Notifications-Settings.extension") { NSWorkspace.shared.open(url) }
+                    } label: {
+                        Text("Open notification settings").frame(minHeight: 32).contentShape(Rectangle())
                     }.buttonStyle(.plain).font(.system(size: 14)).foregroundStyle(accent)
                 }
                 Divider()
@@ -289,11 +308,11 @@ struct SettingsScreen: View {
                 }
                 Divider()
                 SettingsQuitSection(quitApplication: quitApplication)
-            }.padding(16)
+            }.padding(12)
                 .frame(maxWidth: 680, alignment: .leading)
                 .background(Palette.surface, in: RoundedRectangle(cornerRadius: 12))
                 .overlay(RoundedRectangle(cornerRadius: 12).strokeBorder(Palette.line, lineWidth: 0.75))
-                .padding(.horizontal, 16).padding(.bottom, 20)
+                .padding(.horizontal, 12).padding(.bottom, 12)
                 .frame(maxWidth: .infinity, alignment: .top)
         }
         .sheet(isPresented: $showPrivacyPolicy) {
@@ -325,10 +344,12 @@ struct SettingsScreen: View {
     private var localArchiveActions: some View {
         Button { state.showArchiveFolder() } label: {
             Label("Open local archive", systemImage: "folder")
+                .frame(minHeight: 32).contentShape(Rectangle())
         }.accessibilityIdentifier("settings-open-local-archive")
         if let index = state.contentIndex {
             Button { state.rebuildContentIndex() } label: {
                 Label("Rebuild text search", systemImage: "arrow.clockwise")
+                    .frame(minHeight: 32).contentShape(Rectangle())
             }
             .disabled(index.isBusy)
             .buddyHelp(index.isBusy ? "Local text search is already running" : "Recognize text in saved images and documents again")
@@ -418,7 +439,7 @@ struct SettingsScreen: View {
     }
 
     private var quickAccessSection: some View {
-        VStack(alignment: .leading, spacing: 9) {
+        VStack(alignment: .leading, spacing: 8) {
             Text("Quick access").font(.system(size: 16, weight: .semibold, design: .rounded))
             Toggle("Global shortcuts", isOn: Binding(
                 get: { state.quickAccessSettings.isEnabled },
@@ -468,7 +489,9 @@ struct SettingsScreen: View {
             Text("Click a shortcut and press your new keys. Esc cancels. Full screen expands or restores the window. Recording uses your selected capture sources.")
                 .font(.system(size: 12)).foregroundStyle(Palette.muted)
                 .fixedSize(horizontal: false, vertical: true)
-            Button("Reset these shortcuts") { state.quickAccessSettings.resetActionShortcuts() }
+            Button { state.quickAccessSettings.resetActionShortcuts() } label: {
+                Text("Reset these shortcuts").frame(minHeight: 32).contentShape(Rectangle())
+            }
                 .font(.system(size: 12)).buttonStyle(.plain).foregroundStyle(accent)
                 .accessibilityIdentifier("settings-shortcut-reset-actions")
             if let error = state.quickAccessSettings.shortcutEditError {
@@ -510,7 +533,7 @@ private struct SettingsTutorialSection: View {
 
     var body: some View {
         Button(action: runTutorial) {
-            HStack(spacing: 11) {
+            HStack(spacing: 8) {
                 Image(systemName: "sparkles")
                     .font(.system(size: 17, weight: .semibold))
                     .foregroundStyle(accent)
@@ -596,6 +619,7 @@ struct SettingsSoftwareUpdateSection: View {
                 if let release = updates.releasePageURL {
                     Link(destination: release) {
                         Label("Latest release on GitHub", systemImage: "arrow.up.right.square")
+                            .frame(minHeight: 32).contentShape(Rectangle())
                     }
                     .font(.system(size: 12, weight: .medium))
                     .foregroundStyle(accent)
@@ -619,8 +643,11 @@ struct SettingsSoftwareUpdateSection: View {
 
     @ViewBuilder
     private var updateButtons: some View {
-        Button(updates.phase == .checking ? "Checking…" : "Check for updates") {
+        Button {
             updates.checkForUpdates()
+        } label: {
+            Text(updates.phase == .checking ? "Checking…" : "Check for updates")
+                .frame(minHeight: 32).contentShape(Rectangle())
         }
         .buttonStyle(.bordered)
         .controlSize(.small)
@@ -630,7 +657,9 @@ struct SettingsSoftwareUpdateSection: View {
         .buddyHelp("Check GitHub for a newer DaBin release")
 
         if updates.canInstall {
-            Button("Download & install") { updates.downloadAndInstall() }
+            Button { updates.downloadAndInstall() } label: {
+                Text("Download & install").frame(minHeight: 32).contentShape(Rectangle())
+            }
                 .buttonStyle(.borderedProminent)
                 .controlSize(.small)
                 .accessibilityLabel(Self.installAccessibilityLabel)
@@ -672,6 +701,7 @@ struct SettingsQuitSection: View {
                 .fixedSize(horizontal: false, vertical: true)
             Button(role: .destructive, action: quitApplication) {
                 Label(Self.buttonTitle, systemImage: "power")
+                    .frame(minHeight: 32).contentShape(Rectangle())
             }
             .buttonStyle(.bordered)
             .controlSize(.small)

@@ -1,0 +1,242 @@
+[
+  {
+    "original": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-accepted-20261005T111911Z/zoom/compact-text-380-100-dark.png",
+    "copy": "cards/zoom/compact-text-380-100-dark.png",
+    "sha256": "cde15fa82208e100338c99f555e0ecbdbeddcb221f91560403049868ad70a174",
+    "sourceFingerprint": "3f5ec8d396f1e7ff80ef0acb9df9d3a2ab6cfee88471c71be47c700b94df0848",
+    "provenance": "Native render/report from final-card-run; exact frozen production inputs"
+  },
+  {
+    "original": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-accepted-20261005T111911Z/zoom/compact-text-380-100-light.png",
+    "copy": "cards/zoom/compact-text-380-100-light.png",
+    "sha256": "87d3d5a824ac3767f97ba1fd7f811c445c1c477a4d6180d81cb1d6420f949054",
+    "sourceFingerprint": "3f5ec8d396f1e7ff80ef0acb9df9d3a2ab6cfee88471c71be47c700b94df0848",
+    "provenance": "Native render/report from final-card-run; exact frozen production inputs"
+  },
+  {
+    "original": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-accepted-20261005T111911Z/zoom/compact-pdf-260-200-light.png",
+    "copy": "cards/zoom/compact-pdf-260-200-light.png",
+    "sha256": "07f8ba849ffd22040a48ff6e0cd1b6aee2c63a3e9b1cc49c793948c12a1744d9",
+    "sourceFingerprint": "3f5ec8d396f1e7ff80ef0acb9df9d3a2ab6cfee88471c71be47c700b94df0848",
+    "provenance": "Native render/report from final-card-run; exact frozen production inputs"
+  },
+  {
+    "original": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-accepted-20261005T111911Z/zoom/compact-card-geometry.json",
+    "copy": "cards/zoom/compact-card-geometry.json",
+    "sha256": "ff5b2849ff0073244b07acb985c03d425155be1aaf0d098296875c608db917d1",
+    "sourceFingerprint": "3f5ec8d396f1e7ff80ef0acb9df9d3a2ab6cfee88471c71be47c700b94df0848",
+    "provenance": "Native render/report from final-card-run; exact frozen production inputs"
+  },
+  {
+    "original": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-verified-20261005T104616Z/project-cards/project-types-grid-dark@2x.png",
+    "copy": "cards/project-cards/project-types-grid-dark@2x.png",
+    "sha256": "2367583e8894a41e40971ed7abac550a0332474238df680748fdc23f42f44dbe",
+    "provenance": "Native render/report from broad-run source267; final affected Today/render profiles will replace superseded copies where applicable"
+  },
+  {
+    "original": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-verified-20261005T104616Z/project-cards/project-responsive-260-zoom200-grid@2x.png",
+    "copy": "cards/project-cards/project-responsive-260-zoom200-grid@2x.png",
+    "sha256": "726795ee073c84159b36ccc2e833cae4242ef5ad339d54894cd74ff07c4f07d9",
+    "provenance": "Native render/report from broad-run source267; final affected Today/render profiles will replace superseded copies where applicable"
+  },
+  {
+    "original": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-verified-20261005T104616Z/project-cards/project-responsive-260-zoom200-grid-geometry.json",
+    "copy": "cards/project-cards/project-responsive-260-zoom200-grid-geometry.json",
+    "sha256": "f60f05d7cc9f4d15b6890e975895893987a8f9153455b8e0f2e08c7b3261fbf4",
+    "provenance": "Native render/report from broad-run source267; final affected Today/render profiles will replace superseded copies where applicable"
+  },
+  {
+    "original": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-verified-20261005T104616Z/project-cards/project-responsive-320-zoom200-compact@2x.png",
+    "copy": "cards/project-cards/project-responsive-320-zoom200-compact@2x.png",
+    "sha256": "495c77495ecfb0f421196c3500ebfaba19abf824eb5b8a53caf42a7ee6743abd",
+    "provenance": "Native render/report from broad-run source267; final affected Today/render profiles will replace superseded copies where applicable"
+  },
+  {
+    "original": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-verified-20261005T104616Z/project-cards/project-responsive-320-zoom200-compact-geometry.json",
+    "copy": "cards/project-cards/project-responsive-320-zoom200-compact-geometry.json",
+    "sha256": "f338bccd3209dee29de97e74427656fc515545bd6da2e515a7a7aa717ca3ebb9",
+    "provenance": "Native render/report from broad-run source267; final affected Today/render profiles will replace superseded copies where applicable"
+  },
+  {
+    "original": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-verified-20261005T104616Z/explorer/pinned-high-priority-260-zoom200-dark@2x.png",
+    "copy": "cards/explorer/pinned-high-priority-260-zoom200-dark@2x.png",
+    "sha256": "44e33fd3b4311d2fa918a600b1b218acd1039bbe01360280b5a425a80b83f327",
+    "provenance": "Native render/report from broad-run source267; final affected Today/render profiles will replace superseded copies where applicable"
+  },
+  {
+    "original": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-verified-20261005T104616Z/explorer/pinned-high-priority-320-zoom200-light@2x.png",
+    "copy": "cards/explorer/pinned-high-priority-320-zoom200-light@2x.png",
+    "sha256": "0a37b432c7d201e7f1cbe8493ae7660e16dfd81d12fb9f8b6b500dfe223fdca0",
+    "provenance": "Native render/report from broad-run source267; final affected Today/render profiles will replace superseded copies where applicable"
+  },
+  {
+    "original": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-verified-20261005T104616Z/explorer/explorer-capture-card-report.json",
+    "copy": "cards/explorer/explorer-capture-card-report.json",
+    "sha256": "3767383f2216778c03b16558ede39c719aebae1f341c463594260c1fbc64a35b",
+    "provenance": "Native render/report from broad-run source267; final affected Today/render profiles will replace superseded copies where applicable"
+  },
+  {
+    "original": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-verified-20261005T104616Z/timestamps/batch-260-200.png",
+    "copy": "cards/timestamps/batch-260-200.png",
+    "sha256": "ff66804e0adf2c8a5ee29b6f2145b124a8c4d12d26c928e7f4b98ce480189209",
+    "provenance": "Native render/report from broad-run source267; final affected Today/render profiles will replace superseded copies where applicable"
+  },
+  {
+    "original": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-verified-20261005T104616Z/timestamps/hour-260-200.png",
+    "copy": "cards/timestamps/hour-260-200.png",
+    "sha256": "e35b46a0c3e692fc779f80c95daf9e350147a7dbbcb9143c2997911b727a3ba1",
+    "provenance": "Native render/report from broad-run source267; final affected Today/render profiles will replace superseded copies where applicable"
+  },
+  {
+    "original": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-verified-20261005T104616Z/timestamps/search-capture-260-200.png",
+    "copy": "cards/timestamps/search-capture-260-200.png",
+    "sha256": "49241989a077dea887ff1f5b71d47232b64e2f3d12552e865a8e72c3a61d4b12",
+    "provenance": "Native render/report from broad-run source267; final affected Today/render profiles will replace superseded copies where applicable"
+  },
+  {
+    "original": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-verified-20261005T104616Z/timestamps/search-note-260-200.png",
+    "copy": "cards/timestamps/search-note-260-200.png",
+    "sha256": "3f568c3ab1e521197b03ca62fdd169ce9660179b6bb06559715c9614bf09b99b",
+    "provenance": "Native render/report from broad-run source267; final affected Today/render profiles will replace superseded copies where applicable"
+  },
+  {
+    "original": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-accepted-20261005T111911Z/task-plan/plan-380-default@2x.png",
+    "copy": "cards/task-plan/plan-380-default@2x.png",
+    "sha256": "c3a8dee0a1cf3af15c3bcf6e76ffdb9b1a5d9c5641269d93cb50a9155a8a620f",
+    "sourceFingerprint": "3f5ec8d396f1e7ff80ef0acb9df9d3a2ab6cfee88471c71be47c700b94df0848",
+    "provenance": "Native render/report from final-card-run; exact frozen production inputs"
+  },
+  {
+    "original": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-accepted-20261005T111911Z/task-plan/native-task-plan-report.json",
+    "copy": "cards/task-plan/native-task-plan-report.json",
+    "sha256": "fc5d3af3c38e068390486170b15b1ff23856416fc353ce4bd7f70d4940cea6f5",
+    "sourceFingerprint": "3f5ec8d396f1e7ff80ef0acb9df9d3a2ab6cfee88471c71be47c700b94df0848",
+    "provenance": "Native render/report from final-card-run; exact frozen production inputs"
+  },
+  {
+    "original": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-accepted-20261005T111911Z/graphics/visual-animation-stress-report.json",
+    "copy": "cards/graphics/visual-animation-stress-report.json",
+    "sha256": "d735a8a6f0dfb3e8c45d99bb2c74bd6d53c25713641bcc64cadcf2f59a887ba7",
+    "sourceFingerprint": "3f5ec8d396f1e7ff80ef0acb9df9d3a2ab6cfee88471c71be47c700b94df0848",
+    "provenance": "Native render/report from final-card-run; exact frozen production inputs"
+  },
+  {
+    "original": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/collection-card-presentation/F3FCA1F0-F141-4A06-9AFF-3E9B1C8ED13E/media-explicit72-mixed4-200-light-zoom100@2x.png",
+    "copy": "cards/collection/media-explicit72-mixed4-200-light-zoom100@2x.png",
+    "sha256": "dcc846dfbb2407ce8ce0ac080427f5f97acfa95adbaad641d150e14680c29c0c",
+    "sourceFingerprint": "3f5ec8d396f1e7ff80ef0acb9df9d3a2ab6cfee88471c71be47c700b94df0848",
+    "provenance": "Native render/report from final-card-run; exact frozen production inputs"
+  },
+  {
+    "original": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/collection-card-presentation/F3FCA1F0-F141-4A06-9AFF-3E9B1C8ED13E/media-explicit72-mixed4-200-light-zoom200@2x.png",
+    "copy": "cards/collection/media-explicit72-mixed4-200-light-zoom200@2x.png",
+    "sha256": "bad0ce347b4b7b4d0abe83f38afcddebe5d7b317a4d71257a6b77b67ed9ddc9a",
+    "sourceFingerprint": "3f5ec8d396f1e7ff80ef0acb9df9d3a2ab6cfee88471c71be47c700b94df0848",
+    "provenance": "Native render/report from final-card-run; exact frozen production inputs"
+  },
+  {
+    "original": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/collection-card-presentation/F3FCA1F0-F141-4A06-9AFF-3E9B1C8ED13E/media-explicit72-mixed4-zoom100-diagnostic.json",
+    "copy": "cards/collection/media-explicit72-mixed4-zoom100-diagnostic.json",
+    "sha256": "58cf7c2e7ae55a4e69f4dc1007bf14c932609525354b24d7e24e1dfceb98a7ee",
+    "sourceFingerprint": "3f5ec8d396f1e7ff80ef0acb9df9d3a2ab6cfee88471c71be47c700b94df0848",
+    "provenance": "Native render/report from final-card-run; exact frozen production inputs"
+  },
+  {
+    "original": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/collection-card-presentation/F3FCA1F0-F141-4A06-9AFF-3E9B1C8ED13E/media-explicit72-mixed4-zoom200-diagnostic.json",
+    "copy": "cards/collection/media-explicit72-mixed4-zoom200-diagnostic.json",
+    "sha256": "a5d90970bb8e22933a7672ce1a5ea5e009ecd1fc809f842c99b96edf2bcd3c6d",
+    "sourceFingerprint": "3f5ec8d396f1e7ff80ef0acb9df9d3a2ab6cfee88471c71be47c700b94df0848",
+    "provenance": "Native render/report from final-card-run; exact frozen production inputs"
+  },
+  {
+    "original": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/collection-card-presentation/F3FCA1F0-F141-4A06-9AFF-3E9B1C8ED13E/media-explicit72-mixed5-200-light-zoom100@2x.png",
+    "copy": "cards/collection/media-explicit72-mixed5-200-light-zoom100@2x.png",
+    "sha256": "de674975a1163075f5d630fe405d64c326b396c47632fdd5ae76fd188b1f1d72",
+    "sourceFingerprint": "3f5ec8d396f1e7ff80ef0acb9df9d3a2ab6cfee88471c71be47c700b94df0848",
+    "provenance": "Native render/report from final-card-run; exact frozen production inputs"
+  },
+  {
+    "original": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/collection-card-presentation/F3FCA1F0-F141-4A06-9AFF-3E9B1C8ED13E/media-explicit72-mixed5-200-light-zoom200@2x.png",
+    "copy": "cards/collection/media-explicit72-mixed5-200-light-zoom200@2x.png",
+    "sha256": "fa8c494293d2ccdbd57fbd6dfeba0fa83009df7aac28a8db80a7b0bdf2185b96",
+    "sourceFingerprint": "3f5ec8d396f1e7ff80ef0acb9df9d3a2ab6cfee88471c71be47c700b94df0848",
+    "provenance": "Native render/report from final-card-run; exact frozen production inputs"
+  },
+  {
+    "original": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/collection-card-presentation/F3FCA1F0-F141-4A06-9AFF-3E9B1C8ED13E/media-explicit72-mixed5-zoom100-diagnostic.json",
+    "copy": "cards/collection/media-explicit72-mixed5-zoom100-diagnostic.json",
+    "sha256": "89dac6a7ecd6caab5531a6e1203dcdd95f80922d981f4e819af8ee38600ab22a",
+    "sourceFingerprint": "3f5ec8d396f1e7ff80ef0acb9df9d3a2ab6cfee88471c71be47c700b94df0848",
+    "provenance": "Native render/report from final-card-run; exact frozen production inputs"
+  },
+  {
+    "original": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/collection-card-presentation/F3FCA1F0-F141-4A06-9AFF-3E9B1C8ED13E/media-explicit72-mixed5-zoom200-diagnostic.json",
+    "copy": "cards/collection/media-explicit72-mixed5-zoom200-diagnostic.json",
+    "sha256": "f8016135666ade1587664d46a23aec8ed9b48ff2545ff43134abd8b9f6c96325",
+    "sourceFingerprint": "3f5ec8d396f1e7ff80ef0acb9df9d3a2ab6cfee88471c71be47c700b94df0848",
+    "provenance": "Native render/report from final-card-run; exact frozen production inputs"
+  },
+  {
+    "original": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/collection-card-presentation/F3FCA1F0-F141-4A06-9AFF-3E9B1C8ED13E/collection-card-presentation-report.json",
+    "copy": "cards/collection/collection-card-presentation-report.json",
+    "sha256": "3b41c711022469a235dc7795a9d454e761f11fa730c2ba3549614d4dd23f5fa9",
+    "sourceFingerprint": "3f5ec8d396f1e7ff80ef0acb9df9d3a2ab6cfee88471c71be47c700b94df0848",
+    "provenance": "Native render/report from final-card-run; exact frozen production inputs"
+  },
+  {
+    "original": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/collection-card-presentation/F3FCA1F0-F141-4A06-9AFF-3E9B1C8ED13E/fallback-batch-2-200-dark-zoom200@2x.png",
+    "copy": "cards/collection/fallback-batch-2-200-dark-zoom200@2x.png",
+    "sha256": "e53a1fd28e0ae60a9763ab08686668b842fb637effccffa2fe5aed8992af99a4",
+    "sourceFingerprint": "3f5ec8d396f1e7ff80ef0acb9df9d3a2ab6cfee88471c71be47c700b94df0848",
+    "provenance": "Native render/report from final-card-run; exact frozen production inputs"
+  },
+  {
+    "original": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/collection-card-presentation/F3FCA1F0-F141-4A06-9AFF-3E9B1C8ED13E/fallback-batch-3-200-light-zoom200@2x.png",
+    "copy": "cards/collection/fallback-batch-3-200-light-zoom200@2x.png",
+    "sha256": "9790ea7a0b5e8d5ba5fbffad51f07509437820ebfbfc1c6d79c8f9d0f3dcb57b",
+    "sourceFingerprint": "3f5ec8d396f1e7ff80ef0acb9df9d3a2ab6cfee88471c71be47c700b94df0848",
+    "provenance": "Native render/report from final-card-run; exact frozen production inputs"
+  },
+  {
+    "original": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/collection-card-presentation/F3FCA1F0-F141-4A06-9AFF-3E9B1C8ED13E/fallback-batch-5-260-dark-zoom200@2x.png",
+    "copy": "cards/collection/fallback-batch-5-260-dark-zoom200@2x.png",
+    "sha256": "fc913c5a0fad7ffba66643e303ca0db12fc65586df109b13c4846540d563f53d",
+    "sourceFingerprint": "3f5ec8d396f1e7ff80ef0acb9df9d3a2ab6cfee88471c71be47c700b94df0848",
+    "provenance": "Native render/report from final-card-run; exact frozen production inputs"
+  },
+  {
+    "original": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-last-20261005T112805Z/today/task-card-preview-380-dark.png",
+    "copy": "cards/today/task-card-preview-380-dark.png",
+    "sha256": "c9f0a6d25806e191f7f87c587da08e8e442bcc96b87125e76fd449e4be1507ce",
+    "sourceFingerprint": "3f5ec8d396f1e7ff80ef0acb9df9d3a2ab6cfee88471c71be47c700b94df0848",
+    "provenance": "Native final-source Today render/report; exact semantic/native geometry checks passed"
+  },
+  {
+    "original": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-last-20261005T112805Z/today/task-card-preview-380-light.png",
+    "copy": "cards/today/task-card-preview-380-light.png",
+    "sha256": "9a22a59d1c211c08261945765df24d7a24e384afbf63fcf5ed1b94724f277ed3",
+    "sourceFingerprint": "3f5ec8d396f1e7ff80ef0acb9df9d3a2ab6cfee88471c71be47c700b94df0848",
+    "provenance": "Native final-source Today render/report; exact semantic/native geometry checks passed"
+  },
+  {
+    "original": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-last-20261005T112805Z/today/today-card-320-zoom200-dark@2x.png",
+    "copy": "cards/today/today-card-320-zoom200-dark@2x.png",
+    "sha256": "4abd1ecc3f2b1328c87f130fa3d73e87fa00574bee9b4e94dbe2b60cd55c6739",
+    "sourceFingerprint": "3f5ec8d396f1e7ff80ef0acb9df9d3a2ab6cfee88471c71be47c700b94df0848",
+    "provenance": "Native final-source Today render/report; exact semantic/native geometry checks passed"
+  },
+  {
+    "original": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-last-20261005T112805Z/today/today-card-760-zoom75-light@2x.png",
+    "copy": "cards/today/today-card-760-zoom75-light@2x.png",
+    "sha256": "0016bbc635270e2b667e751ef87f918459b5cf5dea99f1c2ea2b5e2c763f722a",
+    "sourceFingerprint": "3f5ec8d396f1e7ff80ef0acb9df9d3a2ab6cfee88471c71be47c700b94df0848",
+    "provenance": "Native final-source Today render/report; exact semantic/native geometry checks passed"
+  },
+  {
+    "original": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-last-20261005T112805Z/today/today-card-geometry.json",
+    "copy": "cards/today/today-card-geometry.json",
+    "sha256": "ac230f2e8abb5b286b04cd009019da9baf842a0a913a00dc91f47893973e5023",
+    "sourceFingerprint": "3f5ec8d396f1e7ff80ef0acb9df9d3a2ab6cfee88471c71be47c700b94df0848",
+    "provenance": "Native final-source Today render/report; exact semantic/native geometry checks passed"
+  }
+]

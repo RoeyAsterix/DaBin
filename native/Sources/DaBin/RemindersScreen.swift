@@ -11,8 +11,10 @@ struct RemindersScreen: View {
             HStack {
                 Text("Follow-ups").font(.system(size: 16, weight: .semibold)).accessibilityAddTraits(.isHeader)
                 Spacer(minLength: 0)
-                Button("New task") { state.openNewTask() }.font(.system(size: 12))
-            }.padding(.horizontal, 16).padding(.vertical, 12)
+                Button { state.openNewTask() } label: {
+                    Text("New task").frame(minHeight: 32).contentShape(Rectangle())
+                }.font(.system(size: 12))
+            }.padding(.horizontal, 12).padding(.vertical, 8)
             if items.isEmpty {
                 EmptyMessage(symbol: "checkmark.circle", title: "All caught up", message: "Turn a capture into a task or add a reminder. Its original stays in your archive.")
             } else {
@@ -21,7 +23,7 @@ struct RemindersScreen: View {
                         followUpSection("Due now", items: items.filter { ($0.reminderAt ?? .distantFuture) <= Date() })
                         followUpSection("Later", items: items.filter { ($0.reminderAt ?? .distantPast) > Date() })
                         followUpSection("Anytime", items: items.filter { $0.reminderAt == nil })
-                    }.padding(.horizontal, 16).padding(.bottom, 12)
+                    }.padding(.horizontal, 12).padding(.bottom, 12)
                 }
             }
         }
@@ -34,13 +36,19 @@ struct RemindersScreen: View {
             ForEach(items) { capture in
                 VStack(alignment: .leading, spacing: 0) {
                     CaptureRow(state: state, capture: capture, featured: false, embeddedInCard: true)
-                    HStack(spacing: 16) {
-                        Button { state.completeFollowUp(capture) } label: { Label("Complete", systemImage: "checkmark.circle") }
-                        Button { state.snoozeFollowUp(capture) } label: { Label("Snooze", systemImage: "clock.arrow.circlepath") }
+                    BuddyActionFlow(spacing: 8) {
+                        Button { state.completeFollowUp(capture) } label: {
+                            Label("Complete", systemImage: "checkmark.circle")
+                                .frame(minHeight: 32).contentShape(Rectangle())
+                        }
+                        Button { state.snoozeFollowUp(capture) } label: {
+                            Label("Snooze", systemImage: "clock.arrow.circlepath")
+                                .frame(minHeight: 32).contentShape(Rectangle())
+                        }
                             .buddyHelp("Remind me tomorrow")
-                        Spacer(minLength: 0)
-                    }.buttonStyle(.plain).font(.system(size: 12)).foregroundStyle(accent).padding(.bottom, 10)
-                }.padding(.horizontal, 11)
+                    }.buttonStyle(.plain).font(.system(size: 12)).foregroundStyle(accent)
+                        .padding(.horizontal, 4)
+                }.padding(8)
                     .projectCardBackground(workspace: state.workspace,
                                            projectName: ExplorerQuery.project(of: capture, in: state.store.captures),
                                            cornerRadius: 12)

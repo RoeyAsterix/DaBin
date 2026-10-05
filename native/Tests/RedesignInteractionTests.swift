@@ -261,7 +261,7 @@ import SwiftUI
         let original = (id: capture.id, originalText: capture.originalText, captureDay: capture.captureDay)
         state.openInbox(); state.isBoardVisible = true
         let route = state.route
-        let hosting = await install(AnyView(ScrollView {
+        var hosting = await install(AnyView(ScrollView {
             CaptureRow(state: state, capture: capture, featured: false).padding(12)
         }.background(Palette.background)), in: window)
         try checkNoManualPasteAddition(context: "The ordinary capture card")
@@ -273,24 +273,77 @@ import SwiftUI
         try expect(window.contentLayoutRect.width == 380 && window.contentLayoutRect.height == 430,
             "In-place conversion leaves window geometry unchanged")
         _ = try await find(id: "capture-conversion-undo-\(capture.id.uuidString)")
+        let conversionUndo = try await find(id: "capture-conversion-undo-action-\(capture.id.uuidString)")
+        try expect(conversionUndo.interactionFrame.width >= 31.5 && conversionUndo.interactionFrame.height >= 31.5,
+                   "Conversion Undo has a 32-point native pointer target")
+        try await press(id: "capture-conversion-undo-action-\(capture.id.uuidString)")
+        try expect(!capture.isTask && capture.originalText == original.originalText && capture.captureDay == original.captureDay
+            && state.route == route, "The visible Undo restores the original note in place without losing its receipt")
+        try await press(id: "capture-convert-to-task-\(capture.id.uuidString)")
+        try expect(capture.isTask && capture.id == original.id, "Reconversion keeps the same capture identity")
         try expect(state.configureTaskFocus(capture, hours: 1, minutes: 30, start: false), "Saved duration fixture commits")
         try await press(id: "task-focus-duration-\(capture.id.uuidString)")
-        let initialHours = try await find(label: "Hours").object as? NSTextField
-        let initialMinutes = try await find(label: "Minutes").object as? NSTextField
-        try expect(initialHours?.stringValue == "1" && initialMinutes?.stringValue == "30",
+        guard let initialHours = try await find(label: "Hours").object as? NSTextField,
+              let initialMinutes = try await find(label: "Minutes").object as? NSTextField else {
+            throw missing("Native duration fields")
+        }
+        try expect(initialHours.stringValue == "1" && initialMinutes.stringValue == "30",
             "First duration opening shows the persisted hours and minutes")
         try await type("0", label: "Hours")
         try await type("2", label: "Minutes")
+        for width: CGFloat in [760, 260, 380] {
+            window.setContentSize(NSSize(width: width, height: 430)); await settle()
+            let hours = try await find(label: "Hours")
+            let minutes = try await find(label: "Minutes")
+            guard let hoursField = hours.object as? NSTextField, let minutesField = minutes.object as? NSTextField,
+                  let popover = hoursField.window, popover.isVisible, let content = popover.contentView else {
+                throw missing("Visible native duration editor after resize")
+            }
+            try expect(hoursField.stringValue == "0" && minutesField.stringValue == "2",
+                "Unsaved duration text survives the \(Int(width))-point layout breakpoint")
+            try expect(capture.taskPlanning?.effortMinutes == 90
+                && capture.taskPlanning?.focusSession?.isRunning != true,
+                "Resizing an open duration editor never commits or starts its pending values")
+            for name in ["Save", "Start"] {
+                let control = try await find(label: name)
+                try expect(control.isEnabled && control.interactionFrame.width > 0
+                    && control.interactionFrame.height > 0
+                    && popover.frame.insetBy(dx: -1, dy: -1).contains(control.interactionFrame),
+                    "The actionable native duration \(name) control survives resize")
+            }
+            try snapshot(content, at: evidence.appendingPathComponent("duration-draft-resize-\(Int(width)).png"))
+        }
         try await press(label: "Save")
         try expect(capture.taskPlanning?.effortMinutes == 2 && capture.taskPlanning?.focusSession?.isRunning != true,
             "Duration setup saves without starting a timer")
         try await press(id: "task-focus-play-\(capture.id.uuidString)")
         try expect(capture.taskPlanning?.focusSession?.isRunning == true, "Task play starts the persisted focus session")
+        state.toggleMinimized(capture); await settle()
+        let minimizedPause = try await find(id: "task-focus-play-\(capture.id.uuidString)")
+        try expect(capture.isMinimized && minimizedPause.label == "Pause focus session"
+            && minimizedPause.isEnabled && minimizedPause.interactionFrame.width >= 31.5
+            && minimizedPause.interactionFrame.height >= 31.5
+            && window.frame.insetBy(dx: -1, dy: -1).contains(minimizedPause.interactionFrame),
+            "A minimized running capture retains its visible labeled 32-point Pause action")
+        try snapshot(hosting, at: evidence.appendingPathComponent("task-running-minimized-380.png"))
         try await press(id: "task-focus-play-\(capture.id.uuidString)")
+        let pausedSeconds = capture.taskPlanning?.focusSession?.remainingSeconds ?? 0
         try expect(capture.taskPlanning?.focusSession?.isRunning == false
-            && (capture.taskPlanning?.focusSession?.remainingSeconds ?? 0) > 0,
-            "Task pause stores remaining time without completing the task")
+            && pausedSeconds > 0 && pausedSeconds < 120,
+            "Minimized task Pause stores elapsed remaining time without completing the task")
+        let pausedStore = try CaptureStore(root: state.store.root)
+        let persistedPaused = pausedStore.captures.first { $0.id == capture.id }
+        try expect(persistedPaused?.isMinimized == true && persistedPaused?.isCompleted == false
+            && persistedPaused?.taskPlanning?.effortMinutes == 2
+            && persistedPaused?.taskPlanning?.focusSession?.isRunning == false
+            && persistedPaused?.taskPlanning?.focusSession?.remainingSeconds == pausedSeconds,
+            "Restart restores the exact paused remaining time and saved minimization")
+        state.toggleMinimized(capture); await settle()
         try expect(!capture.isCompleted && capture.reminderAt == nil, "Focus controls do not complete work or create a reminder")
+        try await checkNarrowTask(state: state, capture: capture, window: window, evidence: evidence)
+        hosting = await install(AnyView(ScrollView {
+            CaptureRow(state: state, capture: capture, featured: false).padding(12)
+        }.background(Palette.background)), in: window)
         let workday = CaptureCalendar.dayString(Date().addingTimeInterval(2 * 86_400))
         try expect(state.scheduleTask(capture, day: workday, time: "09:30"), "Saved schedule fixture commits")
         try await press(id: "task-focus-schedule-\(capture.id.uuidString)")
@@ -392,6 +445,47 @@ import SwiftUI
             && restored?.pasteHistory == remainingHistory && restored?.deletedAt == nil
             && !state.store.trashedCaptures.contains { $0.id == capture.id },
             "Undo restores the removed task with its original content and remaining confirmed provenance")
+    }
+
+    @MainActor private static func checkNarrowTask(state: AppState, capture: Capture,
+                                                 window: NSWindow, evidence: URL) async throws {
+        let previousPlanning = capture.taskPlanning ?? TaskPlanning()
+        let previousPinned = capture.isPinned
+        var highPriority = previousPlanning; highPriority.priority = .high
+        try state.store.setTaskPlanning(capture, planning: highPriority)
+        try state.store.setOrganization(capture, pinned: true, projectName: capture.projectName)
+        for width: CGFloat in [260, 320] {
+            window.setContentSize(NSSize(width: width, height: 640))
+            let hosting = await install(AnyView(ScrollView {
+                CaptureRow(state: state, capture: capture, featured: false).padding(12)
+            }.environment(\.workspaceZoom, WorkspaceZoomLayout(factor: 2))
+                .background(Palette.background)), in: window)
+            let card = try await find(id: "capture-card-\(capture.id.uuidString)")
+            try expect(card.interactionFrame.width > 0 && card.interactionFrame.height > 0
+                && window.frame.insetBy(dx: -1, dy: -1).contains(card.interactionFrame),
+                "Pinned high-priority task fits its \(Int(width))-point native card at 200%")
+            for prefix in ["capture-open-", "capture-copy-", "capture-trash-", "capture-more-",
+                           "capture-project-picker-", "capture-task-status-", "task-focus-duration-", "task-focus-play-"] {
+                let control = try await find(id: prefix + capture.id.uuidString)
+                try expect(control.interactionFrame.width >= 31.5 && control.interactionFrame.height >= 31.5
+                    && card.interactionFrame.insetBy(dx: -1, dy: -1).contains(control.interactionFrame),
+                    "The \(prefix) action remains 32 points and inside the narrow enlarged task")
+            }
+            let title = try await find(id: "capture-open-\(capture.id.uuidString)")
+            try expect(title.interactionFrame.width >= 120,
+                "Narrow enlarged task keeps at least 120 points for its readable title")
+            let priority = try await find(id: "task-priority-tag-\(capture.id.uuidString)")
+            try expect(priority.interactionFrame.width > 0 && priority.interactionFrame.height > 0
+                && card.interactionFrame.insetBy(dx: -1, dy: -1).contains(priority.interactionFrame),
+                "High priority keeps a visible native label alongside project assignment")
+            try expect(capture.isPinned && capture.taskPlanning?.priority == .high
+                && capture.taskPlanning?.focusSession == previousPlanning.focusSession,
+                "Narrow reflow preserves pin, priority and the exact paused focus session")
+            try snapshot(hosting, at: evidence.appendingPathComponent("task-pinned-high-\(Int(width))-200.png"))
+        }
+        try state.store.setTaskPlanning(capture, planning: previousPlanning)
+        try state.store.setOrganization(capture, pinned: previousPinned, projectName: capture.projectName)
+        window.setContentSize(NSSize(width: 380, height: 430)); await settle()
     }
 
     @MainActor static func main() async throws {

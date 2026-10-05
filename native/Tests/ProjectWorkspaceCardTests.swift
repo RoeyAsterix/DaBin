@@ -55,6 +55,7 @@ import SwiftUI
     let items: [ProjectWorkspaceItem]
     let compact: Bool
     let actions: ProjectCardActions
+    var cardWidth: CGFloat = 320
 
     var body: some View {
         let columns = compact ? 1 : min(3, items.count)
@@ -66,7 +67,7 @@ import SwiftUI
                         let index = row * columns + column
                         if index < items.count {
                             ProjectCardFixture(state: state, item: items[index], compact: compact, actions: actions)
-                                .frame(width: compact ? 296 : 320)
+                                .frame(width: cardWidth)
                         }
                     }
                 }
@@ -233,15 +234,17 @@ import SwiftUI
     }
 
     private static func withFixture(state: AppState, items: [ProjectWorkspaceItem], compact: Bool,
-                                    dark: Bool, actions: ProjectCardActions,
+                                    dark: Bool, actions: ProjectCardActions, width: CGFloat? = nil, factor: CGFloat = 1,
                                     operation: (NSView) async throws -> Void) async throws {
         let columns = compact ? 1 : min(3, items.count)
         let rows = (items.count + columns - 1) / columns
-        let size = CGSize(width: compact ? 320 : CGFloat(columns * 320 + (columns - 1) * 12 + 24),
-                          height: CGFloat(rows * (compact ? 96 : 284) + (rows - 1) * 12 + 24))
-        let root = ProjectCardComparison(state: state, items: items, compact: compact, actions: actions)
+        let cardWidth = width ?? (compact ? 296 : 320)
+        let size = CGSize(width: CGFloat(columns) * cardWidth + CGFloat(columns - 1) * 12 + 24,
+                          height: CGFloat(rows * (compact ? 190 : 340) + (rows - 1) * 12 + 24))
+        let root = ProjectCardComparison(state: state, items: items, compact: compact, actions: actions, cardWidth: cardWidth)
             .frame(width: size.width, height: size.height, alignment: .topLeading)
             .environment(\.daBinTooltipsEnabled, false).environment(\.displayScale, 2)
+            .environment(\.workspaceZoom, WorkspaceZoomLayout(factor: factor))
             .preferredColorScheme(dark ? .dark : .light)
             .transaction { $0.animation = nil; $0.disablesAnimations = true }
         let hosting = NSHostingView(rootView: root)
@@ -283,18 +286,29 @@ import SwiftUI
             let select = try await find("project-select-" + item.id, in: view)
             try expect(!badge.frame.intersects(select.frame), "Role badge does not overlap the independent selection target")
             let preview = try await find("project-preview-" + item.id, in: view)
+            let details = try await find("project-details-" + item.id, in: view)
+            let more = try await find("project-more-" + item.id, in: view)
+            let receipt = try await find("project-receipt-" + item.id, in: view)
+            for control in [select, details, more, preview] {
+                try expect(control.frame.width >= 31.5 && control.frame.height >= 31.5 && bounds.contains(control.frame),
+                           "Compact title, selection, preview and native More retain 32-point targets")
+            }
+            for control in [select, more, preview] {
+                try expect(!details.frame.intersects(control.frame), "Details remains independent from selection, preview and More")
+            }
+            try expect(details.frame.maxY > receipt.frame.maxY && bounds.contains(receipt.frame),
+                       "Title leads the full original receipt without truncating its date")
+            if let capture = item.capture {
+                let expected = captureReceiptText(capture) + " · " + (capture.kind == .text ? "Text" : captureTypeLabel(capture.kind))
+                try expect(receipt.label == expected || receipt.valueText == expected,
+                           "Compact metadata exposes the complete saved date/time and category: expected=\(expected), label=\(receipt.label), value=\(receipt.valueText)")
+            }
             if compact {
-                try expect((70...110).contains(preview.frame.height), "Compact cards retain a usable preview target")
-                if let capture = item.capture, capture.isTask {
-                    let textTask = [CaptureKind.text, .task].contains(capture.kind)
-                    try expect(abs(preview.frame.width - (textTask ? 36 : 64)) < 2,
-                               "Compact text tasks reserve only a 36-point icon; saved media retains its 64-point preview")
-                }
-            } else if item.capture?.isTask == true {
-                try expect(preview.frame.height > 12 && preview.frame.height < 220,
-                           "Task content sizes to its text, checklist, or media rather than a 214-point empty tile")
+                try expect(preview.frame.height <= 65 && preview.frame.height >= 32,
+                           "Compact cards have a useful 32–64-point open target without a fixed 80-point slot")
             } else {
-                try expect(preview.frame.height >= 200, "Non-task notes and captures retain their large preview geometry")
+                try expect(preview.frame.height < 193,
+                           "Text sizes to its content; actual media stays below the 192-point preview cap")
             }
             if item.capture?.isTask == true {
                 try expect(preview.label.hasSuffix(", completed") == (item.capture?.isCompleted == true),
@@ -316,7 +330,7 @@ import SwiftUI
                         try expect(project.frame.width >= 60,
                                    "Compact project name retains readable room beside even the longer Medium priority label: \(frames)")
                         try expect(project.frame.width + priority.frame.width >= details.frame.width - 18,
-                                   "Compact project and priority use the available title width instead of reserving dead space: \(frames)")
+                                   "Project and priority use the available row width instead of reserving preview-sized dead space: \(frames)")
                     }
                 }
             } else {
@@ -390,8 +404,10 @@ import SwiftUI
         let originalBytes = try Data(contentsOf: originalURL)
         let imageItem = ProjectWorkspaceItem.capture(imageTask)
         let actions = ProjectCardActions()
-        let output = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
-            .appendingPathComponent("build/qa/project-workspace-card/\(UUID().uuidString)", isDirectory: true)
+        let output = ProcessInfo.processInfo.environment["DABIN_PROJECT_WORKSPACE_CARD_QA_OUTPUT"]
+            .map { URL(fileURLWithPath: $0, isDirectory: true) }
+            ?? URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
+                .appendingPathComponent("build/qa/project-workspace-card/\(UUID().uuidString)", isDirectory: true)
         try FileManager.default.createDirectory(at: output, withIntermediateDirectories: true)
 
         try await withFixture(state: state, items: [imageItem], compact: false, dark: false, actions: actions) { view in
@@ -451,10 +467,10 @@ import SwiftUI
                 let short = try await find("project-task-content-" + denseTasks[0].id, in: view)
                 let checklist = try await find("project-task-content-" + denseTasks[1].id, in: view)
                 let long = try await find("project-task-content-" + denseTasks[2].id, in: view)
-                try expect(short.frame.height < 175 && short.frame.height >= 120,
+                try expect(short.frame.height < 175 && short.frame.height >= 100,
                            "A short project task uses less than 175 points while preserving independent controls")
-                try expect(checklist.frame.height > short.frame.height + 20 && long.frame.height > checklist.frame.height + 10,
-                           "Project task height grows only when checklist or long-title content needs the room")
+                try expect(checklist.frame.height > short.frame.height + 16 && long.frame.height >= checklist.frame.height,
+                           "Checklist and long-title content grow naturally without a fixed empty tile")
                 try expect(long.frame.height < 270, "Long-title task stays denser than the previous fixed 284-point tile")
                 let select = try await find("project-select-" + denseTasks[0].id, in: view)
                 let preview = try await find("project-preview-" + denseTasks[0].id, in: view)
@@ -495,6 +511,52 @@ import SwiftUI
             try expect(compactActions.opened == 1 && compactActions.detailed == 1 && compactActions.selected == 0,
                        "Compact task details remain separate from the new icon")
         }
+        let responsiveTask = try store.createTask(text: "Review the full fictional presentation and approve the final artwork for the client",
+            planning: TaskPlanning(priority: .high), projectName: "A long fictional client project name for narrow cards")
+        let responsiveItem = ProjectWorkspaceItem.capture(responsiveTask)
+        let responsivePlan = responsiveTask.taskPlanning
+        for width in [CGFloat(260), 320] {
+            for compact in [false, true] {
+                try await withFixture(state: state, items: [responsiveItem], compact: compact, dark: width == 260,
+                                      actions: ProjectCardActions(), width: width, factor: 2) { view in
+                    let fixtureName = "project-responsive-\(Int(width))-zoom200-\(compact ? "compact" : "grid")"
+                    // Keep the native evidence even if a subsequent AX/geometry
+                    // assertion fails. Content groups may expose the union of
+                    // readable children rather than decorative outer padding.
+                    try saveFixture(view, name: fixtureName, output: output)
+                    try await checkRoles([responsiveItem], in: view, compact: compact)
+                    let inner = try await find("project-task-content-" + responsiveItem.id, in: view)
+                    let outer = nodes(view).first {
+                        $0.identifier == "project-card-" + responsiveItem.id
+                            && $0.frame.width > 0 && $0.frame.height > 0
+                    }
+                    guard let window = view.window else { throw failure("Responsive card needs its own fixture window") }
+                    let viewport = window.convertToScreen(view.convert(view.bounds, to: nil))
+                    let measured = outer?.frame ?? inner.frame
+                    print("RESPONSIVE_CARD: \(fixtureName), requestedWidth=\(width), inner=\(inner.frame), outer=\(outer?.frame ?? .zero), viewport=\(viewport)")
+                    func rectValues(_ rect: NSRect) -> [Double] {
+                        [Double(rect.minX), Double(rect.minY), Double(rect.width), Double(rect.height)]
+                    }
+                    try JSONSerialization.data(withJSONObject: [
+                        "requestedWidthPoints": width, "zoomFactor": 2,
+                        "innerAXFrame": rectValues(inner.frame),
+                        "outerAXFrame": outer.map { rectValues($0.frame) } ?? [],
+                        "fixtureViewport": rectValues(viewport),
+                        "heightCapPoints": 200,
+                        "measurement": outer == nil ? "Inner accessible content union" : "Outer accessible card"
+                    ], options: [.prettyPrinted, .sortedKeys])
+                        .write(to: output.appendingPathComponent(fixtureName + "-geometry.json"), options: .atomic)
+                    try expect(inner.frame.width >= 32 && inner.frame.width <= width + 1
+                        && viewport.insetBy(dx: -1, dy: -1).contains(inner.frame),
+                               "Responsive inner AX content is positive and contained within the requested card/viewport: \(inner.frame)")
+                    try expect(measured.width >= 32 && measured.width <= width + 1
+                        && measured.height < 200 && viewport.insetBy(dx: -1, dy: -1).contains(measured),
+                               "Long project/high-priority task stays below 200 points and inside the 200% narrow viewport: \(measured)")
+                }
+            }
+        }
+        try expect(responsiveTask.taskPlanning == responsivePlan && !responsiveTask.isCompleted,
+                   "Responsive card layout does not mutate planning, priority or completion")
         try expect(try Data(contentsOf: originalURL) == originalBytes && originalBytes == png,
                    "Classification, rendering, conversion and completion preserve every original image byte")
         try expect(text.kind == .text && !text.isTask && automatic.kind == .text && !automatic.isTask,

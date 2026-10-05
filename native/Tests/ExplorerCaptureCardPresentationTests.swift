@@ -154,7 +154,7 @@ import SwiftUI
     }
 
     private static func render(state: AppState, capture: Capture, name: String, width: CGFloat, dark: Bool,
-                               colorful: Bool, output: URL) async throws -> CGFloat {
+                               colorful: Bool, output: URL, factor: CGFloat = 1) async throws -> CGFloat {
         state.workspace.selectedCaptureID = nil
         let selection = ExplorerCardSelection()
         let size = CGSize(width: width + 24, height: 1_000)
@@ -164,6 +164,7 @@ import SwiftUI
                 .accessibilityElement(children: .contain).accessibilityIdentifier("fixture-explorer-card")
         }.padding(12).frame(width: size.width, height: size.height, alignment: .topLeading)
             .background(Palette.background).environment(\.displayScale, 2)
+            .environment(\.workspaceZoom, WorkspaceZoomLayout(factor: factor))
             .environment(\.daBinTooltipsEnabled, false).preferredColorScheme(dark ? .dark : .light)
             .transaction { $0.animation = nil; $0.disablesAnimations = true }
         let hosting = NSHostingView(rootView: root)
@@ -195,10 +196,32 @@ import SwiftUI
         let trash = try await find(hosting, id: "capture-trash-\(capture.id.uuidString)")
         let project = try await find(hosting, label: capture.parentTaskID == nil ? "Project" : "Parent task project")
         let trail = try await find(hosting, id: "capture-trail-\(capture.id.uuidString)")
-        for control in [open, copy, trash, project, trail] {
+        let more = try await find(hosting, id: "explorer-more-\(capture.id.uuidString)")
+        for control in [open, copy, trash, more, project, trail] {
             try expect(control.frame.width > 0 && control.frame.height > 0 && card.frame.insetBy(dx: -1, dy: -1).contains(control.frame),
                        "Explorer selection/header/trail controls remain visible and contained")
         }
+        for control in [open, copy, trash, more] {
+            try expect(control.frame.width >= 31.5 && control.frame.height >= 31.5,
+                       "Title and primary actions retain 32-point native hit targets at every zoom")
+        }
+        for controls in [[open, copy, trash, more]] {
+            for left in controls.indices {
+                for right in controls.indices where right > left {
+                    try expect(!controls[left].frame.intersects(controls[right].frame),
+                               "Title/Copy/Trash/More are independently clickable without overlapping")
+                }
+            }
+        }
+        let titleIconBudget: CGFloat = capture.isPinned ? 16 : 0
+        try expect(open.frame.width - titleIconBudget >= 119.5,
+                   "Title keeps at least 120 readable points after pinned metadata: width=\(open.frame.width), pinned=\(capture.isPinned)")
+        let stackedHeader = copy.frame.maxY < open.frame.minY
+        if stackedHeader {
+            try expect(abs(copy.frame.midY - trash.frame.midY) < 1 && abs(copy.frame.midY - more.frame.midY) < 1,
+                       "A narrow header moves one aligned action rail below the full-width title")
+        }
+        try expect(open.frame.maxY > project.frame.maxY, "The title leads project/priority and receipt metadata")
         let expectedProject = ExplorerQuery.project(of: capture, in: state.store.captures) ?? "Unfiled"
         if let parentID = capture.parentTaskID, project.valueText.isEmpty {
             // A readonly SwiftUI group does not expose AXValue through these
@@ -222,15 +245,36 @@ import SwiftUI
                    "Footer exposes one task checkbox/conversion action, and no conversion for an attachment")
         if capture.isTask {
             _ = try await find(hosting, label: "Complete task")
-            _ = try await find(hosting, label: "Set focus duration")
+            let duration = try await find(hosting, id: "task-focus-duration-\(capture.id.uuidString)")
+            try expect(duration.frame.height >= 31.5, "Focus duration remains a readable 32-point control")
+            if capture.taskPlanning?.effortMinutes == nil {
+                try expect(duration.label == "Set focus time" && !visible.contains { $0.identifier == "task-focus-play-\(capture.id.uuidString)" },
+                           "Unknown duration offers one clear setup action without a redundant play control")
+            } else {
+                let play = try await find(hosting, id: "task-focus-play-\(capture.id.uuidString)")
+                try expect(play.frame.height >= 31.5 && !play.frame.intersects(duration.frame),
+                           "Configured focus keeps distinct duration and labeled start controls")
+            }
             if state.lastConvertedCaptureID == capture.id {
                 _ = try await find(hosting, id: "capture-conversion-undo-\(capture.id.uuidString)")
             }
         } else if capture.parentTaskID == nil { _ = try await find(hosting, label: "Turn into task") }
         let large = ExplorerCaptureCardPresentation.hasLargePreview(capture: capture, store: state.store)
-        let previewHeight = ExplorerCaptureCardPresentation.previewHeight(for: open.frame.width)
-        try expect(large ? open.frame.height >= previewHeight + 25 : open.frame.height < 115,
-                   "Visual preview dominates selection while text-only selection stays compact: \(open.frame)")
+        let previewWidth = card.frame.width - 24
+        let previewHeight = min(192, ExplorerCaptureCardPresentation.previewHeight(for: previewWidth / factor) * factor)
+        if large {
+            let preview = try await find(hosting, id: "explorer-preview-\(capture.id.uuidString)")
+            try expect(abs(preview.frame.height - previewHeight) < 1 && preview.frame.width >= previewWidth - 1,
+                       "Real media uses its bounded width-dependent preview height, without an oversized fixed hero")
+            try expect(card.frame.insetBy(dx: -1, dy: -1).contains(preview.frame) && !open.frame.intersects(preview.frame),
+                       "Media preview is contained and independent from the title/action header")
+        } else {
+            try expect(!nodes(hosting).contains { $0.identifier == "explorer-preview-\(capture.id.uuidString)" },
+                       "Missing local derivatives and text captures reserve no blank preview")
+            let readableHeaderRowBudget = stackedHeader ? copy.frame.height + 6 : 0
+            try expect(card.frame.height < (factor > 1 ? 265 : 230) + readableHeaderRowBudget,
+                       "Non-media Explorer cards remain compact, allowing only the readable action-row height when narrow")
+        }
         let actual = hosting.convert(window.convertFromScreen(card.frame), from: nil)
         try expect(hosting.bounds.insetBy(dx: -1, dy: -1).contains(actual), "Actual card is fully contained before PNG crop")
         let rect = actual.intersection(hosting.bounds).integral
@@ -255,7 +299,7 @@ import SwiftUI
             try expect(CGFloat(maxY - minY) / 2 > previewHeight * 0.50, "Real cached image pixels occupy a large preview, not a miniature icon")
         }
         guard let png = bitmap.representation(using: .png, properties: [:]) else { throw failure("Explorer PNG encoding failed") }
-        let filename = "\(name)-\(Int(width))-\(dark ? "dark" : "light")@2x.png"
+        let filename = "\(name)-\(Int(width))-zoom\(Int(factor * 100))-\(dark ? "dark" : "light")@2x.png"
         try png.write(to: output.appendingPathComponent(filename), options: .atomic)
         try expect(bitmap.pixelsWide == Int(rect.width * 2), "Explorer PNG is rendered at native 2x")
         try expect(open.press(), "Existing Explorer AX selection action activates")
@@ -264,8 +308,10 @@ import SwiftUI
                    "Single full-card AX press selects exactly once without opening any external file")
         _ = try await find(hosting, id: "workspace-item-\(capture.id.uuidString)")
         reports.append(["file": filename, "widthPoints": width, "heightPoints": rect.height, "largePreview": large,
-                        "previewHeightPoints": previewHeight, "cornerMarkerSampleCounts": cornerCounts,
-                        "receipt": open.valueText, "selectionCallbackCount": selection.calls])
+                        "previewHeightPoints": large ? previewHeight : 0, "zoomFactor": factor, "cornerMarkerSampleCounts": cornerCounts,
+                        "receipt": open.valueText, "selectionCallbackCount": selection.calls,
+                        "titleWidthPoints": open.frame.width, "readableTitleWidthPoints": open.frame.width - titleIconBudget,
+                        "stackedHeaderActions": stackedHeader])
         return card.frame.height
     }
 
@@ -308,7 +354,7 @@ import SwiftUI
         try expect(converted.isTask && converted.kind == .image && state.canUndoTaskConversion, "Converted image task retains original visual kind and Undo")
         for kind in [CaptureKind.image, .video, .pdf, .document, .ai] {
             let capture = Capture(capturedAt: at, kind: kind, title: "Visual kind fixture")
-            try expect(ExplorerCaptureCardPresentation.hasLargePreview(capture: capture, store: store), "Visual kind keeps large preview even before derivative exists")
+            try expect(!ExplorerCaptureCardPresentation.hasLargePreview(capture: capture, store: store), "A visual kind without local artwork reserves no empty hero")
         }
         try expect(!ExplorerCaptureCardPresentation.hasLargePreview(capture: text, store: store)
             && !ExplorerCaptureCardPresentation.hasLargePreview(capture: file, store: store)
@@ -318,13 +364,19 @@ import SwiftUI
             capture.previewState = "ready"; try store.save(captures: [capture])
             try expect(ExplorerCaptureCardPresentation.hasLargePreview(capture: capture, store: store), "Existing file/link local thumbnail enables the large preview without network")
         }
-        for (width, expected) in [(CGFloat(0), CGFloat(160)), (-1, 160), (.infinity, 160), (.nan, 160),
-                                  (100, 160), (220, 176), (320, 256), (380, 300), (10_000, 300)] {
+        for (width, expected) in [(CGFloat(0), CGFloat(112)), (-1, 112), (.infinity, 112), (.nan, 112),
+                                  (100, 96), (220, 110), (320, 160), (380, 160), (10_000, 160)] {
             try expect(ExplorerCaptureCardPresentation.previewHeight(for: width) == expected, "Preview height is finite and bounded for \(width)")
         }
+        let priorityTask = try store.createTask(text: "Review the complete fictional campaign presentation before sending the final visual proposal",
+            planning: TaskPlanning(priority: .high, effortMinutes: 25),
+            projectName: "A deliberately long fictional project name for narrow Explorer cards")
+        priorityTask.isPinned = true; try store.save(captures: [priorityTask])
         let all = store.captures, baseline = try snapshots(all), bytes = try originalBytes(all, store: store)
-        let output = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
-            .appendingPathComponent("build/qa/explorer-capture-cards", isDirectory: true).appendingPathComponent(UUID().uuidString, isDirectory: true)
+        let output = ProcessInfo.processInfo.environment["DABIN_EXPLORER_CARD_QA_OUTPUT"]
+            .map { URL(fileURLWithPath: $0, isDirectory: true) }
+            ?? URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
+                .appendingPathComponent("build/qa/explorer-capture-cards", isDirectory: true).appendingPathComponent(UUID().uuidString, isDirectory: true)
         try FileManager.default.createDirectory(at: output, withIntermediateDirectories: true)
         for width in [CGFloat(220), 320, 380] {
             for dark in [false, true] { _ = try await render(state: state, capture: wide, name: "landscape", width: width, dark: dark, colorful: true, output: output) }
@@ -335,6 +387,16 @@ import SwiftUI
             (text, "text", 220, true, false), (text, "text", 380, false, false),
             (missing, "missing-thumbnail", 220, false, false), (child, "child-long-labels", 220, true, true)
         ] { _ = try await render(state: state, capture: capture, name: name, width: width, dark: dark, colorful: colorful, output: output) }
+        for (width, factor, dark) in [(CGFloat(320), CGFloat(0.75), false), (220, 2, true), (380, 2, false)] {
+            _ = try await render(state: state, capture: child, name: "responsive-child", width: width,
+                                 dark: dark, colorful: true, output: output, factor: factor)
+            _ = try await render(state: state, capture: text, name: "responsive-text", width: width,
+                                 dark: dark, colorful: false, output: output, factor: factor)
+        }
+        for width in [CGFloat(260), 320] {
+            _ = try await render(state: state, capture: priorityTask, name: "pinned-high-priority", width: width,
+                                 dark: width == 260, colorful: false, output: output, factor: 2)
+        }
         let after = try snapshots(all), afterBytes = try originalBytes(all, store: store)
         try expect(after == baseline && afterBytes == bytes,
                    "Rendering and selection change no captured identity, original, receipt, history, planning or file bytes")

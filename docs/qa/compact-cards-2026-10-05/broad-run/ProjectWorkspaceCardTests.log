@@ -1,0 +1,17 @@
+FIXTURE: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-verified-20261005T104616Z/project-cards/completed-image-task-light@2x.png
+FIXTURE: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-verified-20261005T104616Z/project-cards/project-types-grid-light@2x.png
+FIXTURE: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-verified-20261005T104616Z/project-cards/project-types-compact-320-light@2x.png
+FIXTURE: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-verified-20261005T104616Z/project-cards/project-types-grid-dark@2x.png
+FIXTURE: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-verified-20261005T104616Z/project-cards/project-types-compact-320-dark@2x.png
+FIXTURE: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-verified-20261005T104616Z/project-cards/project-tasks-content-height-light@2x.png
+FIXTURE: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-verified-20261005T104616Z/project-cards/project-tasks-content-height-dark@2x.png
+FIXTURE: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-verified-20261005T104616Z/project-cards/project-task-compact-medium-light@2x.png
+FIXTURE: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-verified-20261005T104616Z/project-cards/project-responsive-260-zoom200-grid@2x.png
+RESPONSIVE_CARD: project-responsive-260-zoom200-grid, requestedWidth=260.0, inner=(-9976.0, -9785.722457885742, 236.0, 125.72245788574219), outer=(-9988.0, -9797.5, 260.0, 149.5), viewport=(-10000.0, -10000.0, 284.0, 364.0)
+FIXTURE: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-verified-20261005T104616Z/project-cards/project-responsive-260-zoom200-compact@2x.png
+RESPONSIVE_CARD: project-responsive-260-zoom200-compact, requestedWidth=260.0, inner=(-9976.0, -9935.722457885742, 236.0, 125.72245788574219), outer=(-9988.0, -9947.5, 260.0, 149.5), viewport=(-10000.0, -10000.0, 284.0, 214.0)
+FIXTURE: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-verified-20261005T104616Z/project-cards/project-responsive-320-zoom200-grid@2x.png
+RESPONSIVE_CARD: project-responsive-320-zoom200-grid, requestedWidth=320.0, inner=(-9976.0, -9785.722457885742, 296.0, 125.72245788574219), outer=(-9988.0, -9797.5, 320.0, 149.5), viewport=(-10000.0, -10000.0, 344.0, 364.0)
+FIXTURE: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-verified-20261005T104616Z/project-cards/project-responsive-320-zoom200-compact@2x.png
+RESPONSIVE_CARD: project-responsive-320-zoom200-compact, requestedWidth=320.0, inner=(-9976.0, -9935.722457885742, 296.0, 125.72245788574219), outer=(-9988.0, -9947.5, 320.0, 149.5), viewport=(-10000.0, -10000.0, 344.0, 214.0)
+PASS: 782 project card checks; Task/Note/Capture semantics, real live task updates, light/dark/grid/320-point compact fixtures, original previews and independent selection; no personal archive, clipboard, network, or external opening.

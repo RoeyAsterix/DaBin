@@ -34,12 +34,12 @@ struct HourlyCaptureCard: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: compact ? 7 : 10) {
+        VStack(alignment: .leading, spacing: 8) {
             ProjectChipLabel(name: hasMixedProjects ? "Multiple projects" : resolvedProject,
                              colorHex: hasMixedProjects ? nil : resolvedProjectColor)
             if isExpanded {
                 expandedHeader
-                VStack(spacing: compact ? 7 : 9) {
+                VStack(spacing: 8) {
                     ForEach(group.actions) { action in
                         actionView(action)
                     }
@@ -47,18 +47,18 @@ struct HourlyCaptureCard: View {
                 .transition(reduceMotion ? .opacity : .opacity.combined(with: .move(edge: .top)))
             } else {
                 Button(action: toggleExpansion) {
-                    VStack(alignment: .leading, spacing: compact ? 8 : 11) {
-                        CollectionPreviewMosaic(store: state.store, captures: group.captures, compact: compact)
+                    VStack(alignment: .leading, spacing: 8) {
                         HStack(alignment: .center, spacing: 8) {
                             collectionMetadata
                             Spacer(minLength: 4)
                             Image(systemName: "chevron.down")
                                 .font(.system(size: zoom.fontSize(11), weight: .semibold))
                                 .foregroundStyle(accent)
-                                .frame(width: compact ? 26 : 30, height: compact ? 26 : 30)
+                                .frame(width: 32, height: 32)
                                 .background(accent.opacity(0.09), in: RoundedRectangle(cornerRadius: 8))
                                 .accessibilityHidden(true)
                         }
+                        CollectionPreviewMosaic(store: state.store, captures: group.captures, compact: compact)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .contentShape(Rectangle())
@@ -72,13 +72,12 @@ struct HourlyCaptureCard: View {
                 .buddyHelp("Open collection")
             }
         }
-        .padding(compact ? 8 : 14)
-        .projectCardBackground(workspace: state.workspace, projectName: resolvedProject)
+        .padding(compact ? 10 : 12)
+        .projectCardBackground(workspace: state.workspace, projectName: resolvedProject, cornerRadius: 12)
         .overlay {
-            RoundedRectangle(cornerRadius: 14, style: .continuous)
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
                 .strokeBorder(Palette.line, lineWidth: 0.7)
         }
-        .padding(.vertical, compact ? 0 : 6)
         .accessibilityElement(children: .contain)
     }
 
@@ -104,27 +103,21 @@ struct HourlyCaptureCard: View {
     }
 
     private func actionView(_ action: AutomaticCaptureAction) -> some View {
-        VStack(alignment: .leading, spacing: compact ? 3 : 5) {
-            HStack(spacing: 6) {
-                Image(systemName: action.primary.captureOrigin == .automaticScreenshot
-                      ? "camera.viewfinder" : "doc.on.clipboard")
-                    .font(.system(size: zoom.fontSize(compact ? 9 : 10), weight: .medium))
-                    .foregroundStyle(accent)
-                    .accessibilityHidden(true)
+        VStack(alignment: .leading, spacing: 6) {
+            BuddyActionFlow(spacing: 6) {
                 CaptureReceiptView(capture: action.primary,
                     category: action.primary.captureOrigin == .automaticClipboard ? "Copied" : action.primary.captureOrigin.displayName,
                     fontSize: compact ? 9 : 10)
-                Spacer(minLength: 4)
                 CaptureCopyButton(state: state, captures: action.captures, compact: true)
             }
-            .padding(.horizontal, compact ? 2 : 9)
-            .padding(.top, compact ? 6 : 8)
+            .padding(.horizontal, 6)
+            .padding(.top, 6)
             if let application = action.primary.sourceApplicationName {
                 Text(application)
                     .font(.system(size: zoom.fontSize(compact ? 9 : 10)))
                     .foregroundStyle(Palette.muted)
                     .lineLimit(1)
-                    .padding(.horizontal, compact ? 2 : 9)
+                    .padding(.horizontal, 6)
             }
 
             ForEach(action.cards) { card in
@@ -135,14 +128,14 @@ struct HourlyCaptureCard: View {
                     CaptureRow(state: state, capture: card.primary, featured: false,
                                showsCopyButton: false, embeddedInCard: true,
                                showsProject: hasMixedProjects)
-                        .padding(.horizontal, compact ? 2 : 9)
+                        .padding(.horizontal, 6)
                 }
             }
         }
         .projectCardBackground(workspace: state.workspace, projectName: project(for: action),
-                               cornerRadius: 10, baseColor: Palette.surface.opacity(0.74))
+                               cornerRadius: 12, baseColor: Palette.surface.opacity(0.74))
         .overlay {
-            RoundedRectangle(cornerRadius: 10, style: .continuous)
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
                 .strokeBorder(Palette.line.opacity(0.76), lineWidth: 0.5)
         }
         .accessibilityElement(children: .contain)
@@ -167,7 +160,7 @@ struct HourlyCaptureCard: View {
     private var collectionMetadata: some View {
         VStack(alignment: .leading, spacing: compact ? 3 : 4) {
             Text(group.captureCountLabel)
-                .font(.system(size: zoom.fontSize(compact ? 13 : 16), weight: .semibold))
+                .font(.system(size: zoom.fontSize(compact ? 13 : 14), weight: .semibold))
                 .foregroundStyle(Palette.foreground)
                 .lineLimit(2)
                 .accessibilityIdentifier("collection-hour-count")

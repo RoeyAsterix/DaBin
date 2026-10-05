@@ -405,9 +405,11 @@ import SwiftUI
         let encoder = JSONEncoder(); encoder.outputFormatting = [.sortedKeys]
         let before = try Dictionary(uniqueKeysWithValues: store.captures.map { ($0.id, try encoder.encode(CaptureSnapshot($0))) })
         let original = try originalBytes(store: store, capture: image)
-        let fixtures = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
-            .appendingPathComponent("build/qa/project-workspace-view", isDirectory: true)
-            .appendingPathComponent(UUID().uuidString, isDirectory: true)
+        let fixtures = ProcessInfo.processInfo.environment["DABIN_PROJECT_WORKSPACE_VIEW_QA_OUTPUT"]
+            .map { URL(fileURLWithPath: $0, isDirectory: true) }
+            ?? URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
+                .appendingPathComponent("build/qa/project-workspace-view", isDirectory: true)
+                .appendingPathComponent(UUID().uuidString, isDirectory: true)
         try FileManager.default.createDirectory(at: fixtures, withIntermediateDirectories: true)
 
         var preparedExports: [ProjectWorkspaceExportDocument] = []
@@ -455,9 +457,13 @@ import SwiftUI
         try expect(!nodes(in: hosting).contains { $0.identifier == "project-make-tasks" && $0.frame.width > 0 },
                    "Bulk conversion controls remain hidden until selection")
         let filePreview = try await find("project-preview-" + imageID, in: hosting)
-        try expect(filePreview.frame.height >= 200, "Grid file preview receives at least 200 points of visible height")
+        let expectedPreviewHeight = ExplorerCaptureCardPresentation.previewHeight(for: filePreview.frame.width)
+        try expect(filePreview.frame.width >= 32 && filePreview.frame.height >= 96
+            && abs(filePreview.frame.height - expectedPreviewHeight) < 1,
+                   "Grid file preview follows its actual width within the compact media budget: \(filePreview.frame)")
         let notePreview = try await find("project-preview-" + noteID, in: hosting)
-        try expect(notePreview.frame.height >= 200, "Live project notes use the preview-first card alongside captured files")
+        try expect(notePreview.frame.width >= 32 && (32...80).contains(notePreview.frame.height),
+                   "Live project notes use natural readable text height without an empty hero: \(notePreview.frame)")
         try expect(!nodes(in: hosting).contains { $0.identifier == "project-card-" + ProjectWorkspaceIdentity.capture(other.id) },
                    "Unrelated project is absent from the visible project board")
         try await press("project-select-" + imageID, in: hosting, message: "Image checkbox selects without opening its file")
@@ -561,8 +567,8 @@ import SwiftUI
         try expect(compactToggle.press(), "Compact view toggle is active")
         try await settle(hosting)
         let compactPreview = try await find("project-preview-" + imageID, in: hosting)
-        try expect(compactPreview.frame.height <= 110 && compactPreview.frame.height >= 70,
-                   "Compact mode deliberately reduces the preview without hiding it")
+        try expect(abs(compactPreview.frame.width - 64) < 1 && abs(compactPreview.frame.height - 64) < 1,
+                   "Compact mode keeps the real media preview in a usable 64-point square: \(compactPreview.frame)")
         maximumRows = max(maximumRows, try checkNativeRows(hosting, itemCount: 1_002))
         try await press("project-view-toggle", in: hosting, message: "Preview grid can be restored")
         try await settle(hosting)

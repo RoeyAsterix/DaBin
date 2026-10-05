@@ -32,7 +32,25 @@ struct CollectionPreviewSelection {
 }
 
 enum CollectionPreviewLayout {
-    static func previewHeight(compact: Bool) -> CGFloat { compact ? 152 : 220 }
+    static func previewHeight(compact: Bool) -> CGFloat { compact ? 112 : 144 }
+
+    /// Grow readable tiles with workspace zoom without turning a collection
+    /// back into an oversized hero. Explicit weekly heights remain supported.
+    static func previewHeight(compact: Bool, zoom: WorkspaceZoomLayout) -> CGFloat {
+        min(compact ? 152 : 192, zoom.value(previewHeight(compact: compact)))
+    }
+
+    /// File and text fallbacks need readable labels rather than a media hero.
+    /// Keep two-row grids tall enough for an icon and two filename lines even
+    /// at reduced zoom; stored thumbnails keep the original artwork budget.
+    static func previewHeight(compact: Bool, zoom: WorkspaceZoomLayout,
+                              count: Int, hasThumbnail: Bool) -> CGFloat {
+        guard !hasThumbnail else { return previewHeight(compact: compact, zoom: zoom) }
+        let twoRows = count > 2
+        let nominal: CGFloat = twoRows ? (compact ? 132 : 144) : (compact ? 72 : 80)
+        let maximum: CGFloat = twoRows ? (compact ? 144 : 160) : (compact ? 88 : 96)
+        return max(nominal, min(maximum, zoom.value(nominal)))
+    }
 }
 
 /// Logical, top-down frames are also available to layout regression tests.
@@ -40,7 +58,7 @@ enum CollectionPreviewLayout {
 struct CollectionPreviewMosaicLayout {
     let frames: [CGRect]
 
-    init(count: Int, size: CGSize, compact: Bool) {
+    init(count: Int, size: CGSize, compact: Bool, fallbackOnly: Bool = false) {
         guard size.width.isFinite, size.height.isFinite,
               size.width > 0, size.height > 0, count > 0 else {
             frames = []
@@ -57,12 +75,18 @@ struct CollectionPreviewMosaicLayout {
             frames = [CGRect(x: 0, y: 0, width: halfWidth, height: size.height),
                       CGRect(x: halfWidth + gap, y: 0, width: halfWidth, height: size.height)]
         case 3:
-            let heroWidth = max(0, (size.width - gap) * 0.64)
-            let supportingWidth = max(0, size.width - gap - heroWidth)
-            frames = [CGRect(x: 0, y: 0, width: heroWidth, height: size.height),
-                      CGRect(x: heroWidth + gap, y: 0, width: supportingWidth, height: halfHeight),
-                      CGRect(x: heroWidth + gap, y: halfHeight + gap,
-                             width: supportingWidth, height: halfHeight)]
+            if fallbackOnly {
+                frames = [CGRect(x: 0, y: 0, width: halfWidth, height: halfHeight),
+                          CGRect(x: halfWidth + gap, y: 0, width: halfWidth, height: halfHeight),
+                          CGRect(x: 0, y: halfHeight + gap, width: size.width, height: halfHeight)]
+            } else {
+                let heroWidth = max(0, (size.width - gap) * 0.64)
+                let supportingWidth = max(0, size.width - gap - heroWidth)
+                frames = [CGRect(x: 0, y: 0, width: heroWidth, height: size.height),
+                          CGRect(x: heroWidth + gap, y: 0, width: supportingWidth, height: halfHeight),
+                          CGRect(x: heroWidth + gap, y: halfHeight + gap,
+                                 width: supportingWidth, height: halfHeight)]
+            }
         default:
             frames = [CGRect(x: 0, y: 0, width: halfWidth, height: halfHeight),
                       CGRect(x: halfWidth + gap, y: 0, width: halfWidth, height: halfHeight),
@@ -88,39 +112,62 @@ struct CollectionPreviewMosaic: View {
 
     var body: some View {
         let selection = self.selection
+        // Canonical saved references only; image decoding remains in the
+        // bounded background thumbnail cache.
+        let hasThumbnail = selection.previews.contains {
+            CapturePreviewFileReference.thumbnail(store: store, capture: $0) != nil
+        }
+        let hasFallback = selection.previews.contains {
+            CapturePreviewFileReference.thumbnail(store: store, capture: $0) == nil
+        }
+        let naturalHeight = CollectionPreviewLayout.previewHeight(compact: compact, zoom: zoom,
+            count: selection.previews.count, hasThumbnail: hasThumbnail)
+        // Weekly artwork keeps its explicit height. Generic tiles may need a
+        // larger useful minimum to show both filename lines in two-row grids.
+        let gridHeight = hasThumbnail ? (height ?? naturalHeight) : max(height ?? 0, naturalHeight)
         if !selection.previews.isEmpty {
-            GeometryReader { geometry in
-                let layout = CollectionPreviewMosaicLayout(count: selection.previews.count,
-                                                          size: geometry.size, compact: compact)
-                ZStack(alignment: .topLeading) {
-                    ForEach(Array(selection.previews.enumerated()), id: \.element.id) { index, capture in
-                        if layout.frames.indices.contains(index) {
-                            let rect = layout.frames[index]
-                            CollectionPreviewCell(store: store, capture: capture,
-                                                  size: rect.size, compact: compact)
-                                .frame(width: rect.width, height: rect.height)
-                                .position(x: rect.midX, y: rect.midY)
-                                .accessibilityIdentifier("collection-preview-cell-\(capture.id.uuidString)")
+            VStack(alignment: .trailing, spacing: 4) {
+                if hasFallback && selection.omittedCount > 0 {
+                    Text("+\(selection.omittedCount) more")
+                        .font(.system(size: zoom.fontSize(10), weight: .semibold))
+                        .foregroundStyle(Palette.muted)
+                        .lineLimit(1)
+                        .accessibilityHidden(true)
+                }
+                GeometryReader { geometry in
+                    let layout = CollectionPreviewMosaicLayout(count: selection.previews.count,
+                                                              size: geometry.size, compact: compact,
+                                                              fallbackOnly: !hasThumbnail)
+                    ZStack(alignment: .topLeading) {
+                        ForEach(Array(selection.previews.enumerated()), id: \.element.id) { index, capture in
+                            if layout.frames.indices.contains(index) {
+                                let rect = layout.frames[index]
+                                CollectionPreviewCell(store: store, capture: capture,
+                                                      size: rect.size, compact: compact)
+                                    .frame(width: rect.width, height: rect.height)
+                                    .position(x: rect.midX, y: rect.midY)
+                                    .accessibilityIdentifier("collection-preview-cell-\(capture.id.uuidString)")
+                                    .accessibilityHidden(true)
+                            }
+                        }
+                    }
+                    .frame(width: geometry.size.width, height: geometry.size.height)
+                    .overlay(alignment: .bottomTrailing) {
+                        if !hasFallback && selection.omittedCount > 0 {
+                            Text("+\(selection.omittedCount) more")
+                                .font(.system(size: zoom.fontSize(compact ? 10 : 11), weight: .semibold))
+                                .foregroundStyle(Palette.foreground)
+                                .padding(.horizontal, compact ? 7 : 9).padding(.vertical, 5)
+                                .background(Palette.surface.opacity(0.96),
+                                            in: Capsule(style: .continuous))
+                                .overlay(Capsule(style: .continuous).strokeBorder(Palette.line, lineWidth: 0.5))
+                                .padding(7)
                                 .accessibilityHidden(true)
                         }
                     }
                 }
-                .frame(width: geometry.size.width, height: geometry.size.height)
-                .overlay(alignment: .bottomTrailing) {
-                    if selection.omittedCount > 0 {
-                        Text("+\(selection.omittedCount) more")
-                            .font(.system(size: zoom.fontSize(compact ? 10 : 11), weight: .semibold))
-                            .foregroundStyle(Palette.foreground)
-                            .padding(.horizontal, compact ? 7 : 9).padding(.vertical, 5)
-                            .background(Palette.surface.opacity(0.96),
-                                        in: Capsule(style: .continuous))
-                            .overlay(Capsule(style: .continuous).strokeBorder(Palette.line, lineWidth: 0.5))
-                            .padding(7)
-                            .accessibilityHidden(true)
-                    }
-                }
+                .frame(height: gridHeight)
             }
-            .frame(height: height ?? zoom.value(CollectionPreviewLayout.previewHeight(compact: compact)))
             .accessibilityElement(children: .ignore)
             .accessibilityLabel("Collection contents preview")
             .accessibilityIdentifier("collection-preview-mosaic")
@@ -182,32 +229,51 @@ private struct CollectionPreviewCell: View {
         .background(Palette.surface.opacity(0.94))
     }
 
-    private var fallback: some View {
-        VStack(alignment: .leading, spacing: small ? 4 : 8) {
-            HStack(spacing: 4) {
+    @ViewBuilder private var fallback: some View {
+        if size.height < 64 {
+            // Mixed weekly grids can give a file just a 34pt supporting row.
+            // Keep its icon beside the filename so both lines fit the row.
+            let lines = size.height < 32 ? 1 : 2
+            let fontSize = min(zoom.fontSize(10), max(9.5, (size.height - 6) / (CGFloat(lines) * 1.3)))
+            HStack(alignment: .top, spacing: 4) {
                 Image(systemName: kindSymbol(capture.kind))
-                    .font(.system(size: zoom.fontSize(small ? 11 : 16), weight: .medium))
-                if !small {
-                    Text(captureTypeLabel(capture.kind))
-                        .font(.system(size: zoom.fontSize(9), weight: .semibold)).lineLimit(1)
+                    .font(.system(size: zoom.fontSize(11), weight: .medium))
+                    .foregroundStyle(accent)
+                Text(title)
+                    .font(.system(size: fontSize, weight: .semibold))
+                    .foregroundStyle(Palette.foreground)
+                    .lineLimit(lines).truncationMode(.middle)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            .padding(3)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        } else {
+            VStack(alignment: .leading, spacing: small ? 4 : 8) {
+                HStack(spacing: 4) {
+                    Image(systemName: kindSymbol(capture.kind))
+                        .font(.system(size: zoom.fontSize(small ? 11 : 16), weight: .medium))
+                    if !small {
+                        Text(captureTypeLabel(capture.kind))
+                            .font(.system(size: zoom.fontSize(9), weight: .semibold)).lineLimit(1)
+                    }
+                    Spacer(minLength: 0)
+                }
+                .foregroundStyle(accent)
+                Text(title)
+                    .font(.system(size: zoom.fontSize(small ? 10 : 13), weight: .semibold))
+                    .foregroundStyle(Palette.foreground)
+                    .lineLimit(small ? 2 : 3).truncationMode(.middle)
+                if !small && !excerpt.isEmpty {
+                    Text(excerpt).font(.system(size: zoom.fontSize(compact ? 10 : 11)))
+                        .lineSpacing(zoom.lineSpacing(2)).foregroundStyle(Palette.muted)
+                        .lineLimit(size.height > 170 ? 7 : 3)
+                } else if !small, let url = capture.originalURL, !url.isEmpty {
+                    Text(url).font(.system(size: zoom.fontSize(10))).foregroundStyle(Palette.muted).lineLimit(3)
                 }
                 Spacer(minLength: 0)
             }
-            .foregroundStyle(accent)
-            Text(title)
-                .font(.system(size: zoom.fontSize(small ? 10 : 13), weight: .semibold))
-                .foregroundStyle(Palette.foreground)
-                .lineLimit(small ? 2 : 3).truncationMode(.middle)
-            if !small && !excerpt.isEmpty {
-                Text(excerpt).font(.system(size: zoom.fontSize(compact ? 10 : 11)))
-                    .lineSpacing(zoom.lineSpacing(2)).foregroundStyle(Palette.muted)
-                    .lineLimit(size.height > 170 ? 7 : 3)
-            } else if !small, let url = capture.originalURL, !url.isEmpty {
-                Text(url).font(.system(size: zoom.fontSize(10))).foregroundStyle(Palette.muted).lineLimit(3)
-            }
-            Spacer(minLength: 0)
+            .padding(small ? 7 : 12)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         }
-        .padding(small ? 7 : 12)
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
     }
 }

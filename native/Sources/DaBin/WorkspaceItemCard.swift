@@ -19,68 +19,83 @@ struct WorkspaceItemCard: View {
     private var projectName: String? { ExplorerQuery.project(of: capture, in: state.store.captures) }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: zoom.value(12)) {
+        VStack(alignment: .leading, spacing: 8) {
+            CaptureCardHeaderLayout(minimumLeadingWidth: 120 + (capture.isTask ? 38 : 0) + (capture.isPinned ? 16 : 0)) {
+                HStack(alignment: .top, spacing: 4) {
+                    if capture.isTask { TaskStatusButton(state: state, capture: capture) }
+                    Button {
+                        workspace.selectedCaptureID = capture.id
+                        state.openCapture(capture.id)
+                    } label: {
+                        HStack(alignment: .firstTextBaseline, spacing: 5) {
+                            Text(alias ?? (capture.title.isEmpty ? "Untitled capture" : capture.title))
+                                .font(.system(size: zoom.fontSize(15), weight: .semibold))
+                                .foregroundStyle(capture.isCompleted ? Palette.muted : Palette.foreground)
+                                .strikethrough(capture.isTask && capture.isCompleted).lineLimit(2)
+                            if capture.isPinned {
+                                Image(systemName: "pin.fill").font(.system(size: zoom.fontSize(10)))
+                                    .foregroundStyle(accent).accessibilityLabel("Pinned")
+                            }
+                        }.padding(.top, max(0, (32 - zoom.fontSize(15) * 1.2) / 2))
+                            .frame(maxWidth: .infinity, minHeight: 32, alignment: .topLeading)
+                            .multilineTextAlignment(.leading).contentShape(Rectangle())
+                    }.buttonStyle(.plain).accessibilityLabel("Open \(alias ?? capture.title)")
+                        .accessibilityIdentifier("workspace-item-\(capture.id.uuidString)")
+                        .captureDragSource(state: state, capture: capture)
+                }
+                HStack(alignment: .top, spacing: 4) {
+                    BuddyIconButton(symbol: copied ? "checkmark" : "doc.on.doc", title: copied ? "Copied" : "Copy \(capture.title)") { copy() }
+                        .accessibilityIdentifier("workspace-copy-\(capture.id.uuidString)")
+                    CaptureTrashButton(state: state, capture: capture)
+                    Menu { itemActions(includesRemoval: false, includesCardButtons: false) } label: {
+                        Image(systemName: "ellipsis").font(.system(size: 14, weight: .medium))
+                            .frame(width: 32, height: 32).contentShape(Rectangle())
+                    }.menuStyle(.button).buttonStyle(.plain).menuIndicator(.hidden)
+                        .foregroundStyle(Palette.muted).accessibilityLabel("Actions for \(capture.title)")
+                        .accessibilityIdentifier("workspace-more-\(capture.id.uuidString)").buddyHelp("Item actions")
+                }
+            }
             CaptureProjectPriorityHeader(state: state, capture: capture)
                 .frame(maxWidth: .infinity, alignment: .leading)
-            HStack(alignment: .top, spacing: 4) {
+            ExplorerCaptureActionsLayout {
+                CaptureReceiptView(capture: capture, category: capture.isTask ? (capture.isCompleted ? "Completed" : "Task") : captureTypeLabel(capture.kind))
                 CaptureTrailView(state: state, capture: capture)
-                Spacer(minLength: 0)
-                if capture.isPinned { Image(systemName: "pin.fill").font(.system(size: zoom.fontSize(10))).foregroundStyle(accent).accessibilityLabel("Pinned") }
-                BuddyIconButton(symbol: copied ? "checkmark" : "doc.on.doc", title: copied ? "Copied" : "Copy \(capture.title)") { copy() }
-                CaptureTrashButton(state: state, capture: capture)
             }
-            CaptureReceiptView(capture: capture, category: captureTypeLabel(capture.kind))
-            HStack(alignment: .top, spacing: 8) {
-                if capture.isTask { TaskStatusButton(state: state, capture: capture) }
-                Button {
-                    workspace.selectedCaptureID = capture.id
-                    state.openCapture(capture.id)
-                } label: {
-                    VStack(alignment: .leading, spacing: zoom.value(12)) {
-                        if !capture.isMinimized, !capture.isTask, ![CaptureKind.text, .task].contains(capture.kind) {
+            if let alias, alias != capture.title {
+                Label(capture.title, systemImage: "text.badge.star")
+                    .font(.system(size: zoom.fontSize(11))).foregroundStyle(Palette.muted).lineLimit(1)
+            }
+            if !capture.isMinimized {
+                if CapturePreviewFileReference.thumbnail(store: state.store, capture: capture) != nil {
+                    Button { workspace.selectedCaptureID = capture.id; state.openCapture(capture.id) } label: {
+                        ExplorerCapturePreviewLayout(factor: zoom.factor) {
                             CaptureThumbnail(store: state.store, capture: capture)
-                                .frame(height: zoom.value(workspace.mode == .clipboard ? 164 : 208))
-                                .clipShape(RoundedRectangle(cornerRadius: 8))
-                        }
-                        if let alias {
-                            Label(alias, systemImage: "text.badge.star")
-                                .font(.system(size: zoom.fontSize(12), weight: .semibold)).foregroundStyle(accent).lineLimit(2)
-                        }
-                        if capture.isTask {
-                            Text(capture.isCompleted ? "COMPLETED" : "TASK")
-                                .font(.system(size: zoom.fontSize(10), weight: .medium)).tracking(0.7).foregroundStyle(Palette.muted)
-                        }
-                        Text(capture.title.isEmpty ? "Untitled capture" : capture.title)
-                            .font(.system(size: zoom.fontSize(16), weight: .semibold)).foregroundStyle(capture.isCompleted ? Palette.muted : Palette.foreground)
-                            .strikethrough(capture.isTask && capture.isCompleted)
-                            .lineLimit(capture.isMinimized ? 1 : 4)
-                        if !capture.isMinimized, !capture.isTask, capture.kind == .text,
-                           let content = capture.originalText, content.count > capture.title.count {
-                            Text(content).font(.system(size: zoom.fontSize(14))).foregroundStyle(Palette.muted).lineSpacing(zoom.lineSpacing(3)).lineLimit(4)
-                        }
-                    }.frame(maxWidth: .infinity, alignment: .leading).multilineTextAlignment(.leading).contentShape(Rectangle())
-                }.buttonStyle(.plain).accessibilityLabel("Open \(alias ?? capture.title)")
-                    .accessibilityIdentifier("workspace-item-\(capture.id.uuidString)")
-                    .captureDragSource(state: state, capture: capture)
-            }
-            if capture.isTask, !capture.isMinimized { TaskFocusControls(state: state, capture: capture) }
-            CaptureConversionUndo(state: state, capture: capture)
-            HStack(spacing: 4) {
-                Spacer(minLength: 0)
-                if !capture.isTask {
-                    CaptureTaskConversionButton(state: state, capture: capture)
+                        }.clipShape(RoundedRectangle(cornerRadius: 8)).contentShape(Rectangle())
+                    }.buttonStyle(.plain).accessibilityLabel("Preview \(capture.title)")
+                        .captureDragSource(state: state, capture: capture)
                 }
-                BuddyIconButton(symbol: onShelf ? "tray.full.fill" : "tray.and.arrow.down", title: onShelf ? "Remove from shelf; keep capture" : "Add to shelf", isActive: onShelf) { toggleShelf() }
-                Menu { itemActions(includesRemoval: false, includesCardButtons: false) } label: {
-                    Image(systemName: "ellipsis").font(.system(size: 16, weight: .medium)).frame(width: 32, height: 32)
-                }.menuStyle(.borderlessButton).menuIndicator(.hidden).fixedSize().foregroundStyle(Palette.muted)
-                    .accessibilityLabel("Actions for \(capture.title)").buddyHelp("Item actions")
-            }.padding(.top, 8).overlay(alignment: .top) { Rectangle().fill(Palette.line).frame(height: 0.7) }
-        }.padding(zoom.value(16))
+                if !capture.isTask, capture.kind == .text,
+                   let content = capture.originalText, content.count > capture.title.count {
+                    Text(content).font(.system(size: zoom.fontSize(12))).foregroundStyle(Palette.muted)
+                        .lineSpacing(zoom.lineSpacing(2)).lineLimit(3)
+                        .captureDragSource(state: state, capture: capture)
+                }
+            }
+            if capture.isTask, !capture.isMinimized || capture.taskPlanning?.focusSession?.isRunning == true {
+                TaskFocusControls(state: state, capture: capture, taskCardStyle: true)
+            }
+            CaptureConversionUndo(state: state, capture: capture)
+            BuddyActionFlow(spacing: 6) {
+                if !capture.isTask { CaptureTaskConversionButton(state: state, capture: capture) }
+                BuddyIconButton(symbol: onShelf ? "tray.full.fill" : "tray.and.arrow.down",
+                    title: onShelf ? "Remove from shelf; keep capture" : "Add to shelf",
+                    visualLabel: onShelf ? "On shelf" : "Keep", isActive: onShelf) { toggleShelf() }
+            }
+        }.padding(12)
             .workspaceZoomItem("capture:" + capture.id.uuidString)
-            .projectCardBackground(workspace: workspace, projectName: projectName)
+            .projectCardBackground(workspace: workspace, projectName: projectName, cornerRadius: 12)
             .projectCardFrame(workspace: workspace, projectName: projectName, activeProject: state.libraryProject,
-                              fallbackColor: isSelected ? accent.opacity(0.55) : Palette.line,
+                              cornerRadius: 12, fallbackColor: isSelected ? accent.opacity(0.55) : Palette.line,
                               fallbackWidth: isSelected ? 1 : 0.7)
             .contextMenu { itemActions(includesRemoval: true, includesCardButtons: true) }
             .alert(alias == nil ? "Save as snippet" : "Rename snippet", isPresented: $namingSnippet) {

@@ -15,7 +15,7 @@ struct CaptureDetailPanels: View {
     var isActive = true
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 14) {
+        VStack(alignment: .leading, spacing: 8) {
             if showsTabs {
                 HStack(spacing: 6) {
                     tab(.comments, title: "Comments · \(capture.commentCount)", subtitle: nil, icon: "text.bubble")
@@ -47,7 +47,8 @@ struct CaptureDetailPanels: View {
                 }
                 Spacer(minLength: 0)
             }
-            .padding(.horizontal, 10).frame(maxWidth: .infinity, minHeight: 50)
+            .padding(.horizontal, 10).padding(.vertical, 6)
+            .frame(maxWidth: .infinity, minHeight: 44)
             .contentShape(RoundedRectangle(cornerRadius: 11))
             .background(selection == section ? accent.opacity(0.14) : Palette.soft,
                         in: RoundedRectangle(cornerRadius: 11))
@@ -62,7 +63,7 @@ struct CaptureDetailPanels: View {
     }
 
     private var comments: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: 8) {
             if draft.comment != capture.comment {
                 Text("Recovered comment edit").font(.system(size: 12, weight: .semibold))
                 TextEditor(text: $draft.comment).frame(minHeight: 80)
@@ -75,19 +76,24 @@ struct CaptureDetailPanels: View {
             TextEditor(text: $draft.commentComposer)
                 .background(NavigationEditorRegion(target: .commentComposer, isActive: isActive))
                 .font(.system(size: 13)).scrollContentBackground(.hidden)
-                .padding(7).frame(minHeight: 100, maxHeight: 150)
+                .padding(7).frame(minHeight: 80, maxHeight: 150)
                 .background(Palette.soft, in: RoundedRectangle(cornerRadius: 11))
                 .overlay(RoundedRectangle(cornerRadius: 11).strokeBorder(Palette.line, lineWidth: 1))
                 .accessibilityLabel(draft.editingCommentID == nil ? "New comment" : "Edit comment text")
                 .accessibilityIdentifier("capture-comment-composer")
             HStack {
                 if draft.editingCommentID != nil {
-                    Button("Cancel edit") { draft.commentComposer = ""; draft.editingCommentID = nil }
+                    Button { draft.commentComposer = ""; draft.editingCommentID = nil } label: {
+                        Text("Cancel edit").frame(minHeight: 32).contentShape(Rectangle())
+                    }
                         .buttonStyle(.plain).foregroundStyle(Palette.muted)
                 }
                 Spacer()
-                Button(draft.editingCommentID == nil ? "Post comment" : "Save comment", systemImage: "arrow.up.circle.fill") {
+                Button {
                     state.postDetailComment(capture, draft: draft)
+                } label: {
+                    Label(draft.editingCommentID == nil ? "Post comment" : "Save comment", systemImage: "arrow.up.circle.fill")
+                        .frame(minHeight: 32).contentShape(Rectangle())
                 }.buttonStyle(.borderedProminent).controlSize(.regular)
                     .disabled(draft.commentComposer.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                     .accessibilityIdentifier("capture-post-comment")
@@ -109,7 +115,7 @@ struct CaptureDetailPanels: View {
                         Button {
                             draft.editingCommentID = entry.id
                             draft.commentComposer = entry.text
-                        } label: { Image(systemName: "pencil").frame(width: 28, height: 28) }
+                        } label: { Image(systemName: "pencil").frame(width: 32, height: 32).contentShape(Rectangle()) }
                         .buttonStyle(.plain).foregroundStyle(accent)
                         .disabled(!draft.commentComposer.isEmpty && draft.editingCommentID != entry.id)
                         .accessibilityLabel("Edit comment")

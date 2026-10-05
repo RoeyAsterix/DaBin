@@ -342,6 +342,19 @@ import SwiftUI
         let due = try await find(fixture.hosting, id: "today-task-deadline-\(task.id.uuidString)")
         let date = task.taskPlanning!.deadline!.formatted(date: .abbreviated, time: .omitted)
         try expect(due.readableText.contains("Due") && due.readableText.contains(date), "Due date retains its explicit deadline meaning")
+        let plannedTime = try await find(fixture.hosting, id: "today-task-planned-time-\(task.id.uuidString)")
+        let time = task.taskPlanning!.plannedTime!
+        let plannedTimeSemantic = "Planned today at \(time)"
+        try expect(plannedTime.label == plannedTimeSemantic || plannedTime.accessibleValue == plannedTimeSemantic,
+                   "Planned-today time retains its complete semantic accessibility label: label=\(plannedTime.label), value=\(plannedTime.accessibleValue ?? "nil"), role=\(plannedTime.role), frame=\(plannedTime.frame), id=\(plannedTime.identifier ?? "nil")")
+        let metadataOverlap = plannedTime.frame.intersection(due.frame)
+        try expect(plannedTime.role == "AXStaticText" && due.role == "AXStaticText"
+                   && plannedTime.identifier != due.identifier
+                   && (metadataOverlap.isNull || metadataOverlap.width <= 1 || metadataOverlap.height <= 1),
+                   "Planned time and deadline remain separate, non-overlapping metadata roles")
+        try expect(plannedTime.frame.width > 0 && plannedTime.frame.height > 0
+                   && fixture.window.frame.insetBy(dx: -1, dy: -1).contains(plannedTime.frame),
+                   "Explicit planned-today time remains fully readable inside every viewport")
         try expect(title.label.contains(prettyDay(task.captureDay)) && title.label.contains(captureClock(task)),
                    "Open title retains the original receipt date and time in accessibility")
         let container = try await find(fixture.hosting, id: "today-task-card-\(task.id.uuidString)")
@@ -390,8 +403,8 @@ import SwiftUI
                 .padding(.horizontal, 14).environment(\.workspaceZoom, WorkspaceZoomLayout(factor: factor))
             let rendered = try await fixture(card, size: NSSize(width: width, height: 620), dark: dark)
             do {
-                try await assertGeometry(task, fixture: rendered, width: width, factor: factor)
                 try snapshot(rendered.hosting, at: evidence.appendingPathComponent("today-card-\(Int(width))-zoom\(Int(factor * 100))-\(dark ? "dark" : "light")@2x.png"))
+                try await assertGeometry(task, fixture: rendered, width: width, factor: factor)
                 if width == 380 && factor == 1 {
                     let container = try await find(rendered.hosting, id: "today-task-card-\(task.id.uuidString)")
                     let nativeRect = rendered.hosting.convert(rendered.window.convertFromScreen(container.frame), from: nil)

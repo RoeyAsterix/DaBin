@@ -1,0 +1,24 @@
+{
+  "fixtureViewport" : [
+    -10000,
+    -10000,
+    344,
+    214
+  ],
+  "heightCapPoints" : 200,
+  "innerAXFrame" : [
+    -9976,
+    -9935.7224578857422,
+    296,
+    125.72245788574219
+  ],
+  "measurement" : "Outer accessible card",
+  "outerAXFrame" : [
+    -9988,
+    -9947.5,
+    320,
+    149.5
+  ],
+  "requestedWidthPoints" : 320,
+  "zoomFactor" : 2
+}

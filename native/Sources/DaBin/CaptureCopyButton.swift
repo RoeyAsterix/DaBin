@@ -36,8 +36,8 @@ struct CaptureCopyButton: View {
     var body: some View {
         Button(action: copy) {
             Image(systemName: copied ? "checkmark" : "doc.on.doc")
-                .font(.system(size: compact ? 9 : 10, weight: .medium))
-                .frame(width: compact ? 24 : 28, height: compact ? 22 : 26)
+                .font(.system(size: compact ? 11 : 12, weight: .medium))
+                .frame(width: 32, height: 32)
                 .background(accent.opacity(copied ? 0.2 : 0.11),
                             in: RoundedRectangle(cornerRadius: compact ? 6 : 7, style: .continuous))
                 .contentShape(Rectangle())

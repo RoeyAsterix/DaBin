@@ -557,8 +557,11 @@ import SwiftUI
         settle()
         try expect(try find(hosting, id: "project-workspace").frame.width > 0,
             "A named project opens the new unified workspace")
-        try expect(nodes(hosting).contains { $0.identifier?.hasPrefix("project-preview-") == true && $0.frame.height >= 160 },
-            "The named-project workspace exposes a large accessible content preview")
+        let initialProjectViewport = try find(hosting, id: "project-items").frame
+        try expect(nodes(hosting).contains {
+            $0.identifier?.hasPrefix("project-preview-") == true && $0.frame.width >= 32 && $0.frame.height >= 32
+                && initialProjectViewport.insetBy(dx: -1, dy: -1).contains($0.frame)
+        }, "The named-project workspace exposes a reachable 32-point native content-opening target")
         // Project view intentionally removes redundant mode tabs. Enter an
         // auxiliary view, then retain real accessible tab coverage there.
         state.workspace.mode = .clipboard; settle()
@@ -612,7 +615,9 @@ import SwiftUI
         window.selectNextKeyView(nil); settle()
         try expect(window.firstResponder != nil, "Workspace controls participate in the native keyboard focus chain")
         state.workspace.snippetsOnly = false
-        let evidence = URL(fileURLWithPath: files.currentDirectoryPath).appendingPathComponent("build/qa/workspace-window-evidence")
+        let evidence = ProcessInfo.processInfo.environment["DABIN_WORKSPACE_WINDOW_QA_OUTPUT"]
+            .map { URL(fileURLWithPath: $0, isDirectory: true) }
+            ?? URL(fileURLWithPath: files.currentDirectoryPath).appendingPathComponent("build/qa/workspace-window-evidence")
         try files.createDirectory(at: evidence, withIntermediateDirectories: true)
         for size in [NSSize(width: 380, height: 430), NSSize(width: 620, height: 680), NSSize(width: 1280, height: 850)] {
             window.setContentSize(size); settle()
@@ -641,8 +646,10 @@ import SwiftUI
                         "Project header has no duplicate name or tagline; cards may show their project")
                     try expect(try find(hosting, id: "project-workspace").frame.width > 0,
                         "Named-project workspace is available at \(Int(size.width))-point width")
-                    try expect(nodes(hosting).contains { $0.identifier?.hasPrefix("project-preview-") == true && $0.frame.height >= 160 },
-                        "Project content retains a large preview at \(Int(size.width))-point width")
+                    try expect(nodes(hosting).contains {
+                        $0.identifier?.hasPrefix("project-preview-") == true && $0.frame.width >= 32 && $0.frame.height >= 32
+                            && projectItems.frame.insetBy(dx: -1, dy: -1).contains($0.frame)
+                    }, "Project content retains a fully visible 32-point open target at \(Int(size.width))-point width")
                     for id in ["board-search", "project-export", "project-actions"] {
                         let action = try find(hosting, id: id)
                         try expect(action.frame.width > 0 && visibleContent.insetBy(dx: -1, dy: -1).contains(action.frame),

@@ -1,0 +1,3 @@
+NOT TESTED: Record-button Space activation depends on macOS Keyboard navigation; this fixture leaves that preference unchanged.
+PASS: 324 native labeled-header accessibility and interaction checks
+Inbox calendar fixture renders: /var/folders/qy/zfgc4dgx02x2k_c04330ghy00000gn/T/dabin-header-qa-ndoh4bz7/evidence

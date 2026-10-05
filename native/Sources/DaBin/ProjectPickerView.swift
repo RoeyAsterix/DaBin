@@ -494,7 +494,7 @@ struct ProjectPickerPanel: View {
                 HStack(spacing: 5) {
                     ProjectChipLabel(name: projectName, colorHex: colorHex)
                     Image(systemName: "chevron.down").font(.system(size: 8, weight: .semibold)).foregroundStyle(Palette.muted)
-                }.contentShape(Rectangle())
+                }.frame(minWidth: 32, minHeight: 32).contentShape(Rectangle())
             }.buttonStyle(.plain).focused($focused)
                 .accessibilityLabel("Project").accessibilityValue(projectName ?? "Unfiled")
                 .buddyHelp("File this capture to a project")

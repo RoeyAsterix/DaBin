@@ -1,0 +1,73 @@
+{
+  "checks" : 379,
+  "fixtures" : [
+    {
+      "context" : "native-planning-actions",
+      "priority" : "high",
+      "recurrence" : "weekly",
+      "stepCount" : 2
+    },
+    {
+      "context" : "plan-layout",
+      "draftValid" : true,
+      "height" : 680,
+      "stepCount" : 2,
+      "width" : 380
+    },
+    {
+      "context" : "plan-layout",
+      "draftValid" : true,
+      "height" : 680,
+      "stepCount" : 2,
+      "width" : 760
+    },
+    {
+      "completeTitleRetained" : true,
+      "context" : "unfocused-title-raster",
+      "file" : "full-board-380-task-zoom100@2x.png",
+      "fontSize" : 21,
+      "lineHeight" : 24,
+      "pixelScale" : 2,
+      "theme" : "light",
+      "titleFrameTopLeft" : {
+        "height" : 50,
+        "width" : 310,
+        "x" : 54,
+        "y" : 90
+      },
+      "zoom" : 1
+    },
+    {
+      "context" : "full-board-layout",
+      "height" : 680,
+      "taskPaneHeight" : 295,
+      "width" : 380,
+      "zoom" : 1
+    },
+    {
+      "completeTitleRetained" : true,
+      "context" : "unfocused-title-raster",
+      "file" : "full-board-380-task-zoom200@2x.png",
+      "fontSize" : 25.199999999999999,
+      "lineHeight" : 29,
+      "pixelScale" : 2,
+      "theme" : "dark",
+      "titleFrameTopLeft" : {
+        "height" : 58,
+        "width" : 278,
+        "x" : 70,
+        "y" : 90
+      },
+      "zoom" : 2
+    },
+    {
+      "context" : "full-board-layout",
+      "height" : 680,
+      "taskPaneHeight" : 285,
+      "width" : 380,
+      "zoom" : 2
+    }
+  ],
+  "privacy" : "Disposable fictional task metadata, private preferences, own-process native bindings and menus; no real archive, clipboard, Finder, notification permission or OS notification access.",
+  "suite" : "TaskPlanInteractionTests"
+}

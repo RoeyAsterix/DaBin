@@ -1,0 +1,16 @@
+{
+  "sourceFingerprint": "3f5ec8d396f1e7ff80ef0acb9df9d3a2ab6cfee88471c71be47c700b94df0848",
+  "originalBuildLog": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/store-compact-cards-verified-20261005T112520Z/xcodebuild-release.log",
+  "buildLogSHA256": "1fb4a0bbce49705f5461b4e482ca669d30d35dfa34d1a8b84722237cd650381c",
+  "actualUnsignedAppInfo": {
+    "CFBundleIdentifier": "com.dabin.mac",
+    "CFBundleShortVersionString": "0.4.33",
+    "CFBundleVersion": "88",
+    "DaBinSourceFingerprint": "3f5ec8d396f1e7ff80ef0acb9df9d3a2ab6cfee88471c71be47c700b94df0848"
+  },
+  "executableSHA256": "9eef190dc3f8dc79ba484da3b621845469e921472da962bc3609b0e8afa9cf31",
+  "signed": false,
+  "archiveCreated": false,
+  "uploaded": false,
+  "sandboxRuntimeVerified": false
+}

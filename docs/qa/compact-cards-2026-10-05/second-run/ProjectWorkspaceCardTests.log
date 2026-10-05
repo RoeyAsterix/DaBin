@@ -1,0 +1,9 @@
+Project card QA failed: Error Domain=ProjectWorkspaceCardTests Code=704 "Long project/high-priority task stays compact and fully contained at 200% narrow widths" UserInfo={NSLocalizedDescription=Long project/high-priority task stays compact and fully contained at 200% narrow widths}
+FIXTURE: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-final-20261005T101157Z/project-cards/completed-image-task-light@2x.png
+FIXTURE: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-final-20261005T101157Z/project-cards/project-types-grid-light@2x.png
+FIXTURE: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-final-20261005T101157Z/project-cards/project-types-compact-320-light@2x.png
+FIXTURE: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-final-20261005T101157Z/project-cards/project-types-grid-dark@2x.png
+FIXTURE: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-final-20261005T101157Z/project-cards/project-types-compact-320-dark@2x.png
+FIXTURE: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-final-20261005T101157Z/project-cards/project-tasks-content-height-light@2x.png
+FIXTURE: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-final-20261005T101157Z/project-cards/project-tasks-content-height-dark@2x.png
+FIXTURE: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/compact-cards-final-20261005T101157Z/project-cards/project-task-compact-medium-light@2x.png
