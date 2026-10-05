@@ -1,15 +1,15 @@
 {
   "schemaVersion": 1,
-  "updatedAtUTC": "2026-10-05T05:33:32.535589+00:00",
-  "status": "source_pushed_tool_pty_archive_waiting_at_codesign",
+  "updatedAtUTC": "2026-10-05T06:54:34.807990+00:00",
+  "status": "tab_labels_verified_source_pushed_human_signing_required",
   "version": "0.4.33",
   "build": "88",
   "bundleIdentifier": "com.dabin.mac",
   "appStoreConnectAppID": "6815956446",
-  "codeCommit": "b7ebfb196231dc568a31e80ad36092fb98f43d50",
-  "codeCommitURL": "https://github.com/RoeyAsterix/DaBin/commit/b7ebfb196231dc568a31e80ad36092fb98f43d50",
+  "codeCommit": "5796852360bf11cb28f780e55839390a5f99e957",
+  "codeCommitURL": "https://github.com/RoeyAsterix/DaBin/commit/5796852360bf11cb28f780e55839390a5f99e957",
   "codePushVerified": true,
-  "sourceFingerprint": "e038196eea54714eec07d2403b1e48a9eeb2393037b67fc2515123d68e06d456",
+  "sourceFingerprint": "a85333395e0a982230f3a8246db0d671e050b595f04a954f559dc29912caef09",
   "nativeQa": {
     "registeredSuites": 121,
     "passed": 120,
@@ -21,21 +21,23 @@
     "knownOpenFindings": [
       "Strict zoom performance budgets not met",
       "Framework-reproduced native table warnings"
-    ]
+    ],
+    "status": "previous_source_full_run_only",
+    "sourceFingerprint": "e038196eea54714eec07d2403b1e48a9eeb2393037b67fc2515123d68e06d456"
   },
-  "requestedArchivePath": "/Users/roeylibfeld/Library/Developer/Xcode/Archives/2026-10-05/DaBin-0.4.33-88-TestFlight-tool-pty-20261005T052545Z.xcarchive",
+  "requestedArchivePath": null,
   "archiveComplete": false,
-  "archiveExecSession": 58613,
-  "archiveHelperPID": 2242,
-  "archiveLogPath": "/private/tmp/dabin-testflight-tool-pty-20261005T052545Z.log",
-  "compilationReached": "CodeSign",
+  "archiveExecSession": null,
+  "archiveHelperPID": null,
+  "archiveLogPath": null,
+  "compilationReached": null,
   "signed": false,
   "uploaded": false,
   "appleProcessingVerified": false,
   "internalTestingVerified": false,
   "requestedDistribution": "Normal App Store Connect upload, assign current build to existing internal testers",
   "requiredUserInput": [
-    "Complete any normal macOS signing authentication prompt for the currently running archive; no authentication UI is inspected or controlled by the agent"
+    "Run the current exact-source command from the signed-in Mac Terminal and complete its normal macOS signing prompt; then reply done"
   ],
   "authenticationBoundary": "Protected SecurityAgent control was rejected by automatic approval review earlier; no authentication UI is inspected or operated",
   "manualBoundaries": [
@@ -70,6 +72,17 @@
       "exitCode": 65,
       "outcome": "agent_stopped_own_stalled_codesign_before_interactive_retry",
       "archiveComplete": false
+    },
+    {
+      "attempt": 3,
+      "requestedArchivePath": "/Users/roeylibfeld/Library/Developer/Xcode/Archives/2026-10-05/DaBin-0.4.33-88-TestFlight-tool-pty-20261005T052545Z.xcarchive",
+      "logFile": "archive-attempt-3-stopped-for-tab-labels.log",
+      "logSHA256": "686302b8416196b24f00e9d1b9cd36e9f3b0b000ae78dc13886668f2b3462610",
+      "receiptFile": "archive-attempt-3-final-receipt.json",
+      "exitCode": 65,
+      "outcome": "agent_stopped_own_codesign_because_user_requested_new_tab_labels_before_upload",
+      "sourceFingerprint": "e038196eea54714eec07d2403b1e48a9eeb2393037b67fc2515123d68e06d456",
+      "archiveComplete": false
     }
   ],
   "publicSigningIdentityValid": true,
@@ -84,31 +97,19 @@
   },
   "computerUseRestriction": "Computer Use refused Terminal app control for safety reasons; no Terminal interaction performed",
   "interactiveHandoff": {
-    "scriptPath": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/run-testflight-interactive-20261005.py",
-    "scriptSHA256": "39e688974311cfde38aea0321f9c9309e1a230584e4439b0efcef2c35207f42a",
+    "scriptPath": "/private/tmp/dabin-testflight-tabs-20261005.py",
+    "scriptSHA256": "9faddb9540e90e4fbbb7fe9fb3dd2a390130515f5ef9c79c72562eac63521947",
     "pythonExecutable": "/opt/homebrew/opt/python@3.14/bin/python3.14",
-    "receiptGlob": "/private/tmp/dabin-testflight-interactive-*-receipt.json",
-    "command": "/opt/homebrew/opt/python@3.14/bin/python3.14 /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/run-testflight-interactive-20261005.py",
+    "receiptGlob": "/private/tmp/dabin-testflight-tabs-interactive-*-receipt.json",
+    "command": "/opt/homebrew/opt/python@3.14/bin/python3.14 /private/tmp/dabin-testflight-tabs-20261005.py",
     "usesExistingArchiveHelper": true,
     "checksExactSourceFingerprint": true,
-    "status": "prepared_not_executed"
+    "sourceFingerprint": "a85333395e0a982230f3a8246db0d671e050b595f04a954f559dc29912caef09",
+    "codeCommit": "5796852360bf11cb28f780e55839390a5f99e957",
+    "status": "prepared_not_executed",
+    "executionRequired": "Human signed-in Mac Terminal; never automated native Terminal or protected authentication control"
   },
-  "currentArchiveAttempt": {
-    "attempt": 3,
-    "executionContext": "Codex exec_command allocated PTY; no native Terminal or authentication UI control",
-    "receiptPath": "/private/tmp/dabin-testflight-tool-pty-20261005T052545Z-receipt.json",
-    "runnerPID": 2235,
-    "helperPID": 2242,
-    "requestedArchivePath": "/Users/roeylibfeld/Library/Developer/Xcode/Archives/2026-10-05/DaBin-0.4.33-88-TestFlight-tool-pty-20261005T052545Z.xcarchive",
-    "logPath": "/private/tmp/dabin-testflight-tool-pty-20261005T052545Z.log",
-    "status": "running",
-    "authenticationUIControlled": false,
-    "securitySettingsChanged": false,
-    "snapshotReceiptFile": "archive-attempt-3-running-snapshot.json",
-    "snapshotLogFile": "archive-attempt-3-running-snapshot.log",
-    "snapshotLogSHA256": "6f8f57156399f0f617b7c7cf57fac7af2ff8c98170ac57b58c553ed7b7b9ce3b",
-    "snapshotAtUTC": "2026-10-05T05:33:32.535589+00:00"
-  },
+  "currentArchiveAttempt": null,
   "invitation": {
     "requestedByUser": true,
     "recipient": "Existing owner internal tester in Personal Testing",
@@ -127,5 +128,79 @@
     "currentBuild88Uploaded": false,
     "internalGroupOldBuildState": "Testing",
     "currentInternalTesterInstalledVersion": "0.4.31 (86)"
+  },
+  "previousCodeCommit": "b7ebfb196231dc568a31e80ad36092fb98f43d50",
+  "focusedQa": {
+    "status": "passed",
+    "suiteNames": [
+      "HeaderInteractionTests",
+      "NavigationHistoryTests",
+      "LocalFileLocationTests"
+    ],
+    "sourceFingerprint": "a85333395e0a982230f3a8246db0d671e050b595f04a954f559dc29912caef09",
+    "fullRegisteredRun": false,
+    "passedSuites": 3,
+    "failedSuites": 0,
+    "inputFingerprint": "0f1366e7886005137fac266f3080ef47021713065d3ecb31f0da82fc9a2486b7",
+    "inputsUnchanged": true,
+    "reportPath": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/tab-labels-2026-10-05/report.json",
+    "reportSHA256": "668d4f29195b0dfab502b1a0a085783c4cdcfdf70d4e047ff79df71f9de9ba83",
+    "verificationPath": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/tab-labels-2026-10-05/verification.json"
+  },
+  "tabLabels": {
+    "leftToRight": [
+      "Projects",
+      "Tasks",
+      "Captions"
+    ],
+    "stableAccessibilityIdentifiers": [
+      "primary-workspace",
+      "primary-today",
+      "primary-inbox"
+    ],
+    "dateSpecificTodayLabelsRetained": true
+  },
+  "previousArchiveAttempt": {
+    "attempt": 3,
+    "executionContext": "Codex exec_command allocated PTY; no native Terminal or authentication UI control",
+    "receiptPath": "/private/tmp/dabin-testflight-tool-pty-20261005T052545Z-receipt.json",
+    "runnerPID": 2235,
+    "helperPID": 2242,
+    "requestedArchivePath": "/Users/roeylibfeld/Library/Developer/Xcode/Archives/2026-10-05/DaBin-0.4.33-88-TestFlight-tool-pty-20261005T052545Z.xcarchive",
+    "logPath": "/private/tmp/dabin-testflight-tool-pty-20261005T052545Z.log",
+    "status": "stopped_superseded",
+    "authenticationUIControlled": false,
+    "securitySettingsChanged": false,
+    "snapshotReceiptFile": "archive-attempt-3-running-snapshot.json",
+    "snapshotLogFile": "archive-attempt-3-running-snapshot.log",
+    "snapshotLogSHA256": "6f8f57156399f0f617b7c7cf57fac7af2ff8c98170ac57b58c553ed7b7b9ce3b",
+    "snapshotAtUTC": "2026-10-05T05:33:32.535589+00:00",
+    "outcome": "agent_stopped_own_codesign_because_user_requested_new_tab_labels_before_upload",
+    "supersededBySourceFingerprint": "a85333395e0a982230f3a8246db0d671e050b595f04a954f559dc29912caef09"
+  },
+  "currentUnsignedStoreCandidate": {
+    "status": "unsigned_store_release_compiled_packaging_checked",
+    "sourceFingerprint": "a85333395e0a982230f3a8246db0d671e050b595f04a954f559dc29912caef09",
+    "version": "0.4.33",
+    "buildNumber": "88",
+    "receipt": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/tab-labels-2026-10-05/store-candidate-receipt.json",
+    "receiptSHA256": "fb32170176cde71c7731941c63973f6e25b1fbbf20671d2b3f3d5625bc506e55",
+    "xcodebuildExitCode": 0,
+    "packagingPreflightExitCode": 0,
+    "inputsUnchanged": true,
+    "signed": false,
+    "archiveCreated": false,
+    "uploaded": false,
+    "sandboxRuntimeVerified": false
+  },
+  "previousInteractiveHandoff": {
+    "scriptPath": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/run-testflight-interactive-20261005.py",
+    "scriptSHA256": "39e688974311cfde38aea0321f9c9309e1a230584e4439b0efcef2c35207f42a",
+    "pythonExecutable": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "receiptGlob": "/private/tmp/dabin-testflight-interactive-*-receipt.json",
+    "command": "/opt/homebrew/opt/python@3.14/bin/python3.14 /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/run-testflight-interactive-20261005.py",
+    "usesExistingArchiveHelper": true,
+    "checksExactSourceFingerprint": true,
+    "status": "superseded_by_new_tab_labels_do_not_use_for_current_release"
   }
 }

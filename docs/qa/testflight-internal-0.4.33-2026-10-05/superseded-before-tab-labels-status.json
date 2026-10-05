@@ -1,0 +1,132 @@
+{
+  "schemaVersion": 1,
+  "updatedAtUTC": "2026-10-05T05:33:32.535589+00:00",
+  "status": "source_pushed_tool_pty_archive_waiting_at_codesign",
+  "version": "0.4.33",
+  "build": "88",
+  "bundleIdentifier": "com.dabin.mac",
+  "appStoreConnectAppID": "6815956446",
+  "codeCommit": "b7ebfb196231dc568a31e80ad36092fb98f43d50",
+  "codeCommitURL": "https://github.com/RoeyAsterix/DaBin/commit/b7ebfb196231dc568a31e80ad36092fb98f43d50",
+  "codePushVerified": true,
+  "sourceFingerprint": "e038196eea54714eec07d2403b1e48a9eeb2393037b67fc2515123d68e06d456",
+  "nativeQa": {
+    "registeredSuites": 121,
+    "passed": 120,
+    "failed": 1,
+    "failedSuiteNames": [
+      "WorkspaceZoomPerformanceTests"
+    ],
+    "allFindingsFixed": false,
+    "knownOpenFindings": [
+      "Strict zoom performance budgets not met",
+      "Framework-reproduced native table warnings"
+    ]
+  },
+  "requestedArchivePath": "/Users/roeylibfeld/Library/Developer/Xcode/Archives/2026-10-05/DaBin-0.4.33-88-TestFlight-tool-pty-20261005T052545Z.xcarchive",
+  "archiveComplete": false,
+  "archiveExecSession": 58613,
+  "archiveHelperPID": 2242,
+  "archiveLogPath": "/private/tmp/dabin-testflight-tool-pty-20261005T052545Z.log",
+  "compilationReached": "CodeSign",
+  "signed": false,
+  "uploaded": false,
+  "appleProcessingVerified": false,
+  "internalTestingVerified": false,
+  "requestedDistribution": "Normal App Store Connect upload, assign current build to existing internal testers",
+  "requiredUserInput": [
+    "Complete any normal macOS signing authentication prompt for the currently running archive; no authentication UI is inspected or controlled by the agent"
+  ],
+  "authenticationBoundary": "Protected SecurityAgent control was rejected by automatic approval review earlier; no authentication UI is inspected or operated",
+  "manualBoundaries": [
+    "Physical trackpad and mouse inputs",
+    "Native AVKit transport button use",
+    "Extended soak and hardware/OS coverage"
+  ],
+  "privateLocalEvidenceExcluded": [
+    "docs/qa/testflight-0.4.31-2026-10-04/internal-tester-invited.jpg"
+  ],
+  "followUp": {
+    "automationId": "finish-dabin-testflight-internal-testing",
+    "status": "ACTIVE",
+    "intervalMinutes": 30,
+    "notifyOnlyOnMeaningfulChange": true
+  },
+  "archiveAttempts": [
+    {
+      "attempt": 1,
+      "requestedArchivePath": "/Users/roeylibfeld/Library/Developer/Xcode/Archives/2026-10-05/DaBin-0.4.33-88-TestFlight-internal-20261005T040949Z.xcarchive",
+      "logFile": "archive-attempt-1.log",
+      "logSHA256": "1e422ad880d30e39ae8f4e87556a4a5ad1045479d7c4fe8bfa747ef193b4501b",
+      "exitCode": 65,
+      "outcome": "failed_with_errSecInternalComponent",
+      "archiveComplete": false
+    },
+    {
+      "attempt": 2,
+      "requestedArchivePath": "/Users/roeylibfeld/Library/Developer/Xcode/Archives/2026-10-05/DaBin-0.4.33-88-TestFlight-internal-retry-20261005T041937Z.xcarchive",
+      "logFile": "archive-attempt-2.log",
+      "logSHA256": "07558f84b20a0207ececa00e7e2fef2129a2d78052a6b9233fc042ab92e083c3",
+      "exitCode": 65,
+      "outcome": "agent_stopped_own_stalled_codesign_before_interactive_retry",
+      "archiveComplete": false
+    }
+  ],
+  "publicSigningIdentityValid": true,
+  "appStoreConnectSessionVerified": true,
+  "existingInternalGroup": {
+    "id": "88bf737b-ecd4-48ed-b084-73cee2f3a93c",
+    "name": "Personal Testing",
+    "type": "Internal Group",
+    "testers": 1,
+    "currentBuild": "0.4.31 (86)",
+    "currentBuildState": "Testing"
+  },
+  "computerUseRestriction": "Computer Use refused Terminal app control for safety reasons; no Terminal interaction performed",
+  "interactiveHandoff": {
+    "scriptPath": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/run-testflight-interactive-20261005.py",
+    "scriptSHA256": "39e688974311cfde38aea0321f9c9309e1a230584e4439b0efcef2c35207f42a",
+    "pythonExecutable": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "receiptGlob": "/private/tmp/dabin-testflight-interactive-*-receipt.json",
+    "command": "/opt/homebrew/opt/python@3.14/bin/python3.14 /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/run-testflight-interactive-20261005.py",
+    "usesExistingArchiveHelper": true,
+    "checksExactSourceFingerprint": true,
+    "status": "prepared_not_executed"
+  },
+  "currentArchiveAttempt": {
+    "attempt": 3,
+    "executionContext": "Codex exec_command allocated PTY; no native Terminal or authentication UI control",
+    "receiptPath": "/private/tmp/dabin-testflight-tool-pty-20261005T052545Z-receipt.json",
+    "runnerPID": 2235,
+    "helperPID": 2242,
+    "requestedArchivePath": "/Users/roeylibfeld/Library/Developer/Xcode/Archives/2026-10-05/DaBin-0.4.33-88-TestFlight-tool-pty-20261005T052545Z.xcarchive",
+    "logPath": "/private/tmp/dabin-testflight-tool-pty-20261005T052545Z.log",
+    "status": "stopped_superseded",
+    "authenticationUIControlled": false,
+    "securitySettingsChanged": false,
+    "snapshotReceiptFile": "archive-attempt-3-running-snapshot.json",
+    "snapshotLogFile": "archive-attempt-3-running-snapshot.log",
+    "snapshotLogSHA256": "6f8f57156399f0f617b7c7cf57fac7af2ff8c98170ac57b58c553ed7b7b9ce3b",
+    "snapshotAtUTC": "2026-10-05T05:33:32.535589+00:00",
+    "outcome": "agent_stopped_own_codesign_because_user_requested_new_tab_labels_before_upload"
+  },
+  "invitation": {
+    "requestedByUser": true,
+    "recipient": "Existing owner internal tester in Personal Testing",
+    "existingInvitationAccepted": true,
+    "observedInstalledVersion": "0.4.31 (86)",
+    "currentBuildEmailRequested": false,
+    "currentBuildEmailSentVerified": false,
+    "plannedAction": "After processing, add 0.4.33 (88) to Personal Testing; Apple emails selected group testers when the internal build is added",
+    "appleDocumentation": "https://developer.apple.com/help/app-store-connect/test-a-beta-version/add-internal-testers/"
+  },
+  "latestAppStoreConnectCheck": {
+    "checkedAtUTC": "2026-10-05T05:29:19.820897+00:00",
+    "latestUploadedVersion": "0.4.31",
+    "latestUploadedBuild": "86",
+    "latestUploadState": "Complete",
+    "currentBuild88Uploaded": false,
+    "internalGroupOldBuildState": "Testing",
+    "currentInternalTesterInstalledVersion": "0.4.31 (86)"
+  }
+}

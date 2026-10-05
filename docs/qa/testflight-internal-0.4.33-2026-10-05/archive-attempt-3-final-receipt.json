@@ -1,0 +1,20 @@
+{
+  "executionContext": "Codex exec_command allocated PTY; no native Terminal or authentication UI control",
+  "sourceFingerprint": "e038196eea54714eec07d2403b1e48a9eeb2393037b67fc2515123d68e06d456",
+  "version": "0.4.33",
+  "build": "88",
+  "archivePath": "/Users/roeylibfeld/Library/Developer/Xcode/Archives/2026-10-05/DaBin-0.4.33-88-TestFlight-tool-pty-20261005T052545Z.xcarchive",
+  "logPath": "/private/tmp/dabin-testflight-tool-pty-20261005T052545Z.log",
+  "startedAtUTC": "2026-10-05T05:25:45.521987+00:00",
+  "status": "archive_failed",
+  "runnerPID": 2235,
+  "uploaded": false,
+  "signed": false,
+  "helperPID": 2242,
+  "exitCode": 65,
+  "finishedAtUTC": "2026-10-05T06:40:19.277356+00:00",
+  "logSHA256": "686302b8416196b24f00e9d1b9cd36e9f3b0b000ae78dc13886668f2b3462610",
+  "outcome": "agent_stopped_own_codesign_because_user_requested_new_tab_labels_before_upload",
+  "supersededBySourceFingerprint": "a85333395e0a982230f3a8246db0d671e050b595f04a954f559dc29912caef09",
+  "notANaturalSigningFailure": true
+}
