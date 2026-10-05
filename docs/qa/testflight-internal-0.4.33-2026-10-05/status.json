@@ -1,69 +1,56 @@
 {
   "schemaVersion": 1,
-  "updatedAtUTC": "2026-10-05T14:22:00.028860+00:00",
-  "status": "card_delete_fixes_pushed_awaiting_human_signing",
+  "updatedAtUTC": "2026-10-05T15:39:59.741576+00:00",
+  "status": "drag_upload_fix_verified_pushed_awaiting_human_signing",
   "version": "0.4.33",
   "build": "88",
   "bundleIdentifier": "com.dabin.mac",
   "appStoreConnectAppID": "6815956446",
-  "codeCommit": "3735e8d331db18cafe9e5e77847550f47871a048",
-  "codeCommitURL": "https://github.com/RoeyAsterix/DaBin/commit/3735e8d331db18cafe9e5e77847550f47871a048",
+  "codeCommit": "62bf3e92f65b9c1174841393bf26e1716d3894c6",
+  "codeCommitURL": "https://github.com/RoeyAsterix/DaBin/commit/62bf3e92f65b9c1174841393bf26e1716d3894c6",
   "codePushVerified": true,
-  "sourceFingerprint": "6b013ca1385c4aaf1d837e924e12eaa9bbeeba5ad3544fea2ede31b88f83d909",
+  "sourceFingerprint": "24e49b499b3e8977e2e562c72e1c52a4fe8fd93f2d9f3d4eda650170b2610398",
   "nativeQa": {
-    "status": "affected_campaign_and_final_scoped_rechecks_passed_known_prior_zoom_failure",
-    "registeredSuites": 124,
-    "sourceFingerprint": "6b013ca1385c4aaf1d837e924e12eaa9bbeeba5ad3544fea2ede31b88f83d909",
+    "status": "13_affected_release_suites_passed_known_prior_zoom_failure",
+    "registeredSuites": 126,
+    "sourceFingerprint": "24e49b499b3e8977e2e562c72e1c52a4fe8fd93f2d9f3d4eda650170b2610398",
     "fullRegisteredRun": false,
-    "finalSourcePassedSuites": 10,
+    "finalSourcePassedSuites": 13,
     "finalSourceFailedSuites": 0,
     "finalScopedSuiteNames": [
-      "ArchiveBackupTests",
-      "CaptureAnnotationTests",
+      "ExplorerTransferTests",
+      "CaptureClipboardTests",
+      "ExternalTransferProcessTests",
+      "ProjectWorkspaceExportTests",
+      "ProjectWorkspaceViewTests",
+      "ProjectWorkspaceCardTests",
+      "OutgoingFileSnapshotTests",
+      "DetailPreviewInteractionTests",
       "CaptureExtendedInteractionTests",
-      "CaptureRemovalTests",
-      "CardDeletionInteractionTests",
-      "CommentDraftArchiveTests",
-      "NavigationHistoryTests",
-      "TaskPlanInteractionTests",
-      "WorkspaceTests",
-      "WorkspaceWindowTests"
+      "CollectionCardPresentationTests",
+      "NativeContentDragTests",
+      "CaptionDragTests",
+      "OutgoingFileBatchTests"
     ],
-    "distinctPassedSuitesAcrossCampaign": 24,
-    "nativeDeletionChecks": 152,
-    "windowChecks": 322,
-    "completeDeletionAndWindowMarkersVerified": true,
-    "coverageStrategy": "24 affected suites exercised across campaign and scoped rechecks;10 suites passed on final production source",
-    "earlierBroadCampaign": {
-      "sourceFingerprint": "af41610e63a026a943acaecdab445400266df2bdec1e1f31d95db4f14553a957",
-      "requestedSuites": 24,
-      "initialPassedSuites": 21,
-      "initialFailedSuites": 3,
-      "allRawFailuresPreserved": true,
-      "finalProductionDiffersIn": [
-        "Sources/DaBin/CaptureDetailPanels.swift",
-        "Sources/DaBin/TrashScreen.swift"
-      ],
-      "changes": "Explicit accessibility containment of comment-card and deleted-note child controls; deletion business logic unchanged"
-    },
+    "nativeChecks": 3334,
     "allFindingsFixed": false,
     "knownOpenFindings": [
-      "Prior-source strict zoom latency budget failure remains unresolved and was not rerun for this change",
+      "Historical strict zoom performance budget failure remains open and was not rerun for this transfer change",
       "Framework-reproduced native table warnings"
     ],
+    "packagingUnitTestsPassed": 32,
+    "deterministicProjectCheckPassed": true,
+    "verificationPath": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/drag-upload-2026-10-05/verification.json",
+    "verificationSHA256": "0e719475aa2352e36041868b5951613d51667492da9036223a6ff4e0b747b923",
     "strictZoomPerformance": {
-      "status": "historical_failure_not_rerun_for_card_deletion",
+      "status": "historical_failure_not_rerun_for_drag_transfer_fix",
       "sourceFingerprint": "41b3f117c76dc5f22051c7be2833caecd6cfd4e00345dc4f99f60c8c998820fc",
       "inputToLayoutP95Milliseconds": 62.88366671651602,
       "inputBudgetMilliseconds": 50,
       "steadyZoomTimerP95Milliseconds": 70.97337511368096,
       "timerBudgetMilliseconds": 33,
       "report": "../projects-functional-2026-10-05/zoom-performance.json"
-    },
-    "verificationPath": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/card-deletion-2026-10-05/verification.json",
-    "verificationSHA256": "d3115c491e6eb2d5a55e4af0911c09adacea66809d2b85167db189221465d5c8",
-    "packagingUnitTestsPassed": 32,
-    "deterministicProjectCheckPassed": true
+    }
   },
   "requestedArchivePath": null,
   "archiveComplete": false,
@@ -77,11 +64,7 @@
   "internalTestingVerified": false,
   "requestedDistribution": "Normal App Store Connect upload, assign current build to existing internal testers",
   "requiredUserInput": [
-    {
-      "action": "Run the exact current helper from the signed-in Mac Terminal and complete normal macOS signing authentication",
-      "command": "/opt/homebrew/opt/python@3.14/bin/python3.14 /private/tmp/dabin-testflight-card-delete-20261005.py",
-      "reason": "Computer Use refused Terminal control, and automatic approval review rejected protected Keychain/SecurityAgent control; authentication must remain human-operated"
-    }
+    "Run the current interactiveHandoff.command in the signed-in Mac Terminal and complete normal signing authentication. Previous helpers describe superseded source."
   ],
   "authenticationBoundary": "Protected SecurityAgent control was rejected by automatic approval review earlier; no authentication UI is inspected or operated",
   "manualBoundaries": [
@@ -100,8 +83,9 @@
     "status": "ACTIVE",
     "intervalMinutes": 30,
     "notifyOnlyOnMeaningfulChange": true,
-    "lastUpdatedAtUTC": "2026-10-05T14:23:56.502612+00:00",
-    "requiredSourceFingerprint": "6b013ca1385c4aaf1d837e924e12eaa9bbeeba5ad3544fea2ede31b88f83d909"
+    "lastUpdatedAtUTC": "2026-10-05T15:39:59.741576+00:00",
+    "requiredSourceFingerprint": "24e49b499b3e8977e2e562c72e1c52a4fe8fd93f2d9f3d4eda650170b2610398",
+    "promptStatus": "current_drag_source_handoff_and_internal_invite_updated_tool_confirmed_ACTIVE"
   },
   "archiveAttempts": [
     {
@@ -146,27 +130,27 @@
   },
   "computerUseRestriction": "Computer Use refused Terminal app control for safety reasons; no Terminal interaction performed",
   "interactiveHandoff": {
-    "scriptPath": "/private/tmp/dabin-testflight-card-delete-20261005.py",
-    "scriptSHA256": "e9a50d285090605a179cb429e1dc6a20598c2c57b3a6e7e1876d69eaa65f617a",
+    "scriptPath": "/private/tmp/dabin-testflight-drag-upload-20261005.py",
+    "scriptSHA256": "cde9e177a1f5e153e2fdfec9082cd2a4cca89216a334f2dcc9ad13c44af43aeb",
     "pythonExecutable": "/opt/homebrew/opt/python@3.14/bin/python3.14",
-    "receiptGlob": "/private/tmp/dabin-testflight-card-delete-interactive-*-receipt.json",
-    "command": "/opt/homebrew/opt/python@3.14/bin/python3.14 /private/tmp/dabin-testflight-card-delete-20261005.py",
+    "receiptGlob": "/private/tmp/dabin-testflight-drag-upload-interactive-*-receipt.json",
+    "command": "/opt/homebrew/opt/python@3.14/bin/python3.14 /private/tmp/dabin-testflight-drag-upload-20261005.py",
     "usesExistingArchiveHelper": true,
     "checksExactSourceFingerprint": true,
     "checksExactBuildConfigurationHashes": true,
     "extraBuildConfigurationHashes": {
       "Config/AppStoreSigning.json": "a6072c1ad444175cf204f71d3f8d8d39e0d15bcd3d74d672a4a1924ac525ddf5",
-      "DaBin.xcodeproj/project.pbxproj": "84c644da6852650b0ee9830aec3fc8e80cce80631532d270b3e64d1e45da2260",
+      "DaBin.xcodeproj/project.pbxproj": "271ac8dbec9ca5b278ae8ea42ba42367744953a5963054333c6d6debe6aa85d3",
       "DaBin.xcodeproj/xcshareddata/xcschemes/DaBin.xcscheme": "0922aad38e86918dc38f90b76d197e0405997d7dcd571bde62063ae96e4db283"
     },
-    "sourceFingerprint": "6b013ca1385c4aaf1d837e924e12eaa9bbeeba5ad3544fea2ede31b88f83d909",
-    "codeCommit": "3735e8d331db18cafe9e5e77847550f47871a048",
-    "status": "prepared_not_executed_awaiting_human_normal_signing_authentication",
+    "sourceFingerprint": "24e49b499b3e8977e2e562c72e1c52a4fe8fd93f2d9f3d4eda650170b2610398",
+    "codeCommit": "62bf3e92f65b9c1174841393bf26e1716d3894c6",
+    "status": "prepared_awaiting_human_signing",
     "executionRequired": "Human signed-in Mac Terminal; never automated native Terminal or protected authentication control",
-    "recoveryCopy": "archive-card-delete-human-handoff.py",
+    "recoveryCopy": "archive-drag-upload-human-handoff.py",
     "preparedOnly": true,
     "lockPath": "/private/tmp/dabin-testflight-current-archive.lock",
-    "preparationReceipt": "archive-card-delete-handoff-preparation.json",
+    "preparationReceipt": "archive-drag-upload-handoff-preparation.json",
     "preservedTemplateLogicASTEquivalent": true
   },
   "currentArchiveAttempt": null,
@@ -189,30 +173,33 @@
     "internalGroupOldBuildState": "Testing",
     "currentInternalTesterInstalledVersion": "0.4.31 (86)"
   },
-  "previousCodeCommit": "1e5f0ed3fc3ec460457711ae181e37c4df061c80",
+  "previousCodeCommit": "3735e8d331db18cafe9e5e77847550f47871a048",
   "focusedQa": {
-    "status": "final_scoped_card_deletion_regressions_passed",
+    "status": "current_drag_and_related_native_flows_verified",
     "suiteNames": [
-      "ArchiveBackupTests",
-      "CaptureAnnotationTests",
+      "ExplorerTransferTests",
+      "CaptureClipboardTests",
+      "ExternalTransferProcessTests",
+      "ProjectWorkspaceExportTests",
+      "ProjectWorkspaceViewTests",
+      "ProjectWorkspaceCardTests",
+      "OutgoingFileSnapshotTests",
+      "DetailPreviewInteractionTests",
       "CaptureExtendedInteractionTests",
-      "CaptureRemovalTests",
-      "CardDeletionInteractionTests",
-      "CommentDraftArchiveTests",
-      "NavigationHistoryTests",
-      "TaskPlanInteractionTests",
-      "WorkspaceTests",
-      "WorkspaceWindowTests"
+      "CollectionCardPresentationTests",
+      "NativeContentDragTests",
+      "CaptionDragTests",
+      "OutgoingFileBatchTests"
     ],
-    "sourceFingerprint": "6b013ca1385c4aaf1d837e924e12eaa9bbeeba5ad3544fea2ede31b88f83d909",
-    "passedSuites": 10,
+    "sourceFingerprint": "24e49b499b3e8977e2e562c72e1c52a4fe8fd93f2d9f3d4eda650170b2610398",
+    "passedSuites": 13,
     "failedSuites": 0,
     "fullRegisteredRun": false,
-    "recordedProductionSourceResourceAndQaToolInputsUnchangedBetweenFinalRuns": true,
-    "canonicalProductionInputCount": 168,
+    "canonicalProductionInputCount": 169,
+    "recordedProductionInputsUnchangedBetweenFinalRuns": true,
     "unsignedReleaseInputsUnchanged": true,
-    "verificationPath": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/card-deletion-2026-10-05/verification.json",
-    "verificationSHA256": "d3115c491e6eb2d5a55e4af0911c09adacea66809d2b85167db189221465d5c8"
+    "verificationPath": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/drag-upload-2026-10-05/verification.json",
+    "verificationSHA256": "0e719475aa2352e36041868b5951613d51667492da9036223a6ff4e0b747b923"
   },
   "tabLabels": {
     "leftToRight": [
@@ -247,12 +234,12 @@
   },
   "currentUnsignedStoreCandidate": {
     "status": "unsigned_store_release_compiled_packaging_checked",
-    "sourceFingerprint": "6b013ca1385c4aaf1d837e924e12eaa9bbeeba5ad3544fea2ede31b88f83d909",
+    "sourceFingerprint": "24e49b499b3e8977e2e562c72e1c52a4fe8fd93f2d9f3d4eda650170b2610398",
     "version": "0.4.33",
     "buildNumber": "88",
-    "receipt": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/card-deletion-2026-10-05/store-candidate-receipt.json",
-    "receiptSHA256": "493e7314723a480767980fcb48140a39438237ef066ec4db793e352202a2e0ca",
-    "executableSHA256": "8d4884c9f2f041b103e02a340caba3085b925cf506ad383cbbf9b4704be75d7b",
+    "receipt": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/drag-upload-2026-10-05/store-candidate-receipt.json",
+    "receiptSHA256": "6b2887947d500be6d47909680cfece0acb91fbe8c4bcf7526ffac7737bda624f",
+    "executableSHA256": "451cb0cc150be19896f38e428ac5e5612a9a78b184cfd9d084feefcc3a6913e5",
     "xcodebuildExitCode": 0,
     "packagingPreflightExitCode": 0,
     "inputsUnchanged": true,
@@ -536,7 +523,7 @@
     "uploaded": false,
     "sandboxRuntimeVerified": false
   },
-  "publicSigningIdentityVerificationScope": "Earlier observed valid public identity; no protected authentication or private signing material inspected during card deletion work",
+  "publicSigningIdentityVerificationScope": "Earlier observed valid public identity; no protected authentication or private signing material inspected during drag repair",
   "cardDeletion": {
     "status": "implemented_affected_flows_verified_code_pushed_awaiting_human_signing",
     "sourceFingerprint": "6b013ca1385c4aaf1d837e924e12eaa9bbeeba5ad3544fea2ede31b88f83d909",
@@ -556,7 +543,8 @@
     "allFindingsFixed": false,
     "qaVerificationPath": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/card-deletion-2026-10-05/verification.json",
     "coveragePath": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/card-deletion-2026-10-05/action-coverage.json",
-    "currentHumanArchiveCommandAvailable": true
+    "currentHumanArchiveCommandAvailable": false,
+    "supersededForPublicationBySourceFingerprint": "24e49b499b3e8977e2e562c72e1c52a4fe8fd93f2d9f3d4eda650170b2610398"
   },
   "previousProjectsNativeQa": {
     "status": "full_campaign_plus_scoped_rechecks_complete_known_strict_zoom_failure",
@@ -659,10 +647,10 @@
     "preparedOnly": true
   },
   "codePushVerification": {
-    "verifiedAtUTC": "2026-10-05T14:22:00.028860+00:00",
+    "verifiedAtUTC": "2026-10-05T15:37:10.872774+00:00",
     "remote": "origin",
     "branch": "refs/heads/main",
-    "observedRemoteCommit": "3735e8d331db18cafe9e5e77847550f47871a048",
+    "observedRemoteCommit": "62bf3e92f65b9c1174841393bf26e1716d3894c6",
     "method": "git ls-remote origin refs/heads/main after successful git push"
   },
   "currentBuildApproval": {
@@ -670,5 +658,150 @@
     "currentApprovalVerified": false,
     "status": "no_current_upload_or_review_receipt",
     "appStoreReleaseAuthorized": false
+  },
+  "dragUploadFix": {
+    "status": "implemented_affected_flows_verified_code_pushed_awaiting_human_signing",
+    "reportedError": "Attachment upload failed for 1 file(s) (OD_PROTOCOL_PROXY_FAILED)",
+    "previousReleaseFingerprint": "6b013ca1385c4aaf1d837e924e12eaa9bbeeba5ad3544fea2ede31b88f83d909",
+    "previousHelperSuperseded": true,
+    "sourceFingerprint": "24e49b499b3e8977e2e562c72e1c52a4fe8fd93f2d9f3d4eda650170b2610398",
+    "codeCommit": "62bf3e92f65b9c1174841393bf26e1716d3894c6",
+    "codePushVerified": true,
+    "baselineStaleUrlFailureReproduced": true,
+    "baselineFailedLanes": 8,
+    "stableOutgoingSnapshots": true,
+    "ordinaryOriginalFilenamesPreserved": true,
+    "boundedUniqueNativeBatchFilenames": true,
+    "lazyEncodedImagesAndNativeNSURLPreserved": true,
+    "activeDirectoryIdentityFixed": true,
+    "finalScopedPassedSuites": 13,
+    "nativeChecks": 3334,
+    "registeredSuites": 126,
+    "fullCurrentRegisteredCampaignRun": false,
+    "receivingApplicationConfirmed": false,
+    "reportedProxyErrorReproduced": false,
+    "physicalSandboxedAndLiveReceiverUploadVerified": false,
+    "qaVerificationPath": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/drag-upload-2026-10-05/verification.json",
+    "currentHumanArchiveCommandAvailable": true
+  },
+  "previousCardDeletionInteractiveHandoff": {
+    "scriptPath": "/private/tmp/dabin-testflight-card-delete-20261005.py",
+    "scriptSHA256": "e9a50d285090605a179cb429e1dc6a20598c2c57b3a6e7e1876d69eaa65f617a",
+    "pythonExecutable": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "receiptGlob": "/private/tmp/dabin-testflight-card-delete-interactive-*-receipt.json",
+    "command": "/opt/homebrew/opt/python@3.14/bin/python3.14 /private/tmp/dabin-testflight-card-delete-20261005.py",
+    "usesExistingArchiveHelper": true,
+    "checksExactSourceFingerprint": true,
+    "checksExactBuildConfigurationHashes": true,
+    "extraBuildConfigurationHashes": {
+      "Config/AppStoreSigning.json": "a6072c1ad444175cf204f71d3f8d8d39e0d15bcd3d74d672a4a1924ac525ddf5",
+      "DaBin.xcodeproj/project.pbxproj": "84c644da6852650b0ee9830aec3fc8e80cce80631532d270b3e64d1e45da2260",
+      "DaBin.xcodeproj/xcshareddata/xcschemes/DaBin.xcscheme": "0922aad38e86918dc38f90b76d197e0405997d7dcd571bde62063ae96e4db283"
+    },
+    "sourceFingerprint": "6b013ca1385c4aaf1d837e924e12eaa9bbeeba5ad3544fea2ede31b88f83d909",
+    "codeCommit": "3735e8d331db18cafe9e5e77847550f47871a048",
+    "status": "superseded_by_drag_upload_fix_do_not_use_for_latest_release",
+    "executionRequired": "Human signed-in Mac Terminal; never automated native Terminal or protected authentication control",
+    "recoveryCopy": "archive-card-delete-human-handoff.py",
+    "preparedOnly": true,
+    "lockPath": "/private/tmp/dabin-testflight-current-archive.lock",
+    "preparationReceipt": "archive-card-delete-handoff-preparation.json",
+    "preservedTemplateLogicASTEquivalent": true
+  },
+  "previousCardDeletionNativeQa": {
+    "status": "affected_campaign_and_final_scoped_rechecks_passed_known_prior_zoom_failure",
+    "registeredSuites": 124,
+    "sourceFingerprint": "6b013ca1385c4aaf1d837e924e12eaa9bbeeba5ad3544fea2ede31b88f83d909",
+    "fullRegisteredRun": false,
+    "finalSourcePassedSuites": 10,
+    "finalSourceFailedSuites": 0,
+    "finalScopedSuiteNames": [
+      "ArchiveBackupTests",
+      "CaptureAnnotationTests",
+      "CaptureExtendedInteractionTests",
+      "CaptureRemovalTests",
+      "CardDeletionInteractionTests",
+      "CommentDraftArchiveTests",
+      "NavigationHistoryTests",
+      "TaskPlanInteractionTests",
+      "WorkspaceTests",
+      "WorkspaceWindowTests"
+    ],
+    "distinctPassedSuitesAcrossCampaign": 24,
+    "nativeDeletionChecks": 152,
+    "windowChecks": 322,
+    "completeDeletionAndWindowMarkersVerified": true,
+    "coverageStrategy": "24 affected suites exercised across campaign and scoped rechecks;10 suites passed on final production source",
+    "earlierBroadCampaign": {
+      "sourceFingerprint": "af41610e63a026a943acaecdab445400266df2bdec1e1f31d95db4f14553a957",
+      "requestedSuites": 24,
+      "initialPassedSuites": 21,
+      "initialFailedSuites": 3,
+      "allRawFailuresPreserved": true,
+      "finalProductionDiffersIn": [
+        "Sources/DaBin/CaptureDetailPanels.swift",
+        "Sources/DaBin/TrashScreen.swift"
+      ],
+      "changes": "Explicit accessibility containment of comment-card and deleted-note child controls; deletion business logic unchanged"
+    },
+    "allFindingsFixed": false,
+    "knownOpenFindings": [
+      "Prior-source strict zoom latency budget failure remains unresolved and was not rerun for this change",
+      "Framework-reproduced native table warnings"
+    ],
+    "strictZoomPerformance": {
+      "status": "historical_failure_not_rerun_for_card_deletion",
+      "sourceFingerprint": "41b3f117c76dc5f22051c7be2833caecd6cfd4e00345dc4f99f60c8c998820fc",
+      "inputToLayoutP95Milliseconds": 62.88366671651602,
+      "inputBudgetMilliseconds": 50,
+      "steadyZoomTimerP95Milliseconds": 70.97337511368096,
+      "timerBudgetMilliseconds": 33,
+      "report": "../projects-functional-2026-10-05/zoom-performance.json"
+    },
+    "verificationPath": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/card-deletion-2026-10-05/verification.json",
+    "verificationSHA256": "d3115c491e6eb2d5a55e4af0911c09adacea66809d2b85167db189221465d5c8",
+    "packagingUnitTestsPassed": 32,
+    "deterministicProjectCheckPassed": true
+  },
+  "previousCardDeletionFocusedQa": {
+    "status": "final_scoped_card_deletion_regressions_passed",
+    "suiteNames": [
+      "ArchiveBackupTests",
+      "CaptureAnnotationTests",
+      "CaptureExtendedInteractionTests",
+      "CaptureRemovalTests",
+      "CardDeletionInteractionTests",
+      "CommentDraftArchiveTests",
+      "NavigationHistoryTests",
+      "TaskPlanInteractionTests",
+      "WorkspaceTests",
+      "WorkspaceWindowTests"
+    ],
+    "sourceFingerprint": "6b013ca1385c4aaf1d837e924e12eaa9bbeeba5ad3544fea2ede31b88f83d909",
+    "passedSuites": 10,
+    "failedSuites": 0,
+    "fullRegisteredRun": false,
+    "recordedProductionSourceResourceAndQaToolInputsUnchangedBetweenFinalRuns": true,
+    "canonicalProductionInputCount": 168,
+    "unsignedReleaseInputsUnchanged": true,
+    "verificationPath": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/card-deletion-2026-10-05/verification.json",
+    "verificationSHA256": "d3115c491e6eb2d5a55e4af0911c09adacea66809d2b85167db189221465d5c8"
+  },
+  "previousCardDeletionUnsignedStoreCandidate": {
+    "status": "unsigned_store_release_compiled_packaging_checked",
+    "sourceFingerprint": "6b013ca1385c4aaf1d837e924e12eaa9bbeeba5ad3544fea2ede31b88f83d909",
+    "version": "0.4.33",
+    "buildNumber": "88",
+    "receipt": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/card-deletion-2026-10-05/store-candidate-receipt.json",
+    "receiptSHA256": "493e7314723a480767980fcb48140a39438237ef066ec4db793e352202a2e0ca",
+    "executableSHA256": "8d4884c9f2f041b103e02a340caba3085b925cf506ad383cbbf9b4704be75d7b",
+    "xcodebuildExitCode": 0,
+    "packagingPreflightExitCode": 0,
+    "inputsUnchanged": true,
+    "actualAppInfoAndBinaryVerified": true,
+    "signed": false,
+    "archiveCreated": false,
+    "uploaded": false,
+    "sandboxRuntimeVerified": false
   }
 }
