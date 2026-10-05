@@ -1,0 +1,23 @@
+/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa-cache/app-store-7954d6569f2e697b12b2dc752858d2a1abd6ad157b6adf28a4b2661c6db1ba88/CardDeletionInteractionTests-97067aa579602166/CardDeletionInteractionTests.swift:396:77: error: extra argument 'workspace' in call
+394 | 
+395 |         state.libraryProject = project
+396 |         try await mount(ProjectWorkspaceView(state: state, workspace: state.workspace), in: host)
+    |                                                                             `- error: extra argument 'workspace' in call
+397 |         try await selectMenu(host, id: "project-actions", title: "Project notes")
+398 |         var sheetView: NSView?
+
+/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa-cache/app-store-7954d6569f2e697b12b2dc752858d2a1abd6ad157b6adf28a4b2661c6db1ba88/CardDeletionInteractionTests-97067aa579602166/CardDeletionInteractionTests.swift:396:58: error: missing argument for parameter 'project' in call
+394 | 
+395 |         state.libraryProject = project
+396 |         try await mount(ProjectWorkspaceView(state: state, workspace: state.workspace), in: host)
+    |                                                          `- error: missing argument for parameter 'project' in call
+397 |         try await selectMenu(host, id: "project-actions", title: "Project notes")
+398 |         var sheetView: NSView?
+
+/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/Sources/DaBin/ProjectWorkspaceView.swift:184:5: note: 'init(state:project:showsSearchEntry:pasteboard:chooseExportDestination:)' declared here
+182 |     private static let reorderType = "com.dabin.project-item-order"
+183 | 
+184 |     init(state: AppState, project: String, showsSearchEntry: Bool = true, pasteboard: NSPasteboard = .general,
+    |     `- note: 'init(state:project:showsSearchEntry:pasteboard:chooseExportDestination:)' declared here
+185 |          chooseExportDestination: @escaping @MainActor (ProjectWorkspaceExportDocument) -> URL? = { document in
+186 |              let panel = NSSavePanel()

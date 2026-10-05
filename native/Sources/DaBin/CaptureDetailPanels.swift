@@ -13,6 +13,8 @@ struct CaptureDetailPanels: View {
     @Binding var selection: CaptureDetailSection
     var showsTabs = true
     var isActive = true
+    @State private var pendingCommentDeletion: CaptureCommentEntry?
+    @State private var undoCommentRemovalReceipt: CaptureCommentRemovalReceipt?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -24,6 +26,21 @@ struct CaptureDetailPanels: View {
             }
             if selection == .comments { comments } else { reminder }
         }
+        .alert("Delete this comment?", isPresented: Binding(
+            get: { pendingCommentDeletion != nil }, set: { if !$0 { pendingCommentDeletion = nil } }
+        ), presenting: pendingCommentDeletion) { entry in
+            Button("Cancel", role: .cancel) { pendingCommentDeletion = nil }
+                .accessibilityIdentifier("cancel-delete-comment")
+            Button("Delete comment", role: .destructive) {
+                deleteSavedComment(entry.id)
+                pendingCommentDeletion = nil
+            }.accessibilityIdentifier("confirm-delete-comment-" + entry.id.uuidString)
+        } message: { entry in
+            Text(draft.editingCommentID == entry.id
+                ? "Undo can restore this comment. Your unfinished edit will stay in the composer as a new comment."
+                : "Undo can restore this comment. The capture and its other comments stay saved.")
+        }
+        .onChange(of: capture.id) { _, _ in pendingCommentDeletion = nil; undoCommentRemovalReceipt = nil }
         .onChange(of: state.detailFocus) { _, focus in
             guard showsTabs else { return }
             if focus == "comment" { selection = .comments }
@@ -98,6 +115,19 @@ struct CaptureDetailPanels: View {
                     .disabled(draft.commentComposer.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                     .accessibilityIdentifier("capture-post-comment")
             }
+            if undoCommentRemovalReceipt != nil {
+                HStack(spacing: 8) {
+                    Text("Comment deleted").font(.system(size: 12)).foregroundStyle(Palette.muted)
+                    Spacer(minLength: 0)
+                    Button(action: undoCommentRemoval) {
+                        Label("Undo", systemImage: "arrow.uturn.backward")
+                            .frame(minHeight: 32).contentShape(Rectangle())
+                    }.buttonStyle(.plain).foregroundStyle(accent)
+                        .disabled(state.removingCaptureID != nil || state.isArchiveOperationRunning)
+                        .accessibilityLabel("Undo comment deletion")
+                        .accessibilityIdentifier("capture-undo-comment-delete")
+                }
+            }
             if !capture.commentThread.isEmpty {
                 Divider()
                 Text("Comments · \(capture.commentCount)").font(.system(size: 12, weight: .semibold))
@@ -121,12 +151,78 @@ struct CaptureDetailPanels: View {
                         .accessibilityLabel("Edit comment")
                         .accessibilityIdentifier("edit-comment-\(entry.id.uuidString)")
                         .buddyHelp("Edit this comment")
+                        Button { pendingCommentDeletion = entry } label: {
+                            Image(systemName: "trash").frame(width: 32, height: 32).contentShape(Rectangle())
+                        }.buttonStyle(.plain).foregroundStyle(Palette.muted)
+                            .disabled(state.removingCaptureID != nil || state.isArchiveOperationRunning)
+                            .accessibilityLabel("Delete comment")
+                            .accessibilityHint("Confirm deletion; Undo can restore this comment")
+                            .accessibilityIdentifier("delete-comment-" + entry.id.uuidString)
+                            .buddyHelp("Delete this comment")
                     }
                     Text(entry.text).font(.system(size: 13)).lineSpacing(3).textSelection(.enabled)
                         .fixedSize(horizontal: false, vertical: true).frame(maxWidth: .infinity, alignment: .leading)
                 }.padding(10).background(Palette.soft, in: RoundedRectangle(cornerRadius: 11))
+                    .accessibilityElement(children: .contain)
+                    .accessibilityIdentifier("capture-comment-card-" + entry.id.uuidString)
             }
         }.accessibilityElement(children: .contain).accessibilityIdentifier("capture-comment-thread")
+    }
+
+    private func deleteSavedComment(_ id: UUID) {
+        guard draft.comment == capture.comment else {
+            commentActionFailed("Save your recovered comment edit before deleting a comment.")
+            return
+        }
+        do {
+            let receipt = try state.store.removeComment(capture, id: id)
+            adoptCommentsPreservingComposer(removing: id)
+            undoCommentRemovalReceipt = receipt
+            finishCommentAction("Comment deleted. Undo is available here.")
+        } catch { commentActionFailed("Could not delete the comment: " + error.localizedDescription) }
+    }
+
+    private func undoCommentRemoval() {
+        guard let receipt = undoCommentRemovalReceipt else { return }
+        guard draft.comment == capture.comment else {
+            commentActionFailed("Save your recovered comment edit before restoring a comment.")
+            return
+        }
+        do {
+            _ = try state.store.restoreComment(capture, receipt: receipt)
+            adoptCommentsPreservingComposer()
+            undoCommentRemovalReceipt = nil
+            finishCommentAction("Comment restored.")
+        } catch {
+            // The same receipt remains available for retry after a failed save.
+            commentActionFailed("Could not restore the comment: " + error.localizedDescription)
+        }
+    }
+
+    private func adoptCommentsPreservingComposer(removing id: UUID? = nil) {
+        let composer = draft.commentComposer
+        let editingID = draft.editingCommentID
+        draft.adoptSavedComments(from: capture)
+        draft.commentComposer = composer
+        // Deleting the comment currently being edited keeps its exact typed
+        // text as a new reply. A different edit keeps its original owner.
+        draft.editingCommentID = editingID == id ? nil : editingID
+    }
+
+    private func finishCommentAction(_ message: String) {
+        state.persistDrafts()
+        if let error = state.draftPersistenceError { commentActionFailed(error) }
+        else {
+            draft.message = message
+            draft.hasError = false
+            state.status = AppStatusMessage(text: message, severity: .success)
+        }
+    }
+
+    private func commentActionFailed(_ message: String) {
+        draft.message = message
+        draft.hasError = true
+        state.reportFailure(message)
     }
 
     private var reminder: some View {

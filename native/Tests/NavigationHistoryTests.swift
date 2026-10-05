@@ -482,10 +482,149 @@ import Foundation
                    "History does not save unfinished draft content to captures")
     }
 
+    @MainActor private static func scratchpadRemovalFlowTests() async throws {
+        let root = FileManager.default.temporaryDirectory.appendingPathComponent("DaBinNoteRemovalQA-\(UUID())")
+        let defaultsName = "DaBinNoteRemovalQA.\(UUID())"
+        let defaults = UserDefaults(suiteName: defaultsName)!
+        let board = NSPasteboard(name: .init(defaultsName))
+        let store = try CaptureStore(root: root)
+        let previews = PreviewService(store: store, defaults: defaults)
+        let auto = AutoCaptureService(settings: AutoCaptureSettings(defaults: defaults), input: InputService(store: store),
+            pasteboardProvider: { fatalError("Note removal QA never reads the clipboard") }, sourceApplicationProvider: { nil })
+        let state = AppState(store: store, previews: previews,
+            reminders: ReminderService(store: store, client: HistoryNotifications()), autoCapture: auto,
+            captureClipboard: CaptureClipboardService(pasteboard: board))
+        defer {
+            auto.shutdown(); state.focusSessions.shutdown(); state.shutdownNotificationPresentation(); previews.shutdown()
+            board.releaseGlobally(); defaults.removePersistentDomain(forName: defaultsName)
+            try? FileManager.default.removeItem(at: root)
+        }
+        let project = "Fictional note project"
+        let key = WorkspaceSnapshot.projectKey(project)
+        let text = "Current live note\nעברית 日本語 📝\n  spacing  "
+        let copy = try store.capture(text: text, projectName: project)[0]
+        try state.workspace.setScratchpad(text: text, project: project)
+        state.openLibrary()
+        let stale = WorkspaceScratchpad(text: "Stale search result", projectName: project, updatedAt: .distantPast)
+        let note = state.workspace.snapshot.scratchpads[key]!
+        state.requestScratchpadRemoval(stale)
+        try expect(state.pendingScratchpadRemoval == note && state.isNavigationBlocked,
+                   "Note confirmation freezes the actual current project text/date rather than a stale card's excerpt")
+        let history = state.navigationHistory.entries
+        state.showSettings(); state.requestRemoval(copy)
+        try expect(state.route == .library && state.navigationHistory.entries == history && state.pendingRemoval == nil,
+                   "Pending note deletion blocks navigation and cannot overlap a capture confirmation")
+        state.pendingScratchpadRemoval = nil
+        state.requestRemoval(copy); state.requestScratchpadRemoval(note)
+        try expect(state.pendingRemoval === copy && state.pendingScratchpadRemoval == nil,
+                   "A capture confirmation also blocks a second note confirmation")
+        state.pendingRemoval = nil
+        state.requestScratchpadRemoval(note)
+        try state.workspace.setScratchpad(text: text + "\nLater edit", project: project)
+        try expect(!state.confirmScratchpadRemoval() && state.pendingScratchpadRemoval == nil
+            && state.workspace.deletedScratchpads.isEmpty && state.workspace.scratchpad(project: project) == text + "\nLater edit"
+            && state.status?.severity == .error,
+                   "A changed note refuses stale confirmation, preserves later edits and reports a retryable error")
+        try state.workspace.setScratchpad(text: text, project: project)
+        state.requestScratchpadRemoval(stale)
+        let before = state.workspace.snapshot
+        state.workspace.failureInjector = { throw CaptureStoreError.injectedInterruption }
+        try expect(!state.confirmScratchpadRemoval() && state.workspace.snapshot == before
+            && state.workspace.scratchpad(project: project) == text && !state.canUndoRemoval && state.status?.severity == .error,
+                   "Failed confirmed deletion leaves live text, durable receipt set and Undo unchanged")
+        state.workspace.failureInjector = nil
+        state.requestScratchpadRemoval(stale)
+        try expect(state.confirmScratchpadRemoval() && state.canUndoRemoval && state.workspace.scratchpad(project: project).isEmpty,
+                   "Retry atomically deletes the current live note and exposes shared Undo")
+        let receipt = state.workspace.deletedScratchpads.first!
+        try expect(copy.originalText == text && store.captures.contains { $0 === copy },
+                   "Deleting the live note never deletes its independent saved capture copy")
+        state.workspace.failureInjector = { throw CaptureStoreError.injectedInterruption }
+        await state.undoLastRemoval()
+        try expect(state.canUndoRemoval && state.workspace.deletedScratchpads == [receipt] && state.workspace.scratchpad(project: project).isEmpty,
+                   "Failed note Undo retains the same receipt and remains retryable")
+        state.workspace.failureInjector = nil
+        await state.undoLastRemoval()
+        try expect(!state.canUndoRemoval && state.workspace.snapshot.scratchpads[key] == receipt.note && state.workspace.deletedScratchpads.isEmpty,
+                   "Retrying shared Undo restores exact content/date once")
+        state.performSearchCommand()
+        state.openSearchNote(state.workspace.snapshot.scratchpads[key]!)
+        try expect(state.route == .searchNote, "The deletion fixture actually opens the Search note editor")
+        state.requestScratchpadRemoval(stale)
+        try expect(state.confirmScratchpadRemoval() && state.route == .library && state.selectedSearchNote == nil,
+                   "Deleting the active Search note returns safely to Library and releases its editor context")
+        let searchReceipt = state.workspace.deletedScratchpads.first!
+        state.back()
+        try expect(state.route == .search && state.selectedSearchNote == nil && state.workspace.scratchpad(project: project).isEmpty
+            && state.searchSelectedResultID != "note:" + key
+            && !state.navigationHistory.entries.contains { $0.route == .searchNote || $0.selectedNoteProjectKey == key },
+                   "Back after deletion returns to Search, clearing the deleted note visit and selection instead of opening a blank editor")
+        try expect(state.workspace.projectNames.contains(project), "Pruning deleted note navigation retains its empty project marker")
+        try expect(state.restoreScratchpad(searchReceipt) && state.workspace.scratchpad(project: project) == text,
+                   "Explicit restoration makes the recovered text available to the original project")
+        if state.route == .searchNote {
+            try expect(state.selectedSearchNote == searchReceipt.note, "An active restored Search editor receives the restored current note/date")
+        }
+        state.openLibrary()
+        state.requestScratchpadRemoval(stale)
+        try expect(state.confirmScratchpadRemoval(), "Prepare a note receipt for capture/note Undo exclusivity")
+        let exclusiveNote = state.workspace.deletedScratchpads.first!
+        await state.removeCapture(copy)
+        await state.undoLastRemoval()
+        try expect(store.captures.contains { $0.id == copy.id } && state.workspace.deletedScratchpads.contains { $0.id == exclusiveNote.id }
+            && state.workspace.scratchpad(project: project).isEmpty,
+                   "A later capture deletion makes Undo restore only that capture while retaining older note recovery")
+        try expect(state.restoreScratchpad(exclusiveNote), "Restore the live note for reverse Undo ordering")
+        let restoredCopy = store.captures.first { $0.id == copy.id }!
+        await state.removeCapture(restoredCopy)
+        state.requestScratchpadRemoval(stale)
+        try expect(state.confirmScratchpadRemoval(), "A later note deletion supersedes the older capture Undo")
+        await state.undoLastRemoval()
+        try expect(state.workspace.scratchpad(project: project) == text && store.trashedCaptures.contains { $0.id == copy.id },
+                   "A later note deletion makes Undo restore only the note while the older capture remains in trash")
+        state.requestScratchpadRemoval(stale)
+        try expect(state.confirmScratchpadRemoval(), "Prepare shared note Undo for failed/stale batch regression")
+        let batchReceipt = state.workspace.deletedScratchpads.first!
+        let failedCapture = try store.capture(text: "Capture whose trash commit fails")[0]
+        store.failureInjector = { if $0 == .beforeMetadataSave { throw CaptureStoreError.injectedInterruption } }
+        await state.removeCaptures([failedCapture])
+        try expect(state.canUndoRemoval && state.workspace.deletedScratchpads == [batchReceipt]
+            && store.captures.contains { $0 === failedCapture } && state.status?.severity == .error,
+                   "An all-failed capture batch preserves the preceding note Undo and reports the actual failure")
+        store.failureInjector = nil
+        let staleCapture = store.trashedCaptures.first { $0.id == copy.id }!
+        await state.removeCaptures([staleCapture])
+        try expect(state.canUndoRemoval && state.workspace.deletedScratchpads == [batchReceipt] && state.status?.severity == .warning,
+                   "An already-deleted batch does not replace a meaningful note Undo with stale capture IDs")
+        await state.undoLastRemoval()
+        try expect(state.workspace.scratchpad(project: project) == text && state.workspace.deletedScratchpads.isEmpty,
+                   "Undo still restores the exact preceding note after both unsuccessful batch attempts")
+        state.requestScratchpadRemoval(stale)
+        try expect(state.confirmScratchpadRemoval(), "Prepare recovery-versus-newer-text conflict")
+        let conflict = state.workspace.deletedScratchpads.first!
+        try state.workspace.setScratchpad(text: "New live note must survive", project: project)
+        try expect(!state.canUndoRemoval && !state.restoreScratchpad(conflict)
+            && state.workspace.scratchpad(project: project) == "New live note must survive"
+            && state.workspace.deletedScratchpads == [conflict],
+                   "Shared Undo eligibility and explicit restore agree on preserving newer live text")
+        let restarted = WorkspaceStore(root: root)
+        try expect(restarted.deletedScratchpads == [conflict] && restarted.scratchpad(project: project) == "New live note must survive",
+                   "Restart preserves both newer live content and older recoverable note without merging their text")
+        state.workspace.failureInjector = { throw CaptureStoreError.injectedInterruption }
+        try expect(!state.permanentlyDeleteScratchpad(conflict) && state.workspace.deletedScratchpads == [conflict],
+                   "Failed permanent deletion preserves the receipt for retry")
+        state.workspace.failureInjector = nil
+        try expect(state.permanentlyDeleteScratchpad(conflict) && state.workspace.deletedScratchpads.isEmpty
+            && state.workspace.scratchpad(project: project) == "New live note must survive"
+            && store.trashedCaptures.contains { $0.id == copy.id },
+                   "Permanent note deletion removes only recovery, leaving newer notes and independent capture trash untouched")
+    }
+
     @MainActor static func main() async throws {
         try modelTests()
         try projectPersistenceTests()
         try await removalReturnPersistenceTests()
+        try await scratchpadRemovalFlowTests()
         try await integrationTests()
         print("PASS: \(checks) bounded history, branch, project, draft, search, deletion and navigation safety checks")
     }

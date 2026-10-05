@@ -1,0 +1,10 @@
+Compiling app-store Release test module (137 production sources)…
+PASSED WorkspaceTests: PASS: 83 workspace, clipboard, scratchpad, collection and ZIP checks
+PASSED ArchiveBackupTests: PASS: 31 workspace backup, conflict, rollback, restart, and legacy checks.
+PASSED CaptureRemovalTests: PASS: 76 capture removal/minimize checks
+PASSED CaptureAnnotationTests: PASS: 96 annotation checks; legacy threads, edits, exact comment deletion/additive Undo, search/export, restart/backup, exact reminder/focus acknowledgments and atomic rollback.
+PASSED CommentDraftArchiveTests: PASS: 37 comment draft checks; legacy compatibility, recoverable composer/edit identity, posting/failure and unrelated task-draft preservation.
+PASSED NavigationHistoryTests: PASS: 123 bounded history, branch, project, draft, search, deletion and navigation safety checks
+PASSED WorkspaceWindowTests: PASS: 322 native workspace interaction and responsive layout checks
+FAILED CardDeletionInteractionTests
+QA app-store failed: 7/8 requested suites passed. Report: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/runs/20261005T135925657783Z-app-store/report.json

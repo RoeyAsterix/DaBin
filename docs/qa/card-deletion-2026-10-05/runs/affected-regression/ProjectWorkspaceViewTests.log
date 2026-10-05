@@ -1,0 +1,51 @@
+2026-10-05 16:46:51.799 ProjectWorkspaceViewTests[75198:28130338] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future.
+2026-10-05 16:46:57.930 ProjectWorkspaceViewTests[75198:28130338] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future.
+MENU tracking began: ["", "My order", "Newest first"]
+MENU tracking ended
+MENU tracking began: ["", "My order", "Newest first"]
+MENU tracking ended
+2026-10-05 16:47:02.310 ProjectWorkspaceViewTests[75198:28130338] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future.
+2026-10-05 16:47:02.660 ProjectWorkspaceViewTests[75198:28130338] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future.
+2026-10-05 16:47:03.728 ProjectWorkspaceViewTests[75198:28130338] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future.
+2026-10-05 16:47:06.790 ProjectWorkspaceViewTests[75198:28130338] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future.
+MENU tracking began: ["Move earlier", "Move later", "", "Open details", "Copy", "Open saved file", "Reveal saved file", "Copy saved path", "", "Pin", "Add to shelf", "Turn into task", "Attach to task", "", "Move to Recently Deleted…"]
+MENU tracking ended
+MENU tracking began: ["Move earlier", "Move later", "", "Open details", "Copy", "Open saved file", "Reveal saved file", "Copy saved path", "", "Pin", "Add to shelf", "Turn into task", "Attach to task", "", "Move to Recently Deleted…"]
+MENU tracking ended
+MENU tracking began: ["Move earlier", "Move later", "", "Open details", "Copy", "Open saved file", "Reveal saved file", "Copy saved path", "", "Pin", "Add to shelf", "Turn into task", "Attach to task", "", "Move to Recently Deleted…"]
+MENU tracking ended
+MENU tracking began: ["", "All", "Files", "Captures & notes", "Links", "Tasks"]
+MENU tracking ended
+2026-10-05 16:47:10.776 ProjectWorkspaceViewTests[75198:28130338] Preventing out of bounds access by truncating (range: {0, 1006}, count: 298).
+2026-10-05 16:47:11.040 ProjectWorkspaceViewTests[75198:28130338] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future.
+MENU tracking began: ["", "Add files…", "Paste into project", "Project notes", "Open folder", "", "Copy selected items", "Copy selection summary", "", "Clipboard view", "Shelf view"]
+MENU tracking ended
+MENU tracking began: ["", "Add files…", "Paste into project", "Project notes", "Open folder", "", "Copy selected items", "Copy selection summary", "", "Clipboard view", "Shelf view"]
+MENU tracking ended
+MENU tracking began: ["", "Add files…", "Paste into project", "Project notes", "Open folder", "", "Copy project items", "Copy project summary", "", "Clipboard view", "Shelf view"]
+MENU tracking ended
+MENU tracking began: ["", "Add files…", "Paste into project", "Project notes", "Open folder", "", "Copy project items", "Copy project summary", "", "Clipboard view", "Shelf view"]
+MENU tracking ended
+MENU tracking began: ["", "Add files…", "Paste into project", "Project notes", "Open folder", "", "Copy project items", "Copy project summary", "", "Clipboard view", "Shelf view"]
+MENU tracking ended
+MENU tracking began: ["", "Add files…", "Paste into project", "Project notes", "Open folder", "", "Copy project items", "Copy project summary", "", "Clipboard view", "Shelf view"]
+MENU tracking ended
+MENU tracking began: ["", "Add files…", "Paste into project", "Project notes", "Open folder", "", "Copy project items", "Copy project summary", "", "Clipboard view", "Shelf view"]
+MENU tracking ended
+ROWS: project grid logical=334, materialized=24
+FIXTURE: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/card-delete-20261005T133807Z/project-workspace/project-grid-wide@2x.png
+FIXTURE: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/card-delete-20261005T133807Z/project-workspace/project-selected-narrow@2x.png
+ROWS: project grid logical=501, materialized=3
+ROWS: project grid logical=1002, materialized=3
+ROWS: project grid logical=1002, materialized=3
+FIXTURE: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/card-delete-20261005T133807Z/project-workspace/project-grid-narrow@2x.png
+ROWS: project grid logical=334, materialized=3
+ROWS: project grid logical=1002, materialized=5
+ROWS: project grid logical=334, materialized=4
+ROWS: project grid logical=335, materialized=5
+ROWS: project grid logical=335, materialized=4
+ROWS: project grid logical=335, materialized=4
+ROWS: project grid logical=336, materialized=5
+ROWS: project grid logical=336, materialized=5
+FIXTURE: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/card-delete-20261005T133807Z/project-workspace/project-filter-menu-narrow@2x.png
+PASS: 361 project workspace UI checks; 1,000 synthetic text captures plus image and editable project note; native mixed-selection drag payloads on a private pasteboard; no personal archive, network, general clipboard or external opening. At most 24 simultaneously materialized native rows.

@@ -1,0 +1,79 @@
+{
+  "schemaVersion": 1,
+  "sourceFingerprint": "6b013ca1385c4aaf1d837e924e12eaa9bbeeba5ad3544fea2ede31b88f83d909",
+  "contentCards": [
+    {
+      "cards": "Saved captures and tasks in Projects, Tasks, Captions, Explorer, Daily, Weekly, Shelf and Clipboard",
+      "action": "Existing Trash control or More > Move to Recently Deleted",
+      "recovery": "Shared Undo and Recently Deleted Restore",
+      "scope": "One saved item; original source files retained",
+      "change": "Existing actions retained"
+    },
+    {
+      "cards": "Project live-note cards and Search live-note results",
+      "action": "More > Delete notes / Delete note, with confirmation",
+      "recovery": "Shared Undo and persistent Recently Deleted Restore",
+      "scope": "Exact current live note; project metadata and saved note captures retained",
+      "change": "Added"
+    },
+    {
+      "cards": "Live Project notes editor",
+      "action": "Delete notes, with confirmation inside notes sheet",
+      "recovery": "Shared Undo and Recently Deleted Restore",
+      "scope": "Frozen text/date receipt; a changed note must be reviewed again",
+      "change": "Added"
+    },
+    {
+      "cards": "Hourly automatic capture groups in Daily and Weekly",
+      "action": "More > Delete N visible captures, with confirmation",
+      "recovery": "Shared Undo and Recently Deleted Restore",
+      "scope": "Frozen visible IDs; filtered captures, tasks and new arrivals retained",
+      "change": "Added"
+    },
+    {
+      "cards": "Automatic action groups in Daily",
+      "action": "More > Delete N visible captures, with confirmation",
+      "recovery": "Shared Undo and Recently Deleted Restore",
+      "scope": "Only the selected visible action group",
+      "change": "Added"
+    },
+    {
+      "cards": "Imported batch cards in Captions and Weekly",
+      "action": "Existing single Trash control, with confirmation",
+      "recovery": "Shared Undo and Recently Deleted Restore",
+      "scope": "Frozen visible batch IDs; hidden/new captures retained",
+      "change": "Removed duplicate menu action and froze confirmation scope"
+    },
+    {
+      "cards": "Saved comment cards",
+      "action": "Trash beside Edit, with confirmation",
+      "recovery": "Local Undo",
+      "scope": "Exact comment UUID/date/text; later comments, unsaved composer and task planning retained",
+      "change": "Added"
+    },
+    {
+      "cards": "Saved-capture Search results",
+      "action": "Visible More > Move to Recently Deleted",
+      "recovery": "Shared Undo and Recently Deleted Restore",
+      "scope": "One capture; existing filing, shelf, task and nearby actions retained",
+      "change": "Made shared actions visible without duplicating Open/Copy"
+    },
+    {
+      "cards": "Recently Deleted captures",
+      "action": "Delete permanently, with confirmation",
+      "recovery": "None after permanent deletion",
+      "scope": "Only the deleted capture and its DaBin copies; original source files retained",
+      "change": "Existing action retained"
+    },
+    {
+      "cards": "Recently Deleted live notes",
+      "action": "Restore or Delete permanently, with confirmation for deletion",
+      "recovery": "Restore refuses occupied saved/pending note to preserve newer text",
+      "scope": "Only this removed note receipt; current notes and saved project items retained",
+      "change": "Added"
+    }
+  ],
+  "nonContentSurfaces": "Static settings/instruction panels do not represent deletable saved items",
+  "nativeChecks": 152,
+  "verification": "verification.json"
+}

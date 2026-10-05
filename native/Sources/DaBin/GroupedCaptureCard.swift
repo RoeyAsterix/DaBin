@@ -10,6 +10,7 @@ struct GroupedCaptureCard: View {
     var showsCopyButton = true
     var showsProject = true
     @State private var confirmsRemoval = false
+    @State private var removalCaptures: [Capture] = []
 
     private var primary: Capture { group.primary }
     private var title: String { "\(group.captures.count) captures" }
@@ -63,7 +64,7 @@ struct GroupedCaptureCard: View {
                             .contentShape(Rectangle())
                     }.accessibilityLabel("Collapse batch items")
                 }
-                BuddyIconButton(symbol: "trash", title: "Move batch to Recently Deleted") { confirmsRemoval = true }
+                BuddyIconButton(symbol: "trash", title: "Move batch to Recently Deleted", action: requestRemoval)
                     .accessibilityIdentifier("capture-trash-batch-\(primary.id.uuidString)")
                     .disabled(state.removingCaptureID != nil || state.isArchiveOperationRunning)
                 Menu {
@@ -87,16 +88,26 @@ struct GroupedCaptureCard: View {
         .projectCardBackground(workspace: state.workspace, projectName: resolvedProject, cornerRadius: 12)
         .overlay(RoundedRectangle(cornerRadius: 12, style: .continuous)
             .strokeBorder(Palette.line, lineWidth: 0.7))
-        .alert("Move this batch to Recently Deleted?", isPresented: $confirmsRemoval) {
-            Button("Cancel", role: .cancel) { }
-            Button("Move \(group.captures.count) items", role: .destructive) {
-                Task { await state.removeCaptures(group.captures) }
-            }
+        .alert("Delete \(removalCaptures.count) visible \(removalCaptures.count == 1 ? "capture" : "captures") from this batch?", isPresented: $confirmsRemoval) {
+            Button("Cancel", role: .cancel) { removalCaptures = [] }
+            Button("Delete \(removalCaptures.count) visible \(removalCaptures.count == 1 ? "capture" : "captures")", role: .destructive) {
+                let captures = removalCaptures
+                removalCaptures = []
+                Task { await state.removeCaptures(captures) }
+            }.disabled(state.removingCaptureID != nil || state.isArchiveOperationRunning || removalCaptures.isEmpty)
         } message: {
-            Text("You can restore these captures from Recently Deleted. Files at their original locations are kept.")
+            Text("Only these captures will move to Recently Deleted, where you can restore them. Hidden and newly saved captures are kept. Files at their original locations are kept.")
         }
         .accessibilityElement(children: .contain)
         .accessibilityLabel("Batch of \(group.captures.count) captured items")
+    }
+
+    private func requestRemoval() {
+        guard state.removingCaptureID == nil, !state.isArchiveOperationRunning else { return }
+        let liveIDs = Set(state.store.captures.map(\.id))
+        removalCaptures = group.captures.filter { liveIDs.contains($0.id) }
+        guard !removalCaptures.isEmpty else { return }
+        confirmsRemoval = true
     }
 
     private var collapsedOverview: some View {

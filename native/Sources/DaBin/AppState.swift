@@ -341,6 +341,7 @@ final class AppState: ObservableObject {
     @Published private var isFileImporting = false
     var isImporting: Bool { isFileImporting || manualInput.isBusy || explorerInput.isBusy }
     @Published private var undoRemovalIDs: [UUID] = []
+    @Published private var undoScratchpadRemovalID: UUID?
     private var removalReturnWarning: (revision: UInt, message: AppStatusMessage)?
     @Published var route: BoardRoute = .inbox {
         didSet {
@@ -388,6 +389,7 @@ final class AppState: ObservableObject {
     @Published private(set) var autoCaptureSetupRequested = false
     @Published var selectedCapture: Capture?
     @Published var pendingRemoval: Capture?
+    @Published var pendingScratchpadRemoval: WorkspaceScratchpad?
     @Published private(set) var removingCaptureID: UUID?
     @Published private(set) var captureLayoutRevision: UInt = 0
     @Published var status: AppStatusMessage? {
@@ -838,7 +840,10 @@ final class AppState: ObservableObject {
                 return $0.capturedAt == $1.capturedAt ? $0.id.uuidString < $1.id.uuidString : $0.capturedAt > $1.capturedAt
             }
     }
-    var canUndoRemoval: Bool { store.trashedCaptures.contains { undoRemovalIDs.contains($0.id) } }
+    var canUndoRemoval: Bool {
+        if let id = undoScratchpadRemovalID { return workspace.canRestoreDeletedScratchpad(id: id) }
+        return store.trashedCaptures.contains { undoRemovalIDs.contains($0.id) }
+    }
 
     func setTutorialPresented(_ presented: Bool) { isTutorialPresented = presented }
 
@@ -1573,8 +1578,70 @@ final class AppState: ObservableObject {
         }
     }
 
+    func requestScratchpadRemoval(_ note: WorkspaceScratchpad) {
+        guard !isNavigationBlocked, removingCaptureID == nil else { return }
+        let text = workspace.scratchpad(project: note.projectName)
+        guard !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
+        let key = WorkspaceSnapshot.projectKey(note.projectName)
+        pendingScratchpadRemoval = WorkspaceScratchpad(text: text, projectName: note.projectName,
+            updatedAt: workspace.snapshot.scratchpads[key]?.updatedAt ?? note.updatedAt)
+    }
+
+    @discardableResult
+    func confirmScratchpadRemoval() -> Bool {
+        guard let note = pendingScratchpadRemoval else { return false }
+        pendingScratchpadRemoval = nil
+        guard removingCaptureID == nil, !isArchiveOperationRunning else {
+            reportFailure("Wait for the current archive operation before removing notes."); return false
+        }
+        let key = WorkspaceSnapshot.projectKey(note.projectName)
+        guard workspace.scratchpad(project: note.projectName) == note.text,
+              workspace.snapshot.scratchpads[key].map({ $0.updatedAt == note.updatedAt }) != false else {
+            reportFailure("These notes changed while deletion was being confirmed. Review them and try again.")
+            return false
+        }
+        do {
+            let receipt = try workspace.trashScratchpad(project: note.projectName)
+            undoScratchpadRemovalID = receipt.id; undoRemovalIDs = []
+            if route == .searchNote, selectedSearchNote?.projectName == note.projectName {
+                beginNavigation(); defer { endNavigation() }
+                selectedSearchNote = nil; route = .library; workspaceViewport = nil
+            }
+            reconcileNavigationHistory()
+            status = AppStatusMessage(text: "Notes moved to Recently Deleted. You can undo this.", severity: .success)
+            return true
+        } catch { reportFailure("Couldn’t remove these notes: \(error.localizedDescription)"); return false }
+    }
+
+    @discardableResult
+    func restoreScratchpad(_ receipt: WorkspaceDeletedScratchpad) -> Bool {
+        guard removingCaptureID == nil, !isArchiveOperationRunning else { return false }
+        do {
+            try workspace.restoreDeletedScratchpad(id: receipt.id)
+            if route == .searchNote, selectedSearchNote?.projectName == receipt.note.projectName {
+                selectedSearchNote = workspace.snapshot.scratchpads[WorkspaceSnapshot.projectKey(receipt.note.projectName)]
+            }
+            if undoScratchpadRemovalID == receipt.id { undoScratchpadRemovalID = nil }
+            reconcileNavigationHistory()
+            status = AppStatusMessage(text: "Notes restored to \(receipt.note.projectName ?? "Unfiled").", severity: .success)
+            return true
+        } catch { reportFailure("Couldn’t restore these notes: \(error.localizedDescription)"); return false }
+    }
+
+    @discardableResult
+    func permanentlyDeleteScratchpad(_ receipt: WorkspaceDeletedScratchpad) -> Bool {
+        guard removingCaptureID == nil, !isArchiveOperationRunning else { return false }
+        do {
+            try workspace.permanentDeleteScratchpad(id: receipt.id)
+            if undoScratchpadRemovalID == receipt.id { undoScratchpadRemovalID = nil }
+            status = AppStatusMessage(text: "Note permanently deleted.", severity: .success)
+            return true
+        } catch { reportFailure("Couldn’t permanently delete this note: \(error.localizedDescription)"); return false }
+    }
+
     func requestRemoval(_ capture: Capture) {
-        guard removingCaptureID == nil, store.captures.contains(where: { $0 === capture }) else { return }
+        guard !hasWorkspaceNavigationBlocker, !workspaceZoom.isInteracting,
+              removingCaptureID == nil, store.captures.contains(where: { $0 === capture }) else { return }
         pendingRemoval = capture
     }
 
@@ -1617,6 +1684,7 @@ final class AppState: ObservableObject {
         do {
             try store.moveToTrash(capture)
             undoRemovalIDs = [capture.id]
+            undoScratchpadRemovalID = nil
             captureLayoutRevision &+= 1
             for item in family { drafts.removeValue(forKey: item.id); clearReminderFeedback(for: item) }
             if let pendingID = pendingRemoval?.id, familyIDs.contains(pendingID) { pendingRemoval = nil }
@@ -1672,6 +1740,7 @@ final class AppState: ObservableObject {
     func removeCaptures(_ captures: [Capture]) async {
         let ids = Set(captures.map(\.id))
         guard !ids.isEmpty, removingCaptureID == nil else { return }
+        let previouslyTrashed = Set(store.trashedCaptures.map(\.id))
         var batchReturnWarning: AppStatusMessage?
         for capture in captures where store.captures.contains(where: { $0 === capture }) {
             let previousWarning = removalReturnWarning?.revision
@@ -1681,8 +1750,11 @@ final class AppState: ObservableObject {
             }
         }
         let remaining = store.captures.filter { ids.contains($0.id) }
-        undoRemovalIDs = store.trashedCaptures.filter { ids.contains($0.id) }.map(\.id)
-        if remaining.isEmpty {
+        let newlyRemoved = store.trashedCaptures.filter { ids.contains($0.id) && !previouslyTrashed.contains($0.id) }.map(\.id)
+        if !newlyRemoved.isEmpty { undoRemovalIDs = newlyRemoved }
+        if remaining.isEmpty && newlyRemoved.isEmpty {
+            status = AppStatusMessage(text: "These items were already removed.", severity: .warning)
+        } else if remaining.isEmpty {
             status = batchReturnWarning ?? AppStatusMessage(text: "Moved \(ids.count) items to Recently Deleted.", severity: .success)
         } else if status?.severity != .error {
             reportFailure("Could not remove every item in this batch.")
@@ -1713,6 +1785,10 @@ final class AppState: ObservableObject {
     }
 
     func undoLastRemoval() async {
+        if let id = undoScratchpadRemovalID {
+            if let receipt = workspace.deletedScratchpads.first(where: { $0.id == id }) { restoreScratchpad(receipt) }
+            return
+        }
         let ids = undoRemovalIDs
         for id in ids {
             if let capture = store.trashedCaptures.first(where: { $0.id == id }) { await restoreCapture(capture) }
@@ -1875,7 +1951,7 @@ final class AppState: ObservableObject {
     }
     var canGoForward: Bool { navigationHistory.canGoForward }
     private var hasWorkspaceNavigationBlocker: Bool {
-        isTutorialPresented || pendingRemoval != nil || isArchiveOperationRunning || isDailyDropTargeted
+        isTutorialPresented || pendingRemoval != nil || pendingScratchpadRemoval != nil || isArchiveOperationRunning || isDailyDropTargeted
             || navigationWindowInteractionBlocked || navigationValidationBlocked
     }
     var isWorkspaceInputBlocked: Bool {
@@ -2031,7 +2107,12 @@ final class AppState: ObservableObject {
         let captures = store.captures
         let byID = Dictionary(uniqueKeysWithValues: captures.map { ($0.id, $0) })
         let captureIDs = Set(byID.keys)
-        let noteKeys = Set(workspace.snapshot.scratchpads.keys).union(workspace.pendingScratchpads.keys)
+        // Empty scratchpad markers retain project identity, not a live note
+        // destination. Effective pending text determines what the user sees.
+        let noteKeys = Set(workspace.snapshot.scratchpads.keys).union(workspace.pendingScratchpads.keys).filter { key in
+            let text = workspace.pendingScratchpads[key] ?? workspace.snapshot.scratchpads[key]?.text ?? ""
+            return !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        }
         var projectItemIDs: [String: Set<String>] = [:]
         for capture in captures {
             let parent = capture.parentTaskID.flatMap { byID[$0] }

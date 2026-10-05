@@ -10,8 +10,15 @@ struct HourlyCaptureCard: View {
     @ObservedObject var state: AppState
     let group: AutomaticHourGroup
     var compact = false
+    @State private var confirmsRemoval = false
+    @State private var removalCaptures: [Capture] = []
+    @State private var removalScope = "hour"
 
     private var isExpanded: Bool { state.isHourlyGroupExpanded(group.id) }
+    private var hourIdentity: String {
+        "\(group.id.captureDay)-\(group.id.hour)-\(group.id.utcOffsetSeconds)"
+    }
+    private var removalUnavailable: Bool { state.removingCaptureID != nil || state.isArchiveOperationRunning }
     private var resolvedProjects: [String?] {
         group.actions.flatMap(\.captures).map {
             ExplorerQuery.project(of: $0, in: state.store.captures)
@@ -35,8 +42,20 @@ struct HourlyCaptureCard: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            ProjectChipLabel(name: hasMixedProjects ? "Multiple projects" : resolvedProject,
-                             colorHex: hasMixedProjects ? nil : resolvedProjectColor)
+            HStack(alignment: .center, spacing: 6) {
+                ProjectChipLabel(name: hasMixedProjects ? "Multiple projects" : resolvedProject,
+                                 colorHex: hasMixedProjects ? nil : resolvedProjectColor)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                Menu {
+                    Button("Delete \(group.visibleCaptureCount) visible \(group.visibleCaptureCount == 1 ? "capture" : "captures")…", systemImage: "trash", role: .destructive) {
+                        requestRemoval(group.captures, scope: "hour")
+                    }.disabled(removalUnavailable)
+                        .accessibilityIdentifier("capture-delete-hour-\(hourIdentity)")
+                } label: { moreLabel }
+                    .menuStyle(.button).buttonStyle(.plain).menuIndicator(.hidden).fixedSize()
+                    .foregroundStyle(accent).accessibilityLabel("More actions for \(summaryTitle)")
+                    .accessibilityIdentifier("capture-more-hour-\(hourIdentity)")
+            }
             if isExpanded {
                 expandedHeader
                 VStack(spacing: 8) {
@@ -79,6 +98,16 @@ struct HourlyCaptureCard: View {
                 .strokeBorder(Palette.line, lineWidth: 0.7)
         }
         .accessibilityElement(children: .contain)
+        .alert("Delete \(removalCaptures.count) visible \(removalCaptures.count == 1 ? "capture" : "captures") from this \(removalScope)?", isPresented: $confirmsRemoval) {
+            Button("Cancel", role: .cancel) { removalCaptures = [] }
+            Button("Delete \(removalCaptures.count) visible \(removalCaptures.count == 1 ? "capture" : "captures")", role: .destructive) {
+                let captures = removalCaptures
+                removalCaptures = []
+                Task { await state.removeCaptures(captures) }
+            }.disabled(removalUnavailable || removalCaptures.isEmpty)
+        } message: {
+            Text("Only these captures will move to Recently Deleted, where you can restore them. Hidden captures, other tasks and newly saved captures are kept. Files at their original locations are kept.")
+        }
     }
 
     private var expandedHeader: some View {
@@ -109,6 +138,16 @@ struct HourlyCaptureCard: View {
                     category: action.primary.captureOrigin == .automaticClipboard ? "Copied" : action.primary.captureOrigin.displayName,
                     fontSize: compact ? 9 : 10)
                 CaptureCopyButton(state: state, captures: action.captures, compact: true)
+                Menu {
+                    Button("Delete \(action.captures.count) visible \(action.captures.count == 1 ? "capture" : "captures")…", systemImage: "trash", role: .destructive) {
+                        requestRemoval(action.captures, scope: "action")
+                    }.disabled(removalUnavailable)
+                        .accessibilityIdentifier("capture-delete-action-\(action.id.uuidString)")
+                } label: { moreLabel }
+                    .menuStyle(.button).buttonStyle(.plain).menuIndicator(.hidden).fixedSize()
+                    .foregroundStyle(accent)
+                    .accessibilityLabel("More actions for \(action.primary.captureOrigin.displayName) at \(captureClock(action.primary))")
+                    .accessibilityIdentifier("capture-more-action-\(action.id.uuidString)")
             }
             .padding(.horizontal, 6)
             .padding(.top, 6)
@@ -145,6 +184,20 @@ struct HourlyCaptureCard: View {
     private func project(for action: AutomaticCaptureAction) -> String? {
         let projects = Set(action.captures.map { ExplorerQuery.project(of: $0, in: state.store.captures) })
         return projects.count == 1 ? (projects.first ?? nil) : nil
+    }
+
+    private var moreLabel: some View {
+        Text("More").font(.system(size: zoom.fontSize(11)))
+            .padding(.horizontal, 6).frame(minWidth: 32, minHeight: 32).contentShape(Rectangle())
+    }
+
+    private func requestRemoval(_ captures: [Capture], scope: String) {
+        guard !removalUnavailable else { return }
+        let liveIDs = Set(state.store.captures.map(\.id))
+        removalCaptures = captures.filter { liveIDs.contains($0.id) }
+        guard !removalCaptures.isEmpty else { return }
+        removalScope = scope
+        confirmsRemoval = true
     }
 
     private func toggleExpansion() {

@@ -69,11 +69,23 @@ struct WorkspaceScratchpad: Codable, Equatable {
     var updatedAt: Date
 }
 
+struct WorkspaceDeletedScratchpad: Codable, Equatable, Identifiable {
+    let id: UUID
+    let note: WorkspaceScratchpad
+    let deletedAt: Date
+
+    init(id: UUID = UUID(), note: WorkspaceScratchpad, deletedAt: Date = Date()) {
+        self.id = id; self.note = note; self.deletedAt = deletedAt
+    }
+}
+
 /// Supplemental organization references existing immutable captures. Shelf and
 /// snippet removal never removes a capture, its managed copy, or an external file.
 struct WorkspaceSnapshot: Codable, Equatable {
     var schemaVersion = 1
     var scratchpads: [String: WorkspaceScratchpad] = [:]
+    /// Additive recovery data; older workspaces omit this field.
+    var deletedScratchpads: [WorkspaceDeletedScratchpad]?
     /// Optional so workspaces written before project colors remain readable.
     /// Keys are the exact persisted project names; values are six RGB hex digits.
     var projectColors: [String: String]?
@@ -102,6 +114,15 @@ struct WorkspaceSnapshot: Codable, Equatable {
 
     func validated() throws -> WorkspaceSnapshot {
         guard schemaVersion == 1, scratchpads.count <= 5_000,
+              (deletedScratchpads?.count ?? 0) <= 5_000,
+              Set((deletedScratchpads ?? []).map(\.id)).count == (deletedScratchpads?.count ?? 0),
+              deletedScratchpads?.allSatisfy({ deleted in
+                  !deleted.note.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                    && deleted.note.text.utf8.count <= 1_000_000
+                    && (deleted.note.projectName?.count ?? 0) <= 180
+                    && deleted.note.updatedAt.timeIntervalSinceReferenceDate.isFinite
+                    && deleted.deletedAt.timeIntervalSinceReferenceDate.isFinite
+              }) != false,
               (selectedProject?.count ?? 0) <= 180, (sourceApplication?.count ?? 0) <= 250,
               (explorerQuery?.count ?? 0) <= 2_000,
               ProjectWorkspaceOrdering.isValid(projectItemOrders),
@@ -139,6 +160,18 @@ struct WorkspaceSnapshot: Codable, Equatable {
             }
             if result.scratchpads[key]?.text.isEmpty != false { result.scratchpads[key] = note }
         }
+        var deleted = result.deletedScratchpads ?? []
+        var deletedByID = Dictionary(uniqueKeysWithValues: deleted.map { ($0.id, $0) })
+        for receipt in incoming.deletedScratchpads ?? [] {
+            if let existing = deletedByID[receipt.id] {
+                guard existing == receipt else {
+                    throw WorkspaceError.restoreConflict((receipt.note.projectName ?? "Unfiled") + " deleted notes")
+                }
+            } else {
+                deleted.append(receipt); deletedByID[receipt.id] = receipt
+            }
+        }
+        if !deleted.isEmpty { result.deletedScratchpads = deleted }
         for (id, name) in incoming.snippetNames {
             if let existing = result.snippetNames[id], existing != name { throw WorkspaceError.restoreConflict("Snippet: " + existing) }
             result.snippetNames[id] = name
@@ -175,6 +208,7 @@ struct WorkspaceSnapshot: Codable, Equatable {
 enum WorkspaceError: LocalizedError {
     case invalidArchive, unavailable(String), restoreConflict(String), missingContent, emptyCollection
     case invalidProjectName, invalidProjectColor
+    case deletedScratchpadUnavailable, scratchpadRestoreConflict(String)
     var errorDescription: String? {
         switch self {
         case .invalidArchive: return "The saved workspace could not be read safely. Your existing file has been preserved."
@@ -184,6 +218,9 @@ enum WorkspaceError: LocalizedError {
         case .emptyCollection: return "Add items to the shelf before exporting."
         case .invalidProjectName: return "Enter a project name between 1 and 180 characters without line breaks."
         case .invalidProjectColor: return "Choose a valid six-digit RGB project color."
+        case .deletedScratchpadUnavailable: return "This deleted note is no longer available."
+        case .scratchpadRestoreConflict(let project):
+            return "\(project) already has notes. Keep or clear them before restoring this note. Your deleted note was kept."
         }
     }
 }
@@ -297,6 +334,11 @@ final class WorkspaceStore: ObservableObject {
     var processedInboxIDs: Set<UUID> { Set(snapshot.processedInboxIDs) }
     var projectNames: [String] { snapshot.scratchpads.values.compactMap(\.projectName).sorted() }
     var scratchpads: [WorkspaceScratchpad] { snapshot.scratchpads.values.filter { !$0.text.isEmpty }.sorted { $0.updatedAt > $1.updatedAt } }
+    var deletedScratchpads: [WorkspaceDeletedScratchpad] {
+        (snapshot.deletedScratchpads ?? []).sorted {
+            $0.deletedAt == $1.deletedAt ? $0.id.uuidString < $1.id.uuidString : $0.deletedAt > $1.deletedAt
+        }
+    }
     var hasUnsavedChanges: Bool { !pendingScratchpads.isEmpty }
 
     func projectColorHex(for name: String?) -> String? {
@@ -357,6 +399,62 @@ final class WorkspaceStore: ObservableObject {
         next.scratchpads[key] = WorkspaceScratchpad(text: text, projectName: name, updatedAt: Date())
         try save(next)
         pendingScratchpads.removeValue(forKey: key)
+    }
+
+    /// Recovery and the empty project marker commit together. A failed delete
+    /// must not replace a pending live edit with an empty autosave draft.
+    @discardableResult
+    func trashScratchpad(project: String?) throws -> WorkspaceDeletedScratchpad {
+        let key = WorkspaceSnapshot.projectKey(project)
+        let text = scratchpad(project: project)
+        guard !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+            throw WorkspaceError.deletedScratchpadUnavailable
+        }
+        let now = Date()
+        let note = WorkspaceScratchpad(text: text, projectName: project,
+                                       updatedAt: snapshot.scratchpads[key]?.updatedAt ?? now)
+        let receipt = WorkspaceDeletedScratchpad(note: note, deletedAt: now)
+        var next = snapshot
+        next.deletedScratchpads = (next.deletedScratchpads ?? []) + [receipt]
+        next.scratchpads[key] = WorkspaceScratchpad(text: "", projectName: project, updatedAt: now)
+        try save(next)
+        pendingScratchpads.removeValue(forKey: key)
+        return receipt
+    }
+
+    func canRestoreDeletedScratchpad(id: UUID) -> Bool {
+        (try? restorableDeletedScratchpad(id: id)) != nil
+    }
+
+    func restoreDeletedScratchpad(id: UUID) throws {
+        let receipt = try restorableDeletedScratchpad(id: id)
+        let key = WorkspaceSnapshot.projectKey(receipt.note.projectName)
+        var next = snapshot
+        next.scratchpads[key] = receipt.note
+        next.deletedScratchpads = (next.deletedScratchpads ?? []).filter { $0.id != id }
+        try save(next)
+        pendingScratchpads.removeValue(forKey: key)
+    }
+
+    private func restorableDeletedScratchpad(id: UUID) throws -> WorkspaceDeletedScratchpad {
+        guard let receipt = snapshot.deletedScratchpads?.first(where: { $0.id == id }) else {
+            throw WorkspaceError.deletedScratchpadUnavailable
+        }
+        let key = WorkspaceSnapshot.projectKey(receipt.note.projectName)
+        guard (snapshot.scratchpads[key]?.text ?? "").isEmpty,
+              pendingScratchpads[key]?.isEmpty != false else {
+            throw WorkspaceError.scratchpadRestoreConflict(receipt.note.projectName ?? "Unfiled")
+        }
+        return receipt
+    }
+
+    func permanentDeleteScratchpad(id: UUID) throws {
+        guard snapshot.deletedScratchpads?.contains(where: { $0.id == id }) == true else {
+            throw WorkspaceError.deletedScratchpadUnavailable
+        }
+        var next = snapshot
+        next.deletedScratchpads = (next.deletedScratchpads ?? []).filter { $0.id != id }
+        try save(next)
     }
 
     func setOnShelf(_ ids: [UUID], included: Bool) throws {

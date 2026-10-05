@@ -124,27 +124,37 @@ struct SearchResultCard: View {
                                 visualLabel: "Open") { state.openCapture(capture.id) }
                     .accessibilityIdentifier("search-open-\(capture.id.uuidString)")
                 CaptureCopyButton(state: state, captures: [capture])
+                Menu {
+                    captureActions(capture, includesInspectorButtons: false)
+                } label: { moreLabel }
+                    .menuStyle(.button).buttonStyle(.plain).menuIndicator(.hidden).fixedSize()
+                    .foregroundStyle(accent).accessibilityLabel("More actions for \(capture.title.isEmpty ? "Untitled capture" : capture.title)")
+                    .accessibilityIdentifier("search-more-\(item.id)")
+                    .disabled(state.removingCaptureID != nil || state.isArchiveOperationRunning)
             }
         }.padding(10)
             .projectCardBackground(workspace: state.workspace, projectName: project, cornerRadius: 12,
                                    baseColor: selected ? Palette.soft : Palette.surface)
             .overlay(RoundedRectangle(cornerRadius: 12).strokeBorder(selected ? accent.opacity(0.7) : Palette.line, lineWidth: selected ? 1.2 : 0.7))
-            .contextMenu {
-                ExplorerCaptureActions(state: state, workspace: state.workspace, capture: capture)
-                if capture.parentTaskID == nil {
-                    Menu {
-                        Button("Unfiled", systemImage: "tray") { state.assignProject(capture, name: nil) }
-                        ForEach(Set(state.projectNames + state.workspace.projectNames).sorted(), id: \.self) { project in
-                            Button(project, systemImage: "folder") { state.assignProject(capture, name: project) }
-                        }
-                    } label: { Label("File to project", systemImage: "folder") }
-                }
-                Divider()
-                Button("Show nearby captures", systemImage: "rectangle.stack") { nearbyPresented = true }
-            }
+            .contextMenu { captureActions(capture) }
             .popover(isPresented: $nearbyPresented, arrowEdge: .trailing) {
                 SearchNearbyCaptures(state: state, capture: capture).hoverTooltips()
             }
+    }
+
+    @ViewBuilder private func captureActions(_ capture: Capture, includesInspectorButtons: Bool = true) -> some View {
+        ExplorerCaptureActions(state: state, workspace: state.workspace, capture: capture,
+                               includesInspectorButtons: includesInspectorButtons)
+        if capture.parentTaskID == nil {
+            Menu {
+                Button("Unfiled", systemImage: "tray") { state.assignProject(capture, name: nil) }
+                ForEach(Set(state.projectNames + state.workspace.projectNames).sorted(), id: \.self) { project in
+                    Button(project, systemImage: "folder") { state.assignProject(capture, name: project) }
+                }
+            } label: { Label("File to project", systemImage: "folder") }
+        }
+        Divider()
+        Button("Show nearby captures", systemImage: "rectangle.stack") { nearbyPresented = true }
     }
 
     private func noteCard(_ note: WorkspaceScratchpad) -> some View {
@@ -177,15 +187,32 @@ struct SearchResultCard: View {
                     guard state.copySearchNote(note) else { return }
                     copiedNote = true
                 }.accessibilityIdentifier("search-copy-\(item.id)")
+                Menu { noteRemovalItem(note) } label: { moreLabel }
+                    .menuStyle(.button).buttonStyle(.plain).menuIndicator(.hidden).fixedSize()
+                    .foregroundStyle(accent).accessibilityLabel("More actions for \(note.projectName ?? "Unfiled") notes")
+                    .accessibilityIdentifier("search-more-\(item.id)")
             }
         }.padding(10).projectCardBackground(workspace: state.workspace, projectName: note.projectName, cornerRadius: 12)
             .overlay(RoundedRectangle(cornerRadius: 12).strokeBorder(Palette.line, lineWidth: 0.7))
+            .contextMenu { noteRemovalItem(note) }
             .task(id: copiedNote) {
                 guard copiedNote else { return }
                 try? await Task.sleep(for: .seconds(1.25))
                 guard !Task.isCancelled else { return }
                 copiedNote = false
             }
+    }
+
+    private var moreLabel: some View {
+        Text("More").font(.system(size: zoom.fontSize(11)))
+            .padding(.horizontal, 6).frame(minWidth: 32, minHeight: 32).contentShape(Rectangle())
+    }
+
+    private func noteRemovalItem(_ note: WorkspaceScratchpad) -> some View {
+        Button("Delete note…", systemImage: "trash", role: .destructive) {
+            state.requestScratchpadRemoval(note)
+        }.disabled(state.removingCaptureID != nil || state.isArchiveOperationRunning)
+            .accessibilityIdentifier("search-delete-\(item.id)")
     }
 }
 

@@ -1,0 +1,20 @@
+MENU tracking began: ["Move earlier", "Move later", "", "Edit project notes", "", "Delete notes…"]
+MENU tracking ended
+MENU tracking began: ["Delete note…"]
+MENU tracking ended
+MENU tracking began: ["", "Add files…", "Paste into project", "Project notes", "Open folder", "", "Copy project items", "Copy project summary", "", "Clipboard view", "Shelf view"]
+MENU tracking ended
+MENU tracking began: ["Copy as plain text", "", "Pin", "Add to shelf", "Turn into task", "Attach to task", "", "Move to Recently Deleted…", "File to project", "", "Show nearby captures"]
+MENU tracking ended
+FAIL: Card deletion QA: Error Domain=CardDeletionInteractionTests Code=93 "Missing project control delete-comment-D3707346-7546-4544-BB75-D2C4A334B7FB; visible: , capture-tab-comments, capture-tab-reminder, capture-comment-thread, , capture-comment-composer, capture-post-comment, , capture-comment-card-D3707346-7546-4544-BB75-D2C4A334B7FB, capture-comment-card-D3707346-7546-4544-BB75-D2C4A334B7FB, capture-comment-card-D3707346-7546-4544-BB75-D2C4A334B7FB, capture-comment-card-D3707346-7546-4544-BB75-D2C4A334B7FB, capture-comment-card-2D9DD494-8C43-4726-92A9-DE27318C70D5, capture-comment-card-2D9DD494-8C43-4726-92A9-DE27318C70D5, capture-comment-card-2D9DD494-8C43-4726-92A9-DE27318C70D5, capture-comment-card-2D9DD494-8C43-4726-92A9-DE27318C70D5, capture-comment-composer; tree: NSHostingView<AnyView> [AXGroup] ; AccessibilityNode [AXGroup] Capture sections; AccessibilityNode [AXButton] Comments · 2; AccessibilityNode [AXButton] Reminder, Not scheduled; AccessibilityNode [AXGroup] ; AccessibilityNode [AXStaticText] ; AppKitScrollView [AXScrollArea] ; PlatformTextView [AXTextArea] New comment; _NSTextSelectionView [AXUnknown] ; _NSTextRenderingSurfacesGroupView [AXUnknown] ; _NSTextContentView [AXUnknown] ; _NSTextViewportElementView [AXUnknown] ; NSScroller [AXScrollBar] ; NSClipView [AXUnknown] ; AccessibilityNode [AXButton] Post comment" UserInfo={NSLocalizedDescription=Missing project control delete-comment-D3707346-7546-4544-BB75-D2C4A334B7FB; visible: , capture-tab-comments, capture-tab-reminder, capture-comment-thread, , capture-comment-composer, capture-post-comment, , capture-comment-card-D3707346-7546-4544-BB75-D2C4A334B7FB, capture-comment-card-D3707346-7546-4544-BB75-D2C4A334B7FB, capture-comment-card-D3707346-7546-4544-BB75-D2C4A334B7FB, capture-comment-card-D3707346-7546-4544-BB75-D2C4A334B7FB, capture-comment-card-2D9DD494-8C43-4726-92A9-DE27318C70D5, capture-comment-card-2D9DD494-8C43-4726-92A9-DE27318C70D5, capture-comment-card-2D9DD494-8C43-4726-92A9-DE27318C70D5, capture-comment-card-2D9DD494-8C43-4726-92A9-DE27318C70D5, capture-comment-composer; tree: NSHostingView<AnyView> [AXGroup] ; AccessibilityNode [AXGroup] Capture sections; AccessibilityNode [AXButton] Comments · 2; AccessibilityNode [AXButton] Reminder, Not scheduled; AccessibilityNode [AXGroup] ; AccessibilityNode [AXStaticText] ; AppKitScrollView [AXScrollArea] ; PlatformTextView [AXTextArea] New comment; _NSTextSelectionView [AXUnknown] ; _NSTextRenderingSurfacesGroupView [AXUnknown] ; _NSTextContentView [AXUnknown] ; _NSTextViewportElementView [AXUnknown] ; NSScroller [AXScrollBar] ; NSClipView [AXUnknown] ; AccessibilityNode [AXButton] Post comment}
+FIXTURE: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/card-delete-20261005T133807Z/card-delete/project-note-delete.png
+FIXTURE: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/card-delete-20261005T133807Z/card-delete/search-note-delete.png
+ALERT action: Cancel
+ALERT action: Delete notes
+ALERT action: Cancel
+ALERT action: Move to Recently Deleted
+ALERT action: Cancel
+ALERT action: Delete notes
+ALERT action: Cancel
+ALERT action: Delete permanently
+FIXTURE: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/card-delete-20261005T133807Z/card-delete/comment-delete.png

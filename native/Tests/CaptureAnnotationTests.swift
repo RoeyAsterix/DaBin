@@ -27,10 +27,11 @@ import Foundation
         defer { try? FileManager.default.removeItem(at: root) }
         try legacy(root.appendingPathComponent("Legacy"))
         try comments(root.appendingPathComponent("Comments"))
+        try commentRemoval(root.appendingPathComponent("CommentRemoval"))
         try acknowledgments(root.appendingPathComponent("Acknowledgments"))
         try combinedFocus(root.appendingPathComponent("Combined"))
         try malformed(root.appendingPathComponent("Malformed"))
-        print("PASS: \(checks) annotation checks; legacy threads, edits, search/export, restart/backup, exact reminder/focus acknowledgments and atomic rollback.")
+        print("PASS: \(checks) annotation checks; legacy threads, edits, exact comment deletion/additive Undo, search/export, restart/backup, exact reminder/focus acknowledgments and atomic rollback.")
     }
 
     @MainActor private static func legacy(_ root: URL) throws {
@@ -110,6 +111,131 @@ import Foundation
         try reopened.setTaskCompleted(recurring, completed: true)
         let successor = reopened.captures.first { $0.taskPlanning?.previousOccurrenceID == recurring.id }
         try expect(successor?.commentThread == recurring.commentThread, "Recurring successor preserves reply provenance rather than flattening it")
+    }
+
+    @MainActor private static func commentRemoval(_ root: URL) throws {
+        let store = try CaptureStore(root: root, repairArchiveOnOpen: false)
+        let note = try store.createTask(text: "Original task and receipt stay intact", at: base)
+        var planning = TaskPlanning()
+        planning.checklist = [TaskChecklistItem(text: "Keep this unrelated step")]
+        try store.setTaskPlanning(note, planning: planning)
+        note.comment = "  Legacy text\nwith its exact whitespace  "
+        try store.save(captures: [note])
+        let first = try store.appendComment(note, text: "First reply — שלום", at: base.addingTimeInterval(10))
+        let removed = try store.appendComment(note, text: "Reply to delete", at: base.addingTimeInterval(20))
+        let edited = try store.updateComment(note, id: removed.id, text: "Edited reply\n日本語", at: base.addingTimeInterval(25))
+        let other = try store.createNote(text: "Another capture remains separate", at: base)
+        let before = try snapshot(note)
+        let beforeOther = try snapshot(other)
+        let originalThread = note.commentThread
+        let legacyEntry = originalThread[0]
+        try rejected({ _ = try store.removeComment(note, id: UUID()) }, "Unknown comment deletion cannot remove a neighboring reply")
+        try rejected({ _ = try store.removeComment(note, id: removed.id, at: Date(timeIntervalSince1970: .infinity)) },
+            "An invalid deletion timestamp is rejected before mutation")
+        try expect(try snapshot(note) == before && snapshot(other) == beforeOther, "Rejected deletion leaves every capture field unchanged")
+        store.failureInjector = { if $0 == .beforeMetadataSave { throw CaptureStoreError.importVerificationFailed } }
+        try rejected({ _ = try store.removeComment(note, id: removed.id, at: base.addingTimeInterval(30)) }, "Failed comment deletion is reported")
+        try expect(try snapshot(note) == before, "Failed deletion rolls back entries, aggregate and edit timestamp exactly")
+        let failedReload = try CaptureStore(root: root, repairArchiveOnOpen: false)
+        try expect(failedReload.captures.first { $0.id == note.id }?.commentThread == originalThread,
+            "A fresh store confirms failed deletion left the durable thread intact")
+        store.failureInjector = nil
+        let receipt = try store.removeComment(note, id: removed.id, at: base.addingTimeInterval(30))
+        try expect(receipt.captureID == note.id && receipt.entry == edited,
+            "Removal receipt retains the exact capture, reply UUID, text, posting date and edit date")
+        try expect(note.commentThread == [legacyEntry, first] && !note.comment.contains("Edited reply"),
+            "Deleting one exact reply preserves every neighboring comment and updates searchable aggregate text")
+        let afterRemoval = try snapshot(note)
+        try rejected({ _ = try store.removeComment(note, id: removed.id) }, "Repeating deletion cannot remove another reply")
+        try expect(try snapshot(note) == afterRemoval, "Repeated deletion leaves the surviving conversation unchanged")
+        try expect(note.originalText == "Original task and receipt stay intact" && note.capturedAt == base
+            && note.title == "Original task and receipt stay intact" && note.taskPlanning == planning,
+            "Comment deletion leaves original content, receipt, title and checklist untouched")
+        try expect(try snapshot(other) == beforeOther, "Deleting a comment never changes another capture")
+        let later = try store.appendComment(note, text: "Later reply after deletion", at: base.addingTimeInterval(40))
+        let changedFirst = try store.updateComment(note, id: first.id, text: "Later edit of the neighboring reply", at: base.addingTimeInterval(45))
+        let beforeUndo = try snapshot(note)
+        let invalidReceipt = CaptureCommentRemovalReceipt(captureID: note.id,
+            entry: CaptureCommentEntry(createdAt: base, text: " \n "))
+        try rejected({ _ = try store.restoreComment(note, receipt: invalidReceipt) }, "Undo refuses an invalid empty reply before changing saved content")
+        let extraLegacyReceipt = CaptureCommentRemovalReceipt(captureID: note.id,
+            entry: CaptureCommentEntry(createdAt: nil, text: "A contradictory second legacy entry"))
+        try rejected({ _ = try store.restoreComment(note, receipt: extraLegacyReceipt) }, "Undo cannot create two legacy undated thread entries")
+        try expect(try snapshot(note) == beforeUndo, "Invalid restoration receipts preserve exact current metadata")
+        try rejected({ _ = try store.restoreComment(other, receipt: receipt) }, "A removal receipt cannot restore into a different capture")
+        try rejected({ _ = try store.restoreComment(note, receipt: receipt, at: Date(timeIntervalSince1970: .infinity)) },
+            "An invalid restoration timestamp is rejected")
+        store.failureInjector = { if $0 == .beforeMetadataSave { throw CaptureStoreError.importVerificationFailed } }
+        try rejected({ _ = try store.restoreComment(note, receipt: receipt, at: base.addingTimeInterval(50)) }, "Failed Undo remains retryable")
+        try expect(try snapshot(note) == beforeUndo, "Failed Undo rolls back the whole live snapshot without losing later replies or edits")
+        let failedUndoReload = try CaptureStore(root: root, repairArchiveOnOpen: false)
+        try expect(failedUndoReload.captures.first { $0.id == note.id }?.commentThread == note.commentThread,
+            "Failed Undo leaves the durable thread in its prior state")
+        store.failureInjector = nil
+        try expect(try store.restoreComment(note, receipt: receipt, at: base.addingTimeInterval(50)), "The same receipt can retry Undo after storage recovers")
+        try expect(note.commentThread == [legacyEntry, changedFirst, edited, later],
+            "Additive Undo restores the exact deleted reply in chronology while preserving later additions and edits")
+        try expect(note.comment.contains("Later reply after deletion") && note.comment.contains("Edited reply")
+            && note.originalText == "Original task and receipt stay intact" && note.taskPlanning == planning,
+            "Undo updates aggregate text without replacing the conversation or unrelated task fields")
+        let beforeNoOp = try snapshot(note)
+        store.failureInjector = { if $0 == .beforeMetadataSave { throw CaptureStoreError.importVerificationFailed } }
+        try expect(try store.restoreComment(note, receipt: receipt, at: base.addingTimeInterval(60)) == false,
+            "Repeating exact Undo is an idempotent no-op that performs no write")
+        try expect(try snapshot(note) == beforeNoOp, "Repeated Undo keeps its existing text, chronology and update timestamp")
+        store.failureInjector = nil
+        _ = try store.updateComment(note, id: edited.id, text: "Changed after successful Undo", at: base.addingTimeInterval(60))
+        let changed = try snapshot(note)
+        try rejected({ _ = try store.restoreComment(note, receipt: receipt) }, "Undo never overwrites changed text now owning the same reply identity")
+        try expect(try snapshot(note) == changed, "Conflicting identity preserves all current data")
+        let legacyReceipt = try store.removeComment(note, id: note.id, at: base.addingTimeInterval(70))
+        try expect(legacyReceipt.entry == legacyEntry && legacyReceipt.entry.createdAt == nil,
+            "Legacy deletion retains exact bytes and does not invent a posting date")
+        try expect(try store.restoreComment(note, receipt: legacyReceipt, at: base.addingTimeInterval(80)), "A legacy reply can be restored additively")
+        try expect(note.commentThread[0] == legacyEntry && note.commentThread.count == 4, "Legacy Undo preserves its original position and every modern reply")
+        let reloaded = try CaptureStore(root: root, repairArchiveOnOpen: false)
+        let persistedThread = reloaded.captures.first { $0.id == note.id }!.commentThread
+        try expect(persistedThread == note.commentThread, "Deleted and restored reply provenance survives a fresh store")
+        let backup = root.deletingLastPathComponent().appendingPathComponent("CommentRemoval.dabinbackup")
+        try store.exportBackup(to: backup)
+        let backupTarget = try CaptureStore(root: root.deletingLastPathComponent().appendingPathComponent("CommentRemovalRestored"), repairArchiveOnOpen: false)
+        _ = try backupTarget.restoreBackup(from: backup)
+        try expect(backupTarget.captures.first { $0.id == note.id }?.commentThread == note.commentThread,
+            "Backup and restore retain the post-Undo conversation exactly")
+        let stale = Capture(snapshot: CaptureSnapshot(note))
+        try rejected({ _ = try store.removeComment(stale, id: first.id) }, "A stale capture object cannot delete a current reply")
+        try rejected({ _ = try store.restoreComment(stale, receipt: receipt) }, "A stale capture object cannot restore a reply")
+        try store.moveToTrash(note)
+        try rejected({ _ = try store.removeComment(note, id: first.id) }, "A trashed capture cannot lose a comment through a stale action")
+        try rejected({ _ = try store.restoreComment(note, receipt: legacyReceipt) }, "Comment Undo cannot resurrect a deleted capture")
+
+        let single = try store.createNote(text: "One comment only", at: base)
+        let singleEntry = try store.appendComment(single, text: "Keep exact last-reply bytes", at: base)
+        let singleReceipt = try store.removeComment(single, id: singleEntry.id, at: base.addingTimeInterval(1))
+        try expect(single.commentCount == 0 && single.comment.isEmpty && single.commentEntries.isEmpty,
+            "Deleting the last reply empties both aggregate and entries without a ghost legacy comment")
+        _ = try store.restoreComment(single, receipt: singleReceipt, at: base.addingTimeInterval(2))
+        try expect(single.commentThread == [singleEntry], "Undo of the last reply restores exactly one original entry")
+
+        let longLegacy = try store.createNote(text: "Legacy comments may exceed the new reply limit", at: base)
+        longLegacy.comment = String(repeating: "L", count: CaptureCommentThread.maximumNewCommentCharacters + 1)
+        try store.save(captures: [longLegacy])
+        let longReceipt = try store.removeComment(longLegacy, id: longLegacy.id, at: base.addingTimeInterval(1))
+        _ = try store.restoreComment(longLegacy, receipt: longReceipt, at: base.addingTimeInterval(2))
+        try expect(longLegacy.commentThread == [longReceipt.entry], "Undo preserves valid long legacy content instead of imposing the new-comment input limit")
+
+        let full = try store.createNote(text: "Comment capacity remains enforced", at: base)
+        let fullEntries = (0..<CaptureCommentThread.maximumEntries).map {
+            CaptureCommentEntry(createdAt: base.addingTimeInterval(Double($0)), text: "Synthetic reply \($0)")
+        }
+        full.setCommentEntries(fullEntries); full.comment = CaptureCommentThread.text(fullEntries)
+        try store.save(captures: [full])
+        let fullReceipt = try store.removeComment(full, id: fullEntries[0].id, at: base)
+        _ = try store.appendComment(full, text: "A later reply uses the available slot", at: base.addingTimeInterval(2_000))
+        let fullBeforeUndo = try snapshot(full)
+        try rejected({ _ = try store.restoreComment(full, receipt: fullReceipt) }, "Undo cannot exceed the durable thread limit after a later reply fills its slot")
+        try expect(try snapshot(full) == fullBeforeUndo && full.commentCount == CaptureCommentThread.maximumEntries,
+            "A full-thread Undo refusal preserves every current reply for a later retry")
     }
 
     @MainActor private static func acknowledgments(_ root: URL) throws {

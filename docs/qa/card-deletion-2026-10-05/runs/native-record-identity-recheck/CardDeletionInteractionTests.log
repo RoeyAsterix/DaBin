@@ -1,0 +1,15 @@
+MENU tracking began: ["Move earlier", "Move later", "", "Edit project notes", "", "Delete notes…"]
+MENU tracking ended
+MENU tracking began: ["Delete note…"]
+MENU tracking ended
+MENU tracking began: ["", "Add files…", "Paste into project", "Project notes", "Open folder", "", "Copy project items", "Copy project summary", "", "Clipboard view", "Shelf view"]
+MENU tracking ended
+FAIL: Card deletion QA: Error Domain=CardDeletionInteractionTests Code=70 "Missing project control trash-note-delete-EBB19969-7104-452A-9EAB-F62E381A774A; visible: , , trash-note-EBB19969-7104-452A-9EAB-F62E381A774A, trash-note-EBB19969-7104-452A-9EAB-F62E381A774A, trash-note-EBB19969-7104-452A-9EAB-F62E381A774A, trash-note-EBB19969-7104-452A-9EAB-F62E381A774A, trash-note-EBB19969-7104-452A-9EAB-F62E381A774A; tree: NSHostingView<AnyView> [AXGroup] ; HostingScrollView [AXScrollArea] ; AccessibilityLazyLayoutNode [AXOpaqueProviderGroup] ; AccessibilityNode [AXStaticText] ; AccessibilityNode [AXStaticText] ; AccessibilityNode [AXStaticText] ; AccessibilityNode [AXStaticText] ; AccessibilityNode [AXButton] Restore; AccessibilityNode [AXButton] Delete permanently…; NSClipView [AXUnknown] ; DocumentView [AXUnknown] ; PlatformGroupContainer [AXUnknown] ; _FocusRingView [AXUnknown] ; _FocusRingView [AXUnknown] ; NSScroller [AXScrollBar] " UserInfo={NSLocalizedDescription=Missing project control trash-note-delete-EBB19969-7104-452A-9EAB-F62E381A774A; visible: , , trash-note-EBB19969-7104-452A-9EAB-F62E381A774A, trash-note-EBB19969-7104-452A-9EAB-F62E381A774A, trash-note-EBB19969-7104-452A-9EAB-F62E381A774A, trash-note-EBB19969-7104-452A-9EAB-F62E381A774A, trash-note-EBB19969-7104-452A-9EAB-F62E381A774A; tree: NSHostingView<AnyView> [AXGroup] ; HostingScrollView [AXScrollArea] ; AccessibilityLazyLayoutNode [AXOpaqueProviderGroup] ; AccessibilityNode [AXStaticText] ; AccessibilityNode [AXStaticText] ; AccessibilityNode [AXStaticText] ; AccessibilityNode [AXStaticText] ; AccessibilityNode [AXButton] Restore; AccessibilityNode [AXButton] Delete permanently…; NSClipView [AXUnknown] ; DocumentView [AXUnknown] ; PlatformGroupContainer [AXUnknown] ; _FocusRingView [AXUnknown] ; _FocusRingView [AXUnknown] ; NSScroller [AXScrollBar] }
+FIXTURE: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/card-delete-20261005T133807Z/card-delete/project-note-delete.png
+FIXTURE: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/card-delete-20261005T133807Z/card-delete/search-note-delete.png
+ALERT action: Cancel
+ALERT action: Delete notes
+ALERT action: Cancel
+ALERT action: Move to Recently Deleted
+ALERT action: Cancel
+ALERT action: Delete notes

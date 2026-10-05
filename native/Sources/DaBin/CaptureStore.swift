@@ -2,6 +2,13 @@ import Foundation
 import Combine
 import UniformTypeIdentifiers
 
+/// Undo owns one exact reply, never a snapshot of the whole conversation.
+/// Binding the receipt to its capture prevents restoring it into another card.
+struct CaptureCommentRemovalReceipt: Equatable, Sendable {
+    let captureID: UUID
+    let entry: CaptureCommentEntry
+}
+
 @MainActor final class CaptureStore: ObservableObject {
     @Published private(set) var captures: [Capture] = []
     @Published private(set) var trashedCaptures: [Capture] = []
@@ -777,6 +784,47 @@ import UniformTypeIdentifiers
         entries[index].editedAt = max(date, entries[index].createdAt ?? date)
         try persistComments(entries, for: capture, at: date)
         return entries[index]
+    }
+
+    @discardableResult
+    func removeComment(_ capture: Capture, id: UUID, at date: Date = Date()) throws -> CaptureCommentRemovalReceipt {
+        try requireCurrent(capture)
+        guard date.timeIntervalSinceReferenceDate.isFinite else {
+            throw CaptureStoreError.invalidOriginal("The comment deletion time is invalid.")
+        }
+        var entries = capture.commentThread
+        guard let index = entries.firstIndex(where: { $0.id == id }) else {
+            throw CaptureStoreError.invalidOriginal("This comment is no longer available. Reopen the capture and try again.")
+        }
+        let removed = entries.remove(at: index)
+        try persistComments(entries, for: capture, at: date)
+        return CaptureCommentRemovalReceipt(captureID: capture.id, entry: removed)
+    }
+
+    /// Add back only the removed reply. Later replies and edits stay intact;
+    /// an identity now owned by different text is never overwritten by Undo.
+    @discardableResult
+    func restoreComment(_ capture: Capture, receipt: CaptureCommentRemovalReceipt, at date: Date = Date()) throws -> Bool {
+        try requireCurrent(capture)
+        guard receipt.captureID == capture.id, date.timeIntervalSinceReferenceDate.isFinite else {
+            throw CaptureStoreError.invalidOriginal("This comment belongs to another capture or has an invalid restoration time.")
+        }
+        var entries = capture.commentThread
+        if let existing = entries.first(where: { $0.id == receipt.entry.id }) {
+            guard existing == receipt.entry else {
+                throw CaptureStoreError.invalidOriginal("This comment changed after deletion. Your current comment was kept.")
+            }
+            return false
+        }
+        guard entries.count < CaptureCommentThread.maximumEntries else {
+            throw CaptureStoreError.invalidOriginal("Remove a comment before restoring this reply; this capture has reached its comment limit.")
+        }
+        entries.append(receipt.entry)
+        guard CaptureCommentThread.isValid(entries, aggregate: CaptureCommentThread.text(entries)) else {
+            throw CaptureStoreError.invalidOriginal("The saved comment cannot be restored safely. Your current comments were kept.")
+        }
+        try persistComments(entries, for: capture, at: date)
+        return true
     }
 
     private func validateCommentText(_ text: String, at date: Date) throws {

@@ -136,7 +136,12 @@ private struct WeeklyDayColumn: View {
                                     isExpanded: state.isHourlyGroupExpanded(group.id), isBatch: false, day: day, actions: group.actions,
                                     cardWidth: columnWidth - 12, toggle: { state.toggleHourlyGroup(group.id) })
                                     .workspaceZoomItem("capture:" + (group.captures.first?.id.uuidString ?? ""))
-                                    .id("capture:" + (group.captures.first?.id.uuidString ?? ""))
+                                    .background {
+                                        Color.clear.id("capture:" + (group.captures.first?.id.uuidString ?? ""))
+                                            .allowsHitTesting(false).accessibilityHidden(true)
+                                    }
+                                    // New arrivals update the history anchor without replacing a pending confirmation.
+                                    .id(card.id)
                             }
                         }
                     }.padding(6)
@@ -166,6 +171,7 @@ private struct WeeklyDayColumn: View {
 /// full Daily row with fixed-width toolbars inside one seventh of the screen.
 @MainActor
 private struct WeeklyCollectionCard: View {
+    @Environment(\.workspaceZoom) private var zoom
     @ObservedObject var state: AppState
     let captures: [Capture]
     let title: String
@@ -177,6 +183,14 @@ private struct WeeklyCollectionCard: View {
     let cardWidth: CGFloat
     let toggle: () -> Void
     @State private var confirmsRemoval = false
+    @State private var removalCaptures: [Capture] = []
+
+    private var hourIdentity: String {
+        guard let capture = captures.first else { return "empty" }
+        let key = AutomaticHourKey(capture: capture)
+        return "\(key.captureDay)-\(key.hour)-\(key.utcOffsetSeconds)"
+    }
+    private var removalUnavailable: Bool { state.removingCaptureID != nil || state.isArchiveOperationRunning }
 
     private var projects: Set<String?> {
         Set(captures.map { ExplorerQuery.project(of: $0, in: state.store.captures) })
@@ -204,9 +218,20 @@ private struct WeeklyCollectionCard: View {
                 CaptureCopyButton(state: state, captures: captures, compact: true)
                 Spacer(minLength: 0)
                 if isBatch {
-                    BuddyIconButton(symbol: "trash", title: "Move batch to Recently Deleted") { confirmsRemoval = true }
+                    BuddyIconButton(symbol: "trash", title: "Move batch to Recently Deleted", action: requestRemoval)
                         .disabled(state.removingCaptureID != nil || state.isArchiveOperationRunning)
                         .accessibilityIdentifier("capture-trash-batch-" + (captures.first?.id.uuidString ?? ""))
+                } else {
+                    Menu {
+                        Button("Delete \(captures.count) visible \(captures.count == 1 ? "capture" : "captures")…", systemImage: "trash", role: .destructive, action: requestRemoval)
+                            .disabled(removalUnavailable)
+                            .accessibilityIdentifier("capture-delete-hour-\(hourIdentity)")
+                    } label: {
+                        Text("More").font(.system(size: zoom.fontSize(11)))
+                            .padding(.horizontal, 6).frame(minWidth: 32, minHeight: 32).contentShape(Rectangle())
+                    }.menuStyle(.button).buttonStyle(.plain).menuIndicator(.hidden).fixedSize()
+                        .accessibilityLabel("More actions for \(title), \(subtitle)")
+                        .accessibilityIdentifier("capture-more-hour-\(hourIdentity)")
                 }
                 BuddyIconButton(symbol: isExpanded ? "minus" : "chevron.down",
                                 title: isExpanded ? (isBatch ? "Collapse batch items" : "Collapse actions") : (isBatch ? "Expand batch items" : "Expand actions"), action: toggle)
@@ -247,10 +272,23 @@ private struct WeeklyCollectionCard: View {
         }.padding(6).frame(maxWidth: .infinity, alignment: .leading)
             .background(Palette.surface, in: RoundedRectangle(cornerRadius: 12))
             .overlay(RoundedRectangle(cornerRadius: 12).strokeBorder(Palette.line, lineWidth: 0.7))
-            .alert("Move this batch to Recently Deleted?", isPresented: $confirmsRemoval) {
-                Button("Cancel", role: .cancel) { }
-                Button("Move \(captures.count) items", role: .destructive) { Task { await state.removeCaptures(captures) } }
-            } message: { Text("You can restore these captures from Recently Deleted. Files at their original locations are kept.") }
+            .alert("Delete \(removalCaptures.count) visible \(removalCaptures.count == 1 ? "capture" : "captures") from this \(isBatch ? "batch" : "hour")?", isPresented: $confirmsRemoval) {
+                Button("Cancel", role: .cancel) { removalCaptures = [] }
+                Button("Delete \(removalCaptures.count) visible \(removalCaptures.count == 1 ? "capture" : "captures")", role: .destructive) {
+                    let selected = removalCaptures
+                    removalCaptures = []
+                    Task { await state.removeCaptures(selected) }
+                }.disabled(removalUnavailable || removalCaptures.isEmpty)
+            } message: {
+                Text("Only these captures will move to Recently Deleted, where you can restore them. Hidden captures, other tasks and newly saved captures are kept. Files at their original locations are kept.")
+            }
+    }
+    private func requestRemoval() {
+        guard !removalUnavailable else { return }
+        let liveIDs = Set(state.store.captures.map(\.id))
+        removalCaptures = captures.filter { liveIDs.contains($0.id) }
+        guard !removalCaptures.isEmpty else { return }
+        confirmsRemoval = true
     }
     private func childCard(_ capture: Capture) -> some View {
         WeeklyCaptureCard(state: state, capture: capture,

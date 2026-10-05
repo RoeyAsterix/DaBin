@@ -66,6 +66,97 @@ import UniformTypeIdentifiers
         try expect(reopened.selectedCaptureID == first, "The previous project's selection survives scope restoration and restart")
         return checks
     }
+    @MainActor private static func scratchpadRemovalPersistence(_ root: URL) throws -> Int {
+        var checks = 0
+        func expect(_ value: Bool, _ message: String) throws {
+            checks += 1
+            if !value { throw NSError(domain: "WorkspaceTests", code: 3, userInfo: [NSLocalizedDescriptionKey: message]) }
+        }
+        func rejected(_ operation: () throws -> Void, _ message: String) throws {
+            var failed = false
+            do { try operation() } catch { failed = true }
+            try expect(failed, message)
+        }
+        let store = try CaptureStore(root: root)
+        let workspace = WorkspaceStore(root: root)
+        let project = "Recovery fixture"
+        let key = WorkspaceSnapshot.projectKey(project)
+        let original = "Original note\nעברית 日本語 📝\n  exact spacing  "
+        let pending = original + "\nUncommitted edit survives failed deletion"
+        try workspace.setScratchpad(text: original, project: project)
+        try workspace.setProjectColor(hex: "336699", for: project)
+        let copy = try store.capture(text: original, projectName: project)[0]
+        let saved = workspace.snapshot
+        let savedBytes = try Data(contentsOf: root.appendingPathComponent(WorkspaceStore.filename))
+        workspace.failureInjector = { throw CaptureStoreError.injectedInterruption }
+        try rejected({ try workspace.setScratchpad(text: pending, project: project) }, "The pending-note fixture actually encounters a save failure")
+        try rejected({ _ = try workspace.trashScratchpad(project: project) }, "Failed deletion reports the original storage failure")
+        try expect(workspace.snapshot == saved && workspace.scratchpad(project: project) == pending && workspace.hasUnsavedChanges,
+                   "Failed deletion retains both saved note and exact pending edit without substituting an empty draft")
+        try expect(workspace.deletedScratchpads.isEmpty && (try Data(contentsOf: root.appendingPathComponent(WorkspaceStore.filename))) == savedBytes,
+                   "Failed deletion publishes no receipt and changes no durable workspace bytes")
+        workspace.failureInjector = nil
+        let receipt = try workspace.trashScratchpad(project: project)
+        try expect(receipt.note.text == pending && receipt.note.projectName == project && receipt.note.updatedAt == saved.scratchpads[key]?.updatedAt,
+                   "Deletion recovers the actual pending text and original saved edit date under its exact project")
+        try expect(workspace.scratchpad(project: project).isEmpty && !workspace.hasUnsavedChanges && workspace.deletedScratchpads == [receipt],
+                   "One successful transaction empties the live note and records one recovery receipt")
+        try expect(workspace.snapshot.scratchpads[key]?.projectName == project && workspace.snapshot.projectColors == saved.projectColors
+            && copy.originalText == original && store.captures.contains { $0 === copy },
+                   "Note deletion retains project identity, color and independently saved capture copies")
+        let reopened = WorkspaceStore(root: root)
+        try expect(reopened.deletedScratchpads == [receipt] && reopened.scratchpad(project: project).isEmpty,
+                   "Deleted note identity, content and dates survive restart")
+        try workspace.setScratchpad(text: "Newer saved note", project: project)
+        try rejected({ try workspace.restoreDeletedScratchpad(id: receipt.id) }, "Restoration refuses to replace a newer saved note")
+        workspace.failureInjector = { throw CaptureStoreError.injectedInterruption }
+        try rejected({ try workspace.setScratchpad(text: "", project: project) }, "A failed clear leaves an empty pending draft over saved text")
+        try expect(workspace.scratchpad(project: project).isEmpty && !workspace.canRestoreDeletedScratchpad(id: receipt.id),
+                   "An empty pending clear cannot conceal the nonempty durable note from restore eligibility")
+        try rejected({ try workspace.restoreDeletedScratchpad(id: receipt.id) }, "Restore checks saved and pending text independently")
+        workspace.failureInjector = nil
+        try workspace.setScratchpad(text: "", project: project)
+        let beforeRestore = workspace.snapshot
+        workspace.failureInjector = { throw CaptureStoreError.injectedInterruption }
+        try rejected({ try workspace.restoreDeletedScratchpad(id: receipt.id) }, "A failed restore remains explicit and retryable")
+        try expect(workspace.snapshot == beforeRestore && workspace.canRestoreDeletedScratchpad(id: receipt.id),
+                   "Failed restoration consumes neither the receipt nor the empty live marker")
+        workspace.failureInjector = nil
+        try workspace.restoreDeletedScratchpad(id: receipt.id)
+        try expect(workspace.snapshot.scratchpads[key] == receipt.note && workspace.deletedScratchpads.isEmpty,
+                   "Successful restoration recovers exact text and original date once")
+        try rejected({ try workspace.restoreDeletedScratchpad(id: receipt.id) }, "A consumed recovery identity cannot be restored twice")
+        let second = try workspace.trashScratchpad(project: project)
+        try expect(second.id != receipt.id, "A later independent deletion receives a distinct identity")
+        workspace.failureInjector = { throw CaptureStoreError.injectedInterruption }
+        try rejected({ try workspace.setScratchpad(text: "Pending newer note", project: project) }, "The newer pending note is actually unsaved")
+        try expect(!workspace.canRestoreDeletedScratchpad(id: second.id), "Restore refuses a newer pending note even while the saved marker is empty")
+        try rejected({ try workspace.permanentDeleteScratchpad(id: second.id) }, "Permanent deletion reports storage failure without consuming recovery")
+        try expect(workspace.deletedScratchpads == [second] && workspace.scratchpad(project: project) == "Pending newer note",
+                   "Failed permanent deletion retains recovery and pending live text")
+        workspace.failureInjector = nil
+        try workspace.permanentDeleteScratchpad(id: second.id)
+        try expect(workspace.deletedScratchpads.isEmpty && workspace.scratchpad(project: project) == "Pending newer note"
+            && workspace.snapshot.projectColors == saved.projectColors && copy.originalText == original,
+                   "Permanent deletion removes only its receipt, preserving current pending note, project and saved copy")
+        try workspace.setScratchpad(text: "Unfiled exact\ntext", project: nil)
+        let unfiled = try workspace.trashScratchpad(project: nil)
+        try workspace.restoreDeletedScratchpad(id: unfiled.id)
+        try expect(workspace.scratchpad(project: nil) == "Unfiled exact\ntext" && workspace.scratchpad(project: project) == "Pending newer note",
+                   "Unfiled recovery remains separate from named project notes")
+        var legacy = WorkspaceSnapshot()
+        let decoded = try JSONDecoder().decode(WorkspaceSnapshot.self, from: JSONEncoder().encode(legacy))
+        try expect(decoded.deletedScratchpads == nil && (try decoded.validated()) == legacy,
+                   "Legacy schema-one workspaces need no deleted-note field or migration")
+        legacy.deletedScratchpads = [receipt, receipt]
+        try rejected({ _ = try legacy.validated() }, "Duplicate recovery identities are rejected before persistence")
+        legacy.deletedScratchpads = [WorkspaceDeletedScratchpad(note: receipt.note, deletedAt: Date(timeIntervalSinceReferenceDate: .infinity))]
+        try rejected({ _ = try legacy.validated() }, "Nonfinite deletion dates cannot enter durable recovery")
+        legacy.deletedScratchpads = [WorkspaceDeletedScratchpad(note: WorkspaceScratchpad(text: "  \n", projectName: nil, updatedAt: Date()))]
+        try rejected({ _ = try legacy.validated() }, "Blank recovered notes are rejected rather than creating empty trash cards")
+        return checks
+    }
+
     @MainActor static func main() async throws {
         var checks = 0
         func expect(_ value: Bool, _ message: String) throws {
@@ -80,6 +171,7 @@ import UniformTypeIdentifiers
         let root = files.temporaryDirectory.appendingPathComponent("DaBin-WorkspaceTests-\(UUID())")
         defer { try? files.removeItem(at: root) }
         checks += try projectScopePersistence(root.appendingPathComponent("scope-transactions"))
+        checks += try scratchpadRemovalPersistence(root.appendingPathComponent("note-recovery"))
         let store = try CaptureStore(root: root.appendingPathComponent("archive"))
         let workspace = WorkspaceStore(root: store.root)
         try expect(workspace.error == nil && workspace.mode == .collection && workspace.shelfCaptureIDs.isEmpty,

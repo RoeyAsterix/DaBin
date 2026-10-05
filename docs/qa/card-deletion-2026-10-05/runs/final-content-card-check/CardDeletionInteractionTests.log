@@ -1,0 +1,22 @@
+MENU tracking began: ["Move earlier", "Move later", "", "Edit project notes", "", "Delete notes…"]
+MENU tracking ended
+MENU tracking began: ["Delete note…"]
+MENU tracking ended
+MENU tracking began: ["", "Add files…", "Paste into project", "Project notes", "Open folder", "", "Copy project items", "Copy project summary", "", "Clipboard view", "Shelf view"]
+MENU tracking ended
+MENU tracking began: ["Copy as plain text", "", "Pin", "Add to shelf", "Turn into task", "Attach to task", "", "Move to Recently Deleted…", "File to project", "", "Show nearby captures"]
+MENU tracking ended
+FAIL: Card deletion QA: Error Domain=CardDeletionInteractionTests Code=98 "Comment deletion removes only chosen exact entry" UserInfo={NSLocalizedDescription=Comment deletion removes only chosen exact entry}
+FIXTURE: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/card-delete-20261005T133807Z/card-delete/project-note-delete.png
+FIXTURE: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/card-delete-20261005T133807Z/card-delete/search-note-delete.png
+ALERT action: Cancel
+ALERT action: Delete notes
+ALERT action: Cancel
+ALERT action: Move to Recently Deleted
+ALERT action: Cancel
+ALERT action: Delete notes
+ALERT action: Cancel
+ALERT action: Delete permanently
+FIXTURE: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/card-delete-20261005T133807Z/card-delete/comment-delete.png
+ALERT action: Cancel
+ALERT action: Delete comment

@@ -1,0 +1,11 @@
+MENU tracking began: ["Move earlier", "Move later", "", "Edit project notes", "", "Delete notes…"]
+MENU tracking ended
+MENU tracking began: ["Delete note…"]
+MENU tracking ended
+FAIL: Card deletion QA: Error Domain=CardDeletionInteractionTests Code=38 "Capture confirmation still moves capture to trash" UserInfo={NSLocalizedDescription=Capture confirmation still moves capture to trash}
+FIXTURE: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/card-delete-20261005T133807Z/card-delete/project-note-delete.png
+FIXTURE: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/card-delete-20261005T133807Z/card-delete/search-note-delete.png
+ALERT action: Cancel
+ALERT action: Delete notes
+ALERT action: Cancel
+ALERT action: Move to Recently Deleted

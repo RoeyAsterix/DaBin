@@ -1,0 +1,196 @@
+{
+  "schemaVersion": 1,
+  "verifiedAtUTC": "2026-10-05T14:14:46.173251+00:00",
+  "sourceFingerprint": "6b013ca1385c4aaf1d837e924e12eaa9bbeeba5ad3544fea2ede31b88f83d909",
+  "registeredSuites": 124,
+  "coverage": "24 affected suites exercised across campaign and scoped rechecks;10 suites passed on final production source",
+  "distinctPassedSuites": 24,
+  "finalSourcePassedSuites": 10,
+  "finalSourceFailedSuites": 0,
+  "fullRegisteredCampaignRun": false,
+  "finalSourceChangeSinceBroadCampaign": [
+    "Sources/DaBin/CaptureDetailPanels.swift",
+    "Sources/DaBin/TrashScreen.swift"
+  ],
+  "reasonForFinalSourceChange": "Explicit accessibility grouping separates child controls in saved comment and Recently Deleted note cards",
+  "productionBusinessLogicUnchangedSinceBroadCampaign": true,
+  "finalSuiteCompletionMarkerVerified": true,
+  "suiteEvidence": {
+    "CaptureRemovalTests": {
+      "run": "final-content-card-check",
+      "summary": "PASS: 76 capture removal/minimize checks",
+      "log": "runs/final-content-card-check/CaptureRemovalTests.log"
+    },
+    "HourlyGroupingTests": {
+      "run": "affected-regression",
+      "summary": "PASS: 31 hourly grouping checks; action identity, fourth-action threshold, filters, fixed local hours, stable IDs and accessible collapse.",
+      "log": "runs/affected-regression/HourlyGroupingTests.log"
+    },
+    "WeeklyStateTests": {
+      "run": "affected-regression",
+      "summary": "PASS: 186 weekly state checks; isolated store, local calendar, fake notifications.",
+      "log": "runs/affected-regression/WeeklyStateTests.log"
+    },
+    "SearchDateBoardTests": {
+      "run": "affected-regression",
+      "summary": "PASS: 44 date search grouping, chronology, note semantics, context counts and bounded paging checks",
+      "log": "runs/affected-regression/SearchDateBoardTests.log"
+    },
+    "SearchResultExcerptTests": {
+      "run": "affected-regression",
+      "summary": "PASS: 21 search result excerpt bounds, matching evidence, labels and Unicode checks",
+      "log": "runs/affected-regression/SearchResultExcerptTests.log"
+    },
+    "CaptureAnnotationTests": {
+      "run": "final-content-card-check",
+      "summary": "PASS: 96 annotation checks; legacy threads, edits, exact comment deletion/additive Undo, search/export, restart/backup, exact reminder/focus acknowledgments and atomic rollback.",
+      "log": "runs/final-content-card-check/CaptureAnnotationTests.log"
+    },
+    "CommentDraftArchiveTests": {
+      "run": "final-content-card-check",
+      "summary": "PASS: 37 comment draft checks; legacy compatibility, recoverable composer/edit identity, posting/failure and unrelated task-draft preservation.",
+      "log": "runs/final-content-card-check/CommentDraftArchiveTests.log"
+    },
+    "ProjectWorkspaceStateTests": {
+      "run": "affected-regression",
+      "summary": "PASS: 265 project-workspace checks; stable ordering, scoped selection, complete project counts, backup-compatible persistence, atomic task conversion, inherited ownership and guarded undo.",
+      "log": "runs/affected-regression/ProjectWorkspaceStateTests.log"
+    },
+    "ProjectWorkspaceViewTests": {
+      "run": "affected-regression",
+      "summary": "PASS: 361 project workspace UI checks; 1,000 synthetic text captures plus image and editable project note; native mixed-selection drag payloads on a private pasteboard; no personal archive, network, general clipboard or external opening. At most 24 simultaneously materialized native rows.",
+      "log": "runs/affected-regression/ProjectWorkspaceViewTests.log"
+    },
+    "ProjectWorkspaceCardTests": {
+      "run": "affected-regression",
+      "summary": "PASS: 782 project card checks; Task/Note/Capture semantics, real live task updates, light/dark/grid/320-point compact fixtures, original previews and independent selection; no personal archive, clipboard, network, or external opening.",
+      "log": "runs/affected-regression/ProjectWorkspaceCardTests.log"
+    },
+    "NavigationHistoryTests": {
+      "run": "final-content-card-check",
+      "summary": "PASS: 123 bounded history, branch, project, draft, search, deletion and navigation safety checks",
+      "log": "runs/final-content-card-check/NavigationHistoryTests.log"
+    },
+    "DurabilityStressTests": {
+      "run": "affected-regression",
+      "summary": "PASS: 8586 durability checks; 1000 seeded records, 320 mixed operations, 25 restart comparisons, backup/restore and 4 real SIGKILL boundaries.",
+      "log": "runs/affected-regression/DurabilityStressTests.log"
+    },
+    "FlowActionStressTests": {
+      "run": "affected-regression",
+      "summary": "PASS: 11674 flow/action stress checks; all12 routes, bounded branch/history churn, pending draft ownership, atomic failed-save retries, comments/checklists, timing/lifecycle, private copying, Inbox/organization, removal/restore and repeated local restart. Semantic handlers only; native activation, system dialogs, rendering and animation are separate coverage.",
+      "log": "runs/affected-regression/FlowActionStressTests.log"
+    },
+    "WeeklyWindowTests": {
+      "run": "affected-regression",
+      "summary": "",
+      "log": "runs/affected-regression/WeeklyWindowTests.log"
+    },
+    "WorkspaceWindowTests": {
+      "run": "final-content-card-check",
+      "summary": "PASS: 322 native workspace interaction and responsive layout checks",
+      "log": "runs/final-content-card-check/WorkspaceWindowTests.log"
+    },
+    "TaskPlanInteractionTests": {
+      "run": "final-content-card-check",
+      "summary": "PASS: 379 native task-plan/checklist/reminder binding, focus, persistence, validation and responsive checks; renders: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/card-delete-20261005T133807Z/task-plan",
+      "log": "runs/final-content-card-check/TaskPlanInteractionTests.log"
+    },
+    "CaptureExtendedInteractionTests": {
+      "run": "final-content-card-check",
+      "summary": "",
+      "log": "runs/final-content-card-check/CaptureExtendedInteractionTests.log"
+    },
+    "CollectionCardPresentationTests": {
+      "run": "affected-regression",
+      "summary": "PASS: 1359 collection selection, layout, native preview, theme, AX expansion and data preservation checks. /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/collection-card-presentation/F1D8AEE7-1D50-4C8D-AE34-7182138699D1",
+      "log": "runs/affected-regression/CollectionCardPresentationTests.log"
+    },
+    "SearchWindowTests": {
+      "run": "affected-regression",
+      "summary": "PASS: 106 native global Search checks; keyboard verification passed: native focus, Tab retained filter focus with Keyboard Navigation disabled, Escape dismissal and Return activates Done.",
+      "log": "runs/affected-regression/SearchWindowTests.log"
+    },
+    "ProjectBrowsingNavigationTests": {
+      "run": "affected-regression",
+      "summary": "PASS: 74 native project browsing checks; real Board All/Unfiled/named history, native cross-project Notes/retry, late-blocked selection/creation and metadata-filing isolation",
+      "log": "runs/affected-regression/ProjectBrowsingNavigationTests.log"
+    },
+    "SnippetNamingInteractionTests": {
+      "run": "affected-regression",
+      "summary": "PASS: 51 native Projects Clipboard/Shelf naming checks; real More dispatch, native text entry, retained failed drafts, visible retry, exactly-once save, restart, cancellation, and immutable capture; no general clipboard or external access",
+      "log": "runs/affected-regression/SnippetNamingInteractionTests.log"
+    },
+    "WorkspaceTests": {
+      "run": "final-content-card-check",
+      "summary": "PASS: 83 workspace, clipboard, scratchpad, collection and ZIP checks",
+      "log": "runs/final-content-card-check/WorkspaceTests.log"
+    },
+    "ArchiveBackupTests": {
+      "run": "final-content-card-check",
+      "summary": "PASS: 31 workspace backup, conflict, rollback, restart, and legacy checks.",
+      "log": "runs/final-content-card-check/ArchiveBackupTests.log"
+    },
+    "CardDeletionInteractionTests": {
+      "run": "native-confirmation-scope-recheck",
+      "summary": "",
+      "log": "runs/native-confirmation-scope-recheck/CardDeletionInteractionTests.log"
+    }
+  },
+  "initialFailuresPreserved": true,
+  "nativeHarnessRepairs": [
+    "Target native alert proxies with normal own-window events",
+    "Use documented ProjectWorkspaceView initializer and private pasteboard",
+    "Follow immutable capture IDs through deliberate trash/restore object replacement",
+    "Limit confirmation targeting to the active sheet when its button has the same label as a card control"
+  ],
+  "fixtureRepairs": [
+    "Use six-digit RGB values without a leading #"
+  ],
+  "productionFindingsFixed": [
+    "Deleted live-note history no longer reopens an empty editor",
+    "Weekly hour identity keeps pending confirmation during new arrivals",
+    "Separate accessible controls on removed-note and saved-comment cards"
+  ],
+  "knownOpenFindings": [
+    "Prior-source strict zoom latency budget failure remains unresolved and was not rerun for this change",
+    "Framework-reproduced native table warnings"
+  ],
+  "manualBoundaries": [
+    "Human VoiceOver and physical input behavior",
+    "Extended OS/hardware soak",
+    "Signing, distribution sandbox runtime, installation and Apple processing"
+  ],
+  "signed": false,
+  "uploaded": false,
+  "nativeDeletionChecks": 152,
+  "packagingUnitTests": {
+    "passed": 32,
+    "failed": 0,
+    "log": "packaging-unit-tests.log",
+    "initialSandboxAttempt": "One fixture could not create native/build temporary output under read-only sandbox; rerun with approved repository write access passed all 32 tests"
+  },
+  "deterministicProjectCheckPassed": true,
+  "nativeCardRendersInspected": [
+    "project-note-delete.png",
+    "search-note-delete.png",
+    "comment-delete.png",
+    "hour-delete.png"
+  ],
+  "unsignedStoreCandidate": {
+    "receipt": "store-candidate-receipt.json",
+    "receiptSHA256": "493e7314723a480767980fcb48140a39438237ef066ec4db793e352202a2e0ca",
+    "sourceFingerprint": "6b013ca1385c4aaf1d837e924e12eaa9bbeeba5ad3544fea2ede31b88f83d909",
+    "executableSHA256": "8d4884c9f2f041b103e02a340caba3085b925cf506ad383cbbf9b4704be75d7b",
+    "version": "0.4.33",
+    "build": "88",
+    "inputsUnchanged": true,
+    "xcodebuildExitCode": 0,
+    "packagingPreflightExitCode": 0,
+    "actualEmbeddedMetadataAndBinaryVerified": true,
+    "signed": false,
+    "archiveCreated": false,
+    "uploaded": false,
+    "sandboxRuntimeVerified": false
+  }
+}

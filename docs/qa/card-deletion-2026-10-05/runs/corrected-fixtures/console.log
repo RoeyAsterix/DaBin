@@ -1,0 +1,4 @@
+PASSED WorkspaceTests: PASS: 83 workspace, clipboard, scratchpad, collection and ZIP checks
+PASSED ArchiveBackupTests: PASS: 31 workspace backup, conflict, rollback, restart, and legacy checks.
+FAILED CardDeletionInteractionTests
+QA app-store failed: 2/3 requested suites passed. Report: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/runs/20261005T135507371201Z-app-store/report.json

@@ -252,7 +252,13 @@ enum ProjectCardRole: String {
     @ViewBuilder private var itemActions: some View {
         if let capture = item.capture {
             ExplorerCaptureActions(state: state, workspace: state.workspace, capture: capture, taskConversion: makeTask)
-        } else { Button("Edit project notes", systemImage: "note.text", action: details) }
+        } else if case .note(let note) = item {
+            Button("Edit project notes", systemImage: "note.text", action: details)
+            Divider()
+            Button("Delete notes…", systemImage: "trash", role: .destructive) {
+                state.requestScratchpadRemoval(note)
+            }
+        }
     }
 }
 

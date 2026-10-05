@@ -1,0 +1,7 @@
+MENU tracking began: ["Move earlier", "Move later", "", "Edit project notes", "", "Delete notes…"]
+MENU tracking ended
+MENU tracking began: ["Delete note…"]
+MENU tracking ended
+FAIL: Card deletion QA: Error Domain=CardDeletionInteractionTests Code=21 "Actual confirmation action Cancel works" UserInfo={NSLocalizedDescription=Actual confirmation action Cancel works}
+FIXTURE: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/card-delete-20261005T133807Z/card-delete/project-note-delete.png
+FIXTURE: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/card-delete-20261005T133807Z/card-delete/search-note-delete.png

@@ -18,6 +18,62 @@ struct ArchiveBackupTests {
         Set((files.enumerator(atPath: root.path)?.allObjects as? [String]) ?? [])
     }
 
+    @MainActor private static func deletedNoteBackupTests(_ root: URL) throws {
+        let source = try CaptureStore(root: root.appendingPathComponent("DeletedNoteSource"))
+        let workspace = WorkspaceStore(root: source.root)
+        try workspace.setScratchpad(text: "Recoverable note\nעברית 📝", project: "Recovery project")
+        try workspace.setProjectColor(hex: "336699", for: "Recovery project")
+        let copy = try source.capture(text: "Independent saved note copy", projectName: "Recovery project")[0]
+        let receipt = try workspace.trashScratchpad(project: "Recovery project")
+        try workspace.setScratchpad(text: "Newer live note stays live", project: "Recovery project")
+        let backup = root.appendingPathComponent("DeletedNotes.dabinbackup")
+        try source.exportBackup(to: backup)
+        let target = try CaptureStore(root: root.appendingPathComponent("DeletedNoteTarget"))
+        let targetWorkspace = WorkspaceStore(root: target.root)
+        try targetWorkspace.setScratchpad(text: "Local recovery", project: "Local project")
+        let local = try targetWorkspace.trashScratchpad(project: "Local project")
+        _ = try target.restoreBackup(from: backup)
+        try targetWorkspace.reload()
+        try expect(Set(targetWorkspace.deletedScratchpads.map(\.id)) == Set([receipt.id, local.id])
+            && targetWorkspace.deletedScratchpads.first { $0.id == receipt.id } == receipt,
+                   "Backup restoration adds exact deleted-note content, edit/deletion dates and identity without discarding local recovery")
+        try expect(targetWorkspace.scratchpad(project: "Recovery project") == "Newer live note stays live"
+            && targetWorkspace.snapshot.projectColors == workspace.snapshot.projectColors
+            && target.captures.first { $0.id == copy.id }?.originalText == copy.originalText,
+                   "Live notes, project color and independently captured copies restore alongside recovery receipts")
+        let beforeRepeat = targetWorkspace.snapshot
+        _ = try target.restoreBackup(from: backup)
+        try targetWorkspace.reload()
+        try expect(targetWorkspace.snapshot == beforeRepeat && WorkspaceStore(root: target.root).snapshot == beforeRepeat,
+                   "Repeated deleted-note backup restores are idempotent and survive restart")
+        var conflicting = workspace.snapshot
+        conflicting.deletedScratchpads = [WorkspaceDeletedScratchpad(id: receipt.id,
+            note: WorkspaceScratchpad(text: "Different content under the same identity", projectName: receipt.note.projectName, updatedAt: receipt.note.updatedAt),
+            deletedAt: receipt.deletedAt)]
+        try workspace.save(conflicting)
+        let conflictBackup = root.appendingPathComponent("ConflictingDeletedNotes.dabinbackup")
+        try source.exportBackup(to: conflictBackup)
+        let beforeInventory = inventory(target.root)
+        let beforeBytes = try Data(contentsOf: target.root.appendingPathComponent(WorkspaceStore.filename))
+        let beforeIDs = target.captures.map(\.id)
+        try rejected({ _ = try target.restoreBackup(from: conflictBackup) }, "A conflicting deleted-note UUID requires explicit conflict resolution")
+        try expect(inventory(target.root) == beforeInventory && target.captures.map(\.id) == beforeIDs
+            && (try Data(contentsOf: target.root.appendingPathComponent(WorkspaceStore.filename))) == beforeBytes,
+                   "Receipt conflict is detected before any capture, original or workspace bytes change")
+        let legacy = try CaptureStore(root: root.appendingPathComponent("LegacyNotesSource"))
+        try WorkspaceStore(root: legacy.root).setScratchpad(text: "Legacy workspace notes", project: "Legacy project")
+        let legacyBackup = root.appendingPathComponent("LegacyNotes.dabinbackup")
+        try legacy.exportBackup(to: legacyBackup)
+        let manifest = try JSONSerialization.jsonObject(with: Data(contentsOf: legacyBackup.appendingPathComponent("Manifest.json"))) as! [String: Any]
+        let legacyWorkspace = manifest["workspace"] as! [String: Any]
+        try expect(legacyWorkspace["deletedScratchpads"] == nil, "An older-compatible workspace backup omits the additive recovery field")
+        _ = try target.restoreBackup(from: legacyBackup)
+        try targetWorkspace.reload()
+        try expect(Set(targetWorkspace.deletedScratchpads.map(\.id)) == Set([receipt.id, local.id])
+            && targetWorkspace.scratchpad(project: "Legacy project") == "Legacy workspace notes",
+                   "Restoring a legacy workspace adds its notes and preserves all existing recovery receipts")
+    }
+
     @MainActor static func main() throws {
         let root = files.temporaryDirectory.appendingPathComponent("DaBinWorkspaceBackup-\(UUID())")
         try files.createDirectory(at: root, withIntermediateDirectories: true)
@@ -133,6 +189,7 @@ struct ArchiveBackupTests {
         let dangling = try CaptureStore(root: root.appendingPathComponent("Dangling"))
         try files.createSymbolicLink(at: dangling.root.appendingPathComponent(WorkspaceStore.filename), withDestinationURL: root.appendingPathComponent("Missing.json"))
         try rejected({ _ = try dangling.restoreBackup(from: backup) }, "Restore rejects dangling workspace links before writing")
+        try deletedNoteBackupTests(root)
         print("PASS: \(checks) workspace backup, conflict, rollback, restart, and legacy checks.")
     }
 }

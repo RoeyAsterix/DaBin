@@ -84,6 +84,15 @@ struct BoardView: View {
         } message: { _ in
             Text("You can restore it from Recently Deleted. Files at their original locations are kept.")
         }
+        .alert("Delete these notes?", isPresented: Binding(
+            get: { state.pendingScratchpadRemoval != nil },
+            set: { if !$0 { state.pendingScratchpadRemoval = nil } }
+        ), presenting: state.pendingScratchpadRemoval) { _ in
+            Button("Cancel", role: .cancel) { state.pendingScratchpadRemoval = nil }
+            Button("Delete notes", role: .destructive) { state.confirmScratchpadRemoval() }
+        } message: { _ in
+            Text("The notes move to Recently Deleted, where you can restore them. Saved copies and other project items are kept.")
+        }
         .onExitCommand {
             if tutorial.isPresented { tutorial.finish(in: state) }
             else if searchFocused { searchFocused = false }
@@ -449,6 +458,7 @@ struct BoardView: View {
             Text("Moved to Recently Deleted").font(.system(size: 12))
             Spacer(minLength: 4)
             Button("Undo") { Task { await state.undoLastRemoval() } }.buttonStyle(.plain).foregroundStyle(accent)
+                .accessibilityIdentifier("card-delete-undo")
         }.padding(9).background(Palette.soft).accessibilityElement(children: .contain)
     }
     private func statusBanner(_ message: AppStatusMessage) -> some View {

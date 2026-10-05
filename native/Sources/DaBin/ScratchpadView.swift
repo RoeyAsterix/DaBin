@@ -11,6 +11,7 @@ struct ScratchpadView: View {
     @StateObject private var successPresentation = TransientMessagePresentation<String>()
     @State private var savedCaptureID: UUID?
     @State private var savedText: String?
+    @State private var pendingDeletion: WorkspaceScratchpad?
 
     private var project: String? {
         if let noteContext { return noteContext.projectName }
@@ -49,6 +50,11 @@ struct ScratchpadView: View {
                         .disabled(text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                 }
                 Spacer(minLength: 0)
+                Button("Delete notes…", systemImage: "trash", role: .destructive) {
+                    pendingDeletion = WorkspaceScratchpad(text: text, projectName: project,
+                        updatedAt: workspace.snapshot.scratchpads[WorkspaceSnapshot.projectKey(project)]?.updatedAt ?? Date())
+                }.disabled(text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                    .accessibilityIdentifier("scratchpad-delete")
             }.font(.system(size: zoom.fontSize(13))).tint(accent)
             Text("A place to think. Your notes stay on this Mac after you close DaBin.")
                 .font(.system(size: zoom.fontSize(14))).foregroundStyle(Palette.muted).fixedSize(horizontal: false, vertical: true)
@@ -76,6 +82,23 @@ struct ScratchpadView: View {
             WorkspaceScrollHistory(anchor: state.workspaceViewport, contextID: "note-" + WorkspaceSnapshot.projectKey(project),
                 onAnchor: { state.workspaceViewport = $0 }).allowsHitTesting(false).accessibilityHidden(true)
         }
+        }
+        .alert("Delete these notes?", isPresented: Binding(
+            get: { pendingDeletion != nil }, set: { if !$0 { pendingDeletion = nil } }
+        ), presenting: pendingDeletion) { note in
+            Button("Cancel", role: .cancel) { pendingDeletion = nil }
+            Button("Delete notes", role: .destructive) {
+                pendingDeletion = nil
+                guard workspace.scratchpad(project: note.projectName) == note.text else {
+                    state.reportFailure("The notes changed. Review them and choose Delete again.")
+                    return
+                }
+                state.requestScratchpadRemoval(note)
+                state.confirmScratchpadRemoval()
+                clearFeedback(); savedCaptureID = nil; savedText = nil
+            }
+        } message: { _ in
+            Text("The notes move to Recently Deleted, where you can restore them. Saved copies and other project items are kept.")
         }
     }
 
