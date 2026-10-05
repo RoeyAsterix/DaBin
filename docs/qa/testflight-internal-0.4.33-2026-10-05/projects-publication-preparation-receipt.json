@@ -1,0 +1,19 @@
+{
+  "preparedAtUTC": "2026-10-05T13:10:22.479104+00:00",
+  "codeCommit": "1e5f0ed3fc3ec460457711ae181e37c4df061c80",
+  "originMainVerified": "1e5f0ed3fc3ec460457711ae181e37c4df061c80",
+  "sourceFingerprint": "41b3f117c76dc5f22051c7be2833caecd6cfd4e00345dc4f99f60c8c998820fc",
+  "helperPath": "/private/tmp/dabin-testflight-projects-20261005.py",
+  "helperSHA256": "289abf704113559f815c4f9536f2caf6fd7a544b42050f253d171007831395c3",
+  "publicRecoveryIdentical": true,
+  "extraConfigurationHashes": {
+    "Config/AppStoreSigning.json": "a6072c1ad444175cf204f71d3f8d8d39e0d15bcd3d74d672a4a1924ac525ddf5",
+    "DaBin.xcodeproj/project.pbxproj": "a5ced65f171224343a45a2862ad6a1c8f5ccd5304ffc253e9168b8d94fd039d8",
+    "DaBin.xcodeproj/xcshareddata/xcschemes/DaBin.xcscheme": "0922aad38e86918dc38f90b76d197e0405997d7dcd571bde62063ae96e4db283"
+  },
+  "helperExecuted": false,
+  "signed": false,
+  "uploaded": false,
+  "internalTestingVerified": false,
+  "emailRequested": false
+}
