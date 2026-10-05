@@ -1,47 +1,40 @@
 {
   "schemaVersion": 1,
-  "updatedAtUTC": "2026-10-05T15:39:59.741576+00:00",
-  "status": "drag_upload_fix_verified_pushed_awaiting_human_signing",
+  "updatedAtUTC": "2026-10-05T15:57:49.907126+00:00",
+  "status": "organize_and_pin_actions_removed_verified_pushed_awaiting_human_signing",
   "version": "0.4.33",
   "build": "88",
   "bundleIdentifier": "com.dabin.mac",
   "appStoreConnectAppID": "6815956446",
-  "codeCommit": "62bf3e92f65b9c1174841393bf26e1716d3894c6",
-  "codeCommitURL": "https://github.com/RoeyAsterix/DaBin/commit/62bf3e92f65b9c1174841393bf26e1716d3894c6",
+  "codeCommit": "b89e73d2e27907d3677f3478a56e067c58fdcd89",
+  "codeCommitURL": "https://github.com/RoeyAsterix/DaBin/commit/b89e73d2e27907d3677f3478a56e067c58fdcd89",
   "codePushVerified": true,
-  "sourceFingerprint": "24e49b499b3e8977e2e562c72e1c52a4fe8fd93f2d9f3d4eda650170b2610398",
+  "sourceFingerprint": "dae2228aa8ea9dcd4e3dd556ccc8aeb7273e230b1471340feb3eebb1fa2cc8a1",
   "nativeQa": {
-    "status": "13_affected_release_suites_passed_known_prior_zoom_failure",
+    "status": "6_affected_release_suites_passed_known_prior_zoom_failure",
     "registeredSuites": 126,
-    "sourceFingerprint": "24e49b499b3e8977e2e562c72e1c52a4fe8fd93f2d9f3d4eda650170b2610398",
+    "sourceFingerprint": "dae2228aa8ea9dcd4e3dd556ccc8aeb7273e230b1471340feb3eebb1fa2cc8a1",
     "fullRegisteredRun": false,
-    "finalSourcePassedSuites": 13,
+    "finalSourcePassedSuites": 6,
     "finalSourceFailedSuites": 0,
     "finalScopedSuiteNames": [
-      "ExplorerTransferTests",
-      "CaptureClipboardTests",
-      "ExternalTransferProcessTests",
-      "ProjectWorkspaceExportTests",
-      "ProjectWorkspaceViewTests",
-      "ProjectWorkspaceCardTests",
-      "OutgoingFileSnapshotTests",
-      "DetailPreviewInteractionTests",
-      "CaptureExtendedInteractionTests",
-      "CollectionCardPresentationTests",
-      "NativeContentDragTests",
-      "CaptionDragTests",
-      "OutgoingFileBatchTests"
+      "WorkInboxTests",
+      "RedesignInteractionTests",
+      "HeaderInteractionTests",
+      "ExplorerCaptureCardPresentationTests",
+      "CardDeletionInteractionTests",
+      "SnippetNamingInteractionTests"
     ],
-    "nativeChecks": 3334,
+    "nativeChecks": 1479,
     "allFindingsFixed": false,
     "knownOpenFindings": [
-      "Historical strict zoom performance budget failure remains open and was not rerun for this transfer change",
+      "Historical strict zoom performance budget failure was not rerun for this UI removal",
       "Framework-reproduced native table warnings"
     ],
     "packagingUnitTestsPassed": 32,
     "deterministicProjectCheckPassed": true,
-    "verificationPath": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/drag-upload-2026-10-05/verification.json",
-    "verificationSHA256": "0e719475aa2352e36041868b5951613d51667492da9036223a6ff4e0b747b923",
+    "verificationPath": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/remove-organize-pin-2026-10-05/verification.json",
+    "verificationSHA256": "2325b0ed57133ea807a68f1f6c58ae2dd66fa9a243fa6a2bcf315caab823dc47",
     "strictZoomPerformance": {
       "status": "historical_failure_not_rerun_for_drag_transfer_fix",
       "sourceFingerprint": "41b3f117c76dc5f22051c7be2833caecd6cfd4e00345dc4f99f60c8c998820fc",
@@ -83,9 +76,9 @@
     "status": "ACTIVE",
     "intervalMinutes": 30,
     "notifyOnlyOnMeaningfulChange": true,
-    "lastUpdatedAtUTC": "2026-10-05T15:39:59.741576+00:00",
-    "requiredSourceFingerprint": "24e49b499b3e8977e2e562c72e1c52a4fe8fd93f2d9f3d4eda650170b2610398",
-    "promptStatus": "current_drag_source_handoff_and_internal_invite_updated_tool_confirmed_ACTIVE"
+    "lastUpdatedAtUTC": "2026-10-05T15:59:39.706713+00:00",
+    "requiredSourceFingerprint": "dae2228aa8ea9dcd4e3dd556ccc8aeb7273e230b1471340feb3eebb1fa2cc8a1",
+    "promptStatus": "current_action_removal_source_handoff_and_internal_invite_updated_tool_confirmed_ACTIVE"
   },
   "archiveAttempts": [
     {
@@ -130,11 +123,11 @@
   },
   "computerUseRestriction": "Computer Use refused Terminal app control for safety reasons; no Terminal interaction performed",
   "interactiveHandoff": {
-    "scriptPath": "/private/tmp/dabin-testflight-drag-upload-20261005.py",
-    "scriptSHA256": "cde9e177a1f5e153e2fdfec9082cd2a4cca89216a334f2dcc9ad13c44af43aeb",
+    "scriptPath": "/private/tmp/dabin-testflight-remove-organize-pin-20261005.py",
+    "scriptSHA256": "ed895db69ea44e05ece2014e9eab61f91f45430c143bbd1c091702e5556d26a0",
     "pythonExecutable": "/opt/homebrew/opt/python@3.14/bin/python3.14",
-    "receiptGlob": "/private/tmp/dabin-testflight-drag-upload-interactive-*-receipt.json",
-    "command": "/opt/homebrew/opt/python@3.14/bin/python3.14 /private/tmp/dabin-testflight-drag-upload-20261005.py",
+    "receiptGlob": "/private/tmp/dabin-testflight-remove-organize-pin-interactive-*-receipt.json",
+    "command": "/opt/homebrew/opt/python@3.14/bin/python3.14 /private/tmp/dabin-testflight-remove-organize-pin-20261005.py",
     "usesExistingArchiveHelper": true,
     "checksExactSourceFingerprint": true,
     "checksExactBuildConfigurationHashes": true,
@@ -143,14 +136,14 @@
       "DaBin.xcodeproj/project.pbxproj": "271ac8dbec9ca5b278ae8ea42ba42367744953a5963054333c6d6debe6aa85d3",
       "DaBin.xcodeproj/xcshareddata/xcschemes/DaBin.xcscheme": "0922aad38e86918dc38f90b76d197e0405997d7dcd571bde62063ae96e4db283"
     },
-    "sourceFingerprint": "24e49b499b3e8977e2e562c72e1c52a4fe8fd93f2d9f3d4eda650170b2610398",
-    "codeCommit": "62bf3e92f65b9c1174841393bf26e1716d3894c6",
+    "sourceFingerprint": "dae2228aa8ea9dcd4e3dd556ccc8aeb7273e230b1471340feb3eebb1fa2cc8a1",
+    "codeCommit": "b89e73d2e27907d3677f3478a56e067c58fdcd89",
     "status": "prepared_awaiting_human_signing",
     "executionRequired": "Human signed-in Mac Terminal; never automated native Terminal or protected authentication control",
-    "recoveryCopy": "archive-drag-upload-human-handoff.py",
+    "recoveryCopy": "archive-remove-organize-pin-human-handoff.py",
     "preparedOnly": true,
     "lockPath": "/private/tmp/dabin-testflight-current-archive.lock",
-    "preparationReceipt": "archive-drag-upload-handoff-preparation.json",
+    "preparationReceipt": "archive-remove-organize-pin-handoff-preparation.json",
     "preservedTemplateLogicASTEquivalent": true
   },
   "currentArchiveAttempt": null,
@@ -162,7 +155,8 @@
     "currentBuildEmailRequested": false,
     "currentBuildEmailSentVerified": false,
     "plannedAction": "After current source archive upload and processing, add only this 0.4.33 (88) to Personal Testing; record Apple email request separately from inbox delivery",
-    "appleDocumentation": "https://developer.apple.com/help/app-store-connect/test-a-beta-version/add-internal-testers/"
+    "appleDocumentation": "https://developer.apple.com/help/app-store-connect/test-a-beta-version/add-internal-testers/",
+    "requiredSourceFingerprint": "dae2228aa8ea9dcd4e3dd556ccc8aeb7273e230b1471340feb3eebb1fa2cc8a1"
   },
   "latestAppStoreConnectCheck": {
     "checkedAtUTC": "2026-10-05T05:29:19.820897+00:00",
@@ -173,33 +167,27 @@
     "internalGroupOldBuildState": "Testing",
     "currentInternalTesterInstalledVersion": "0.4.31 (86)"
   },
-  "previousCodeCommit": "3735e8d331db18cafe9e5e77847550f47871a048",
+  "previousCodeCommit": "62bf3e92f65b9c1174841393bf26e1716d3894c6",
   "focusedQa": {
-    "status": "current_drag_and_related_native_flows_verified",
+    "status": "requested_action_removal_and_related_native_flows_verified",
     "suiteNames": [
-      "ExplorerTransferTests",
-      "CaptureClipboardTests",
-      "ExternalTransferProcessTests",
-      "ProjectWorkspaceExportTests",
-      "ProjectWorkspaceViewTests",
-      "ProjectWorkspaceCardTests",
-      "OutgoingFileSnapshotTests",
-      "DetailPreviewInteractionTests",
-      "CaptureExtendedInteractionTests",
-      "CollectionCardPresentationTests",
-      "NativeContentDragTests",
-      "CaptionDragTests",
-      "OutgoingFileBatchTests"
+      "WorkInboxTests",
+      "RedesignInteractionTests",
+      "HeaderInteractionTests",
+      "ExplorerCaptureCardPresentationTests",
+      "CardDeletionInteractionTests",
+      "SnippetNamingInteractionTests"
     ],
-    "sourceFingerprint": "24e49b499b3e8977e2e562c72e1c52a4fe8fd93f2d9f3d4eda650170b2610398",
-    "passedSuites": 13,
+    "sourceFingerprint": "dae2228aa8ea9dcd4e3dd556ccc8aeb7273e230b1471340feb3eebb1fa2cc8a1",
+    "passedSuites": 6,
     "failedSuites": 0,
+    "nativeChecks": 1479,
     "fullRegisteredRun": false,
     "canonicalProductionInputCount": 169,
     "recordedProductionInputsUnchangedBetweenFinalRuns": true,
     "unsignedReleaseInputsUnchanged": true,
-    "verificationPath": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/drag-upload-2026-10-05/verification.json",
-    "verificationSHA256": "0e719475aa2352e36041868b5951613d51667492da9036223a6ff4e0b747b923"
+    "verificationPath": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/remove-organize-pin-2026-10-05/verification.json",
+    "verificationSHA256": "2325b0ed57133ea807a68f1f6c58ae2dd66fa9a243fa6a2bcf315caab823dc47"
   },
   "tabLabels": {
     "leftToRight": [
@@ -234,12 +222,12 @@
   },
   "currentUnsignedStoreCandidate": {
     "status": "unsigned_store_release_compiled_packaging_checked",
-    "sourceFingerprint": "24e49b499b3e8977e2e562c72e1c52a4fe8fd93f2d9f3d4eda650170b2610398",
+    "sourceFingerprint": "dae2228aa8ea9dcd4e3dd556ccc8aeb7273e230b1471340feb3eebb1fa2cc8a1",
     "version": "0.4.33",
     "buildNumber": "88",
-    "receipt": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/drag-upload-2026-10-05/store-candidate-receipt.json",
-    "receiptSHA256": "6b2887947d500be6d47909680cfece0acb91fbe8c4bcf7526ffac7737bda624f",
-    "executableSHA256": "451cb0cc150be19896f38e428ac5e5612a9a78b184cfd9d084feefcc3a6913e5",
+    "receipt": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/remove-organize-pin-2026-10-05/store-candidate-receipt.json",
+    "receiptSHA256": "c9178b7710b7684cdfd5810c714af8dff1b995c30c78d1f1dcc7b6013eba1de7",
+    "executableSHA256": "481997f89df759bc8c28fe0d0d3a82fbad916fdef1f406ff9b3bf90d6bf2177a",
     "xcodebuildExitCode": 0,
     "packagingPreflightExitCode": 0,
     "inputsUnchanged": true,
@@ -544,7 +532,7 @@
     "qaVerificationPath": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/card-deletion-2026-10-05/verification.json",
     "coveragePath": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/card-deletion-2026-10-05/action-coverage.json",
     "currentHumanArchiveCommandAvailable": false,
-    "supersededForPublicationBySourceFingerprint": "24e49b499b3e8977e2e562c72e1c52a4fe8fd93f2d9f3d4eda650170b2610398"
+    "supersededForPublicationBySourceFingerprint": "dae2228aa8ea9dcd4e3dd556ccc8aeb7273e230b1471340feb3eebb1fa2cc8a1"
   },
   "previousProjectsNativeQa": {
     "status": "full_campaign_plus_scoped_rechecks_complete_known_strict_zoom_failure",
@@ -647,10 +635,10 @@
     "preparedOnly": true
   },
   "codePushVerification": {
-    "verifiedAtUTC": "2026-10-05T15:37:10.872774+00:00",
+    "verifiedAtUTC": "2026-10-05T15:57:49.907126+00:00",
     "remote": "origin",
     "branch": "refs/heads/main",
-    "observedRemoteCommit": "62bf3e92f65b9c1174841393bf26e1716d3894c6",
+    "observedRemoteCommit": "b89e73d2e27907d3677f3478a56e067c58fdcd89",
     "method": "git ls-remote origin refs/heads/main after successful git push"
   },
   "currentBuildApproval": {
@@ -660,7 +648,7 @@
     "appStoreReleaseAuthorized": false
   },
   "dragUploadFix": {
-    "status": "implemented_affected_flows_verified_code_pushed_awaiting_human_signing",
+    "status": "implemented_verified_at_documented_drag_source_retained_in_current_release",
     "reportedError": "Attachment upload failed for 1 file(s) (OD_PROTOCOL_PROXY_FAILED)",
     "previousReleaseFingerprint": "6b013ca1385c4aaf1d837e924e12eaa9bbeeba5ad3544fea2ede31b88f83d909",
     "previousHelperSuperseded": true,
@@ -682,7 +670,8 @@
     "reportedProxyErrorReproduced": false,
     "physicalSandboxedAndLiveReceiverUploadVerified": false,
     "qaVerificationPath": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/drag-upload-2026-10-05/verification.json",
-    "currentHumanArchiveCommandAvailable": true
+    "currentHumanArchiveCommandAvailable": false,
+    "supersededForPublicationBySourceFingerprint": "dae2228aa8ea9dcd4e3dd556ccc8aeb7273e230b1471340feb3eebb1fa2cc8a1"
   },
   "previousCardDeletionInteractiveHandoff": {
     "scriptPath": "/private/tmp/dabin-testflight-card-delete-20261005.py",
@@ -803,5 +792,132 @@
     "archiveCreated": false,
     "uploaded": false,
     "sandboxRuntimeVerified": false
+  },
+  "previousDragUploadInteractiveHandoff": {
+    "scriptPath": "/private/tmp/dabin-testflight-drag-upload-20261005.py",
+    "scriptSHA256": "cde9e177a1f5e153e2fdfec9082cd2a4cca89216a334f2dcc9ad13c44af43aeb",
+    "pythonExecutable": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "receiptGlob": "/private/tmp/dabin-testflight-drag-upload-interactive-*-receipt.json",
+    "command": "/opt/homebrew/opt/python@3.14/bin/python3.14 /private/tmp/dabin-testflight-drag-upload-20261005.py",
+    "usesExistingArchiveHelper": true,
+    "checksExactSourceFingerprint": true,
+    "checksExactBuildConfigurationHashes": true,
+    "extraBuildConfigurationHashes": {
+      "Config/AppStoreSigning.json": "a6072c1ad444175cf204f71d3f8d8d39e0d15bcd3d74d672a4a1924ac525ddf5",
+      "DaBin.xcodeproj/project.pbxproj": "271ac8dbec9ca5b278ae8ea42ba42367744953a5963054333c6d6debe6aa85d3",
+      "DaBin.xcodeproj/xcshareddata/xcschemes/DaBin.xcscheme": "0922aad38e86918dc38f90b76d197e0405997d7dcd571bde62063ae96e4db283"
+    },
+    "sourceFingerprint": "24e49b499b3e8977e2e562c72e1c52a4fe8fd93f2d9f3d4eda650170b2610398",
+    "codeCommit": "62bf3e92f65b9c1174841393bf26e1716d3894c6",
+    "status": "superseded_by_requested_action_removal_do_not_use_for_latest_release",
+    "executionRequired": "Human signed-in Mac Terminal; never automated native Terminal or protected authentication control",
+    "recoveryCopy": "archive-drag-upload-human-handoff.py",
+    "preparedOnly": true,
+    "lockPath": "/private/tmp/dabin-testflight-current-archive.lock",
+    "preparationReceipt": "archive-drag-upload-handoff-preparation.json",
+    "preservedTemplateLogicASTEquivalent": true
+  },
+  "previousDragUploadNativeQa": {
+    "status": "13_affected_release_suites_passed_known_prior_zoom_failure",
+    "registeredSuites": 126,
+    "sourceFingerprint": "24e49b499b3e8977e2e562c72e1c52a4fe8fd93f2d9f3d4eda650170b2610398",
+    "fullRegisteredRun": false,
+    "finalSourcePassedSuites": 13,
+    "finalSourceFailedSuites": 0,
+    "finalScopedSuiteNames": [
+      "ExplorerTransferTests",
+      "CaptureClipboardTests",
+      "ExternalTransferProcessTests",
+      "ProjectWorkspaceExportTests",
+      "ProjectWorkspaceViewTests",
+      "ProjectWorkspaceCardTests",
+      "OutgoingFileSnapshotTests",
+      "DetailPreviewInteractionTests",
+      "CaptureExtendedInteractionTests",
+      "CollectionCardPresentationTests",
+      "NativeContentDragTests",
+      "CaptionDragTests",
+      "OutgoingFileBatchTests"
+    ],
+    "nativeChecks": 3334,
+    "allFindingsFixed": false,
+    "knownOpenFindings": [
+      "Historical strict zoom performance budget failure remains open and was not rerun for this transfer change",
+      "Framework-reproduced native table warnings"
+    ],
+    "packagingUnitTestsPassed": 32,
+    "deterministicProjectCheckPassed": true,
+    "verificationPath": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/drag-upload-2026-10-05/verification.json",
+    "verificationSHA256": "0e719475aa2352e36041868b5951613d51667492da9036223a6ff4e0b747b923",
+    "strictZoomPerformance": {
+      "status": "historical_failure_not_rerun_for_drag_transfer_fix",
+      "sourceFingerprint": "41b3f117c76dc5f22051c7be2833caecd6cfd4e00345dc4f99f60c8c998820fc",
+      "inputToLayoutP95Milliseconds": 62.88366671651602,
+      "inputBudgetMilliseconds": 50,
+      "steadyZoomTimerP95Milliseconds": 70.97337511368096,
+      "timerBudgetMilliseconds": 33,
+      "report": "../projects-functional-2026-10-05/zoom-performance.json"
+    }
+  },
+  "previousDragUploadFocusedQa": {
+    "status": "current_drag_and_related_native_flows_verified",
+    "suiteNames": [
+      "ExplorerTransferTests",
+      "CaptureClipboardTests",
+      "ExternalTransferProcessTests",
+      "ProjectWorkspaceExportTests",
+      "ProjectWorkspaceViewTests",
+      "ProjectWorkspaceCardTests",
+      "OutgoingFileSnapshotTests",
+      "DetailPreviewInteractionTests",
+      "CaptureExtendedInteractionTests",
+      "CollectionCardPresentationTests",
+      "NativeContentDragTests",
+      "CaptionDragTests",
+      "OutgoingFileBatchTests"
+    ],
+    "sourceFingerprint": "24e49b499b3e8977e2e562c72e1c52a4fe8fd93f2d9f3d4eda650170b2610398",
+    "passedSuites": 13,
+    "failedSuites": 0,
+    "fullRegisteredRun": false,
+    "canonicalProductionInputCount": 169,
+    "recordedProductionInputsUnchangedBetweenFinalRuns": true,
+    "unsignedReleaseInputsUnchanged": true,
+    "verificationPath": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/drag-upload-2026-10-05/verification.json",
+    "verificationSHA256": "0e719475aa2352e36041868b5951613d51667492da9036223a6ff4e0b747b923"
+  },
+  "previousDragUploadCurrentUnsignedStoreCandidate": {
+    "status": "unsigned_store_release_compiled_packaging_checked",
+    "sourceFingerprint": "24e49b499b3e8977e2e562c72e1c52a4fe8fd93f2d9f3d4eda650170b2610398",
+    "version": "0.4.33",
+    "buildNumber": "88",
+    "receipt": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/drag-upload-2026-10-05/store-candidate-receipt.json",
+    "receiptSHA256": "6b2887947d500be6d47909680cfece0acb91fbe8c4bcf7526ffac7737bda624f",
+    "executableSHA256": "451cb0cc150be19896f38e428ac5e5612a9a78b184cfd9d084feefcc3a6913e5",
+    "xcodebuildExitCode": 0,
+    "packagingPreflightExitCode": 0,
+    "inputsUnchanged": true,
+    "actualAppInfoAndBinaryVerified": true,
+    "signed": false,
+    "archiveCreated": false,
+    "uploaded": false,
+    "sandboxRuntimeVerified": false
+  },
+  "actionRemoval": {
+    "status": "implemented_affected_flows_verified_code_pushed_awaiting_human_signing",
+    "sourceFingerprint": "dae2228aa8ea9dcd4e3dd556ccc8aeb7273e230b1471340feb3eebb1fa2cc8a1",
+    "codeCommit": "b89e73d2e27907d3677f3478a56e067c58fdcd89",
+    "codePushVerified": true,
+    "toOrganizeButtonRemoved": true,
+    "selectedToOrganizeLabelRemoved": true,
+    "pinAndUnpinCardActionsRemoved": true,
+    "legacyPinMetadataRetained": true,
+    "captionsTabReturnContextVerified": true,
+    "finalScopedPassedSuites": 6,
+    "nativeChecks": 1479,
+    "registeredSuites": 126,
+    "fullCurrentRegisteredCampaignRun": false,
+    "qaVerificationPath": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/remove-organize-pin-2026-10-05/verification.json",
+    "currentHumanArchiveCommandAvailable": true
   }
 }

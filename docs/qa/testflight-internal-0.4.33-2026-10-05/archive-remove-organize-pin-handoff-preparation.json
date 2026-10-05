@@ -1,0 +1,30 @@
+{
+  "archiveNamespace": "DaBin-0.4.33-88-TestFlight-remove-organize-pin-interactive-*",
+  "build": "88",
+  "buildConfigurationSHA256": {
+    "Config/AppStoreSigning.json": "a6072c1ad444175cf204f71d3f8d8d39e0d15bcd3d74d672a4a1924ac525ddf5",
+    "DaBin.xcodeproj/project.pbxproj": "271ac8dbec9ca5b278ae8ea42ba42367744953a5963054333c6d6debe6aa85d3",
+    "DaBin.xcodeproj/xcshareddata/xcschemes/DaBin.xcscheme": "0922aad38e86918dc38f90b76d197e0405997d7dcd571bde62063ae96e4db283"
+  },
+  "bundleIdentifier": "com.dabin.mac",
+  "codeCommit": "b89e73d2e27907d3677f3478a56e067c58fdcd89",
+  "currentHEAD": "b89e73d2e27907d3677f3478a56e067c58fdcd89",
+  "expectedProductionFingerprint": "dae2228aa8ea9dcd4e3dd556ccc8aeb7273e230b1471340feb3eebb1fa2cc8a1",
+  "futureRecoveryFilename": "archive-remove-organize-pin-human-handoff.py",
+  "lockPath": "/private/tmp/dabin-testflight-current-archive.lock",
+  "outputPath": "/private/tmp/dabin-testflight-remove-organize-pin-20261005.py",
+  "outputSHA256": "ed895db69ea44e05ece2014e9eab61f91f45430c143bbd1c091702e5556d26a0",
+  "preservedLogicASTEquivalent": true,
+  "pushVerification": "Root must independently verify the code checkpoint was pushed; generator checks local ancestry only",
+  "receiptNamespace": "dabin-testflight-remove-organize-pin-interactive-*",
+  "scope": "generator-only; helper not executed; no archive/sign/upload/authentication",
+  "substitutions": [
+    "expected",
+    "code_commit",
+    "extra_inputs",
+    "3 archive/log/receipt card-delete-interactive namespaces"
+  ],
+  "templatePath": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/testflight-internal-0.4.33-2026-10-05/archive-card-delete-human-handoff.py",
+  "templateSHA256": "e9a50d285090605a179cb429e1dc6a20598c2c57b3a6e7e1876d69eaa65f617a",
+  "version": "0.4.33"
+}
