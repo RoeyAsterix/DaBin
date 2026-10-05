@@ -109,16 +109,18 @@ def input_snapshot(selected):
             for path in sorted(set(paths))}
 
 
-def search_window_operation(executable, library, log, timeout):
+def search_window_operation(executable, library, log, timeout, suite="SearchWindowTests"):
     """Give native keyboard QA a Launch Services identity and a real app event loop.
 
     `open` does not forward the child's exit status. Require the test's unique
     result sentinel as well, so a crash or incomplete run cannot report success.
     """
-    with tempfile.TemporaryDirectory(prefix="dabin-search-qa-") as staging:
+    is_header = suite == "HeaderInteractionTests"
+    label = "Header" if is_header else "Search"
+    with tempfile.TemporaryDirectory(prefix=f"dabin-{label.lower()}-qa-") as staging:
         stage = Path(staging)
-        app = stage / "DaBin Search QA.app"
-        binary = app / "Contents/MacOS/DaBinSearchQA"
+        app = stage / f"DaBin {label} QA.app"
+        binary = app / f"Contents/MacOS/DaBin{label}QA"
         asset_directory = app / "Contents/Resources"
         frameworks = app / "Contents/Frameworks"
         binary.parent.mkdir(parents=True)
@@ -134,7 +136,7 @@ def search_window_operation(executable, library, log, timeout):
                         "@executable_path/../Frameworks", str(binary)], check=True)
         for resource in resources():
             shutil.copyfile(resource, asset_directory / resource.name)
-        info = {"CFBundleIdentifier": "com.dabin.qa.searchwindow", "CFBundleName": "DaBin Search QA",
+        info = {"CFBundleIdentifier": f"com.dabin.qa.{label.lower()}window", "CFBundleName": f"DaBin {label} QA",
                 "CFBundleExecutable": binary.name, "CFBundlePackageType": "APPL", "CFBundleVersion": "1",
                 "NSPrincipalClass": "NSApplication", "NSHighResolutionCapable": True}
         (app / "Contents/Info.plist").write_bytes(plistlib.dumps(info))
@@ -142,11 +144,13 @@ def search_window_operation(executable, library, log, timeout):
         subprocess.run(["codesign", "--force", "--sign", "-", str(app)], check=True)
         sentinel = stage / "result.json"
         stdout, stderr = stage / "stdout.log", stage / "stderr.log"
-        evidence = os.environ.get("DABIN_SEARCH_QA_DIR", str(ROOT.parent / "docs/qa/global-date-search-2026-10-03"))
+        evidence_env = "DABIN_HEADER_QA_DIR" if is_header else "DABIN_SEARCH_QA_DIR"
+        evidence_default = ROOT / "build/qa/inbox-calendar" if is_header else ROOT.parent / "docs/qa/global-date-search-2026-10-03"
+        evidence = os.environ.get(evidence_env, str(evidence_default))
         fixture_evidence = stage / "evidence"
         arguments = ["/usr/bin/open", "-n", "-W", "--stdout", stdout, "--stderr", stderr,
-                     "--env", f"DABIN_QA_RESULT_PATH={sentinel}", "--env", f"DABIN_SEARCH_QA_DIR={fixture_evidence}"]
-        if os.environ.get("DABIN_SEARCH_QA_SKIP_KEYBOARD") == "1":
+                     "--env", f"DABIN_QA_RESULT_PATH={sentinel}", "--env", f"{evidence_env}={fixture_evidence}"]
+        if not is_header and os.environ.get("DABIN_SEARCH_QA_SKIP_KEYBOARD") == "1":
             arguments += ["--env", "DABIN_SEARCH_QA_SKIP_KEYBOARD=1"]
         arguments.append(app)
         result = operation(arguments, log, timeout)
@@ -172,7 +176,7 @@ def search_window_operation(executable, library, log, timeout):
             completion = {"passed": False, "error": "The native test app did not write its completion receipt."}
         if result["status"] == "passed" and completion.get("passed") is not True:
             result.update(status="failed", exitCode=1)
-            output += f"\nNative Search QA failed: {completion.get('error', 'Incomplete test run')}\n"
+            output += f"\nNative {label} QA failed: {completion.get('error', 'Incomplete test run')}\n"
         result["launchMethod"] = "temporary_app_bundle"
         result["completion"] = completion
         log.write_text(output)
@@ -313,8 +317,8 @@ def main():
         else:
             arguments = [executable]
             if name == "DomainTests": arguments.append(ROOT / "Handoff/implementation/search-cases.json")
-            result = (search_window_operation(executable, library, run_dir / f"{name}.log", args.timeout)
-                      if name == "SearchWindowTests"
+            result = (search_window_operation(executable, library, run_dir / f"{name}.log", args.timeout, suite=name)
+                      if name in ("SearchWindowTests", "HeaderInteractionTests")
                       else operation(arguments, run_dir / f"{name}.log", args.timeout))
             suite.update(result)
             output = (ROOT / result["log"]).read_text(errors="replace")

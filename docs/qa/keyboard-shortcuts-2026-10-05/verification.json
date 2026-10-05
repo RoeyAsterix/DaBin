@@ -1,0 +1,62 @@
+{
+  "verifiedAtUTC": "2026-10-05T08:41:04.646387+00:00",
+  "releaseSourceFingerprint": "d9cf19d153df895fa60204d21f16505f0da14d2015353820b17e476c6e06eb28",
+  "version": "0.4.33",
+  "build": "88",
+  "qaCoverage": "selected_suites",
+  "qaPassed": 8,
+  "qaFailed": 0,
+  "suiteNames": [
+    "QuickAccessTests",
+    "ApplicationLifecycleTests",
+    "AutoCaptureServiceTests",
+    "WindowTests",
+    "HeaderInteractionTests",
+    "RobotWindowTransitionTests",
+    "ProjectRecordingRobotTests",
+    "SearchWindowTests"
+  ],
+  "qaInputFingerprint": "50353f790ce63f42427337799aca00994d15a76727525b4cbc4a59d116067d25",
+  "sourceChangedDuringQa": false,
+  "fullRegisteredRun": false,
+  "unsignedStoreCompilationPassed": true,
+  "unsignedStorePackagingPassed": true,
+  "signedArchiveVerified": false,
+  "uploaded": false,
+  "installedLocally": false,
+  "defaults": {
+    "fullScreen": "Control + Option + F",
+    "recording": "Control + Option + R"
+  },
+  "visualInspection": "Reviewed synthetic compact 380-point Settings render. Both shortcut rows, clear controls, help, reset and global switch are visible without clipped labels.",
+  "knownLimits": [
+    "Global action dispatch uses a fake registrar in automated tests; physical system-wide hotkey activation from another app is not claimed.",
+    "Native recorder uses a dedicated app bundle and native event queue; IME protection is verified with a native marked-text fixture.",
+    "The previous E038 full 121-suite run passed 120/121, with strict zoom budget failure and framework native table warnings still open. No new full run or performance fix is claimed.",
+    "No current signed archive, TestFlight readiness, current Apple email request or inbox delivery is claimed."
+  ],
+  "evidence": {
+    "WindowTests-compile.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "production-module.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "RobotWindowTransitionTests.log": "7e3a07057b929839795f1a8de2f772937978b8731a63f448dcb74be7fe763f66",
+    "report.json": "fa6953906470c69221189f6f2c628b279b40a11b8b1af92d9ac7a6f65a4c6ef6",
+    "AutoCaptureServiceTests-compile.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "AutoCaptureServiceTests.log": "5e3b10a9b31dc9b87cb8c3945b9c6bac80c50f92e75f47239fbe06e53f283a87",
+    "QuickAccessTests-compile.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "ApplicationLifecycleTests.log": "928b4509ea622cf9c3d57a456d09b2793d72c2824a75c9a67fcd306212c651f7",
+    "settings-shortcuts-380.png": "e781ad72f922e19f23f22c21698a5897f9ba54525f0b035badebd0123b7acf4b",
+    "xcodebuild-release.log": "d7bd7f2acc141e46a79d14a5a6bf7e24b3f042b3ea7e459277906e4b82dc25d5",
+    "HeaderInteractionTests.log": "2b89021239ab91e8aa8eb6c6f4273b88429a2c300d171b6ae3a7a231d4ea5c63",
+    "unsigned-packaging-preflight.log": "3185396f156f35ca73d76a5316de4fc6430ef96756d29e5e9fe4bcc9437aa005",
+    "SearchWindowTests-compile.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "store-candidate-receipt.json": "44e61d175dfc67a0d5fe795e16792499434dba1934f041c977dbf3ada41c793a",
+    "RobotWindowTransitionTests-compile.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "QuickAccessTests.log": "64bd79e6a7d02b1de7631d8ecf5028be4515483c081bf2147178ced37efc79d0",
+    "WindowTests.log": "ade10e8cbd1861647b00c1963e3705261f8b9d7c530191183cd3e9c35cbed68a",
+    "ProjectRecordingRobotTests-compile.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "HeaderInteractionTests-compile.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "SearchWindowTests.log": "37c2b564f27125ec196f163e14e26070970c2b5740452320d4f100eed0447070",
+    "ApplicationLifecycleTests-compile.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "ProjectRecordingRobotTests.log": "8524e636c6c109ede7a64426c052fb0d93a84bb19a5416ed786855c00e026897"
+  }
+}

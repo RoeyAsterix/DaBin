@@ -190,6 +190,89 @@ private final class WindowNotificationClient: ReminderNotificationClient {
                    "Opening Settings from automatic Week full view restores the compact right-side anchor")
     }
 
+    @MainActor private static func verifyGlobalShortcutActions(screen: NSScreen, root: URL) throws {
+        let suite = "DaBinShortcutWindows.\(UUID().uuidString)"
+        let defaults = UserDefaults(suiteName: suite)!
+        defer { defaults.removePersistentDomain(forName: suite) }
+        let store = try CaptureStore(root: root.appendingPathComponent("ShortcutActions"))
+        let previews = PreviewService(store: store, defaults: defaults)
+        defer { previews.cancelNetwork() }
+        let pasteboard = NSPasteboard(name: .init("DaBinShortcutWindows.\(UUID().uuidString)"))
+        defer { pasteboard.releaseGlobally() }
+        let settings = AutoCaptureSettings(defaults: defaults)
+        let input = InputService(store: store)
+        let autoCapture = AutoCaptureService(settings: settings, input: input,
+            pasteboardProvider: { pasteboard }, sourceApplicationProvider: { nil })
+        defer { autoCapture.shutdown() }
+        let state = AppState(store: store, previews: previews,
+            reminders: ReminderService(store: store, client: WindowNotificationClient()), autoCapture: autoCapture)
+        let controller = CornerController(state: state, input: input,
+            placementDefaults: defaults, animateRobotTransitions: false)
+        defer { controller.shutdown() }
+        state.openNewTask()
+        state.newTaskDraft.text = "Keep this shortcut draft"
+        controller.showBoard(immediate: true)
+        RunLoop.main.run(until: Date().addingTimeInterval(0.12))
+        let normal = controller.board.frame
+        controller.dismiss()
+        controller.toggleExpandedWindowFromShortcut()
+        try expect(controller.board.isVisible && controller.board.frame == screen.visibleFrame
+                   && state.route == .newTask && state.newTaskDraft.text == "Keep this shortcut draft",
+                   "The hidden full-screen shortcut opens expanded without losing the route or draft")
+        controller.toggleExpandedWindowFromShortcut()
+        try expect(controller.board.frame == normal,
+                   "The full-screen shortcut restores the exact previous window geometry")
+        try expect(defaults.object(forKey: CornerController.boardSizeKey) == nil,
+                   "Temporary full-screen shortcuts never replace the saved normal window size")
+        state.newTaskDraft.pendingChecklistText = String(repeating: "x", count: 501)
+        state.newTaskDraft.validationFailed = true
+        controller.toggleExpandedWindowFromShortcut()
+        try expect(controller.board.frame == screen.visibleFrame && state.route == .newTask,
+                   "An invalid draft can still expand without navigating away")
+        controller.toggleExpandedWindowFromShortcut()
+        controller.toggleRecordingFromShortcut()
+        try expect(state.route == .newTask && !settings.isEnabled && !state.autoCaptureSetupRequested,
+                   "Unconfigured recording respects draft validation before opening setup")
+        state.newTaskDraft.pendingChecklistText = ""
+        state.newTaskDraft.validationFailed = false
+        let composition = NSTextView(frame: NSRect(x: 5, y: 5, width: 150, height: 30))
+        controller.board.contentView!.addSubview(composition)
+        try expect(controller.board.makeFirstResponder(composition),
+                   "The shortcut fixture focuses its own native composition editor")
+        composition.setMarkedText("かな", selectedRange: NSRange(location: 2, length: 0),
+                                  replacementRange: NSRange(location: NSNotFound, length: 0))
+        try expect(composition.hasMarkedText(), "The native composition fixture has active marked text")
+        controller.toggleRecordingFromShortcut()
+        try expect(state.route == .newTask && composition.hasMarkedText() && !settings.isEnabled,
+                   "Unconfigured recording never leaves the current route during native text composition")
+        settings.setClipboardEnabled(true)
+        settings.setPaused(true)
+        let exclusions = settings.excludedBundleIdentifiers
+        controller.toggleRecordingFromShortcut()
+        try expect(!settings.isPaused && autoCapture.isRunning && settings.isClipboardEnabled
+                   && !settings.isScreenshotsEnabled && state.route == .newTask,
+                   "Configured recording resumes during text composition without changing the current draft")
+        state.newTaskDraft.pendingChecklistText = String(repeating: "x", count: 501)
+        state.newTaskDraft.validationFailed = true
+        controller.toggleRecordingFromShortcut()
+        try expect(settings.isPaused && !autoCapture.isRunning
+                   && settings.excludedBundleIdentifiers == exclusions && state.route == .newTask,
+                   "Recording can always pause a configured channel while preserving exclusions and the draft")
+        state.newTaskDraft.pendingChecklistText = ""
+        state.newTaskDraft.validationFailed = false
+        composition.unmarkText()
+        controller.board.makeFirstResponder(nil)
+        composition.removeFromSuperview()
+        settings.setEnabled(false)
+        state.openDaily(); controller.dismiss()
+        controller.toggleRecordingFromShortcut()
+        try expect(controller.board.isVisible && state.route == .settings && !settings.isEnabled
+                   && !settings.isClipboardEnabled && !settings.isScreenshotsEnabled,
+                   "Unconfigured recording reveals setup without silently enabling a source")
+        try expect(store.captures.isEmpty && !input.isBusy,
+                   "Shortcut fixtures produce no captures or paste operations")
+    }
+
     @MainActor static func main() throws {
         let application = NSApplication.shared
         application.setActivationPolicy(.accessory)
@@ -680,6 +763,7 @@ private final class WindowNotificationClient: ReminderNotificationClient {
         try expect(screens.contains { $0.visibleFrame.contains(invalidPlacement.board.frame) }, "Malformed saved placement safely falls back to a visible corner")
         invalidPlacement.dismiss()
         try verifyExpandedAutomaticDragging(screen: screen, root: root)
+        try verifyGlobalShortcutActions(screen: screen, root: root)
         try expect(store.captures.isEmpty && !input.isBusy, "Window testing creates no captures or paste operations")
         try expect(notificationClient.permissionRequests == 0 && notificationClient.additions == 0,
                    "Window testing requests no real or fake notification permission/schedules")

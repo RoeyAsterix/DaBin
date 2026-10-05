@@ -1,4 +1,5 @@
 import AppKit
+import Carbon
 import SwiftUI
 import UniformTypeIdentifiers
 
@@ -424,7 +425,7 @@ struct SettingsScreen: View {
                 set: { state.quickAccessSettings.setEnabled($0) }
             ))
             .toggleStyle(.switch).controlSize(.small).font(.system(size: 14))
-            Picker("Shortcut keys", selection: Binding(
+            Picker("Search and clipboard keys", selection: Binding(
                 get: { state.quickAccessSettings.shortcutStyle },
                 set: { state.quickAccessSettings.setShortcutStyle($0) }
             )) {
@@ -436,6 +437,45 @@ struct SettingsScreen: View {
             Text("Search: \(state.quickAccessSettings.shortcutStyle.searchLabel) · Save clipboard: \(state.quickAccessSettings.shortcutStyle.captureLabel)")
                 .font(.system(size: 12)).foregroundStyle(Palette.muted)
                 .fixedSize(horizontal: false, vertical: true)
+            ForEach(ConfigurableShortcutAction.allCases) { action in
+                HStack(spacing: 8) {
+                    Text(action.title).font(.system(size: 13))
+                    Spacer(minLength: 0)
+                    ShortcutRecorderControl(
+                        shortcut: state.quickAccessSettings.binding(for: action),
+                        actionTitle: action.title,
+                        identifier: action == .fullScreen ? "settings-shortcut-full-screen" : "settings-shortcut-recording",
+                        onCommit: { state.quickAccessSettings.setShortcut($0, for: action) },
+                        onEditingChanged: {
+                            state.quickAccessSettings.isEditingShortcut = $0
+                            if $0 { state.quickAccessSettings.shortcutEditError = nil }
+                        },
+                        onInvalidKey: {
+                            state.quickAccessSettings.shortcutEditError = "Use a key with Command, Control or Option. Esc cancels."
+                        }
+                    ).frame(width: 126, height: 32)
+                    Button {
+                        _ = state.quickAccessSettings.setShortcut(nil, for: action)
+                    } label: {
+                        Image(systemName: "xmark.circle").frame(width: 32, height: 32)
+                    }.buttonStyle(.plain).foregroundStyle(Palette.muted)
+                        .disabled(state.quickAccessSettings.binding(for: action) == nil)
+                        .accessibilityLabel("Disable \(action.title.lowercased()) shortcut")
+                        .accessibilityIdentifier(action == .fullScreen ? "settings-shortcut-disable-full-screen" : "settings-shortcut-disable-recording")
+                        .buddyHelp("Disable this shortcut")
+                }
+            }
+            Text("Click a shortcut and press your new keys. Esc cancels. Full screen expands or restores the window. Recording uses your selected capture sources.")
+                .font(.system(size: 12)).foregroundStyle(Palette.muted)
+                .fixedSize(horizontal: false, vertical: true)
+            Button("Reset these shortcuts") { state.quickAccessSettings.resetActionShortcuts() }
+                .font(.system(size: 12)).buttonStyle(.plain).foregroundStyle(accent)
+                .accessibilityIdentifier("settings-shortcut-reset-actions")
+            if let error = state.quickAccessSettings.shortcutEditError {
+                Text(error).font(.system(size: 12)).foregroundStyle(Palette.task)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .accessibilityIdentifier("settings-shortcut-edit-error")
+            }
             if let error = state.quickAccessSettings.registrationError {
                 Text(error).font(.system(size: 12)).foregroundStyle(Palette.task)
                     .fixedSize(horizontal: false, vertical: true)
@@ -769,5 +809,176 @@ private struct ExcludedApplicationsSheet: View {
             return value
         }
         return identifier.split(separator: ".").last.map(String.init) ?? identifier
+    }
+}
+
+/// Key capture exists only while this explicit Settings control owns focus.
+/// DaBin's global hotkeys remain suspended until the recorded key is released.
+private struct ShortcutRecorderControl: NSViewRepresentable {
+    let shortcut: GlobalShortcutBinding?
+    let actionTitle: String
+    let identifier: String
+    let onCommit: (GlobalShortcutBinding?) -> Bool
+    let onEditingChanged: (Bool) -> Void
+    let onInvalidKey: () -> Void
+
+    func makeNSView(context: Context) -> ShortcutRecorderButton {
+        let button = ShortcutRecorderButton(frame: .zero)
+        updateNSView(button, context: context)
+        return button
+    }
+
+    func updateNSView(_ button: ShortcutRecorderButton, context: Context) {
+        button.displayTitle = shortcut?.label ?? "Set shortcut"
+        button.actionTitle = actionTitle
+        button.setAccessibilityIdentifier(identifier)
+        button.onCommit = onCommit
+        button.onEditingChanged = onEditingChanged
+        button.onInvalidKey = onInvalidKey
+        button.refreshTitle()
+    }
+
+    static func dismantleNSView(_ button: ShortcutRecorderButton, coordinator: ()) {
+        button.cancelRecording()
+    }
+}
+
+@MainActor
+final class ShortcutRecorderButton: NSButton {
+    var displayTitle = "Set shortcut"
+    var actionTitle = "Shortcut"
+    var onCommit: ((GlobalShortcutBinding?) -> Bool)?
+    var onEditingChanged: ((Bool) -> Void)?
+    var onInvalidKey: (() -> Void)?
+    private(set) var isRecording = false
+    private var pendingReleaseKey: UInt16?
+    private var monitor: Any?
+    private var keyWindowObserver: NSObjectProtocol?
+
+    override var acceptsFirstResponder: Bool { true }
+    // Shortcut entry is a form input, so it belongs to the native key loop
+    // even when macOS limits ordinary button navigation to text fields.
+    override var canBecomeKeyView: Bool {
+        isEnabled && !isHiddenOrHasHiddenAncestor && window != nil
+    }
+    override var intrinsicContentSize: NSSize {
+        let size = super.intrinsicContentSize
+        return NSSize(width: max(126, size.width), height: max(32, size.height))
+    }
+
+    override init(frame frameRect: NSRect) {
+        super.init(frame: frameRect)
+        configureButton()
+    }
+
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        configureButton()
+    }
+
+    private func configureButton() {
+        bezelStyle = .rounded
+        controlSize = .small
+        font = .monospacedSystemFont(ofSize: 12, weight: .medium)
+        target = self
+        action = #selector(beginRecording)
+        setAccessibilityHelp("Click and press a shortcut. Escape cancels; Delete clears it.")
+        refreshTitle()
+    }
+
+    func refreshTitle() {
+        title = isRecording ? (pendingReleaseKey == nil ? "Press shortcut…" : "Release keys…") : displayTitle
+        setAccessibilityLabel("\(actionTitle) shortcut, \(title)")
+    }
+
+    @objc func beginRecording() {
+        guard !isRecording, let window, window.isKeyWindow,
+              window.makeFirstResponder(self) else { return }
+        isRecording = true
+        pendingReleaseKey = nil
+        onEditingChanged?(true)
+        refreshTitle()
+        monitor = NSEvent.addLocalMonitorForEvents(matching: [.keyDown, .keyUp]) { [weak self] event in
+            guard let self, self.isRecording, let window = self.window,
+                  window.isKeyWindow, window.firstResponder === self,
+                  event.windowNumber == window.windowNumber else { return event }
+            return self.handleRecordingEvent(event) ? nil : event
+        }
+        keyWindowObserver = NotificationCenter.default.addObserver(
+            forName: NSWindow.didResignKeyNotification, object: window, queue: .main
+        ) { [weak self] _ in
+            MainActor.assumeIsolated { self?.cancelRecording() }
+        }
+    }
+
+    /// Use AppKit's eligible key views for Tab navigation; a button's default
+    /// handling can restart the window's loop instead of leaving this input.
+    private func handleRecordingEvent(_ event: NSEvent) -> Bool {
+        if event.type == .keyUp {
+            if pendingReleaseKey == event.keyCode { cancelRecording() }
+            return true
+        }
+        guard event.type == .keyDown else { return false }
+        guard !event.isARepeat, pendingReleaseKey == nil else { return true }
+        if event.keyCode == UInt16(kVK_Escape) { cancelRecording(); return true }
+        if event.keyCode == UInt16(kVK_Tab) {
+            let targetWindow = window
+            let next = event.modifierFlags.contains(.shift) ? previousValidKeyView : nextValidKeyView
+            cancelRecording()
+            guard let next else { return false }
+            return targetWindow?.makeFirstResponder(next) == true
+        }
+        let modifiers = event.modifierFlags.intersection([.command, .control, .option, .shift])
+        if modifiers.isEmpty && (event.keyCode == UInt16(kVK_Delete) || event.keyCode == UInt16(kVK_ForwardDelete)) {
+            if onCommit?(nil) == true {
+                displayTitle = "Set shortcut"
+                pendingReleaseKey = event.keyCode
+                refreshTitle()
+            }
+            return true
+        }
+        guard let binding = GlobalShortcutBinding.from(event: event) else { onInvalidKey?(); return true }
+        guard onCommit?(binding) == true else { return true }
+        displayTitle = binding.label
+        pendingReleaseKey = event.keyCode
+        refreshTitle()
+        return true
+    }
+
+    override func keyDown(with event: NSEvent) {
+        if !isRecording || !handleRecordingEvent(event) { super.keyDown(with: event) }
+    }
+
+    override func keyUp(with event: NSEvent) {
+        if !isRecording || !handleRecordingEvent(event) { super.keyUp(with: event) }
+    }
+
+    override func performKeyEquivalent(with event: NSEvent) -> Bool {
+        if isRecording, window?.firstResponder === self {
+            return handleRecordingEvent(event)
+        }
+        return super.performKeyEquivalent(with: event)
+    }
+
+    func cancelRecording() {
+        guard isRecording else { return }
+        isRecording = false
+        pendingReleaseKey = nil
+        if let monitor { NSEvent.removeMonitor(monitor) }
+        monitor = nil
+        if let keyWindowObserver { NotificationCenter.default.removeObserver(keyWindowObserver) }
+        keyWindowObserver = nil
+        refreshTitle()
+        onEditingChanged?(false)
+    }
+
+    override func resignFirstResponder() -> Bool {
+        cancelRecording()
+        return super.resignFirstResponder()
+    }
+
+    override func viewWillMove(toWindow newWindow: NSWindow?) {
+        if newWindow == nil { cancelRecording() }
+        super.viewWillMove(toWindow: newWindow)
     }
 }

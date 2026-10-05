@@ -1,4 +1,5 @@
 import AppKit
+import Carbon
 import ApplicationServices
 import Foundation
 import SwiftUI
@@ -301,10 +302,116 @@ private enum HeaderInteractionTests {
         try data.write(to: url, options: .atomic)
     }
 
-    @MainActor static func main() async throws {
-        let application = NSApplication.shared
-        application.setActivationPolicy(.accessory)
-        application.finishLaunching()
+    @MainActor private static func verifyShortcutRecorder(_ application: NSApplication) async throws {
+        let settings = QuickAccessSettings(defaults: nil, systemShortcuts: { [] })
+        let window = DaBinPanel(contentRect: NSRect(x: 90, y: 90, width: 300, height: 100),
+                                 styleMask: [.borderless, .nonactivatingPanel], backing: .buffered, defer: false)
+        window.becomesKeyOnlyIfNeeded = false
+        window.isReleasedWhenClosed = false
+        // This fixture supplies its native key-view order explicitly; do not
+        // let window activation recalculate it from the deliberately tiny layout.
+        window.autorecalculatesKeyViewLoop = false
+        let button = ShortcutRecorderButton(frame: NSRect(x: 15, y: 25, width: 180, height: 28))
+        button.displayTitle = settings.binding(for: .fullScreen)!.label
+        button.actionTitle = "Full screen"
+        button.onCommit = { settings.setShortcut($0, for: .fullScreen) }
+        button.onEditingChanged = { settings.isEditingShortcut = $0 }
+        var invalidKeys = 0
+        button.onInvalidKey = { invalidKeys += 1 }
+        window.contentView!.addSubview(button)
+        let previousField = NSTextField(frame: NSRect(x: 5, y: 65, width: 100, height: 20))
+        let nextField = NSTextField(frame: NSRect(x: 160, y: 5, width: 100, height: 20))
+        window.contentView!.addSubview(previousField)
+        window.contentView!.addSubview(nextField)
+        previousField.nextKeyView = button
+        button.nextKeyView = nextField
+        nextField.nextKeyView = previousField
+        application.activate(ignoringOtherApps: true)
+        window.makeKeyAndOrderFront(nil)
+        for _ in 0..<30 where !window.isKeyWindow {
+            await Task.yield()
+            try await Task.sleep(for: .milliseconds(10))
+            settle(0.01)
+        }
+        // AppKit builds its initial key loop when the window first becomes
+        // key. Supply the fixture order after that initialization has finished.
+        previousField.nextKeyView = button
+        button.nextKeyView = nextField
+        nextField.nextKeyView = previousField
+        try expect(button.nextValidKeyView === nextField && button.previousValidKeyView === previousField,
+                   "The native recorder fixture has the intended eligible next and previous input fields")
+        defer { button.cancelRecording(); window.orderOut(nil); window.close() }
+        func send(_ type: NSEvent.EventType, _ code: UInt16, _ text: String,
+                  _ modifiers: NSEvent.ModifierFlags = [], repeatKey: Bool = false) async throws {
+            let event = NSEvent.keyEvent(with: type, location: .zero, modifierFlags: modifiers,
+                timestamp: ProcessInfo.processInfo.systemUptime, windowNumber: window.windowNumber,
+                context: nil, characters: text, charactersIgnoringModifiers: text,
+                isARepeat: repeatKey, keyCode: code)!
+            // The native event queue runs NSEvent local monitors. Calling
+            // sendEvent directly skips that stage and tests a different path.
+            application.postEvent(event, atStart: false)
+            await Task.yield()
+            try await Task.sleep(for: .milliseconds(30))
+            settle(0.01)
+        }
+        func clickRecorder() throws {
+            window.makeKey()
+            let rect = window.convertToScreen(button.convert(button.bounds, to: nil))
+            try click(NSPoint(x: rect.midX, y: rect.midY), in: window)
+            try expect(button.isRecording && settings.isEditingShortcut && window.firstResponder === button,
+                       "Each recorder click starts focused capture")
+        }
+        try clickRecorder()
+        try expect(button.isRecording && settings.isEditingShortcut,
+                   "Clicking a shortcut focuses its recorder and suspends hotkeys")
+        try await send(.keyDown, UInt16(kVK_ANSI_G), "g", [.control, .option])
+        let saved = settings.binding(for: .fullScreen)
+        try expect(saved?.keyCode == UInt32(kVK_ANSI_G) && settings.isEditingShortcut,
+                   "Recording commits new keys while keeping hotkeys suspended until release")
+        try await send(.keyDown, UInt16(kVK_ANSI_G), "g", [.control, .option], repeatKey: true)
+        try await send(.keyUp, UInt16(kVK_ANSI_H), "h", [.control, .option])
+        try expect(button.isRecording && settings.binding(for: .fullScreen) == saved,
+                   "A repeated press and unrelated key release cannot finish the recorder")
+        try await send(.keyUp, UInt16(kVK_ANSI_G), "g", [.control, .option])
+        try expect(!button.isRecording && !settings.isEditingShortcut && button.title == saved?.label,
+                   "Releasing the assigned key restores the shortcut and its displayed label")
+        try clickRecorder()
+        try await send(.keyDown, UInt16(kVK_Escape), "\u{1b}")
+        try expect(!button.isRecording && !settings.isEditingShortcut && settings.binding(for: .fullScreen) == saved,
+                   "Escape cancels without changing the saved shortcut")
+        try clickRecorder()
+        try await send(.keyDown, UInt16(kVK_ANSI_A), "a")
+        try expect(settings.shortcutEditError != nil && button.isRecording && settings.binding(for: .fullScreen) == saved,
+                   "A bare letter reports validation without capturing normal typing")
+        window.makeFirstResponder(previousField)
+        try expect(!button.isRecording && !settings.isEditingShortcut,
+                   "Leaving keyboard focus always restores hotkey registration")
+        try clickRecorder()
+        try await send(.keyDown, UInt16(kVK_Delete), "\u{7f}")
+        try await send(.keyUp, UInt16(kVK_Delete), "\u{7f}")
+        try expect(settings.binding(for: .fullScreen) == nil && !button.isRecording
+                   && settings.binding(for: .recording) == .recordingDefault,
+                   "Delete disables only the selected action and restores other hotkeys")
+        try clickRecorder()
+        try await send(.keyDown, UInt16(kVK_Tab), "\u{09}")
+        try expect(!settings.isEditingShortcut && nextField.currentEditor() === window.firstResponder,
+                   "Tab exits shortcut capture and moves forward to the next field")
+        try clickRecorder()
+        try await send(.keyDown, UInt16(kVK_Tab), "\u{09}", .shift)
+        try expect(!settings.isEditingShortcut && previousField.currentEditor() === window.firstResponder,
+                   "Shift-Tab exits shortcut capture and moves backward to the previous field")
+        try clickRecorder()
+        window.resignKey()
+        try expect(!button.isRecording && !settings.isEditingShortcut,
+                   "Losing the key window always ends capture and restores hotkeys")
+        window.makeKey()
+        try clickRecorder()
+        button.removeFromSuperview()
+        try expect(!button.isRecording && !settings.isEditingShortcut,
+                   "Dismantling the recorder cannot leave global shortcuts suspended")
+    }
+
+    @MainActor private static func runTests(application: NSApplication) async throws {
         let root = FileManager.default.temporaryDirectory.appendingPathComponent("DaBinHeaderInteractions-\(UUID().uuidString)")
         let suite = "DaBinHeaderInteractions.\(UUID().uuidString)"
         let defaults = UserDefaults(suiteName: suite)!
@@ -362,6 +469,10 @@ private enum HeaderInteractionTests {
         }.value
         try expect(accessibilityActivation == .success,
                    "Own-process accessibility activation succeeds (AX error \(accessibilityActivation.rawValue))")
+        settle()
+
+        try await verifyShortcutRecorder(application)
+        window.makeKeyAndOrderFront(nil)
         settle()
 
         for id in ["primary-inbox", "primary-today", "primary-workspace", "inbox-organize", "timeline-mode-daily", "timeline-mode-weekly", "board-search", "timeline-action-add", "board-more", "board-settings", "timeline-auto-capture", "window-expand", "window-close", "auto-capture-status"] {
@@ -428,7 +539,9 @@ private enum HeaderInteractionTests {
         hosting.rootView = BoardView(state: state, theme: theme).frame(width: size.width, height: size.height)
         window.setContentSize(size); hosting.frame = NSRect(origin: .zero, size: size); settle()
         try expect(state.route == .inbox, "Initial route is the capture Inbox")
-        let evidence = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
+        let evidence = ProcessInfo.processInfo.environment["DABIN_HEADER_QA_DIR"].map {
+            URL(fileURLWithPath: $0, isDirectory: true)
+        } ?? URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
             .appendingPathComponent("build/qa/inbox-calendar", isDirectory: true)
         try FileManager.default.createDirectory(at: evidence, withIntermediateDirectories: true)
         let inboxNavigationIDs = ["inbox-organize", "timeline-mode-daily", "timeline-mode-weekly"]
@@ -510,11 +623,33 @@ private enum HeaderInteractionTests {
         try expect(!elements(in: hosting).contains { $0.accessibilityIdentifier() == "primary-inbox" },
                    "Settings does not reserve an unrelated primary navigation row")
 
+        func shortcutButtons(in view: NSView) -> [ShortcutRecorderButton] {
+            ((view as? ShortcutRecorderButton).map { [$0] } ?? []) + view.subviews.flatMap { shortcutButtons(in: $0) }
+        }
+        let recorderButtons = shortcutButtons(in: hosting)
+        try expect(recorderButtons.count == 2, "Settings presents both configurable action shortcuts")
+        for recorder in recorderButtons {
+            try expect(recorder.frame.width >= 126 && recorder.frame.height >= 32
+                       && !(recorder.accessibilityLabel() ?? "").isEmpty,
+                       "Each shortcut has a usable labeled native control at 380pt width: \(recorder.frame), \(recorder.accessibilityLabel() ?? "missing")")
+        }
+        if let document = recorderButtons.first?.enclosingScrollView?.documentView {
+            let rows = recorderButtons.reduce(NSRect.null) { $0.union($1.convert($1.bounds, to: document)) }
+            document.scrollToVisible(rows.insetBy(dx: 0, dy: -140))
+        }
+        settle()
+        try snapshot(hosting, at: evidence.appendingPathComponent("settings-shortcuts-380.png"))
+
         let tutorialCaptureCount = state.store.captures.count
         let tutorialProject = state.libraryProject
         let tutorialClipboardEnabled = settings.isClipboardEnabled
         let tutorialScreenshotsEnabled = settings.isScreenshotsEnabled
         let tutorialSearchAnchor = state.searchDateAnchor
+        if let scroll = recorderButtons.first?.enclosingScrollView {
+            scroll.contentView.scroll(to: .zero)
+            scroll.reflectScrolledClipView(scroll.contentView)
+            settle()
+        }
         try press(hosting, identifier: "settings-run-tutorial")
         _ = try element(hosting, identifier: "dabin-tutorial-overlay")
         try expect(state.route == .settings && state.isTutorialPresented,
@@ -607,7 +742,7 @@ private enum HeaderInteractionTests {
         window.setContentSize(size); hosting.frame = NSRect(origin: .zero, size: size); settle()
         try press(hosting, identifier: "search-filters")
         let datesWindow = application.windows.first { candidate in
-            guard candidate.isVisible, let content = candidate.contentView else { return false }
+            guard candidate !== window, candidate.isVisible, let content = candidate.contentView else { return false }
             return elements(in: content).contains { $0.accessibilityIdentifier() == "search-date-mode" }
         }
         try expect(datesWindow != nil, "Filters opens one reachable popover containing the native date controls")
@@ -642,9 +777,25 @@ private enum HeaderInteractionTests {
             try expect(state.query == "Today" && state.filter == .all,
                        "Changing dates preserves query and type refinements")
             try snapshot(content, at: evidence.appendingPathComponent("search-date-range-popover.png"))
+            let modeControl = try element(content, identifier: "search-date-mode").object
+            let modeView = (modeControl as? NSView) ?? (modeControl as? NSCell)?.controlView
+            try expect(modeView != nil && datesWindow.makeFirstResponder(modeView),
+                       "Escape is delivered through a focused native Filters control after date entry")
             key(application, window: datesWindow, code: 53, text: "\u{1b}")
-            try expect(!datesWindow.isVisible && state.route == .search,
-                       "Escape dismisses the Filters popover without closing Search")
+            // SwiftUI closes the native popover after its main-actor dismissal
+            // job can run; a nested synchronous RunLoop alone cannot release it.
+            for _ in 0..<20 where datesWindow.isVisible {
+                await Task.yield()
+                try await Task.sleep(for: .milliseconds(10))
+                settle(0.01)
+            }
+            let stillPresented = application.windows.contains { candidate in
+                candidate !== window && candidate.isVisible && candidate.contentView.map { content in
+                    elements(in: content).contains { $0.accessibilityIdentifier() == "search-filters-popover" }
+                } == true
+            }
+            try expect(!stillPresented && state.route == .search,
+                       "Escape dismisses the Filters popover without closing Search (selected \(type(of: datesWindow)), key \(String(describing: application.keyWindow)), responder \(String(describing: datesWindow.firstResponder)))")
         }
         state.query = ""; settle()
         try press(hosting, identifier: "board-back")
@@ -738,5 +889,34 @@ private enum HeaderInteractionTests {
         try expect(Set(store.captures.map(\.id)) == Set([current.id, older.id]), "Header checks do not mutate captured data")
         print("PASS: \(checks) native labeled-header accessibility and interaction checks")
         print("Inbox calendar fixture renders: \(evidence.path)")
+    }
+
+    @MainActor private static func writeResult(passed: Bool, error: String? = nil) throws {
+        guard let path = ProcessInfo.processInfo.environment["DABIN_QA_RESULT_PATH"] else { return }
+        var result: [String: Any] = ["passed": passed, "checks": checks,
+                                    "keyboardVerification": passed ? "strict native focus and recorder checks passed" : "failed or incomplete"]
+        if let error { result["error"] = error }
+        try JSONSerialization.data(withJSONObject: result, options: [.sortedKeys])
+            .write(to: URL(fileURLWithPath: path), options: .atomic)
+    }
+
+    /// A sustained native event loop is required for actual key-window ownership.
+    /// The QA runner launches an isolated temporary bundle and checks its receipt.
+    @MainActor static func main() {
+        let application = NSApplication.shared
+        application.setActivationPolicy(.regular)
+        Task { @MainActor in
+            do {
+                try writeResult(passed: false, error: "Native Header QA did not finish")
+                try await runTests(application: application)
+                try writeResult(passed: true)
+                application.terminate(nil)
+            } catch {
+                try? writeResult(passed: false, error: String(describing: error))
+                fputs("HeaderInteractionTests failed: \(error)\n", stderr)
+                exit(1)
+            }
+        }
+        application.run()
     }
 }

@@ -940,6 +940,32 @@ final class CornerController: NSObject {
         // disk so a relaunch or a display change always has a usable restore.
     }
 
+    /// An explicit global shortcut can reopen the existing route without
+    /// losing a draft. Hidden windows open expanded; visible windows restore
+    /// or expand using the same geometry as the header control.
+    func toggleExpandedWindowFromShortcut() {
+        guard !isShutDown, !state.isTutorialPresented, boardDragStartFrame == nil,
+              !boardIsResizing, board.attachedSheet == nil, NSApp.modalWindow == nil else { return }
+        let wasVisible = board.isVisible && !NSApp.isHidden
+        showBoard(immediate: true)
+        guard board.isVisible else { return }
+        if wasVisible || frameBeforeExpansion == nil { toggleExpandedWindow() }
+    }
+
+    /// Pause/resume never changes the selected capture sources or project.
+    /// An unconfigured source opens the existing setup after navigation safety
+    /// checks; pausing remains available even while a draft is invalid.
+    func toggleRecordingFromShortcut() {
+        guard !isShutDown, !state.isTutorialPresented else { return }
+        let needsSetup = !state.autoCapture.settings.isEnabled
+        if needsSetup {
+            guard !state.isNavigationBlocked, board.attachedSheet == nil, NSApp.modalWindow == nil,
+                  (board.firstResponder as? NSTextView)?.hasMarkedText() != true else { return }
+        }
+        state.toggleAutoCaptureFromHeader()
+        if needsSetup, state.route == .settings { showBoard(immediate: true) }
+    }
+
     private func beginBoardResize() {
         state.workspaceZoom.finishInteraction()
         if robotTransitionTarget != nil { settleRobotTransition(open: true) }

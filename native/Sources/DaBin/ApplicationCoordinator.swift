@@ -209,7 +209,9 @@ final class ApplicationCoordinator {
                 state?.openDaily()
                 corners?.showBoard(immediate: true)
                 state?.pasteClipboard()
-            })
+            },
+            fullScreen: { [weak corners] in corners?.toggleExpandedWindowFromShortcut() },
+            recording: { [weak corners] in corners?.toggleRecordingFromShortcut() })
         quietSubscription = quickAccess.$quietMode.sink { [weak autoCaptureRobot, weak taskTimerRobot] quiet in
             if quiet {
                 autoCaptureRobot?.dismiss()
