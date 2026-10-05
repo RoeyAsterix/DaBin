@@ -1,0 +1,30 @@
+2026-10-05 15:18:07.689 ProjectWorkspaceViewTests[58387:27891500] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future.
+2026-10-05 15:18:13.752 ProjectWorkspaceViewTests[58387:27891500] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future.
+MENU tracking began: ["", "My order", "Newest first"]
+MENU tracking ended
+MENU tracking began: ["", "My order", "Newest first"]
+MENU tracking ended
+2026-10-05 15:18:18.019 ProjectWorkspaceViewTests[58387:27891500] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future.
+2026-10-05 15:18:18.393 ProjectWorkspaceViewTests[58387:27891500] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future.
+2026-10-05 15:18:19.457 ProjectWorkspaceViewTests[58387:27891500] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future.
+2026-10-05 15:18:22.497 ProjectWorkspaceViewTests[58387:27891500] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future.
+MENU tracking began: ["Move earlier", "Move later", "", "Open details", "Copy", "Open saved file", "Reveal saved file", "Copy saved path", "", "Pin", "Add to shelf", "Turn into task", "Attach to task", "", "Move to Recently Deleted…"]
+MENU tracking ended
+MENU tracking began: ["Move earlier", "Move later", "", "Open details", "Copy", "Open saved file", "Reveal saved file", "Copy saved path", "", "Pin", "Add to shelf", "Turn into task", "Attach to task", "", "Move to Recently Deleted…"]
+MENU tracking ended
+Project workspace view QA failed: Error Domain=ProjectWorkspaceViewTests Code=246 "Menu fits its fixture window" UserInfo={NSLocalizedDescription=Menu fits its fixture window}
+ROWS: project grid logical=334, materialized=24
+FIXTURE: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/projects-functional-20261005T120113Z/project-workspace/project-grid-wide@2x.png
+FIXTURE: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/projects-functional-20261005T120113Z/project-workspace/project-selected-narrow@2x.png
+ROWS: project grid logical=501, materialized=3
+ROWS: project grid logical=1002, materialized=3
+ROWS: project grid logical=1002, materialized=3
+FIXTURE: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/projects-functional-20261005T120113Z/project-workspace/project-grid-narrow@2x.png
+ROWS: project grid logical=334, materialized=3
+ROWS: project grid logical=1002, materialized=5
+ROWS: project grid logical=334, materialized=4
+ROWS: project grid logical=335, materialized=5
+ROWS: project grid logical=335, materialized=4
+ROWS: project grid logical=335, materialized=4
+ROWS: project grid logical=336, materialized=5
+ROWS: project grid logical=336, materialized=5

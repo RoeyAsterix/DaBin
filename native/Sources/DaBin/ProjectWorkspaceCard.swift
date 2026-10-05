@@ -40,6 +40,8 @@ enum ProjectCardRole: String {
     let canReorder: Bool
     let drag: () throws -> [NSPasteboardWriting]
     var dragEnded: () -> Void = {}
+    var canMoveEarlier: Bool = true
+    var canMoveLater: Bool = true
 
     private var role: ProjectCardRole { ProjectCardRole(item: item) }
     private var completed: Bool { item.capture?.isTask == true && item.capture?.isCompleted == true }
@@ -233,8 +235,8 @@ enum ProjectCardRole: String {
 
     private var actionsMenu: some View {
         Menu {
-            Button("Move earlier", systemImage: "arrow.up", action: earlier).disabled(!canReorder)
-            Button("Move later", systemImage: "arrow.down", action: later).disabled(!canReorder)
+            Button("Move earlier", systemImage: "arrow.up", action: earlier).disabled(!canReorder || !canMoveEarlier)
+            Button("Move later", systemImage: "arrow.down", action: later).disabled(!canReorder || !canMoveLater)
             Divider()
             itemActions
         } label: {

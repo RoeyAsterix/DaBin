@@ -124,15 +124,34 @@ private final class ApplicationLifecycleTests: NSObject, NSApplicationDelegate {
         coordinator!.state.libraryProject = "Fictional Atlas"
         try expect(coordinator!.autoCapture.projectProvider() == "Fictional Atlas",
                    "The composition root routes Auto Capture to the project selected in Projects")
+        let priorScope = coordinator!.state.workspace.snapshot
         coordinator!.state.workspace.failureInjector = { throw CaptureStoreError.injectedInterruption }
         coordinator!.state.libraryProject = "Live unsaved selection"
-        try expect(coordinator!.state.workspace.selectedProject == "Fictional Atlas"
-                   && coordinator!.autoCapture.projectProvider() == "Live unsaved selection",
-                   "Auto Capture follows the live project shown in the footer even when preference persistence fails")
+        try expect(coordinator!.state.libraryProject == "Fictional Atlas"
+                   && coordinator!.state.workspace.snapshot == priorScope
+                   && coordinator!.autoCapture.projectProvider() == "Fictional Atlas",
+                   "A refused project selection keeps the displayed scope and Auto Capture on the previous durable project")
+        try expect(coordinator!.state.workspace.error != nil && coordinator!.state.status?.severity == .error,
+                   "A refused project selection reports its save failure explicitly")
+        try expect(WorkspaceStore(root: root).snapshot == priorScope,
+                   "Restart keeps the exact prior workspace after a refused project selection")
         coordinator!.state.workspace.failureInjector = nil
+        coordinator!.state.libraryProject = "Live unsaved selection"
+        try expect(coordinator!.state.libraryProject == "Live unsaved selection"
+                   && coordinator!.state.workspace.selectedProject == "Live unsaved selection"
+                   && coordinator!.autoCapture.projectProvider() == "Live unsaved selection"
+                   && coordinator!.state.workspace.error == nil,
+                   "Retry adopts the requested project together in the UI, workspace and Auto Capture")
+        try expect(WorkspaceStore(root: root).snapshot == coordinator!.state.workspace.snapshot,
+                   "Restart observes the same complete workspace that the successful retry displays")
         coordinator!.state.libraryProject = nil
-        try expect(coordinator!.autoCapture.projectProvider() == nil,
-                   "Clearing the selected project returns Auto Capture to Unfiled")
+        try expect(coordinator!.state.libraryProject == nil
+                   && coordinator!.state.workspace.selectedProject == nil
+                   && coordinator!.autoCapture.projectProvider() == nil,
+                   "Clearing the selected project returns the UI, workspace and Auto Capture to Unfiled")
+        try expect(WorkspaceStore(root: root).snapshot == coordinator!.state.workspace.snapshot
+                   && WorkspaceStore(root: root).selectedProject == nil,
+                   "The cleared Unfiled destination also survives restart")
         try expect(coordinator?.isStarted == false && coordinator?.isStopped == false,
                    "Construction does not start observers or pointer monitoring")
         try expect(!coordinator!.corners.board.isVisible && !coordinator!.corners.bin.isVisible,

@@ -1,0 +1,13 @@
+{
+  "sourceFingerprint": "41b3f117c76dc5f22051c7be2833caecd6cfd4e00345dc4f99f60c8c998820fc",
+  "version": "0.4.33",
+  "buildNumber": "88",
+  "actualAppInfoVerified": true,
+  "binarySHA256MatchesReceipt": true,
+  "binarySHA256": "d6ee0cf3acb1629e4bf3a13422ef863890f7b193c7cbc41531ce73e9b63034bb",
+  "inputsMatchCurrent": true,
+  "signed": false,
+  "sandboxRuntimeVerified": false,
+  "archiveCreated": false,
+  "uploaded": false
+}

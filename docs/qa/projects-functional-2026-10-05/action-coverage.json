@@ -1,0 +1,251 @@
+{
+  "schemaVersion": 1,
+  "status": "complete_with_known_strict_zoom_failure",
+  "updatedAtUTC": "2026-10-05T13:04:44.018209+00:00",
+  "actions": [
+    {
+      "goal": "Create/search/validate project names and colors; reopen",
+      "suites": [
+        "ProjectPickerTests",
+        "RedesignInteractionTests",
+        "ProjectBrowsingNavigationTests"
+      ],
+      "results": {
+        "ProjectPickerTests": "passed",
+        "RedesignInteractionTests": "passed",
+        "ProjectBrowsingNavigationTests": "passed"
+      },
+      "status": "automated_goals_passed"
+    },
+    {
+      "goal": "Browse All, Unfiled and named projects; blocked navigation and save retry",
+      "suites": [
+        "ProjectBrowsingNavigationTests",
+        "WorkspaceTests",
+        "NavigationHistoryTests"
+      ],
+      "results": {
+        "ProjectBrowsingNavigationTests": "passed",
+        "WorkspaceTests": "passed",
+        "NavigationHistoryTests": "passed"
+      },
+      "status": "automated_goals_passed"
+    },
+    {
+      "goal": "Return using Back/Forward with filters, selections, viewport and drafts",
+      "suites": [
+        "NavigationHistoryTests",
+        "WorkspaceWindowTests",
+        "NavigationGestureTests"
+      ],
+      "results": {
+        "NavigationHistoryTests": "passed",
+        "WorkspaceWindowTests": "passed",
+        "NavigationGestureTests": "passed"
+      },
+      "status": "automated_goals_passed"
+    },
+    {
+      "goal": "Import, paste, move, inherited attachment ownership and async destinations",
+      "suites": [
+        "InputTests",
+        "ExplorerTransferTests",
+        "ProjectFileArchiveTests",
+        "ConnectedWorkflowTests",
+        "FlowActionStressTests"
+      ],
+      "results": {
+        "InputTests": "passed",
+        "ExplorerTransferTests": "passed",
+        "ProjectFileArchiveTests": "passed",
+        "ConnectedWorkflowTests": "passed",
+        "FlowActionStressTests": "passed"
+      },
+      "status": "automated_goals_passed"
+    },
+    {
+      "goal": "Undo moves and retry failed writes without discarding newer edits",
+      "suites": [
+        "ExplorerTransferTests",
+        "ProjectWorkspaceViewTests"
+      ],
+      "results": {
+        "ExplorerTransferTests": "passed",
+        "ProjectWorkspaceViewTests": "passed"
+      },
+      "status": "automated_goals_passed"
+    },
+    {
+      "goal": "Edit project notes, switch projects and restore unsaved failed notes",
+      "suites": [
+        "ProjectBrowsingNavigationTests",
+        "WorkspaceTests",
+        "SearchWindowTests"
+      ],
+      "results": {
+        "ProjectBrowsingNavigationTests": "passed",
+        "WorkspaceTests": "passed",
+        "SearchWindowTests": "passed"
+      },
+      "status": "automated_goals_passed"
+    },
+    {
+      "goal": "Filter, sort, select, reorder, grid/list and reset empty results",
+      "suites": [
+        "ProjectWorkspaceStateTests",
+        "ProjectWorkspaceViewTests",
+        "WorkspaceInputTests",
+        "ExplorerKeyboardTests"
+      ],
+      "results": {
+        "ProjectWorkspaceStateTests": "passed",
+        "ProjectWorkspaceViewTests": "passed",
+        "WorkspaceInputTests": "passed",
+        "ExplorerKeyboardTests": "passed"
+      },
+      "status": "automated_goals_passed"
+    },
+    {
+      "goal": "Open local details, external original URL/path validation and project folder resolution",
+      "suites": [
+        "ProjectWorkspaceViewTests",
+        "LocalFileLocationTests",
+        "CaptureActionTests",
+        "CaptureDetailNavigationTests"
+      ],
+      "results": {
+        "ProjectWorkspaceViewTests": "passed",
+        "LocalFileLocationTests": "passed",
+        "CaptureActionTests": "passed",
+        "CaptureDetailNavigationTests": "passed"
+      },
+      "status": "automated_goals_passed"
+    },
+    {
+      "goal": "Copy mixed originals/notes and whole/selected ZIP export integrity",
+      "suites": [
+        "ProjectWorkspaceViewTests",
+        "ProjectWorkspaceExportTests",
+        "CaptureClipboardTests",
+        "ExplorerTransferTests",
+        "WorkspaceTests"
+      ],
+      "results": {
+        "ProjectWorkspaceViewTests": "passed",
+        "ProjectWorkspaceExportTests": "passed",
+        "CaptureClipboardTests": "passed",
+        "ExplorerTransferTests": "passed",
+        "WorkspaceTests": "passed"
+      },
+      "status": "automated_goals_passed"
+    },
+    {
+      "goal": "Convert captures to tasks, immediate Undo, completion, planning/checklist/reminders/focus",
+      "suites": [
+        "ProjectWorkspaceStateTests",
+        "CaptureTaskConversionTests",
+        "ProjectWorkspaceViewTests",
+        "TaskPlanInteractionTests",
+        "TaskFocusTests",
+        "TaskPlanningTests",
+        "TaskPriorityTagTests",
+        "ReminderAlertCoordinatorTests"
+      ],
+      "results": {
+        "ProjectWorkspaceStateTests": "passed",
+        "CaptureTaskConversionTests": "passed",
+        "ProjectWorkspaceViewTests": "passed",
+        "TaskPlanInteractionTests": "passed",
+        "TaskFocusTests": "passed",
+        "TaskPlanningTests": "passed",
+        "TaskPriorityTagTests": "passed",
+        "ReminderAlertCoordinatorTests": "passed"
+      },
+      "status": "automated_goals_passed"
+    },
+    {
+      "goal": "Clipboard/Shelf save or rename snippet with failure draft/retry/cancel",
+      "suites": [
+        "SnippetNamingInteractionTests",
+        "WorkspaceTests",
+        "WorkspaceWindowTests"
+      ],
+      "results": {
+        "SnippetNamingInteractionTests": "passed",
+        "WorkspaceTests": "passed",
+        "WorkspaceWindowTests": "passed"
+      },
+      "status": "automated_goals_passed"
+    },
+    {
+      "goal": "Trash/restore families and coherent return after workspace failure",
+      "suites": [
+        "NavigationHistoryTests",
+        "CaptureRemovalTests",
+        "ArchiveRecoveryTests",
+        "CaptureActionTests"
+      ],
+      "results": {
+        "NavigationHistoryTests": "passed",
+        "CaptureRemovalTests": "passed",
+        "ArchiveRecoveryTests": "passed",
+        "CaptureActionTests": "passed"
+      },
+      "status": "automated_goals_passed"
+    },
+    {
+      "goal": "Search scope, dates, local notes/files and return",
+      "suites": [
+        "SearchScopeStateTests",
+        "SearchInputTests",
+        "SearchWindowTests",
+        "SearchResultExcerptTests",
+        "LocalContentSearchTests"
+      ],
+      "results": {
+        "SearchScopeStateTests": "passed",
+        "SearchInputTests": "passed",
+        "SearchWindowTests": "passed",
+        "SearchResultExcerptTests": "passed",
+        "LocalContentSearchTests": "passed"
+      },
+      "status": "automated_goals_passed"
+    },
+    {
+      "goal": "Project recording labels, responsive graphics/animations and sustained load",
+      "suites": [
+        "ProjectRecordingRobotTests",
+        "RobotProjectSignRenderTests",
+        "ProjectWorkspaceCardTests",
+        "WorkspaceZoomLayoutTests",
+        "VisualAnimationStressTests",
+        "DurabilityStressTests",
+        "FlowActionStressTests",
+        "WorkspaceZoomPerformanceTests"
+      ],
+      "results": {
+        "ProjectRecordingRobotTests": "passed",
+        "RobotProjectSignRenderTests": "passed",
+        "ProjectWorkspaceCardTests": "passed",
+        "WorkspaceZoomLayoutTests": "passed",
+        "VisualAnimationStressTests": "passed",
+        "DurabilityStressTests": "passed",
+        "FlowActionStressTests": "passed",
+        "WorkspaceZoomPerformanceTests": "failed"
+      },
+      "status": "functional_and_graphics_passed_strict_latency_failed"
+    }
+  ],
+  "notImplemented": [
+    "Rename a project",
+    "Remove a project marker"
+  ],
+  "manualBoundaries": [
+    "User operation of Finder and system Open/Save panels",
+    "Physical trackpad/mouse and hardware IME behavior",
+    "Human VoiceOver usability",
+    "Extended soak and hardware/OS matrix",
+    "Distribution signing, sandbox runtime, installation and Apple processing"
+  ],
+  "privacy": "Disposable fictional archives and isolated preferences; copy/drag actions use private pasteboards and external folder opener is injected. No production archive, general clipboard, real notification permissions or protected authentication UI."
+}

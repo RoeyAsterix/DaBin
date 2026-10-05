@@ -1,0 +1,1 @@
+Application lifecycle QA failed: Error Domain=ApplicationLifecycleTests Code=1 "Auto Capture follows the live project shown in the footer even when preference persistence fails" UserInfo={NSLocalizedDescription=Auto Capture follows the live project shown in the footer even when preference persistence fails}

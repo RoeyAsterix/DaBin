@@ -1,0 +1,53 @@
+PASS: Apple Developer Team ID is configured
+PASS: Environment Team ID matches the checked-in signing configuration
+PASS: App Store bundle identifier is configured
+PASS: Info.plist uses the configured App Store bundle identifier
+PASS: Productivity category is configured
+PASS: Copyright is present (publisher must confirm ownership)
+PASS: Marketing version has a numeric release format
+PASS: Build number has a numeric release format
+PASS: Xcode resolves the source build-configuration marker deterministically
+PASS: Export compliance declares only absent or exempt encryption
+PASS: App Sandbox is enabled
+PASS: Source entitlement file does not allow debugger attachment
+PASS: Source capabilities match the minimal reviewed sandbox entitlement set
+PASS: Bundled manifest declares no tracking
+PASS: Manifest contains the collected-data declaration
+PASS: Privacy manifest covers preferences, elapsed time and app-owned file timestamps without tracking/collection
+PASS: Readable in-app privacy policy resource exists
+PASS: Release build uses the configured Apple Developer Team
+PASS: Xcode app target uses the configured App Store bundle identifier
+PASS: Xcode project includes PrivacyInfo.xcprivacy
+PASS: Xcode project includes PrivacyPolicy.md
+PASS: Xcode project includes PrivacyInformation.swift
+PASS: Xcode Store builds compile the Store-managed update stub, not the direct downloader
+PASS: The direct update helper and feed are limited to the standalone build path
+PASS: Archive helper never silently downloads provisioning assets or registers devices
+PASS: Minimum supported macOS is 14.0
+PASS: Xcode project includes every current production source and required resource
+BLOCKED: Generated project and shared scheme match the deterministic source inventory
+PASS: Debug and Release app/test/project configurations target ARM64 and macOS 14
+PASS: All configurations enforce Swift warnings; Release uses whole-module optimization
+PASS: Full Xcode is selected and xcodebuild is available
+PASS: An HTTPS published privacy policy is configured; public reachability/content still require review
+PASS: An HTTPS support page with real contact details is configured; public reachability/content still require review
+PASS: Distribution app contains only ARM64 code
+PASS: Distribution app records a Release build
+PASS: Inspected app uses the configured bundle identifier
+PASS: Inspected version, build and minimum macOS match the current source
+PASS: Inspected app fingerprint matches the current production build inputs
+PASS: Inspected binary contains the Store update stub and no direct downloader
+PASS: Distribution app contains its Productivity category
+PASS: Distribution app bundles PrivacyInfo.xcprivacy
+PASS: Distribution app bundles PrivacyPolicy.md
+PASS: Distribution app contains DaBinPrivacyPolicyURL
+PASS: Distribution app contains DaBinSupportURL
+PASS: Distribution app has no direct GitHub update channel
+PASS: Distribution app does not embed the direct update installer
+PASS: Inspected app contains no direct update helper, manifest or handoff payload
+PASS: Inspected privacy manifest matches the reviewed source declaration
+PASS: Inspected app bundles the exact current PrivacyPolicy.md
+PASS: Inspected app bundles the exact current AppIcon.icns
+PASS: Distribution app contains no quarantined files
+
+1 blocking check(s). No archive or upload was performed.

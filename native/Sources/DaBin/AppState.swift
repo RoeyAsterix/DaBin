@@ -307,8 +307,16 @@ final class AppState: ObservableObject {
     @Published private var newNoteDestination: ComposerDestination?
     var newNoteProject: String? { newNoteDestination?.projectName }
     var newTaskProject: String? { newTaskDraft.destination?.projectName }
-    @Published var libraryProject: String? {
-        didSet { if workspace.selectedProject != libraryProject { workspace.selectedProject = libraryProject } }
+    @Published private var libraryProjectStorage: String?
+    var libraryProject: String? {
+        get { libraryProjectStorage }
+        set {
+            guard newValue != libraryProjectStorage else { return }
+            do {
+                try workspace.selectProject(newValue, unfiledOnly: workspace.explorerUnfiledOnly)
+                libraryProjectStorage = newValue
+            } catch { reportFailure(error.localizedDescription) }
+        }
     }
     @Published var todayPlanningScope = "today"
     @Published var workspaceViewport: NavigationViewportAnchor?
@@ -333,6 +341,7 @@ final class AppState: ObservableObject {
     @Published private var isFileImporting = false
     var isImporting: Bool { isFileImporting || manualInput.isBusy || explorerInput.isBusy }
     @Published private var undoRemovalIDs: [UUID] = []
+    private var removalReturnWarning: (revision: UInt, message: AppStatusMessage)?
     @Published var route: BoardRoute = .inbox {
         didSet {
             if route != oldValue { captureNavigationRevision &+= 1 }
@@ -478,7 +487,7 @@ final class AppState: ObservableObject {
         self.clipboardRetention = ClipboardRetentionService(store: store, workspace: self.workspace)
         self.focusSessions = TaskFocusCoordinator(store: store)
         self.draftArchive = DraftArchive(root: store.root)
-        self.libraryProject = self.workspace.selectedProject
+        self.libraryProjectStorage = self.workspace.selectedProject
         self.manualInput = manualInput ?? InputService(store: store)
         self.folderOpener = folderOpener
         self.clipboardRetention.onWillTrash = { [weak previews, weak contentIndex] capture in
@@ -1411,11 +1420,22 @@ final class AppState: ObservableObject {
         } catch { reportFailure(error.localizedDescription) }
     }
 
+    private func projectConversionDraftAllowsUndo(_ receipt: ProjectTaskConversionReceipt) -> Bool {
+        !receipt.captureIDs.contains { id in
+            guard let draft = drafts[id] else { return false }
+            return draft.hasChanges || !draft.commentComposer.isEmpty || draft.editingCommentID != nil
+        }
+    }
+
+    func canUndoProjectTaskConversion(_ receipt: ProjectTaskConversionReceipt) -> Bool {
+        projectConversionDraftAllowsUndo(receipt) && store.canUndoProjectTaskConversion(receipt)
+    }
+
     /// Bulk undo must also respect unfinished detail edits, not just saved
     /// metadata. Reordering the project does not invalidate this receipt.
     @discardableResult
     func undoProjectTaskConversion(_ receipt: ProjectTaskConversionReceipt) -> Bool {
-        guard !receipt.captureIDs.contains(where: { drafts[$0]?.hasChanges == true }) else {
+        guard projectConversionDraftAllowsUndo(receipt) else {
             reportFailure("Save or discard task edits before undoing the conversion.")
             return false
         }
@@ -1609,15 +1629,38 @@ final class AppState: ObservableObject {
                 selectedDraft = nil
                 detailFocus = nil
             }
-            reconcileNavigationHistory()
-            if removesDisplayedDetail, let destination = navigationHistory.current ?? removalParent {
-                // A removed visit is pruned, so the surviving task keeps its
-                // own viewport, focus and live draft rather than the deleted
-                // attachment's presentation. Direct opens use their parent.
-                navigationHistory.updateCurrent(destination)
-                restoreNavigation(destination)
+            var survivingHistory = reconciledNavigationHistory(navigationHistory)
+            var returnWarning: String?
+            if removesDisplayedDetail, let destination = survivingHistory.current ?? removalParent {
+                // Trash has committed. Restore the surviving destination only
+                // after its entire workspace scope commits as well.
+                survivingHistory.updateCurrent(destination)
+                do {
+                    try workspace.restoreNavigationScope(project: destination.project, presentation: destination.workspace)
+                    navigationHistory = survivingHistory
+                    restoreNavigation(destination, workspaceCommitted: true)
+                } catch {
+                    // Never claim the trash operation rolled back or leave a
+                    // deleted Detail mounted. Keep the actual persisted scope;
+                    // a distinct surviving parent remains reachable with Back.
+                    route = .library
+                    selectedCapture = nil; selectedDraft = nil; detailFocus = nil
+                    workspaceViewport = nil; navigationFocusTarget = nil
+                    navigationTransitionRevision &+= 1
+                    let fallback = navigationSnapshot()
+                    let canRetryWithBack = !destination.hasSameDestination(as: fallback)
+                    survivingHistory.visit(fallback)
+                    navigationHistory = survivingHistory
+                    returnWarning = "Moved to Recently Deleted, but couldn’t restore the previous workspace. "
+                        + error.localizedDescription + (canRetryWithBack ? " Use Back to try again." : " Your current project was kept.")
+                }
+            } else { navigationHistory = survivingHistory }
+            let removalStatus = AppStatusMessage(text: returnWarning ?? "Moved to Recently Deleted. You can undo this.",
+                                                severity: returnWarning == nil ? .success : .warning)
+            if returnWarning != nil {
+                removalReturnWarning = ((removalReturnWarning?.revision ?? 0) &+ 1, removalStatus)
             }
-            status = AppStatusMessage(text: "Moved to Recently Deleted. You can undo this.", severity: .success)
+            status = removalStatus
             for item in family { await reminders.clearForCapture(item.id) }
         } catch {
             reportFailure("Could not remove this capture: \(error.localizedDescription)")
@@ -1629,13 +1672,18 @@ final class AppState: ObservableObject {
     func removeCaptures(_ captures: [Capture]) async {
         let ids = Set(captures.map(\.id))
         guard !ids.isEmpty, removingCaptureID == nil else { return }
+        var batchReturnWarning: AppStatusMessage?
         for capture in captures where store.captures.contains(where: { $0 === capture }) {
+            let previousWarning = removalReturnWarning?.revision
             await removeCapture(capture)
+            if removalReturnWarning?.revision != previousWarning {
+                batchReturnWarning = removalReturnWarning?.message
+            }
         }
         let remaining = store.captures.filter { ids.contains($0.id) }
         undoRemovalIDs = store.trashedCaptures.filter { ids.contains($0.id) }.map(\.id)
         if remaining.isEmpty {
-            status = AppStatusMessage(text: "Moved \(ids.count) items to Recently Deleted.", severity: .success)
+            status = batchReturnWarning ?? AppStatusMessage(text: "Moved \(ids.count) items to Recently Deleted.", severity: .success)
         } else if status?.severity != .error {
             reportFailure("Could not remove every item in this batch.")
         }
@@ -1868,11 +1916,15 @@ final class AppState: ObservableObject {
         route = destination
     }
 
-    func navigateProject(_ project: String?, unfiledOnly: Bool = false) {
-        guard !isNavigationBlocked else { return }
-        beginNavigation(); defer { endNavigation() }
-        libraryProject = project
-        workspace.explorerUnfiledOnly = unfiledOnly
+    @discardableResult
+    func navigateProject(_ project: String?, unfiledOnly: Bool = false) -> Bool {
+        guard !isNavigationBlocked else { return false }
+        let previousWorkspace = navigationSnapshot().workspace
+        do { try workspace.selectProject(project, unfiledOnly: unfiledOnly) }
+        catch { reportFailure(error.localizedDescription); return false }
+        beginNavigation(previousWorkspace: previousWorkspace); defer { endNavigation() }
+        libraryProjectStorage = project
+        return true
     }
 
     func navigateWorkspaceMode(_ mode: WorkspaceMode) {
@@ -1882,13 +1934,15 @@ final class AppState: ObservableObject {
     }
 
     /// Nestable so an explicit date action that opens Search records one visit.
-    func beginNavigation() {
+    func beginNavigation(previousWorkspace: NavigationWorkspacePresentation? = nil) {
         guard !isRestoringNavigation else { return }
         if navigationDepth == 0 {
             navigationTransitionRevision &+= 1
             WorkspaceZoomViewport.flushHistory()
             navigationFocusTarget = onCaptureNavigationFocus?()
-            navigationHistory.updateCurrent(navigationSnapshot())
+            var current = navigationSnapshot()
+            if let previousWorkspace { current.workspace = previousWorkspace }
+            navigationHistory.updateCurrent(current)
         }
         navigationDepth += 1
     }
@@ -1919,20 +1973,29 @@ final class AppState: ObservableObject {
             guard !isNavigationBlocked, navigationDepth == 0 else { return false }
         }
         WorkspaceZoomViewport.flushHistory()
+        let previousFocusTarget = navigationFocusTarget
         navigationFocusTarget = onCaptureNavigationFocus?()
+        var nextHistory = navigationHistory
         // A system/direct-open detail has one known parent. Never fabricate a
         // next day or a Forward destination at an otherwise empty root.
-        if navigationHistory.entries.isEmpty, route == .detail {
+        if nextHistory.entries.isEmpty, route == .detail {
             var parent = navigationSnapshot()
             parent.route = origin == .detail ? .inbox : origin
             parent.selectedCaptureID = nil
             parent.focus = nil
-            navigationHistory.updateCurrent(parent)
-            navigationHistory.visit(navigationSnapshot())
-        } else { navigationHistory.updateCurrent(navigationSnapshot()) }
-        reconcileNavigationHistory()
-        guard let snapshot = forward ? navigationHistory.forward() : navigationHistory.back() else { return false }
-        restoreNavigation(snapshot)
+            nextHistory.updateCurrent(parent)
+            nextHistory.visit(navigationSnapshot())
+        } else { nextHistory.updateCurrent(navigationSnapshot()) }
+        nextHistory = reconciledNavigationHistory(nextHistory)
+        guard let snapshot = forward ? nextHistory.forward() : nextHistory.back() else { return false }
+        do { try workspace.restoreNavigationScope(project: snapshot.project, presentation: snapshot.workspace) }
+        catch {
+            navigationFocusTarget = previousFocusTarget
+            reportFailure(error.localizedDescription)
+            return false
+        }
+        navigationHistory = nextHistory
+        restoreNavigation(snapshot, workspaceCommitted: true)
         return true
     }
 
@@ -1959,6 +2022,10 @@ final class AppState: ObservableObject {
     }
 
     func reconcileNavigationHistory() {
+        navigationHistory = reconciledNavigationHistory(navigationHistory)
+    }
+
+    private func reconciledNavigationHistory(_ history: NavigationHistory) -> NavigationHistory {
         // Resolve the live archive once per command, not once per history
         // entry. A hundred visits over a large archive remain one linear scan.
         let captures = store.captures
@@ -1982,7 +2049,9 @@ final class AppState: ObservableObject {
             presentationIDs: Set(captureIDs.map(ProjectWorkspaceIdentity.capture)).union(noteKeys.map { "note:" + $0 }),
             todayReceiptIDs: Set(captures.filter { $0.captureDay == currentDayKey }.map { Self.todayReceiptItemID($0.id) }),
             noteKeys: noteKeys, projectItemIDs: projectItemIDs)
-        navigationHistory.reconcile { resolveNavigation($0, live: live) }
+        var result = history
+        result.reconcile { resolveNavigation($0, live: live) }
+        return result
     }
 
     private func navigationSnapshot() -> NavigationSnapshot {
@@ -2081,7 +2150,7 @@ final class AppState: ObservableObject {
         return next
     }
 
-    private func restoreNavigation(_ snapshot: NavigationSnapshot) {
+    private func restoreNavigation(_ snapshot: NavigationSnapshot, workspaceCommitted: Bool) {
         isRestoringNavigation = true
         defer {
             isRestoringNavigation = false
@@ -2089,7 +2158,9 @@ final class AppState: ObservableObject {
             navigationRestorationRevision &+= 1
             onRestoreNavigationFocus?(snapshot.focusTarget)
         }
-        libraryProject = snapshot.project; libraryPinnedOnly = snapshot.pinnedOnly
+        precondition(workspaceCommitted)
+        libraryProjectStorage = snapshot.project
+        libraryPinnedOnly = snapshot.pinnedOnly
         selectedDay = snapshot.day; weekEndingDay = snapshot.weekEndingDay; customWeeklyDays = snapshot.weeklyDays
         filter = snapshot.filter
         if snapshot.belongsToSearchSession {
@@ -2106,12 +2177,6 @@ final class AppState: ObservableObject {
         }
         dailyScrollID = snapshot.dailyScrollID; expandedAutomaticHours = snapshot.expandedHours
         weeklyColumnViewports = snapshot.weeklyColumnViewports
-        workspace.mode = snapshot.workspace.mode; workspace.sourceApplication = snapshot.workspace.source
-        workspace.dateFilter = snapshot.workspace.dateFilter; workspace.originFilter = snapshot.workspace.originFilter
-        workspace.snippetsOnly = snapshot.workspace.snippetsOnly; workspace.explorerUnfiledOnly = snapshot.workspace.unfiledOnly
-        workspace.explorerGrouping = snapshot.workspace.grouping; workspace.explorerQuery = snapshot.workspace.query
-        workspace.explorerShowsDailyFiles = snapshot.workspace.dailyFiles
-        workspace.selectedCaptureID = snapshot.workspace.selectedID
         workspaceViewport = snapshot.workspaceViewport; todayPlanningScope = snapshot.todayPlanningScope
         if let project = snapshot.project, let presentation = snapshot.projectPresentation { projectPresentation[project] = presentation }
         selectedCapture = snapshot.selectedCaptureID.flatMap { id in store.captures.first { $0.id == id } }

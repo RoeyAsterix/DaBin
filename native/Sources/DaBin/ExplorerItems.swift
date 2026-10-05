@@ -397,19 +397,26 @@ struct ExplorerCaptureActionsLayout: Layout {
         }.buttonStyle(.plain).foregroundStyle(Palette.foreground).focused($focused)
             .buddyHelp("Choose a project or drag items onto a project")
             .accessibilityLabel("Project, \(title)").accessibilityIdentifier("workspace-project-picker")
+            .disabled(state.isNavigationBlocked)
             .accessibilityValue(countLabel ?? "")
             .onDrop(of: ExplorerTransfer.acceptedTypeIdentifiers, isTargeted: $dragHovered) { _ in false }
             .task(id: dragHovered) {
-                guard dragHovered else { return }
+                guard dragHovered, !state.isNavigationBlocked else { return }
                 try? await Task.sleep(for: .milliseconds(350))
-                if !Task.isCancelled && dragHovered { presented = true }
+                if !Task.isCancelled && dragHovered && !state.isNavigationBlocked { presented = true }
             }
             .popover(isPresented: $presented, arrowEdge: .bottom) {
                 ProjectPickerPanel(state: state, selectedProject: state.libraryProject, allowsAll: true,
                     allSelected: state.libraryProject == nil && !workspace.explorerUnfiledOnly, allowsDrop: true,
-                    onSelect: { name, all in
-                        state.navigateProject(name, unfiledOnly: name == nil && !all)
-                        if let error = workspace.error { throw WorkspaceError.unavailable(error) }
+                    validateSelection: {
+                        guard !state.isNavigationBlocked else {
+                            throw WorkspaceError.unavailable("Finish the current interaction before choosing a project.")
+                        }
+                    }, onSelect: { name, all in
+                        guard state.navigateProject(name, unfiledOnly: name == nil && !all) else {
+                            throw WorkspaceError.unavailable(workspace.error
+                                ?? "Finish the current interaction before choosing a project.")
+                        }
                     }, onDismiss: { presented = false; focused = true })
                     .hoverTooltips()
             }

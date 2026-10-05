@@ -88,6 +88,79 @@ private final class ExplorerLatePromiseFixture: InputFilePromise {
                    "A newer receive keeps its own independent project destination")
     }
 
+    @MainActor private static func undoFailureRetry(_ root: URL) async throws {
+        let store = try CaptureStore(root: root)
+        let defaultsName = "DaBin.ExplorerUndo.\(UUID())"
+        let defaults = UserDefaults(suiteName: defaultsName)!
+        let previews = PreviewService(store: store, defaults: defaults)
+        let board = NSPasteboard(name: .init("DaBin.ExplorerUndo.\(UUID())"))
+        let state = AppState(store: store, previews: previews,
+            reminders: ReminderService(store: store, client: ExplorerTransferReminderClient()),
+            captureClipboard: CaptureClipboardService(pasteboard: board))
+        defer {
+            state.autoCapture.shutdown(); state.focusSessions.shutdown(); state.shutdownNotificationPresentation()
+            previews.shutdown(); board.releaseGlobally()
+            defaults.removePersistentDomain(forName: defaultsName)
+        }
+        let first = try store.capture(text: "First exact move original", projectName: "Origin")[0]
+        let second = try store.capture(text: "Second exact move original", projectName: "Origin")[0]
+        let laterEdited = try store.capture(text: "Later edited move original", projectName: "Origin")[0]
+        let items = [first, second, laterEdited]
+        let originals = items.map { ($0.id, $0.originalText, $0.capturedAt) }
+        let providers = try items.map { try ExplorerTransfer.itemProvider(for: $0, store: store) }
+        let controller = ExplorerCaptureController(state: state, input: InputService(store: store))
+        try expect(controller.receive(providers, project: "Destination"), "A mixed Undo fixture moves one existing identity per provider")
+        try await waitForIdle(controller)
+        try store.setOrganization(laterEdited, pinned: true, projectName: "Later work")
+        let movedRevisions = Dictionary(uniqueKeysWithValues: [first, second].map { ($0.id, $0.updatedAt) })
+        var writes = 0
+        store.failureInjector = { point in
+            if point == .beforeMetadataSave {
+                writes += 1
+                if writes == 1 { throw CaptureStoreError.injectedInterruption }
+            }
+        }
+        controller.undoLastMove()
+        try expect(writes == 2 && controller.canUndoMove && state.status?.severity == .warning,
+                   "A transient Undo write failure retains only a retryable receipt and reports partial restoration")
+        let retry = [first, second].first { $0.projectName == "Destination" }!
+        let restored = [first, second].first { $0.projectName == "Origin" }!
+        let restoredRevision = restored.updatedAt
+        try expect(retry.updatedAt == movedRevisions[retry.id] && laterEdited.projectName == "Later work" && laterEdited.isPinned,
+                   "Failed Undo rolls back its exact revision while a stale receipt never overwrites later work")
+        let afterFailure = try CaptureStore(root: root)
+        try expect(afterFailure.captures.first { $0.id == retry.id }?.projectName == "Destination"
+            && afterFailure.captures.first { $0.id == restored.id }?.projectName == "Origin"
+            && afterFailure.captures.first { $0.id == laterEdited.id }?.projectName == "Later work",
+                   "Restart observes successful restorations and preserves failed or later-edited items")
+        store.failureInjector = nil
+        controller.undoLastMove()
+        try expect(!controller.canUndoMove && first.projectName == "Origin" && second.projectName == "Origin"
+            && laterEdited.projectName == "Later work" && restored.updatedAt == restoredRevision,
+                   "Retry restores only the failed eligible item without repeating a successful Undo")
+        controller.undoLastMove()
+        try expect(restored.updatedAt == restoredRevision && Set(store.captures.map(\.id)) == Set(items.map(\.id)),
+                   "An exhausted receipt neither runs twice nor duplicates original identities")
+        for (id, text, receipt) in originals {
+            let item = store.captures.first { $0.id == id }!
+            try expect(item.originalText == text && item.capturedAt == receipt,
+                       "Mixed Undo and retry preserve exact original content and saved receipt dates")
+        }
+        try expect(controller.receive([providers[0]], project: "Destination"), "Another move creates a fresh receipt")
+        try await waitForIdle(controller)
+        store.failureInjector = { if $0 == .beforeMetadataSave { throw CaptureStoreError.injectedInterruption } }
+        controller.undoLastMove()
+        try expect(controller.canUndoMove && first.projectName == "Destination", "A fully failed Undo remains available")
+        store.failureInjector = nil
+        try store.setOrganization(first, pinned: true, projectName: "Newer destination")
+        controller.undoLastMove()
+        try expect(!controller.canUndoMove && first.projectName == "Newer destination" && first.isPinned,
+                   "An edit after a failed Undo invalidates its retry instead of discarding newer work")
+        let reopened = try CaptureStore(root: root)
+        try expect(reopened.captures.first { $0.id == first.id }?.projectName == "Newer destination"
+            && reopened.captures.count == items.count, "Final restart preserves later edits and exact capture count")
+    }
+
     private static func load(_ provider: NSItemProvider, type: String) async throws -> Data {
         try await withCheckedThrowingContinuation { continuation in
             provider.loadDataRepresentation(forTypeIdentifier: type) { data, error in
@@ -422,6 +495,7 @@ private final class ExplorerLatePromiseFixture: InputFilePromise {
             try expect(Date().timeIntervalSince(started) < 1, "Broken internal promises have a bounded wait")
         }
         try await sharedInputLifecycle(root.appendingPathComponent("Shared input lifecycle"))
+        try await undoFailureRetry(root.appendingPathComponent("Undo failure retry"))
         print("PASS: \(checks) Explorer transfer checks; native representations, projects, preservation, Undo, asynchronous destinations and failures.")
     }
 }

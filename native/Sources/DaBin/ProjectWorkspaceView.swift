@@ -62,6 +62,7 @@ private struct ProjectWorkspaceRows {
     private var visibleValue: [ProjectWorkspaceItem] = []
     private(set) var visibleIDs: [String] = []
     private var visibleLookup: [String: ProjectWorkspaceItem] = [:]
+    private var visiblePositions: [String: Int] = [:]
     private var selectedIDs: Set<String>?
     private var selectedItems: [ProjectWorkspaceItem] = []
     private struct RowKey: Hashable { var columns: Int; var newestFirst: Bool }
@@ -82,11 +83,13 @@ private struct ProjectWorkspaceRows {
             // scale. Build identity/lookup storage once, not for every pinch.
             visibleIDs = visibleValue.map(\.id)
             visibleLookup = Dictionary(uniqueKeysWithValues: zip(visibleIDs, visibleValue))
+            visiblePositions = Dictionary(uniqueKeysWithValues: visibleIDs.enumerated().map { ($0.element, $0.offset) })
             layouts.removeAll(keepingCapacity: true)
             selectedIDs = nil; selectedItems = []
         }
         return visibleValue
     }
+    func position(of id: String) -> Int? { visiblePositions[id] }
     func selected(_ ids: Set<String>) -> [ProjectWorkspaceItem] {
         guard !ids.isEmpty else { return [] }
         if selectedIDs != ids {
@@ -137,6 +140,7 @@ private final class ProjectReorderWriter: NSObject, NSPasteboardWriting {
     let project: String
     let showsSearchEntry: Bool
     private let chooseExportDestination: @MainActor (ProjectWorkspaceExportDocument) -> URL?
+    private let pasteboard: NSPasteboard
     @Environment(\.workspaceZoom) private var zoom
     private var presentation: ProjectNavigationPresentation {
         get { state.projectPresentation[project] ?? ProjectNavigationPresentation() }
@@ -177,7 +181,7 @@ private final class ProjectReorderWriter: NSObject, NSPasteboardWriting {
     @FocusState private var focusedItem: String?
     private static let reorderType = "com.dabin.project-item-order"
 
-    init(state: AppState, project: String, showsSearchEntry: Bool = true,
+    init(state: AppState, project: String, showsSearchEntry: Bool = true, pasteboard: NSPasteboard = .general,
          chooseExportDestination: @escaping @MainActor (ProjectWorkspaceExportDocument) -> URL? = { document in
              let panel = NSSavePanel()
              panel.allowedContentTypes = [.zip]
@@ -191,6 +195,7 @@ private final class ProjectReorderWriter: NSObject, NSPasteboardWriting {
         self.state = state; self.project = project; self.showsSearchEntry = showsSearchEntry
         _contentCache = State(initialValue: ProjectWorkspaceContentCache(store: state.store, workspace: state.workspace))
         self.chooseExportDestination = chooseExportDestination
+        self.pasteboard = pasteboard
         _workspace = ObservedObject(wrappedValue: state.workspace)
         _store = ObservedObject(wrappedValue: state.store)
         _intake = ObservedObject(wrappedValue: state.explorerInput)
@@ -248,15 +253,25 @@ private final class ProjectReorderWriter: NSObject, NSPasteboardWriting {
                 Image(systemName: "lock").accessibilityHidden(true)
                 Text(intake.isBusy ? "Saving into \(project)…" : "Saved on this Mac")
                 Spacer(minLength: 0)
-                if undoReceipt != nil {
-                    Button("Undo task conversion") { undoTasks() }.accessibilityIdentifier("project-undo-tasks")
+                if intake.canUndoMove {
+                    Button("Undo move") { intake.undoLastMove() }
+                        .frame(minHeight: 32).disabled(busy)
+                        .accessibilityLabel("Undo project move").accessibilityIdentifier("project-undo-move")
+                }
+                if let receipt = undoReceipt, state.canUndoProjectTaskConversion(receipt) {
+                    Button("Undo tasks") { undoTasks() }.frame(minHeight: 32).disabled(busy)
+                        .accessibilityLabel("Undo task conversion").accessibilityIdentifier("project-undo-tasks")
                 }
             }.font(.system(size: 11)).foregroundStyle(Palette.muted).padding(.horizontal, 18).padding(.vertical, 8)
         }
         .background(Palette.background)
         .overlay { if targeted { RoundedRectangle(cornerRadius: 12).strokeBorder(color, lineWidth: 2).allowsHitTesting(false) } }
         .onDrop(of: ExplorerTransfer.acceptedTypeIdentifiers, isTargeted: $targeted) { intake.receive($0, project: project) }
-        .onChange(of: visibleIDs) { _, ids in selection.formIntersection(Set(ids)) }
+        .onChange(of: visibleIDs) { _, ids in
+            let visible = Set(ids)
+            selection.formIntersection(visible)
+            if let anchor = selectionAnchor, !visible.contains(anchor) { selectionAnchor = nil }
+        }
         .onAppear { focusedItem = presentation.focusedID }
         .onChange(of: focusedItem) { _, value in presentation.focusedID = value }
         .onChange(of: presentation.focusedID) { _, value in if focusedItem != value { focusedItem = value } }
@@ -270,7 +285,7 @@ private final class ProjectReorderWriter: NSObject, NSPasteboardWriting {
         }
         .sheet(isPresented: $notePresented) {
             VStack(spacing: 8) {
-                HStack { Text("Project notes").font(.headline); Spacer(); Button("Done") { notePresented = false }.keyboardShortcut(.cancelAction) }.padding()
+                HStack { Text("Project notes").font(.headline); Spacer(); Button("Done") { notePresented = false }.keyboardShortcut(.cancelAction).accessibilityIdentifier("project-notes-done") }.padding()
                 ScratchpadView(state: state, workspace: workspace,
                     noteContext: WorkspaceScratchpad(text: workspace.scratchpad(project: project), projectName: project, updatedAt: Date()))
             }.frame(minWidth: 400, idealWidth: 560, minHeight: 450, idealHeight: 620)
@@ -295,7 +310,7 @@ private final class ProjectReorderWriter: NSObject, NSPasteboardWriting {
         let summaryTitle = selected.isEmpty ? "Copy project summary" : "Copy selection summary"
         return Menu {
             Button("Add files…", systemImage: "folder.badge.plus") { intake.chooseFiles(project: project) }
-            Button("Paste into project", systemImage: "doc.on.clipboard") { intake.paste(project: project) }
+            Button("Paste into project", systemImage: "doc.on.clipboard") { intake.paste(project: project, from: pasteboard) }
             Button("Project notes", systemImage: "note.text") { notePresented = true }
             Button("Open folder", systemImage: "folder") { state.showProjectFiles() }
             Divider()
@@ -304,8 +319,8 @@ private final class ProjectReorderWriter: NSObject, NSPasteboardWriting {
             Button(summaryTitle, systemImage: "text.alignleft") { copy(items, summary: true, scope: scope) }
                 .disabled(items.isEmpty)
             Divider()
-            Button("Clipboard view") { state.navigateWorkspaceMode(.clipboard) }
-            Button("Shelf view") { state.navigateWorkspaceMode(.shelf) }
+            Button("Clipboard view") { state.navigateWorkspaceMode(.clipboard) }.disabled(state.isNavigationBlocked)
+            Button("Shelf view") { state.navigateWorkspaceMode(.shelf) }.disabled(state.isNavigationBlocked)
         } label: { Image(systemName: "ellipsis").frame(width: 32, height: 32) }
             .menuStyle(.borderlessButton).menuIndicator(.hidden).fixedSize().accessibilityLabel("Project actions")
             .accessibilityIdentifier("project-actions")
@@ -340,7 +355,19 @@ private final class ProjectReorderWriter: NSObject, NSPasteboardWriting {
         ViewThatFits(in: .horizontal) {
             HStack(spacing: 6) { filterChips; Spacer(minLength: 4); viewOptions }
             VStack(alignment: .leading, spacing: 8) {
-                ScrollView(.horizontal, showsIndicators: false) { HStack(spacing: 6) { filterChips } }
+                HStack {
+                    Menu {
+                        ForEach(ProjectWorkspaceFilter.allCases) { value in
+                            Button { selectFilter(value) } label: {
+                                Label(value.rawValue, systemImage: filter == value ? "checkmark" : "line.3.horizontal.decrease")
+                            }.accessibilityIdentifier("project-filter-\(value.id)")
+                        }
+                    } label: { Label(filter.rawValue, systemImage: "line.3.horizontal.decrease") }
+                        .menuStyle(.borderlessButton).frame(minHeight: 32).fixedSize()
+                        .accessibilityLabel("Project item type: \(filter.rawValue)")
+                        .accessibilityIdentifier("project-filter-menu")
+                    Spacer(minLength: 0)
+                }
                 HStack { viewOptions; Spacer(minLength: 0) }
             }
         }.padding(.horizontal, 18).padding(.bottom, 8)
@@ -348,9 +375,9 @@ private final class ProjectReorderWriter: NSObject, NSPasteboardWriting {
 
     private var filterChips: some View {
         ForEach(ProjectWorkspaceFilter.allCases) { value in
-            Button { filter = value; selection.removeAll(); selectionAnchor = nil } label: {
+            Button { selectFilter(value) } label: {
                 Text(value.rawValue).font(.system(size: 12, weight: filter == value ? .semibold : .regular))
-                    .padding(.horizontal, 10).frame(height: 30)
+                    .padding(.horizontal, 10).frame(height: 32)
                     .background(filter == value ? color.opacity(0.13) : Palette.surface, in: Capsule())
                     .overlay(Capsule().strokeBorder(filter == value ? color.opacity(0.32) : Palette.line, lineWidth: 0.6))
             }.buttonStyle(.plain).foregroundStyle(filter == value ? color : Palette.muted)
@@ -367,15 +394,18 @@ private final class ProjectReorderWriter: NSObject, NSPasteboardWriting {
                         Label(date.title, systemImage: dateFilter == date ? "checkmark" : "calendar")
                     }
                 }
-            } label: { Label(dateFilter.title, systemImage: "calendar") }.fixedSize()
+            } label: { Label(dateFilter.title, systemImage: "calendar") }.frame(minHeight: 32).fixedSize()
+                .accessibilityIdentifier("project-date-filter")
             Menu {
                 Button { newestFirst = false } label: { Label("My order", systemImage: newestFirst ? "line.3.horizontal" : "checkmark") }
                     .accessibilityIdentifier("project-sort-custom")
                 Button { newestFirst = true } label: { Label("Newest first", systemImage: newestFirst ? "checkmark" : "clock") }
                     .accessibilityIdentifier("project-sort-newest")
-            } label: { Text(newestFirst ? "Newest first" : "My order") }.fixedSize().accessibilityLabel("Project sort order")
+            } label: { Text(newestFirst ? "Newest first" : "My order") }.frame(minHeight: 32).fixedSize()
+                .accessibilityLabel("Project sort order").accessibilityIdentifier("project-sort-order")
             Button { compact.toggle() } label: {
-                Image(systemName: compact ? "square.grid.2x2" : "list.bullet").frame(width: 30, height: 30)
+                Label(compact ? "Grid" : "List", systemImage: compact ? "square.grid.2x2" : "list.bullet")
+                    .padding(.horizontal, 6).frame(minWidth: 32, minHeight: 32).contentShape(Rectangle())
             }.buttonStyle(.plain).accessibilityLabel(compact ? "Show preview grid" : "Show compact list")
                 .accessibilityIdentifier("project-view-toggle")
         }.font(.system(size: 11)).foregroundStyle(Palette.muted).menuStyle(.borderlessButton)
@@ -401,7 +431,7 @@ private final class ProjectReorderWriter: NSObject, NSPasteboardWriting {
                 .foregroundStyle(selection.isEmpty ? Palette.muted : Palette.foreground)
                 .accessibilityIdentifier("project-selection-count")
             if !selection.isEmpty {
-                Button { selection.removeAll(); selectionAnchor = nil } label: { Image(systemName: "xmark.circle.fill").frame(width: 28, height: 28) }
+                Button { selection.removeAll(); selectionAnchor = nil } label: { Image(systemName: "xmark.circle.fill").frame(width: 32, height: 32) }
                     .buttonStyle(.plain).foregroundStyle(Palette.muted).accessibilityLabel("Clear selection")
                     .accessibilityIdentifier("project-clear-selection")
             }
@@ -414,25 +444,32 @@ private final class ProjectReorderWriter: NSObject, NSPasteboardWriting {
                 .buttonStyle(.plain).foregroundStyle(color).disabled(visible.isEmpty)
                 .accessibilityIdentifier("project-select-all")
         } else {
-            Button("Make tasks", systemImage: "checkmark.circle") { makeTasks(selected) }
+            Button(selected.lazy.filter { $0.capture?.isTask == false }.count == 1 ? "Make task" : "Make tasks", systemImage: "checkmark.circle") { makeTasks(selected) }
                 .disabled(busy || !selected.contains { $0.capture?.isTask == false })
                 .buddyHelp("Keeps each capture and file. Edit live project notes before saving them as a task.")
                 .accessibilityIdentifier("project-make-tasks")
             Menu {
                 Button("Move earlier", systemImage: "arrow.up") { moveSelection(earlier: true) }
+                    .disabled(!canMoveSelection(earlier: true))
                 Button("Move later", systemImage: "arrow.down") { moveSelection(earlier: false) }
-            } label: { Image(systemName: "arrow.up.arrow.down").frame(width: 24, height: 24) }
+                    .disabled(!canMoveSelection(earlier: false))
+            } label: { Image(systemName: "arrow.up.arrow.down").frame(width: 32, height: 32) }
                 .menuStyle(.borderlessButton).menuIndicator(.hidden).fixedSize().disabled(!canReorder)
-                .accessibilityLabel("Reorder selected items").buddyHelp("Reorder in All items, Any date, My order")
+                .accessibilityLabel("Reorder selected items").accessibilityIdentifier("project-reorder-selection").buddyHelp("Reorder in All items, Any date, My order")
         }
     }
 
     private func browser(layout: ProjectWorkspaceRows, visible: [ProjectWorkspaceItem], columns: Int, emptyProject: Bool) -> some View {
         List {
             if layout.rows.isEmpty {
-                EmptyMessage(symbol: "folder", title: emptyProject ? "Make room for your next idea" : "No matching items",
-                    message: emptyProject ? "Drop a file or paste something into this project. Your notes, links and tasks will live here too." : "Choose All and Any date to see the complete project.")
-                    .listRowSeparator(.hidden).listRowBackground(Color.clear)
+                VStack(spacing: 8) {
+                    EmptyMessage(symbol: "folder", title: emptyProject ? "Make room for your next idea" : "No matching items",
+                        message: emptyProject ? "Drop a file or paste something into this project. Your notes, links and tasks will live here too." : "Try another filter or show the complete project.")
+                    if !emptyProject {
+                        Button("Show all items") { selectFilter(.all); dateFilter = .anytime }
+                            .frame(minHeight: 32).accessibilityIdentifier("project-reset-filters")
+                    }
+                }.listRowSeparator(.hidden).listRowBackground(Color.clear)
             }
             ForEach(layout.rows) { row in
                 HStack(alignment: .top, spacing: zoom.value(12)) {
@@ -486,7 +523,8 @@ private final class ProjectReorderWriter: NSObject, NSPasteboardWriting {
                     writers[0] = ProjectReorderWriter(content: first, type: Self.reorderType)
                 }
                 return writers
-            }, dragEnded: { dragging.removeAll() })
+            }, dragEnded: { dragging.removeAll() },
+            canMoveEarlier: canMoveItem(item.id, earlier: true), canMoveLater: canMoveItem(item.id, earlier: false))
             .onDrop(of: [Self.reorderType], isTargeted: nil) { _ in
                 guard canReorder, !dragging.isEmpty, !dragging.contains(item.id) else { return false }
                 saveOrder(ProjectWorkspaceOrdering.moving(allItems.map(\.id), selected: dragging, before: item.id))
@@ -494,7 +532,7 @@ private final class ProjectReorderWriter: NSObject, NSPasteboardWriting {
             }
             .onKeyPress("a", phases: .down) { press in
                 guard press.modifiers.contains(.command) else { return .ignored }
-                selection = Set(visible.map(\.id)); return .handled
+                selection = Set(visible.map(\.id)); selectionAnchor = visible.first?.id; return .handled
             }
     }
 
@@ -518,8 +556,25 @@ private final class ProjectReorderWriter: NSObject, NSPasteboardWriting {
         if capture.attachmentRelativePath != nil || capture.kind == .link { state.openOriginal(capture) }
         else { state.openCapture(capture.id) }
     }
+    private func selectFilter(_ value: ProjectWorkspaceFilter) {
+        filter = value; selection.removeAll(); selectionAnchor = nil
+    }
+    private func canMoveSelection(earlier: Bool) -> Bool {
+        guard canReorder else { return false }
+        let ids = contentCache.visibleIDs
+        guard ids.count > 1, !selection.isEmpty else { return false }
+        return ids.indices.contains { index in
+            guard selection.contains(ids[index]) else { return false }
+            let neighbor = earlier ? index - 1 : index + 1
+            return ids.indices.contains(neighbor) && !selection.contains(ids[neighbor])
+        }
+    }
+    private func canMoveItem(_ id: String, earlier: Bool) -> Bool {
+        guard canReorder, let index = contentCache.position(of: id) else { return false }
+        return earlier ? index > 0 : index + 1 < contentCache.visibleIDs.count
+    }
     private func moveSelection(earlier: Bool) {
-        guard canReorder else { return }
+        guard canMoveSelection(earlier: earlier) else { return }
         saveOrder(ProjectWorkspaceOrdering.move(allItems.map(\.id), selected: selection,
             direction: earlier ? .earlier : .later))
     }
@@ -530,7 +585,8 @@ private final class ProjectReorderWriter: NSObject, NSPasteboardWriting {
     private func makeTasks(_ items: [ProjectWorkspaceItem]) {
         do {
             undoReceipt = try state.convertProjectItemsToTasks(items.compactMap(\.capture))
-            state.status = AppStatusMessage(text: "\(undoReceipt?.count ?? 0) captures are now tasks. Originals are kept."
+            let count = undoReceipt?.count ?? 0
+            state.status = AppStatusMessage(text: (count == 1 ? "1 capture is now a task. Originals are kept." : "\(count) captures are now tasks. Originals are kept.")
                 + (notes(in: items) == nil ? "" : " Live project notes remain notes."), severity: .success)
         } catch { state.reportFailure(error.localizedDescription) }
     }
@@ -547,10 +603,10 @@ private final class ProjectReorderWriter: NSObject, NSPasteboardWriting {
             if summary {
                 let document = try ProjectWorkspaceExport.document(project: project, captures: items.compactMap(\.capture), store: store,
                     notes: notes(in: items), scope: scope, orderedItemIDs: items.map(\.id))
-                try WorkspaceClipboard.write(document.summary)
+                try WorkspaceClipboard.write(document.summary, to: pasteboard)
             } else {
                 try ProjectWorkspaceExport.copyItems(captures: items.compactMap(\.capture), store: store, notes: notes(in: items),
-                    orderedItemIDs: items.map(\.id))
+                    orderedItemIDs: items.map(\.id), pasteboard: pasteboard)
             }
             state.status = AppStatusMessage(text: "\(items.count) items copied\(summary ? " as a summary" : "").", severity: .success)
         } catch { state.reportFailure(error.localizedDescription) }

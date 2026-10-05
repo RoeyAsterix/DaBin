@@ -46,12 +46,25 @@ import SwiftUI
         typealias Getter = @convention(c) (AnyObject, Selector) -> NSRect
         return unsafeBitCast(object.method(for: selector), to: Getter.self)(object, selector)
     }
+    var interactionFrame: NSRect {
+        if let cell = object as? NSCell, let view = cell.controlView, let window = view.window {
+            return window.convertToScreen(view.convert(view.bounds, to: nil))
+        }
+        return frame
+    }
     func press() -> Bool {
         let selector = NSSelectorFromString("accessibilityPerformPress")
         guard object.responds(to: selector) else { return false }
         typealias Action = @convention(c) (AnyObject, Selector) -> Bool
         return unsafeBitCast(object.method(for: selector), to: Action.self)(object, selector)
     }
+    func showMenu() -> Bool {
+        let selector = NSSelectorFromString("accessibilityPerformShowMenu")
+        guard object.responds(to: selector) else { return false }
+        typealias Action = @convention(c) (AnyObject, Selector) -> Bool
+        return unsafeBitCast(object.method(for: selector), to: Action.self)(object, selector)
+    }
+    var actions: [String] { (value("accessibilityActionNames") as? [String]) ?? [] }
     var children: [Any] {
         var result: [Any] = []
         for name in ["accessibilityChildren", "accessibilityChildrenInNavigationOrder", "accessibilityContents"] {
@@ -60,6 +73,34 @@ import SwiftUI
         if let values = attribute("AXChildren") as? [Any] { result += values }
         if let view = object as? NSView { result += view.subviews }
         return result
+    }
+}
+
+@MainActor private final class ProjectMenuTracking {
+    let deadline = ProcessInfo.processInfo.systemUptime + 2
+    weak var window: NSWindow?
+    private(set) var menus: [NSMenu] = []
+    private(set) var ended = Set<ObjectIdentifier>()
+    private(set) var timedOut = false
+    init(window: NSWindow?) { self.window = window }
+    func began(_ menu: NSMenu) {
+        if !menus.contains(where: { $0 === menu }) { menus.append(menu) }
+        fputs("MENU tracking began: \(menu.items.map(\.title))\n", stderr)
+    }
+    func didEnd(_ menu: NSMenu) {
+        ended.insert(ObjectIdentifier(menu)); fputs("MENU tracking ended\n", stderr)
+    }
+    func cancel() {
+        menus.forEach { $0.cancelTrackingWithoutAnimation() }
+        guard ProcessInfo.processInfo.systemUptime >= deadline else { return }
+        timedOut = true
+        // A bounded fallback for a menu implementation that hasn't delivered
+        // its notification yet. This event is queued only in the test process
+        // and carries the fixture's own window number; no global input is sent.
+        guard let window, let escape = NSEvent.keyEvent(with: .keyDown, location: .zero, modifierFlags: [],
+            timestamp: ProcessInfo.processInfo.systemUptime, windowNumber: window.windowNumber, context: nil,
+            characters: "\u{1b}", charactersIgnoringModifiers: "\u{1b}", isARepeat: false, keyCode: 53) else { return }
+        NSApp.postEvent(escape, atStart: true)
     }
 }
 
@@ -346,6 +387,71 @@ import SwiftUI
         return maximumRows
     }
 
+    private static func menuItems(_ menu: NSMenu) -> [NSMenuItem] {
+        menu.items.flatMap { [$0] + ($0.submenu.map(menuItems) ?? []) }
+    }
+    private static func nativeMenu(_ host: NSView, id: String, containing title: String) async throws -> NSMenu {
+        let target = try await find(id, in: host), tracking = ProjectMenuTracking(window: host.window)
+        let center = NotificationCenter.default
+        let began = center.addObserver(forName: NSMenu.didBeginTrackingNotification, object: nil, queue: nil) { notification in
+            guard let menu = notification.object as? NSMenu else { return }
+            MainActor.assumeIsolated { tracking.began(menu) }
+        }
+        let ended = center.addObserver(forName: NSMenu.didEndTrackingNotification, object: nil, queue: nil) { notification in
+            guard let menu = notification.object as? NSMenu else { return }
+            MainActor.assumeIsolated { tracking.didEnd(menu) }
+        }
+        let timer = Timer(timeInterval: 0.02, repeats: true) { _ in MainActor.assumeIsolated { tracking.cancel() } }
+        RunLoop.main.add(timer, forMode: .common); RunLoop.main.add(timer, forMode: .eventTracking)
+        defer { timer.invalidate(); center.removeObserver(began); center.removeObserver(ended) }
+        var accepted = target.actions.contains("AXShowMenu") ? target.showMenu() : false
+        if !accepted && tracking.menus.isEmpty && target.actions.contains("AXPress") { accepted = target.press() }
+        if !accepted && tracking.menus.isEmpty {
+            guard let window = host.window else { throw NSError(domain: "ProjectWorkspaceViewTests", code: 8) }
+            let frame = target.interactionFrame, point = window.convertPoint(fromScreen: NSPoint(x: frame.midX, y: frame.midY))
+            try expect(frame.width > 0 && frame.height > 0 && window.convertToScreen(host.bounds).insetBy(dx: -1, dy: -1).contains(frame), "Menu fits its fixture window: \(frame)")
+            let timestamp = ProcessInfo.processInfo.systemUptime
+            guard let down = NSEvent.mouseEvent(with: .leftMouseDown, location: point, modifierFlags: [],
+                timestamp: timestamp, windowNumber: window.windowNumber, context: nil, eventNumber: 1, clickCount: 1, pressure: 1),
+                  let up = NSEvent.mouseEvent(with: .leftMouseUp, location: point, modifierFlags: [],
+                timestamp: timestamp + 0.02, windowNumber: window.windowNumber, context: nil, eventNumber: 2, clickCount: 1, pressure: 0) else {
+                throw NSError(domain: "ProjectWorkspaceViewTests", code: 9)
+            }
+            NSApp.postEvent(up, atStart: true); window.sendEvent(down)
+            if let remaining = NSApp.nextEvent(matching: .leftMouseUp, until: Date(), inMode: .default, dequeue: true) {
+                try expect(remaining.windowNumber == window.windowNumber, "Native menu release belongs only to the fixture")
+                window.sendEvent(remaining)
+            }
+        }
+        try await settle(host)
+        guard let menu = tracking.menus.first(where: { menuItems($0).contains { $0.title == title } }) else {
+            throw NSError(domain: "ProjectWorkspaceViewTests", code: 10,
+                userInfo: [NSLocalizedDescriptionKey: "\(id) must expose the real native menu containing \(title)"])
+        }
+        try expect(!tracking.timedOut && tracking.ended.contains(ObjectIdentifier(menu)), "Actual \(id) menu closes before item dispatch")
+        return menu
+    }
+    private static func selectMenu(_ host: NSView, id: String, title: String) async throws {
+        let menu = try await nativeMenu(host, id: id, containing: title)
+        guard let item = menuItems(menu).first(where: { $0.title == title }), let owner = item.menu else {
+            throw NSError(domain: "ProjectWorkspaceViewTests", code: 11)
+        }
+        try expect(item.isEnabled && !item.isHidden && item.action != nil, "Native menu destination \(title) remains actionable")
+        owner.performActionForItem(at: owner.index(of: item)); try await settle(host)
+    }
+    private static func scrollToStart(_ view: NSView) async throws {
+        try await settle(view)
+        guard let table = table(in: view), let scroll = table.enclosingScrollView else { throw failure("Missing native project table") }
+        // A deliberate scroll must send the native live-scroll lifecycle;
+        // otherwise the production arrival-protection coordinator correctly
+        // restores its still-active insertion anchor over this programmatic move.
+        NotificationCenter.default.post(name: NSScrollView.willStartLiveScrollNotification, object: scroll)
+        table.scrollRowToVisible(0)
+        scroll.contentView.scroll(to: .zero); scroll.reflectScrolledClipView(scroll.contentView)
+        NotificationCenter.default.post(name: NSScrollView.didEndLiveScrollNotification, object: scroll)
+        try await settle(view)
+    }
+
     private static func run() async throws {
         let watchdog = DispatchWorkItem {
             FileHandle.standardError.write(Data("FAIL: Project workspace view QA exceeded 90 seconds\n".utf8))
@@ -369,11 +475,12 @@ import SwiftUI
             capture.projectName = project
             return capture
         }
-        let other = Capture(capturedAt: at, timeZone: zone, kind: .text,
+        let otherSeed = Capture(capturedAt: at, timeZone: zone, kind: .text,
             originalText: "Unrelated project must stay excluded", title: "Unrelated project")
-        other.projectName = "Another fictional project"
-        try CaptureRepository(root: root).save(seeded + [other])
+        otherSeed.projectName = "Another fictional project"
+        try CaptureRepository(root: root).save(seeded + [otherSeed])
         let store = try CaptureStore(root: root, repairArchiveOnOpen: false)
+        guard let other = store.captures.first(where: { $0.id == otherSeed.id }) else { throw failure("Unrelated stored fixture missing") }
         let png = try fixturePNG()
         let image = try await store.importData(png, filename: "Fictional poster.png", at: at,
             timeZone: zone, projectName: project)
@@ -386,11 +493,12 @@ import SwiftUI
         let auto = AutoCaptureService(settings: AutoCaptureSettings(defaults: defaults), input: InputService(store: store),
             pasteboardProvider: { fatalError("Project view QA must not read the clipboard") },
             sourceApplicationProvider: { nil })
+        var openedFolders: [URL] = []
         let state = AppState(store: store, previews: previews,
             reminders: ReminderService(store: store, client: ProjectWorkspaceFixtureNotifications()),
             autoCapture: auto,
             captureClipboard: CaptureClipboardService(writer: { _ in fatalError("Project view QA must not write the clipboard") }),
-            folderOpener: { _ in fatalError("Project view QA must not open Finder") })
+            folderOpener: { openedFolders.append($0); return true })
         defer { previews.shutdown(); auto.shutdown(); state.focusSessions.shutdown(); store.cancelArchiveRepair() }
         state.libraryProject = project
         state.workspace.mode = .collection
@@ -412,8 +520,10 @@ import SwiftUI
                 .appendingPathComponent(UUID().uuidString, isDirectory: true)
         try FileManager.default.createDirectory(at: fixtures, withIntermediateDirectories: true)
 
+        let clipboard = NSPasteboard(name: .init("DaBin.ProjectActionsQA.\(UUID().uuidString)"))
+        defer { clipboard.releaseGlobally() }
         var preparedExports: [ProjectWorkspaceExportDocument] = []
-        let hosting = NSHostingView(rootView: ProjectWorkspaceView(state: state, project: project,
+        let hosting = NSHostingView(rootView: ProjectWorkspaceView(state: state, project: project, pasteboard: clipboard,
             chooseExportDestination: { document in preparedExports.append(document); return nil })
             .environment(\.daBinTooltipsEnabled, false).environment(\.displayScale, 2).preferredColorScheme(.light)
             .transaction { $0.animation = nil; $0.disablesAnimations = true })
@@ -541,11 +651,16 @@ import SwiftUI
         try expect(!clearedByFilter.contains("selected"), "Changing filters clears hidden selection")
         try await checkExportAction(in: hosting)
 
-        // SwiftUI creates sort-menu actions only when their menu is presented;
-        // this offscreen, non-key fixture cannot invoke Newest first safely.
-        // Its !canReorder drag path is code-reviewed and awaits a manual check.
-        // The real rendered Files-filtered path above covers the same outgoing
-        // writer branch while asserting the absence of its reorder marker.
+        // Open and dispatch the production native menus inside this process.
+        try await selectMenu(hosting, id: "project-sort-order", title: "Newest first")
+        try expect(state.projectPresentation[project]?.newestFirst == true, "Native sort menu changes project ordering")
+        try await checkNativeProjectDrag(in: hosting, label: image.title, expected: [.capture(image)], reorder: false, store: store)
+        try await selectMenu(hosting, id: "project-sort-order", title: "My order")
+        try expect(state.projectPresentation[project]?.newestFirst == false, "Custom order returns through the same native menu")
+        // Changing order intentionally preserves a browsing viewport. Position
+        // this fixture at its known first item before inspecting that item.
+        state.projectPresentation[project, default: ProjectNavigationPresentation()].viewport = nil
+        try await scrollToStart(hosting)
 
         for width in [CGFloat(760), 400, 320, 1_080] {
             window.setContentSize(CGSize(width: width, height: 760))
@@ -590,6 +705,118 @@ import SwiftUI
         try expect(try originalBytes(store: store, capture: image) == original,
                    "Project preview, resizing, and selection preserve original file bytes")
         maximumRows = max(maximumRows, try checkNativeRows(hosting, itemCount: 1_006))
+        let availableOrder = ProjectWorkspaceContents.captures(in: project, from: store.captures).map { ProjectWorkspaceIdentity.capture($0.id) } + [noteID]
+        let restoredOrder = ProjectWorkspaceOrdering.ordered(availableOrder, saved: initialOrder)
+        try state.workspace.saveProjectItemOrder(restoredOrder, project: project)
+        state.projectPresentation[project, default: ProjectNavigationPresentation()].viewport = nil
+        try await scrollToStart(hosting)
+        let boundaryMenu = try await nativeMenu(hosting, id: "project-more-" + imageID, containing: "Move earlier")
+        try expect(menuItems(boundaryMenu).first { $0.title == "Move earlier" }?.isEnabled == false,
+            "The first item cannot offer a no-op Move earlier action")
+        try await selectMenu(hosting, id: "project-more-" + imageID, title: "Move later")
+        try expect(state.workspace.orderedProjectItemIDs(initialOrder, project: project).prefix(2) == [textID, imageID],
+            "Native item action moves the saved item exactly one position")
+        state.projectPresentation[project, default: ProjectNavigationPresentation()].viewport = nil
+        try await scrollToStart(hosting)
+        try await selectMenu(hosting, id: "project-more-" + imageID, title: "Move earlier")
+        try expect(state.workspace.orderedProjectItemIDs(initialOrder, project: project).prefix(2) == [imageID, textID],
+            "Native reverse reorder restores custom positions")
+        try await scrollToStart(hosting)
+        try await clearSelection(in: hosting)
+
+        // Narrow widths expose every type through a visible menu; an empty
+        // combination offers one action to clear both type and date filtering.
+        state.openLibrary()
+        window.setContentSize(CGSize(width: 320, height: 760)); try await settle(hosting)
+        try await selectMenu(hosting, id: "project-filter-menu", title: "Tasks")
+        try expect(state.projectPresentation[project]?.filterRawValue == "Tasks", "Narrow native menu reaches the formerly hidden Tasks filter")
+        try await press("project-reset-filters", in: hosting, message: "Empty filtered project resets in one click")
+        try await settle(hosting)
+        try expect(state.projectPresentation[project]?.filterRawValue == "All"
+            && state.projectPresentation[project]?.dateFilter == .anytime, "Reset restores both All types and Any date")
+        try saveFixtureImage(hosting, filename: "project-filter-menu-narrow@2x.png", directory: fixtures)
+        window.setContentSize(CGSize(width: 1_080, height: 760)); try await settle(hosting)
+
+        // Mixed copy actions execute the menu's real closures against a private
+        // pasteboard. Their labels and output have the same selected scope.
+        state.projectPresentation[project, default: ProjectNavigationPresentation()].selectedIDs = [imageID, textID, noteID]
+        try await settle(hosting)
+        try await selectMenu(hosting, id: "project-actions", title: "Copy selected items")
+        let copied = clipboard.pasteboardItems ?? []
+        try expect(copied.count == 3 && copied[0].string(forType: .fileURL) == store.managedURL(for: image)?.absoluteString,
+            "Mixed selected Copy retains its file, text and live note as three ordered items")
+        try expect(copied[1].string(forType: .string) == text.originalText
+            && copied[2].string(forType: .string) == state.workspace.scratchpad(project: project), "Copy retains exact text and live project notes")
+        try expect(copied.allSatisfy { !$0.types.contains(ExplorerTransfer.pasteboardType) }, "Public Copy does not leak a local move identity")
+        try await selectMenu(hosting, id: "project-actions", title: "Copy selection summary")
+        let summary = clipboard.string(forType: .string) ?? ""
+        try expect(summary.contains(project) && summary.contains(text.title) && summary.contains(image.title)
+            && !summary.contains(other.originalText ?? "UNRELATED"), "Copy summary includes the selected project content and excludes unrelated captures")
+        try await clearSelection(in: hosting)
+        try await selectMenu(hosting, id: "project-actions", title: "Open folder")
+        try expect(openedFolders.count == 1 && openedFolders[0].path.hasPrefix(root.path), "Open folder resolves only the selected fictional project's local archive")
+
+        // Both mode destinations retain project context and an actual history
+        // return. The Board-level picker suite covers their rendered return UI.
+        for (title, mode) in [("Clipboard view", WorkspaceMode.clipboard), ("Shelf view", WorkspaceMode.shelf)] {
+            try await selectMenu(hosting, id: "project-actions", title: title)
+            try expect(state.workspace.mode == mode && state.libraryProject == project, "Native \(title) keeps the selected project")
+            state.back(); try await settle(hosting)
+            try expect(state.route == .library && state.workspace.mode == .collection && state.libraryProject == project,
+                "Back returns from \(title) to the same project collection")
+        }
+        try await selectMenu(hosting, id: "project-actions", title: "Project notes")
+        guard let sheet = window.sheets.first, let noteHost = sheet.contentView else { throw failure("Project notes must open its own editable sheet") }
+        try await settle(noteHost)
+        try await press("project-notes-done", in: noteHost, message: "Project notes has a reachable Done return")
+        try await settle(hosting)
+        try expect(window.sheets.isEmpty && state.workspace.scratchpad(project: project) == liveNote.text,
+            "Closing notes preserves the live project note without another capture")
+
+        // Native conversion and immediate Undo preserve the same captures and
+        // files. A later edit invalidates the receipt and hides a stale Undo.
+        state.projectPresentation[project, default: ProjectNavigationPresentation()].selectedIDs = [imageID, textID, noteID]
+        try await settle(hosting)
+        try await press("project-make-tasks", in: hosting, message: "Selected originals can become tasks in place")
+        try await settle(hosting)
+        try expect(image.isTask && text.isTask && state.workspace.scratchpad(project: project) == liveNote.text,
+            "Conversion changes captures in place while live project notes remain notes")
+        try await press("project-undo-tasks", in: hosting, message: "Native Undo restores task conversion")
+        try await settle(hosting)
+        let restoredOriginal = try originalBytes(store: store, capture: image)
+        try expect(!image.isTask && !text.isTask && restoredOriginal == original,
+            "Undo restores original capture types and exact file bytes")
+        try await clearSelection(in: hosting)
+
+        // Feed the production named-project drop receiver an explicit internal
+        // drag identity, then invoke the newly reachable native Undo action.
+        let provider = try ExplorerTransfer.itemProvider(for: other, store: store)
+        try expect(state.explorerInput.receive([provider], project: project), "Named project accepts the internal drag payload")
+        for _ in 0..<40 where state.explorerInput.isBusy { try await Task.sleep(for: .milliseconds(35)) }
+        try await settle(hosting)
+        try expect(other.projectName == project && state.explorerInput.canUndoMove, "Drop moves the same capture into the named project")
+        try await press("project-undo-move", in: hosting, message: "Undo move is reachable in the destination named project")
+        try await settle(hosting)
+        try expect(other.projectName == "Another fictional project" && !state.explorerInput.canUndoMove,
+            "Named-project Undo restores the source project without copying or deleting the capture")
+
+        clipboard.clearContents(); try expect(clipboard.setString("Fictional native project paste", forType: .string), "Private paste fixture is prepared")
+        let countBeforePaste = store.captures.count
+        try await selectMenu(hosting, id: "project-actions", title: "Paste into project")
+        for _ in 0..<40 where state.explorerInput.isBusy { try await Task.sleep(for: .milliseconds(35)) }
+        try await settle(hosting)
+        try expect(store.captures.count == countBeforePaste + 1
+            && store.captures.contains { $0.originalText == "Fictional native project paste" && $0.projectName == project },
+            "Native Paste imports exactly one new capture into the selected project")
+
+        state.projectPresentation[project, default: ProjectNavigationPresentation()].selectedIDs = [textID]
+        try await settle(hosting); try await press("project-make-tasks", in: hosting, message: "Single selected capture can become a task")
+        try await settle(hosting)
+        _ = try store.setTaskCompleted(text, completed: true)
+        try await settle(hosting)
+        try expect(!nodes(in: hosting).contains { $0.identifier == "project-undo-tasks" && $0.frame.width > 0 },
+            "After later task edits the project hides an invalid conversion Undo instead of offering an action that must fail")
+        try expect(!window.isKeyWindow && !window.isMainWindow, "Project menus and sheet returns stay inside the isolated fixture")
         print("PASS: \(checks) project workspace UI checks; 1,000 synthetic text captures plus image and editable project note; native mixed-selection drag payloads on a private pasteboard; no personal archive, network, general clipboard or external opening. At most \(maximumRows) simultaneously materialized native rows.")
     }
 

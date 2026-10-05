@@ -12,9 +12,9 @@ import Foundation
 
 @main struct NavigationHistoryTests {
     @MainActor private static var checks = 0
-    @MainActor private static func expect(_ value: @autoclosure () -> Bool, _ message: String) throws {
+    @MainActor private static func expect(_ value: @autoclosure () throws -> Bool, _ message: String) throws {
         checks += 1
-        guard value() else { throw NSError(domain: "NavigationHistoryTests", code: 1,
+        guard try value() else { throw NSError(domain: "NavigationHistoryTests", code: 1,
             userInfo: [NSLocalizedDescriptionKey: message]) }
     }
 
@@ -55,6 +55,192 @@ import Foundation
         let fields = Set(Mirror(reflecting: NavigationSnapshot()).children.compactMap(\.label))
         try expect(fields.isDisjoint(with: ["capture", "draft", "comment", "text", "content", "fileBody", "zoom", "frame"]),
                    "Snapshot excludes content, draft copies, zoom and geometry")
+    }
+
+    @MainActor private static func projectPersistenceTests() throws {
+        let root = FileManager.default.temporaryDirectory.appendingPathComponent("DaBinProjectScopeQA-\(UUID())")
+        let defaultsName = "DaBinProjectScopeQA.\(UUID())"
+        let defaults = UserDefaults(suiteName: defaultsName)!
+        let board = NSPasteboard(name: .init(defaultsName))
+        let store = try CaptureStore(root: root)
+        let previews = PreviewService(store: store, defaults: defaults)
+        let auto = AutoCaptureService(settings: AutoCaptureSettings(defaults: defaults), input: InputService(store: store),
+            pasteboardProvider: { fatalError("Project scope QA never reads the clipboard") }, sourceApplicationProvider: { nil })
+        let state = AppState(store: store, previews: previews,
+            reminders: ReminderService(store: store, client: HistoryNotifications()), autoCapture: auto,
+            captureClipboard: CaptureClipboardService(pasteboard: board))
+        defer {
+            auto.shutdown(); state.focusSessions.shutdown(); state.shutdownNotificationPresentation(); previews.shutdown()
+            board.releaseGlobally(); defaults.removePersistentDomain(forName: defaultsName)
+            try? FileManager.default.removeItem(at: root)
+        }
+        let first = try store.capture(text: "First project scope original", projectName: "First")[0]
+        let second = try store.capture(text: "Second project scope original", projectName: "Second")[0]
+        state.openLibrary()
+        try expect(state.navigateProject("First"), "A successfully persisted named scope reports success")
+        state.workspace.selectedCaptureID = first.id
+        let before = state.workspace.snapshot
+        let beforeEntries = state.navigationHistory.entries
+        let beforeIndex = state.navigationHistory.index
+        let beforeRevision = state.navigationTransitionRevision
+        state.workspace.failureInjector = { throw CaptureStoreError.injectedInterruption }
+        try expect(!state.navigateProject(nil, unfiledOnly: true), "A failed Unfiled scope reports failure to its picker")
+        try expect(state.libraryProject == "First" && state.workspace.snapshot == before
+            && state.workspace.selectedCaptureID == first.id && state.workspace.error != nil
+            && state.status?.severity == .error,
+                   "A failed project change keeps displayed and persisted scope and selected item together")
+        try expect(state.navigationHistory.entries == beforeEntries && state.navigationHistory.index == beforeIndex
+            && state.navigationTransitionRevision == beforeRevision,
+                   "A failed project change neither moves history nor replaces its current destination")
+        try expect(try WorkspaceStore.readSnapshot(at: root) == before,
+                   "A failed project change preserves the saved workspace exactly")
+        state.libraryProject = "Second"
+        try expect(state.libraryProject == "First" && state.workspace.snapshot == before,
+                   "Direct project filtering also commits before publishing and remains unchanged after a failed write")
+        state.workspace.failureInjector = nil
+        var writes = 0
+        state.workspace.failureInjector = { writes += 1 }
+        try expect(state.navigateProject(nil, unfiledOnly: true) && writes == 1,
+                   "Retry commits project and Unfiled together in one save")
+        try expect(state.libraryProject == nil && state.workspace.selectedProject == nil
+            && state.workspace.explorerUnfiledOnly && state.navigationHistory.entries.count == beforeEntries.count + 1,
+                   "Successful retry creates one new destination after the unchanged old visit")
+        try expect(state.navigateProject("Second") && state.libraryProject == "Second"
+            && !state.workspace.explorerUnfiledOnly, "Selecting a named project clears the Unfiled scope atomically")
+        state.workspace.selectedCaptureID = second.id
+        state.workspace.failureInjector = nil
+        let beforeBack = state.workspace.snapshot
+        let backEntries = state.navigationHistory.entries
+        let backIndex = state.navigationHistory.index
+        let backRevision = state.navigationRestorationRevision
+        state.workspace.failureInjector = { throw CaptureStoreError.injectedInterruption }
+        state.back()
+        try expect(state.route == .library && state.libraryProject == "Second"
+            && state.workspace.snapshot == beforeBack && state.workspace.selectedCaptureID == second.id,
+                   "Failed Back restoration keeps the displayed project and selected capture unchanged")
+        try expect(state.navigationHistory.entries == backEntries && state.navigationHistory.index == backIndex
+            && state.navigationRestorationRevision == backRevision && state.canGoBack,
+                   "Failed Back retains exact history and remains retryable")
+        state.workspace.failureInjector = nil
+        state.back()
+        try expect(state.libraryProject == nil && state.workspace.selectedProject == nil
+            && state.workspace.explorerUnfiledOnly && state.navigationHistory.index == backIndex - 1,
+                   "Retrying Back restores the Unfiled destination after its scope write succeeds")
+        let beforeForward = state.workspace.snapshot
+        let forwardEntries = state.navigationHistory.entries
+        let forwardIndex = state.navigationHistory.index
+        state.workspace.failureInjector = { throw CaptureStoreError.injectedInterruption }
+        state.forward()
+        try expect(state.libraryProject == nil && state.workspace.snapshot == beforeForward
+            && state.navigationHistory.entries == forwardEntries && state.navigationHistory.index == forwardIndex
+            && state.canGoForward, "Failed Forward retains its old scope and branch without publishing the target")
+        state.workspace.failureInjector = nil
+        state.forward()
+        try expect(state.libraryProject == "Second" && state.workspace.selectedProject == "Second"
+            && !state.workspace.explorerUnfiledOnly && state.workspace.selectedCaptureID == second.id,
+                   "Retrying Forward restores its project's own selected identity")
+        let reopened = WorkspaceStore(root: root)
+        try expect(reopened.snapshot == state.workspace.snapshot && reopened.selectedProject == "Second"
+            && reopened.selectedCaptureID == second.id, "Restart sees the same destination that successful Forward displays")
+        state.back(); state.back()
+        try expect(state.libraryProject == "First" && !state.workspace.explorerUnfiledOnly
+            && state.workspace.selectedCaptureID == first.id,
+                   "Back through Unfiled restores the first project's original per-project selection")
+        let currentEntries = state.navigationHistory.entries
+        let currentIndex = state.navigationHistory.index
+        state.navigationWindowInteractionBlocked = true
+        try expect(!state.navigateProject("Second") && state.libraryProject == "First"
+            && state.navigationHistory.entries == currentEntries && state.navigationHistory.index == currentIndex,
+                   "A blocked project command reports failure without writing or creating a visit")
+        state.navigationWindowInteractionBlocked = false
+    }
+
+    @MainActor private static func removalReturnPersistenceTests() async throws {
+        let root = FileManager.default.temporaryDirectory.appendingPathComponent("DaBinRemovalReturnQA-\(UUID())")
+        let defaultsName = "DaBinRemovalReturnQA.\(UUID())"
+        let defaults = UserDefaults(suiteName: defaultsName)!
+        let board = NSPasteboard(name: .init(defaultsName))
+        let store = try CaptureStore(root: root)
+        let previews = PreviewService(store: store, defaults: defaults)
+        let auto = AutoCaptureService(settings: AutoCaptureSettings(defaults: defaults), input: InputService(store: store),
+            pasteboardProvider: { fatalError("Removal return QA never reads the clipboard") }, sourceApplicationProvider: { nil })
+        let state = AppState(store: store, previews: previews,
+            reminders: ReminderService(store: store, client: HistoryNotifications()), autoCapture: auto,
+            captureClipboard: CaptureClipboardService(pasteboard: board))
+        defer {
+            auto.shutdown(); state.focusSessions.shutdown(); state.shutdownNotificationPresentation(); previews.shutdown()
+            board.releaseGlobally(); defaults.removePersistentDomain(forName: defaultsName)
+            try? FileManager.default.removeItem(at: root)
+        }
+        let task = try store.createTask(text: "Surviving project task", projectName: "Fixture")
+        let child = try store.capture(text: "Attachment to remove safely", parentTask: task)[0]
+        state.openLibrary(); state.navigateProject("Fixture")
+        state.openCapture(task.id, focus: "comment")
+        let taskDraft = state.selectedDraft!
+        taskDraft.commentComposer = "Pending parent comment survives child removal"
+        taskDraft.pendingChecklistText = "Pending parent checklist survives child removal"
+        let taskViewport = NavigationViewportAnchor(itemID: ProjectWorkspaceIdentity.capture(task.id), offset: -18)
+        state.workspaceViewport = taskViewport
+        state.openCapture(child.id)
+        let before = state.workspace.snapshot
+        state.workspace.failureInjector = { throw CaptureStoreError.injectedInterruption }
+        await state.removeCapture(child)
+        try expect(!store.captures.contains { $0.id == child.id } && store.trashedCaptures.contains { $0.id == child.id }
+            && store.captures.contains { $0 === task }, "A failed return does not pretend the successfully trashed attachment was restored")
+        try expect(state.route == .library && state.libraryProject == "Fixture" && state.workspace.snapshot == before
+            && state.selectedCapture == nil && state.selectedDraft == nil && state.detailFocus == nil,
+                   "Failed removal return leaves deleted Detail through a coherent Library in the actual persisted scope")
+        try expect(state.navigationHistory.current?.route == .library
+            && state.navigationHistory.current?.project == state.workspace.selectedProject
+            && !state.navigationHistory.entries.contains { $0.selectedCaptureID == child.id }
+            && state.navigationHistory.entries.contains { $0.route == .detail && $0.selectedCaptureID == task.id },
+                   "History prunes the deleted visit, aligns fallback scope, and retains the surviving parent for Back retry")
+        try expect(state.status?.severity == .warning && state.status?.text.contains("Moved to Recently Deleted") == true
+            && state.status?.text.contains("Use Back to try again") == true,
+                   "Successful trash and failed workspace return have one specific warning rather than a false success")
+        let failedEntries = state.navigationHistory.entries
+        let failedIndex = state.navigationHistory.index
+        state.back()
+        try expect(state.route == .library && state.navigationHistory.entries == failedEntries
+            && state.navigationHistory.index == failedIndex && state.workspace.snapshot == before,
+                   "Retry while storage is still unavailable keeps the safe fallback and original parent history")
+        let reread = try CaptureStore(root: root)
+        try expect(reread.trashedCaptures.contains { $0.id == child.id }
+            && reread.captures.first { $0.id == task.id }?.originalText == task.originalText,
+                   "Restart confirms committed trash and unchanged surviving parent content")
+        state.workspace.failureInjector = nil
+        state.back()
+        try expect(state.route == .detail && state.selectedCapture === task && state.selectedDraft === taskDraft
+            && state.detailFocus == "comment" && state.workspaceViewport == taskViewport
+            && state.workspace.selectedCaptureID == task.id,
+                   "Recovered storage lets Back restore the exact surviving parent's draft, focus, viewport and selection")
+        try expect(taskDraft.commentComposer == "Pending parent comment survives child removal"
+            && taskDraft.pendingChecklistText == "Pending parent checklist survives child removal"
+            && task.comment.isEmpty && task.taskPlanning?.checklist.isEmpty != false,
+                   "Return retry preserves unfinished comment and checklist without silently committing either")
+        let reopenedWorkspace = WorkspaceStore(root: root)
+        try expect(reopenedWorkspace.snapshot == state.workspace.snapshot && reopenedWorkspace.selectedCaptureID == task.id,
+                   "Successful retry persists the same parent scope that the UI now displays")
+        let nextChild = try store.capture(text: "Batch attachment to remove", parentTask: task)[0]
+        let other = try store.capture(text: "Another batch item", projectName: "Fixture")[0]
+        state.openCapture(nextChild.id)
+        state.workspace.failureInjector = { throw CaptureStoreError.injectedInterruption }
+        await state.removeCaptures([nextChild, other])
+        try expect([nextChild, other].allSatisfy { item in store.trashedCaptures.contains { $0.id == item.id } }
+            && state.route == .library && state.status?.severity == .warning
+            && state.status?.text.contains("couldn’t restore the previous workspace") == true,
+                   "Batch success preserves its newly generated failed-return warning after later items trash successfully")
+        state.workspace.failureInjector = nil
+        state.back()
+        try expect(state.selectedCapture === task && state.selectedDraft === taskDraft
+            && taskDraft.pendingChecklistText == "Pending parent checklist survives child removal",
+                   "Batch fallback retains the same surviving parent and unfinished draft for Back retry")
+        state.openLibrary()
+        let ordinary = try store.capture(text: "Ordinary batch removal", projectName: "Fixture")[0]
+        state.status = AppStatusMessage(text: "An unrelated earlier warning", severity: .warning)
+        await state.removeCaptures([ordinary])
+        try expect(state.status?.severity == .success && state.status?.text == "Moved 1 items to Recently Deleted.",
+                   "An unrelated old warning is not mistaken for a new batch return failure")
     }
 
     @MainActor private static func integrationTests() async throws {
@@ -298,6 +484,8 @@ import Foundation
 
     @MainActor static func main() async throws {
         try modelTests()
+        try projectPersistenceTests()
+        try await removalReturnPersistenceTests()
         try await integrationTests()
         print("PASS: \(checks) bounded history, branch, project, draft, search, deletion and navigation safety checks")
     }

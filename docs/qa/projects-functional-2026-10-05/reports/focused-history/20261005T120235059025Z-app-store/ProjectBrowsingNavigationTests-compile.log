@@ -1,0 +1,15 @@
+/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa-cache/app-store-1d1ef2c67c4e4e6747d2e64bd3a3aaf61fccbab8c7b1fc70224cb78744632f87/ProjectBrowsingNavigationTests-abd7d36534d7b0e5/ProjectBrowsingNavigationTests.swift:97:22: error: instance method 'run' is unavailable from asynchronous contexts; run(until:) cannot be used from async contexts.; this is an error in the Swift 6 language mode
+ 95 |         await Task.yield()
+ 96 |         try? await Task.sleep(for: .milliseconds(100))
+ 97 |         RunLoop.main.run(until: Date().addingTimeInterval(0.04))
+    |                      `- error: instance method 'run' is unavailable from asynchronous contexts; run(until:) cannot be used from async contexts.; this is an error in the Swift 6 language mode
+ 98 |     }
+ 99 |     @MainActor private static func nodes(_ view: NSView) -> [ProjectBrowsingAXNode] {
+
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/Foundation.framework/Headers/NSRunLoop.h:125:1: note: 'run(until:)' declared here
+123 | ///
+124 | /// If no input sources or timers are attached to the run loop, this method exits immediately; otherwise, it runs the receiver in the ``RunLoop/Mode/default`` mode by repeatedly invoking ``RunLoop/run(mode:before:)`` until the specified expiration date.
+125 | - (void)runUntilDate:(NSDate *)limitDate NS_SWIFT_UNAVAILABLE_FROM_ASYNC("run(until:) cannot be used from async contexts.");
+    | `- note: 'run(until:)' declared here
+126 | 
+127 | /// Runs the loop once, blocking for input in the specified mode until a given date.

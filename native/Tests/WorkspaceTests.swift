@@ -3,6 +3,69 @@ import Foundation
 import UniformTypeIdentifiers
 
 @main struct WorkspaceTests {
+    @MainActor private static func projectScopePersistence(_ root: URL) throws -> Int {
+        var checks = 0
+        func expect(_ condition: Bool, _ message: String) throws {
+            checks += 1
+            if !condition { throw NSError(domain: "WorkspaceTests", code: 2,
+                userInfo: [NSLocalizedDescriptionKey: message]) }
+        }
+        try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
+        let workspace = WorkspaceStore(root: root)
+        let first = UUID(), second = UUID()
+        var legacy = WorkspaceSnapshot()
+        legacy.selectedProject = "First"; legacy.selectedCaptureID = first
+        try workspace.save(legacy)
+        workspace.failureInjector = { throw CaptureStoreError.injectedInterruption }
+        do {
+            try workspace.selectProject(nil, unfiledOnly: true)
+            try expect(false, "An injected project scope write must fail")
+        } catch CaptureStoreError.injectedInterruption { }
+        try expect(workspace.snapshot == legacy && workspace.error != nil,
+                   "Failed scope save publishes neither a new project nor half an Unfiled destination")
+        try expect(try WorkspaceStore.readSnapshot(at: root) == legacy,
+                   "Failed scope save keeps the legacy persisted selection unchanged")
+        workspace.failureInjector = nil
+        var writes = 0
+        workspace.failureInjector = { writes += 1 }
+        try workspace.selectProject(nil, unfiledOnly: true)
+        try expect(writes == 1 && workspace.selectedProject == nil && workspace.explorerUnfiledOnly
+            && workspace.selectedCaptureID == nil
+            && workspace.snapshot.projectSelections?[WorkspaceSnapshot.projectKey("First")] == first,
+                   "One transaction switches to Unfiled and migrates the legacy selection under its original project")
+        try workspace.selectProject("Second", unfiledOnly: false)
+        workspace.selectedCaptureID = second
+        try workspace.selectProject("First", unfiledOnly: false)
+        try expect(workspace.selectedCaptureID == first, "Switching back retrieves only the first project's selection")
+        let before = workspace.snapshot
+        var presentation = NavigationWorkspacePresentation()
+        presentation.mode = .shelf; presentation.selectedID = second; presentation.source = "Fixture Editor"
+        presentation.dateFilter = .lastSevenDays; presentation.originFilter = .clipboard
+        presentation.snippetsOnly = true; presentation.unfiledOnly = false
+        presentation.grouping = .date; presentation.query = "Exact fixture query"; presentation.dailyFiles = true
+        workspace.failureInjector = { throw CaptureStoreError.injectedInterruption }
+        do {
+            try workspace.restoreNavigationScope(project: "Second", presentation: presentation)
+            try expect(false, "Injected history scope restoration must fail")
+        } catch CaptureStoreError.injectedInterruption { }
+        try expect(workspace.snapshot == before && (try WorkspaceStore.readSnapshot(at: root)) == before,
+                   "Failed history restore keeps all project, selection and presentation fields together")
+        writes = 0
+        workspace.failureInjector = { writes += 1 }
+        try workspace.restoreNavigationScope(project: "Second", presentation: presentation)
+        try expect(writes == 1 && workspace.selectedProject == "Second" && workspace.selectedCaptureID == second
+            && workspace.mode == .shelf && workspace.sourceApplication == presentation.source
+            && workspace.dateFilter == .lastSevenDays && workspace.originFilter == .clipboard
+            && workspace.snippetsOnly && workspace.explorerGrouping == .date
+            && workspace.explorerQuery == presentation.query && workspace.explorerShowsDailyFiles,
+                   "One successful history transaction restores the exact destination and its preferences")
+        let reopened = WorkspaceStore(root: root)
+        try expect(reopened.snapshot == workspace.snapshot && reopened.selectedCaptureID == second,
+                   "Restart observes the complete scope and its selected identity")
+        reopened.selectedProject = "First"
+        try expect(reopened.selectedCaptureID == first, "The previous project's selection survives scope restoration and restart")
+        return checks
+    }
     @MainActor static func main() async throws {
         var checks = 0
         func expect(_ value: Bool, _ message: String) throws {
@@ -16,6 +79,7 @@ import UniformTypeIdentifiers
         }
         let root = files.temporaryDirectory.appendingPathComponent("DaBin-WorkspaceTests-\(UUID())")
         defer { try? files.removeItem(at: root) }
+        checks += try projectScopePersistence(root.appendingPathComponent("scope-transactions"))
         let store = try CaptureStore(root: root.appendingPathComponent("archive"))
         let workspace = WorkspaceStore(root: store.root)
         try expect(workspace.error == nil && workspace.mode == .collection && workspace.shelfCaptureIDs.isEmpty,

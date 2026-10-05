@@ -1,0 +1,50 @@
+[
+  {
+    "run": "20261005T120235059025Z-app-store",
+    "status": "failed",
+    "passedSuites": 5,
+    "failedSuites": 2,
+    "productionSourceIsCurrent": false,
+    "sourceChangedDuringRun": false
+  },
+  {
+    "run": "20261005T121331967908Z-app-store",
+    "status": "failed",
+    "passedSuites": 2,
+    "failedSuites": 1,
+    "productionSourceIsCurrent": true,
+    "sourceChangedDuringRun": false
+  },
+  {
+    "run": "20261005T121748780566Z-app-store",
+    "status": "failed",
+    "passedSuites": 3,
+    "failedSuites": 2,
+    "productionSourceIsCurrent": true,
+    "sourceChangedDuringRun": false
+  },
+  {
+    "run": "20261005T122051939663Z-app-store",
+    "status": "failed",
+    "passedSuites": 1,
+    "failedSuites": 1,
+    "productionSourceIsCurrent": true,
+    "sourceChangedDuringRun": false
+  },
+  {
+    "run": "20261005T122310959090Z-app-store",
+    "status": "failed",
+    "passedSuites": 0,
+    "failedSuites": 1,
+    "productionSourceIsCurrent": true,
+    "sourceChangedDuringRun": false
+  },
+  {
+    "run": "20261005T122507303210Z-app-store",
+    "status": "passed",
+    "passedSuites": 1,
+    "failedSuites": 0,
+    "productionSourceIsCurrent": true,
+    "sourceChangedDuringRun": false
+  }
+]

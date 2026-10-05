@@ -539,7 +539,7 @@ final class ExplorerCaptureController: ObservableObject {
         var restored = 0
         var failures: [String] = []
         let moves = undoMoves
-        undoMoves = []; canUndoMove = false
+        var retryable: [Move] = []
         for change in moves {
             guard let capture = state.store.captures.first(where: { $0.id == change.id }),
                   capture.projectName == change.after, capture.updatedAt == change.revision, capture.parentTaskID == nil else {
@@ -549,8 +549,15 @@ final class ExplorerCaptureController: ObservableObject {
             do {
                 try state.store.setOrganization(capture, pinned: capture.isPinned, projectName: change.before)
                 restored += 1
-            } catch { failures.append(error.localizedDescription) }
+            } catch {
+                // A failed write rolls back the item. Keep its exact revision
+                // receipt so the user can retry without undoing newer edits.
+                retryable.append(change)
+                failures.append(error.localizedDescription)
+            }
         }
+        undoMoves = retryable
+        canUndoMove = !retryable.isEmpty
         state.status = AppStatusMessage(text: failures.isEmpty ? "Project move undone." :
             "Restored \(restored) items. " + failures.joined(separator: "\n"), severity: failures.isEmpty ? .success : .warning)
     }

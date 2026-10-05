@@ -1,0 +1,64 @@
+{
+  "images": [
+    {
+      "path": "renders/project-workspace/project-filter-menu-narrow@2x.png",
+      "originalPath": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/projects-functional-20261005T120113Z/final-full/project-workspace/project-filter-menu-narrow@2x.png",
+      "sha256": "8786c94146a0daf3c9dd76227f45325a3de22b0af4c9120fba0acd2fd07816cb",
+      "sourceFingerprint": "41b3f117c76dc5f22051c7be2833caecd6cfd4e00345dc4f99f60c8c998820fc",
+      "run": "20261005T122643328446Z-app-store",
+      "fictionalArchive": true
+    },
+    {
+      "path": "renders/project-workspace/project-grid-wide@2x.png",
+      "originalPath": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/projects-functional-20261005T120113Z/final-full/project-workspace/project-grid-wide@2x.png",
+      "sha256": "a22d0c1076e4ee232b17a3e314a06323c491e1c2acb487865fe5fef60fbc7a3e",
+      "sourceFingerprint": "41b3f117c76dc5f22051c7be2833caecd6cfd4e00345dc4f99f60c8c998820fc",
+      "run": "20261005T122643328446Z-app-store",
+      "fictionalArchive": true
+    },
+    {
+      "path": "renders/project-workspace/project-selected-narrow@2x.png",
+      "originalPath": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/projects-functional-20261005T120113Z/final-full/project-workspace/project-selected-narrow@2x.png",
+      "sha256": "be6db5c7af7036c8a2950ea85dd721597a6f9d84a1d012b553f7e268636313b4",
+      "sourceFingerprint": "41b3f117c76dc5f22051c7be2833caecd6cfd4e00345dc4f99f60c8c998820fc",
+      "run": "20261005T122643328446Z-app-store",
+      "fictionalArchive": true
+    },
+    {
+      "path": "renders/snippet-naming/snippet-clipboard-failed-native@2x.png",
+      "originalPath": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/projects-functional-20261005T120113Z/final-full/snippet-naming/snippet-clipboard-failed-native@2x.png",
+      "sha256": "7b3dbe6e6b7bdd3c6c06c12b43a12e586b9453b833b506ed1c0447246596dc8a",
+      "sourceFingerprint": "41b3f117c76dc5f22051c7be2833caecd6cfd4e00345dc4f99f60c8c998820fc",
+      "run": "20261005T122643328446Z-app-store",
+      "fictionalArchive": true
+    },
+    {
+      "path": "renders/snippet-naming/snippet-shelf-failed-native@2x.png",
+      "originalPath": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/projects-functional-20261005T120113Z/final-full/snippet-naming/snippet-shelf-failed-native@2x.png",
+      "sha256": "bb1516e87b347f487fc48e88162b5d33fc944460b5ac956cb77ddbb81d6b0129",
+      "sourceFingerprint": "41b3f117c76dc5f22051c7be2833caecd6cfd4e00345dc4f99f60c8c998820fc",
+      "run": "20261005T122643328446Z-app-store",
+      "fictionalArchive": true
+    },
+    {
+      "path": "renders/project-cards/project-types-compact-320-dark@2x.png",
+      "originalPath": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/projects-functional-20261005T120113Z/final-full/project-cards/project-types-compact-320-dark@2x.png",
+      "sha256": "52775955014a927e794d72731746a508de2d87307c47113a15c8e06e24344112",
+      "sourceFingerprint": "41b3f117c76dc5f22051c7be2833caecd6cfd4e00345dc4f99f60c8c998820fc",
+      "run": "20261005T122643328446Z-app-store",
+      "fictionalArchive": true
+    },
+    {
+      "path": "renders/project-cards/project-types-grid-light@2x.png",
+      "originalPath": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/projects-functional-20261005T120113Z/final-full/project-cards/project-types-grid-light@2x.png",
+      "sha256": "e88afad4ac24704433900049aed1c9c480d34588354a6973f463d2b79f928040",
+      "sourceFingerprint": "41b3f117c76dc5f22051c7be2833caecd6cfd4e00345dc4f99f60c8c998820fc",
+      "run": "20261005T122643328446Z-app-store",
+      "fictionalArchive": true
+    }
+  ],
+  "limitations": [
+    "Native cached sheet PNGs preserve transparency; native button interaction was verified separately.",
+    "project-filter-menu-narrow shows the reset result All/Any date, not the empty-reset button itself."
+  ]
+}

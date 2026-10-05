@@ -211,12 +211,43 @@ final class WorkspaceStore: ObservableObject {
     }
     var selectedProject: String? {
         get { snapshot.selectedProject }
-        set { updatePreference {
-            if $0.projectSelections == nil, let current = $0.selectedCaptureID {
-                $0.projectSelections = [WorkspaceSnapshot.projectKey($0.selectedProject): current]
-            }
-            $0.selectedProject = newValue
-        } }
+        set {
+            do { try selectProject(newValue, unfiledOnly: explorerUnfiledOnly) }
+            catch { self.error = error.localizedDescription }
+        }
+    }
+
+    /// Project and Unfiled are one browsing destination. Publish it only after
+    /// the complete selection scope has been written successfully.
+    func selectProject(_ project: String?, unfiledOnly: Bool) throws {
+        let next = projectScope(project, unfiledOnly: unfiledOnly)
+        guard next != snapshot else { return }
+        try save(next)
+    }
+
+    /// Back/Forward restores the destination and its selection/preferences in
+    /// one write, before AppState moves the history cursor or displayed route.
+    func restoreNavigationScope(project: String?, presentation: NavigationWorkspacePresentation) throws {
+        var next = projectScope(project, unfiledOnly: presentation.unfiledOnly)
+        next.mode = presentation.mode; next.sourceApplication = presentation.source
+        next.dateFilter = presentation.dateFilter; next.originFilter = presentation.originFilter
+        next.snippetsOnly = presentation.snippetsOnly; next.explorerGrouping = presentation.grouping
+        next.explorerQuery = String(presentation.query.prefix(2_000)); next.explorerShowsDailyFiles = presentation.dailyFiles
+        var selections = next.projectSelections ?? [:]
+        selections[WorkspaceSnapshot.projectKey(project)] = presentation.selectedID
+        next.projectSelections = selections; next.selectedCaptureID = presentation.selectedID
+        guard next != snapshot else { return }
+        try save(next)
+    }
+
+    private func projectScope(_ project: String?, unfiledOnly: Bool) -> WorkspaceSnapshot {
+        var next = snapshot
+        if next.projectSelections == nil, let current = next.selectedCaptureID {
+            next.projectSelections = [WorkspaceSnapshot.projectKey(next.selectedProject): current]
+        }
+        next.selectedProject = project
+        if unfiledOnly || next.explorerUnfiledOnly != nil { next.explorerUnfiledOnly = unfiledOnly }
+        return next
     }
     var selectedCaptureID: UUID? {
         get {

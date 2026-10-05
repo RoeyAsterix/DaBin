@@ -74,6 +74,7 @@ NONFOCUS += ["DurabilityStressTests", "FlowActionStressTests"]
 NONFOCUS.append("MediaIntegrationTests")
 WINDOW.append("VisualAnimationStressTests")
 WINDOW.append("VideoPlaybackIntegrationTests")
+WINDOW += ["ProjectBrowsingNavigationTests", "SnippetNamingInteractionTests"]
 
 
 def capture(arguments):

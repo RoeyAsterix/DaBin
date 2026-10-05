@@ -9,6 +9,8 @@ struct WorkspaceItemCard: View {
     @Environment(\.daBinAccent) private var accent
     @State private var namingSnippet = false
     @State private var snippetName = ""
+    @State private var snippetError: String?
+    @FocusState private var snippetNameFocused: Bool
     @State private var copied = false
     @State private var copyGeneration = 0
 
@@ -98,11 +100,9 @@ struct WorkspaceItemCard: View {
                               cornerRadius: 12, fallbackColor: isSelected ? accent.opacity(0.55) : Palette.line,
                               fallbackWidth: isSelected ? 1 : 0.7)
             .contextMenu { itemActions(includesRemoval: true, includesCardButtons: true) }
-            .alert(alias == nil ? "Save as snippet" : "Rename snippet", isPresented: $namingSnippet) {
-                TextField("Snippet name", text: $snippetName)
-                Button("Cancel", role: .cancel) { }
-                Button("Save") { saveSnippet() }.disabled(snippetName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
-            } message: { Text("Give this reusable content a name. Its original capture stays intact and is searchable.") }
+            .sheet(isPresented: $namingSnippet, onDismiss: resetSnippetNaming) {
+                snippetNamingForm
+            }
     }
 
     @ViewBuilder private func itemActions(includesRemoval: Bool, includesCardButtons: Bool) -> some View {
@@ -116,7 +116,9 @@ struct WorkspaceItemCard: View {
                 catch { state.reportFailure(error.localizedDescription) }
             }
             Button(alias == nil ? "Save as snippet…" : "Rename snippet…", systemImage: "text.badge.star") {
-                snippetName = alias ?? String(capture.title.prefix(60)); namingSnippet = true
+                snippetName = alias ?? String(capture.title.prefix(60))
+                snippetError = nil
+                namingSnippet = true
             }
         }
         if alias != nil {
@@ -182,10 +184,57 @@ struct WorkspaceItemCard: View {
         do { try workspace.setOnShelf([capture.id], included: !onShelf) }
         catch { state.reportFailure(error.localizedDescription) }
     }
+    private var snippetNamingForm: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text(alias == nil ? "Save as snippet" : "Rename snippet")
+                .font(.system(size: 17, weight: .semibold))
+            Text("Give this reusable content a name. Its original capture stays intact and is searchable.")
+                .font(.system(size: 12)).foregroundStyle(Palette.muted)
+                .fixedSize(horizontal: false, vertical: true)
+            TextField("Snippet name", text: $snippetName)
+                .textFieldStyle(.roundedBorder).focused($snippetNameFocused).frame(minHeight: 32)
+                .accessibilityLabel("Snippet name")
+                .accessibilityIdentifier("workspace-snippet-name-\(capture.id.uuidString)")
+                .onSubmit(saveSnippet)
+            if let snippetError {
+                Text(snippetError).font(.system(size: 12)).foregroundStyle(Palette.task)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .accessibilityIdentifier("workspace-snippet-error-\(capture.id.uuidString)")
+            }
+            HStack(spacing: 8) {
+                Button(role: .cancel) { namingSnippet = false } label: {
+                    Text("Cancel").frame(minHeight: 32).contentShape(Rectangle())
+                }.keyboardShortcut(.cancelAction)
+                    .accessibilityIdentifier("workspace-snippet-cancel-\(capture.id.uuidString)")
+                Spacer(minLength: 0)
+                Button(action: saveSnippet) {
+                    Text(snippetError == nil ? "Save" : "Retry save").frame(minHeight: 32).contentShape(Rectangle())
+                }.buttonStyle(.borderedProminent).tint(accent).keyboardShortcut(.defaultAction)
+                    .disabled(snippetName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                    .accessibilityIdentifier("workspace-snippet-save-\(capture.id.uuidString)")
+            }
+        }.padding(20).frame(width: 320)
+            .accessibilityElement(children: .contain)
+            .accessibilityIdentifier("workspace-snippet-editor-\(capture.id.uuidString)")
+            .onAppear { snippetNameFocused = true }
+            .onChange(of: snippetName) { _, _ in snippetError = nil }
+    }
+
+    private func resetSnippetNaming() {
+        snippetName = ""
+        snippetError = nil
+        snippetNameFocused = false
+    }
+
     private func saveSnippet() {
+        guard namingSnippet, !snippetName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
         do {
             try workspace.setSnippetName(snippetName, for: capture.id)
             state.status = AppStatusMessage(text: "Snippet saved. Find it in Projects → Clipboard → Snippets.", severity: .success)
-        } catch { state.reportFailure(error.localizedDescription) }
+            namingSnippet = false
+        } catch {
+            snippetError = "Couldn’t save this snippet name: " + error.localizedDescription
+            state.reportFailure(error.localizedDescription)
+        }
     }
 }

@@ -1,0 +1,1 @@
+Project filter native target: type=SwiftUIPopupButtonCell role=AXMenuButton AX={{98, 574}, {55, 16}} interaction={{93, 574}, {60, 16}} visible={{80, 300}, {384, 430}} AXEnabled=Optional(true) nativeEnabled=Optional(true) cellEnabled=Optional(true) cellControl=Optional("SwiftUIPopupButton") sameCell=true ownWindow=true actions=["AXPress"]

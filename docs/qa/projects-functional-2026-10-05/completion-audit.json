@@ -1,0 +1,51 @@
+{
+  "fullRunPassingLogsInspected": 120,
+  "otherMissingCompletionMarkersFound": false,
+  "emptyReportedSummarySuites": [
+    {
+      "suite": "WeeklyWindowTests",
+      "logSHA256": "d2855233c6e7745ec79c99e6c16f07ec40edfd5ea4af93238d94b27d4f3f737a",
+      "finalLines": [
+        "Weekly window checks: 101, failures: 0"
+      ],
+      "classification": "final_completion_present_runner_summary_regex_did_not_match"
+    },
+    {
+      "suite": "FilterResizeTests",
+      "logSHA256": "4859c8b50f2b9c1874c4605b634643934447c49185e557c78479550d2db87a26",
+      "finalLines": [
+        "Filter resize checks: 112, failures: 0"
+      ],
+      "classification": "final_completion_present_runner_summary_regex_did_not_match"
+    },
+    {
+      "suite": "RobotWindowTransitionTests",
+      "logSHA256": "7e3a07057b929839795f1a8de2f772937978b8731a63f448dcb74be7fe763f66",
+      "finalLines": [
+        "PASS 60 robot window transition checks"
+      ],
+      "classification": "final_completion_present_runner_summary_regex_did_not_match"
+    },
+    {
+      "suite": "CaptureExtendedInteractionTests",
+      "logSHA256": "c8ba410d5aba69a7d900f812b5e8d8d72179d9ee8013d8b908f0b0c387e1ed5b",
+      "finalLines": [
+        "Capture Extended View QA passed (24 checks)"
+      ],
+      "classification": "final_completion_present_runner_summary_regex_did_not_match"
+    },
+    {
+      "suite": "ExtendedMediaInteractionTests",
+      "logSHA256": "19fbdfd42038dca3bae55d7bf668847aea6e5a405a9ecb9405a2a46dcf595564",
+      "finalLines": [
+        "Extended media QA: text",
+        "Extended media QA: Quick Look",
+        "Extended media interaction QA passed (36 checks); renders: /private/tmp/dabin-extended-media-qa"
+      ],
+      "classification": "final_completion_present_runner_summary_regex_did_not_match"
+    }
+  ],
+  "prematureWindowRetry": "20261005T125628503870Z-app-store reported exit0 without final completion; excluded from verified aggregate",
+  "acceptedWindowRun": "20261005T130057008810Z-app-store",
+  "acceptedWindowCompletionMarker": true
+}

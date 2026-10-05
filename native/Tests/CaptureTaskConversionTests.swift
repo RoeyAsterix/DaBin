@@ -66,6 +66,7 @@ struct CaptureTaskConversionTests {
         try legacyPayloads()
         try rollbackAndIdentity(root.appendingPathComponent("transactions"))
         try await detailAndPageState(root.appendingPathComponent("state"))
+        try projectUndoEligibility(root.appendingPathComponent("project-undo"))
         try await taskMembership(root.appendingPathComponent("membership"))
         try await groupingAndExports(root.appendingPathComponent("grouping"))
         try await promotedAutomaticOrder(root.appendingPathComponent("promoted-order"))
@@ -247,6 +248,53 @@ struct CaptureTaskConversionTests {
                    && failedDraft.hasChanges && app.captureLayoutRevision == failedLayout,
                    "Failed conversion preserves the page, draft and layout revision")
         store.failureInjector = nil
+    }
+
+    @MainActor private static func projectUndoEligibility(_ root: URL) throws {
+        let store = try CaptureStore(root: root)
+        let app = state(for: store)
+        defer {
+            app.autoCapture.shutdown(); app.focusSessions.shutdown(); app.shutdownNotificationPresentation()
+            app.previews.shutdown()
+        }
+        let first = try store.capture(text: "First batch conversion original", projectName: "Fixture")[0]
+        let second = try store.capture(text: "Second batch conversion original", projectName: "Fixture")[0]
+        let receipt = try app.convertProjectItemsToTasks([first, second])
+        try expect(app.canUndoProjectTaskConversion(receipt), "An untouched batch exposes safe Undo through AppState")
+        app.openCapture(first.id, focus: "task")
+        let draft = app.selectedDraft!
+        try expect(!draft.hasChanges && app.canUndoProjectTaskConversion(receipt),
+                   "Opening a converted task does not invalidate its unchanged Undo receipt")
+        draft.commentComposer = "Pending comment belongs to this task"
+        let revision = first.updatedAt
+        try expect(!draft.hasChanges && store.canUndoProjectTaskConversion(receipt) && !app.canUndoProjectTaskConversion(receipt),
+                   "An unfinished comment hides batch Undo while its persisted receipt alone remains eligible")
+        try expect(!app.undoProjectTaskConversion(receipt) && first.isTask && second.isTask
+            && first.updatedAt == revision && draft.commentComposer == "Pending comment belongs to this task",
+                   "The Undo handler shares the draft guard and preserves the complete converted batch and typed comment")
+        draft.commentComposer = ""
+        draft.pendingChecklistText = "A step not saved yet"
+        try expect(!app.canUndoProjectTaskConversion(receipt), "A pending checklist composer also protects the converted task")
+        draft.pendingChecklistText = ""
+        try expect(app.canUndoProjectTaskConversion(receipt), "Discarding unfinished edits makes the unchanged receipt eligible again")
+        try store.setOrganization(second, pinned: true, projectName: "Fixture")
+        try expect(!app.canUndoProjectTaskConversion(receipt) && !app.undoProjectTaskConversion(receipt)
+            && first.isTask && second.isTask && second.isPinned,
+                   "A later saved edit hides stale Undo and its action preserves every task in the batch")
+        let retryItem = try store.capture(text: "Retryable batch conversion original", projectName: "Fixture")[0]
+        let retryReceipt = try app.convertProjectItemsToTasks([retryItem])
+        store.failureInjector = { if $0 == .beforeMetadataSave { throw CaptureStoreError.injectedInterruption } }
+        try expect(!app.undoProjectTaskConversion(retryReceipt) && retryItem.isTask
+            && app.canUndoProjectTaskConversion(retryReceipt),
+                   "A transient Undo save failure preserves task data and keeps the exact receipt visible for retry")
+        store.failureInjector = nil
+        try expect(app.undoProjectTaskConversion(retryReceipt) && !retryItem.isTask
+            && !app.canUndoProjectTaskConversion(retryReceipt), "Successful retry consumes eligibility without running Undo twice")
+        let reopened = try CaptureStore(root: root)
+        try expect(reopened.captures.first { $0.id == retryItem.id }?.isTask == false
+            && reopened.captures.first { $0.id == first.id }?.isTask == true
+            && reopened.captures.first { $0.id == second.id }?.isPinned == true,
+                   "Restart preserves successful retry and the later edits that blocked the older batch receipt")
     }
 
     @MainActor private static func taskMembership(_ root: URL) async throws {

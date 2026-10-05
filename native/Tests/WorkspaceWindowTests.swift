@@ -1,5 +1,6 @@
 import AppKit
 import ApplicationServices
+import Darwin
 import SwiftUI
 
 @MainActor private final class WorkspaceWindowReminderClient: ReminderNotificationClient {
@@ -70,6 +71,13 @@ import SwiftUI
         typealias Action = @convention(c) (AnyObject, Selector) -> Bool
         return unsafeBitCast(object.method(for: selector), to: Action.self)(object, selector)
     }
+    var actions: [String] { (value("accessibilityActionNames") as? [String]) ?? [] }
+    func showMenu() -> Bool {
+        let selector = NSSelectorFromString("accessibilityPerformShowMenu")
+        guard object.responds(to: selector) else { return false }
+        typealias Action = @convention(c) (AnyObject, Selector) -> Bool
+        return unsafeBitCast(object.method(for: selector), to: Action.self)(object, selector)
+    }
     var children: [Any] {
         var result: [Any] = []
         for name in ["accessibilityChildren", "accessibilityChildrenInNavigationOrder", "accessibilityContents"] {
@@ -80,6 +88,30 @@ import SwiftUI
     }
 }
 
+/// Capture and close only native menus opened by this fixture. Cancellation
+/// occurs on the tracking run loop, never reentrantly in the begin observer.
+@MainActor private final class WorkspaceWindowMenuTracking {
+    private let deadline = ProcessInfo.processInfo.systemUptime + 2
+    private weak var window: NSWindow?
+    private(set) var menus: [NSMenu] = []
+    private(set) var ended = Set<ObjectIdentifier>()
+    private(set) var timedOut = false
+    init(window: NSWindow?) { self.window = window }
+    func began(_ menu: NSMenu) {
+        if !menus.contains(where: { $0 === menu }) { menus.append(menu) }
+    }
+    func didEnd(_ menu: NSMenu) { ended.insert(ObjectIdentifier(menu)) }
+    func cancel() {
+        menus.forEach { $0.cancelTrackingWithoutAnimation() }
+        guard ProcessInfo.processInfo.systemUptime >= deadline else { return }
+        timedOut = true
+        guard let window, let escape = NSEvent.keyEvent(with: .keyDown, location: .zero, modifierFlags: [],
+            timestamp: ProcessInfo.processInfo.systemUptime, windowNumber: window.windowNumber, context: nil,
+            characters: "\u{1b}", charactersIgnoringModifiers: "\u{1b}", isARepeat: false, keyCode: 53) else { return }
+        NSApp.postEvent(escape, atStart: true)
+    }
+}
+
 @MainActor private struct WorkspacePlanningHarness: View {
     @ObservedObject var draft: NewTaskDraft
     var body: some View { TaskPlanningEditor(planning: $draft.planning).padding(16) }
@@ -87,8 +119,34 @@ import SwiftUI
 
 /// Exercises the production workspace using native accessible actions in an
 /// isolated window. Fixtures never use the user's archive or system clipboard.
-@main private enum WorkspaceWindowTests {
+@main @MainActor private final class WorkspaceWindowTests: NSObject, NSApplicationDelegate {
+    private var result: Int32 = 1
     @MainActor private static var checks = 0
+
+    static func main() {
+        let application = NSApplication.shared
+        let delegate = WorkspaceWindowTests()
+        application.setActivationPolicy(.accessory)
+        application.delegate = delegate
+        withExtendedLifetime(delegate) { application.run() }
+        exit(delegate.result)
+    }
+
+    func applicationDidFinishLaunching(_ notification: Notification) {
+        Task {
+            do {
+                try await Self.run()
+                print("COMPLETE: WorkspaceWindowTests finished every fixture and cleanup")
+                result = 0
+            } catch {
+                result = 1
+                fputs("Workspace window QA failed: \(error)\n", stderr)
+            }
+            NSApp.stop(nil)
+            NSApp.postEvent(NSEvent.otherEvent(with: .applicationDefined, location: .zero, modifierFlags: [],
+                timestamp: 0, windowNumber: 0, context: nil, subtype: 0, data1: 0, data2: 0)!, atStart: true)
+        }
+    }
     @MainActor private static func expect(_ condition: Bool, _ message: String) throws {
         checks += 1
         if !condition { throw NSError(domain: "WorkspaceWindowTests", code: 1, userInfo: [NSLocalizedDescriptionKey: message]) }
@@ -173,6 +231,104 @@ import SwiftUI
         }
         fputs("Workspace controls at failure: \(nodes(view).compactMap { $0.identifier ?? $0.label }.joined(separator: "; "))\n", stderr)
         throw NSError(domain: "WorkspaceWindowTests", code: 2, userInfo: [NSLocalizedDescriptionKey: "Missing workspace control \(id)"])
+    }
+    @MainActor private static func menuItems(_ menu: NSMenu) -> [NSMenuItem] {
+        menu.items.flatMap { [$0] + ($0.submenu.map(menuItems) ?? []) }
+    }
+    @MainActor private static func nativeProjectFilterMenu(_ host: NSView, containing title: String) async throws -> NSMenu {
+        let target = try find(host, id: "project-filter-menu")
+        guard let window = host.window else {
+            throw NSError(domain: "WorkspaceWindowTests", code: 14,
+                userInfo: [NSLocalizedDescriptionKey: "Project filter menu needs its owned fixture window"])
+        }
+        let visible = window.convertToScreen(host.convert(host.bounds, to: nil))
+        // An AX cell can outlive/recycle its former control view. Only use a
+        // native control's hit rectangle when it still owns this exact cell
+        // and belongs to the current fixture; otherwise retain the AX frame.
+        let nativeControl: NSControl? = {
+            let control: NSControl?
+            if let cell = target.object as? NSCell, let candidate = cell.controlView as? NSControl,
+               candidate.cell === cell { control = candidate }
+            else { control = target.object as? NSControl }
+            guard let control, control.window === window, control.isDescendant(of: host),
+                  !control.isHiddenOrHasHiddenAncestor else { return nil }
+            return control
+        }()
+        let frame = nativeControl.map { window.convertToScreen($0.convert($0.bounds, to: nil)) } ?? target.frame
+        let advertisedAXEnabled: Bool? = target.object.responds(to: NSSelectorFromString("isAccessibilityEnabled"))
+            ? target.isEnabled : nil
+        let enabled = nativeControl?.isEnabled ?? (target.object as? NSCell)?.isEnabled ?? advertisedAXEnabled
+        let cell = target.object as? NSCell
+        let formerControl = cell?.controlView
+        let detail = "type=\(String(describing: type(of: target.object))) role=\(target.role) "
+            + "AX=\(NSStringFromRect(target.frame)) interaction=\(NSStringFromRect(frame)) visible=\(NSStringFromRect(visible)) "
+            + "AXEnabled=\(String(describing: advertisedAXEnabled)) nativeEnabled=\(String(describing: nativeControl?.isEnabled)) cellEnabled=\(String(describing: cell?.isEnabled)) "
+            + "cellControl=\(String(describing: formerControl.map { String(describing: type(of: $0)) })) "
+            + "sameCell=\(cell != nil && (formerControl as? NSControl)?.cell === cell) ownWindow=\(formerControl?.window === window) "
+            + "actions=\(target.actions)"
+        fputs("Project filter native target: \(detail)\n", stderr)
+        // Native borderless menus retain intrinsic hosts inside SwiftUI's
+        // 32-point layout frame. Test the real native bounds and action, as the
+        // existing header fixture does, without inventing larger AX geometry.
+        try expect(enabled != false && frame.width > 0 && frame.height > 0
+            && visible.insetBy(dx: -1, dy: -1).contains(frame),
+            "Narrow project filter menu has a visible owned native target without a disabled state: " + detail)
+        let tracking = WorkspaceWindowMenuTracking(window: window)
+        let center = NotificationCenter.default
+        let began = center.addObserver(forName: NSMenu.didBeginTrackingNotification, object: nil, queue: nil) { notification in
+            guard let menu = notification.object as? NSMenu else { return }
+            MainActor.assumeIsolated { tracking.began(menu) }
+        }
+        let ended = center.addObserver(forName: NSMenu.didEndTrackingNotification, object: nil, queue: nil) { notification in
+            guard let menu = notification.object as? NSMenu else { return }
+            MainActor.assumeIsolated { tracking.didEnd(menu) }
+        }
+        let timer = Timer(timeInterval: 0.02, repeats: true) { _ in MainActor.assumeIsolated { tracking.cancel() } }
+        RunLoop.main.add(timer, forMode: .common); RunLoop.main.add(timer, forMode: .eventTracking)
+        defer { timer.invalidate(); center.removeObserver(began); center.removeObserver(ended) }
+        var accepted = target.actions.contains("AXShowMenu") ? target.showMenu() : false
+        if !accepted && tracking.menus.isEmpty && target.actions.contains("AXPress") { accepted = target.press() }
+        if !accepted && tracking.menus.isEmpty {
+            let point = window.convertPoint(fromScreen: NSPoint(x: frame.midX, y: frame.midY))
+            let timestamp = ProcessInfo.processInfo.systemUptime
+            guard let down = NSEvent.mouseEvent(with: .leftMouseDown, location: point, modifierFlags: [],
+                timestamp: timestamp, windowNumber: window.windowNumber, context: nil, eventNumber: 1, clickCount: 1, pressure: 1),
+                  let up = NSEvent.mouseEvent(with: .leftMouseUp, location: point, modifierFlags: [],
+                timestamp: timestamp + 0.02, windowNumber: window.windowNumber, context: nil, eventNumber: 2, clickCount: 1, pressure: 0) else {
+                throw NSError(domain: "WorkspaceWindowTests", code: 15)
+            }
+            NSApp.postEvent(up, atStart: true); window.sendEvent(down)
+            if let release = NSApp.nextEvent(matching: .leftMouseUp, until: Date(), inMode: .default, dequeue: true) {
+                try expect(release.windowNumber == window.windowNumber, "Native filter-menu release belongs only to the fixture")
+                window.sendEvent(release)
+            }
+        }
+        await settleNavigation()
+        guard let menu = tracking.menus.first(where: { menuItems($0).contains { $0.title == title } }) else {
+            throw NSError(domain: "WorkspaceWindowTests", code: 16,
+                userInfo: [NSLocalizedDescriptionKey: "Project filter exposes a real native menu containing \(title)"])
+        }
+        try expect(!tracking.timedOut && tracking.ended.contains(ObjectIdentifier(menu)),
+            "Actual project filter menu closes before item dispatch")
+        return menu
+    }
+    @MainActor private static func selectProjectFilter(_ title: String, in host: NSView, message: String) async throws {
+        if nodes(host).contains(where: { $0.identifier == "project-filter-menu" && $0.frame.width > 0 && $0.frame.height > 0 }) {
+            let menu = try await nativeProjectFilterMenu(host, containing: title)
+            let identifier = "project-filter-" + title
+            guard let item = menuItems(menu).first(where: {
+                $0.identifier?.rawValue == identifier || WorkspaceAXNode(object: $0).identifier == identifier
+            }), let owner = item.menu else {
+                throw NSError(domain: "WorkspaceWindowTests", code: 17,
+                    userInfo: [NSLocalizedDescriptionKey: "Native project filter keeps exact menu item identity \(identifier)"])
+            }
+            try expect(item.title == title && item.isEnabled && !item.isHidden && item.action != nil, message)
+            owner.performActionForItem(at: owner.index(of: item))
+            await settleNavigation()
+        } else {
+            try expect(try find(host, id: "project-filter-" + title).press(), message)
+            settle()
+        }
     }
     @MainActor private static func findLabeled(_ view: NSView, label: String) throws -> WorkspaceAXNode {
         for _ in 0..<6 {
@@ -507,10 +663,8 @@ import SwiftUI
             "Window resizing and annotation tabs neither commit draft edits nor add unfinished checklist input")
     }
 
-    @MainActor static func main() async throws {
+    @MainActor private static func run() async throws {
         let application = NSApplication.shared
-        application.setActivationPolicy(.accessory)
-        application.finishLaunching()
         let files = FileManager.default
         let root = files.temporaryDirectory.appendingPathComponent("DaBin-WorkspaceWindow-\(UUID())")
         let suite = "DaBinWorkspaceWindow.\(UUID())"
@@ -663,12 +817,14 @@ import SwiftUI
                         $0.frame.width > 0 && (["project-export-all", "project-export-selection"].contains($0.identifier ?? "")
                             || ["Export", "Copy project", "Copy", "Export ZIP"].contains($0.label ?? ""))
                     }, "Projects avoids duplicate day/week export and standalone copy menus at \(Int(size.width))-point width")
-                    try expect(try find(hosting, id: "project-filter-Files").press(), "Project Files filter is usable below the compact header")
-                    settle()
+                    try await selectProjectFilter("Files", in: hosting, message: "Project Files filter is usable below the compact header")
+                    try expect(state.projectPresentation["Client A"]?.filterRawValue == "Files",
+                        "The real Files filter action updates the current project's visible type scope")
                     try expect(try find(hosting, id: "workspace-project-picker").valueText == "4 items",
                         "Filtering the grid never changes the dropdown's whole-project total")
-                    try expect(try find(hosting, id: "project-filter-All").press(), "Restore all project items")
-                    settle()
+                    try await selectProjectFilter("All", in: hosting, message: "Restore all project items")
+                    try expect(state.projectPresentation["Client A"]?.filterRawValue == "All",
+                        "The real All filter action restores the complete project's visible type scope")
                 } else {
                     for modeButton in WorkspaceMode.allCases {
                         let frame = try find(hosting, id: "workspace-mode-\(modeButton.rawValue)").frame

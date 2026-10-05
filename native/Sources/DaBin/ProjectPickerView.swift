@@ -167,6 +167,7 @@ struct ProjectPickerPanel: View {
     var allowsAll = false
     var allSelected = false
     var allowsDrop = false
+    let validateSelection: () throws -> Void
     let onSelect: (String?, Bool) throws -> Void
     let onDismiss: () -> Void
     @State private var query = ""
@@ -187,10 +188,12 @@ struct ProjectPickerPanel: View {
 
     init(state: AppState, selectedProject: String?, allowsAll: Bool = false,
          allSelected: Bool = false, allowsDrop: Bool = false, startCreating: Bool = false,
+         validateSelection: @escaping () throws -> Void = {},
          onSelect: @escaping (String?, Bool) throws -> Void, onDismiss: @escaping () -> Void) {
         self.state = state; _workspace = ObservedObject(wrappedValue: state.workspace)
         self.selectedProject = selectedProject; self.allowsAll = allowsAll
         self.allSelected = allSelected; self.allowsDrop = allowsDrop
+        self.validateSelection = validateSelection
         self.onSelect = onSelect; self.onDismiss = onDismiss
         _creating = State(initialValue: startCreating)
     }
@@ -307,15 +310,18 @@ struct ProjectPickerPanel: View {
         if let choice = choices.first(where: { $0.id == highlighted }) ?? choices.first { select(choice) }
     }
     private func select(_ choice: Choice) {
-        do { try onSelect(choice.project, choice.all); onDismiss() }
+        do { try validateSelection(); try onSelect(choice.project, choice.all); onDismiss() }
         catch { self.error = error.localizedDescription }
     }
     private func create() {
         if let message = ProjectNamePolicy.validationMessage(name, existing: projects) { error = message; return }
         let value = ProjectNamePolicy.normalized(name)
         do {
+            // Browsing can become blocked while this panel is already open.
+            // Refuse before creating a marker; filing panels keep their own policy.
+            try validateSelection()
             try workspace.createProject(name: value, colorHex: colorHex)
-            do { try onSelect(value, false); onDismiss() }
+            do { try validateSelection(); try onSelect(value, false); onDismiss() }
             catch {
                 creating = false; query = value; highlighted = "project:" + value; field = .search
                 self.error = "Project created. Filing needs another try: " + error.localizedDescription

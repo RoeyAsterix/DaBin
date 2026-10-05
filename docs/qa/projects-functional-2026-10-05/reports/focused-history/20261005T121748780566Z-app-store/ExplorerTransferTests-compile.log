@@ -1,0 +1,15 @@
+/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa-cache/app-store-aa45576d395d7915108ddcef023da0ec1ba45c306052d13139a1e0fdb050d22f/ExplorerTransferTests-b995c7d09cee3f16/ExplorerTransferTests.swift:94:63: error: 'nil' is not compatible with expected argument type 'UserDefaults'
+ 92 |     @MainActor private static func undoFailureRetry(_ root: URL) async throws {
+ 93 |         let store = try CaptureStore(root: root)
+ 94 |         let previews = PreviewService(store: store, defaults: nil)
+    |                                                               `- error: 'nil' is not compatible with expected argument type 'UserDefaults'
+ 95 |         let board = NSPasteboard(name: .init("DaBin.ExplorerUndo.\(UUID())"))
+ 96 |         let state = AppState(store: store, previews: previews,
+
+/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa-cache/app-store-aa45576d395d7915108ddcef023da0ec1ba45c306052d13139a1e0fdb050d22f/ExplorerTransferTests-b995c7d09cee3f16/ExplorerTransferTests.swift:122:88: error: cannot infer contextual base in reference to member 'warning'
+120 |         }
+121 |         controller.undoLastMove()
+122 |         try expect(writes == 2 && controller.canUndoMove && state.status?.severity == .warning,
+    |                                                                                        `- error: cannot infer contextual base in reference to member 'warning'
+123 |                    "A transient Undo write failure retains only a retryable receipt and reports partial restoration")
+124 |         let retry = [first, second].first { $0.projectName == "Destination" }!
