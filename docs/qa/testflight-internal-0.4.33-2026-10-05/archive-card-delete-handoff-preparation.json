@@ -1,0 +1,30 @@
+{
+  "archiveNamespace": "DaBin-0.4.33-88-TestFlight-card-delete-interactive-*",
+  "build": "88",
+  "buildConfigurationSHA256": {
+    "Config/AppStoreSigning.json": "a6072c1ad444175cf204f71d3f8d8d39e0d15bcd3d74d672a4a1924ac525ddf5",
+    "DaBin.xcodeproj/project.pbxproj": "84c644da6852650b0ee9830aec3fc8e80cce80631532d270b3e64d1e45da2260",
+    "DaBin.xcodeproj/xcshareddata/xcschemes/DaBin.xcscheme": "0922aad38e86918dc38f90b76d197e0405997d7dcd571bde62063ae96e4db283"
+  },
+  "bundleIdentifier": "com.dabin.mac",
+  "codeCommit": "3735e8d331db18cafe9e5e77847550f47871a048",
+  "currentHEAD": "3735e8d331db18cafe9e5e77847550f47871a048",
+  "expectedProductionFingerprint": "6b013ca1385c4aaf1d837e924e12eaa9bbeeba5ad3544fea2ede31b88f83d909",
+  "futureRecoveryFilename": "archive-card-delete-human-handoff.py",
+  "lockPath": "/private/tmp/dabin-testflight-current-archive.lock",
+  "outputPath": "/private/tmp/dabin-testflight-card-delete-20261005.py",
+  "outputSHA256": "e9a50d285090605a179cb429e1dc6a20598c2c57b3a6e7e1876d69eaa65f617a",
+  "preservedLogicASTEquivalent": true,
+  "pushVerification": "Root must independently verify the code checkpoint was pushed; generator checks local ancestry only",
+  "receiptNamespace": "dabin-testflight-card-delete-interactive-*",
+  "scope": "generator-only; helper not executed; no archive/sign/upload/authentication",
+  "substitutions": [
+    "expected",
+    "code_commit",
+    "extra_inputs",
+    "3 archive/log/receipt projects-interactive namespaces"
+  ],
+  "templatePath": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/testflight-internal-0.4.33-2026-10-05/archive-projects-human-handoff.py",
+  "templateSHA256": "289abf704113559f815c4f9536f2caf6fd7a544b42050f253d171007831395c3",
+  "version": "0.4.33"
+}
