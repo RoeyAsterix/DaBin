@@ -1,0 +1,48 @@
+{
+  "verifiedAtUTC": "2026-10-05T06:50:45.302183+00:00",
+  "mainTabsLeftToRight": [
+    "Projects",
+    "Tasks",
+    "Captions"
+  ],
+  "releaseSourceFingerprint": "a85333395e0a982230f3a8246db0d671e050b595f04a954f559dc29912caef09",
+  "version": "0.4.33",
+  "build": "88",
+  "sourceChangedDuringQa": false,
+  "qaCoverage": "selected_suites",
+  "qaInputFingerprint": "0f1366e7886005137fac266f3080ef47021713065d3ecb31f0da82fc9a2486b7",
+  "qaPassed": 3,
+  "qaFailed": 0,
+  "suiteNames": [
+    "HeaderInteractionTests",
+    "NavigationHistoryTests",
+    "LocalFileLocationTests"
+  ],
+  "unsignedStoreCompilationPassed": true,
+  "unsignedStorePackagingPassed": true,
+  "signedArchiveVerified": false,
+  "uploaded": false,
+  "installedLocally": false,
+  "visualInspection": "Reviewed current isolated 380-point Captions render: Projects, Tasks, Captions appear left-to-right; all three labels fit with visible selected-tab underline. Fixture content is synthetic.",
+  "knownLimits": [
+    "No new full121-suite run claimed; previous E038 full run120/121 with strict zoom failure and native table warnings remains historical",
+    "Record Space activation depends on macOS Keyboard navigation and was not changed by the existing header fixture",
+    "Signing and TestFlight still require the existing human signing boundary"
+  ],
+  "evidence": {
+    "production-module.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "report.json": "668d4f29195b0dfab502b1a0a085783c4cdcfdf70d4e047ff79df71f9de9ba83",
+    "captions-weekly-380.png": "63771e9e165cfcd4bcb20afd6e781e34c6eb713c0b7b9daa9975b8b03c1b9ccb",
+    "NavigationHistoryTests-compile.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "NavigationHistoryTests.log": "9bba62774862e0c4b51cacb4197446c0286a3b4c976242fc60f3deb184c892c9",
+    "captions-inbox-380.png": "0ad6ba07aa22e2c16fedebc31be93a8c9f4a96e45b5df78f3a723023f2088895",
+    "xcodebuild-release.log": "969e99c8bbc305f7c9c2a49b8483fe48afeb6da7b805b14c167a0bea690a085e",
+    "HeaderInteractionTests.log": "45f7ba7c6150afbec0ec87e0088b503c182ebd747930273e9b5d1e36b50bc9b4",
+    "unsigned-packaging-preflight.log": "3185396f156f35ca73d76a5316de4fc6430ef96756d29e5e9fe4bcc9437aa005",
+    "store-candidate-receipt.json": "fb32170176cde71c7731941c63973f6e25b1fbbf20671d2b3f3d5625bc506e55",
+    "captions-daily-380.png": "7aa3d66c10bd9c6699add40d20367f42234109a766d29c22c8f3376622b93e0c",
+    "LocalFileLocationTests-compile.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "LocalFileLocationTests.log": "a82b4136d952c16c6b091c765f11988c99e6b456e0d819aabab1b94ecfcc937b",
+    "HeaderInteractionTests-compile.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

@@ -93,7 +93,7 @@ struct InboxScreen: View {
             if asTask { _ = try state.store.createTask(text: text, reminderAt: nil, projectName: project) }
             else { let capture = try state.store.createNote(text: text, projectName: project); state.didCapture([capture]) }
             state.clearNewNoteDraft()
-            let destination = project ?? "Inbox"
+            let destination = project ?? "Captions"
             state.status = AppStatusMessage(text: asTask ? "Task added to \(destination)." : "Note saved to \(destination).", severity: .success)
         } catch { state.reportFailure(error.localizedDescription) }
     }

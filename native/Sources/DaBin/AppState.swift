@@ -1354,7 +1354,7 @@ final class AppState: ObservableObject {
                 planning: committedPlanning, projectName: project)
             newTaskDraft.reset()
             route = creationReturnRoute
-            status = AppStatusMessage(text: project.map { "Task saved in \($0)." } ?? "Task saved to Inbox.", severity: .success)
+            status = AppStatusMessage(text: project.map { "Task saved in \($0)." } ?? "Task saved to Captions.", severity: .success)
             dailyScrollID = feedID(for: capture, on: selectedDay)
             if reminder != nil {
                 Task { await saveReminderAndReport(for: capture) }

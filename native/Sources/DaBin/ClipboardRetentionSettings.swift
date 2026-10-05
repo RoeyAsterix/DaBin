@@ -22,7 +22,7 @@ struct ClipboardRetentionSettings: View {
                 ForEach(ClipboardRetentionPeriod.allCases) { period in Text(period.title).tag(period) }
             }.pickerStyle(.menu).controlSize(.small).font(.system(size: 12))
                 .disabled(service.isRunning).accessibilityIdentifier("settings-clipboard-retention")
-            Text("Automatic copies that have been inactive for this long move to Recently Deleted. Tasks, reminders, pinned items, snippets, projects, the shelf and items kept from Inbox are protected.")
+            Text("Automatic copies that have been inactive for this long move to Recently Deleted. Tasks, reminders, pinned items, snippets, projects, the shelf and items kept from Captions are protected.")
                 .font(.system(size: 11)).foregroundStyle(Palette.muted).fixedSize(horizontal: false, vertical: true)
             Button {
                 confirmedIDs = candidates.map(\.id)
@@ -50,7 +50,7 @@ struct ClipboardRetentionSettings: View {
                 Task { _ = await service.clearUnfiledHistory(confirmedIDs: ids) }
             }
         } message: {
-            Text("Only unfiled automatic clipboard copies are included. Tasks, project materials, snippets, pinned items, shelf materials and items kept from Inbox stay saved. You can restore moved copies from Recently Deleted.")
+            Text("Only unfiled automatic clipboard copies are included. Tasks, project materials, snippets, pinned items, shelf materials and items kept from Captions stay saved. You can restore moved copies from Recently Deleted.")
         }
     }
 }

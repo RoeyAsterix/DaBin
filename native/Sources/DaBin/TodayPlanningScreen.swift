@@ -41,7 +41,7 @@ struct TodayPlanningScreen: View {
         VStack(spacing: 0) {
             VStack(alignment: .leading, spacing: 6) {
                 HStack {
-                    Text("Today").font(.system(size: 14, weight: .semibold))
+                    Text("Tasks").font(.system(size: 14, weight: .semibold))
                     Spacer(minLength: 0)
                     BuddyIconButton(symbol: "plus.circle", title: "Add task for today") {
                         state.openNewTask(); state.newTaskDraft.planning.plannedDay = todayKey
@@ -83,7 +83,7 @@ struct TodayPlanningScreen: View {
                         section("Today's plan", items: planned, reorderable: true)
                         section("Needs another look", items: unfinished)
                         section("Reminders", items: dueReminders)
-                        section("Choose from Inbox", items: TaskPlanningPolicy.inbox(active).filter { item in !unfinished.contains { $0.id == item.id } })
+                        section("Unplanned tasks", items: TaskPlanningPolicy.inbox(active).filter { item in !unfinished.contains { $0.id == item.id } })
                     } else if scope == "later" {
                         section("Coming up", items: later)
                         section("Upcoming reminders", items: active.filter { !$0.isCompleted && ($0.reminderAt ?? .distantPast) > Date() && !$0.isTask })

@@ -17,10 +17,10 @@ struct NewNoteScreen: View {
                 .focused($textFocused).accessibilityLabel("New note text")
                 .accessibilityIdentifier("new-note-text")
             HStack {
-                Label(state.newNoteProject ?? "Inbox", systemImage: state.newNoteProject == nil ? "tray" : "folder")
+                Label(state.newNoteProject ?? "Captions", systemImage: state.newNoteProject == nil ? "tray" : "folder")
                     .font(.system(size: zoom.fontSize(12))).foregroundStyle(Palette.muted).lineLimit(2)
-                    .accessibilityLabel("Save note to \(state.newNoteProject ?? "Inbox")")
-                    .buddyHelp("Save note to \(state.newNoteProject ?? "Inbox")")
+                    .accessibilityLabel("Save note to \(state.newNoteProject ?? "Captions")")
+                    .buddyHelp("Save note to \(state.newNoteProject ?? "Captions")")
                 Spacer(minLength: 0)
                 Button("Cancel") { state.cancelNewNote() }.buttonStyle(.bordered)
                 Button("Save note") { state.saveNewNote() }.buttonStyle(.borderedProminent)

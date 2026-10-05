@@ -132,7 +132,7 @@ struct BoardView: View {
             Group {
                 Button("Search captures") { state.performSearchCommand(); searchFocused = true }
                     .keyboardShortcut("k", modifiers: .command)
-                Button("Open Today") { state.showReminders() }
+                Button("Open Tasks") { state.showReminders() }
                     .keyboardShortcut("d", modifiers: [.command, .shift])
             }.frame(width: 0, height: 0).opacity(0).accessibilityHidden(true)
         }
@@ -206,8 +206,10 @@ struct BoardView: View {
                     historyControls
                     navigationButton("Projects", symbol: "folder", selected: state.route == .library,
                                      identifier: "primary-workspace") { state.openLibrary() }
-                    navigationButton("Today", symbol: "sun.max", selected: state.route == .reminders) { state.showReminders() }
-                    navigationButton("Inbox", symbol: "tray", selected: state.isInboxRoute) { state.openInbox() }
+                    navigationButton("Tasks", symbol: "sun.max", selected: state.route == .reminders,
+                                     identifier: "primary-today") { state.showReminders() }
+                    navigationButton("Captions", symbol: "tray", selected: state.isInboxRoute,
+                                     identifier: "primary-inbox") { state.openInbox() }
                 }.accessibilityElement(children: .contain).accessibilityLabel("Main views")
             } else {
                 HStack(spacing: 8) {
@@ -413,7 +415,7 @@ struct BoardView: View {
                                id: "timeline-mode-tooltip-\(mode == .daily ? "daily" : "weekly")")
             }
         }.padding(2).background(Palette.soft, in: RoundedRectangle(cornerRadius: 9))
-            .accessibilityElement(children: .contain).accessibilityLabel("Inbox calendar view")
+            .accessibilityElement(children: .contain).accessibilityLabel("Captions calendar view")
             .daBinTutorialAnchor(.timelineModes)
     }
 
@@ -547,11 +549,11 @@ enum DaBinTutorialStep: String, CaseIterable, Identifiable {
         switch self {
         case .welcome: return "Welcome to DaBin"
         case .capture: return "Capture anything"
-        case .inbox: return "Start in Inbox"
+        case .inbox: return "Start in Captions"
         case .day: return "Review your Day"
         case .week: return "See the whole Week"
         case .captureActions: return "Keep every capture useful"
-        case .today: return "Plan in Today"
+        case .today: return "Plan in Tasks"
         case .projects: return "Build a project workspace"
         case .projectRecording: return "Record to a project"
         case .search: return "Find it again"
@@ -568,7 +570,7 @@ enum DaBinTutorialStep: String, CaseIterable, Identifiable {
         case .capture:
             return "This is the drop and quick-capture area. After the tour, drop text, links, files, images, or video here—or hover over me and paste."
         case .inbox:
-            return "Inbox is the landing zone. These controls are where you paste the clipboard, import files, jot a note, or create a task."
+            return "Captions is the landing zone. These controls are where you paste the clipboard, import files, jot a note, or create a task."
         case .day:
             return "Day keeps captures in their real timeline. Use the highlighted switch to move between one day and the seven-day view."
         case .week:
@@ -576,7 +578,7 @@ enum DaBinTutorialStep: String, CaseIterable, Identifiable {
         case .captureActions:
             return "The highlighted More control appears on every card. It opens copy, notes, reminders, pinning, projects, task conversion, minimizing, and removal."
         case .today:
-            return "Today brings tasks and reminders together. Add priorities, deadlines, checklists, repeat rules, and focus timers as work develops."
+            return "Plan your tasks and reminders here. Add priorities, deadlines, checklists, repeat rules, and focus timers as work develops."
         case .projects:
             return "Projects hold captures, files, links, tasks, and notes. Switch between Library, Clipboard, Shelf, and Notes; select, reorder, convert, copy, or export together."
         case .projectRecording:

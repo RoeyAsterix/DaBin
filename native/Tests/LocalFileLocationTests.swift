@@ -434,14 +434,14 @@ import SwiftUI
             let actions = try await fixture(actionView, size: NSSize(width: 380, height: family == "capture detail" ? 1_300 : 240))
             defer { actions.close() }
             let trigger = try await find(actions.hosting, id: actionID)
-            let native = try await nativeMore(trigger, host: actions.hosting, window: actions.window, requiredTitle: "Return to Inbox")
-            guard let item = native.items.first(where: { $0.title == "Return to Inbox" }) else {
-                throw failure("Production menu lost Return to Inbox")
+            let native = try await nativeMore(trigger, host: actions.hosting, window: actions.window, requiredTitle: "Return to Captions")
+            guard let item = native.items.first(where: { $0.title == "Return to Captions" }) else {
+                throw failure("Production menu lost Return to Captions")
             }
             let expectedReturnID = "capture-return-to-inbox-\(unfiled.id.uuidString)"
             try expect((item.identifier?.rawValue == expectedReturnID || LocalFolderAX(object: item).identifier == expectedReturnID)
                 && item.isEnabled && !item.isHidden && item.action != nil,
-                       "Return to Inbox has its stable capture identity and reachable native action in \(family): nativeID=\(item.identifier?.rawValue ?? "none") enabled=\(item.isEnabled) hidden=\(item.isHidden) action=\(String(describing: item.action)) \(LocalFolderAX(object: item).diagnostic)")
+                       "Return to Captions has its stable capture identity and reachable native action in \(family): nativeID=\(item.identifier?.rawValue ?? "none") enabled=\(item.isEnabled) hidden=\(item.isHidden) action=\(String(describing: item.action)) \(LocalFolderAX(object: item).diagnostic)")
             let historyIndex = state.navigationHistory.index
             native.performActionForItem(at: native.index(of: item))
             await settle(actions.hosting)

@@ -82,7 +82,7 @@ struct TaskPlanningEditor: View {
                 Button("Unplanned") { planning.plannedDay = nil; planning.plannedTime = nil; planning.order = nil }
                     .buttonStyle(.plain).padding(.horizontal, 5).frame(minHeight: 32)
                     .background(planning.plannedDay == nil ? accent.opacity(0.12) : Color.clear, in: RoundedRectangle(cornerRadius: 7))
-                    .accessibilityLabel("Move task to Inbox without a planned day")
+                    .accessibilityLabel("Leave task unplanned")
                     .accessibilityIdentifier("task-plan-enabled")
             }
             if planning.plannedDay != nil {

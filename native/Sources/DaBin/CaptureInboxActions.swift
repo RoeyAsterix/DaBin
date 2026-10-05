@@ -20,10 +20,10 @@ extension AppState {
             beginNavigation(); defer { endNavigation() }
             filter = .all
             openInbox()
-            status = AppStatusMessage(text: "Returned to Inbox. Your original capture is unchanged.", severity: .success)
+            status = AppStatusMessage(text: "Returned to Captions. Your original capture is unchanged.", severity: .success)
             return true
         } catch {
-            reportFailure("Could not return this capture to Inbox: \(error.localizedDescription)")
+            reportFailure("Could not return this capture to Captions: \(error.localizedDescription)")
             return false
         }
     }
@@ -43,7 +43,7 @@ struct CaptureReturnToInboxMenuItem: View {
 
     var body: some View {
         if state.canReturnCaptureToInbox(capture) {
-            Button("Return to Inbox", systemImage: "tray.and.arrow.down") {
+            Button("Return to Captions", systemImage: "tray.and.arrow.down") {
                 state.returnCaptureToInbox(capture)
             }
             .accessibilityIdentifier("capture-return-to-inbox-\(capture.id.uuidString)")
