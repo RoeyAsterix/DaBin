@@ -127,7 +127,6 @@ struct WorkspaceItemCard: View {
                 catch { state.reportFailure(error.localizedDescription) }
             }
         }
-        Button(capture.isPinned ? "Unpin" : "Pin", systemImage: capture.isPinned ? "pin.slash" : "pin") { state.togglePinned(capture) }
         CaptureReturnToInboxMenuItem(state: state, capture: capture)
         if includesCardButtons {
             Button(onShelf ? "Remove from shelf; keep capture" : "Add to shelf", systemImage: onShelf ? "tray" : "tray.and.arrow.down") { toggleShelf() }

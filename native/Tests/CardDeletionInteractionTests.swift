@@ -241,6 +241,8 @@ import SwiftUI
                 userInfo: [NSLocalizedDescriptionKey: "\(id) must expose the real native menu containing \(title)"])
         }
         try expect(!tracking.timedOut && tracking.ended.contains(ObjectIdentifier(menu)), "Actual \(id) menu closes before item dispatch")
+        try expect(!menuItems(menu).contains { $0.title == "Pin" || $0.title == "Unpin" },
+                   "Native \(id) menu omits the retired Pin action while keeping \(title) available")
         return menu
     }
     private static func selectMenu(_ host: NSView, id: String, title: String) async throws {

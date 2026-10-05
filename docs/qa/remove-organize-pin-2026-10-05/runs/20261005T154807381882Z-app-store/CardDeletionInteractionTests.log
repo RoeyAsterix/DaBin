@@ -1,0 +1,37 @@
+MENU tracking began: ["Move earlier", "Move later", "", "Edit project notes", "", "Delete notes…"]
+MENU tracking ended
+MENU tracking began: ["Delete note…"]
+MENU tracking ended
+MENU tracking began: ["", "Add files…", "Paste into project", "Project notes", "Open folder", "", "Copy project items", "Copy project summary", "", "Clipboard view", "Shelf view"]
+MENU tracking ended
+MENU tracking began: ["Copy as plain text", "", "Add to shelf", "Turn into task", "Attach to task", "", "Move to Recently Deleted…", "File to project", "", "Show nearby captures"]
+MENU tracking ended
+MENU tracking began: ["Delete 3 visible captures…"]
+MENU tracking ended
+MENU tracking began: ["Delete 3 visible captures…"]
+MENU tracking ended
+MENU tracking began: ["Delete 1 visible capture…"]
+MENU tracking ended
+MENU tracking began: ["Delete 4 visible captures…"]
+MENU tracking ended
+FIXTURE: /var/folders/qy/zfgc4dgx02x2k_c04330ghy00000gn/T/DaBinCardDeletionRenders/project-note-delete.png
+FIXTURE: /var/folders/qy/zfgc4dgx02x2k_c04330ghy00000gn/T/DaBinCardDeletionRenders/search-note-delete.png
+ALERT action: Cancel
+ALERT action: Delete notes
+ALERT action: Cancel
+ALERT action: Move to Recently Deleted
+ALERT action: Cancel
+ALERT action: Delete notes
+ALERT action: Cancel
+ALERT action: Delete permanently
+FIXTURE: /var/folders/qy/zfgc4dgx02x2k_c04330ghy00000gn/T/DaBinCardDeletionRenders/comment-delete.png
+ALERT action: Cancel
+ALERT action: Delete comment
+ALERT action: Delete comment
+FIXTURE: /var/folders/qy/zfgc4dgx02x2k_c04330ghy00000gn/T/DaBinCardDeletionRenders/hour-delete.png
+ALERT action: Cancel
+ALERT action: Delete 3 visible captures
+ALERT action: Delete 1 visible capture
+ALERT action: Delete 4 visible captures
+Card deletion interaction QA passed 160 checks.
+COMPLETE: CardDeletionInteractionTests finished every fixture and cleanup

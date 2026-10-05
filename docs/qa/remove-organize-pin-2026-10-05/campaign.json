@@ -1,0 +1,120 @@
+[
+  {
+    "console": "affected-flows-console.log",
+    "report": "runs/20261005T154807381882Z-app-store/report.json",
+    "passedSuites": 5,
+    "failedSuites": 0,
+    "requested": [
+      {
+        "compile": {
+          "cached": false,
+          "exitCode": 0,
+          "log": "build/qa/runs/20261005T154807381882Z-app-store/WorkInboxTests-compile.log",
+          "seconds": 2.899,
+          "status": "passed"
+        },
+        "exitCode": 0,
+        "log": "build/qa/runs/20261005T154807381882Z-app-store/WorkInboxTests.log",
+        "name": "WorkInboxTests",
+        "reportedSummary": "PASS: 93 work inbox checks",
+        "requiresWindowFocus": false,
+        "seconds": 1.264,
+        "status": "passed"
+      },
+      {
+        "compile": {
+          "cached": false,
+          "exitCode": 0,
+          "log": "build/qa/runs/20261005T154807381882Z-app-store/RedesignInteractionTests-compile.log",
+          "seconds": 2.889,
+          "status": "passed"
+        },
+        "exitCode": 0,
+        "log": "build/qa/runs/20261005T154807381882Z-app-store/RedesignInteractionTests.log",
+        "name": "RedesignInteractionTests",
+        "reportedSummary": "PASS: 119 native redesign interaction checks",
+        "requiresWindowFocus": true,
+        "seconds": 17.263,
+        "status": "passed"
+      },
+      {
+        "compile": {
+          "cached": false,
+          "exitCode": 0,
+          "log": "build/qa/runs/20261005T154807381882Z-app-store/HeaderInteractionTests-compile.log",
+          "seconds": 5.258,
+          "status": "passed"
+        },
+        "completion": {
+          "checks": 326,
+          "keyboardVerification": "strict native focus and recorder checks passed",
+          "passed": true
+        },
+        "exitCode": 0,
+        "launchMethod": "temporary_app_bundle",
+        "log": "build/qa/runs/20261005T154807381882Z-app-store/HeaderInteractionTests.log",
+        "name": "HeaderInteractionTests",
+        "reportedSummary": "PASS: 326 native labeled-header accessibility and interaction checks",
+        "requiresWindowFocus": true,
+        "seconds": 24.126,
+        "status": "passed"
+      },
+      {
+        "compile": {
+          "cached": false,
+          "exitCode": 0,
+          "log": "build/qa/runs/20261005T154807381882Z-app-store/ExplorerCaptureCardPresentationTests-compile.log",
+          "seconds": 2.574,
+          "status": "passed"
+        },
+        "exitCode": 0,
+        "log": "build/qa/runs/20261005T154807381882Z-app-store/ExplorerCaptureCardPresentationTests.log",
+        "name": "ExplorerCaptureCardPresentationTests",
+        "reportedSummary": "PASS: 726 Explorer native preview, complete-image corners, metadata, actions, selection and capture preservation checks. /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/explorer-capture-cards/45D60D0D-961D-4F2B-B4AE-CB23EB3D6160",
+        "requiresWindowFocus": true,
+        "seconds": 16.724,
+        "status": "passed"
+      },
+      {
+        "compile": {
+          "cached": false,
+          "exitCode": 0,
+          "log": "build/qa/runs/20261005T154807381882Z-app-store/CardDeletionInteractionTests-compile.log",
+          "seconds": 5.073,
+          "status": "passed"
+        },
+        "exitCode": 0,
+        "log": "build/qa/runs/20261005T154807381882Z-app-store/CardDeletionInteractionTests.log",
+        "name": "CardDeletionInteractionTests",
+        "reportedSummary": "",
+        "requiresWindowFocus": true,
+        "seconds": 24.506,
+        "status": "passed"
+      }
+    ]
+  },
+  {
+    "console": "projects-menu-console.log",
+    "report": "runs/20261005T155128010138Z-app-store/report.json",
+    "passedSuites": 1,
+    "failedSuites": 0,
+    "requested": [
+      {
+        "compile": {
+          "cached": false,
+          "exitCode": 0,
+          "log": "build/qa/runs/20261005T155128010138Z-app-store/SnippetNamingInteractionTests-compile.log",
+          "seconds": 2.132,
+          "status": "passed"
+        },
+        "exitCode": 0,
+        "log": "build/qa/runs/20261005T155128010138Z-app-store/SnippetNamingInteractionTests.log",
+        "name": "SnippetNamingInteractionTests",
+        "reportedSummary": "PASS: 55 native Projects Clipboard/Shelf naming checks; real More dispatch, native text entry, retained failed drafts, visible retry, exactly-once save, restart, cancellation, and immutable capture; no general clipboard or external access",
+        "requiresWindowFocus": true,
+        "seconds": 6.433,
+        "status": "passed"
+      }
+    ]
+  }
+]

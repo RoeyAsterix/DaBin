@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "verifiedAtUTC": "2026-10-05T15:54:52.190887+00:00",
+  "sourceFingerprint": "dae2228aa8ea9dcd4e3dd556ccc8aeb7273e230b1471340feb3eebb1fa2cc8a1",
+  "canonicalProductionInputCount": 169,
+  "status": "requested_ui_removal_affected_native_flows_and_unsigned_release_verified",
+  "version": "0.4.33",
+  "build": "88",
+  "finalSourcePassedSuites": 6,
+  "finalSourceFailedSuites": 0,
+  "registeredSuites": 126,
+  "fullRegisteredRun": false,
+  "nativeChecks": 1479,
+  "checksBySuite": {
+    "WorkInboxTests": 93,
+    "RedesignInteractionTests": 119,
+    "HeaderInteractionTests": 326,
+    "ExplorerCaptureCardPresentationTests": 726,
+    "CardDeletionInteractionTests": 160,
+    "SnippetNamingInteractionTests": 55
+  },
+  "productionInputsUnchangedBetweenNativeRunsAndUnsignedCandidate": true,
+  "packagingUnitTestsPassed": 32,
+  "deterministicProjectCheckPassed": true,
+  "unsignedReleaseActualInfoAndBinaryVerified": true,
+  "unsignedReleaseReceipt": "store-candidate-receipt.json",
+  "unsignedReleaseReceiptSHA256": "c9178b7710b7684cdfd5810c714af8dff1b995c30c78d1f1dcc7b6013eba1de7",
+  "signed": false,
+  "uploaded": false,
+  "sandboxRuntimeVerified": false,
+  "allFindingsFixed": false,
+  "knownOpenFindings": [
+    "Historical strict zoom performance budget failure was not rerun for this UI removal",
+    "Framework-reproduced native table warnings"
+  ],
+  "scope": "Removed the To organize button/static selected label and Pin/Unpin actions from all three native card-menu implementations. Captions tab remains the return path. Legacy pin data, badges, filters, sorting and retention remain compatible."
+}

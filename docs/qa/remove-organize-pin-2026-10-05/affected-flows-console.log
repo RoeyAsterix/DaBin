@@ -1,0 +1,9 @@
+Compiling app-store Release test module (138 production sources)…
+PASSED WorkInboxTests: PASS: 93 work inbox checks
+PASSED RedesignInteractionTests: PASS: 119 native redesign interaction checks
+/var/folders/qy/zfgc4dgx02x2k_c04330ghy00000gn/T/dabin-header-qa-ecl0syzc/DaBin Header QA.app/Contents/Frameworks/libDaBinTestCore.dylib: replacing existing signature
+/var/folders/qy/zfgc4dgx02x2k_c04330ghy00000gn/T/dabin-header-qa-ecl0syzc/DaBin Header QA.app: replacing existing signature
+PASSED HeaderInteractionTests: PASS: 326 native labeled-header accessibility and interaction checks
+PASSED ExplorerCaptureCardPresentationTests: PASS: 726 Explorer native preview, complete-image corners, metadata, actions, selection and capture preservation checks. /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/explorer-capture-cards/45D60D0D-961D-4F2B-B4AE-CB23EB3D6160
+PASSED CardDeletionInteractionTests
+QA app-store passed: 5/5 requested suites passed. Report: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/runs/20261005T154807381882Z-app-store/report.json

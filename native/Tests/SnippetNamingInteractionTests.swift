@@ -225,6 +225,8 @@ import SwiftUI
             throw failure("The actual native More menu contains \(title)")
         }
         try expect(!tracking.timedOut && tracking.ended.contains(ObjectIdentifier(menu)), "Native More closes before dispatch")
+        try expect(!menuItems(menu).contains { $0.title == "Pin" || $0.title == "Unpin" },
+                   "Native Projects More menu omits Pin while retaining snippet actions")
         try expect(item.isEnabled && !item.isHidden && item.action != nil, "\(title) is an actionable native menu item")
         owner.performActionForItem(at: owner.index(of: item)); await settle(view)
     }

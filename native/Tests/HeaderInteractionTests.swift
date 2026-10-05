@@ -475,13 +475,15 @@ private enum HeaderInteractionTests {
         window.makeKeyAndOrderFront(nil)
         settle()
 
-        for id in ["primary-inbox", "primary-today", "primary-workspace", "inbox-organize", "timeline-mode-daily", "timeline-mode-weekly", "board-search", "timeline-action-add", "board-more", "board-settings", "timeline-auto-capture", "window-expand", "window-close", "auto-capture-status"] {
+        for id in ["primary-inbox", "primary-today", "primary-workspace", "timeline-mode-daily", "timeline-mode-weekly", "board-search", "timeline-action-add", "board-more", "board-settings", "timeline-auto-capture", "window-expand", "window-close", "auto-capture-status"] {
             let control = try element(hosting, identifier: id)
             let frame = control.accessibilityFrame()
             try expect(frame.width > 0 && frame.height > 0, "\(id) has an accessible visible target")
             try expect(frame.minX >= window.frame.minX - 1 && frame.maxX <= window.frame.maxX + 1,
                        "\(id) fits the compact 380-point window")
         }
+        try expect(!elements(in: hosting).contains { $0.accessibilityIdentifier() == "inbox-organize" },
+                   "Inbox header omits the removed To organize label and action")
         // Measure the actual visible control envelope at three window sizes. A
         // flexible drag handle previously absorbed hundreds of vertical points
         // before the feed; checking only intrinsic view sizes missed that bug.
@@ -544,7 +546,7 @@ private enum HeaderInteractionTests {
         } ?? URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
             .appendingPathComponent("build/qa/inbox-calendar", isDirectory: true)
         try FileManager.default.createDirectory(at: evidence, withIntermediateDirectories: true)
-        let inboxNavigationIDs = ["inbox-organize", "timeline-mode-daily", "timeline-mode-weekly"]
+        let inboxNavigationIDs = ["timeline-mode-daily", "timeline-mode-weekly"]
         state.selectedDay = yesterday
         state.filter = .text
         state.newNoteText = "Unfinished Inbox calendar fixture"
@@ -554,6 +556,8 @@ private enum HeaderInteractionTests {
             try expect(state.route == target && state.selectedDay == yesterday && state.filter == .text
                        && state.newNoteText == "Unfinished Inbox calendar fixture",
                        "Inbox \(target) navigation preserves the selected date, filter and quick-capture draft")
+            try expect(!elements(in: hosting).contains { $0.accessibilityIdentifier() == "inbox-organize" },
+                       "Removed To organize label and action are absent on \(target)")
             try snapshot(hosting, at: evidence.appendingPathComponent("inbox-\(target)-380.png"))
             let controls = try inboxNavigationIDs.map { try element(hosting, identifier: $0) }
             let controlFrames = controls.map { $0.accessibilityFrame() }
@@ -561,18 +565,9 @@ private enum HeaderInteractionTests {
             let frameDiagnostic = zip(inboxNavigationIDs, controls).map {
                 "\($0.0): AX=\(NSStringFromRect($0.1.accessibilityFrame())), interaction=\(NSStringFromRect($0.1.interactionFrame()))"
             }.joined(separator: "; ") + "; window=\(NSStringFromRect(window.frame)); screens=\(NSScreen.screens.map { NSStringFromRect($0.frame) })"
-            if target == .inbox {
-                _ = controls[0].accessibilityPerformPress()
-                settle()
-                try expect(state.route == .inbox
-                           && controls.dropFirst().allSatisfy { $0.supportsAccessiblePress() },
-                           "The selected To organize label cannot navigate while Day and Week remain actionable")
-            } else {
-                try expect(controls.allSatisfy { $0.supportsAccessiblePress() },
-                           "To organize, Day and Week remain directly actionable on \(target)")
-            }
-            try expect(controlFrames[0].width > 0 && controlFrames[0].height > 0
-                && controlFrames.dropFirst().allSatisfy { $0.width >= 28 && $0.height >= 28 }
+            try expect(controls.allSatisfy { $0.supportsAccessiblePress() },
+                       "Day and Week remain directly actionable on \(target)")
+            try expect(controlFrames.allSatisfy { $0.width >= 28 && $0.height >= 28 }
                 && frames.allSatisfy { $0.minX >= window.frame.minX - 1 && $0.maxX <= window.frame.maxX + 1
                 && $0.minY >= window.frame.minY - 1 && $0.maxY <= window.frame.maxY + 1 },
                        "Inbox subnavigation fits the compact 380-point \(target) view. \(frameDiagnostic)")
@@ -593,10 +588,10 @@ private enum HeaderInteractionTests {
                            "Week opened directly from Inbox covers the seven dates ending on the selected day")
             }
         }
-        try press(hosting, identifier: "inbox-organize")
+        try press(hosting, identifier: "primary-inbox")
         try expect(state.route == .inbox && state.selectedDay == yesterday && state.filter == .text
                    && state.newNoteText == "Unfinished Inbox calendar fixture",
-                   "To organize returns to Inbox triage without discarding calendar context or the draft")
+                   "The existing Captions tab returns to Inbox without discarding calendar context, filter or the draft")
         state.clearNewNoteDraft()
         try press(hosting, identifier: "timeline-mode-daily")
         try expect(state.route == .daily, "Inbox Day opens the daily calendar directly")

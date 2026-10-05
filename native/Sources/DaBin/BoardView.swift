@@ -357,11 +357,6 @@ struct BoardView: View {
         VStack(spacing: 4) {
             HStack(spacing: 4) {
                 if state.route == .inbox {
-                    Label("To organize", systemImage: "tray.full")
-                        .font(.system(size: 12, weight: .medium)).frame(minHeight: 30)
-                        .foregroundStyle(accent)
-                        .accessibilityElement(children: .combine)
-                        .accessibilityAddTraits(.isSelected).accessibilityIdentifier("inbox-organize")
                     Spacer(minLength: 0)
                 } else {
                     SmallIcon(symbol: "chevron.left", label: state.route == .weekly ? "Previous week" : "Previous day", size: 26) { moveTimeline(-1) }
@@ -385,9 +380,6 @@ struct BoardView: View {
                         }
                     SmallIcon(symbol: "chevron.right", label: state.route == .weekly ? "Next week" : "Next day", size: 26) { moveTimeline(1) }
                         .disabled(state.isNavigationBlocked || Calendar.current.isDateInToday(state.route == .weekly ? state.weekEndingDay : state.selectedDay))
-                    BuddyIconButton(symbol: "tray.full", title: "To organize") { state.openInbox() }
-                        .accessibilityIdentifier("inbox-organize")
-                        .disabled(state.isNavigationBlocked)
                 }
                 timelineModeToggle
                 if isTimeline && !Calendar.current.isDateInToday(state.route == .weekly ? state.weekEndingDay : state.selectedDay) {

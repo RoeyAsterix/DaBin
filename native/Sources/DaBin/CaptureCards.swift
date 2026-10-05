@@ -446,7 +446,6 @@ struct CaptureActionMenuItems: View {
         Button(openingLabel, systemImage: "arrow.up.forward.square") { state.openCapture(capture.id) }
         Button(capture.comment.isEmpty ? "Add comment" : "Edit comment", systemImage: "text.bubble") { state.openCapture(capture.id, focus: "comment") }
         Button(capture.reminderAt == nil ? "Add reminder" : "Edit reminder", systemImage: "bell") { state.openCapture(capture.id, focus: "reminder") }
-        Button(capture.isPinned ? "Unpin" : "Pin", systemImage: capture.isPinned ? "pin.slash" : "pin") { state.togglePinned(capture) }
         CaptureReturnToInboxMenuItem(state: state, capture: capture)
         CaptureTaskConversionMenu(state: state, capture: capture)
         if capture.isTask {
