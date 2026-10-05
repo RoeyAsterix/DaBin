@@ -1,0 +1,7 @@
+DaBin 0.4.33 (88)
+
+Main tabs: Projects → Tasks → Captions.
+Settings → Quick access: choose, clear or reset Full screen and Recording on/off shortcuts. Defaults are Control + Option + F and Control + Option + R. Full screen expands/restores the existing window; recording pauses/resumes selected capture sources. With no source selected, recording opens setup after draft and text-composition checks.
+Try assignment, cancellation, conflicting keys, holding a key, window hide/reopen and toggling recording while editing. Confirm drafts, selected channels and exclusions remain intact.
+
+Eight focused native Release suites and unsigned packaging checks pass. Known issues remain: strict zoom performance budgets missed in the previous full QA run and framework native table warnings. Physical global shortcut activation and wider hardware/OS coverage still need tester checks. No new full 121-suite run is claimed.
