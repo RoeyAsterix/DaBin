@@ -1,43 +1,29 @@
 {
   "schemaVersion": 1,
-  "updatedAtUTC": "2026-10-05T11:37:52.433507+00:00",
-  "status": "current_app_wide_card_redesign_pushed_waiting_for_human_signing",
+  "updatedAtUTC": "2026-10-05T09:21:55.552028+00:00",
+  "status": "task_card_redesign_verified_source_pushed_human_signing_required",
   "version": "0.4.33",
   "build": "88",
   "bundleIdentifier": "com.dabin.mac",
   "appStoreConnectAppID": "6815956446",
-  "codeCommit": "086c3b51bc00470cfa8ea9a2963e8c895b8765c2",
-  "codeCommitURL": "https://github.com/RoeyAsterix/DaBin/commit/086c3b51bc00470cfa8ea9a2963e8c895b8765c2",
+  "codeCommit": "107c5f15cbcf9819d5468086ab3f6b2396e4ebf8",
+  "codeCommitURL": "https://github.com/RoeyAsterix/DaBin/commit/107c5f15cbcf9819d5468086ab3f6b2396e4ebf8",
   "codePushVerified": true,
-  "sourceFingerprint": "3f5ec8d396f1e7ff80ef0acb9df9d3a2ab6cfee88471c71be47c700b94df0848",
+  "sourceFingerprint": "1a5e3982c72c0dbe06924595659edfecf3392afedda1517d393f8a022707d1b7",
   "nativeQa": {
-    "status": "selected_current_source_regressions_passed_strict_zoom_performance_failed",
     "registeredSuites": 121,
-    "sourceFingerprint": "3f5ec8d396f1e7ff80ef0acb9df9d3a2ab6cfee88471c71be47c700b94df0848",
-    "fullRegisteredRun": false,
-    "finalSourcePassedSuites": 8,
-    "finalSourceFailedSuites": 1,
+    "passed": 120,
+    "failed": 1,
     "failedSuiteNames": [
       "WorkspaceZoomPerformanceTests"
     ],
-    "distinctRelevantPassedSuitesAcrossBroadAndScopedRuns": 38,
     "allFindingsFixed": false,
     "knownOpenFindings": [
-      "Current strict zoom performance budgets not met",
+      "Strict zoom performance budgets not met",
       "Framework-reproduced native table warnings"
     ],
-    "strictZoomPerformance": {
-      "status": "failed",
-      "sourceFingerprint": "3f5ec8d396f1e7ff80ef0acb9df9d3a2ab6cfee88471c71be47c700b94df0848",
-      "requestedSeconds": 30,
-      "fixedData": false,
-      "report": "zoom-performance.json",
-      "inputToLayoutP95Milliseconds": 66.1668332759291,
-      "inputBudgetMilliseconds": 50,
-      "steadyZoomTimerP95Milliseconds": 72.20766670070589,
-      "timerBudgetMilliseconds": 33
-    },
-    "verificationPath": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/compact-cards-2026-10-05/verification.json"
+    "status": "previous_source_full_run_only",
+    "sourceFingerprint": "e038196eea54714eec07d2403b1e48a9eeb2393037b67fc2515123d68e06d456"
   },
   "requestedArchivePath": null,
   "archiveComplete": false,
@@ -51,11 +37,7 @@
   "internalTestingVerified": false,
   "requestedDistribution": "Normal App Store Connect upload, assign current build to existing internal testers",
   "requiredUserInput": [
-    {
-      "action": "Run the current exact-source archive helper from the signed-in Mac Terminal and complete normal macOS signing authentication",
-      "command": "/opt/homebrew/opt/python@3.14/bin/python3.14 /private/tmp/dabin-testflight-compact-cards-20261005.py",
-      "reason": "Protected SecurityAgent/Keychain control was rejected by automatic approval review; native Terminal control was refused by Computer Use"
-    }
+    "Run the NEW task-card exact-source command from the signed-in Mac Terminal and complete normal macOS signing authentication; all preceding helper commands are superseded"
   ],
   "authenticationBoundary": "Protected SecurityAgent control was rejected by automatic approval review earlier; no authentication UI is inspected or operated",
   "manualBoundaries": [
@@ -115,19 +97,18 @@
   },
   "computerUseRestriction": "Computer Use refused Terminal app control for safety reasons; no Terminal interaction performed",
   "interactiveHandoff": {
-    "scriptPath": "/private/tmp/dabin-testflight-compact-cards-20261005.py",
-    "scriptSHA256": "cf3a606c5061fe4d22ad7a90570b559eb448d58951eb401fe5d0cd50fc27b29e",
+    "scriptPath": "/private/tmp/dabin-testflight-task-card-20261005.py",
+    "scriptSHA256": "bb2347a43d820afb7b6a7866039208fc74838f45cfec64b8c6eae2944b6f227a",
     "pythonExecutable": "/opt/homebrew/opt/python@3.14/bin/python3.14",
-    "receiptGlob": "/private/tmp/dabin-testflight-compact-cards-interactive-*-receipt.json",
-    "command": "/opt/homebrew/opt/python@3.14/bin/python3.14 /private/tmp/dabin-testflight-compact-cards-20261005.py",
+    "receiptGlob": "/private/tmp/dabin-testflight-task-card-interactive-*-receipt.json",
+    "command": "/opt/homebrew/opt/python@3.14/bin/python3.14 /private/tmp/dabin-testflight-task-card-20261005.py",
     "usesExistingArchiveHelper": true,
     "checksExactSourceFingerprint": true,
-    "checksExactBuildConfigurationHashes": true,
-    "sourceFingerprint": "3f5ec8d396f1e7ff80ef0acb9df9d3a2ab6cfee88471c71be47c700b94df0848",
-    "codeCommit": "086c3b51bc00470cfa8ea9a2963e8c895b8765c2",
+    "sourceFingerprint": "1a5e3982c72c0dbe06924595659edfecf3392afedda1517d393f8a022707d1b7",
+    "codeCommit": "107c5f15cbcf9819d5468086ab3f6b2396e4ebf8",
     "status": "prepared_not_executed",
     "executionRequired": "Human signed-in Mac Terminal; never automated native Terminal or protected authentication control",
-    "recoveryCopy": "archive-compact-cards-human-handoff.py"
+    "recoveryCopy": "archive-task-card-human-handoff.py"
   },
   "currentArchiveAttempt": null,
   "invitation": {
@@ -149,31 +130,30 @@
     "internalGroupOldBuildState": "Testing",
     "currentInternalTesterInstalledVersion": "0.4.31 (86)"
   },
-  "previousCodeCommit": "107c5f15cbcf9819d5468086ab3f6b2396e4ebf8",
+  "previousCodeCommit": "9c325e6b194fbb19d6d747141095b209d211a5c5",
   "focusedQa": {
-    "status": "eight_current_source_card_regressions_passed",
+    "status": "passed",
     "suiteNames": [
-      "CollectionCardPresentationTests",
-      "DailyGridLayoutTests",
-      "RedesignInteractionTests",
+      "TaskFocusTests",
+      "TaskPlanningTests",
+      "CaptureTaskConversionTests",
+      "WorkspaceWindowTests",
       "TaskPlanInteractionTests",
+      "CaptureTimestampPresentationTests",
+      "TaskPriorityTagTests",
+      "NativeContentDragTests",
       "TodayTaskCardTests",
-      "VisualAnimationStressTests",
-      "WeeklyLayoutTests",
       "WorkspaceZoomLayoutTests"
     ],
-    "sourceFingerprint": "3f5ec8d396f1e7ff80ef0acb9df9d3a2ab6cfee88471c71be47c700b94df0848",
+    "sourceFingerprint": "1a5e3982c72c0dbe06924595659edfecf3392afedda1517d393f8a022707d1b7",
     "fullRegisteredRun": false,
-    "passedSuites": 8,
+    "passedSuites": 10,
     "failedSuites": 0,
+    "inputFingerprint": "b8d1579336ec88439f5d2d04bdd1126c4998766072b291d0f3b07908801af363",
     "inputsUnchanged": true,
-    "coverageStrategy": "Seven passed in final-card-run; Today passed after a native static-text AX query repair on the same unchanged production source. Broad run provides other unchanged card/flow coverage. Strict performance is recorded separately as failed.",
-    "verificationPath": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/compact-cards-2026-10-05/verification.json",
-    "verificationSHA256": "2fe17cabd44ad2d4700c73b663ff650a8d07474cdb35609370acf2bbd81295ee",
-    "productionDeltaFromBroadRun": [
-      "Sources/DaBin/CollectionPreviewMosaic.swift",
-      "Sources/DaBin/TodayTaskCard.swift"
-    ]
+    "reportPath": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/task-card-modern-2026-10-05/report.json",
+    "reportSHA256": "76b5784ef5e835220bebbf3cab520defe7f952049fb3587b1d491359ebc7c74e",
+    "verificationPath": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/task-card-modern-2026-10-05/verification.json"
   },
   "tabLabels": {
     "leftToRight": [
@@ -208,15 +188,14 @@
   },
   "currentUnsignedStoreCandidate": {
     "status": "unsigned_store_release_compiled_packaging_checked",
-    "sourceFingerprint": "3f5ec8d396f1e7ff80ef0acb9df9d3a2ab6cfee88471c71be47c700b94df0848",
+    "sourceFingerprint": "1a5e3982c72c0dbe06924595659edfecf3392afedda1517d393f8a022707d1b7",
     "version": "0.4.33",
     "buildNumber": "88",
-    "receipt": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/compact-cards-2026-10-05/store-candidate-receipt.json",
-    "receiptSHA256": "96628114c8cbf0636546c096cd9a935217eb12b135aa8cea98aac45845ae4db0",
+    "receipt": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/task-card-modern-2026-10-05/store-candidate-receipt.json",
+    "receiptSHA256": "6aeab7b8cf00d1d5030d5f11c11ee4752ced84a22cdfb6030b98acd1d55dc68b",
     "xcodebuildExitCode": 0,
     "packagingPreflightExitCode": 0,
     "inputsUnchanged": true,
-    "actualAppInfoAndBinaryVerified": true,
     "signed": false,
     "archiveCreated": false,
     "uploaded": false,
@@ -245,7 +224,7 @@
     "status": "superseded_by_keyboard_shortcuts_do_not_use_for_current_release",
     "executionRequired": "Human signed-in Mac Terminal; never automated native Terminal or protected authentication control"
   },
-  "previousSourceFingerprint": "1a5e3982c72c0dbe06924595659edfecf3392afedda1517d393f8a022707d1b7",
+  "previousSourceFingerprint": "d9cf19d153df895fa60204d21f16505f0da14d2015353820b17e476c6e06eb28",
   "keyboardShortcuts": {
     "settingsLocation": "Settings \u2192 Quick access",
     "fullScreenDefault": "Control + Option + F",
@@ -285,134 +264,11 @@
       "Pause"
     ],
     "visualProfiles": 18,
-    "cardHeightAt380PointsAnd100Percent": 189.0,
-    "cardChecks": 1121,
-    "dragAndAttachmentDropRetained": true,
-    "nativeMenuDispatchVerified": true,
-    "privateClipboardAndPersistenceVerified": true,
-    "previewPath": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/compact-cards-2026-10-05/cards/today/task-card-preview-380-dark.png",
-    "sourceFingerprint": "3f5ec8d396f1e7ff80ef0acb9df9d3a2ab6cfee88471c71be47c700b94df0848",
-    "plannedTimeVisiblyLabeledToday": true
-  },
-  "activeCardRefinement": {
-    "status": "implemented_selected_regressions_verified_release_compiled_and_code_pushed",
-    "sourceFingerprint": "3f5ec8d396f1e7ff80ef0acb9df9d3a2ab6cfee88471c71be47c700b94df0848",
-    "codeCommit": "086c3b51bc00470cfa8ea9a2963e8c895b8765c2",
-    "codePushVerified": true,
-    "priorPublicationSourceSuperseded": true,
-    "currentHumanArchiveCommandAvailable": true,
-    "strictPerformanceRemainingOpen": true,
-    "qaVerificationPath": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/compact-cards-2026-10-05/verification.json"
-  },
-  "previousTaskCardInteractiveHandoff": {
-    "scriptPath": "/private/tmp/dabin-testflight-task-card-20261005.py",
-    "scriptSHA256": "bb2347a43d820afb7b6a7866039208fc74838f45cfec64b8c6eae2944b6f227a",
-    "pythonExecutable": "/opt/homebrew/opt/python@3.14/bin/python3.14",
-    "receiptGlob": "/private/tmp/dabin-testflight-task-card-interactive-*-receipt.json",
-    "command": "/opt/homebrew/opt/python@3.14/bin/python3.14 /private/tmp/dabin-testflight-task-card-20261005.py",
-    "usesExistingArchiveHelper": true,
-    "checksExactSourceFingerprint": true,
-    "sourceFingerprint": "1a5e3982c72c0dbe06924595659edfecf3392afedda1517d393f8a022707d1b7",
-    "codeCommit": "107c5f15cbcf9819d5468086ab3f6b2396e4ebf8",
-    "status": "superseded_by_app_wide_card_redesign_do_not_use_for_current_release",
-    "executionRequired": "Human signed-in Mac Terminal; never automated native Terminal or protected authentication control",
-    "recoveryCopy": "archive-task-card-human-handoff.py"
-  },
-  "previousTaskCardFocusedQa": {
-    "status": "passed",
-    "suiteNames": [
-      "TaskFocusTests",
-      "TaskPlanningTests",
-      "CaptureTaskConversionTests",
-      "WorkspaceWindowTests",
-      "TaskPlanInteractionTests",
-      "CaptureTimestampPresentationTests",
-      "TaskPriorityTagTests",
-      "NativeContentDragTests",
-      "TodayTaskCardTests",
-      "WorkspaceZoomLayoutTests"
-    ],
-    "sourceFingerprint": "1a5e3982c72c0dbe06924595659edfecf3392afedda1517d393f8a022707d1b7",
-    "fullRegisteredRun": false,
-    "passedSuites": 10,
-    "failedSuites": 0,
-    "inputFingerprint": "b8d1579336ec88439f5d2d04bdd1126c4998766072b291d0f3b07908801af363",
-    "inputsUnchanged": true,
-    "reportPath": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/task-card-modern-2026-10-05/report.json",
-    "reportSHA256": "76b5784ef5e835220bebbf3cab520defe7f952049fb3587b1d491359ebc7c74e",
-    "verificationPath": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/task-card-modern-2026-10-05/verification.json"
-  },
-  "previousTaskCardRedesign": {
-    "titleFirst": true,
-    "titleLines": 2,
-    "completionAndMoreAligned": true,
-    "secondaryActionsInNativeMenu": true,
-    "labeledFocusActions": [
-      "Set focus time",
-      "Start",
-      "Resume",
-      "Pause"
-    ],
-    "visualProfiles": 18,
     "cardHeightAt380PointsAnd100Percent": 193,
     "cardChecks": 1067,
     "dragAndAttachmentDropRetained": true,
     "nativeMenuDispatchVerified": true,
     "privateClipboardAndPersistenceVerified": true,
     "previewPath": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/task-card-modern-2026-10-05/cards/task-card-preview-380-dark.png"
-  },
-  "previousUnsignedStoreCandidate": {
-    "status": "unsigned_store_release_compiled_packaging_checked",
-    "sourceFingerprint": "1a5e3982c72c0dbe06924595659edfecf3392afedda1517d393f8a022707d1b7",
-    "version": "0.4.33",
-    "buildNumber": "88",
-    "receipt": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/task-card-modern-2026-10-05/store-candidate-receipt.json",
-    "receiptSHA256": "6aeab7b8cf00d1d5030d5f11c11ee4752ced84a22cdfb6030b98acd1d55dc68b",
-    "xcodebuildExitCode": 0,
-    "packagingPreflightExitCode": 0,
-    "inputsUnchanged": true,
-    "signed": false,
-    "archiveCreated": false,
-    "uploaded": false,
-    "sandboxRuntimeVerified": false
-  },
-  "historicalFullQa": {
-    "registeredSuites": 121,
-    "passed": 120,
-    "failed": 1,
-    "failedSuiteNames": [
-      "WorkspaceZoomPerformanceTests"
-    ],
-    "allFindingsFixed": false,
-    "knownOpenFindings": [
-      "Strict zoom performance budgets not met",
-      "Framework-reproduced native table warnings"
-    ],
-    "status": "previous_source_full_run_only",
-    "sourceFingerprint": "e038196eea54714eec07d2403b1e48a9eeb2393037b67fc2515123d68e06d456"
-  },
-  "cardRedesign": {
-    "families": [
-      "Projects",
-      "Tasks",
-      "Captions",
-      "Workspace items",
-      "Collections",
-      "Hourly groups",
-      "Search",
-      "Settings",
-      "Capture detail panels"
-    ],
-    "titleFirst": true,
-    "contentSizedText": true,
-    "previewsOnlyForSavedThumbnails": true,
-    "adaptiveHeaderRetainsControlLifetime": true,
-    "minimumNativeControlPoints": 32,
-    "fullReceiptAndOriginalContentRetained": true,
-    "mixedFileFilenameAndBadgeClippingFixed": true,
-    "nativeCollectionChecks": 1359,
-    "seededGraphicsAnimationChecks": 109041,
-    "previewPath": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/compact-cards-2026-10-05/cards/today/task-card-preview-380-dark.png"
-  },
-  "appStoreConnectSessionVerificationScope": "Previously verified at the timestamp in latestAppStoreConnectCheck; revalidate after current signing before upload"
+  }
 }
