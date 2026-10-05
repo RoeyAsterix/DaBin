@@ -1,0 +1,14 @@
+{
+  "files": {
+    "native/Sources/DaBin/BoardView.swift": "8f4b473379758fdf5f9aeed5626e2754f40d0a288e06d8afa8316502474d2ac8",
+    "native/Sources/DaBin/WorkspaceInput.swift": "f1458efaae48b07936952cf4a3407325a41e192987e315e6798dd7ad7f846f80",
+    "native/scripts/run_qa.py": "97c696d0a8c1fe8f8fa4e3d9304d7b1dfda8bd08caa61839a7daabc3344f9c67",
+    "native/Tests/WorkspaceInputTests.swift": "5d9624f9e49b89e454e842bac549cb88982c44992a161433b9c452c745450dbf",
+    "native/DaBin.xcodeproj/project.pbxproj": "bd087341d5aa8db8b02d7844cdaf3bbd8a00713a882a16e96275508f748b7edf",
+    "native/Tests/NavigationGestureTests.swift": "8d0f4833b4de032266e265490080b68512036629a69b03661d396539cef5db15"
+  },
+  "sourceFingerprint": "b3a888c7967be0e995ad82a7de5cc67ed207826bffc5b815f31861c2e61a8d0f",
+  "backup": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/navigation-gestures-integration-backup",
+  "nativeReport": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/navigation-gestures-2026-10-05/verification.json",
+  "preservedConcurrentBaseline": true
+}

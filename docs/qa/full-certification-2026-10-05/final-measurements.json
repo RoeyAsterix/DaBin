@@ -1,0 +1,526 @@
+{
+  "campaign": {
+    "failedSuites": 0,
+    "fullRegisteredSuitesPassed": 121,
+    "fullReport": "app-store-full-run.json",
+    "fullReportSHA256": "58e589aa0221f7b1a206edd4a590564d5523800b062a60feafffe9f3439011d2",
+    "runID": "20261005T012113981577Z-app-store",
+    "scope": "Native test executables; no distribution signing, sandbox entitlement enforcement, installer, or App Store validation.",
+    "sourceChangedDuringRun": false,
+    "sourceFingerprint": "807afd531fd5a8c3e3cbc059f73bf0c1d4137aa3efc2684fdf337f2b36c47b15"
+  },
+  "curatedAtUTC": "2026-10-05T02:34:38.892908+00:00",
+  "curation": {
+    "artifacts": [
+      {
+        "bytes": 240,
+        "path": "sandbox-final/Smoke.entitlements",
+        "sha256": "b746c74b201e6af4e0864fbd1f4f629f96156a7ec4b7208bc995d0a5089bb592",
+        "source": "/private/tmp/dabin-full-certification-final-sandbox-20261005T014700/Smoke.entitlements"
+      },
+      {
+        "bytes": 9890,
+        "path": "sandbox-final/StoreSandboxSmokeTests.original.swift",
+        "sha256": "383ce1b8c32b6adf890afc6d236f2a6e5e5b62e7376e061f5ea7a5c8b8770563",
+        "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Tests/StoreSandboxSmokeTests.swift"
+      },
+      {
+        "bytes": 9921,
+        "path": "sandbox-final/StoreSandboxSmokeTests.swift",
+        "sha256": "ee156d848ef24a6fdbae8a2930f4b31c3c4c5166c3cba57cf6ed2b119d6f0813",
+        "source": "/private/tmp/dabin-full-certification-final-sandbox-20261005T014700/StoreSandboxSmokeTests.swift"
+      },
+      {
+        "bytes": 0,
+        "path": "sandbox-final/compile.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "source": "/private/tmp/dabin-full-certification-final-sandbox-20261005T014700/compile.log"
+      },
+      {
+        "bytes": 0,
+        "path": "sandbox-final/reopen-export.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "source": "/private/tmp/dabin-full-certification-final-sandbox-20261005T014700/reopen-export.stderr.log"
+      },
+      {
+        "bytes": 1949,
+        "path": "sandbox-final/reopen-export.stdout.json",
+        "sha256": "6927476a8c74a21fe0a0c40b004917348fd9d7d90e5d5b31d34d3d93fd2da0ac",
+        "source": "/private/tmp/dabin-full-certification-final-sandbox-20261005T014700/reopen-export.stdout.json"
+      },
+      {
+        "bytes": 23455,
+        "path": "sandbox-final/report.json",
+        "sha256": "2aab69267647d720781364d8fd2ebe4368c23449788203d1c3d8c3f513e80bab",
+        "source": "/private/tmp/dabin-full-certification-final-sandbox-20261005T014700/report.json"
+      },
+      {
+        "bytes": 0,
+        "path": "sandbox-final/save.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "source": "/private/tmp/dabin-full-certification-final-sandbox-20261005T014700/save.stderr.log"
+      },
+      {
+        "bytes": 1339,
+        "path": "sandbox-final/save.stdout.json",
+        "sha256": "16c64c8f68aaa2a7146d26d4420e22c64500495c0fb3c035667d552767da9e7f",
+        "source": "/private/tmp/dabin-full-certification-final-sandbox-20261005T014700/save.stdout.json"
+      },
+      {
+        "bytes": 128,
+        "path": "sandbox-final/sign-app.log",
+        "sha256": "051b667bfb4977d4c37f3558628cff2a3120d551b9fca0b2252c0dd0cc92afaa",
+        "source": "/private/tmp/dabin-full-certification-final-sandbox-20261005T014700/sign-app.log"
+      },
+      {
+        "bytes": 171,
+        "path": "sandbox-final/sign-library.log",
+        "sha256": "15c2f877e048dcfc968af13b2d6baa9c5b568050a2e5abe5d11446e7336ebb42",
+        "source": "/private/tmp/dabin-full-certification-final-sandbox-20261005T014700/sign-library.log"
+      },
+      {
+        "bytes": 0,
+        "path": "sandbox-final/signature-verify.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "source": "/private/tmp/dabin-full-certification-final-sandbox-20261005T014700/signature-verify.log"
+      },
+      {
+        "bytes": 467,
+        "path": "sandbox-final/signed-entitlements.log",
+        "sha256": "57404249a7ab5fcbbd5e917fa1a4386e0745f2adde1b0ac220667720faa4e6c6",
+        "source": "/private/tmp/dabin-full-certification-final-sandbox-20261005T014700/signed-entitlements.log"
+      },
+      {
+        "bytes": 21251,
+        "path": "store-candidate/store-candidate-receipt.json",
+        "sha256": "7823bc16cac97fdd0c116fddb56cf5bea4744c00c099bde09c39a094e1f11999",
+        "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/store-full-certification-20261005/store-candidate-receipt.json"
+      },
+      {
+        "bytes": 3482,
+        "path": "store-candidate/unsigned-packaging-preflight.log",
+        "sha256": "3185396f156f35ca73d76a5316de4fc6430ef96756d29e5e9fe4bcc9437aa005",
+        "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/store-full-certification-20261005/unsigned-packaging-preflight.log"
+      },
+      {
+        "bytes": 127056,
+        "path": "store-candidate/xcodebuild-release.log",
+        "sha256": "315920c8018eaf8779fffb6441460c02bb2816926f8122bcd0fd9782a0f7a212",
+        "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/store-full-certification-20261005/xcodebuild-release.log"
+      },
+      {
+        "bytes": 0,
+        "path": "measured-flows/FlowActionStressTests-compile.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa/runs/20261005T012113981577Z-app-store/FlowActionStressTests-compile.log"
+      },
+      {
+        "bytes": 2693,
+        "path": "measured-flows/FlowActionStressTests.log",
+        "sha256": "4fa685a5eaefd74a6778c76cd475ebab146cba34b5f94cd32fe5ccaceb7dcdcd",
+        "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa/runs/20261005T012113981577Z-app-store/FlowActionStressTests.log"
+      },
+      {
+        "bytes": 41909,
+        "path": "measured-flows/FlowActionStressTests.swift",
+        "sha256": "2265e101454cb89193cdb502188ce97f4e33a5862d8e3918663d9538ef6b4e8d",
+        "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Tests/FlowActionStressTests.swift"
+      },
+      {
+        "bytes": 0,
+        "path": "measured-flows/VideoPlaybackIntegrationTests-compile.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa/runs/20261005T012113981577Z-app-store/VideoPlaybackIntegrationTests-compile.log"
+      },
+      {
+        "bytes": 3703,
+        "path": "measured-flows/VideoPlaybackIntegrationTests.log",
+        "sha256": "3243087f193042c3ac722eab602098af2e2b3ea464071e7523b78a4ab3de41f1",
+        "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa/runs/20261005T012113981577Z-app-store/VideoPlaybackIntegrationTests.log"
+      },
+      {
+        "bytes": 29452,
+        "path": "measured-flows/VideoPlaybackIntegrationTests.swift",
+        "sha256": "83f982f8e61b21474b3052562a58f70ce5b47ec4b9ac1a3fa595882e1009e24d",
+        "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Tests/VideoPlaybackIntegrationTests.swift"
+      },
+      {
+        "bytes": 3509,
+        "path": "measured-flows/suite-receipts.json",
+        "sha256": "725756f0a8d9f17b227b7be8e904c748dcd90a156423d4f5b83aa9ebea5ab7c8",
+        "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa/runs/20261005T012113981577Z-app-store/report.json"
+      },
+      {
+        "bytes": 0,
+        "path": "workspace-zoom/WorkspaceZoomPerformanceTests-compile.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa/runs/20261005T012113981577Z-app-store/WorkspaceZoomPerformanceTests-compile.log"
+      },
+      {
+        "bytes": 1550,
+        "path": "workspace-zoom/WorkspaceZoomPerformanceTests.log",
+        "sha256": "b154d2bc41aa4da4feb92e97d85cddbc24abf87dbb79c514e78aba6c023def8c",
+        "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa/runs/20261005T012113981577Z-app-store/WorkspaceZoomPerformanceTests.log"
+      },
+      {
+        "bytes": 26942,
+        "path": "workspace-zoom/WorkspaceZoomPerformanceTests.swift",
+        "sha256": "2526ccb280cc8b312dbebe26649749fbd593775221fdd4024a2a5fac95d7d3b9",
+        "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Tests/WorkspaceZoomPerformanceTests.swift"
+      },
+      {
+        "bytes": 1550,
+        "path": "workspace-zoom/historical-20261005T002333138721Z.log",
+        "sha256": "11424c326f1cd98e838baf5fa985c2f73104824d3f5e9d2fee4d8fee4e07c792",
+        "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa/runs/20261005T002333138721Z-app-store/WorkspaceZoomPerformanceTests.log"
+      },
+      {
+        "bytes": 5772,
+        "path": "workspace-zoom/performance.json",
+        "sha256": "da08084666b4a5984d44bfe78def6bd28000a1025149a1018077f6b5ff2937e4",
+        "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa/workspace-zoom-performance/performance.json"
+      }
+    ],
+    "excludedKinds": [
+      "Compiled app bundles",
+      "Executables",
+      "Dynamic libraries",
+      "Module caches",
+      "Large media",
+      "Render frame sequences"
+    ],
+    "includedKinds": [
+      "JSON receipts",
+      "Text logs",
+      "Sandbox entitlements",
+      "Swift fixture source snapshots"
+    ]
+  },
+  "evidenceRoot": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05",
+  "flowActionStress": {
+    "actionCounts": {
+      "assignProject.filed": 32,
+      "assignProject.unfiled": 32,
+      "back": 1370,
+      "back.boundary": 40,
+      "completeFollowUp.task": 32,
+      "configureTaskFocus": 32,
+      "convertToTask": 32,
+      "convertToTask.failed": 32,
+      "convertToTask.repeat": 32,
+      "copyCapturesToClipboard": 32,
+      "copySearchNote": 32,
+      "forward": 1111,
+      "forward.boundary": 40,
+      "moveDay": 64,
+      "navigateProject": 97,
+      "navigateWorkspaceMode": 256,
+      "openCapture": 33,
+      "openCapture.attachment": 64,
+      "openCapture.convertible": 32,
+      "openCapture.removal": 32,
+      "openLibrary": 65,
+      "openNewNote": 33,
+      "openNewTask": 33,
+      "postDetailComment.edit": 32,
+      "postDetailComment.empty": 32,
+      "postDetailComment.failed": 32,
+      "postDetailComment.retry": 32,
+      "removeCapture": 32,
+      "resetTaskFocus": 32,
+      "restart.openCapture": 40,
+      "restoreCapture": 32,
+      "returnCaptureToInbox": 32,
+      "returnCaptureToInbox.failed": 32,
+      "returnCaptureToInbox.repeat": 32,
+      "route.daily": 64,
+      "route.detail": 128,
+      "route.inbox": 128,
+      "route.library": 64,
+      "route.newNote": 64,
+      "route.newTask": 64,
+      "route.reminders": 64,
+      "route.search": 64,
+      "route.searchNote": 64,
+      "route.settings": 128,
+      "route.trash": 64,
+      "route.weekly": 64,
+      "saveDetail.failed": 32,
+      "saveDetail.pastReminder": 32,
+      "saveDetail.repeat": 32,
+      "saveDetail.retry": 32,
+      "saveNewNote.empty": 32,
+      "saveNewNote.failed": 32,
+      "saveNewNote.retry": 32,
+      "saveNewTask.failed": 32,
+      "saveNewTask.invalidChecklist": 32,
+      "saveNewTask.pastReminder": 32,
+      "saveNewTask.retry": 32,
+      "scheduleTask": 32,
+      "selectSearchProject": 64,
+      "setDetailReminder": 32,
+      "showSettings.blocked": 32,
+      "showTrash": 32,
+      "store.capture": 32,
+      "store.captureAttachment": 33,
+      "store.createTask": 1,
+      "store.importData": 1,
+      "toggleMinimized": 64,
+      "togglePinned": 64,
+      "togglePinned.failed": 32,
+      "toggleTaskCompletion.complete": 32,
+      "toggleTaskCompletion.failed": 32,
+      "toggleTaskCompletion.reopen": 64,
+      "toggleTaskFocus.pause": 32,
+      "toggleTaskFocus.start": 32,
+      "undoTaskConversion": 32,
+      "undoTaskConversion.blocked": 32,
+      "workspace.createProject": 4,
+      "workspace.markInboxProcessed": 32,
+      "workspace.setOnShelf": 32,
+      "workspace.setOnShelf.remove": 32,
+      "workspace.setScratchpad": 33,
+      "workspace.setScratchpad.failed": 32,
+      "workspace.setScratchpad.retry": 32,
+      "workspace.setSnippetName": 32
+    },
+    "checks": 11674,
+    "countInterpretation": "Repeated recorded semantic action invocations, including route commands and boundary/rejection attempts; not distinct user flows or native button activations. Checks are assertions, not user actions.",
+    "evidence": [
+      "measured-flows/FlowActionStressTests.log",
+      "measured-flows/FlowActionStressTests.swift",
+      "measured-flows/suite-receipts.json"
+    ],
+    "logCounterName": "actualHandlerInvocations",
+    "measuredWorkloadSeconds": 9.744,
+    "navigationCycles": 64,
+    "recordedActionInvocations": 6134,
+    "restartChecks": 72,
+    "routeCommandInvocations": 960,
+    "routeCounts": {
+      "daily": 64,
+      "detail": 128,
+      "inbox": 128,
+      "library": 64,
+      "newNote": 64,
+      "newTask": 64,
+      "reminders": 64,
+      "search": 64,
+      "searchNote": 64,
+      "settings": 128,
+      "trash": 64,
+      "weekly": 64
+    },
+    "routeKinds": 12,
+    "runnerProcessSeconds": 10.211,
+    "scope": "Public production AppState/store/workspace semantic actions; temporary archive, private clipboard and fake notification client. Native activation, system dialogs, rendering and animation are separate coverage.",
+    "seedHex": "dab120261005",
+    "status": "passed",
+    "transactionalCycles": 32,
+    "workspaceModes": 4
+  },
+  "overallBoundaries": [
+    "This is bounded automated fixture evidence, not proof that every action succeeds on every user archive or device.",
+    "The native full run uses test executables; sandbox enforcement is separately shown by an isolated ad-hoc smoke linked to the Store module.",
+    "Unsigned Store packaging is compile/preflight evidence, not distribution signing, archive validation, TestFlight upload or Apple review.",
+    "Multi-hour heap/GPU/compositor stability, thermal throttling, swap, physical input-to-display smoothness and mixed-display behavior remain unverified."
+  ],
+  "sandboxSmoke": {
+    "checks": 31,
+    "currentSourceHashMismatches": [],
+    "currentSourceHashesValidated": 137,
+    "deniedReadErrno": 1,
+    "deniedWriteErrno": 1,
+    "distributionSignedAppRuntimeVerified": false,
+    "evidence": [
+      "sandbox-final/report.json",
+      "sandbox-final/save.stdout.json",
+      "sandbox-final/reopen-export.stdout.json",
+      "sandbox-final/signed-entitlements.log",
+      "sandbox-final/Smoke.entitlements",
+      "sandbox-final/StoreSandboxSmokeTests.swift",
+      "sandbox-final/StoreSandboxSmokeTests.original.swift"
+    ],
+    "externalFixturePreserved": true,
+    "externalFixtureRemoved": true,
+    "materializedWrapperExactTransformMatched": true,
+    "materializedWrapperSHA256": "ee156d848ef24a6fdbae8a2930f4b31c3c4c5166c3cba57cf6ed2b119d6f0813",
+    "materializedWrapperTransform": "@testable import DaBinTestCore\\n + exact original Swift source",
+    "moduleSHA256": "cfcd623cefc11df01f93fb005e14ed048eaeaf8ebb5ff0de75788bbf1886b35e",
+    "moduleSHA256Matched": true,
+    "originalTestSHA256": "383ce1b8c32b6adf890afc6d236f2a6e5e5b62e7376e061f5ea7a5c8b8770563",
+    "originalTestSHA256Matched": true,
+    "passed": true,
+    "phases": [
+      {
+        "checks": 12,
+        "exitCode": 0,
+        "passed": true,
+        "phase": "save"
+      },
+      {
+        "checks": 19,
+        "exitCode": 0,
+        "passed": true,
+        "phase": "reopen-export"
+      }
+    ],
+    "processPhases": 2,
+    "scope": "isolated ad-hoc sandbox smoke; not distribution-signed application",
+    "scriptEvidenceLocation": "native/Tests/store_sandbox_smoke.py:81-91",
+    "scriptSHA256": "64c62a37a49b68a9877defe02d4f48293194efbea94ab9a6e240a8bf3df182aa",
+    "scriptSHA256Matched": true,
+    "syntheticArchiveRemoved": true
+  },
+  "schemaVersion": 1,
+  "unsignedStoreCandidate": {
+    "appStoreApproved": false,
+    "architecture": "arm64",
+    "archiveCreated": false,
+    "buildNumber": "88",
+    "configuration": "Release",
+    "evidence": [
+      "store-candidate/store-candidate-receipt.json",
+      "store-candidate/xcodebuild-release.log",
+      "store-candidate/unsigned-packaging-preflight.log"
+    ],
+    "executableSHA256": "94607393da6a808e5c9c8b57a3979cfa54659ccf32961e39143376a95035c694",
+    "inputsUnchanged": true,
+    "packagingPreflightExitCode": 0,
+    "preflightPassChecks": 51,
+    "sandboxRuntimeVerified": false,
+    "scope": "mac-app-store-unsigned-compile-only",
+    "signed": false,
+    "sourceFingerprint": "ea77017c68c2d9e21c15de7100c5b7b4bd69504c8fc882444c2209cb11639a17",
+    "uploaded": false,
+    "version": "0.4.33",
+    "xcodebuildExitCode": 0
+  },
+  "videoPlayback": {
+    "actualAXButtonPresses": 0,
+    "checks": 113,
+    "componentCaptureMountings": 4,
+    "evidence": [
+      "measured-flows/VideoPlaybackIntegrationTests.log",
+      "measured-flows/VideoPlaybackIntegrationTests.swift",
+      "measured-flows/suite-receipts.json"
+    ],
+    "fixtureDurationsSeconds": [
+      4.0,
+      3.0
+    ],
+    "measuredWorkloadSeconds": 14.184,
+    "nativeControlBoundaries": [
+      "CONTROL_BOUNDARY: fittedPreview landscape Play: no standard named native button with a supported AXPress was exposed by this inactive offscreen AVKit view; ownProcessAX=0. Exposed buttons: Button [AXPress=true]; Button [AXPress=true]",
+      "CONTROL_BOUNDARY: fittedPreview landscape Pause: no standard named native button with a supported AXPress was exposed by this inactive offscreen AVKit view; ownProcessAX=0. Exposed buttons: Button [AXPress=true]; Button [AXPress=true]",
+      "CONTROL_BOUNDARY: fittedPreview portrait Play: no standard named native button with a supported AXPress was exposed by this inactive offscreen AVKit view; ownProcessAX=0. Exposed buttons: Button [AXPress=true]; Button [AXPress=true]",
+      "CONTROL_BOUNDARY: fittedPreview portrait Pause: no standard named native button with a supported AXPress was exposed by this inactive offscreen AVKit view; ownProcessAX=0. Exposed buttons: Button [AXPress=true]; Button [AXPress=true]",
+      "CONTROL_BOUNDARY: extendedCanvas landscape Play: no standard named native button with a supported AXPress was exposed by this inactive offscreen AVKit view; ownProcessAX=0. Exposed buttons: Button [AXPress=true]; Button [AXPress=true]",
+      "CONTROL_BOUNDARY: extendedCanvas landscape Pause: no standard named native button with a supported AXPress was exposed by this inactive offscreen AVKit view; ownProcessAX=0. Exposed buttons: Button [AXPress=true]; Button [AXPress=true]",
+      "CONTROL_BOUNDARY: extendedCanvas portrait Play: no standard named native button with a supported AXPress was exposed by this inactive offscreen AVKit view; ownProcessAX=0. Exposed buttons: Button [AXPress=true]; Button [AXPress=true]",
+      "CONTROL_BOUNDARY: extendedCanvas portrait Pause: no standard named native button with a supported AXPress was exposed by this inactive offscreen AVKit view; ownProcessAX=0. Exposed buttons: Button [AXPress=true]; Button [AXPress=true]"
+    ],
+    "productionComponents": 2,
+    "runnerProcessSeconds": 14.583,
+    "scope": "Transport is exercised through the public API of actual native players mounted by two production SwiftUI components. No named native Play/Pause button was exposed with a supported AXPress in this inactive offscreen fixture; this run does not prove native transport button activation.",
+    "status": "passed",
+    "syntheticMOVCaptures": 2,
+    "unavailableNamedPlayPauseActions": 8,
+    "unverified": [
+      "Transport slider dragging",
+      "Audio",
+      "AirPlay",
+      "Picture in Picture",
+      "Hardware decoder varieties",
+      "Live DetailScreen thumbnail/opener flow",
+      "Multi-hour playback/GPU retention"
+    ],
+    "verifiedFunctionality": [
+      "Actual production AVPlayerView.player ready/source identity",
+      "Playback clock and decoded-frame advancement",
+      "Pause stability, accurate seek, end notification and replay",
+      "Fitted resize, capture replacement, outgoing pause, native close and weak deallocation"
+    ]
+  },
+  "workspaceZoom": {
+    "automaticArrivals": 114,
+    "baselineTimerP95Milliseconds": 16.8505001347512,
+    "burstSize": 100,
+    "checks": 25,
+    "cycles": 5,
+    "durableSaveP95Milliseconds": 16.157458536326885,
+    "durationSeconds": 30.001211541704834,
+    "evidence": [
+      "workspace-zoom/performance.json",
+      "workspace-zoom/WorkspaceZoomPerformanceTests.log",
+      "workspace-zoom/WorkspaceZoomPerformanceTests.swift"
+    ],
+    "fullTenMinuteRun": false,
+    "historicalWarnings": {
+      "evidence": "workspace-zoom/historical-20261005T002333138721Z.log",
+      "inputToLayoutP95Milliseconds": 54.79087494313717,
+      "runID": "20261005T002333138721Z-app-store",
+      "steadyZoomTimerP95Milliseconds": 65.86554157547653
+    },
+    "initialRecords": 5000,
+    "inputSamples": 160,
+    "inputToLayoutP95Milliseconds": 54.56233327277005,
+    "limitations": [
+      "No physical trackpad or mouse-driver coverage",
+      "Offscreen native rendering cannot measure presentation timestamps",
+      "RSS includes the growing fixture archive, caches and retained timing arrays",
+      "Main-runloop timer intervals are callback delivery, not display frame presentation.",
+      "Input samples include synchronous publication/window resize, forced layouts and async scheduling; they directly call zoom.update and bypass native-input coalescing.",
+      "No attributed performance stack establishes the dominant bottleneck.",
+      "RSS includes archive arrivals, cache warming and retained timing arrays; no multi-hour heap/GPU stability claim."
+    ],
+    "maximumAvailableNativeRows": 3,
+    "measurement": "Synthetic native input-to-layout flush and main-runloop timer intervals; not physical input-to-display latency",
+    "memory": [
+      {
+        "phase": "baseline",
+        "rssBytes": 234799104
+      },
+      {
+        "phase": "cycle 1",
+        "rssBytes": 246824960
+      },
+      {
+        "phase": "cycle 2",
+        "rssBytes": 247398400
+      },
+      {
+        "phase": "cycle 3",
+        "rssBytes": 247480320
+      },
+      {
+        "phase": "cycle 4",
+        "rssBytes": 247562240
+      },
+      {
+        "phase": "cycle 5",
+        "rssBytes": 248741888
+      },
+      {
+        "phase": "end of measured run",
+        "rssBytes": 248741888
+      }
+    ],
+    "nativeTableReentrancyWarnings": 2,
+    "passDoesNotClearWarnings": true,
+    "requestedDurationSeconds": 30,
+    "retainedCaptureModels": 5114,
+    "retainedTimerCapacityBytes": 38496,
+    "status": "passed",
+    "steadyZoomTimerP95Milliseconds": 69.42895846441388,
+    "warnings": [
+      "Synthetic input-to-layout p95 exceeds 50 ms",
+      "Steady zoom main-runloop interval p95 exceeds 33 ms",
+      "Main-runloop interval reached 110.50270847044885 ms in phase '100 durable arrivals during zoom'; delivery-phase labeling can include preceding operation time",
+      "Main-runloop interval reached 108.84024994447827 ms in phase 'idle between inputs'; delivery-phase labeling can include preceding operation time",
+      "Main-runloop interval reached 108.50004153326154 ms in phase 'navigation'; delivery-phase labeling can include preceding operation time"
+    ],
+    "wholeRunTimerIntervalsAbove100Milliseconds": 23,
+    "wholeRunTimerMaximumMilliseconds": 110.50270847044885
+  }
+}

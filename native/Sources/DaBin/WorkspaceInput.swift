@@ -59,6 +59,8 @@ enum WorkspaceInputPolicy {
     private var consumesZoomMomentum = false
     private var checkingFirstResponder = false
     private var lastCommandEvent: EventIdentity?
+    private var handledAuxiliaryButtons = Set<Int>()
+    private var cancelledAuxiliaryButtons = Set<Int>()
     private var observers: [NSObjectProtocol] = []
     var swipePreference: () -> Bool = { NSEvent.isSwipeTrackingFromScrollEventsEnabled }
     /// The real recognizer owns completion/cancellation and semantic direction.
@@ -85,11 +87,17 @@ enum WorkspaceInputPolicy {
     func attach(to window: NSWindow?) {
         for observer in observers { NotificationCenter.default.removeObserver(observer) }
         observers.removeAll()
+        handledAuxiliaryButtons.removeAll()
+        cancelledAuxiliaryButtons.removeAll()
         guard let window else { cancel(); return }
         for name in [NSWindow.didResignKeyNotification, NSWindow.willCloseNotification,
                      NSWindow.willBeginSheetNotification] {
             observers.append(NotificationCenter.default.addObserver(forName: name, object: window, queue: .main) { [weak self] _ in
-                MainActor.assumeIsolated { self?.cancel() }
+                MainActor.assumeIsolated {
+                    if let self { self.cancelledAuxiliaryButtons.formUnion(self.handledAuxiliaryButtons) }
+                    self?.handledAuxiliaryButtons.removeAll()
+                    self?.cancel()
+                }
             })
         }
     }
@@ -155,12 +163,33 @@ enum WorkspaceInputPolicy {
     func handle(_ event: NSEvent) -> Bool {
         guard let window, let state, event.windowNumber == window.windowNumber,
               window.isKeyWindow, window.isVisible else { return false }
-        if blocked { cancel(); return false }
-        if event.type == .otherMouseUp, let command = WorkspaceInputPolicy.auxiliaryButton(event.buttonNumber) {
-            return perform(command, event: event)
+        if (event.type == .otherMouseDown || event.type == .otherMouseUp),
+           let command = WorkspaceInputPolicy.auxiliaryButton(event.buttonNumber) {
+            if lastCommandEvent == EventIdentity(event) { return true }
+            // Act on the press, consuming its release even if navigation opens
+            // a blocker. Some drivers deliver only a release, so keep that path.
+            if event.type == .otherMouseUp,
+               handledAuxiliaryButtons.remove(event.buttonNumber) != nil
+                || cancelledAuxiliaryButtons.remove(event.buttonNumber) != nil {
+                lastCommandEvent = EventIdentity(event)
+                return true
+            }
+            if event.type == .otherMouseDown,
+               handledAuxiliaryButtons.contains(event.buttonNumber) { return true }
+            if event.type == .otherMouseDown { cancelledAuxiliaryButtons.remove(event.buttonNumber) }
+            guard !blocked else { cancel(); return false }
+            guard perform(command, event: event) else { return false }
+            if event.type == .otherMouseDown { handledAuxiliaryButtons.insert(event.buttonNumber) }
+            return true
         }
+        if blocked { cancel(); return false }
         guard [.scrollWheel, .magnify, .swipe].contains(event.type) else { return false }
         if event.modifierFlags.contains(.control) { cancel(); return false }
+        // A second recognizer cannot reset ownership before the native fluid
+        // swipe completes, or turn one physical gesture into two history steps.
+        if owner == .swipe && (event.type == .swipe || event.type == .magnify) { return true }
+        if owner == .zoom && event.type == .swipe { return true }
+        if owner == .child && event.type == .swipe { return false }
         if event.type == .scrollWheel, !event.momentumPhase.isEmpty, consumesZoomMomentum {
             if event.momentumPhase.contains(.ended) { consumesZoomMomentum = false }
             return true
@@ -190,7 +219,7 @@ enum WorkspaceInputPolicy {
                 && (event.scrollingDeltaX != 0 || event.scrollingDeltaY != 0 || began)) { owner = .child }
         }
         if owner == .child {
-            if ended { clearOwner() }
+            if ended || event.type == .swipe { clearOwner() }
             return false
         }
         // An ended/cancelled zero event only finishes its existing owner. It
@@ -202,10 +231,6 @@ enum WorkspaceInputPolicy {
             } else if consumed { finish() } else { clearOwner() }
             return consumed
         }
-        // Secondary recognizers cannot tear down the current physical owner.
-        // In particular an unrelated swipe must not orphan an active pinch.
-        if owner == .zoom && event.type == .swipe { return true }
-        if owner == .swipe && event.type == .magnify { return true }
         if event.type == .magnify {
             guard owner == .undecided || owner == .zoom else { return false }
             if owner == .undecided, !beginZoom(at: event.locationInWindow) { cancel(); return false }
@@ -216,10 +241,11 @@ enum WorkspaceInputPolicy {
         if event.type == .swipe {
             defer { clearOwner() }
             guard owner == .undecided, state.workspaceZoom.trackpadNavigationEnabled,
-                  swipePreference(), !event.phase.contains(.cancelled), event.deltaY == 0,
+                  !event.phase.contains(.cancelled), event.deltaY == 0,
                   abs(event.deltaX) == 1 else { return false }
-            // Recognized NSEvent.swipe has AppKit's semantic direction, unlike raw wheel data.
-            return perform(event.deltaX > 0 ? .back : .forward, event: event)
+            // AppKit reports a recognized right swipe as -1 (Back), and a
+            // left swipe as +1 (Forward), independently of raw scroll tracking.
+            return perform(event.deltaX < 0 ? .back : .forward, event: event)
         }
         if WorkspaceInputPolicy.qualifiesForWheelZoom(modifiers: event.modifierFlags, momentum: event.momentumPhase),
            owner == .undecided || owner == .zoom {

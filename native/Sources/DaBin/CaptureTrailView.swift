@@ -54,6 +54,7 @@ struct CaptureTrailView: View {
                 ViewThatFits(in: .horizontal) {
                     trailPath(limit: CapturePasteHistory.compactLimit)
                     trailPath(limit: 1)
+                    CaptureApplicationMark(application: source, size: compact ? 24 : 28)
                 }
                 .padding(.horizontal, 3).frame(minHeight: 34)
                 .contentShape(RoundedRectangle(cornerRadius: 7))

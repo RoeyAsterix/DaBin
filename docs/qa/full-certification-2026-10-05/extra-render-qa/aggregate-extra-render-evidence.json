@@ -1,0 +1,138 @@
+{
+  "schemaVersion": 1,
+  "assembledAtUTC": "2026-10-05T02:32:35.198551+00:00",
+  "status": "passed",
+  "scope": "Four additional standalone render executables; separate from the registered full campaign. Aggregate of unchanged original runtime, strict read-only artifact correction and one intentional Privacy fixture rerun.",
+  "suiteCount": 4,
+  "passedSuites": 4,
+  "failedSuites": 0,
+  "pngCount": 387,
+  "productionSourcesMatchVerifiedModule": true,
+  "testSourcesMatchRuntimeReceipts": true,
+  "retainedOriginalFailedReport": "docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/extra-render-report.json",
+  "retainedOriginalFailedReportSHA256": "50b542749f1a0a78c8766ca17d94fb2f005f58ab1290af85b21d01fc3c622f04",
+  "priorFailures": [
+    {
+      "name": "NativeRenderTests",
+      "category": "runner artifact-count assumption",
+      "productFailure": false
+    },
+    {
+      "name": "PrivacyRenderTests",
+      "category": "configured production URL keys incorrectly copied into existing unconfigured-links fixture",
+      "productFailure": false
+    }
+  ],
+  "suites": [
+    {
+      "name": "NativeRenderTests",
+      "status": "passed",
+      "runtimeReport": "docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/extra-render-report.json",
+      "runtimeReportSHA256": "50b542749f1a0a78c8766ca17d94fb2f005f58ab1290af85b21d01fc3c622f04",
+      "runtimeExitCode": 0,
+      "runtimeSeconds": 10.819,
+      "sourceSHA256": "d28c63673e75b9d1c1b77c657d99c54cd49b6ce1ea90a5a324601a24a08f57e5",
+      "executableSHA256": "7afe6448c442426fe1c7c7fa8fffedc18ecaef98fa0e77659f948601aea13f05",
+      "moduleDirectory": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa-cache/app-store-70feee950c20ceae70b7bcf9494d1b269c9a089191bf243f85ee35071457d45b",
+      "moduleReadyStampSHA256": "d330095a97cdbfb35fa6640f747b32be2b28e55cdd41b85d31047584e0911fa1",
+      "renderManifest": "docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/renders/NativeRenderTests/responsive-detail-renders.json",
+      "renderManifestSHA256": "0bc3e5f9b85492e319972c25ef7d5d4fb92a5d71854835daea91d5f9f473c33f",
+      "pngCount": 24,
+      "savedArtifactCount": 25,
+      "runtimeLog": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/logs/NativeRenderTests.log",
+      "runtimeLogSHA256": "f864fc0b03644ecfb5fa07e65233920f881b36e8d3c1919872970c8946ce88ef",
+      "artifactRevalidation": {
+        "receipt": "docs/qa/full-certification-2026-10-05/extra-render-qa/native-responsive-artifact-revalidation.json",
+        "sha256": "ec3a7a69fcb2a4758a856810180f1fd63055fc37722d51a0e7625a15036633ef",
+        "reason": "Original executable exited0 and produced the complete exact24source states; old script assumed30PNGs. Read-only artifact revalidation, no runtime rerun.",
+        "originalArtifactStatusPreserved": "artifact_failed"
+      }
+    },
+    {
+      "name": "PrivacyRenderTests",
+      "status": "passed",
+      "runtimeReport": "docs/qa/full-certification-2026-10-05/extra-render-qa/privacy-only-runtime/20261005T014721320972Z-d77027a3/extra-render-report.json",
+      "runtimeReportSHA256": "8a530fe0f377186dbddfe12125e9f1f6e067e5aaae556d0e7ee4e6fd67d683fe",
+      "runtimeExitCode": 0,
+      "runtimeSeconds": 1.247,
+      "sourceSHA256": "92874838181437e6f9b82f124022ee7146670f6011c4faaf1053c8d091e8a648",
+      "executableSHA256": "ef6243e8c8edbf21d9df0668bbd8db60e66eaf88d6d63e68bc666db5c803cb9e",
+      "moduleDirectory": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa-cache/app-store-70feee950c20ceae70b7bcf9494d1b269c9a089191bf243f85ee35071457d45b",
+      "moduleReadyStampSHA256": "d330095a97cdbfb35fa6640f747b32be2b28e55cdd41b85d31047584e0911fa1",
+      "renderManifest": "docs/qa/full-certification-2026-10-05/extra-render-qa/privacy-only-runtime/20261005T014721320972Z-d77027a3/renders/PrivacyRenderTests/privacy-renders.json",
+      "renderManifestSHA256": "e4cbbb779b5a8cf179a0c97be08bd0c891c06aa0cefc544c4df1bce827d2ae60",
+      "pngCount": 4,
+      "savedArtifactCount": 5,
+      "runtimeLog": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/privacy-only-runtime/20261005T014721320972Z-d77027a3/logs/PrivacyRenderTests.log",
+      "runtimeLogSHA256": "85a68285c84e5b6377d4d0ac40fed0ce1dc49a75a0c7877e403024405bfc61df",
+      "fixtureInfoOverrides": {
+        "reason": "Unconfigured public policy/support links fixture; existing native assertion is unchanged.",
+        "removedKeys": [
+          "DaBinPrivacyPolicyURL",
+          "DaBinSupportURL"
+        ],
+        "sourceValues": {
+          "DaBinPrivacyPolicyURL": "https://github.com/RoeyAsterix/DaBin/blob/main/native/Resources/PrivacyPolicy.md",
+          "DaBinSupportURL": "https://github.com/RoeyAsterix/DaBin/issues"
+        }
+      },
+      "coverage": {
+        "allStandaloneModesIncluded": false,
+        "availableSuiteCount": 4,
+        "meaning": "Status applies only to selected suites; omitted suites receive no runtime or artifact claim from this receipt.",
+        "omittedSuites": [
+          "NativeRenderTests",
+          "WalkthroughRenderTests",
+          "IslandPlaygroundRender"
+        ],
+        "selectedSuites": [
+          "PrivacyRenderTests"
+        ],
+        "selection": "partial"
+      }
+    },
+    {
+      "name": "WalkthroughRenderTests",
+      "status": "passed",
+      "runtimeReport": "docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/extra-render-report.json",
+      "runtimeReportSHA256": "50b542749f1a0a78c8766ca17d94fb2f005f58ab1290af85b21d01fc3c622f04",
+      "runtimeExitCode": 0,
+      "runtimeSeconds": 11.972,
+      "sourceSHA256": "44631784de1ad2dcf05ca32d96c83e5311dde5240f22a48478aa4de98347f2bd",
+      "executableSHA256": "ea25f04f5cb70ea5a9ff66426e748f09868d73390b3bc627298f0e7ffc7aef4a",
+      "moduleDirectory": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa-cache/app-store-70feee950c20ceae70b7bcf9494d1b269c9a089191bf243f85ee35071457d45b",
+      "moduleReadyStampSHA256": "d330095a97cdbfb35fa6640f747b32be2b28e55cdd41b85d31047584e0911fa1",
+      "renderManifest": "docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/renders/WalkthroughRenderTests/walkthrough-renders.json",
+      "renderManifestSHA256": "965d45d64cc4f4851c86794b626f9f9e94b428344862d8f2e8bffb8d5852608e",
+      "pngCount": 31,
+      "savedArtifactCount": 35,
+      "runtimeLog": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/logs/WalkthroughRenderTests.log",
+      "runtimeLogSHA256": "eb7ab316cf867c4f0b442cd4d0e58f3d70dd982d11abca485c433d8c039e5a7f"
+    },
+    {
+      "name": "IslandPlaygroundRender",
+      "status": "passed",
+      "runtimeReport": "docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/extra-render-report.json",
+      "runtimeReportSHA256": "50b542749f1a0a78c8766ca17d94fb2f005f58ab1290af85b21d01fc3c622f04",
+      "runtimeExitCode": 0,
+      "runtimeSeconds": 11.418,
+      "sourceSHA256": "ff3afc2f684f3505adbd940d0dd0bcdafb6754b5f0226b0d4f062caf757726cb",
+      "executableSHA256": "95b934bde19b582d63678ddc9be900bb56a38926d154ae099180a6835d83977a",
+      "moduleDirectory": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa-cache/app-store-70feee950c20ceae70b7bcf9494d1b269c9a089191bf243f85ee35071457d45b",
+      "moduleReadyStampSHA256": "d330095a97cdbfb35fa6640f747b32be2b28e55cdd41b85d31047584e0911fa1",
+      "renderManifest": "docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/renders/IslandPlaygroundRender/native-render.json",
+      "renderManifestSHA256": "8af3ee58e349b5be26f55b390dde6ea6fcb8be80ab4f4fbde0cd3d84181bc792",
+      "pngCount": 328,
+      "savedArtifactCount": 329,
+      "runtimeLog": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/logs/IslandPlaygroundRender.log",
+      "runtimeLogSHA256": "d38f464517bad4e87fc762a777063bedfdeea25474f47750f6e0b9058598b735",
+      "nativeAnimationFrameCount": 327,
+      "additionalPNG": "contact sheet"
+    }
+  ],
+  "limits": [
+    "PNG/artifact completeness and native assertions do not establish physical FPS, subjective smoothness or long-duration GPU/heap durability.",
+    "The Privacy rerun tests intentionally absent public URLs in a disposable bundle; it does not remove or validate live production web endpoints.",
+    "Physical native AVKit transport activation remains inconclusive; offscreen render success is not a substitute."
+  ]
+}

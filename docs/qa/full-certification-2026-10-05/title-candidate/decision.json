@@ -1,0 +1,7 @@
+{
+  "decision": "rejected",
+  "productionSourceChanged": false,
+  "interactionChecksPassed": 351,
+  "reason": "The candidate did not improve the normal-zoom title render; a production change is not supported by this experiment.",
+  "remainingFinding": "Unfocused normal-zoom long title paints one line within a reserved two-line area in native offscreen renders; stored text/editing loss not established."
+}

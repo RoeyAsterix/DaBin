@@ -1,0 +1,33 @@
+{
+  "version": "0.4.33",
+  "build": "88",
+  "requestedTabOrder": [
+    "Projects",
+    "Today",
+    "Inbox"
+  ],
+  "buildSourceFingerprint": "f1747d182ae403add19fca1a4114cb942afd42b2d5bc61c9a9bb089dec7e6923",
+  "productionChange": "BoardView.swift primary navigation reordered; existing actions and stable identifiers retained.",
+  "qaStatus": "passed",
+  "priorCaptureVerification": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/capture-detail-redesign-2026-10-04/verification.json",
+  "priorVerifiedBuildFingerprint": "378518ca22afe48cecf5ea2132efc6c164b445b4aba72b66d71971d276d98f68",
+  "priorCaptureSuitesPassed": 15,
+  "navigationSuites": [
+    "NavigationHistoryTests",
+    "CaptureDetailNavigationTests"
+  ],
+  "supersededArchive": "DaBin-0.4.33-88-TestFlight-capture-redesign-final.xcarchive",
+  "uploadStatus": "waiting_for_keychain_authentication",
+  "uploaded": false,
+  "navigationSuitesPassed": 2,
+  "navigationChecks": 1042,
+  "sourceChangedDuringRun": false,
+  "qaReport": "run-receipts/20261004T222738506773Z-app-store/report.json",
+  "headerPreview": "passed",
+  "headerPreviewChecks": 102,
+  "headerPreviewScope": "Bounded copy of existing HeaderInteractionTests; header visibility/layout only, plus six synthetic screenshots. Full HeaderInteractionTests suite not run.",
+  "visualReview": "Projects \u2192 Today \u2192 Inbox verified in native 380-point Projects and 760-point Inbox previews.",
+  "releaseCompilation": "completed",
+  "archiveSessionID": 34198,
+  "archivePath": "/Users/roeylibfeld/Library/Developer/Xcode/Archives/2026-10-05/DaBin-0.4.33-88-TestFlight-projects-first.xcarchive"
+}

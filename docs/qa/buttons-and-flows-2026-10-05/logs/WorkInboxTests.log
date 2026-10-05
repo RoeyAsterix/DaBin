@@ -1,0 +1,30 @@
+CoreData: error: (6922) I/O error for database at /var/folders/qy/zfgc4dgx02x2k_c04330ghy00000gn/T/DaBinReminderRecovery-7498191D-2364-45A0-BC12-554A5C70B140/metadata.store.  SQLite error code:6922, 'disk I/O error'
+CoreData: error: SQLCore dispatchRequest: exception handling request: <NSSQLFetchRequestContext: 0xa0cd8c000> , I/O error for database at /var/folders/qy/zfgc4dgx02x2k_c04330ghy00000gn/T/DaBinReminderRecovery-7498191D-2364-45A0-BC12-554A5C70B140/metadata.store.  SQLite error code:6922, 'disk I/O error' with userInfo of {
+    NSFilePath = "/var/folders/qy/zfgc4dgx02x2k_c04330ghy00000gn/T/DaBinReminderRecovery-7498191D-2364-45A0-BC12-554A5C70B140/metadata.store";
+    NSSQLiteErrorDomain = 6922;
+}
+CoreData: error: -executeRequest: encountered exception = I/O error for database at /var/folders/qy/zfgc4dgx02x2k_c04330ghy00000gn/T/DaBinReminderRecovery-7498191D-2364-45A0-BC12-554A5C70B140/metadata.store.  SQLite error code:6922, 'disk I/O error' with userInfo = {
+    NSFilePath = "/var/folders/qy/zfgc4dgx02x2k_c04330ghy00000gn/T/DaBinReminderRecovery-7498191D-2364-45A0-BC12-554A5C70B140/metadata.store";
+    NSSQLiteErrorDomain = 6922;
+}
+CoreData: error: SQLCore dispatchRequest: exception handling request: <NSSQLFetchRequestContext: 0xa0cd8c000> , unable to open database file with userInfo of {
+    NSFilePath = "/var/folders/qy/zfgc4dgx02x2k_c04330ghy00000gn/T/DaBinReminderRecovery-7498191D-2364-45A0-BC12-554A5C70B140/metadata.store";
+    NSSQLiteErrorDomain = 14;
+}
+CoreData: error: -executeRequest: encountered exception = unable to open database file with userInfo = {
+    NSFilePath = "/var/folders/qy/zfgc4dgx02x2k_c04330ghy00000gn/T/DaBinReminderRecovery-7498191D-2364-45A0-BC12-554A5C70B140/metadata.store";
+    NSSQLiteErrorDomain = 14;
+}
+CoreData: error: SQLCore dispatchRequest: exception handling request: <NSSQLFetchRequestContext: 0xa0cd8c000> , unable to open database file with userInfo of {
+    NSFilePath = "/var/folders/qy/zfgc4dgx02x2k_c04330ghy00000gn/T/DaBinReminderRecovery-7498191D-2364-45A0-BC12-554A5C70B140/metadata.store";
+    NSSQLiteErrorDomain = 14;
+}
+CoreData: error: -executeRequest: encountered exception = unable to open database file with userInfo = {
+    NSFilePath = "/var/folders/qy/zfgc4dgx02x2k_c04330ghy00000gn/T/DaBinReminderRecovery-7498191D-2364-45A0-BC12-554A5C70B140/metadata.store";
+    NSSQLiteErrorDomain = 14;
+}
+CoreData: error: SQLCore dispatchRequest: exception handling request: <NSSQLFetchRequestContext: 0xa0cd8c000> , unable to open database file with userInfo of {
+    NSFilePath = "/var/folders/qy/zfgc4dgx02x2k_c04330ghy00000gn/T/DaBinReminderRecovery-7498191D-2364-45A0-BC12-554A5C70B140/metadata.store";
+    NSSQLiteErrorDomain = 14;
+}
+PASS: 87 work inbox checks

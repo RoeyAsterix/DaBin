@@ -70,6 +70,7 @@ private final class WalkthroughRenderTests: NSObject, NSApplicationDelegate {
         let previews = PreviewService(store: store, defaults: defaults)
         let index = ContentIndexService(store: store)
         defer { previews.shutdown(); index.shutdown() }
+        #if DABIN_DIRECT_UPDATES
         let info = try PropertyListSerialization.propertyList(from: Data(contentsOf: URL(fileURLWithPath: "Resources/Info.plist")), format: nil) as! [String: Any]
         let updates = SoftwareUpdateService(currentVersion: info["CFBundleShortVersionString"] as! String,
             currentBuild: info["CFBundleVersion"] as! String,
@@ -79,6 +80,9 @@ private final class WalkthroughRenderTests: NSObject, NSApplicationDelegate {
             updatesDirectory: root.appendingPathComponent("Updates"), helperURL: root.appendingPathComponent("Unused helper"),
             validateHelper: { _ in throw Failure(message: "Installer forbidden in walkthrough") },
             launchInstaller: { _, _ in throw Failure(message: "Installer forbidden in walkthrough") })
+        #else
+        let updates = SoftwareUpdateService(bundle: .main)
+        #endif
         let state = AppState(store: store, previews: previews, contentIndex: index,
             reminders: ReminderService(store: store, client: WalkthroughNotifications()), updates: updates)
         guard !state.autoCapture.settings.isEnabled, !previews.enabled else {
@@ -121,8 +125,10 @@ private final class WalkthroughRenderTests: NSObject, NSApplicationDelegate {
         try await board(state, "05-daily-files")
         state.filter = .all
         state.selectTimelineMode(.weekly)
-        guard state.weeklyVisibleDays.count == 3 else { throw Failure(message: "Expected exactly 3 active days") }
-        try await board(state, "06-weekly", width: 780)
+        guard state.weeklyVisibleDays.count == 7, state.weeklyActiveDays.count == 3 else {
+            throw Failure(message: "Expected all 7 selected dates with exactly 3 active days")
+        }
+        try await board(state, "06-weekly", width: 1440)
         try await popover(WeeklySearchPopover(state: state, isPresented: .constant(true)),
                            "07-week-search-menu", width: 258, height: 174)
         state.openSearch(week: state.weeklyDays)

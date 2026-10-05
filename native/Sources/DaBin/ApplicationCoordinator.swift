@@ -35,7 +35,6 @@ final class ApplicationCoordinator {
     private let defaults: UserDefaults
     private(set) var isStarted = false
     private(set) var isStopped = false
-    nonisolated static let firstLaunchDailyPresentedKey = "DaBin.launch.didPresentDaily.v1"
 
     convenience init() throws {
         try self.init(store: CaptureStore(repairArchiveOnOpen: false))
@@ -227,12 +226,6 @@ final class ApplicationCoordinator {
     /// Returns true once for this preference domain. AppDelegate uses the result
     /// to make a normal first launch discoverable; subsequent launches retain
     /// DaBin's quiet, corner-only behavior after the board is dismissed.
-    func claimFirstLaunchDailyPresentation() -> Bool {
-        guard !defaults.bool(forKey: Self.firstLaunchDailyPresentedKey) else { return false }
-        defaults.set(true, forKey: Self.firstLaunchDailyPresentedKey)
-        return true
-    }
-
     func start(showDaily: Bool = false, installMenu: Bool = true, installStatusItem: Bool = true,
                pointerPosition: @escaping () -> NSPoint = { NSEvent.mouseLocation }) {
         guard !isStarted, !isStopped else { return }

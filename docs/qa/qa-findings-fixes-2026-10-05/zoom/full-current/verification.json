@@ -1,0 +1,91 @@
+{
+  "automaticArrivals": 114,
+  "cycles": [
+    {
+      "anchorAfter": "capture:E285F873-B976-4D82-BF3B-91DFFAA7264C",
+      "anchorBefore": "capture:E285F873-B976-4D82-BF3B-91DFFAA7264C",
+      "captures": 5102,
+      "cycle": 1,
+      "durationSeconds": 4.707539166789502,
+      "rssBytes": 250036224
+    },
+    {
+      "anchorAfter": "capture:E285F873-B976-4D82-BF3B-91DFFAA7264C",
+      "anchorBefore": "capture:E285F873-B976-4D82-BF3B-91DFFAA7264C",
+      "captures": 5104,
+      "cycle": 2,
+      "durationSeconds": 2.424795708153397,
+      "rssBytes": 250658816
+    },
+    {
+      "anchorAfter": "capture:E285F873-B976-4D82-BF3B-91DFFAA7264C",
+      "anchorBefore": "capture:E285F873-B976-4D82-BF3B-91DFFAA7264C",
+      "captures": 5107,
+      "cycle": 3,
+      "durationSeconds": 2.4060332914814353,
+      "rssBytes": 250757120
+    },
+    {
+      "anchorAfter": "capture:E285F873-B976-4D82-BF3B-91DFFAA7264C",
+      "anchorBefore": "capture:E285F873-B976-4D82-BF3B-91DFFAA7264C",
+      "captures": 5110,
+      "cycle": 4,
+      "durationSeconds": 2.4167942500207573,
+      "rssBytes": 250691584
+    },
+    {
+      "anchorAfter": "capture:E285F873-B976-4D82-BF3B-91DFFAA7264C",
+      "anchorBefore": "capture:E285F873-B976-4D82-BF3B-91DFFAA7264C",
+      "captures": 5113,
+      "cycle": 5,
+      "durationSeconds": 2.401999458204955,
+      "rssBytes": 250839040
+    }
+  ],
+  "initialRecords": 5000,
+  "inputSamples": 160,
+  "inputToLayoutP95Milliseconds": 54.44804183207452,
+  "limits": [
+    "No physical trackpad or mouse-driver coverage",
+    "Offscreen native rendering cannot measure presentation timestamps",
+    "RSS includes the growing fixture archive, caches and retained timing arrays"
+  ],
+  "measuredAtUTC": "2026-10-05T03:52:11.613536+00:00",
+  "nativeReentrantTableWarningCount": 1,
+  "performanceGates": {
+    "inputToLayoutP95MaximumMilliseconds": 50,
+    "passed": false,
+    "steadyZoomTimerP95MaximumMilliseconds": 33
+  },
+  "performanceReceipt": "performance.json",
+  "performanceSHA256": "3b22feae184aa0daca50461ae0560402248916264775a01ec4b593f3956971e7",
+  "runID": "20261005T033354460853Z-app-store",
+  "runtimeLog": "runtime.log",
+  "runtimeLogSHA256": "8ee2ffb944b65f4c22edfa6fbd1a378538748ec1b321a2dc285f23913125ea17",
+  "sampled": false,
+  "schemaVersion": 1,
+  "sourceProof": {
+    "QAInputFingerprint": "206badd60f8e8639b925fb4f0f4f69168c23245e91b46364d51bf57757d9e293",
+    "allRecordedInputsMatchCurrentFiles": true,
+    "campaignReport": "campaign-report.json",
+    "campaignReportOriginal": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa/runs/20261005T033354460853Z-app-store/report.json",
+    "campaignReportSHA256": "67aeb58ad2c843b33fdb73709f15e7a48eef327f0edd706260cf1715a92150c6",
+    "fullCampaignFailedSuites": 1,
+    "fullCampaignPassedSuites": 120,
+    "fullCampaignStatus": "failed",
+    "inputHashes": 269,
+    "sourceChangedDuringRun": false,
+    "status": "Verified exact current full-campaign report and all current input hashes",
+    "suiteCompileExitCode": 0,
+    "suiteCompileStatus": "passed",
+    "suiteExitCode": 1,
+    "suiteRuntimeStatus": "failed",
+    "suiteSeconds": 34.45
+  },
+  "status": "failed strict 50 ms input-to-layout budget; measured steady timer also exceeds 33 ms",
+  "steadyZoomTimerP95Milliseconds": 67.253083223477,
+  "suite": "WorkspaceZoomPerformanceTests",
+  "testCurrentSHA256": "971a4bf7d63a7c3a0df8f0f0536f97dc09e8cc44674b42cad0727ecc11219382",
+  "timingScope": "Current full campaign, frozen source/test inputs; parent verified no competing compiler or GUI fixtures during this performance run. Unsigned compiler had finished earlier at 03:37:07 UTC.",
+  "verifiedAtUTC": "2026-10-05T03:56:13.788728+00:00"
+}

@@ -1,0 +1,33 @@
+2026-10-05 06:01:25.205 ProjectWorkspaceTableProbe[86662:26685055] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future.
+2026-10-05 06:01:32.649 ProjectWorkspaceTableProbe[86662:26685055] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future.
+2026-10-05 06:01:35.348 ProjectWorkspaceTableProbe[86662:26685055] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future.
+2026-10-05 06:01:35.736 ProjectWorkspaceTableProbe[86662:26685055] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future.
+2026-10-05 06:01:36.816 ProjectWorkspaceTableProbe[86662:26685055] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future.
+ROWS: project grid logical=334, materialized=25
+TABLE: auto=true, rowHeight=24.0, delegate=Optional(<_TtGC7SwiftUI22OutlineListCoordinatorGOS_19SelectionManagerBoxOs5Never__: 0xbbad60c00>)
+FIXTURE: /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa/project-workspace-view/A490A300-9266-4C91-9D9A-81B475B1477E/project-grid-wide@2x.png
+FIXTURE: /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa/project-workspace-view/A490A300-9266-4C91-9D9A-81B475B1477E/project-selected-narrow@2x.png
+ROWS: project grid logical=501, materialized=3
+TABLE: auto=true, rowHeight=24.0, delegate=Optional(<_TtGC7SwiftUI22OutlineListCoordinatorGOS_19SelectionManagerBoxOs5Never__: 0xbbad60c00>)
+ROWS: project grid logical=1002, materialized=3
+TABLE: auto=true, rowHeight=24.0, delegate=Optional(<_TtGC7SwiftUI22OutlineListCoordinatorGOS_19SelectionManagerBoxOs5Never__: 0xbbad60c00>)
+ROWS: project grid logical=1002, materialized=3
+TABLE: auto=true, rowHeight=24.0, delegate=Optional(<_TtGC7SwiftUI22OutlineListCoordinatorGOS_19SelectionManagerBoxOs5Never__: 0xbbad60c00>)
+FIXTURE: /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa/project-workspace-view/A490A300-9266-4C91-9D9A-81B475B1477E/project-grid-narrow@2x.png
+ROWS: project grid logical=334, materialized=3
+TABLE: auto=true, rowHeight=24.0, delegate=Optional(<_TtGC7SwiftUI22OutlineListCoordinatorGOS_19SelectionManagerBoxOs5Never__: 0xbbad60c00>)
+ROWS: project grid logical=1002, materialized=7
+TABLE: auto=true, rowHeight=24.0, delegate=Optional(<_TtGC7SwiftUI22OutlineListCoordinatorGOS_19SelectionManagerBoxOs5Never__: 0xbbad60c00>)
+ROWS: project grid logical=334, materialized=3
+TABLE: auto=true, rowHeight=24.0, delegate=Optional(<_TtGC7SwiftUI22OutlineListCoordinatorGOS_19SelectionManagerBoxOs5Never__: 0xbbad60c00>)
+ROWS: project grid logical=335, materialized=3
+TABLE: auto=true, rowHeight=24.0, delegate=Optional(<_TtGC7SwiftUI22OutlineListCoordinatorGOS_19SelectionManagerBoxOs5Never__: 0xbbad60c00>)
+ROWS: project grid logical=335, materialized=3
+TABLE: auto=true, rowHeight=24.0, delegate=Optional(<_TtGC7SwiftUI22OutlineListCoordinatorGOS_19SelectionManagerBoxOs5Never__: 0xbbad60c00>)
+ROWS: project grid logical=335, materialized=3
+TABLE: auto=true, rowHeight=24.0, delegate=Optional(<_TtGC7SwiftUI22OutlineListCoordinatorGOS_19SelectionManagerBoxOs5Never__: 0xbbad60c00>)
+ROWS: project grid logical=336, materialized=4
+TABLE: auto=true, rowHeight=24.0, delegate=Optional(<_TtGC7SwiftUI22OutlineListCoordinatorGOS_19SelectionManagerBoxOs5Never__: 0xbbad60c00>)
+ROWS: project grid logical=336, materialized=4
+TABLE: auto=true, rowHeight=24.0, delegate=Optional(<_TtGC7SwiftUI22OutlineListCoordinatorGOS_19SelectionManagerBoxOs5Never__: 0xbbad60c00>)
+PASS: 209 project workspace UI checks; 1,000 synthetic text captures plus image and editable project note; native mixed-selection drag payloads on a private pasteboard; no personal archive, network, general clipboard or external opening. At most 25 simultaneously materialized native rows.

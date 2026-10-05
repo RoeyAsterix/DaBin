@@ -1,0 +1,2390 @@
+{
+  "schemaVersion": 1,
+  "mappedAtUTC": "2026-10-05T03:58:00.519925+00:00",
+  "kind": "independent_static_fix_to_regression_map_not_runtime_receipt",
+  "sourcesAreSnapshots": "Source hashes/lines describe mapping-time contents. Active candidate work may change them; final campaign input inventory is authoritative and must be frozen.",
+  "currentRepairFindings": [
+    {
+      "findingID": "normal-zoom-title-clipping",
+      "status": "product_title_fix_verified_current_native_and_raster_evidence",
+      "requiredRegisteredRegressions": [
+        "TaskPlanInteractionTests",
+        "CaptureDetailNavigationTests",
+        "NavigationHistoryTests",
+        "CaptureDetailReadabilityTests",
+        "WorkspaceWindowTests",
+        "WorkspaceInputTests",
+        "WorkspaceZoomPerformanceTests"
+      ],
+      "additionalAcceptance": [
+        "Real full Board narrow 380x680 screenshots at100% and200% show nonblank wrapped continuation; semantic two-line attributes alone do not establish painted pixels.",
+        "Existing and extended TaskPlanInteraction native title edits, Return, multiline draft, selection/editor identity across resize, Save, restart, invalid-title escape, AXID and accessibility help all pass.",
+        "Freeze accepted source before compiling final campaign; rejected fixedSize candidate remains rejected."
+      ],
+      "historicalProductionSite": {
+        "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Sources/DaBin/DetailScreen.swift",
+        "line": 280,
+        "needle": "TextField(\"Task title\", text: $draft.title, axis: .vertical)",
+        "sourceSHA256AtMapping": "2419831a28166a15c4cf58666e482f5cf5200faa33ed8ba132fe937af81c428c"
+      },
+      "currentSourceEvidence": [
+        {
+          "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Sources/DaBin/DetailScreen.swift",
+          "line": 173,
+          "needle": "field.maximumNumberOfLines = 2",
+          "sourceSHA256AtMapping": "e0b20e6157c70be7cd63d1be6756cde38154032ee5f95661c9a878eb7423bd74"
+        },
+        {
+          "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Tests/TaskPlanInteractionTests.swift",
+          "line": 808,
+          "needle": "titleField.maximumNumberOfLines == 2",
+          "sourceSHA256AtMapping": "42b523a232c2e2dc8bf42551d4c74d0362b2a7f9a3139b75c0e40c0f09afd21c"
+        }
+      ],
+      "implementedSourceChange": "Public editable wrapping NSTextField max2lines and finite preferred width, zero native alignment insets; existing draft binding/NavigationEditorRegion/AX preserved. Native field editor selection/IME survive responsive typography; only changed explicit focus intents clear owned focus.",
+      "historicalCandidateSourceChange": "Replace only task title with a finite-width wrapping editable public AppKit NSTextField capped at two visible lines, preserving full draft text/native editor, focus/IME/AX contract. This is an isolated candidate, not the current source.",
+      "historicalCandidateEvidence": [
+        {
+          "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/title/DetailScreen.swift",
+          "line": 173,
+          "needle": "field.maximumNumberOfLines = 2",
+          "sourceSHA256AtMapping": "3318f41b3b8d76e63b857e965b5028c973cbc7a9b1e1649b6dd67a838335ce17"
+        },
+        {
+          "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/title/TaskPlanInteractionTests.swift",
+          "line": 809,
+          "needle": "titleField.maximumNumberOfLines == 2",
+          "sourceSHA256AtMapping": "13a77d61f8f32a102194326cb86c54853e061101163d406fe865fead7be1663b"
+        }
+      ],
+      "targetedClosure": {
+        "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/title/closure.json",
+        "sha256": "1bc78be8cf9265311cf206cda9a273fab77a89164a9398e5212805288f812ee9"
+      },
+      "targetedNativeChecks": 379,
+      "rasterAcceptance": {
+        "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/title/candidate-raster-proof.json",
+        "sha256": "55cd91909755aa09a2ab3f303e997b44de2d8252ec25e0acd2c76ab9087965fb"
+      },
+      "remainingVerification": "No required title regression remains pending; independent zoom performance and framework warnings remain open.",
+      "currentCampaignRegressions": [
+        {
+          "suite": "TaskPlanInteractionTests",
+          "status": "passed",
+          "log": {
+            "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/full-current-run/logs/TaskPlanInteractionTests.log",
+            "sha256": "28f09c08ab69ef7fcde779d0596a2d1e1643b03368cd00dfc47ca49a9efb849e"
+          }
+        },
+        {
+          "suite": "CaptureDetailNavigationTests",
+          "status": "passed",
+          "log": {
+            "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/full-current-run/logs/CaptureDetailNavigationTests.log",
+            "sha256": "7a2fdde88d229f08bed03eb7cb9a249a5d0ecdd505a636a7c4febb51b13a6886"
+          }
+        },
+        {
+          "suite": "NavigationHistoryTests",
+          "status": "passed",
+          "log": {
+            "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/full-current-run/logs/NavigationHistoryTests.log",
+            "sha256": "9bba62774862e0c4b51cacb4197446c0286a3b4c976242fc60f3deb184c892c9"
+          }
+        },
+        {
+          "suite": "CaptureDetailReadabilityTests",
+          "status": "passed",
+          "log": {
+            "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/full-current-run/logs/CaptureDetailReadabilityTests.log",
+            "sha256": "c4108d5e2a36ee3fbb9aa117b26904752e29a12d994fbec8f0349dae47079c84"
+          }
+        },
+        {
+          "suite": "WorkspaceWindowTests",
+          "status": "passed",
+          "log": {
+            "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/full-current-run/logs/WorkspaceWindowTests.log",
+            "sha256": "19988078a2749f4d0d10210fc1bdd48dfba7ff8aab7c88f4f06b8a93899ad076"
+          }
+        },
+        {
+          "suite": "WorkspaceInputTests",
+          "status": "passed",
+          "log": {
+            "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/full-current-run/logs/WorkspaceInputTests.log",
+            "sha256": "f981eeb7f96994e633f97dba72339607762dc0d144aa9765595b90cf3f6b8d30"
+          }
+        },
+        {
+          "suite": "WorkspaceZoomPerformanceTests",
+          "status": "failed",
+          "log": {
+            "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/full-current-run/logs/WorkspaceZoomPerformanceTests.log",
+            "sha256": "8ee2ffb944b65f4c22edfa6fbd1a378538748ec1b321a2dc285f23913125ea17"
+          }
+        }
+      ],
+      "currentRasterProof": {
+        "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/current-title-raster-proof.json",
+        "sha256": "2ae901fddf2636313a8fecd5d8b04d7862620301208742e4ab17be977066483e"
+      }
+    },
+    {
+      "findingID": "native-table-reentrancy",
+      "status": "framework_reproduced_open_unresolved_warning_no_safe_public_workaround_promoted",
+      "currentProductionSites": [
+        {
+          "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Sources/DaBin/ExplorerViewport.swift",
+          "line": 275,
+          "needle": "private func scheduleRestore()",
+          "sourceSHA256AtMapping": "e106d7aa1e79aea0938b842d4513c8d54ab021ad43add30e053b93bad7e28889"
+        },
+        {
+          "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Sources/DaBin/WorkspaceZoomLayout.swift",
+          "line": 189,
+          "needle": "private func scheduleRestore()",
+          "sourceSHA256AtMapping": "f2525e486361ae71d544b529a73391cf2a24ea573ab9540c89a1ed62a1da6773"
+        },
+        {
+          "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Sources/DaBin/SearchColumnViewport.swift",
+          "line": 86,
+          "needle": "private func rememberVisibleRow()",
+          "sourceSHA256AtMapping": "858090f1c4e40ae0e11cc95aa96fd2be7f8b424cbc2f9117bef6eba5cc882294"
+        }
+      ],
+      "sourceFixRequired": "No unsafe delegate intervention, warning suppression, fixed-height replacement or broad row architecture rewrite promoted. Native virtualization and controls retained; warning remains an explicit unresolved finding in future full logs.",
+      "diagnosticEvidence": {
+        "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/table-warning/project-baseline-trace.log",
+        "sha256": "c1c61469e76a3ac0f324e1e1696eab85463e8b77a4130050e4ab24c08c0155e9"
+      },
+      "requiredRegisteredRegressions": [
+        "ProjectWorkspaceViewTests",
+        "SearchWindowTests",
+        "WorkspaceZoomPerformanceTests",
+        "AutoCaptureExplorerResponsivenessTests",
+        "ViewportLifecycleTests",
+        "ExplorerKeyboardTests",
+        "WorkspaceZoomLayoutTests",
+        "NavigationHistoryTests"
+      ],
+      "additionalAcceptance": [
+        "Retain all unsuppressed affected-suite logs and observed counts. Finding stays OPEN while the warning remains.",
+        "Preserve insertion anchors, history/scroll ownership, keyboard selection, filters and bounded row materialization.",
+        "Existing zero-warning closure criteria were NOT met. Semantic pass counts and framework classification are not warning elimination."
+      ],
+      "frameworkReproduction": {
+        "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/table-warning/framework-reproduction.json",
+        "sha256": "58ea049421e68d104914ac9d75b0661c1fa5a33b1c77d713b1f86938c846c64e"
+      },
+      "currentCampaignObservation": {
+        "log": {
+          "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-campaign/ProjectWorkspaceViewTests.log",
+          "sha256": "fa550ff7b852083516e1e274e74cd22ac007fee977140515703e64c56e07d1ff"
+        },
+        "checks": 209,
+        "unsuppressedIdenticalWarningLines": 5,
+        "wholeCampaignStillRunning": false,
+        "findingClosed": false
+      },
+      "currentCampaignRegressions": [
+        {
+          "suite": "ProjectWorkspaceViewTests",
+          "status": "passed",
+          "log": {
+            "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/full-current-run/logs/ProjectWorkspaceViewTests.log",
+            "sha256": "fa550ff7b852083516e1e274e74cd22ac007fee977140515703e64c56e07d1ff"
+          }
+        },
+        {
+          "suite": "SearchWindowTests",
+          "status": "passed",
+          "log": {
+            "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/full-current-run/logs/SearchWindowTests.log",
+            "sha256": "ba97ea0f1757b5aea1015261c8d21f0162ed9ee5fa3417ad5d2979f9304626d0"
+          }
+        },
+        {
+          "suite": "WorkspaceZoomPerformanceTests",
+          "status": "failed",
+          "log": {
+            "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/full-current-run/logs/WorkspaceZoomPerformanceTests.log",
+            "sha256": "8ee2ffb944b65f4c22edfa6fbd1a378538748ec1b321a2dc285f23913125ea17"
+          }
+        },
+        {
+          "suite": "AutoCaptureExplorerResponsivenessTests",
+          "status": "passed",
+          "log": {
+            "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/full-current-run/logs/AutoCaptureExplorerResponsivenessTests.log",
+            "sha256": "2fe031436a8fffd3d85ee5c3c4a9d83f8ad021e450350d31385c1ebf13e41159"
+          }
+        },
+        {
+          "suite": "ViewportLifecycleTests",
+          "status": "passed",
+          "log": {
+            "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/full-current-run/logs/ViewportLifecycleTests.log",
+            "sha256": "6fa04f4ddb7174ddbb6515bc63d5676e03fdebd95e28abd6f3d4e020cc7addde"
+          }
+        },
+        {
+          "suite": "ExplorerKeyboardTests",
+          "status": "passed",
+          "log": {
+            "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/full-current-run/logs/ExplorerKeyboardTests.log",
+            "sha256": "be911aa49d913cde2de5e7b76fc7207a9c5f7dfcb70ee4416a7d95d22250bd66"
+          }
+        },
+        {
+          "suite": "WorkspaceZoomLayoutTests",
+          "status": "passed",
+          "log": {
+            "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/full-current-run/logs/WorkspaceZoomLayoutTests.log",
+            "sha256": "cf7dce70006090d8feb4f77420d4ff15d603c8dd44b144267d8c44f701c3d064"
+          }
+        },
+        {
+          "suite": "NavigationHistoryTests",
+          "status": "passed",
+          "log": {
+            "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/full-current-run/logs/NavigationHistoryTests.log",
+            "sha256": "9bba62774862e0c4b51cacb4197446c0286a3b4c976242fc60f3deb184c892c9"
+          }
+        }
+      ]
+    },
+    {
+      "findingID": "zoom-performance-warning",
+      "status": "open_strict_performance_regression_failed_current_campaign",
+      "currentInstrumentationSites": [
+        {
+          "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Tests/WorkspaceZoomPerformanceTests.swift",
+          "line": 6,
+          "needle": "var onDisplayMeasurement",
+          "sourceSHA256AtMapping": "971a4bf7d63a7c3a0df8f0f0536f97dc09e8cc44674b42cad0727ecc11219382"
+        }
+      ],
+      "sourceFixRequired": "No causal source optimization promoted. RobotAppFrame measurement observer was removed and original source restored. Native coupled resize/NSHostingView layout remains measured dominant stage; resize-before-publish candidate was worse and its run contested by compile overlap. Final strict50ms input/33ms timer gates remain; any failure must stay visible.",
+      "requiredRegisteredRegressions": [
+        "WorkspaceZoomPerformanceTests",
+        "WorkspaceZoomLayoutTests",
+        "WorkspaceZoomTests",
+        "WorkspaceInputTests",
+        "ViewportLifecycleTests",
+        "WindowResizeInteractionTests",
+        "WindowChromePresentationTests",
+        "RobotAppFrameTests",
+        "RobotWindowTransitionTests",
+        "ProjectWorkspaceViewTests",
+        "AutoCaptureExplorerResponsivenessTests"
+      ],
+      "strictGates": {
+        "syntheticInputToLayoutP95MaximumMilliseconds": 50,
+        "steadyZoomRunloopP95MaximumMilliseconds": 33,
+        "raisesThresholdsToPassAllowed": false
+      },
+      "workload": [
+        "5000 mixed starting records including1000 accepted thumbnails",
+        "5 zoom cycles, same coupled display:true resize and forced layout phases",
+        "100 durable capture burst plus periodic arrivals; exact insertion/selection/resource assertions retained",
+        "Defined30-second default run with baseline and phase measurements; no concurrent GUI or CPU tests during measurement"
+      ],
+      "additionalAcceptance": [
+        "Retain raw failing profiles and reports and compare matching source/test/module inputs.",
+        "Report any workload/phase change explicitly; timer intervals and synthetic forced layouts are not physical input-to-display latency or FPS.",
+        "Durable arrivals, anchor identity, selection, native input ownership and virtualization pass alongside strict budgets."
+      ],
+      "finalAnalysis": {
+        "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/zoom/final-analysis.json",
+        "sha256": "fea9e722a445a4d716f9c09599f29f56415c96579ed5cbc77dfd7e63de778433"
+      },
+      "currentCampaignRegressions": [
+        {
+          "suite": "WorkspaceZoomPerformanceTests",
+          "status": "failed",
+          "log": {
+            "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/full-current-run/logs/WorkspaceZoomPerformanceTests.log",
+            "sha256": "8ee2ffb944b65f4c22edfa6fbd1a378538748ec1b321a2dc285f23913125ea17"
+          }
+        },
+        {
+          "suite": "WorkspaceZoomLayoutTests",
+          "status": "passed",
+          "log": {
+            "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/full-current-run/logs/WorkspaceZoomLayoutTests.log",
+            "sha256": "cf7dce70006090d8feb4f77420d4ff15d603c8dd44b144267d8c44f701c3d064"
+          }
+        },
+        {
+          "suite": "WorkspaceZoomTests",
+          "status": "passed",
+          "log": {
+            "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/full-current-run/logs/WorkspaceZoomTests.log",
+            "sha256": "811d46cc575413394dfb68c10ed1a4a7eabcbf39126d7fd70c53085ab0dc243b"
+          }
+        },
+        {
+          "suite": "WorkspaceInputTests",
+          "status": "passed",
+          "log": {
+            "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/full-current-run/logs/WorkspaceInputTests.log",
+            "sha256": "f981eeb7f96994e633f97dba72339607762dc0d144aa9765595b90cf3f6b8d30"
+          }
+        },
+        {
+          "suite": "ViewportLifecycleTests",
+          "status": "passed",
+          "log": {
+            "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/full-current-run/logs/ViewportLifecycleTests.log",
+            "sha256": "6fa04f4ddb7174ddbb6515bc63d5676e03fdebd95e28abd6f3d4e020cc7addde"
+          }
+        },
+        {
+          "suite": "WindowResizeInteractionTests",
+          "status": "passed",
+          "log": {
+            "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/full-current-run/logs/WindowResizeInteractionTests.log",
+            "sha256": "2bfeff07ed3b24a0158657673e129ca98f080f90f3010901b021150cbc74efef"
+          }
+        },
+        {
+          "suite": "WindowChromePresentationTests",
+          "status": "passed",
+          "log": {
+            "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/full-current-run/logs/WindowChromePresentationTests.log",
+            "sha256": "9b645af67905f9a578a7cdfcb65e12af7b2560b9fd72878d044c2cb81a9c126a"
+          }
+        },
+        {
+          "suite": "RobotAppFrameTests",
+          "status": "passed",
+          "log": {
+            "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/full-current-run/logs/RobotAppFrameTests.log",
+            "sha256": "e3f34507d54ddadd265d08fecd166ae658376a5cf71d22f0ea585ab864936d0d"
+          }
+        },
+        {
+          "suite": "RobotWindowTransitionTests",
+          "status": "passed",
+          "log": {
+            "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/full-current-run/logs/RobotWindowTransitionTests.log",
+            "sha256": "7e3a07057b929839795f1a8de2f772937978b8731a63f448dcb74be7fe763f66"
+          }
+        },
+        {
+          "suite": "ProjectWorkspaceViewTests",
+          "status": "passed",
+          "log": {
+            "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/full-current-run/logs/ProjectWorkspaceViewTests.log",
+            "sha256": "fa550ff7b852083516e1e274e74cd22ac007fee977140515703e64c56e07d1ff"
+          }
+        },
+        {
+          "suite": "AutoCaptureExplorerResponsivenessTests",
+          "status": "passed",
+          "log": {
+            "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/full-current-run/logs/AutoCaptureExplorerResponsivenessTests.log",
+            "sha256": "2fe031436a8fffd3d85ee5c3c4a9d83f8ad021e450350d31385c1ebf13e41159"
+          }
+        }
+      ],
+      "currentPerformanceReceipt": {
+        "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/zoom/full-current/performance.json",
+        "sha256": "3b22feae184aa0daca50461ae0560402248916264775a01ec4b593f3956971e7"
+      }
+    },
+    {
+      "findingID": "reminder-fixture-live-store-teardown",
+      "status": "fixture_lifecycle_fix_verified_current_campaign93_clean_checks",
+      "currentSourceEvidence": [
+        {
+          "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Tests/WorkInboxTests.swift",
+          "line": 199,
+          "needle": "private static func checkReminderRecovery() async throws",
+          "sourceSHA256AtMapping": "cfa2ba5717d733bfd156301d159924b1216b7329badf2cf602480ca2530c3082"
+        },
+        {
+          "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Tests/WorkInboxTests.swift",
+          "line": 263,
+          "needle": "try await waitForReminderWork",
+          "sourceSHA256AtMapping": "cfa2ba5717d733bfd156301d159924b1216b7329badf2cf602480ca2530c3082"
+        },
+        {
+          "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Tests/WorkInboxTests.swift",
+          "line": 270,
+          "needle": "try expect(store.error == nil && rootExists",
+          "sourceSHA256AtMapping": "cfa2ba5717d733bfd156301d159924b1216b7329badf2cf602480ca2530c3082"
+        }
+      ],
+      "implementedSourceChange": "Recovery fixture retains unchanged pre-yield recovery assertions, observes queued fake-client work and waits for it while its UUID store is live; shuts down presentation/focus services before teardown. No production changes.",
+      "targetedEvidence": {
+        "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/reminder-fixture-fix.json",
+        "sha256": "fe5934a418b9e891f03482b9a2644e22e72a44562bb2eb913f6d707ac39256e0"
+      },
+      "requiredRegisteredRegressions": [
+        "WorkInboxTests"
+      ],
+      "additionalAcceptance": [
+        "Current strict fixture passes93checks on fresh final production module with no reminder UUID Core Data I/O or unable-to-open messages.",
+        "Keep restricted failed output and clean exact-original-executable normal comparison; one-factor environment association does not prove an exact denied operation.",
+        "No logs muted or assertion weakened."
+      ],
+      "currentCampaignRuntime": {
+        "status": "passed_final_unchanged_input_campaign",
+        "reportedBy": "parent completed-suite exit0 plus preserved raw93PASS log",
+        "checks": 93,
+        "sourceSHA256": "cfa2ba5717d733bfd156301d159924b1216b7329badf2cf602480ca2530c3082",
+        "log": {
+          "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-campaign/WorkInboxTests.log",
+          "sha256": "0c65789ee25394352163b829070b20cf2e3e04090f13770d39936ce5d861d664"
+        },
+        "compileLog": {
+          "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-campaign/WorkInboxTests-compile.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "originalCoreDataIOObserved": false,
+        "otherWarningLines": 0,
+        "campaignDirectory": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa/runs/20261005T033354460853Z-app-store",
+        "wholeCampaignCompleted": true,
+        "wholeCampaignInputsUnchangedConfirmed": true,
+        "campaignReport": {
+          "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/full-current-run/report.json",
+          "sha256": "67aeb58ad2c843b33fdb73709f15e7a48eef327f0edd706260cf1715a92150c6"
+        },
+        "campaignInputFingerprint": "206badd60f8e8639b925fb4f0f4f69168c23245e91b46364d51bf57757d9e293"
+      },
+      "currentCampaignRegressions": [
+        {
+          "suite": "WorkInboxTests",
+          "status": "passed",
+          "log": {
+            "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/full-current-run/logs/WorkInboxTests.log",
+            "sha256": "0c65789ee25394352163b829070b20cf2e3e04090f13770d39936ce5d861d664"
+          }
+        }
+      ]
+    }
+  ],
+  "priorVerifiedProductFixes": [
+    {
+      "findingID": "project-mode-history",
+      "implementedSourceChange": "Route through navigateWorkspaceMode; Back/Forward restore each visible mode.",
+      "currentSourceEvidence": [
+        {
+          "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Sources/DaBin/LibraryScreen.swift",
+          "line": 65,
+          "needle": "state.navigateWorkspaceMode(mode)",
+          "sourceSHA256AtMapping": "c32247022024412a69ed07adf8d00481c624c26dd44b96e87a8fd607a35cf46b"
+        },
+        {
+          "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Sources/DaBin/AppState.swift",
+          "line": 1878,
+          "needle": "func navigateWorkspaceMode",
+          "sourceSHA256AtMapping": "116a823caaa1769ac630515e937e2a29f8a023fb57fda9639a00e9c91de44752"
+        }
+      ],
+      "requiredRegisteredRegressions": [
+        "NavigationHistoryTests",
+        "WorkspaceWindowTests"
+      ],
+      "status": "prior_verified_fix_present_in_static_source_fresh_campaign_required",
+      "currentCampaignRecheck": [
+        {
+          "suite": "NavigationHistoryTests",
+          "status": "passed"
+        },
+        {
+          "suite": "WorkspaceWindowTests",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "findingID": "invalid-detail-escape",
+      "implementedSourceChange": "Error-only Keep draft and go back persists before exiting; preserves invalid fields and all other navigation/modal guards.",
+      "currentSourceEvidence": [
+        {
+          "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Sources/DaBin/AppState.swift",
+          "line": 1858,
+          "needle": "func keepDetailDraftAndGoBack",
+          "sourceSHA256AtMapping": "116a823caaa1769ac630515e937e2a29f8a023fb57fda9639a00e9c91de44752"
+        },
+        {
+          "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Sources/DaBin/DetailScreen.swift",
+          "line": 566,
+          "needle": "detail-keep-draft-back",
+          "sourceSHA256AtMapping": "e0b20e6157c70be7cd63d1be6756cde38154032ee5f95661c9a878eb7423bd74"
+        }
+      ],
+      "requiredRegisteredRegressions": [
+        "NavigationHistoryTests",
+        "TaskPlanInteractionTests"
+      ],
+      "status": "prior_verified_fix_present_in_static_source_fresh_campaign_required",
+      "currentCampaignRecheck": [
+        {
+          "suite": "NavigationHistoryTests",
+          "status": "passed"
+        },
+        {
+          "suite": "TaskPlanInteractionTests",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "findingID": "return-to-inbox",
+      "implementedSourceChange": "Shared conditional Return to Inbox menu item persists before changing route and exposes only items that actually qualify for Inbox.",
+      "currentSourceEvidence": [
+        {
+          "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Sources/DaBin/CaptureInboxActions.swift",
+          "line": 15,
+          "needle": "func returnCaptureToInbox",
+          "sourceSHA256AtMapping": "0143fa0beb6e7d0822fafe12fa20596fd9264fb328e7c9e2e8f4181c46cc6ebf"
+        }
+      ],
+      "requiredRegisteredRegressions": [
+        "WorkInboxTests",
+        "LocalFileLocationTests"
+      ],
+      "status": "prior_verified_fix_present_in_static_source_fresh_campaign_required",
+      "currentCampaignRecheck": [
+        {
+          "suite": "WorkInboxTests",
+          "status": "passed"
+        },
+        {
+          "suite": "LocalFileLocationTests",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "findingID": "pending-checklist-save-recovery",
+      "implementedSourceChange": "Model-backed recoverable pending field; primary Save/Add validates and commits it once, clearing only after success.",
+      "currentSourceEvidence": [
+        {
+          "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Sources/DaBin/AppState.swift",
+          "line": 1331,
+          "needle": "ChecklistDraftPolicy.committing(newTaskDraft.pendingChecklistText",
+          "sourceSHA256AtMapping": "116a823caaa1769ac630515e937e2a29f8a023fb57fda9639a00e9c91de44752"
+        },
+        {
+          "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Sources/DaBin/AppState.swift",
+          "line": 2257,
+          "needle": "ChecklistDraftPolicy.committing(draft.pendingChecklistText",
+          "sourceSHA256AtMapping": "116a823caaa1769ac630515e937e2a29f8a023fb57fda9639a00e9c91de44752"
+        },
+        {
+          "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Sources/DaBin/DraftArchive.swift",
+          "line": 17,
+          "needle": "var pendingChecklistText",
+          "sourceSHA256AtMapping": "0a5601ec9dc987ced2c3cf42cd37bd5ac6e9175fdf7e69e32da600b0f9d85a49"
+        }
+      ],
+      "requiredRegisteredRegressions": [
+        "TaskPlanInteractionTests",
+        "CommentDraftArchiveTests",
+        "TaskPlanningTests"
+      ],
+      "status": "prior_verified_fix_present_in_static_source_fresh_campaign_required",
+      "currentCampaignRecheck": [
+        {
+          "suite": "TaskPlanInteractionTests",
+          "status": "passed"
+        },
+        {
+          "suite": "CommentDraftArchiveTests",
+          "status": "passed"
+        },
+        {
+          "suite": "TaskPlanningTests",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "findingID": "invalid-title-draft-recovery",
+      "implementedSourceChange": "Keep commit validation separate from bounded draft recovery.",
+      "currentSourceEvidence": [
+        {
+          "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Sources/DaBin/DraftArchive.swift",
+          "line": 60,
+          "needle": "Commit validation must not invalidate recovery",
+          "sourceSHA256AtMapping": "0a5601ec9dc987ced2c3cf42cd37bd5ac6e9175fdf7e69e32da600b0f9d85a49"
+        }
+      ],
+      "requiredRegisteredRegressions": [
+        "CommentDraftArchiveTests",
+        "NavigationHistoryTests"
+      ],
+      "status": "prior_verified_fix_present_in_static_source_fresh_campaign_required",
+      "currentCampaignRecheck": [
+        {
+          "suite": "CommentDraftArchiveTests",
+          "status": "passed"
+        },
+        {
+          "suite": "NavigationHistoryTests",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "findingID": "today-export-day",
+      "implementedSourceChange": "Resolve Today export from current published day; retain Daily and Weekly selected-date semantics.",
+      "currentSourceEvidence": [
+        {
+          "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Sources/DaBin/BoardView.swift",
+          "line": 328,
+          "needle": "static func exportDay(for state: AppState)",
+          "sourceSHA256AtMapping": "3eead1acf077b238432095603dde8f2fa09c29f61af774a132124a5792eaaef2"
+        }
+      ],
+      "requiredRegisteredRegressions": [
+        "DayExportUITests",
+        "DayExportTests"
+      ],
+      "status": "prior_verified_fix_present_in_static_source_fresh_campaign_required",
+      "currentCampaignRecheck": [
+        {
+          "suite": "DayExportUITests",
+          "status": "passed"
+        },
+        {
+          "suite": "DayExportTests",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "findingID": "duplicate-entry-controls",
+      "implementedSourceChange": "Keep global header Search and New task in real Board, one Explorer Open folder entry; standalone reusable views keep their entry points.",
+      "currentSourceEvidence": [
+        {
+          "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Sources/DaBin/LibraryScreen.swift",
+          "line": 53,
+          "needle": "ExplorerScreen(state: state, showsSearchEntry: false)",
+          "sourceSHA256AtMapping": "c32247022024412a69ed07adf8d00481c624c26dd44b96e87a8fd607a35cf46b"
+        },
+        {
+          "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Sources/DaBin/LibraryScreen.swift",
+          "line": 51,
+          "needle": "ProjectWorkspaceView(state: state, project: project, showsSearchEntry: false)",
+          "sourceSHA256AtMapping": "c32247022024412a69ed07adf8d00481c624c26dd44b96e87a8fd607a35cf46b"
+        },
+        {
+          "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Sources/DaBin/BoardView.swift",
+          "line": 143,
+          "needle": "InboxScreen(state: state, showsNewTaskEntry: false)",
+          "sourceSHA256AtMapping": "3eead1acf077b238432095603dde8f2fa09c29f61af774a132124a5792eaaef2"
+        }
+      ],
+      "requiredRegisteredRegressions": [
+        "SearchWindowTests",
+        "WorkspaceWindowTests",
+        "LocalFileLocationTests"
+      ],
+      "status": "prior_verified_fix_present_in_static_source_fresh_campaign_required",
+      "currentCampaignRecheck": [
+        {
+          "suite": "SearchWindowTests",
+          "status": "passed"
+        },
+        {
+          "suite": "WorkspaceWindowTests",
+          "status": "passed"
+        },
+        {
+          "suite": "LocalFileLocationTests",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "findingID": "misleading-action-labels",
+      "implementedSourceChange": "Text filter called Text; Finder actions Open folder; imports Add files; comment actions Add/Edit comment; Clear filters matches actual operation; app utilities use More app actions.",
+      "currentSourceEvidence": [
+        {
+          "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Sources/DaBin/ExplorerScreen.swift",
+          "line": 132,
+          "needle": "title: \"Open folder\"",
+          "sourceSHA256AtMapping": "a55f44e37454b493479a50cbab794a6c0ecaf511cab17f339583e423de850777"
+        },
+        {
+          "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Sources/DaBin/LibraryScreen.swift",
+          "line": 152,
+          "needle": "Button(\"Add files\"",
+          "sourceSHA256AtMapping": "c32247022024412a69ed07adf8d00481c624c26dd44b96e87a8fd607a35cf46b"
+        },
+        {
+          "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Sources/DaBin/BoardView.swift",
+          "line": 322,
+          "needle": "More app actions",
+          "sourceSHA256AtMapping": "3eead1acf077b238432095603dde8f2fa09c29f61af774a132124a5792eaaef2"
+        }
+      ],
+      "requiredRegisteredRegressions": [
+        "LocalFileLocationTests",
+        "TaskPlanInteractionTests",
+        "WorkspaceWindowTests"
+      ],
+      "status": "prior_verified_fix_present_in_static_source_fresh_campaign_required",
+      "currentCampaignRecheck": [
+        {
+          "suite": "LocalFileLocationTests",
+          "status": "passed"
+        },
+        {
+          "suite": "TaskPlanInteractionTests",
+          "status": "passed"
+        },
+        {
+          "suite": "WorkspaceWindowTests",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "findingID": "unavailable-actions",
+      "implementedSourceChange": "Hide completed-task notification Retry and unavailable conversion Undo; remove Store Check for Updates no-op; disable guarded navigation/archive controls.",
+      "currentSourceEvidence": [
+        {
+          "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Sources/DaBin/CaptureDetailPanels.swift",
+          "line": 184,
+          "needle": "if (!capture.isTask || !capture.isCompleted)",
+          "sourceSHA256AtMapping": "df311d725f77671a2f23bd92d1607a68425d1043e72b314a1c0432fd3db75865"
+        },
+        {
+          "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Sources/DaBin/CaptureCards.swift",
+          "line": 371,
+          "needle": "state.canUndoTaskConversion",
+          "sourceSHA256AtMapping": "be93d26dd0814237ff7527480627510f2b41af5d235de92fce97cc19b17a0635"
+        },
+        {
+          "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Sources/DaBin/ApplicationMenu.swift",
+          "line": 39,
+          "needle": "#if DABIN_DIRECT_UPDATES",
+          "sourceSHA256AtMapping": "93cf464964a97d0c3bd477cd04ccdf9442bf30ddc2694f0ad4a4415d67ef52b6"
+        }
+      ],
+      "requiredRegisteredRegressions": [
+        "TaskPlanInteractionTests",
+        "HeaderInteractionTests",
+        "CaptureTaskConversionTests"
+      ],
+      "status": "prior_verified_fix_present_in_static_source_fresh_campaign_required",
+      "currentCampaignRecheck": [
+        {
+          "suite": "TaskPlanInteractionTests",
+          "status": "passed"
+        },
+        {
+          "suite": "HeaderInteractionTests",
+          "status": "passed"
+        },
+        {
+          "suite": "CaptureTaskConversionTests",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "findingID": "full-note-editor-entry",
+      "implementedSourceChange": "Inbox can open existing editor with the same unfinished draft and its original destination.",
+      "currentSourceEvidence": [
+        {
+          "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Sources/DaBin/InboxScreen.swift",
+          "line": 37,
+          "needle": "Label(\"Note editor\"",
+          "sourceSHA256AtMapping": "82165270963da0f62084b99f802e64a89dcf7837cfc51906e24f7fb476d3231d"
+        }
+      ],
+      "requiredRegisteredRegressions": [
+        "DailyCaptureTests",
+        "NavigationHistoryTests",
+        "WorkspaceWindowTests"
+      ],
+      "status": "prior_verified_fix_present_in_static_source_fresh_campaign_required",
+      "currentCampaignRecheck": [
+        {
+          "suite": "DailyCaptureTests",
+          "status": "passed"
+        },
+        {
+          "suite": "NavigationHistoryTests",
+          "status": "passed"
+        },
+        {
+          "suite": "WorkspaceWindowTests",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "findingID": "recognized-text-fit",
+      "implementedSourceChange": "Native scrollable word-wrapping text view uses the measured container width; complete text remains selectable and full-copyable.",
+      "currentSourceEvidence": [
+        {
+          "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Sources/DaBin/DetailScreen.swift",
+          "line": 117,
+          "needle": "reader.textContainer?.widthTracksTextView = true",
+          "sourceSHA256AtMapping": "e0b20e6157c70be7cd63d1be6756cde38154032ee5f95661c9a878eb7423bd74"
+        },
+        {
+          "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Sources/DaBin/DetailScreen.swift",
+          "line": 119,
+          "needle": "reader.textContainer?.containerSize =",
+          "sourceSHA256AtMapping": "e0b20e6157c70be7cd63d1be6756cde38154032ee5f95661c9a878eb7423bd74"
+        }
+      ],
+      "requiredRegisteredRegressions": [
+        "CaptureDetailReadabilityTests",
+        "CaptureDetailNavigationTests"
+      ],
+      "status": "prior_verified_fix_present_in_static_source_fresh_campaign_required",
+      "currentCampaignRecheck": [
+        {
+          "suite": "CaptureDetailReadabilityTests",
+          "status": "passed"
+        },
+        {
+          "suite": "CaptureDetailNavigationTests",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "findingID": "visible-icon-label-targets",
+      "implementedSourceChange": "Opt-in visible label inside BuddyIconButton and explicit reminder-label binding preserve icon-only header controls and the native switch.",
+      "currentSourceEvidence": [
+        {
+          "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Sources/DaBin/BuddyControls.swift",
+          "line": 112,
+          "needle": "if let visualLabel",
+          "sourceSHA256AtMapping": "4139cf84a96039a1ee90ef52e856273e107a54eb9692fe2b0f3e18e6c3db565d"
+        },
+        {
+          "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Sources/DaBin/CaptureSourceView.swift",
+          "line": 164,
+          "needle": "visualLabel: copied ? \"Copied\" : \"Copy\"",
+          "sourceSHA256AtMapping": "be605137504045c87199f066653e5611fe50d9ba8a94f710cb7e242ef213bd30"
+        }
+      ],
+      "requiredRegisteredRegressions": [
+        "CaptureDetailReadabilityTests",
+        "TaskPlanInteractionTests"
+      ],
+      "status": "prior_verified_fix_present_in_static_source_fresh_campaign_required",
+      "currentCampaignRecheck": [
+        {
+          "suite": "CaptureDetailReadabilityTests",
+          "status": "passed"
+        },
+        {
+          "suite": "TaskPlanInteractionTests",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "findingID": "reminder-label-toggle",
+      "implementedSourceChange": "A labeled native action toggles the same binding beside the native switch; label and switch retain their identifiers.",
+      "currentSourceEvidence": [
+        {
+          "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Sources/DaBin/ReminderClockEditor.swift",
+          "line": 79,
+          "needle": "Button { enabled.toggle() }",
+          "sourceSHA256AtMapping": "c094d6526cf5bdac09ba5b12e85e389f98458e9133b81b29ba9635786199a6fc"
+        },
+        {
+          "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Sources/DaBin/ReminderClockEditor.swift",
+          "line": 91,
+          "needle": "isOn: $enabled",
+          "sourceSHA256AtMapping": "c094d6526cf5bdac09ba5b12e85e389f98458e9133b81b29ba9635786199a6fc"
+        }
+      ],
+      "requiredRegisteredRegressions": [
+        "CaptureDetailReadabilityTests",
+        "TaskPlanInteractionTests"
+      ],
+      "status": "prior_verified_fix_present_in_static_source_fresh_campaign_required",
+      "currentCampaignRecheck": [
+        {
+          "suite": "CaptureDetailReadabilityTests",
+          "status": "passed"
+        },
+        {
+          "suite": "TaskPlanInteractionTests",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "findingID": "detail-function-reachability",
+      "implementedSourceChange": "Fixed header/actions and direct section navigation expose Preview, Task, Comments, Reminder, Text and Details without losing actions.",
+      "currentSourceEvidence": [
+        {
+          "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Sources/DaBin/DetailScreen.swift",
+          "line": 525,
+          "needle": "private func pane<Content: View>",
+          "sourceSHA256AtMapping": "e0b20e6157c70be7cd63d1be6756cde38154032ee5f95661c9a878eb7423bd74"
+        },
+        {
+          "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Sources/DaBin/DetailScreen.swift",
+          "line": 503,
+          "needle": "detail-section-picker",
+          "sourceSHA256AtMapping": "e0b20e6157c70be7cd63d1be6756cde38154032ee5f95661c9a878eb7423bd74"
+        },
+        {
+          "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Sources/DaBin/DetailScreen.swift",
+          "line": 665,
+          "needle": "detail-actions-more",
+          "sourceSHA256AtMapping": "e0b20e6157c70be7cd63d1be6756cde38154032ee5f95661c9a878eb7423bd74"
+        }
+      ],
+      "requiredRegisteredRegressions": [
+        "CaptureDetailNavigationTests",
+        "CaptureDetailReadabilityTests",
+        "LocalFileLocationTests"
+      ],
+      "status": "prior_verified_fix_present_in_static_source_fresh_campaign_required",
+      "currentCampaignRecheck": [
+        {
+          "suite": "CaptureDetailNavigationTests",
+          "status": "passed"
+        },
+        {
+          "suite": "CaptureDetailReadabilityTests",
+          "status": "passed"
+        },
+        {
+          "suite": "LocalFileLocationTests",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "findingID": "inactive-editor-focus",
+      "implementedSourceChange": "Inactive native editors release first responder while preserving draft, selection and scroll.",
+      "currentSourceEvidence": [
+        {
+          "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Sources/DaBin/DetailScreen.swift",
+          "line": 131,
+          "needle": "if !isEnabled, let window = reader.window",
+          "sourceSHA256AtMapping": "e0b20e6157c70be7cd63d1be6756cde38154032ee5f95661c9a878eb7423bd74"
+        },
+        {
+          "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Sources/DaBin/DailyCaptureView.swift",
+          "line": 34,
+          "needle": "var isActive = true {",
+          "sourceSHA256AtMapping": "f46a663f75c87a4f49cce1d22def9814c4817e2eca6fc3976afa44b9b20c3561"
+        }
+      ],
+      "requiredRegisteredRegressions": [
+        "CaptureDetailNavigationTests",
+        "TaskPlanInteractionTests"
+      ],
+      "status": "prior_verified_fix_present_in_static_source_fresh_campaign_required",
+      "currentCampaignRecheck": [
+        {
+          "suite": "CaptureDetailNavigationTests",
+          "status": "passed"
+        },
+        {
+          "suite": "TaskPlanInteractionTests",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "findingID": "detail-history-pane-anchors",
+      "implementedSourceChange": "Retain capture identity, store section in detailFocus, clear stale viewport only on explicit section changes, restore on history.",
+      "currentSourceEvidence": [
+        {
+          "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Sources/DaBin/DetailScreen.swift",
+          "line": 424,
+          "needle": "if pageSection != section { state.workspaceViewport = nil }",
+          "sourceSHA256AtMapping": "e0b20e6157c70be7cd63d1be6756cde38154032ee5f95661c9a878eb7423bd74"
+        },
+        {
+          "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Sources/DaBin/DetailScreen.swift",
+          "line": 416,
+          "needle": "CapturePageSection.from(focus: state.detailFocus)",
+          "sourceSHA256AtMapping": "e0b20e6157c70be7cd63d1be6756cde38154032ee5f95661c9a878eb7423bd74"
+        }
+      ],
+      "requiredRegisteredRegressions": [
+        "CaptureDetailNavigationTests",
+        "NavigationHistoryTests"
+      ],
+      "status": "prior_verified_fix_present_in_static_source_fresh_campaign_required",
+      "currentCampaignRecheck": [
+        {
+          "suite": "CaptureDetailNavigationTests",
+          "status": "passed"
+        },
+        {
+          "suite": "NavigationHistoryTests",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "findingID": "today-complete-receipts",
+      "implementedSourceChange": "Always-present current-day receipt feed precedes the work plan, uses immutable receipt day and a published day key, and keeps independent marker identities.",
+      "currentSourceEvidence": [
+        {
+          "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Sources/DaBin/AppState.swift",
+          "line": 809,
+          "needle": "var currentTodayCaptures:",
+          "sourceSHA256AtMapping": "116a823caaa1769ac630515e937e2a29f8a023fb57fda9639a00e9c91de44752"
+        },
+        {
+          "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Sources/DaBin/TodayPlanningScreen.swift",
+          "line": 122,
+          "needle": "CaptureRow(state: state, capture: capture, featured: false, navigationItemID: itemID, compactReceipt: true)",
+          "sourceSHA256AtMapping": "d7f58a5fce478283eae8cc57d02b688c05676d274ba160f488077cb442b8a27a"
+        }
+      ],
+      "requiredRegisteredRegressions": [
+        "WorkInboxTests",
+        "WorkspaceWindowTests",
+        "DailyCaptureTests"
+      ],
+      "status": "prior_verified_fix_present_in_static_source_fresh_campaign_required",
+      "currentCampaignRecheck": [
+        {
+          "suite": "WorkInboxTests",
+          "status": "passed"
+        },
+        {
+          "suite": "WorkspaceWindowTests",
+          "status": "passed"
+        },
+        {
+          "suite": "DailyCaptureTests",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "findingID": "today-direct-capture-route",
+      "implementedSourceChange": "Today participates in native capture targeting and route-preserving completion while editor refusal guards remain.",
+      "currentSourceEvidence": [
+        {
+          "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Sources/DaBin/DailyCaptureView.swift",
+          "line": 113,
+          "needle": "state?.route == .daily || state?.route == .inbox || state?.route == .reminders",
+          "sourceSHA256AtMapping": "f46a663f75c87a4f49cce1d22def9814c4817e2eca6fc3976afa44b9b20c3561"
+        },
+        {
+          "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Sources/DaBin/CornerController.swift",
+          "line": 1601,
+          "needle": "let captureRoute = state.route",
+          "sourceSHA256AtMapping": "ab2d411780e13a60160493b05d6db7dbf026a74e1952f18d9088a6f832656e97"
+        },
+        {
+          "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Sources/DaBin/AppState.swift",
+          "line": 1206,
+          "needle": "self.route != .inbox && self.route != .reminders",
+          "sourceSHA256AtMapping": "116a823caaa1769ac630515e937e2a29f8a023fb57fda9639a00e9c91de44752"
+        }
+      ],
+      "requiredRegisteredRegressions": [
+        "DailyCaptureTests",
+        "WorkspaceWindowTests"
+      ],
+      "status": "prior_verified_fix_present_in_static_source_fresh_campaign_required",
+      "currentCampaignRecheck": [
+        {
+          "suite": "DailyCaptureTests",
+          "status": "passed"
+        },
+        {
+          "suite": "WorkspaceWindowTests",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "findingID": "compact-receipt-copy-label",
+      "implementedSourceChange": "Copy keeps an intrinsic horizontal label width; native receipt/Copy/More bounds are checked at100%,150%,200%.",
+      "currentSourceEvidence": [
+        {
+          "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Sources/DaBin/CaptureCards.swift",
+          "line": 159,
+          "needle": ".fixedSize(horizontal: true, vertical: false)",
+          "sourceSHA256AtMapping": "be93d26dd0814237ff7527480627510f2b41af5d235de92fce97cc19b17a0635"
+        }
+      ],
+      "requiredRegisteredRegressions": [
+        "WorkspaceWindowTests"
+      ],
+      "status": "prior_verified_fix_present_in_static_source_fresh_campaign_required",
+      "currentCampaignRecheck": [
+        {
+          "suite": "WorkspaceWindowTests",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "findingID": "gesture-direction-preference-surface",
+      "implementedSourceChange": "Recognized right swipe goes Back and left goes Forward; preferences, fluid ownership and whole-Board surface are handled while documents/editors keep their interactions.",
+      "currentSourceEvidence": [
+        {
+          "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Sources/DaBin/WorkspaceInput.swift",
+          "line": 248,
+          "needle": "return perform(event.deltaX < 0 ? .back : .forward",
+          "sourceSHA256AtMapping": "f1458efaae48b07936952cf4a3407325a41e192987e315e6798dd7ad7f846f80"
+        },
+        {
+          "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Sources/DaBin/BoardView.swift",
+          "line": 52,
+          "needle": ".background(WorkspaceInputRegion())",
+          "sourceSHA256AtMapping": "3eead1acf077b238432095603dde8f2fa09c29f61af774a132124a5792eaaef2"
+        }
+      ],
+      "requiredRegisteredRegressions": [
+        "WorkspaceInputTests",
+        "NavigationGestureTests"
+      ],
+      "status": "prior_verified_fix_present_in_static_source_fresh_campaign_required",
+      "currentCampaignRecheck": [
+        {
+          "suite": "WorkspaceInputTests",
+          "status": "passed"
+        },
+        {
+          "suite": "NavigationGestureTests",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "findingID": "gesture-ownership-auxiliary-pairing",
+      "implementedSourceChange": "Latch one navigation per Down/Up pair, retain cancelled releases across focus boundaries and preserve child/active gesture ownership.",
+      "currentSourceEvidence": [
+        {
+          "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Sources/DaBin/WorkspaceInput.swift",
+          "line": 173,
+          "needle": "cancelledAuxiliaryButtons.remove(event.buttonNumber) != nil",
+          "sourceSHA256AtMapping": "f1458efaae48b07936952cf4a3407325a41e192987e315e6798dd7ad7f846f80"
+        },
+        {
+          "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Sources/DaBin/WorkspaceInput.swift",
+          "line": 190,
+          "needle": "if owner == .swipe && (event.type == .swipe || event.type == .magnify)",
+          "sourceSHA256AtMapping": "f1458efaae48b07936952cf4a3407325a41e192987e315e6798dd7ad7f846f80"
+        }
+      ],
+      "requiredRegisteredRegressions": [
+        "WorkspaceInputTests",
+        "NavigationGestureTests"
+      ],
+      "status": "prior_verified_fix_present_in_static_source_fresh_campaign_required",
+      "currentCampaignRecheck": [
+        {
+          "suite": "WorkspaceInputTests",
+          "status": "passed"
+        },
+        {
+          "suite": "NavigationGestureTests",
+          "status": "passed"
+        }
+      ]
+    }
+  ],
+  "requiredFinalReruns": {
+    "owner": "parent serial native scheduler",
+    "fullAppStoreRelease": {
+      "runner": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/scripts/run_qa.py",
+      "runnerSHA256AtMapping": "dfb0c05251aab6c37c7c667f84dc6cdab663c15ea8a41071997a5192c6e8b33f",
+      "requiredSuiteCount": 121,
+      "registeredSuiteNames": [
+        "ProjectFileArchiveTests",
+        "ExplorerTransferTests",
+        "ExplorerQueryTests",
+        "CaptureProvenanceTests",
+        "TaskFocusTests",
+        "ProjectPickerTests",
+        "QuickAccessTests",
+        "ProductFoundationTests",
+        "ConnectedWorkflowTests",
+        "WorkInboxTests",
+        "WorkspaceTests",
+        "ManualCaptureLifecycleTests",
+        "ArchiveRecoveryTests",
+        "ArchiveBackupTests",
+        "ThemeSettingsTests",
+        "PrivacyInformationTests",
+        "DomainTests",
+        "ArchiveLayoutTests",
+        "ArchiveStoreTests",
+        "DeferredArchiveRepairTests",
+        "RepositoryBatchTests",
+        "CaptureRemovalTests",
+        "ServiceTests",
+        "QAStorageScopedSaveTests",
+        "QALifecycleTests",
+        "ApplicationLifecycleTests",
+        "PreviewLifecycleTests",
+        "TaskStateTests",
+        "TaskPlanningTests",
+        "CaptureActionTests",
+        "CaptureClipboardTests",
+        "ClipboardRetentionTests",
+        "CaptureTaskConversionTests",
+        "LocalContentSearchTests",
+        "LocalDOCXTextExtractorTests",
+        "SearchScopeStateTests",
+        "HourlyGroupingTests",
+        "DayExportTests",
+        "DayExportUITests",
+        "WeeklyStateTests",
+        "InputTests",
+        "AutoCaptureServiceTests",
+        "AutoCaptureRobotPresenterTests",
+        "AutoCaptureRobotCelebrationTests",
+        "SoftwareUpdateTests",
+        "UpdateConfigurationTests",
+        "RobotMotionTests",
+        "IslandRobotChoreographyTests",
+        "RobotLifecycleTests",
+        "RobotAppFrameTests",
+        "QuietOrbitRenderTests",
+        "CaptureZoomStateTests",
+        "RobotProjectSignRenderTests",
+        "AutoCaptureSignMotionTests",
+        "AutoCaptureSignPresenterTests",
+        "AutoCaptureSignRenderTests",
+        "CapturePreviewPerformanceTests",
+        "BoredRobotArtworkTests",
+        "TooltipBehaviorTests",
+        "SearchDateBoardTests",
+        "SearchResultExcerptTests",
+        "CaptureAnnotationTests",
+        "ReminderAlertCoordinatorTests",
+        "CommentDraftArchiveTests",
+        "ExternalTransferProcessTests",
+        "ProjectWorkspaceStateTests",
+        "ProjectWorkspaceExportTests",
+        "ProjectWorkspaceViewTests",
+        "ProjectWorkspaceCardTests",
+        "NavigationHistoryTests",
+        "DurabilityStressTests",
+        "FlowActionStressTests",
+        "MediaIntegrationTests",
+        "RedesignInteractionTests",
+        "WindowResizeInteractionTests",
+        "WindowTests",
+        "WeeklyWindowTests",
+        "FilterResizeTests",
+        "RobotDropTests",
+        "DailyCaptureTests",
+        "HeaderInteractionTests",
+        "WorkspaceWindowTests",
+        "RobotWindowTransitionTests",
+        "DetailPreviewInteractionTests",
+        "CaptureDetailReadabilityTests",
+        "CaptureDetailNavigationTests",
+        "TaskPlanInteractionTests",
+        "CaptureExtendedInteractionTests",
+        "ExtendedMediaInteractionTests",
+        "CaptureTimestampPresentationTests",
+        "RobotVisualConsistencyTests",
+        "NativeTooltipPreferenceTests",
+        "TooltipPresentationTests",
+        "RobotCloseVisualTests",
+        "CollectionCardPresentationTests",
+        "TaskTimerRobotTests",
+        "ExplorerCaptureCardPresentationTests",
+        "AutoCaptureExplorerResponsivenessTests",
+        "ExplorerKeyboardTests",
+        "NotificationPresentationTests",
+        "WindowChromePresentationTests",
+        "ProjectRecordingRobotTests",
+        "SearchWindowTests",
+        "TaskPriorityTagTests",
+        "LocalFileLocationTests",
+        "NativeContentDragTests",
+        "CaptionDragTests",
+        "SearchInputTests",
+        "AutoRecordIndicatorTests",
+        "TimelineCalendarTests",
+        "TodayTaskCardTests",
+        "WeeklyLayoutTests",
+        "DailyGridLayoutTests",
+        "WorkspaceZoomTests",
+        "WorkspaceZoomLayoutTests",
+        "WorkspaceInputTests",
+        "WorkspaceZoomPerformanceTests",
+        "ViewportLifecycleTests",
+        "NavigationGestureTests",
+        "VisualAnimationStressTests",
+        "VideoPlaybackIntegrationTests"
+      ],
+      "compileDefinitions": [],
+      "timeoutSecondsPerSuite": 180,
+      "acceptance": "Run all121 with inputs unchanged and raw logs retained. Native semantic passes alone do not close outstanding performance or framework warnings; strict zoom budgets and title pixel/editor acceptance remain unmet until compatible passing proof. Report any suite failure and unresolved warning honestly.",
+      "completedReport": {
+        "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/full-current-run/report.json",
+        "sha256": "67aeb58ad2c843b33fdb73709f15e7a48eef327f0edd706260cf1715a92150c6"
+      },
+      "status": "completed120passed1failed"
+    },
+    "priorityTargetedSuites": [
+      "TaskPlanInteractionTests",
+      "CaptureDetailNavigationTests",
+      "NavigationHistoryTests",
+      "CaptureDetailReadabilityTests",
+      "WorkspaceWindowTests",
+      "WorkspaceInputTests",
+      "WorkspaceZoomPerformanceTests",
+      "ProjectWorkspaceViewTests",
+      "SearchWindowTests",
+      "AutoCaptureExplorerResponsivenessTests",
+      "ViewportLifecycleTests",
+      "ExplorerKeyboardTests",
+      "WorkspaceZoomLayoutTests",
+      "WorkspaceZoomTests",
+      "WindowResizeInteractionTests",
+      "WindowChromePresentationTests",
+      "RobotAppFrameTests",
+      "RobotWindowTransitionTests",
+      "WorkInboxTests"
+    ],
+    "directChannelSelectedSuites": [
+      "PrivacyInformationTests",
+      "ApplicationLifecycleTests",
+      "SoftwareUpdateTests",
+      "UpdateConfigurationTests",
+      "HeaderInteractionTests"
+    ],
+    "separateAcceptance": [
+      "StoreSandboxSmokeTests real ad-hoc sandbox save/reopen/export phases on current source module; standalone CLI WorkInbox normal environment is not a sandbox entitlement proof.",
+      "Current accepted title raster evidence plus full campaign VisualAnimationStressTests renders.",
+      "NativeRenderTests, IslandPlaygroundRender, WalkthroughRenderTests and PrivacyRenderTests rerun if final graphics/root-frame production changes invalidate prior exact inputs; retain fixture corrections/dispositions.",
+      "Current generated project --check and unsigned store candidate/preflight; unsigned compilation does not mean signed/archive/upload success."
+    ],
+    "unchangedToolingEvidence": "Existing Python90 and XCTest2 may be carried only with explicit unchanged relevant-input provenance and bounded scope; rerun if tooling/model/storage inputs change. Their previous logs lacked full at-run manifests, so do not invent source compatibility.",
+    "openFindingsAtLastJoin": [
+      "Framework-reproduced NSTableView warning remains open; current9 warning lines retained.",
+      "Strict Zoom test failed50ms input budget; measured steady timer also exceeds33ms. No causal optimization promoted."
+    ],
+    "plannedSequenceBeforeInvestigations": [
+      "Resolve and promote accepted title/table/performance fixes; do not begin final whole campaign while product source is still changing.",
+      "Compile final production/test inputs and perform targeted acceptance gates with exact source compatibility.",
+      "Run full121 registered App Store Release native suites serially, retaining stderr/stdout and immutable input fingerprint.",
+      "Run direct-channel5 selected suites, fresh sandbox smoke, affected standalone graphics fixtures and unsigned candidate preflight with current-source receipts; treat signing/upload as separate release proof."
+    ],
+    "completedSequence": "Accepted title and fixture fixes promoted; instrumentation restored; full121 campaign completed with unchanged inputs. Sole strict performance failure and framework warnings retained as open findings.",
+    "unrunCurrentSeparateLanes": [
+      "Direct-channel selected5",
+      "Python90",
+      "XCTest2",
+      "Ad-hoc sandbox31",
+      "Standalone extra4 render fixtures"
+    ]
+  },
+  "nonSourceBugDispositions": {
+    "resolvedFixtureEnvironmentFindings": [
+      {
+        "id": "native-menu-fixture-materialization",
+        "status": "fixed_and_prior_runtime_passed",
+        "resolution": "Own-window label click captures real NSMenu, cancels tracking with bounded event-mode timer; responds-gated String/NSAttributedString getters preserve exact visible label versus semantic title assertions."
+      },
+      {
+        "id": "exclusive-section-lazy-fixture-adapters",
+        "status": "fixed_and_prior_runtime_passed",
+        "resolution": "Select actual sections and scroll the real native content to the intended plan/reorder controls, preserving editing/draft/focus and persistence assertions."
+      },
+      {
+        "id": "visual-stress-control-discovery",
+        "status": "fixed_and_prior_runtime_passed",
+        "resolution": "Retained failed attempts; frozen native discovery fixture subsequently passed108535checks in full campaign."
+      },
+      {
+        "id": "native-render-count-checker",
+        "status": "fixed_and_runtime_artifacts_revalidated",
+        "resolution": "Original runtime exited0; exact24files revalidated read-only with hashes and manifest."
+      },
+      {
+        "id": "privacy-render-configured-links-fixture",
+        "status": "fixed_and_targeted_runtime_passed",
+        "resolution": "Omit two URL keys only in the disposable nil-link fixture; production URLs/test assertions unchanged; targeted4PNG rerun passed."
+      },
+      {
+        "id": "sandbox-build-environment",
+        "status": "superseded_by_current_successful_runtime",
+        "resolution": "Retain failed sign receipt; clean private temporary fixture compiled/signed and completed31current-source sandbox checks in2processes."
+      },
+      {
+        "id": "xctest-environment-run",
+        "status": "superseded_by_two_passing_cases",
+        "resolution": "Original failure log retained; current successful result has2cases/0failures."
+      },
+      {
+        "id": "walkthrough-channel-initializer",
+        "status": "fixed_compiled_and_runtime_passed",
+        "resolution": "Test-only initializer correction; assertions unchanged; current31PNG runtime passed."
+      }
+    ],
+    "expectedFaultDiagnostics": [
+      {
+        "id": "deliberately-corrupt-metadata",
+        "classification": "expected_fault_injection_diagnostic",
+        "disposition": "Retain deliberately triggered fault/adapter evidence; not an ordinary user-path product failure."
+      },
+      {
+        "id": "appintents-metadata-skip",
+        "classification": "expected_build_metadata_diagnostic",
+        "disposition": "Retain deliberately triggered fault/adapter evidence; not an ordinary user-path product failure."
+      },
+      {
+        "id": "sandbox-wrapper-hash-distinction",
+        "classification": "expected_materialization_transform",
+        "disposition": "Retain deliberately triggered fault/adapter evidence; not an ordinary user-path product failure."
+      }
+    ],
+    "manualAndProvenanceBoundaries": [
+      {
+        "id": "physical_input",
+        "disposition": "No observed product defect established; preserve explicit hardware/live-service/manual/provenance boundary. Source changes and passing assertion counts cannot manufacture verification."
+      },
+      {
+        "id": "live_notifications_permissions",
+        "disposition": "No observed product defect established; preserve explicit hardware/live-service/manual/provenance boundary. Source changes and passing assertion counts cannot manufacture verification."
+      },
+      {
+        "id": "live_auto_capture_and_bookmarks",
+        "disposition": "No observed product defect established; preserve explicit hardware/live-service/manual/provenance boundary. Source changes and passing assertion counts cannot manufacture verification."
+      },
+      {
+        "id": "external_apps",
+        "disposition": "No observed product defect established; preserve explicit hardware/live-service/manual/provenance boundary. Source changes and passing assertion counts cannot manufacture verification."
+      },
+      {
+        "id": "hardware_graphics_lifecycle",
+        "disposition": "No observed product defect established; preserve explicit hardware/live-service/manual/provenance boundary. Source changes and passing assertion counts cannot manufacture verification."
+      },
+      {
+        "id": "system_media_variants",
+        "disposition": "No observed product defect established; preserve explicit hardware/live-service/manual/provenance boundary. Source changes and passing assertion counts cannot manufacture verification."
+      },
+      {
+        "id": "distribution_live_services",
+        "disposition": "No observed product defect established; preserve explicit hardware/live-service/manual/provenance boundary. Source changes and passing assertion counts cannot manufacture verification."
+      },
+      {
+        "id": "storage_faults_beyond_process_kill",
+        "disposition": "No observed product defect established; preserve explicit hardware/live-service/manual/provenance boundary. Source changes and passing assertion counts cannot manufacture verification."
+      },
+      {
+        "id": "human_accessibility_usability",
+        "disposition": "No observed product defect established; preserve explicit hardware/live-service/manual/provenance boundary. Source changes and passing assertion counts cannot manufacture verification."
+      },
+      {
+        "id": "physical-avkit-transport",
+        "disposition": "No observed product defect established; preserve explicit hardware/live-service/manual/provenance boundary. Source changes and passing assertion counts cannot manufacture verification."
+      },
+      {
+        "id": "physical-title-screenshot-artifact",
+        "disposition": "No observed product defect established; preserve explicit hardware/live-service/manual/provenance boundary. Source changes and passing assertion counts cannot manufacture verification."
+      },
+      {
+        "id": "probe-preferences-removal",
+        "disposition": "No observed product defect established; preserve explicit hardware/live-service/manual/provenance boundary. Source changes and passing assertion counts cannot manufacture verification."
+      },
+      {
+        "id": "python-xctest-at-run-hash-manifest",
+        "disposition": "No observed product defect established; preserve explicit hardware/live-service/manual/provenance boundary. Source changes and passing assertion counts cannot manufacture verification."
+      }
+    ],
+    "newDiagnosticHarnessAttempt": {
+      "id": "table-warning-logger-recursion",
+      "disposition": "Diagnostic logger interposition recursion was corrected separately; never treat that failed harness as app reentrancy pass/count evidence. Original7.6GB generated log removal is documented with SHA and bounded first/last context.",
+      "receipt": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/table-warning/logger-recursion-attempt.json"
+    }
+  },
+  "claimsNotMade": [
+    "All buttons or all possible user flows exercised",
+    "Human usability/user-study success",
+    "Physical trackpad/mouse hardware compatibility",
+    "Physical video transport AX buttons exercised",
+    "Sustained multi-hour soak or zero remaining bugs",
+    "Signed distribution, completed archive or TestFlight upload"
+  ],
+  "completedCampaign": {
+    "report": {
+      "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/full-current-run/report.json",
+      "sha256": "67aeb58ad2c843b33fdb73709f15e7a48eef327f0edd706260cf1715a92150c6"
+    },
+    "originalReport": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa/runs/20261005T033354460853Z-app-store/report.json",
+    "sourceFingerprint": "206badd60f8e8639b925fb4f0f4f69168c23245e91b46364d51bf57757d9e293",
+    "status": "failed",
+    "passedSuites": 120,
+    "failedSuites": 1,
+    "failedSuiteNames": [
+      "WorkspaceZoomPerformanceTests"
+    ],
+    "registeredSuitesExecuted": 121,
+    "compileFailures": 0,
+    "timeouts": 0,
+    "inputsUnchangedDuringRun": true,
+    "all269InputsMatchCurrent": true,
+    "startedAtUTC": "2026-10-05T03:33:54.460853+00:00",
+    "finishedAtUTC": "2026-10-05T03:53:14.521439+00:00",
+    "suiteSummaries": [
+      {
+        "name": "ProjectFileArchiveTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 56 project file layout, daily records, move recovery, file ownership, trash, and backup checks",
+        "requiresWindowFocus": false
+      },
+      {
+        "name": "ExplorerTransferTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 99 Explorer transfer checks; native representations, projects, preservation, Undo, asynchronous destinations and failures.",
+        "requiresWindowFocus": false
+      },
+      {
+        "name": "ExplorerQueryTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 24 Explorer filtering, grouping and persistence checks",
+        "requiresWindowFocus": false
+      },
+      {
+        "name": "CaptureProvenanceTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 66 provenance checks; legacy records, truthful origins, bounded manual ledger, compact grouping, rollback, conversion, recurrence, restart, backup, day/week exports and readable sidecars.",
+        "requiresWindowFocus": false
+      },
+      {
+        "name": "TaskFocusTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 82 task focus, local schedule, lifecycle, recovery and draft checks; synthetic archive only.",
+        "requiresWindowFocus": false
+      },
+      {
+        "name": "ProjectPickerTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 23 shared project picker and scope checks",
+        "requiresWindowFocus": false
+      },
+      {
+        "name": "QuickAccessTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 28 quick access checks",
+        "requiresWindowFocus": false
+      },
+      {
+        "name": "ProductFoundationTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 77 connected product foundation checks",
+        "requiresWindowFocus": false
+      },
+      {
+        "name": "ConnectedWorkflowTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 19 connected capture, client collection, clipboard reuse, task planning, restart and backup scenarios",
+        "requiresWindowFocus": false
+      },
+      {
+        "name": "WorkInboxTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 93 work inbox checks",
+        "requiresWindowFocus": false
+      },
+      {
+        "name": "WorkspaceTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 48 workspace, clipboard, scratchpad, collection and ZIP checks",
+        "requiresWindowFocus": false
+      },
+      {
+        "name": "ManualCaptureLifecycleTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 20 manual capture lifecycle checks (private named pasteboards)",
+        "requiresWindowFocus": false
+      },
+      {
+        "name": "ArchiveRecoveryTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 61 recoverable-trash and archive backup/restore assertions",
+        "requiresWindowFocus": false
+      },
+      {
+        "name": "ArchiveBackupTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 24 workspace backup, conflict, rollback, restart, and legacy checks.",
+        "requiresWindowFocus": false
+      },
+      {
+        "name": "ThemeSettingsTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 621 theme settings checks",
+        "requiresWindowFocus": false
+      },
+      {
+        "name": "PrivacyInformationTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 38 privacy information checks",
+        "requiresWindowFocus": false
+      },
+      {
+        "name": "DomainTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 218 assertions; 10 search fixtures; managed-copy reopen, immutable dates, import compensation and interruption recovery.",
+        "requiresWindowFocus": false
+      },
+      {
+        "name": "ArchiveLayoutTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 50 archive layout, provenance, exact-content, edit preservation, and path safety checks",
+        "requiresWindowFocus": false
+      },
+      {
+        "name": "ArchiveStoreTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 116 archive-store integration assertions; dated originals, readable records, updates, migration, legacy/current recovery, retryable mirror failure, and single-publication incremental inserts.",
+        "requiresWindowFocus": false
+      },
+      {
+        "name": "DeferredArchiveRepairTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 16 deferred archive readiness, cancellation, recovery, edit, and deletion checks.",
+        "requiresWindowFocus": false
+      },
+      {
+        "name": "RepositoryBatchTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 10 repository batching, duplicate, mixed-update, rollback, and restart checks.",
+        "requiresWindowFocus": false
+      },
+      {
+        "name": "CaptureRemovalTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 76 capture removal/minimize checks",
+        "requiresWindowFocus": false
+      },
+      {
+        "name": "ServiceTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 61 service checks (isolated store, fake notifications, no network).",
+        "requiresWindowFocus": false
+      },
+      {
+        "name": "QAStorageScopedSaveTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 31 scoped-storage assertions; touched-record saves, no-op previews, transaction rollback, reminder retry, retained archive warnings, and 1,000-record benchmark.",
+        "requiresWindowFocus": false
+      },
+      {
+        "name": "QALifecycleTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 22 lifecycle/cache checks; isolated event centers, store and fake notifications, no network.",
+        "requiresWindowFocus": false
+      },
+      {
+        "name": "ApplicationLifecycleTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 74 application lifecycle checks; isolated preferences, events, pointer samples and fake notifications, no focus or personal data.",
+        "requiresWindowFocus": false
+      },
+      {
+        "name": "PreviewLifecycleTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 130 preview cancellation/shutdown checks; isolated callbacks, preferences and archive only",
+        "requiresWindowFocus": false
+      },
+      {
+        "name": "TaskStateTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 131 task workflow checks; isolated store and fake notifications.",
+        "requiresWindowFocus": false
+      },
+      {
+        "name": "TaskPlanningTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 45 task planning checks; synthetic local archive only.",
+        "requiresWindowFocus": false
+      },
+      {
+        "name": "CaptureActionTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 31 capture action checks; confirmation, minimize, search, draft cleanup and delayed reminder deletion in an isolated archive.",
+        "requiresWindowFocus": false
+      },
+      {
+        "name": "CaptureClipboardTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 29 capture clipboard checks; text, links, tasks, files, batches, native types and failures.",
+        "requiresWindowFocus": false
+      },
+      {
+        "name": "ClipboardRetentionTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 25 clipboard retention, recovery, protected-work, and note-capture checks.",
+        "requiresWindowFocus": false
+      },
+      {
+        "name": "CaptureTaskConversionTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 173 capture-to-task checks; originals, legacy data, persistence, atomic failure, drafts, routes, filters, carryover, reminders and receipt exports.",
+        "requiresWindowFocus": false
+      },
+      {
+        "name": "LocalContentSearchTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 91 local content-search checks; schema compatibility, persistence, OCR snippets, filters, scopes, task conversion, queueing, cancellation, shutdown, removal, retry, native Vision/PDF/text extraction and privacy boundaries.",
+        "requiresWindowFocus": false
+      },
+      {
+        "name": "LocalDOCXTextExtractorTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 138 local DOCX checks; paragraphs/tables/Unicode, strict OOXML, stored/deflated ZIP, descriptors, CRC/size/path guards, bounded inflation/XML, entity rejection, cancellation and no remote/converter loading.",
+        "requiresWindowFocus": false
+      },
+      {
+        "name": "SearchScopeStateTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 126 scoped-search checks; project/type/source intersection, live attachment inheritance, capture-day ranges, scratchpads, DST and Back restoration",
+        "requiresWindowFocus": false
+      },
+      {
+        "name": "HourlyGroupingTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 31 hourly grouping checks; action identity, fourth-action threshold, filters, fixed local hours, stable IDs and accessible collapse.",
+        "requiresWindowFocus": false
+      },
+      {
+        "name": "DayExportTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 126 day/week export checks; deterministic content, exact selected date scopes, cutoff, grouping and UTF-8 identity.",
+        "requiresWindowFocus": false
+      },
+      {
+        "name": "DayExportUITests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 36 export UI checks; day/week copy and download, ordered header actions, popover presentation, feedback, cancellation, failure and exact bytes.",
+        "requiresWindowFocus": false
+      },
+      {
+        "name": "WeeklyStateTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 186 weekly state checks; isolated store, local calendar, fake notifications.",
+        "requiresWindowFocus": false
+      },
+      {
+        "name": "InputTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 136 input lifecycle checks (private named pasteboards; general clipboard untouched)",
+        "requiresWindowFocus": false
+      },
+      {
+        "name": "AutoCaptureServiceTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 75 auto-capture service checks",
+        "requiresWindowFocus": false
+      },
+      {
+        "name": "AutoCaptureRobotPresenterTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 82 automatic-capture robot presenter checks",
+        "requiresWindowFocus": false
+      },
+      {
+        "name": "AutoCaptureRobotCelebrationTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 1397 auto-capture celebration rotation and performance checks",
+        "requiresWindowFocus": false
+      },
+      {
+        "name": "SoftwareUpdateTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 17 Store update checks; disabled direct actions, stable Store-managed state, zero HTTP(S) requests; no signing, installed app, or user archive used.",
+        "requiresWindowFocus": false
+      },
+      {
+        "name": "UpdateConfigurationTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 41 update-channel configuration checks",
+        "requiresWindowFocus": false
+      },
+      {
+        "name": "RobotMotionTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 40 robot motion and personality checks",
+        "requiresWindowFocus": false
+      },
+      {
+        "name": "IslandRobotChoreographyTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 28695 island choreography contact, timing, and envelope checks",
+        "requiresWindowFocus": false
+      },
+      {
+        "name": "RobotLifecycleTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 38 robot lifecycle checks",
+        "requiresWindowFocus": false
+      },
+      {
+        "name": "RobotAppFrameTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 88 robot application frame geometry, gaze and lifecycle checks",
+        "requiresWindowFocus": false
+      },
+      {
+        "name": "QuietOrbitRenderTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 91 Quiet Orbit artwork, idle, reaction, burst-count, cleanup, and Reduce Motion checks passed. /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa/quiet-orbit",
+        "requiresWindowFocus": false
+      },
+      {
+        "name": "CaptureZoomStateTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 30 capture extended-canvas zoom, fit, pan, resize, PDF, text and native-input checks",
+        "requiresWindowFocus": false
+      },
+      {
+        "name": "RobotProjectSignRenderTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 63 native recording-board checks; renders: /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/project-recording-sign-compact-2026-10-03/renders",
+        "requiresWindowFocus": false
+      },
+      {
+        "name": "AutoCaptureSignMotionTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "Auto capture sign motion checks passed: 2587",
+        "requiresWindowFocus": false
+      },
+      {
+        "name": "AutoCaptureSignPresenterTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 75 typed Auto Capture sign presenter, queue, interruption, privacy and service receipt checks",
+        "requiresWindowFocus": false
+      },
+      {
+        "name": "AutoCaptureSignRenderTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 305 native confirmation-sign checks; renders: /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/auto-capture-sign-2026-10-03/renders",
+        "requiresWindowFocus": false
+      },
+      {
+        "name": "CapturePreviewPerformanceTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 15 bounded background preview/cache checks; no main-thread decode",
+        "requiresWindowFocus": false
+      },
+      {
+        "name": "BoredRobotArtworkTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 12 canonical empty-state robot hosting, static rendering and cleanup checks",
+        "requiresWindowFocus": false
+      },
+      {
+        "name": "TooltipBehaviorTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 158 tooltip delay, cancellation, preference, suppression, active-only anchors and clamped-layout checks",
+        "requiresWindowFocus": false
+      },
+      {
+        "name": "SearchDateBoardTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 44 date search grouping, chronology, note semantics, context counts and bounded paging checks",
+        "requiresWindowFocus": false
+      },
+      {
+        "name": "SearchResultExcerptTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 21 search result excerpt bounds, matching evidence, labels and Unicode checks",
+        "requiresWindowFocus": false
+      },
+      {
+        "name": "CaptureAnnotationTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 55 annotation checks; legacy threads, edits, search/export, restart/backup, exact reminder/focus acknowledgments and atomic rollback.",
+        "requiresWindowFocus": false
+      },
+      {
+        "name": "ReminderAlertCoordinatorTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 26 reminder alert coordinator checks; scheduled delivery, wake/clock refresh, occurrence identity, filtering, restart and durable focus receipts.",
+        "requiresWindowFocus": false
+      },
+      {
+        "name": "CommentDraftArchiveTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 37 comment draft checks; legacy compatibility, recoverable composer/edit identity, posting/failure and unrelated task-draft preservation.",
+        "requiresWindowFocus": false
+      },
+      {
+        "name": "ExternalTransferProcessTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 40 external transfer process checks; 6 mixed production items, exact Unicode text/URL, PNG/JPEG promised bytes and file hashes. Cross-process data availability only; physical drops, sandboxed destinations and browsers are not exercised.",
+        "requiresWindowFocus": false
+      },
+      {
+        "name": "ProjectWorkspaceStateTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 265 project-workspace checks; stable ordering, scoped selection, complete project counts, backup-compatible persistence, atomic task conversion, inherited ownership and guarded undo.",
+        "requiresWindowFocus": false
+      },
+      {
+        "name": "ProjectWorkspaceExportTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 49 project ZIP, ordering, metadata, notes, scope, safe publication, missing-original, and private clipboard checks",
+        "requiresWindowFocus": false
+      },
+      {
+        "name": "ProjectWorkspaceViewTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 209 project workspace UI checks; 1,000 synthetic text captures plus image and editable project note; native mixed-selection drag payloads on a private pasteboard; no personal archive, network, general clipboard or external opening. At most 25 simultaneously materialized native rows.",
+        "requiresWindowFocus": false
+      },
+      {
+        "name": "ProjectWorkspaceCardTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 379 project card checks; Task/Note/Capture semantics, real live task updates, light/dark/grid/320-point compact fixtures, original previews and independent selection; no personal archive, clipboard, network, or external opening.",
+        "requiresWindowFocus": false
+      },
+      {
+        "name": "NavigationHistoryTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 66 bounded history, branch, project, draft, search, deletion and navigation safety checks",
+        "requiresWindowFocus": false
+      },
+      {
+        "name": "DurabilityStressTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 8586 durability checks; 1000 seeded records, 320 mixed operations, 25 restart comparisons, backup/restore and 4 real SIGKILL boundaries.",
+        "requiresWindowFocus": false
+      },
+      {
+        "name": "FlowActionStressTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 11674 flow/action stress checks; all12 routes, bounded branch/history churn, pending draft ownership, atomic failed-save retries, comments/checklists, timing/lifecycle, private copying, Inbox/organization, removal/restore and repeated local restart. Semantic handlers only; native activation, system dialogs, rendering and animation are separate coverage.",
+        "requiresWindowFocus": false
+      },
+      {
+        "name": "MediaIntegrationTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "39/39 media integration checks passed; 0 failed",
+        "requiresWindowFocus": false
+      },
+      {
+        "name": "RedesignInteractionTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 76 native redesign interaction checks",
+        "requiresWindowFocus": true
+      },
+      {
+        "name": "WindowResizeInteractionTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 33 native window resize and movement interaction checks; 1 attached displays",
+        "requiresWindowFocus": true
+      },
+      {
+        "name": "WindowTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 188 window checks across 1 real screen(s); no cursor synthesis, clipboard access, network or notification permission.",
+        "requiresWindowFocus": true
+      },
+      {
+        "name": "WeeklyWindowTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "",
+        "requiresWindowFocus": true
+      },
+      {
+        "name": "FilterResizeTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "",
+        "requiresWindowFocus": true
+      },
+      {
+        "name": "RobotDropTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 117 robot drop checks (private pasteboards, isolated archive, native destination callbacks and corner panels)",
+        "requiresWindowFocus": true
+      },
+      {
+        "name": "DailyCaptureTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 207 Daily capture checks (private pasteboards, local archive, native drop callbacks, shortcut/editor routing and controller integration)",
+        "requiresWindowFocus": true
+      },
+      {
+        "name": "HeaderInteractionTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 290 native labeled-header accessibility and interaction checks",
+        "requiresWindowFocus": true
+      },
+      {
+        "name": "WorkspaceWindowTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 311 native workspace interaction and responsive layout checks",
+        "requiresWindowFocus": true
+      },
+      {
+        "name": "RobotWindowTransitionTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "",
+        "requiresWindowFocus": true
+      },
+      {
+        "name": "DetailPreviewInteractionTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 110 detail-preview native open-action checks; no external app launched",
+        "requiresWindowFocus": true
+      },
+      {
+        "name": "CaptureDetailReadabilityTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 599 capture-detail readability and labeled-action checks; 27 native panel fixtures. Renders: /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/capture-detail-fix-2026-10-04",
+        "requiresWindowFocus": true
+      },
+      {
+        "name": "CaptureDetailNavigationTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 995 capture-detail navigation, fixed-control, draft-resumption and action checks; renders: /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/capture-detail-redesign-2026-10-04/navigation",
+        "requiresWindowFocus": true
+      },
+      {
+        "name": "TaskPlanInteractionTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 379 native task-plan/checklist/reminder binding, focus, persistence, validation and responsive checks; renders: /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/task-plan-redesign-2026-10-05/native",
+        "requiresWindowFocus": true
+      },
+      {
+        "name": "CaptureExtendedInteractionTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "",
+        "requiresWindowFocus": true
+      },
+      {
+        "name": "ExtendedMediaInteractionTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "",
+        "requiresWindowFocus": true
+      },
+      {
+        "name": "CaptureTimestampPresentationTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "Capture timestamp presentation QA passed: 129 checks; original receipt formatting, compact date-before-category cards, enlarged detail date navigation. Evidence: /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa/capture-timestamp",
+        "requiresWindowFocus": true
+      },
+      {
+        "name": "RobotVisualConsistencyTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 106 robot visual consistency, native frame layout, click-through, and Reduce Motion checks. /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa/robot-visual-consistency",
+        "requiresWindowFocus": true
+      },
+      {
+        "name": "NativeTooltipPreferenceTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 31 native tooltip preference, persistence, accessibility, drag interaction, and lifecycle checks",
+        "requiresWindowFocus": true
+      },
+      {
+        "name": "TooltipPresentationTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 146 native tooltip visibility, actual anchors, preference, focus and click-through checks. /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa/tooltips",
+        "requiresWindowFocus": true
+      },
+      {
+        "name": "RobotCloseVisualTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 1344 actual robot opening/closing motion, presentation, reversal, cleanup and encoded video checks. /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa/robot-close-visual/600055E6-7D82-498D-9F52-76E8A78B9530",
+        "requiresWindowFocus": true
+      },
+      {
+        "name": "CollectionCardPresentationTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 350 collection selection, layout, native preview, theme, AX expansion and data preservation checks. /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa/collection-card-presentation/5CE887EF-5CA4-4844-B4EE-EF94469EF8DA",
+        "requiresWindowFocus": true
+      },
+      {
+        "name": "TaskTimerRobotTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 523 task timer title, geometry, presenter, durable expiry, integration, native 2x artwork and acknowledgment checks. /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa/task-timer-robot/94F8B9E9-4BA9-4B92-B79A-2BEA3E56C380",
+        "requiresWindowFocus": true
+      },
+      {
+        "name": "ExplorerCaptureCardPresentationTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 267 Explorer native preview, complete-image corners, metadata, actions, selection and capture preservation checks. /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa/explorer-capture-cards/C6C9DD4C-3EFC-4AA7-81D8-3C2DF03E993D",
+        "requiresWindowFocus": true
+      },
+      {
+        "name": "AutoCaptureExplorerResponsivenessTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 169 Explorer responsiveness checks; production DailyCaptureHostingView and RobotAppFrameView, actual BoardView, 128 automatic captures, late local previews, 16 insertion bursts, selected-middle-image scrolling, mixed paste trails/tasks, exact narrow/wide breakpoint resizing, visible tooltip overlay, native close/reopen and interrupted reversal. Native table had at most 20 simultaneously available row views. Background 8-second run-loop watchdog remained healthy.",
+        "requiresWindowFocus": true
+      },
+      {
+        "name": "ExplorerKeyboardTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 75 native Explorer keyboard checks; 45 Up/Down transitions, recycled rows, project restoration, incoming capture, viewport-guard cancellation, and Return. Available rows: 5.",
+        "requiresWindowFocus": true
+      },
+      {
+        "name": "NotificationPresentationTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 63 notification presentation checks; exact monotonic expiry, identical restarts, stale cancellation, native Board/Detail/Settings, persistent diagnostics and unchanged captures. Evidence: /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa/notification-presentation/A368FD6A-5261-4824-8EF7-1077E7873842",
+        "requiresWindowFocus": true
+      },
+      {
+        "name": "WindowChromePresentationTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 50904 window chrome checks; visible/physical resize grips, direct native drags, smooth shared corner masks and 1x/2x appearance. Evidence: /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa/window-chrome/C1F8DBF9-2E5D-43C8-B734-FF870A0884DC",
+        "requiresWindowFocus": true
+      },
+      {
+        "name": "ProjectRecordingRobotTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 42 project recording robot checks passed",
+        "requiresWindowFocus": true
+      },
+      {
+        "name": "SearchWindowTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 106 native global Search checks; keyboard verification passed: native focus, Tab retained filter focus with Keyboard Navigation disabled, Escape dismissal and Return activates Done.",
+        "requiresWindowFocus": true
+      },
+      {
+        "name": "TaskPriorityTagTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 464 task priority tag checks; real choices/save/persistence, adjacent project/priority geometry and green\u2013amber\u2013red cards at 380/760 in light/dark; fictional local archive only. PNG evidence: /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa/task-priority-tags",
+        "requiresWindowFocus": true
+      },
+      {
+        "name": "LocalFileLocationTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 90 local-folder resolution, project scope, native button, read-only byte preservation, and failure-feedback checks",
+        "requiresWindowFocus": true
+      },
+      {
+        "name": "NativeContentDragTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 38 native content drag checks; clicks, mixed native items, copy-only external transfers and source preservation.",
+        "requiresWindowFocus": true
+      },
+      {
+        "name": "CaptionDragTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 149 production caption drag checks; full capture/collection payloads, exact comment text, independent controls and editors.",
+        "requiresWindowFocus": true
+      },
+      {
+        "name": "SearchInputTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 65 production Search typing, focus, clear, private direct/Cmd V paste, unrelated-editor and immediate/animated reopen checks",
+        "requiresWindowFocus": true
+      },
+      {
+        "name": "AutoRecordIndicatorTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 117 Auto Record state, native geometry, compositor motion, reduced-motion and lifecycle checks",
+        "requiresWindowFocus": true
+      },
+      {
+        "name": "TimelineCalendarTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: Timeline calendar 33 checks passed",
+        "requiresWindowFocus": true
+      },
+      {
+        "name": "TodayTaskCardTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 117 Today task card checks; same-row planning/controls at 380/760 in light/dark, priority beside project, real rescheduling/completion/reorder and persistence. Evidence: /var/folders/qy/zfgc4dgx02x2k_c04330ghy00000gn/T/DaBinTodayCards-27A85161-C606-4303-B1AF-EE66B15DBC72/renders",
+        "requiresWindowFocus": true
+      },
+      {
+        "name": "WeeklyLayoutTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 3168 native weekly layout, bounds, expanded collection and data preservation checks. /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa/week-layout",
+        "requiresWindowFocus": true
+      },
+      {
+        "name": "DailyGridLayoutTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 1208 native Daily grid, bounds, resizing, filter, history and data-preservation checks. /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa/day-grid",
+        "requiresWindowFocus": true
+      },
+      {
+        "name": "WorkspaceZoomTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "Workspace zoom: 94 checks passed",
+        "requiresWindowFocus": true
+      },
+      {
+        "name": "WorkspaceZoomLayoutTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 375 workspace zoom layout checks; finite metrics, logical columns, pointer/item anchoring, history offset, native cards at 75/100/150/200%",
+        "requiresWindowFocus": true
+      },
+      {
+        "name": "WorkspaceInputTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 96 native workspace command, owner, cancellation, child precedence, IME, modal and dedup checks; synthetic device coverage only",
+        "requiresWindowFocus": true
+      },
+      {
+        "name": "WorkspaceZoomPerformanceTests",
+        "status": "failed",
+        "exitCode": 1,
+        "reportedSummary": "Workspace zoom performance QA failed: Error Domain=WorkspaceZoomPerformanceTests Code=1 \"Synthetic input-to-layout p95 must stay within the existing 50 ms budget; report: /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa/workspace-zoom-performance\" UserInfo={NSLocalizedDescription=Synthetic input-to-layout p95 must stay within the existing 50 ms budget; report: /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa/workspace-zoom-performance}",
+        "requiresWindowFocus": true
+      },
+      {
+        "name": "ViewportLifecycleTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 16 viewport lifecycle checks; delayed insertion settle, bounded expiry, context cancellation, generation-safe history, keyboard selection scroll ownership",
+        "requiresWindowFocus": true
+      },
+      {
+        "name": "NavigationGestureTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS NavigationGestureTests 72 checks; real panel dispatch, 12 routes, header/body/footer, both swipe directions, mouse pairing and task draft/focus restoration",
+        "requiresWindowFocus": true
+      },
+      {
+        "name": "VisualAnimationStressTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 108535 seeded native graphics, animation interruption, visible-control and disposal checks; /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/stability-stress-2026-10-05/graphics",
+        "requiresWindowFocus": true
+      },
+      {
+        "name": "VideoPlaybackIntegrationTests",
+        "status": "passed",
+        "exitCode": 0,
+        "reportedSummary": "PASS: 113 native video playback checks;2 production components \u00d72 actual MOV captures, clock and decoded-frame advancement, pause/seek/end/replay, fitted resize, capture replacement, native close and deallocation; no external effects. seconds=14.149",
+        "requiresWindowFocus": true
+      }
+    ]
+  }
+}

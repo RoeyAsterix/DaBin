@@ -45,10 +45,33 @@ private struct SearchCacheKey: Equatable {
     let revision: UInt
 }
 
+/// A typed next step is part of its owner's draft until an explicit Add or
+/// successful primary save. Build a candidate so failed writes cannot eat it.
+enum ChecklistDraftPolicy {
+    static func isValid(_ text: String, planning: TaskPlanning) -> Bool {
+        let step = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        return step.isEmpty || (step.count <= 500 && planning.checklist.count < 100)
+    }
+    static func committing(_ text: String, to planning: TaskPlanning) throws -> TaskPlanning {
+        let step = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !step.isEmpty else { return planning }
+        guard step.count <= 500 else {
+            throw NSError(domain: "ChecklistDraft", code: 1, userInfo: [NSLocalizedDescriptionKey: "Keep the new step within 500 characters."])
+        }
+        guard planning.checklist.count < 100 else {
+            throw NSError(domain: "ChecklistDraft", code: 2, userInfo: [NSLocalizedDescriptionKey: "This checklist has 100 steps. Remove a step before adding another."])
+        }
+        var committed = planning
+        committed.checklist.append(TaskChecklistItem(text: step))
+        return committed
+    }
+}
+
 @MainActor
 final class NewTaskDraft: ObservableObject {
     @Published var text = ""
     @Published var planning = TaskPlanning()
+    @Published var pendingChecklistText = ""
     @Published var reminderEnabled = false
     @Published var reminderMode: ReminderScheduleMode = .date
     @Published var countdownHours = 0
@@ -60,7 +83,8 @@ final class NewTaskDraft: ObservableObject {
 
     var hasUnresolvedValidation: Bool {
         guard validationFailed else { return false }
-        if text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || !planning.isValid { return true }
+        if text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || !planning.isValid
+            || !ChecklistDraftPolicy.isValid(pendingChecklistText, planning: planning) { return true }
         if reminderEnabled {
             return (try? ReminderSchedule.resolve(mode: reminderMode, date: reminderDate,
                 hours: countdownHours, minutes: countdownMinutes)) == nil
@@ -68,11 +92,12 @@ final class NewTaskDraft: ObservableObject {
         return false
     }
 
-    var hasChanges: Bool { !text.isEmpty || reminderEnabled || planning != TaskPlanning() }
+    var hasChanges: Bool { !text.isEmpty || !pendingChecklistText.isEmpty || reminderEnabled || planning != TaskPlanning() }
 
     func reset() {
         text = ""
         planning = TaskPlanning()
+        pendingChecklistText = ""
         reminderEnabled = false
         reminderMode = .date
         countdownHours = 0
@@ -108,7 +133,7 @@ final class CaptureDraft: ObservableObject {
         case .title:
             let name = title.trimmingCharacters(in: .whitespacesAndNewlines)
             return name.isEmpty || name.count > 2_000
-        case .planning: return !planning.isValid
+        case .planning: return !planning.isValid || !ChecklistDraftPolicy.isValid(pendingChecklistText, planning: planning)
         case .reminder:
             guard reminderChanged else { return false }
             do { _ = try resolvedReminder(); return false } catch { return true }
@@ -118,6 +143,7 @@ final class CaptureDraft: ObservableObject {
     let feedback = TransientMessagePresentation<String>()
     private var feedbackSubscription: AnyCancellable?
     @Published var planning: TaskPlanning
+    @Published var pendingChecklistText = ""
     private var savedPlanning: TaskPlanning
     private var savedComment: String
     private var savedReminder: Date?
@@ -140,7 +166,7 @@ final class CaptureDraft: ObservableObject {
 
     var committedPlanningForRecovery: TaskPlanning { savedPlanning }
     var reminder: Date? { reminderEnabled ? reminderDate : nil }
-    var hasChanges: Bool { title != savedTitle || comment != savedComment || reminderChanged || planning != savedPlanning }
+    var hasChanges: Bool { title != savedTitle || comment != savedComment || reminderChanged || planning != savedPlanning || !pendingChecklistText.isEmpty }
     var reminderChanged: Bool { (reminderEnabled && reminderMode == .countdown) || reminder != savedReminder }
 
     func resolvedReminder(at now: Date = Date()) throws -> Date? {
@@ -310,7 +336,7 @@ final class AppState: ObservableObject {
     @Published var route: BoardRoute = .inbox {
         didSet {
             if route != oldValue { captureNavigationRevision &+= 1 }
-            if route != .daily { isDailyDropTargeted = false }
+            if route != .daily && route != .reminders { isDailyDropTargeted = false }
             if route != .weekly { weeklySearchActionsPresented = false }
         }
     }
@@ -421,7 +447,7 @@ final class AppState: ObservableObject {
     private var drafts: [UUID: CaptureDraft] = [:]
     private var subscriptions = Set<AnyCancellable>()
     private var reminderServiceFeedback: (captureID: UUID, message: String?)?
-    private var currentDayKey = CaptureCalendar.dayString(Date())
+    @Published private(set) var currentDayKey = CaptureCalendar.dayString(Date())
     private var searchRevision: UInt = 0
     private var searchCacheKey: SearchCacheKey?
     private var searchCache: [SearchGroup] = []
@@ -549,7 +575,8 @@ final class AppState: ObservableObject {
             reminderEnabled: newTaskDraft.reminderEnabled, reminderMode: newTaskDraft.reminderMode.rawValue,
             countdownHours: newTaskDraft.countdownHours, countdownMinutes: newTaskDraft.countdownMinutes,
             reminderDate: newTaskDraft.reminderDate,
-            destination: newTaskDraft.destination ?? ComposerDestination(projectName: composerProjectContext))
+            destination: newTaskDraft.destination ?? ComposerDestination(projectName: composerProjectContext),
+            pendingChecklistText: newTaskDraft.pendingChecklistText)
         snapshot.details = drafts.compactMap { id, draft in
             guard draft.hasChanges || !draft.commentComposer.isEmpty || draft.editingCommentID != nil else { return nil }
             return DetailDraftSnapshot(captureID: id, title: draft.title, comment: draft.comment, planning: draft.planning,
@@ -557,7 +584,8 @@ final class AppState: ObservableObject {
                 committedReminderRevision: draft.committedReminderRevisionForRecovery,
                 reminderEnabled: draft.reminderEnabled, reminderMode: draft.reminderMode.rawValue,
                 countdownHours: draft.countdownHours, countdownMinutes: draft.countdownMinutes, reminderDate: draft.reminderDate,
-                commentComposer: draft.commentComposer, editingCommentID: draft.editingCommentID)
+                commentComposer: draft.commentComposer, editingCommentID: draft.editingCommentID,
+                pendingChecklistText: draft.pendingChecklistText)
         }
         do { try draftArchive.save(snapshot); draftPersistenceError = nil }
         catch { draftPersistenceError = "Drafts are still in memory. \(error.localizedDescription)" }
@@ -572,6 +600,7 @@ final class AppState: ObservableObject {
         newTaskDraft.destination = snapshot.task.destination ?? ComposerDestination(projectName: libraryProject)
         newTaskDraft.text = snapshot.task.text
         newTaskDraft.planning = snapshot.task.planning
+        newTaskDraft.pendingChecklistText = snapshot.task.pendingChecklistText ?? ""
         newTaskDraft.reminderEnabled = snapshot.task.reminderEnabled
         newTaskDraft.reminderMode = ReminderScheduleMode(rawValue: snapshot.task.reminderMode) ?? .date
         newTaskDraft.countdownHours = snapshot.task.countdownHours
@@ -584,6 +613,7 @@ final class AppState: ObservableObject {
             draft.comment = saved.comment
             draft.commentComposer = saved.commentComposer ?? ""
             draft.editingCommentID = saved.editingCommentID
+            draft.pendingChecklistText = saved.pendingChecklistText ?? ""
             draft.restorePlanning(saved.planning, baseline: saved.committedPlanning, from: capture)
             // Clear and Snooze commit before the debounced draft sidecar. A
             // stale sidecar must not turn that successful action back into an
@@ -600,6 +630,11 @@ final class AppState: ObservableObject {
     }
 
     private func observeDraft(_ draft: CaptureDraft) {
+        draft.objectWillChange.sink { [weak self, weak draft] _ in
+            guard let self, let draft, let id = self.lastConvertedCaptureID,
+                  self.drafts[id] === draft else { return }
+            self.objectWillChange.send()
+        }.store(in: &subscriptions)
         draft.objectWillChange.debounce(for: .milliseconds(150), scheduler: RunLoop.main)
             .sink { [weak self] _ in self?.persistDrafts() }.store(in: &subscriptions)
     }
@@ -608,13 +643,10 @@ final class AppState: ObservableObject {
         customWeeklyDays ?? WeeklyDateSelection.trailingWeek(ending: weekEndingDay)
     }
     var isCustomWeekSelection: Bool { customWeeklyDays != nil }
-    /// The chosen dates remain the navigation source of truth, while the
-    /// Weekly board only presents dates that contain activity. Filters change
-    /// the cards inside those dates without making the date columns jump.
-    /// Carried and reminder-day tasks are included by `allCaptures(for:)`.
-    var weeklyVisibleDays: [Date] {
-        weeklyDays.filter { !allCaptures(for: $0).isEmpty }
-    }
+    /// Keep the chosen calendar dates visible even when a filter or an empty
+    /// day has no cards. Week is a stable overview of the complete selection.
+    var weeklyVisibleDays: [Date] { weeklyDays }
+    var weeklyActiveDays: [Date] { weeklyDays.filter { !allCaptures(for: $0).isEmpty } }
 
     func allCaptures(for day: Date) -> [Capture] {
         let key = CaptureCalendar.dayString(day)
@@ -765,13 +797,17 @@ final class AppState: ObservableObject {
         workspace.hasUnsavedChanges || !newNoteText.isEmpty || newTaskDraft.hasChanges || drafts.values.contains(where: \.hasChanges)
     }
 
-    /// The primary Today view shows receipt history. Outstanding work has its
-    /// own Follow-ups queue rather than being repeated on every later day.
+    /// Receipt membership is independent of organization, task scheduling and
+    /// the filters on other workspaces.
     func receiptCaptures(for day: Date) -> [Capture] {
-        let key = CaptureCalendar.dayString(day)
+        receiptCaptures(dayKey: CaptureCalendar.dayString(day))
+    }
+    private func receiptCaptures(dayKey key: String) -> [Capture] {
         return store.captures.filter { $0.captureDay == key }
             .sorted { $0.capturedAt == $1.capturedAt ? $0.id.uuidString < $1.id.uuidString : $0.capturedAt > $1.capturedAt }
     }
+    var currentTodayCaptures: [Capture] { receiptCaptures(dayKey: currentDayKey) }
+    static func todayReceiptItemID(_ id: UUID) -> String { "today-receipt:" + id.uuidString }
     var todayTimelineCaptures: [Capture] { receiptCaptures(for: selectedDay).filter { filter.includes($0) } }
     var projectNames: [String] {
         Set(store.captures.compactMap(\.projectName) + workspace.projectNames).sorted { $0.localizedStandardCompare($1) == .orderedAscending }
@@ -1087,7 +1123,7 @@ final class AppState: ObservableObject {
         selectedSearchNote = note
         route = .searchNote
     }
-    func showReminders() { navigate(to: .reminders) }
+    func showReminders() { refreshCurrentDay(); navigate(to: .reminders) }
     func showSettings() {
         guard !isNavigationBlocked else { return }
         beginNavigation(); defer { endNavigation() }
@@ -1166,7 +1202,8 @@ final class AppState: ObservableObject {
         let navigation = captureNavigationRevision
         manualInput.receive(pasteboard, completion: { [weak self] captures, failures in
             guard let self else { return }
-            if !captures.isEmpty, self.captureNavigationRevision == navigation, self.route != .inbox { self.openDaily() }
+            if !captures.isEmpty, self.captureNavigationRevision == navigation,
+               self.route != .inbox && self.route != .reminders { self.openDaily() }
             self.reportCaptureResult(captures, errors: failures)
         })
     }
@@ -1194,7 +1231,8 @@ final class AppState: ObservableObject {
                 catch { failures.append("\(url.lastPathComponent): \(error.localizedDescription)") }
             }
             isFileImporting = false
-            if !saved.isEmpty, captureNavigationRevision == navigation, route != .inbox { openDaily() }
+            if !saved.isEmpty, captureNavigationRevision == navigation,
+               route != .inbox && route != .reminders { openDaily() }
             reportCaptureResult(saved, errors: failures)
         }
     }
@@ -1289,6 +1327,9 @@ final class AppState: ObservableObject {
             newTaskDraft.validationFailed = true
             return
         }
+        let committedPlanning: TaskPlanning
+        do { committedPlanning = try ChecklistDraftPolicy.committing(newTaskDraft.pendingChecklistText, to: newTaskDraft.planning) }
+        catch { newTaskDraft.message = error.localizedDescription; newTaskDraft.validationFailed = true; return }
         let reminder: Date?
         do {
             reminder = newTaskDraft.reminderEnabled ? try ReminderSchedule.resolve(
@@ -1300,7 +1341,7 @@ final class AppState: ObservableObject {
             newTaskDraft.validationFailed = true
             return
         }
-        guard newTaskDraft.planning.isValid else {
+        guard committedPlanning.isValid else {
             newTaskDraft.message = "Check the task dates, estimate, and checklist before saving."
             newTaskDraft.validationFailed = true
             return
@@ -1310,7 +1351,7 @@ final class AppState: ObservableObject {
             let project = newTaskProject
             let capture = try store.createTask(text: newTaskDraft.text, reminderAt: reminder,
                 reminderTimeZoneID: reminder == nil ? nil : TimeZone.current.identifier,
-                planning: newTaskDraft.planning, projectName: project)
+                planning: committedPlanning, projectName: project)
             newTaskDraft.reset()
             route = creationReturnRoute
             status = AppStatusMessage(text: project.map { "Task saved in \($0)." } ?? "Task saved to Inbox.", severity: .success)
@@ -1348,13 +1389,18 @@ final class AppState: ObservableObject {
         guard let id = lastConvertedCaptureID, let capture = store.captures.first(where: { $0.id == id }) else { return false }
         return capture.convertedToTask && !capture.isCompleted && (capture.taskPlanning == nil || capture.taskPlanning == TaskPlanning())
             && store.attachments(for: capture).isEmpty
+            && conversionDraftAllowsUndo(capture)
+    }
+
+    private func conversionDraftAllowsUndo(_ capture: Capture) -> Bool {
+        guard let draft = drafts[capture.id] else { return true }
+        return draft.planning == TaskPlanning() && draft.title == capture.title && draft.pendingChecklistText.isEmpty
     }
 
     func undoTaskConversion() {
         guard let id = lastConvertedCaptureID, let capture = store.captures.first(where: { $0.id == id }) else { return }
         // An unfinished task draft is work too; do not silently discard it.
-        guard (drafts[id]?.planning == nil || drafts[id]?.planning == TaskPlanning()),
-              (drafts[id]?.title == nil || drafts[id]?.title == capture.title) else {
+        guard conversionDraftAllowsUndo(capture) else {
             reportFailure("Save or discard task edits before undoing the conversion."); return
         }
         do {
@@ -1711,6 +1757,11 @@ final class AppState: ObservableObject {
             observeDraft(draft)
         }
         selectedDraft = drafts[id]
+        // An explicit section request starts in that pane. History restoration
+        // assigns its saved viewport separately and never comes through here.
+        if route == .detail, let focus, detailFocus != focus {
+            workspaceViewport = nil
+        }
         detailFocus = focus
         route = .detail
     }
@@ -1775,9 +1826,12 @@ final class AppState: ObservableObject {
         navigationHistory.canGoBack || (navigationHistory.entries.isEmpty && route == .detail && selectedCapture != nil)
     }
     var canGoForward: Bool { navigationHistory.canGoForward }
-    var isWorkspaceInputBlocked: Bool {
+    private var hasWorkspaceNavigationBlocker: Bool {
         isTutorialPresented || pendingRemoval != nil || isArchiveOperationRunning || isDailyDropTargeted
             || navigationWindowInteractionBlocked || navigationValidationBlocked
+    }
+    var isWorkspaceInputBlocked: Bool {
+        hasWorkspaceNavigationBlocker
             || (route == .detail && selectedDraft?.hasUnresolvedValidation == true)
             || (route == .newTask && newTaskDraft.hasUnresolvedValidation)
     }
@@ -1788,6 +1842,25 @@ final class AppState: ObservableObject {
     /// protection; views use these same methods and enabled state.
     func back() { moveInHistory(forward: false) }
     func forward() { moveInHistory(forward: true) }
+
+    /// Explicit recovery can leave an invalid Detail draft without applying it.
+    /// Ordinary history and route commands keep their validation gate.
+    var canKeepDetailDraftAndGoBack: Bool {
+        guard route == .detail, selectedDraft?.hasUnresolvedValidation == true, canGoBack,
+              navigationDepth == 0, !hasWorkspaceNavigationBlocker, !workspaceZoom.isInteracting else { return false }
+        let window = NSApp?.keyWindow
+        return window?.attachedSheet == nil && window?.sheetParent == nil && NSApp?.modalWindow == nil
+            && (window?.firstResponder as? NSTextView)?.hasMarkedText() != true
+            && NSEvent.pressedMouseButtons & 1 == 0
+    }
+
+    @discardableResult
+    func keepDetailDraftAndGoBack() -> Bool {
+        guard canKeepDetailDraftAndGoBack else { return false }
+        persistDrafts()
+        guard draftPersistenceError == nil else { return false }
+        return moveInHistory(forward: false, keepingInvalidDetailDraft: true)
+    }
 
     func navigate(to destination: BoardRoute) {
         guard !isNavigationBlocked, destination != route else { return }
@@ -1838,8 +1911,13 @@ final class AppState: ObservableObject {
         }
     }
 
-    private func moveInHistory(forward: Bool) {
-        guard !isNavigationBlocked, navigationDepth == 0 else { return }
+    @discardableResult
+    private func moveInHistory(forward: Bool, keepingInvalidDetailDraft: Bool = false) -> Bool {
+        if keepingInvalidDetailDraft {
+            guard !forward, canKeepDetailDraftAndGoBack else { return false }
+        } else {
+            guard !isNavigationBlocked, navigationDepth == 0 else { return false }
+        }
         WorkspaceZoomViewport.flushHistory()
         navigationFocusTarget = onCaptureNavigationFocus?()
         // A system/direct-open detail has one known parent. Never fabricate a
@@ -1853,8 +1931,9 @@ final class AppState: ObservableObject {
             navigationHistory.visit(navigationSnapshot())
         } else { navigationHistory.updateCurrent(navigationSnapshot()) }
         reconcileNavigationHistory()
-        guard let snapshot = forward ? navigationHistory.forward() : navigationHistory.back() else { return }
+        guard let snapshot = forward ? navigationHistory.forward() : navigationHistory.back() else { return false }
         restoreNavigation(snapshot)
+        return true
     }
 
     /// Call only after a successful rename. Projects currently use exact names
@@ -1874,6 +1953,7 @@ final class AppState: ObservableObject {
         var captureIDs: Set<UUID>
         var projects: Set<String>
         var presentationIDs: Set<String>
+        var todayReceiptIDs: Set<String>
         var noteKeys: Set<String>
         var projectItemIDs: [String: Set<String>]
     }
@@ -1900,6 +1980,7 @@ final class AppState: ObservableObject {
         let live = NavigationLiveIdentities(captureIDs: captureIDs,
             projects: Set(captures.compactMap(\.projectName)).union(workspace.projectNames),
             presentationIDs: Set(captureIDs.map(ProjectWorkspaceIdentity.capture)).union(noteKeys.map { "note:" + $0 }),
+            todayReceiptIDs: Set(captures.filter { $0.captureDay == currentDayKey }.map { Self.todayReceiptItemID($0.id) }),
             noteKeys: noteKeys, projectItemIDs: projectItemIDs)
         navigationHistory.reconcile { resolveNavigation($0, live: live) }
     }
@@ -1984,7 +2065,7 @@ final class AppState: ObservableObject {
         next.searchColumnScrollIDs = next.searchColumnScrollIDs.filter { presentationIDs.contains($0.value) }
         next.searchColumnViewports = next.searchColumnViewports.compactMapValues { $0.resolving(against: presentationIDs) }
         next.weeklyColumnViewports = next.weeklyColumnViewports.compactMapValues { $0.resolving(against: presentationIDs) }
-        next.workspaceViewport = next.workspaceViewport?.resolving(against: presentationIDs)
+        next.workspaceViewport = next.workspaceViewport?.resolving(against: presentationIDs.union(live.todayReceiptIDs))
         if let key = next.selectedNoteProjectKey, !live.noteKeys.contains(key) {
             next.selectedNoteProjectKey = nil
             if next.route == .searchNote { next.route = .search }
@@ -2164,6 +2245,7 @@ final class AppState: ObservableObject {
             draft.hasError = true
             return
         }
+        var committedPlanning = draft.planning
         if capture.isTask {
             let title = draft.title.trimmingCharacters(in: .whitespacesAndNewlines)
             if title.isEmpty || title.count > 2_000 {
@@ -2172,7 +2254,9 @@ final class AppState: ObservableObject {
                 draft.hasError = true
                 return
             }
-            guard draft.planning.isValid else {
+            do { committedPlanning = try ChecklistDraftPolicy.committing(draft.pendingChecklistText, to: draft.planning) }
+            catch { draft.validationIssue = .planning; draft.message = error.localizedDescription; draft.hasError = true; return }
+            guard committedPlanning.isValid else {
                 draft.validationIssue = .planning
                 draft.message = "Check the task dates, estimate, and checklist before saving."
                 draft.hasError = true
@@ -2193,9 +2277,13 @@ final class AppState: ObservableObject {
         do {
             try store.update(capture, comment: draft.comment, reminderAt: resolvedReminder,
                              reminderTimeZoneID: resolvedReminder == nil ? nil : (changedReminder ? TimeZone.current.identifier : capture.reminderTimeZoneID),
-                             planning: capture.isTask ? draft.planning : nil, title: capture.isTask ? draft.title : nil)
+                             planning: capture.isTask ? committedPlanning : nil, title: capture.isTask ? draft.title : nil)
             draft.adoptSavedReminder(from: capture)
             draft.title = capture.title
+            if capture.isTask {
+                draft.planning = committedPlanning
+                draft.pendingChecklistText = ""
+            }
             draft.adoptSavedPlanning(from: capture)
             draft.didSave()
             if changedReminder {

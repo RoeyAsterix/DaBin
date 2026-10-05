@@ -624,11 +624,13 @@ private enum SearchWindowTests {
         phase("entry.step lookup project-workspace")
         try expect((try node(in: hosting, id: "project-workspace")).frame.width > 0,
                    "The Alpha project workspace is mounted for its native Search entry")
+        try expect(!nodes(in: hosting).contains { ["project-search", "explorer-search"].contains($0.identifier ?? "") },
+                   "Projects uses the shared header Search without a duplicate inner global Search control")
         let noteDestination = state.newNoteProject
         let taskDestination = state.newTaskDraft.destination
-        phase("entry.step press project-search")
-        try press(hosting, id: "project-search")
-        phase("entry.step project-search returned; await Search mount")
+        phase("entry.step press board-search from Projects")
+        try press(hosting, id: "board-search")
+        phase("entry.step board-search returned; await Search mount")
         try await waitForNativeUI()
         phase("entry.step assert global Search state")
         try expect(state.route == .search && state.searchProject == nil && !state.searchUnfiledOnly

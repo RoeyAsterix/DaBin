@@ -1,0 +1,57 @@
+{
+  "appliedAtUTC": "2026-10-04T20:32:16.596628+00:00",
+  "changes": [
+    {
+      "path": "native/Sources/DaBin/BuddyControls.swift",
+      "before": "dd88d037c6385d32a1d2f63f70fd922fdc77cf64813c621dda07cc3b31a8649d",
+      "after": "4139cf84a96039a1ee90ef52e856273e107a54eb9692fe2b0f3e18e6c3db565d"
+    },
+    {
+      "path": "native/Sources/DaBin/CaptureCards.swift",
+      "before": "eae85187dd3bae1b61a293a2cdd217486e672354d7f2d3a227e789b2fb0c840c",
+      "after": "9bcc62df01a5f6aa853ace5e7844a81f622247a325f97ce586038c4910e11b3c"
+    },
+    {
+      "path": "native/Sources/DaBin/CaptureSourceView.swift",
+      "before": "a24b5f0bd375b7d38cb456e41711ebf05f3d444d2545ac207e749c85b38062cd",
+      "after": "be605137504045c87199f066653e5611fe50d9ba8a94f710cb7e242ef213bd30"
+    },
+    {
+      "path": "native/Sources/DaBin/DetailScreen.swift",
+      "before": "d6e2990f1346cb4c5548872ad24d2a1de07d87b8a2c4143f7a6f99c788b93205",
+      "after": "0404a0e2b2f29cd09b821ad63ab3d9f89c5d0eb8efa9866b8a8c1449538f9696"
+    },
+    {
+      "path": "native/Sources/DaBin/ReminderClockEditor.swift",
+      "before": "1aadc2773e235bca0fa94c9677b2708689f01ce34dbd311f72eef1a448d47676",
+      "after": "cb1dd1dd085635ca26e6ac50a023cc851acbb38009fc44c474c6ad7e6258d977"
+    },
+    {
+      "path": "native/Resources/Info.plist",
+      "before": "6a78a53a33bab6f2caa4d306b46b08bc83f52ad5072390dc2c49000c54205916",
+      "after": "ba9e237856986d1cdf1a8c40f42e2db943d5f778c636dc24d83d96dc74df9710"
+    },
+    {
+      "path": "native/scripts/run_qa.py",
+      "before": "8d988e0f4f1f45eb0b8f3c3f534d9caec9a83609f90d731333455b9ceedff1b0",
+      "after": "11d238020b252a391b8a06c9b3aac4657271ee8e440e1aef37de132707abdd11"
+    },
+    {
+      "path": "native/DaBin.xcodeproj/project.pbxproj",
+      "before": "d3af4ece00dcb0b254d343f6b4142defe770f78c772ad9a5db9f6380a59aa9f0",
+      "after": "0dc5acf75464daab72c331db71f78381592183dfd2e751ae6531e5329f4b4d73"
+    },
+    {
+      "path": "native/Tests/CaptureDetailReadabilityTests.swift",
+      "before": null,
+      "after": "d1a6d9c17c3772c58ae3641b88f0168c11c5047fcb6f3be2eba9d0067aee363f"
+    },
+    {
+      "path": "docs/app-store/metadata-en-US.json",
+      "before": "27776e26db155ea293e5a51d3df8a7341d5e42b58a7e4b1ce56ae6abfa80f822",
+      "after": "a358d12a56eebdb6e04959b1144a2f009ae023b488fb73335e9f5789dfaf9fa8"
+    }
+  ],
+  "backup": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/integration-backup",
+  "status": "applied"
+}

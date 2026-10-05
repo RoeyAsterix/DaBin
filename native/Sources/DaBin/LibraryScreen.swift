@@ -48,9 +48,9 @@ struct LibraryScreen: View {
                 ScratchpadView(state: state, workspace: workspace)
             } else if workspace.mode == .collection {
                 if let project = state.libraryProject {
-                    ProjectWorkspaceView(state: state, project: project).id(project)
+                    ProjectWorkspaceView(state: state, project: project, showsSearchEntry: false).id(project)
                 } else {
-                    ExplorerScreen(state: state)
+                    ExplorerScreen(state: state, showsSearchEntry: false)
                 }
             } else {
                 itemList
@@ -62,13 +62,13 @@ struct LibraryScreen: View {
         VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 4) {
                 ForEach(WorkspaceMode.allCases) { mode in
-                    Button { workspace.mode = mode } label: {
+                    Button { state.navigateWorkspaceMode(mode) } label: {
                         HStack(spacing: 4) {
                             Image(systemName: mode.symbol).font(.system(size: 13, weight: .medium)).accessibilityHidden(true)
                             Text(mode.title).font(.system(size: 11, weight: .medium)).lineLimit(1)
                         }.frame(maxWidth: .infinity, minHeight: 32)
                             .contentShape(RoundedRectangle(cornerRadius: 10))
-                    }.buttonStyle(.plain)
+                    }.buttonStyle(.plain).disabled(state.isNavigationBlocked)
                         .foregroundStyle(workspace.mode == mode ? Palette.foreground : Palette.muted)
                         .background(workspace.mode == mode ? Palette.surface : .clear, in: RoundedRectangle(cornerRadius: 7))
                         .overlay(RoundedRectangle(cornerRadius: 7).strokeBorder(workspace.mode == mode ? Palette.line : .clear, lineWidth: 0.6))
@@ -83,7 +83,7 @@ struct LibraryScreen: View {
                 HStack(spacing: 4) {
                     ForEach(CaptureFilter.allCases) { filter in
                         BuddyIconButton(symbol: filter.buddySymbol,
-                            title: filter == .text ? "Copy/paste text" : filter.title,
+                            title: filter.title,
                             isActive: state.filter == filter) { state.filter = filter }
                             .accessibilityIdentifier("capture-filter-\(filter.rawValue)")
                             .accessibilityAddTraits(state.filter == filter ? .isSelected : [])
@@ -145,9 +145,9 @@ struct LibraryScreen: View {
         VStack(alignment: .leading, spacing: 7) {
             HStack(spacing: 8) {
                 Button("Paste", systemImage: "doc.on.clipboard") { shelfCapture.paste() }.fixedSize()
-                Button("Files", systemImage: "folder") { state.showProjectFiles() }
+                Button("Open folder", systemImage: "folder") { state.showProjectFiles() }
                     .fixedSize()
-                    .accessibilityLabel("Files")
+                    .accessibilityLabel("Open folder")
                     .accessibilityIdentifier("workspace-open-files")
                 Button("Add files", systemImage: "plus") { shelfCapture.chooseFiles() }
                     .fixedSize()

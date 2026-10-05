@@ -1,0 +1,20 @@
+{
+  "bounds" : "{{0, 0}, {308, 50}}",
+  "currentEditorID" : "ObjectIdentifier(0x0000000b2af53000)",
+  "currentEditorSelection" : "{11, 6}",
+  "expectedSelection" : "{11, 6}",
+  "fieldWindowPresent" : true,
+  "firstResponderClass" : "NSTextView",
+  "firstResponderIsEditor" : true,
+  "originalEditorID" : "ObjectIdentifier(0x0000000b2af53000)",
+  "originalEditorSelection" : "{11, 6}",
+  "originalEditorText" : "Fictional Δ title 日本語 with a recoverable native selection and readable wrapping",
+  "originalFieldID" : "ObjectIdentifier(0x0000000b274b9c00)",
+  "preferredWidth" : 308,
+  "resizedFieldID" : "ObjectIdentifier(0x0000000b274b9c00)",
+  "resizedText" : "Fictional Δ title 日本語 with a recoverable native selection and readable wrapping",
+  "resizedWindowPresent" : true,
+  "sameEditor" : true,
+  "sameField" : true,
+  "width" : 380
+}

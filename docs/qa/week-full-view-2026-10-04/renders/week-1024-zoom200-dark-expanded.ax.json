@@ -1,0 +1,961 @@
+{
+  "context" : "1024-zoom200-dark-expanded",
+  "nodes" : [
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19992, -19960}, {1008, 912}}",
+      "identifier" : "weekly-columns",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19992, -19108}, {139, 60}}",
+      "identifier" : "weekly-day-2026-09-28",
+      "label" : "Monday, 28 September 2026, 1 captures, open Daily"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityLazyLayoutNode",
+      "frame" : "{{-19986, -19428.5}, {127, 314}}",
+      "identifier" : "",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19986, -19428.5}, {127, 314}}",
+      "identifier" : "weekly-card-CDDECFE9-8E5F-4E7A-98EE-BAD4F1151CDC",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19980, -19148.5}, {108, 28}}",
+      "identifier" : "",
+      "label" : "Project"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19980, -19168.5}, {32.5, 14}}",
+      "identifier" : "",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19980, -19183.5}, {23.5, 13}}",
+      "identifier" : "",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19980, -19265.5}, {115, 76}}",
+      "identifier" : "",
+      "label" : "Open Fictional weekly planning note with a long readable title, captured at 12:00"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19980, -19305.5}, {106.5, 34}}",
+      "identifier" : "",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19980, -19305.5}, {106.5, 34}}",
+      "identifier" : "capture-trail-CDDECFE9-8E5F-4E7A-98EE-BAD4F1151CDC",
+      "label" : "From Unknown source. No paste destinations recorded. Open content trail."
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19980, -19343.5}, {109, 32}}",
+      "identifier" : "capture-comment-CDDECFE9-8E5F-4E7A-98EE-BAD4F1151CDC",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19980, -19381.5}, {32, 32}}",
+      "identifier" : "",
+      "label" : "Comment on Fictional weekly planning note with a long readable title"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19948, -19381.5}, {32, 32}}",
+      "identifier" : "",
+      "label" : "Reminder for Fictional weekly planning note with a long readable title"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19980, -19417.5}, {24, 22}}",
+      "identifier" : "capture-copy-CDDECFE9-8E5F-4E7A-98EE-BAD4F1151CDC",
+      "label" : "Copy Fictional weekly planning note with a long readable title to clipboard"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19929, -19422.5}, {32, 32}}",
+      "identifier" : "capture-trash-CDDECFE9-8E5F-4E7A-98EE-BAD4F1151CDC",
+      "label" : "Move Fictional weekly planning note with a long readable title to Recently Deleted"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19897, -19422.5}, {32, 32}}",
+      "identifier" : "capture-more-CDDECFE9-8E5F-4E7A-98EE-BAD4F1151CDC",
+      "label" : "More actions for Fictional weekly planning note with a long readable title"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19847, -19108}, {138.5, 60}}",
+      "identifier" : "weekly-day-2026-09-29",
+      "label" : "Tuesday, 29 September 2026, 1 captures, open Daily"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityLazyLayoutNode",
+      "frame" : "{{-19841, -19449}, {126.5, 334.5}}",
+      "identifier" : "",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19841, -19449}, {126.5, 334.5}}",
+      "identifier" : "weekly-card-2EC7686C-320F-487C-928A-A98E41C02FB1",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19835, -19148.5}, {108, 28}}",
+      "identifier" : "",
+      "label" : "Project"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19835, -19168.5}, {32.5, 14}}",
+      "identifier" : "",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19835, -19183.5}, {29.5, 13}}",
+      "identifier" : "",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19835, -19324}, {114.5, 134.5}}",
+      "identifier" : "",
+      "label" : "Open Fictional color reference.png, captured at 12:00"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19835, -19364}, {106.5, 34}}",
+      "identifier" : "",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19835, -19364}, {106.5, 34}}",
+      "identifier" : "capture-trail-2EC7686C-320F-487C-928A-A98E41C02FB1",
+      "label" : "From Unknown source. No paste destinations recorded. Open content trail."
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19835, -19402}, {32, 32}}",
+      "identifier" : "",
+      "label" : "Comment on Fictional color reference.png"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19803, -19402}, {32, 32}}",
+      "identifier" : "",
+      "label" : "Reminder for Fictional color reference.png"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19835, -19438}, {24, 22}}",
+      "identifier" : "capture-copy-2EC7686C-320F-487C-928A-A98E41C02FB1",
+      "label" : "Copy Fictional color reference.png to clipboard"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19784.5, -19443}, {32, 32}}",
+      "identifier" : "capture-trash-2EC7686C-320F-487C-928A-A98E41C02FB1",
+      "label" : "Move Fictional color reference.png to Recently Deleted"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19752.5, -19443}, {32, 32}}",
+      "identifier" : "capture-more-2EC7686C-320F-487C-928A-A98E41C02FB1",
+      "label" : "More actions for Fictional color reference.png"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19702.5, -19108}, {139, 60}}",
+      "identifier" : "weekly-day-2026-09-30",
+      "label" : "Wednesday, 30 September 2026, 1 captures, open Daily"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityLazyLayoutNode",
+      "frame" : "{{-19696.5, -19468}, {127, 353.5}}",
+      "identifier" : "",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19696.5, -19468}, {127, 353.5}}",
+      "identifier" : "weekly-card-134821CB-28DD-49E0-99A2-A69AA5E34C86",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19690.5, -19148.5}, {108, 28}}",
+      "identifier" : "",
+      "label" : "Project"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19690.5, -19168.5}, {32.5, 14}}",
+      "identifier" : "",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19690.5, -19183.5}, {17, 13}}",
+      "identifier" : "",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19690.5, -19343}, {115, 153.5}}",
+      "identifier" : "",
+      "label" : "Open Fictional reference document.bin, captured at 12:00"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19690.5, -19383}, {106.5, 34}}",
+      "identifier" : "",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19690.5, -19383}, {106.5, 34}}",
+      "identifier" : "capture-trail-134821CB-28DD-49E0-99A2-A69AA5E34C86",
+      "label" : "From Unknown source. No paste destinations recorded. Open content trail."
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19690.5, -19421}, {32, 32}}",
+      "identifier" : "",
+      "label" : "Comment on Fictional reference document.bin"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19658.5, -19421}, {32, 32}}",
+      "identifier" : "",
+      "label" : "Reminder for Fictional reference document.bin"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19690.5, -19457}, {24, 22}}",
+      "identifier" : "capture-copy-134821CB-28DD-49E0-99A2-A69AA5E34C86",
+      "label" : "Copy Fictional reference document.bin to clipboard"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19639.5, -19462}, {32, 32}}",
+      "identifier" : "capture-trash-134821CB-28DD-49E0-99A2-A69AA5E34C86",
+      "label" : "Move Fictional reference document.bin to Recently Deleted"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19607.5, -19462}, {32, 32}}",
+      "identifier" : "capture-more-134821CB-28DD-49E0-99A2-A69AA5E34C86",
+      "label" : "More actions for Fictional reference document.bin"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19557.5, -19108}, {139, 60}}",
+      "identifier" : "weekly-day-2026-10-01",
+      "label" : "Thursday, 1 October 2026, 2 captures, open Daily"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityLazyLayoutNode",
+      "frame" : "{{-19551.5, -19938}, {127, 823.5}}",
+      "identifier" : "",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19545.5, -19154.5}, {115, 34}}",
+      "identifier" : "collection-batch-summary",
+      "label" : "Collapse batch items"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19545.5, -19187.5}, {24, 22}}",
+      "identifier" : "capture-copy-batch-26E3946C-1280-46E7-AC98-B1FECC3B1899",
+      "label" : "Copy 2 captured items to clipboard"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19494.5, -19192.5}, {32, 32}}",
+      "identifier" : "capture-trash-batch-26E3946C-1280-46E7-AC98-B1FECC3B1899",
+      "label" : "Move batch to Recently Deleted"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19462.5, -19192.5}, {32, 32}}",
+      "identifier" : "",
+      "label" : "Collapse batch items"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19545.5, -19562}, {115, 363.5}}",
+      "identifier" : "weekly-card-26E3946C-1280-46E7-AC98-B1FECC3B1899",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19539.5, -19232.5}, {99.5, 28}}",
+      "identifier" : "",
+      "label" : "Project"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19539.5, -19252.5}, {32.5, 14}}",
+      "identifier" : "",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19539.5, -19267.5}, {17, 13}}",
+      "identifier" : "",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19539.5, -19437}, {103, 163.5}}",
+      "identifier" : "",
+      "label" : "Open Fictional grouped reference 1.bin, captured at 12:00"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19539.5, -19477}, {30, 34}}",
+      "identifier" : "",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19539.5, -19477}, {30, 34}}",
+      "identifier" : "capture-trail-26E3946C-1280-46E7-AC98-B1FECC3B1899",
+      "label" : "From Unknown source. No paste destinations recorded. Open content trail."
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19539.5, -19515}, {32, 32}}",
+      "identifier" : "",
+      "label" : "Comment on Fictional grouped reference 1.bin"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19507.5, -19515}, {32, 32}}",
+      "identifier" : "",
+      "label" : "Reminder for Fictional grouped reference 1.bin"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19539.5, -19551}, {24, 22}}",
+      "identifier" : "capture-copy-26E3946C-1280-46E7-AC98-B1FECC3B1899",
+      "label" : "Copy Fictional grouped reference 1.bin to clipboard"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19500.5, -19556}, {32, 32}}",
+      "identifier" : "capture-trash-26E3946C-1280-46E7-AC98-B1FECC3B1899",
+      "label" : "Move Fictional grouped reference 1.bin to Recently Deleted"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19468.5, -19556}, {32, 32}}",
+      "identifier" : "capture-more-26E3946C-1280-46E7-AC98-B1FECC3B1899",
+      "label" : "More actions for Fictional grouped reference 1.bin"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19545.5, -19932}, {115, 364}}",
+      "identifier" : "weekly-card-59329DB2-921D-441B-85D6-346C6645D405",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19539.5, -19602}, {99.5, 28}}",
+      "identifier" : "",
+      "label" : "Project"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19539.5, -19622.197142857141}, {32.5, 14}}",
+      "identifier" : "",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19539.5, -19637.197142857141}, {17, 13}}",
+      "identifier" : "",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19539.5, -19807}, {103, 164}}",
+      "identifier" : "",
+      "label" : "Open Fictional grouped reference 0.bin, captured at 12:00"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19539.5, -19847}, {30, 34}}",
+      "identifier" : "",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19539.5, -19847}, {30, 34}}",
+      "identifier" : "capture-trail-59329DB2-921D-441B-85D6-346C6645D405",
+      "label" : "From Unknown source. No paste destinations recorded. Open content trail."
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19539.5, -19885}, {32, 32}}",
+      "identifier" : "",
+      "label" : "Comment on Fictional grouped reference 0.bin"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19507.5, -19885}, {32, 32}}",
+      "identifier" : "",
+      "label" : "Reminder for Fictional grouped reference 0.bin"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19539.5, -19921}, {24, 22}}",
+      "identifier" : "capture-copy-59329DB2-921D-441B-85D6-346C6645D405",
+      "label" : "Copy Fictional grouped reference 0.bin to clipboard"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19500.5, -19926}, {32, 32}}",
+      "identifier" : "capture-trash-59329DB2-921D-441B-85D6-346C6645D405",
+      "label" : "Move Fictional grouped reference 0.bin to Recently Deleted"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19468.5, -19926}, {32, 32}}",
+      "identifier" : "capture-more-59329DB2-921D-441B-85D6-346C6645D405",
+      "label" : "More actions for Fictional grouped reference 0.bin"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19412.5, -19108}, {139, 60}}",
+      "identifier" : "weekly-day-2026-10-02",
+      "label" : "Friday, 2 October 2026, 4 captures, open Daily"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityLazyLayoutNode",
+      "frame" : "{{-19406.5, -20326.5}, {127, 1212}}",
+      "identifier" : "",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19400.5, -19154.5}, {115, 34}}",
+      "identifier" : "collection-hour-summary",
+      "label" : "Collapse actions"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19400.5, -19187.5}, {24, 22}}",
+      "identifier" : "capture-copy-batch-F8AE6EA9-2CFB-46AE-B5DA-0CEA7A9C3421",
+      "label" : "Copy 4 captured items to clipboard"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19317.5, -19192.5}, {32, 32}}",
+      "identifier" : "",
+      "label" : "Collapse actions"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19400.5, -19474.5}, {115, 276}}",
+      "identifier" : "weekly-card-F8AE6EA9-2CFB-46AE-B5DA-0CEA7A9C3421",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19394.5, -19232.5}, {99.5, 28}}",
+      "identifier" : "",
+      "label" : "Project"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19394.5, -19252.5}, {32.5, 14}}",
+      "identifier" : "",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19394.5, -19267.5}, {23.5, 13}}",
+      "identifier" : "",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19394.5, -19349.5}, {103, 76}}",
+      "identifier" : "",
+      "label" : "Open Fictional automatic action 3 with its preserved original text, captured at 12:06"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19394.5, -19389.5}, {30, 34}}",
+      "identifier" : "",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19394.5, -19389.5}, {30, 34}}",
+      "identifier" : "capture-trail-F8AE6EA9-2CFB-46AE-B5DA-0CEA7A9C3421",
+      "label" : "From Fictional Source Application. No paste destinations recorded. Open content trail."
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19394.5, -19427.5}, {32, 32}}",
+      "identifier" : "",
+      "label" : "Comment on Fictional automatic action 3 with its preserved original text"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19362.5, -19427.5}, {32, 32}}",
+      "identifier" : "",
+      "label" : "Reminder for Fictional automatic action 3 with its preserved original text"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19394.5, -19463.5}, {24, 22}}",
+      "identifier" : "capture-copy-F8AE6EA9-2CFB-46AE-B5DA-0CEA7A9C3421",
+      "label" : "Copy Fictional automatic action 3 with its preserved original text to clipboard"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19355.5, -19468.5}, {32, 32}}",
+      "identifier" : "capture-trash-F8AE6EA9-2CFB-46AE-B5DA-0CEA7A9C3421",
+      "label" : "Move Fictional automatic action 3 with its preserved original text to Recently Deleted"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19323.5, -19468.5}, {32, 32}}",
+      "identifier" : "capture-more-F8AE6EA9-2CFB-46AE-B5DA-0CEA7A9C3421",
+      "label" : "More actions for Fictional automatic action 3 with its preserved original text"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19400.5, -19756.5}, {115, 276}}",
+      "identifier" : "weekly-card-F414E1AA-A785-4E39-AB04-AC8A4D38257E",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19394.5, -19514.5}, {99.5, 28}}",
+      "identifier" : "",
+      "label" : "Project"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19394.5, -19534.5}, {32.5, 14}}",
+      "identifier" : "",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19394.5, -19549.5}, {23.5, 13}}",
+      "identifier" : "",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19394.5, -19631.5}, {103, 76}}",
+      "identifier" : "",
+      "label" : "Open Fictional automatic action 2 with its preserved original text, captured at 12:04"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19394.5, -19671.5}, {30, 34}}",
+      "identifier" : "",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19394.5, -19671.5}, {30, 34}}",
+      "identifier" : "capture-trail-F414E1AA-A785-4E39-AB04-AC8A4D38257E",
+      "label" : "From Fictional Source Application. No paste destinations recorded. Open content trail."
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19394.5, -19709.5}, {32, 32}}",
+      "identifier" : "",
+      "label" : "Comment on Fictional automatic action 2 with its preserved original text"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19362.5, -19709.5}, {32, 32}}",
+      "identifier" : "",
+      "label" : "Reminder for Fictional automatic action 2 with its preserved original text"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19394.5, -19745.5}, {24, 22}}",
+      "identifier" : "capture-copy-F414E1AA-A785-4E39-AB04-AC8A4D38257E",
+      "label" : "Copy Fictional automatic action 2 with its preserved original text to clipboard"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19355.5, -19750.5}, {32, 32}}",
+      "identifier" : "capture-trash-F414E1AA-A785-4E39-AB04-AC8A4D38257E",
+      "label" : "Move Fictional automatic action 2 with its preserved original text to Recently Deleted"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19323.5, -19750.5}, {32, 32}}",
+      "identifier" : "capture-more-F414E1AA-A785-4E39-AB04-AC8A4D38257E",
+      "label" : "More actions for Fictional automatic action 2 with its preserved original text"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19400.5, -20038.5}, {115, 276}}",
+      "identifier" : "weekly-card-48A012AE-D632-45EA-966A-86189A0264E0",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19394.5, -19796.5}, {99.5, 28}}",
+      "identifier" : "",
+      "label" : "Project"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19394.5, -19816.5}, {32.5, 14}}",
+      "identifier" : "",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19394.5, -19831.5}, {23.5, 13}}",
+      "identifier" : "",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19394.5, -19913.5}, {103, 76}}",
+      "identifier" : "",
+      "label" : "Open Fictional automatic action 1 with its preserved original text, captured at 12:02"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19394.5, -19953.5}, {30, 34}}",
+      "identifier" : "",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19394.5, -19953.5}, {30, 34}}",
+      "identifier" : "capture-trail-48A012AE-D632-45EA-966A-86189A0264E0",
+      "label" : "From Fictional Source Application. No paste destinations recorded. Open content trail."
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19394.5, -19991.5}, {32, 32}}",
+      "identifier" : "",
+      "label" : "Comment on Fictional automatic action 1 with its preserved original text"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19362.5, -19991.5}, {32, 32}}",
+      "identifier" : "",
+      "label" : "Reminder for Fictional automatic action 1 with its preserved original text"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19394.5, -20027.5}, {24, 22}}",
+      "identifier" : "capture-copy-48A012AE-D632-45EA-966A-86189A0264E0",
+      "label" : "Copy Fictional automatic action 1 with its preserved original text to clipboard"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19355.5, -20032.5}, {32, 32}}",
+      "identifier" : "capture-trash-48A012AE-D632-45EA-966A-86189A0264E0",
+      "label" : "Move Fictional automatic action 1 with its preserved original text to Recently Deleted"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19323.5, -20032.5}, {32, 32}}",
+      "identifier" : "capture-more-48A012AE-D632-45EA-966A-86189A0264E0",
+      "label" : "More actions for Fictional automatic action 1 with its preserved original text"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19400.5, -20320.5}, {115, 276}}",
+      "identifier" : "weekly-card-FF232F3E-3D7D-4DD1-9A02-E4429B4EDC98",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19394.5, -20078.5}, {99.5, 28}}",
+      "identifier" : "",
+      "label" : "Project"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19394.5, -20098.5}, {32.5, 14}}",
+      "identifier" : "",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19394.5, -20113.5}, {23.5, 13}}",
+      "identifier" : "",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19394.5, -20195.5}, {103, 76}}",
+      "identifier" : "",
+      "label" : "Open Fictional automatic action 0 with its preserved original text, captured at 12:00"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19394.5, -20235.5}, {30, 34}}",
+      "identifier" : "",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19394.5, -20235.5}, {30, 34}}",
+      "identifier" : "capture-trail-FF232F3E-3D7D-4DD1-9A02-E4429B4EDC98",
+      "label" : "From Fictional Source Application. No paste destinations recorded. Open content trail."
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19394.5, -20273.5}, {32, 32}}",
+      "identifier" : "",
+      "label" : "Comment on Fictional automatic action 0 with its preserved original text"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19362.5, -20273.5}, {32, 32}}",
+      "identifier" : "",
+      "label" : "Reminder for Fictional automatic action 0 with its preserved original text"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19394.5, -20309.5}, {24, 22}}",
+      "identifier" : "capture-copy-FF232F3E-3D7D-4DD1-9A02-E4429B4EDC98",
+      "label" : "Copy Fictional automatic action 0 with its preserved original text to clipboard"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19355.5, -20314.5}, {32, 32}}",
+      "identifier" : "capture-trash-FF232F3E-3D7D-4DD1-9A02-E4429B4EDC98",
+      "label" : "Move Fictional automatic action 0 with its preserved original text to Recently Deleted"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19323.5, -20314.5}, {32, 32}}",
+      "identifier" : "capture-more-FF232F3E-3D7D-4DD1-9A02-E4429B4EDC98",
+      "label" : "More actions for Fictional automatic action 0 with its preserved original text"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19267.5, -19108}, {138.5, 60}}",
+      "identifier" : "weekly-day-2026-10-03",
+      "label" : "Saturday, 3 October 2026, 1 captures, open Daily"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityLazyLayoutNode",
+      "frame" : "{{-19261.5, -19390.5}, {126.5, 276}}",
+      "identifier" : "",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19261.5, -19390.5}, {126.5, 276}}",
+      "identifier" : "weekly-card-B334F6CE-07A5-4B16-B5D4-6D636EC80766",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19255.5, -19148.5}, {108.5, 28}}",
+      "identifier" : "",
+      "label" : "Project"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19255.5, -19168.5}, {32.5, 14}}",
+      "identifier" : "",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19255.5, -19183.5}, {23.5, 13}}",
+      "identifier" : "",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19255.5, -19265.5}, {114.5, 76}}",
+      "identifier" : "",
+      "label" : "Open Fictional project capture whose title can wrap to several lines, captured at 12:00"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19255.5, -19305.5}, {106.5, 34}}",
+      "identifier" : "",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19255.5, -19305.5}, {106.5, 34}}",
+      "identifier" : "capture-trail-B334F6CE-07A5-4B16-B5D4-6D636EC80766",
+      "label" : "From Unknown source. No paste destinations recorded. Open content trail."
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19255.5, -19343.5}, {32, 32}}",
+      "identifier" : "",
+      "label" : "Comment on Fictional project capture whose title can wrap to several lines"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19223.5, -19343.5}, {32, 32}}",
+      "identifier" : "",
+      "label" : "Reminder for Fictional project capture whose title can wrap to several lines"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19255.5, -19379.5}, {24, 22}}",
+      "identifier" : "capture-copy-B334F6CE-07A5-4B16-B5D4-6D636EC80766",
+      "label" : "Copy Fictional project capture whose title can wrap to several lines to clipboard"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19205, -19384.5}, {32, 32}}",
+      "identifier" : "capture-trash-B334F6CE-07A5-4B16-B5D4-6D636EC80766",
+      "label" : "Move Fictional project capture whose title can wrap to several lines to Recently Deleted"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19173, -19384.5}, {32, 32}}",
+      "identifier" : "capture-more-B334F6CE-07A5-4B16-B5D4-6D636EC80766",
+      "label" : "More actions for Fictional project capture whose title can wrap to several lines"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19123, -19108}, {139, 60}}",
+      "identifier" : "weekly-day-2026-10-04",
+      "label" : "Sunday, 4 October 2026, 1 captures, open Daily"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityLazyLayoutNode",
+      "frame" : "{{-19117, -19435.5}, {127, 321}}",
+      "identifier" : "",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19117, -19435.5}, {127, 321}}",
+      "identifier" : "weekly-card-5C5FFA02-602E-4211-AC35-4F765D100986",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19111, -19148.5}, {108, 28}}",
+      "identifier" : "",
+      "label" : "Project"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19111, -19179.5}, {32.5, 14}}",
+      "identifier" : "",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19030, -19190.5}, {34, 36}}",
+      "identifier" : "capture-task-status-5C5FFA02-602E-4211-AC35-4F765D100986",
+      "label" : "Task: Fictional task with a long title and focus controls"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19111, -19272.5}, {115, 76}}",
+      "identifier" : "",
+      "label" : "Open Fictional task with a long title and focus controls, captured at 12:00"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19111, -19312.5}, {106.5, 34}}",
+      "identifier" : "",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19111, -19312.5}, {106.5, 34}}",
+      "identifier" : "capture-trail-5C5FFA02-602E-4211-AC35-4F765D100986",
+      "label" : "From Unknown source. No paste destinations recorded. Open content trail."
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19111, -19350.5}, {109, 32}}",
+      "identifier" : "capture-comment-5C5FFA02-602E-4211-AC35-4F765D100986",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19111, -19388.5}, {32, 32}}",
+      "identifier" : "",
+      "label" : "Comment on Fictional task with a long title and focus controls"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19079, -19388.5}, {32, 32}}",
+      "identifier" : "",
+      "label" : "Reminder for Fictional task with a long title and focus controls"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19047, -19388.5}, {32, 32}}",
+      "identifier" : "",
+      "label" : "Focus and schedule task"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19111, -19424.5}, {24, 22}}",
+      "identifier" : "capture-copy-5C5FFA02-602E-4211-AC35-4F765D100986",
+      "label" : "Copy Fictional task with a long title and focus controls to clipboard"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19060, -19429.5}, {32, 32}}",
+      "identifier" : "capture-trash-5C5FFA02-602E-4211-AC35-4F765D100986",
+      "label" : "Move Fictional task with a long title and focus controls to Recently Deleted"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19028, -19429.5}, {32, 32}}",
+      "identifier" : "capture-more-5C5FFA02-602E-4211-AC35-4F765D100986",
+      "label" : "More actions for Fictional task with a long title and focus controls"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19983, -19991}, {116.5, 14}}",
+      "identifier" : "",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19129.5, -19991}, {136.5, 14}}",
+      "identifier" : "",
+      "label" : ""
+    }
+  ],
+  "totalNodes" : 489,
+  "viewport" : "{{-20000, -20000}, {1024, 960}}"
+}

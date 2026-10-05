@@ -296,6 +296,7 @@ struct ExplorerCaptureActionsLayout: Layout {
         }
         Divider()
         Button(capture.isPinned ? "Unpin" : "Pin", systemImage: capture.isPinned ? "pin.slash" : "pin") { state.togglePinned(capture) }
+        CaptureReturnToInboxMenuItem(state: state, capture: capture)
         Button(workspace.shelfCaptureIDs.contains(capture.id) ? "Remove from shelf; keep capture" : "Add to shelf", systemImage: "tray") {
             do { try workspace.setOnShelf([capture.id], included: !workspace.shelfCaptureIDs.contains(capture.id)) }
             catch { state.reportFailure(error.localizedDescription) }

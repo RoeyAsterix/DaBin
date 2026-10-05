@@ -1,0 +1,98 @@
+{
+  "schemaVersion": 1,
+  "status": "fixture_lifecycle_fix_verified_current_campaign93_clean_checks",
+  "testBeforeSHA256": "6a97dd4b12aa48b2d0ecef29d6b53e11379c0f6a8692ccff97a536de85fb6d9e",
+  "testAfterSHA256": "cfa2ba5717d733bfd156301d159924b1216b7329badf2cf602480ca2530c3082",
+  "rootCause": "Synchronous MainActor recovery fixture queued AppState reminder Tasks, then removed its UUID archive before any suspension; the next async fixture let ReminderService save notification state against the removed database.",
+  "productionChanged": false,
+  "testRuntimeLaunchedByAgent": false,
+  "existingBehaviorAssertionsPreserved": true,
+  "newAssertions": 6,
+  "closureCriteria": [
+    "WorkInboxTests passes all retained plus6new assertions.",
+    "Its runtime output has no UUID reminder-recovery Core Data I/O/unable-to-open diagnostics.",
+    "No logs are muted or discarded."
+  ],
+  "typecheckModule": "native/build/qa-cache/app-store-70feee950c20ceae70b7bcf9494d1b269c9a089191bf243f85ee35071457d45b",
+  "optimizedCompile": {
+    "manifest": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa-cache/work-inbox-fixture-cfa2ba5717d733bf-70feee950c20ceae/manifest.json",
+    "manifestSHA256": "02891699cb69487934d94aa202cc610a3fda5f4df0c9d2bc4b80a5568a46596c",
+    "status": "compiled_not_run",
+    "warningsAsErrors": true,
+    "optimized": true,
+    "immutableModule": "app-store-70feee950c20ceae70b7bcf9494d1b269c9a089191bf243f85ee35071457d45b"
+  },
+  "initialTargetedRuntime": {
+    "status": "failed_restricted_default_environment_exact_operation_unestablished",
+    "sourceSHA256": "7705fe1f2f1c980cda205c8279c9aa8a2cae41622b6acf7e24d31653684ade4b",
+    "exitCode": 133,
+    "log": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/work-inbox-initial-failure.log",
+    "logSHA256": "f3748397299c571e29633e63dd1684a718b63a877a895cf58d91fdf4eec56100",
+    "observed": "No Core Data I/O or unable-to-open messages in this bounded run. New strict archive/root assertion failed, so the fixture fix is not closed. The six IOPMScheduleUserActivityLevelNotification lines are retained."
+  },
+  "diagnosticTargetedRuntime": {
+    "status": "passed",
+    "reportedBy": "parent runtime execution",
+    "environment": "normal desktop per parent; CLI own-fixture execution, no GUI operated by this agent",
+    "exitCode": 0,
+    "checks": 93,
+    "sourceSHA256": "cfa2ba5717d733bfd156301d159924b1216b7329badf2cf602480ca2530c3082",
+    "executableSHA256": "c5951e804c8ba689d11c6946037be7fc71e3360738f8bc1f01f3e5b87c74cff1",
+    "log": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/work-inbox-diagnostic-normal-desktop.log",
+    "logSHA256": "0c65789ee25394352163b829070b20cf2e3e04090f13770d39936ce5d861d664",
+    "originalCoreDataIOObserved": false,
+    "otherWarningLines": 0,
+    "sourceScope": "Test-only diagnostic fixture linked to immutable app-store-70feee950c20ceae module; not a fresh current-production module campaign."
+  },
+  "originalStrictNormalDesktopRuntime": {
+    "status": "passed",
+    "reportedBy": "parent runtime execution",
+    "environment": "normal desktop per parent",
+    "exitCode": 0,
+    "checks": 93,
+    "sourceSHA256": "7705fe1f2f1c980cda205c8279c9aa8a2cae41622b6acf7e24d31653684ade4b",
+    "executableSHA256": "7900a69788dcaa3b24c59c8014cc7ed2bd33c5316b36c536f34fcc4d38663047",
+    "manifest": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa-cache/work-inbox-fixture-7705fe1f2f1c980c-70feee950c20ceae/manifest.json",
+    "manifestSHA256": "acf329627c56389fc3ac00a114c039e08be94538d0763b718d1b13595bafa269",
+    "log": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/work-inbox-original-strict-normal-desktop.log",
+    "logSHA256": "0c65789ee25394352163b829070b20cf2e3e04090f13770d39936ce5d861d664",
+    "originalCoreDataIOObserved": false,
+    "otherWarningLines": 0,
+    "sourceScope": "Immutable 70fee production module; fresh current-production full campaign remains required."
+  },
+  "environmentComparison": {
+    "changedFactor": "Execution environment: restricted default invocation versus normal-desktop invocation, per parent.",
+    "unchangedInputs": [
+      "Exact original strict test executable SHA256 7900a69788dcaa3b24c59c8014cc7ed2bd33c5316b36c536f34fcc4d38663047",
+      "Immutable production module",
+      "All assertions and fixture setup code; no diagnostic stage arrays in this original executable"
+    ],
+    "observed": "Restricted original strict run failed the new archive/root assertion; the exact same executable passed93 with a clean log in normal desktop. Diagnostic-only variant also passed93 in normal desktop.",
+    "interpretation": "Evidence associates the strict failure with execution environment; it does not identify a specific denied filesystem/coordinator operation or exclude nondeterminism from a single run per condition. The proven original queued-task/deleted-fixture lifecycle defect is repaired without muting logs or weakening assertions.",
+    "remainingRequirement": "Satisfied: fresh final-module strict cfa2 fixture passed93 with clean output; exact final inputs checked against completed report."
+  },
+  "currentCampaignRuntime": {
+    "status": "passed_final_unchanged_input_campaign",
+    "reportedBy": "parent completed-suite exit0 plus preserved raw93PASS log",
+    "checks": 93,
+    "sourceSHA256": "cfa2ba5717d733bfd156301d159924b1216b7329badf2cf602480ca2530c3082",
+    "log": {
+      "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-campaign/WorkInboxTests.log",
+      "sha256": "0c65789ee25394352163b829070b20cf2e3e04090f13770d39936ce5d861d664"
+    },
+    "compileLog": {
+      "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-campaign/WorkInboxTests-compile.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "originalCoreDataIOObserved": false,
+    "otherWarningLines": 0,
+    "campaignDirectory": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa/runs/20261005T033354460853Z-app-store",
+    "wholeCampaignCompleted": true,
+    "wholeCampaignInputsUnchangedConfirmed": true,
+    "campaignReport": {
+      "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/full-current-run/report.json",
+      "sha256": "67aeb58ad2c843b33fdb73709f15e7a48eef327f0edd706260cf1715a92150c6"
+    },
+    "campaignInputFingerprint": "206badd60f8e8639b925fb4f0f4f69168c23245e91b46364d51bf57757d9e293"
+  }
+}

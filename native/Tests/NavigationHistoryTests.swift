@@ -171,10 +171,89 @@ import Foundation
         state.back()
         try expect(draft.validationIssue == .title && state.navigationHistory.index == validationIndex,
                    "Actual rejected title Save blocks navigation until the field is corrected")
+        let originalPlan = draft.planning
+        let committedPlan = task.taskPlanning
+        draft.planning.priority = .high
+        draft.pendingChecklistText = "Uncommitted next step kept with the invalid title"
+        let retainedPlan = draft.planning
+        try expect(state.canKeepDetailDraftAndGoBack,
+                   "An invalid Detail draft has an explicit recovery return without unlocking ordinary Back")
+        state.navigationValidationBlocked = true
+        try expect(!state.canKeepDetailDraftAndGoBack && !state.keepDetailDraftAndGoBack(),
+                   "Detail recovery cannot waive global editor validation")
+        state.navigationValidationBlocked = false
+        state.navigationWindowInteractionBlocked = true
+        try expect(!state.canKeepDetailDraftAndGoBack && !state.keepDetailDraftAndGoBack(),
+                   "Detail recovery cannot interrupt a window interaction")
+        state.navigationWindowInteractionBlocked = false
+        state.setTutorialPresented(true)
+        try expect(!state.canKeepDetailDraftAndGoBack && !state.keepDetailDraftAndGoBack(),
+                   "Detail recovery cannot leave an active tutorial")
+        state.setTutorialPresented(false)
+        state.pendingRemoval = task
+        try expect(!state.canKeepDetailDraftAndGoBack && !state.keepDetailDraftAndGoBack(),
+                   "Detail recovery cannot bypass a pending removal")
+        state.pendingRemoval = nil
+        state.isDailyDropTargeted = true
+        try expect(!state.canKeepDetailDraftAndGoBack && !state.keepDetailDraftAndGoBack(),
+                   "Detail recovery cannot interrupt a drop")
+        state.isDailyDropTargeted = false
+        _ = state.workspaceZoom.beginInteraction()
+        try expect(!state.canKeepDetailDraftAndGoBack && !state.keepDetailDraftAndGoBack(),
+                   "Detail recovery cannot interrupt workspace zoom")
+        state.workspaceZoom.finishInteraction()
+        try expect(state.route == .detail && state.navigationHistory.index == validationIndex
+            && state.selectedDraft === draft && draft.validationIssue == .title,
+                   "Refused recovery actions retain the exact invalid draft and history position")
+        let recoveryURL = root.appendingPathComponent("Drafts.json")
+        try? FileManager.default.removeItem(at: recoveryURL)
+        try FileManager.default.createDirectory(at: recoveryURL, withIntermediateDirectories: false)
+        try expect(!state.keepDetailDraftAndGoBack() && state.draftPersistenceError != nil
+            && state.route == .detail && state.navigationHistory.index == validationIndex
+            && state.selectedDraft === draft && draft.title == "   " && draft.validationIssue == .title
+            && draft.pendingChecklistText == "Uncommitted next step kept with the invalid title",
+                   "Failed recovery persistence leaves invalid text and checklist in their Detail owner")
+        try FileManager.default.removeItem(at: recoveryURL)
+        try expect(state.keepDetailDraftAndGoBack() && state.route == .search
+            && state.navigationHistory.index == validationIndex - 1 && state.draftPersistenceError == nil,
+                   "Explicit recovery persists before returning to the preceding refined Search")
+        let savedRecovery = DraftArchive(root: root).load()?.details.first { $0.captureID == task.id }
+        try expect(savedRecovery?.title == "   " && savedRecovery?.planning == retainedPlan
+            && savedRecovery?.commentComposer == draft.commentComposer
+            && savedRecovery?.pendingChecklistText == draft.pendingChecklistText,
+                   "Recovery storage contains the complete invalid draft and pending comment and checklist")
+        try expect(task.title == "Fictional feedback task" && task.taskPlanning == committedPlan && task.comment.isEmpty,
+                   "Keeping the invalid draft never applies its title, plan or comment to the capture")
+        state.forward()
+        try expect(state.route == .detail && state.selectedCapture === task && state.selectedDraft === draft
+            && draft.title == "   " && draft.planning == retainedPlan && draft.validationIssue == .title
+            && draft.hasUnresolvedValidation && draft.pendingChecklistText == "Uncommitted next step kept with the invalid title",
+                   "Forward restores the same invalid draft with its validation and pending work intact")
+        state.back()
+        try expect(state.navigationHistory.index == validationIndex,
+                   "Explicit recovery does not weaken subsequent ordinary Back validation")
         draft.title = task.title
+        draft.planning = originalPlan
+        draft.pendingChecklistText = ""
         state.back()
         try expect(state.navigationHistory.index == validationIndex - 1,
                    "Correcting validation input immediately restores navigation without saving draft text")
+        for parent in [BoardRoute.library, .reminders] {
+            if parent == .library { state.openLibrary(); state.navigateProject("Example Client") }
+            else { state.showReminders() }
+            state.openCapture(task.id)
+            draft.title = String(repeating: "x", count: 2_001)
+            state.saveDetail()
+            try expect(state.keepDetailDraftAndGoBack() && state.route == parent,
+                       "Invalid Detail recovery returns to its actual Projects or Today parent")
+            state.forward()
+            try expect(state.selectedDraft === draft && draft.title.count == 2_001 && draft.validationIssue == .title,
+                       "Projects and Today recovery preserve an overlong title for later correction")
+            draft.title = task.title
+            state.back()
+        }
+        try expect(!state.canKeepDetailDraftAndGoBack && !state.keepDetailDraftAndGoBack(),
+                   "Detail recovery is unavailable on ordinary non-Detail routes")
         state.openNewTask(); state.newTaskDraft.text = ""
         state.saveNewTask()
         try expect(state.newTaskDraft.hasUnresolvedValidation && state.isNavigationBlocked,

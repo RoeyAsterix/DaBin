@@ -76,7 +76,6 @@ import SwiftUI
             if let children = value(name) as? [Any] { result += children }
         }
         if let children = attribute("AXChildren") as? [Any] { result += children }
-        if let view = object as? NSView { result += view.subviews }
         return result
     }
 }
@@ -123,7 +122,7 @@ import SwiftUI
         }
         return geometry + ", logicalRows=\(table.numberOfRows), visibleRange=\(table.rows(in: table.visibleRect)), availableRows=[\(rows.joined(separator: "; "))]"
     }
-    @MainActor private static func nodes(_ view: NSView) -> [WorkspaceAXNode] {
+    @MainActor private static func nodes(_ view: NSView, includeSubviews: Bool = true) -> [WorkspaceAXNode] {
         view.layoutSubtreeIfNeeded()
         var seen = Set<ObjectIdentifier>()
         var result: [WorkspaceAXNode] = []
@@ -131,10 +130,41 @@ import SwiftUI
             guard depth < 50, let object = value as? NSObject, seen.insert(ObjectIdentifier(object)).inserted else { return }
             let node = WorkspaceAXNode(object: object); result.append(node)
             node.children.forEach { visit($0, depth: depth + 1) }
+            if includeSubviews, let native = object as? NSView {
+                native.subviews.forEach { visit($0, depth: depth + 1) }
+            }
         }
         visit(view, depth: 0)
         NSAccessibility.unignoredChildren(from: [view]).forEach { visit($0, depth: 0) }
         return result
+    }
+    @MainActor private static func scrollControlIntoView(_ view: NSView, id: String, window: NSWindow) async throws -> WorkspaceAXNode {
+        let scroll = try listScrollView(in: view)
+        guard let document = scroll.documentView else {
+            throw NSError(domain: "WorkspaceWindowTests", code: 10,
+                userInfo: [NSLocalizedDescriptionKey: "Today scroll view has no native document"])
+        }
+        // Lazy receipt rows precede the plan. Materialize the real plan by
+        // scrolling its native viewport; an AX lookup alone cannot reveal it.
+        for _ in 0..<48 {
+            view.layoutSubtreeIfNeeded()
+            let viewport = window.convertToScreen(scroll.contentView.convert(scroll.contentView.bounds, to: nil))
+            if let target = nodes(view, includeSubviews: false).first(where: { $0.identifier == id }),
+               target.frame.width > 0 && target.frame.height > 0 {
+                if viewport.insetBy(dx: -1, dy: -1).contains(target.frame) { return target }
+                let targetRect = document.convert(window.convertFromScreen(target.frame), from: nil)
+                _ = document.scrollToVisible(targetRect.insetBy(dx: -2, dy: -6))
+            } else {
+                let maximum = max(0, document.bounds.maxY - scroll.contentView.bounds.height)
+                let direction: CGFloat = document.isFlipped ? 1 : -1
+                let next = min(maximum, max(0, scroll.contentView.bounds.minY + direction * scroll.contentView.bounds.height * 0.7))
+                scroll.contentView.scroll(to: NSPoint(x: scroll.contentView.bounds.minX, y: next))
+            }
+            scroll.reflectScrolledClipView(scroll.contentView)
+            await settleNavigation()
+        }
+        throw NSError(domain: "WorkspaceWindowTests", code: 11,
+            userInfo: [NSLocalizedDescriptionKey: "Could not reveal native Today control \(id); \(nativeListDescription(scroll))"])
     }
     @MainActor private static func find(_ view: NSView, id: String) throws -> WorkspaceAXNode {
         for _ in 0..<6 {
@@ -401,14 +431,16 @@ import SwiftUI
         draft.commentComposer = "An unposted reply survives every resize"
         draft.reminderDate = savedReminder.addingTimeInterval(3600)
         let pendingStep = "A next step that has not been added yet"
-        let input = try findLabeled(hosting, label: "Add a small next step")
+        let input = try findLabeled(hosting, label: "Add a next step")
+        if let field = input.object as? NSTextField { _ = field.scrollToVisible(field.bounds); await settleNavigation() }
         try expect(input.setText(pendingStep), "Task detail accepts an unfinished checklist entry before resizing")
         await settleNavigation()
         let focusedEditor = window.firstResponder as? NSTextView
         for size in [expandedSize, shortSize, compactSize] {
             window.setContentSize(size)
             await settleNavigation()
-            let currentInput = try findLabeled(hosting, label: "Add a small next step")
+            let currentInput = try findLabeled(hosting, label: "Add a next step")
+            if let field = currentInput.object as? NSTextField { _ = field.scrollToVisible(field.bounds); await settleNavigation() }
             let currentText = (currentInput.object as? NSTextField)?.stringValue
                 ?? (currentInput.value("accessibilityValue") as? String)
             try expect(currentText == pendingStep,
@@ -417,12 +449,12 @@ import SwiftUI
                 && draft.commentComposer == "An unposted reply survives every resize"
                 && draft.reminderDate == savedReminder.addingTimeInterval(3600) && draft.hasChanges,
                 "Resizing preserves the same unsaved comment, composer and reminder draft")
-            let detailNodes = nodes(hosting)
-            try expect(detailNodes.contains { $0.identifier == "capture-comment-thread" }
-                && detailNodes.contains { $0.identifier == "capture-comment-composer" }
-                && detailNodes.contains { $0.identifier == "capture-tab-reminder" }
-                && !detailNodes.contains { $0.identifier == "capture-reminder-panel" },
-                "Resizing retains the selected Comments tab and composer; Reminder remains a separate available tab")
+            let detailNodes = nodes(hosting, includeSubviews: false)
+            try expect(state.detailFocus == "task" && detailNodes.contains { $0.identifier == "detail-pane-task" }
+                && detailNodes.contains { $0.identifier == "task-checklist-new" }
+                && detailNodes.contains { $0.identifier == "detail-section-reminder" }
+                && !detailNodes.contains { $0.identifier == "capture-comment-composer" || $0.identifier == "capture-reminder-panel" },
+                "Resizing retains the exclusive Task pane and native checklist; Comments and Reminder remain separate sections")
             let visible = window.convertToScreen(hosting.convert(hosting.bounds, to: nil))
             let save = try find(hosting, id: "detail-save")
             try expect(save.isEnabled && visible.insetBy(dx: -1, dy: -1).contains(save.frame),
@@ -436,14 +468,14 @@ import SwiftUI
         // Comments and Reminder are mutually exclusive tabs, not simultaneous
         // disclosures. Exercise their real actions after the resize/focus checks
         // and verify neither selecting a tab nor resizing implicitly saves.
-        try expect(try find(hosting, id: "capture-tab-reminder").press(),
-            "The retained Reminder tab opens its actual scheduling panel")
+        try expect(try find(hosting, id: "detail-section-reminder").press(),
+            "The retained Reminder section opens its actual scheduling panel")
         await settleNavigation()
         for size in [expandedSize, compactSize] {
             window.setContentSize(size)
             await settleNavigation()
-            let detailNodes = nodes(hosting)
-            try expect(detailNodes.contains { $0.identifier == "capture-reminder-panel" }
+            let detailNodes = nodes(hosting, includeSubviews: false)
+            try expect(state.detailFocus == "reminder" && detailNodes.contains { $0.identifier == "capture-reminder-panel" }
                 && detailNodes.contains { $0.identifier == "reminder-mode-date" || $0.label == "Date" }
                 && !detailNodes.contains { $0.identifier == "capture-comment-composer" },
                 "The selected Reminder panel and date controls survive compact/expanded resizing")
@@ -452,14 +484,20 @@ import SwiftUI
                 && draft.reminderDate == savedReminder.addingTimeInterval(3600) && draft.hasChanges,
                 "Tab selection and resizing retain all unpublished changes in the original draft")
         }
-        try expect(try find(hosting, id: "capture-tab-comments").press(),
-            "Comments can be reopened without saving or removing the reminder")
+        try expect(try find(hosting, id: "detail-section-comments").press(),
+            "Comments can be opened without saving or removing the reminder")
         await settleNavigation()
-        try expect(nodes(hosting).contains { $0.identifier == "capture-comment-composer" }
-            && !nodes(hosting).contains { $0.identifier == "capture-reminder-panel" }
+        try expect(nodes(hosting, includeSubviews: false).contains { $0.identifier == "capture-comment-composer" }
+            && !nodes(hosting, includeSubviews: false).contains { $0.identifier == "capture-reminder-panel" }
             && draft.commentComposer == "An unposted reply survives every resize",
             "Returning to Comments restores its unposted composer")
-        let retainedInput = try findLabeled(hosting, label: "Add a small next step")
+        window.setContentSize(expandedSize); await settleNavigation()
+        try expect(try find(hosting, id: "detail-section-task").press(),
+            "The real Task section action returns to the retained checklist")
+        await settleNavigation()
+        window.setContentSize(compactSize); await settleNavigation()
+        let retainedInput = try findLabeled(hosting, label: "Add a next step")
+        if let field = retainedInput.object as? NSTextField { _ = field.scrollToVisible(field.bounds); await settleNavigation() }
         let retainedInputText = (retainedInput.object as? NSTextField)?.stringValue
             ?? (retainedInput.value("accessibilityValue") as? String)
         try expect(retainedInputText == pendingStep,
@@ -525,12 +563,28 @@ import SwiftUI
         // auxiliary view, then retain real accessible tab coverage there.
         state.workspace.mode = .clipboard; settle()
         for mode in [WorkspaceMode.clipboard, .shelf, .scratchpad, .collection] {
+            let previousMode = state.workspace.mode
+            let historyIndex = state.navigationHistory.index
             let button = try find(hosting, id: "workspace-mode-\(mode.rawValue)")
             try expect(button.frame.width >= 28 && button.frame.height >= 28, "Workspace mode \(mode.title) has a usable hit target")
             try expect(button.press(), "Workspace mode \(mode.title) supports accessible activation")
             settle()
             try expect(state.workspace.mode == mode && state.libraryProject == "Client A", "Mode change keeps the selected project")
+            try expect(state.navigationHistory.index == historyIndex + (previousMode == mode ? 0 : 1),
+                "The real \(mode.title) tab records exactly one deliberate destination, while reselecting the current tab records none")
         }
+        let collectionHistoryIndex = state.navigationHistory.index
+        try expect(try find(hosting, id: "board-back").press(), "Back activates after the real workspace mode tabs")
+        await settleNavigation()
+        try expect(state.route == .library && state.workspace.mode == .scratchpad && state.libraryProject == "Client A"
+            && state.navigationHistory.index == collectionHistoryIndex - 1
+            && state.workspace.scratchpad(project: "Client A").contains("Client A resume note"),
+            "Real tab Back restores the preceding Scratchpad, project and existing note without skipping to Inbox")
+        try expect(try find(hosting, id: "board-forward").press(), "Forward activates after restoring the preceding workspace mode")
+        await settleNavigation()
+        try expect(state.route == .library && state.workspace.mode == .collection && state.libraryProject == "Client A"
+            && state.navigationHistory.index == collectionHistoryIndex,
+            "Real tab Forward restores the visited project collection without making another history entry")
         try expect(try find(hosting, id: "project-workspace").frame.width > 0,
             "Explorer mode returns a named project to the unified preview workspace")
         state.workspace.mode = .scratchpad; settle()
@@ -589,11 +643,13 @@ import SwiftUI
                         "Named-project workspace is available at \(Int(size.width))-point width")
                     try expect(nodes(hosting).contains { $0.identifier?.hasPrefix("project-preview-") == true && $0.frame.height >= 160 },
                         "Project content retains a large preview at \(Int(size.width))-point width")
-                    for id in ["project-search", "project-export", "project-actions"] {
+                    for id in ["board-search", "project-export", "project-actions"] {
                         let action = try find(hosting, id: id)
                         try expect(action.frame.width > 0 && visibleContent.insetBy(dx: -1, dy: -1).contains(action.frame),
                             "\(id) remains inside the \(Int(size.width))×\(Int(size.height)) project workspace")
                     }
+                    try expect(!nodes(hosting).contains { ["project-search", "explorer-search"].contains($0.identifier ?? "") },
+                        "Projects retains header Search without a duplicate inner entry at \(Int(size.width))-point width")
                     try expect(try find(hosting, id: "project-export").label == "Export project",
                         "Project export keeps its explicit text at \(Int(size.width))-point width")
                     try expect(!nodes(hosting).contains {
@@ -673,7 +729,49 @@ import SwiftUI
             try expect(visible.contains(try find(hosting, id: "workspace-scratchpad-save-status").frame),
                 "Scratchpad save status stays visible beside a long project name")
             try saveImage(hosting, to: evidence.appendingPathComponent("workspace-long-project-notes-\(Int(size.width))x\(Int(size.height))-light.png"))
-            state.showReminders(); settle()
+            state.showReminders(); await settleNavigation()
+            for scope in ["today", "later", "done"] {
+                state.todayPlanningScope = scope; settle()
+                let receiptsHeading = try find(hosting, id: "today-receipts-heading")
+                try expect(visible.contains(receiptsHeading.frame), "Captured today remains visible before the \(scope) work plan at \(Int(size.width))-point width")
+                try expect(visible.contains(try find(hosting, id: "today-receipts-count").frame),
+                    "Today's receipt count stays visible for the \(scope) work plan at \(Int(size.width))-point width")
+            }
+            state.todayPlanningScope = "today"; settle()
+            guard let receipt = state.currentTodayCaptures.first, let receiptText = receipt.originalText else {
+                throw NSError(domain: "WorkspaceWindowTests", code: 12,
+                    userInfo: [NSLocalizedDescriptionKey: "Today compact receipt fixture is missing its current text capture"])
+            }
+            try expect(receiptText == "Fictional incoming project capture" && state.workspaceZoom.factor == 1,
+                "Compact receipt geometry uses the first actual short receipt at 100 percent zoom")
+            let receiptCard = try find(hosting, id: "today-receipt-card-\(receipt.id.uuidString)")
+            let compactReceipt = try find(hosting, id: "capture-compact-receipt-\(receipt.id.uuidString)")
+            try expect(receiptCard.frame.width > 0 && receiptCard.frame.height > 0 && receiptCard.frame.height <= 140
+                && compactReceipt.frame.width > 0 && compactReceipt.frame.height > 0
+                && visible.insetBy(dx: -1, dy: -1).contains(receiptCard.frame),
+                "The first compact receipt fits wholly inside the \(Int(size.width))×\(Int(size.height)) viewport and stays at most 140 points tall: \(receiptCard.frame)")
+            let copyReceipt = try find(hosting, id: CaptureCopyButton.accessibilityIdentifier(for: [receipt]))
+            let openReceipt = try find(hosting, id: "capture-compact-open-\(receipt.id.uuidString)")
+            let moreReceipt = try find(hosting, id: "capture-more-\(receipt.id.uuidString)")
+            for action in [copyReceipt, openReceipt, moreReceipt] {
+                try expect(action.isEnabled && action.interactionFrame.width > 0 && action.interactionFrame.height >= 28
+                    && visible.insetBy(dx: -1, dy: -1).contains(action.interactionFrame),
+                    "Compact receipt action \(action.identifier ?? "unknown") has a visible usable native target at \(Int(size.width))-point width")
+            }
+            let copiesBefore = copiedPayloads.count
+            try expect(copyReceipt.press(), "Compact receipt Copy supports direct accessible activation")
+            await settleNavigation()
+            try expect(copiedPayloads.count == copiesBefore + 1 && copiedPayloads.last?.items == [.text(receiptText)]
+                && state.route == .reminders,
+                "Compact receipt Copy writes its full original text through the private clipboard handler and keeps Today open")
+            try expect(openReceipt.press(), "Compact receipt title supports direct accessible activation")
+            await settleNavigation()
+            try expect(state.route == .detail && state.selectedCapture?.id == receipt.id,
+                "The compact receipt title opens the exact captured item")
+            state.back(); await settleNavigation()
+            try expect(state.route == .reminders && state.todayPlanningScope == "today"
+                && state.libraryProject == longProject && state.currentTodayCaptures.first?.id == receipt.id,
+                "Back from a receipt restores Today, its work plan scope and project without changing receipt membership")
             let todayProject = try find(hosting, id: "today-project-picker")
             try expect(visible.insetBy(dx: -1, dy: -1).contains(todayProject.interactionFrame), "Long Today project remains inside the \(Int(size.width))-point window")
             try expect(todayProject.label?.contains(longProject) == true, "Today exposes the full project name to accessibility")
@@ -682,6 +780,43 @@ import SwiftUI
             try expect(add.frame.width >= 28 && add.frame.height >= 28 && visible.contains(add.frame), "Today Add has a visible usable hit target")
             try saveImage(hosting, to: evidence.appendingPathComponent("today-long-project-\(Int(size.width))x\(Int(size.height))-light.png"))
         }
+        // Keep the actual compact Board fixed at minimum width while its
+        // receipt content grows. Window coupling must not mask a clipped action.
+        window.setContentSize(NSSize(width: 380, height: 680)); await settleNavigation()
+        guard let zoomReceipt = state.currentTodayCaptures.first, let zoomReceiptText = zoomReceipt.originalText else {
+            throw NSError(domain: "WorkspaceWindowTests", code: 13,
+                userInfo: [NSLocalizedDescriptionKey: "Today zoom fixture is missing its current text receipt"])
+        }
+        for factor in [CGFloat(1.5), 2] {
+            state.workspaceZoom.setFactor(factor); await settleNavigation()
+            let scroll = try listScrollView(in: hosting)
+            let viewport = window.convertToScreen(scroll.contentView.convert(scroll.contentView.bounds, to: nil))
+            let receiptCard = try find(hosting, id: "today-receipt-card-\(zoomReceipt.id.uuidString)")
+            let compactReceipt = try find(hosting, id: "capture-compact-receipt-\(zoomReceipt.id.uuidString)")
+            try expect(state.workspaceZoom.factor == factor && abs(hosting.bounds.width - 380) <= 1,
+                "Today zoom check renders \(Int(factor * 100)) percent in the actual 380-point Board")
+            for surface in [receiptCard, compactReceipt] {
+                try expect(surface.frame.width > 0 && surface.frame.height > 0
+                    && viewport.insetBy(dx: -1, dy: -1).contains(surface.frame),
+                    "The first receipt surface stays fully inside the native Today viewport at \(Int(factor * 100)) percent: \(surface.frame) in \(viewport)")
+            }
+            let copyReceipt = try find(hosting, id: CaptureCopyButton.accessibilityIdentifier(for: [zoomReceipt]))
+            let moreReceipt = try find(hosting, id: "capture-more-\(zoomReceipt.id.uuidString)")
+            for action in [copyReceipt, moreReceipt] {
+                try expect(action.isEnabled && action.interactionFrame.width > 0 && action.interactionFrame.height >= 28
+                    && viewport.insetBy(dx: -1, dy: -1).contains(action.interactionFrame),
+                    "Compact receipt \(action.identifier ?? "unknown") remains visible inside the native content width at \(Int(factor * 100)) percent: \(action.interactionFrame) in \(viewport)")
+            }
+            try saveImage(hosting, to: evidence.appendingPathComponent("today-compact-receipt-380x680-zoom-\(Int(factor * 100))-light.png"))
+            let copiesBefore = copiedPayloads.count
+            try expect(copyReceipt.press(), "Compact receipt Copy activates at \(Int(factor * 100)) percent")
+            await settleNavigation()
+            try expect(copiedPayloads.count == copiesBefore + 1 && copiedPayloads.last?.items == [.text(zoomReceiptText)]
+                && state.route == .reminders,
+                "Zoomed Copy writes the full receipt text through the private handler without navigating")
+        }
+        state.workspaceZoom.reset(); await settleNavigation()
+        try expect(state.workspaceZoom.factor == 1, "Today zoom fixture restores 100 percent before subsequent task checks")
         let addToday = try find(hosting, id: "today-add-task")
         try expect(addToday.press(), "Today Add supports accessible activation")
         settle()
@@ -695,10 +830,11 @@ import SwiftUI
         try store.reorderTasks([task, nextTask], on: CaptureCalendar.dayString(Date()))
         window.setContentSize(NSSize(width: 380, height: 680)); state.showReminders(); settle()
         for direction in ["up", "down"] {
-            let action = try find(hosting, id: "today-move-\(direction)-\(task.id.uuidString)")
+            let action = try await scrollControlIntoView(hosting, id: "today-move-\(direction)-\(task.id.uuidString)", window: window)
             try expect(action.frame.width >= 28 && action.frame.height >= 28, "Task reorder \(direction) has a usable hit target")
         }
-        try expect(try find(hosting, id: "today-move-down-\(task.id.uuidString)").press(), "Task reorder works through accessibility")
+        let moveDown = try await scrollControlIntoView(hosting, id: "today-move-down-\(task.id.uuidString)", window: window)
+        try expect(moveDown.press(), "Task reorder works through accessibility")
         settle()
         try expect(TaskPlanningPolicy.today(store.captures).filter { $0.projectName == "Client A" }.map(\.id) == [nextTask.id, task.id],
             "Accessible reorder persists the intended task order")
@@ -767,18 +903,16 @@ import SwiftUI
         let editor = NSHostingView(rootView: WorkspacePlanningHarness(draft: editorDraft))
         window.contentView = editor; window.setContentSize(NSSize(width: 380, height: 800)); await settleNavigation()
         try saveImage(editor, to: evidence.appendingPathComponent("checklist-editor-before-validation.png"))
-        // DisclosureGroup can propagate its AX identifier to descendants on
-        // macOS. Locate these real controls by their semantic labels instead.
-        let checklistInput = try findLabeled(editor, label: "Add a small next step")
+        let checklistInput = try findLabeled(editor, label: "Add a next step")
         try expect(checklistInput.setText(String(repeating: "x", count: 501)), "Checklist input supports accessible editing")
         settle()
-        try expect(!(try findLabeled(editor, label: "Add checklist step").isEnabled), "A 501-character step cannot activate Add")
+        try expect(!(try find(editor, id: "task-checklist-add").isEnabled), "A 501-character step cannot activate Add")
         try expect(nodes(editor).contains { $0.label?.contains("500 characters") == true },
             "An oversized step explains the 500-character limit")
         try expect(editorDraft.planning.checklist.count == 1, "Invalid input preserves the existing checklist")
         try expect(checklistInput.setText("  " + String(repeating: "x", count: 500) + "  "), "Checklist text can be corrected without losing it")
         settle()
-        let addStep = try findLabeled(editor, label: "Add checklist step")
+        let addStep = try find(editor, id: "task-checklist-add")
         try expect(addStep.isEnabled && addStep.press(), "A corrected 500-character step can be added")
         settle()
         try expect(editorDraft.planning.checklist.count == 2 && editorDraft.planning.checklist.last?.text.count == 500,

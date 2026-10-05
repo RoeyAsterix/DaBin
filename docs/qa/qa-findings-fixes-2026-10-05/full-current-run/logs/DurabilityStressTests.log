@@ -1,0 +1,2 @@
+PASS: 8586 durability checks; 1000 seeded records, 320 mixed operations, 25 restart comparisons, backup/restore and 4 real SIGKILL boundaries.
+DURABILITY measured wall time 33.816 seconds; no timing threshold asserted

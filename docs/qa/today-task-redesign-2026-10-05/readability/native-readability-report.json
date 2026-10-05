@@ -1,0 +1,322 @@
+{
+  "checks" : 599,
+  "fixtures" : [
+    {
+      "bodyFrame" : "{{-9976.5, -10243}, {333, 879}}",
+      "context" : "recognized-380-zoom75-light",
+      "copyCallbacks" : 2,
+      "fullCharacters" : 5000,
+      "panelFrame" : "{{-9985.5, -9676}, {351, 340}}",
+      "previewCharacters" : 2000,
+      "readerFontPoints" : 14.25,
+      "viewportWidth" : 380,
+      "zoom" : 0.75
+    },
+    {
+      "bodyFrame" : "{{-9976.5, -10243}, {333, 879}}",
+      "context" : "recognized-380-zoom75-dark",
+      "copyCallbacks" : 2,
+      "fullCharacters" : 5000,
+      "panelFrame" : "{{-9985.5, -9676}, {351, 340}}",
+      "previewCharacters" : 2000,
+      "readerFontPoints" : 14.25,
+      "viewportWidth" : 380,
+      "zoom" : 0.75
+    },
+    {
+      "bodyFrame" : "{{-9972, -10781}, {324, 1413}}",
+      "context" : "recognized-380-zoom100-light",
+      "copyCallbacks" : 2,
+      "fullCharacters" : 5000,
+      "panelFrame" : "{{-9984, -9684}, {348, 348}}",
+      "previewCharacters" : 2000,
+      "readerFontPoints" : 15,
+      "viewportWidth" : 380,
+      "zoom" : 1
+    },
+    {
+      "bodyFrame" : "{{-9972, -10781}, {324, 1413}}",
+      "context" : "recognized-380-zoom100-dark",
+      "copyCallbacks" : 2,
+      "fullCharacters" : 5000,
+      "panelFrame" : "{{-9984, -9684}, {348, 348}}",
+      "previewCharacters" : 2000,
+      "readerFontPoints" : 15,
+      "viewportWidth" : 380,
+      "zoom" : 1
+    },
+    {
+      "bodyFrame" : "{{-9944, -10953.5}, {268, 1570}}",
+      "context" : "recognized-380-zoom200-light",
+      "copyCallbacks" : 2,
+      "fullCharacters" : 5000,
+      "panelFrame" : "{{-9968, -9713}, {316, 377}}",
+      "previewCharacters" : 2000,
+      "readerFontPoints" : 17,
+      "viewportWidth" : 380,
+      "zoom" : 2
+    },
+    {
+      "bodyFrame" : "{{-9944, -10953.5}, {268, 1570}}",
+      "context" : "recognized-380-zoom200-dark",
+      "copyCallbacks" : 2,
+      "fullCharacters" : 5000,
+      "panelFrame" : "{{-9968, -9713}, {316, 377}}",
+      "previewCharacters" : 2000,
+      "readerFontPoints" : 17,
+      "viewportWidth" : 380,
+      "zoom" : 2
+    },
+    {
+      "bodyFrame" : "{{-9973, -10292}, {546, 928}}",
+      "context" : "recognized-600-zoom75-light",
+      "copyCallbacks" : 2,
+      "fullCharacters" : 5000,
+      "panelFrame" : "{{-9982, -9676}, {564, 340}}",
+      "previewCharacters" : 2000,
+      "readerFontPoints" : 14.830555555555554,
+      "viewportWidth" : 600,
+      "zoom" : 0.75
+    },
+    {
+      "bodyFrame" : "{{-9973, -10292}, {546, 928}}",
+      "context" : "recognized-600-zoom75-dark",
+      "copyCallbacks" : 2,
+      "fullCharacters" : 5000,
+      "panelFrame" : "{{-9982, -9676}, {564, 340}}",
+      "previewCharacters" : 2000,
+      "readerFontPoints" : 14.830555555555554,
+      "viewportWidth" : 600,
+      "zoom" : 0.75
+    },
+    {
+      "bodyFrame" : "{{-9966.5, -10345.5}, {533, 977.5}}",
+      "context" : "recognized-600-zoom100-light",
+      "copyCallbacks" : 2,
+      "fullCharacters" : 5000,
+      "panelFrame" : "{{-9978.5, -9684}, {557, 348}}",
+      "previewCharacters" : 2000,
+      "readerFontPoints" : 15.611111111111111,
+      "viewportWidth" : 600,
+      "zoom" : 1
+    },
+    {
+      "bodyFrame" : "{{-9966.5, -10345.5}, {533, 977.5}}",
+      "context" : "recognized-600-zoom100-dark",
+      "copyCallbacks" : 2,
+      "fullCharacters" : 5000,
+      "panelFrame" : "{{-9978.5, -9684}, {557, 348}}",
+      "previewCharacters" : 2000,
+      "readerFontPoints" : 15.611111111111111,
+      "viewportWidth" : 600,
+      "zoom" : 1
+    },
+    {
+      "bodyFrame" : "{{-9944, -10439}, {488, 1055.5}}",
+      "context" : "recognized-600-zoom200-light",
+      "copyCallbacks" : 2,
+      "fullCharacters" : 5000,
+      "panelFrame" : "{{-9968, -9713}, {536, 377}}",
+      "previewCharacters" : 2000,
+      "readerFontPoints" : 17,
+      "viewportWidth" : 600,
+      "zoom" : 2
+    },
+    {
+      "bodyFrame" : "{{-9944, -10439}, {488, 1055.5}}",
+      "context" : "recognized-600-zoom200-dark",
+      "copyCallbacks" : 2,
+      "fullCharacters" : 5000,
+      "panelFrame" : "{{-9968, -9713}, {536, 377}}",
+      "previewCharacters" : 2000,
+      "readerFontPoints" : 17,
+      "viewportWidth" : 600,
+      "zoom" : 2
+    },
+    {
+      "bodyFrame" : "{{-9973, -9881}, {1146, 516}}",
+      "context" : "recognized-1200-zoom75-light",
+      "copyCallbacks" : 2,
+      "fullCharacters" : 5000,
+      "panelFrame" : "{{-9982, -9676}, {1164, 340}}",
+      "previewCharacters" : 2000,
+      "readerFontPoints" : 16.149999999999999,
+      "viewportWidth" : 1200,
+      "zoom" : 0.75
+    },
+    {
+      "bodyFrame" : "{{-9973, -9881}, {1146, 516}}",
+      "context" : "recognized-1200-zoom75-dark",
+      "copyCallbacks" : 2,
+      "fullCharacters" : 5000,
+      "panelFrame" : "{{-9982, -9676}, {1164, 340}}",
+      "previewCharacters" : 2000,
+      "readerFontPoints" : 16.149999999999999,
+      "viewportWidth" : 1200,
+      "zoom" : 0.75
+    },
+    {
+      "bodyFrame" : "{{-9964, -9909}, {1128, 540.5}}",
+      "context" : "recognized-1200-zoom100-light",
+      "copyCallbacks" : 2,
+      "fullCharacters" : 5000,
+      "panelFrame" : "{{-9976, -9684}, {1152, 348}}",
+      "previewCharacters" : 2000,
+      "readerFontPoints" : 17,
+      "viewportWidth" : 1200,
+      "zoom" : 1
+    },
+    {
+      "bodyFrame" : "{{-9964, -9909}, {1128, 540.5}}",
+      "context" : "recognized-1200-zoom100-dark",
+      "copyCallbacks" : 2,
+      "fullCharacters" : 5000,
+      "panelFrame" : "{{-9976, -9684}, {1152, 348}}",
+      "previewCharacters" : 2000,
+      "readerFontPoints" : 17,
+      "viewportWidth" : 1200,
+      "zoom" : 1
+    },
+    {
+      "bodyFrame" : "{{-9933, -9924}, {1066, 540.5}}",
+      "context" : "recognized-1200-zoom200-light",
+      "copyCallbacks" : 2,
+      "fullCharacters" : 5000,
+      "panelFrame" : "{{-9957, -9713}, {1114, 377}}",
+      "previewCharacters" : 2000,
+      "readerFontPoints" : 17,
+      "viewportWidth" : 1200,
+      "zoom" : 2
+    },
+    {
+      "bodyFrame" : "{{-9933, -9924}, {1066, 540.5}}",
+      "context" : "recognized-1200-zoom200-dark",
+      "copyCallbacks" : 2,
+      "fullCharacters" : 5000,
+      "panelFrame" : "{{-9957, -9713}, {1114, 377}}",
+      "previewCharacters" : 2000,
+      "readerFontPoints" : 17,
+      "viewportWidth" : 1200,
+      "zoom" : 2
+    },
+    {
+      "bodyFrame" : "{{-9972, -10781}, {324, 1413}}",
+      "context" : "continuous-380-zoom100-light",
+      "nativeViewportWidth" : 324,
+      "panelFrame" : "{{-9984, -9684}, {348, 348}}",
+      "readerFontPoints" : 15,
+      "selectionPreserved" : true,
+      "textContainerWidth" : 316,
+      "viewportWidth" : 380,
+      "zoom" : 1
+    },
+    {
+      "bodyFrame" : "{{-9964, -9912.5}, {1128, 540.5}}",
+      "context" : "continuous-1200-zoom100-light",
+      "nativeViewportWidth" : 1128,
+      "panelFrame" : "{{-9976, -9684}, {1152, 348}}",
+      "readerFontPoints" : 17,
+      "selectionPreserved" : true,
+      "textContainerWidth" : 1120,
+      "viewportWidth" : 1200,
+      "zoom" : 1
+    },
+    {
+      "bodyFrame" : "{{-9966.5, -10349.5}, {533, 977.5}}",
+      "context" : "continuous-600-zoom100-light",
+      "nativeViewportWidth" : 533,
+      "panelFrame" : "{{-9978.5, -9684}, {557, 348}}",
+      "readerFontPoints" : 15.611111111111111,
+      "selectionPreserved" : true,
+      "textContainerWidth" : 525,
+      "viewportWidth" : 600,
+      "zoom" : 1
+    },
+    {
+      "bodyFrame" : "{{-9944, -10953.5}, {268, 1570}}",
+      "context" : "continuous-380-zoom200-dark",
+      "nativeViewportWidth" : 268,
+      "panelFrame" : "{{-9968, -9713}, {316, 377}}",
+      "readerFontPoints" : 17,
+      "selectionPreserved" : true,
+      "textContainerWidth" : 260,
+      "viewportWidth" : 380,
+      "zoom" : 2
+    },
+    {
+      "bodyFrame" : "{{-9933, -9927.5}, {1066, 540.5}}",
+      "context" : "continuous-1200-zoom200-dark",
+      "nativeViewportWidth" : 1066,
+      "panelFrame" : "{{-9957, -9713}, {1114, 377}}",
+      "readerFontPoints" : 17,
+      "selectionPreserved" : true,
+      "textContainerWidth" : 1058,
+      "viewportWidth" : 1200,
+      "zoom" : 2
+    },
+    {
+      "bodyFrame" : "{{-9944, -10442.5}, {488, 1055.5}}",
+      "context" : "continuous-600-zoom200-dark",
+      "nativeViewportWidth" : 488,
+      "panelFrame" : "{{-9968, -9713}, {536, 377}}",
+      "readerFontPoints" : 17,
+      "selectionPreserved" : true,
+      "textContainerWidth" : 480,
+      "viewportWidth" : 600,
+      "zoom" : 2
+    },
+    {
+      "actionCount" : 5,
+      "contentBounds" : "{{-9984, -10000}, {348, 900}}",
+      "context" : "detail-integration",
+      "detailFrame" : "{{-10000, -10000}, {380, 900}}",
+      "inferredPanelHorizontalBounds" : "{{-9984, -9573}, {348, 229}}",
+      "moreActionIDs" : [
+        "detail-action-open-original",
+        "detail-action-folder",
+        "capture-trash-537A45DC-C7F2-48C0-83C8-8C506DCC65AE"
+      ],
+      "moreFrame" : "{{-9796.5, -9236}, {70.5, 32}}",
+      "nativeScrollFrame" : "{{-9972, -9573}, {324, 229}}",
+      "readerFontPoints" : 15,
+      "viewportWidth" : 380,
+      "zoom" : 1
+    },
+    {
+      "actionCount" : 5,
+      "contentBounds" : "{{-9968, -10000}, {536, 900}}",
+      "context" : "detail-integration",
+      "detailFrame" : "{{-10000, -10000}, {600, 900}}",
+      "inferredPanelHorizontalBounds" : "{{-9968, -9578}, {536, 234}}",
+      "moreActionIDs" : [
+        "detail-action-open-original",
+        "detail-action-folder",
+        "capture-trash-537A45DC-C7F2-48C0-83C8-8C506DCC65AE"
+      ],
+      "moreFrame" : "{{-9757, -9221}, {79, 32}}",
+      "nativeScrollFrame" : "{{-9944, -9578}, {488, 234}}",
+      "readerFontPoints" : 17,
+      "viewportWidth" : 600,
+      "zoom" : 2
+    },
+    {
+      "actionCount" : 5,
+      "contentBounds" : "{{-9976, -10000}, {1152, 900}}",
+      "context" : "detail-integration",
+      "detailFrame" : "{{-10000, -10000}, {1200, 900}}",
+      "inferredPanelHorizontalBounds" : "{{-9976, -9563}, {1152, 234}}",
+      "moreActionIDs" : [
+        "detail-action-open-original",
+        "detail-action-folder",
+        "capture-trash-537A45DC-C7F2-48C0-83C8-8C506DCC65AE"
+      ],
+      "moreFrame" : "{{-9788.5, -9221}, {70.5, 32}}",
+      "nativeScrollFrame" : "{{-9964, -9563}, {1128, 234}}",
+      "readerFontPoints" : 17,
+      "viewportWidth" : 1200,
+      "zoom" : 1
+    }
+  ],
+  "privacy" : "Synthetic records, own-process accessibility and window-local clicks only; no clipboard or personal archive access.",
+  "suite" : "CaptureDetailReadabilityTests"
+}

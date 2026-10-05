@@ -40,7 +40,6 @@ struct BoardView: View {
                 .environment(\.workspaceZoom, state.route == .settings ? WorkspaceZoomLayout() :
                     WorkspaceZoomLayout(factor: state.workspaceZoom.factor,
                         isInteracting: state.workspaceZoom.isInteracting))
-                .background(WorkspaceInputRegion())
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .daBinTutorialAnchor(.routeBody)
             BoardCaptureStatus(state: state, service: state.autoCapture, settings: state.autoCapture.settings)
@@ -50,6 +49,7 @@ struct BoardView: View {
         .environment(\.timelineTooltipController, tooltipController)
         .environment(\.hoverTooltipActiveID, tooltipController.visible?.id)
         .environment(\.daBinTutorialTargets, tutorial.isPresented ? Set(tutorial.step.targetCandidates) : [])
+        .background(WorkspaceInputRegion())
         .background(Palette.background.opacity(ThemeSettings.effectiveBoardOpacity(
             preferred: theme.boardOpacity, reduceTransparency: reduceTransparency || colorSchemeContrast == .increased)))
         .preferredColorScheme(theme.darkModeEnabled ? .dark : .light)
@@ -59,7 +59,7 @@ struct BoardView: View {
             HoverTooltipOverlay(controller: tooltipController, anchors: anchors, isEnabled: theme.showTooltips)
         }
         .overlay {
-            if state.isDailyDropTargeted && (state.route == .daily || state.route == .inbox
+            if state.isDailyDropTargeted && (state.route == .daily || state.route == .inbox || state.route == .reminders
                 || (state.route == .detail && state.selectedCapture?.isTask == true)) {
                 BoardWindowChrome.shape.fill(accent.opacity(0.06))
                     .overlay(BoardWindowChrome.shape.strokeBorder(accent, lineWidth: 2))
@@ -140,7 +140,7 @@ struct BoardView: View {
 
     @ViewBuilder private var routeContent: some View {
         switch state.route {
-        case .inbox: InboxScreen(state: state)
+        case .inbox: InboxScreen(state: state, showsNewTaskEntry: false)
         case .daily: DailyScreen(state: state)
         case .weekly: WeeklyScreen(state: state)
         case .library: LibraryScreen(state: state)
@@ -182,9 +182,11 @@ struct BoardView: View {
                     BuddyIconButton(symbol: "magnifyingglass", title: "Search captures", tooltipID: "board-search-tooltip") {
                         state.performSearchCommand(); searchFocused = true
                     }.accessibilityIdentifier("board-search")
+                        .disabled(state.isNavigationBlocked)
                 }
                 BuddyIconButton(symbol: "gearshape", title: "Settings", tooltipID: "board-settings-tooltip") { state.showSettings() }
                     .accessibilityIdentifier("board-settings")
+                    .disabled(state.isNavigationBlocked)
                 exportManagementMenu
                 BuddyIconButton(symbol: "arrow.up.left.and.arrow.down.right", title: "Expand or restore window",
                                 tooltipID: "window-expand-tooltip") {
@@ -202,10 +204,10 @@ struct BoardView: View {
             } else if isPrimary {
                 HStack(spacing: 4) {
                     historyControls
-                    navigationButton("Inbox", symbol: "tray", selected: state.isInboxRoute) { state.openInbox() }
-                    navigationButton("Today", symbol: "sun.max", selected: state.route == .reminders) { state.showReminders() }
                     navigationButton("Projects", symbol: "folder", selected: state.route == .library,
                                      identifier: "primary-workspace") { state.openLibrary() }
+                    navigationButton("Today", symbol: "sun.max", selected: state.route == .reminders) { state.showReminders() }
+                    navigationButton("Inbox", symbol: "tray", selected: state.isInboxRoute) { state.openInbox() }
                 }.accessibilityElement(children: .contain).accessibilityLabel("Main views")
             } else {
                 HStack(spacing: 8) {
@@ -279,6 +281,7 @@ struct BoardView: View {
                 .overlay(alignment: .bottom) { if selected { Capsule().fill(accent).frame(height: 2).padding(.horizontal, 5) } }
                 .contentShape(Rectangle())
         }.buttonStyle(.plain).foregroundStyle(selected ? Palette.foreground : Palette.muted)
+            .disabled(state.isNavigationBlocked)
             .accessibilityAddTraits(selected ? [.isSelected] : [])
             .accessibilityIdentifier(identifier ?? "primary-\(title.lowercased())")
     }
@@ -290,11 +293,13 @@ struct BoardView: View {
         .buttonStyle(.plain).fixedSize().buddyHelp("New task", id: "primary-tooltip-add")
         .background(accent.opacity(0.13), in: RoundedRectangle(cornerRadius: 8))
         .accessibilityLabel("New task").accessibilityIdentifier("timeline-action-add")
+        .disabled(state.isNavigationBlocked)
     }
 
     private var exportManagementMenu: some View {
         let hasDay = DayExportDocument.hasCaptures(captures: state.store.captures, selectedDate: exportDay)
         let hasWeek = WeekExportDocument.hasCaptures(captures: state.store.captures, selectedDays: state.weeklyDays)
+        let archiveBusy = state.isArchiveOperationRunning || state.isImporting || state.removingCaptureID != nil
         return Menu {
             if state.route == .weekly {
                 Button("Search selected day", systemImage: "calendar") { state.openSearch(day: state.weeklyActionDay) }
@@ -311,15 +316,26 @@ struct BoardView: View {
                 Divider()
             }
             Button("Recently Deleted", systemImage: "trash") { state.showTrash() }
-            Button("Back up archive…", systemImage: "externaldrive") { state.exportArchiveBackup() }.disabled(state.isArchiveOperationRunning)
-            Button("Restore archive backup…", systemImage: "arrow.counterclockwise") { state.restoreArchiveBackup() }.disabled(state.isArchiveOperationRunning)
-        } label: { Image(systemName: "square.and.arrow.up").font(.system(size: 16, weight: .semibold)).frame(width: 28, height: 32) }
-        .menuStyle(.borderlessButton).menuIndicator(.hidden).fixedSize().foregroundStyle(accent).buddyHelp("Export Management")
-        .accessibilityLabel("Export Management").accessibilityIdentifier("board-more")
+            Button("Back up archive…", systemImage: "externaldrive") { state.exportArchiveBackup() }.disabled(archiveBusy)
+            Button("Restore archive backup…", systemImage: "arrow.counterclockwise") { state.restoreArchiveBackup() }.disabled(archiveBusy)
+        } label: { Image(systemName: "ellipsis").font(.system(size: 16, weight: .semibold)).frame(width: 28, height: 32) }
+        .menuStyle(.borderlessButton).menuIndicator(.hidden).fixedSize().foregroundStyle(accent).buddyHelp("More app actions")
+        .accessibilityLabel("More app actions").accessibilityIdentifier("board-more")
+        .disabled(state.isNavigationBlocked)
         .daBinTutorialAnchor(.boardMore)
     }
 
-    private var exportDay: Date { state.route == .weekly ? state.weeklyActionDay : state.selectedDay }
+    static func exportDay(for state: AppState) -> Date {
+        if state.route == .weekly { return state.weeklyActionDay }
+        guard state.route == .reminders else { return state.selectedDay }
+        let formatter = DateFormatter()
+        formatter.calendar = Calendar(identifier: .gregorian)
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.timeZone = .current
+        formatter.dateFormat = "yyyy-MM-dd"
+        return formatter.date(from: state.currentDayKey) ?? Date()
+    }
+    private var exportDay: Date { Self.exportDay(for: state) }
     private var dayDocument: DayExportDocument { DayExportDocument.make(captures: state.store.captures, selectedDate: exportDay) }
     private var weekDocument: WeekExportDocument { WeekExportDocument.make(captures: state.store.captures, selectedDays: state.weeklyDays) }
     private func reportExport(_ result: DayExportSaveOutcome) {
@@ -338,6 +354,7 @@ struct BoardView: View {
                     Spacer(minLength: 0)
                 } else {
                     SmallIcon(symbol: "chevron.left", label: state.route == .weekly ? "Previous week" : "Previous day", size: 26) { moveTimeline(-1) }
+                        .disabled(state.isNavigationBlocked)
                     Button { showCalendar.toggle() } label: {
                         HStack(spacing: 5) {
                             Image(systemName: "calendar").foregroundStyle(accent)
@@ -348,6 +365,7 @@ struct BoardView: View {
                             .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 7))
                             .contentShape(RoundedRectangle(cornerRadius: 7))
                     }.buttonStyle(.plain).accessibilityLabel("Choose date, \(timelineDateLabel)").accessibilityIdentifier("timeline-date")
+                        .disabled(state.isNavigationBlocked)
                         .popover(isPresented: $showCalendar, arrowEdge: .bottom) {
                             TimelineCalendarPicker(state: state, weekly: state.route == .weekly) { showCalendar = false }
                                 .environment(\.daBinAccent, accent)
@@ -355,9 +373,10 @@ struct BoardView: View {
                                 .hoverTooltips()
                         }
                     SmallIcon(symbol: "chevron.right", label: state.route == .weekly ? "Next week" : "Next day", size: 26) { moveTimeline(1) }
-                        .disabled(Calendar.current.isDateInToday(state.route == .weekly ? state.weekEndingDay : state.selectedDay))
+                        .disabled(state.isNavigationBlocked || Calendar.current.isDateInToday(state.route == .weekly ? state.weekEndingDay : state.selectedDay))
                     BuddyIconButton(symbol: "tray.full", title: "To organize") { state.openInbox() }
                         .accessibilityIdentifier("inbox-organize")
+                        .disabled(state.isNavigationBlocked)
                 }
                 timelineModeToggle
                 if isTimeline && !Calendar.current.isDateInToday(state.route == .weekly ? state.weekEndingDay : state.selectedDay) {
@@ -366,6 +385,7 @@ struct BoardView: View {
                     } label: { Image(systemName: "arrow.uturn.backward").frame(width: 22, height: 28) }
                     .buttonStyle(.plain).font(.system(size: 11)).foregroundStyle(accent)
                         .accessibilityLabel("Return to today").buddyHelp("Return to today")
+                        .disabled(state.isNavigationBlocked)
                 }
             }
             if isTimeline { CaptureFilterStrip(selection: $state.filter) }
@@ -388,6 +408,7 @@ struct BoardView: View {
                     .accessibilityLabel(mode == .daily ? "Daily view" : "Weekly view")
                     .accessibilityAddTraits(selected ? .isSelected : [])
                     .accessibilityIdentifier(mode == .daily ? "timeline-mode-daily" : "timeline-mode-weekly")
+                    .disabled(state.isNavigationBlocked)
                     .buddyHelp(mode == .daily ? "Captures for the selected day" : "Choose up to seven days with activity",
                                id: "timeline-mode-tooltip-\(mode == .daily ? "daily" : "weekly")")
             }
@@ -565,7 +586,7 @@ enum DaBinTutorialStep: String, CaseIterable, Identifiable {
         case .automation:
             return "Automatic capture starts off. Clipboard and Screenshots are separate, pausable choices, and excluded apps stay unread."
         case .localControl:
-            return "Your archive stays on this Mac. Export Management offers exports, Recently Deleted, backup, and restore; Settings opens the archive and controls shortcuts, appearance, and privacy."
+            return "Your archive stays on this Mac. More app actions offers exports, Recently Deleted, backup, and restore; Settings opens the archive and controls shortcuts, appearance, and privacy."
         case .finish:
             return "That’s the loop: capture, find, plan, and move work into a project. Run this tutorial again anytime from Settings."
         }

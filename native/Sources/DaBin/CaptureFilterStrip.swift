@@ -20,7 +20,7 @@ struct CaptureFilterStrip: View {
         HStack(spacing: 10) {
             ForEach(CaptureFilter.allCases) { filter in
                 BuddyIconButton(symbol: filter.buddySymbol,
-                    title: filter == .text ? "Copy/paste text" : filter.title,
+                    title: filter.title,
                     isActive: selection == filter, tooltipID: "filter-tooltip-\(filter.rawValue)") { selection = filter }
                     .accessibilityIdentifier("capture-filter-\(filter.rawValue)")
                     .accessibilityAddTraits(selection == filter ? .isSelected : [])

@@ -1,0 +1,18 @@
+{
+  "checkedAtUTC": "2026-10-05T02:36:47.623676+00:00",
+  "version": "0.4.33",
+  "build": "88",
+  "buildConfiguration": "Release",
+  "compiledAppSourceFingerprint": "ea77017c68c2d9e21c15de7100c5b7b4bd69504c8fc882444c2209cb11639a17",
+  "sourceInfoPlist": "/Users/roeylibfeld/Library/Developer/Xcode/DerivedData/DaBin-cwnwlltrpkdugtgprhbljhuvfboj/Build/Intermediates.noindex/ArchiveIntermediates/DaBin/InstallationBuildProductsLocation/Applications/DaBin.app/Contents/Info.plist",
+  "sourceInfoPlistSHA256": "80f5e253af41f5e56b95a3e8bd2ce1b34b446547eff42c5d1a28dec6fe268489",
+  "log": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/testflight-full-certification-archive.log",
+  "logSHA256AtSigningStage": "023d0c6df708db94ac910b899e30c99084cf25823b2d34cb4f14e5d61fbd1b92",
+  "releaseCompilation": "completed; log reached CodeSign",
+  "archiveComplete": false,
+  "signedPreflight": "pending",
+  "uploaded": false,
+  "archiveExecSession": 16551,
+  "authenticationUI": "not inspected or operated; human handoff requested",
+  "coverageBoundary": "Compilation and recorded Info.plist fingerprint are not completed signing, archive validation, sandbox installation or upload evidence."
+}

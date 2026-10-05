@@ -1,0 +1,58 @@
+[
+  {
+    "class" : "_TtGC7SwiftUI13NSHostingViewVS_7AnyView_",
+    "frame" : "{{-10000, -10000}, {380, 280}}",
+    "id" : "",
+    "label" : "",
+    "role" : "AXGroup"
+  },
+  {
+    "class" : "SwiftUI.AccessibilityNode",
+    "frame" : "{{-9971, -9766}, {83, 16}}",
+    "id" : "",
+    "label" : "Reminder",
+    "role" : "AXStaticText"
+  },
+  {
+    "class" : "_TtC7SwiftUIP33_1246D37251EA3A918B392E2B95F8B7EF14PlatformSwitch",
+    "frame" : "{{-9881, -9769}, {46, 22}}",
+    "id" : "reminder-enabled",
+    "label" : "",
+    "role" : "AXCheckBox"
+  },
+  {
+    "class" : "_TtGC6AppKit18_NSCoreHostingViewVS_P10$190a796e812AppKitSwitch_",
+    "frame" : "{{-9880, -9768}, {44, 20}}",
+    "id" : "",
+    "label" : "",
+    "role" : "AXUnknown"
+  },
+  {
+    "class" : "_TtGC6AppKit22NSCorePlatformViewHostGVS_32PlatformViewRepresentableAdaptorGVS_P10$190a7bc3412WindowPortalGV7SwiftUI21_ViewModifier_ContentVS_16LiftPortalEffect____",
+    "frame" : "{{-9878, -9766}, {26, 16}}",
+    "id" : "",
+    "label" : "",
+    "role" : "AXUnknown"
+  },
+  {
+    "class" : "_TtC6AppKitP33_3163C09D58C8C57067DCBFBB784729CE14LiftPortalView",
+    "frame" : "{{-9878, -9766}, {26, 16}}",
+    "id" : "",
+    "label" : "",
+    "role" : "AXUnknown"
+  },
+  {
+    "class" : "_TtGC6AppKit18_NSCoreHostingViewGV7SwiftUI21_ViewModifier_ContentVS_16LiftPortalEffect__",
+    "frame" : "{{-9878, -9766}, {26, 16}}",
+    "id" : "",
+    "label" : "",
+    "role" : "AXUnknown"
+  },
+  {
+    "class" : "_TtGC7SwiftUI22AppKitPlatformViewHostGVS_P10$1c1cc0bf832PlatformViewRepresentableAdaptorVS_P10$1c1d132106Switch__",
+    "frame" : "{{-9880, -9768}, {44, 20}}",
+    "id" : "",
+    "label" : "",
+    "role" : "AXUnknown"
+  }
+]

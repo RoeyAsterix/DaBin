@@ -1,0 +1,4 @@
+NOT TESTED: Record-button Space activation depends on macOS Keyboard navigation; this fixture leaves that preference unchanged.
+NOT VERIFIED: macOS did not activate the standalone test process; immediate search typing requires live installed-app verification.
+PASS: 290 native labeled-header accessibility and interaction checks
+Inbox calendar fixture renders: /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa/inbox-calendar

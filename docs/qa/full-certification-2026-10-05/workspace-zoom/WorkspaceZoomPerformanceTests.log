@@ -1,0 +1,9 @@
+CoreData: debug: WAL checkpoint: Database did checkpoint. Log size: 1908 checkpointed: 1908
+2026-10-05 04:38:52.960 WorkspaceZoomPerformanceTests[80304:26554235] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future.
+CYCLE: 1/5, records=5102, RSS=246824960
+CYCLE: 2/5, records=5104, RSS=247398400
+CYCLE: 3/5, records=5107, RSS=247480320
+CYCLE: 4/5, records=5110, RSS=247562240
+CYCLE: 5/5, records=5113, RSS=248741888
+2026-10-05 04:39:26.559 WorkspaceZoomPerformanceTests[80304:26554235] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future.
+PASS: 25 workspace zoom performance checks. 30.001211541704834s, 114 arrivals, 5 cycles. Synthetic input-to-layout p95 54.56233327277005ms; steady runloop p95 69.42895846441388ms; warnings: ["Synthetic input-to-layout p95 exceeds 50 ms", "Steady zoom main-runloop interval p95 exceeds 33 ms", "Main-runloop interval reached 110.50270847044885 ms in phase \'100 durable arrivals during zoom\'; delivery-phase labeling can include preceding operation time", "Main-runloop interval reached 108.84024994447827 ms in phase \'idle between inputs\'; delivery-phase labeling can include preceding operation time", "Main-runloop interval reached 108.50004153326154 ms in phase \'navigation\'; delivery-phase labeling can include preceding operation time"]. Report: /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa/workspace-zoom-performance

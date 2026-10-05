@@ -106,7 +106,7 @@ private final class WorkspaceTestEvent: NSEvent {
         try expect(WorkspaceInputPolicy.completedSwipe(amount: 1, cancelled: true) == nil, "Cancelled recognizer never commits")
         try expect(WorkspaceInputPolicy.completedSwipe(amount: 0.7, cancelled: false) == nil, "Incomplete recognizer never commits")
         try expect(WorkspaceInputPolicy.completedSwipe(amount: -.infinity, cancelled: false) == nil, "Nonfinite swipe is ignored")
-        try expect(WorkspaceInputPolicy.completedSwipe(amount: -1, cancelled: false) == .forward, "Native semantic negative completion is Forward")
+        try expect(WorkspaceInputPolicy.completedSwipe(amount: -1, cancelled: false) == .forward, "Fluid recognizer negative completion is Forward")
         try expect(!WorkspaceInputPolicy.qualifiesForWheelZoom(modifiers: [.command, .control], momentum: []), "Control-scroll cannot zoom workspace")
         try expect(!WorkspaceInputPolicy.qualifiesForWheelZoom(modifiers: .command, momentum: .changed), "Momentum cannot zoom workspace")
 
@@ -156,6 +156,34 @@ private final class WorkspaceTestEvent: NSEvent {
         try expect(input.handle(WorkspaceTestEvent(.otherMouseUp, window: window, button: 3)) && state.route == .library, "Mouse Back uses same history")
         try expect(input.handle(WorkspaceTestEvent(.otherMouseUp, window: window, button: 4)) && state.route == .reminders, "Mouse Forward uses same history")
         try expect(!input.handle(WorkspaceTestEvent(.otherMouseUp, window: window, button: 2)), "Middle click is untouched")
+        let mouseIndex = state.navigationHistory.index
+        let mouseBackDown = WorkspaceTestEvent(.otherMouseDown, window: window, button: 3)
+        try expect(input.handle(mouseBackDown) && state.route == .library && state.navigationHistory.index == mouseIndex - 1,
+                   "Mouse Back commits on button Down")
+        try expect(input.handle(mouseBackDown)
+            && input.handle(WorkspaceTestEvent(.otherMouseDown, window: window, button: 3))
+            && state.navigationHistory.index == mouseIndex - 1, "Duplicate or held Back Down cannot navigate again")
+        let mouseBackUp = WorkspaceTestEvent(.otherMouseUp, window: window, button: 3)
+        state.navigationValidationBlocked = true
+        try expect(input.handle(mouseBackUp) && input.handle(mouseBackUp) && state.navigationHistory.index == mouseIndex - 1,
+                   "Paired Back release is consumed even when navigation becomes validation-blocked")
+        state.navigationValidationBlocked = false
+        let mouseForwardDown = WorkspaceTestEvent(.otherMouseDown, window: window, button: 4)
+        try expect(input.handle(mouseForwardDown) && state.route == .reminders && state.navigationHistory.index == mouseIndex,
+                   "Mouse Forward commits on button Down")
+        let mouseForwardUp = WorkspaceTestEvent(.otherMouseUp, window: window, button: 4)
+        try expect(input.handle(mouseForwardUp) && input.handle(mouseForwardUp) && state.navigationHistory.index == mouseIndex,
+                   "Forward release and its duplicate cannot navigate twice")
+        try expect(input.handle(WorkspaceTestEvent(.otherMouseDown, window: window, button: 3))
+            && state.navigationHistory.index == mouseIndex - 1, "Back press before focus loss navigates once")
+        NotificationCenter.default.post(name: NSWindow.didResignKeyNotification, object: window)
+        NSApp.activate(ignoringOtherApps: true); window.makeKeyAndOrderFront(nil); await settle()
+        let releasedAfterFocus = WorkspaceTestEvent(.otherMouseUp, window: window, button: 3)
+        try expect(input.handle(releasedAfterFocus) && state.navigationHistory.index == mouseIndex - 1,
+                   "Reactivated window consumes the release of a press interrupted by focus loss")
+        try expect(input.handle(WorkspaceTestEvent(.otherMouseUp, window: window, button: 4)) && state.route == .reminders,
+                   "Up-only Forward driver remains supported after interrupted Back pairing")
+        try expect(!input.handle(WorkspaceTestEvent(.otherMouseDown, window: window, button: 2)), "Middle button Down stays native")
         try expect(input.key(key("[", window: window, repeatKey: true)) && state.route == .reminders, "Held shortcut does not cascade")
 
         let editor = InputEditor(frame: NSRect(x: 20, y: 20, width: 100, height: 80)); host.addSubview(editor)
@@ -173,8 +201,15 @@ private final class WorkspaceTestEvent: NSEvent {
         window.makeFirstResponder(doc)
         try expect(!input.key(key("+", window: window)), "Document owns generic zoom shortcuts")
         window.makeFirstResponder(host)
+        let childSwipeIndex = state.navigationHistory.index
+        try expect(!input.handle(WorkspaceTestEvent(.swipe, window: window, point: CGPoint(x: 50, y: 50), x: -1))
+            && input.owner == nil && state.navigationHistory.index == childSwipeIndex,
+                   "One-shot recognized child swipe releases ownership without stealing navigation")
         try expect(!input.handle(WorkspaceTestEvent(.magnify, window: window, point: CGPoint(x: 50, y: 50), phase: .mayBegin)), "Document owns initial gesture surface")
         try expect(input.owner == .child, "Child owner latched at mayBegin")
+        try expect(!input.handle(WorkspaceTestEvent(.swipe, window: window, phase: .began, x: -1))
+            && input.owner == .child && state.navigationHistory.index == childSwipeIndex,
+                   "Moved-pointer recognized began duplicate cannot steal an existing child gesture")
         try expect(!input.handle(WorkspaceTestEvent(.magnify, window: window, phase: .began, magnification: 0.4))
                    && input.owner == .child && state.workspaceZoom.factor == 1, "Moved pointer on began cannot steal document gesture")
         _ = input.handle(WorkspaceTestEvent(.magnify, window: window, phase: .ended))
@@ -231,9 +266,24 @@ private final class WorkspaceTestEvent: NSEvent {
                    "A later independent plain wheel returns to native scrolling")
         try expect(input.perform(.resetZoom) && state.workspaceZoom.factor == 1, "Explicit workspace reset uses same controller")
 
-        try expect(input.handle(WorkspaceTestEvent(.swipe, window: window, phase: .ended, x: 1)) && state.route == .library,
-                   "Completed native swipe with terminal phase still navigates once")
-        _ = input.handle(WorkspaceTestEvent(.otherMouseUp, window: window, button: 4))
+        input.swipePreference = { false }
+        let recognizedBack = WorkspaceTestEvent(.swipe, window: window, phase: .ended, x: -1)
+        try expect(input.handle(recognizedBack) && state.route == .library,
+                   "Recognized right swipe (-1) goes Back even when scroll tracking preference is off")
+        let recognizedIndex = state.navigationHistory.index
+        try expect(input.handle(recognizedBack) && state.navigationHistory.index == recognizedIndex,
+                   "Duplicate recognized Back cannot consume another history entry")
+        let recognizedForward = WorkspaceTestEvent(.swipe, window: window, x: 1)
+        try expect(input.handle(recognizedForward) && state.route == .reminders,
+                   "Recognized left swipe (+1) goes Forward with scroll tracking preference off")
+        try expect(input.handle(recognizedForward) && state.navigationHistory.index == recognizedIndex + 1,
+                   "Duplicate recognized Forward cannot navigate twice")
+        state.workspaceZoom.trackpadNavigationEnabled = false
+        try expect(!input.handle(WorkspaceTestEvent(.swipe, window: window, x: -1))
+            && input.owner == nil && state.navigationHistory.index == recognizedIndex + 1,
+                   "Explicit app navigation preference still disables recognized swipes")
+        state.workspaceZoom.trackpadNavigationEnabled = true
+        input.swipePreference = { true }
 
         typealias Callback = (CGFloat, NSEvent.Phase, Bool, UnsafeMutablePointer<ObjCBool>) -> Void
         var tracked: Callback?
@@ -250,6 +300,10 @@ private final class WorkspaceTestEvent: NSEvent {
                    "mayBegin is not passed to recognizer requiring began/changed")
         try expect(input.handle(WorkspaceTestEvent(.scrollWheel, window: window, phase: .began, x: 15)) && calls == 1,
                    "Dominant horizontal began starts native recognizer")
+        let activeFluidIndex = state.navigationHistory.index
+        try expect(input.handle(WorkspaceTestEvent(.swipe, window: window, phase: .began, x: -1))
+            && input.owner == .swipe && calls == 1 && state.navigationHistory.index == activeFluidIndex,
+                   "Recognized began duplicate cannot reset or independently commit the fluid swipe owner")
         var stop = ObjCBool(false)
         tracked?(1, .cancelled, true, &stop)
         try expect(state.route == .reminders && input.owner == nil, "Cancelled native recognizer leaves route unchanged")

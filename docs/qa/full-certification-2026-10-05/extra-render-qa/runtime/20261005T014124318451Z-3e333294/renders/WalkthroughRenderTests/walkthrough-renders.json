@@ -1,0 +1,394 @@
+{
+  "actionsVerified" : [
+    "production PDF import",
+    "real PDFKit text extraction",
+    "indexed-only query match",
+    "3 active weekly days",
+    "AppState.saveDetail persists comment",
+    "AppState.convertToTask preserves PDF",
+    "AppState.toggleTaskCompletion persists completion",
+    "archive reopen retains all edits",
+    "Auto Capture defaults off",
+    "Copy Day output contains fixture"
+  ],
+  "captureMethod" : "Exact production views in an isolated offscreen NSWindow subclass with an explicit 2× backingScaleFactor, captured by NSView.cacheDisplay into 2× bitmaps. This preserves crisp native typography on a physical 1× display. Cursor transitions are editorial reenactments between actual production states.",
+  "controls" : {
+    "comment" : {
+      "editor" : [
+        260,
+        414
+      ],
+      "save" : [
+        693,
+        535
+      ]
+    },
+    "daily" : {
+      "export" : [
+        380,
+        56
+      ],
+      "files" : [
+        404,
+        90
+      ],
+      "search" : [
+        320,
+        56
+      ],
+      "settings" : [
+        500,
+        56
+      ],
+      "weekly" : [
+        244,
+        22
+      ]
+    },
+    "dailyTask" : {
+      "completion" : [
+        704,
+        298
+      ]
+    },
+    "detail" : {
+      "convertToTask" : [
+        77,
+        127
+      ],
+      "save" : [
+        693,
+        535
+      ]
+    },
+    "search" : {
+      "field" : [
+        315,
+        71
+      ],
+      "match" : [
+        200,
+        379
+      ]
+    },
+    "settings" : {
+      "autoCaptureOff" : [
+        128,
+        240
+      ],
+      "localArchiveText" : [
+        350,
+        240
+      ]
+    },
+    "weekly" : {
+      "daily" : [
+        228,
+        22
+      ],
+      "export" : [
+        390,
+        56
+      ],
+      "search" : [
+        330,
+        56
+      ]
+    }
+  },
+  "description" : "Exact production DaBin views with one coherent fictional PDF arc.",
+  "fixture" : "Launch-plan.pdf",
+  "pdfTileCapture" : "PDFKit tiled layers are omitted by cacheDisplay. For visible PDFViews only, this renderer rasterizes the actual fixture PDF page at the live PDFView measured page bounds. No UI is redrawn.",
+  "privacy" : "Isolated temporary store and UserDefaults suite; fictional fixtures only; never read general clipboard, request permissions, deliver notifications, or contact network. Temporary archive deleted on exit.",
+  "productionSources" : [
+    "BoardView.swift",
+    "CaptureStore.swift",
+    "ContentIndexService.swift",
+    "AppState.swift",
+    "DayExportUI.swift",
+    "RobotCharacterView.swift"
+  ],
+  "query" : "launch checklist",
+  "restoredPDFTiles" : 6,
+  "screenshots" : [
+    {
+      "file" : "01-daily-before@2x.png",
+      "logicalHeight" : 560,
+      "logicalWidth" : 760,
+      "pixelHeight" : 1120,
+      "pixelScale" : 2,
+      "pixelWidth" : 1520,
+      "route" : "daily"
+    },
+    {
+      "file" : "02-drop-target@2x.png",
+      "logicalHeight" : 560,
+      "logicalWidth" : 760,
+      "pixelHeight" : 1120,
+      "pixelScale" : 2,
+      "pixelWidth" : 1520,
+      "route" : "daily"
+    },
+    {
+      "file" : "03-capture-success@2x.png",
+      "logicalHeight" : 560,
+      "logicalWidth" : 760,
+      "pixelHeight" : 1120,
+      "pixelScale" : 2,
+      "pixelWidth" : 1520,
+      "route" : "daily"
+    },
+    {
+      "file" : "04-daily-captured@2x.png",
+      "logicalHeight" : 560,
+      "logicalWidth" : 760,
+      "pixelHeight" : 1120,
+      "pixelScale" : 2,
+      "pixelWidth" : 1520,
+      "route" : "daily"
+    },
+    {
+      "file" : "05-daily-files@2x.png",
+      "logicalHeight" : 560,
+      "logicalWidth" : 760,
+      "pixelHeight" : 1120,
+      "pixelScale" : 2,
+      "pixelWidth" : 1520,
+      "route" : "daily"
+    },
+    {
+      "file" : "06-weekly@2x.png",
+      "logicalHeight" : 560,
+      "logicalWidth" : 1440,
+      "pixelHeight" : 1120,
+      "pixelScale" : 2,
+      "pixelWidth" : 2880,
+      "route" : "weekly"
+    },
+    {
+      "file" : "07-week-search-menu@2x.png",
+      "logicalHeight" : 174,
+      "logicalWidth" : 258,
+      "pixelHeight" : 348,
+      "pixelScale" : 2,
+      "pixelWidth" : 516,
+      "route" : "production-popover"
+    },
+    {
+      "file" : "08-search-empty@2x.png",
+      "logicalHeight" : 560,
+      "logicalWidth" : 760,
+      "pixelHeight" : 1120,
+      "pixelScale" : 2,
+      "pixelWidth" : 1520,
+      "route" : "search"
+    },
+    {
+      "file" : "09-search-launch@2x.png",
+      "logicalHeight" : 560,
+      "logicalWidth" : 760,
+      "pixelHeight" : 1120,
+      "pixelScale" : 2,
+      "pixelWidth" : 1520,
+      "route" : "search"
+    },
+    {
+      "file" : "10-search-launch-check@2x.png",
+      "logicalHeight" : 560,
+      "logicalWidth" : 760,
+      "pixelHeight" : 1120,
+      "pixelScale" : 2,
+      "pixelWidth" : 1520,
+      "route" : "search"
+    },
+    {
+      "file" : "11-search-result@2x.png",
+      "logicalHeight" : 560,
+      "logicalWidth" : 760,
+      "pixelHeight" : 1120,
+      "pixelScale" : 2,
+      "pixelWidth" : 1520,
+      "route" : "search"
+    },
+    {
+      "file" : "12-detail-before@2x.png",
+      "logicalHeight" : 560,
+      "logicalWidth" : 760,
+      "pixelHeight" : 1120,
+      "pixelScale" : 2,
+      "pixelWidth" : 1520,
+      "route" : "detail"
+    },
+    {
+      "file" : "13-comment-empty@2x.png",
+      "logicalHeight" : 560,
+      "logicalWidth" : 760,
+      "pixelHeight" : 1120,
+      "pixelScale" : 2,
+      "pixelWidth" : 1520,
+      "route" : "detail"
+    },
+    {
+      "file" : "14-comment-draft@2x.png",
+      "logicalHeight" : 560,
+      "logicalWidth" : 760,
+      "pixelHeight" : 1120,
+      "pixelScale" : 2,
+      "pixelWidth" : 1520,
+      "route" : "detail"
+    },
+    {
+      "file" : "15-comment-saved@2x.png",
+      "logicalHeight" : 560,
+      "logicalWidth" : 760,
+      "pixelHeight" : 1120,
+      "pixelScale" : 2,
+      "pixelWidth" : 1520,
+      "route" : "detail"
+    },
+    {
+      "file" : "16-before-task@2x.png",
+      "logicalHeight" : 560,
+      "logicalWidth" : 760,
+      "pixelHeight" : 1120,
+      "pixelScale" : 2,
+      "pixelWidth" : 1520,
+      "route" : "detail"
+    },
+    {
+      "file" : "17-task-created@2x.png",
+      "logicalHeight" : 560,
+      "logicalWidth" : 760,
+      "pixelHeight" : 1120,
+      "pixelScale" : 2,
+      "pixelWidth" : 1520,
+      "route" : "detail"
+    },
+    {
+      "file" : "18-daily-task@2x.png",
+      "logicalHeight" : 560,
+      "logicalWidth" : 760,
+      "pixelHeight" : 1120,
+      "pixelScale" : 2,
+      "pixelWidth" : 1520,
+      "route" : "daily"
+    },
+    {
+      "file" : "19-daily-completed@2x.png",
+      "logicalHeight" : 560,
+      "logicalWidth" : 760,
+      "pixelHeight" : 1120,
+      "pixelScale" : 2,
+      "pixelWidth" : 1520,
+      "route" : "daily"
+    },
+    {
+      "file" : "20-settings-auto-off@2x.png",
+      "logicalHeight" : 560,
+      "logicalWidth" : 760,
+      "pixelHeight" : 1120,
+      "pixelScale" : 2,
+      "pixelWidth" : 1520,
+      "route" : "settings"
+    },
+    {
+      "file" : "21-settings-local@2x.png",
+      "logicalHeight" : 560,
+      "logicalWidth" : 760,
+      "pixelHeight" : 1120,
+      "pixelScale" : 2,
+      "pixelWidth" : 1520,
+      "route" : "settings"
+    },
+    {
+      "file" : "22-weekly-export@2x.png",
+      "logicalHeight" : 560,
+      "logicalWidth" : 780,
+      "pixelHeight" : 1120,
+      "pixelScale" : 2,
+      "pixelWidth" : 1560,
+      "route" : "weekly"
+    },
+    {
+      "file" : "23-export-menu@2x.png",
+      "logicalHeight" : 286,
+      "logicalWidth" : 262,
+      "pixelHeight" : 572,
+      "pixelScale" : 2,
+      "pixelWidth" : 524,
+      "route" : "production-popover"
+    },
+    {
+      "file" : "24-export-copied@2x.png",
+      "logicalHeight" : 316,
+      "logicalWidth" : 262,
+      "pixelHeight" : 632,
+      "pixelScale" : 2,
+      "pixelWidth" : 524,
+      "route" : "production-popover"
+    },
+    {
+      "file" : "25-daily-final@2x.png",
+      "logicalHeight" : 560,
+      "logicalWidth" : 760,
+      "pixelHeight" : 1120,
+      "pixelScale" : 2,
+      "pixelWidth" : 1520,
+      "route" : "daily"
+    },
+    {
+      "file" : "robot-idle@2x.png",
+      "logicalHeight" : 156,
+      "logicalWidth" : 128,
+      "pixelHeight" : 312,
+      "pixelScale" : 2,
+      "pixelWidth" : 256,
+      "route" : "production-robot"
+    },
+    {
+      "file" : "robot-curious@2x.png",
+      "logicalHeight" : 156,
+      "logicalWidth" : 128,
+      "pixelHeight" : 312,
+      "pixelScale" : 2,
+      "pixelWidth" : 256,
+      "route" : "production-robot"
+    },
+    {
+      "file" : "robot-hungry@2x.png",
+      "logicalHeight" : 156,
+      "logicalWidth" : 128,
+      "pixelHeight" : 312,
+      "pixelScale" : 2,
+      "pixelWidth" : 256,
+      "route" : "production-robot"
+    },
+    {
+      "file" : "robot-digesting@2x.png",
+      "logicalHeight" : 156,
+      "logicalWidth" : 128,
+      "pixelHeight" : 312,
+      "pixelScale" : 2,
+      "pixelWidth" : 256,
+      "route" : "production-robot"
+    },
+    {
+      "file" : "robot-success@2x.png",
+      "logicalHeight" : 156,
+      "logicalWidth" : 128,
+      "pixelHeight" : 312,
+      "pixelScale" : 2,
+      "pixelWidth" : 256,
+      "route" : "production-robot"
+    },
+    {
+      "file" : "fixture-file-icon@2x.png",
+      "logicalHeight" : 64,
+      "logicalWidth" : 64,
+      "pixelHeight" : 128,
+      "pixelScale" : 2,
+      "pixelWidth" : 128,
+      "route" : "macOS-PDF-icon"
+    }
+  ]
+}

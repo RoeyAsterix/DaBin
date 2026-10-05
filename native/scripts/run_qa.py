@@ -25,6 +25,9 @@ NONFOCUS = ["ProjectFileArchiveTests", "ExplorerTransferTests", "ExplorerQueryTe
             "SoftwareUpdateTests", "UpdateConfigurationTests", "RobotMotionTests", "IslandRobotChoreographyTests", "RobotLifecycleTests", "RobotAppFrameTests", "QuietOrbitRenderTests"]
 WINDOW = ["RedesignInteractionTests", "WindowResizeInteractionTests", "WindowTests", "WeeklyWindowTests", "FilterResizeTests", "RobotDropTests", "DailyCaptureTests", "HeaderInteractionTests", "WorkspaceWindowTests", "RobotWindowTransitionTests"]
 WINDOW.append("DetailPreviewInteractionTests")
+WINDOW.append("CaptureDetailReadabilityTests")
+WINDOW.append("CaptureDetailNavigationTests")
+WINDOW.append("TaskPlanInteractionTests")
 WINDOW.append("CaptureExtendedInteractionTests")
 WINDOW.append("ExtendedMediaInteractionTests")
 NONFOCUS.append("CaptureZoomStateTests")
@@ -62,8 +65,15 @@ WINDOW.append("SearchInputTests")
 WINDOW.append("AutoRecordIndicatorTests")
 WINDOW.append("TimelineCalendarTests")
 WINDOW.append("TodayTaskCardTests")
+WINDOW.append("WeeklyLayoutTests")
+WINDOW.append("DailyGridLayoutTests")
 NONFOCUS.append("NavigationHistoryTests")
 WINDOW += ["WorkspaceZoomTests", "WorkspaceZoomLayoutTests", "WorkspaceInputTests", "WorkspaceZoomPerformanceTests", "ViewportLifecycleTests"]
+WINDOW.append("NavigationGestureTests")
+NONFOCUS += ["DurabilityStressTests", "FlowActionStressTests"]
+NONFOCUS.append("MediaIntegrationTests")
+WINDOW.append("VisualAnimationStressTests")
+WINDOW.append("VideoPlaybackIntegrationTests")
 
 
 def capture(arguments):

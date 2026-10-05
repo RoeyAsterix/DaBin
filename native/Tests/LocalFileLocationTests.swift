@@ -37,6 +37,7 @@ import SwiftUI
         [value("accessibilityLabel"), value("accessibilityTitle"), attribute("AXTitle"), attribute("AXDescription")]
             .compactMap { $0 as? String }.first { !$0.isEmpty } ?? ""
     }
+    var valueText: String? { (value("accessibilityValue") as? String) ?? (attribute("AXValue") as? String) }
     var diagnostic: String {
         let role = (value("accessibilityRole") as? String) ?? (attribute("AXRole") as? String) ?? "no role"
         let names = ["accessibilityLabel", "accessibilityTitle", "accessibilityDescription", "accessibilityValue"]
@@ -70,7 +71,7 @@ import SwiftUI
     private static var checks = 0
     private var result: Int32 = 0
     private static let files = FileManager.default
-    private struct Fixture {
+    @MainActor private struct Fixture {
         let hosting: NSHostingView<AnyView>
         let window: NSWindow
         func close() { window.orderOut(nil); window.contentView = nil; window.close() }
@@ -185,6 +186,77 @@ import SwiftUI
     }
 
     private static func run() async throws {
+        @MainActor final class MenuTracking {
+            let deadline = ProcessInfo.processInfo.systemUptime + 2
+            weak var window: NSWindow?
+            private(set) var menus: [NSMenu] = []
+            private(set) var ended = Set<ObjectIdentifier>()
+            private(set) var timedOut = false
+            init(window: NSWindow) { self.window = window }
+            func began(_ menu: NSMenu) {
+                if !menus.contains(where: { $0 === menu }) { menus.append(menu) }
+            }
+            func didEnd(_ menu: NSMenu) { ended.insert(ObjectIdentifier(menu)) }
+            func cancel() {
+                menus.forEach { $0.cancelTrackingWithoutAnimation() }
+                guard ProcessInfo.processInfo.systemUptime >= deadline else { return }
+                timedOut = true
+                guard let window, let escape = NSEvent.keyEvent(with: .keyDown, location: .zero, modifierFlags: [],
+                    timestamp: ProcessInfo.processInfo.systemUptime, windowNumber: window.windowNumber, context: nil,
+                    characters: "\u{1b}", charactersIgnoringModifiers: "\u{1b}", isARepeat: false, keyCode: 53) else { return }
+                NSApp.postEvent(escape, atStart: true)
+            }
+        }
+        func nativeMore(_ target: LocalFolderAX, host: NSView, window: NSWindow, requiredTitle: String? = nil) async throws -> NSMenu {
+            let tracking = MenuTracking(window: window)
+            let center = NotificationCenter.default
+            let began = center.addObserver(forName: NSMenu.didBeginTrackingNotification, object: nil, queue: nil) { notification in
+                guard let menu = notification.object as? NSMenu else { return }
+                MainActor.assumeIsolated { tracking.began(menu) }
+            }
+            let ended = center.addObserver(forName: NSMenu.didEndTrackingNotification, object: nil, queue: nil) { notification in
+                guard let menu = notification.object as? NSMenu else { return }
+                MainActor.assumeIsolated { tracking.didEnd(menu) }
+            }
+            let timer = Timer(timeInterval: 0.02, repeats: true) { _ in
+                MainActor.assumeIsolated { tracking.cancel() }
+            }
+            RunLoop.main.add(timer, forMode: .common)
+            RunLoop.main.add(timer, forMode: .eventTracking)
+            defer { timer.invalidate(); center.removeObserver(began); center.removeObserver(ended) }
+            let selector = NSSelectorFromString("accessibilityFrame")
+            guard target.object.responds(to: selector) else { throw failure("More has no native label frame") }
+            typealias FrameGetter = @convention(c) (AnyObject, Selector) -> NSRect
+            let frame = unsafeBitCast(target.object.method(for: selector), to: FrameGetter.self)(target.object, selector)
+            let point = NSPoint(x: frame.midX, y: frame.midY)
+            let sufficientWidth = requiredTitle == nil ? frame.width > 32 : frame.width >= 28
+            try expect(sufficientWidth && frame.height >= 32 && window.frame.insetBy(dx: -1, dy: -1).contains(frame),
+                       "More exposes its full visible native label target within the fixture: id=\(target.identifier ?? "none") frame=\(frame) window=\(window.frame) requiredTitle=\(requiredTitle ?? "none")")
+            let location = window.convertPoint(fromScreen: point)
+            let timestamp = ProcessInfo.processInfo.systemUptime
+            guard let down = NSEvent.mouseEvent(with: .leftMouseDown, location: location, modifierFlags: [],
+                timestamp: timestamp, windowNumber: window.windowNumber, context: nil,
+                eventNumber: 1, clickCount: 1, pressure: 1),
+                  let up = NSEvent.mouseEvent(with: .leftMouseUp, location: location, modifierFlags: [],
+                timestamp: timestamp + 0.02, windowNumber: window.windowNumber, context: nil,
+                eventNumber: 2, clickCount: 1, pressure: 0) else { throw failure("Cannot create fixture-local menu label click") }
+            NSApp.postEvent(up, atStart: true); window.sendEvent(down)
+            if let remaining = NSApp.nextEvent(matching: .leftMouseUp, until: Date(), inMode: .default, dequeue: true) {
+                try expect(remaining.windowNumber == window.windowNumber, "More label mouse-up belongs only to the folder fixture")
+                window.sendEvent(remaining)
+            }
+            await settle(host)
+            guard let menu = tracking.menus.first(where: { menu in
+                if let requiredTitle { return menu.items.contains { $0.title == requiredTitle } }
+                return menu.items.contains { $0.title == "Saved folder" || $0.title == "Show saved folder" }
+                    && menu.items.contains { $0.title == "Trash" || $0.title.contains("Recently Deleted") }
+            }) else { throw failure("More's visible label must materialize its requested native menu") }
+            try expect(!tracking.timedOut && tracking.ended.contains(ObjectIdentifier(menu)),
+                       "More menu tracking finishes before invoking the saved-folder item")
+            try expect(!window.isKeyWindow && !NSApp.isActive,
+                       "More label activation preserves the inactive, non-key folder fixture")
+            return menu
+        }
         let scratch = files.temporaryDirectory.appendingPathComponent("DaBinLocalFolderQA-\(UUID().uuidString)")
         let root = scratch.appendingPathComponent("Library", isDirectory: true)
         let suite = "DaBinLocalFolderQA.\(UUID().uuidString)"
@@ -265,6 +337,11 @@ import SwiftUI
         defer { explorer.close() }
         let explorerImport = try await find(explorer.hosting, id: "explorer-add-files")
         try expect(explorerImport.label == "Add files", "Explorer preserves an explicitly named Add files importer")
+        let explorerFolder = try await find(explorer.hosting, id: "explorer-open-files")
+        try expect(explorerFolder.label == "Open folder",
+                   "Explorer distinguishes Open folder from its Add files importer")
+        try expect(!nodes(explorer.hosting).contains { $0.identifier == "explorer-open-project-folder" },
+                   "Explorer exposes one Finder folder opener without a duplicate footer control")
         await settle(explorer.hosting)
         let explorerOpens = opened.count
         try await press(explorer.hosting, id: "explorer-open-files")
@@ -282,6 +359,9 @@ import SwiftUI
         defer { shelf.close() }
         let shelfImport = try await find(shelf.hosting, id: "workspace-add-files")
         try expect(shelfImport.label == "Add files", "Shelf preserves the separate Add files importer. Selected ID node hierarchy:\n\(hierarchy(shelfImport))\nAll matching ID nodes:\n\(nodes(shelf.hosting).filter { $0.identifier == "workspace-add-files" }.map(\.diagnostic).joined(separator: "\n"))")
+        let shelfFolder = try await find(shelf.hosting, id: "workspace-open-files")
+        try expect(shelfFolder.label == "Open folder",
+                   "Shelf distinguishes Open folder from its Add files importer")
         let shelfOpens = opened.count
         try await press(shelf.hosting, id: "workspace-open-files")
         try expect(opened.count == shelfOpens + 1 && opened.last == northFolder,
@@ -301,9 +381,115 @@ import SwiftUI
             size: NSSize(width: 380, height: 1_300))
         defer { detail.close() }
         let detailOpens = opened.count
-        try await press(detail.hosting, label: "Show saved folder")
+        let detailInventory = try inventory(store.root)
+        let more = try await find(detail.hosting, id: "detail-actions-more")
+        try expect(more.label == "More capture actions", "Capture detail exposes the labeled native More menu")
+        let menu = try await nativeMore(more, host: detail.hosting, window: detail.window)
+        guard let savedFolder = menu.items.first(where: {
+                  LocalFolderAX(object: $0).identifier == "detail-action-folder"
+                      || $0.identifier?.rawValue == "detail-action-folder"
+              }) else { throw failure("Detail More must expose its real native saved-folder menu action") }
+        try expect(savedFolder.title == "Saved folder" && LocalFolderAX(object: savedFolder).label == "Show saved folder"
+            && savedFolder.isEnabled && !savedFolder.isHidden && savedFolder.action != nil,
+                   "Saved folder retains its readable label, stable identity and enabled native menu-item action")
+        // Dispatch SwiftUI's actual NSMenuItem action, rather than calling the
+        // AppState method directly or invoking Finder outside the opener spy.
+        menu.performActionForItem(at: menu.index(of: savedFolder))
+        await settle(detail.hosting)
         try expect(opened.count == detailOpens + 1 && opened.last == currentParent,
                    "Production capture-detail folder action opens the current saved original directory")
+        try expect(try inventory(store.root) == detailInventory
+            && Data(contentsOf: managedAfter) == payload && Data(contentsOf: source) == payload,
+                   "The native saved-folder menu action preserves every library file and both managed and external original bytes")
+
+        // Every menu family exposes the actual production return action. The
+        // fixture supplies only the Explorer menu's visual container; it does
+        // not replace its NSMenuItem handler with a direct state mutation.
+        for family in ["shared capture", "Explorer/Projects", "capture detail"] {
+            try state.workspace.markInboxProcessed([unfiled.id])
+            state.openLibrary(); state.filter = .files
+            let openerCount = opened.count
+            let contentBefore = CaptureSnapshot(unfiled)
+            let actionView: AnyView
+            let actionID: String
+            if family == "Explorer/Projects" {
+                actionID = "qa-explorer-return-actions"
+                actionView = AnyView(Menu {
+                    ExplorerCaptureActions(state: state, workspace: state.workspace, capture: unfiled)
+                } label: {
+                    Label("Capture actions", systemImage: "ellipsis").frame(minHeight: 32).contentShape(Rectangle())
+                }.menuStyle(.button).buttonStyle(.plain).menuIndicator(.hidden).fixedSize()
+                    .accessibilityIdentifier(actionID).padding(14))
+            } else if family == "capture detail" {
+                state.openCapture(unfiled.id)
+                guard let returnDraft = state.selectedDraft else { throw failure("Return-to-Inbox Detail must own its actual draft") }
+                try expect(state.route == .detail && state.selectedCapture === unfiled,
+                    "The Detail More return fixture enters its actual capture route")
+                actionID = "detail-actions-more"
+                actionView = AnyView(DetailScreen(state: state, capture: unfiled, draft: returnDraft))
+            } else {
+                actionID = "capture-more-\(unfiled.id.uuidString)"
+                actionView = AnyView(CaptureControls(state: state, capture: unfiled).padding(14))
+            }
+            let actions = try await fixture(actionView, size: NSSize(width: 380, height: family == "capture detail" ? 1_300 : 240))
+            defer { actions.close() }
+            let trigger = try await find(actions.hosting, id: actionID)
+            let native = try await nativeMore(trigger, host: actions.hosting, window: actions.window, requiredTitle: "Return to Inbox")
+            guard let item = native.items.first(where: { $0.title == "Return to Inbox" }) else {
+                throw failure("Production menu lost Return to Inbox")
+            }
+            let expectedReturnID = "capture-return-to-inbox-\(unfiled.id.uuidString)"
+            try expect((item.identifier?.rawValue == expectedReturnID || LocalFolderAX(object: item).identifier == expectedReturnID)
+                && item.isEnabled && !item.isHidden && item.action != nil,
+                       "Return to Inbox has its stable capture identity and reachable native action in \(family): nativeID=\(item.identifier?.rawValue ?? "none") enabled=\(item.isEnabled) hidden=\(item.isHidden) action=\(String(describing: item.action)) \(LocalFolderAX(object: item).diagnostic)")
+            let historyIndex = state.navigationHistory.index
+            native.performActionForItem(at: native.index(of: item))
+            await settle(actions.hosting)
+            try expect(state.route == .inbox && state.filter == .all && !state.workspace.processedInboxIDs.contains(unfiled.id),
+                       "The \(family) native menu returns the kept item to visible Inbox")
+            try expect(state.navigationHistory.index == historyIndex + 1,
+                "The \(family) return action records exactly one actual Inbox history visit")
+            let encoder = JSONEncoder(); encoder.outputFormatting = [.sortedKeys]
+            try expect(try encoder.encode(CaptureSnapshot(unfiled)) == encoder.encode(contentBefore)
+                && opened.count == openerCount && Data(contentsOf: managedAfter) == payload && Data(contentsOf: source) == payload,
+                       "The native return action preserves capture metadata and original bytes without opening Finder")
+        }
+
+        state.libraryProject = "Northstar"; state.openLibrary(); state.openNewNote()
+        state.newNoteText = "An existing shared note draft"
+        let noteProject = state.newNoteProject
+        try expect(noteProject == "Northstar", "The existing note draft has its explicit project destination")
+        state.back(); state.openInbox()
+        let noteBoard = try await fixture(BoardView(state: state, theme: ThemeSettings(defaults: defaults)),
+            size: NSSize(width: 380, height: 800))
+        defer { noteBoard.close() }
+        let noteEntry = try await find(noteBoard.hosting, id: "inbox-note-editor")
+        try expect(noteEntry.label == "Open note editor" && noteEntry.press(),
+                   "Inbox exposes and activates its actual full-note editor entry")
+        await settle(noteBoard.hosting)
+        try expect(state.route == .newNote && state.newNoteText == "An existing shared note draft"
+            && state.newNoteProject == noteProject,
+                   "Opening the note editor preserves the current shared text and destination")
+        func editableNote(in view: NSView) -> NSTextView? {
+            if let editor = view as? NSTextView, editor.isEditable, editor.string == state.newNoteText { return editor }
+            return view.subviews.compactMap { editableNote(in: $0) }.first
+        }
+        guard let editor = editableNote(in: noteBoard.hosting) else { throw failure("The full note editor has no mounted editable NSTextView") }
+        try expect(noteBoard.window.makeFirstResponder(editor), "The fixture focuses its own native note editor")
+        editor.setSelectedRange(NSRange(location: (editor.string as NSString).length, length: 0))
+        editor.insertText(" — continued in the editor", replacementRange: editor.selectedRange())
+        await settle(noteBoard.hosting)
+        let continuedText = "An existing shared note draft — continued in the editor"
+        try expect(state.newNoteText == continuedText, "Native note typing updates the existing shared draft binding")
+        let back = try await find(noteBoard.hosting, id: "board-back")
+        try expect(back.press(), "The note editor has an actual Back action")
+        await settle(noteBoard.hosting)
+        let quick = try await find(noteBoard.hosting, id: "inbox-quick-text")
+        try expect(state.route == .inbox && state.newNoteText == continuedText && state.newNoteProject == noteProject
+            && quick.valueText == continuedText,
+                   "Back restores Inbox and its visible quick composer with the edited draft and destination intact")
+        try expect(!noteBoard.window.isKeyWindow && !NSApp.isActive,
+                   "Note entry, native typing and Back retain the inactive own-process fixture")
 
         openerSucceeds = false; state.status = nil
         state.showArchiveFolder(for: imported)

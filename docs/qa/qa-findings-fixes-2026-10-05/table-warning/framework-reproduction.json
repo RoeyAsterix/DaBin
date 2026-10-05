@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "verifiedAtUTC": "2026-10-05T03:27:03.088173+00:00",
+  "status": "framework_reproduced_warning_remains_open",
+  "observedWarning": "WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future.",
+  "warningCount": 5,
+  "runtimeExitCodeReportedByParent": 0,
+  "checks": 74,
+  "phases": 18,
+  "maximumMaterializedNativeRows": 32,
+  "recordsInitially": 1002,
+  "recordsFinally": 1050,
+  "allSnapshotsRetainAutomaticHeights": true,
+  "evidence": {
+    "source": {
+      "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/table-warning/StandaloneVariableHeightListProbe.swift",
+      "sha256": "9cf1cb9effd7cad3272dca56013e16d8d15b3ffae8bd23f1f49657a2aaa5df63"
+    },
+    "compileReceipt": {
+      "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/table-warning/standalone-variable-list-compile.json",
+      "sha256": "097f897531d210fbaa65c55e4afb9a452933d38d9529c1c92387a4956239167f"
+    },
+    "executable": {
+      "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa-cache/standalone-variable-list-9cf1cb9effd7cad3/StandaloneVariableHeightListProbe",
+      "sha256": "1719b41925c3422f41c72386b77e700d6dad7df5d541ce7c2597510f32bbfff0"
+    },
+    "runtimeLog": {
+      "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/table-warning/standalone-runtime.log",
+      "sha256": "07295de2e5944964bc36750e94fcad2785a0a608e0c417727727e9db1151509b"
+    },
+    "runtimeReport": {
+      "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/table-warning/standalone-runtime/standalone-variable-list-report.json",
+      "sha256": "44b3bac42440447f9dfccc9e81d967041361bd2490e59553d0b09c1d0961de85"
+    }
+  },
+  "isolation": "Standalone only public SwiftUI/AppKit/Foundation/Darwin. No DaBin product/module, store, viewport marker, observer or custom NSTableView delegate; real native SwiftUI List and automatic row heights retained.",
+  "interpretation": "The same native warning reproduces independently of DaBin code. This establishes a bounded SwiftUI/AppKit framework reproduction for this macOS/SDK combination; it does not mean the warning is fixed or guarantee future framework compatibility.",
+  "rejectedPublicWorkaround": {
+    "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/table-warning/ProjectWorkspaceTableRealisticEstimateTrial.swift",
+    "sourceSHA256": "8f85c03055759edbf37c2aebf792c389770e2ecd531ff837badde2553c693873",
+    "log": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/table-warning/project-realistic-estimate-trial.log",
+    "logSHA256": "99cb29d5cdd4735afe66340614b870ef2d2d84e87baa4ce7d96b7d45edb99d32",
+    "observed": "209semantic checks; realistic294estimate preserves auto heights but retains all5warnings; SwiftUI resets rowHeight to24 at later updates."
+  },
+  "decision": "No unsafe delegate intervention, warning suppression, fixed-height replacement or broad row architecture rewrite promoted. Native virtualization and controls retained; warning remains an explicit unresolved finding in future full logs.",
+  "productionChangedForThisDiagnostic": false,
+  "runtimeLaunchedByAgent": false
+}

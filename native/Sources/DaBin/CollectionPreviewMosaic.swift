@@ -82,6 +82,7 @@ struct CollectionPreviewMosaic: View {
     let store: CaptureStore
     let captures: [Capture]
     var compact = false
+    var height: CGFloat? = nil
 
     private var selection: CollectionPreviewSelection { CollectionPreviewSelection(captures: captures) }
 
@@ -119,7 +120,7 @@ struct CollectionPreviewMosaic: View {
                     }
                 }
             }
-            .frame(height: zoom.value(CollectionPreviewLayout.previewHeight(compact: compact)))
+            .frame(height: height ?? zoom.value(CollectionPreviewLayout.previewHeight(compact: compact)))
             .accessibilityElement(children: .ignore)
             .accessibilityLabel("Collection contents preview")
             .accessibilityIdentifier("collection-preview-mosaic")

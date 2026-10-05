@@ -1,0 +1,11 @@
+{
+  "attempt": "NSLog and NSLogv both interposed; RTLD_NEXT resolved the replacement, causing logger recursion",
+  "productionChanged": false,
+  "originalRawLog": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa-fixes-project-trace-recursion.log",
+  "originalSHA256": "26a980f219c795e49e42d9477dc2f3f0d3de6199702ee7d9a879cbdd52b9c04d",
+  "bytes": 7595242642,
+  "usableEvidence": "First upstream warning stack only; runtime pass and warning counts invalidated",
+  "correctedLogger": "Only NSLog interposed; NSLogv remains untouched",
+  "originalRawLogRemoved": true,
+  "removalReason": "Generated recursive duplicate log was7.6GB; SHA and bounded first/last context preserved; no product/user data"
+}

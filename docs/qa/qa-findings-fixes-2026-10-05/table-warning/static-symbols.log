@@ -1,0 +1,292 @@
+(lldb) target create "native/build/qa-cache/app-store-70feee950c20ceae70b7bcf9494d1b269c9a089191bf243f85ee35071457d45b/ProjectWorkspaceViewTests-5a3f98658dce14e0/ProjectWorkspaceViewTests"
+Current executable set to '/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa-cache/app-store-70feee950c20ceae70b7bcf9494d1b269c9a089191bf243f85ee35071457d45b/ProjectWorkspaceViewTests-5a3f98658dce14e0/ProjectWorkspaceViewTests' (arm64).
+(lldb) image lookup -r -n '[Rr]eent'
+2 matches found in /System/Library/Frameworks/SwiftUI.framework/Versions/A/SwiftUI:
+        Address: SwiftUI[0x00000001b61af734] (SwiftUI.__TEXT.__text + 8810620)
+        Summary: SwiftUI`SwiftUI.NSHostingView.checkForReentrantLayout() -> Swift.Bool
+        Address: SwiftUI[0x00000001b65d3cb0] (SwiftUI.__TEXT.__text + 13153784)
+        Summary: SwiftUI`@objc SwiftUI.SwiftUIAppKitButton.didReenterButton(__C.NSButton) -> ()
+1 match found in /System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation:
+        Address: CoreFoundation[0x000000018058a0b8] (CoreFoundation.__TEXT.__text + 301512)
+        Summary: CoreFoundation`__NSCheckReentrancy
+4 matches found in /System/Library/PrivateFrameworks/SkyLight.framework/Versions/A/SkyLight:
+        Address: SkyLight[0x0000000186f4cd18] (SkyLight.__TEXT.__text + 2462600)
+        Summary: SkyLight`screentime_suppress_connection(CGXConnection*, __CFDictionary const*)
+        Address: SkyLight[0x0000000186f4de18] (SkyLight.__TEXT.__text + 2466952)
+        Summary: SkyLight`invocation function for block in screentime_suppress_connection(CGXConnection*, __CFDictionary const*)
+        Address: SkyLight[0x0000000186f4e250] (SkyLight.__TEXT.__text + 2468032)
+        Summary: SkyLight`invocation function for block in screentime_suppress_connection(CGXConnection*, __CFDictionary const*)
+        Address: SkyLight[0x0000000187058718] (SkyLight.__TEXT.__text + 3558792)
+        Summary: SkyLight`CGXWindow::set_is_suppressed_for_screentime(bool)
+1 match found in /usr/lib/libxml2.2.dylib:
+        Address: libxml2.2.dylib[0x000000018ae07f2c] (libxml2.2.dylib.__TEXT.__text + 193828)
+        Summary: libxml2.2.dylib`xmlEncodeEntitiesReentrant
+9 matches found in /System/Library/Frameworks/CoreMedia.framework/Versions/A/CoreMedia:
+        Address: CoreMedia[0x000000018cef9f28] (CoreMedia.__TEXT.__text + 526144)
+        Summary: CoreMedia`figSimpleMutexAllocateForReentrantPThreadMutex
+        Address: CoreMedia[0x000000018cef9dc4] (CoreMedia.__TEXT.__text + 525788)
+        Summary: CoreMedia`FigReentrantMutexCheckIsLockedOnThisThread
+        Address: CoreMedia[0x000000018cef9dc8] (CoreMedia.__TEXT.__text + 525792)
+        Summary: CoreMedia`FigReentrantMutexCheckIsNotLockedOnThisThread
+        Address: CoreMedia[0x000000018ce7a0f0] (CoreMedia.__TEXT.__text + 2312)
+        Summary: CoreMedia`FigReentrantMutexCreate
+        Address: CoreMedia[0x000000018cef9db8] (CoreMedia.__TEXT.__text + 525776)
+        Summary: CoreMedia`FigReentrantMutexCreateWithFlags
+        Address: CoreMedia[0x000000018ce820c0] (CoreMedia.__TEXT.__text + 35032)
+        Summary: CoreMedia`FigReentrantMutexDestroy
+        Address: CoreMedia[0x000000018ce7a950] (CoreMedia.__TEXT.__text + 4456)
+        Summary: CoreMedia`FigReentrantMutexLock
+        Address: CoreMedia[0x000000018cef9dc0] (CoreMedia.__TEXT.__text + 525784)
+        Summary: CoreMedia`FigReentrantMutexTryLock
+        Address: CoreMedia[0x000000018ce7abc8] (CoreMedia.__TEXT.__text + 5088)
+        Summary: CoreMedia`FigReentrantMutexUnlock
+5 matches found in /System/Library/PrivateFrameworks/AVFCore.framework/Versions/A/AVFCore:
+        Address: AVFCore[0x000000019a98553c] (AVFCore.__TEXT.__text + 1143268)
+        Summary: AVFCore`+[AVSerializedMostlySynchronousReentrantBlockScheduler initialize]
+        Address: AVFCore[0x000000019a985618] (AVFCore.__TEXT.__text + 1143488)
+        Summary: AVFCore`-[AVSerializedMostlySynchronousReentrantBlockScheduler dealloc]
+        Address: AVFCore[0x000000019a985674] (AVFCore.__TEXT.__text + 1143580)
+        Summary: AVFCore`-[AVSerializedMostlySynchronousReentrantBlockScheduler scheduleBlock:]
+        Address: AVFCore[0x000000019aa11fb0] (AVFCore.__TEXT.__text + 1719384)
+        Summary: AVFCore`-[AVSerializedMostlySynchronousReentrantBlockScheduler init]
+        Address: AVFCore[0x000000019a9854fc] (AVFCore.__TEXT.__text + 1143204)
+        Summary: AVFCore`AVMakeBlockSchedulerThatSerializesBlocksPrefersSynchronousExecutionAndAllowsReentrantExecution
+47 matches found in /System/Library/Frameworks/QuickLookUI.framework/Versions/A/QuickLookUI:
+        Address: QuickLookUI[0x000000022c87107c] (QuickLookUI.__TEXT.__text + 85164)
+        Summary: QuickLookUI`-[QLPreviewPanelController _displayedDisplayBundleBlockedByScreentime]
+        Address: QuickLookUI[0x000000022c878bb4] (QuickLookUI.__TEXT.__text + 116708)
+        Summary: QuickLookUI`-[QLPreviewPanelController previewView:didShowScreentimeLockout:]
+        Address: QuickLookUI[0x000000022c89e1b8] (QuickLookUI.__TEXT.__text + 269800)
+        Summary: QuickLookUI`+[QLInlinePreviewController screentimeCategoryForUTI:]
+        Address: QuickLookUI[0x000000022c89e21c] (QuickLookUI.__TEXT.__text + 269900)
+        Summary: QuickLookUI`+[QLInlinePreviewController screentimeBundleForUTI:]
+        Address: QuickLookUI[0x000000022c89e228] (QuickLookUI.__TEXT.__text + 269912)
+        Summary: QuickLookUI`+[QLInlinePreviewController _setupScreentimeObserver]
+        Address: QuickLookUI[0x000000022c89e2b0] (QuickLookUI.__TEXT.__text + 270048)
+        Summary: QuickLookUI`__53+[QLInlinePreviewController _setupScreentimeObserver]_block_invoke
+        Address: QuickLookUI[0x000000022c89e3e8] (QuickLookUI.__TEXT.__text + 270360)
+        Summary: QuickLookUI`__53+[QLInlinePreviewController _setupScreentimeObserver]_block_invoke_2
+        Address: QuickLookUI[0x000000022c89e3f0] (QuickLookUI.__TEXT.__text + 270368)
+        Summary: QuickLookUI`__53+[QLInlinePreviewController _setupScreentimeObserver]_block_invoke_3
+        Address: QuickLookUI[0x000000022c89e818] (QuickLookUI.__TEXT.__text + 271432)
+        Summary: QuickLookUI`+[QLInlinePreviewController _schedulePostScreentimeChangedNotification]
+        Address: QuickLookUI[0x000000022c89e88c] (QuickLookUI.__TEXT.__text + 271548)
+        Summary: QuickLookUI`__71+[QLInlinePreviewController _schedulePostScreentimeChangedNotification]_block_invoke
+        Address: QuickLookUI[0x000000022c89e8ec] (QuickLookUI.__TEXT.__text + 271644)
+        Summary: QuickLookUI`+[QLInlinePreviewController _postScreentimeChangedNotification]
+        Address: QuickLookUI[0x000000022c89e944] (QuickLookUI.__TEXT.__text + 271732)
+        Summary: QuickLookUI`-[QLInlinePreviewController screentimeAllowControls]
+        Address: QuickLookUI[0x000000022c89ea4c] (QuickLookUI.__TEXT.__text + 271996)
+        Summary: QuickLookUI`-[QLInlinePreviewController updateControlsForScreentime:]
+        Address: QuickLookUI[0x000000022c8aef3c] (QuickLookUI.__TEXT.__text + 338796)
+        Summary: QuickLookUI`+[QLDisplayBundle screentimeTimeoutError]
+        Address: QuickLookUI[0x000000022c8afa98] (QuickLookUI.__TEXT.__text + 341704)
+        Summary: QuickLookUI`-[QLDisplayBundle bundleIDForScreentime]
+        Address: QuickLookUI[0x000000022c8afaa0] (QuickLookUI.__TEXT.__text + 341712)
+        Summary: QuickLookUI`-[QLDisplayBundle categoryForScreentime]
+        Address: QuickLookUI[0x000000022c8b1bac] (QuickLookUI.__TEXT.__text + 350172)
+        Summary: QuickLookUI`-[QLDisplayBundle currentScreentimePolicy]
+        Address: QuickLookUI[0x000000022c8b1bb4] (QuickLookUI.__TEXT.__text + 350180)
+        Summary: QuickLookUI`-[QLDisplayBundle setCurrentScreentimePolicy:]
+        Address: QuickLookUI[0x000000022c8b1c04] (QuickLookUI.__TEXT.__text + 350260)
+        Summary: QuickLookUI`-[QLDisplayBundle screentimeCategoryPolicyMonitor]
+        Address: QuickLookUI[0x000000022c8b1c10] (QuickLookUI.__TEXT.__text + 350272)
+        Summary: QuickLookUI`-[QLDisplayBundle setScreentimeCategoryPolicyMonitor:]
+        Address: QuickLookUI[0x000000022c8b1c18] (QuickLookUI.__TEXT.__text + 350280)
+        Summary: QuickLookUI`-[QLDisplayBundle screentimeApplicationPolicyMonitor]
+        Address: QuickLookUI[0x000000022c8b1c24] (QuickLookUI.__TEXT.__text + 350292)
+        Summary: QuickLookUI`-[QLDisplayBundle setScreentimeApplicationPolicyMonitor:]
+        Address: QuickLookUI[0x000000022c8c2578] (QuickLookUI.__TEXT.__text + 418216)
+        Summary: QuickLookUI`-[QLUIServiceHostViewController didShowScreentimeLockout:withPolicy:]
+        Address: QuickLookUI[0x000000022c8cea4c] (QuickLookUI.__TEXT.__text + 468604)
+        Summary: QuickLookUI`-[QLRemoteDisplayBundle didShowScreentimeLockout:withPolicy:]
+        Address: QuickLookUI[0x000000022c8d03bc] (QuickLookUI.__TEXT.__text + 475116)
+        Summary: QuickLookUI`-[QLRemoteDisplayBundle currentScreentimePolicy]
+        Address: QuickLookUI[0x000000022c8d03cc] (QuickLookUI.__TEXT.__text + 475132)
+        Summary: QuickLookUI`-[QLRemoteDisplayBundle setCurrentScreentimePolicy:]
+        Address: QuickLookUI[0x000000022c8fc2d4] (QuickLookUI.__TEXT.__text + 655108)
+        Summary: QuickLookUI`-[QLPreviewDocument displayBundle:didShowScreentimeLockout:]
+        Address: QuickLookUI[0x000000022c919a88] (QuickLookUI.__TEXT.__text + 775864)
+        Summary: QuickLookUI`-[QLPreviewExtensionDisplayBundle bundleIDForScreentime]
+        Address: QuickLookUI[0x000000022c976c00] (QuickLookUI.__TEXT.__objc_stubs + 4544)
+        Summary: QuickLookUI`objc_msgSend$_displayedDisplayBundleBlockedByScreentime
+        Address: QuickLookUI[0x000000022c978620] (QuickLookUI.__TEXT.__objc_stubs + 11232)
+        Summary: QuickLookUI`objc_msgSend$_schedulePostScreentimeChangedNotification
+        Address: QuickLookUI[0x000000022c978d80] (QuickLookUI.__TEXT.__objc_stubs + 13120)
+        Summary: QuickLookUI`objc_msgSend$_setupScreentimeObserver
+        Address: QuickLookUI[0x000000022c97be20] (QuickLookUI.__TEXT.__objc_stubs + 25568)
+        Summary: QuickLookUI`objc_msgSend$bundleIDForScreentime
+        Address: QuickLookUI[0x000000022c97c400] (QuickLookUI.__TEXT.__objc_stubs + 27072)
+        Summary: QuickLookUI`objc_msgSend$categoryForScreentime
+        Address: QuickLookUI[0x000000022c97d7c0] (QuickLookUI.__TEXT.__objc_stubs + 32128)
+        Summary: QuickLookUI`objc_msgSend$currentScreentimePolicy
+        Address: QuickLookUI[0x000000022c97e020] (QuickLookUI.__TEXT.__objc_stubs + 34272)
+        Summary: QuickLookUI`objc_msgSend$didShowScreentimeLockout:withPolicy:
+        Address: QuickLookUI[0x000000022c97e200] (QuickLookUI.__TEXT.__objc_stubs + 34752)
+        Summary: QuickLookUI`objc_msgSend$displayBundle:didShowScreentimeLockout:
+        Address: QuickLookUI[0x000000022c984fc0] (QuickLookUI.__TEXT.__objc_stubs + 62848)
+        Summary: QuickLookUI`objc_msgSend$previewView:didShowScreentimeLockout:
+        Address: QuickLookUI[0x000000022c986720] (QuickLookUI.__TEXT.__objc_stubs + 68832)
+        Summary: QuickLookUI`objc_msgSend$screentimeAllowControls
+        Address: QuickLookUI[0x000000022c986740] (QuickLookUI.__TEXT.__objc_stubs + 68864)
+        Summary: QuickLookUI`objc_msgSend$screentimeApplicationPolicyMonitor
+        Address: QuickLookUI[0x000000022c986760] (QuickLookUI.__TEXT.__objc_stubs + 68896)
+        Summary: QuickLookUI`objc_msgSend$screentimeBundleForUTI:
+        Address: QuickLookUI[0x000000022c986780] (QuickLookUI.__TEXT.__objc_stubs + 68928)
+        Summary: QuickLookUI`objc_msgSend$screentimeCategoryForUTI:
+        Address: QuickLookUI[0x000000022c9867a0] (QuickLookUI.__TEXT.__objc_stubs + 68960)
+        Summary: QuickLookUI`objc_msgSend$screentimeCategoryPolicyMonitor
+        Address: QuickLookUI[0x000000022c9867c0] (QuickLookUI.__TEXT.__objc_stubs + 68992)
+        Summary: QuickLookUI`objc_msgSend$screentimeTimeoutError
+        Address: QuickLookUI[0x000000022c9867e0] (QuickLookUI.__TEXT.__objc_stubs + 69024)
+        Summary: QuickLookUI`objc_msgSend$screentimeiWorkBundleForUTI:
+        Address: QuickLookUI[0x000000022c988280] (QuickLookUI.__TEXT.__objc_stubs + 75840)
+        Summary: QuickLookUI`objc_msgSend$setCurrentScreentimePolicy:
+        Address: QuickLookUI[0x000000022c98aa80] (QuickLookUI.__TEXT.__objc_stubs + 86080)
+        Summary: QuickLookUI`objc_msgSend$setScreentimeApplicationPolicyMonitor:
+        Address: QuickLookUI[0x000000022c98aaa0] (QuickLookUI.__TEXT.__objc_stubs + 86112)
+        Summary: QuickLookUI`objc_msgSend$setScreentimeCategoryPolicyMonitor:
+5 matches found in /System/Library/Frameworks/Vision.framework/Versions/A/Vision:
+        Address: Vision[0x00000001990e0d14] (Vision.__TEXT.__text + 2983332)
+        Summary: Vision`+[VNDetector isReentrant]
+        Address: Vision[0x00000001991418f0] (Vision.__TEXT.__text + 3379584)
+        Summary: Vision`+[VNBrightnessDetector isReentrant]
+        Address: Vision[0x00000001991e31a0] (Vision.__TEXT.__text + 4041264)
+        Summary: Vision`+[VNImageRegistrationDetector isReentrant]
+        Address: Vision[0x00000001991f8158] (Vision.__TEXT.__text + 4127208)
+        Summary: Vision`+[VNBlurDetector isReentrant]
+        Address: Vision[0x0000000199493200] (Vision.__TEXT.__objc_stubs + 60896)
+        Summary: Vision`objc_msgSend$isReentrant
+1 match found in /usr/lib/system/libxpc.dylib:
+        Address: libxpc.dylib[0x00000001801e7f28] (libxpc.dylib.__TEXT.__text + 109240)
+        Summary: libxpc.dylib`_xpc_neuter_potential_reentrancy
+2 matches found in /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/CarbonCore.framework/Versions/A/CarbonCore:
+        Address: CarbonCore[0x000000018450780c] (CarbonCore.__TEXT.__text + 132532)
+        Summary: CarbonCore`FolderManagerReentrancyLock
+        Address: CarbonCore[0x0000000184509464] (CarbonCore.__TEXT.__text + 139788)
+        Summary: CarbonCore`FolderManagerReentrancyUnlock
+4 matches found in /System/Library/PrivateFrameworks/AVFCapture.framework/Versions/A/AVFCapture:
+        Address: AVFCapture[0x00000001a4617490] (AVFCapture.__TEXT.__text + 1499320)
+        Summary: AVFCapture`-[AVCaptureDevice_Tundra addLinkedDeviceWithoutReentering:]
+        Address: AVFCapture[0x00000001a461749c] (AVFCapture.__TEXT.__text + 1499332)
+        Summary: AVFCapture`-[AVCaptureDevice_Tundra removeLinkedDeviceWithoutReentering:]
+        Address: AVFCapture[0x00000001a46d4460] (AVFCapture.__TEXT.__objc_stubs + 28128)
+        Summary: AVFCapture`objc_msgSend$addLinkedDeviceWithoutReentering:
+        Address: AVFCapture[0x00000001a46e0840] (AVFCapture.__TEXT.__objc_stubs + 78272)
+        Summary: AVFCapture`objc_msgSend$removeLinkedDeviceWithoutReentering:
+4 matches found in /System/Library/Frameworks/AVRouting.framework/Versions/A/AVRouting:
+        Address: AVRouting[0x000000022691b938] (AVRouting.__TEXT.__text + 116424)
+        Summary: AVRouting`+[AVRoutingSerializedMostlySynchronousReentrantBlockScheduler initialize]
+        Address: AVRouting[0x000000022691ba14] (AVRouting.__TEXT.__text + 116644)
+        Summary: AVRouting`-[AVRoutingSerializedMostlySynchronousReentrantBlockScheduler dealloc]
+        Address: AVRouting[0x000000022691ba70] (AVRouting.__TEXT.__text + 116736)
+        Summary: AVRouting`-[AVRoutingSerializedMostlySynchronousReentrantBlockScheduler scheduleBlock:]
+        Address: AVRouting[0x0000000226949974] (AVRouting.__TEXT.__text + 304900)
+        Summary: AVRouting`-[AVRoutingSerializedMostlySynchronousReentrantBlockScheduler init]
+1 match found in /System/Library/PrivateFrameworks/QuickLookSupport.framework/Versions/A/QuickLookSupport:
+        Address: QuickLookSupport[0x00000001aa8e9668] (QuickLookSupport.__TEXT.__text + 40712)
+        Summary: QuickLookSupport`+[QLUTIManager screentimeiWorkBundleForUTI:]
+1 match found in /System/Library/PrivateFrameworks/MallocStackLogging.framework/Versions/A/MallocStackLogging:
+        Address: MallocStackLogging[0x00000001ade703b4] (MallocStackLogging.__TEXT.__text + 35020)
+        Summary: MallocStackLogging`__malloc_stack_logging_is_reentered
+23 matches found in /System/Library/PrivateFrameworks/FamilyCircle.framework/Versions/A/FamilyCircle:
+        Address: FamilyCircle[0x0000000199a3cbe4] (FamilyCircle.__TEXT.__text + 45764)
+        Summary: FamilyCircle`-[FASaveScreenTimeSettingsCacheRequest initWithFamilyMemberDSID:screentimeObject:]
+        Address: FamilyCircle[0x0000000199a527d4] (FamilyCircle.__TEXT.__text + 134836)
+        Summary: FamilyCircle`-[FAEnableScreenTimeSettingsRequest initWithFamilyMemberDSID:screentimeModelCache:]
+        Address: FamilyCircle[0x0000000199a52e1c] (FamilyCircle.__TEXT.__text + 136444)
+        Summary: FamilyCircle`-[FAEnableScreenTimeSettingsRequest screentimeModelCache]
+        Address: FamilyCircle[0x0000000199a593b0] (FamilyCircle.__TEXT.__text + 162448)
+        Summary: FamilyCircle`+[FAScreentimeSettingsObjectCache introductionModelClass]
+        Address: FamilyCircle[0x0000000199a593bc] (FamilyCircle.__TEXT.__text + 162460)
+        Summary: FamilyCircle`-[FAScreentimeSettingsObjectCache initWithIntroductionModel:date:dsid:]
+        Address: FamilyCircle[0x0000000199a5948c] (FamilyCircle.__TEXT.__text + 162668)
+        Summary: FamilyCircle`-[FAScreentimeSettingsObjectCache encodeWithCoder:]
+        Address: FamilyCircle[0x0000000199a59514] (FamilyCircle.__TEXT.__text + 162804)
+        Summary: FamilyCircle`-[FAScreentimeSettingsObjectCache initWithCoder:]
+        Address: FamilyCircle[0x0000000199a59608] (FamilyCircle.__TEXT.__text + 163048)
+        Summary: FamilyCircle`+[FAScreentimeSettingsObjectCache supportsSecureCoding]
+        Address: FamilyCircle[0x0000000199a59610] (FamilyCircle.__TEXT.__text + 163056)
+        Summary: FamilyCircle`-[FAScreentimeSettingsObjectCache date]
+        Address: FamilyCircle[0x0000000199a59618] (FamilyCircle.__TEXT.__text + 163064)
+        Summary: FamilyCircle`-[FAScreentimeSettingsObjectCache setDate:]
+        Address: FamilyCircle[0x0000000199a59620] (FamilyCircle.__TEXT.__text + 163072)
+        Summary: FamilyCircle`-[FAScreentimeSettingsObjectCache introductionModel]
+        Address: FamilyCircle[0x0000000199a59628] (FamilyCircle.__TEXT.__text + 163080)
+        Summary: FamilyCircle`-[FAScreentimeSettingsObjectCache setIntroductionModel:]
+        Address: FamilyCircle[0x0000000199a5966c] (FamilyCircle.__TEXT.__text + 163148)
+        Summary: FamilyCircle`-[FAScreentimeSettingsObjectCache memberDSID]
+        Address: FamilyCircle[0x0000000199a59674] (FamilyCircle.__TEXT.__text + 163156)
+        Summary: FamilyCircle`-[FAScreentimeSettingsObjectCache setMemberDSID:]
+        Address: FamilyCircle[0x0000000199a596b8] (FamilyCircle.__TEXT.__text + 163224)
+        Summary: FamilyCircle`-[FAScreentimeSettingsObjectCache .cxx_destruct]
+        Address: FamilyCircle[0x0000000199a59708] (FamilyCircle.__TEXT.__text + 163304)
+        Summary: FamilyCircle`+[FAScreentimeSettingsObjectCache(Convenience) objectWithData:]
+        Address: FamilyCircle[0x0000000199a597c8] (FamilyCircle.__TEXT.__text + 163496)
+        Summary: FamilyCircle`-[FAScreentimeSettingsObjectCache(Convenience) dataRepresentation]
+        Address: FamilyCircle[0x0000000199a5e018] (FamilyCircle.__TEXT.__text + 182008)
+        Summary: FamilyCircle`-[FAScreenTimeRequestProvider cacheScreenTimeSettingToDiskWithDSID:screentimeObject:completionHandler:]
+        Address: FamilyCircle[0x0000000199a5e0b8] (FamilyCircle.__TEXT.__text + 182168)
+        Summary: FamilyCircle`-[FAScreenTimeRequestProvider enableScreenTimeSettingsForDSID:screentimeObject:completionHandler:]
+        Address: FamilyCircle[0x0000000199b53680] (FamilyCircle.__TEXT.__objc_stubs + 7648)
+        Summary: FamilyCircle`objc_msgSend$enableSettingsForMemberDSID:screentimeModelCache:options:replyBlock:
+        Address: FamilyCircle[0x0000000199b54840] (FamilyCircle.__TEXT.__objc_stubs + 12192)
+        Summary: FamilyCircle`objc_msgSend$initWithFamilyMemberDSID:screentimeModelCache:
+        Address: FamilyCircle[0x0000000199b54860] (FamilyCircle.__TEXT.__objc_stubs + 12224)
+        Summary: FamilyCircle`objc_msgSend$initWithFamilyMemberDSID:screentimeObject:
+        Address: FamilyCircle[0x0000000199b56840] (FamilyCircle.__TEXT.__objc_stubs + 20384)
+        Summary: FamilyCircle`objc_msgSend$screentimeModelCache
+2 matches found in /System/Library/PrivateFrameworks/ScreenTimeCore.framework/Versions/A/ScreenTimeCore:
+        Address: ScreenTimeCore[0x00000001af5d7720] (ScreenTimeCore.__TEXT.__text + 368800)
+        Summary: ScreenTimeCore`+[STLog screentime]
+        Address: ScreenTimeCore[0x00000001af69bb60] (ScreenTimeCore.__TEXT.__objc_stubs + 40032)
+        Summary: ScreenTimeCore`objc_msgSend$screentime
+10 matches found in /System/Library/PrivateFrameworks/GeoServicesCore.framework/Versions/A/GeoServicesCore:
+        Address: GeoServicesCore[0x000000024c28c2cc] (GeoServicesCore.__TEXT.__text + 5348)
+        Summary: GeoServicesCore`-[geo_reentrant_isolater debugDescription]
+        Address: GeoServicesCore[0x000000024c28c2d0] (GeoServicesCore.__TEXT.__text + 5352)
+        Summary: GeoServicesCore`-[geo_reentrant_isolater description]
+        Address: GeoServicesCore[0x000000024c28c360] (GeoServicesCore.__TEXT.__text + 5496)
+        Summary: GeoServicesCore`-[geo_reentrant_isolater dealloc]
+        Address: GeoServicesCore[0x000000024c28c3b0] (GeoServicesCore.__TEXT.__text + 5576)
+        Summary: GeoServicesCore`-[geo_reentrant_isolater initWithName:]
+        Address: GeoServicesCore[0x000000024c28d588] (GeoServicesCore.__TEXT.__text + 10144)
+        Summary: GeoServicesCore`geo_assert_reentrant_isolated
+        Address: GeoServicesCore[0x000000024c28d590] (GeoServicesCore.__TEXT.__text + 10152)
+        Summary: GeoServicesCore`geo_assert_reentrant_not_isolated
+        Address: GeoServicesCore[0x000000024c28d418] (GeoServicesCore.__TEXT.__text + 9776)
+        Summary: GeoServicesCore`geo_reentrant_isolate_sync
+        Address: GeoServicesCore[0x000000024c28d4d0] (GeoServicesCore.__TEXT.__text + 9960)
+        Summary: GeoServicesCore`geo_reentrant_isolate_sync_data
+        Address: GeoServicesCore[0x000000024c28d360] (GeoServicesCore.__TEXT.__text + 9592)
+        Summary: GeoServicesCore`geo_reentrant_isolater_create
+        Address: GeoServicesCore[0x000000024c28d3a0] (GeoServicesCore.__TEXT.__text + 9656)
+        Summary: GeoServicesCore`geo_reentrant_isolater_create_with_format
+3 matches found in /System/Library/PrivateFrameworks/DataDetectors.framework/Versions/A/DataDetectors:
+        Address: DataDetectors[0x00000001ad343394] (DataDetectors.__TEXT.__text + 106100)
+        Summary: DataDetectors`-[DDActionContext bypassScreentimeContactShield]
+        Address: DataDetectors[0x00000001ad3433a0] (DataDetectors.__TEXT.__text + 106112)
+        Summary: DataDetectors`-[DDActionContext setBypassScreentimeContactShield:]
+        Address: DataDetectors[0x00000001ad362a00] (DataDetectors.__TEXT.__objc_stubs + 17504)
+        Summary: DataDetectors`objc_msgSend$setBypassScreentimeContactShield:
+10 matches found in /System/Library/PrivateFrameworks/GRDBInternal.framework/Versions/A/GRDBInternal:
+        Address: GRDBInternal[0x0000000248cb2298] (GRDBInternal.__TEXT.__text + 273944)
+        Summary: GRDBInternal`GRDBInternal.DatabasePool.unsafeReentrantRead<τ_0_0>((GRDBInternal.Database) throws -> τ_0_0) throws -> τ_0_0
+        Address: GRDBInternal[0x0000000248cb0d70] (GRDBInternal.__TEXT.__text + 268528)
+        Summary: GRDBInternal`GRDBInternal.DatabasePool.unsafeReentrantWrite<τ_0_0>((GRDBInternal.Database) throws -> τ_0_0) throws -> τ_0_0
+        Address: GRDBInternal[0x0000000248cb5a14] (GRDBInternal.__TEXT.__text + 288148)
+        Summary: GRDBInternal`GRDBInternal.DatabaseQueue.unsafeReentrantRead<τ_0_0>((GRDBInternal.Database) throws -> τ_0_0) throws -> τ_0_0
+        Address: GRDBInternal[0x0000000248cb6204] (GRDBInternal.__TEXT.__text + 290180)
+        Summary: GRDBInternal`GRDBInternal.DatabaseQueue.unsafeReentrantWrite<τ_0_0>((GRDBInternal.Database) throws -> τ_0_0) throws -> τ_0_0
+        Address: GRDBInternal[0x0000000248cb86f4] (GRDBInternal.__TEXT.__text + 299636)
+        Summary: GRDBInternal`dispatch thunk of GRDBInternal.DatabaseReader.unsafeReentrantRead<τ_0_0>((GRDBInternal.Database) throws -> τ_1_0) throws -> τ_1_0
+        Address: GRDBInternal[0x0000000248ccb6ec] (GRDBInternal.__TEXT.__text + 377452)
+        Summary: GRDBInternal`dispatch thunk of GRDBInternal.DatabaseWriter.unsafeReentrantWrite<τ_0_0>((GRDBInternal.Database) throws -> τ_1_0) throws -> τ_1_0
+        Address: GRDBInternal[0x0000000248cc2dac] (GRDBInternal.__TEXT.__text + 342316)
+        Summary: GRDBInternal`GRDBInternal.DatabaseSnapshot.unsafeReentrantRead<τ_0_0>((GRDBInternal.Database) throws -> τ_0_0) throws -> τ_0_0
+        Address: GRDBInternal[0x0000000248cb845c] (GRDBInternal.__TEXT.__text + 298972)
+        Summary: GRDBInternal`GRDBInternal.AnyDatabaseReader.unsafeReentrantRead<τ_0_0>((GRDBInternal.Database) throws -> τ_0_0) throws -> τ_0_0
+        Address: GRDBInternal[0x0000000248ccb070] (GRDBInternal.__TEXT.__text + 375792)
+        Summary: GRDBInternal`GRDBInternal.AnyDatabaseWriter.unsafeReentrantRead<τ_0_0>((GRDBInternal.Database) throws -> τ_0_0) throws -> τ_0_0
+        Address: GRDBInternal[0x0000000248ccb400] (GRDBInternal.__TEXT.__text + 376704)
+        Summary: GRDBInternal`GRDBInternal.AnyDatabaseWriter.unsafeReentrantWrite<τ_0_0>((GRDBInternal.Database) throws -> τ_0_0) throws -> τ_0_0

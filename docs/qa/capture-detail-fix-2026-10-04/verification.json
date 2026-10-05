@@ -1,0 +1,60 @@
+{
+  "version": "0.4.32",
+  "build": "87",
+  "status": "passed",
+  "buildSourceFingerprint": "b56c833d721ef9be3f917264c1af6df22d52e17ba6003e07c82b811dbc46f579",
+  "suiteCount": 12,
+  "suites": {
+    "CaptureProvenanceTests": {
+      "summary": "PASS: 66 provenance checks; legacy records, truthful origins, bounded manual ledger, compact grouping, rollback, conversion, recurrence, restart, backup, day/week exports and readable sidecars.",
+      "report": "build/qa/runs/20261004T202151295098Z-app-store/report.json"
+    },
+    "CaptureRemovalTests": {
+      "summary": "PASS: 76 capture removal/minimize checks",
+      "report": "build/qa/runs/20261004T202151295098Z-app-store/report.json"
+    },
+    "TaskPlanningTests": {
+      "summary": "PASS: 39 task planning checks; synthetic local archive only.",
+      "report": "build/qa/runs/20261004T202151295098Z-app-store/report.json"
+    },
+    "CaptureActionTests": {
+      "summary": "PASS: 31 capture action checks; confirmation, minimize, search, draft cleanup and delayed reminder deletion in an isolated archive.",
+      "report": "build/qa/runs/20261004T202151295098Z-app-store/report.json"
+    },
+    "CaptureTaskConversionTests": {
+      "summary": "PASS: 173 capture-to-task checks; originals, legacy data, persistence, atomic failure, drafts, routes, filters, carryover, reminders and receipt exports.",
+      "report": "build/qa/runs/20261004T202151295098Z-app-store/report.json"
+    },
+    "UpdateConfigurationTests": {
+      "summary": "PASS: 41 update-channel configuration checks",
+      "report": "build/qa/runs/20261004T202151295098Z-app-store/report.json"
+    },
+    "TooltipBehaviorTests": {
+      "summary": "PASS: 158 tooltip delay, cancellation, preference, suppression, active-only anchors and clamped-layout checks",
+      "report": "build/qa/runs/20261004T202151295098Z-app-store/report.json"
+    },
+    "HeaderInteractionTests": {
+      "summary": "PASS: 290 native labeled-header accessibility and interaction checks",
+      "report": "build/qa/runs/20261004T202151295098Z-app-store/report.json"
+    },
+    "DetailPreviewInteractionTests": {
+      "summary": "PASS: 110 detail-preview native open-action checks; no external app launched",
+      "report": "build/qa/runs/20261004T202151295098Z-app-store/report.json"
+    },
+    "NativeTooltipPreferenceTests": {
+      "summary": "PASS: 31 native tooltip preference, persistence, accessibility, drag interaction, and lifecycle checks",
+      "report": "build/qa/runs/20261004T202151295098Z-app-store/report.json"
+    },
+    "WorkspaceZoomLayoutTests": {
+      "summary": "PASS: 375 workspace zoom layout checks; finite metrics, logical columns, pointer/item anchoring, history offset, native cards at 75/100/150/200%",
+      "report": "build/qa/runs/20261004T202151295098Z-app-store/report.json"
+    },
+    "CaptureDetailReadabilityTests": {
+      "summary": "PASS: 560 capture-detail readability and labeled-action checks; 27 native panel fixtures. Renders: /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/capture-detail-fix-2026-10-04",
+      "report": "build/qa/runs/20261004T202834087948Z-app-store/report.json"
+    }
+  },
+  "nativeReadabilityChecks": 560,
+  "nativeFixtures": 27,
+  "boundary": "Passed suites were combined across two runs with identical current production inputs and unchanged passing test sources. Fictional captures and own-process native fixtures on the current Mac; distribution validation follows."
+}

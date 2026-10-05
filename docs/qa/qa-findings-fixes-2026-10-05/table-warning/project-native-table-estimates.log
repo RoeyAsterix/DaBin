@@ -1,0 +1,98 @@
+2026-10-05 06:15:34.787 ProjectWorkspaceTableEstimateProbe[88361:26708914] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future.
+2026-10-05 06:15:42.363 ProjectWorkspaceTableEstimateProbe[88361:26708914] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future.
+2026-10-05 06:15:45.104 ProjectWorkspaceTableEstimateProbe[88361:26708914] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future.
+2026-10-05 06:15:45.488 ProjectWorkspaceTableEstimateProbe[88361:26708914] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future.
+2026-10-05 06:15:46.577 ProjectWorkspaceTableEstimateProbe[88361:26708914] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future.
+ROWS: project grid logical=334, materialized=25
+TABLE: auto=true, rowHeight=24.0, delegate=Optional(<_TtGC7SwiftUI22OutlineListCoordinatorGOS_19SelectionManagerBoxOs5Never__: 0xc85158c00>)
+ROWDETAIL: index=0, actual=294.0, estimate=-1.0, spacing=0.0
+ROWDETAIL: index=1, actual=294.0, estimate=-1.0, spacing=0.0
+ROWDETAIL: index=2, actual=294.0, estimate=-1.0, spacing=0.0
+ROWDETAIL: index=3, actual=294.0, estimate=-1.0, spacing=0.0
+ROWDETAIL: index=4, actual=294.0, estimate=-1.0, spacing=0.0
+ROWDETAIL: index=5, actual=294.0, estimate=-1.0, spacing=0.0
+ROWDETAIL: index=6, actual=294.0, estimate=-1.0, spacing=0.0
+ROWDETAIL: index=7, actual=294.0, estimate=-1.0, spacing=0.0
+ROWDETAIL: index=8, actual=294.0, estimate=-1.0, spacing=0.0
+ROWDETAIL: index=9, actual=294.0, estimate=-1.0, spacing=0.0
+ROWDETAIL: index=10, actual=294.0, estimate=-1.0, spacing=0.0
+ROWDETAIL: index=11, actual=294.0, estimate=-1.0, spacing=0.0
+ROWDETAIL: index=12, actual=294.0, estimate=-1.0, spacing=0.0
+ROWDETAIL: index=13, actual=294.0, estimate=-1.0, spacing=0.0
+ROWDETAIL: index=14, actual=294.0, estimate=-1.0, spacing=0.0
+ROWDETAIL: index=15, actual=294.0, estimate=-1.0, spacing=0.0
+ROWDETAIL: index=16, actual=294.0, estimate=-1.0, spacing=0.0
+ROWDETAIL: index=17, actual=294.0, estimate=-1.0, spacing=0.0
+ROWDETAIL: index=18, actual=294.0, estimate=-1.0, spacing=0.0
+ROWDETAIL: index=19, actual=294.0, estimate=-1.0, spacing=0.0
+ROWDETAIL: index=20, actual=294.0, estimate=-1.0, spacing=0.0
+ROWDETAIL: index=21, actual=294.0, estimate=-1.0, spacing=0.0
+ROWDETAIL: index=22, actual=294.0, estimate=-1.0, spacing=0.0
+ROWDETAIL: index=23, actual=294.0, estimate=-1.0, spacing=0.0
+ROWDETAIL: index=24, actual=294.0, estimate=-1.0, spacing=0.0
+FIXTURE: /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa/project-workspace-view/BC7BF3B4-C73E-44B6-BAFB-45AF39FF988B/project-grid-wide@2x.png
+FIXTURE: /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa/project-workspace-view/BC7BF3B4-C73E-44B6-BAFB-45AF39FF988B/project-selected-narrow@2x.png
+ROWS: project grid logical=501, materialized=3
+TABLE: auto=true, rowHeight=24.0, delegate=Optional(<_TtGC7SwiftUI22OutlineListCoordinatorGOS_19SelectionManagerBoxOs5Never__: 0xc85158c00>)
+ROWDETAIL: index=0, actual=294.0, estimate=-1.0, spacing=0.0
+ROWDETAIL: index=1, actual=294.0, estimate=-1.0, spacing=0.0
+ROWDETAIL: index=2, actual=294.0, estimate=-1.0, spacing=0.0
+ROWS: project grid logical=1002, materialized=3
+TABLE: auto=true, rowHeight=24.0, delegate=Optional(<_TtGC7SwiftUI22OutlineListCoordinatorGOS_19SelectionManagerBoxOs5Never__: 0xc85158c00>)
+ROWDETAIL: index=0, actual=294.0, estimate=-1.0, spacing=0.0
+ROWDETAIL: index=1, actual=294.0, estimate=-1.0, spacing=0.0
+ROWDETAIL: index=2, actual=294.0, estimate=-1.0, spacing=0.0
+ROWS: project grid logical=1002, materialized=3
+TABLE: auto=true, rowHeight=24.0, delegate=Optional(<_TtGC7SwiftUI22OutlineListCoordinatorGOS_19SelectionManagerBoxOs5Never__: 0xc85158c00>)
+ROWDETAIL: index=0, actual=294.0, estimate=-1.0, spacing=0.0
+ROWDETAIL: index=1, actual=294.0, estimate=-1.0, spacing=0.0
+ROWDETAIL: index=2, actual=294.0, estimate=-1.0, spacing=0.0
+FIXTURE: /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa/project-workspace-view/BC7BF3B4-C73E-44B6-BAFB-45AF39FF988B/project-grid-narrow@2x.png
+ROWS: project grid logical=334, materialized=3
+TABLE: auto=true, rowHeight=24.0, delegate=Optional(<_TtGC7SwiftUI22OutlineListCoordinatorGOS_19SelectionManagerBoxOs5Never__: 0xc85158c00>)
+ROWDETAIL: index=0, actual=294.0, estimate=-1.0, spacing=0.0
+ROWDETAIL: index=1, actual=294.0, estimate=-1.0, spacing=0.0
+ROWDETAIL: index=2, actual=294.0, estimate=-1.0, spacing=0.0
+ROWS: project grid logical=1002, materialized=8
+TABLE: auto=true, rowHeight=24.0, delegate=Optional(<_TtGC7SwiftUI22OutlineListCoordinatorGOS_19SelectionManagerBoxOs5Never__: 0xc85158c00>)
+ROWDETAIL: index=0, actual=106.0, estimate=-1.0, spacing=0.0
+ROWDETAIL: index=1, actual=106.0, estimate=-1.0, spacing=0.0
+ROWDETAIL: index=2, actual=106.0, estimate=-1.0, spacing=0.0
+ROWDETAIL: index=3, actual=106.0, estimate=-1.0, spacing=0.0
+ROWDETAIL: index=4, actual=106.0, estimate=-1.0, spacing=0.0
+ROWDETAIL: index=5, actual=106.0, estimate=-1.0, spacing=0.0
+ROWDETAIL: index=6, actual=106.0, estimate=-1.0, spacing=0.0
+ROWDETAIL: index=7, actual=106.0, estimate=-1.0, spacing=0.0
+ROWS: project grid logical=334, materialized=3
+TABLE: auto=true, rowHeight=24.0, delegate=Optional(<_TtGC7SwiftUI22OutlineListCoordinatorGOS_19SelectionManagerBoxOs5Never__: 0xc85158c00>)
+ROWDETAIL: index=162, actual=294.0, estimate=-1.0, spacing=0.0
+ROWDETAIL: index=163, actual=294.0, estimate=-1.0, spacing=0.0
+ROWDETAIL: index=164, actual=294.0, estimate=-1.0, spacing=0.0
+ROWS: project grid logical=335, materialized=3
+TABLE: auto=true, rowHeight=24.0, delegate=Optional(<_TtGC7SwiftUI22OutlineListCoordinatorGOS_19SelectionManagerBoxOs5Never__: 0xc85158c00>)
+ROWDETAIL: index=163, actual=294.0, estimate=-1.0, spacing=0.0
+ROWDETAIL: index=164, actual=294.0, estimate=-1.0, spacing=0.0
+ROWDETAIL: index=165, actual=294.0, estimate=-1.0, spacing=0.0
+ROWS: project grid logical=335, materialized=3
+TABLE: auto=true, rowHeight=24.0, delegate=Optional(<_TtGC7SwiftUI22OutlineListCoordinatorGOS_19SelectionManagerBoxOs5Never__: 0xc85158c00>)
+ROWDETAIL: index=163, actual=294.0, estimate=-1.0, spacing=0.0
+ROWDETAIL: index=164, actual=294.0, estimate=-1.0, spacing=0.0
+ROWDETAIL: index=165, actual=294.0, estimate=-1.0, spacing=0.0
+ROWS: project grid logical=335, materialized=3
+TABLE: auto=true, rowHeight=24.0, delegate=Optional(<_TtGC7SwiftUI22OutlineListCoordinatorGOS_19SelectionManagerBoxOs5Never__: 0xc85158c00>)
+ROWDETAIL: index=163, actual=294.0, estimate=-1.0, spacing=0.0
+ROWDETAIL: index=164, actual=294.0, estimate=-1.0, spacing=0.0
+ROWDETAIL: index=165, actual=294.0, estimate=-1.0, spacing=0.0
+ROWS: project grid logical=336, materialized=4
+TABLE: auto=true, rowHeight=24.0, delegate=Optional(<_TtGC7SwiftUI22OutlineListCoordinatorGOS_19SelectionManagerBoxOs5Never__: 0xc85158c00>)
+ROWDETAIL: index=163, actual=294.0, estimate=-1.0, spacing=0.0
+ROWDETAIL: index=164, actual=294.0, estimate=-1.0, spacing=0.0
+ROWDETAIL: index=165, actual=294.0, estimate=-1.0, spacing=0.0
+ROWDETAIL: index=166, actual=294.0, estimate=-1.0, spacing=0.0
+ROWS: project grid logical=336, materialized=4
+TABLE: auto=true, rowHeight=24.0, delegate=Optional(<_TtGC7SwiftUI22OutlineListCoordinatorGOS_19SelectionManagerBoxOs5Never__: 0xc85158c00>)
+ROWDETAIL: index=163, actual=294.0, estimate=-1.0, spacing=0.0
+ROWDETAIL: index=164, actual=294.0, estimate=-1.0, spacing=0.0
+ROWDETAIL: index=165, actual=294.0, estimate=-1.0, spacing=0.0
+ROWDETAIL: index=166, actual=294.0, estimate=-1.0, spacing=0.0
+PASS: 209 project workspace UI checks; 1,000 synthetic text captures plus image and editable project note; native mixed-selection drag payloads on a private pasteboard; no personal archive, network, general clipboard or external opening. At most 25 simultaneously materialized native rows.

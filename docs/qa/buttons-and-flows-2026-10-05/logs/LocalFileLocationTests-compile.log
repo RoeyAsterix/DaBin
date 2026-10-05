@@ -1,0 +1,96 @@
+/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa-cache/app-store-fd67f6530907ff11d1101e2e5b077786e6b17c21d36257413151c70168e60c4d/LocalFileLocationTests-9d9a711715f78d3e/LocalFileLocationTests.swift:78:31: warning: call to main actor-isolated instance method 'orderOut' in a synchronous nonisolated context [#ActorIsolatedCall]
+ 76 |         let hosting: NSHostingView<AnyView>
+ 77 |         let window: NSWindow
+ 78 |         func close() { window.orderOut(nil); window.contentView = nil; window.close() }
+    |              |                `- warning: call to main actor-isolated instance method 'orderOut' in a synchronous nonisolated context [#ActorIsolatedCall]
+    |              `- note: add '@MainActor' to make instance method 'close()' part of global actor 'MainActor'
+ 79 |     }
+ 80 | 
+
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSWindow.h:425:1: note: calls to instance method 'orderOut' from outside of its actor context are implicitly asynchronous
+ 423 | - (void)orderFront:(nullable id)sender;
+ 424 | - (void)orderBack:(nullable id)sender;
+ 425 | - (void)orderOut:(nullable id)sender;
+     | |- note: calls to instance method 'orderOut' from outside of its actor context are implicitly asynchronous
+     | `- note: main actor isolation inferred from inheritance from class 'NSResponder'
+ 426 | - (void)orderWindow:(NSWindowOrderingMode)place relativeTo:(NSInteger)otherWin;
+ 427 | - (void)orderFrontRegardless;
+
+/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa-cache/app-store-fd67f6530907ff11d1101e2e5b077786e6b17c21d36257413151c70168e60c4d/LocalFileLocationTests-9d9a711715f78d3e/LocalFileLocationTests.swift:78:53: warning: main actor-isolated property 'contentView' can not be mutated from a nonisolated context
+ 76 |         let hosting: NSHostingView<AnyView>
+ 77 |         let window: NSWindow
+ 78 |         func close() { window.orderOut(nil); window.contentView = nil; window.close() }
+    |              |                                      `- warning: main actor-isolated property 'contentView' can not be mutated from a nonisolated context
+    |              `- note: add '@MainActor' to make instance method 'close()' part of global actor 'MainActor'
+ 79 |     }
+ 80 | 
+
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSWindow.h:337:47: note: mutation of this property is only permitted within the actor
+ 335 | - (void)setTitleWithRepresentedFilename:(NSString *)filename;
+ 336 | @property (getter=isExcludedFromWindowsMenu) BOOL excludedFromWindowsMenu;
+ 337 | @property (nullable, strong) __kindof NSView *contentView;
+     |                                               `- note: mutation of this property is only permitted within the actor
+ 338 | @property (nullable, weak) id<NSWindowDelegate> delegate;
+ 339 | @property (readonly) NSInteger windowNumber;
+
+/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa-cache/app-store-fd67f6530907ff11d1101e2e5b077786e6b17c21d36257413151c70168e60c4d/LocalFileLocationTests-9d9a711715f78d3e/LocalFileLocationTests.swift:78:79: warning: call to main actor-isolated instance method 'close()' in a synchronous nonisolated context [#ActorIsolatedCall]
+ 76 |         let hosting: NSHostingView<AnyView>
+ 77 |         let window: NSWindow
+ 78 |         func close() { window.orderOut(nil); window.contentView = nil; window.close() }
+    |              |                                                                `- warning: call to main actor-isolated instance method 'close()' in a synchronous nonisolated context [#ActorIsolatedCall]
+    |              `- note: add '@MainActor' to make instance method 'close()' part of global actor 'MainActor'
+ 79 |     }
+ 80 | 
+
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSWindow.h:392:1: note: calls to instance method 'close()' from outside of its actor context are implicitly asynchronous
+ 390 | 
+ 391 | @property (readonly) NSEventModifierFlags resizeFlags;
+ 392 | - (void)close;
+     | |- note: calls to instance method 'close()' from outside of its actor context are implicitly asynchronous
+     | `- note: main actor isolation inferred from inheritance from class 'NSResponder'
+ 393 | @property (getter=isReleasedWhenClosed) BOOL releasedWhenClosed;
+ 394 | - (void)miniaturize:(nullable id)sender;
+
+/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa-cache/app-store-fd67f6530907ff11d1101e2e5b077786e6b17c21d36257413151c70168e60c4d/LocalFileLocationTests-9d9a711715f78d3e/LocalFileLocationTests.swift:459:37: error: 'newNoteDestination' is inaccessible due to 'private' protection level
+457 |         state.libraryProject = "Northstar"; state.openLibrary(); state.openNewNote()
+458 |         state.newNoteText = "An existing shared note draft"
+459 |         let noteDestination = state.newNoteDestination
+    |                                     `- error: 'newNoteDestination' is inaccessible due to 'private' protection level
+460 |         state.back(); state.openInbox()
+461 |         let noteBoard = try await fixture(BoardView(state: state, theme: ThemeSettings(defaults: defaults)),
+
+DaBinTestCore.AppState.newNoteDestination:2:35: note: 'newNoteDestination' declared here
+1 | class AppState {
+2 | @Published @MainActor private var newNoteDestination: DaBinTestCore.ComposerDestination? { get set }}
+  |                                   `- note: 'newNoteDestination' declared here
+3 | 
+
+/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa-cache/app-store-fd67f6530907ff11d1101e2e5b077786e6b17c21d36257413151c70168e60c4d/LocalFileLocationTests-9d9a711715f78d3e/LocalFileLocationTests.swift:469:22: error: 'newNoteDestination' is inaccessible due to 'private' protection level
+467 |         await settle(noteBoard.hosting)
+468 |         try expect(state.route == .newNote && state.newNoteText == "An existing shared note draft"
+469 |             && state.newNoteDestination == noteDestination,
+    |                      `- error: 'newNoteDestination' is inaccessible due to 'private' protection level
+470 |                    "Opening the note editor preserves the current shared text and destination")
+471 |         func editableNote(in view: NSView) -> NSTextView? {
+
+DaBinTestCore.AppState.newNoteDestination:2:35: note: 'newNoteDestination' declared here
+1 | class AppState {
+2 | @Published @MainActor private var newNoteDestination: DaBinTestCore.ComposerDestination? { get set }}
+  |                                   `- note: 'newNoteDestination' declared here
+3 | 
+
+/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa-cache/app-store-fd67f6530907ff11d1101e2e5b077786e6b17c21d36257413151c70168e60c4d/LocalFileLocationTests-9d9a711715f78d3e/LocalFileLocationTests.swift:486:89: error: 'newNoteDestination' is inaccessible due to 'private' protection level
+484 |         await settle(noteBoard.hosting)
+485 |         let quick = try await find(noteBoard.hosting, id: "inbox-quick-text")
+486 |         try expect(state.route == .inbox && state.newNoteText == continuedText && state.newNoteDestination == noteDestination
+    |                                                                                         `- error: 'newNoteDestination' is inaccessible due to 'private' protection level
+487 |             && quick.valueText == continuedText,
+488 |                    "Back restores Inbox and its visible quick composer with the edited draft and destination intact")
+
+DaBinTestCore.AppState.newNoteDestination:2:35: note: 'newNoteDestination' declared here
+1 | class AppState {
+2 | @Published @MainActor private var newNoteDestination: DaBinTestCore.ComposerDestination? { get set }}
+  |                                   `- note: 'newNoteDestination' declared here
+3 | 
+
+[#ActorIsolatedCall]: <https://docs.swift.org/compiler/documentation/diagnostics/actor-isolated-call>

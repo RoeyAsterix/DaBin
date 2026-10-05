@@ -1,0 +1,718 @@
+{
+  "schemaVersion": 1,
+  "assembledAtUTC": "2026-10-05T02:39:03.270981+00:00",
+  "kind": "bounded_local_verification_evidence",
+  "status": "automated_fixture_groups_passed_with_unresolved_warnings_and_manual_bounds",
+  "summary": {
+    "appStoreReleaseRegisteredSuites": {
+      "passed": 121,
+      "failed": 0,
+      "nativeWindowSuites": 48,
+      "nonfocusSuites": 73
+    },
+    "selectedDirectChannelSuites": {
+      "passed": 5,
+      "failed": 0
+    },
+    "pythonUnitTests": {
+      "passed": 90,
+      "groups": [
+        58,
+        32
+      ]
+    },
+    "xctestCases": {
+      "passed": 2,
+      "failed": 0
+    },
+    "trueSandboxChecks": {
+      "passed": 31,
+      "processPhases": 2
+    },
+    "additionalStandaloneRenderFixtures": {
+      "passed": 4,
+      "pngArtifacts": 387
+    },
+    "interpretation": "Counts remain separate: suites, unit cases, assertions, handler invocations and rendered artifacts are different units. No count is a number of unique human flows or every-button coverage."
+  },
+  "environment": {
+    "architecture": "arm64",
+    "configuration": "Release",
+    "os": "ProductName:\t\tmacOS\nProductVersion:\t\t26.6.2\nBuildVersion:\t\t25G83",
+    "sdkVersion": "27.0",
+    "swiftVersion": "swift-driver version: 1.168.6 Apple Swift version 6.4 (swiftlang-6.4.0.34.1 clang-2100.3.34.1)\nTarget: arm64-apple-macosx26.0",
+    "target": "arm64-apple-macosx14.0"
+  },
+  "inputVerification": {
+    "checkedAtUTC": "2026-10-05T02:39:03.270981+00:00",
+    "releaseBuildInventory": {
+      "recordedInputCount": 168,
+      "currentHashMismatches": [],
+      "currentInputsMatch": true,
+      "currentInputsFingerprint": "ea77017c68c2d9e21c15de7100c5b7b4bd69504c8fc882444c2209cb11639a17",
+      "receipt": {
+        "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/release-inputs.json",
+        "sha256": "f678527f3bdd2681af2bea895e51aa49e595837160567c84c6857025a46d8cc4"
+      }
+    },
+    "fullRegisteredCampaign": {
+      "recordedInputCount": 269,
+      "currentHashMismatches": [],
+      "currentInputsMatch": true,
+      "currentInputsFingerprint": "807afd531fd5a8c3e3cbc059f73bf0c1d4137aa3efc2684fdf337f2b36c47b15",
+      "sourceChangedDuringRun": false,
+      "receipt": {
+        "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/app-store-full-run.json",
+        "sha256": "58e589aa0221f7b1a206edd4a590564d5523800b062a60feafffe9f3439011d2"
+      }
+    },
+    "selectedDirectCampaign": {
+      "recordedInputCount": 152,
+      "currentHashMismatches": [],
+      "currentInputsMatch": true,
+      "currentInputsFingerprint": "4451914002e6caf7852612a062b0e366ac3bca0895acc74281dad3a74661f150",
+      "sourceChangedDuringRun": false,
+      "receipt": {
+        "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/direct-channel-run.json",
+        "sha256": "7cb9b261e1c92558c48523c5d336fc4172618743ebfcb37a7e1be096423c80e8"
+      }
+    },
+    "unsignedStoreCandidate": {
+      "recordedInputCount": 171,
+      "currentHashMismatches": [],
+      "currentInputsMatch": true,
+      "currentInputsFingerprint": "c876b6a02e8bd88171c1c972845a98ed164c71875f8da15c77ac36e9b901ea2d",
+      "inputsUnchangedDuringBuild": true
+    },
+    "productionBaseline": {
+      "receipt": {
+        "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/full-certification-baseline.json",
+        "sha256": "81188d95a0ecb622093319e841bb765e57b36c0731df520d283166fe77494038"
+      },
+      "productionSwiftSources": 138,
+      "changedProductionSwiftSources": 0,
+      "changedExistingNonproductionPaths": [
+        "DaBin.xcodeproj/project.pbxproj",
+        "Tests/WalkthroughRenderTests.swift",
+        "scripts/run_qa.py"
+      ],
+      "newTestSources": [
+        "Tests/DurabilityStressTests.swift",
+        "Tests/FlowActionStressTests.swift",
+        "Tests/VideoPlaybackIntegrationTests.swift",
+        "Tests/VisualAnimationStressTests.swift"
+      ]
+    },
+    "nativeIntegration": {
+      "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/full-certification-native-integration.json",
+      "sha256": "36d71914c80e59a4767d3f4db7ea56baa9a24689d7b5cb174dcc4267596db590",
+      "allActualReleaseInputsAndSwiftTestsMatchCertifiedClone": true,
+      "meaning": "Parent guarded-integration receipt; actual source changes are test/project/runner only. No production Swift edits."
+    }
+  },
+  "runtimeResults": {
+    "appStoreRelease": {
+      "receipt": {
+        "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/app-store-full-run.json",
+        "sha256": "58e589aa0221f7b1a206edd4a590564d5523800b062a60feafffe9f3439011d2"
+      },
+      "coverage": "full_registered_suite",
+      "passedSuites": 121,
+      "failedSuites": 0,
+      "fullInputFingerprint": "807afd531fd5a8c3e3cbc059f73bf0c1d4137aa3efc2684fdf337f2b36c47b15",
+      "durationSeconds": 1155.984103,
+      "compileDefinitions": [],
+      "scope": "Native test executables; no distribution signing, sandbox entitlement enforcement, installer, or App Store validation.",
+      "allSuiteNamesAndSourceHashes": {
+        "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/feature-coverage.json",
+        "sha256": "7a01ed8a83f28a2ce42646ea6d0ae2ddefeabd1289f2ac4739a14cfacda56771"
+      }
+    },
+    "directChannel": {
+      "receipt": {
+        "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/direct-channel-run.json",
+        "sha256": "7cb9b261e1c92558c48523c5d336fc4172618743ebfcb37a7e1be096423c80e8"
+      },
+      "coverage": "selected_suites_only",
+      "selectedPassedSuites": [
+        "PrivacyInformationTests",
+        "ApplicationLifecycleTests",
+        "SoftwareUpdateTests",
+        "UpdateConfigurationTests",
+        "HeaderInteractionTests"
+      ],
+      "passedSuites": 5,
+      "notRequestedSuites": 116,
+      "compileDefinitions": [
+        "DABIN_DIRECT_UPDATES"
+      ],
+      "scope": "Native test executables; no distribution signing, sandbox entitlement enforcement, installer, or App Store validation."
+    },
+    "python": {
+      "runtimeLog": {
+        "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/python-qa-final.log",
+        "sha256": "de14f91dc952ad233689492fa73a28e5987c9e8abd58e576b960e8cf433fa968"
+      },
+      "groupsPassed": [
+        58,
+        32
+      ],
+      "totalPassed": 90,
+      "currentSourceInventory": [
+        {
+          "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Tests/test_app_store_archive_location.py",
+          "sourceSHA256": "c0986560fb05bf0a64a436c736d8cca9876bb557a5d32eae4e378929e096651c",
+          "declaredTestMethods": 8
+        },
+        {
+          "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Tests/test_app_store_metadata.py",
+          "sourceSHA256": "d7878f9f0a069176933686cf3bcd65cb8e7b48e6fbe39b0c99d5bd368a5a57d0",
+          "declaredTestMethods": 15
+        },
+        {
+          "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Tests/test_notarized_distribution.py",
+          "sourceSHA256": "384fc628d9f28ceda9e7ea594deecab318b28a94f07c7b71e1040e78ebf8f93c",
+          "declaredTestMethods": 30
+        },
+        {
+          "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Tests/test_qa_distribution.py",
+          "sourceSHA256": "a61315fa0fb9acf60f18bdd77320a420ff6da1e0c55e4ccbd710716f08404d52",
+          "declaredTestMethods": 5
+        },
+        {
+          "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/scripts/test_app_store_preflight.py",
+          "sourceSHA256": "87b722214de52c7ef120cc42d42c1ae4e96fd44e93eb526f54828d211c3bcfae",
+          "declaredTestMethods": 32
+        }
+      ],
+      "scope": "Distribution/build-script unit cases using local synthetic artifacts; no signed deployment or live services.",
+      "hashQualification": "The execution log has no original per-input SHA manifest. Current source hashes and declared method counts are recorded here; source-at-run cryptographic provenance is not invented."
+    },
+    "xctest": {
+      "summary": {
+        "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/xctest-summary.json",
+        "sha256": "b87ae662910d1c79f94b94a78ed0eae98e94664c92b1a3e9556b44f800728944"
+      },
+      "runtimeLog": {
+        "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/xctest-passed.log",
+        "sha256": "97ec1ef9e0ae87ef59ef2a9eb94fa6d8bb3acc6dc90be11600ed3c4c1625dc59"
+      },
+      "passedCases": 2,
+      "failedCases": 0,
+      "source": {
+        "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Tests/XcodeSmokeTests.swift",
+        "sha256": "6c2f4885ad9f02ccc91498172bb3b87ccec6fddf800ddca4f29452334b4b71d1"
+      },
+      "scope": "Storage original/day/comment reopen and scoped search. Standalone XCTest receipt has no complete per-input hash manifest."
+    },
+    "sandbox": {
+      "receipt": {
+        "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/sandbox-final/report.json",
+        "sha256": "2aab69267647d720781364d8fd2ebe4368c23449788203d1c3d8c3f513e80bab"
+      },
+      "checks": 31,
+      "phases": [
+        {
+          "checks": 12,
+          "exitCode": 0,
+          "passed": true,
+          "phase": "save"
+        },
+        {
+          "checks": 19,
+          "exitCode": 0,
+          "passed": true,
+          "phase": "reopen-export"
+        }
+      ],
+      "runtimeScope": "isolated ad-hoc sandbox smoke; not distribution-signed application",
+      "currentProductionSourceCheck": {
+        "recordedInputCount": 137,
+        "currentHashMismatches": [],
+        "currentInputsMatch": true,
+        "currentInputsFingerprint": "780e4dba9f5870cbaf58eac50ff0df1d0b1dc4395dd304d8ba5d446987cf0f73"
+      },
+      "originalTestSHA256": "383ce1b8c32b6adf890afc6d236f2a6e5e5b62e7376e061f5ea7a5c8b8770563",
+      "materializedWrapperSHA256": "ee156d848ef24a6fdbae8a2930f4b31c3c4c5166c3cba57cf6ed2b119d6f0813",
+      "materializedWrapperExactTransformMatched": true,
+      "wrapperTransform": "Prepend @testable import DaBinTestCore and a newline to the exact original Swift source.",
+      "moduleSHA256": "cfcd623cefc11df01f93fb005e14ed048eaeaf8ebb5ff0de75788bbf1886b35e",
+      "actualReadAndWriteDenied": true,
+      "sourceAndDenialFixturePreserved": true,
+      "distributionSignedAppRuntimeVerified": false,
+      "historicalAttemptsRetained": [
+        "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/sandbox/report.json",
+        "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/sandbox-passed/report.json"
+      ]
+    },
+    "standaloneRenders": {
+      "aggregate": {
+        "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/aggregate-extra-render-evidence.json",
+        "sha256": "874bf786dbaa388e2956202391f374b8e923a52b1acb8dce87000106abb4d7f6"
+      },
+      "passedFixtures": 4,
+      "pngCount": 387,
+      "runtimeJoins": [
+        {
+          "name": "NativeRenderTests",
+          "status": "passed",
+          "sourceSHA256": "d28c63673e75b9d1c1b77c657d99c54cd49b6ce1ea90a5a324601a24a08f57e5",
+          "runtimeReceipt": {
+            "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/extra-render-report.json",
+            "sha256": "50b542749f1a0a78c8766ca17d94fb2f005f58ab1290af85b21d01fc3c622f04"
+          },
+          "runtimeLog": {
+            "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/logs/NativeRenderTests.log",
+            "sha256": "f864fc0b03644ecfb5fa07e65233920f881b36e8d3c1919872970c8946ce88ef"
+          },
+          "runtimeSeconds": 10.819,
+          "pngCount": 24,
+          "artifactHashesMatch": true,
+          "scope": "Only the injected-preferences responsive detail branch, before legacy UserDefaults.standard mutation.",
+          "artifactRevalidation": {
+            "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/native-responsive-artifact-revalidation.json",
+            "sha256": "ec3a7a69fcb2a4758a856810180f1fd63055fc37722d51a0e7625a15036633ef"
+          },
+          "qualification": "Only --responsive-detail mode:4sizes ×2appearances ×3states=24PNGs. Original native runtime exited0; incorrect30PNG artifact minimum was corrected read-only. Original failed aggregate remains retained."
+        },
+        {
+          "name": "PrivacyRenderTests",
+          "status": "passed",
+          "sourceSHA256": "92874838181437e6f9b82f124022ee7146670f6011c4faaf1053c8d091e8a648",
+          "runtimeReceipt": {
+            "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/privacy-only-runtime/20261005T014721320972Z-d77027a3/extra-render-report.json",
+            "sha256": "8a530fe0f377186dbddfe12125e9f1f6e067e5aaae556d0e7ee4e6fd67d683fe"
+          },
+          "runtimeLog": {
+            "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/privacy-only-runtime/20261005T014721320972Z-d77027a3/logs/PrivacyRenderTests.log",
+            "sha256": "85a68285c84e5b6377d4d0ac40fed0ce1dc49a75a0c7877e403024405bfc61df"
+          },
+          "runtimeSeconds": 1.247,
+          "pngCount": 4,
+          "artifactHashesMatch": true,
+          "scope": "Real bundled local policy in offscreen non-key windows; no folder button is pressed.",
+          "fixtureCorrection": {
+            "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/privacy-fixture-correction.json",
+            "sha256": "bfeb937d8878eb6ddfaed4b973ef57996c7ea6a171ae9714966c55f211635993"
+          },
+          "qualification": "Intentional unconfigured-links scenario in a disposable bundle: two public URL keys omitted only there; production URLs and test assertions unchanged. Selected Privacy rerun only."
+        },
+        {
+          "name": "WalkthroughRenderTests",
+          "status": "passed",
+          "sourceSHA256": "44631784de1ad2dcf05ca32d96c83e5311dde5240f22a48478aa4de98347f2bd",
+          "runtimeReceipt": {
+            "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/extra-render-report.json",
+            "sha256": "50b542749f1a0a78c8766ca17d94fb2f005f58ab1290af85b21d01fc3c622f04"
+          },
+          "runtimeLog": {
+            "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/logs/WalkthroughRenderTests.log",
+            "sha256": "eb7ab316cf867c4f0b442cd4d0e58f3d70dd982d11abca485c433d8c039e5a7f"
+          },
+          "runtimeSeconds": 11.972,
+          "pngCount": 31,
+          "artifactHashesMatch": true,
+          "scope": "Synthetic PDF import/index/search/comment/task/export/archive arc; direct-channel fixture refuses network/installer, App Store branch uses the production inert updater.",
+          "qualification": "Narrative production state/persistence rendering, not proof of native activation for every pictured button."
+        },
+        {
+          "name": "IslandPlaygroundRender",
+          "status": "passed",
+          "sourceSHA256": "ff3afc2f684f3505adbd940d0dd0bcdafb6754b5f0226b0d4f062caf757726cb",
+          "runtimeReceipt": {
+            "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/extra-render-report.json",
+            "sha256": "50b542749f1a0a78c8766ca17d94fb2f005f58ab1290af85b21d01fc3c622f04"
+          },
+          "runtimeLog": {
+            "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/logs/IslandPlaygroundRender.log",
+            "sha256": "d38f464517bad4e87fc762a777063bedfdeea25474f47750f6e0b9058598b735"
+          },
+          "runtimeSeconds": 11.418,
+          "pngCount": 328,
+          "artifactHashesMatch": true,
+          "scope": "Offscreen production character presentation layers, fictional vector desktop, fresh frame sequence; no installed-app recording.",
+          "qualification": "328PNGs comprise327frames and one contact sheet; actual presentation-layer guards passed. No physical FPS or multi-hour GPU/heap claim."
+        }
+      ],
+      "originalFailedAggregateRetained": true,
+      "meaning": "Declared native render/model assertions and exact artifacts; not exhaustive physical display or pictured-button activation."
+    },
+    "graphics": {
+      "manifest": {
+        "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/graphics-final/hash-manifest.json",
+        "sha256": "fcb369b1391a09808002168ddc7c1788b61d1cc72bc2b4228be48478934c8943"
+      },
+      "checks": 108535,
+      "exactCuratedPNGs": 8,
+      "scope": "Seeded native graphics/interruption/control/disposal fixture; bounded native render/layer evidence.",
+      "pixelInspectionLimit": "Curated artifacts do not establish exhaustive human inspection of every pixel, smoothness or physical FPS."
+    }
+  },
+  "stressWorkloads": {
+    "durability": {
+      "report": {
+        "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/durability-stress-report.json",
+        "sha256": "f4ee9e37229945f376ce62b0d69e77ca44ada1bc968b6a21d12f65c2a8567dec"
+      },
+      "counts": {
+        "backupRecords": 1008,
+        "failedMutations": 19,
+        "importInterruptionChecks": 3,
+        "mixedOperations": 320,
+        "operationKind0": 46,
+        "operationKind1": 35,
+        "operationKind2": 43,
+        "operationKind3": 36,
+        "operationKind4": 43,
+        "operationKind5": 35,
+        "operationKind6": 39,
+        "operationKind7": 43,
+        "originalFiles": 8,
+        "processKillBoundaries": 4,
+        "repositoryBatchRollbacks": 1,
+        "restarts": 25,
+        "restoreRollbackChecks": 2,
+        "seededRecords": 1000,
+        "workspaceWriteRetries": 1
+      },
+      "checks": 8586,
+      "scope": "Synthetic private archives;1008backuprecords,25restarts and4real SIGKILL child boundaries. No power-loss/full-disk/cloud guarantee."
+    },
+    "measuredFlowActionAndVideo": {
+      "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/final-measurements.json",
+      "sha256": "9db85faaf79503a96e2102b5cad548a509d05be3648ac7df2c72823ebcdf8c67"
+    },
+    "semanticVsNative": "FlowActionStress invokes public semantic handlers. Native action/hit-target suites are separate. Actual offscreen AVKit transport AX presses are0; production-owned player API fallback verifies transport/time/frames."
+  },
+  "warningsAndFindings": [
+    {
+      "id": "title-clipping",
+      "status": "confirmed_bounded_visual_defect",
+      "finding": {
+        "id": "normal-zoom-title-render",
+        "severity": "confirmed-visual-defect",
+        "observed": "At100% zoom, an unfocused long task title visibly paints one clipped line within a reserved two-line header region in the380×680 production Board. Root own-process physical CUA screenshot matched the cached rendering;200% cached fixtures paint two lines.",
+        "limits": "Visible title clipping is confirmed for this seeded unfocused100% case. Complete native field value and AXHelp are retained; stored text loss or title-editing failure is not demonstrated. The200% observation is cached evidence, not an additional physical comparison.",
+        "experiment": "Single fixedSize(horizontal:false,vertical:true) modifier in an isolated copied-source module;351 interaction checks passed, normal-zoom render unchanged; candidate rejected and never promoted.",
+        "evidence": "title-candidate/decision.json",
+        "status": "confirmed-on-physical-native-window",
+        "physicalCorroboration": {
+          "reportedBy": "Root QA own-process CUA getScreenshot and accessibility inspection",
+          "physicalScreenshotPersisted": false,
+          "physicalScreenshotEvidence": "Inline CUA image observed by root; no exact physical PNG saved",
+          "AXHelpRetainsFullTitle": true,
+          "observationScope": "Synthetic title fixture only; no installed user app or personal content inspected"
+        },
+        "nativeFieldMetadata": {
+          "fontSize": 21,
+          "frame": "{{620, 719}, {312, 48}}",
+          "wraps": true,
+          "scrollable": false,
+          "usesSingleLineMode": false,
+          "maximumNumberOfLines": 0,
+          "fullFixtureTitleRetained": true
+        },
+        "productionSourceChanged": false,
+        "evidenceFiles": [
+          {
+            "file": "title-candidate/decision.json",
+            "sha256": "530836fedb66744451577ed3a122da891e12bdb22d980419337b21210f52f7e0"
+          },
+          {
+            "file": "title-candidate/candidate-manifest.json",
+            "sha256": "b4ac59dbb2dbf1186cca70e7e50d43e4522354296c66b9fb8a00f573d834d9e9"
+          },
+          {
+            "file": "native-title-probe/probe-manifest.json",
+            "sha256": "6f098144b2e40f47ad2c617628af8cf89d864515881a91802c989a5413d9b217"
+          },
+          {
+            "file": "native-title-probe/output/launch-ready.json",
+            "sha256": "303cc6370bc7e1e18cc187fda9c4720f6194c520bed7a91a6146888475762a1c"
+          },
+          {
+            "file": "native-title-probe/output/cache-display-visible-window@2x.png",
+            "sha256": "8478db575e4fad3a5ca61f407d5b9755ba462ad5b41a320951b6048543539f92"
+          },
+          {
+            "file": "native-title-probe/output/root-cleanup-verification.json",
+            "sha256": "409cb454de988123bcc3df91b9a15358bb8f00697abdddb97c0234e05b81de3c"
+          }
+        ],
+        "nextAction": "Investigate native text-field wrapping/drawing at normal zoom while preserving editable binding, focus/history, accessibility and the bounded two-line header."
+      },
+      "evidence": {
+        "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/findings.json",
+        "sha256": "06453be15bfbe831f2532014e75aa54d269c459d1c4997d37a2fad6ac7d18139"
+      }
+    },
+    {
+      "id": "zoom-performance",
+      "status": "warnings_remain_despite_fixture_pass",
+      "inputToLayoutP95Milliseconds": 54.56233327277005,
+      "steadyRunloopP95Milliseconds": 69.42895846441388,
+      "baselineTimerP95Milliseconds": 16.8505001347512,
+      "details": {
+        "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/final-measurements.json",
+        "sha256": "9db85faaf79503a96e2102b5cad548a509d05be3648ac7df2c72823ebcdf8c67"
+      },
+      "measurementLimit": "Synthetic direct updates, forced layout and coupled resizing; callback delivery is not physical display frame rate."
+    },
+    {
+      "id": "native-table-reentrancy",
+      "status": "source_callback_not_established",
+      "warningCount": 10,
+      "suites": [
+        {
+          "suite": "ProjectWorkspaceViewTests",
+          "count": 5,
+          "runtimeLog": {
+            "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa/runs/20261005T012113981577Z-app-store/ProjectWorkspaceViewTests.log",
+            "sha256": "debbba60a8dadb64db2f9d79e75256a8b57e2d820b0f55b94504071b33d0037a"
+          },
+          "messages": [
+            "2026-10-05 04:25:41.384 ProjectWorkspaceViewTests[77472:26518558] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future.",
+            "2026-10-05 04:25:48.974 ProjectWorkspaceViewTests[77472:26518558] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future.",
+            "2026-10-05 04:25:51.699 ProjectWorkspaceViewTests[77472:26518558] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future.",
+            "2026-10-05 04:25:52.086 ProjectWorkspaceViewTests[77472:26518558] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future.",
+            "2026-10-05 04:25:53.202 ProjectWorkspaceViewTests[77472:26518558] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future."
+          ]
+        },
+        {
+          "suite": "SearchWindowTests",
+          "count": 3,
+          "runtimeLog": {
+            "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa/runs/20261005T012113981577Z-app-store/SearchWindowTests.log",
+            "sha256": "738dc4ad989f94e03fe3807c719f55cddacad6d2e520274433afd129553f27b0"
+          },
+          "messages": [
+            "2026-10-05 04:35:56.555 DaBinSearchQA[79752:26547476] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future.",
+            "2026-10-05 04:36:07.948 DaBinSearchQA[79752:26547476] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future.",
+            "2026-10-05 04:36:17.908 DaBinSearchQA[79752:26547476] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future."
+          ]
+        },
+        {
+          "suite": "WorkspaceZoomPerformanceTests",
+          "count": 2,
+          "runtimeLog": {
+            "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa/runs/20261005T012113981577Z-app-store/WorkspaceZoomPerformanceTests.log",
+            "sha256": "b154d2bc41aa4da4feb92e97d85cddbc24abf87dbb79c514e78aba6c023def8c"
+          },
+          "messages": [
+            "2026-10-05 04:38:52.960 WorkspaceZoomPerformanceTests[80304:26554235] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future.",
+            "2026-10-05 04:39:26.559 WorkspaceZoomPerformanceTests[80304:26554235] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future."
+          ]
+        }
+      ],
+      "meaning": "AppKit warns this may become an assertion in a future OS. Passing fixtures do not resolve the warning."
+    },
+    {
+      "id": "temporary-reminder-store-diagnostics",
+      "status": "fixture_scoped_cause_not_established",
+      "suite": "WorkInboxTests",
+      "suitePassed": true,
+      "coreDataErrorLines": 8,
+      "runtimeLog": {
+        "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa/runs/20261005T012113981577Z-app-store/WorkInboxTests.log",
+        "sha256": "2f2764a2330a20fe6b8a7db54c771b1278af34fb92d604de9243330329a02851"
+      },
+      "observation": "I/O and unable-to-open diagnostics refer to an owned UUID temporary DaBinReminderRecovery archive. Cleanup timing is a hypothesis, not an established cause or product-storage failure.",
+      "possibleFixtureLifetimeEvidence": {
+        "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Tests/WorkInboxTests.swift",
+        "line": 202,
+        "statement": "defer removes the temporary root"
+      }
+    },
+    {
+      "id": "deliberate-corrupt-database-diagnostics",
+      "status": "intentional_fault_fixture",
+      "suite": "DomainTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Tests/DomainTests.swift",
+      "line": 472,
+      "meaning": "The fixture deliberately writes non-database bytes and asserts initialization refusal and unchanged corrupt bytes; diagnostic output is expected for that injection."
+    }
+  ],
+  "manualAndLiveBoundaries": [
+    {
+      "id": "physical_input",
+      "needs": "Physical two/three-finger trackpad gestures, natural-scroll settings, mouse button remapping/firmware and unusual keyboards.",
+      "automatedEvidence": [
+        "WorkspaceInputTests",
+        "NavigationGestureTests",
+        "SearchInputTests"
+      ],
+      "scope": "Synthetic NSEvent dispatch and native responder routing."
+    },
+    {
+      "id": "live_notifications_permissions",
+      "needs": "Real permission UI, notification delivery, system alert actions, Focus modes and sleep/wake delivery timing.",
+      "automatedEvidence": [
+        "ServiceTests",
+        "ReminderAlertCoordinatorTests",
+        "NotificationPresentationTests"
+      ],
+      "scope": "Fake clients plus native own-process notification presentation."
+    },
+    {
+      "id": "live_auto_capture_and_bookmarks",
+      "needs": "Actual screenshot-folder bookmark grant, Accessibility entitlement workflow and clipboard/screenshot activity in external apps.",
+      "automatedEvidence": [
+        "AutoCaptureServiceTests",
+        "ManualCaptureLifecycleTests",
+        "QuickAccessTests"
+      ],
+      "scope": "Controlled provider and file fixtures; no personal clipboard or real external session."
+    },
+    {
+      "id": "external_apps",
+      "needs": "Finder/system file-open behavior and drag/copy compatibility with specific target apps.",
+      "automatedEvidence": [
+        "ExternalTransferProcessTests",
+        "NativeContentDragTests",
+        "LocalFileLocationTests"
+      ],
+      "scope": "Own-process native drag targets, independent fixture consumer and safe folder-opening spies."
+    },
+    {
+      "id": "hardware_graphics_lifecycle",
+      "needs": "Actual multiple displays/scaling, GPU frame pacing, thermal pressure, long sleep/wake sessions and broader leak profiling.",
+      "automatedEvidence": [
+        "RobotVisualConsistencyTests",
+        "VisualAnimationStressTests",
+        "RobotWindowTransitionTests",
+        "ViewportLifecycleTests",
+        "VideoPlaybackIntegrationTests"
+      ],
+      "scope": "Production offscreen/native geometry/render/queue and bounded lifecycle stress."
+    },
+    {
+      "id": "system_media_variants",
+      "needs": "Protected/remote media, all third-party codecs, audio output devices and arbitrary corrupted documents. Native AVKit transport button/slider clicks, AirPlay and PiP also remain separate.",
+      "automatedEvidence": [
+        "MediaIntegrationTests",
+        "ExtendedMediaInteractionTests",
+        "LocalDOCXTextExtractorTests",
+        "VideoPlaybackIntegrationTests"
+      ],
+      "scope": "Fresh local media, OS preview/extraction plus native fixture interactions. Production-owned AVPlayer API transport and decoded-frame/time advancement are exercised on generated MOVs; prototype actual AX presses were zero."
+    },
+    {
+      "id": "distribution_live_services",
+      "needs": "Distribution-signed installed app, TestFlight entitlement/install/upgrade, live updater/website networking and notarization.",
+      "automatedEvidence": [
+        "SoftwareUpdateTests",
+        "UpdateConfigurationTests",
+        "StoreSandboxSmokeTests"
+      ],
+      "scope": "Store/direct build semantics and an actual ad-hoc sandbox fixture, not a distribution-signed live app."
+    },
+    {
+      "id": "storage_faults_beyond_process_kill",
+      "needs": "Power loss, full disks, permission changes, network volumes, iCloud conflicts and filesystem corruption across hardware.",
+      "automatedEvidence": [
+        "DurabilityStressTests",
+        "ArchiveRecoveryTests",
+        "ArchiveBackupTests",
+        "QAStorageScopedSaveTests"
+      ],
+      "scope": "Failed writes/encoding, journal checkpoints, ordinary restarts and real SIGKILL in owned fixture children."
+    },
+    {
+      "id": "human_accessibility_usability",
+      "needs": "Human task completion, VoiceOver use, discoverability, comfort and every input method.",
+      "automatedEvidence": [
+        "CaptureDetailReadabilityTests",
+        "CaptureDetailNavigationTests",
+        "TaskPlanInteractionTests",
+        "WorkspaceWindowTests"
+      ],
+      "scope": "Native accessibility action availability, hit-target bounds, focus/editor preservation and source cognitive review; no user study."
+    }
+  ],
+  "physicalProbeBoundary": {
+    "id": "physical-native-avkit-controls",
+    "severity": "verification-gap",
+    "status": "inconclusive-transport-attempt",
+    "observed": "Root attempted the synthetic visible probe video command after the title observation. CUA reported stale menu elements, screenshot unavailable and appquit; no video-ready.json was produced.",
+    "limits": "This does not establish a product failure or successful physical AVKit play/pause/seek activation. Existing offscreen media/renderer evidence remains separate.",
+    "evidence": "native-title-probe/output/root-cleanup-verification.json",
+    "cleanupScope": "Root independently verified exactPID83152 exited and its exactUUID archive was removed. Dedicated preferences-domain removal was not independently verified. Earlier cleanup.json belongs toPID82407 and is not attributed to this later run."
+  },
+  "unsignedStoreCandidate": {
+    "receipt": {
+      "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/store-candidate/store-candidate-receipt.json",
+      "sha256": "7823bc16cac97fdd0c116fddb56cf5bea4744c00c099bde09c39a094e1f11999"
+    },
+    "version": "0.4.33",
+    "buildNumber": "88",
+    "configuration": "Release",
+    "architecture": "arm64",
+    "buildExitCode": 0,
+    "unsignedPackagingPreflightExitCode": 0,
+    "preflightPassChecks": 51,
+    "sourceFingerprint": "ea77017c68c2d9e21c15de7100c5b7b4bd69504c8fc882444c2209cb11639a17",
+    "executableSHA256": "94607393da6a808e5c9c8b57a3979cfa54659ccf32961e39143376a95035c694",
+    "executableHashStillMatches": true,
+    "signed": false,
+    "archiveCreated": false,
+    "uploaded": false,
+    "appStoreApproved": false,
+    "sandboxRuntimeVerifiedForThisUnsignedCandidate": false
+  },
+  "releaseStatus": {
+    "status": "fresh_release_compilation_complete_signing_and_upload_pending",
+    "compilationStageReceipt": {
+      "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/testflight-compilation-receipt.json",
+      "sha256": "c918aea36ef6f071004a71c1472d27f9a920e39d3ee9acae146d1fab1cd1024d"
+    },
+    "archiveComplete": false,
+    "uploaded": false,
+    "scope": "Unsigned build/preflight and ad-hoc sandbox evidence are complete. Parent may append a distinct signed archive/upload receipt after it finishes; none is claimed by this assembly.",
+    "compilationWarnings": [
+      {
+        "message": "Metadata extraction skipped, no AppIntents.framework dependency found",
+        "category": "metadata_step_skipped",
+        "log": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/testflight-full-certification-archive.log",
+        "observedLogLine": 287,
+        "interpretation": "The Release compilation reached CodeSign; this message is not a compiler failure or proof that signing completed."
+      }
+    ]
+  },
+  "evidenceInventory": {
+    "featureCoverage": {
+      "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/feature-coverage.json",
+      "sha256": "7a01ed8a83f28a2ce42646ea6d0ae2ddefeabd1289f2ac4739a14cfacda56771"
+    },
+    "findings": {
+      "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/findings.json",
+      "sha256": "06453be15bfbe831f2532014e75aa54d269c459d1c4997d37a2fad6ac7d18139"
+    },
+    "measurements": {
+      "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/final-measurements.json",
+      "sha256": "9db85faaf79503a96e2102b5cad548a509d05be3648ac7df2c72823ebcdf8c67"
+    },
+    "curatedReceiptManifest": {
+      "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/receipt-manifest.json",
+      "sha256": "930207faa1791738a5ddaeaf625dcc71c267cb31e35e3277e30f370ed9166405"
+    },
+    "claimsNotMade": [
+      "Assertion count equals number of completed user flows",
+      "Every declared control activated in every state",
+      "All bugs eliminated",
+      "Physical input verified by synthetic events",
+      "Human usability established by fixtures",
+      "No memory leaks or smooth hardware FPS established by bounded render stress",
+      "Distribution installation established by ad-hoc sandbox smoke"
+    ]
+  },
+  "retainedHistoricalAttempts": {
+    "meaning": "Prior environment, signing, discovery, render checker/fixture and rejected source experiments remain intact; current passes supersede only their documented scope.",
+    "paths": [
+      "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/xctest-environment-failure.log",
+      "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/sandbox/report.json",
+      "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/attempts",
+      "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/title-candidate/decision.json",
+      "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/extra-render-report.json"
+    ]
+  }
+}

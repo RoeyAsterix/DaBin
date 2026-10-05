@@ -182,7 +182,8 @@ import SwiftUI
         try render(view, "calendar-selected-dark")
         try await press(view, "calendar-apply")
         try expect(dismissals == 1 && state.weeklyDays == [day(1), day(3), day(5)], "Apply commits exactly the chosen nonconsecutive days")
-        try expect(state.weeklyVisibleDays == [day(1), day(5)], "Chosen empty dates create no columns")
+        try expect(state.weeklyVisibleDays == [day(1), day(3), day(5)], "Every chosen date creates a column, including the empty date")
+        try expect(state.weeklyActiveDays == [day(1), day(5)], "The active-day count includes only chosen populated dates")
         for value in [7, 9, 11, 13] { try await press(view, "calendar-day-2025-03-\(String(format: "%02d", value))") }
         let atCap = try await find(view, "calendar-selection-count")
         try expect(atCap.textValue == "7 of 7 days selected", "Seven additions reach the cap")

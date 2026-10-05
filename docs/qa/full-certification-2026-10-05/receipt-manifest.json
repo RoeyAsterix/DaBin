@@ -1,0 +1,178 @@
+{
+  "artifacts": [
+    {
+      "bytes": 240,
+      "path": "sandbox-final/Smoke.entitlements",
+      "sha256": "b746c74b201e6af4e0864fbd1f4f629f96156a7ec4b7208bc995d0a5089bb592",
+      "source": "/private/tmp/dabin-full-certification-final-sandbox-20261005T014700/Smoke.entitlements"
+    },
+    {
+      "bytes": 9890,
+      "path": "sandbox-final/StoreSandboxSmokeTests.original.swift",
+      "sha256": "383ce1b8c32b6adf890afc6d236f2a6e5e5b62e7376e061f5ea7a5c8b8770563",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Tests/StoreSandboxSmokeTests.swift"
+    },
+    {
+      "bytes": 9921,
+      "path": "sandbox-final/StoreSandboxSmokeTests.swift",
+      "sha256": "ee156d848ef24a6fdbae8a2930f4b31c3c4c5166c3cba57cf6ed2b119d6f0813",
+      "source": "/private/tmp/dabin-full-certification-final-sandbox-20261005T014700/StoreSandboxSmokeTests.swift"
+    },
+    {
+      "bytes": 0,
+      "path": "sandbox-final/compile.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/private/tmp/dabin-full-certification-final-sandbox-20261005T014700/compile.log"
+    },
+    {
+      "bytes": 0,
+      "path": "sandbox-final/reopen-export.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/private/tmp/dabin-full-certification-final-sandbox-20261005T014700/reopen-export.stderr.log"
+    },
+    {
+      "bytes": 1949,
+      "path": "sandbox-final/reopen-export.stdout.json",
+      "sha256": "6927476a8c74a21fe0a0c40b004917348fd9d7d90e5d5b31d34d3d93fd2da0ac",
+      "source": "/private/tmp/dabin-full-certification-final-sandbox-20261005T014700/reopen-export.stdout.json"
+    },
+    {
+      "bytes": 23455,
+      "path": "sandbox-final/report.json",
+      "sha256": "2aab69267647d720781364d8fd2ebe4368c23449788203d1c3d8c3f513e80bab",
+      "source": "/private/tmp/dabin-full-certification-final-sandbox-20261005T014700/report.json"
+    },
+    {
+      "bytes": 0,
+      "path": "sandbox-final/save.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/private/tmp/dabin-full-certification-final-sandbox-20261005T014700/save.stderr.log"
+    },
+    {
+      "bytes": 1339,
+      "path": "sandbox-final/save.stdout.json",
+      "sha256": "16c64c8f68aaa2a7146d26d4420e22c64500495c0fb3c035667d552767da9e7f",
+      "source": "/private/tmp/dabin-full-certification-final-sandbox-20261005T014700/save.stdout.json"
+    },
+    {
+      "bytes": 128,
+      "path": "sandbox-final/sign-app.log",
+      "sha256": "051b667bfb4977d4c37f3558628cff2a3120d551b9fca0b2252c0dd0cc92afaa",
+      "source": "/private/tmp/dabin-full-certification-final-sandbox-20261005T014700/sign-app.log"
+    },
+    {
+      "bytes": 171,
+      "path": "sandbox-final/sign-library.log",
+      "sha256": "15c2f877e048dcfc968af13b2d6baa9c5b568050a2e5abe5d11446e7336ebb42",
+      "source": "/private/tmp/dabin-full-certification-final-sandbox-20261005T014700/sign-library.log"
+    },
+    {
+      "bytes": 0,
+      "path": "sandbox-final/signature-verify.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/private/tmp/dabin-full-certification-final-sandbox-20261005T014700/signature-verify.log"
+    },
+    {
+      "bytes": 467,
+      "path": "sandbox-final/signed-entitlements.log",
+      "sha256": "57404249a7ab5fcbbd5e917fa1a4386e0745f2adde1b0ac220667720faa4e6c6",
+      "source": "/private/tmp/dabin-full-certification-final-sandbox-20261005T014700/signed-entitlements.log"
+    },
+    {
+      "bytes": 21251,
+      "path": "store-candidate/store-candidate-receipt.json",
+      "sha256": "7823bc16cac97fdd0c116fddb56cf5bea4744c00c099bde09c39a094e1f11999",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/store-full-certification-20261005/store-candidate-receipt.json"
+    },
+    {
+      "bytes": 3482,
+      "path": "store-candidate/unsigned-packaging-preflight.log",
+      "sha256": "3185396f156f35ca73d76a5316de4fc6430ef96756d29e5e9fe4bcc9437aa005",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/store-full-certification-20261005/unsigned-packaging-preflight.log"
+    },
+    {
+      "bytes": 127056,
+      "path": "store-candidate/xcodebuild-release.log",
+      "sha256": "315920c8018eaf8779fffb6441460c02bb2816926f8122bcd0fd9782a0f7a212",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/store-full-certification-20261005/xcodebuild-release.log"
+    },
+    {
+      "bytes": 0,
+      "path": "measured-flows/FlowActionStressTests-compile.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa/runs/20261005T012113981577Z-app-store/FlowActionStressTests-compile.log"
+    },
+    {
+      "bytes": 2693,
+      "path": "measured-flows/FlowActionStressTests.log",
+      "sha256": "4fa685a5eaefd74a6778c76cd475ebab146cba34b5f94cd32fe5ccaceb7dcdcd",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa/runs/20261005T012113981577Z-app-store/FlowActionStressTests.log"
+    },
+    {
+      "bytes": 41909,
+      "path": "measured-flows/FlowActionStressTests.swift",
+      "sha256": "2265e101454cb89193cdb502188ce97f4e33a5862d8e3918663d9538ef6b4e8d",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Tests/FlowActionStressTests.swift"
+    },
+    {
+      "bytes": 0,
+      "path": "measured-flows/VideoPlaybackIntegrationTests-compile.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa/runs/20261005T012113981577Z-app-store/VideoPlaybackIntegrationTests-compile.log"
+    },
+    {
+      "bytes": 3703,
+      "path": "measured-flows/VideoPlaybackIntegrationTests.log",
+      "sha256": "3243087f193042c3ac722eab602098af2e2b3ea464071e7523b78a4ab3de41f1",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa/runs/20261005T012113981577Z-app-store/VideoPlaybackIntegrationTests.log"
+    },
+    {
+      "bytes": 29452,
+      "path": "measured-flows/VideoPlaybackIntegrationTests.swift",
+      "sha256": "83f982f8e61b21474b3052562a58f70ce5b47ec4b9ac1a3fa595882e1009e24d",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Tests/VideoPlaybackIntegrationTests.swift"
+    },
+    {
+      "bytes": 3509,
+      "path": "measured-flows/suite-receipts.json",
+      "sha256": "725756f0a8d9f17b227b7be8e904c748dcd90a156423d4f5b83aa9ebea5ab7c8",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa/runs/20261005T012113981577Z-app-store/report.json"
+    },
+    {
+      "bytes": 0,
+      "path": "workspace-zoom/WorkspaceZoomPerformanceTests-compile.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa/runs/20261005T012113981577Z-app-store/WorkspaceZoomPerformanceTests-compile.log"
+    },
+    {
+      "bytes": 1550,
+      "path": "workspace-zoom/WorkspaceZoomPerformanceTests.log",
+      "sha256": "b154d2bc41aa4da4feb92e97d85cddbc24abf87dbb79c514e78aba6c023def8c",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa/runs/20261005T012113981577Z-app-store/WorkspaceZoomPerformanceTests.log"
+    },
+    {
+      "bytes": 26942,
+      "path": "workspace-zoom/WorkspaceZoomPerformanceTests.swift",
+      "sha256": "2526ccb280cc8b312dbebe26649749fbd593775221fdd4024a2a5fac95d7d3b9",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Tests/WorkspaceZoomPerformanceTests.swift"
+    },
+    {
+      "bytes": 1550,
+      "path": "workspace-zoom/historical-20261005T002333138721Z.log",
+      "sha256": "11424c326f1cd98e838baf5fa985c2f73104824d3f5e9d2fee4d8fee4e07c792",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa/runs/20261005T002333138721Z-app-store/WorkspaceZoomPerformanceTests.log"
+    },
+    {
+      "bytes": 5772,
+      "path": "workspace-zoom/performance.json",
+      "sha256": "da08084666b4a5984d44bfe78def6bd28000a1025149a1018077f6b5ff2937e4",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa/workspace-zoom-performance/performance.json"
+    },
+    {
+      "bytes": 23911,
+      "path": "final-measurements.json",
+      "sha256": "9db85faaf79503a96e2102b5cad548a509d05be3648ac7df2c72823ebcdf8c67"
+    }
+  ],
+  "schemaVersion": 1
+}

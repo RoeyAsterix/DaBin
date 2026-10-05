@@ -1,5 +1,14 @@
 import Foundation
 
+@MainActor private final class ExportScopeReminderClient: ReminderNotificationClient {
+    func authorization() async -> ReminderAuthorization { .allowed }
+    func requestAuthorization() async throws -> Bool { fatalError("Export scope QA never requests permission") }
+    func pending() async -> [ScheduledReminder] { [] }
+    func add(_ reminder: ScheduledReminder) async throws { fatalError("Export scope QA never schedules reminders") }
+    func removePending(_ identifiers: [String]) { }
+    func removeDelivered(_ identifiers: [String]) { }
+}
+
 @main
 private enum DayExportUITests {
     @MainActor private static var checks = 0
@@ -16,12 +25,64 @@ private enum DayExportUITests {
     @MainActor
     static func main() async throws {
         try checkHeaderActionContract()
+        try checkBoardExportScope()
         let document = makeDocument()
         try await checkCopyFeedback(document)
         try checkCopyFailureAndEmpty(document)
         try checkSaveSuccessCancellationAndFailure(document)
         try checkWeekCopyAndDownload()
         print("PASS: \(checks) export UI checks; day/week copy and download, ordered header actions, popover presentation, feedback, cancellation, failure and exact bytes.")
+    }
+
+    @MainActor
+    private static func checkBoardExportScope() throws {
+        let root = FileManager.default.temporaryDirectory.appendingPathComponent("DaBinExportScope-\(UUID())")
+        let defaultsName = "DaBinExportScope.\(UUID())"
+        let defaults = UserDefaults(suiteName: defaultsName)!
+        let store = try CaptureStore(root: root)
+        let previews = PreviewService(store: store, defaults: defaults)
+        let state = AppState(store: store, previews: previews,
+            reminders: ReminderService(store: store, client: ExportScopeReminderClient()),
+            captureClipboard: CaptureClipboardService(writer: { _ in fatalError("Export scope QA never uses capture clipboard") }))
+        defer {
+            state.autoCapture.shutdown(); state.focusSessions.shutdown(); state.shutdownNotificationPresentation(); previews.shutdown()
+            defaults.removePersistentDomain(forName: defaultsName)
+            try? FileManager.default.removeItem(at: root)
+        }
+        let now = Date()
+        let oldDay = Calendar.current.date(byAdding: .day, value: -2, to: now)!
+        let old = try store.capture(text: "Old browsed receipt must not enter Today export", at: oldDay)[0]
+        let current = try store.capture(text: "Current Today export keeps the complete original receipt", at: now)[0]
+        state.selectWeeklyDay(oldDay)
+        state.showReminders()
+        state.libraryProject = "Unrelated work plan project"; state.todayPlanningScope = "done"; state.filter = .tasks
+        let document = DayExportDocument.make(captures: store.captures, selectedDate: BoardView.exportDay(for: state), now: now)
+        try expect(CaptureCalendar.dayString(state.selectedDay) == old.captureDay
+            && document.day == state.currentDayKey && document.day == current.captureDay,
+            "Today exports its current receipt day while keeping the older browsed history date")
+        try expect(document.actionCount == 1 && document.text.contains(current.originalText!)
+            && !document.text.contains(old.originalText!),
+            "Today export includes the full current receipt and excludes old history independently of work plan project, scope and type filter")
+        var copied: String?
+        let controller = DayExportActionController(pasteboardWriter: { copied = $0; return true },
+            destinationChooser: { _, _ in .cancelled }, fileWriter: { _, _ in }, accessibilityAnnouncer: { _ in })
+        try expect(controller.copy(document) && copied == document.text,
+            "The resolved Today document reaches Copy with the exact complete text")
+        controller.dismiss()
+        let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: now)!
+        let next = try store.capture(text: "Receipt after midnight uses the newly published day", at: tomorrow)[0]
+        state.refreshCurrentDay(at: tomorrow)
+        let nextDocument = DayExportDocument.make(captures: store.captures, selectedDate: BoardView.exportDay(for: state), now: tomorrow)
+        try expect(nextDocument.day == state.currentDayKey && nextDocument.day == next.captureDay
+            && nextDocument.text.contains(next.originalText!) && !nextDocument.text.contains(current.originalText!)
+            && CaptureCalendar.dayString(state.selectedDay) == old.captureDay,
+            "Today export follows the published midnight day without inheriting or changing browsed history")
+        state.navigate(to: .daily)
+        try expect(CaptureCalendar.dayString(BoardView.exportDay(for: state)) == old.captureDay,
+            "Daily export still uses its deliberately selected historical day")
+        state.openWeekly()
+        try expect(BoardView.exportDay(for: state) == state.weeklyActionDay,
+            "Weekly export still uses its selected action day")
     }
 
     @MainActor

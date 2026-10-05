@@ -1,0 +1,83 @@
+{
+  "status": "passed",
+  "method": "Parallel source review of navigation, visible controls, menus, draft lifecycle and action handlers; native disposable fixture regressions follow. Source declarations include reusable and conditionally visible controls.",
+  "routes": [
+    {
+      "flow": "Projects / Collection / Clipboard / Scratchpad / Shelf",
+      "review": "Mode buttons now create history visits; project selection, notes sheet, filters, capture actions and Finder entry inspected."
+    },
+    {
+      "flow": "Today / Day / Week / Inbox",
+      "review": "Date movement, calendar picker, filters, quick capture, dropped/imported captures, planning and exports inspected. Today export date fixed; processed items can return to Inbox when eligible."
+    },
+    {
+      "flow": "Search / Capture detail",
+      "review": "Search entry, scoped/date results, result open, pane navigation, draft edits, originals, exports, annotations and Back/Forward inspected. Explicit validation escape added."
+    },
+    {
+      "flow": "New task / New note",
+      "review": "Creation entry, Save/Add, Cancel and Back/Forward inspected. Pending checklist text now recovered and included on primary Save/Add. Full note editor entry added to Inbox."
+    },
+    {
+      "flow": "Settings / Recently Deleted / Extended view",
+      "review": "Return routes, sheet dismissal, restore/permanent deletion confirmation, archive backup/restore, settings actions and utility-window Close/Back inspected."
+    },
+    {
+      "flow": "Desktop robot / app menu / gestures",
+      "review": "Registered robot/drop/clipboard, responder, input and lifecycle suites retained. Store update menu no-op removed; direct update functionality retained."
+    }
+  ],
+  "fixes": [
+    {
+      "issue": "Project mode buttons skipped history",
+      "change": "Route through navigateWorkspaceMode; Back/Forward restore each visible mode."
+    },
+    {
+      "issue": "Invalid Detail draft blocked every exit",
+      "change": "Error-only Keep draft and go back persists before exiting; preserves invalid fields and all other navigation/modal guards."
+    },
+    {
+      "issue": "Keep in Projects had no reverse action",
+      "change": "Shared conditional Return to Inbox menu item persists before changing route and exposes only items that actually qualify for Inbox."
+    },
+    {
+      "issue": "Typed checklist step was lost on navigation or excluded from primary Save",
+      "change": "Model-backed recoverable pending field; primary Save/Add validates and commits it once, clearing only after success."
+    },
+    {
+      "issue": "Invalid typed title prevented recovery of unrelated drafts",
+      "change": "Keep commit validation separate from bounded draft recovery."
+    },
+    {
+      "issue": "Today copy/export inherited old browsed day",
+      "change": "Resolve Today export from current published day; retain Daily and Weekly selected-date semantics."
+    },
+    {
+      "issue": "Repeated Search, Finder and new empty task controls",
+      "change": "Keep global header Search and New task in real Board, one Explorer Open folder entry; standalone reusable views keep their entry points."
+    },
+    {
+      "issue": "Misleading action labels",
+      "change": "Text filter called Text; Finder actions Open folder; imports Add files; comment actions Add/Edit comment; Clear filters matches actual operation; app utilities use More app actions."
+    },
+    {
+      "issue": "Enabled actions that could not perform their advertised work",
+      "change": "Hide completed-task notification Retry and unavailable conversion Undo; remove Store Check for Updates no-op; disable guarded navigation/archive controls."
+    },
+    {
+      "issue": "Full note editor reachable only on empty Day",
+      "change": "Inbox can open existing editor with the same unfinished draft and its original destination."
+    }
+  ],
+  "retainedFunctionality": "Capturing, quick task creation from typed text, import/drop, all project modes, note editing, task planning, reminders, original-content tools, search, exports, archive backup/restore, deleted-item recovery and direct-distribution updater.",
+  "runtimeLimits": [
+    "Fixture input is synthetic inside the native application process. Physical trackpad/mouse hardware was not individually exercised.",
+    "Real external app launches, user data, destructive operations on real captures, notification permission prompts, signing credentials and Apple server validation are not simulated as completed.",
+    "Passing native test executables does not establish App Store signing, sandbox runtime or upload success."
+  ],
+  "nativeVerification": "verification.json",
+  "appStoreSuitesPassed": 116,
+  "directDistributionSuitesPassed": 2,
+  "buildSourceFingerprint": "35b0acf920db5cbf88c0e057911a5231068726712f6c98819ec5afda5eac4039",
+  "boundedVisualFollowup": "In a 380-point native snapshot at 100% zoom, a long unfocused editable task title paints one line with unused second-line space; 200% paints two lines. The full value remains editable and exposed by its tooltip. No editing failure or data loss was established. Retained as a title-rendering polish observation."
+}

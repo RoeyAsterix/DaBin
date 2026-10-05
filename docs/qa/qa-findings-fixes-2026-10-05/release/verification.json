@@ -1,0 +1,75 @@
+{
+  "artifacts": [
+    {
+      "SHA256": "7ef74dd8dc46ef40ffd231218d4dca210cf71b5aa57399da2678c4cb10c46b97",
+      "bytes": 21246,
+      "original": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/store-qa-findings-fixes-20261005/store-candidate-receipt.json",
+      "path": "store-candidate-receipt.json"
+    },
+    {
+      "SHA256": "452dff45ee6d4e86eb147fde1158f7a3bd81eb0d3f1d28eec4afb00e7eb4b027",
+      "bytes": 126672,
+      "original": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/store-qa-findings-fixes-20261005/xcodebuild-release.log",
+      "path": "xcodebuild-release.log"
+    },
+    {
+      "SHA256": "3185396f156f35ca73d76a5316de4fc6430ef96756d29e5e9fe4bcc9437aa005",
+      "bytes": 3482,
+      "original": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/store-qa-findings-fixes-20261005/unsigned-packaging-preflight.log",
+      "path": "unsigned-packaging-preflight.log"
+    }
+  ],
+  "boundaries": {
+    "appleReviewPassed": false,
+    "archiveCreated": false,
+    "installationPerformed": false,
+    "nativeAppLaunchedByThisCommand": false,
+    "overallQAAllFindingsFixed": false,
+    "sandboxRuntimeVerifiedByThisBuild": false,
+    "signed": false,
+    "uploaded": false
+  },
+  "executableSHA256": "7a6bbcaab6f5e57d0373bde5b4b6f370a45139b9d8d8d266c7a449539c3340fa",
+  "fullCampaignJoin": {
+    "QAInputFingerprint": "206badd60f8e8639b925fb4f0f4f69168c23245e91b46364d51bf57757d9e293",
+    "allFullCampaignInputsMatchCurrentFiles": true,
+    "allSharedInputHashesMatch": true,
+    "campaignReport": "../zoom/full-current/campaign-report.json",
+    "campaignReportSHA256": "67aeb58ad2c843b33fdb73709f15e7a48eef327f0edd706260cf1715a92150c6",
+    "failedSuites": 1,
+    "inputHashes": 269,
+    "note": "QAInputFingerprint covers full test inventory; Store sourceFingerprint covers the canonical build inventory. These hashes have different scopes.",
+    "passedSuites": 120,
+    "runID": "20261005T033354460853Z-app-store",
+    "sharedCandidateFullCampaignInputHashes": 147,
+    "soleFailedSuite": "WorkspaceZoomPerformanceTests",
+    "sourceChangedDuringRun": false,
+    "status": "failed"
+  },
+  "omittedArtifacts": [
+    "Compiled app bundle",
+    "Executable",
+    "Derived data",
+    "SDK/module caches"
+  ],
+  "rawReceiptSHA256": "7ef74dd8dc46ef40ffd231218d4dca210cf71b5aa57399da2678c4cb10c46b97",
+  "remainingPerformanceFinding": "../zoom/final-analysis.json",
+  "schemaVersion": 1,
+  "scope": {
+    "allRecordedInputsMatchCurrentFiles": true,
+    "architecture": "arm64",
+    "buildNumber": "88",
+    "configuration": "Release",
+    "distributionChannel": "mac-app-store-unsigned-compile-only",
+    "executableSHA256MatchesReceipt": true,
+    "fingerprintRecomputedMatchesReceipt": true,
+    "packagingChecks": 51,
+    "sourceFingerprint": "e038196eea54714eec07d2403b1e48a9eeb2393037b67fc2515123d68e06d456",
+    "sourceInputs": 171,
+    "unsignedPackagingPreflightExitCode": 0,
+    "version": "0.4.33",
+    "xcodebuildExitCode": 0
+  },
+  "status": "Unsigned Store compilation and packaging preflight passed; overall QA/release approval is not implied",
+  "verifiedAtUTC": "2026-10-05T03:56:13.793037+00:00"
+}

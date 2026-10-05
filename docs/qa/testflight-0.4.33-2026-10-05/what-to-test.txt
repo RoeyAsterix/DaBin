@@ -1,0 +1,26 @@
+DaBin 0.4.33 (88)
+
+• Main tabs are Projects → Today → Inbox.
+• Use your Mac's page-swipe gesture or mouse Back/Forward buttons to revisit views. Check swipes over the header, content and footer, one history step per mouse press, and restoration of unfinished task drafts and text selection. Trackpad navigation follows the app toggle; native document scrolling/panning stays available.
+• Today always shows all captures received today, across projects and task views, including filed items, completed tasks and task attachments. Drop or paste directly into Today.
+• Compact receipt cards show the title, project and capture time with direct Copy, completion and More actions.
+• Task work plans use direct Today, Tomorrow and Unplanned choices, priority chips, Add deadline and Repeat. Save changes applies planning edits.
+• Add checklist steps above the existing list, use Return to add another, edit inline, and track completion.
+• Typed checklist steps survive Back/Forward and restart. Save changes or Add task includes the pending step once; failed saves keep it for correction.
+• Switch Projects modes and use Back/Forward to revisit each mode. A rejected task edit offers Keep draft and go back without applying or losing the unfinished fields.
+• Kept, unfiled and unplanned items offer Return to Inbox in their card and capture-page menus. Inbox can open the full note editor with its existing draft.
+• Duplicate Search, folder and new-task controls are consolidated. More app actions contains exports, Recently Deleted and archive tools. Today exports the displayed current day.
+• Reminders offer 15 min, 1 hour and tomorrow at 9 presets, alongside custom countdown and date/time entry. Apply reminder saves only the reminder.
+• Capture sections open directly, with fixed navigation and Save controls. Recognized text remains readable and visible icon labels are clickable.
+• Inbox no longer shows the “Capture now. Organize later.” heading.
+• Please check narrow/expanded windows, switching sections with unfinished drafts, focus controls and notification scheduling.
+
+Current QA: all 121 registered native suites ran on unchanged source. 120 passed; WorkspaceZoomPerformanceTests failed the existing strict performance limits. Release compilation and 51 unsigned packaging checks passed.
+
+Known issues: zoom input-to-layout p95 is 54.45 ms against a 50 ms limit; main run-loop timer p95 is 67.25 ms against a 33 ms limit. Nine native table warnings remain and were reproduced independently in SwiftUI/AppKit. These findings remain open.
+
+Please pay particular attention to physical trackpad/mouse navigation, sustained zoom smoothness, narrow-window long task titles and native video transport buttons. Physical device input, live services and extended soak testing are not certified by automated pass counts.
+
+The task-title second line and native editing, selection, focus, resize and Save behavior passed current checks. The reminder recovery QA fixture now drains queued work before removing its temporary store, with no previous Core Data I/O messages.
+
+Internal testing is requested while later review remains pending. Upload and tester availability will be recorded separately after Apple confirms them.

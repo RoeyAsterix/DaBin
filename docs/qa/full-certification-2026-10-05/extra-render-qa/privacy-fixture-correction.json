@@ -1,0 +1,40 @@
+{
+  "scope": "Standalone extra-render script and disposable Privacy bundle fixture only; existing shared tests and production URLs untouched",
+  "retainedFailedReport": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/extra-render-report.json",
+  "retainedFailedReportSHA256": "50b542749f1a0a78c8766ca17d94fb2f005f58ab1290af85b21d01fc3c622f04",
+  "successfulCompileOnlyReport": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/privacy-fixture-compile-only/20261005T014528093600Z-f1290220/extra-render-report.json",
+  "successfulCompileOnlyReportSHA256": "132bcf32880c872e81d82cf68e58fb4760d3247fc789c8b83c0ab9568320445b",
+  "runnerSHA256": "894d46380847c4e943d15fc62fbec1f6a7beb12f750fed05a7c3bdbab7a3e0a8",
+  "coverage": {
+    "allStandaloneModesIncluded": false,
+    "availableSuiteCount": 4,
+    "meaning": "Status applies only to selected suites; omitted suites receive no runtime or artifact claim from this receipt.",
+    "omittedSuites": [
+      "NativeRenderTests",
+      "WalkthroughRenderTests",
+      "IslandPlaygroundRender"
+    ],
+    "selectedSuites": [
+      "PrivacyRenderTests"
+    ],
+    "selection": "partial"
+  },
+  "intentionalFixtureOverrides": {
+    "reason": "Unconfigured public policy/support links fixture; existing native assertion is unchanged.",
+    "removedKeys": [
+      "DaBinPrivacyPolicyURL",
+      "DaBinSupportURL"
+    ],
+    "sourceValues": {
+      "DaBinPrivacyPolicyURL": "https://github.com/RoeyAsterix/DaBin/blob/main/native/Resources/PrivacyPolicy.md",
+      "DaBinSupportURL": "https://github.com/RoeyAsterix/DaBin/issues"
+    }
+  },
+  "productionInfoSHA256": "a5656f8a57b7a363a15a484fe6881907bded4d39223b1f4adf29462807057b07",
+  "previousFixtureInfoSHA256": "860c12bd6d15af91c5a1577565918694cef5246758932071ac7a8044b4932cdb",
+  "correctedFixtureInfoSHA256": "fb0ed9513d5bc8dd486f3a73e9309d12fb114e9cbcae64acd15220847247a308",
+  "privacyTestSourceSHA256": "92874838181437e6f9b82f124022ee7146670f6011c4faaf1053c8d091e8a648",
+  "executableSHA256": "ea5b92688e758f1731144092554fc439856d5673644972e646e5a7ad941072b9",
+  "runtimeLaunchedByAuthor": false,
+  "productionSourceChanged": false
+}

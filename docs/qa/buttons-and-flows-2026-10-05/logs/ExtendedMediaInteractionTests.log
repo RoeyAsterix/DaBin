@@ -1,0 +1,8 @@
+Extended media QA: fixtures
+Extended media QA: image
+Extended media QA: PDF
+2026-10-05 03:34:02.738 ExtendedMediaInteractionTests[69792:26423857] addTextFromVisionDocument: numWordQuads = 4, elapsedTime = 0.00256395 secs
+2026-10-05 03:34:03.182 ExtendedMediaInteractionTests[69792:26423893] addTextFromVisionDocument: numWordQuads = 4, elapsedTime = 0.000592947 secs
+Extended media QA: text
+Extended media QA: Quick Look
+Extended media interaction QA passed (36 checks); renders: /private/tmp/dabin-extended-media-qa

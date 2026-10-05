@@ -1,0 +1,39 @@
+2026-10-05 06:23:49.054 StandaloneVariableHeightListProbe[89647:26724494] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future.
+2026-10-05 06:23:49.612 StandaloneVariableHeightListProbe[89647:26724494] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future.
+2026-10-05 06:23:50.176 StandaloneVariableHeightListProbe[89647:26724494] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future.
+2026-10-05 06:23:50.467 StandaloneVariableHeightListProbe[89647:26724494] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future.
+2026-10-05 06:23:51.242 StandaloneVariableHeightListProbe[89647:26724494] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future.
+PROBE_PHASE: initial-presentation rows=334 materialized=32 estimate=24.0 automatic=true
+PROBE_OPERATION: resize 380.0
+PROBE_PHASE: resize-380 rows=1002 materialized=4 estimate=24.0 automatic=true
+PROBE_OPERATION: resize 760.0
+PROBE_PHASE: resize-760 rows=501 materialized=3 estimate=24.0 automatic=true
+PROBE_OPERATION: resize 1080.0
+PROBE_PHASE: resize-1080 rows=334 materialized=3 estimate=24.0 automatic=true
+PROBE_OPERATION: resize 320.0
+PROBE_PHASE: resize-320 rows=1002 materialized=4 estimate=24.0 automatic=true
+PROBE_OPERATION: resize 560.0
+PROBE_PHASE: resize-560 rows=1002 materialized=4 estimate=24.0 automatic=true
+PROBE_OPERATION: resize 1080.0
+PROBE_PHASE: resize-1080 rows=334 materialized=3 estimate=24.0 automatic=true
+PROBE_PHASE: compact rows=1002 materialized=7 estimate=24.0 automatic=true
+PROBE_PHASE: compact-middle-scroll rows=1002 materialized=5 estimate=24.0 automatic=true
+PROBE_OPERATION: insert-batch 0
+PROBE_PHASE: insert-0 rows=338 materialized=3 estimate=24.0 automatic=true
+PROBE_OPERATION: insert-batch 1
+PROBE_PHASE: insert-1 rows=342 materialized=3 estimate=24.0 automatic=true
+PROBE_OPERATION: insert-batch 2
+PROBE_PHASE: insert-2 rows=346 materialized=3 estimate=24.0 automatic=true
+PROBE_OPERATION: insert-batch 3
+PROBE_PHASE: insert-3 rows=350 materialized=3 estimate=24.0 automatic=true
+PROBE_OPERATION: factor 0.75
+PROBE_PHASE: font-layout-0.75 rows=350 materialized=3 estimate=24.0 automatic=true
+PROBE_OPERATION: factor 1.0
+PROBE_PHASE: font-layout-1.0 rows=350 materialized=3 estimate=24.0 automatic=true
+PROBE_OPERATION: factor 1.5
+PROBE_PHASE: font-layout-1.5 rows=350 materialized=3 estimate=24.0 automatic=true
+PROBE_OPERATION: factor 2.0
+PROBE_PHASE: font-layout-2.0 rows=350 materialized=3 estimate=24.0 automatic=true
+PROBE_OPERATION: factor 1.0
+PROBE_PHASE: font-layout-1.0 rows=350 materialized=3 estimate=24.0 automatic=true
+PASS: 74 standalone public SwiftUI List checks; no DaBin code; warnings remain in unsuppressed stderr

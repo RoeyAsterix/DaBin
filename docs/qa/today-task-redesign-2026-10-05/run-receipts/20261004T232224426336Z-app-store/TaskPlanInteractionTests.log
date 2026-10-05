@@ -1,0 +1,5 @@
+MENU tracking began: ["Does not repeat", "Every day", "Every weekday", "Every week", "Every month"]
+MENU tracking ended
+MENU tracking began: ["Preview", "Task", "Comments", "Reminder", "Details"]
+MENU tracking ended
+PASS: 301 native task-plan/checklist/reminder binding, focus, persistence, validation and responsive checks; renders: /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/today-task-redesign-2026-10-05/task-plan

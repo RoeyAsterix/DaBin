@@ -1,0 +1,93 @@
+{
+  "schemaVersion": 1,
+  "productionSourcesChanged": false,
+  "findings": [
+    {
+      "id": "normal-zoom-title-render",
+      "severity": "confirmed-visual-defect",
+      "observed": "At100% zoom, an unfocused long task title visibly paints one clipped line within a reserved two-line header region in the380\u00d7680 production Board. Root own-process physical CUA screenshot matched the cached rendering;200% cached fixtures paint two lines.",
+      "limits": "Visible title clipping is confirmed for this seeded unfocused100% case. Complete native field value and AXHelp are retained; stored text loss or title-editing failure is not demonstrated. The200% observation is cached evidence, not an additional physical comparison.",
+      "experiment": "Single fixedSize(horizontal:false,vertical:true) modifier in an isolated copied-source module;351 interaction checks passed, normal-zoom render unchanged; candidate rejected and never promoted.",
+      "evidence": "title-candidate/decision.json",
+      "status": "confirmed-on-physical-native-window",
+      "physicalCorroboration": {
+        "reportedBy": "Root QA own-process CUA getScreenshot and accessibility inspection",
+        "physicalScreenshotPersisted": false,
+        "physicalScreenshotEvidence": "Inline CUA image observed by root; no exact physical PNG saved",
+        "AXHelpRetainsFullTitle": true,
+        "observationScope": "Synthetic title fixture only; no installed user app or personal content inspected"
+      },
+      "nativeFieldMetadata": {
+        "fontSize": 21,
+        "frame": "{{620, 719}, {312, 48}}",
+        "wraps": true,
+        "scrollable": false,
+        "usesSingleLineMode": false,
+        "maximumNumberOfLines": 0,
+        "fullFixtureTitleRetained": true
+      },
+      "productionSourceChanged": false,
+      "evidenceFiles": [
+        {
+          "file": "title-candidate/decision.json",
+          "sha256": "530836fedb66744451577ed3a122da891e12bdb22d980419337b21210f52f7e0"
+        },
+        {
+          "file": "title-candidate/candidate-manifest.json",
+          "sha256": "b4ac59dbb2dbf1186cca70e7e50d43e4522354296c66b9fb8a00f573d834d9e9"
+        },
+        {
+          "file": "native-title-probe/probe-manifest.json",
+          "sha256": "6f098144b2e40f47ad2c617628af8cf89d864515881a91802c989a5413d9b217"
+        },
+        {
+          "file": "native-title-probe/output/launch-ready.json",
+          "sha256": "303cc6370bc7e1e18cc187fda9c4720f6194c520bed7a91a6146888475762a1c"
+        },
+        {
+          "file": "native-title-probe/output/cache-display-visible-window@2x.png",
+          "sha256": "8478db575e4fad3a5ca61f407d5b9755ba462ad5b41a320951b6048543539f92"
+        },
+        {
+          "file": "native-title-probe/output/root-cleanup-verification.json",
+          "sha256": "409cb454de988123bcc3df91b9a15358bb8f00697abdddb97c0234e05b81de3c"
+        }
+      ],
+      "nextAction": "Investigate native text-field wrapping/drawing at normal zoom while preserving editable binding, focus/history, accessibility and the bounded two-line header."
+    },
+    {
+      "id": "zoom-latency",
+      "severity": "measured-performance-warning",
+      "historicalMeasurements": {
+        "inputToLayoutP95ms": 54.79,
+        "steadyRunloopP95ms": 65.87,
+        "warmRunloopP95ms": 16.77
+      },
+      "limits": "Synthetic direct zoom updates,forced layout,coupled native resizing and task scheduling;timers are callback delivery rather than presented frame rate;production input coalescing bypassed.",
+      "currentCampaignMeasurements": "pending",
+      "nextMeasurement": "A/B coupled resizing and stage timings before attributing a bottleneck. Preserve anchors,selection,row-materialization and update-cache bounds.",
+      "unprovenOptimizationCandidates": [
+        "ID-to-row index rebuilt only with row-group changes",
+        "Avoid recursive backing-scale rewrites when scale is unchanged"
+      ],
+      "nativeRuntimeWarning": "Two historical NSTableView reentrant-operation warnings;source callback not established."
+    },
+    {
+      "id": "physical-native-avkit-controls",
+      "severity": "verification-gap",
+      "status": "inconclusive-transport-attempt",
+      "observed": "Root attempted the synthetic visible probe video command after the title observation. CUA reported stale menu elements, screenshot unavailable and appquit; no video-ready.json was produced.",
+      "limits": "This does not establish a product failure or successful physical AVKit play/pause/seek activation. Existing offscreen media/renderer evidence remains separate.",
+      "evidence": "native-title-probe/output/root-cleanup-verification.json",
+      "cleanupScope": "Root independently verified exactPID83152 exited and its exactUUID archive was removed. Dedicated preferences-domain removal was not independently verified. Earlier cleanup.json belongs toPID82407 and is not attributed to this later run."
+    }
+  ],
+  "boundaries": [
+    "Multi-hour whole-heap/GPU/compositor stability,thermal throttling and swap are not established by bounded fixtures.",
+    "Native AVKit button/slider activation is not established when named controls are absent from offscreen accessibility.",
+    "Hardware gestures,live external permissions/services and physical display/OS accessibility switches require separate verification."
+  ],
+  "updatedAtUTC": "2026-10-05T02:33:23.064489+00:00",
+  "graphicsEvidence": "graphics-final/hash-manifest.json",
+  "extraRenderAggregateEvidence": "extra-render-qa/aggregate-extra-render-evidence.json"
+}

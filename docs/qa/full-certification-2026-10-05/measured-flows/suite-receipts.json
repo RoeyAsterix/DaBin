@@ -1,0 +1,59 @@
+{
+  "configuration": "Release",
+  "distribution": "app-store",
+  "schemaVersion": 1,
+  "sourceChangedDuringRun": false,
+  "sourceFingerprint": "807afd531fd5a8c3e3cbc059f73bf0c1d4137aa3efc2684fdf337f2b36c47b15",
+  "sourceReport": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa/runs/20261005T012113981577Z-app-store/report.json",
+  "sourceReportSHA256": "58e589aa0221f7b1a206edd4a590564d5523800b062a60feafffe9f3439011d2",
+  "suites": [
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261005T012113981577Z-app-store/FlowActionStressTests-compile.log",
+        "seconds": 4.004,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261005T012113981577Z-app-store/FlowActionStressTests.log",
+      "name": "FlowActionStressTests",
+      "reportedSummary": "PASS: 11674 flow/action stress checks; all12 routes, bounded branch/history churn, pending draft ownership, atomic failed-save retries, comments/checklists, timing/lifecycle, private copying, Inbox/organization, removal/restore and repeated local restart. Semantic handlers only; native activation, system dialogs, rendering and animation are separate coverage.",
+      "requiresWindowFocus": false,
+      "seconds": 10.211,
+      "status": "passed"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261005T012113981577Z-app-store/WorkspaceZoomPerformanceTests-compile.log",
+        "seconds": 2.556,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261005T012113981577Z-app-store/WorkspaceZoomPerformanceTests.log",
+      "name": "WorkspaceZoomPerformanceTests",
+      "reportedSummary": "PASS: 25 workspace zoom performance checks. 30.001211541704834s, 114 arrivals, 5 cycles. Synthetic input-to-layout p95 54.56233327277005ms; steady runloop p95 69.42895846441388ms; warnings: [\"Synthetic input-to-layout p95 exceeds 50 ms\", \"Steady zoom main-runloop interval p95 exceeds 33 ms\", \"Main-runloop interval reached 110.50270847044885 ms in phase \\'100 durable arrivals during zoom\\'; delivery-phase labeling can include preceding operation time\", \"Main-runloop interval reached 108.84024994447827 ms in phase \\'idle between inputs\\'; delivery-phase labeling can include preceding operation time\", \"Main-runloop interval reached 108.50004153326154 ms in phase \\'navigation\\'; delivery-phase labeling can include preceding operation time\"]. Report: /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa/workspace-zoom-performance",
+      "requiresWindowFocus": true,
+      "seconds": 36.326,
+      "status": "passed"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261005T012113981577Z-app-store/VideoPlaybackIntegrationTests-compile.log",
+        "seconds": 2.154,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261005T012113981577Z-app-store/VideoPlaybackIntegrationTests.log",
+      "name": "VideoPlaybackIntegrationTests",
+      "reportedSummary": "PASS: 113 native video playback checks;2 production components \u00d72 actual MOV captures, clock and decoded-frame advancement, pause/seek/end/replay, fitted resize, capture replacement, native close and deallocation; no external effects. seconds=14.184",
+      "requiresWindowFocus": true,
+      "seconds": 14.583,
+      "status": "passed"
+    }
+  ]
+}

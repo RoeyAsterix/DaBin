@@ -94,7 +94,13 @@ extension View {
         let candidates = historyMarkers(near: marker)
         guard let sample = candidates.first, let scroll = sample.workspaceScroll, let document = scroll.documentView else { return nil }
         let ordered = candidates.filter { $0.workspaceScroll === scroll }.sorted {
-            $0.convert($0.bounds, to: document).minY < $1.convert($1.bounds, to: document).minY
+            let lhs = $0.convert($0.bounds, to: document)
+            let rhs = $1.convert($1.bounds, to: document)
+            // Grid siblings share a row. Use reading order, then identity, so
+            // dictionary enumeration never changes the saved target or neighbors.
+            if lhs.minY != rhs.minY { return lhs.minY < rhs.minY }
+            if lhs.minX != rhs.minX { return lhs.minX < rhs.minX }
+            return $0.itemID < $1.itemID
         }
         guard let first = ordered.first(where: { $0.convert($0.bounds, to: document).maxY > scroll.contentView.bounds.minY + 1 }) else { return nil }
         let rect = first.convert(first.bounds, to: document)

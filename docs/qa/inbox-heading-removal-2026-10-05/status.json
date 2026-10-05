@@ -1,0 +1,20 @@
+{
+  "status": "passed",
+  "scope": "One-line Inbox heading removal",
+  "removedText": "Capture now. Organize later.",
+  "version": "0.4.33",
+  "build": "88",
+  "buildSourceFingerprint": "c43b3a65e0aee01bda4d3b0c907e387f08b675ccbc17bb7dae65f7f23e7c0900",
+  "priorVerifiedBuildFingerprint": "f1747d182ae403add19fca1a4114cb942afd42b2d5bc61c9a9bb089dec7e6923",
+  "verification": [
+    "Inbox view typecheck with warnings as errors",
+    "Generated Xcode project check",
+    "Independent reference and sizing audit",
+    "Exact one-line source diff; all other production hashes preserved"
+  ],
+  "regressionSuitesRun": false,
+  "archivePath": "/Users/roeylibfeld/Library/Developer/Xcode/Archives/2026-10-05/DaBin-0.4.33-88-TestFlight-inbox-cleanup.xcarchive",
+  "uploadStatus": "waiting_for_keychain_authentication",
+  "releaseCompilation": "completed",
+  "archiveSessionID": 28202
+}

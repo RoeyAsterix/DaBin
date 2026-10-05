@@ -4,8 +4,8 @@
   "locale": "en-US",
   "candidate": {
     "bundleIdentifier": "com.dabin.mac",
-    "version": "0.4.31",
-    "build": "86",
+    "version": "0.4.33",
+    "build": "88",
     "minimumMacOS": "14.0",
     "architecture": "arm64"
   },

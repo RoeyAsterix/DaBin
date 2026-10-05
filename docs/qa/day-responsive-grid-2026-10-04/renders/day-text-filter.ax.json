@@ -1,0 +1,1158 @@
+{
+  "context" : "text-filter",
+  "nodes" : [
+    {
+      "class" : "SwiftUI.AccessibilityLazyLayoutNode",
+      "frame" : "{{-19984, -20470}, {1888, 1430}}",
+      "identifier" : "daily-grid",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19984, -19375}, {368, 335}}",
+      "identifier" : "daily-card-E3F17722-F194-44ED-90E1-BF4052D5DBDC",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19968, -19090}, {326.5, 28}}",
+      "identifier" : "capture-project-priority-E3F17722-F194-44ED-90E1-BF4052D5DBDC",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19968, -19090}, {326.5, 28}}",
+      "identifier" : "capture-project-picker-E3F17722-F194-44ED-90E1-BF4052D5DBDC",
+      "label" : "Project"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19968, -19136}, {106.5, 34}}",
+      "identifier" : "",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19968, -19136}, {106.5, 34}}",
+      "identifier" : "capture-trail-E3F17722-F194-44ED-90E1-BF4052D5DBDC",
+      "label" : "From Unknown source. No paste destinations recorded. Open content trail."
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19968, -19154}, {140.5, 14}}",
+      "identifier" : "capture-receipt-E3F17722-F194-44ED-90E1-BF4052D5DBDC",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19968, -19154}, {101.5, 14}}",
+      "identifier" : "capture-receipt-time-E3F17722-F194-44ED-90E1-BF4052D5DBDC",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19853, -19154}, {25.5, 14}}",
+      "identifier" : "capture-receipt-category-E3F17722-F194-44ED-90E1-BF4052D5DBDC",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19704, -19144}, {32, 32}}",
+      "identifier" : "capture-copy-E3F17722-F194-44ED-90E1-BF4052D5DBDC",
+      "label" : "Copy Fictional client feedback — a deliberately long title with multilingual text שלום 世界 and a concrete "
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19664, -19144}, {32, 32}}",
+      "identifier" : "capture-trash-E3F17722-F194-44ED-90E1-BF4052D5DBDC",
+      "label" : "Move ⁨Fictional client feedback — a deliberately long title with multilingual text שלום 世界 and a concrete ⁩ to Recently Deleted"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19968, -19223}, {336, 57}}",
+      "identifier" : "",
+      "label" : "Open ⁨Fictional client feedback — a deliberately long title with multilingual text שלום 世界 and a concrete ⁩, ⁨Note⁩, saved ⁨Sun, 4 Oct 2026⁩ at ⁨11:05⁩"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19966.5, -19265}, {320, 30}}",
+      "identifier" : "capture-comment-E3F17722-F194-44ED-90E1-BF4052D5DBDC",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19664, -19309}, {32, 32}}",
+      "identifier" : "capture-convert-to-task-E3F17722-F194-44ED-90E1-BF4052D5DBDC",
+      "label" : "Turn ⁨Fictional client feedback — a deliberately long title with multilingual text שלום 世界 and a concrete ⁩ into a task"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19968, -19353}, {32, 32}}",
+      "identifier" : "",
+      "label" : "Comment"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19934, -19353}, {32, 32}}",
+      "identifier" : "",
+      "label" : "Reminder"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19698, -19353}, {32, 32}}",
+      "identifier" : "capture-collapse-E3F17722-F194-44ED-90E1-BF4052D5DBDC",
+      "label" : "Minimize capture"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19664, -19353}, {32, 32}}",
+      "identifier" : "capture-more-E3F17722-F194-44ED-90E1-BF4052D5DBDC",
+      "label" : "More actions for ⁨Fictional client feedback — a deliberately long title with multilingual text שלום 世界 and a concrete ⁩"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19604, -20196}, {368, 1156}}",
+      "identifier" : "daily-card-E1E72DD7-BDCA-459C-8688-C98BE3A71FB3",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19604, -20190}, {368, 1144}}",
+      "identifier" : "",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19590, -19088}, {83.5, 28}}",
+      "identifier" : "",
+      "label" : "Project"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19590, -19117}, {81.5, 19}}",
+      "identifier" : "collection-hour-count",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19590, -19135}, {142, 14}}",
+      "identifier" : "collection-hour-time",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19282, -19132.5}, {32, 32}}",
+      "identifier" : "minus",
+      "label" : "Collapse actions"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19590, -19396}, {340, 251}}",
+      "identifier" : "",
+      "label" : "Copied content at 10:03"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19562.5, -19170.5}, {141.5, 13}}",
+      "identifier" : "capture-receipt-E1E72DD7-BDCA-459C-8688-C98BE3A71FB3",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19562.5, -19170.5}, {93.5, 13}}",
+      "identifier" : "capture-receipt-time-E1E72DD7-BDCA-459C-8688-C98BE3A71FB3",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19455.5, -19170.5}, {34.5, 13}}",
+      "identifier" : "capture-receipt-category-E1E72DD7-BDCA-459C-8688-C98BE3A71FB3",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19283, -19175}, {24, 22}}",
+      "identifier" : "capture-copy-E1E72DD7-BDCA-459C-8688-C98BE3A71FB3",
+      "label" : "Copy Fictional automatic capture 3 — locally preserved words. to clipboard"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19581, -19193}, {72.5, 13}}",
+      "identifier" : "",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19577, -19236}, {106.5, 34}}",
+      "identifier" : "",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19577, -19236}, {106.5, 34}}",
+      "identifier" : "capture-trail-E1E72DD7-BDCA-459C-8688-C98BE3A71FB3",
+      "label" : "From Fictional Editor. No paste destinations recorded. Open content trail."
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19577, -19254}, {140.5, 14}}",
+      "identifier" : "capture-receipt-E1E72DD7-BDCA-459C-8688-C98BE3A71FB3",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19577, -19254}, {101.5, 14}}",
+      "identifier" : "capture-receipt-time-E1E72DD7-BDCA-459C-8688-C98BE3A71FB3",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19462, -19254}, {25.5, 14}}",
+      "identifier" : "capture-receipt-category-E1E72DD7-BDCA-459C-8688-C98BE3A71FB3",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19295, -19244}, {32, 32}}",
+      "identifier" : "capture-trash-E1E72DD7-BDCA-459C-8688-C98BE3A71FB3",
+      "label" : "Move Fictional automatic capture 3 — locally preserved words. to Recently Deleted"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19577, -19304}, {314, 38}}",
+      "identifier" : "",
+      "label" : "Open Fictional automatic capture 3 — locally preserved words., Note, saved Sun, 4 Oct 2026 at 10:03"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19295, -19348}, {32, 32}}",
+      "identifier" : "capture-convert-to-task-E1E72DD7-BDCA-459C-8688-C98BE3A71FB3",
+      "label" : "Turn Fictional automatic capture 3 — locally preserved words. into a task"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19577, -19392}, {32, 32}}",
+      "identifier" : "",
+      "label" : "Comment"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19543, -19392}, {32, 32}}",
+      "identifier" : "",
+      "label" : "Reminder"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19329, -19392}, {32, 32}}",
+      "identifier" : "capture-collapse-E1E72DD7-BDCA-459C-8688-C98BE3A71FB3",
+      "label" : "Minimize capture"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19295, -19392}, {32, 32}}",
+      "identifier" : "capture-more-E1E72DD7-BDCA-459C-8688-C98BE3A71FB3",
+      "label" : "More actions for Fictional automatic capture 3 — locally preserved words."
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19590, -19656}, {340, 251}}",
+      "identifier" : "",
+      "label" : "Copied content at 10:02"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19562.5, -19430.5}, {141.5, 13}}",
+      "identifier" : "capture-receipt-7981032D-197E-4BBF-B67C-ADD047A954B8",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19562.5, -19430.5}, {93.5, 13}}",
+      "identifier" : "capture-receipt-time-7981032D-197E-4BBF-B67C-ADD047A954B8",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19455.5, -19430.5}, {34.5, 13}}",
+      "identifier" : "capture-receipt-category-7981032D-197E-4BBF-B67C-ADD047A954B8",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19283, -19435}, {24, 22}}",
+      "identifier" : "capture-copy-7981032D-197E-4BBF-B67C-ADD047A954B8",
+      "label" : "Copy Fictional automatic capture 2 — locally preserved words. to clipboard"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19581, -19453}, {72.5, 13}}",
+      "identifier" : "",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19577, -19496}, {106.5, 34}}",
+      "identifier" : "",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19577, -19496}, {106.5, 34}}",
+      "identifier" : "capture-trail-7981032D-197E-4BBF-B67C-ADD047A954B8",
+      "label" : "From Fictional Editor. No paste destinations recorded. Open content trail."
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19577, -19514}, {140.5, 14}}",
+      "identifier" : "capture-receipt-7981032D-197E-4BBF-B67C-ADD047A954B8",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19577, -19514}, {101.5, 14}}",
+      "identifier" : "capture-receipt-time-7981032D-197E-4BBF-B67C-ADD047A954B8",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19462, -19514}, {25.5, 14}}",
+      "identifier" : "capture-receipt-category-7981032D-197E-4BBF-B67C-ADD047A954B8",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19295, -19504}, {32, 32}}",
+      "identifier" : "capture-trash-7981032D-197E-4BBF-B67C-ADD047A954B8",
+      "label" : "Move Fictional automatic capture 2 — locally preserved words. to Recently Deleted"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19577, -19564}, {314, 38}}",
+      "identifier" : "",
+      "label" : "Open Fictional automatic capture 2 — locally preserved words., Note, saved Sun, 4 Oct 2026 at 10:02"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19295, -19608}, {32, 32}}",
+      "identifier" : "capture-convert-to-task-7981032D-197E-4BBF-B67C-ADD047A954B8",
+      "label" : "Turn Fictional automatic capture 2 — locally preserved words. into a task"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19577, -19652}, {32, 32}}",
+      "identifier" : "",
+      "label" : "Comment"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19543, -19652}, {32, 32}}",
+      "identifier" : "",
+      "label" : "Reminder"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19329, -19652}, {32, 32}}",
+      "identifier" : "capture-collapse-7981032D-197E-4BBF-B67C-ADD047A954B8",
+      "label" : "Minimize capture"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19295, -19652}, {32, 32}}",
+      "identifier" : "capture-more-7981032D-197E-4BBF-B67C-ADD047A954B8",
+      "label" : "More actions for Fictional automatic capture 2 — locally preserved words."
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19590, -19916}, {340, 251}}",
+      "identifier" : "",
+      "label" : "Copied content at 10:01"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19562.5, -19690.5}, {141.5, 13}}",
+      "identifier" : "capture-receipt-9900CA03-CC3C-4BDE-BB84-2C0E3D3C2D9B",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19562.5, -19690.5}, {93.5, 13}}",
+      "identifier" : "capture-receipt-time-9900CA03-CC3C-4BDE-BB84-2C0E3D3C2D9B",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19455.5, -19690.5}, {34.5, 13}}",
+      "identifier" : "capture-receipt-category-9900CA03-CC3C-4BDE-BB84-2C0E3D3C2D9B",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19283, -19695}, {24, 22}}",
+      "identifier" : "capture-copy-9900CA03-CC3C-4BDE-BB84-2C0E3D3C2D9B",
+      "label" : "Copy Fictional automatic capture 1 — locally preserved words. to clipboard"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19581, -19713}, {72.5, 13}}",
+      "identifier" : "",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19577, -19756}, {106.5, 34}}",
+      "identifier" : "",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19577, -19756}, {106.5, 34}}",
+      "identifier" : "capture-trail-9900CA03-CC3C-4BDE-BB84-2C0E3D3C2D9B",
+      "label" : "From Fictional Editor. No paste destinations recorded. Open content trail."
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19577, -19774}, {140.5, 14}}",
+      "identifier" : "capture-receipt-9900CA03-CC3C-4BDE-BB84-2C0E3D3C2D9B",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19577, -19774}, {101.5, 14}}",
+      "identifier" : "capture-receipt-time-9900CA03-CC3C-4BDE-BB84-2C0E3D3C2D9B",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19462, -19774}, {25.5, 14}}",
+      "identifier" : "capture-receipt-category-9900CA03-CC3C-4BDE-BB84-2C0E3D3C2D9B",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19295, -19764}, {32, 32}}",
+      "identifier" : "capture-trash-9900CA03-CC3C-4BDE-BB84-2C0E3D3C2D9B",
+      "label" : "Move Fictional automatic capture 1 — locally preserved words. to Recently Deleted"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19577, -19824}, {314, 38}}",
+      "identifier" : "",
+      "label" : "Open Fictional automatic capture 1 — locally preserved words., Note, saved Sun, 4 Oct 2026 at 10:01"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19295, -19868}, {32, 32}}",
+      "identifier" : "capture-convert-to-task-9900CA03-CC3C-4BDE-BB84-2C0E3D3C2D9B",
+      "label" : "Turn Fictional automatic capture 1 — locally preserved words. into a task"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19577, -19912}, {32, 32}}",
+      "identifier" : "",
+      "label" : "Comment"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19543, -19912}, {32, 32}}",
+      "identifier" : "",
+      "label" : "Reminder"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19329, -19912}, {32, 32}}",
+      "identifier" : "capture-collapse-9900CA03-CC3C-4BDE-BB84-2C0E3D3C2D9B",
+      "label" : "Minimize capture"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19295, -19912}, {32, 32}}",
+      "identifier" : "capture-more-9900CA03-CC3C-4BDE-BB84-2C0E3D3C2D9B",
+      "label" : "More actions for Fictional automatic capture 1 — locally preserved words."
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19590, -20176}, {340, 251}}",
+      "identifier" : "",
+      "label" : "Copied content at 10:00"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19562.5, -19950.5}, {141.5, 13}}",
+      "identifier" : "capture-receipt-97BD9CE5-7E3C-4EF1-973A-D043C2F036EB",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19562.5, -19950.5}, {93.5, 13}}",
+      "identifier" : "capture-receipt-time-97BD9CE5-7E3C-4EF1-973A-D043C2F036EB",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19455.5, -19950.5}, {34.5, 13}}",
+      "identifier" : "capture-receipt-category-97BD9CE5-7E3C-4EF1-973A-D043C2F036EB",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19283, -19955}, {24, 22}}",
+      "identifier" : "capture-copy-97BD9CE5-7E3C-4EF1-973A-D043C2F036EB",
+      "label" : "Copy Fictional automatic capture 0 — locally preserved words. to clipboard"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19581, -19973}, {72.5, 13}}",
+      "identifier" : "",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19577, -20016}, {106.5, 34}}",
+      "identifier" : "",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19577, -20016}, {106.5, 34}}",
+      "identifier" : "capture-trail-97BD9CE5-7E3C-4EF1-973A-D043C2F036EB",
+      "label" : "From Fictional Editor. No paste destinations recorded. Open content trail."
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19577, -20034}, {140.5, 14}}",
+      "identifier" : "capture-receipt-97BD9CE5-7E3C-4EF1-973A-D043C2F036EB",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19577, -20034}, {101.5, 14}}",
+      "identifier" : "capture-receipt-time-97BD9CE5-7E3C-4EF1-973A-D043C2F036EB",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19462, -20034}, {25.5, 14}}",
+      "identifier" : "capture-receipt-category-97BD9CE5-7E3C-4EF1-973A-D043C2F036EB",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19295, -20024}, {32, 32}}",
+      "identifier" : "capture-trash-97BD9CE5-7E3C-4EF1-973A-D043C2F036EB",
+      "label" : "Move Fictional automatic capture 0 — locally preserved words. to Recently Deleted"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19577, -20084}, {314, 38}}",
+      "identifier" : "",
+      "label" : "Open Fictional automatic capture 0 — locally preserved words., Note, saved Sun, 4 Oct 2026 at 10:00"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19295, -20128}, {32, 32}}",
+      "identifier" : "capture-convert-to-task-97BD9CE5-7E3C-4EF1-973A-D043C2F036EB",
+      "label" : "Turn Fictional automatic capture 0 — locally preserved words. into a task"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19577, -20172}, {32, 32}}",
+      "identifier" : "",
+      "label" : "Comment"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19543, -20172}, {32, 32}}",
+      "identifier" : "",
+      "label" : "Reminder"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19329, -20172}, {32, 32}}",
+      "identifier" : "capture-collapse-97BD9CE5-7E3C-4EF1-973A-D043C2F036EB",
+      "label" : "Minimize capture"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19295, -20172}, {32, 32}}",
+      "identifier" : "capture-more-97BD9CE5-7E3C-4EF1-973A-D043C2F036EB",
+      "label" : "More actions for Fictional automatic capture 0 — locally preserved words."
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19224, -19314}, {368, 274}}",
+      "identifier" : "daily-card-CF1EE833-DF8A-4FAD-AAE4-4FD6E25C6546",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19208, -19090}, {98, 28}}",
+      "identifier" : "capture-project-priority-CF1EE833-DF8A-4FAD-AAE4-4FD6E25C6546",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19208, -19090}, {98, 28}}",
+      "identifier" : "capture-project-picker-CF1EE833-DF8A-4FAD-AAE4-4FD6E25C6546",
+      "label" : "Project"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19208, -19136}, {106.5, 34}}",
+      "identifier" : "",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19208, -19136}, {106.5, 34}}",
+      "identifier" : "capture-trail-CF1EE833-DF8A-4FAD-AAE4-4FD6E25C6546",
+      "label" : "From Unknown source. No paste destinations recorded. Open content trail."
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19208, -19154}, {140.5, 14}}",
+      "identifier" : "capture-receipt-CF1EE833-DF8A-4FAD-AAE4-4FD6E25C6546",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19208, -19154}, {101.5, 14}}",
+      "identifier" : "capture-receipt-time-CF1EE833-DF8A-4FAD-AAE4-4FD6E25C6546",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19093, -19154}, {25.5, 14}}",
+      "identifier" : "capture-receipt-category-CF1EE833-DF8A-4FAD-AAE4-4FD6E25C6546",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-18944, -19144}, {32, 32}}",
+      "identifier" : "capture-copy-CF1EE833-DF8A-4FAD-AAE4-4FD6E25C6546",
+      "label" : "Copy Fictional work note 5: keep the original source and continue after a break."
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-18904, -19144}, {32, 32}}",
+      "identifier" : "capture-trash-CF1EE833-DF8A-4FAD-AAE4-4FD6E25C6546",
+      "label" : "Move Fictional work note 5: keep the original source and continue after a break. to Recently Deleted"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19208, -19204}, {336, 38}}",
+      "identifier" : "",
+      "label" : "Open Fictional work note 5: keep the original source and continue after a break., Note, saved Sun, 4 Oct 2026 at 09:10"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-18904, -19248}, {32, 32}}",
+      "identifier" : "capture-convert-to-task-CF1EE833-DF8A-4FAD-AAE4-4FD6E25C6546",
+      "label" : "Turn Fictional work note 5: keep the original source and continue after a break. into a task"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19208, -19292}, {32, 32}}",
+      "identifier" : "",
+      "label" : "Comment"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19174, -19292}, {32, 32}}",
+      "identifier" : "",
+      "label" : "Reminder"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-18938, -19292}, {32, 32}}",
+      "identifier" : "capture-collapse-CF1EE833-DF8A-4FAD-AAE4-4FD6E25C6546",
+      "label" : "Minimize capture"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-18904, -19292}, {32, 32}}",
+      "identifier" : "capture-more-CF1EE833-DF8A-4FAD-AAE4-4FD6E25C6546",
+      "label" : "More actions for Fictional work note 5: keep the original source and continue after a break."
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-18844, -19314}, {368, 274}}",
+      "identifier" : "daily-card-E72A4456-ECC3-41A3-BD9E-1D51AF53EC0A",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-18828, -19090}, {98, 28}}",
+      "identifier" : "capture-project-priority-E72A4456-ECC3-41A3-BD9E-1D51AF53EC0A",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-18828, -19090}, {98, 28}}",
+      "identifier" : "capture-project-picker-E72A4456-ECC3-41A3-BD9E-1D51AF53EC0A",
+      "label" : "Project"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-18828, -19136}, {106.5, 34}}",
+      "identifier" : "",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-18828, -19136}, {106.5, 34}}",
+      "identifier" : "capture-trail-E72A4456-ECC3-41A3-BD9E-1D51AF53EC0A",
+      "label" : "From Unknown source. No paste destinations recorded. Open content trail."
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-18828, -19154}, {140.5, 14}}",
+      "identifier" : "capture-receipt-E72A4456-ECC3-41A3-BD9E-1D51AF53EC0A",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-18828, -19154}, {101.5, 14}}",
+      "identifier" : "capture-receipt-time-E72A4456-ECC3-41A3-BD9E-1D51AF53EC0A",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-18713, -19154}, {25.5, 14}}",
+      "identifier" : "capture-receipt-category-E72A4456-ECC3-41A3-BD9E-1D51AF53EC0A",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-18564, -19144}, {32, 32}}",
+      "identifier" : "capture-copy-E72A4456-ECC3-41A3-BD9E-1D51AF53EC0A",
+      "label" : "Copy Fictional work note 4: keep the original source and continue after a break."
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-18524, -19144}, {32, 32}}",
+      "identifier" : "capture-trash-E72A4456-ECC3-41A3-BD9E-1D51AF53EC0A",
+      "label" : "Move Fictional work note 4: keep the original source and continue after a break. to Recently Deleted"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-18828, -19204}, {336, 38}}",
+      "identifier" : "",
+      "label" : "Open Fictional work note 4: keep the original source and continue after a break., Note, saved Sun, 4 Oct 2026 at 09:08"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-18524, -19248}, {32, 32}}",
+      "identifier" : "capture-convert-to-task-E72A4456-ECC3-41A3-BD9E-1D51AF53EC0A",
+      "label" : "Turn Fictional work note 4: keep the original source and continue after a break. into a task"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-18828, -19292}, {32, 32}}",
+      "identifier" : "",
+      "label" : "Comment"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-18794, -19292}, {32, 32}}",
+      "identifier" : "",
+      "label" : "Reminder"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-18558, -19292}, {32, 32}}",
+      "identifier" : "capture-collapse-E72A4456-ECC3-41A3-BD9E-1D51AF53EC0A",
+      "label" : "Minimize capture"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-18524, -19292}, {32, 32}}",
+      "identifier" : "capture-more-E72A4456-ECC3-41A3-BD9E-1D51AF53EC0A",
+      "label" : "More actions for Fictional work note 4: keep the original source and continue after a break."
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-18464, -19314}, {368, 274}}",
+      "identifier" : "daily-card-C29848A7-F85A-4B1F-984E-6CD69E152C2B",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-18448, -19090}, {98, 28}}",
+      "identifier" : "capture-project-priority-C29848A7-F85A-4B1F-984E-6CD69E152C2B",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-18448, -19090}, {98, 28}}",
+      "identifier" : "capture-project-picker-C29848A7-F85A-4B1F-984E-6CD69E152C2B",
+      "label" : "Project"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-18448, -19136}, {106.5, 34}}",
+      "identifier" : "",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-18448, -19136}, {106.5, 34}}",
+      "identifier" : "capture-trail-C29848A7-F85A-4B1F-984E-6CD69E152C2B",
+      "label" : "From Unknown source. No paste destinations recorded. Open content trail."
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-18448, -19154}, {140.5, 14}}",
+      "identifier" : "capture-receipt-C29848A7-F85A-4B1F-984E-6CD69E152C2B",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-18448, -19154}, {101.5, 14}}",
+      "identifier" : "capture-receipt-time-C29848A7-F85A-4B1F-984E-6CD69E152C2B",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-18333, -19154}, {25.5, 14}}",
+      "identifier" : "capture-receipt-category-C29848A7-F85A-4B1F-984E-6CD69E152C2B",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-18184, -19144}, {32, 32}}",
+      "identifier" : "capture-copy-C29848A7-F85A-4B1F-984E-6CD69E152C2B",
+      "label" : "Copy Fictional work note 3: keep the original source and continue after a break."
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-18144, -19144}, {32, 32}}",
+      "identifier" : "capture-trash-C29848A7-F85A-4B1F-984E-6CD69E152C2B",
+      "label" : "Move Fictional work note 3: keep the original source and continue after a break. to Recently Deleted"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-18448, -19204}, {336, 38}}",
+      "identifier" : "",
+      "label" : "Open Fictional work note 3: keep the original source and continue after a break., Note, saved Sun, 4 Oct 2026 at 09:06"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-18144, -19248}, {32, 32}}",
+      "identifier" : "capture-convert-to-task-C29848A7-F85A-4B1F-984E-6CD69E152C2B",
+      "label" : "Turn Fictional work note 3: keep the original source and continue after a break. into a task"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-18448, -19292}, {32, 32}}",
+      "identifier" : "",
+      "label" : "Comment"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-18414, -19292}, {32, 32}}",
+      "identifier" : "",
+      "label" : "Reminder"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-18178, -19292}, {32, 32}}",
+      "identifier" : "capture-collapse-C29848A7-F85A-4B1F-984E-6CD69E152C2B",
+      "label" : "Minimize capture"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-18144, -19292}, {32, 32}}",
+      "identifier" : "capture-more-C29848A7-F85A-4B1F-984E-6CD69E152C2B",
+      "label" : "More actions for Fictional work note 3: keep the original source and continue after a break."
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19984, -20470}, {368, 274}}",
+      "identifier" : "daily-card-95CEED98-57C7-45A1-8491-DE6186C75522",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19968, -20246}, {98, 28}}",
+      "identifier" : "capture-project-priority-95CEED98-57C7-45A1-8491-DE6186C75522",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19968, -20246}, {98, 28}}",
+      "identifier" : "capture-project-picker-95CEED98-57C7-45A1-8491-DE6186C75522",
+      "label" : "Project"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19968, -20292}, {106.5, 34}}",
+      "identifier" : "",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19968, -20292}, {106.5, 34}}",
+      "identifier" : "capture-trail-95CEED98-57C7-45A1-8491-DE6186C75522",
+      "label" : "From Unknown source. No paste destinations recorded. Open content trail."
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19968, -20310}, {140.5, 14}}",
+      "identifier" : "capture-receipt-95CEED98-57C7-45A1-8491-DE6186C75522",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19968, -20310}, {101.5, 14}}",
+      "identifier" : "capture-receipt-time-95CEED98-57C7-45A1-8491-DE6186C75522",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19853, -20310}, {25.5, 14}}",
+      "identifier" : "capture-receipt-category-95CEED98-57C7-45A1-8491-DE6186C75522",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19704, -20300}, {32, 32}}",
+      "identifier" : "capture-copy-95CEED98-57C7-45A1-8491-DE6186C75522",
+      "label" : "Copy Fictional work note 2: keep the original source and continue after a break."
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19664, -20300}, {32, 32}}",
+      "identifier" : "capture-trash-95CEED98-57C7-45A1-8491-DE6186C75522",
+      "label" : "Move Fictional work note 2: keep the original source and continue after a break. to Recently Deleted"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19968, -20360}, {336, 38}}",
+      "identifier" : "",
+      "label" : "Open Fictional work note 2: keep the original source and continue after a break., Note, saved Sun, 4 Oct 2026 at 09:04"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19664, -20404}, {32, 32}}",
+      "identifier" : "capture-convert-to-task-95CEED98-57C7-45A1-8491-DE6186C75522",
+      "label" : "Turn Fictional work note 2: keep the original source and continue after a break. into a task"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19968, -20448}, {32, 32}}",
+      "identifier" : "",
+      "label" : "Comment"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19934, -20448}, {32, 32}}",
+      "identifier" : "",
+      "label" : "Reminder"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19698, -20448}, {32, 32}}",
+      "identifier" : "capture-collapse-95CEED98-57C7-45A1-8491-DE6186C75522",
+      "label" : "Minimize capture"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19664, -20448}, {32, 32}}",
+      "identifier" : "capture-more-95CEED98-57C7-45A1-8491-DE6186C75522",
+      "label" : "More actions for Fictional work note 2: keep the original source and continue after a break."
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19604, -20470}, {368, 274}}",
+      "identifier" : "daily-card-76C8CB25-E5A8-40B0-963B-599C07C3D4FC",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19588, -20246}, {98, 28}}",
+      "identifier" : "capture-project-priority-76C8CB25-E5A8-40B0-963B-599C07C3D4FC",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19588, -20246}, {98, 28}}",
+      "identifier" : "capture-project-picker-76C8CB25-E5A8-40B0-963B-599C07C3D4FC",
+      "label" : "Project"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19588, -20292}, {106.5, 34}}",
+      "identifier" : "",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19588, -20292}, {106.5, 34}}",
+      "identifier" : "capture-trail-76C8CB25-E5A8-40B0-963B-599C07C3D4FC",
+      "label" : "From Unknown source. No paste destinations recorded. Open content trail."
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19588, -20310}, {140.5, 14}}",
+      "identifier" : "capture-receipt-76C8CB25-E5A8-40B0-963B-599C07C3D4FC",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19588, -20310}, {101.5, 14}}",
+      "identifier" : "capture-receipt-time-76C8CB25-E5A8-40B0-963B-599C07C3D4FC",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19473, -20310}, {25.5, 14}}",
+      "identifier" : "capture-receipt-category-76C8CB25-E5A8-40B0-963B-599C07C3D4FC",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19324, -20300}, {32, 32}}",
+      "identifier" : "capture-copy-76C8CB25-E5A8-40B0-963B-599C07C3D4FC",
+      "label" : "Copy Fictional work note 1: keep the original source and continue after a break."
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19284, -20300}, {32, 32}}",
+      "identifier" : "capture-trash-76C8CB25-E5A8-40B0-963B-599C07C3D4FC",
+      "label" : "Move Fictional work note 1: keep the original source and continue after a break. to Recently Deleted"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19588, -20360}, {336, 38}}",
+      "identifier" : "",
+      "label" : "Open Fictional work note 1: keep the original source and continue after a break., Note, saved Sun, 4 Oct 2026 at 09:02"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19284, -20404}, {32, 32}}",
+      "identifier" : "capture-convert-to-task-76C8CB25-E5A8-40B0-963B-599C07C3D4FC",
+      "label" : "Turn Fictional work note 1: keep the original source and continue after a break. into a task"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19588, -20448}, {32, 32}}",
+      "identifier" : "",
+      "label" : "Comment"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19554, -20448}, {32, 32}}",
+      "identifier" : "",
+      "label" : "Reminder"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19318, -20448}, {32, 32}}",
+      "identifier" : "capture-collapse-76C8CB25-E5A8-40B0-963B-599C07C3D4FC",
+      "label" : "Minimize capture"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19284, -20448}, {32, 32}}",
+      "identifier" : "capture-more-76C8CB25-E5A8-40B0-963B-599C07C3D4FC",
+      "label" : "More actions for Fictional work note 1: keep the original source and continue after a break."
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19224, -20470}, {368, 274}}",
+      "identifier" : "daily-card-D5F4C4A1-3991-44C8-918B-3B3E1510931E",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19208, -20246}, {98, 28}}",
+      "identifier" : "capture-project-priority-D5F4C4A1-3991-44C8-918B-3B3E1510931E",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19208, -20246}, {98, 28}}",
+      "identifier" : "capture-project-picker-D5F4C4A1-3991-44C8-918B-3B3E1510931E",
+      "label" : "Project"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19208, -20292}, {106.5, 34}}",
+      "identifier" : "",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19208, -20292}, {106.5, 34}}",
+      "identifier" : "capture-trail-D5F4C4A1-3991-44C8-918B-3B3E1510931E",
+      "label" : "From Unknown source. No paste destinations recorded. Open content trail."
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19208, -20310}, {140.5, 14}}",
+      "identifier" : "capture-receipt-D5F4C4A1-3991-44C8-918B-3B3E1510931E",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19208, -20310}, {101.5, 14}}",
+      "identifier" : "capture-receipt-time-D5F4C4A1-3991-44C8-918B-3B3E1510931E",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19093, -20310}, {25.5, 14}}",
+      "identifier" : "capture-receipt-category-D5F4C4A1-3991-44C8-918B-3B3E1510931E",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-18944, -20300}, {32, 32}}",
+      "identifier" : "capture-copy-D5F4C4A1-3991-44C8-918B-3B3E1510931E",
+      "label" : "Copy Fictional work note 0: keep the original source and continue after a break."
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-18904, -20300}, {32, 32}}",
+      "identifier" : "capture-trash-D5F4C4A1-3991-44C8-918B-3B3E1510931E",
+      "label" : "Move Fictional work note 0: keep the original source and continue after a break. to Recently Deleted"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19208, -20360}, {336, 38}}",
+      "identifier" : "",
+      "label" : "Open Fictional work note 0: keep the original source and continue after a break., Note, saved Sun, 4 Oct 2026 at 09:00"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-18904, -20404}, {32, 32}}",
+      "identifier" : "capture-convert-to-task-D5F4C4A1-3991-44C8-918B-3B3E1510931E",
+      "label" : "Turn Fictional work note 0: keep the original source and continue after a break. into a task"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19208, -20448}, {32, 32}}",
+      "identifier" : "",
+      "label" : "Comment"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19174, -20448}, {32, 32}}",
+      "identifier" : "",
+      "label" : "Reminder"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-18938, -20448}, {32, 32}}",
+      "identifier" : "capture-collapse-D5F4C4A1-3991-44C8-918B-3B3E1510931E",
+      "label" : "Minimize capture"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-18904, -20448}, {32, 32}}",
+      "identifier" : "capture-more-D5F4C4A1-3991-44C8-918B-3B3E1510931E",
+      "label" : "More actions for Fictional work note 0: keep the original source and continue after a break."
+    }
+  ],
+  "viewport" : "{{-20000, -20000}, {1920, 960}}"
+}

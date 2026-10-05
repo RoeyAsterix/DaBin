@@ -1,17 +1,202 @@
 import Foundation
+import Combine
 
 @MainActor private final class InboxReminderClient: ReminderNotificationClient {
     var requests: [String: ScheduledReminder] = [:]
+    private(set) var removedPendingIDs: Set<String> = []
     func authorization() async -> ReminderAuthorization { .allowed }
     func requestAuthorization() async throws -> Bool { fatalError("No system permission in tests") }
     func pending() async -> [ScheduledReminder] { Array(requests.values) }
     func add(_ reminder: ScheduledReminder) async throws { requests[reminder.identifier] = reminder }
-    func removePending(_ identifiers: [String]) { identifiers.forEach { requests.removeValue(forKey: $0) } }
+    func removePending(_ identifiers: [String]) {
+        removedPendingIDs.formUnion(identifiers)
+        identifiers.forEach { requests.removeValue(forKey: $0) }
+    }
     func removeDelivered(_ identifiers: [String]) {}
 }
 
 @main struct WorkInboxTests {
-    @MainActor private static func checkReminderRecovery() throws -> Int {
+    @MainActor private static func checkReturnToInbox() async throws -> Int {
+        var checks = 0
+        func expect(_ value: Bool, _ message: String) throws {
+            checks += 1
+            if !value { throw NSError(domain: "WorkInboxTests", code: 4, userInfo: [NSLocalizedDescriptionKey: message]) }
+        }
+        func bytes(_ capture: Capture) throws -> Data {
+            let encoder = JSONEncoder(); encoder.outputFormatting = [.sortedKeys]
+            return try encoder.encode(CaptureSnapshot(capture))
+        }
+        let root = FileManager.default.temporaryDirectory.appendingPathComponent("DaBinInboxReturn-\(UUID())")
+        let suite = "DaBinInboxReturn.\(UUID())"
+        let defaults = UserDefaults(suiteName: suite)!
+        let store = try CaptureStore(root: root)
+        let previews = PreviewService(store: store, defaults: defaults)
+        let state = AppState(store: store, previews: previews,
+            reminders: ReminderService(store: store, client: InboxReminderClient()))
+        defer {
+            previews.shutdown(); state.focusSessions.shutdown(); state.shutdownNotificationPresentation()
+            defaults.removePersistentDomain(forName: suite); try? FileManager.default.removeItem(at: root)
+        }
+        let receivedAt = Date().addingTimeInterval(-86_400)
+        let payload = Data("Fictional kept original bytes".utf8)
+        let kept = try await store.importData(payload, filename: "Kept.txt", at: receivedAt)
+        let task = try store.createTask(text: "Kept unplanned task", at: receivedAt)
+        let child = try store.capture(text: "Independent task attachment", at: receivedAt, parentTask: task)[0]
+        let filed = try store.createNote(text: "Already filed", at: receivedAt, projectName: "Example project")
+        let scheduled = try store.createTask(text: "Scheduled work", at: receivedAt)
+        try store.planTask(scheduled, on: CaptureCalendar.dayString(Date()))
+        let completed = try store.createTask(text: "Finished work", at: receivedAt)
+        _ = try store.setTaskCompleted(completed, completed: true)
+        let fresh = try store.createNote(text: "Already in Inbox", at: receivedAt)
+        let removed = try store.createNote(text: "Recently Deleted", at: receivedAt)
+        try state.workspace.markInboxProcessed([kept, task, child, filed, scheduled, completed, removed].map(\.id))
+        try store.moveToTrash(removed)
+        try expect(state.canReturnCaptureToInbox(kept) && state.canReturnCaptureToInbox(task),
+                   "Kept unfiled originals and unplanned tasks can return to Inbox")
+        for (capture, reason) in [(child, "task attachment"), (filed, "filed capture"),
+                                  (scheduled, "scheduled task"), (completed, "completed task"),
+                                  (fresh, "already-unprocessed capture"), (removed, "deleted capture"),
+                                  (Capture(snapshot: CaptureSnapshot(kept)), "stale matching UUID")] {
+            try expect(!state.canReturnCaptureToInbox(capture), "Return to Inbox excludes a \(reason)")
+            let processed = state.workspace.processedInboxIDs
+            try expect(!state.returnCaptureToInbox(capture) && state.workspace.processedInboxIDs == processed,
+                       "An ineligible \(reason) cannot change Inbox processing")
+        }
+        state.assignProject(kept, name: "Temporary project")
+        try expect(!state.canReturnCaptureToInbox(kept), "A kept capture is ineligible while filed")
+        state.assignProject(kept, name: nil)
+        try expect(state.canReturnCaptureToInbox(kept), "Choosing Unfiled makes a kept capture eligible for the explicit return action")
+        state.openLibrary(); state.filter = .links
+        let before = try bytes(kept)
+        let workspaceURL = root.appendingPathComponent(WorkspaceStore.filename)
+        let workspaceBefore = try Data(contentsOf: workspaceURL)
+        state.workspace.failureInjector = { throw CocoaError(.fileWriteNoPermission) }
+        try expect(!state.returnCaptureToInbox(kept), "A failed workspace write rejects Return to Inbox")
+        try expect(state.route == .library && state.filter == .links && state.workspace.processedInboxIDs.contains(kept.id)
+                   && state.status?.severity == .error,
+                   "Failure retains the current view, filter and processed bit and reports feedback")
+        try expect(try Data(contentsOf: workspaceURL) == workspaceBefore && bytes(kept) == before,
+                   "A failed return preserves workspace and capture bytes")
+        try expect(WorkspaceStore(root: root).processedInboxIDs.contains(kept.id),
+                   "Restart after a failed write keeps the capture processed")
+        state.workspace.failureInjector = nil
+        state.setTutorialPresented(true)
+        try expect(!state.returnCaptureToInbox(kept) && state.workspace.processedInboxIDs.contains(kept.id),
+                   "Blocked navigation cannot partially apply Return to Inbox")
+        state.setTutorialPresented(false)
+        state.openCapture(kept.id)
+        guard let draft = state.selectedDraft, let managed = store.managedURL(for: kept) else {
+            throw NSError(domain: "WorkInboxTests", code: 4, userInfo: [NSLocalizedDescriptionKey: "Missing fictional return draft or original"])
+        }
+        draft.comment = "Keep this unfinished comment"
+        state.openLibrary(); state.filter = .links
+        try expect(state.returnCaptureToInbox(kept), "Returning a kept original succeeds through the shared action")
+        try expect(state.route == .inbox && state.filter == .all && !state.workspace.processedInboxIDs.contains(kept.id),
+                   "Success opens Inbox with a visible returned item rather than a hiding type filter")
+        try expect(try bytes(kept) == before && Data(contentsOf: managed) == payload,
+                   "Return preserves the capture identity, original content, receipt, project and annotations")
+        try expect(!WorkspaceStore(root: root).processedInboxIDs.contains(kept.id),
+                   "Restart preserves the successful return to Inbox")
+        state.openCapture(kept.id)
+        try expect(state.selectedDraft === draft && draft.comment == "Keep this unfinished comment" && draft.hasChanges,
+                   "Returning to Inbox preserves the exact pending comment draft")
+        state.back()
+        let taskBefore = try bytes(task), childBefore = try bytes(child)
+        try expect(state.returnCaptureToInbox(task), "A previously kept unplanned task can return")
+        try expect(try bytes(task) == taskBefore && bytes(child) == childBefore && store.attachments(for: task).map(\.id) == [child.id],
+                   "Returning a task preserves its task planning and attachment family")
+        let restarted = try CaptureStore(root: root)
+        let workspace = WorkspaceStore(root: root)
+        let visible = restarted.captures.filter {
+            $0.parentTaskID == nil && $0.projectName == nil && !$0.isCompleted
+                && !workspace.processedInboxIDs.contains($0.id) && (!$0.isTask || $0.taskPlanning?.plannedDay == nil)
+        }
+        try expect(Set(visible.map(\.id)) == Set([kept.id, task.id, fresh.id]),
+                   "The actual Inbox eligibility contract survives restart without exposing filed, scheduled, completed or attached captures")
+        return checks
+    }
+
+    @MainActor private static func checkTodayReceipts() async throws -> Int {
+        var checks = 0
+        func expect(_ value: Bool, _ message: String) throws {
+            checks += 1
+            if !value { throw NSError(domain: "WorkInboxTests", code: 3, userInfo: [NSLocalizedDescriptionKey: message]) }
+        }
+        let root = FileManager.default.temporaryDirectory.appendingPathComponent("DaBinTodayReceipts-\(UUID())")
+        let suite = "DaBinTodayReceipts.\(UUID())"
+        let defaults = UserDefaults(suiteName: suite)!
+        let store = try CaptureStore(root: root)
+        let previews = PreviewService(store: store, defaults: defaults)
+        let state = AppState(store: store, previews: previews,
+            reminders: ReminderService(store: store, client: InboxReminderClient()))
+        defer {
+            previews.shutdown(); state.focusSessions.shutdown(); state.shutdownNotificationPresentation()
+            defaults.removePersistentDomain(forName: suite); try? FileManager.default.removeItem(at: root)
+        }
+        let now = Calendar.current.date(bySettingHour: 12, minute: 0, second: 0, of: Date())!
+        let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: now)!
+        let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: now)!
+        let todayKey = CaptureCalendar.dayString(now)
+        state.showReminders()
+        state.refreshCurrentDay(at: now)
+        let note = try store.createNote(text: "Today's authored note", at: now)
+        let link = try store.capture(text: "https://example.invalid/today", at: now.addingTimeInterval(1))[0]
+        let automatic = try store.capture(text: "Today's copied text", at: now.addingTimeInterval(2),
+            receipt: .automatic(.automaticClipboard))[0]
+        let dropped = try await store.importData(Data("Today's file bytes".utf8), filename: "Receipt.txt", at: now.addingTimeInterval(3))
+        try store.setOrganization(dropped, pinned: true, projectName: "Other project")
+        let completed = try store.createTask(text: "A completed task remains a receipt", at: now.addingTimeInterval(4))
+        _ = try store.setTaskCompleted(completed, completed: true, at: now.addingTimeInterval(5))
+        let later = try store.createTask(text: "Created today, planned tomorrow", at: now.addingTimeInterval(6))
+        try store.planTask(later, on: CaptureCalendar.dayString(tomorrow))
+        let earlierTask = try store.createTask(text: "Created yesterday, planned today", at: yesterday)
+        try store.planTask(earlierTask, on: todayKey)
+        let attachment = try store.capture(text: "Today's independently received attachment", at: now.addingTimeInterval(7), parentTask: earlierTask)[0]
+        _ = try store.capture(text: "Yesterday's receipt", at: yesterday.addingTimeInterval(1))
+        let removed = try store.capture(text: "A removed receipt", at: now.addingTimeInterval(8))[0]
+        try store.moveToTrash(removed)
+        try state.workspace.markInboxProcessed([note.id, dropped.id])
+        state.libraryProject = "Unrelated selected project"
+        state.libraryPinnedOnly = true; state.filter = .links
+        state.selectedDay = yesterday; state.weekEndingDay = yesterday
+        let expected = Set([note, link, automatic, dropped, completed, later, attachment].map(\.id))
+        for scope in ["today", "later", "done"] {
+            state.todayPlanningScope = scope
+            try expect(Set(state.currentTodayCaptures.map(\.id)) == expected,
+                "Today receipts retain every captured item across task scope, project, type, pins, processing and completion: \(scope)")
+        }
+        try expect(!state.currentTodayCaptures.contains { $0.id == earlierTask.id || $0.id == removed.id },
+            "Today's receipt feed excludes older scheduled tasks and Recently Deleted originals")
+        try expect(TaskPlanningPolicy.today(store.captures, at: now).contains { $0.id == earlierTask.id },
+            "An older task planned for today remains available separately in planning")
+        try expect(state.currentTodayCaptures.map(\.id) == [attachment, later, completed, dropped, automatic, link, note].map(\.id),
+            "Today receipts use descending capture time rather than task order or completion time")
+        let receiptID = AppState.todayReceiptItemID(later.id)
+        try expect(receiptID != ProjectWorkspaceIdentity.capture(later.id), "Receipt and planning instances have distinct workspace markers")
+        state.workspaceViewport = NavigationViewportAnchor(itemID: receiptID, offset: 21,
+            neighbors: [AppState.todayReceiptItemID(completed.id)])
+        state.openCapture(later.id); state.reconcileNavigationHistory(); state.back()
+        try expect(state.route == .reminders && state.workspaceViewport?.itemID == receiptID
+            && state.workspaceViewport?.offset == 21 && state.todayPlanningScope == "done",
+            "Detail Back restores the distinct Today receipt anchor and task scope")
+        state.workspaceViewport = NavigationViewportAnchor(itemID: ProjectWorkspaceIdentity.capture(earlierTask.id), offset: 9)
+        state.openCapture(earlierTask.id); state.reconcileNavigationHistory(); state.back()
+        try expect(state.workspaceViewport?.itemID == ProjectWorkspaceIdentity.capture(earlierTask.id),
+            "Existing planning anchors stay compatible")
+        let nextReceipt = try store.createNote(text: "Tomorrow's receipt", at: tomorrow)
+        var publishedDays: [String] = []
+        let subscription = state.$currentDayKey.dropFirst().sink { publishedDays.append($0) }
+        state.refreshCurrentDay(at: tomorrow)
+        try expect(publishedDays == [CaptureCalendar.dayString(tomorrow)] && state.currentTodayCaptures.map(\.id) == [nextReceipt.id],
+            "Midnight publishes the new Today receipt membership even when history is browsed")
+        try expect(state.selectedDay == yesterday && state.weekEndingDay == yesterday && state.filter == .links,
+            "Midnight leaves deliberately browsed history and filters intact")
+        state.refreshCurrentDay(at: tomorrow.addingTimeInterval(60))
+        try expect(publishedDays.count == 1, "Wake or activation on the same day does not publish a second day transition")
+        withExtendedLifetime(subscription) {}
+        return checks
+    }
+    @MainActor private static func checkReminderRecovery() async throws -> Int {
         var checks = 0
         func expect(_ value: Bool, _ message: String) throws {
             checks += 1
@@ -25,15 +210,26 @@ import Foundation
         let store = try CaptureStore(root: root)
         let previews = PreviewService(store: store, defaults: defaults)
         defer { previews.shutdown() }
-        func makeState() -> AppState {
+        func makeState(client: InboxReminderClient? = nil) -> AppState {
             AppState(store: store, previews: previews,
-                     reminders: ReminderService(store: store, client: InboxReminderClient()))
+                     reminders: ReminderService(store: store, client: client ?? InboxReminderClient()))
+        }
+        func waitForReminderWork(_ predicate: () -> Bool) async throws {
+            let deadline = Date().addingTimeInterval(3)
+            while !predicate() && Date() < deadline {
+                try await Task.sleep(for: .milliseconds(5))
+            }
+            try expect(predicate(), "Queued reminder work completes before its fixture archive is removed")
         }
         let sidecar = root.appendingPathComponent("Drafts.json")
         for clear in [true, false] {
+            var archiveStates = ["before capture: \(store.error ?? "<nil>")"]
             let capture = try store.capture(text: clear ? "Clear recovery fixture" : "Snooze recovery fixture")[0]
+            archiveStates.append("after capture: \(store.error ?? "<nil>")")
             try store.update(capture, comment: "", reminderAt: Date().addingTimeInterval(3600), reminderTimeZoneID: TimeZone.current.identifier)
-            let editor = makeState()
+            archiveStates.append("after initial reminder: \(store.error ?? "<nil>")")
+            let editorClient = InboxReminderClient()
+            let editor = makeState(client: editorClient)
             editor.openCapture(capture.id)
             editor.selectedDraft!.comment = "Keep the unfinished recovery comment"
             editor.selectedDraft!.reminderMode = .countdown
@@ -41,11 +237,15 @@ import Foundation
             editor.persistDrafts()
             let before = try Data(contentsOf: sidecar)
             if clear { editor.completeFollowUp(capture) } else { editor.snoozeFollowUp(capture) }
+            archiveStates.append("after immediate action: \(store.error ?? "<nil>")")
             let committed = capture.reminderAt
             try expect(try Data(contentsOf: sidecar) == before,
                        "Reminder recovery fixture reproduces the unchanged sidecar before its debounced save")
             try expect(clear ? committed == nil : committed != nil,
                        "The immediate reminder action commits before recovery")
+            let identifier = ReminderService.identifier(capture.id)
+            try expect(editorClient.requests.isEmpty && editorClient.removedPendingIDs.isEmpty,
+                       "The synchronous recovery setup has queued reminder work that still owns the live archive")
             let recovered = makeState()
             recovered.openCapture(capture.id)
             let draft = recovered.selectedDraft!
@@ -54,9 +254,23 @@ import Foundation
             try expect(draft.reminder == committed && draft.reminderMode == .date && !draft.reminderChanged,
                        "Recovery adopts the committed clear or snooze instead of reviving an older countdown")
             recovered.saveDetail()
+            archiveStates.append("after recovered save: \(store.error ?? "<nil>")")
             try expect(capture.reminderAt == committed && capture.comment == "Keep the unfinished recovery comment"
                        && !draft.hasChanges && !draft.hasError,
                        "Saving the recovered comment cannot replace the newer reminder")
+            // AppState's immediate actions launch MainActor tasks. Do not delete
+            // their database while those tasks are still waiting to begin.
+            try await waitForReminderWork {
+                if clear { return editorClient.removedPendingIDs.contains(identifier) }
+                return editorClient.requests[identifier]?.revision == capture.reminderRevision
+                    && capture.notificationState == "scheduled"
+            }
+            archiveStates.append("after queued completion: \(store.error ?? "<nil>")")
+            let rootExists = FileManager.default.fileExists(atPath: root.path)
+            try expect(store.error == nil && rootExists,
+                       "Reminder completion persists against the live fixture without archive errors. clear=\(clear); rootExists=\(rootExists); notificationState=\(capture.notificationState); stages=\(archiveStates.joined(separator: " | "))")
+            editor.focusSessions.shutdown(); editor.shutdownNotificationPresentation()
+            recovered.focusSessions.shutdown(); recovered.shutdownNotificationPresentation()
         }
 
         let pending = try store.capture(text: "Pending reminder recovery fixture")[0]
@@ -220,7 +434,9 @@ import Foundation
         legacy.removeValue(forKey: "isPinned"); legacy.removeValue(forKey: "projectName"); legacy.removeValue(forKey: "deletedAt")
         let old = Capture(snapshot: try JSONDecoder().decode(CaptureSnapshot.self, from: JSONSerialization.data(withJSONObject: legacy)))
         try expect(!old.isPinned && old.projectName == nil && old.deletedAt == nil && old.originalText == restored.originalText, "Schema 6 defaults preserve old capture data")
-        checks += try checkReminderRecovery()
+        checks += try await checkReminderRecovery()
+        checks += try await checkTodayReceipts()
+        checks += try await checkReturnToInbox()
         print("PASS: \(checks) work inbox checks")
     }
 }

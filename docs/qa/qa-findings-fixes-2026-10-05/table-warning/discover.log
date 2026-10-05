@@ -1,0 +1,8 @@
+(lldb) target create "native/build/qa-cache/app-store-70feee950c20ceae70b7bcf9494d1b269c9a089191bf243f85ee35071457d45b/ProjectWorkspaceViewTests-5a3f98658dce14e0/ProjectWorkspaceViewTests"
+Current executable set to '/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa-cache/app-store-70feee950c20ceae70b7bcf9494d1b269c9a089191bf243f85ee35071457d45b/ProjectWorkspaceViewTests-5a3f98658dce14e0/ProjectWorkspaceViewTests' (arm64).
+(lldb) command source -s 0 'docs/qa/qa-findings-fixes-2026-10-05/table-warning/discover.lldb'
+Executing commands in '/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/table-warning/discover.lldb'.
+(lldb) settings set target.disable-aslr false
+(lldb) breakpoint set --name '+[NSApplication sharedApplication]'
+Breakpoint 1: where = AppKit`+[NSApplication sharedApplication], address = 0x00000001849bec80
+(lldb) run

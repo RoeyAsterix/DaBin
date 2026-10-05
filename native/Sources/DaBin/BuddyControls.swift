@@ -84,9 +84,11 @@ extension View {
 @MainActor
 struct BuddyIconButton: View {
     @Environment(\.daBinAccent) private var accent
+    @Environment(\.workspaceZoom) private var zoom
     @Environment(\.timelineTooltipController) private var tooltipController
     let symbol: String
     let title: String
+    var visualLabel: String? = nil
     var isActive = false
     var tooltipID: String? = nil
     let action: () -> Void
@@ -101,12 +103,21 @@ struct BuddyIconButton: View {
             tooltipController?.activate(id: effectiveTooltipID)
             action()
         } label: {
-            Image(systemName: symbol)
-                .font(.system(size: 16, weight: .semibold))
-                .symbolRenderingMode(.monochrome)
-                .frame(width: 32, height: 32)
-                .contentShape(RoundedRectangle(cornerRadius: 8))
-                .accessibilityHidden(true)
+            HStack(spacing: 6) {
+                Image(systemName: symbol)
+                    .font(.system(size: 16, weight: .semibold))
+                    .symbolRenderingMode(.monochrome)
+                    .frame(width: 16, height: 16)
+                    .accessibilityHidden(true)
+                if let visualLabel {
+                    Text(visualLabel).font(.system(size: zoom.fontSize(13), weight: .medium))
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            }
+            .padding(.horizontal, visualLabel == nil ? 0 : 8)
+            .padding(.vertical, visualLabel == nil ? 0 : 5)
+            .frame(minWidth: 32, minHeight: 32)
+            .contentShape(RoundedRectangle(cornerRadius: 8))
         }
         .buttonStyle(BuddyIconButtonStyle(accent: accent, isActive: isActive,
                                           hovered: hovered, focused: focused))
@@ -116,6 +127,40 @@ struct BuddyIconButton: View {
         .accessibilityLabel(title)
         .accessibilityAddTraits(isActive ? .isSelected : [])
         .accessibilityRemoveTraits(isActive ? [] : .isSelected)
+    }
+}
+
+/// Keep one set of labeled actions alive while moving whole buttons onto new
+/// rows. The label and symbol remain inside the same native button hit region.
+struct BuddyActionFlow: Layout {
+    var spacing: CGFloat = 6
+
+    private func frames(width: CGFloat, subviews: Subviews) -> [CGRect] {
+        var result: [CGRect] = [], x: CGFloat = 0, y: CGFloat = 0, rowHeight: CGFloat = 0
+        for view in subviews {
+            let ideal = view.sizeThatFits(.unspecified)
+            let size = view.sizeThatFits(ProposedViewSize(width: min(width, ideal.width), height: nil))
+            if x > 0 && x + size.width > width {
+                x = 0; y += rowHeight + spacing; rowHeight = 0
+            }
+            result.append(CGRect(origin: CGPoint(x: x, y: y), size: size))
+            x += size.width + spacing; rowHeight = max(rowHeight, size.height)
+        }
+        return result
+    }
+
+    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+        let intrinsic = subviews.reduce(CGFloat(0)) { $0 + $1.sizeThatFits(.unspecified).width }
+            + spacing * CGFloat(max(0, subviews.count - 1))
+        let width = proposal.width.flatMap { $0.isFinite ? max(0, $0) : nil } ?? intrinsic
+        return CGSize(width: width, height: frames(width: width, subviews: subviews).map(\.maxY).max() ?? 0)
+    }
+
+    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
+        for (index, frame) in frames(width: bounds.width, subviews: subviews).enumerated() {
+            subviews[index].place(at: CGPoint(x: bounds.minX + frame.minX, y: bounds.minY + frame.minY),
+                                 anchor: .topLeading, proposal: ProposedViewSize(frame.size))
+        }
     }
 }
 

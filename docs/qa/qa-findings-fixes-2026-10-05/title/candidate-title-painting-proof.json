@@ -1,0 +1,58 @@
+{
+  "scope": "Read-only actual fullBoard native raster only. Interaction suite still failed resize selection, so this does not accept candidate or certify focus/history. No GUI launch or image editing.",
+  "status": "passed-raster-only",
+  "profiles": [
+    {
+      "zoom": 100,
+      "png": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/title/renders/full-board-380-task-zoom100@2x.png",
+      "sha256": "d2e9cb17d60b663111581c2796205cd3816f727a99514ae145a1de1009bb3815",
+      "nativeGeometryFile": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/title/renders/title-geometry-zoom100.json",
+      "bounds": "{{0, 0}, {308, 50}}",
+      "preferredWidth": 308,
+      "alignmentInsets": {
+        "bottom": 0,
+        "left": 0,
+        "right": 0,
+        "top": 0
+      },
+      "lineHeight": 24,
+      "titleFrameTopLeft": {
+        "height": 50,
+        "width": 308,
+        "x": 56,
+        "y": 90
+      },
+      "firstLineForegroundPixels": 6920,
+      "secondLineForegroundPixels": 7041,
+      "firstLineInkRows": 36,
+      "secondLineInkRows": 37,
+      "twoLinesPainted": true
+    },
+    {
+      "zoom": 200,
+      "png": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/title/renders/full-board-380-task-zoom200@2x.png",
+      "sha256": "47cd57c9653f513b8be54fcf33b8393977bbfb1aef68fd300e4b17d90be12160",
+      "nativeGeometryFile": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/title/renders/title-geometry-zoom200.json",
+      "bounds": "{{0, 0}, {276, 58}}",
+      "preferredWidth": 276,
+      "alignmentInsets": {
+        "bottom": 0,
+        "left": 0,
+        "right": 0,
+        "top": 0
+      },
+      "lineHeight": 29,
+      "titleFrameTopLeft": {
+        "height": 58,
+        "width": 276,
+        "x": 72,
+        "y": 90
+      },
+      "firstLineForegroundPixels": 7082,
+      "secondLineForegroundPixels": 7236,
+      "firstLineInkRows": 46,
+      "secondLineInkRows": 37,
+      "twoLinesPainted": true
+    }
+  ]
+}

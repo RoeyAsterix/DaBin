@@ -137,12 +137,6 @@ private final class ApplicationLifecycleTests: NSObject, NSApplicationDelegate {
                    "Construction does not start observers or pointer monitoring")
         try expect(!coordinator!.corners.board.isVisible && !coordinator!.corners.bin.isVisible,
                    "Construction keeps both native panels hidden")
-        try expect(coordinator!.claimFirstLaunchDailyPresentation(),
-                   "A fresh preference domain claims one discoverable Daily presentation")
-        try expect(defaults.bool(forKey: ApplicationCoordinator.firstLaunchDailyPresentedKey),
-                   "The first-launch Daily presentation is persisted locally")
-        try expect(!coordinator!.claimFirstLaunchDailyPresentation(),
-                   "The discoverable Daily presentation is never claimed twice")
         coordinator!.theme.select(.teal)
         try expect(ThemeSettings(defaults: defaults).selectedHex == ThemePreset.teal.hex,
                    "The composition root shares injected local preferences with theme state")
@@ -172,13 +166,19 @@ private final class ApplicationLifecycleTests: NSObject, NSApplicationDelegate {
         menu.install()
         let appMenu = NSApp.mainMenu!.items[0].submenu!
         let open = appMenu.items.first { $0.title == "Open DaBin" }!
-        let checkUpdates = appMenu.items.first { $0.title == "Check for Updates…" }!
         let preference = appMenu.items.first { $0.title == "Settings…" }!
         try expect(NSApp.sendAction(open.action!, to: open.target, from: open), "Native Open DaBin command dispatches")
+        #if DABIN_DIRECT_UPDATES
+        let checkUpdates = appMenu.items.first { $0.title == "Check for Updates…" }!
         try expect(NSApp.sendAction(checkUpdates.action!, to: checkUpdates.target, from: checkUpdates),
                    "Native Check for Updates command dispatches")
+        try expect(updateChecks == 1, "Direct-distribution update check invokes its action once")
+        #else
+        try expect(!appMenu.items.contains { $0.title == "Check for Updates…" } && updateChecks == 0,
+                   "Store-managed builds do not expose an update command with no available action")
+        #endif
         try expect(NSApp.sendAction(preference.action!, to: preference.target, from: preference), "Native Settings command dispatches")
-        try expect(daily == 1 && updateChecks == 1 && settings == 1, "Menu commands invoke their intended actions once")
+        try expect(daily == 1 && settings == 1, "Menu commands invoke their intended actions once")
         let edit = NSApp.mainMenu!.items[1].submenu!
         try expect(edit.items.first { $0.title == "Paste" }?.target == nil, "Paste resolves through the native responder chain")
         try expect(appMenu.items.contains { $0.title == "About DaBin" } && appMenu.items.contains { $0.title == "Hide DaBin" },

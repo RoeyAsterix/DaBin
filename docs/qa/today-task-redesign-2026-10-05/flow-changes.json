@@ -1,0 +1,19 @@
+{
+  "dayPlanning": {
+    "before": "Open duration/schedule popover, choose workday, save timing separately",
+    "after": "Choose Today/Tomorrow/Unplanned in the visible work plan, then Save changes"
+  },
+  "checklist": {
+    "before": "Find composer below existing checklist steps",
+    "after": "Composer stays before steps; Return adds and retains focus; native editable rows and progress"
+  },
+  "reminder": {
+    "before": "Enable, choose mode, enter fields, save",
+    "after": "Choose a visible preset, Apply reminder; custom fields remain available"
+  },
+  "today": {
+    "before": "Planned task lists without a complete capture receipt feed",
+    "after": "Current-day receipts from every project precede existing plan, upcoming and completed lists; direct drop and Paste retain Today"
+  },
+  "compatibility": "Planning commits with Save changes; focus controls retain their immediate service actions; Apply reminder persists only the reminder; compact receipt actions do not change isMinimized."
+}

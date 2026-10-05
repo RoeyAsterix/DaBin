@@ -14,6 +14,7 @@ struct ComposerSnapshot: Codable {
     var countdownMinutes = 30
     var reminderDate = Date().addingTimeInterval(3600)
     var destination: ComposerDestination?
+    var pendingChecklistText: String? = nil
 }
 struct DetailDraftSnapshot: Codable {
     let captureID: UUID
@@ -31,6 +32,7 @@ struct DetailDraftSnapshot: Codable {
     let reminderDate: Date
     var commentComposer: String? = nil
     var editingCommentID: UUID? = nil
+    var pendingChecklistText: String? = nil
 }
 struct DraftArchiveSnapshot: Codable {
     var version = 1
@@ -55,8 +57,9 @@ struct DraftArchiveSnapshot: Codable {
             let data = try Data(contentsOf: url)
             guard data.count <= 32_000_000 else { throw WorkspaceError.invalidArchive }
             let snapshot = try JSONDecoder().decode(DraftArchiveSnapshot.self, from: data)
-            guard snapshot.version == 1, snapshot.details.count <= 10_000,
-                  snapshot.details.allSatisfy({ ($0.title?.count ?? 0) <= 2_000 }) else { throw WorkspaceError.invalidArchive }
+            // Commit validation must not invalidate recovery of typed drafts.
+            // The file-size and record-count bounds already limit recovery data.
+            guard snapshot.version == 1, snapshot.details.count <= 10_000 else { throw WorkspaceError.invalidArchive }
             return snapshot
         } catch { recoveryError = "Draft recovery needs attention. The original Drafts.json was kept. \(error.localizedDescription)"; return nil }
     }

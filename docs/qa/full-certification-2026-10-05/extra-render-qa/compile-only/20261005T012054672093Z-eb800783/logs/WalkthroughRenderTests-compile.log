@@ -1,0 +1,47 @@
+/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/compile-only/20261005T012054672093Z-eb800783/fixture/WalkthroughRenderTests.swift:75:44: error: extra arguments at positions #1, #2, #3, #4, #5, #6, #7, #8 in call
+ 73 |         defer { previews.shutdown(); index.shutdown() }
+ 74 |         let info = try PropertyListSerialization.propertyList(from: Data(contentsOf: URL(fileURLWithPath: "Resources/Info.plist")), format: nil) as! [String: Any]
+ 75 |         let updates = SoftwareUpdateService(currentVersion: info["CFBundleShortVersionString"] as! String,
+    |                                            `- error: extra arguments at positions #1, #2, #3, #4, #5, #6, #7, #8 in call
+ 76 |             currentBuild: info["CFBundleVersion"] as! String,
+ 77 |             manifestURL: SoftwareUpdateConfiguration.manifestURL(),
+
+/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Sources/DaBin/SoftwareUpdateService.swift:435:5: note: 'init(bundle:)' declared here
+433 |     var versionLabel: String { "DaBin \(currentVersion) (\(currentBuild))" }
+434 | 
+435 |     init(bundle: Bundle = .main) {
+    |     `- note: 'init(bundle:)' declared here
+436 |         currentVersion = bundle.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "0.0.0"
+437 |         currentBuild = bundle.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "0"
+
+/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/compile-only/20261005T012054672093Z-eb800783/fixture/WalkthroughRenderTests.swift:121:25: error: cannot infer contextual base in reference to member 'files'
+119 |         state.status = nil
+120 |         try await board(state, "04-daily-captured")
+121 |         state.filter = .files
+    |                         `- error: cannot infer contextual base in reference to member 'files'
+122 |         try await board(state, "05-daily-files")
+123 |         state.filter = .all
+
+/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/compile-only/20261005T012054672093Z-eb800783/fixture/WalkthroughRenderTests.swift:123:25: error: cannot infer contextual base in reference to member 'all'
+121 |         state.filter = .files
+122 |         try await board(state, "05-daily-files")
+123 |         state.filter = .all
+    |                         `- error: cannot infer contextual base in reference to member 'all'
+124 |         state.selectTimelineMode(.weekly)
+125 |         guard state.weeklyVisibleDays.count == 7, state.weeklyActiveDays.count == 3 else {
+
+/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/compile-only/20261005T012054672093Z-eb800783/fixture/WalkthroughRenderTests.swift:139:58: error: cannot infer key path type from context; consider explicitly specifying a root type
+137 |             try await board(state, name)
+138 |         }
+139 |         let matchingEntries = state.searchGroups.flatMap(\.entries).filter(\.isMatch)
+    |                                                          `- error: cannot infer key path type from context; consider explicitly specifying a root type
+140 |         guard matchingEntries.count == 1, matchingEntries[0].capture.id == pdf.id,
+141 |               matchingEntries[0].indexedTextMatch != nil else {
+
+/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/compile-only/20261005T012054672093Z-eb800783/fixture/WalkthroughRenderTests.swift:139:76: error: cannot infer key path type from context; consider explicitly specifying a root type
+137 |             try await board(state, name)
+138 |         }
+139 |         let matchingEntries = state.searchGroups.flatMap(\.entries).filter(\.isMatch)
+    |                                                                            `- error: cannot infer key path type from context; consider explicitly specifying a root type
+140 |         guard matchingEntries.count == 1, matchingEntries[0].capture.id == pdf.id,
+141 |               matchingEntries[0].indexedTextMatch != nil else {

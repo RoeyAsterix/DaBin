@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "preparedAtUTC": "2026-10-05T03:40:43.526553+00:00",
+  "script": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/integrate-qa-findings-fixes.py",
+  "scriptSHA256": "04695362ae120f96b3973b6e986f0c8fac931e54f064d0af90836bc1f5423868",
+  "syntaxValidation": "AST parse only; script not imported or executed",
+  "executed": true,
+  "actualRepositoryChangedByAgent": false,
+  "requiredFinalReport": "Not yet supplied; parent must provide fresh unchanged-input full121 report",
+  "allowedNativePaths": [
+    "Sources/DaBin/DetailScreen.swift",
+    "Tests/TaskPlanInteractionTests.swift",
+    "Tests/WorkInboxTests.swift",
+    "Tests/WorkspaceZoomPerformanceTests.swift"
+  ],
+  "guardedBaselinePathCount": 297,
+  "soleAllowedFailure": "Exact evidenced strict WorkspaceZoomPerformanceTests budget failure, retained as failure",
+  "archiveComplete": false,
+  "uploaded": false,
+  "rollbackPolicy": "Only roll back exact native/metadata hashes this attempt actually wrote; preserve unexpected concurrent changes.",
+  "releaseFingerprintRecipe": "Canonical168release inputs, matching guarded project_inventory.build_inventory",
+  "syntaxCheck": "ast.parse_only_not_imported_or_executed",
+  "unsignedCandidateReceiptSHA256": "7ef74dd8dc46ef40ffd231218d4dca210cf71b5aa57399da2678c4cb10c46b97",
+  "unsignedCandidateValidation": "Exact receipt hash, version0.4.33/build88, build/preflight0, inputsUnchanged, 171current file hashes including canonical168 release fingerprint, executable hash, no signing/archive/upload/sandbox/install claim",
+  "rootReviewed": true,
+  "parentNativeExecutionReceipt": {
+    "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/qa-findings-fixes-native-integration.json",
+    "sha256": "21daffe9df29f6d948d7228fb08ebc516fda4b4c1667c71d4da9a1ee56cf85a1"
+  },
+  "executedByAgent": false,
+  "preparedFinalReport": {
+    "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa/runs/20261005T033354460853Z-app-store/report.json",
+    "sha256": "67aeb58ad2c843b33fdb73709f15e7a48eef327f0edd706260cf1715a92150c6"
+  },
+  "executedBy": "parent_native_phase_only",
+  "evidencePhaseExecuted": false,
+  "actualRepositoryChangedByParent": true
+}

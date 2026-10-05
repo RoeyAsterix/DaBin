@@ -3,9 +3,22 @@ import Darwin
 import Foundation
 
 @MainActor private final class ZoomPerformanceWindow: NSWindow {
+    var onDisplayMeasurement: ((String, Double) -> Void)?
     override var canBecomeKey: Bool { false }
     override var canBecomeMain: Bool { false }
     override func constrainFrameRect(_ frameRect: NSRect, to screen: NSScreen?) -> NSRect { frameRect }
+    override func display() {
+        guard let onDisplayMeasurement else { super.display(); return }
+        let before = ProcessInfo.processInfo.systemUptime
+        super.display()
+        onDisplayMeasurement("display", (ProcessInfo.processInfo.systemUptime - before) * 1000)
+    }
+    override func displayIfNeeded() {
+        guard let onDisplayMeasurement else { super.displayIfNeeded(); return }
+        let before = ProcessInfo.processInfo.systemUptime
+        super.displayIfNeeded()
+        onDisplayMeasurement("displayIfNeeded", (ProcessInfo.processInfo.systemUptime - before) * 1000)
+    }
 }
 @MainActor private final class ZoomPerformanceNotifications: ReminderNotificationClient {
     func authorization() async -> ReminderAuthorization { .denied }
@@ -187,9 +200,14 @@ import Foundation
         defer { zoom.finishInteraction(); frame.setVisible(false); window.orderOut(nil); window.contentView = nil; window.close() }
         let reference = WorkspaceZoomGeometry(frame: original, factor: 1)!
         let available = CGRect(x: -10_000, y: -11_000, width: 1_600, height: 1_750)
+        var lastCoupledResizeMilliseconds = 0.0
         zoom.onInteractionBegan = { WorkspaceZoomViewport.begin(in: window, anchorInWindow: zoom.anchorInWindow); return true }
         zoom.onFactorChanged = { factor in
-            if zoom.resizeWindowWithZoom, let target = reference.frame(at: factor, visible: available) { window.setFrame(target, display: true) }
+            if zoom.resizeWindowWithZoom, let target = reference.frame(at: factor, visible: available) {
+                let before = ProcessInfo.processInfo.systemUptime
+                window.setFrame(target, display: true)
+                lastCoupledResizeMilliseconds = (ProcessInfo.processInfo.systemUptime - before) * 1000
+            }
         }
         zoom.onInteractionEnded = { WorkspaceZoomViewport.end(in: window) }
         try await settle(frame, milliseconds: 350)
@@ -204,6 +222,12 @@ import Foundation
         try await settle(frame)
 
         var phase = "warm baseline"
+        var nativeDisplayStages: [String: [Double]] = [:]
+        window.onDisplayMeasurement = { stage, milliseconds in
+            guard phase == "steady zoom", nativeDisplayStages[stage, default: []].count < 4_000 else { return }
+            nativeDisplayStages[stage, default: []].append(milliseconds)
+        }
+        defer { window.onDisplayMeasurement = nil }
         var baselineIntervals: [Double] = [], activeIntervals: [Double] = [], maximumAvailableRows = 0
         var allIntervals: [Double] = []
         var intervalsByPhase: [String: [Double]] = [:]
@@ -230,6 +254,7 @@ import Foundation
         let started = ProcessInfo.processInfo.systemUptime
         var arrivals = 0, burstDone = false, cycle = 0, nextArrival = started + 2
         var inputLayoutMilliseconds: [Double] = [], saveMilliseconds: [Double] = []
+        var inputStages: [String: [Double]] = [:]
         var memory: [[String: Any]] = [["phase": "baseline", "rssBytes": baselineRSS]]
         var cycles: [[String: Any]] = []
 
@@ -261,10 +286,25 @@ import Foundation
                 for step in 0..<32 {
                     phase = "steady zoom"
                     let value: CGFloat = step < 16 ? 1 + CGFloat(step) / 15 : 2 - CGFloat(step - 16) / 15
+                    lastCoupledResizeMilliseconds = 0
                     let before = ProcessInfo.processInfo.systemUptime
-                    zoom.update(to: value); frame.layoutSubtreeIfNeeded()
-                    try await Task.sleep(for: .milliseconds(1)); frame.layoutSubtreeIfNeeded()
-                    inputLayoutMilliseconds.append((ProcessInfo.processInfo.systemUptime - before) * 1000)
+                    zoom.update(to: value)
+                    let updated = ProcessInfo.processInfo.systemUptime
+                    frame.layoutSubtreeIfNeeded()
+                    let firstLayout = ProcessInfo.processInfo.systemUptime
+                    try await Task.sleep(for: .milliseconds(1))
+                    let resumed = ProcessInfo.processInfo.systemUptime
+                    frame.layoutSubtreeIfNeeded()
+                    let completed = ProcessInfo.processInfo.systemUptime
+                    inputLayoutMilliseconds.append((completed - before) * 1000)
+                    // Nested resize is already included in update.total. Keep
+                    // the original workload and completion boundary unchanged.
+                    inputStages["update.total", default: []].append((updated - before) * 1000)
+                    inputStages["update.coupledResize", default: []].append(lastCoupledResizeMilliseconds)
+                    inputStages["update.excludingCoupledResize", default: []].append(max(0, (updated - before) * 1000 - lastCoupledResizeMilliseconds))
+                    inputStages["firstLayout", default: []].append((firstLayout - updated) * 1000)
+                    inputStages["schedulingWait", default: []].append((resumed - firstLayout) * 1000)
+                    inputStages["secondLayout", default: []].append((completed - resumed) * 1000)
                     if !fixedData && !burstDone && step == 8 {
                         phase = "100 durable arrivals during zoom"
                         for burst in 0..<100 {
@@ -328,6 +368,18 @@ import Foundation
                     "p95Milliseconds": percentile(samples, 0.95), "maximumMilliseconds": samples.max() ?? 0,
                     "intervalsAbove100Milliseconds": samples.filter { $0 > 100 }.count]
         }
+        let inputStageMetrics: [[String: Any]] = inputStages.keys.sorted().map { name in
+            let samples = inputStages[name] ?? []
+            return ["stage": name, "count": samples.count,
+                    "medianMilliseconds": percentile(samples, 0.5), "p95Milliseconds": percentile(samples, 0.95),
+                    "maximumMilliseconds": samples.max() ?? 0]
+        }
+        let nativeDisplayStageMetrics: [[String: Any]] = nativeDisplayStages.keys.sorted().map { name in
+            let samples = nativeDisplayStages[name] ?? []
+            return ["stage": name, "count": samples.count,
+                    "medianMilliseconds": percentile(samples, 0.5), "p95Milliseconds": percentile(samples, 0.95),
+                    "maximumMilliseconds": samples.max() ?? 0]
+        }
         var warnings: [String] = []
         if p95Input > 50 { warnings.append("Synthetic input-to-layout p95 exceeds 50 ms") }
         if p95Frame > 33 { warnings.append("Steady zoom main-runloop interval p95 exceeds 33 ms") }
@@ -346,9 +398,13 @@ import Foundation
         }
         let timerCapacityBytes = MemoryLayout<Double>.stride * (allIntervals.capacity
             + intervalsByPhase.values.reduce(0) { $0 + $1.capacity } + baselineIntervals.capacity + activeIntervals.capacity)
+        let inputStageCapacityBytes = MemoryLayout<Double>.stride * inputStages.values.reduce(0) { $0 + $1.capacity }
+        let displayStageCapacityBytes = MemoryLayout<Double>.stride * nativeDisplayStages.values.reduce(0) { $0 + $1.capacity }
         let report: [String: Any] = [
             "workload": fixedData ? "fixed-data retention experiment" : "durable arrivals and burst stress",
             "fixedData": fixedData, "retainedTimerCapacityBytes": timerCapacityBytes,
+            "retainedInputStageCapacityBytes": inputStageCapacityBytes,
+            "retainedNativeDisplayStageCapacityBytes": displayStageCapacityBytes,
             "retainedCaptureModels": store.captures.count,
             "measurement": "Synthetic native input-to-layout flush and main-runloop timer intervals; not physical input-to-display latency",
             "durationSeconds": runSeconds, "requestedDurationSeconds": duration, "fullTenMinuteRun": duration == 600,
@@ -366,6 +422,11 @@ import Foundation
             "timerIntervalsByPhase": phaseMetrics,
             "timerPhaseAttribution": "Every interval is retained including burst, navigation, save, settle and idle phases; labels describe phase at callback delivery, so an interval can span an earlier phase boundary",
             "inputToLayoutP95Milliseconds": p95Input, "inputSamples": inputLayoutMilliseconds.count,
+            "inputStageMilliseconds": inputStageMetrics,
+            "nativeDisplayStageMilliseconds": nativeDisplayStageMetrics,
+            "performanceGates": ["inputToLayoutP95MaximumMilliseconds": 50,
+                "steadyZoomTimerP95MaximumMilliseconds": 33,
+                "passed": p95Input <= 50 && p95Frame <= 33],
             "durableSaveP95Milliseconds": percentile(saveMilliseconds, 0.95), "memory": memory,
             "maximumAvailableNativeRows": maximumAvailableRows, "warnings": warnings,
             "limitations": ["No physical trackpad or mouse-driver coverage", "Offscreen native rendering cannot measure presentation timestamps",
@@ -373,6 +434,9 @@ import Foundation
                     : "RSS includes the growing fixture archive, caches and retained timing arrays"]]
         try JSONSerialization.data(withJSONObject: report, options: [.prettyPrinted, .sortedKeys])
             .write(to: output.appendingPathComponent("performance.json"))
+        print("STAGES: \(inputStageMetrics); native display: \(nativeDisplayStageMetrics)"); fflush(stdout)
+        try expect(p95Input <= 50, "Synthetic input-to-layout p95 must stay within the existing 50 ms budget; report: \(output.path)")
+        try expect(p95Frame <= 33, "Steady zoom main-runloop p95 must stay within the existing 33 ms budget; report: \(output.path)")
         for factor in [CGFloat(0.75), 1, 1.5, 2] {
             zoom.setFactor(factor); try await settle(frame, milliseconds: 200)
             try render(frame, to: output.appendingPathComponent("production-board-\(Int(factor * 100))@2x.png"))

@@ -1,0 +1,204 @@
+{
+  "schemaVersion": 1,
+  "curatedAtUTC": "2026-10-05T02:30:55.120549+00:00",
+  "scope": "Exact copies of final own-process native graphics stress evidence; no GUI launch, pixel modification or production edit",
+  "status": "passed-runtime-evidence-curated",
+  "sourceDirectory": "docs/qa/stability-stress-2026-10-05/graphics",
+  "renderedProfileCount": 8,
+  "checks": 108535,
+  "seed": "0xDAB120261005",
+  "finalCampaign": {
+    "file": "docs/qa/full-certification-2026-10-05/app-store-full-run.json",
+    "sha256": "58e589aa0221f7b1a206edd4a590564d5523800b062a60feafffe9f3439011d2",
+    "test": "VisualAnimationStressTests",
+    "sourceSHA256": "695e74bb399aa1ec67d3bc491f20af9a81483f84ecfdfdaadd16fa66732530da",
+    "reportedSummary": "PASS: 108535 seeded native graphics, animation interruption, visible-control and disposal checks; /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/stability-stress-2026-10-05/graphics",
+    "status": "passed",
+    "frozenInputSourceSHA256": "695e74bb399aa1ec67d3bc491f20af9a81483f84ecfdfdaadd16fa66732530da",
+    "currentSourceMatchesFrozenInput": true
+  },
+  "files": [
+    {
+      "file": "burst-light-380@2x.png",
+      "source": "docs/qa/stability-stress-2026-10-05/graphics/burst-light-380@2x.png",
+      "bytes": 197130,
+      "sha256": "0732e4beb826c69f519f98b75866bd35cdb91397ea091ef41ad0ce2b982f26b4",
+      "pixelWidth": 800,
+      "pixelHeight": 1460,
+      "fixture": {
+        "cancelledGenerations": 12,
+        "contentHeight": 680,
+        "contentWidth": 380,
+        "finalCompletions": 1,
+        "interruptions": 12,
+        "nativeAnimationReduceMotion": false,
+        "nativeAppearance": "NSAppearanceNameAqua",
+        "profile": "light",
+        "render": "burst-light-380@2x.png",
+        "zoom": 2
+      }
+    },
+    {
+      "file": "burst-light-760@2x.png",
+      "source": "docs/qa/stability-stress-2026-10-05/graphics/burst-light-760@2x.png",
+      "bytes": 253668,
+      "sha256": "ecc4c02c931f4300dff54c6c5d34a12db3fa87b9f3bd22618dbb34fad86b0425",
+      "pixelWidth": 1560,
+      "pixelHeight": 1460,
+      "fixture": {
+        "cancelledGenerations": 12,
+        "contentHeight": 680,
+        "contentWidth": 760,
+        "finalCompletions": 1,
+        "interruptions": 12,
+        "nativeAnimationReduceMotion": false,
+        "nativeAppearance": "NSAppearanceNameAqua",
+        "profile": "light",
+        "render": "burst-light-760@2x.png",
+        "zoom": 0.75
+      }
+    },
+    {
+      "file": "burst-dark-380@2x.png",
+      "source": "docs/qa/stability-stress-2026-10-05/graphics/burst-dark-380@2x.png",
+      "bytes": 325851,
+      "sha256": "77ca6435383923f58974e8d2ce8be6fd49ed2c54a7db1ab04cedb828ec5753d1",
+      "pixelWidth": 800,
+      "pixelHeight": 1460,
+      "fixture": {
+        "cancelledGenerations": 12,
+        "contentHeight": 680,
+        "contentWidth": 380,
+        "finalCompletions": 1,
+        "interruptions": 12,
+        "nativeAnimationReduceMotion": false,
+        "nativeAppearance": "NSAppearanceNameDarkAqua",
+        "profile": "dark",
+        "render": "burst-dark-380@2x.png",
+        "zoom": 2
+      }
+    },
+    {
+      "file": "burst-dark-760@2x.png",
+      "source": "docs/qa/stability-stress-2026-10-05/graphics/burst-dark-760@2x.png",
+      "bytes": 388602,
+      "sha256": "f0b6693a180084c17bdd6c4326e156c0cb05f0c2e63ed82222d92f5da428213a",
+      "pixelWidth": 1560,
+      "pixelHeight": 1460,
+      "fixture": {
+        "cancelledGenerations": 12,
+        "contentHeight": 680,
+        "contentWidth": 760,
+        "finalCompletions": 1,
+        "interruptions": 12,
+        "nativeAnimationReduceMotion": false,
+        "nativeAppearance": "NSAppearanceNameDarkAqua",
+        "profile": "dark",
+        "render": "burst-dark-760@2x.png",
+        "zoom": 0.75
+      }
+    },
+    {
+      "file": "burst-appkit-contrast-light-reduced-380@2x.png",
+      "source": "docs/qa/stability-stress-2026-10-05/graphics/burst-appkit-contrast-light-reduced-380@2x.png",
+      "bytes": 203666,
+      "sha256": "d571d2d6d0155ae01e52804b1131626a5fbcfcb60cd86ce1a0fce46167ce6990",
+      "pixelWidth": 800,
+      "pixelHeight": 1460,
+      "fixture": {
+        "cancelledGenerations": 12,
+        "contentHeight": 680,
+        "contentWidth": 380,
+        "finalCompletions": 1,
+        "interruptions": 12,
+        "nativeAnimationReduceMotion": true,
+        "nativeAppearance": "NSAppearanceNameAqua",
+        "profile": "appkit-contrast-light-reduced",
+        "render": "burst-appkit-contrast-light-reduced-380@2x.png",
+        "zoom": 2
+      }
+    },
+    {
+      "file": "burst-appkit-contrast-light-reduced-760@2x.png",
+      "source": "docs/qa/stability-stress-2026-10-05/graphics/burst-appkit-contrast-light-reduced-760@2x.png",
+      "bytes": 261874,
+      "sha256": "2ad55a70a608f00ef4ef83780582d8a5ee0c4dfe3613679c78872a016691febc",
+      "pixelWidth": 1560,
+      "pixelHeight": 1460,
+      "fixture": {
+        "cancelledGenerations": 12,
+        "contentHeight": 680,
+        "contentWidth": 760,
+        "finalCompletions": 1,
+        "interruptions": 12,
+        "nativeAnimationReduceMotion": true,
+        "nativeAppearance": "NSAppearanceNameAqua",
+        "profile": "appkit-contrast-light-reduced",
+        "render": "burst-appkit-contrast-light-reduced-760@2x.png",
+        "zoom": 0.75
+      }
+    },
+    {
+      "file": "burst-appkit-contrast-dark-reduced-380@2x.png",
+      "source": "docs/qa/stability-stress-2026-10-05/graphics/burst-appkit-contrast-dark-reduced-380@2x.png",
+      "bytes": 203726,
+      "sha256": "0fdc54b255858e2d1a25a9439a0ed35af5e480e182cd090b779ac908c2f3ac9e",
+      "pixelWidth": 800,
+      "pixelHeight": 1460,
+      "fixture": {
+        "cancelledGenerations": 12,
+        "contentHeight": 680,
+        "contentWidth": 380,
+        "finalCompletions": 1,
+        "interruptions": 12,
+        "nativeAnimationReduceMotion": true,
+        "nativeAppearance": "NSAppearanceNameDarkAqua",
+        "profile": "appkit-contrast-dark-reduced",
+        "render": "burst-appkit-contrast-dark-reduced-380@2x.png",
+        "zoom": 2
+      }
+    },
+    {
+      "file": "burst-appkit-contrast-dark-reduced-760@2x.png",
+      "source": "docs/qa/stability-stress-2026-10-05/graphics/burst-appkit-contrast-dark-reduced-760@2x.png",
+      "bytes": 263307,
+      "sha256": "6a1b7c70d6479b9b9d4e074a6f939d530124ba55584133a2d08c5be26a276661",
+      "pixelWidth": 1560,
+      "pixelHeight": 1460,
+      "fixture": {
+        "cancelledGenerations": 12,
+        "contentHeight": 680,
+        "contentWidth": 760,
+        "finalCompletions": 1,
+        "interruptions": 12,
+        "nativeAnimationReduceMotion": true,
+        "nativeAppearance": "NSAppearanceNameDarkAqua",
+        "profile": "appkit-contrast-dark-reduced",
+        "render": "burst-appkit-contrast-dark-reduced-760@2x.png",
+        "zoom": 0.75
+      }
+    },
+    {
+      "file": "visual-animation-stress-report.json",
+      "source": "docs/qa/stability-stress-2026-10-05/graphics/visual-animation-stress-report.json",
+      "bytes": 3913,
+      "sha256": "c0ca386d7726ceb3484fd8f2bf2a62dea93191d15960c727515e19d276dcffc7"
+    }
+  ],
+  "controllerDisposal": [
+    {
+      "context": "controller-disposal",
+      "controllers": 4,
+      "releasedControllers": 4,
+      "retainedNativeWindows": 8,
+      "staleCompletions": 0
+    }
+  ],
+  "systemAccessibility": {
+    "increaseContrast": false,
+    "reduceMotion": false,
+    "reduceTransparency": false
+  },
+  "limits": "Read-only SwiftUI accessibility environment follows actual OS settings; high-contrast profiles exercise AppKit NSAppearance and native reduced motion is passed explicitly. Renderability and finite geometry are not physical refresh-rate, GPU scheduling, subjective smoothness or exhaustive heap leak measurements",
+  "interpretation": "Light/dark, AppKit contrast requests and explicit native reduced-motion profiles at380/760 logical widths. Actual OS accessibility preferences were read, not changed. This is bounded interruption/control/geometry evidence, not physical FPS or exhaustive heap/GPU durability."
+}

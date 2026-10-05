@@ -1,0 +1,8 @@
+{
+  "checks" : 20,
+  "fixtures" : [
+
+  ],
+  "scope" : "partial-native-title-editing-only",
+  "suite" : "TaskPlanInteractionTests"
+}

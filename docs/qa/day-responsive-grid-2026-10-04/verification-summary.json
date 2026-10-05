@@ -1,0 +1,106 @@
+{
+  "status": "passed",
+  "suites": [
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261004T145611736876Z-direct/NavigationHistoryTests-compile.log",
+        "seconds": 1.794,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261004T145611736876Z-direct/NavigationHistoryTests.log",
+      "name": "NavigationHistoryTests",
+      "reportedSummary": "PASS: 47 bounded history, branch, project, draft, search, deletion and navigation safety checks",
+      "requiresWindowFocus": false,
+      "seconds": 0.987,
+      "status": "passed"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261004T145611736876Z-direct/DailyCaptureTests-compile.log",
+        "seconds": 7.46,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261004T145611736876Z-direct/DailyCaptureTests.log",
+      "name": "DailyCaptureTests",
+      "reportedSummary": "PASS: 186 Daily capture checks (private pasteboards, local archive, native drop callbacks, shortcut/editor routing and controller integration)",
+      "requiresWindowFocus": true,
+      "seconds": 5.155,
+      "status": "passed"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261004T145611736876Z-direct/CaptionDragTests-compile.log",
+        "seconds": 2.263,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261004T145611736876Z-direct/CaptionDragTests.log",
+      "name": "CaptionDragTests",
+      "reportedSummary": "PASS: 147 production caption drag checks; full capture/collection payloads, exact comment text, independent controls and editors.",
+      "requiresWindowFocus": true,
+      "seconds": 6.733,
+      "status": "passed"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261004T145611736876Z-direct/WorkspaceZoomLayoutTests-compile.log",
+        "seconds": 1.631,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261004T145611736876Z-direct/WorkspaceZoomLayoutTests.log",
+      "name": "WorkspaceZoomLayoutTests",
+      "reportedSummary": "PASS: 375 workspace zoom layout checks; finite metrics, logical columns, pointer/item anchoring, history offset, native cards at 75/100/150/200%",
+      "requiresWindowFocus": true,
+      "seconds": 7.448,
+      "status": "passed"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261004T145611736876Z-direct/ViewportLifecycleTests-compile.log",
+        "seconds": 1.017,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261004T145611736876Z-direct/ViewportLifecycleTests.log",
+      "name": "ViewportLifecycleTests",
+      "reportedSummary": "PASS: 16 viewport lifecycle checks; delayed insertion settle, bounded expiry, context cancellation, generation-safe history, keyboard selection scroll ownership",
+      "requiresWindowFocus": true,
+      "seconds": 4.082,
+      "status": "passed"
+    },
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261004T150126510277Z-direct/DailyGridLayoutTests-compile.log",
+        "seconds": 2.466,
+        "status": "passed"
+      },
+      "exitCode": 0,
+      "log": "build/qa/runs/20261004T150126510277Z-direct/DailyGridLayoutTests.log",
+      "name": "DailyGridLayoutTests",
+      "reportedSummary": "PASS: 1208 native Daily grid, bounds, resizing, filter, history and data-preservation checks. /Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/day-responsive-grid-2026-10-04/renders",
+      "requiresWindowFocus": true,
+      "seconds": 13.779,
+      "status": "passed"
+    }
+  ],
+  "sourceReports": [
+    "initial-regression-run.json",
+    "daily-grid-rerun.json"
+  ],
+  "note": "The initial layout test incorrectly compared speculative offscreen AX frames. The corrected test measures rendered visible cards; the layout suite then passed using the cached unchanged production module."
+}

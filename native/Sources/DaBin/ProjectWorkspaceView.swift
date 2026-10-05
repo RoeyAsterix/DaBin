@@ -135,6 +135,7 @@ private final class ProjectReorderWriter: NSObject, NSPasteboardWriting {
     @ObservedObject private var store: CaptureStore
     @ObservedObject private var intake: ExplorerCaptureController
     let project: String
+    let showsSearchEntry: Bool
     private let chooseExportDestination: @MainActor (ProjectWorkspaceExportDocument) -> URL?
     @Environment(\.workspaceZoom) private var zoom
     private var presentation: ProjectNavigationPresentation {
@@ -176,7 +177,7 @@ private final class ProjectReorderWriter: NSObject, NSPasteboardWriting {
     @FocusState private var focusedItem: String?
     private static let reorderType = "com.dabin.project-item-order"
 
-    init(state: AppState, project: String,
+    init(state: AppState, project: String, showsSearchEntry: Bool = true,
          chooseExportDestination: @escaping @MainActor (ProjectWorkspaceExportDocument) -> URL? = { document in
              let panel = NSSavePanel()
              panel.allowedContentTypes = [.zip]
@@ -187,7 +188,7 @@ private final class ProjectReorderWriter: NSObject, NSPasteboardWriting {
              panel.message = "\(document.scope.title) · \(count) \(count == 1 ? "item" : "items") from \(document.project ?? "DaBin").\nIncludes original files, text, links, notes and task details."
              return panel.runModal() == .OK ? panel.url : nil
          }) {
-        self.state = state; self.project = project
+        self.state = state; self.project = project; self.showsSearchEntry = showsSearchEntry
         _contentCache = State(initialValue: ProjectWorkspaceContentCache(store: state.store, workspace: state.workspace))
         self.chooseExportDestination = chooseExportDestination
         _workspace = ObservedObject(wrappedValue: state.workspace)
@@ -296,7 +297,7 @@ private final class ProjectReorderWriter: NSObject, NSPasteboardWriting {
             Button("Add files…", systemImage: "folder.badge.plus") { intake.chooseFiles(project: project) }
             Button("Paste into project", systemImage: "doc.on.clipboard") { intake.paste(project: project) }
             Button("Project notes", systemImage: "note.text") { notePresented = true }
-            Button("Open project folder", systemImage: "folder") { state.showProjectFiles() }
+            Button("Open folder", systemImage: "folder") { state.showProjectFiles() }
             Divider()
             Button(copyTitle, systemImage: "doc.on.doc") { copy(items, summary: false, scope: scope) }
                 .disabled(items.isEmpty)
@@ -316,13 +317,15 @@ private final class ProjectReorderWriter: NSObject, NSPasteboardWriting {
         let scope: ProjectWorkspaceExportScope = selected.isEmpty ? .project : .selection
         let title = selected.isEmpty ? "Export project" : "Export selected (\(selected.count))"
         return HStack(spacing: 8) {
-            Button { state.performSearchCommand() } label: {
-                ViewThatFits(in: .horizontal) {
-                    Label("Search everything", systemImage: "magnifyingglass").fixedSize()
-                    Image(systemName: "magnifyingglass").frame(width: 32, height: 32)
-                }
-            }.buttonStyle(.plain).foregroundStyle(Palette.muted).accessibilityLabel("Search everything saved in DaBin")
-                .accessibilityIdentifier("project-search").buddyHelp("Search across DaBin; refine by project in Filters")
+            if showsSearchEntry {
+                Button { state.performSearchCommand() } label: {
+                    ViewThatFits(in: .horizontal) {
+                        Label("Search everything", systemImage: "magnifyingglass").fixedSize()
+                        Image(systemName: "magnifyingglass").frame(width: 32, height: 32)
+                    }
+                }.buttonStyle(.plain).foregroundStyle(Palette.muted).accessibilityLabel("Search everything saved in DaBin")
+                    .accessibilityIdentifier("project-search").buddyHelp("Search across DaBin; refine by project in Filters")
+            }
             Spacer(minLength: 4)
             Button { export(items, scope: scope) } label: {
                 Label(exporting ? "Exporting…" : title, systemImage: "arrow.down.to.line")

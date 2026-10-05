@@ -1,0 +1,1678 @@
+--- before/native/Sources/DaBin/AppState.swift
++++ after/native/Sources/DaBin/AppState.swift
+@@ -310,7 +310,7 @@
+     @Published var route: BoardRoute = .inbox {
+         didSet {
+             if route != oldValue { captureNavigationRevision &+= 1 }
+-            if route != .daily { isDailyDropTargeted = false }
++            if route != .daily && route != .reminders { isDailyDropTargeted = false }
+             if route != .weekly { weeklySearchActionsPresented = false }
+         }
+     }
+@@ -421,7 +421,7 @@
+     private var drafts: [UUID: CaptureDraft] = [:]
+     private var subscriptions = Set<AnyCancellable>()
+     private var reminderServiceFeedback: (captureID: UUID, message: String?)?
+-    private var currentDayKey = CaptureCalendar.dayString(Date())
++    @Published private(set) var currentDayKey = CaptureCalendar.dayString(Date())
+     private var searchRevision: UInt = 0
+     private var searchCacheKey: SearchCacheKey?
+     private var searchCache: [SearchGroup] = []
+@@ -762,13 +762,17 @@
+         workspace.hasUnsavedChanges || !newNoteText.isEmpty || newTaskDraft.hasChanges || drafts.values.contains(where: \.hasChanges)
+     }
+ 
+-    /// The primary Today view shows receipt history. Outstanding work has its
+-    /// own Follow-ups queue rather than being repeated on every later day.
++    /// Receipt membership is independent of organization, task scheduling and
++    /// the filters on other workspaces.
+     func receiptCaptures(for day: Date) -> [Capture] {
+-        let key = CaptureCalendar.dayString(day)
++        receiptCaptures(dayKey: CaptureCalendar.dayString(day))
++    }
++    private func receiptCaptures(dayKey key: String) -> [Capture] {
+         return store.captures.filter { $0.captureDay == key }
+             .sorted { $0.capturedAt == $1.capturedAt ? $0.id.uuidString < $1.id.uuidString : $0.capturedAt > $1.capturedAt }
+     }
++    var currentTodayCaptures: [Capture] { receiptCaptures(dayKey: currentDayKey) }
++    static func todayReceiptItemID(_ id: UUID) -> String { "today-receipt:" + id.uuidString }
+     var todayTimelineCaptures: [Capture] { receiptCaptures(for: selectedDay).filter { filter.includes($0) } }
+     var projectNames: [String] {
+         Set(store.captures.compactMap(\.projectName) + workspace.projectNames).sorted { $0.localizedStandardCompare($1) == .orderedAscending }
+@@ -1084,7 +1088,7 @@
+         selectedSearchNote = note
+         route = .searchNote
+     }
+-    func showReminders() { navigate(to: .reminders) }
++    func showReminders() { refreshCurrentDay(); navigate(to: .reminders) }
+     func showSettings() {
+         guard !isNavigationBlocked else { return }
+         beginNavigation(); defer { endNavigation() }
+@@ -1163,7 +1167,8 @@
+         let navigation = captureNavigationRevision
+         manualInput.receive(pasteboard, completion: { [weak self] captures, failures in
+             guard let self else { return }
+-            if !captures.isEmpty, self.captureNavigationRevision == navigation, self.route != .inbox { self.openDaily() }
++            if !captures.isEmpty, self.captureNavigationRevision == navigation,
++               self.route != .inbox && self.route != .reminders { self.openDaily() }
+             self.reportCaptureResult(captures, errors: failures)
+         })
+     }
+@@ -1191,7 +1196,8 @@
+                 catch { failures.append("\(url.lastPathComponent): \(error.localizedDescription)") }
+             }
+             isFileImporting = false
+-            if !saved.isEmpty, captureNavigationRevision == navigation, route != .inbox { openDaily() }
++            if !saved.isEmpty, captureNavigationRevision == navigation,
++               route != .inbox && route != .reminders { openDaily() }
+             reportCaptureResult(saved, errors: failures)
+         }
+     }
+@@ -1876,6 +1882,7 @@
+         var captureIDs: Set<UUID>
+         var projects: Set<String>
+         var presentationIDs: Set<String>
++        var todayReceiptIDs: Set<String>
+         var noteKeys: Set<String>
+         var projectItemIDs: [String: Set<String>]
+     }
+@@ -1902,6 +1909,7 @@
+         let live = NavigationLiveIdentities(captureIDs: captureIDs,
+             projects: Set(captures.compactMap(\.projectName)).union(workspace.projectNames),
+             presentationIDs: Set(captureIDs.map(ProjectWorkspaceIdentity.capture)).union(noteKeys.map { "note:" + $0 }),
++            todayReceiptIDs: Set(captures.filter { $0.captureDay == currentDayKey }.map { Self.todayReceiptItemID($0.id) }),
+             noteKeys: noteKeys, projectItemIDs: projectItemIDs)
+         navigationHistory.reconcile { resolveNavigation($0, live: live) }
+     }
+@@ -1986,7 +1994,7 @@
+         next.searchColumnScrollIDs = next.searchColumnScrollIDs.filter { presentationIDs.contains($0.value) }
+         next.searchColumnViewports = next.searchColumnViewports.compactMapValues { $0.resolving(against: presentationIDs) }
+         next.weeklyColumnViewports = next.weeklyColumnViewports.compactMapValues { $0.resolving(against: presentationIDs) }
+-        next.workspaceViewport = next.workspaceViewport?.resolving(against: presentationIDs)
++        next.workspaceViewport = next.workspaceViewport?.resolving(against: presentationIDs.union(live.todayReceiptIDs))
+         if let key = next.selectedNoteProjectKey, !live.noteKeys.contains(key) {
+             next.selectedNoteProjectKey = nil
+             if next.route == .searchNote { next.route = .search }
+--- before/native/Sources/DaBin/BoardView.swift
++++ after/native/Sources/DaBin/BoardView.swift
+@@ -59,7 +59,7 @@
+             HoverTooltipOverlay(controller: tooltipController, anchors: anchors, isEnabled: theme.showTooltips)
+         }
+         .overlay {
+-            if state.isDailyDropTargeted && (state.route == .daily || state.route == .inbox
++            if state.isDailyDropTargeted && (state.route == .daily || state.route == .inbox || state.route == .reminders
+                 || (state.route == .detail && state.selectedCapture?.isTask == true)) {
+                 BoardWindowChrome.shape.fill(accent.opacity(0.06))
+                     .overlay(BoardWindowChrome.shape.strokeBorder(accent, lineWidth: 2))
+--- before/native/Sources/DaBin/CaptureCards.swift
++++ after/native/Sources/DaBin/CaptureCards.swift
+@@ -42,6 +42,9 @@
+     var showsProject = true
+     var planningActions: AnyView? = nil
+     var planningMetadata: AnyView? = nil
++    var navigationItemID: String? = nil
++    /// A receipt summary for Today; it never changes saved minimization state.
++    var compactReceipt = false
+     @State private var copied = false
+     @State private var copyGeneration = 0
+     @State private var dropTargeted = false
+@@ -50,6 +53,10 @@
+     private var projectName: String? { ExplorerQuery.project(of: capture, in: state.store.captures) }
+ 
+     var body: some View {
++        Group {
++        if compactReceipt {
++            compactReceiptContent
++        } else {
+         VStack(alignment: .leading, spacing: zoom.value(capture.isTask ? 10 : 12)) {
+             if showsProject {
+                 CaptureProjectPriorityHeader(state: state, capture: capture)
+@@ -103,20 +110,77 @@
+             }
+             secondaryActions
+         }
+-        .padding(zoom.value(embeddedInCard ? 4 : capture.isTask ? 14 : 16))
+-        .workspaceZoomItem("capture:" + capture.id.uuidString)
++        }
++        }
++        .padding(zoom.value(embeddedInCard ? 4 : compactReceipt ? 8 : capture.isTask ? 14 : 16))
++        .workspaceZoomItem(navigationItemID ?? "capture:" + capture.id.uuidString)
+         .projectCardBackground(workspace: state.workspace, projectName: projectName,
+                                enabled: !embeddedInCard)
+         .projectCardFrame(workspace: state.workspace, projectName: projectName, activeProject: nil,
+                           fallbackColor: embeddedInCard ? .clear : dropTargeted ? accent : taskAtTop ? accent.opacity(0.55) : Palette.line,
+                           fallbackWidth: embeddedInCard ? 0 : dropTargeted ? 1.5 : 0.7)
+-        .padding(.vertical, embeddedInCard ? 0 : 6)
+-        .contextMenu { CaptureActionMenuItems(state: state, capture: capture, includesRemoval: true) }
++        .padding(.vertical, embeddedInCard ? 0 : compactReceipt ? 4 : 6)
++        .contextMenu { CaptureActionMenuItems(state: state, capture: capture, includesRemoval: true, allowsMinimization: !compactReceipt, showsParentTask: compactReceipt) }
+         .onDrop(of: TaskAttachmentTypes.identifiers, isTargeted: $dropTargeted) { providers in
+             guard capture.isTask else { return false }
+             return state.receiveTaskAttachments(providers, to: capture)
+         }
+         .animation(reduceMotion ? nil : .easeOut(duration: 0.18), value: capture.isTask)
++    }
++
++    private var compactReceiptContent: some View {
++        VStack(alignment: .leading, spacing: 4) {
++            HStack(alignment: .top, spacing: 6) {
++                if capture.isTask { TaskStatusButton(state: state, capture: capture) }
++                Button { state.openCapture(capture.id) } label: {
++                    Text(capture.title.isEmpty ? "Untitled capture" : capture.title)
++                        .font(.system(size: zoom.fontSize(15), weight: .semibold))
++                        .strikethrough(capture.isTask && capture.isCompleted, color: Palette.muted)
++                        .foregroundStyle(capture.isCompleted ? Palette.muted : Palette.foreground)
++                        .lineLimit(2).fixedSize(horizontal: false, vertical: true)
++                        .frame(maxWidth: .infinity, minHeight: 32, alignment: .leading)
++                        .multilineTextAlignment(.leading).contentShape(Rectangle())
++                }.buttonStyle(.plain)
++                    .accessibilityLabel("Open \(capture.title), \(capture.isTask ? "task" : captureTypeLabel(capture.kind)), saved \(prettyDay(capture.captureDay)) at \(captureClock(capture))")
++                    .accessibilityIdentifier("capture-compact-open-\(capture.id.uuidString)")
++                    .captureDragSource(state: state, capture: capture)
++                    .buddyHelp(capture.title)
++                    .layoutPriority(1)
++                if capture.isPinned {
++                    Image(systemName: "pin.fill").font(.system(size: zoom.fontSize(10)))
++                        .foregroundStyle(accent).accessibilityLabel("Pinned")
++                }
++                if showsCopyButton {
++                    Button(action: copy) {
++                        Label(copied ? "Copied" : "Copy", systemImage: copied ? "checkmark" : "doc.on.doc")
++                            .font(.system(size: min(15, max(12, zoom.fontSize(13))), weight: .medium))
++                            .padding(.horizontal, 6).frame(minHeight: 32).contentShape(Rectangle())
++                    }.buttonStyle(.plain).foregroundStyle(accent)
++                        .fixedSize(horizontal: true, vertical: false)
++                        .accessibilityLabel(copied ? "Copied" : "Copy \(capture.title)")
++                        .accessibilityIdentifier(CaptureCopyButton.accessibilityIdentifier(for: [capture]))
++                        .buddyHelp(copied ? "Copied" : "Copy \(capture.title)")
++                }
++                Menu { CaptureActionMenuItems(state: state, capture: capture, includesRemoval: true, allowsMinimization: false, showsParentTask: true) } label: {
++                    Label("More", systemImage: "ellipsis")
++                        .font(.system(size: min(15, max(12, zoom.fontSize(13))), weight: .medium))
++                        .padding(.horizontal, 6).frame(minHeight: 32).contentShape(Rectangle())
++                }.menuStyle(.button).buttonStyle(.plain).menuIndicator(.hidden).fixedSize()
++                    .foregroundStyle(accent).buddyHelp("More capture actions")
++                    .accessibilityLabel("More actions for \(capture.title)")
++                    .accessibilityIdentifier("capture-more-\(capture.id.uuidString)")
++                    .disabled(state.removingCaptureID == capture.id)
++                    .daBinTutorialAnchor(.captureActions)
++            }
++            if showsProject {
++                CaptureProjectPriorityHeader(state: state, capture: capture)
++            } else {
++                CaptureTaskPriorityTag(capture: capture)
++            }
++            CaptureReceiptView(capture: capture, category: captureTypeLabel(capture.kind))
++            CaptureConversionUndo(state: state, capture: capture)
++        }.accessibilityElement(children: .contain)
++            .accessibilityIdentifier("capture-compact-receipt-\(capture.id.uuidString)")
+     }
+ 
+     private var header: some View {
+@@ -372,6 +436,8 @@
+     @ObservedObject var state: AppState
+     @ObservedObject var capture: Capture
+     let includesRemoval: Bool
++    var allowsMinimization = true
++    var showsParentTask = false
+     var body: some View {
+         Button("Open capture", systemImage: "arrow.up.forward.square") { state.openCapture(capture.id) }
+         Button(capture.comment.isEmpty ? "Add note" : "Edit note", systemImage: "text.bubble") { state.openCapture(capture.id, focus: "comment") }
+@@ -383,7 +449,13 @@
+             Button(capture.isCompleted ? "Mark incomplete" : "Complete task", systemImage: "checkmark.circle") { state.toggleTaskCompletion(capture) }
+         }
+         Divider()
+-        Button(capture.isMinimized ? "Expand capture" : "Minimize capture", systemImage: capture.isMinimized ? "chevron.down" : "chevron.up") { state.toggleMinimized(capture) }
++        if showsParentTask, let parentID = capture.parentTaskID {
++            Button("Open parent task", systemImage: "arrow.turn.up.left") { state.openCapture(parentID, focus: "task") }
++                .accessibilityIdentifier("capture-parent-task-menu-\(capture.id.uuidString)")
++        }
++        if allowsMinimization {
++            Button(capture.isMinimized ? "Expand capture" : "Minimize capture", systemImage: capture.isMinimized ? "chevron.down" : "chevron.up") { state.toggleMinimized(capture) }
++        }
+         Button("Show capture day", systemImage: "calendar") { state.showCaptureDay(capture) }
+         if includesRemoval {
+             Button("Move to Recently Deleted", systemImage: "trash", role: .destructive) { state.requestRemoval(capture) }
+--- before/native/Sources/DaBin/CaptureDetailPanels.swift
++++ after/native/Sources/DaBin/CaptureDetailPanels.swift
+@@ -6,6 +6,7 @@
+ @MainActor
+ struct CaptureDetailPanels: View {
+     @Environment(\.daBinAccent) private var accent
++    @Environment(\.workspaceZoom) private var zoom
+     @ObservedObject var state: AppState
+     @ObservedObject var capture: Capture
+     @ObservedObject var draft: CaptureDraft
+@@ -123,48 +124,74 @@
+     }
+ 
+     private var reminder: some View {
+-        VStack(alignment: .leading, spacing: 12) {
++        VStack(alignment: .leading, spacing: 8) {
+             ReminderClockEditor(enabled: $draft.reminderEnabled, mode: $draft.reminderMode,
+                 date: $draft.reminderDate, hours: $draft.countdownHours, minutes: $draft.countdownMinutes)
+             if capture.reminderAt != nil {
+-                HStack(spacing: 8) {
++                Text("Saved · \(reminderLabel)")
++                    .font(.system(size: reminderControlFont)).foregroundStyle(Palette.muted)
++                    .fixedSize(horizontal: false, vertical: true)
++                    .accessibilityIdentifier("capture-reminder-saved-summary")
++            }
++            if draft.reminderEnabled || draft.reminderChanged || capture.reminderAt != nil {
++            BuddyActionFlow {
++                Button {
++                    do {
++                        let date = draft.reminderChanged ? try draft.resolvedReminder() : draft.reminder
++                        if state.setDetailReminder(capture, date: date) {
++                            draft.adoptSavedReminder(from: capture)
++                            draft.message = date == nil ? "Reminder removed." : "Reminder saved."
++                        }
++                    } catch { draft.message = error.localizedDescription; draft.hasError = true }
++                } label: {
++                    Label("Apply reminder", systemImage: "checkmark")
++                        .font(.system(size: reminderControlFont, weight: .medium))
++                        .padding(.horizontal, 10).frame(minHeight: 32).contentShape(Rectangle())
++                        .foregroundStyle(Palette.background)
++                }.buttonStyle(.borderedProminent).controlSize(.small).tint(accent)
++                    .disabled(!draft.reminderChanged).accessibilityIdentifier("capture-save-reminder")
++                    .accessibilityLabel("Apply reminder")
++                    .accessibilityHint("Save only the reminder; other draft changes stay pending")
++                if capture.reminderAt != nil {
+                     Menu {
+                         Button("In 10 minutes") { snooze(minutes: 10) }
+                         Button("In 1 hour") { snooze(minutes: 60) }
+                         Button("Tomorrow morning") { state.snoozeFollowUp(capture) }
+-                    } label: { Label("Snooze", systemImage: "zzz") }
+-                    .menuStyle(.borderlessButton).fixedSize()
+-                    .accessibilityIdentifier("capture-snooze-reminder")
+-                    Spacer(minLength: 0)
+-                    Button("Remove", systemImage: "bell.slash") { state.setDetailReminder(capture, date: nil) }
+-                        .buttonStyle(.bordered).accessibilityLabel("Remove reminder")
++                    } label: {
++                        Label("Snooze", systemImage: "zzz")
++                            .font(.system(size: reminderControlFont))
++                            .padding(.horizontal, 8).frame(minHeight: 32).contentShape(Rectangle())
++                    }.menuStyle(.borderlessButton).fixedSize()
++                        .accessibilityIdentifier("capture-snooze-reminder")
++                    Button { state.setDetailReminder(capture, date: nil) } label: {
++                        Label("Remove", systemImage: "bell.slash")
++                            .font(.system(size: reminderControlFont))
++                            .padding(.horizontal, 8).frame(minHeight: 32).contentShape(Rectangle())
++                    }.buttonStyle(.plain).accessibilityLabel("Remove reminder")
+                         .accessibilityIdentifier("capture-remove-reminder")
+-                }.font(.system(size: 12)).foregroundStyle(accent)
++                }
++            }.foregroundStyle(accent)
+             }
+             if capture.isTask && capture.isCompleted {
+                 Label("Reminders pause while this task is completed.", systemImage: "bell.slash")
+-                    .font(.system(size: 12)).foregroundStyle(Palette.muted)
++                    .font(.system(size: reminderControlFont)).foregroundStyle(Palette.muted)
++                    .fixedSize(horizontal: false, vertical: true)
+             }
+-            Button(draft.reminderEnabled ? "Save reminder" : "Save reminder changes", systemImage: "checkmark") {
+-                do {
+-                    let date = draft.reminderChanged ? try draft.resolvedReminder() : draft.reminder
+-                    if state.setDetailReminder(capture, date: date) {
+-                        draft.adoptSavedReminder(from: capture)
+-                        draft.message = date == nil ? "Reminder removed." : "Reminder saved."
+-                    }
+-                } catch { draft.message = error.localizedDescription; draft.hasError = true }
+-            }.buttonStyle(.borderedProminent).controlSize(.regular)
+-                .disabled(!draft.reminderChanged).accessibilityIdentifier("capture-save-reminder")
+             if let message = state.reminders.visibleStatus {
+-                Text(message).font(.system(size: 12)).foregroundStyle(Palette.muted)
++                Text(message).font(.system(size: reminderControlFont)).foregroundStyle(Palette.muted)
+                     .fixedSize(horizontal: false, vertical: true)
+             }
+             if let date = capture.reminderAt, date > Date(), !["scheduled", "delivered"].contains(capture.notificationState) {
+-                Button("Retry notification", systemImage: "bell.badge") { state.retryReminder(capture) }
+-                    .buttonStyle(.plain).foregroundStyle(accent)
++                Button { state.retryReminder(capture) } label: {
++                    Label("Retry notification", systemImage: "bell.badge")
++                        .font(.system(size: reminderControlFont))
++                        .padding(.horizontal, 8).frame(minHeight: 32).contentShape(Rectangle())
++                }.buttonStyle(.plain).foregroundStyle(accent)
++                    .accessibilityIdentifier("capture-retry-reminder")
+             }
+         }.accessibilityElement(children: .contain).accessibilityIdentifier("capture-reminder-panel")
+     }
+ 
++    private var reminderControlFont: CGFloat { min(15, max(12, zoom.fontSize(13))) }
+     private func snooze(minutes: Int) { state.setDetailReminder(capture, date: Date().addingTimeInterval(Double(minutes) * 60)) }
+ }
+--- before/native/Sources/DaBin/CornerController.swift
++++ after/native/Sources/DaBin/CornerController.swift
+@@ -1230,7 +1230,7 @@
+         case .newTask: return (state.newTaskDraft.reminderEnabled ? 500 : 440) + extra
+         case .settings: return 620
+         case .reminders:
+-            let count = state.followUpCaptures.count
++            let count = state.currentTodayCaptures.count + state.followUpCaptures.count
+             return count == 0 ? 380 + extra : min(560, max(450, 220 + CGFloat(count) * 170 + extra))
+         }
+     }
+@@ -1597,15 +1597,20 @@
+         if state.route == .inbox || (state.route == .library && state.workspace.mode == .collection) {
+             state.pasteClipboard(from: pasteboard); return
+         }
+-        guard state.route == .daily else { return }
++        guard state.route == .daily || state.route == .reminders else { return }
++        let captureRoute = state.route
+         let navigationRevision = state.captureNavigationRevision
+         input.receive(pasteboard, completion: { [weak self] captures, _ in
+             // Reveal a successful capture on its receipt day, even if the
+             // board was showing an older date or an incompatible filter.
+             // A slow import must never pull the user out of a later action.
+             guard let self, let first = captures.first, self.board.isVisible,
+-                  self.state.route == .daily,
++                  self.state.route == captureRoute,
+                   self.state.captureNavigationRevision == navigationRevision else { return }
++            if captureRoute == .reminders {
++                self.state.refreshCurrentDay()
++                return
++            }
+             self.state.openDaily()
+             self.state.selectedDay = first.capturedAt
+             self.state.dailyScrollID = self.state.feedID(for: first, on: self.state.selectedDay)
+--- before/native/Sources/DaBin/DailyCaptureView.swift
++++ after/native/Sources/DaBin/DailyCaptureView.swift
+@@ -110,7 +110,7 @@
+     @MainActor required dynamic init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
+ 
+     private var acceptsCapture: Bool {
+-        state?.route == .daily || state?.route == .inbox
++        state?.route == .daily || state?.route == .inbox || state?.route == .reminders
+             || (state?.route == .library && state?.workspace.mode == .collection)
+             || (state?.route == .detail && state?.selectedCapture?.isTask == true)
+     }
+--- before/native/Sources/DaBin/DetailScreen.swift
++++ after/native/Sources/DaBin/DetailScreen.swift
+@@ -216,7 +216,7 @@
+                         pane(.preview, layout: paneLayout) { originalContent(layout: paneLayout).id("capture-preview") }
+                         if capture.isTask {
+                             pane(.task, layout: paneLayout) {
+-                                TaskFocusControls(state: state, capture: capture, compact: false, emphasizesCountdown: false)
++                                TaskFocusControls(state: state, capture: capture, compact: false, showsSchedule: false, emphasizesCountdown: false)
+                                 taskWorkspace(layout: paneLayout).id("task").accessibilityIdentifier("task-workspace")
+                             }
+                         }
+@@ -454,7 +454,7 @@
+             : AnyLayout(VStackLayout(alignment: .leading, spacing: 8))
+         return arrangement {
+             VStack(alignment: .leading, spacing: 8) {
+-                TaskPlanningEditor(planning: $draft.planning, showsSchedule: false)
++                TaskPlanningEditor(planning: $draft.planning, showsFocusDuration: false)
+                 if let previous = capture.taskPlanning?.previousOccurrenceID {
+                     Button("Previous occurrence", systemImage: "arrow.counterclockwise") { state.openCapture(previous) }
+                         .buttonStyle(.plain).font(.system(size: zoom.fontSize(12)))
+--- before/native/Sources/DaBin/ReminderClockEditor.swift
++++ after/native/Sources/DaBin/ReminderClockEditor.swift
+@@ -4,92 +4,145 @@
+ @MainActor
+ struct ReminderClockEditor: View {
+     @Environment(\.daBinAccent) private var accent
++    @Environment(\.workspaceZoom) private var zoom
+     @Binding var enabled: Bool
+     @Binding var mode: ReminderScheduleMode
+     @Binding var date: Date
+     @Binding var hours: Int
+     @Binding var minutes: Int
+ 
+-    private var minuteAngle: Double { Double(mode == .countdown ? minutes : Calendar.current.component(.minute, from: date)) * 6 }
+-    private var hourAngle: Double { Double(mode == .countdown ? hours % 12 : Calendar.current.component(.hour, from: date) % 12) * 30 + minuteAngle / 12 }
++    private var controlFont: CGFloat { min(15, max(12, zoom.fontSize(13))) }
++    private var summary: String {
++        if mode == .date { return date.formatted(date: .abbreviated, time: .shortened) }
++        return hours == 0 ? "In \(minutes) minutes" : "In \(hours)h \(minutes)m"
++    }
+ 
+     var body: some View {
+-        VStack(alignment: .leading, spacing: 12) {
+-            HStack {
+-                Button { enabled.toggle() } label: {
+-                    Label("Reminder", systemImage: "clock")
+-                        .font(.system(size: 13, weight: .semibold))
+-                        .frame(minHeight: 32).contentShape(Rectangle())
++        VStack(alignment: .leading, spacing: 4) {
++            if enabled {
++                ViewThatFits(in: .horizontal) {
++                    HStack(spacing: 4) {
++                        reminderLabel
++                        Spacer(minLength: 4)
++                        modeChoices
++                        reminderToggle
++                    }.fixedSize(horizontal: true, vertical: false)
++                    VStack(alignment: .leading, spacing: 4) {
++                        HStack(spacing: 4) { reminderLabel; Spacer(minLength: 4); reminderToggle }
++                        modeChoices
++                    }
+                 }
+-                .buttonStyle(.plain)
+-                .accessibilityLabel("Reminder")
+-                .accessibilityValue(enabled ? "On" : "Off")
+-                .accessibilityHint("Turn the reminder on or off")
+-                .accessibilityIdentifier("reminder-label-toggle")
+-                Spacer()
+-                Toggle("Reminder", isOn: $enabled).labelsHidden().toggleStyle(.switch).controlSize(.small)
+-                    .accessibilityLabel("Reminder")
+-                    .accessibilityIdentifier("reminder-enabled")
++            } else {
++                HStack(spacing: 4) { reminderLabel; Spacer(minLength: 4); reminderToggle }
++            }
++            BuddyActionFlow {
++                preset("15 min", identifier: "reminder-preset-15") { chooseCountdown(hours: 0, minutes: 15) }
++                preset("1 hour", identifier: "reminder-preset-60") { chooseCountdown(hours: 1, minutes: 0) }
++                preset("Tomorrow", identifier: "reminder-preset-tomorrow", action: chooseTomorrow)
+             }
+             if enabled {
+-                HStack(spacing: 14) {
+-                    clock.accessibilityHidden(true)
+-                    VStack(alignment: .leading, spacing: 8) {
+-                        HStack(spacing: 4) {
+-                            modeButton(.countdown, title: "Countdown", symbol: "timer")
+-                            modeButton(.date, title: "Date", symbol: "calendar")
+-                        }
+-                        if mode == .countdown {
+-                            HStack(alignment: .firstTextBaseline, spacing: 4) {
+-                                durationField("Hours", value: $hours)
+-                                Text(":").font(.system(size: 26, weight: .light, design: .rounded)).foregroundStyle(accent)
+-                                durationField("Minutes", value: $minutes)
+-                            }
+-                        } else {
+-                            DatePicker("Remind me", selection: $date, displayedComponents: [.date, .hourAndMinute])
+-                                .datePickerStyle(.field).labelsHidden().controlSize(.small)
+-                                .accessibilityLabel("Reminder date and time")
+-                        }
+-                    }.frame(maxWidth: .infinity, alignment: .leading)
++                if mode == .countdown {
++                    HStack(alignment: .top, spacing: 8) {
++                        durationField("Hours", value: $hours, identifier: "reminder-countdown-hours")
++                        durationField("Minutes", value: $minutes, identifier: "reminder-countdown-minutes")
++                    }
++                } else {
++                    // Separate native fields keep both controls readable when
++                    // the pane is narrow; they continue editing one Date value.
++                    BuddyActionFlow {
++                        DatePicker("Date", selection: $date, displayedComponents: .date)
++                            .datePickerStyle(.field).labelsHidden().controlSize(.regular)
++                            .fixedSize().frame(minHeight: 32)
++                            .accessibilityLabel("Reminder date")
++                            .accessibilityIdentifier("reminder-date-time")
++                        DatePicker("Time", selection: $date, displayedComponents: .hourAndMinute)
++                            .datePickerStyle(.field).labelsHidden().controlSize(.regular)
++                            .fixedSize().frame(minHeight: 32)
++                            .accessibilityLabel("Reminder time")
++                            .accessibilityIdentifier("reminder-time")
++                    }
+                 }
+-                Text(mode == .countdown ? "Hours : minutes · starts when you save" : TimeZone.current.identifier)
+-                    .font(.system(size: 10)).foregroundStyle(Palette.muted)
++                Text(mode == .countdown ? "Countdown starts when saved." : TimeZone.current.identifier)
++                    .font(.system(size: min(13, max(11, zoom.fontSize(11))))).foregroundStyle(Palette.muted)
+                     .fixedSize(horizontal: false, vertical: true)
+             }
+-        }.padding(12).background(accent.opacity(0.045), in: RoundedRectangle(cornerRadius: 14))
+-            .overlay(RoundedRectangle(cornerRadius: 14).strokeBorder(accent.opacity(0.14), lineWidth: 0.7))
++        }.padding(8).frame(maxWidth: .infinity, alignment: .leading)
++            .background(accent.opacity(0.045), in: RoundedRectangle(cornerRadius: 10))
++            .overlay(RoundedRectangle(cornerRadius: 10).strokeBorder(accent.opacity(0.14), lineWidth: 0.7))
++            .accessibilityElement(children: .contain)
++            .accessibilityLabel("Reminder")
++            .accessibilityValue(enabled ? summary : "Off")
++            .accessibilityIdentifier("reminder-editor")
+     }
+ 
+-    private var clock: some View {
+-        ZStack {
+-            Circle().fill(Palette.surface)
+-            Circle().stroke(accent.opacity(0.25), lineWidth: 1)
+-            ForEach(0..<12) { tick in
+-                Capsule().fill(accent.opacity(tick.isMultiple(of: 3) ? 0.7 : 0.28))
+-                    .frame(width: 1.5, height: tick.isMultiple(of: 3) ? 5 : 3)
+-                    .offset(y: -25).rotationEffect(.degrees(Double(tick) * 30))
+-            }
+-            Capsule().fill(accent).frame(width: 3, height: 16).offset(y: -7).rotationEffect(.degrees(hourAngle))
+-            Capsule().fill(accent).frame(width: 2, height: 22).offset(y: -10).rotationEffect(.degrees(minuteAngle))
+-            Circle().fill(accent).frame(width: 5, height: 5)
+-        }.frame(width: 64, height: 64).shadow(color: accent.opacity(0.08), radius: 8, y: 3)
++    private var reminderLabel: some View {
++        Button { enabled.toggle() } label: {
++            Label("Reminder", systemImage: "clock")
++                .font(.system(size: controlFont, weight: .semibold))
++                .frame(minHeight: 32).contentShape(Rectangle())
++        }.buttonStyle(.plain)
++            .accessibilityLabel("Reminder")
++            .accessibilityValue(enabled ? "On" : "Off")
++            .accessibilityHint("Turn the reminder on or off")
++            .accessibilityIdentifier("reminder-label-toggle")
+     }
+ 
+-    private func modeButton(_ target: ReminderScheduleMode, title: String, symbol: String) -> some View {
++    private var reminderToggle: some View {
++        Toggle("Reminder", isOn: $enabled).labelsHidden().toggleStyle(.switch).controlSize(.small)
++            .frame(minHeight: 32)
++            .accessibilityLabel("Reminder")
++            .accessibilityIdentifier("reminder-enabled")
++    }
++
++    private var modeChoices: some View {
++        HStack(spacing: 4) {
++            modeButton(.countdown, title: "Countdown")
++            modeButton(.date, title: "Date")
++        }
++    }
++
++    private func preset(_ title: String, identifier: String, action: @escaping () -> Void) -> some View {
++        Button(action: action) {
++            Text(title).font(.system(size: controlFont, weight: .medium))
++                .padding(.horizontal, 10).frame(minHeight: 32)
++                .contentShape(RoundedRectangle(cornerRadius: 7))
++                .background(Palette.surface, in: RoundedRectangle(cornerRadius: 7))
++                .overlay(RoundedRectangle(cornerRadius: 7).strokeBorder(Palette.line, lineWidth: 0.7))
++        }.buttonStyle(.plain).foregroundStyle(accent)
++            .accessibilityLabel(title == "Tomorrow" ? "Remind me tomorrow at 9 AM" : "Remind me in \(title)")
++            .accessibilityIdentifier(identifier)
++    }
++
++    private func chooseCountdown(hours: Int, minutes: Int) {
++        self.hours = hours; self.minutes = minutes
++        mode = .countdown; enabled = true
++    }
++
++    private func chooseTomorrow() {
++        let calendar = Calendar.current
++        guard let tomorrow = calendar.date(byAdding: .day, value: 1, to: calendar.startOfDay(for: Date())),
++              let morning = calendar.date(bySettingHour: 9, minute: 0, second: 0, of: tomorrow) else { return }
++        date = morning; mode = .date; enabled = true
++    }
++
++    private func modeButton(_ target: ReminderScheduleMode, title: String) -> some View {
+         Button { mode = target } label: {
+-            Label(title, systemImage: symbol).font(.system(size: 11, weight: .medium))
+-                .padding(.horizontal, 7).padding(.vertical, 5)
+-                .background(mode == target ? accent.opacity(0.14) : .clear, in: Capsule())
++            Text(title).font(.system(size: controlFont, weight: .medium))
++                .padding(.horizontal, 6).frame(minHeight: 32).contentShape(RoundedRectangle(cornerRadius: 7))
++                .background(mode == target ? accent.opacity(0.14) : .clear, in: RoundedRectangle(cornerRadius: 7))
+         }.buttonStyle(.plain).foregroundStyle(accent)
+             .accessibilityAddTraits(mode == target ? .isSelected : [])
+             .accessibilityIdentifier("reminder-mode-\(target == .date ? "date" : "countdown")")
+     }
+ 
+-    private func durationField(_ title: String, value: Binding<Int>) -> some View {
+-        TextField(title, value: value, format: .number.grouping(.never))
+-            .font(.system(size: 26, weight: .light, design: .rounded)).monospacedDigit()
+-            .textFieldStyle(.plain).multilineTextAlignment(.center).frame(width: 48)
+-            .padding(.vertical, 4).background(Palette.surface, in: RoundedRectangle(cornerRadius: 8))
+-            .accessibilityLabel("Countdown \(title.lowercased())")
++    private func durationField(_ title: String, value: Binding<Int>, identifier: String) -> some View {
++        HStack(spacing: 5) {
++            Text(title).font(.system(size: controlFont)).foregroundStyle(Palette.muted)
++            TextField(title, value: value, format: .number.grouping(.never))
++                .font(.system(size: min(22, zoom.fontSize(18)), design: .rounded)).monospacedDigit()
++                .textFieldStyle(.roundedBorder).multilineTextAlignment(.center).frame(width: 56, height: 32)
++                .accessibilityLabel("Countdown \(title.lowercased())")
++                .accessibilityIdentifier(identifier)
++        }
+     }
+ }
+--- before/native/Sources/DaBin/TaskEditorScreen.swift
++++ after/native/Sources/DaBin/TaskEditorScreen.swift
+@@ -12,13 +12,13 @@
+     var body: some View {
+         VStack(spacing: 0) {
+             ScrollView {
+-                VStack(alignment: .leading, spacing: 16) {
++                VStack(alignment: .leading, spacing: 10) {
+                     VStack(alignment: .leading, spacing: 7) {
+                         Label("What needs doing?", systemImage: "checkmark.square").font(.system(size: 14, weight: .semibold))
+                         TextEditor(text: $draft.text)
+                             .background(NavigationEditorRegion(target: .newTask))
+-                            .font(.system(size: zoom.fontSize(20), weight: .medium, design: .rounded)).scrollContentBackground(.hidden)
+-                            .padding(zoom.value(8)).frame(height: zoom.value(116)).background(Palette.surface)
++                            .font(.system(size: zoom.fontSize(18), weight: .medium, design: .rounded)).scrollContentBackground(.hidden)
++                            .padding(zoom.value(8)).frame(height: zoom.value(82)).background(Palette.surface)
+                             .clipShape(RoundedRectangle(cornerRadius: 11))
+                             .overlay(RoundedRectangle(cornerRadius: 11).stroke(Palette.line))
+                             .focused($textFocused).accessibilityLabel("Task text")
+--- before/native/Sources/DaBin/TaskFocusControls.swift
++++ after/native/Sources/DaBin/TaskFocusControls.swift
+@@ -29,6 +29,21 @@
+     }
+ 
+     var body: some View {
++        if !compact && !emphasizesCountdown {
++            BuddyActionFlow(spacing: 6) {
++                Label("Focus", systemImage: "timer")
++                    .font(.system(size: 12, weight: .medium)).foregroundStyle(Palette.muted).frame(minHeight: 32)
++                countdown(large: false).frame(minHeight: 32)
++                focusControl
++                if showsSchedule { scheduleControl }
++                Button { _ = state.resetTaskFocus(capture) } label: {
++                    Label("Reset", systemImage: "arrow.counterclockwise")
++                        .font(.system(size: 12)).padding(.horizontal, 5).frame(minHeight: 32)
++                }.buttonStyle(.plain).foregroundStyle(accent)
++                    .disabled(capture.taskPlanning?.effortMinutes == nil)
++                    .accessibilityLabel("Reset focus to configured duration")
++            }.accessibilityElement(children: .contain).accessibilityLabel("Focus session")
++        } else {
+         VStack(alignment: .leading, spacing: compact ? 0 : emphasizesCountdown ? 12 : 8) {
+             if !compact {
+                 if emphasizesCountdown {
+@@ -59,6 +74,7 @@
+                         .accessibilityLabel("Reset focus to configured duration")
+                 }
+             }
++        }
+         }
+     }
+ 
+--- before/native/Sources/DaBin/TaskPlanningEditor.swift
++++ after/native/Sources/DaBin/TaskPlanningEditor.swift
+@@ -52,52 +52,44 @@
+ struct TaskPlanningEditor: View {
+     @Binding var planning: TaskPlanning
+     var showsSchedule: Bool
++    var showsFocusDuration: Bool
+     @Environment(\.daBinAccent) private var accent
+     @State private var checklistText = ""
+-    @State private var detailsExpanded: Bool
++    @FocusState private var checklistFocused: Bool
++    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+     private var trimmedChecklistText: String { checklistText.trimmingCharacters(in: .whitespacesAndNewlines) }
+     private var canAddChecklistItem: Bool {
+         !trimmedChecklistText.isEmpty && trimmedChecklistText.count <= 500 && planning.checklist.count < 100
+     }
+ 
+-    init(planning: Binding<TaskPlanning>, showsSchedule: Bool = true) {
++    init(planning: Binding<TaskPlanning>, showsSchedule: Bool = true, showsFocusDuration: Bool = true) {
+         self.showsSchedule = showsSchedule
++        self.showsFocusDuration = showsFocusDuration
+         _planning = planning
+-        let value = planning.wrappedValue
+-        _detailsExpanded = State(initialValue: value.deadline != nil || value.effortMinutes != nil
+-            || value.recurrence != .none || !value.checklist.isEmpty)
+     }
+ 
+     var body: some View {
+-        VStack(alignment: .leading, spacing: 14) {
+-            Label("Work plan", systemImage: "calendar.badge.checkmark")
+-                .font(.system(size: 13, weight: .semibold)).accessibilityAddTraits(.isHeader)
++        VStack(alignment: .leading, spacing: 9) {
+             if showsSchedule {
+-            HStack(spacing: 8) {
++            BuddyActionFlow(spacing: 6) {
++                Text("Work on").foregroundStyle(Palette.muted).frame(minHeight: 32)
+                 dayButton("Today", offset: 0)
+                 dayButton("Tomorrow", offset: 1)
+-                Button("Inbox") { planning.plannedDay = nil; planning.plannedTime = nil; planning.order = nil }
+-                    .buttonStyle(.bordered).controlSize(.small)
++                Button("Unplanned") { planning.plannedDay = nil; planning.plannedTime = nil; planning.order = nil }
++                    .buttonStyle(.plain).padding(.horizontal, 5).frame(minHeight: 32)
++                    .background(planning.plannedDay == nil ? accent.opacity(0.12) : Color.clear, in: RoundedRectangle(cornerRadius: 7))
+                     .accessibilityLabel("Move task to Inbox without a planned day")
+-            }
+-            Toggle("Plan a day", isOn: plannedEnabled).toggleStyle(.switch).controlSize(.small)
+-                .accessibilityIdentifier("task-plan-enabled")
++                    .accessibilityIdentifier("task-plan-enabled")
++            }
+             if planning.plannedDay != nil {
+-                DatePicker("Work on", selection: plannedDate, displayedComponents: .date)
+-                    .datePickerStyle(.field).controlSize(.small).accessibilityIdentifier("task-planned-day")
+-                HStack {
+-                    Text("Optional local time").foregroundStyle(Palette.muted)
+-                    TextField("HH:MM", text: plannedTime).textFieldStyle(.roundedBorder).frame(width: 80)
+-                        .accessibilityLabel("Optional planned local time in HH:MM")
+-                }
+-            }
+-            Text("Plan when to work. A deadline is when it must be finished.")
+-                .font(.system(size: 11)).foregroundStyle(Palette.muted).fixedSize(horizontal: false, vertical: true)
+-            }
+-            Divider()
+-            VStack(alignment: .leading, spacing: 6) {
+-                Text("Priority").foregroundStyle(Palette.muted)
+-                HStack(spacing: 6) {
++                ViewThatFits(in: .horizontal) {
++                    HStack(spacing: 8) { plannedDateField; plannedTimeField }
++                    VStack(alignment: .leading, spacing: 5) { plannedDateField; plannedTimeField }
++                }
++            }
++            }
++            BuddyActionFlow(spacing: 5) {
++                Text("Priority").foregroundStyle(Palette.muted).frame(minHeight: 32)
+                 ForEach(TaskPriority.allCases) { priority in
+                     Button { planning.priority = priority } label: {
+                         TaskPriorityTag(priority: priority, isSelected: planning.priority == priority)
+@@ -108,84 +100,146 @@
+                         .accessibilityAddTraits(planning.priority == priority ? .isSelected : [])
+                         .buddyHelp(priority.title)
+                 }
+-                }
+             }.accessibilityElement(children: .contain).accessibilityIdentifier("task-priority")
+-            if showsSchedule {
+-                Toggle("Focus duration", isOn: estimateEnabled).toggleStyle(.switch).controlSize(.small)
+-                if planning.effortMinutes != nil {
+-                    TaskDurationDraftFields(minutes: effort)
+-                }
++            planningDetails
++            if showsFocusDuration {
++                HStack(spacing: 8) {
++                    Text("Focus").foregroundStyle(Palette.muted)
++                    Spacer(minLength: 0)
++                    if planning.effortMinutes == nil {
++                        ForEach([25, 45, 60], id: \.self) { value in
++                            Button("\(value)m") { planning.effortMinutes = value }
++                                .buttonStyle(.bordered).controlSize(.small).frame(minHeight: 32)
++                                .accessibilityLabel("Set focus duration to \(value) minutes")
++                        }
++                    } else {
++                        Button("Clear", systemImage: "xmark") { planning.effortMinutes = nil }
++                            .buttonStyle(.plain).frame(minHeight: 32).foregroundStyle(Palette.muted)
++                            .accessibilityLabel("Clear focus duration")
++                    }
++                }
++                if planning.effortMinutes != nil { TaskDurationDraftFields(minutes: effort) }
+             }
+             checklistSection
+-            DisclosureGroup("Details & repeat", isExpanded: $detailsExpanded) {
+-                advancedDetails.padding(.top, 10)
+-            }.accessibilityIdentifier("task-planning-details")
+-        }.font(.system(size: 12)).padding(12)
+-            .background(accent.opacity(0.035), in: RoundedRectangle(cornerRadius: 14))
+-            .overlay(RoundedRectangle(cornerRadius: 14).strokeBorder(accent.opacity(0.12), lineWidth: 0.7))
+-    }
+-
+-    private var advancedDetails: some View {
+-        VStack(alignment: .leading, spacing: 12) {
+-            Toggle("Deadline", isOn: deadlineEnabled).toggleStyle(.switch).controlSize(.small)
+-                .accessibilityIdentifier("task-deadline-enabled")
++        }.font(.system(size: 12)).padding(10)
++            .background(Palette.surface.opacity(0.65), in: RoundedRectangle(cornerRadius: 12))
++            .overlay(RoundedRectangle(cornerRadius: 12).strokeBorder(accent.opacity(0.17), lineWidth: 0.8))
++            .accessibilityElement(children: .contain).accessibilityLabel("Work plan")
++    }
++
++    private var plannedDateField: some View {
++                DatePicker("Work on", selection: plannedDate, displayedComponents: .date)
++                    .datePickerStyle(.field).controlSize(.small).accessibilityIdentifier("task-planned-day")
++    }
++
++    private var plannedTimeField: some View {
++                TextField("Time (optional)", text: plannedTime).textFieldStyle(.roundedBorder).frame(width: 106)
++                        .accessibilityLabel("Optional planned local time in HH:MM")
++                    .buddyHelp("Optional local work time, HH:MM")
++    }
++
++    private var planningDetails: some View {
++        VStack(alignment: .leading, spacing: 6) {
++            BuddyActionFlow(spacing: 6) {
++                if planning.deadline == nil {
++                    Button { planning.deadline = Date().addingTimeInterval(3_600) } label: {
++                        Label("Add deadline", systemImage: "flag")
++                            .padding(.horizontal, 8).frame(minHeight: 32).contentShape(RoundedRectangle(cornerRadius: 7))
++                    }.buttonStyle(.plain).foregroundStyle(Palette.muted)
++                        .background(Palette.soft, in: RoundedRectangle(cornerRadius: 7))
++                        .accessibilityIdentifier("task-deadline-add")
++                        .buddyHelp("Choose when this task must be finished")
++                } else {
++                    Label("Deadline", systemImage: "flag").foregroundStyle(Palette.muted)
++                        .padding(.horizontal, 8).frame(minHeight: 32, alignment: .leading)
++                }
++                Menu {
++                    ForEach(TaskRecurrence.allCases) { recurrence in
++                        Button { planning.recurrence = recurrence } label: {
++                            if planning.recurrence == recurrence { Label(recurrence.title, systemImage: "checkmark") }
++                            else { Text(recurrence.title) }
++                        }.accessibilityIdentifier("task-recurrence-choice-" + recurrence.rawValue)
++                    }
++                } label: {
++                    Label(planning.recurrence == .none ? "No repeat" : planning.recurrence.title, systemImage: "repeat")
++                        .lineLimit(1).padding(.horizontal, 8).frame(minHeight: 32)
++                }.menuStyle(.button).buttonStyle(.plain).menuIndicator(.hidden)
++                    .foregroundStyle(planning.recurrence == .none ? Palette.muted : accent)
++                    .background(Palette.soft, in: RoundedRectangle(cornerRadius: 7))
++                    .accessibilityLabel("Repeat: " + planning.recurrence.title).accessibilityIdentifier("task-recurrence")
++            }
+             if planning.deadline != nil {
++                ViewThatFits(in: .horizontal) {
++                    HStack(spacing: 6) { deadlineField; removeDeadline }
++                    VStack(alignment: .leading, spacing: 4) { deadlineField; removeDeadline }
++                }
++            }
++        }.accessibilityElement(children: .contain).accessibilityIdentifier("task-planning-details")
++    }
++
++    private var deadlineField: some View {
+                 DatePicker("Finish by", selection: deadlineDate, displayedComponents: [.date, .hourAndMinute])
+                     .datePickerStyle(.field).controlSize(.small).accessibilityIdentifier("task-deadline")
+-            }
+-            Label("Repeat", systemImage: "repeat").foregroundStyle(Palette.muted)
+-            LazyVGrid(columns: [GridItem(.adaptive(minimum: 110), spacing: 7)], spacing: 7) {
+-                ForEach(TaskRecurrence.allCases) { recurrence in
+-                    Button { planning.recurrence = recurrence } label: {
+-                        HStack(spacing: 5) {
+-                            if planning.recurrence == recurrence { Image(systemName: "checkmark") }
+-                            Text(recurrence.title).font(.system(size: 11)).lineLimit(2)
+-                        }.frame(maxWidth: .infinity, minHeight: 32).padding(.horizontal, 5)
+-                            .background(planning.recurrence == recurrence ? accent.opacity(0.12) : Palette.surface, in: RoundedRectangle(cornerRadius: 7))
+-                    }.buttonStyle(.plain).accessibilityLabel(recurrence.title)
+-                        .accessibilityAddTraits(planning.recurrence == recurrence ? .isSelected : [])
+-                }
+-            }.accessibilityIdentifier("task-recurrence")
+-            if planning.recurrence != .none {
+-                Text("Completing this task creates one next occurrence. Files stay with the completed occurrence.")
+-                    .font(.system(size: 11)).foregroundStyle(Palette.muted).fixedSize(horizontal: false, vertical: true)
+-            }
+-        }
++                    .buddyHelp("Finish-by date; separate from work time and reminders")
++    }
++
++    private var removeDeadline: some View {
++        Button { planning.deadline = nil } label: {
++            Image(systemName: "xmark").frame(width: 32, height: 32).contentShape(Rectangle())
++        }.buttonStyle(.plain).foregroundStyle(Palette.muted)
++            .accessibilityLabel("Remove deadline").accessibilityIdentifier("task-deadline-remove")
++            .buddyHelp("Remove deadline")
+     }
+ 
+     private var checklistSection: some View {
+-        VStack(alignment: .leading, spacing: 12) {
++        VStack(alignment: .leading, spacing: 6) {
+             Divider()
+             HStack {
+-                Label("Checklist", systemImage: "checklist").font(.system(size: 12, weight: .medium))
++                Label("Steps", systemImage: "checklist").font(.system(size: 12, weight: .semibold))
+                 Spacer(minLength: 0)
+                 if !planning.checklist.isEmpty {
+                     Text("\(planning.checklist.filter(\.isCompleted).count)/\(planning.checklist.count)")
+-                        .font(.system(size: 11)).foregroundStyle(Palette.muted)
+-                }
++                        .font(.system(size: 11, weight: .semibold)).monospacedDigit().foregroundStyle(accent)
++                        .padding(.horizontal, 7).padding(.vertical, 3).background(accent.opacity(0.10), in: Capsule())
++                }
++            }
++            HStack(spacing: 6) {
++                TextField("Add a next step", text: $checklistText)
++                    .textFieldStyle(.plain).onSubmit(addChecklistItem).focused($checklistFocused)
++                    .padding(.horizontal, 8).frame(minHeight: 32)
++                    .background(Palette.soft, in: RoundedRectangle(cornerRadius: 7))
++                    .accessibilityIdentifier("task-checklist-new")
++                    .accessibilityLabel("New checklist step")
++                Button(action: addChecklistItem) { Label("Add step", systemImage: "plus").frame(minHeight: 32) }
++                    .buttonStyle(.plain).foregroundStyle(accent).disabled(!canAddChecklistItem)
++                    .accessibilityLabel("Add checklist step").buddyHelp("Add step, or press Return")
++                    .accessibilityIdentifier("task-checklist-add")
++            }
++            if !planning.checklist.isEmpty {
++                ProgressView(value: Double(planning.checklist.filter(\.isCompleted).count), total: Double(planning.checklist.count))
++                    .tint(accent).controlSize(.small)
++                    .accessibilityLabel("Checklist progress")
++                    .accessibilityValue("\(planning.checklist.filter(\.isCompleted).count) of \(planning.checklist.count) complete")
+             }
+             ForEach($planning.checklist) { $item in
+-                HStack(spacing: 7) {
++                HStack(alignment: .top, spacing: 5) {
+                     Toggle(item.text, isOn: $item.isCompleted).labelsHidden().toggleStyle(.checkbox)
++                        .frame(width: 32, height: 32).contentShape(Rectangle())
+                         .accessibilityLabel("Complete checklist step: \(item.text)")
+-                    TextField("Step", text: $item.text).textFieldStyle(.plain)
++                        .accessibilityIdentifier("task-checklist-complete-" + item.id.uuidString)
++                    TextField("Step", text: $item.text, axis: .vertical).lineLimit(1...3).textFieldStyle(.plain)
++                        .frame(minHeight: 32).foregroundStyle(item.isCompleted ? Palette.muted : Palette.foreground)
++                        .strikethrough(item.isCompleted)
+                         .accessibilityLabel("Checklist step")
++                        .accessibilityIdentifier("task-checklist-text-" + item.id.uuidString)
+                     Button { let id = item.id; planning.checklist.removeAll { $0.id == id } } label: {
+-                        Image(systemName: "minus.circle")
++                        Image(systemName: "xmark").font(.system(size: 10, weight: .medium))
++                            .frame(width: 32, height: 32).contentShape(Rectangle())
+                     }.buttonStyle(.plain).foregroundStyle(Palette.muted)
+                         .accessibilityLabel("Remove checklist step: \(item.text)")
++                        .accessibilityIdentifier("task-checklist-remove-" + item.id.uuidString)
+                         .buddyHelp("Remove step")
+-                }
+-            }
+-            HStack(spacing: 7) {
+-                TextField("Add a small next step", text: $checklistText)
+-                    .textFieldStyle(.roundedBorder).onSubmit(addChecklistItem)
+-                    .accessibilityIdentifier("task-checklist-new")
+-                Button(action: addChecklistItem) { Image(systemName: "plus.circle.fill") }
+-                    .buttonStyle(.plain).foregroundStyle(accent)
+-                    .disabled(!canAddChecklistItem)
+-                    .accessibilityLabel("Add checklist step").buddyHelp("Add step")
+-                    .accessibilityIdentifier("task-checklist-add")
++                }.padding(.horizontal, 3).background(item.isCompleted ? accent.opacity(0.035) : Color.clear, in: RoundedRectangle(cornerRadius: 7))
+             }
+             if trimmedChecklistText.count > 500 {
+                 Text("Keep this step within 500 characters (\(trimmedChecklistText.count)/500).")
+@@ -210,17 +264,13 @@
+             let date = Calendar.current.date(byAdding: .day, value: offset, to: Date()) ?? Date()
+             planning.plannedDay = CaptureCalendar.dayString(date)
+             planning.order = nil
+-        }.buttonStyle(.bordered).controlSize(.small)
++        }.buttonStyle(.plain).padding(.horizontal, 6).frame(minHeight: 32)
++            .background(planning.plannedDay == CaptureCalendar.dayString(Calendar.current.date(byAdding: .day, value: offset, to: Date()) ?? Date()) ? accent.opacity(0.12) : Palette.soft,
++                        in: RoundedRectangle(cornerRadius: 7))
+             .accessibilityLabel("Plan task for \(title.lowercased())")
+-    }
+-
+-    private var plannedEnabled: Binding<Bool> {
+-        Binding(get: { planning.plannedDay != nil }, set: {
+-            planning.plannedDay = $0 ? CaptureCalendar.dayString(Date()) : nil
+-            if !$0 { planning.plannedTime = nil }
+-            planning.order = nil
+-        })
+-    }
++            .accessibilityIdentifier("task-plan-" + title.lowercased())
++    }
++
+     private var plannedDate: Binding<Date> {
+         Binding(get: { planning.plannedDay.flatMap { TaskPlanningPolicy.date(for: $0) } ?? Date() }, set: {
+             planning.plannedDay = CaptureCalendar.dayString($0)
+@@ -230,22 +280,19 @@
+     private var plannedTime: Binding<String> {
+         Binding(get: { planning.plannedTime ?? "" }, set: { planning.plannedTime = $0.isEmpty ? nil : $0 })
+     }
+-    private var deadlineEnabled: Binding<Bool> {
+-        Binding(get: { planning.deadline != nil }, set: { planning.deadline = $0 ? Date().addingTimeInterval(3_600) : nil })
+-    }
+     private var deadlineDate: Binding<Date> {
+         Binding(get: { planning.deadline ?? Date() }, set: { planning.deadline = $0 })
+     }
+-    private var estimateEnabled: Binding<Bool> {
+-        Binding(get: { planning.effortMinutes != nil }, set: { planning.effortMinutes = $0 ? 30 : nil })
+-    }
+     private var effort: Binding<Int> {
+         Binding(get: { planning.effortMinutes ?? 30 }, set: { planning.effortMinutes = $0 })
+     }
+     private func addChecklistItem() {
+         guard canAddChecklistItem else { return }
+-        planning.checklist.append(TaskChecklistItem(text: trimmedChecklistText))
++        withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.12)) {
++            planning.checklist.append(TaskChecklistItem(text: trimmedChecklistText))
++        }
+         checklistText = ""
++        checklistFocused = true
+     }
+ }
+ 
+@@ -263,25 +310,26 @@
+         _minutesText = State(initialValue: String(max(0, minutes.wrappedValue) % 60))
+     }
+     var body: some View {
+-        VStack(alignment: .leading, spacing: 8) {
+-            HStack(spacing: 10) {
++        VStack(alignment: .leading, spacing: 6) {
++            HStack(spacing: 6) {
+                 field("Hours", text: $hoursText)
+-                Text(":").font(.system(size: 24, design: .monospaced)).foregroundStyle(Palette.muted)
++                Text(":").font(.system(size: 16, design: .monospaced)).foregroundStyle(Palette.muted)
+                 field("Minutes", text: $minutesText)
+             }
+-            HStack(spacing: 8) {
++            BuddyActionFlow(spacing: 6) {
+                 ForEach([25, 45, 60], id: \.self) { value in
+                     Button("\(value)m") { hoursText = String(value / 60); minutesText = String(value % 60); update() }
+-                        .buttonStyle(.bordered).controlSize(.small).frame(minHeight: 32)
++                        .buttonStyle(.plain).padding(.horizontal, 7).frame(minHeight: 32)
++                        .background(Palette.soft, in: RoundedRectangle(cornerRadius: 7))
+                 }
+             }
+         }.onChange(of: hoursText) { _, _ in update() }.onChange(of: minutesText) { _, _ in update() }
+     }
+     private func field(_ title: String, text: Binding<String>) -> some View {
+-        VStack(alignment: .leading, spacing: 4) {
+-            Text(title).font(.system(size: 11)).foregroundStyle(Palette.muted)
+-            TextField(title, text: text).font(.system(size: 24, design: .monospaced)).textFieldStyle(.roundedBorder)
+-                .frame(width: 82).accessibilityLabel("Focus duration \(title.lowercased())")
++        HStack(spacing: 5) {
++            TextField(title, text: text).font(.system(size: 16, design: .monospaced)).textFieldStyle(.roundedBorder)
++                .frame(width: 50).accessibilityLabel("Focus duration \(title.lowercased())")
++            Text(title.lowercased()).font(.system(size: 11)).foregroundStyle(Palette.muted)
+         }
+     }
+     private func update() {
+--- before/native/Sources/DaBin/TodayPlanningScreen.swift
++++ after/native/Sources/DaBin/TodayPlanningScreen.swift
+@@ -8,14 +8,14 @@
+         get { state.todayPlanningScope }
+         nonmutating set { state.todayPlanningScope = newValue }
+     }
+-    private var todayKey: String { CaptureCalendar.dayString(Date()) }
++    private var todayKey: String { state.currentDayKey }
+     private var projects: [String] {
+         Set(state.projectNames + state.workspace.projectNames).sorted { $0.localizedStandardCompare($1) == .orderedAscending }
+     }
+     private var active: [Capture] {
+         state.store.captures.filter { $0.parentTaskID == nil && (state.libraryProject == nil || $0.projectName == state.libraryProject) }
+     }
+-    private var planned: [Capture] { TaskPlanningPolicy.today(active) }
++    private var planned: [Capture] { TaskPlanningPolicy.sorted(active.filter { TaskPlanningPolicy.isPlanned($0, for: todayKey) }) }
+     private var unfinished: [Capture] {
+         TaskPlanningPolicy.sorted(active.filter { $0.isTask && !$0.isCompleted
+             && (($0.taskPlanning?.plannedDay.map { $0 < todayKey } ?? false) || TaskPlanningPolicy.isOverdue($0))
+@@ -39,9 +39,9 @@
+     }
+     var body: some View {
+         VStack(spacing: 0) {
+-            VStack(alignment: .leading, spacing: 10) {
++            VStack(alignment: .leading, spacing: 6) {
+                 HStack {
+-                    Text("Make room for what matters").font(.system(size: 14, weight: .semibold))
++                    Text("Today").font(.system(size: 14, weight: .semibold))
+                     Spacer(minLength: 0)
+                     BuddyIconButton(symbol: "plus.circle", title: "Add task for today") {
+                         state.openNewTask(); state.newTaskDraft.planning.plannedDay = todayKey
+@@ -52,28 +52,29 @@
+                         Button("All projects", systemImage: "square.stack.3d.up") { state.libraryProject = nil }
+                         ForEach(projects, id: \.self) { project in Button(project, systemImage: "folder") { state.libraryProject = project } }
+                     } label: {
+-                        Label(state.libraryProject ?? "All projects", systemImage: "folder")
++                        Label("Plan: \(state.libraryProject ?? "All projects")", systemImage: "folder")
+                             .lineLimit(1).truncationMode(.tail)
+                     }
+                         .menuStyle(.borderlessButton).font(.system(size: 12))
+                         .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+-                        .accessibilityLabel("Project, \(state.libraryProject ?? "all projects")")
++                        .accessibilityLabel("Work plan project, \(state.libraryProject ?? "all projects")")
+                         .accessibilityIdentifier("today-project-picker")
+                         .buddyHelp(state.libraryProject ?? "Show tasks from all projects")
+                     Spacer(minLength: 0)
+                     Text("\(planned.count) planned\(effortLabel)").font(.system(size: 11)).foregroundStyle(Palette.muted)
+                         .fixedSize().accessibilityIdentifier("today-plan-summary")
+                 }
+-                Picker("Task view", selection: Binding(get: { scope }, set: { scope = $0 })) {
++                Picker("Work plan view", selection: Binding(get: { scope }, set: { scope = $0 })) {
+                     Text("Today").tag("today")
+                     Text("Upcoming").tag("later")
+                     Text("Completed").tag("done")
+-                }.pickerStyle(.segmented).accessibilityIdentifier("task-view-scope")
+-            }.padding(14)
++                }.pickerStyle(.segmented).accessibilityLabel("Work plan view").accessibilityIdentifier("task-view-scope")
++            }.padding(.horizontal, 14).padding(.vertical, 8)
+                 .daBinTutorialAnchor(.todayControls)
+             ScrollViewReader { proxy in
+             ScrollView {
+                 LazyVStack(alignment: .leading, spacing: zoom.value(9)) {
++                    capturedToday
+                     if scope == "today" {
+                         if planned.isEmpty {
+                             Text("Pick a few tasks for today. Deadlines and reminders stay separate.")
+@@ -93,13 +94,35 @@
+                     }
+                 }.padding(.horizontal, 14).padding(.bottom, 14).frame(maxWidth: zoom.value(860)).frame(maxWidth: .infinity)
+             }.background {
+-                WorkspaceScrollHistory(anchor: state.workspaceViewport, contextID: "today-" + scope,
++                WorkspaceScrollHistory(anchor: state.workspaceViewport, contextID: "today-" + todayKey + "-" + scope,
+                     onAnchor: { state.workspaceViewport = $0 }).allowsHitTesting(false).accessibilityHidden(true)
+             }
+             .onAppear { if let anchor = state.workspaceViewport { proxy.scrollTo(anchor.itemID, anchor: .top) } }
+             .onChange(of: state.navigationRestorationRevision) { _, _ in
+                 if let anchor = state.workspaceViewport { proxy.scrollTo(anchor.itemID, anchor: .top) }
+             }
++            }
++        }
++    }
++    @ViewBuilder private var capturedToday: some View {
++        let receipts = state.currentTodayCaptures
++        HStack {
++            Text("Captured today").font(.system(size: 12, weight: .semibold))
++                .accessibilityAddTraits(.isHeader).accessibilityIdentifier("today-receipts-heading")
++            Spacer(minLength: 0)
++            Text("\(receipts.count) \(receipts.count == 1 ? "item" : "items")").font(.system(size: 11)).foregroundStyle(Palette.muted)
++                .accessibilityIdentifier("today-receipts-count")
++        }.padding(.top, 8)
++        if receipts.isEmpty {
++            Text("Drop a file here, paste from the clipboard, or write a note.")
++                .font(.system(size: 12)).foregroundStyle(Palette.muted).fixedSize(horizontal: false, vertical: true)
++        } else {
++            ForEach(receipts) { capture in
++                let itemID = AppState.todayReceiptItemID(capture.id)
++                CaptureRow(state: state, capture: capture, featured: false, navigationItemID: itemID, compactReceipt: true)
++                    .accessibilityElement(children: .contain)
++                    .accessibilityIdentifier("today-receipt-card-" + capture.id.uuidString)
++                    .id(itemID)
+             }
+         }
+     }
+--- before/native/scripts/run_qa.py
++++ after/native/scripts/run_qa.py
+@@ -27,6 +27,7 @@
+ WINDOW.append("DetailPreviewInteractionTests")
+ WINDOW.append("CaptureDetailReadabilityTests")
+ WINDOW.append("CaptureDetailNavigationTests")
++WINDOW.append("TaskPlanInteractionTests")
+ WINDOW.append("CaptureExtendedInteractionTests")
+ WINDOW.append("ExtendedMediaInteractionTests")
+ NONFOCUS.append("CaptureZoomStateTests")
+--- before/native/Tests/DailyCaptureTests.swift
++++ after/native/Tests/DailyCaptureTests.swift
+@@ -185,10 +185,90 @@
+         state.openCapture(task.id)
+         try await checkRoundTrip(text: task.title, target: .detailTitle)
+         let draft = try unwrap(state.selectedDraft, "Production task owns a draft")
++        // Detail panes stay mounted across section changes. Select Comments
++        // before focusing its native editor so this fixture exercises a visible
++        // production destination rather than an inactive mounted text view.
++        state.openCapture(task.id, focus: "comment")
++        try await settle()
++        try expect(NavigationEditorRegionView.regions(in: host).contains {
++            $0.target == .commentComposer && $0.isActive
++        }, "Production Comments destination exposes its active composer region")
+         draft.commentComposer = "Fictional unfinished reply retains its selection"
+         try await checkRoundTrip(text: draft.commentComposer, target: .commentComposer)
+         try expect(state.selectedDraft === draft && task.comment.isEmpty && draft.commentComposer.hasPrefix("Fictional unfinished"),
+                    "Focus restoration retains the live draft without posting or saving its text")
++    }
++
++    @MainActor private static func verifyTodayCaptures(root: URL) async throws {
++        let suite = "DaBinTodayDropQA.\(UUID())"
++        let defaults = UserDefaults(suiteName: suite)!
++        let store = try CaptureStore(root: root)
++        let input = InputService(store: store, stagingRoot: root.appendingPathComponent("Promises"))
++        let previews = PreviewService(store: store, defaults: defaults)
++        let state = AppState(store: store, previews: previews,
++            reminders: ReminderService(store: store, client: DailyNotificationClient()), manualInput: input)
++        let controller = CornerController(state: state, input: input, placementDefaults: nil, animateRobotTransitions: false)
++        defer {
++            controller.shutdown(); previews.shutdown(); state.focusSessions.shutdown(); state.shutdownNotificationPresentation()
++            defaults.removePersistentDomain(forName: suite)
++        }
++        state.showReminders(); state.todayPlanningScope = "later"
++        state.libraryProject = "Other project"; state.filter = .files
++        let browsedDay = Calendar.current.date(byAdding: .day, value: -7, to: Date())!
++        state.selectedDay = browsedDay
++        controller.openDaily()
++        let host = try unwrap(controller.board.captureHostingView, "Today uses the native capture host")
++        try expect(controller.board.makeFirstResponder(host), "Today background accepts native focus")
++        try expect(host.canPasteCapture, "Today enables background Paste without an active editor")
++        let textBoard = try board([item("Fictional Today drop")])
++        defer { textBoard.releaseGlobally() }
++        let drag = DailyDropFixture(textBoard); drag.draggingDestinationWindow = controller.board
++        try expect(host.draggingEntered(drag) == .copy && state.isDailyDropTargeted,
++            "Today exposes the native drop target")
++        try expect(host.prepareForDragOperation(drag) && host.performDragOperation(drag), "Today accepts a direct native text drop")
++        host.concludeDragOperation(drag)
++        try await wait("Today text drop persists") { store.captures.count == 1 && !input.isBusy }
++        try expect(state.route == .reminders && state.selectedDay == browsedDay && state.filter == .files
++            && state.todayPlanningScope == "later" && !state.isDailyDropTargeted,
++            "A successful Today drop retains Today, task scope and browsed history")
++        try expect(state.currentTodayCaptures.map(\.id) == store.captures.map(\.id),
++            "Today shows the text receipt despite a file filter and unrelated selected project")
++        let source = root.appendingPathComponent("Older original.txt")
++        let bytes = Data("Fictional old original received today".utf8)
++        try bytes.write(to: source)
++        try FileManager.default.setAttributes([.modificationDate: browsedDay], ofItemAtPath: source.path)
++        let fileBoard = try board([item(source.absoluteString, type: .fileURL)])
++        defer { fileBoard.releaseGlobally() }
++        let fileDrag = DailyDropFixture(fileBoard); fileDrag.draggingDestinationWindow = controller.board
++        try expect(host.performDragOperation(fileDrag), "Today accepts a file drop with an older modification date")
++        try await wait("Today file drop persists") { store.captures.count == 2 && !input.isBusy }
++        let file = try unwrap(store.captures.first { $0.originalFilename == source.lastPathComponent }, "Today file receipt exists")
++        try expect(file.captureDay == state.currentDayKey && state.currentTodayCaptures.contains { $0.id == file.id }
++            && state.route == .reminders, "Today includes the file by receipt date and retains its route")
++        let managed = try unwrap(store.managedURL(for: file), "Today file has an archived original")
++        try expect(try Data(contentsOf: source) == bytes && Data(contentsOf: managed) == bytes,
++            "Today file drop preserves both source and managed bytes")
++        let pasteBoard = try board([item("Fictional Today paste")])
++        defer { pasteBoard.releaseGlobally() }
++        state.pasteClipboard(from: pasteBoard)
++        try await wait("Today private Paste persists") { store.captures.count == 3 && !input.isBusy }
++        try expect(state.route == .reminders && state.currentTodayCaptures.count == 3 && state.selectedDay == browsedDay,
++            "Today Paste stays on the complete current receipt feed")
++        try expect(host.performDragOperation(drag), "A slow Today capture starts before a new draft")
++        state.openNewNote(); state.newNoteText = "Keep the later draft open"
++        try await wait("Today capture finishes after navigation") { store.captures.count == 4 && !input.isBusy }
++        try expect(state.route == .newNote && state.newNoteText == "Keep the later draft open",
++            "A completing Today capture cannot pull the user out of a later draft")
++        state.cancelNewNote(); state.showReminders()
++        let editor = NSTextView(frame: NSRect(x: 0, y: 0, width: 140, height: 40))
++        editor.isEditable = true; editor.string = "An editor keeps its text"
++        host.addSubview(editor)
++        try expect(controller.board.makeFirstResponder(editor), "Today editor receives native focus")
++        try expect(!host.canPasteCapture && host.draggingEntered(drag).isEmpty && !host.performDragOperation(drag),
++            "Today background capture yields Paste and drops to an active native editor")
++        try expect(store.captures.count == 4 && editor.string == "An editor keeps its text",
++            "Editor refusal preserves content and creates no additional receipt")
++        editor.removeFromSuperview()
+     }
+ 
+     static func main() {
+@@ -224,6 +304,7 @@
+         defer { previews.cancelNetwork() }
+         try await verifyFocusRestoration(state)
+         try await verifyProductionEditorRestoration(root: root.appendingPathComponent("ProductionEditors"))
++        try await verifyTodayCaptures(root: root.appendingPathComponent("TodayInputs"))
+         let hosting = DailyCaptureHostingView(state: state)
+         hosting.sizingOptions = []
+         let panel = DailyCapturePanel(contentRect: NSRect(x: 60, y: 60, width: 380, height: 500),
+@@ -413,7 +494,13 @@
+         try expect(pasteCalls == 8, "Panel Command V fallback does not create captures while editing")
+         panel.makeFirstResponder(hosting); probe.removeFromSuperview()
+ 
+-        for route: BoardRoute in [.weekly, .search, .newTask, .detail, .reminders, .settings] {
++        state.showReminders()
++        try expect(hosting.canPasteCapture && panel.validateUserInterfaceItem(pasteMenu),
++                   "Today enables the native background Paste fallback")
++        try expect(hosting.draggingEntered(textDrag) == .copy && hosting.prepareForDragOperation(textDrag),
++                   "Today supports background drops through the same native destination")
++        hosting.draggingExited(textDrag)
++        for route: BoardRoute in [.weekly, .search, .newTask, .detail, .settings] {
+             state.route = route
+             try expect(!hosting.handlePasteShortcut(shortcut(.control, time: 20, window: panel)), "\(route) never captures a Daily shortcut")
+             try expect(hosting.draggingEntered(textDrag).isEmpty && !hosting.prepareForDragOperation(textDrag) && !hosting.performDragOperation(textDrag),
+--- before/native/Tests/WorkInboxTests.swift
++++ after/native/Tests/WorkInboxTests.swift
+@@ -1,4 +1,5 @@
+ import Foundation
++import Combine
+ 
+ @MainActor private final class InboxReminderClient: ReminderNotificationClient {
+     var requests: [String: ScheduledReminder] = [:]
+@@ -11,6 +12,86 @@
+ }
+ 
+ @main struct WorkInboxTests {
++    @MainActor private static func checkTodayReceipts() async throws -> Int {
++        var checks = 0
++        func expect(_ value: Bool, _ message: String) throws {
++            checks += 1
++            if !value { throw NSError(domain: "WorkInboxTests", code: 3, userInfo: [NSLocalizedDescriptionKey: message]) }
++        }
++        let root = FileManager.default.temporaryDirectory.appendingPathComponent("DaBinTodayReceipts-\(UUID())")
++        let suite = "DaBinTodayReceipts.\(UUID())"
++        let defaults = UserDefaults(suiteName: suite)!
++        let store = try CaptureStore(root: root)
++        let previews = PreviewService(store: store, defaults: defaults)
++        let state = AppState(store: store, previews: previews,
++            reminders: ReminderService(store: store, client: InboxReminderClient()))
++        defer {
++            previews.shutdown(); state.focusSessions.shutdown(); state.shutdownNotificationPresentation()
++            defaults.removePersistentDomain(forName: suite); try? FileManager.default.removeItem(at: root)
++        }
++        let now = Calendar.current.date(bySettingHour: 12, minute: 0, second: 0, of: Date())!
++        let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: now)!
++        let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: now)!
++        let todayKey = CaptureCalendar.dayString(now)
++        state.showReminders()
++        state.refreshCurrentDay(at: now)
++        let note = try store.createNote(text: "Today's authored note", at: now)
++        let link = try store.capture(text: "https://example.invalid/today", at: now.addingTimeInterval(1))[0]
++        let automatic = try store.capture(text: "Today's copied text", at: now.addingTimeInterval(2),
++            receipt: .automatic(.automaticClipboard))[0]
++        let dropped = try await store.importData(Data("Today's file bytes".utf8), filename: "Receipt.txt", at: now.addingTimeInterval(3))
++        try store.setOrganization(dropped, pinned: true, projectName: "Other project")
++        let completed = try store.createTask(text: "A completed task remains a receipt", at: now.addingTimeInterval(4))
++        _ = try store.setTaskCompleted(completed, completed: true, at: now.addingTimeInterval(5))
++        let later = try store.createTask(text: "Created today, planned tomorrow", at: now.addingTimeInterval(6))
++        try store.planTask(later, on: CaptureCalendar.dayString(tomorrow))
++        let earlierTask = try store.createTask(text: "Created yesterday, planned today", at: yesterday)
++        try store.planTask(earlierTask, on: todayKey)
++        let attachment = try store.capture(text: "Today's independently received attachment", at: now.addingTimeInterval(7), parentTask: earlierTask)[0]
++        _ = try store.capture(text: "Yesterday's receipt", at: yesterday.addingTimeInterval(1))
++        let removed = try store.capture(text: "A removed receipt", at: now.addingTimeInterval(8))[0]
++        try store.moveToTrash(removed)
++        try state.workspace.markInboxProcessed([note.id, dropped.id])
++        state.libraryProject = "Unrelated selected project"
++        state.libraryPinnedOnly = true; state.filter = .links
++        state.selectedDay = yesterday; state.weekEndingDay = yesterday
++        let expected = Set([note, link, automatic, dropped, completed, later, attachment].map(\.id))
++        for scope in ["today", "later", "done"] {
++            state.todayPlanningScope = scope
++            try expect(Set(state.currentTodayCaptures.map(\.id)) == expected,
++                "Today receipts retain every captured item across task scope, project, type, pins, processing and completion: \(scope)")
++        }
++        try expect(!state.currentTodayCaptures.contains { $0.id == earlierTask.id || $0.id == removed.id },
++            "Today's receipt feed excludes older scheduled tasks and Recently Deleted originals")
++        try expect(TaskPlanningPolicy.today(store.captures, at: now).contains { $0.id == earlierTask.id },
++            "An older task planned for today remains available separately in planning")
++        try expect(state.currentTodayCaptures.map(\.id) == [attachment, later, completed, dropped, automatic, link, note].map(\.id),
++            "Today receipts use descending capture time rather than task order or completion time")
++        let receiptID = AppState.todayReceiptItemID(later.id)
++        try expect(receiptID != ProjectWorkspaceIdentity.capture(later.id), "Receipt and planning instances have distinct workspace markers")
++        state.workspaceViewport = NavigationViewportAnchor(itemID: receiptID, offset: 21,
++            neighbors: [AppState.todayReceiptItemID(completed.id)])
++        state.openCapture(later.id); state.reconcileNavigationHistory(); state.back()
++        try expect(state.route == .reminders && state.workspaceViewport?.itemID == receiptID
++            && state.workspaceViewport?.offset == 21 && state.todayPlanningScope == "done",
++            "Detail Back restores the distinct Today receipt anchor and task scope")
++        state.workspaceViewport = NavigationViewportAnchor(itemID: ProjectWorkspaceIdentity.capture(earlierTask.id), offset: 9)
++        state.openCapture(earlierTask.id); state.reconcileNavigationHistory(); state.back()
++        try expect(state.workspaceViewport?.itemID == ProjectWorkspaceIdentity.capture(earlierTask.id),
++            "Existing planning anchors stay compatible")
++        let nextReceipt = try store.createNote(text: "Tomorrow's receipt", at: tomorrow)
++        var publishedDays: [String] = []
++        let subscription = state.$currentDayKey.dropFirst().sink { publishedDays.append($0) }
++        state.refreshCurrentDay(at: tomorrow)
++        try expect(publishedDays == [CaptureCalendar.dayString(tomorrow)] && state.currentTodayCaptures.map(\.id) == [nextReceipt.id],
++            "Midnight publishes the new Today receipt membership even when history is browsed")
++        try expect(state.selectedDay == yesterday && state.weekEndingDay == yesterday && state.filter == .links,
++            "Midnight leaves deliberately browsed history and filters intact")
++        state.refreshCurrentDay(at: tomorrow.addingTimeInterval(60))
++        try expect(publishedDays.count == 1, "Wake or activation on the same day does not publish a second day transition")
++        withExtendedLifetime(subscription) {}
++        return checks
++    }
+     @MainActor private static func checkReminderRecovery() throws -> Int {
+         var checks = 0
+         func expect(_ value: Bool, _ message: String) throws {
+@@ -221,6 +302,7 @@
+         let old = Capture(snapshot: try JSONDecoder().decode(CaptureSnapshot.self, from: JSONSerialization.data(withJSONObject: legacy)))
+         try expect(!old.isPinned && old.projectName == nil && old.deletedAt == nil && old.originalText == restored.originalText, "Schema 6 defaults preserve old capture data")
+         checks += try checkReminderRecovery()
++        checks += try await checkTodayReceipts()
+         print("PASS: \(checks) work inbox checks")
+     }
+ }
+--- before/native/Tests/WorkspaceWindowTests.swift
++++ after/native/Tests/WorkspaceWindowTests.swift
+@@ -76,7 +76,6 @@
+             if let children = value(name) as? [Any] { result += children }
+         }
+         if let children = attribute("AXChildren") as? [Any] { result += children }
+-        if let view = object as? NSView { result += view.subviews }
+         return result
+     }
+ }
+@@ -123,7 +122,7 @@
+         }
+         return geometry + ", logicalRows=\(table.numberOfRows), visibleRange=\(table.rows(in: table.visibleRect)), availableRows=[\(rows.joined(separator: "; "))]"
+     }
+-    @MainActor private static func nodes(_ view: NSView) -> [WorkspaceAXNode] {
++    @MainActor private static func nodes(_ view: NSView, includeSubviews: Bool = true) -> [WorkspaceAXNode] {
+         view.layoutSubtreeIfNeeded()
+         var seen = Set<ObjectIdentifier>()
+         var result: [WorkspaceAXNode] = []
+@@ -131,10 +130,41 @@
+             guard depth < 50, let object = value as? NSObject, seen.insert(ObjectIdentifier(object)).inserted else { return }
+             let node = WorkspaceAXNode(object: object); result.append(node)
+             node.children.forEach { visit($0, depth: depth + 1) }
++            if includeSubviews, let native = object as? NSView {
++                native.subviews.forEach { visit($0, depth: depth + 1) }
++            }
+         }
+         visit(view, depth: 0)
+         NSAccessibility.unignoredChildren(from: [view]).forEach { visit($0, depth: 0) }
+         return result
++    }
++    @MainActor private static func scrollControlIntoView(_ view: NSView, id: String, window: NSWindow) async throws -> WorkspaceAXNode {
++        let scroll = try listScrollView(in: view)
++        guard let document = scroll.documentView else {
++            throw NSError(domain: "WorkspaceWindowTests", code: 10,
++                userInfo: [NSLocalizedDescriptionKey: "Today scroll view has no native document"])
++        }
++        // Lazy receipt rows precede the plan. Materialize the real plan by
++        // scrolling its native viewport; an AX lookup alone cannot reveal it.
++        for _ in 0..<48 {
++            view.layoutSubtreeIfNeeded()
++            let viewport = window.convertToScreen(scroll.contentView.convert(scroll.contentView.bounds, to: nil))
++            if let target = nodes(view, includeSubviews: false).first(where: { $0.identifier == id }),
++               target.frame.width > 0 && target.frame.height > 0 {
++                if viewport.insetBy(dx: -1, dy: -1).contains(target.frame) { return target }
++                let targetRect = document.convert(window.convertFromScreen(target.frame), from: nil)
++                _ = document.scrollToVisible(targetRect.insetBy(dx: -2, dy: -6))
++            } else {
++                let maximum = max(0, document.bounds.maxY - scroll.contentView.bounds.height)
++                let direction: CGFloat = document.isFlipped ? 1 : -1
++                let next = min(maximum, max(0, scroll.contentView.bounds.minY + direction * scroll.contentView.bounds.height * 0.7))
++                scroll.contentView.scroll(to: NSPoint(x: scroll.contentView.bounds.minX, y: next))
++            }
++            scroll.reflectScrolledClipView(scroll.contentView)
++            await settleNavigation()
++        }
++        throw NSError(domain: "WorkspaceWindowTests", code: 11,
++            userInfo: [NSLocalizedDescriptionKey: "Could not reveal native Today control \(id); \(nativeListDescription(scroll))"])
+     }
+     @MainActor private static func find(_ view: NSView, id: String) throws -> WorkspaceAXNode {
+         for _ in 0..<6 {
+@@ -401,14 +431,16 @@
+         draft.commentComposer = "An unposted reply survives every resize"
+         draft.reminderDate = savedReminder.addingTimeInterval(3600)
+         let pendingStep = "A next step that has not been added yet"
+-        let input = try findLabeled(hosting, label: "Add a small next step")
++        let input = try findLabeled(hosting, label: "Add a next step")
++        if let field = input.object as? NSTextField { _ = field.scrollToVisible(field.bounds); await settleNavigation() }
+         try expect(input.setText(pendingStep), "Task detail accepts an unfinished checklist entry before resizing")
+         await settleNavigation()
+         let focusedEditor = window.firstResponder as? NSTextView
+         for size in [expandedSize, shortSize, compactSize] {
+             window.setContentSize(size)
+             await settleNavigation()
+-            let currentInput = try findLabeled(hosting, label: "Add a small next step")
++            let currentInput = try findLabeled(hosting, label: "Add a next step")
++            if let field = currentInput.object as? NSTextField { _ = field.scrollToVisible(field.bounds); await settleNavigation() }
+             let currentText = (currentInput.object as? NSTextField)?.stringValue
+                 ?? (currentInput.value("accessibilityValue") as? String)
+             try expect(currentText == pendingStep,
+@@ -417,12 +449,12 @@
+                 && draft.commentComposer == "An unposted reply survives every resize"
+                 && draft.reminderDate == savedReminder.addingTimeInterval(3600) && draft.hasChanges,
+                 "Resizing preserves the same unsaved comment, composer and reminder draft")
+-            let detailNodes = nodes(hosting)
+-            try expect(detailNodes.contains { $0.identifier == "capture-comment-thread" }
+-                && detailNodes.contains { $0.identifier == "capture-comment-composer" }
+-                && detailNodes.contains { $0.identifier == "capture-tab-reminder" }
+-                && !detailNodes.contains { $0.identifier == "capture-reminder-panel" },
+-                "Resizing retains the selected Comments tab and composer; Reminder remains a separate available tab")
++            let detailNodes = nodes(hosting, includeSubviews: false)
++            try expect(state.detailFocus == "task" && detailNodes.contains { $0.identifier == "detail-pane-task" }
++                && detailNodes.contains { $0.identifier == "task-checklist-new" }
++                && detailNodes.contains { $0.identifier == "detail-section-reminder" }
++                && !detailNodes.contains { $0.identifier == "capture-comment-composer" || $0.identifier == "capture-reminder-panel" },
++                "Resizing retains the exclusive Task pane and native checklist; Comments and Reminder remain separate sections")
+             let visible = window.convertToScreen(hosting.convert(hosting.bounds, to: nil))
+             let save = try find(hosting, id: "detail-save")
+             try expect(save.isEnabled && visible.insetBy(dx: -1, dy: -1).contains(save.frame),
+@@ -436,14 +468,14 @@
+         // Comments and Reminder are mutually exclusive tabs, not simultaneous
+         // disclosures. Exercise their real actions after the resize/focus checks
+         // and verify neither selecting a tab nor resizing implicitly saves.
+-        try expect(try find(hosting, id: "capture-tab-reminder").press(),
+-            "The retained Reminder tab opens its actual scheduling panel")
++        try expect(try find(hosting, id: "detail-section-reminder").press(),
++            "The retained Reminder section opens its actual scheduling panel")
+         await settleNavigation()
+         for size in [expandedSize, compactSize] {
+             window.setContentSize(size)
+             await settleNavigation()
+-            let detailNodes = nodes(hosting)
+-            try expect(detailNodes.contains { $0.identifier == "capture-reminder-panel" }
++            let detailNodes = nodes(hosting, includeSubviews: false)
++            try expect(state.detailFocus == "reminder" && detailNodes.contains { $0.identifier == "capture-reminder-panel" }
+                 && detailNodes.contains { $0.identifier == "reminder-mode-date" || $0.label == "Date" }
+                 && !detailNodes.contains { $0.identifier == "capture-comment-composer" },
+                 "The selected Reminder panel and date controls survive compact/expanded resizing")
+@@ -452,14 +484,20 @@
+                 && draft.reminderDate == savedReminder.addingTimeInterval(3600) && draft.hasChanges,
+                 "Tab selection and resizing retain all unpublished changes in the original draft")
+         }
+-        try expect(try find(hosting, id: "capture-tab-comments").press(),
+-            "Comments can be reopened without saving or removing the reminder")
+-        await settleNavigation()
+-        try expect(nodes(hosting).contains { $0.identifier == "capture-comment-composer" }
+-            && !nodes(hosting).contains { $0.identifier == "capture-reminder-panel" }
++        try expect(try find(hosting, id: "detail-section-comments").press(),
++            "Comments can be opened without saving or removing the reminder")
++        await settleNavigation()
++        try expect(nodes(hosting, includeSubviews: false).contains { $0.identifier == "capture-comment-composer" }
++            && !nodes(hosting, includeSubviews: false).contains { $0.identifier == "capture-reminder-panel" }
+             && draft.commentComposer == "An unposted reply survives every resize",
+             "Returning to Comments restores its unposted composer")
+-        let retainedInput = try findLabeled(hosting, label: "Add a small next step")
++        window.setContentSize(expandedSize); await settleNavigation()
++        try expect(try find(hosting, id: "detail-section-task").press(),
++            "The real Task section action returns to the retained checklist")
++        await settleNavigation()
++        window.setContentSize(compactSize); await settleNavigation()
++        let retainedInput = try findLabeled(hosting, label: "Add a next step")
++        if let field = retainedInput.object as? NSTextField { _ = field.scrollToVisible(field.bounds); await settleNavigation() }
+         let retainedInputText = (retainedInput.object as? NSTextField)?.stringValue
+             ?? (retainedInput.value("accessibilityValue") as? String)
+         try expect(retainedInputText == pendingStep,
+@@ -673,7 +711,49 @@
+             try expect(visible.contains(try find(hosting, id: "workspace-scratchpad-save-status").frame),
+                 "Scratchpad save status stays visible beside a long project name")
+             try saveImage(hosting, to: evidence.appendingPathComponent("workspace-long-project-notes-\(Int(size.width))x\(Int(size.height))-light.png"))
+-            state.showReminders(); settle()
++            state.showReminders(); await settleNavigation()
++            for scope in ["today", "later", "done"] {
++                state.todayPlanningScope = scope; settle()
++                let receiptsHeading = try find(hosting, id: "today-receipts-heading")
++                try expect(visible.contains(receiptsHeading.frame), "Captured today remains visible before the \(scope) work plan at \(Int(size.width))-point width")
++                try expect(visible.contains(try find(hosting, id: "today-receipts-count").frame),
++                    "Today's receipt count stays visible for the \(scope) work plan at \(Int(size.width))-point width")
++            }
++            state.todayPlanningScope = "today"; settle()
++            guard let receipt = state.currentTodayCaptures.first, let receiptText = receipt.originalText else {
++                throw NSError(domain: "WorkspaceWindowTests", code: 12,
++                    userInfo: [NSLocalizedDescriptionKey: "Today compact receipt fixture is missing its current text capture"])
++            }
++            try expect(receiptText == "Fictional incoming project capture" && state.workspaceZoom.factor == 1,
++                "Compact receipt geometry uses the first actual short receipt at 100 percent zoom")
++            let receiptCard = try find(hosting, id: "today-receipt-card-\(receipt.id.uuidString)")
++            let compactReceipt = try find(hosting, id: "capture-compact-receipt-\(receipt.id.uuidString)")
++            try expect(receiptCard.frame.width > 0 && receiptCard.frame.height > 0 && receiptCard.frame.height <= 140
++                && compactReceipt.frame.width > 0 && compactReceipt.frame.height > 0
++                && visible.insetBy(dx: -1, dy: -1).contains(receiptCard.frame),
++                "The first compact receipt fits wholly inside the \(Int(size.width))×\(Int(size.height)) viewport and stays at most 140 points tall: \(receiptCard.frame)")
++            let copyReceipt = try find(hosting, id: CaptureCopyButton.accessibilityIdentifier(for: [receipt]))
++            let openReceipt = try find(hosting, id: "capture-compact-open-\(receipt.id.uuidString)")
++            let moreReceipt = try find(hosting, id: "capture-more-\(receipt.id.uuidString)")
++            for action in [copyReceipt, openReceipt, moreReceipt] {
++                try expect(action.isEnabled && action.interactionFrame.width > 0 && action.interactionFrame.height >= 28
++                    && visible.insetBy(dx: -1, dy: -1).contains(action.interactionFrame),
++                    "Compact receipt action \(action.identifier ?? "unknown") has a visible usable native target at \(Int(size.width))-point width")
++            }
++            let copiesBefore = copiedPayloads.count
++            try expect(copyReceipt.press(), "Compact receipt Copy supports direct accessible activation")
++            await settleNavigation()
++            try expect(copiedPayloads.count == copiesBefore + 1 && copiedPayloads.last?.items == [.text(receiptText)]
++                && state.route == .reminders,
++                "Compact receipt Copy writes its full original text through the private clipboard handler and keeps Today open")
++            try expect(openReceipt.press(), "Compact receipt title supports direct accessible activation")
++            await settleNavigation()
++            try expect(state.route == .detail && state.selectedCapture?.id == receipt.id,
++                "The compact receipt title opens the exact captured item")
++            state.back(); await settleNavigation()
++            try expect(state.route == .reminders && state.todayPlanningScope == "today"
++                && state.libraryProject == longProject && state.currentTodayCaptures.first?.id == receipt.id,
++                "Back from a receipt restores Today, its work plan scope and project without changing receipt membership")
+             let todayProject = try find(hosting, id: "today-project-picker")
+             try expect(visible.insetBy(dx: -1, dy: -1).contains(todayProject.interactionFrame), "Long Today project remains inside the \(Int(size.width))-point window")
+             try expect(todayProject.label?.contains(longProject) == true, "Today exposes the full project name to accessibility")
+@@ -682,6 +762,43 @@
+             try expect(add.frame.width >= 28 && add.frame.height >= 28 && visible.contains(add.frame), "Today Add has a visible usable hit target")
+             try saveImage(hosting, to: evidence.appendingPathComponent("today-long-project-\(Int(size.width))x\(Int(size.height))-light.png"))
+         }
++        // Keep the actual compact Board fixed at minimum width while its
++        // receipt content grows. Window coupling must not mask a clipped action.
++        window.setContentSize(NSSize(width: 380, height: 680)); await settleNavigation()
++        guard let zoomReceipt = state.currentTodayCaptures.first, let zoomReceiptText = zoomReceipt.originalText else {
++            throw NSError(domain: "WorkspaceWindowTests", code: 13,
++                userInfo: [NSLocalizedDescriptionKey: "Today zoom fixture is missing its current text receipt"])
++        }
++        for factor in [CGFloat(1.5), 2] {
++            state.workspaceZoom.setFactor(factor); await settleNavigation()
++            let scroll = try listScrollView(in: hosting)
++            let viewport = window.convertToScreen(scroll.contentView.convert(scroll.contentView.bounds, to: nil))
++            let receiptCard = try find(hosting, id: "today-receipt-card-\(zoomReceipt.id.uuidString)")
++            let compactReceipt = try find(hosting, id: "capture-compact-receipt-\(zoomReceipt.id.uuidString)")
++            try expect(state.workspaceZoom.factor == factor && abs(hosting.bounds.width - 380) <= 1,
++                "Today zoom check renders \(Int(factor * 100)) percent in the actual 380-point Board")
++            for surface in [receiptCard, compactReceipt] {
++                try expect(surface.frame.width > 0 && surface.frame.height > 0
++                    && viewport.insetBy(dx: -1, dy: -1).contains(surface.frame),
++                    "The first receipt surface stays fully inside the native Today viewport at \(Int(factor * 100)) percent: \(surface.frame) in \(viewport)")
++            }
++            let copyReceipt = try find(hosting, id: CaptureCopyButton.accessibilityIdentifier(for: [zoomReceipt]))
++            let moreReceipt = try find(hosting, id: "capture-more-\(zoomReceipt.id.uuidString)")
++            for action in [copyReceipt, moreReceipt] {
++                try expect(action.isEnabled && action.interactionFrame.width > 0 && action.interactionFrame.height >= 28
++                    && viewport.insetBy(dx: -1, dy: -1).contains(action.interactionFrame),
++                    "Compact receipt \(action.identifier ?? "unknown") remains visible inside the native content width at \(Int(factor * 100)) percent: \(action.interactionFrame) in \(viewport)")
++            }
++            try saveImage(hosting, to: evidence.appendingPathComponent("today-compact-receipt-380x680-zoom-\(Int(factor * 100))-light.png"))
++            let copiesBefore = copiedPayloads.count
++            try expect(copyReceipt.press(), "Compact receipt Copy activates at \(Int(factor * 100)) percent")
++            await settleNavigation()
++            try expect(copiedPayloads.count == copiesBefore + 1 && copiedPayloads.last?.items == [.text(zoomReceiptText)]
++                && state.route == .reminders,
++                "Zoomed Copy writes the full receipt text through the private handler without navigating")
++        }
++        state.workspaceZoom.reset(); await settleNavigation()
++        try expect(state.workspaceZoom.factor == 1, "Today zoom fixture restores 100 percent before subsequent task checks")
+         let addToday = try find(hosting, id: "today-add-task")
+         try expect(addToday.press(), "Today Add supports accessible activation")
+         settle()
+@@ -695,10 +812,11 @@
+         try store.reorderTasks([task, nextTask], on: CaptureCalendar.dayString(Date()))
+         window.setContentSize(NSSize(width: 380, height: 680)); state.showReminders(); settle()
+         for direction in ["up", "down"] {
+-            let action = try find(hosting, id: "today-move-\(direction)-\(task.id.uuidString)")
++            let action = try await scrollControlIntoView(hosting, id: "today-move-\(direction)-\(task.id.uuidString)", window: window)
+             try expect(action.frame.width >= 28 && action.frame.height >= 28, "Task reorder \(direction) has a usable hit target")
+         }
+-        try expect(try find(hosting, id: "today-move-down-\(task.id.uuidString)").press(), "Task reorder works through accessibility")
++        let moveDown = try await scrollControlIntoView(hosting, id: "today-move-down-\(task.id.uuidString)", window: window)
++        try expect(moveDown.press(), "Task reorder works through accessibility")
+         settle()
+         try expect(TaskPlanningPolicy.today(store.captures).filter { $0.projectName == "Client A" }.map(\.id) == [nextTask.id, task.id],
+             "Accessible reorder persists the intended task order")
+@@ -767,18 +885,16 @@
+         let editor = NSHostingView(rootView: WorkspacePlanningHarness(draft: editorDraft))
+         window.contentView = editor; window.setContentSize(NSSize(width: 380, height: 800)); await settleNavigation()
+         try saveImage(editor, to: evidence.appendingPathComponent("checklist-editor-before-validation.png"))
+-        // DisclosureGroup can propagate its AX identifier to descendants on
+-        // macOS. Locate these real controls by their semantic labels instead.
+-        let checklistInput = try findLabeled(editor, label: "Add a small next step")
++        let checklistInput = try findLabeled(editor, label: "Add a next step")
+         try expect(checklistInput.setText(String(repeating: "x", count: 501)), "Checklist input supports accessible editing")
+         settle()
+-        try expect(!(try findLabeled(editor, label: "Add checklist step").isEnabled), "A 501-character step cannot activate Add")
++        try expect(!(try find(editor, id: "task-checklist-add").isEnabled), "A 501-character step cannot activate Add")
+         try expect(nodes(editor).contains { $0.label?.contains("500 characters") == true },
+             "An oversized step explains the 500-character limit")
+         try expect(editorDraft.planning.checklist.count == 1, "Invalid input preserves the existing checklist")
+         try expect(checklistInput.setText("  " + String(repeating: "x", count: 500) + "  "), "Checklist text can be corrected without losing it")
+         settle()
+-        let addStep = try findLabeled(editor, label: "Add checklist step")
++        let addStep = try find(editor, id: "task-checklist-add")
+         try expect(addStep.isEnabled && addStep.press(), "A corrected 500-character step can be added")
+         settle()
+         try expect(editorDraft.planning.checklist.count == 2 && editorDraft.planning.checklist.last?.text.count == 500,
+--- before/native/Tests/NotificationPresentationTests.swift
++++ after/native/Tests/NotificationPresentationTests.swift
+@@ -300,6 +300,13 @@
+         }.value
+         try expect(activation == .success && fixtures.allSatisfy { $0.1.frame.maxX < 0 && !$0.1.isKeyWindow }, "Native message fixtures initialize only own offscreen non-key windows")
+         await settle(views)
++        let reminderNodes = nodes(detail.0)
++        try expect(["reminder-preset-15", "reminder-preset-60", "reminder-preset-tomorrow"].allSatisfy { id in
++            reminderNodes.contains { $0.identifier == id }
++        }, "Actual Detail exposes reminder presets before enabling a reminder")
++        try expect(!draft.reminderEnabled && !draft.reminderChanged
++            && !reminderNodes.contains { $0.identifier == "capture-save-reminder" },
++                   "An unchanged reminder-off pane omits its inactive Apply action")
+         let baseline = try captureData(store.captures), baselineHeight = CornerGeometry.dailyPanelHeight(for: state)
+         try expect(baselineHeight == 380, "An empty selected day has no reserved banner height")
+         let status = AppStatusMessage(text: "Fictional capture saved successfully.", severity: .success)
+--- before/native/DaBin.xcodeproj/project.pbxproj
++++ after/native/DaBin.xcodeproj/project.pbxproj
+@@ -391,6 +391,7 @@
+ 		7AE095FA8A701986457E3EE1 = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Tests/SoftwareUpdateTests.swift"; sourceTree = SOURCE_ROOT; };
+ 		2D2215A16B332D5CAB10EDAA = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Tests/StoreSandboxSmokeTests.swift"; sourceTree = SOURCE_ROOT; };
+ 		BAC8BD606D76BFED04EB8336 = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Tests/TaskFocusTests.swift"; sourceTree = SOURCE_ROOT; };
++		247B2C08D9AE1CC1BF763E26 = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Tests/TaskPlanInteractionTests.swift"; sourceTree = SOURCE_ROOT; };
+ 		EA35E2B56F0A7DB04C84EA37 = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Tests/TaskPlanningTests.swift"; sourceTree = SOURCE_ROOT; };
+ 		44AB7E2EBCE9F14189EBA312 = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Tests/TaskPriorityTagTests.swift"; sourceTree = SOURCE_ROOT; };
+ 		A7BD93102ACB1995301FC1E2 = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Tests/TaskStateTests.swift"; sourceTree = SOURCE_ROOT; };
+@@ -416,7 +417,7 @@
+ 		ED787CB27DF11AF1C21A447E = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Tests/WorkspaceZoomLayoutTests.swift"; sourceTree = SOURCE_ROOT; };
+ 		001FB3E76CD6549F82D67275 = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Tests/WorkspaceZoomPerformanceTests.swift"; sourceTree = SOURCE_ROOT; };
+ 		35653675ABE54B90C772DE53 = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Tests/WorkspaceZoomTests.swift"; sourceTree = SOURCE_ROOT; };
+-		EEDAA1FD6A7DE98D1B3C23A3 = { isa = PBXGroup; children = (D37B9395C2BAF168F977CE9F, 3892457DD311E33CF4B947E1, B162D845B1B09B7D5A9927EE, F387F442D4F735A53C476DF9, DE29B374133655E91F6DA4DD, 45F407D3BFBCEF1FD9C5101B, BF69D90C5422B7FDF42815E2, 364490D22DE25728011F6BE0, 827EC457E365ECF7BF1D9A97, DD4F067E98A3EC72A8465326, B135E2573CA0E6292A2B25A3, 984B3ED14F56C7C3D1085EF5, 9BE8F6E2142E5476A3BAB8CA, 77E9E4C97907236C2B2B6062, 58BEE8B95B329F24761D76BA, 320D010EEEA57DCD005C3960, 25ED891C5EB989B4ABC98DF8, 66F173C59E1C02A8E9FAE338, E8C537597B8E22668B9A50E6, 44411B4FA45EB310C599A68F, 83E5AB381A4614D15D8D316B, A73D32F044EE35BAC03AB176, 539A366B6A2A1B0D179BC52C, 53D10AD1DE47A05D12A05154, 0BB8B80FE822623DFDB8CD35, E67EB6E878C856AA6703257D, 5CE8366C2C9D17DACCF6D2D5, D52617D15C8F154246C2B9E1, F619DFF7DAC9C665668F060C, A23F96C3502240790DE63B75, AFFC1AABE47E2D700344759F, F15C7F5D5B35F003C8803F84, B89855FFAC17DCE8C0CAE82B, 4C8885F36B29BB8644436AA2, 418029BB8B0F4845CC4C2250, FE65F2A4CE8A283651385E4D, 3A9DA91286FC6A2D43FB4C27, 24638A23094DE4806DDD1232, 19E1D1A0CA05AC7DE1BAC4C2, ADDFF98D5B1BEE811E59FF42, 0D0809C56B5ACA984A91426B, 7C1276D2B98B617217D7668B, 423AF5411325BA81ECAA7A3A, B3742657D4A2A8D5AF297D3B, 18C11A9EB7E53CB292F44C04, 5BEBB5E2F38D8EEDB0DF7DC9, EA64930F207053445AA0EEBA, 840201AFBE6C24A4A77C27C3, 0AC9FFD0C882041B5C9ED277, F49E5F1B2954F5E46A5F5AF0, 5FB20F7C4FAAFA72EB0AEEB0, D127F349AB3A25DB9B5BF4D9, F725357FFF9D1AD412FBA4E1, 46957A62F45F121076D0038A, 972D18A796814C9F38BD9DDF, 454C391B844416844072AB81, 6D33CF5D7DEC22399B872820, 6F32809C9172C2A2C43A7031, FF1DE96E5795C7A2F3BC03DF, E033E399AA7CA1055C495C0D, 42FB2CFFF098FB4471ECEF47, 72495E3DEB081918FABBE56A, 30DB62A2986946022E4E4608, 1FEC0C5646CA9C4A68F610FE, 90A652E64EF16770186093A4, B6A8BE12BC2AC70FCC40F15C, C8A57C66D15A418E9130A86D, D2C3619FE097D1FC9EDB55DE, 453C618F5C6A47B14A24D627, 56CCE70744E723A3383CCFA9, 54C84CC1EEA9159951026387, 07D211F14684592AC8331B1B, 5F9BE27E50858C3C2B76ED8A, 3F4FD55022342BB2B90EC1A8, E6A7517123A669D8AD400484, 3577A082E51C898272EE7BE9, 6944064A5B0A67D9E63D9097, 8BFCEA650B26A022775CCC4B, C6966A7FC92FDCC4F49D4911, 500F19E20E8A38C5D2B06F76, 3C68847655C92403543348CD, 33DFF494BE77C45DF008A4BE, 3EC0E96689A631B391C06F4E, EA3EC90D2582CC73CCB13259, 37B0E4873F18478A397A1920, 766D43F53B4B977A7160F930, 3A5AE8E73A9AA6A8B9528792, B1AA2A3C93AE41AF3052CB3E, 0EB0F5F6E42F64A4EA714FF3, 887BA1642EB587193C0C8007, 3CD4DAA3B1D561F4D1D01E4C, 13F16F8809FA7AAF864F0333, 9FADB64B78A667A04959978F, 4062805D80D07D9E42D141CB, 7AE095FA8A701986457E3EE1, 2D2215A16B332D5CAB10EDAA, BAC8BD606D76BFED04EB8336, EA35E2B56F0A7DB04C84EA37, 44AB7E2EBCE9F14189EBA312, A7BD93102ACB1995301FC1E2, D7FBE7BCD3337B305539476B, 0ECCF93C43C4337671045617, 645ED3637EF903F0CC4F93DB, 9A6BF47890D7DAABC1E99083, 5E54D0D6EE86D4144C068DA3, 56213F600FCC3E8F5EF22CC9, E5393357E56E16AF0013F6A3, 5A844D9B8406970181395700, 7A9D7E3EF4DFA09619A423CE, 6D91D609F6C8C71A0E0C96AE, 12603D33346A1F53F9010736, 53AE4AE7CD9F7FF768542C2F, D3A585082A9E07B4E329331B, 0BC1A40F724D2E8D0102A4B3, 14197A639707CF82B3C5D20F, 6AFC1FD762084FF2BFB1D61E, CE1B80D266AD4C417B3A40DE, A26AB387CE70E25F1242E036, 35E1A919C895B7AAF6E81A52, ED787CB27DF11AF1C21A447E, 001FB3E76CD6549F82D67275, 35653675ABE54B90C772DE53,); name = Tests; sourceTree = "<group>"; };
++		EEDAA1FD6A7DE98D1B3C23A3 = { isa = PBXGroup; children = (D37B9395C2BAF168F977CE9F, 3892457DD311E33CF4B947E1, B162D845B1B09B7D5A9927EE, F387F442D4F735A53C476DF9, DE29B374133655E91F6DA4DD, 45F407D3BFBCEF1FD9C5101B, BF69D90C5422B7FDF42815E2, 364490D22DE25728011F6BE0, 827EC457E365ECF7BF1D9A97, DD4F067E98A3EC72A8465326, B135E2573CA0E6292A2B25A3, 984B3ED14F56C7C3D1085EF5, 9BE8F6E2142E5476A3BAB8CA, 77E9E4C97907236C2B2B6062, 58BEE8B95B329F24761D76BA, 320D010EEEA57DCD005C3960, 25ED891C5EB989B4ABC98DF8, 66F173C59E1C02A8E9FAE338, E8C537597B8E22668B9A50E6, 44411B4FA45EB310C599A68F, 83E5AB381A4614D15D8D316B, A73D32F044EE35BAC03AB176, 539A366B6A2A1B0D179BC52C, 53D10AD1DE47A05D12A05154, 0BB8B80FE822623DFDB8CD35, E67EB6E878C856AA6703257D, 5CE8366C2C9D17DACCF6D2D5, D52617D15C8F154246C2B9E1, F619DFF7DAC9C665668F060C, A23F96C3502240790DE63B75, AFFC1AABE47E2D700344759F, F15C7F5D5B35F003C8803F84, B89855FFAC17DCE8C0CAE82B, 4C8885F36B29BB8644436AA2, 418029BB8B0F4845CC4C2250, FE65F2A4CE8A283651385E4D, 3A9DA91286FC6A2D43FB4C27, 24638A23094DE4806DDD1232, 19E1D1A0CA05AC7DE1BAC4C2, ADDFF98D5B1BEE811E59FF42, 0D0809C56B5ACA984A91426B, 7C1276D2B98B617217D7668B, 423AF5411325BA81ECAA7A3A, B3742657D4A2A8D5AF297D3B, 18C11A9EB7E53CB292F44C04, 5BEBB5E2F38D8EEDB0DF7DC9, EA64930F207053445AA0EEBA, 840201AFBE6C24A4A77C27C3, 0AC9FFD0C882041B5C9ED277, F49E5F1B2954F5E46A5F5AF0, 5FB20F7C4FAAFA72EB0AEEB0, D127F349AB3A25DB9B5BF4D9, F725357FFF9D1AD412FBA4E1, 46957A62F45F121076D0038A, 972D18A796814C9F38BD9DDF, 454C391B844416844072AB81, 6D33CF5D7DEC22399B872820, 6F32809C9172C2A2C43A7031, FF1DE96E5795C7A2F3BC03DF, E033E399AA7CA1055C495C0D, 42FB2CFFF098FB4471ECEF47, 72495E3DEB081918FABBE56A, 30DB62A2986946022E4E4608, 1FEC0C5646CA9C4A68F610FE, 90A652E64EF16770186093A4, B6A8BE12BC2AC70FCC40F15C, C8A57C66D15A418E9130A86D, D2C3619FE097D1FC9EDB55DE, 453C618F5C6A47B14A24D627, 56CCE70744E723A3383CCFA9, 54C84CC1EEA9159951026387, 07D211F14684592AC8331B1B, 5F9BE27E50858C3C2B76ED8A, 3F4FD55022342BB2B90EC1A8, E6A7517123A669D8AD400484, 3577A082E51C898272EE7BE9, 6944064A5B0A67D9E63D9097, 8BFCEA650B26A022775CCC4B, C6966A7FC92FDCC4F49D4911, 500F19E20E8A38C5D2B06F76, 3C68847655C92403543348CD, 33DFF494BE77C45DF008A4BE, 3EC0E96689A631B391C06F4E, EA3EC90D2582CC73CCB13259, 37B0E4873F18478A397A1920, 766D43F53B4B977A7160F930, 3A5AE8E73A9AA6A8B9528792, B1AA2A3C93AE41AF3052CB3E, 0EB0F5F6E42F64A4EA714FF3, 887BA1642EB587193C0C8007, 3CD4DAA3B1D561F4D1D01E4C, 13F16F8809FA7AAF864F0333, 9FADB64B78A667A04959978F, 4062805D80D07D9E42D141CB, 7AE095FA8A701986457E3EE1, 2D2215A16B332D5CAB10EDAA, BAC8BD606D76BFED04EB8336, 247B2C08D9AE1CC1BF763E26, EA35E2B56F0A7DB04C84EA37, 44AB7E2EBCE9F14189EBA312, A7BD93102ACB1995301FC1E2, D7FBE7BCD3337B305539476B, 0ECCF93C43C4337671045617, 645ED3637EF903F0CC4F93DB, 9A6BF47890D7DAABC1E99083, 5E54D0D6EE86D4144C068DA3, 56213F600FCC3E8F5EF22CC9, E5393357E56E16AF0013F6A3, 5A844D9B8406970181395700, 7A9D7E3EF4DFA09619A423CE, 6D91D609F6C8C71A0E0C96AE, 12603D33346A1F53F9010736, 53AE4AE7CD9F7FF768542C2F, D3A585082A9E07B4E329331B, 0BC1A40F724D2E8D0102A4B3, 14197A639707CF82B3C5D20F, 6AFC1FD762084FF2BFB1D61E, CE1B80D266AD4C417B3A40DE, A26AB387CE70E25F1242E036, 35E1A919C895B7AAF6E81A52, ED787CB27DF11AF1C21A447E, 001FB3E76CD6549F82D67275, 35653675ABE54B90C772DE53,); name = Tests; sourceTree = "<group>"; };
+ 		0D6E4079E36703EBD37C0072 = { isa = PBXGroup; children = (C230D44FE4F353089DF40A6C, 675DF48933E0D23E699B56D3, EEDAA1FD6A7DE98D1B3C23A3, 0A3E27B8CA818264D75C8D81,); sourceTree = "<group>"; };
+ 		878A52FC5FF6A57D50B7B870 = { isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (27F16A7E21F49C0A8C1D0AFD, 2D4543B63F78FDAB42569305, 9ADDE54145B42B069C269D9F, 0A20A065ECA410B6962A2A6F, 715472BC35B358F9FEEE6ADA, E25DF396AD5F0A46E16C5FE2, E0A98B51EBF03AFC167FBCF9, E0EFA92097DB41A62C22C3BC, 38A3B153486A9333F83BD0A3, CBE8533E9EE102BBFC0BAB3F, 1D6CE446F979E2DA7243D77F, E3D293C6DC2AB2CABF88530B, 6AC7E6D7E4C93C92AC8FBCFF, D317519EA30D84E0AA8C103A, 90920C8A59353D67E8CE05FB, 03730DA2615C5BD05B5022B8, 78E359F452C83D0FC8A94B80, D76088E81DE5502EF93C1EE4, 4FC6DF1462487945F93B1FF5, 8C8228C17E27A698D0714203, EEAC0A32D96A275BEBA9A8AB, F3D318FF67397BC624D43CE2, B2D0554087C5D3490C0D7471, 492FC33FD3E903D9387A5DEE, 0A17557074E6107E6F23BBA1, 415CCB431065BA09639F7F4D, CFDA913BAB3C49662F74600B, 1AF4908921EB2E99CCBFBAAE, EC2F3C2470FB8178BF855701, 05623ACB260F2266DA24ACA1, 1A58441E8ED23D983F400617, AE1F26084D014784BE3083C7, BBE13D2B96D526F8B83959E0, D91C02AFD0301E06FEF13070, B21E75929B9249D7690EB2A9, DB8AD4D2558FE78D1491812F, 453169A4E923B74AD08D60A4, DB6117076596A5BE3C9F024A, 1D17B639279CEA42B61AAED2, 3961A5A57A9B3ADAB9E1C3D6, 889CCBD73B08828EEB8B5AF4, 863B3CE18F20B6F8E94A4A96, FBB7A593ACA3C3CE2753C43D, D3EDC45E99545E2318516CD4, A900A45D765D88FF238D12C3, 31110333D12800F3F5D8D319, 74E8C4844D8A8EA16B2D565C, 32F8429555C3A976F3B2670A, 544A3A18198BCAB5A28C020A, 01377977BB83536D92AC3C53, 77A980DDC0A59BB9933FAC48, 1EE7846E91F821F556DA4D9F, BEF12C69F9B0AF88267A2246, FF014DD418A13B1A22AEF724, A1390080ED3F61BDD6242751, 22D023A0334CB168D08BAD85, C490C5547C2189796900C67E, 49A30595F59E55E5095DD2C5, FC0E13AEDC4410E16C0FF0DD, 06751506ADA836AB9CBF20EF, F0F581E647CD39F004FF9A19, 06DD175ED5F066DDA84A7DEB, 13216C3DBBBB9F85370AAC16, F3208350A9DBA38E12D410A5, B2DAD47517CC6804771D5626, 658254DC98ADC33A92B3710E, 405D1ED3B71734CF13F0FE94, D57EDEC30DCFC9844F07B568, EA7922B8C785F615D2E5404A, EB6029CD22E8A1A8E12B0B1B, 06D7D1C90081887C4C6DA4D3, 4E4583BFEA01C6865C97607C, 35A847044729373988E39D3C, 05EAD435C05C9CD3376FE311, 11AF367217AE4697BFE34C0F, 86E8133B5BE24112E2F1775D, AC15F7E1D454CADBC73E5D8E, 66706642BCEF22C5153C4269, B45B9EDAB1E1595FD040E13C, B6BD8D0410B8B22AE237E38E, A5BE1F80D09D49D5ED0F8F0D, EEF1F778C5FEE49441B74751, A990FD0FF80878B7297C89D1, 4A2261FA8570370F9F66AA25, E97E69C37A6B3ACC97E0DB5F, ACDDEA692E6CC6DFB2207382, BB6F4CA5CEAD485463B205BF, EBB613346544926C273A84B1, DE169A7D7A46C019537A7178, 2B13408C5F4658B8643E2FDC, A97BD36AD6F1D51496C23A12, 3F44892BD20365533C3EDBA3, EAE06266C823F8FA07521419, 12EDCC2F60752821FD92045E, 6CE7E03CE145D19F65C3C5E2, E254A18F810F2AC3C7060EF3, 2A091D660463F2AF3B91DCA0, 202B55FBEA216EC579FD0F52, ECDF9E55B556975CB26FF94C, 612E8F7655B99C13470987EA, FF71EEAC01CED2426EBF740E, 2209DAE17B387038A3C9FAEE, B151428FA8109B1D4ED8791B, 383810A74B41E45BB1AA73D1, 44F7872F49F90A0A68BE5DA6, A2411B175FBDF4CB47FCFF30, 1CDA2821477ECB04BA25973E, F4915E82B45F7C0362E61A32, F7614C28002A87AD3A2067BA, 9DD21E60155AB8CF8B9534FC, CFB7D51B9549C8E72A3BEEFC, F721F9CB2A607F8755096D63, 5EE799235488DA905FE6862E, CA998C3E2D03197022856069, A978A18C43F8DD0339E86A19, 8EFD9DF5842DEABE978DDC0C, 7BF83985E5BF5EA12410FA89, FE63397917B148EE51AC1B45, 66DC43C780A9B4A42FEC1CCD, 5F4A001EB64F683E29D8CA29, 5B8DA74F718D63F828650705, 7F6A6D1B34D87F16782561BA, 1FC964964FF67C1B68988062, CD9E06655BB118053CDFDB4B, 8C5E64353477097F5E8C1697, 4B4B93DD99A0D16EA2886E3E, A44A071F4CD05E283AC10603, 02B909B2F81D5CA43B081455, 7EBC66D857916920B6E5BFB0, E02FAF4B9D5202ACB4913397, A01ACE31FAA0FC4E6921FBCE, 742E9981F87FE7A83F88ADD0, 020E561A078FB70318AB2500, 0BC24D1EE6230AF23A37A678, EC854D1DC6FC104BA371E4A5, EE7EF65D39E746E862F54B42, EB77EA0EBE394B2860211056,); runOnlyForDeploymentPostprocessing = 0; };
+ 		41D311A605520FC7B8B9A980 = { isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (5A3525FB6931C46507CD84B4, D04AF157FB143F17000DA183, 1EF2FDA037B32BB28746FB31, AB064F911C74AA51F0FB935B,); runOnlyForDeploymentPostprocessing = 0; };

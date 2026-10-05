@@ -1,0 +1,27 @@
+{
+  "files": {
+    "native/Sources/DaBin/AppState.swift": "232d0cae0e42d243ef952abf600d6a9b54e40614de4a505ccd19ce9384171408",
+    "native/Sources/DaBin/BoardView.swift": "51b4c975335aa61dfdeb518714183f8dd40b3809cf36db376faec81da33786c9",
+    "native/Sources/DaBin/CaptureCards.swift": "5f724df745fc77db294cfdbfe6dc9e62b454d53261e2ec90f205c1e2e8c10660",
+    "native/Sources/DaBin/CaptureDetailPanels.swift": "a73674fa8cba968f3c7d427f3f6de640bce695c5866dda3968d21a9c2b0d1771",
+    "native/Sources/DaBin/CornerController.swift": "ab2d411780e13a60160493b05d6db7dbf026a74e1952f18d9088a6f832656e97",
+    "native/Sources/DaBin/DailyCaptureView.swift": "f46a663f75c87a4f49cce1d22def9814c4817e2eca6fc3976afa44b9b20c3561",
+    "native/Sources/DaBin/DetailScreen.swift": "9d7bb9c25d50d633cdea2e9f3d4451c117df36f0e127ca4cbae3f4bac64cbcb0",
+    "native/Sources/DaBin/ReminderClockEditor.swift": "c094d6526cf5bdac09ba5b12e85e389f98458e9133b81b29ba9635786199a6fc",
+    "native/Sources/DaBin/TaskEditorScreen.swift": "cb74a3a870fb2836553ba772ea6c90c1f7826caf7c480569a6c0c6c10a6b42e4",
+    "native/Sources/DaBin/TaskFocusControls.swift": "45f4e53d72a22b30c6b200c79683a96806b21c2bfce95b5f4a2bb2df6f5ecd2f",
+    "native/Sources/DaBin/TaskPlanningEditor.swift": "4435e0c679c921157b1b4e92a0bfa3d89c19c632b11416f0e26f3708931ce1af",
+    "native/Sources/DaBin/TodayPlanningScreen.swift": "d7f58a5fce478283eae8cc57d02b688c05676d274ba160f488077cb442b8a27a",
+    "native/scripts/run_qa.py": "03870aefba47f741785aae077731f4d5dd393dd21c271c1e5a58f64ad10ffe4c",
+    "native/Tests/DailyCaptureTests.swift": "2211ceee7ec0f688252cdf4483d98c07536801737801a5ffdb87b3388259bbb1",
+    "native/Tests/WorkInboxTests.swift": "8a5635e6624095e76e327ced4794110282d464b7a28e81e7ca230b32f3aa5d9d",
+    "native/Tests/WorkspaceWindowTests.swift": "984c35cff047792a8aa0857225fa029a389583949387b027b66848d0677a62d8",
+    "native/Tests/NotificationPresentationTests.swift": "89e966ba501908129582211328c7dbfacc19d25de3107406e0fee628e06b415c",
+    "native/DaBin.xcodeproj/project.pbxproj": "8252446b29aa8ba3b879cdbd5808e76d6fd8c02f62c7ec4cd307e8fffcfa5732",
+    "native/Tests/TaskPlanInteractionTests.swift": "e17c916977e7685a930ccd1e9e728ab4c344e036d56e30d9af96232743e23f6c"
+  },
+  "sourceFingerprint": "d4dcadc575a98e4e0b273171bfc6c3abd503428db3bd9d7604affe02ef602510",
+  "backup": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/task-redesign-integration-backup",
+  "nativeReport": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/today-task-redesign-2026-10-05/verification.json",
+  "preservedConcurrentBaseline": true
+}

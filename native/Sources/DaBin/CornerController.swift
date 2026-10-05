@@ -264,25 +264,6 @@ enum CornerGeometry {
         return leftRoom > rightRoom ? .left : .right
     }
 
-    static func weeklyPanelFrame(compact: NSRect, visible: NSRect, direction: WeeklyExpansionDirection,
-                                 activeDayCount: Int = 7, preferredHeight: CGFloat = 560) -> NSRect {
-        let count = min(7, max(0, activeDayCount))
-        let preferredWidth: CGFloat
-        if count == 0 {
-            preferredWidth = 400
-        } else if count == 7 {
-            preferredWidth = 1460
-        } else {
-            preferredWidth = max(400, 52 + CGFloat(count) * 194 + CGFloat(count - 1) * 8)
-        }
-        let width = min(preferredWidth, max(0, visible.width - 16))
-        let height = min(preferredHeight, max(0, visible.height - 16))
-        let x = direction == .left ? compact.maxX - width : compact.minX
-        return NSRect(x: min(max(x, visible.minX), visible.maxX - width),
-                      y: min(max(compact.maxY - height, visible.minY), visible.maxY - height),
-                      width: width, height: height)
-    }
-
     static func compactTopLeft(weeklyFrame: NSRect, compactWidth: CGFloat, direction: WeeklyExpansionDirection) -> NSPoint {
         NSPoint(x: direction == .left ? weeklyFrame.maxX - compactWidth : weeklyFrame.minX,
                 y: weeklyFrame.maxY)
@@ -379,6 +360,9 @@ final class CornerController: NSObject {
     private var workspaceZoomChangedGeometry = false
     private var workspaceZoomOwnsNormalSize = false
     private var frameBeforeExpansion: NSRect?
+    /// Week automatically borrows the expanded presentation. Other routes
+    /// retain their normal geometry when that temporary presentation ends.
+    private var expansionBelongsToWeek = false
     private var workingApplication: NSRunningApplication?
     private var applyingBoardFrame = false
     private var lastAppliedBoardFrame: NSRect?
@@ -387,12 +371,11 @@ final class CornerController: NSObject {
     private var lastLayoutFilter: CaptureFilter?
     private var weeklyDirection: WeeklyExpansionDirection?
     /// A Week stretch is temporary and must not replace the user's normal
-    /// window size. Choosing other dates or changing the populated day set
-    /// restores content fitting; filtering cards keeps the chosen geometry.
+    /// window size. Choosing other dates reopens full view; changing captures
+    /// or filtering cards keeps the chosen geometry.
     private var weeklyUserSize: CGSize?
     private struct WeeklyLayoutKey: Equatable {
         let selectedDays: [Date]
-        let populatedDays: [Date]
     }
     private var lastWeeklyLayoutKey: WeeklyLayoutKey?
     private var boardFrameAnimation: Timer?
@@ -937,16 +920,18 @@ final class CornerController: NSObject {
             target = BoardResizeGeometry.fitted(previous, visible: screen.visibleFrame,
                                                 minimum: userBoardSize == nil ? .zero : nil)
             frameBeforeExpansion = nil
+            expansionBelongsToWeek = false
             // Automatic layouts retain their compact anchor, even when the
             // route changed while expanded from a left-opening Week.
-            if state.route == .weekly && !workspaceZoomOwnsNormalSize {
-                if weeklyUserSize != nil { weeklyUserSize = target.size }
+            if state.route == .weekly {
+                weeklyUserSize = target.size
             } else if userBoardSize != nil {
                 userBoardSize = target.size
                 boardTopLeft = NSPoint(x: target.minX, y: target.maxY)
             }
         } else {
             frameBeforeExpansion = board.frame
+            expansionBelongsToWeek = state.route == .weekly
             target = screen.visibleFrame
         }
         setBoardFrame(target)
@@ -962,12 +947,15 @@ final class CornerController: NSObject {
         boardIsResizing = true
         updateNavigationInteractionState()
         frameBeforeExpansion = nil
+        expansionBelongsToWeek = false
     }
 
     func resizeBoardFromUser(to frame: NSRect) {
         guard !isShutDown, board.isVisible, let screen = boardScreen() else { return }
         let fitted = BoardResizeGeometry.fitted(frame, visible: screen.visibleFrame)
-        if state.route == .weekly && !workspaceZoomOwnsNormalSize {
+        frameBeforeExpansion = nil
+        expansionBelongsToWeek = false
+        if state.route == .weekly {
             weeklyUserSize = fitted.size
             let normalWidth = normalBoardFrame(on: screen).width
             boardTopLeft = CornerGeometry.compactTopLeft(weeklyFrame: fitted, compactWidth: normalWidth,
@@ -1008,10 +996,15 @@ final class CornerController: NSObject {
               let screen = boardScreen(),
               let frame = workspaceZoomGeometry?.frame(at: factor, visible: screen.visibleFrame) else { return }
         workspaceZoomChangedGeometry = true
-        workspaceZoomOwnsNormalSize = true
-        userBoardSize = frame.size
-        weeklyUserSize = nil
-        boardTopLeft = CGPoint(x: frame.minX, y: frame.maxY)
+        if state.route == .weekly {
+            weeklyUserSize = frame.size
+            boardTopLeft = CornerGeometry.compactTopLeft(weeklyFrame: frame,
+                compactWidth: normalBoardFrame(on: screen).width, direction: weeklyDirection ?? .right)
+        } else {
+            workspaceZoomOwnsNormalSize = true
+            userBoardSize = frame.size
+            boardTopLeft = CGPoint(x: frame.minX, y: frame.maxY)
+        }
         activeScreen = screen
         setBoardFrame(frame)
     }
@@ -1021,6 +1014,10 @@ final class CornerController: NSObject {
         state.workspaceZoom.anchorInWindow = nil
         guard workspaceZoomChangedGeometry else { return }
         workspaceZoomChangedGeometry = false
+        if state.route == .weekly {
+            rememberBoardPosition()
+            return
+        }
         persistBoardSize()
         placementDefaults?.set(true, forKey: Self.boardZoomSizeKey)
         if let point = boardTopLeft {
@@ -1233,7 +1230,7 @@ final class CornerController: NSObject {
         case .newTask: return (state.newTaskDraft.reminderEnabled ? 500 : 440) + extra
         case .settings: return 620
         case .reminders:
-            let count = state.followUpCaptures.count
+            let count = state.currentTodayCaptures.count + state.followUpCaptures.count
             return count == 0 ? 380 + extra : min(560, max(450, 220 + CGFloat(count) * 170 + extra))
         }
     }
@@ -1309,38 +1306,51 @@ final class CornerController: NSObject {
     private func layoutBoard(on screen: NSScreen) {
         let previousRoute = lastLayoutRoute
         let previousFilter = lastLayoutFilter
-        let weeklyKey = WeeklyLayoutKey(selectedDays: state.weeklyDays, populatedDays: state.weeklyVisibleDays)
+        let weeklyKey = WeeklyLayoutKey(selectedDays: state.weeklyDays)
         let weeklyDaysChanged = state.route == .weekly && lastWeeklyLayoutKey != weeklyKey
         let enteringWeek = state.route == .weekly && (previousRoute == .daily || previousRoute == .inbox)
         if weeklyDaysChanged || enteringWeek { weeklyUserSize = nil }
-        let frame: NSRect
-        if frameBeforeExpansion != nil {
-            frame = screen.visibleFrame
-        } else if workspaceZoomOwnsNormalSize {
-            // A coupled zoom is an explicit normal size shared by workspace
-            // routes, including Week. Automatic date changes cannot undo it.
-            frame = normalBoardFrame(on: screen)
-        } else if state.route == .weekly {
+        if expansionBelongsToWeek && state.route != .weekly {
+            frameBeforeExpansion = nil
+            expansionBelongsToWeek = false
+        }
+        if state.route == .weekly {
             if weeklyDirection == nil || enteringWeek {
-                // A rapid re-open uses the intended compact endpoint rather
-                // than adopting an intermediate animation frame as placement.
-                let compact = boardAnimationTarget ?? (board.isVisible ? board.frame : normalBoardFrame(on: screen))
-                // Remember the compact header in memory, without treating a
-                // programmatic expansion as a user placement preference.
+                // A rapid re-open uses the compact animation endpoint. A
+                // manually expanded Daily already has its own Restore frame.
+                let compact = frameBeforeExpansion ?? boardAnimationTarget
+                    ?? (board.isVisible ? board.frame : normalBoardFrame(on: screen))
                 boardTopLeft = NSPoint(x: compact.minX, y: compact.maxY)
                 weeklyDirection = CornerGeometry.weeklyExpansionDirection(compact: compact, visible: screen.visibleFrame)
             }
             let direction = weeklyDirection ?? .right
             if state.weeklyExpansionDirection != direction { state.weeklyExpansionDirection = direction }
+            if frameBeforeExpansion == nil && weeklyUserSize == nil {
+                // Fill this display's safe area, using the same presentation
+                // as Expand. Keep the compact size and anchor off disk.
+                frameBeforeExpansion = enteringWeek
+                    ? (boardAnimationTarget ?? (board.isVisible ? board.frame : normalBoardFrame(on: screen)))
+                    : normalBoardFrame(on: screen)
+                expansionBelongsToWeek = true
+            }
+        }
+        let frame: NSRect
+        if frameBeforeExpansion != nil {
+            frame = screen.visibleFrame
+        } else if workspaceZoomOwnsNormalSize && state.route != .weekly {
+            // A coupled zoom remains the normal size beneath Week's
+            // temporary full view.
+            frame = normalBoardFrame(on: screen)
+        } else if state.route == .weekly {
+            let direction = weeklyDirection ?? .right
             let normal = normalBoardFrame(on: screen)
             if let weeklyUserSize {
                 let x = direction == .left ? normal.maxX - weeklyUserSize.width : normal.minX
                 frame = BoardResizeGeometry.fitted(NSRect(x: x, y: normal.maxY - weeklyUserSize.height,
-                    width: weeklyUserSize.width, height: weeklyUserSize.height), visible: screen.visibleFrame)
+                    width: weeklyUserSize.width, height: weeklyUserSize.height), visible: screen.visibleFrame,
+                    minimum: userBoardSize == nil ? .zero : nil)
             } else {
-                frame = CornerGeometry.weeklyPanelFrame(compact: normal, visible: screen.visibleFrame,
-                    direction: direction, activeDayCount: state.weeklyVisibleDays.count,
-                    preferredHeight: userBoardSize?.height ?? boardHeight)
+                frame = screen.visibleFrame
             }
         } else {
             frame = normalBoardFrame(on: screen)
@@ -1432,8 +1442,9 @@ final class CornerController: NSObject {
             restored = BoardResizeGeometry.fitted(restored, visible: screen.visibleFrame,
                                                    minimum: userBoardSize == nil ? .zero : nil)
             frameBeforeExpansion = nil
-            if state.route == .weekly && !workspaceZoomOwnsNormalSize {
-                if weeklyUserSize != nil { weeklyUserSize = restored.size }
+            expansionBelongsToWeek = false
+            if state.route == .weekly {
+                weeklyUserSize = restored.size
             } else if userBoardSize != nil { userBoardSize = restored.size }
             setBoardFrame(restored)
             rebaseWorkspaceZoom()
@@ -1503,7 +1514,7 @@ final class CornerController: NSObject {
     private func rememberBoardPosition(persist: Bool = true) {
         guard frameBeforeExpansion == nil else { return }
         let point: NSPoint
-        if lastLayoutRoute == .weekly, !workspaceZoomOwnsNormalSize, let direction = weeklyDirection {
+        if lastLayoutRoute == .weekly, let direction = weeklyDirection {
             let visible = NSScreen.screens.first { $0.frame.contains(NSPoint(x: board.frame.midX, y: board.frame.maxY - 20)) }
                 ?? boardScreen()
             let compactWidth = visible.map { normalBoardFrame(on: $0).width } ?? 400
@@ -1586,15 +1597,20 @@ final class CornerController: NSObject {
         if state.route == .inbox || (state.route == .library && state.workspace.mode == .collection) {
             state.pasteClipboard(from: pasteboard); return
         }
-        guard state.route == .daily else { return }
+        guard state.route == .daily || state.route == .reminders else { return }
+        let captureRoute = state.route
         let navigationRevision = state.captureNavigationRevision
         input.receive(pasteboard, completion: { [weak self] captures, _ in
             // Reveal a successful capture on its receipt day, even if the
             // board was showing an older date or an incompatible filter.
             // A slow import must never pull the user out of a later action.
             guard let self, let first = captures.first, self.board.isVisible,
-                  self.state.route == .daily,
+                  self.state.route == captureRoute,
                   self.state.captureNavigationRevision == navigationRevision else { return }
+            if captureRoute == .reminders {
+                self.state.refreshCurrentDay()
+                return
+            }
             self.state.openDaily()
             self.state.selectedDay = first.capturedAt
             self.state.dailyScrollID = self.state.feedID(for: first, on: self.state.selectedDay)

@@ -1,0 +1,21 @@
+2026-10-05 03:28:01.436 ProjectWorkspaceViewTests[68525:26408385] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future.
+2026-10-05 03:28:09.043 ProjectWorkspaceViewTests[68525:26408385] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future.
+2026-10-05 03:28:11.746 ProjectWorkspaceViewTests[68525:26408385] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future.
+2026-10-05 03:28:12.117 ProjectWorkspaceViewTests[68525:26408385] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future.
+2026-10-05 03:28:13.216 ProjectWorkspaceViewTests[68525:26408385] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future.
+ROWS: project grid logical=334, materialized=25
+FIXTURE: /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa/project-workspace-view/F0AA8DC7-0CDC-4BF3-B684-08C98FEC43FA/project-grid-wide@2x.png
+FIXTURE: /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa/project-workspace-view/F0AA8DC7-0CDC-4BF3-B684-08C98FEC43FA/project-selected-narrow@2x.png
+ROWS: project grid logical=501, materialized=3
+ROWS: project grid logical=1002, materialized=3
+ROWS: project grid logical=1002, materialized=3
+FIXTURE: /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa/project-workspace-view/F0AA8DC7-0CDC-4BF3-B684-08C98FEC43FA/project-grid-narrow@2x.png
+ROWS: project grid logical=334, materialized=3
+ROWS: project grid logical=1002, materialized=8
+ROWS: project grid logical=334, materialized=3
+ROWS: project grid logical=335, materialized=3
+ROWS: project grid logical=335, materialized=3
+ROWS: project grid logical=335, materialized=3
+ROWS: project grid logical=336, materialized=4
+ROWS: project grid logical=336, materialized=4
+PASS: 209 project workspace UI checks; 1,000 synthetic text captures plus image and editable project note; native mixed-selection drag payloads on a private pasteboard; no personal archive, network, general clipboard or external opening. At most 25 simultaneously materialized native rows.

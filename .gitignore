@@ -23,3 +23,6 @@ tmp/
 .work/
 .build/
 *.blend1
+
+# Keep the original tester-account screenshot local.
+docs/qa/testflight-0.4.31-2026-10-04/internal-tester-invited.jpg

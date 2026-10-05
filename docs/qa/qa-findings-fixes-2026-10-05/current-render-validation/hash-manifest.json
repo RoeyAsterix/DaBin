@@ -1,0 +1,954 @@
+{
+  "schemaVersion": 1,
+  "createdAtUTC": "2026-10-05T03:47:21.698229+00:00",
+  "scope": "Raw copies from current sole-root native campaign only; source mtime >= run start and current suite PASS log required. Older historical certification evidence untouched. No native inputs edited, GUI launched or heavy compute.",
+  "runID": "20261005T033354460853Z-app-store",
+  "minimumSourceMtimeUTC": "2026-10-05T03:33:54.460853Z",
+  "currentFullReport": {
+    "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa/runs/20261005T033354460853Z-app-store/report.json",
+    "copiedRawPath": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/full-campaign-report.json",
+    "sha256": "67aeb58ad2c843b33fdb73709f15e7a48eef327f0edd706260cf1715a92150c6",
+    "status": "failed",
+    "coverage": "full_registered_suite",
+    "passedSuites": 120,
+    "requestedSuites": 121,
+    "failedSuites": 1,
+    "failedSuiteNames": [
+      "WorkspaceZoomPerformanceTests"
+    ],
+    "sourceChangedDuringRun": false,
+    "sourceFingerprint": "206badd60f8e8639b925fb4f0f4f69168c23245e91b46364d51bf57757d9e293",
+    "startedAtUTC": "2026-10-05T03:33:54.460853+00:00",
+    "finishedAtUTC": "2026-10-05T03:53:14.521439+00:00",
+    "scope": "Title and relevant flow/graphics suites passed; the full campaign failed its unchanged zoom performance budget. This is not a global all-findings-fixed claim."
+  },
+  "suites": [
+    {
+      "suite": "CaptureDetailReadabilityTests",
+      "status": "passed",
+      "checks": 599,
+      "panelFixtureContexts": 27,
+      "pngCount": 48,
+      "rawArtifactCount": 49,
+      "currentLog": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa/runs/20261005T033354460853Z-app-store/CaptureDetailReadabilityTests.log",
+      "copiedLog": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/logs/CaptureDetailReadabilityTests.log",
+      "logSHA256": "c4108d5e2a36ee3fbb9aa117b26904752e29a12d994fbec8f0349dae47079c84",
+      "sourceOutputDirectory": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/capture-detail-fix-2026-10-04",
+      "copiedOutputDirectory": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/readability",
+      "reportName": "native-readability-report.json",
+      "reportSHA256": "d10bac314684b43fbf2c12316422773bdf65bbbc3c4f303a4dc24d5b0f4c52ce",
+      "nativeTestSource": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Tests/CaptureDetailReadabilityTests.swift",
+      "nativeTestSourceSHA256": "7d04f1f6a797b4bfb908283b31c46015c96894f376649c7799f8d1d9c68a893e",
+      "fullCampaignSuiteReceipt": {
+        "compile": {
+          "cached": false,
+          "exitCode": 0,
+          "log": "build/qa/runs/20261005T033354460853Z-app-store/CaptureDetailReadabilityTests-compile.log",
+          "seconds": 2.575,
+          "status": "passed"
+        },
+        "exitCode": 0,
+        "log": "build/qa/runs/20261005T033354460853Z-app-store/CaptureDetailReadabilityTests.log",
+        "name": "CaptureDetailReadabilityTests",
+        "reportedSummary": "PASS: 599 capture-detail readability and labeled-action checks; 27 native panel fixtures. Renders: /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/capture-detail-fix-2026-10-04",
+        "requiresWindowFocus": true,
+        "seconds": 50.379,
+        "status": "passed"
+      }
+    },
+    {
+      "suite": "CaptureDetailNavigationTests",
+      "status": "passed",
+      "checks": 995,
+      "panelFixtureContexts": 11,
+      "pngCount": 22,
+      "rawArtifactCount": 23,
+      "currentLog": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa/runs/20261005T033354460853Z-app-store/CaptureDetailNavigationTests.log",
+      "copiedLog": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/logs/CaptureDetailNavigationTests.log",
+      "logSHA256": "7a2fdde88d229f08bed03eb7cb9a249a5d0ecdd505a636a7c4febb51b13a6886",
+      "sourceOutputDirectory": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/capture-detail-redesign-2026-10-04/navigation",
+      "copiedOutputDirectory": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/navigation",
+      "reportName": "native-navigation-report.json",
+      "reportSHA256": "07dcab6f2279b5eea37e62a7a5d5a9dee7c6d57374fde92940def8cb3135d075",
+      "nativeTestSource": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Tests/CaptureDetailNavigationTests.swift",
+      "nativeTestSourceSHA256": "43aea99cb4a23f5b30ada7ac56e8e8b71e36a9c4e363c65f58e25eb136ee8db0",
+      "fullCampaignSuiteReceipt": {
+        "compile": {
+          "cached": false,
+          "exitCode": 0,
+          "log": "build/qa/runs/20261005T033354460853Z-app-store/CaptureDetailNavigationTests-compile.log",
+          "seconds": 3.107,
+          "status": "passed"
+        },
+        "exitCode": 0,
+        "log": "build/qa/runs/20261005T033354460853Z-app-store/CaptureDetailNavigationTests.log",
+        "name": "CaptureDetailNavigationTests",
+        "reportedSummary": "PASS: 995 capture-detail navigation, fixed-control, draft-resumption and action checks; renders: /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/capture-detail-redesign-2026-10-04/navigation",
+        "requiresWindowFocus": true,
+        "seconds": 44.931,
+        "status": "passed"
+      }
+    },
+    {
+      "suite": "TaskPlanInteractionTests",
+      "status": "passed",
+      "checks": 379,
+      "panelFixtureContexts": 7,
+      "pngCount": 23,
+      "rawArtifactCount": 29,
+      "currentLog": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa/runs/20261005T033354460853Z-app-store/TaskPlanInteractionTests.log",
+      "copiedLog": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/logs/TaskPlanInteractionTests.log",
+      "logSHA256": "28f09c08ab69ef7fcde779d0596a2d1e1643b03368cd00dfc47ca49a9efb849e",
+      "sourceOutputDirectory": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/task-plan-redesign-2026-10-05/native",
+      "copiedOutputDirectory": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/task-plan",
+      "reportName": "native-task-plan-report.json",
+      "reportSHA256": "ad078f610bc8395635079e0059a4a7aa0879ee4b9c7833e4ad841e6743f97b06",
+      "nativeTestSource": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Tests/TaskPlanInteractionTests.swift",
+      "nativeTestSourceSHA256": "42b523a232c2e2dc8bf42551d4c74d0362b2a7f9a3139b75c0e40c0f09afd21c",
+      "fullCampaignSuiteReceipt": {
+        "compile": {
+          "cached": false,
+          "exitCode": 0,
+          "log": "build/qa/runs/20261005T033354460853Z-app-store/TaskPlanInteractionTests-compile.log",
+          "seconds": 4.106,
+          "status": "passed"
+        },
+        "exitCode": 0,
+        "log": "build/qa/runs/20261005T033354460853Z-app-store/TaskPlanInteractionTests.log",
+        "name": "TaskPlanInteractionTests",
+        "reportedSummary": "PASS: 379 native task-plan/checklist/reminder binding, focus, persistence, validation and responsive checks; renders: /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/task-plan-redesign-2026-10-05/native",
+        "requiresWindowFocus": true,
+        "seconds": 25.008,
+        "status": "passed"
+      }
+    }
+  ],
+  "files": [
+    {
+      "suite": "CaptureDetailReadabilityTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/capture-detail-fix-2026-10-04/continuous-1200-zoom100-light@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/readability/continuous-1200-zoom100-light@2x.png",
+      "sha256": "6d21b3101eaaf6a7c9730942140767a867f9a1f5c1a018f06c24082b6f10f8ca",
+      "bytes": 268601,
+      "sourceMtimeUTC": "2026-10-05T03:43:46.799489+00:00"
+    },
+    {
+      "suite": "CaptureDetailReadabilityTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/capture-detail-fix-2026-10-04/continuous-1200-zoom200-dark@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/readability/continuous-1200-zoom200-dark@2x.png",
+      "sha256": "f1ee30603cc7c0f8b2f1f8a5bcbd8240dad6a9b01917fa098fe2ffdc7e79f8b3",
+      "bytes": 275560,
+      "sourceMtimeUTC": "2026-10-05T03:43:48.308439+00:00"
+    },
+    {
+      "suite": "CaptureDetailReadabilityTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/capture-detail-fix-2026-10-04/continuous-380-zoom100-light@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/readability/continuous-380-zoom100-light@2x.png",
+      "sha256": "3cedf39f96379674c429a91b1dcae22f1b5c6d0788443308a7980152eb186951",
+      "bytes": 128229,
+      "sourceMtimeUTC": "2026-10-05T03:43:46.454683+00:00"
+    },
+    {
+      "suite": "CaptureDetailReadabilityTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/capture-detail-fix-2026-10-04/continuous-380-zoom200-dark@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/readability/continuous-380-zoom200-dark@2x.png",
+      "sha256": "3de97bd769302847d390e08588a72a78027405332f805a651d066511dff264c6",
+      "bytes": 124711,
+      "sourceMtimeUTC": "2026-10-05T03:43:47.969394+00:00"
+    },
+    {
+      "suite": "CaptureDetailReadabilityTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/capture-detail-fix-2026-10-04/continuous-600-zoom100-light@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/readability/continuous-600-zoom100-light@2x.png",
+      "sha256": "551d40076d507cf593ba8262ebbc47859d35557aa344228b3d5bc64becb28ae7",
+      "bytes": 157902,
+      "sourceMtimeUTC": "2026-10-05T03:43:47.128434+00:00"
+    },
+    {
+      "suite": "CaptureDetailReadabilityTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/capture-detail-fix-2026-10-04/continuous-600-zoom200-dark@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/readability/continuous-600-zoom200-dark@2x.png",
+      "sha256": "0fd97a5e755a35bc82b2efe0e5d55188aa311e37b2d031e92fe92c24f66fdb12",
+      "bytes": 160934,
+      "sourceMtimeUTC": "2026-10-05T03:43:48.633958+00:00"
+    },
+    {
+      "suite": "CaptureDetailReadabilityTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/capture-detail-fix-2026-10-04/detail-integration-1200-zoom100-light@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/readability/detail-integration-1200-zoom100-light@2x.png",
+      "sha256": "b44bbeec84449499b08c2750f0bbd8985b144e517cf726841b078587a7da73ba",
+      "bytes": 346095,
+      "sourceMtimeUTC": "2026-10-05T03:43:52.365121+00:00"
+    },
+    {
+      "suite": "CaptureDetailReadabilityTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/capture-detail-fix-2026-10-04/detail-integration-380-zoom100-light@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/readability/detail-integration-380-zoom100-light@2x.png",
+      "sha256": "44228cc897a46e8ba8eb6dc31d9add85221a08a451eff52c6324b02d459d7792",
+      "bytes": 183376,
+      "sourceMtimeUTC": "2026-10-05T03:43:49.882030+00:00"
+    },
+    {
+      "suite": "CaptureDetailReadabilityTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/capture-detail-fix-2026-10-04/detail-integration-600-zoom200-dark@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/readability/detail-integration-600-zoom200-dark@2x.png",
+      "sha256": "799fd6798dd8be1459ac4b58ad0ae490b8500256564c089eaabd6137b58478c8",
+      "bytes": 229598,
+      "sourceMtimeUTC": "2026-10-05T03:43:51.108029+00:00"
+    },
+    {
+      "suite": "CaptureDetailReadabilityTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/capture-detail-fix-2026-10-04/labeled-copy-and-icon-default@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/readability/labeled-copy-and-icon-default@2x.png",
+      "sha256": "80d58d2f8efc63f3ad041c211a56387a3cddd826f81f762922811ac74bd44034",
+      "bytes": 7344,
+      "sourceMtimeUTC": "2026-10-05T03:43:03.684803+00:00"
+    },
+    {
+      "suite": "CaptureDetailReadabilityTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/capture-detail-fix-2026-10-04/native-readability-report.json",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/readability/native-readability-report.json",
+      "sha256": "d10bac314684b43fbf2c12316422773bdf65bbbc3c4f303a4dc24d5b0f4c52ce",
+      "bytes": 10484,
+      "sourceMtimeUTC": "2026-10-05T03:43:52.368288+00:00"
+    },
+    {
+      "suite": "CaptureDetailReadabilityTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/capture-detail-fix-2026-10-04/recognized-1200-zoom100-dark-expanded@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/readability/recognized-1200-zoom100-dark-expanded@2x.png",
+      "sha256": "a96645af23ea9f54b7c0da5277f4cf97939b1ee60e27de9631c376f747635961",
+      "bytes": 261476,
+      "sourceMtimeUTC": "2026-10-05T03:43:40.458194+00:00"
+    },
+    {
+      "suite": "CaptureDetailReadabilityTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/capture-detail-fix-2026-10-04/recognized-1200-zoom100-dark-preview@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/readability/recognized-1200-zoom100-dark-preview@2x.png",
+      "sha256": "994c08f29cc638485df4b20ffe1cc480d171d8650a0ad1425afe7751a37085bd",
+      "bytes": 274553,
+      "sourceMtimeUTC": "2026-10-05T03:43:39.337153+00:00"
+    },
+    {
+      "suite": "CaptureDetailReadabilityTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/capture-detail-fix-2026-10-04/recognized-1200-zoom100-light-expanded@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/readability/recognized-1200-zoom100-light-expanded@2x.png",
+      "sha256": "7beb6312f7cb9f199c39b2ac1485a145cf95b33200252c21530f20fbd76fc039",
+      "bytes": 260275,
+      "sourceMtimeUTC": "2026-10-05T03:43:38.165195+00:00"
+    },
+    {
+      "suite": "CaptureDetailReadabilityTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/capture-detail-fix-2026-10-04/recognized-1200-zoom100-light-preview@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/readability/recognized-1200-zoom100-light-preview@2x.png",
+      "sha256": "9df897eb937c4f24de078354e1446675f09bebf134068e04d91990c36bde1ba6",
+      "bytes": 273434,
+      "sourceMtimeUTC": "2026-10-05T03:43:37.048368+00:00"
+    },
+    {
+      "suite": "CaptureDetailReadabilityTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/capture-detail-fix-2026-10-04/recognized-1200-zoom200-dark-expanded@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/readability/recognized-1200-zoom200-dark-expanded@2x.png",
+      "sha256": "4952ce5d20daf99e477292e3194fd964525438447e79341476c45292e37bbd7f",
+      "bytes": 265730,
+      "sourceMtimeUTC": "2026-10-05T03:43:45.035335+00:00"
+    },
+    {
+      "suite": "CaptureDetailReadabilityTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/capture-detail-fix-2026-10-04/recognized-1200-zoom200-dark-preview@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/readability/recognized-1200-zoom200-dark-preview@2x.png",
+      "sha256": "ae6fabef5e65c45a850633f799516ebf676bbeef64f82c278a4420abfe6599b6",
+      "bytes": 281526,
+      "sourceMtimeUTC": "2026-10-05T03:43:43.918226+00:00"
+    },
+    {
+      "suite": "CaptureDetailReadabilityTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/capture-detail-fix-2026-10-04/recognized-1200-zoom200-light-expanded@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/readability/recognized-1200-zoom200-light-expanded@2x.png",
+      "sha256": "a9ab1302d5c74c2db7cdedc9ef7491c7b230d632badb657631b7cf2b6d5a5253",
+      "bytes": 264925,
+      "sourceMtimeUTC": "2026-10-05T03:43:42.751031+00:00"
+    },
+    {
+      "suite": "CaptureDetailReadabilityTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/capture-detail-fix-2026-10-04/recognized-1200-zoom200-light-preview@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/readability/recognized-1200-zoom200-light-preview@2x.png",
+      "sha256": "4c3dd488326e653b720e799f4315d0100304bc352cd106fe6f219d2bcf3b12bf",
+      "bytes": 280931,
+      "sourceMtimeUTC": "2026-10-05T03:43:41.638482+00:00"
+    },
+    {
+      "suite": "CaptureDetailReadabilityTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/capture-detail-fix-2026-10-04/recognized-1200-zoom75-dark-expanded@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/readability/recognized-1200-zoom75-dark-expanded@2x.png",
+      "sha256": "debb70b754a2b3fd215659ce447f664faeb1eb2576c1aea533ac71254856b36c",
+      "bytes": 278480,
+      "sourceMtimeUTC": "2026-10-05T03:43:35.874982+00:00"
+    },
+    {
+      "suite": "CaptureDetailReadabilityTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/capture-detail-fix-2026-10-04/recognized-1200-zoom75-dark-preview@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/readability/recognized-1200-zoom75-dark-preview@2x.png",
+      "sha256": "7577e5998d0e8675d1b1bd4e408022c452abf5508e7da79b06f4778a0c9857aa",
+      "bytes": 294015,
+      "sourceMtimeUTC": "2026-10-05T03:43:34.775534+00:00"
+    },
+    {
+      "suite": "CaptureDetailReadabilityTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/capture-detail-fix-2026-10-04/recognized-1200-zoom75-light-expanded@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/readability/recognized-1200-zoom75-light-expanded@2x.png",
+      "sha256": "216eee3cd0ffea2f9f1089da58fbf0e9836ffe0a56fea673220dc0ca8475d904",
+      "bytes": 276128,
+      "sourceMtimeUTC": "2026-10-05T03:43:33.636707+00:00"
+    },
+    {
+      "suite": "CaptureDetailReadabilityTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/capture-detail-fix-2026-10-04/recognized-1200-zoom75-light-preview@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/readability/recognized-1200-zoom75-light-preview@2x.png",
+      "sha256": "4c02d338320aa3d8d9d8380680636f7f052c74ab56b4dc3bf76d6c3bcf16b81e",
+      "bytes": 291773,
+      "sourceMtimeUTC": "2026-10-05T03:43:32.517792+00:00"
+    },
+    {
+      "suite": "CaptureDetailReadabilityTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/capture-detail-fix-2026-10-04/recognized-380-zoom100-dark-expanded@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/readability/recognized-380-zoom100-dark-expanded@2x.png",
+      "sha256": "ba17e27bd22d83514deda2e3cbb18a99c05a95ba8706d01b9f5a23e4d087696f",
+      "bytes": 118372,
+      "sourceMtimeUTC": "2026-10-05T03:43:13.203933+00:00"
+    },
+    {
+      "suite": "CaptureDetailReadabilityTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/capture-detail-fix-2026-10-04/recognized-380-zoom100-dark-preview@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/readability/recognized-380-zoom100-dark-preview@2x.png",
+      "sha256": "eef8ca59edb4793e31376fa7e2bb697c34ed2d6ca32963cbd3c2fb23c7ed9eb9",
+      "bytes": 129156,
+      "sourceMtimeUTC": "2026-10-05T03:43:12.100775+00:00"
+    },
+    {
+      "suite": "CaptureDetailReadabilityTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/capture-detail-fix-2026-10-04/recognized-380-zoom100-light-expanded@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/readability/recognized-380-zoom100-light-expanded@2x.png",
+      "sha256": "5d790defc487d25e98542a4cd02127095b397a6db9f909d07b72878648142ee5",
+      "bytes": 117632,
+      "sourceMtimeUTC": "2026-10-05T03:43:10.941717+00:00"
+    },
+    {
+      "suite": "CaptureDetailReadabilityTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/capture-detail-fix-2026-10-04/recognized-380-zoom100-light-preview@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/readability/recognized-380-zoom100-light-preview@2x.png",
+      "sha256": "3cedf39f96379674c429a91b1dcae22f1b5c6d0788443308a7980152eb186951",
+      "bytes": 128229,
+      "sourceMtimeUTC": "2026-10-05T03:43:09.841807+00:00"
+    },
+    {
+      "suite": "CaptureDetailReadabilityTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/capture-detail-fix-2026-10-04/recognized-380-zoom200-dark-expanded@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/readability/recognized-380-zoom200-dark-expanded@2x.png",
+      "sha256": "6a3025360e6f685611ced7e607167a9cef8c65d57264409b3717cd4611d12b67",
+      "bytes": 112744,
+      "sourceMtimeUTC": "2026-10-05T03:43:17.728752+00:00"
+    },
+    {
+      "suite": "CaptureDetailReadabilityTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/capture-detail-fix-2026-10-04/recognized-380-zoom200-dark-preview@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/readability/recognized-380-zoom200-dark-preview@2x.png",
+      "sha256": "3de97bd769302847d390e08588a72a78027405332f805a651d066511dff264c6",
+      "bytes": 124711,
+      "sourceMtimeUTC": "2026-10-05T03:43:16.627798+00:00"
+    },
+    {
+      "suite": "CaptureDetailReadabilityTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/capture-detail-fix-2026-10-04/recognized-380-zoom200-light-expanded@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/readability/recognized-380-zoom200-light-expanded@2x.png",
+      "sha256": "2d655e59ae2ddf25888f1d5b886e547d9d4dc082dcf2dd86f547f65f031bc21d",
+      "bytes": 112429,
+      "sourceMtimeUTC": "2026-10-05T03:43:15.469703+00:00"
+    },
+    {
+      "suite": "CaptureDetailReadabilityTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/capture-detail-fix-2026-10-04/recognized-380-zoom200-light-preview@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/readability/recognized-380-zoom200-light-preview@2x.png",
+      "sha256": "59e8d3e0d9815b8d6abb63fb93bd83885b6cb9c0a832834a4a8feb25ed46c753",
+      "bytes": 124212,
+      "sourceMtimeUTC": "2026-10-05T03:43:14.366960+00:00"
+    },
+    {
+      "suite": "CaptureDetailReadabilityTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/capture-detail-fix-2026-10-04/recognized-380-zoom75-dark-expanded@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/readability/recognized-380-zoom75-dark-expanded@2x.png",
+      "sha256": "0743b53c5242b969b38b957f18e2859e258ac5a5ce87eabefcd6b948fd950320",
+      "bytes": 150014,
+      "sourceMtimeUTC": "2026-10-05T03:43:08.674785+00:00"
+    },
+    {
+      "suite": "CaptureDetailReadabilityTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/capture-detail-fix-2026-10-04/recognized-380-zoom75-dark-preview@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/readability/recognized-380-zoom75-dark-preview@2x.png",
+      "sha256": "8cb3885ea0212078f646b77b9e6fcebc1c83956dc246ff64a6023781472d15dd",
+      "bytes": 164683,
+      "sourceMtimeUTC": "2026-10-05T03:43:07.572787+00:00"
+    },
+    {
+      "suite": "CaptureDetailReadabilityTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/capture-detail-fix-2026-10-04/recognized-380-zoom75-light-expanded@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/readability/recognized-380-zoom75-light-expanded@2x.png",
+      "sha256": "a9c78453e25bc61240c88ac39a392951d4c7dda8bd3f42fd4dc65377abaff151",
+      "bytes": 147717,
+      "sourceMtimeUTC": "2026-10-05T03:43:06.418931+00:00"
+    },
+    {
+      "suite": "CaptureDetailReadabilityTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/capture-detail-fix-2026-10-04/recognized-380-zoom75-light-preview@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/readability/recognized-380-zoom75-light-preview@2x.png",
+      "sha256": "2d5555b11895cef13d2ab41105beeb6693c948923a851d8ba73c323fa95d78cd",
+      "bytes": 161896,
+      "sourceMtimeUTC": "2026-10-05T03:43:05.345119+00:00"
+    },
+    {
+      "suite": "CaptureDetailReadabilityTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/capture-detail-fix-2026-10-04/recognized-600-zoom100-dark-expanded@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/readability/recognized-600-zoom100-dark-expanded@2x.png",
+      "sha256": "4a394851ad9666647e4f80ebd371c4ad99364c260a0c528ad8a85446e90460b2",
+      "bytes": 153861,
+      "sourceMtimeUTC": "2026-10-05T03:43:26.835385+00:00"
+    },
+    {
+      "suite": "CaptureDetailReadabilityTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/capture-detail-fix-2026-10-04/recognized-600-zoom100-dark-preview@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/readability/recognized-600-zoom100-dark-preview@2x.png",
+      "sha256": "43bd099abec2a308051456579f4f4df365d7f784a1d93926af545336749cf4a3",
+      "bytes": 164766,
+      "sourceMtimeUTC": "2026-10-05T03:43:25.725195+00:00"
+    },
+    {
+      "suite": "CaptureDetailReadabilityTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/capture-detail-fix-2026-10-04/recognized-600-zoom100-light-expanded@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/readability/recognized-600-zoom100-light-expanded@2x.png",
+      "sha256": "43af31075397d62fe0a000d9b20bac089e131d90e7cafcc301b2510346918d52",
+      "bytes": 152629,
+      "sourceMtimeUTC": "2026-10-05T03:43:24.556182+00:00"
+    },
+    {
+      "suite": "CaptureDetailReadabilityTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/capture-detail-fix-2026-10-04/recognized-600-zoom100-light-preview@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/readability/recognized-600-zoom100-light-preview@2x.png",
+      "sha256": "c38340fa9ce9448c183d1400eea99780432f021c3d13e1e31a5318c22e1e5661",
+      "bytes": 163249,
+      "sourceMtimeUTC": "2026-10-05T03:43:23.461982+00:00"
+    },
+    {
+      "suite": "CaptureDetailReadabilityTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/capture-detail-fix-2026-10-04/recognized-600-zoom200-dark-expanded@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/readability/recognized-600-zoom200-dark-expanded@2x.png",
+      "sha256": "8c99d2eab986374b9a4c1a18f57b5b4cf28026b68a409ce59829cd69f75b2a09",
+      "bytes": 151777,
+      "sourceMtimeUTC": "2026-10-05T03:43:31.355006+00:00"
+    },
+    {
+      "suite": "CaptureDetailReadabilityTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/capture-detail-fix-2026-10-04/recognized-600-zoom200-dark-preview@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/readability/recognized-600-zoom200-dark-preview@2x.png",
+      "sha256": "3096c951a9ead6446994e35423a85704e374ef767ed22022c5cbfc728e75aeb4",
+      "bytes": 161009,
+      "sourceMtimeUTC": "2026-10-05T03:43:30.246984+00:00"
+    },
+    {
+      "suite": "CaptureDetailReadabilityTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/capture-detail-fix-2026-10-04/recognized-600-zoom200-light-expanded@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/readability/recognized-600-zoom200-light-expanded@2x.png",
+      "sha256": "62c2e7d86644b15294b16ba16dfec9606cd44499def4d3f17cad38f0653a2124",
+      "bytes": 151064,
+      "sourceMtimeUTC": "2026-10-05T03:43:29.090080+00:00"
+    },
+    {
+      "suite": "CaptureDetailReadabilityTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/capture-detail-fix-2026-10-04/recognized-600-zoom200-light-preview@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/readability/recognized-600-zoom200-light-preview@2x.png",
+      "sha256": "eb6f7522644f2ddd1f5766e0ce8e222e4a92902b68e4cbc6c7b8c2483fdb08e7",
+      "bytes": 160236,
+      "sourceMtimeUTC": "2026-10-05T03:43:28.001517+00:00"
+    },
+    {
+      "suite": "CaptureDetailReadabilityTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/capture-detail-fix-2026-10-04/recognized-600-zoom75-dark-expanded@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/readability/recognized-600-zoom75-dark-expanded@2x.png",
+      "sha256": "eaeac4fefd647118b10b7f521ac6ec41dfd965ec92fc8874d33ba87ebb0e0ed9",
+      "bytes": 161311,
+      "sourceMtimeUTC": "2026-10-05T03:43:22.290680+00:00"
+    },
+    {
+      "suite": "CaptureDetailReadabilityTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/capture-detail-fix-2026-10-04/recognized-600-zoom75-dark-preview@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/readability/recognized-600-zoom75-dark-preview@2x.png",
+      "sha256": "4000af11bdd9bd8a03163749944188a87c11143508c44d161e96eeb3cd42dae7",
+      "bytes": 172739,
+      "sourceMtimeUTC": "2026-10-05T03:43:21.181415+00:00"
+    },
+    {
+      "suite": "CaptureDetailReadabilityTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/capture-detail-fix-2026-10-04/recognized-600-zoom75-light-expanded@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/readability/recognized-600-zoom75-light-expanded@2x.png",
+      "sha256": "d95a5d9b39dd833ac99557e14ce00eccd7e132c4d17f9e16cebb61f4118ce785",
+      "bytes": 159063,
+      "sourceMtimeUTC": "2026-10-05T03:43:20.004022+00:00"
+    },
+    {
+      "suite": "CaptureDetailReadabilityTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/capture-detail-fix-2026-10-04/recognized-600-zoom75-light-preview@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/readability/recognized-600-zoom75-light-preview@2x.png",
+      "sha256": "dc4ef98fc92129628a75b49e4d6f2fb27dabb3a17be0549a7f1f04d3dbd4dbde",
+      "bytes": 170381,
+      "sourceMtimeUTC": "2026-10-05T03:43:18.900000+00:00"
+    },
+    {
+      "suite": "CaptureDetailReadabilityTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/capture-detail-fix-2026-10-04/reminder-before-label-click@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/readability/reminder-before-label-click@2x.png",
+      "sha256": "1169a8bf5088e9339efd7893d086af9808af44ef2775837ed4294417ee2e9fd6",
+      "bytes": 23937,
+      "sourceMtimeUTC": "2026-10-05T03:43:04.235999+00:00"
+    },
+    {
+      "suite": "CaptureDetailReadabilityTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/capture-detail-fix-2026-10-04/reminder-label-target@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/readability/reminder-label-target@2x.png",
+      "sha256": "1169a8bf5088e9339efd7893d086af9808af44ef2775837ed4294417ee2e9fd6",
+      "bytes": 23937,
+      "sourceMtimeUTC": "2026-10-05T03:43:04.752502+00:00"
+    },
+    {
+      "suite": "CaptureDetailNavigationTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/capture-detail-redesign-2026-10-04/navigation/full-board-380-zoom200-long-title@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/navigation/full-board-380-zoom200-long-title@2x.png",
+      "sha256": "284b0da79103799a71910e00efb3c22ab85bbf87225071304f1ff5ae9c6670a0",
+      "bytes": 135218,
+      "sourceMtimeUTC": "2026-10-05T03:43:56.794471+00:00"
+    },
+    {
+      "suite": "CaptureDetailNavigationTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/capture-detail-redesign-2026-10-04/navigation/native-navigation-report.json",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/navigation/native-navigation-report.json",
+      "sha256": "07dcab6f2279b5eea37e62a7a5d5a9dee7c6d57374fde92940def8cb3135d075",
+      "bytes": 8025,
+      "sourceMtimeUTC": "2026-10-05T03:44:40.394315+00:00"
+    },
+    {
+      "suite": "CaptureDetailNavigationTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/capture-detail-redesign-2026-10-04/navigation/navigation-1200-zoom100-comments@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/navigation/navigation-1200-zoom100-comments@2x.png",
+      "sha256": "3149cb438c687bba7432646605e8f261ccc7b43a7fed7b4e850c232142345528",
+      "bytes": 137064,
+      "sourceMtimeUTC": "2026-10-05T03:44:22.996201+00:00"
+    },
+    {
+      "suite": "CaptureDetailNavigationTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/capture-detail-redesign-2026-10-04/navigation/navigation-1200-zoom100-reminder@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/navigation/navigation-1200-zoom100-reminder@2x.png",
+      "sha256": "ef083463127e2eb27d20d8c931e4a0d4498fa3f1fe4e976e1cafa3f657906d38",
+      "bytes": 132622,
+      "sourceMtimeUTC": "2026-10-05T03:44:23.306840+00:00"
+    },
+    {
+      "suite": "CaptureDetailNavigationTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/capture-detail-redesign-2026-10-04/navigation/navigation-1200-zoom100-task@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/navigation/navigation-1200-zoom100-task@2x.png",
+      "sha256": "601ea92b84f8c7084421b79235195d7145a2208f1c0e812ee47b1268a9b67d89",
+      "bytes": 196481,
+      "sourceMtimeUTC": "2026-10-05T03:44:22.691748+00:00"
+    },
+    {
+      "suite": "CaptureDetailNavigationTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/capture-detail-redesign-2026-10-04/navigation/navigation-1200-zoom100-text@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/navigation/navigation-1200-zoom100-text@2x.png",
+      "sha256": "02dc862269852a1b3d63a7b01c943e30666f9d2ca48aa6c7760e4360f644917e",
+      "bytes": 224780,
+      "sourceMtimeUTC": "2026-10-05T03:44:23.611416+00:00"
+    },
+    {
+      "suite": "CaptureDetailNavigationTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/capture-detail-redesign-2026-10-04/navigation/navigation-1200-zoom100@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/navigation/navigation-1200-zoom100@2x.png",
+      "sha256": "cb3073ecce2418d09851e457311211ea99598374ae3e58e91fdf6d5d421f0a1f",
+      "bytes": 128391,
+      "sourceMtimeUTC": "2026-10-05T03:44:24.133039+00:00"
+    },
+    {
+      "suite": "CaptureDetailNavigationTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/capture-detail-redesign-2026-10-04/navigation/navigation-1200-zoom200@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/navigation/navigation-1200-zoom200@2x.png",
+      "sha256": "da07d141874e13fc7de33ce7d98156880cad1c18e57cbfdc07ff936f979a9e08",
+      "bytes": 131873,
+      "sourceMtimeUTC": "2026-10-05T03:44:27.335920+00:00"
+    },
+    {
+      "suite": "CaptureDetailNavigationTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/capture-detail-redesign-2026-10-04/navigation/navigation-1200-zoom75@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/navigation/navigation-1200-zoom75@2x.png",
+      "sha256": "e9def8a1c3d0502f5eda518749a407d26f03820852bc60f5bf450e6b539bf0e9",
+      "bytes": 126389,
+      "sourceMtimeUTC": "2026-10-05T03:44:21.539000+00:00"
+    },
+    {
+      "suite": "CaptureDetailNavigationTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/capture-detail-redesign-2026-10-04/navigation/navigation-380-zoom100-before-menu@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/navigation/navigation-380-zoom100-before-menu@2x.png",
+      "sha256": "d13f43f18f1ab23c3c3de16e32cc551bcf478f32c005ac3fa8cc763b5426d9ff",
+      "bytes": 141064,
+      "sourceMtimeUTC": "2026-10-05T03:44:04.554178+00:00"
+    },
+    {
+      "suite": "CaptureDetailNavigationTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/capture-detail-redesign-2026-10-04/navigation/navigation-380-zoom100-comments@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/navigation/navigation-380-zoom100-comments@2x.png",
+      "sha256": "4f582e2ceb48328d5e27f58c12c6b752bc1b42db6994dd348848adae2f7613cd",
+      "bytes": 89538,
+      "sourceMtimeUTC": "2026-10-05T03:44:05.691885+00:00"
+    },
+    {
+      "suite": "CaptureDetailNavigationTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/capture-detail-redesign-2026-10-04/navigation/navigation-380-zoom100-reminder@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/navigation/navigation-380-zoom100-reminder@2x.png",
+      "sha256": "4cdfdc8721a83898d45132ad57ed37029e6c78f48eafe3c895ff20c5fa4a6e32",
+      "bytes": 84845,
+      "sourceMtimeUTC": "2026-10-05T03:44:05.960659+00:00"
+    },
+    {
+      "suite": "CaptureDetailNavigationTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/capture-detail-redesign-2026-10-04/navigation/navigation-380-zoom100-task@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/navigation/navigation-380-zoom100-task@2x.png",
+      "sha256": "d13f43f18f1ab23c3c3de16e32cc551bcf478f32c005ac3fa8cc763b5426d9ff",
+      "bytes": 141064,
+      "sourceMtimeUTC": "2026-10-05T03:44:05.421684+00:00"
+    },
+    {
+      "suite": "CaptureDetailNavigationTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/capture-detail-redesign-2026-10-04/navigation/navigation-380-zoom100-text@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/navigation/navigation-380-zoom100-text@2x.png",
+      "sha256": "7d54de215d2670a17c1b086006f2dd808347e451756f9d2b1d387b80fe5b4a81",
+      "bytes": 168926,
+      "sourceMtimeUTC": "2026-10-05T03:44:06.402175+00:00"
+    },
+    {
+      "suite": "CaptureDetailNavigationTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/capture-detail-redesign-2026-10-04/navigation/navigation-380-zoom100@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/navigation/navigation-380-zoom100@2x.png",
+      "sha256": "69d464b5387c9d83b3ed92d621257e7eb9b22d9383bd4c451423a74f95537bdb",
+      "bytes": 79939,
+      "sourceMtimeUTC": "2026-10-05T03:44:07.248291+00:00"
+    },
+    {
+      "suite": "CaptureDetailNavigationTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/capture-detail-redesign-2026-10-04/navigation/navigation-380-zoom200-before-menu@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/navigation/navigation-380-zoom200-before-menu@2x.png",
+      "sha256": "eb242a394551a251f7f1551c8e2694be7cc1e8fca9cbcc6256311239896c71f1",
+      "bytes": 143564,
+      "sourceMtimeUTC": "2026-10-05T03:44:07.849268+00:00"
+    },
+    {
+      "suite": "CaptureDetailNavigationTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/capture-detail-redesign-2026-10-04/navigation/navigation-380-zoom200@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/navigation/navigation-380-zoom200@2x.png",
+      "sha256": "f70f79ec9753bceda3c5ff27e166b566e88c69d7a557c1d98e8cb8aa6534765d",
+      "bytes": 89174,
+      "sourceMtimeUTC": "2026-10-05T03:44:10.492819+00:00"
+    },
+    {
+      "suite": "CaptureDetailNavigationTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/capture-detail-redesign-2026-10-04/navigation/navigation-380-zoom75-before-menu@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/navigation/navigation-380-zoom75-before-menu@2x.png",
+      "sha256": "0052c5e783c7103b57405a818e386b86ddeb215de3315d4b796f10df685dd683",
+      "bytes": 139266,
+      "sourceMtimeUTC": "2026-10-05T03:44:01.365709+00:00"
+    },
+    {
+      "suite": "CaptureDetailNavigationTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/capture-detail-redesign-2026-10-04/navigation/navigation-380-zoom75@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/navigation/navigation-380-zoom75@2x.png",
+      "sha256": "9c27a961ce20c4933baf1be4822b6a7b7c0136d2536d93857a4ffaf624cf05ff",
+      "bytes": 77846,
+      "sourceMtimeUTC": "2026-10-05T03:44:03.944284+00:00"
+    },
+    {
+      "suite": "CaptureDetailNavigationTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/capture-detail-redesign-2026-10-04/navigation/navigation-600-zoom100@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/navigation/navigation-600-zoom100@2x.png",
+      "sha256": "e45e5c768d03a100e9f8df87fb1d24f8af73b761800934c32bad4b26eac09d8f",
+      "bytes": 92584,
+      "sourceMtimeUTC": "2026-10-05T03:44:16.010831+00:00"
+    },
+    {
+      "suite": "CaptureDetailNavigationTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/capture-detail-redesign-2026-10-04/navigation/navigation-600-zoom200@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/navigation/navigation-600-zoom200@2x.png",
+      "sha256": "ee93c965aacee5e10c1d3aa4c565ac11e9d4e4284af9088bba9d0958d8c38010",
+      "bytes": 98700,
+      "sourceMtimeUTC": "2026-10-05T03:44:19.161880+00:00"
+    },
+    {
+      "suite": "CaptureDetailNavigationTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/capture-detail-redesign-2026-10-04/navigation/navigation-600-zoom75@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/navigation/navigation-600-zoom75@2x.png",
+      "sha256": "7629a8254aaa97075619f1f48e48180edb17995981e4d6bdfd8fcd37c9baf6ce",
+      "bytes": 93228,
+      "sourceMtimeUTC": "2026-10-05T03:44:12.843020+00:00"
+    },
+    {
+      "suite": "CaptureDetailNavigationTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/capture-detail-redesign-2026-10-04/navigation/navigation-drafts-and-ocr-resume@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/navigation/navigation-drafts-and-ocr-resume@2x.png",
+      "sha256": "c4f3ba90c26cf1bd9fd3c7b5300d9f5580e602fbbd8f8214a47e5c221fd1d622",
+      "bytes": 183594,
+      "sourceMtimeUTC": "2026-10-05T03:44:36.750602+00:00"
+    },
+    {
+      "suite": "TaskPlanInteractionTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/task-plan-redesign-2026-10-05/native/detail-380-reminder-applied@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/task-plan/detail-380-reminder-applied@2x.png",
+      "sha256": "bdfdbc50483f9e546c78300556653eb7453e89c78b2a5b1787bfd9d7ccdb6acb",
+      "bytes": 154175,
+      "sourceMtimeUTC": "2026-10-05T03:44:58.339802+00:00"
+    },
+    {
+      "suite": "TaskPlanInteractionTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/task-plan-redesign-2026-10-05/native/detail-380-task-pending@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/task-plan/detail-380-task-pending@2x.png",
+      "sha256": "a53e2efbfb3a3d0435e4624dea5db30e813cb17381d497cb1d75e7aa1a3acc4d",
+      "bytes": 172167,
+      "sourceMtimeUTC": "2026-10-05T03:44:57.763037+00:00"
+    },
+    {
+      "suite": "TaskPlanInteractionTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/task-plan-redesign-2026-10-05/native/full-board-380-reminder-date-zoom100@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/task-plan/full-board-380-reminder-date-zoom100@2x.png",
+      "sha256": "669f4f19c963f597cb4ce3194a5c52ac5d54593cc50079de0d33962d20bb5c8f",
+      "bytes": 152902,
+      "sourceMtimeUTC": "2026-10-05T03:45:06.933987+00:00"
+    },
+    {
+      "suite": "TaskPlanInteractionTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/task-plan-redesign-2026-10-05/native/full-board-380-reminder-date-zoom200@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/task-plan/full-board-380-reminder-date-zoom200@2x.png",
+      "sha256": "518030a844ab70df6c6cd00843811f2874e95fb4360a5735da476db665947faf",
+      "bytes": 159933,
+      "sourceMtimeUTC": "2026-10-05T03:45:07.896528+00:00"
+    },
+    {
+      "suite": "TaskPlanInteractionTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/task-plan-redesign-2026-10-05/native/full-board-380-reminder-zoom100@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/task-plan/full-board-380-reminder-zoom100@2x.png",
+      "sha256": "db34d445cd1336724ad6f155be74f86dedd7711ee32dbd45d7dd60330ee4ff9c",
+      "bytes": 155535,
+      "sourceMtimeUTC": "2026-10-05T03:45:06.770155+00:00"
+    },
+    {
+      "suite": "TaskPlanInteractionTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/task-plan-redesign-2026-10-05/native/full-board-380-reminder-zoom200@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/task-plan/full-board-380-reminder-zoom200@2x.png",
+      "sha256": "ccae9a1b4e950a6a9b1aa84fea42a8de38fc9f0932ff6c5ae19400bee0a5d511",
+      "bytes": 165661,
+      "sourceMtimeUTC": "2026-10-05T03:45:07.739354+00:00"
+    },
+    {
+      "suite": "TaskPlanInteractionTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/task-plan-redesign-2026-10-05/native/full-board-380-task-zoom100@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/task-plan/full-board-380-task-zoom100@2x.png",
+      "sha256": "356c7e49859812b813fb1b22278d4b8a6129c517a38df20392f9e5019761f30d",
+      "bytes": 180378,
+      "sourceMtimeUTC": "2026-10-05T03:45:06.432100+00:00"
+    },
+    {
+      "suite": "TaskPlanInteractionTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/task-plan-redesign-2026-10-05/native/full-board-380-task-zoom200@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/task-plan/full-board-380-task-zoom200@2x.png",
+      "sha256": "d252c9df862d39f08433632e8e36c6bba3b53240538fadf23fbf2174453eea79",
+      "bytes": 172619,
+      "sourceMtimeUTC": "2026-10-05T03:45:07.405741+00:00"
+    },
+    {
+      "suite": "TaskPlanInteractionTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/task-plan-redesign-2026-10-05/native/native-task-plan-report.json",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/task-plan/native-task-plan-report.json",
+      "sha256": "ad078f610bc8395635079e0059a4a7aa0879ee4b9c7833e4ad841e6743f97b06",
+      "bytes": 1758,
+      "sourceMtimeUTC": "2026-10-05T03:45:09.492889+00:00"
+    },
+    {
+      "suite": "TaskPlanInteractionTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/task-plan-redesign-2026-10-05/native/native-title-edit-resize-save@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/task-plan/native-title-edit-resize-save@2x.png",
+      "sha256": "3906d17cd978bba211d66ce8cdc6c30f5785585a5e8db96e04f82784f39e8c9e",
+      "bytes": 169748,
+      "sourceMtimeUTC": "2026-10-05T03:45:09.487728+00:00"
+    },
+    {
+      "suite": "TaskPlanInteractionTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/task-plan-redesign-2026-10-05/native/plan-380-deadline@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/task-plan/plan-380-deadline@2x.png",
+      "sha256": "1cd91e69d6abee1c45326da8aa522308a99c43ab185eefdbb0d22fe7fe9bc47e",
+      "bytes": 105792,
+      "sourceMtimeUTC": "2026-10-05T03:44:52.351293+00:00"
+    },
+    {
+      "suite": "TaskPlanInteractionTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/task-plan-redesign-2026-10-05/native/plan-380-default@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/task-plan/plan-380-default@2x.png",
+      "sha256": "c3a8dee0a1cf3af15c3bcf6e76ffdb9b1a5d9c5641269d93cb50a9155a8a620f",
+      "bytes": 99682,
+      "sourceMtimeUTC": "2026-10-05T03:44:52.199885+00:00"
+    },
+    {
+      "suite": "TaskPlanInteractionTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/task-plan-redesign-2026-10-05/native/plan-760-deadline@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/task-plan/plan-760-deadline@2x.png",
+      "sha256": "57f7b6ecc773b20fb9d6b097f1b9d8d71ce39260188c6531a3a6ca26236a6c4d",
+      "bytes": 122397,
+      "sourceMtimeUTC": "2026-10-05T03:44:54.198317+00:00"
+    },
+    {
+      "suite": "TaskPlanInteractionTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/task-plan-redesign-2026-10-05/native/plan-760-default@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/task-plan/plan-760-default@2x.png",
+      "sha256": "68cfc8fe20a1eaa38ccbe7e863a8932111b4c87587aab5f2e08fcebe0a3a2782",
+      "bytes": 116617,
+      "sourceMtimeUTC": "2026-10-05T03:44:54.042825+00:00"
+    },
+    {
+      "suite": "TaskPlanInteractionTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/task-plan-redesign-2026-10-05/native/plan-760-native-actions@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/task-plan/plan-760-native-actions@2x.png",
+      "sha256": "aaa8259ddfbd2764d6bf01a9cf0693a061a2b56631a0384c56f72a433afe1312",
+      "bytes": 115956,
+      "sourceMtimeUTC": "2026-10-05T03:44:49.069145+00:00"
+    },
+    {
+      "suite": "TaskPlanInteractionTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/task-plan-redesign-2026-10-05/native/reminder-380-countdown@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/task-plan/reminder-380-countdown@2x.png",
+      "sha256": "d2d76de69446626afdd728b3089faea80b19933e40cb1a360e839aa3fb3c41fb",
+      "bytes": 44152,
+      "sourceMtimeUTC": "2026-10-05T03:44:53.330627+00:00"
+    },
+    {
+      "suite": "TaskPlanInteractionTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/task-plan-redesign-2026-10-05/native/reminder-380-date@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/task-plan/reminder-380-date@2x.png",
+      "sha256": "6ae1da4d133b7f553e22660f4b71acd3af7c052193074f84954e2100ed59b77f",
+      "bytes": 42027,
+      "sourceMtimeUTC": "2026-10-05T03:44:53.597030+00:00"
+    },
+    {
+      "suite": "TaskPlanInteractionTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/task-plan-redesign-2026-10-05/native/reminder-760-countdown@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/task-plan/reminder-760-countdown@2x.png",
+      "sha256": "d510c6b3f9034fafbb46edfe5b7779d8eb1392e2f6d46b981754abd9aa7f7df6",
+      "bytes": 55555,
+      "sourceMtimeUTC": "2026-10-05T03:44:55.178104+00:00"
+    },
+    {
+      "suite": "TaskPlanInteractionTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/task-plan-redesign-2026-10-05/native/reminder-760-date@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/task-plan/reminder-760-date@2x.png",
+      "sha256": "d46df4d1179508327c129a90aeba2a3bd0dc41700fb520d20f7f2dbd9aa69871",
+      "bytes": 53430,
+      "sourceMtimeUTC": "2026-10-05T03:44:55.459172+00:00"
+    },
+    {
+      "suite": "TaskPlanInteractionTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/task-plan-redesign-2026-10-05/native/title-geometry-zoom100.json",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/task-plan/title-geometry-zoom100.json",
+      "sha256": "3ef7273302ab6679f6743efa1350806ed899ae7f781ae651df0f9f2ad6c1e6dd",
+      "bytes": 705,
+      "sourceMtimeUTC": "2026-10-05T03:45:06.367713+00:00"
+    },
+    {
+      "suite": "TaskPlanInteractionTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/task-plan-redesign-2026-10-05/native/title-geometry-zoom100@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/task-plan/title-geometry-zoom100@2x.png",
+      "sha256": "356c7e49859812b813fb1b22278d4b8a6129c517a38df20392f9e5019761f30d",
+      "bytes": 180378,
+      "sourceMtimeUTC": "2026-10-05T03:45:06.402512+00:00"
+    },
+    {
+      "suite": "TaskPlanInteractionTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/task-plan-redesign-2026-10-05/native/title-geometry-zoom200.json",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/task-plan/title-geometry-zoom200.json",
+      "sha256": "a45af9b2b08d6e923e008b6d3c99c50051f372d9bb037b5b0ceb1728269bf6f3",
+      "bytes": 721,
+      "sourceMtimeUTC": "2026-10-05T03:45:07.340842+00:00"
+    },
+    {
+      "suite": "TaskPlanInteractionTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/task-plan-redesign-2026-10-05/native/title-geometry-zoom200@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/task-plan/title-geometry-zoom200@2x.png",
+      "sha256": "d252c9df862d39f08433632e8e36c6bba3b53240538fadf23fbf2174453eea79",
+      "bytes": 172619,
+      "sourceMtimeUTC": "2026-10-05T03:45:07.376118+00:00"
+    },
+    {
+      "suite": "TaskPlanInteractionTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/task-plan-redesign-2026-10-05/native/title-resize-1200.json",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/task-plan/title-resize-1200.json",
+      "sha256": "1ba40b472b799c67cf917d673f0bfe35c1c21ee269746cb969b36149e2f0f61b",
+      "bytes": 855,
+      "sourceMtimeUTC": "2026-10-05T03:45:08.828597+00:00"
+    },
+    {
+      "suite": "TaskPlanInteractionTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/task-plan-redesign-2026-10-05/native/title-resize-1200@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/task-plan/title-resize-1200@2x.png",
+      "sha256": "c90c205753f42371c0265c7dfb47a8893188f57602d27357c88e114f43a7f4d0",
+      "bytes": 247188,
+      "sourceMtimeUTC": "2026-10-05T03:45:08.884840+00:00"
+    },
+    {
+      "suite": "TaskPlanInteractionTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/task-plan-redesign-2026-10-05/native/title-resize-380.json",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/task-plan/title-resize-380.json",
+      "sha256": "1f34ef33b7c3d99d5775e7543d17ee453247b86454d071544694ead9cb4cdaf0",
+      "bytes": 852,
+      "sourceMtimeUTC": "2026-10-05T03:45:09.014153+00:00"
+    },
+    {
+      "suite": "TaskPlanInteractionTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/task-plan-redesign-2026-10-05/native/title-resize-380@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/task-plan/title-resize-380@2x.png",
+      "sha256": "dca0a816d5d405ef1dfff7fe068623ffbeb3e9054ac3338977e1d56c3b9d9efe",
+      "bytes": 171789,
+      "sourceMtimeUTC": "2026-10-05T03:45:09.035928+00:00"
+    },
+    {
+      "suite": "TaskPlanInteractionTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/task-plan-redesign-2026-10-05/native/title-resize-600.json",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/task-plan/title-resize-600.json",
+      "sha256": "4d526cee636cdcad9da82c6dfba8010bf7cc7969ed5adcb53a314a3ce29cb782",
+      "bytes": 852,
+      "sourceMtimeUTC": "2026-10-05T03:45:08.658184+00:00"
+    },
+    {
+      "suite": "TaskPlanInteractionTests",
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/task-plan-redesign-2026-10-05/native/title-resize-600@2x.png",
+      "copied": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/task-plan/title-resize-600@2x.png",
+      "sha256": "a27297d5dfcf8d19bfd879a4c12ff217cf8800fea6902ff9a20d852c4f70ad62",
+      "bytes": 199291,
+      "sourceMtimeUTC": "2026-10-05T03:45:08.696815+00:00"
+    }
+  ],
+  "currentTitleSource": {
+    "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Sources/DaBin/DetailScreen.swift",
+    "sha256": "e0b20e6157c70be7cd63d1be6756cde38154032ee5f95661c9a878eb7423bd74"
+  },
+  "derivedReadOnlyProof": {
+    "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/current-render-validation/current-title-raster-proof.json",
+    "sha256": "2ae901fddf2636313a8fecd5d8b04d7862620301208742e4ab17be977066483e",
+    "status": "passed",
+    "nativeChecks": 379,
+    "baselineSecondLinePixels": 0,
+    "currentSecondLinePixels": {
+      "zoom100": 7041,
+      "zoom200": 7236
+    },
+    "scope": "Pure raster analysis of the current full-campaign TaskPlan native output; no GUI."
+  },
+  "campaignJoinAtUTC": "2026-10-05T03:56:18.791378+00:00",
+  "fullReportInputHashesMatchedCurrentOwnedFiles": true
+}

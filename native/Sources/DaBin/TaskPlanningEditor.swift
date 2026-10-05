@@ -52,52 +52,48 @@ struct CaptureTaskPriorityTag: View {
 struct TaskPlanningEditor: View {
     @Binding var planning: TaskPlanning
     var showsSchedule: Bool
+    var showsFocusDuration: Bool
     @Environment(\.daBinAccent) private var accent
-    @State private var checklistText = ""
-    @State private var detailsExpanded: Bool
-    private var trimmedChecklistText: String { checklistText.trimmingCharacters(in: .whitespacesAndNewlines) }
+    private let pendingChecklistText: Binding<String>?
+    @State private var standaloneChecklistText = ""
+    @FocusState private var checklistFocused: Bool
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    private var checklistText: Binding<String> { pendingChecklistText ?? $standaloneChecklistText }
+    private var trimmedChecklistText: String { checklistText.wrappedValue.trimmingCharacters(in: .whitespacesAndNewlines) }
     private var canAddChecklistItem: Bool {
         !trimmedChecklistText.isEmpty && trimmedChecklistText.count <= 500 && planning.checklist.count < 100
     }
 
-    init(planning: Binding<TaskPlanning>, showsSchedule: Bool = true) {
+    init(planning: Binding<TaskPlanning>, pendingChecklistText: Binding<String>? = nil,
+         showsSchedule: Bool = true, showsFocusDuration: Bool = true) {
         self.showsSchedule = showsSchedule
+        self.showsFocusDuration = showsFocusDuration
         _planning = planning
-        let value = planning.wrappedValue
-        _detailsExpanded = State(initialValue: value.deadline != nil || value.effortMinutes != nil
-            || value.recurrence != .none || !value.checklist.isEmpty)
+        self.pendingChecklistText = pendingChecklistText
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 14) {
-            Label("Work plan", systemImage: "calendar.badge.checkmark")
-                .font(.system(size: 13, weight: .semibold)).accessibilityAddTraits(.isHeader)
+        VStack(alignment: .leading, spacing: 9) {
             if showsSchedule {
-            HStack(spacing: 8) {
+            BuddyActionFlow(spacing: 6) {
+                Text("Work on").foregroundStyle(Palette.muted).frame(minHeight: 32)
                 dayButton("Today", offset: 0)
                 dayButton("Tomorrow", offset: 1)
-                Button("Inbox") { planning.plannedDay = nil; planning.plannedTime = nil; planning.order = nil }
-                    .buttonStyle(.bordered).controlSize(.small)
+                Button("Unplanned") { planning.plannedDay = nil; planning.plannedTime = nil; planning.order = nil }
+                    .buttonStyle(.plain).padding(.horizontal, 5).frame(minHeight: 32)
+                    .background(planning.plannedDay == nil ? accent.opacity(0.12) : Color.clear, in: RoundedRectangle(cornerRadius: 7))
                     .accessibilityLabel("Move task to Inbox without a planned day")
+                    .accessibilityIdentifier("task-plan-enabled")
             }
-            Toggle("Plan a day", isOn: plannedEnabled).toggleStyle(.switch).controlSize(.small)
-                .accessibilityIdentifier("task-plan-enabled")
             if planning.plannedDay != nil {
-                DatePicker("Work on", selection: plannedDate, displayedComponents: .date)
-                    .datePickerStyle(.field).controlSize(.small).accessibilityIdentifier("task-planned-day")
-                HStack {
-                    Text("Optional local time").foregroundStyle(Palette.muted)
-                    TextField("HH:MM", text: plannedTime).textFieldStyle(.roundedBorder).frame(width: 80)
-                        .accessibilityLabel("Optional planned local time in HH:MM")
+                ViewThatFits(in: .horizontal) {
+                    HStack(spacing: 8) { plannedDateField; plannedTimeField }
+                    VStack(alignment: .leading, spacing: 5) { plannedDateField; plannedTimeField }
                 }
             }
-            Text("Plan when to work. A deadline is when it must be finished.")
-                .font(.system(size: 11)).foregroundStyle(Palette.muted).fixedSize(horizontal: false, vertical: true)
             }
-            Divider()
-            VStack(alignment: .leading, spacing: 6) {
-                Text("Priority").foregroundStyle(Palette.muted)
-                HStack(spacing: 6) {
+            BuddyActionFlow(spacing: 5) {
+                Text("Priority").foregroundStyle(Palette.muted).frame(minHeight: 32)
                 ForEach(TaskPriority.allCases) { priority in
                     Button { planning.priority = priority } label: {
                         TaskPriorityTag(priority: priority, isSelected: planning.priority == priority)
@@ -108,84 +104,146 @@ struct TaskPlanningEditor: View {
                         .accessibilityAddTraits(planning.priority == priority ? .isSelected : [])
                         .buddyHelp(priority.title)
                 }
-                }
             }.accessibilityElement(children: .contain).accessibilityIdentifier("task-priority")
-            if showsSchedule {
-                Toggle("Focus duration", isOn: estimateEnabled).toggleStyle(.switch).controlSize(.small)
-                if planning.effortMinutes != nil {
-                    TaskDurationDraftFields(minutes: effort)
+            planningDetails
+            if showsFocusDuration {
+                HStack(spacing: 8) {
+                    Text("Focus").foregroundStyle(Palette.muted)
+                    Spacer(minLength: 0)
+                    if planning.effortMinutes == nil {
+                        ForEach([25, 45, 60], id: \.self) { value in
+                            Button("\(value)m") { planning.effortMinutes = value }
+                                .buttonStyle(.bordered).controlSize(.small).frame(minHeight: 32)
+                                .accessibilityLabel("Set focus duration to \(value) minutes")
+                        }
+                    } else {
+                        Button("Clear", systemImage: "xmark") { planning.effortMinutes = nil }
+                            .buttonStyle(.plain).frame(minHeight: 32).foregroundStyle(Palette.muted)
+                            .accessibilityLabel("Clear focus duration")
+                    }
                 }
+                if planning.effortMinutes != nil { TaskDurationDraftFields(minutes: effort) }
             }
             checklistSection
-            DisclosureGroup("Details & repeat", isExpanded: $detailsExpanded) {
-                advancedDetails.padding(.top, 10)
-            }.accessibilityIdentifier("task-planning-details")
-        }.font(.system(size: 12)).padding(12)
-            .background(accent.opacity(0.035), in: RoundedRectangle(cornerRadius: 14))
-            .overlay(RoundedRectangle(cornerRadius: 14).strokeBorder(accent.opacity(0.12), lineWidth: 0.7))
+        }.font(.system(size: 12)).padding(10)
+            .background(Palette.surface.opacity(0.65), in: RoundedRectangle(cornerRadius: 12))
+            .overlay(RoundedRectangle(cornerRadius: 12).strokeBorder(accent.opacity(0.17), lineWidth: 0.8))
+            .accessibilityElement(children: .contain).accessibilityLabel("Work plan")
     }
 
-    private var advancedDetails: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Toggle("Deadline", isOn: deadlineEnabled).toggleStyle(.switch).controlSize(.small)
-                .accessibilityIdentifier("task-deadline-enabled")
+    private var plannedDateField: some View {
+                DatePicker("Work on", selection: plannedDate, displayedComponents: .date)
+                    .datePickerStyle(.field).controlSize(.small).accessibilityIdentifier("task-planned-day")
+    }
+
+    private var plannedTimeField: some View {
+                TextField("Time (optional)", text: plannedTime).textFieldStyle(.roundedBorder).frame(width: 106)
+                        .accessibilityLabel("Optional planned local time in HH:MM")
+                    .buddyHelp("Optional local work time, HH:MM")
+    }
+
+    private var planningDetails: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            BuddyActionFlow(spacing: 6) {
+                if planning.deadline == nil {
+                    Button { planning.deadline = Date().addingTimeInterval(3_600) } label: {
+                        Label("Add deadline", systemImage: "flag")
+                            .padding(.horizontal, 8).frame(minHeight: 32).contentShape(RoundedRectangle(cornerRadius: 7))
+                    }.buttonStyle(.plain).foregroundStyle(Palette.muted)
+                        .background(Palette.soft, in: RoundedRectangle(cornerRadius: 7))
+                        .accessibilityIdentifier("task-deadline-add")
+                        .buddyHelp("Choose when this task must be finished")
+                } else {
+                    Label("Deadline", systemImage: "flag").foregroundStyle(Palette.muted)
+                        .padding(.horizontal, 8).frame(minHeight: 32, alignment: .leading)
+                }
+                Menu {
+                    ForEach(TaskRecurrence.allCases) { recurrence in
+                        Button { planning.recurrence = recurrence } label: {
+                            if planning.recurrence == recurrence { Label(recurrence.title, systemImage: "checkmark") }
+                            else { Text(recurrence.title) }
+                        }.accessibilityIdentifier("task-recurrence-choice-" + recurrence.rawValue)
+                    }
+                } label: {
+                    Label(planning.recurrence == .none ? "No repeat" : planning.recurrence.title, systemImage: "repeat")
+                        .lineLimit(1).padding(.horizontal, 8).frame(minHeight: 32)
+                }.menuStyle(.button).buttonStyle(.plain).menuIndicator(.hidden)
+                    .foregroundStyle(planning.recurrence == .none ? Palette.muted : accent)
+                    .background(Palette.soft, in: RoundedRectangle(cornerRadius: 7))
+                    .accessibilityLabel("Repeat: " + planning.recurrence.title).accessibilityIdentifier("task-recurrence")
+            }
             if planning.deadline != nil {
+                ViewThatFits(in: .horizontal) {
+                    HStack(spacing: 6) { deadlineField; removeDeadline }
+                    VStack(alignment: .leading, spacing: 4) { deadlineField; removeDeadline }
+                }
+            }
+        }.accessibilityElement(children: .contain).accessibilityIdentifier("task-planning-details")
+    }
+
+    private var deadlineField: some View {
                 DatePicker("Finish by", selection: deadlineDate, displayedComponents: [.date, .hourAndMinute])
                     .datePickerStyle(.field).controlSize(.small).accessibilityIdentifier("task-deadline")
-            }
-            Label("Repeat", systemImage: "repeat").foregroundStyle(Palette.muted)
-            LazyVGrid(columns: [GridItem(.adaptive(minimum: 110), spacing: 7)], spacing: 7) {
-                ForEach(TaskRecurrence.allCases) { recurrence in
-                    Button { planning.recurrence = recurrence } label: {
-                        HStack(spacing: 5) {
-                            if planning.recurrence == recurrence { Image(systemName: "checkmark") }
-                            Text(recurrence.title).font(.system(size: 11)).lineLimit(2)
-                        }.frame(maxWidth: .infinity, minHeight: 32).padding(.horizontal, 5)
-                            .background(planning.recurrence == recurrence ? accent.opacity(0.12) : Palette.surface, in: RoundedRectangle(cornerRadius: 7))
-                    }.buttonStyle(.plain).accessibilityLabel(recurrence.title)
-                        .accessibilityAddTraits(planning.recurrence == recurrence ? .isSelected : [])
-                }
-            }.accessibilityIdentifier("task-recurrence")
-            if planning.recurrence != .none {
-                Text("Completing this task creates one next occurrence. Files stay with the completed occurrence.")
-                    .font(.system(size: 11)).foregroundStyle(Palette.muted).fixedSize(horizontal: false, vertical: true)
-            }
-        }
+                    .buddyHelp("Finish-by date; separate from work time and reminders")
+    }
+
+    private var removeDeadline: some View {
+        Button { planning.deadline = nil } label: {
+            Image(systemName: "xmark").frame(width: 32, height: 32).contentShape(Rectangle())
+        }.buttonStyle(.plain).foregroundStyle(Palette.muted)
+            .accessibilityLabel("Remove deadline").accessibilityIdentifier("task-deadline-remove")
+            .buddyHelp("Remove deadline")
     }
 
     private var checklistSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: 6) {
             Divider()
             HStack {
-                Label("Checklist", systemImage: "checklist").font(.system(size: 12, weight: .medium))
+                Label("Steps", systemImage: "checklist").font(.system(size: 12, weight: .semibold))
                 Spacer(minLength: 0)
                 if !planning.checklist.isEmpty {
                     Text("\(planning.checklist.filter(\.isCompleted).count)/\(planning.checklist.count)")
-                        .font(.system(size: 11)).foregroundStyle(Palette.muted)
+                        .font(.system(size: 11, weight: .semibold)).monospacedDigit().foregroundStyle(accent)
+                        .padding(.horizontal, 7).padding(.vertical, 3).background(accent.opacity(0.10), in: Capsule())
                 }
+            }
+            HStack(spacing: 6) {
+                TextField("Add a next step", text: checklistText)
+                    .textFieldStyle(.plain).onSubmit(addChecklistItem).focused($checklistFocused)
+                    .padding(.horizontal, 8).frame(minHeight: 32)
+                    .background(Palette.soft, in: RoundedRectangle(cornerRadius: 7))
+                    .accessibilityIdentifier("task-checklist-new")
+                    .accessibilityLabel("New checklist step")
+                Button(action: addChecklistItem) { Label("Add step", systemImage: "plus").frame(minHeight: 32) }
+                    .buttonStyle(.plain).foregroundStyle(accent).disabled(!canAddChecklistItem)
+                    .accessibilityLabel("Add checklist step").buddyHelp("Add step, or press Return")
+                    .accessibilityIdentifier("task-checklist-add")
+            }
+            if !planning.checklist.isEmpty {
+                ProgressView(value: Double(planning.checklist.filter(\.isCompleted).count), total: Double(planning.checklist.count))
+                    .tint(accent).controlSize(.small)
+                    .accessibilityLabel("Checklist progress")
+                    .accessibilityValue("\(planning.checklist.filter(\.isCompleted).count) of \(planning.checklist.count) complete")
             }
             ForEach($planning.checklist) { $item in
-                HStack(spacing: 7) {
+                HStack(alignment: .top, spacing: 5) {
                     Toggle(item.text, isOn: $item.isCompleted).labelsHidden().toggleStyle(.checkbox)
+                        .frame(width: 32, height: 32).contentShape(Rectangle())
                         .accessibilityLabel("Complete checklist step: \(item.text)")
-                    TextField("Step", text: $item.text).textFieldStyle(.plain)
+                        .accessibilityIdentifier("task-checklist-complete-" + item.id.uuidString)
+                    TextField("Step", text: $item.text, axis: .vertical).lineLimit(1...3).textFieldStyle(.plain)
+                        .frame(minHeight: 32).foregroundStyle(item.isCompleted ? Palette.muted : Palette.foreground)
+                        .strikethrough(item.isCompleted)
                         .accessibilityLabel("Checklist step")
+                        .accessibilityIdentifier("task-checklist-text-" + item.id.uuidString)
                     Button { let id = item.id; planning.checklist.removeAll { $0.id == id } } label: {
-                        Image(systemName: "minus.circle")
+                        Image(systemName: "xmark").font(.system(size: 10, weight: .medium))
+                            .frame(width: 32, height: 32).contentShape(Rectangle())
                     }.buttonStyle(.plain).foregroundStyle(Palette.muted)
                         .accessibilityLabel("Remove checklist step: \(item.text)")
+                        .accessibilityIdentifier("task-checklist-remove-" + item.id.uuidString)
                         .buddyHelp("Remove step")
-                }
-            }
-            HStack(spacing: 7) {
-                TextField("Add a small next step", text: $checklistText)
-                    .textFieldStyle(.roundedBorder).onSubmit(addChecklistItem)
-                    .accessibilityIdentifier("task-checklist-new")
-                Button(action: addChecklistItem) { Image(systemName: "plus.circle.fill") }
-                    .buttonStyle(.plain).foregroundStyle(accent)
-                    .disabled(!canAddChecklistItem)
-                    .accessibilityLabel("Add checklist step").buddyHelp("Add step")
-                    .accessibilityIdentifier("task-checklist-add")
+                }.padding(.horizontal, 3).background(item.isCompleted ? accent.opacity(0.035) : Color.clear, in: RoundedRectangle(cornerRadius: 7))
             }
             if trimmedChecklistText.count > 500 {
                 Text("Keep this step within 500 characters (\(trimmedChecklistText.count)/500).")
@@ -210,17 +268,13 @@ struct TaskPlanningEditor: View {
             let date = Calendar.current.date(byAdding: .day, value: offset, to: Date()) ?? Date()
             planning.plannedDay = CaptureCalendar.dayString(date)
             planning.order = nil
-        }.buttonStyle(.bordered).controlSize(.small)
+        }.buttonStyle(.plain).padding(.horizontal, 6).frame(minHeight: 32)
+            .background(planning.plannedDay == CaptureCalendar.dayString(Calendar.current.date(byAdding: .day, value: offset, to: Date()) ?? Date()) ? accent.opacity(0.12) : Palette.soft,
+                        in: RoundedRectangle(cornerRadius: 7))
             .accessibilityLabel("Plan task for \(title.lowercased())")
+            .accessibilityIdentifier("task-plan-" + title.lowercased())
     }
 
-    private var plannedEnabled: Binding<Bool> {
-        Binding(get: { planning.plannedDay != nil }, set: {
-            planning.plannedDay = $0 ? CaptureCalendar.dayString(Date()) : nil
-            if !$0 { planning.plannedTime = nil }
-            planning.order = nil
-        })
-    }
     private var plannedDate: Binding<Date> {
         Binding(get: { planning.plannedDay.flatMap { TaskPlanningPolicy.date(for: $0) } ?? Date() }, set: {
             planning.plannedDay = CaptureCalendar.dayString($0)
@@ -230,22 +284,19 @@ struct TaskPlanningEditor: View {
     private var plannedTime: Binding<String> {
         Binding(get: { planning.plannedTime ?? "" }, set: { planning.plannedTime = $0.isEmpty ? nil : $0 })
     }
-    private var deadlineEnabled: Binding<Bool> {
-        Binding(get: { planning.deadline != nil }, set: { planning.deadline = $0 ? Date().addingTimeInterval(3_600) : nil })
-    }
     private var deadlineDate: Binding<Date> {
         Binding(get: { planning.deadline ?? Date() }, set: { planning.deadline = $0 })
-    }
-    private var estimateEnabled: Binding<Bool> {
-        Binding(get: { planning.effortMinutes != nil }, set: { planning.effortMinutes = $0 ? 30 : nil })
     }
     private var effort: Binding<Int> {
         Binding(get: { planning.effortMinutes ?? 30 }, set: { planning.effortMinutes = $0 })
     }
     private func addChecklistItem() {
         guard canAddChecklistItem else { return }
-        planning.checklist.append(TaskChecklistItem(text: trimmedChecklistText))
-        checklistText = ""
+        withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.12)) {
+            planning.checklist.append(TaskChecklistItem(text: trimmedChecklistText))
+        }
+        checklistText.wrappedValue = ""
+        checklistFocused = true
     }
 }
 
@@ -263,25 +314,26 @@ struct TaskDurationDraftFields: View {
         _minutesText = State(initialValue: String(max(0, minutes.wrappedValue) % 60))
     }
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack(spacing: 10) {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack(spacing: 6) {
                 field("Hours", text: $hoursText)
-                Text(":").font(.system(size: 24, design: .monospaced)).foregroundStyle(Palette.muted)
+                Text(":").font(.system(size: 16, design: .monospaced)).foregroundStyle(Palette.muted)
                 field("Minutes", text: $minutesText)
             }
-            HStack(spacing: 8) {
+            BuddyActionFlow(spacing: 6) {
                 ForEach([25, 45, 60], id: \.self) { value in
                     Button("\(value)m") { hoursText = String(value / 60); minutesText = String(value % 60); update() }
-                        .buttonStyle(.bordered).controlSize(.small).frame(minHeight: 32)
+                        .buttonStyle(.plain).padding(.horizontal, 7).frame(minHeight: 32)
+                        .background(Palette.soft, in: RoundedRectangle(cornerRadius: 7))
                 }
             }
         }.onChange(of: hoursText) { _, _ in update() }.onChange(of: minutesText) { _, _ in update() }
     }
     private func field(_ title: String, text: Binding<String>) -> some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text(title).font(.system(size: 11)).foregroundStyle(Palette.muted)
-            TextField(title, text: text).font(.system(size: 24, design: .monospaced)).textFieldStyle(.roundedBorder)
-                .frame(width: 82).accessibilityLabel("Focus duration \(title.lowercased())")
+        HStack(spacing: 5) {
+            TextField(title, text: text).font(.system(size: 16, design: .monospaced)).textFieldStyle(.roundedBorder)
+                .frame(width: 50).accessibilityLabel("Focus duration \(title.lowercased())")
+            Text(title.lowercased()).font(.system(size: 11)).foregroundStyle(Palette.muted)
         }
     }
     private func update() {

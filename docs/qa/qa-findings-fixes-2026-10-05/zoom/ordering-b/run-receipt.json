@@ -1,0 +1,23 @@
+{
+  "acceptanceTiming": false,
+  "compileReceipt": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/zoom-profile-ordering-b/compile-receipt.json",
+  "conclusion": "Candidate failed both unchanged 50/33 ms budgets; no production ordering change promoted. Timings are diagnostic only.",
+  "concurrencyLimitations": [
+    "Visual title candidate production-module compilation overlapped this run; root confirmed it completed while B was active.",
+    "Independent public List probe compile ended 2026-10-05T03:22:22.108 UTC after a 3.56-second compile, overlapping this run."
+  ],
+  "elapsedSeconds": 34.51090129185468,
+  "executableSHA256": "c78549d0525c70effa98c8a17e68ecbe97f95dfc808d9838b27956a7562c500a",
+  "exitCode": 1,
+  "finishedUTC": "2026-10-05T03:22:27.703312+00:00",
+  "moduleSHA256": "27bbf294e89808406dbaa6a88fa74aef8ff9b079133575f874243303286ab342",
+  "performanceSHA256": "f1eb618da3c0911ede2275512d30a9e137bd6040d6aab21ade28fad78c510907",
+  "pid": 89408,
+  "productionModuleUnchanged": true,
+  "runtimeLogSHA256": "3cce1169408aef632db6a2ac7502a1072ba4fb36ceba20016060427a0d67f229",
+  "sampled": false,
+  "scope": "Identical mixed-record coupled-resize zoom workload; one callback invoked before factor publication. Counterfactual diagnostic, no source optimization promoted.",
+  "stage": "ordering B diagnostic only",
+  "startedUTC": "2026-10-05T03:21:53.191994+00:00",
+  "testSHA256": "6339585d3f30c8fc74543a0db7d3180310f064f6879cb7bad781dd5d61583450"
+}

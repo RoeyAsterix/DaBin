@@ -1,0 +1,94 @@
+{
+  "version": "0.4.31",
+  "build": "86",
+  "bundleIdentifier": "com.dabin.mac",
+  "userAuthorized": "Upload to TestFlight and enable the existing owner account to test on another Mac signed into the same Apple Account.",
+  "sourceFingerprint": "cda5504ffbd21b7d090c142f54cf635f8d139adedd61be14a3ab85e045ce62c5",
+  "archivePath": "/Users/roeylibfeld/Library/Developer/Xcode/Archives/2026-10-04/DaBin-0.4.31-86-TestFlight-20261004T1700.xcarchive",
+  "archiveState": "Archive succeeded; strict signing and App Store package preflight passed. Independent frozen-source/resource audit passed.",
+  "browserState": "Personal Testing: Internal Group, 1 Tester, 1 Build. Owner account Invited; DaBin 0.4.31 (86) Ready to Test.",
+  "xcodeAccount": "Existing Admin team available in Xcode.",
+  "localInstallerIdentityPresent": false,
+  "distributionRoute": "Xcode Organizer automatic signing; second upload attempt succeeded.",
+  "uploaded": true,
+  "reviewSubmitted": true,
+  "publicRelease": false,
+  "testersInvited": true,
+  "updatedAtUTC": "2026-10-04T19:29:34.941480+00:00",
+  "appStoreConnectAppId": "6815956446",
+  "uploadOptions": {
+    "uploadSymbols": true,
+    "manageVersionAndBuildNumber": false,
+    "testFlightInternalOnly": false
+  },
+  "distributionSummary": {
+    "certificate": "Apple Distribution",
+    "certificateExpires": "2027-09-24",
+    "profile": "Mac Team Store Provisioning Profile: com.dabin.mac",
+    "profileExpires": "2027-09-27",
+    "team": "Roey Libfeld",
+    "version": "0.4.31",
+    "build": "86",
+    "architectures": [
+      "arm64"
+    ],
+    "symbolsIncluded": true,
+    "sandbox": true
+  },
+  "uploadAttempts": [
+    {
+      "result": "failed",
+      "errorDomain": "NSCocoaErrorDomain",
+      "errorCode": 4097,
+      "message": "Could not communicate with a helper application",
+      "confirmedFileUpload": false,
+      "logDirectory": "/private/var/folders/qy/zfgc4dgx02x2k_c04330ghy00000gn/T/DaBin_2026-10-04_20-07-26.262.xcdistributionlogs"
+    },
+    {
+      "result": "succeeded",
+      "confirmedFileUpload": true,
+      "appStoreConnectState": "Processing",
+      "version": "0.4.31",
+      "build": "86"
+    }
+  ],
+  "preparedPackage": {
+    "path": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/output/DaBin-0.4.31-86-App-Store.pkg",
+    "sha256": "4b76d2aeb86bec227e786920d54e7719bee11443ec8b758fa9533b9033090e83",
+    "signatureValidation": "pkgutil passed with system trust services",
+    "installerIdentity": "3rd Party Mac Developer Installer: Roey Libfeld (8QG4967CSU)",
+    "note": "Preserved package from first signing attempt; final transferred package identified separately by successful upload receipt."
+  },
+  "processingState": "COMPLETE",
+  "appStoreConnectBuildId": "d14741b6-9384-4e0f-84f8-792a40ac5d20",
+  "appStoreConnectURL": "https://appstoreconnect.apple.com/teams/baf209b8-bfea-402a-a04b-4f18387e96bc/apps/6815956446/testflight/macos",
+  "uploadConfirmation": "Xcode Organizer: App upload complete \u2014 DaBin 0.4.31 (86) uploaded.",
+  "evidence": [
+    "xcode-upload-complete.png",
+    "app-store-connect-processing.jpg",
+    "archive-preflight.txt",
+    "internal-tester-invited.jpg",
+    "internal-build-ready.jpg"
+  ],
+  "uploadedPackage": {
+    "path": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/output/DaBin-0.4.31-86-TestFlight-uploaded.pkg",
+    "sha256": "1f187404ea19e4329822ff1c10112ca2e6e139febf5ced0562415bdf8d32cb5e",
+    "distributionLogDirectory": "/private/var/folders/qy/zfgc4dgx02x2k_c04330ghy00000gn/T/DaBin_2026-10-04_21-14-29.218.xcdistributionlogs"
+  },
+  "testFlightState": "Ready to Test (internal)",
+  "reviewSubmittedByAssistant": false,
+  "externalReviewStatus": "Waiting for Review (observed before internal testing setup)",
+  "internalTesting": {
+    "groupName": "Personal Testing",
+    "groupId": "88bf737b-ecd4-48ed-b084-73cee2f3a93c",
+    "automaticDistribution": false,
+    "testerEmail": "roey.libfeld@gmail.com",
+    "testerStatus": "Invited",
+    "testerCount": 1,
+    "buildCount": 1,
+    "version": "0.4.31",
+    "build": "86",
+    "buildStatus": "Ready to Test",
+    "installationOnOtherMacVerified": false
+  }
+}

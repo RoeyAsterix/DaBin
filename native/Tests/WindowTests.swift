@@ -64,9 +64,9 @@ private final class WindowNotificationClient: ReminderNotificationClient {
                               modifierFlags: [], timestamp: 30, windowNumber: controller.board.windowNumber,
                               context: nil, eventNumber: 3, clickCount: 1, pressure: 1)!
         }
-        func dragExpanded(label: String) throws -> NSRect {
-            let normal = controller.board.frame
-            controller.toggleExpandedWindow()
+        func dragExpanded(label: String, automaticRestoreFrame: NSRect? = nil) throws -> NSRect {
+            let normal = automaticRestoreFrame ?? controller.board.frame
+            if automaticRestoreFrame == nil { controller.toggleExpandedWindow() }
             RunLoop.main.run(until: Date().addingTimeInterval(0.12))
             guard let rootView = controller.board.contentView,
                   let handle = handles(in: rootView).max(by: { $0.bounds.width < $1.bounds.width }) else {
@@ -129,9 +129,9 @@ private final class WindowNotificationClient: ReminderNotificationClient {
         controller.showBoard(immediate: true)
         RunLoop.main.run(until: Date().addingTimeInterval(0.40))
         let direction = state.weeklyExpansionDirection
-        try expect(state.weeklyVisibleDays.count == 7 && controller.board.frame.width > compact.width,
-                   "Automatic Week drag fixture opens populated date columns wider than Daily")
-        let movedWeek = try dragExpanded(label: "Populated Week")
+        try expect(state.weeklyVisibleDays.count == 7 && controller.board.frame == screen.visibleFrame,
+                   "Automatic Week drag fixture opens all seven columns in the full display safe area")
+        let movedWeek = try dragExpanded(label: "Populated Week", automaticRestoreFrame: compact)
         let compactAnchor = CornerGeometry.compactTopLeft(weeklyFrame: movedWeek, compactWidth: compact.width,
                                                          direction: direction)
         state.back()
@@ -150,12 +150,12 @@ private final class WindowNotificationClient: ReminderNotificationClient {
         controller.toggleExpandedWindow()
         controller.toggleExpandedWindow()
         try expect(controller.board.frame == automaticWeek,
-                   "Expand and restore retains the exact automatic Week frame")
+                   "Restore and expand returns to the exact automatic Week full view")
         state.back()
         controller.showBoard(immediate: true)
         RunLoop.main.run(until: Date().addingTimeInterval(0.40))
         try expect(state.route == .daily && controller.board.frame == beforeWeekRestore,
-                   "Back after expanding and restoring an automatic Week retains content-driven compact Daily sizing")
+                   "Back after restoring and expanding Week retains content-driven compact Daily sizing")
 
         let rightAnchor = NSPoint(x: screen.visibleFrame.maxX - compact.width,
                                   y: screen.visibleFrame.maxY - 35)
@@ -166,12 +166,12 @@ private final class WindowNotificationClient: ReminderNotificationClient {
         controller.showBoard(immediate: true)
         RunLoop.main.run(until: Date().addingTimeInterval(0.40))
         let leftOpeningWeek = controller.board.frame
-        try expect(state.weeklyExpansionDirection == .left && leftOpeningWeek.maxX == rightCompact.maxX,
-                   "Right-side automatic Week fixture expands left from the compact right-edge anchor")
+        try expect(state.weeklyExpansionDirection == .left && leftOpeningWeek == screen.visibleFrame,
+                   "Right-side automatic Week fills the safe area and remembers its compact right anchor")
         controller.toggleExpandedWindow()
         controller.toggleExpandedWindow()
         try expect(controller.board.frame == leftOpeningWeek,
-                   "Expand and restore retains the exact left-opening automatic Week frame")
+                   "Restore and expand retains the exact right-anchored Week full view")
         state.back()
         controller.showBoard(immediate: true)
         RunLoop.main.run(until: Date().addingTimeInterval(0.40))
@@ -181,17 +181,13 @@ private final class WindowNotificationClient: ReminderNotificationClient {
         state.openWeekly()
         controller.showBoard(immediate: true)
         RunLoop.main.run(until: Date().addingTimeInterval(0.40))
-        controller.toggleExpandedWindow()
         state.showSettings()
         controller.showBoard(immediate: true)
-        RunLoop.main.run(until: Date().addingTimeInterval(0.12))
-        controller.toggleExpandedWindow()
-        controller.showBoard(immediate: true)
-        RunLoop.main.run(until: Date().addingTimeInterval(0.12))
+        RunLoop.main.run(until: Date().addingTimeInterval(0.40))
         let rightSettings = CornerGeometry.movedPanelFrame(topLeft: NSPoint(x: rightCompact.minX, y: rightCompact.maxY),
                                                           visible: screen.visibleFrame, preferredHeight: 670)
         try expect(state.route == .settings && controller.board.frame == rightSettings,
-                   "Opening Settings while an automatic left-opening Week is expanded retains the compact right-side anchor after restore")
+                   "Opening Settings from automatic Week full view restores the compact right-side anchor")
     }
 
     @MainActor static func main() throws {

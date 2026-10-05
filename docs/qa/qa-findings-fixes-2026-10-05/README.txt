@@ -1,0 +1,11 @@
+QA findings repair verification — 2026-10-05
+
+The fresh App Store Release native campaign completed all121 registered suites with unchanged inputs:120passed,1failed. The sole failure is the strict zoom performance gate: input-to-layout p95 54.448ms exceeds50ms; steady timer p95 67.253ms also exceeds33ms. These are synthetic native layout/timer measurements from a30-second workload, not physical input-to-display/FPS or a ten-minute soak. All findings are not fixed.
+
+Fixed and verified: the narrow task title now paints its second line at100% and200%, with current379 native editing/focus/selection/resize/Return/Save checks and saved raster proof. The reminder recovery test now drains queued work before removing its temporary store; current93checks passed with no previous Core Data I/O messages. Native integration changed1production file and3tests using backups and297path guards; actual native files match the final clone.
+
+Still open:9 unsuppressed NSTableView warnings (Project5,Search3,Zoom1). An independent SwiftUI/AppKit-only variable-height List reproduced the same warning5times while74checks/native virtualization passed. No safe public estimator workaround or broad row rewrite was promoted. Performance has no accepted causal source optimization; its strict budgets were retained.
+
+verification.json joins the current269input campaign fingerprint, all121 outcomes, relevant graphics/storage/action evidence and exact hashes. full-current-run contains the untouched report and all compile/runtime logs. Current unsigned0.4.33(88) Store compilation and51packaging checks passed on the canonical168release fingerprint. This is separate from signing/sandbox/install/archive/upload; those current-release stages remain unverified/unperformed. The previous TestFlight archive is superseded and no new signed archive or upload is claimed.
+
+The older direct5,Python90,XCTest2,ad-hoc sandbox31 and extra4render fixtures/387PNGs remain historical, not fresh passes for the current title source change. Manual hardware gestures, live services, physical AVKit Play/Pause buttons and human usability remain explicit boundaries. Assertion, handler, suite and image counts are not counts of unique user flows or proof that every button was physically exercised.

@@ -1,0 +1,1076 @@
+{
+  "schemaVersion": 1,
+  "sampleScope": "Mixed startup/burst/resize5s sample; this is only the exact resize subtree, not an overall hotspot percentage",
+  "mainThreadSamples": 3740,
+  "zoomUpdateSamples": 521,
+  "nativeViewTreeLayoutSamples": 519,
+  "subtreeLineStart": 12533,
+  "subtreeLineEnd": 21296,
+  "selectedFrames": [
+    {
+      "line": 12533,
+      "samples": 521,
+      "symbol": "WorkspaceZoomSettings.update(to:)  (in libDaBinTestCore.dylib) + 476  [0x1020cf940]"
+    },
+    {
+      "line": 12534,
+      "samples": 521,
+      "symbol": "partial apply for closure #12 in static WorkspaceZoomPerformanceTests.run()  (in WorkspaceZoomPerformanceTests) + 192  [0x100111b58]"
+    },
+    {
+      "line": 12535,
+      "samples": 521,
+      "symbol": "-[NSWindow _setFrameCommon:display:fromServer:]  (in AppKit) + 1876  [0x18f818868]"
+    },
+    {
+      "line": 12536,
+      "samples": 519,
+      "symbol": "-[NSWindow _oldPlaceWindow:fromServer:]  (in AppKit) + 620  [0x18f8193a8]"
+    },
+    {
+      "line": 12537,
+      "samples": 519,
+      "symbol": "-[NSWindow(NSConstraintBasedLayoutInternal) _layoutViewTree]  (in AppKit) + 120  [0x1907de958]"
+    },
+    {
+      "line": 12538,
+      "samples": 519,
+      "symbol": "-[NSView layoutSubtreeIfNeeded]  (in AppKit) + 96  [0x18f81b710]"
+    },
+    {
+      "line": 12539,
+      "samples": 519,
+      "symbol": "NSPerformVisuallyAtomicChange  (in AppKit) + 128  [0x18f8172d8]"
+    },
+    {
+      "line": 12540,
+      "samples": 519,
+      "symbol": "-[NSView _layoutSubtreeIfNeededAndAllowTemporaryEngine:]  (in AppKit) + 100  [0x18f81b780]"
+    },
+    {
+      "line": 12541,
+      "samples": 519,
+      "symbol": "NSPerformVisuallyAtomicChange  (in AppKit) + 128  [0x18f8172d8]"
+    },
+    {
+      "line": 12542,
+      "samples": 519,
+      "symbol": "__56-[NSView _layoutSubtreeIfNeededAndAllowTemporaryEngine:]_block_invoke  (in AppKit) + 908  [0x19050093c]"
+    },
+    {
+      "line": 12543,
+      "samples": 519,
+      "symbol": "-[NSView _layoutSubtreeWithOldSize:]  (in AppKit) + 100  [0x18f81bba4]"
+    },
+    {
+      "line": 12544,
+      "samples": 519,
+      "symbol": "NSPerformVisuallyAtomicChange  (in AppKit) + 128  [0x18f8172d8]"
+    },
+    {
+      "line": 12545,
+      "samples": 519,
+      "symbol": "__36-[NSView _layoutSubtreeWithOldSize:]_block_invoke  (in AppKit) + 684  [0x1904ffea4]"
+    },
+    {
+      "line": 12546,
+      "samples": 519,
+      "symbol": "-[NSView _layoutSubtreeWithOldSize:]  (in AppKit) + 100  [0x18f81bba4]"
+    },
+    {
+      "line": 12547,
+      "samples": 519,
+      "symbol": "NSPerformVisuallyAtomicChange  (in AppKit) + 128  [0x18f8172d8]"
+    },
+    {
+      "line": 12548,
+      "samples": 519,
+      "symbol": "__36-[NSView _layoutSubtreeWithOldSize:]_block_invoke  (in AppKit) + 684  [0x1904ffea4]"
+    },
+    {
+      "line": 12549,
+      "samples": 519,
+      "symbol": "-[NSView _layoutSubtreeWithOldSize:]  (in AppKit) + 100  [0x18f81bba4]"
+    },
+    {
+      "line": 12550,
+      "samples": 519,
+      "symbol": "NSPerformVisuallyAtomicChange  (in AppKit) + 128  [0x18f8172d8]"
+    },
+    {
+      "line": 12551,
+      "samples": 519,
+      "symbol": "__36-[NSView _layoutSubtreeWithOldSize:]_block_invoke  (in AppKit) + 684  [0x1904ffea4]"
+    },
+    {
+      "line": 12552,
+      "samples": 519,
+      "symbol": "-[NSView _layoutSubtreeWithOldSize:]  (in AppKit) + 100  [0x18f81bba4]"
+    },
+    {
+      "line": 12553,
+      "samples": 519,
+      "symbol": "NSPerformVisuallyAtomicChange  (in AppKit) + 128  [0x18f8172d8]"
+    },
+    {
+      "line": 12554,
+      "samples": 492,
+      "symbol": "__36-[NSView _layoutSubtreeWithOldSize:]_block_invoke  (in AppKit) + 372  [0x1904ffd6c]"
+    },
+    {
+      "line": 12555,
+      "samples": 492,
+      "symbol": "_NSViewLayout  (in AppKit) + 96  [0x18f81bc10]"
+    },
+    {
+      "line": 12556,
+      "samples": 492,
+      "symbol": "NSPerformVisuallyAtomicChange  (in AppKit) + 128  [0x18f8172d8]"
+    },
+    {
+      "line": 12557,
+      "samples": 492,
+      "symbol": "___NSViewLayout_block_invoke  (in AppKit) + 624  [0x19050a078]"
+    },
+    {
+      "line": 12558,
+      "samples": 492,
+      "symbol": "???  (in AppKit)  load address 0x18f79d000 + 0x529dec  [0x18fcc6dec]"
+    },
+    {
+      "line": 12559,
+      "samples": 492,
+      "symbol": "???  (in AppKit)  load address 0x18f79d000 + 0x5297a0  [0x18fcc67a0]"
+    },
+    {
+      "line": 12560,
+      "samples": 492,
+      "symbol": "???  (in AppKit)  load address 0x18f79d000 + 0x564534  [0x18fd01534]"
+    },
+    {
+      "line": 12561,
+      "samples": 492,
+      "symbol": "???  (in AppKit)  load address 0x18f79d000 + 0x56450c  [0x18fd0150c]"
+    },
+    {
+      "line": 12562,
+      "samples": 492,
+      "symbol": "@objc NSHostingView.layout()  (in SwiftUI) + 28  [0x1c0fa5060]"
+    },
+    {
+      "line": 12563,
+      "samples": 492,
+      "symbol": "NSHostingView.layout()  (in SwiftUI) + 480  [0x1c0fa4ae4]"
+    },
+    {
+      "line": 12564,
+      "samples": 492,
+      "symbol": "+[NSAnimationContext runAnimationGroup:]  (in AppKit) + 56  [0x18f7ecf58]"
+    },
+    {
+      "line": 12565,
+      "samples": 492,
+      "symbol": "<deduplicated_symbol>  (in SwiftUI) + 44  [0x1c0f9f084]"
+    },
+    {
+      "line": 12566,
+      "samples": 492,
+      "symbol": "<deduplicated_symbol>  (in SwiftUI) + 28  [0x1c0fbffcc]"
+    },
+    {
+      "line": 12567,
+      "samples": 492,
+      "symbol": "closure #1 in NSHostingView.layout()  (in SwiftUI) + 484  [0x1c0fa4d6c]"
+    },
+    {
+      "line": 12568,
+      "samples": 492,
+      "symbol": "ViewGraphRootValueUpdater.render(interval:updateDisplayList:targetTimestamp:)  (in SwiftUICore) + 584  [0x23947cf7c]"
+    },
+    {
+      "line": 12569,
+      "samples": 230,
+      "symbol": "closure #1 in ViewGraphRootValueUpdater.render(interval:updateDisplayList:targetTimestamp:)  (in SwiftUICore) + 420  [0x23947ebb8]"
+    },
+    {
+      "line": 12570,
+      "samples": 230,
+      "symbol": "GraphHost.flushTransactions()  (in SwiftUICore) + 180  [0x238f12760]"
+    },
+    {
+      "line": 12571,
+      "samples": 227,
+      "symbol": "specialized GraphHost.runTransaction(_:do:id:)  (in SwiftUICore) + 368  [0x238f2f7a0]"
+    },
+    {
+      "line": 12572,
+      "samples": 226,
+      "symbol": "AG::Subgraph::update(unsigned int)  (in AttributeGraph) + 972  [0x1c1e96c58]"
+    },
+    {
+      "line": 12573,
+      "samples": 219,
+      "symbol": "AG::Graph::UpdateStack::update()  (in AttributeGraph) + 496  [0x1c1e87384]"
+    },
+    {
+      "line": 12574,
+      "samples": 120,
+      "symbol": "partial apply for implicit closure #1 in closure #1 in closure #1 in Attribute.init<A>(_:)  (in SwiftUICore) + 32  [0x23899aad8]"
+    },
+    {
+      "line": 12580,
+      "samples": 20,
+      "symbol": "protocol witness for View.body.getter in conformance ObservedProjectCaptureCard  (in libDaBinTestCore.dylib) + 24  [0x101fab0f0]"
+    },
+    {
+      "line": 12581,
+      "samples": 14,
+      "symbol": "ProjectWorkspaceCard.content.getter  (in libDaBinTestCore.dylib) + 916  [0x101f9e300]"
+    },
+    {
+      "line": 12582,
+      "samples": 11,
+      "symbol": "closure #3 in closure #1 in ProjectWorkspaceCard.content.getter  (in libDaBinTestCore.dylib) + 988  [0x101fa096c]"
+    },
+    {
+      "line": 12583,
+      "samples": 11,
+      "symbol": "closure #3 in closure #3 in closure #1 in ProjectWorkspaceCard.content.getter  (in libDaBinTestCore.dylib) + 248  [0x101fa1934]"
+    },
+    {
+      "line": 12584,
+      "samples": 11,
+      "symbol": "ProjectWorkspaceCard.metadata.getter  (in libDaBinTestCore.dylib) + 156  [0x101fa0240]"
+    },
+    {
+      "line": 12585,
+      "samples": 10,
+      "symbol": "closure #1 in ProjectWorkspaceCard.metadata.getter  (in libDaBinTestCore.dylib) + 2832  [0x101fa9660]"
+    },
+    {
+      "line": 12586,
+      "samples": 8,
+      "symbol": "closure #3 in closure #1 in ProjectWorkspaceCard.metadata.getter  (in libDaBinTestCore.dylib) + 1116  [0x101faa220]"
+    },
+    {
+      "line": 12587,
+      "samples": 6,
+      "symbol": "prettyDay(_:includeWeekday:)  (in libDaBinTestCore.dylib) + 544  [0x101d11e5c]"
+    },
+    {
+      "line": 12651,
+      "samples": 1,
+      "symbol": "prettyDay(_:includeWeekday:)  (in libDaBinTestCore.dylib) + 636  [0x101d11eb8]"
+    },
+    {
+      "line": 12661,
+      "samples": 1,
+      "symbol": "prettyDay(_:includeWeekday:)  (in libDaBinTestCore.dylib) + 808  [0x101d11f64]"
+    },
+    {
+      "line": 12681,
+      "samples": 1,
+      "symbol": "closure #3 in closure #1 in ProjectWorkspaceCard.metadata.getter  (in libDaBinTestCore.dylib) + 1164  [0x101faa250]"
+    },
+    {
+      "line": 12682,
+      "samples": 1,
+      "symbol": "captureClock(_:)  (in libDaBinTestCore.dylib) + 436  [0x101e1198c]"
+    },
+    {
+      "line": 12696,
+      "samples": 1,
+      "symbol": "closure #3 in closure #1 in ProjectWorkspaceCard.metadata.getter  (in libDaBinTestCore.dylib) + 1568  [0x101faa3e4]"
+    },
+    {
+      "line": 12697,
+      "samples": 1,
+      "symbol": "captureTypeLabel(_:)  (in libDaBinTestCore.dylib) + 192  [0x101e11760]"
+    },
+    {
+      "line": 12700,
+      "samples": 1,
+      "symbol": "closure #1 in ProjectWorkspaceCard.metadata.getter  (in libDaBinTestCore.dylib) + 1832  [0x101fa9278]"
+    },
+    {
+      "line": 12702,
+      "samples": 1,
+      "symbol": "closure #1 in closure #1 in ProjectWorkspaceCard.metadata.getter  (in libDaBinTestCore.dylib) + 212  [0x101fa99bc]"
+    },
+    {
+      "line": 12703,
+      "samples": 1,
+      "symbol": "ProjectWorkspaceItem.title.getter  (in libDaBinTestCore.dylib) + 240  [0x101fa5070]"
+    },
+    {
+      "line": 12708,
+      "samples": 1,
+      "symbol": "closure #3 in closure #1 in ProjectWorkspaceCard.content.getter  (in libDaBinTestCore.dylib) + 396  [0x101fa071c]"
+    },
+    {
+      "line": 12709,
+      "samples": 1,
+      "symbol": "ProjectWorkspaceCard.preview.getter  (in libDaBinTestCore.dylib) + 1092  [0x101f9fcdc]"
+    },
+    {
+      "line": 12712,
+      "samples": 1,
+      "symbol": "closure #3 in closure #1 in ProjectWorkspaceCard.content.getter  (in libDaBinTestCore.dylib) + 796  [0x101fa08ac]"
+    },
+    {
+      "line": 12713,
+      "samples": 1,
+      "symbol": "ProjectWorkspaceCard.roleBadge.getter  (in libDaBinTestCore.dylib) + 2452  [0x101fa1588]"
+    },
+    {
+      "line": 12714,
+      "samples": 1,
+      "symbol": "Capture.isTask.getter  (in libDaBinTestCore.dylib) + 148  [0x101d0c80c]"
+    },
+    {
+      "line": 12726,
+      "samples": 1,
+      "symbol": "closure #3 in closure #1 in ProjectWorkspaceCard.content.getter  (in libDaBinTestCore.dylib) + 1324  [0x101fa0abc]"
+    },
+    {
+      "line": 12727,
+      "samples": 1,
+      "symbol": "<deduplicated_symbol>  (in libDaBinTestCore.dylib) + 56  [0x10229db64]"
+    },
+    {
+      "line": 12734,
+      "samples": 4,
+      "symbol": "ProjectWorkspaceCard.content.getter  (in libDaBinTestCore.dylib) + 832  [0x101f9e2ac]"
+    },
+    {
+      "line": 12735,
+      "samples": 4,
+      "symbol": "ProjectWorkspaceCard.taskCard(_:)  (in libDaBinTestCore.dylib) + 328  [0x101fa0398]"
+    },
+    {
+      "line": 12736,
+      "samples": 3,
+      "symbol": "closure #1 in ProjectWorkspaceCard.taskCard(_:)  (in libDaBinTestCore.dylib) + 2984  [0x101fa2650]"
+    },
+    {
+      "line": 12737,
+      "samples": 3,
+      "symbol": "closure #4 in closure #1 in ProjectWorkspaceCard.taskCard(_:)  (in libDaBinTestCore.dylib) + 636  [0x101fa5330]"
+    },
+    {
+      "line": 12738,
+      "samples": 2,
+      "symbol": "prettyDay(_:includeWeekday:)  (in libDaBinTestCore.dylib) + 544  [0x101d11e5c]"
+    },
+    {
+      "line": 12757,
+      "samples": 1,
+      "symbol": "prettyDay(_:includeWeekday:)  (in libDaBinTestCore.dylib) + 424  [0x101d11de4]"
+    },
+    {
+      "line": 12760,
+      "samples": 1,
+      "symbol": "closure #1 in ProjectWorkspaceCard.taskCard(_:)  (in libDaBinTestCore.dylib) + 1028  [0x101fa1eac]"
+    },
+    {
+      "line": 12761,
+      "samples": 1,
+      "symbol": "closure #1 in closure #1 in ProjectWorkspaceCard.taskCard(_:)  (in libDaBinTestCore.dylib) + 436  [0x101fa2ab0]"
+    },
+    {
+      "line": 12762,
+      "samples": 1,
+      "symbol": "ProjectWorkspaceCard.selectionButton.getter  (in libDaBinTestCore.dylib) + 752  [0x101f9f28c]"
+    },
+    {
+      "line": 12770,
+      "samples": 1,
+      "symbol": "ProjectWorkspaceCard.content.getter  (in libDaBinTestCore.dylib) + 1284  [0x101f9e470]"
+    },
+    {
+      "line": 12772,
+      "samples": 1,
+      "symbol": "ProjectWorkspaceCard.content.getter  (in libDaBinTestCore.dylib) + 2228  [0x101f9e820]"
+    },
+    {
+      "line": 12792,
+      "samples": 7,
+      "symbol": "BoardView.body.getter  (in libDaBinTestCore.dylib) + 1452  [0x101dcf740]"
+    },
+    {
+      "line": 12793,
+      "samples": 7,
+      "symbol": "closure #1 in BoardView.body.getter  (in libDaBinTestCore.dylib) + 884  [0x101dd1818]"
+    },
+    {
+      "line": 12794,
+      "samples": 6,
+      "symbol": "closure #1 in BoardView.header.getter  (in libDaBinTestCore.dylib) + 596  [0x101dd9224]"
+    },
+    {
+      "line": 12795,
+      "samples": 6,
+      "symbol": "closure #1 in closure #1 in BoardView.header.getter  (in libDaBinTestCore.dylib) + 5384  [0x101ddad88]"
+    },
+    {
+      "line": 12796,
+      "samples": 4,
+      "symbol": "BoardView.exportManagementMenu.getter  (in libDaBinTestCore.dylib) + 2060  [0x101ddc710]"
+    },
+    {
+      "line": 12797,
+      "samples": 4,
+      "symbol": "specialized static WeekExportDocument.selectedDayKeys(_:timeZone:)  (in libDaBinTestCore.dylib) + 128  [0x10219b8ec]"
+    },
+    {
+      "line": 12798,
+      "samples": 4,
+      "symbol": "specialized static CaptureCalendar.dayString(_:timeZone:)  (in libDaBinTestCore.dylib) + 932  [0x10214c0bc]"
+    },
+    {
+      "line": 12848,
+      "samples": 2,
+      "symbol": "BoardView.exportManagementMenu.getter  (in libDaBinTestCore.dylib) + 2092  [0x101ddc730]"
+    },
+    {
+      "line": 12849,
+      "samples": 2,
+      "symbol": "specialized static CaptureCalendar.dayString(_:timeZone:)  (in libDaBinTestCore.dylib) + 932  [0x10214c0bc]"
+    },
+    {
+      "line": 12876,
+      "samples": 1,
+      "symbol": "closure #1 in BoardView.header.getter  (in libDaBinTestCore.dylib) + 1104  [0x101dd9420]"
+    },
+    {
+      "line": 12877,
+      "samples": 1,
+      "symbol": "closure #3 in closure #1 in BoardView.header.getter  (in libDaBinTestCore.dylib) + 1072  [0x101dde2e8]"
+    },
+    {
+      "line": 12878,
+      "samples": 1,
+      "symbol": "BoardView.historyControls.getter  (in libDaBinTestCore.dylib) + 416  [0x101ddd7dc]"
+    },
+    {
+      "line": 12879,
+      "samples": 1,
+      "symbol": "closure #1 in BoardView.historyControls.getter  (in libDaBinTestCore.dylib) + 1728  [0x101ddff7c]"
+    },
+    {
+      "line": 12884,
+      "samples": 4,
+      "symbol": "ProjectWorkspaceView.body.getter  (in libDaBinTestCore.dylib) + 1044  [0x101fbe7e0]"
+    },
+    {
+      "line": 12885,
+      "samples": 4,
+      "symbol": "closure #1 in ProjectWorkspaceView.body.getter  (in libDaBinTestCore.dylib) + 1248  [0x101fbf56c]"
+    },
+    {
+      "line": 12886,
+      "samples": 3,
+      "symbol": "ProjectWorkspaceView.selectionBar(all:visible:selected:)  (in libDaBinTestCore.dylib) + 1488  [0x101fbff6c]"
+    },
+    {
+      "line": 12887,
+      "samples": 2,
+      "symbol": "closure #2 in closure #2 in closure #1 in ProjectWorkspaceView.selectionBar(all:visible:selected:)  (in libDaBinTestCore.dylib) + 648  [0x101fca130]"
+    },
+    {
+      "line": 12888,
+      "samples": 2,
+      "symbol": "ProjectWorkspaceView.selectionActions(_:visible:)  (in libDaBinTestCore.dylib) + 1852  [0x101fc97b0]"
+    },
+    {
+      "line": 12889,
+      "samples": 2,
+      "symbol": "WorkspaceStore.projectColorHex(for:)  (in libDaBinTestCore.dylib) + 96  [0x101ea8f00]"
+    },
+    {
+      "line": 12890,
+      "samples": 2,
+      "symbol": "specialized static WorkspaceStore.normalizedProjectName(_:)  (in libDaBinTestCore.dylib) + 272  [0x102162c74]"
+    },
+    {
+      "line": 12891,
+      "samples": 2,
+      "symbol": "specialized Sequence.contains(where:)  (in libDaBinTestCore.dylib) + 316  [0x101d132dc]"
+    },
+    {
+      "line": 12897,
+      "samples": 1,
+      "symbol": "closure #2 in closure #2 in closure #1 in ProjectWorkspaceView.selectionBar(all:visible:selected:)  (in libDaBinTestCore.dylib) + 488  [0x101fca090]"
+    },
+    {
+      "line": 12898,
+      "samples": 1,
+      "symbol": "ProjectWorkspaceView.selectionActions(_:visible:)  (in libDaBinTestCore.dylib) + 1852  [0x101fc97b0]"
+    },
+    {
+      "line": 12899,
+      "samples": 1,
+      "symbol": "WorkspaceStore.projectColorHex(for:)  (in libDaBinTestCore.dylib) + 96  [0x101ea8f00]"
+    },
+    {
+      "line": 12900,
+      "samples": 1,
+      "symbol": "specialized static WorkspaceStore.normalizedProjectName(_:)  (in libDaBinTestCore.dylib) + 272  [0x102162c74]"
+    },
+    {
+      "line": 12901,
+      "samples": 1,
+      "symbol": "specialized Sequence.contains(where:)  (in libDaBinTestCore.dylib) + 316  [0x101d132dc]"
+    },
+    {
+      "line": 12907,
+      "samples": 1,
+      "symbol": "ProjectWorkspaceView.selectionBar(all:visible:selected:)  (in libDaBinTestCore.dylib) + 940  [0x101fbfd48]"
+    },
+    {
+      "line": 12908,
+      "samples": 1,
+      "symbol": "ProjectWorkspaceView.selectionActions(_:visible:)  (in libDaBinTestCore.dylib) + 1852  [0x101fc97b0]"
+    },
+    {
+      "line": 12909,
+      "samples": 1,
+      "symbol": "WorkspaceStore.projectColorHex(for:)  (in libDaBinTestCore.dylib) + 96  [0x101ea8f00]"
+    },
+    {
+      "line": 12910,
+      "samples": 1,
+      "symbol": "specialized static WorkspaceStore.normalizedProjectName(_:)  (in libDaBinTestCore.dylib) + 272  [0x102162c74]"
+    },
+    {
+      "line": 12911,
+      "samples": 1,
+      "symbol": "specialized Sequence.contains(where:)  (in libDaBinTestCore.dylib) + 316  [0x101d132dc]"
+    },
+    {
+      "line": 12916,
+      "samples": 1,
+      "symbol": "BoardView.body.getter  (in libDaBinTestCore.dylib) + 8624  [0x101dd1344]"
+    },
+    {
+      "line": 12935,
+      "samples": 1,
+      "symbol": "BoardView.body.getter  (in libDaBinTestCore.dylib) + 8816  [0x101dd1404]"
+    },
+    {
+      "line": 12937,
+      "samples": 1,
+      "symbol": "closure #17 in BoardView.body.getter  (in libDaBinTestCore.dylib) + 116  [0x101dd72ec]"
+    },
+    {
+      "line": 12938,
+      "samples": 1,
+      "symbol": "closure #1 in closure #17 in BoardView.body.getter  (in libDaBinTestCore.dylib) + 684  [0x101dd7634]"
+    },
+    {
+      "line": 12965,
+      "samples": 1,
+      "symbol": "CaptureThumbnail.body.getter  (in libDaBinTestCore.dylib) + 140  [0x101e4a424]"
+    },
+    {
+      "line": 12980,
+      "samples": 1,
+      "symbol": "getEnumTagSinglePayload for CapturePreviewImageRequest  (in libDaBinTestCore.dylib) + 0  [0x1021f1a0c]"
+    },
+    {
+      "line": 13019,
+      "samples": 1,
+      "symbol": "key path getter for EnvironmentValues.timelineTooltipController : EnvironmentValues  (in libDaBinTestCore.dylib) + 24  [0x101dc4f0c]"
+    },
+    {
+      "line": 13020,
+      "samples": 1,
+      "symbol": "lazy protocol witness table accessor for type TimelineTooltipControllerKey and conformance TimelineTooltipControllerKey  (in libDaBinTestCore.dylib) + 0  [0x1021964b8]"
+    },
+    {
+      "line": 13195,
+      "samples": 8,
+      "symbol": "closure #1 in closure #1 in closure #1 in closure #1 in ProjectWorkspaceView.browser(layout:visible:columns:emptyProject:)  (in libDaBinTestCore.dylib) + 128  [0x101fcc79c]"
+    },
+    {
+      "line": 13196,
+      "samples": 8,
+      "symbol": "ProjectWorkspaceView.card(_:visible:)  (in libDaBinTestCore.dylib) + 1172  [0x101fccce8]"
+    },
+    {
+      "line": 13197,
+      "samples": 8,
+      "symbol": "WorkspaceStore.projectColorHex(for:)  (in libDaBinTestCore.dylib) + 96  [0x101ea8f00]"
+    },
+    {
+      "line": 13198,
+      "samples": 8,
+      "symbol": "specialized static WorkspaceStore.normalizedProjectName(_:)  (in libDaBinTestCore.dylib) + 272  [0x102162c74]"
+    },
+    {
+      "line": 13199,
+      "samples": 7,
+      "symbol": "specialized Sequence.contains(where:)  (in libDaBinTestCore.dylib) + 316  [0x101d132dc]"
+    },
+    {
+      "line": 13209,
+      "samples": 1,
+      "symbol": "specialized Sequence.contains(where:)  (in libDaBinTestCore.dylib) + 380  [0x101d1331c]"
+    },
+    {
+      "line": 13218,
+      "samples": 3,
+      "symbol": "closure #1 in ProjectWorkspaceView.filterChips.getter  (in libDaBinTestCore.dylib) + 628  [0x101fc755c]"
+    },
+    {
+      "line": 13220,
+      "samples": 2,
+      "symbol": "closure #2 in closure #1 in ProjectWorkspaceView.filterChips.getter  (in libDaBinTestCore.dylib) + 1496  [0x101fc7f54]"
+    },
+    {
+      "line": 13221,
+      "samples": 2,
+      "symbol": "WorkspaceStore.projectColorHex(for:)  (in libDaBinTestCore.dylib) + 96  [0x101ea8f00]"
+    },
+    {
+      "line": 13222,
+      "samples": 2,
+      "symbol": "specialized static WorkspaceStore.normalizedProjectName(_:)  (in libDaBinTestCore.dylib) + 272  [0x102162c74]"
+    },
+    {
+      "line": 13223,
+      "samples": 2,
+      "symbol": "specialized Sequence.contains(where:)  (in libDaBinTestCore.dylib) + 316  [0x101d132dc]"
+    },
+    {
+      "line": 13229,
+      "samples": 1,
+      "symbol": "closure #2 in closure #1 in ProjectWorkspaceView.filterChips.getter  (in libDaBinTestCore.dylib) + 1020  [0x101fc7d78]"
+    },
+    {
+      "line": 13230,
+      "samples": 1,
+      "symbol": "WorkspaceStore.projectColorHex(for:)  (in libDaBinTestCore.dylib) + 96  [0x101ea8f00]"
+    },
+    {
+      "line": 13231,
+      "samples": 1,
+      "symbol": "specialized static WorkspaceStore.normalizedProjectName(_:)  (in libDaBinTestCore.dylib) + 272  [0x102162c74]"
+    },
+    {
+      "line": 13232,
+      "samples": 1,
+      "symbol": "specialized Sequence.contains(where:)  (in libDaBinTestCore.dylib) + 316  [0x101d132dc]"
+    },
+    {
+      "line": 13237,
+      "samples": 3,
+      "symbol": "closure #1 in closure #1 in ProjectWorkspaceView.browser(layout:visible:columns:emptyProject:)  (in libDaBinTestCore.dylib) + 628  [0x101fcc52c]"
+    },
+    {
+      "line": 13238,
+      "samples": 3,
+      "symbol": "specialized ForEach<>.init(_:content:)  (in libDaBinTestCore.dylib) + 244  [0x101dfae80]"
+    },
+    {
+      "line": 13260,
+      "samples": 1,
+      "symbol": "closure #1 in closure #1 in ProjectWorkspaceView.browser(layout:visible:columns:emptyProject:)  (in libDaBinTestCore.dylib) + 724  [0x101fcc58c]"
+    },
+    {
+      "line": 13261,
+      "samples": 1,
+      "symbol": "specialized ForEach.init(_:id:content:)  (in libDaBinTestCore.dylib) + 188  [0x101dc7f34]"
+    },
+    {
+      "line": 13265,
+      "samples": 1,
+      "symbol": "closure #1 in closure #1 in ProjectWorkspaceView.browser(layout:visible:columns:emptyProject:)  (in libDaBinTestCore.dylib) + 976  [0x101fcc688]"
+    },
+    {
+      "line": 13270,
+      "samples": 1,
+      "symbol": "closure #1 in closure #1 in ProjectWorkspaceView.browser(layout:visible:columns:emptyProject:)  (in libDaBinTestCore.dylib) + 1032  [0x101fcc6c0]"
+    },
+    {
+      "line": 14878,
+      "samples": 1,
+      "symbol": "<deduplicated_symbol>  (in libDaBinTestCore.dylib) + 0  [0x101dc64dc]"
+    },
+    {
+      "line": 15061,
+      "samples": 1,
+      "symbol": "initializeBufferWithCopyOfBuffer for AutoCaptureRobotReactionDeck  (in libDaBinTestCore.dylib) + 0  [0x102249584]"
+    },
+    {
+      "line": 15352,
+      "samples": 215,
+      "symbol": "closure #1 in ViewGraphRootValueUpdater.render(interval:updateDisplayList:targetTimestamp:)  (in SwiftUICore) + 872  [0x23947ed7c]"
+    },
+    {
+      "line": 15353,
+      "samples": 192,
+      "symbol": "ViewGraph.updateOutputs(at:)  (in SwiftUICore) + 472  [0x239485b24]"
+    },
+    {
+      "line": 15354,
+      "samples": 192,
+      "symbol": "specialized update #1 () in ViewGraph.updateOutputs(async:)  (in SwiftUICore) + 332  [0x23948b4c4]"
+    },
+    {
+      "line": 15355,
+      "samples": 192,
+      "symbol": "NSHostingView.preferencesDidChange()  (in SwiftUI) + 2164  [0x1c0fb6280]"
+    },
+    {
+      "line": 15356,
+      "samples": 192,
+      "symbol": "FocusBridge.preferencesDidChange(_:)  (in SwiftUI) + 3972  [0x1c0d39d08]"
+    },
+    {
+      "line": 15357,
+      "samples": 192,
+      "symbol": "FocusBridge.invalidateKeyViewLoop()  (in SwiftUI) + 180  [0x1c0ef2450]"
+    },
+    {
+      "line": 15358,
+      "samples": 186,
+      "symbol": "FocusBridge.updateDefaultKeyViewLoop()  (in SwiftUI) + 2228  [0x1c0ef4390]"
+    },
+    {
+      "line": 15359,
+      "samples": 186,
+      "symbol": "-[NSView _recursiveSetDefaultKeyViewLoop]  (in AppKit) + 672  [0x18f866694]"
+    },
+    {
+      "line": 15360,
+      "samples": 186,
+      "symbol": "-[NSTableView _primitiveSetDefaultNextKeyView:]  (in AppKit) + 96  [0x18f8d10ac]"
+    },
+    {
+      "line": 15361,
+      "samples": 186,
+      "symbol": "-[NSTableRowData updateKeyViewLoopForAllRows]  (in AppKit) + 132  [0x18f8d115c]"
+    },
+    {
+      "line": 15362,
+      "samples": 186,
+      "symbol": "-[NSTableView enumerateAvailableRowViewsUsingBlock:]  (in AppKit) + 88  [0x18f8582a8]"
+    },
+    {
+      "line": 15363,
+      "samples": 186,
+      "symbol": "-[NSTableRowData enumerateAvailableRowViewsIncludingOrphanRows:usingBlock:]  (in AppKit) + 168  [0x19065249c]"
+    },
+    {
+      "line": 15364,
+      "samples": 186,
+      "symbol": "__75-[NSTableRowData enumerateAvailableRowViewsIncludingOrphanRows:usingBlock:]_block_invoke  (in AppKit) + 140  [0x190652b50]"
+    },
+    {
+      "line": 15365,
+      "samples": 186,
+      "symbol": "-[NSTableRowData _updateKeyViewLoopForRowView:]  (in AppKit) + 84  [0x19064fd48]"
+    },
+    {
+      "line": 15366,
+      "samples": 176,
+      "symbol": "-[NSView _setDefaultKeyViewLoop]  (in AppKit) + 232  [0x18f864ea0]"
+    },
+    {
+      "line": 15367,
+      "samples": 176,
+      "symbol": "-[NSView layoutSubtreeIfNeeded]  (in AppKit) + 96  [0x18f81b710]"
+    },
+    {
+      "line": 15368,
+      "samples": 176,
+      "symbol": "NSPerformVisuallyAtomicChange  (in AppKit) + 128  [0x18f8172d8]"
+    },
+    {
+      "line": 15369,
+      "samples": 176,
+      "symbol": "-[NSView _layoutSubtreeIfNeededAndAllowTemporaryEngine:]  (in AppKit) + 100  [0x18f81b780]"
+    },
+    {
+      "line": 15370,
+      "samples": 176,
+      "symbol": "NSPerformVisuallyAtomicChange  (in AppKit) + 128  [0x18f8172d8]"
+    },
+    {
+      "line": 15371,
+      "samples": 145,
+      "symbol": "__56-[NSView _layoutSubtreeIfNeededAndAllowTemporaryEngine:]_block_invoke  (in AppKit) + 908  [0x19050093c]"
+    },
+    {
+      "line": 15372,
+      "samples": 145,
+      "symbol": "-[NSView _layoutSubtreeWithOldSize:]  (in AppKit) + 100  [0x18f81bba4]"
+    },
+    {
+      "line": 15373,
+      "samples": 145,
+      "symbol": "NSPerformVisuallyAtomicChange  (in AppKit) + 128  [0x18f8172d8]"
+    },
+    {
+      "line": 15374,
+      "samples": 143,
+      "symbol": "__36-[NSView _layoutSubtreeWithOldSize:]_block_invoke  (in AppKit) + 684  [0x1904ffea4]"
+    },
+    {
+      "line": 15375,
+      "samples": 143,
+      "symbol": "-[NSView _layoutSubtreeWithOldSize:]  (in AppKit) + 100  [0x18f81bba4]"
+    },
+    {
+      "line": 15376,
+      "samples": 143,
+      "symbol": "NSPerformVisuallyAtomicChange  (in AppKit) + 128  [0x18f8172d8]"
+    },
+    {
+      "line": 15377,
+      "samples": 137,
+      "symbol": "__36-[NSView _layoutSubtreeWithOldSize:]_block_invoke  (in AppKit) + 684  [0x1904ffea4]"
+    },
+    {
+      "line": 15378,
+      "samples": 137,
+      "symbol": "-[NSView _layoutSubtreeWithOldSize:]  (in AppKit) + 100  [0x18f81bba4]"
+    },
+    {
+      "line": 15379,
+      "samples": 137,
+      "symbol": "NSPerformVisuallyAtomicChange  (in AppKit) + 128  [0x18f8172d8]"
+    },
+    {
+      "line": 15380,
+      "samples": 136,
+      "symbol": "__36-[NSView _layoutSubtreeWithOldSize:]_block_invoke  (in AppKit) + 372  [0x1904ffd6c]"
+    },
+    {
+      "line": 15381,
+      "samples": 136,
+      "symbol": "_NSViewLayout  (in AppKit) + 96  [0x18f81bc10]"
+    },
+    {
+      "line": 15382,
+      "samples": 136,
+      "symbol": "NSPerformVisuallyAtomicChange  (in AppKit) + 128  [0x18f8172d8]"
+    },
+    {
+      "line": 15383,
+      "samples": 134,
+      "symbol": "___NSViewLayout_block_invoke  (in AppKit) + 624  [0x19050a078]"
+    },
+    {
+      "line": 15384,
+      "samples": 134,
+      "symbol": "???  (in AppKit)  load address 0x18f79d000 + 0x529dec  [0x18fcc6dec]"
+    },
+    {
+      "line": 15385,
+      "samples": 134,
+      "symbol": "???  (in AppKit)  load address 0x18f79d000 + 0x5297a0  [0x18fcc67a0]"
+    },
+    {
+      "line": 15386,
+      "samples": 134,
+      "symbol": "???  (in AppKit)  load address 0x18f79d000 + 0x564534  [0x18fd01534]"
+    },
+    {
+      "line": 15387,
+      "samples": 134,
+      "symbol": "???  (in AppKit)  load address 0x18f79d000 + 0x56450c  [0x18fd0150c]"
+    },
+    {
+      "line": 15388,
+      "samples": 134,
+      "symbol": "@objc NSHostingView.layout()  (in SwiftUI) + 28  [0x1c0fa5060]"
+    },
+    {
+      "line": 15389,
+      "samples": 134,
+      "symbol": "NSHostingView.layout()  (in SwiftUI) + 480  [0x1c0fa4ae4]"
+    },
+    {
+      "line": 15390,
+      "samples": 134,
+      "symbol": "+[NSAnimationContext runAnimationGroup:]  (in AppKit) + 56  [0x18f7ecf58]"
+    },
+    {
+      "line": 15391,
+      "samples": 133,
+      "symbol": "<deduplicated_symbol>  (in SwiftUI) + 44  [0x1c0f9f084]"
+    },
+    {
+      "line": 15392,
+      "samples": 133,
+      "symbol": "<deduplicated_symbol>  (in SwiftUI) + 28  [0x1c0fbffcc]"
+    },
+    {
+      "line": 15393,
+      "samples": 133,
+      "symbol": "closure #1 in NSHostingView.layout()  (in SwiftUI) + 484  [0x1c0fa4d6c]"
+    },
+    {
+      "line": 15394,
+      "samples": 133,
+      "symbol": "ViewGraphRootValueUpdater.render(interval:updateDisplayList:targetTimestamp:)  (in SwiftUICore) + 584  [0x23947cf7c]"
+    },
+    {
+      "line": 17394,
+      "samples": 1,
+      "symbol": "destroy for NativeContentDragSurface  (in libDaBinTestCore.dylib) + 60  [0x1022543f0]"
+    },
+    {
+      "line": 17397,
+      "samples": 1,
+      "symbol": "__swift_closure_destructor.4682Tm  (in libDaBinTestCore.dylib) + 72  [0x102287120]"
+    },
+    {
+      "line": 17398,
+      "samples": 1,
+      "symbol": "outlined consume of Environment<WorkspaceZoomLayout>.Content  (in libDaBinTestCore.dylib) + 0  [0x1021a1d04]"
+    },
+    {
+      "line": 17681,
+      "samples": 5,
+      "symbol": "@objc NSHostingView.layout()  (in SwiftUI) + 28  [0x1c0fa5060]"
+    },
+    {
+      "line": 17682,
+      "samples": 5,
+      "symbol": "NSHostingView.layout()  (in SwiftUI) + 480  [0x1c0fa4ae4]"
+    },
+    {
+      "line": 17686,
+      "samples": 4,
+      "symbol": "closure #1 in NSHostingView.layout()  (in SwiftUI) + 484  [0x1c0fa4d6c]"
+    },
+    {
+      "line": 17716,
+      "samples": 1,
+      "symbol": "closure #1 in NSHostingView.layout()  (in SwiftUI) + 632  [0x1c0fa4e00]"
+    },
+    {
+      "line": 19268,
+      "samples": 3,
+      "symbol": "@objc NSHostingView.layout()  (in SwiftUI) + 28  [0x1c0fa5060]"
+    },
+    {
+      "line": 19269,
+      "samples": 3,
+      "symbol": "NSHostingView.layout()  (in SwiftUI) + 480  [0x1c0fa4ae4]"
+    },
+    {
+      "line": 19273,
+      "samples": 3,
+      "symbol": "closure #1 in NSHostingView.layout()  (in SwiftUI) + 484  [0x1c0fa4d6c]"
+    },
+    {
+      "line": 19472,
+      "samples": 1,
+      "symbol": "thunk for @escaping @callee_guaranteed @Sendable (@in_guaranteed Notification) -> ()  (in libDaBinTestCore.dylib) + 116  [0x101d85a8c]"
+    },
+    {
+      "line": 19473,
+      "samples": 1,
+      "symbol": "closure #2 in closure #1 in WorkspaceZoomViewport.Coordinator.connect(_:)  (in libDaBinTestCore.dylib) + 76  [0x1020e7060]"
+    },
+    {
+      "line": 19474,
+      "samples": 1,
+      "symbol": "specialized static MainActor.assumeIsolated<A>(_:file:line:)  (in libDaBinTestCore.dylib) + 128  [0x101d858e0]"
+    },
+    {
+      "line": 19475,
+      "samples": 1,
+      "symbol": "partial apply for closure #1 in closure #2 in closure #1 in WorkspaceZoomViewport.Coordinator.connect(_:)  (in libDaBinTestCore.dylib) + 20  [0x10228de88]"
+    },
+    {
+      "line": 19476,
+      "samples": 1,
+      "symbol": "partial apply for closure #1 in closure #1 in closure #1 in SearchColumnViewport.Coordinator.connect(from:)  (in libDaBinTestCore.dylib) + 72  [0x1022a6000]"
+    },
+    {
+      "line": 19477,
+      "samples": 1,
+      "symbol": "WorkspaceZoomViewport.Coordinator.scheduleRestore()  (in libDaBinTestCore.dylib) + 540  [0x1020e6614]"
+    },
+    {
+      "line": 19939,
+      "samples": 1,
+      "symbol": "???  (in libDaBinTestCore.dylib)  load address 0x101cdc000 + 0x148b8  [0x101cf08b8]"
+    },
+    {
+      "line": 20319,
+      "samples": 1,
+      "symbol": "closure #1 in closure #1 in closure #1 in closure #1 in ProjectWorkspaceView.browser(layout:visible:columns:emptyProject:)  (in libDaBinTestCore.dylib) + 128  [0x101fcc79c]"
+    },
+    {
+      "line": 20320,
+      "samples": 1,
+      "symbol": "ProjectWorkspaceView.card(_:visible:)  (in libDaBinTestCore.dylib) + 1172  [0x101fccce8]"
+    },
+    {
+      "line": 20321,
+      "samples": 1,
+      "symbol": "WorkspaceStore.projectColorHex(for:)  (in libDaBinTestCore.dylib) + 96  [0x101ea8f00]"
+    },
+    {
+      "line": 20322,
+      "samples": 1,
+      "symbol": "specialized static WorkspaceStore.normalizedProjectName(_:)  (in libDaBinTestCore.dylib) + 272  [0x102162c74]"
+    },
+    {
+      "line": 20323,
+      "samples": 1,
+      "symbol": "specialized Sequence.contains(where:)  (in libDaBinTestCore.dylib) + 316  [0x101d132dc]"
+    },
+    {
+      "line": 20361,
+      "samples": 6,
+      "symbol": "@objc NSHostingView.layout()  (in SwiftUI) + 28  [0x1c0fa5060]"
+    },
+    {
+      "line": 20362,
+      "samples": 6,
+      "symbol": "NSHostingView.layout()  (in SwiftUI) + 480  [0x1c0fa4ae4]"
+    },
+    {
+      "line": 20366,
+      "samples": 6,
+      "symbol": "closure #1 in NSHostingView.layout()  (in SwiftUI) + 484  [0x1c0fa4d6c]"
+    },
+    {
+      "line": 21049,
+      "samples": 1,
+      "symbol": "@objc NSHostingView.layout()  (in SwiftUI) + 28  [0x1c0fa5060]"
+    },
+    {
+      "line": 21050,
+      "samples": 1,
+      "symbol": "NSHostingView.layout()  (in SwiftUI) + 480  [0x1c0fa4ae4]"
+    },
+    {
+      "line": 21054,
+      "samples": 1,
+      "symbol": "closure #1 in NSHostingView.layout()  (in SwiftUI) + 484  [0x1c0fa4d6c]"
+    },
+    {
+      "line": 21208,
+      "samples": 2,
+      "symbol": "@objc NSHostingView.layout()  (in SwiftUI) + 28  [0x1c0fa5060]"
+    },
+    {
+      "line": 21209,
+      "samples": 2,
+      "symbol": "NSHostingView.layout()  (in SwiftUI) + 480  [0x1c0fa4ae4]"
+    },
+    {
+      "line": 21213,
+      "samples": 2,
+      "symbol": "closure #1 in NSHostingView.layout()  (in SwiftUI) + 484  [0x1c0fa4d6c]"
+    }
+  ]
+}

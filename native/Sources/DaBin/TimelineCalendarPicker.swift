@@ -68,7 +68,7 @@ struct TimelineCalendarPicker: View {
                 }
             }
             if weekly {
-                Text("Pick up to 7 days. Days with activity appear side by side.")
+                Text("Pick up to 7 days. All selected dates appear side by side.")
                     .font(.system(size: 12)).foregroundStyle(Palette.muted).fixedSize(horizontal: false, vertical: true)
             }
             HStack(spacing: 4) {

@@ -1,0 +1,198 @@
+{
+  "attribution": {
+    "NSHostingViewLayoutSamplesInDominantBranch": 492,
+    "conclusion": "The expensive coupled resize invokes AppKit view-tree layout and SwiftUI graph/layout work. Robot geometry/backing-scale and public display callbacks are too small to explain the observed resize cost. This does not prove a specific app-level layout defect or GPU bottleneck.",
+    "nativeViewTreeLayoutSamples": 519,
+    "publicDisplayP95Milliseconds": 0.02620834857225418,
+    "rawSampleSHA256": "4d0e42616d09a1e03b66b2babedab2b7d60f26ffd2afaf93bdc5ff3de7ef22ea",
+    "resizeBranchSamples": 521,
+    "robotLayoutP95Milliseconds": 0.08266675285995007,
+    "sampleReceipt": "stage-a2/resize-sample-summary.json",
+    "scope": "Only exact update/resize branch of a mixed startup/burst/resize sample; no whole-process hotspot percentage inferred."
+  },
+  "candidates": [
+    {
+      "candidate": "Disable content-derived NSHostingView sizing",
+      "officialSource": "https://developer.apple.com/documentation/swiftui/nshostingview/sizingoptions",
+      "result": "Discarded before edits/compile; production DailyCaptureHostingView already sets sizingOptions = []."
+    },
+    {
+      "candidate": "Resize window before publishing factor",
+      "result": "Private fixture-only counterfactual failed; firstLayout rose to 42.23 ms and overall p95 73.41/85.64 ms. No production edit. CPU overlap qualifies exact timing, and no effect is claimed as acceptance."
+    }
+  ],
+  "finalSourceState": {
+    "RobotAppFrameView.swift": {
+      "SHA256": "0edbd249a3998343c5e1f83cf412833597f3e74e7e02f70914792e1c23cf8809",
+      "matchesOriginal70feeManifest": true,
+      "temporaryObserverRemoved": true
+    },
+    "WorkspaceZoom.swift": {
+      "SHA256": "738510220a5c70b25e7816f299b5ea33d2d4eed7f546761146ce936c0d884913",
+      "unchanged": true
+    },
+    "WorkspaceZoomLayout.swift": {
+      "SHA256": "f2525e486361ae71d544b529a73391cf2a24ea573ab9540c89a1ed62a1da6773",
+      "unchanged": true
+    },
+    "WorkspaceZoomPerformanceTests.swift": {
+      "SHA256": "971a4bf7d63a7c3a0df8f0f0536f97dc09e8cc44674b42cad0727ecc11219382",
+      "compileReceipt": "final-instrumentation/compile-receipt.json",
+      "compilerWarningsAsErrorsPassed": true,
+      "originalWorkloadRetained": true,
+      "strictGatesRetained": true,
+      "testOnlyStageInstrumentation": true
+    }
+  },
+  "finding": "Synthetic coupled workspace zoom exceeds input-to-layout p95 50 ms and steady main-runloop timer p95 33 ms budgets.",
+  "historicalFullCampaignWarnings": {
+    "inputToLayoutP95Milliseconds": 54.56233327277005,
+    "receipt": "../../full-certification-2026-10-05/workspace-zoom/performance.json",
+    "scope": "Previous full campaign measurements; preserved as warnings, not current acceptance proof.",
+    "steadyZoomTimerP95Milliseconds": 69.42895846441388
+  },
+  "limits": [
+    "Main-runloop timer intervals and forced native layout are synthetic measurements, not physical input-to-display or compositor presentation timestamps.",
+    "A 30-second synthetic fixture does not establish multi-hour allocation retention, memory pressure, GPU stability, frame pacing, thermal behavior or mixed-monitor hardware reliability.",
+    "Private native fixtures do not establish physical trackpad or third-party mouse-driver behavior."
+  ],
+  "requiredFollowup": [
+    "Current frozen full campaign executed the final pure test in a quiet native desktop session and failed its strict input budget; the measured timer also misses its budget. Exact final report and all 269 current input hashes are joined. Do not treat compile/functional success as clearing this performance finding.",
+    "Before any future layout optimization, instrument a bounded isolated project-row layout counter and compare current source with one candidate under identical synthetic data, selection, anchors, geometry and quiet CPU conditions.",
+    "After a demonstrated causal improvement, repeat unsampled performance measurement and existing zoom/layout/input/viewport/window/chrome/project virtualization regressions."
+  ],
+  "runs": [
+    {
+      "baselineTimerP95Milliseconds": 22.04354153946042,
+      "coupledResizeP95Milliseconds": 47.62420826591551,
+      "firstLayoutP95Milliseconds": 0.02774992026388645,
+      "id": "baseline",
+      "inputSamples": 160,
+      "inputToLayoutP95Milliseconds": 53.65379177965224,
+      "nativeReentrantTableWarningCount": 1,
+      "performanceGates": {
+        "inputToLayoutP95MaximumMilliseconds": 50,
+        "passed": false,
+        "steadyZoomTimerP95MaximumMilliseconds": 33
+      },
+      "performanceReceipt": "baseline/performance.json",
+      "performanceSHA256": "bdf9fc7e02ca3428b57c10f3abe470528ea4d97e66f192dd2554273c5369e787",
+      "runtimeLog": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa-fixes-zoom-baseline-desktop.log",
+      "runtimeLogSHA256": "b3e53577224dce407665a685dc25857d17a482f6f9ff28209172859b53a23abe",
+      "scope": "Unoptimized immutable 70fee module; unsampled original stage instrumentation.",
+      "secondLayoutP95Milliseconds": 0.5955416709184647,
+      "steadyZoomTimerP95Milliseconds": 64.19854145497084
+    },
+    {
+      "baselineTimerP95Milliseconds": 20.300666568800807,
+      "coupledResizeP95Milliseconds": 51.53558333404362,
+      "firstLayoutP95Milliseconds": 0.033416785299777985,
+      "id": "stage-a",
+      "inputSamples": 160,
+      "inputToLayoutP95Milliseconds": 57.75224999524653,
+      "nativeReentrantTableWarningCount": 1,
+      "performanceGates": {
+        "inputToLayoutP95MaximumMilliseconds": 50,
+        "passed": false,
+        "steadyZoomTimerP95MaximumMilliseconds": 33
+      },
+      "performanceReceipt": "stage-a/runtime/performance.json",
+      "performanceSHA256": "7d52bdd48da8497adb0e16211ef51d9b89b44dfbf975fd3bdb225a98e5285dd1",
+      "runtimeLog": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa-fixes-zoom-stage-a.log",
+      "runtimeLogSHA256": "64736eb447a15a820d654725e7342b0337e914801a87101eb1f75194b413e700",
+      "scope": "Immutable A module; diagnostic Robot timings, no optimization.",
+      "secondLayoutP95Milliseconds": 0.6367084570229053,
+      "steadyZoomTimerP95Milliseconds": 67.87358340807259
+    },
+    {
+      "baselineTimerP95Milliseconds": 16.68224995955825,
+      "coupledResizeP95Milliseconds": 60.3300416842103,
+      "firstLayoutP95Milliseconds": 0.03716675564646721,
+      "id": "stage-a2",
+      "inputSamples": 160,
+      "inputToLayoutP95Milliseconds": 67.7286668214947,
+      "nativeReentrantTableWarningCount": 1,
+      "performanceGates": {
+        "inputToLayoutP95MaximumMilliseconds": 50,
+        "passed": false,
+        "steadyZoomTimerP95MaximumMilliseconds": 33
+      },
+      "performanceReceipt": "stage-a2/runtime/performance.json",
+      "performanceSHA256": "01c4b5cc32bfb8b577ebf684e11b3b0770686b2fd42afede9f9bd8acac4e04ad",
+      "runtimeLog": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/zoom/stage-a2/runtime.log",
+      "runtimeLogSHA256": "9bd665f0adf712561767205394755c5eb0099e42df38659ee994b02d375c253d",
+      "scope": "A module with display timing; own-process sampling overlaps mixed startup/resize, diagnostic only.",
+      "secondLayoutP95Milliseconds": 0.7153332699090242,
+      "steadyZoomTimerP95Milliseconds": 76.15550002083182
+    },
+    {
+      "baselineTimerP95Milliseconds": 18.550041830167174,
+      "coupledResizeP95Milliseconds": 28.24250003322959,
+      "firstLayoutP95Milliseconds": 42.2302084043622,
+      "id": "ordering-b",
+      "inputSamples": 160,
+      "inputToLayoutP95Milliseconds": 73.41466681100428,
+      "nativeReentrantTableWarningCount": 1,
+      "performanceGates": {
+        "inputToLayoutP95MaximumMilliseconds": 50,
+        "passed": false,
+        "steadyZoomTimerP95MaximumMilliseconds": 33
+      },
+      "performanceReceipt": "ordering-b/runtime/performance.json",
+      "performanceSHA256": "f1eb618da3c0911ede2275512d30a9e137bd6040d6aab21ade28fad78c510907",
+      "runtimeLog": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/zoom/ordering-b/runtime.log",
+      "runtimeLogSHA256": "3cce1169408aef632db6a2ac7502a1072ba4fb36ceba20016060427a0d67f229",
+      "scope": "Same A module and workload; resize callback moved before factor publication. Contested diagnostic timing.",
+      "secondLayoutP95Milliseconds": 0.7527084089815617,
+      "steadyZoomTimerP95Milliseconds": 85.63724998384714
+    },
+    {
+      "baselineTimerP95Milliseconds": 16.92824997007847,
+      "coupledResizeP95Milliseconds": 49.42933330312371,
+      "firstLayoutP95Milliseconds": 0.03004167228937149,
+      "id": "full-current",
+      "inputSamples": 160,
+      "inputToLayoutP95Milliseconds": 54.44804183207452,
+      "nativeReentrantTableWarningCount": 1,
+      "performanceGates": {
+        "inputToLayoutP95MaximumMilliseconds": 50,
+        "passed": false,
+        "steadyZoomTimerP95MaximumMilliseconds": 33
+      },
+      "performanceReceipt": "full-current/performance.json",
+      "performanceSHA256": "3b22feae184aa0daca50461ae0560402248916264775a01ec4b593f3956971e7",
+      "runID": "20261005T033354460853Z-app-store",
+      "runtimeLog": "full-current/runtime.log",
+      "runtimeLogSHA256": "8ee2ffb944b65f4c22edfa6fbd1a378538748ec1b321a2dc285f23913125ea17",
+      "scope": "Current full campaign, frozen source/test inputs; parent verified no competing compiler or GUI fixtures during this performance run. Unsigned compiler had finished earlier at 03:37:07 UTC.",
+      "secondLayoutP95Milliseconds": 0.6261665839701891,
+      "sourceProof": {
+        "QAInputFingerprint": "206badd60f8e8639b925fb4f0f4f69168c23245e91b46364d51bf57757d9e293",
+        "all269CurrentInputHashesMatch": true,
+        "campaignReport": "full-current/campaign-report.json",
+        "campaignReportSHA256": "67aeb58ad2c843b33fdb73709f15e7a48eef327f0edd706260cf1715a92150c6",
+        "receipt": "full-current/verification.json",
+        "receiptSHA256": "aa9bea9120e5d9b72e7fe4856a5fa35ccb75e1a26880e3119238fe2ed8dc8ee5",
+        "sourceChangedDuringRun": false
+      },
+      "status": "FAILED strict budget",
+      "steadyZoomTimerP95Milliseconds": 67.253083223477
+    }
+  ],
+  "schemaVersion": 1,
+  "status": "OPEN: current full campaign confirms strict performance budget failure; no measured safe production fix promoted",
+  "updatedUTC": "2026-10-05T03:56:13.789080+00:00",
+  "workloadPreserved": {
+    "acceptedThumbnails": 1000,
+    "arrivalCadenceSeconds": 2,
+    "bounds": "At most five preference writes; nonactivating private fixtures and bounded sample arrays",
+    "burstDurableArrivals": 100,
+    "coupledOuterResize": "NSWindow.setFrame(display: true) on every changed factor",
+    "cycles": 5,
+    "flushes": "Native layout before and after same requested 1 ms Task.sleep",
+    "initialRecords": 5000,
+    "managedOriginals": 2000,
+    "mixedContent": true,
+    "zoomUpdates": 160
+  }
+}

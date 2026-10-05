@@ -1,0 +1,230 @@
+{
+  "architecture" : "arm64",
+  "arrivalCadenceSeconds" : 2,
+  "automaticArrivals" : 114,
+  "backingScale" : 2,
+  "baselineTimerP95Milliseconds" : 16.928249970078468,
+  "burstSize" : 100,
+  "cycles" : [
+    {
+      "anchorAfter" : "capture:E285F873-B976-4D82-BF3B-91DFFAA7264C",
+      "anchorBefore" : "capture:E285F873-B976-4D82-BF3B-91DFFAA7264C",
+      "captures" : 5102,
+      "cycle" : 1,
+      "durationSeconds" : 4.7075391667895019,
+      "rssBytes" : 250036224
+    },
+    {
+      "anchorAfter" : "capture:E285F873-B976-4D82-BF3B-91DFFAA7264C",
+      "anchorBefore" : "capture:E285F873-B976-4D82-BF3B-91DFFAA7264C",
+      "captures" : 5104,
+      "cycle" : 2,
+      "durationSeconds" : 2.4247957081533968,
+      "rssBytes" : 250658816
+    },
+    {
+      "anchorAfter" : "capture:E285F873-B976-4D82-BF3B-91DFFAA7264C",
+      "anchorBefore" : "capture:E285F873-B976-4D82-BF3B-91DFFAA7264C",
+      "captures" : 5107,
+      "cycle" : 3,
+      "durationSeconds" : 2.4060332914814353,
+      "rssBytes" : 250757120
+    },
+    {
+      "anchorAfter" : "capture:E285F873-B976-4D82-BF3B-91DFFAA7264C",
+      "anchorBefore" : "capture:E285F873-B976-4D82-BF3B-91DFFAA7264C",
+      "captures" : 5110,
+      "cycle" : 4,
+      "durationSeconds" : 2.4167942500207573,
+      "rssBytes" : 250691584
+    },
+    {
+      "anchorAfter" : "capture:E285F873-B976-4D82-BF3B-91DFFAA7264C",
+      "anchorBefore" : "capture:E285F873-B976-4D82-BF3B-91DFFAA7264C",
+      "captures" : 5113,
+      "cycle" : 5,
+      "durationSeconds" : 2.4019994582049549,
+      "rssBytes" : 250839040
+    }
+  ],
+  "durableSaveP95Milliseconds" : 15.213916776701808,
+  "durationSeconds" : 30.02914150012657,
+  "fixedData" : false,
+  "fullTenMinuteRun" : false,
+  "initialRecords" : 5000,
+  "inputSamples" : 160,
+  "inputStageMilliseconds" : [
+    {
+      "count" : 160,
+      "maximumMilliseconds" : 52.685416536405683,
+      "medianMilliseconds" : 0.015708152204751968,
+      "p95Milliseconds" : 0.03004167228937149,
+      "stage" : "firstLayout"
+    },
+    {
+      "count" : 160,
+      "maximumMilliseconds" : 6.7127083893865347,
+      "medianMilliseconds" : 4.0216250345110893,
+      "p95Milliseconds" : 5.3997084032744169,
+      "stage" : "schedulingWait"
+    },
+    {
+      "count" : 160,
+      "maximumMilliseconds" : 2.6183333247900009,
+      "medianMilliseconds" : 0.21337508223950863,
+      "p95Milliseconds" : 0.62616658397018909,
+      "stage" : "secondLayout"
+    },
+    {
+      "count" : 160,
+      "maximumMilliseconds" : 64.777583349496126,
+      "medianMilliseconds" : 44.706458458676934,
+      "p95Milliseconds" : 49.429333303123713,
+      "stage" : "update.coupledResize"
+    },
+    {
+      "count" : 160,
+      "maximumMilliseconds" : 0.16045849770307541,
+      "medianMilliseconds" : 0.090500107035040855,
+      "p95Milliseconds" : 0.12012477964162827,
+      "stage" : "update.excludingCoupledResize"
+    },
+    {
+      "count" : 160,
+      "maximumMilliseconds" : 64.875000156462193,
+      "medianMilliseconds" : 44.791583437472582,
+      "p95Milliseconds" : 49.518875079229474,
+      "stage" : "update.total"
+    }
+  ],
+  "inputToLayoutP95Milliseconds" : 54.448041832074523,
+  "limitations" : [
+    "No physical trackpad or mouse-driver coverage",
+    "Offscreen native rendering cannot measure presentation timestamps",
+    "RSS includes the growing fixture archive, caches and retained timing arrays"
+  ],
+  "maximumAvailableNativeRows" : 3,
+  "measurement" : "Synthetic native input-to-layout flush and main-runloop timer intervals; not physical input-to-display latency",
+  "memory" : [
+    {
+      "phase" : "baseline",
+      "rssBytes" : 236830720
+    },
+    {
+      "phase" : "cycle 1",
+      "rssBytes" : 250036224
+    },
+    {
+      "phase" : "cycle 2",
+      "rssBytes" : 250658816
+    },
+    {
+      "phase" : "cycle 3",
+      "rssBytes" : 250757120
+    },
+    {
+      "phase" : "cycle 4",
+      "rssBytes" : 250691584
+    },
+    {
+      "phase" : "cycle 5",
+      "rssBytes" : 250839040
+    },
+    {
+      "phase" : "end of measured run",
+      "rssBytes" : 250839040
+    }
+  ],
+  "nativeDisplayStageMilliseconds" : [
+    {
+      "count" : 429,
+      "maximumMilliseconds" : 0.28808345086872578,
+      "medianMilliseconds" : 0.011166557669639587,
+      "p95Milliseconds" : 0.023124972358345985,
+      "stage" : "displayIfNeeded"
+    }
+  ],
+  "observedTimerSamples" : 1334,
+  "os" : "Version 26.6.2 (Build 25G83)",
+  "performanceGates" : {
+    "inputToLayoutP95MaximumMilliseconds" : 50,
+    "passed" : false,
+    "steadyZoomTimerP95MaximumMilliseconds" : 33
+  },
+  "physicalMemoryBytes" : 51539607552,
+  "processors" : 15,
+  "requestedDurationSeconds" : 30,
+  "retainedCaptureModels" : 5114,
+  "retainedInputStageCapacityBytes" : 15168,
+  "retainedNativeDisplayStageCapacityBytes" : 5088,
+  "retainedTimerCapacityBytes" : 38496,
+  "seedSeconds" : 0.13519649999216199,
+  "steadyZoomTimerMaxMilliseconds" : 85.630625020712614,
+  "steadyZoomTimerP95Milliseconds" : 67.253083223477006,
+  "timerIntervalsByPhase" : [
+    {
+      "count" : 20,
+      "intervalsAbove100Milliseconds" : 20,
+      "maximumMilliseconds" : 111.63974995724857,
+      "p95Milliseconds" : 110.61695823445916,
+      "phase" : "100 durable arrivals during zoom"
+    },
+    {
+      "count" : 6,
+      "intervalsAbove100Milliseconds" : 0,
+      "maximumMilliseconds" : 74.686791747808456,
+      "p95Milliseconds" : 73.58454167842865,
+      "phase" : "durable arrival"
+    },
+    {
+      "count" : 855,
+      "intervalsAbove100Milliseconds" : 0,
+      "maximumMilliseconds" : 98.428499884903431,
+      "p95Milliseconds" : 18.89824983663857,
+      "phase" : "idle between inputs"
+    },
+    {
+      "count" : 41,
+      "intervalsAbove100Milliseconds" : 4,
+      "maximumMilliseconds" : 112.82970849424601,
+      "p95Milliseconds" : 110.98362482152879,
+      "phase" : "navigation"
+    },
+    {
+      "count" : 51,
+      "intervalsAbove100Milliseconds" : 0,
+      "maximumMilliseconds" : 55.190041661262512,
+      "p95Milliseconds" : 41.621791664510965,
+      "phase" : "settling"
+    },
+    {
+      "count" : 302,
+      "intervalsAbove100Milliseconds" : 0,
+      "maximumMilliseconds" : 85.630625020712614,
+      "p95Milliseconds" : 67.253083223477006,
+      "phase" : "steady zoom"
+    },
+    {
+      "count" : 59,
+      "intervalsAbove100Milliseconds" : 0,
+      "maximumMilliseconds" : 24.913041619583964,
+      "p95Milliseconds" : 16.928249970078468,
+      "phase" : "warm baseline"
+    }
+  ],
+  "timerPhaseAttribution" : "Every interval is retained including burst, navigation, save, settle and idle phases; labels describe phase at callback delivery, so an interval can span an earlier phase boundary",
+  "timerSamples" : 302,
+  "validatedImageThumbnails" : 1000,
+  "validatedManagedOriginals" : 2000,
+  "warnings" : [
+    "Synthetic input-to-layout p95 exceeds 50 ms",
+    "Steady zoom main-runloop interval p95 exceeds 33 ms",
+    "Main-runloop interval reached 111.63974995724857 ms in phase '100 durable arrivals during zoom'; delivery-phase labeling can include preceding operation time",
+    "Main-runloop interval reached 112.829708494246 ms in phase 'navigation'; delivery-phase labeling can include preceding operation time"
+  ],
+  "wholeRunTimerIntervalsAbove100Milliseconds" : 24,
+  "wholeRunTimerMaximumMilliseconds" : 112.82970849424601,
+  "wholeRunTimerP95Milliseconds" : 65.624125069007277,
+  "wholeRunTimerSamples" : 1334,
+  "workload" : "durable arrivals and burst stress"
+}

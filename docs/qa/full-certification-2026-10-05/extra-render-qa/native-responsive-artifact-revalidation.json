@@ -1,0 +1,145 @@
+{
+  "artifactCheck": {
+    "manifest": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/renders/NativeRenderTests/responsive-detail-renders.json",
+    "manifestSHA256": "0bc3e5f9b85492e319972c25ef7d5d4fb92a5d71854835daea91d5f9f473c33f",
+    "meaning": "Artifacts and declared checks exist; visual inspection remains separate.",
+    "pngCount": 24,
+    "status": "passed"
+  },
+  "artifactInputs": [
+    {
+      "bytes": 61629,
+      "path": "native-view-responsive-comment-dark-1200x430.png",
+      "sha256": "669c094c73e3267abb984c649210566044a46d122998d14fb7ccc46758960040"
+    },
+    {
+      "bytes": 89818,
+      "path": "native-view-responsive-comment-dark-1200x900.png",
+      "sha256": "ac34de65f470f392156d70e6f67052ade6bf80888dedd3a72c838d64fe1c66c5"
+    },
+    {
+      "bytes": 49493,
+      "path": "native-view-responsive-comment-dark-380x430.png",
+      "sha256": "b69a4d188fa966cd70b893b49d9798607cc3c6b280e6eb535a14e038db17024e"
+    },
+    {
+      "bytes": 75738,
+      "path": "native-view-responsive-comment-dark-760x680.png",
+      "sha256": "f81130c6d07e55344169f24f07796a61b2dd05d74036ba94780e2939a2359f6e"
+    },
+    {
+      "bytes": 60511,
+      "path": "native-view-responsive-comment-light-1200x430.png",
+      "sha256": "b147a0e9d13b7b703bf7847d89f3937698978e9e87a3687569e9371e6b1ca2bf"
+    },
+    {
+      "bytes": 88245,
+      "path": "native-view-responsive-comment-light-1200x900.png",
+      "sha256": "e037cedf0b3bafb1ce92b92a14bbdec1b569a2988b88b46fb738996ca34829fd"
+    },
+    {
+      "bytes": 48786,
+      "path": "native-view-responsive-comment-light-380x430.png",
+      "sha256": "1efec97f852ff2257dc740ab8cb9de71f394ada8bf768bcdd3e8583feac8b562"
+    },
+    {
+      "bytes": 74428,
+      "path": "native-view-responsive-comment-light-760x680.png",
+      "sha256": "d5d6bd32070b887394c7f1b72cda27cfaf930769a70a51265c03873ca790a6a7"
+    },
+    {
+      "bytes": 61578,
+      "path": "native-view-responsive-image-dark-1200x430.png",
+      "sha256": "9cc524740226550d133dab0b8ca50425834627f61ca6dce8f8bc264edbff7116"
+    },
+    {
+      "bytes": 78230,
+      "path": "native-view-responsive-image-dark-1200x900.png",
+      "sha256": "d7a4cd547c948fcbbe63d6068ef39fe66fc00641cb5701a4d7d1bd93be71ee69"
+    },
+    {
+      "bytes": 48131,
+      "path": "native-view-responsive-image-dark-380x430.png",
+      "sha256": "be419461f517104f8a5b7291f2358d415588e87975b32d1ef99f096ba0a840fc"
+    },
+    {
+      "bytes": 64555,
+      "path": "native-view-responsive-image-dark-760x680.png",
+      "sha256": "702f7ced2f29a78d2cb0506a7fc7a55922e01c4f0ae25c979e70597500217e66"
+    },
+    {
+      "bytes": 60384,
+      "path": "native-view-responsive-image-light-1200x430.png",
+      "sha256": "8c93d154c34ff3d4b135fd824b62f9d7789d5c859209800799c00a31a261e4e0"
+    },
+    {
+      "bytes": 76861,
+      "path": "native-view-responsive-image-light-1200x900.png",
+      "sha256": "8d099959d516f20125540edc03dc3b8d93b8c904d49818a2df0915580a19bad4"
+    },
+    {
+      "bytes": 47304,
+      "path": "native-view-responsive-image-light-380x430.png",
+      "sha256": "6ad0949f3b3e2419cd38ad3fc1de9ad22c5cfc3ff5deb9ab9ad0410a8dcea55e"
+    },
+    {
+      "bytes": 63196,
+      "path": "native-view-responsive-image-light-760x680.png",
+      "sha256": "68a8fdf19224008483b087e4b98ef9f211ed5b16796590eac0f1b86800067708"
+    },
+    {
+      "bytes": 69485,
+      "path": "native-view-responsive-task-dark-1200x430.png",
+      "sha256": "2a9323973678ba95312589904632afd6e7f3136bb830cf3821b849c3a6d9d086"
+    },
+    {
+      "bytes": 129332,
+      "path": "native-view-responsive-task-dark-1200x900.png",
+      "sha256": "dd4ea95020367a51788995f85115c6ecf1b4f8778e2c81f7a4445e7fe515d3a8"
+    },
+    {
+      "bytes": 52202,
+      "path": "native-view-responsive-task-dark-380x430.png",
+      "sha256": "7f4ae8206e73ecb274baaf6584e4f9e2ed8086a2e7d0a9d929f11770966d4f35"
+    },
+    {
+      "bytes": 92199,
+      "path": "native-view-responsive-task-dark-760x680.png",
+      "sha256": "a208553c766bc5da30c0da6609bf9c307b98fda95a17c6b6f039a8ad596d88b1"
+    },
+    {
+      "bytes": 68354,
+      "path": "native-view-responsive-task-light-1200x430.png",
+      "sha256": "bbe3048c945687db10442a0dc5e2c6cc12a4de31b492b8b98ebcd81f69ed72f2"
+    },
+    {
+      "bytes": 127129,
+      "path": "native-view-responsive-task-light-1200x900.png",
+      "sha256": "c07783c510c0cbdd3c088f5c244d907e5db4a443300048d2e993d57729954f4c"
+    },
+    {
+      "bytes": 51561,
+      "path": "native-view-responsive-task-light-380x430.png",
+      "sha256": "d505ed45cc28cca5eb0b653435d5bd1768355c22578d005df1cb33bc53b11b83"
+    },
+    {
+      "bytes": 90716,
+      "path": "native-view-responsive-task-light-760x680.png",
+      "sha256": "1c066a040b6bf49a345365ad0c69bade5b0467de6cc8b6c25d805db367bfd7da"
+    },
+    {
+      "bytes": 15117,
+      "path": "responsive-detail-renders.json",
+      "sha256": "0bc3e5f9b85492e319972c25ef7d5d4fb92a5d71854835daea91d5f9f473c33f"
+    }
+  ],
+  "correction": "Exact production fixture has 4sizes\u00d72appearances\u00d73states=24files; previous30minimum was a runner assumption",
+  "previousArtifactError": "Incomplete or empty PNG evidence for NativeRenderTests",
+  "previousReport": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/extra-render-report.json",
+  "previousReportSHA256": "50b542749f1a0a78c8766ca17d94fb2f005f58ab1290af85b21d01fc3c622f04",
+  "revalidatedAtUTC": "2026-10-05T01:45:53.977318+00:00",
+  "runner": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/run_extra_renders.py",
+  "runnerSHA256": "894d46380847c4e943d15fc62fbec1f6a7beb12f750fed05a7c3bdbab7a3e0a8",
+  "runtimeExitCode": 0,
+  "scope": "Read-only artifact revalidation of already passed native runtime; no rerun, production or original report modification"
+}

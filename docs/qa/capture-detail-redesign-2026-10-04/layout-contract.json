@@ -1,0 +1,55 @@
+{
+  "version": "0.4.33",
+  "build": "88",
+  "sourceFingerprint": "378518ca22afe48cecf5ea2132efc6c164b445b4aba72b66d71971d276d98f68",
+  "goals": [
+    "Reach functions through fixed section navigation without scrolling past the preview",
+    "Keep primary actions compact and every supporting action reachable",
+    "Preserve native editing, preview and recognized-text state across navigation"
+  ],
+  "sections": [
+    "Preview",
+    "Task (tasks only)",
+    "Comments",
+    "Reminder",
+    "Text (recognition-supported captures)",
+    "Details"
+  ],
+  "narrowNavigation": "Current-section menu plus direct Comments and Reminder buttons",
+  "actions": {
+    "primary": [
+      "Copy",
+      "Make task (captures only)"
+    ],
+    "more": [
+      "Open Extended View",
+      "Open original (file/link captures)",
+      "Saved folder",
+      "Back to task (attachments)",
+      "Trash (recoverable)"
+    ]
+  },
+  "preserved": [
+    "Project assignment and inheritance",
+    "Capture receipt date and clock",
+    "Task completion, planning, checklist, recurrence, focus timer and attachments",
+    "Comment composition, edits, recovered drafts and posting",
+    "Reminder enable/date/countdown/save/snooze/remove/status/retry",
+    "Source details, trail, original file metadata and drag export",
+    "Recognized-text status/retry/select/preview/full/copy",
+    "Global Save, validation feedback and navigation history"
+  ],
+  "researchSources": [
+    "https://developer.apple.com/design/human-interface-guidelines/tab-views",
+    "https://developer.apple.com/design/human-interface-guidelines/segmented-controls",
+    "https://developer.apple.com/design/human-interface-guidelines/toolbars",
+    "https://developer.apple.com/design/human-interface-guidelines/layout"
+  ],
+  "qaStatus": "passed",
+  "uploadStatus": "waiting_for_keychain_authentication",
+  "nativeFocus": "Inactive Comments and OCR editors release first responder while preserving drafts, selection and scroll",
+  "history": "Explicit section requests reset stale pane anchors; Back and Forward restore saved anchors",
+  "taskLayout": "Compact focus clock retains duration, start/pause, reset and scheduling",
+  "nativeSuitesPassed": 15,
+  "verification": "verification.json"
+}

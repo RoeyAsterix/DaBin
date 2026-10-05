@@ -1,0 +1,76 @@
+{
+  "scope": "Unregistered test fixture compatibility and standalone extra-render script only; production Sources and shared runner unchanged",
+  "walkthrough": {
+    "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Tests/WalkthroughRenderTests.swift",
+    "beforeSHA256": "ce5b13c446367eb5239aa6bee644c00b154a20cc0c623b3b54d209aa9236eaf7",
+    "afterSHA256": "44631784de1ad2dcf05ca32d96c83e5311dde5240f22a48478aa4de98347f2bd",
+    "originalDirectInitializerSHA256": "ec2d710b71966e02bfb1b51aaccb1c1f40ad541fcf06def2aeb0ed3ee8f37a22",
+    "assertionsChanged": false
+  },
+  "script": {
+    "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/run_extra_renders.py",
+    "beforeSHA256": "627291b8c66b92d5365e272b7e35e0c4019f565a2a91cf5403f076f27063342b",
+    "afterSHA256": "2438196928d81a64e877774a8dc0f90da9e532267934649ae550217d1c9c7b38",
+    "copiedWrapperAdapterRemoved": true
+  },
+  "retainedFailedCompileReceipt": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/compile-only/20261005T012054672093Z-eb800783/extra-render-report.json",
+  "retainedCopiedAdapterCompileReceipt": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/compile-only/20261005T012320883349Z-75700efc/extra-render-report.json",
+  "successfulCompileOnlyReceipt": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/compile-only/20261005T012745129643Z-0f56fb9e/extra-render-report.json",
+  "successfulCompileOnlyReceiptSHA256": "650a8e140b17640eb354696bf892f7238e8648a66491e9dff16e26536bea0854",
+  "runtimeLaunched": false,
+  "productionSourceChangedDuringCompile": false,
+  "successfulExecutables": [
+    {
+      "name": "NativeRenderTests",
+      "testSourceSHA256": "d28c63673e75b9d1c1b77c657d99c54cd49b6ce1ea90a5a324601a24a08f57e5",
+      "wrapperSHA256": "95ff290ca613e16b7a79b4cfdb868c24dd488c63ffa2e373d1991f634a6e4d13",
+      "executableSHA256": "161ae0d9128515226ebce7de924803ad67153acf22bc47998927cbe7d034bb01"
+    },
+    {
+      "name": "PrivacyRenderTests",
+      "testSourceSHA256": "92874838181437e6f9b82f124022ee7146670f6011c4faaf1053c8d091e8a648",
+      "wrapperSHA256": "2439d829573ece9d18b017919f28f06035160ce9e3c2cf16f0e2eb304c9a7e17",
+      "executableSHA256": "f40bf38665a678db1ee5970b8bfe9beeff8ea1d1b7b1239dd146d358ac8f24e3"
+    },
+    {
+      "name": "WalkthroughRenderTests",
+      "testSourceSHA256": "44631784de1ad2dcf05ca32d96c83e5311dde5240f22a48478aa4de98347f2bd",
+      "wrapperSHA256": "22f31a6d7a5496f693f5ac2fa892ce191cc9ce627600a3b54c7618cbb174519a",
+      "executableSHA256": "07b450c00897232c06d3beabf095ee0a667c0bc12a8d9ad787a176be3cd62e3a"
+    },
+    {
+      "name": "IslandPlaygroundRender",
+      "testSourceSHA256": "ff3afc2f684f3505adbd940d0dd0bcdafb6754b5f0226b0d4f062caf757726cb",
+      "wrapperSHA256": "510dd81f96d7af9788f1249674db50764f1a14f4d44dbcb1108564f5d4b444e7",
+      "executableSHA256": "4c7bf23ce3167d3c1c2e288b7c6fbf2311f697f3bf309a2b3646f93b06531bcd"
+    }
+  ],
+  "finalModuleCompileOnlyReceipt": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/final-module-compile-only/20261005T013101333703Z-697fbca6/extra-render-report.json",
+  "finalModuleDirectory": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa-cache/app-store-70feee950c20ceae70b7bcf9494d1b269c9a089191bf243f85ee35071457d45b",
+  "finalModuleExecutables": [
+    {
+      "name": "NativeRenderTests",
+      "testSourceSHA256": "d28c63673e75b9d1c1b77c657d99c54cd49b6ce1ea90a5a324601a24a08f57e5",
+      "wrapperSHA256": "95ff290ca613e16b7a79b4cfdb868c24dd488c63ffa2e373d1991f634a6e4d13",
+      "executableSHA256": "7afe6448c442426fe1c7c7fa8fffedc18ecaef98fa0e77659f948601aea13f05"
+    },
+    {
+      "name": "PrivacyRenderTests",
+      "testSourceSHA256": "92874838181437e6f9b82f124022ee7146670f6011c4faaf1053c8d091e8a648",
+      "wrapperSHA256": "2439d829573ece9d18b017919f28f06035160ce9e3c2cf16f0e2eb304c9a7e17",
+      "executableSHA256": "e2b0a4ba5613ae43f668775eb48852cdfc00505409ceaa63a0849aab288e85da"
+    },
+    {
+      "name": "WalkthroughRenderTests",
+      "testSourceSHA256": "44631784de1ad2dcf05ca32d96c83e5311dde5240f22a48478aa4de98347f2bd",
+      "wrapperSHA256": "22f31a6d7a5496f693f5ac2fa892ce191cc9ce627600a3b54c7618cbb174519a",
+      "executableSHA256": "ea25f04f5cb70ea5a9ff66426e748f09868d73390b3bc627298f0e7ffc7aef4a"
+    },
+    {
+      "name": "IslandPlaygroundRender",
+      "testSourceSHA256": "ff3afc2f684f3505adbd940d0dd0bcdafb6754b5f0226b0d4f062caf757726cb",
+      "wrapperSHA256": "510dd81f96d7af9788f1249674db50764f1a14f4d44dbcb1108564f5d4b444e7",
+      "executableSHA256": "95b934bde19b582d63678ddc9be900bb56a38926d154ae099180a6835d83977a"
+    }
+  ]
+}

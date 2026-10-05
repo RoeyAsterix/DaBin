@@ -1,0 +1,22 @@
+{
+  "version": "0.4.31",
+  "build": "86",
+  "locale": "en-US",
+  "status": "PREPARED_NOT_SUBMITTED",
+  "betaDescription": "DaBin keeps notes, links, images, files and tasks together on your Mac. Save content manually, organize it in projects, search across saved content in date columns and choose a task for a focus session. Auto Capture is optional and off by default; it saves later clipboard changes and new images in a folder you choose, not a live screen recording. Use fictional, non-sensitive content for this beta. Requires an Apple Silicon Mac with macOS 14 or later. No account or purchase is required. Optional website previews are off by default and contact websites only for manually saved links.",
+  "whatToTest": "1. Paste text and import/drop files, then reopen the saved copies.\n2. Search across saved content and projects using typing, context-menu Paste and Command-V; verify date columns and filters.\n3. Organize project cards, open local file locations, export the full project or selected items and inspect the ZIP.\n4. Create a task with the upper + button, check green/amber/red priority tags and run a focus timer.\n5. Opt into clipboard and screenshot-folder Auto Capture using fictional content. Check the destination, red recording indication, Pause/Resume/Off and folder permission changes.\n6. Drag cards/captions into applications that accept their content, move the window between monitors and try keyboard navigation, themes and Reduce Motion.",
+  "feedbackEmail": null,
+  "reviewContact": {
+    "firstName": null,
+    "lastName": null,
+    "email": null,
+    "phone": null
+  },
+  "signInRequired": false,
+  "reviewNotes": "DaBin is an Apple Silicon macOS menu-bar/desktop app. It requires macOS 14 or later and has no login, paid unlock, ads or server account.\n\nStart: Open DaBin; use its menu-bar item or double-click the desktop robot to open the board. The upper + opens a new task directly. Quit through the menu bar or Settings. Closing the board leaves the menu-bar app running; Quit shuts its services down.\n\nManual capture: Paste text or a link with Cmd-V, or drop a fictional image/file into the app. Create a note/task, assign a project and search for its content. Search accepts typing, context-menu paste and Cmd-V; results are grouped by date. Export and archive backup use native destination pickers. Local OCR/document search is limited to saved supported content.\n\nAuto Capture: OFF on first launch. Enable it through its explicit consent flow, choose clipboard and/or screenshots, and choose a destination. Screenshot monitoring requires selecting a folder in the macOS picker; it monitors only new regular images, not existing files or the live display. The menu-bar icon becomes a red recording symbol while monitoring, even with the board closed or Quiet mode on. Ready, Paused and Off are separate states. Pause or turn off to stop monitoring. Automatically captured links never fetch remote previews. Source-app exclusions and sensitive-pasteboard checks are best-effort.\n\nPrivacy: Settings → Privacy policy & data controls contains the full bundled policy, local deletion instructions and online policy/support links. Captures are stored on device. Website previews are optional, off by default, and only apply to manually saved links. There is no analytics, advertising or cloud-sync SDK. The app does not request Accessibility, Screen Recording, camera or microphone access. Reminder permission is requested only when a reminder is saved; notifications use generic text. A completed focus timer can show the first three words of the task title locally.\n\nStore build: App Sandbox is enabled. User-selected files and scoped bookmarks support import/export and screenshot-folder access. The direct-download updater and installer are excluded from this binary; updates are managed by the Mac App Store. No automatic launch-at-login or privileged helper is installed.\n\nSuggested review: verify manual save/search/task/project/export; opt into clipboard capture using fictional text; opt into a new screenshot in a chosen temporary folder; pause and confirm monitoring stops; disable capture and quit. No demo credentials are needed.",
+  "knownVerificationGaps": [
+    "Distribution-signed runtime acceptance still pending.",
+    "Physical cross-application drops and supported OS/display coverage not established by automated tests.",
+    "Current public privacy policy parity remains pending."
+  ]
+}

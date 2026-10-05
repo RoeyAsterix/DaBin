@@ -1,0 +1,41 @@
+{
+  "checks" : 351,
+  "fixtures" : [
+    {
+      "context" : "native-planning-actions",
+      "priority" : "high",
+      "recurrence" : "weekly",
+      "stepCount" : 2
+    },
+    {
+      "context" : "plan-layout",
+      "draftValid" : true,
+      "height" : 680,
+      "stepCount" : 2,
+      "width" : 380
+    },
+    {
+      "context" : "plan-layout",
+      "draftValid" : true,
+      "height" : 680,
+      "stepCount" : 2,
+      "width" : 760
+    },
+    {
+      "context" : "full-board-layout",
+      "height" : 680,
+      "taskPaneHeight" : 301,
+      "width" : 380,
+      "zoom" : 1
+    },
+    {
+      "context" : "full-board-layout",
+      "height" : 680,
+      "taskPaneHeight" : 289,
+      "width" : 380,
+      "zoom" : 2
+    }
+  ],
+  "privacy" : "Disposable fictional task metadata, private preferences, own-process native bindings and menus; no real archive, clipboard, Finder, notification permission or OS notification access.",
+  "suite" : "TaskPlanInteractionTests"
+}

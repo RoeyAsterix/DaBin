@@ -8,6 +8,7 @@ struct TaskFocusControls: View {
     @ObservedObject var capture: Capture
     var compact = true
     var showsSchedule = true
+    var emphasizesCountdown = true
     @Environment(\.daBinAccent) private var accent
     @State private var showDuration = false
     @State private var showSchedule = false
@@ -28,11 +29,35 @@ struct TaskFocusControls: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: compact ? 0 : 12) {
+        if !compact && !emphasizesCountdown {
+            BuddyActionFlow(spacing: 6) {
+                Label("Focus", systemImage: "timer")
+                    .font(.system(size: 12, weight: .medium)).foregroundStyle(Palette.muted).frame(minHeight: 32)
+                countdown(large: false).frame(minHeight: 32)
+                focusControl
+                if showsSchedule { scheduleControl }
+                Button { _ = state.resetTaskFocus(capture) } label: {
+                    Label("Reset", systemImage: "arrow.counterclockwise")
+                        .font(.system(size: 12)).padding(.horizontal, 5).frame(minHeight: 32)
+                }.buttonStyle(.plain).foregroundStyle(accent)
+                    .disabled(capture.taskPlanning?.effortMinutes == nil)
+                    .accessibilityLabel("Reset focus to configured duration")
+            }.accessibilityElement(children: .contain).accessibilityLabel("Focus session")
+        } else {
+        VStack(alignment: .leading, spacing: compact ? 0 : emphasizesCountdown ? 12 : 8) {
             if !compact {
-                Label("Focus session", systemImage: "timer")
-                    .font(.system(size: 12, weight: .semibold)).foregroundStyle(Palette.muted)
-                countdown(large: true).frame(maxWidth: .infinity).padding(.vertical, 5)
+                if emphasizesCountdown {
+                    Label("Focus session", systemImage: "timer")
+                        .font(.system(size: 12, weight: .semibold)).foregroundStyle(Palette.muted)
+                    countdown(large: true).frame(maxWidth: .infinity).padding(.vertical, 5)
+                } else {
+                    HStack {
+                        Label("Focus session", systemImage: "timer")
+                            .font(.system(size: 12, weight: .semibold)).foregroundStyle(Palette.muted)
+                        Spacer(minLength: 4)
+                        countdown(large: false)
+                    }
+                }
             }
             ViewThatFits(in: .horizontal) {
                 HStack(spacing: 8) { focusControl; Spacer(minLength: 0); if showsSchedule { scheduleControl } }
@@ -49,6 +74,7 @@ struct TaskFocusControls: View {
                         .accessibilityLabel("Reset focus to configured duration")
                 }
             }
+        }
         }
     }
 

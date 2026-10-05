@@ -1,0 +1,2346 @@
+{
+  "method": "Source declarations, including conditional/reusable/context-menu controls. Not a count of visible buttons or proof that every control was individually activated.",
+  "declarations": 390,
+  "controls": [
+    {
+      "file": "Sources/DaBin/BoardComponents.swift",
+      "line": 284,
+      "kind": "Button",
+      "declaration": "Button {"
+    },
+    {
+      "file": "Sources/DaBin/BoardComponents.swift",
+      "line": 361,
+      "kind": "Button",
+      "declaration": "Button {"
+    },
+    {
+      "file": "Sources/DaBin/BoardComponents.swift",
+      "line": 461,
+      "kind": "Button",
+      "declaration": "Button {"
+    },
+    {
+      "file": "Sources/DaBin/BoardView.swift",
+      "line": 79,
+      "kind": "Button",
+      "declaration": "Button(\"Cancel\", role: .cancel) { state.pendingRemoval = nil }"
+    },
+    {
+      "file": "Sources/DaBin/BoardView.swift",
+      "line": 80,
+      "kind": "Button",
+      "declaration": "Button(\"Move to Recently Deleted\", role: .destructive) {"
+    },
+    {
+      "file": "Sources/DaBin/BoardView.swift",
+      "line": 133,
+      "kind": "Button",
+      "declaration": "Button(\"Search captures\") { state.performSearchCommand(); searchFocused = true }"
+    },
+    {
+      "file": "Sources/DaBin/BoardView.swift",
+      "line": 135,
+      "kind": "Button",
+      "declaration": "Button(\"Open Today\") { state.showReminders() }"
+    },
+    {
+      "file": "Sources/DaBin/BoardView.swift",
+      "line": 182,
+      "kind": "BuddyIconButton",
+      "declaration": "BuddyIconButton(symbol: \"magnifyingglass\", title: \"Search captures\", tooltipID: \"board-search-tooltip\") {"
+    },
+    {
+      "file": "Sources/DaBin/BoardView.swift",
+      "line": 187,
+      "kind": "BuddyIconButton",
+      "declaration": "BuddyIconButton(symbol: \"gearshape\", title: \"Settings\", tooltipID: \"board-settings-tooltip\") { state.showSettings() }"
+    },
+    {
+      "file": "Sources/DaBin/BoardView.swift",
+      "line": 191,
+      "kind": "BuddyIconButton",
+      "declaration": "BuddyIconButton(symbol: \"arrow.up.left.and.arrow.down.right\", title: \"Expand or restore window\","
+    },
+    {
+      "file": "Sources/DaBin/BoardView.swift",
+      "line": 195,
+      "kind": "SmallIcon",
+      "declaration": "SmallIcon(symbol: \"xmark\", label: \"Hide DaBin\", size: 28) { state.onDismiss?() }"
+    },
+    {
+      "file": "Sources/DaBin/BoardView.swift",
+      "line": 228,
+      "kind": "Button",
+      "declaration": "Button { state.back() } label: {"
+    },
+    {
+      "file": "Sources/DaBin/BoardView.swift",
+      "line": 234,
+      "kind": "Button",
+      "declaration": "Button { state.forward() } label: {"
+    },
+    {
+      "file": "Sources/DaBin/BoardView.swift",
+      "line": 263,
+      "kind": "Button",
+      "declaration": "Button {"
+    },
+    {
+      "file": "Sources/DaBin/BoardView.swift",
+      "line": 277,
+      "kind": "Button",
+      "declaration": "Button(action: action) {"
+    },
+    {
+      "file": "Sources/DaBin/BoardView.swift",
+      "line": 290,
+      "kind": "Button",
+      "declaration": "Button {"
+    },
+    {
+      "file": "Sources/DaBin/BoardView.swift",
+      "line": 303,
+      "kind": "Menu",
+      "declaration": "return Menu {"
+    },
+    {
+      "file": "Sources/DaBin/BoardView.swift",
+      "line": 305,
+      "kind": "Button",
+      "declaration": "Button(\"Search selected day\", systemImage: \"calendar\") { state.openSearch(day: state.weeklyActionDay) }"
+    },
+    {
+      "file": "Sources/DaBin/BoardView.swift",
+      "line": 306,
+      "kind": "Button",
+      "declaration": "Button(\"Search selected week\", systemImage: \"rectangle.stack\") { state.openSearch(week: state.weeklyDays) }"
+    },
+    {
+      "file": "Sources/DaBin/BoardView.swift",
+      "line": 310,
+      "kind": "Menu",
+      "declaration": "Menu {"
+    },
+    {
+      "file": "Sources/DaBin/BoardView.swift",
+      "line": 311,
+      "kind": "Button",
+      "declaration": "Button(\"Copy day \u00b7 \\(exportDay.formatted(.dateTime.month(.abbreviated).day()))\", systemImage: \"doc.on.doc\") { dayExportController.copy(dayDocument) }.disabled(!hasDay)"
+    },
+    {
+      "file": "Sources/DaBin/BoardView.swift",
+      "line": 312,
+      "kind": "Button",
+      "declaration": "Button(\"Export day \u00b7 \\(exportDay.formatted(.dateTime.month(.abbreviated).day()))\u2026\", systemImage: \"doc.badge.arrow.up\") { reportExport(dayExportController.save(dayDocument)) }.disabled(!hasDay)"
+    },
+    {
+      "file": "Sources/DaBin/BoardView.swift",
+      "line": 313,
+      "kind": "Button",
+      "declaration": "Button(\"Copy selected week\", systemImage: \"doc.on.doc.fill\") { dayExportController.copy(weekDocument) }.disabled(!hasWeek)"
+    },
+    {
+      "file": "Sources/DaBin/BoardView.swift",
+      "line": 314,
+      "kind": "Button",
+      "declaration": "Button(\"Export selected week\u2026\", systemImage: \"square.and.arrow.up\") { reportExport(dayExportController.save(weekDocument)) }.disabled(!hasWeek)"
+    },
+    {
+      "file": "Sources/DaBin/BoardView.swift",
+      "line": 318,
+      "kind": "Button",
+      "declaration": "Button(\"Recently Deleted\", systemImage: \"trash\") { state.showTrash() }"
+    },
+    {
+      "file": "Sources/DaBin/BoardView.swift",
+      "line": 319,
+      "kind": "Button",
+      "declaration": "Button(\"Back up archive\u2026\", systemImage: \"externaldrive\") { state.exportArchiveBackup() }.disabled(archiveBusy)"
+    },
+    {
+      "file": "Sources/DaBin/BoardView.swift",
+      "line": 320,
+      "kind": "Button",
+      "declaration": "Button(\"Restore archive backup\u2026\", systemImage: \"arrow.counterclockwise\") { state.restoreArchiveBackup() }.disabled(archiveBusy)"
+    },
+    {
+      "file": "Sources/DaBin/BoardView.swift",
+      "line": 356,
+      "kind": "SmallIcon",
+      "declaration": "SmallIcon(symbol: \"chevron.left\", label: state.route == .weekly ? \"Previous week\" : \"Previous day\", size: 26) { moveTimeline(-1) }"
+    },
+    {
+      "file": "Sources/DaBin/BoardView.swift",
+      "line": 358,
+      "kind": "Button",
+      "declaration": "Button { showCalendar.toggle() } label: {"
+    },
+    {
+      "file": "Sources/DaBin/BoardView.swift",
+      "line": 375,
+      "kind": "SmallIcon",
+      "declaration": "SmallIcon(symbol: \"chevron.right\", label: state.route == .weekly ? \"Next week\" : \"Next day\", size: 26) { moveTimeline(1) }"
+    },
+    {
+      "file": "Sources/DaBin/BoardView.swift",
+      "line": 377,
+      "kind": "BuddyIconButton",
+      "declaration": "BuddyIconButton(symbol: \"tray.full\", title: \"To organize\") { state.openInbox() }"
+    },
+    {
+      "file": "Sources/DaBin/BoardView.swift",
+      "line": 383,
+      "kind": "Button",
+      "declaration": "Button {"
+    },
+    {
+      "file": "Sources/DaBin/BoardView.swift",
+      "line": 399,
+      "kind": "Button",
+      "declaration": "Button { state.selectTimelineMode(mode) } label: {"
+    },
+    {
+      "file": "Sources/DaBin/BoardView.swift",
+      "line": 449,
+      "kind": "Button",
+      "declaration": "Button(\"Undo\") { Task { await state.undoLastRemoval() } }.buttonStyle(.plain).foregroundStyle(accent)"
+    },
+    {
+      "file": "Sources/DaBin/BoardView.swift",
+      "line": 457,
+      "kind": "Button",
+      "declaration": "Button { state.dismissNotification() } label: { Image(systemName: \"xmark\").font(.system(size: 10)) }"
+    },
+    {
+      "file": "Sources/DaBin/BoardView.swift",
+      "line": 818,
+      "kind": "Button",
+      "declaration": "Button(\"Exit\") { tutorial.finish(in: state) }"
+    },
+    {
+      "file": "Sources/DaBin/BoardView.swift",
+      "line": 822,
+      "kind": "Button",
+      "declaration": "Button(\"Back\") { tutorial.goBack(in: state) }"
+    },
+    {
+      "file": "Sources/DaBin/BoardView.swift",
+      "line": 824,
+      "kind": "Button",
+      "declaration": "Button(tutorial.isLastStep ? \"Finish\" : \"Next\") { tutorial.advance(in: state) }"
+    },
+    {
+      "file": "Sources/DaBin/BoardView.swift",
+      "line": 931,
+      "kind": "Menu",
+      "declaration": "Menu {"
+    },
+    {
+      "file": "Sources/DaBin/BuddyControls.swift",
+      "line": 102,
+      "kind": "Button",
+      "declaration": "Button {"
+    },
+    {
+      "file": "Sources/DaBin/CaptureCards.swift",
+      "line": 99,
+      "kind": "Button",
+      "declaration": "Button { state.openCapture(parentID, focus: \"task\") } label: { Label(\"Task attachment\", systemImage: \"arrow.turn.up.left\") }"
+    },
+    {
+      "file": "Sources/DaBin/CaptureCards.swift",
+      "line": 135,
+      "kind": "Button",
+      "declaration": "Button { state.openCapture(capture.id) } label: {"
+    },
+    {
+      "file": "Sources/DaBin/CaptureCards.swift",
+      "line": 154,
+      "kind": "Button",
+      "declaration": "Button(action: copy) {"
+    },
+    {
+      "file": "Sources/DaBin/CaptureCards.swift",
+      "line": 164,
+      "kind": "Menu",
+      "declaration": "Menu { CaptureActionMenuItems(state: state, capture: capture, includesRemoval: true, allowsMinimization: false, showsParentTask: true) } label: {"
+    },
+    {
+      "file": "Sources/DaBin/CaptureCards.swift",
+      "line": 205,
+      "kind": "BuddyIconButton",
+      "declaration": "BuddyIconButton(symbol: copied ? \"checkmark\" : \"doc.on.doc\", title: copied ? \"Copied\" : \"Copy \\(capture.title)\") { copy() }"
+    },
+    {
+      "file": "Sources/DaBin/CaptureCards.swift",
+      "line": 215,
+      "kind": "Button",
+      "declaration": "Button { state.openCapture(capture.id) } label: {"
+    },
+    {
+      "file": "Sources/DaBin/CaptureCards.swift",
+      "line": 231,
+      "kind": "Button",
+      "declaration": "Button { state.openCapture(capture.id) } label: {"
+    },
+    {
+      "file": "Sources/DaBin/CaptureCards.swift",
+      "line": 264,
+      "kind": "BuddyIconButton",
+      "declaration": "BuddyIconButton(symbol: \"text.bubble\", title: \"Comment\") { state.openCapture(capture.id, focus: \"comment\") }"
+    },
+    {
+      "file": "Sources/DaBin/CaptureCards.swift",
+      "line": 265,
+      "kind": "BuddyIconButton",
+      "declaration": "BuddyIconButton(symbol: \"bell\", title: \"Reminder\") { state.openCapture(capture.id, focus: \"reminder\") }"
+    },
+    {
+      "file": "Sources/DaBin/CaptureCards.swift",
+      "line": 267,
+      "kind": "BuddyIconButton",
+      "declaration": "BuddyIconButton(symbol: \"paperclip\", title: \"Add task attachments\") { state.openCapture(capture.id, focus: \"task\") }"
+    },
+    {
+      "file": "Sources/DaBin/CaptureCards.swift",
+      "line": 283,
+      "kind": "BuddyIconButton",
+      "declaration": "BuddyIconButton(symbol: capture.isMinimized ? \"chevron.down\" : \"chevron.up\", title: capture.isMinimized ? \"Expand capture\" : \"Minimize capture\") { state.toggleMinimized(capture) }"
+    },
+    {
+      "file": "Sources/DaBin/CaptureCards.swift",
+      "line": 354,
+      "kind": "BuddyIconButton",
+      "declaration": "BuddyIconButton(symbol: \"trash\", title: \"Move to Recently Deleted\", visualLabel: visualLabel) {"
+    },
+    {
+      "file": "Sources/DaBin/CaptureCards.swift",
+      "line": 376,
+      "kind": "Button",
+      "declaration": "Button(\"Undo\") { state.undoTaskConversion() }.buttonStyle(.plain)"
+    },
+    {
+      "file": "Sources/DaBin/CaptureCards.swift",
+      "line": 380,
+      "kind": "Button",
+      "declaration": "Button(\"Undo\") { state.undoTaskConversion() }.buttonStyle(.plain)"
+    },
+    {
+      "file": "Sources/DaBin/CaptureCards.swift",
+      "line": 402,
+      "kind": "BuddyIconButton",
+      "declaration": "BuddyIconButton(symbol: \"checkmark\", title: \"Keep in Projects\") {"
+    },
+    {
+      "file": "Sources/DaBin/CaptureCards.swift",
+      "line": 420,
+      "kind": "Menu",
+      "declaration": "Menu { CaptureActionMenuItems(state: state, capture: capture, includesRemoval: includesRemoval) } label: {"
+    },
+    {
+      "file": "Sources/DaBin/CaptureCards.swift",
+      "line": 442,
+      "kind": "Button",
+      "declaration": "Button(\"Open capture\", systemImage: \"arrow.up.forward.square\") { state.openCapture(capture.id) }"
+    },
+    {
+      "file": "Sources/DaBin/CaptureCards.swift",
+      "line": 443,
+      "kind": "Button",
+      "declaration": "Button(capture.comment.isEmpty ? \"Add comment\" : \"Edit comment\", systemImage: \"text.bubble\") { state.openCapture(capture.id, focus: \"comment\") }"
+    },
+    {
+      "file": "Sources/DaBin/CaptureCards.swift",
+      "line": 444,
+      "kind": "Button",
+      "declaration": "Button(capture.reminderAt == nil ? \"Add reminder\" : \"Edit reminder\", systemImage: \"bell\") { state.openCapture(capture.id, focus: \"reminder\") }"
+    },
+    {
+      "file": "Sources/DaBin/CaptureCards.swift",
+      "line": 445,
+      "kind": "Button",
+      "declaration": "Button(capture.isPinned ? \"Unpin\" : \"Pin\", systemImage: capture.isPinned ? \"pin.slash\" : \"pin\") { state.togglePinned(capture) }"
+    },
+    {
+      "file": "Sources/DaBin/CaptureCards.swift",
+      "line": 449,
+      "kind": "Button",
+      "declaration": "Button(\"Add task attachments\", systemImage: \"paperclip\") { state.openCapture(capture.id, focus: \"task\") }"
+    },
+    {
+      "file": "Sources/DaBin/CaptureCards.swift",
+      "line": 450,
+      "kind": "Button",
+      "declaration": "Button(capture.isCompleted ? \"Mark incomplete\" : \"Complete task\", systemImage: \"checkmark.circle\") { state.toggleTaskCompletion(capture) }"
+    },
+    {
+      "file": "Sources/DaBin/CaptureCards.swift",
+      "line": 454,
+      "kind": "Button",
+      "declaration": "Button(\"Open parent task\", systemImage: \"arrow.turn.up.left\") { state.openCapture(parentID, focus: \"task\") }"
+    },
+    {
+      "file": "Sources/DaBin/CaptureCards.swift",
+      "line": 458,
+      "kind": "Button",
+      "declaration": "Button(capture.isMinimized ? \"Expand capture\" : \"Minimize capture\", systemImage: capture.isMinimized ? \"chevron.down\" : \"chevron.up\") { state.toggleMinimized(capture) }"
+    },
+    {
+      "file": "Sources/DaBin/CaptureCards.swift",
+      "line": 460,
+      "kind": "Button",
+      "declaration": "Button(\"Show capture day\", systemImage: \"calendar\") { state.showCaptureDay(capture) }"
+    },
+    {
+      "file": "Sources/DaBin/CaptureCards.swift",
+      "line": 462,
+      "kind": "Button",
+      "declaration": "Button(\"Move to Recently Deleted\", systemImage: \"trash\", role: .destructive) { state.requestRemoval(capture) }"
+    },
+    {
+      "file": "Sources/DaBin/CaptureCards.swift",
+      "line": 474,
+      "kind": "BuddyIconButton",
+      "declaration": "BuddyIconButton(symbol: \"checkmark.square\", title: \"Turn into task\", visualLabel: visualLabel) { state.convertToTask(capture) }"
+    },
+    {
+      "file": "Sources/DaBin/CaptureCards.swift",
+      "line": 488,
+      "kind": "Button",
+      "declaration": "Button { state.convertToTask(capture) } label: { Label(\"Turn into task\", systemImage: \"checkmark.circle\") }"
+    },
+    {
+      "file": "Sources/DaBin/CaptureCards.swift",
+      "line": 503,
+      "kind": "Button",
+      "declaration": "Button { state.toggleTaskCompletion(capture) } label: {"
+    },
+    {
+      "file": "Sources/DaBin/CaptureCopyButton.swift",
+      "line": 37,
+      "kind": "Button",
+      "declaration": "Button(action: copy) {"
+    },
+    {
+      "file": "Sources/DaBin/CaptureDetailPanels.swift",
+      "line": 41,
+      "kind": "Button",
+      "declaration": "Button { selection = section } label: {"
+    },
+    {
+      "file": "Sources/DaBin/CaptureDetailPanels.swift",
+      "line": 85,
+      "kind": "Button",
+      "declaration": "Button(\"Cancel edit\") { draft.commentComposer = \"\"; draft.editingCommentID = nil }"
+    },
+    {
+      "file": "Sources/DaBin/CaptureDetailPanels.swift",
+      "line": 89,
+      "kind": "Button",
+      "declaration": "Button(draft.editingCommentID == nil ? \"Post comment\" : \"Save comment\", systemImage: \"arrow.up.circle.fill\") {"
+    },
+    {
+      "file": "Sources/DaBin/CaptureDetailPanels.swift",
+      "line": 109,
+      "kind": "Button",
+      "declaration": "Button {"
+    },
+    {
+      "file": "Sources/DaBin/CaptureDetailPanels.swift",
+      "line": 138,
+      "kind": "Button",
+      "declaration": "Button {"
+    },
+    {
+      "file": "Sources/DaBin/CaptureDetailPanels.swift",
+      "line": 156,
+      "kind": "Menu",
+      "declaration": "Menu {"
+    },
+    {
+      "file": "Sources/DaBin/CaptureDetailPanels.swift",
+      "line": 157,
+      "kind": "Button",
+      "declaration": "Button(\"In 10 minutes\") { snooze(minutes: 10) }"
+    },
+    {
+      "file": "Sources/DaBin/CaptureDetailPanels.swift",
+      "line": 158,
+      "kind": "Button",
+      "declaration": "Button(\"In 1 hour\") { snooze(minutes: 60) }"
+    },
+    {
+      "file": "Sources/DaBin/CaptureDetailPanels.swift",
+      "line": 159,
+      "kind": "Button",
+      "declaration": "Button(\"Tomorrow morning\") { state.snoozeFollowUp(capture) }"
+    },
+    {
+      "file": "Sources/DaBin/CaptureDetailPanels.swift",
+      "line": 166,
+      "kind": "Button",
+      "declaration": "Button { state.setDetailReminder(capture, date: nil) } label: {"
+    },
+    {
+      "file": "Sources/DaBin/CaptureDetailPanels.swift",
+      "line": 186,
+      "kind": "Button",
+      "declaration": "Button { state.retryReminder(capture) } label: {"
+    },
+    {
+      "file": "Sources/DaBin/CaptureExtendedCanvas.swift",
+      "line": 223,
+      "kind": "Button",
+      "declaration": "Button(action: { zoom.zoomOut() }) { Image(systemName: \"minus\") }"
+    },
+    {
+      "file": "Sources/DaBin/CaptureExtendedCanvas.swift",
+      "line": 232,
+      "kind": "Button",
+      "declaration": "Button(action: { zoom.zoomIn() }) { Image(systemName: \"plus\") }"
+    },
+    {
+      "file": "Sources/DaBin/CaptureExtendedCanvas.swift",
+      "line": 237,
+      "kind": "Button",
+      "declaration": "Button { zoom.fitToScreen() } label: {"
+    },
+    {
+      "file": "Sources/DaBin/CaptureExtendedCanvas.swift",
+      "line": 245,
+      "kind": "Button",
+      "declaration": "Button(\"100%\") { zoom.showNative100() }"
+    },
+    {
+      "file": "Sources/DaBin/CaptureExtendedCanvas.swift",
+      "line": 248,
+      "kind": "Button",
+      "declaration": "Button(\"Reset\") { zoom.reset() }"
+    },
+    {
+      "file": "Sources/DaBin/CaptureExtendedCanvas.swift",
+      "line": 253,
+      "kind": "Button",
+      "declaration": "Button(action: { zoom.decreaseTextSize() }) { Text(\"A\u2212\") }"
+    },
+    {
+      "file": "Sources/DaBin/CaptureExtendedCanvas.swift",
+      "line": 257,
+      "kind": "Button",
+      "declaration": "Button(action: { zoom.increaseTextSize() }) { Text(\"A+\") }"
+    },
+    {
+      "file": "Sources/DaBin/CaptureExtendedCanvas.swift",
+      "line": 264,
+      "kind": "Button",
+      "declaration": "Button(action: { zoom.previousPDFPage() }) { Image(systemName: \"chevron.left\") }"
+    },
+    {
+      "file": "Sources/DaBin/CaptureExtendedCanvas.swift",
+      "line": 272,
+      "kind": "Button",
+      "declaration": "Button(action: { zoom.nextPDFPage() }) { Image(systemName: \"chevron.right\") }"
+    },
+    {
+      "file": "Sources/DaBin/CaptureExtendedWindow.swift",
+      "line": 135,
+      "kind": "Button",
+      "declaration": "Button(action: onClose) { Label(\"Back\", systemImage: \"chevron.backward\") }"
+    },
+    {
+      "file": "Sources/DaBin/CaptureExtendedWindow.swift",
+      "line": 144,
+      "kind": "Button",
+      "declaration": "Button(action: onReminderList) { Image(systemName: \"list.bullet\").frame(width: 30, height: 30) }"
+    },
+    {
+      "file": "Sources/DaBin/CaptureExtendedWindow.swift",
+      "line": 196,
+      "kind": "Button",
+      "declaration": "Button(\"Save changes\") { state.saveDetail(capture: capture, draft: draft) }"
+    },
+    {
+      "file": "Sources/DaBin/CaptureExtendedWindow.swift",
+      "line": 217,
+      "kind": "Button",
+      "declaration": "Button(\"Close\", action: close)"
+    },
+    {
+      "file": "Sources/DaBin/CaptureExtendedWindow.swift",
+      "line": 225,
+      "kind": "Button",
+      "declaration": "Button { open(receipt) } label: {"
+    },
+    {
+      "file": "Sources/DaBin/CaptureFilterStrip.swift",
+      "line": 22,
+      "kind": "BuddyIconButton",
+      "declaration": "BuddyIconButton(symbol: filter.buddySymbol,"
+    },
+    {
+      "file": "Sources/DaBin/CaptureInboxActions.swift",
+      "line": 46,
+      "kind": "Button",
+      "declaration": "Button(\"Return to Inbox\", systemImage: \"tray.and.arrow.down\") {"
+    },
+    {
+      "file": "Sources/DaBin/CapturePreviews.swift",
+      "line": 209,
+      "kind": "Button",
+      "declaration": "Button(action: onOpenOriginal) {"
+    },
+    {
+      "file": "Sources/DaBin/CaptureSourceView.swift",
+      "line": 154,
+      "kind": "Button",
+      "declaration": "Button { showLocation.toggle() } label: {"
+    },
+    {
+      "file": "Sources/DaBin/CaptureSourceView.swift",
+      "line": 162,
+      "kind": "BuddyIconButton",
+      "declaration": "BuddyIconButton(symbol: copied ? \"checkmark\" : \"doc.on.doc\","
+    },
+    {
+      "file": "Sources/DaBin/CaptureTrailView.swift",
+      "line": 50,
+      "kind": "Button",
+      "declaration": "Button {"
+    },
+    {
+      "file": "Sources/DaBin/CaptureTrailView.swift",
+      "line": 101,
+      "kind": "Button",
+      "declaration": "Button { showingHistory = false } label: {"
+    },
+    {
+      "file": "Sources/DaBin/CaptureTrailView.swift",
+      "line": 158,
+      "kind": "Button",
+      "declaration": "Button { remove(event) } label: {"
+    },
+    {
+      "file": "Sources/DaBin/ClipboardRetentionSettings.swift",
+      "line": 27,
+      "kind": "Button",
+      "declaration": "Button {"
+    },
+    {
+      "file": "Sources/DaBin/ClipboardRetentionSettings.swift",
+      "line": 47,
+      "kind": "Button",
+      "declaration": "Button(\"Cancel\", role: .cancel) { confirmedIDs = [] }"
+    },
+    {
+      "file": "Sources/DaBin/ClipboardRetentionSettings.swift",
+      "line": 48,
+      "kind": "Button",
+      "declaration": "Button(\"Move \\(confirmedIDs.count) copies\", role: .destructive) {"
+    },
+    {
+      "file": "Sources/DaBin/DailyScreen.swift",
+      "line": 51,
+      "kind": "Button",
+      "declaration": "Button(\"Paste clipboard\") { state.pasteClipboard() }"
+    },
+    {
+      "file": "Sources/DaBin/DailyScreen.swift",
+      "line": 52,
+      "kind": "Button",
+      "declaration": "Button(\"New note\") { state.openNewNote() }"
+    },
+    {
+      "file": "Sources/DaBin/DailyScreen.swift",
+      "line": 55,
+      "kind": "Button",
+      "declaration": "Button(\"Show all captures\") { state.filter = .all }"
+    },
+    {
+      "file": "Sources/DaBin/DayExportUI.swift",
+      "line": 384,
+      "kind": "Button",
+      "declaration": "Button(action: action) {"
+    },
+    {
+      "file": "Sources/DaBin/DayExportUI.swift",
+      "line": 562,
+      "kind": "Button",
+      "declaration": "Button(action: action) {"
+    },
+    {
+      "file": "Sources/DaBin/DetailScreen.swift",
+      "line": 67,
+      "kind": "BuddyIconButton",
+      "declaration": "BuddyIconButton(symbol: copied ? \"checkmark\" : \"doc.on.doc\","
+    },
+    {
+      "file": "Sources/DaBin/DetailScreen.swift",
+      "line": 72,
+      "kind": "BuddyIconButton",
+      "declaration": "BuddyIconButton(symbol: showAll ? \"chevron.up\" : \"chevron.down\","
+    },
+    {
+      "file": "Sources/DaBin/DetailScreen.swift",
+      "line": 316,
+      "kind": "Button",
+      "declaration": "Button { state.showCaptureDay(capture) } label: {"
+    },
+    {
+      "file": "Sources/DaBin/DetailScreen.swift",
+      "line": 331,
+      "kind": "Menu",
+      "declaration": "Menu {"
+    },
+    {
+      "file": "Sources/DaBin/DetailScreen.swift",
+      "line": 333,
+      "kind": "Button",
+      "declaration": "Button { selectSection(section) } label: {"
+    },
+    {
+      "file": "Sources/DaBin/DetailScreen.swift",
+      "line": 358,
+      "kind": "Button",
+      "declaration": "Button { selectSection(section) } label: {"
+    },
+    {
+      "file": "Sources/DaBin/DetailScreen.swift",
+      "line": 403,
+      "kind": "Button",
+      "declaration": "Button { state.keepDetailDraftAndGoBack() } label: {"
+    },
+    {
+      "file": "Sources/DaBin/DetailScreen.swift",
+      "line": 414,
+      "kind": "Button",
+      "declaration": "Button(\"Save changes\") { saveChanges() }.buttonStyle(.borderedProminent)"
+    },
+    {
+      "file": "Sources/DaBin/DetailScreen.swift",
+      "line": 434,
+      "kind": "Button",
+      "declaration": "Button { state.openExtendedCapture(capture.id) } label: {"
+    },
+    {
+      "file": "Sources/DaBin/DetailScreen.swift",
+      "line": 453,
+      "kind": "Button",
+      "declaration": "Button(\"Open Extended View\", systemImage: \"arrow.up.left.and.arrow.down.right\") {"
+    },
+    {
+      "file": "Sources/DaBin/DetailScreen.swift",
+      "line": 470,
+      "kind": "Button",
+      "declaration": "Button(\"Previous occurrence\", systemImage: \"arrow.counterclockwise\") { state.openCapture(previous) }"
+    },
+    {
+      "file": "Sources/DaBin/DetailScreen.swift",
+      "line": 489,
+      "kind": "Menu",
+      "declaration": "Menu {"
+    },
+    {
+      "file": "Sources/DaBin/DetailScreen.swift",
+      "line": 490,
+      "kind": "Button",
+      "declaration": "Button(\"Open Extended View\", systemImage: \"arrow.up.left.and.arrow.down.right\") { state.openExtendedCapture(capture.id) }"
+    },
+    {
+      "file": "Sources/DaBin/DetailScreen.swift",
+      "line": 492,
+      "kind": "Button",
+      "declaration": "Button(\"Open original\", systemImage: \"arrow.up.forward.square\") { state.openOriginal(capture) }"
+    },
+    {
+      "file": "Sources/DaBin/DetailScreen.swift",
+      "line": 495,
+      "kind": "Button",
+      "declaration": "Button(\"Saved folder\", systemImage: \"folder\") { state.showArchiveFolder(for: capture) }"
+    },
+    {
+      "file": "Sources/DaBin/DetailScreen.swift",
+      "line": 498,
+      "kind": "Button",
+      "declaration": "Button(\"Back to task\", systemImage: \"arrow.turn.up.left\") { state.openCapture(parent, focus: \"task\") }"
+    },
+    {
+      "file": "Sources/DaBin/DetailScreen.swift",
+      "line": 502,
+      "kind": "Button",
+      "declaration": "Button(\"Trash\", systemImage: \"trash\") { state.requestRemoval(capture) }"
+    },
+    {
+      "file": "Sources/DaBin/DetailScreen.swift",
+      "line": 516,
+      "kind": "Button",
+      "declaration": "Button(action: action) { compactActionLabel(label, symbol: symbol) }"
+    },
+    {
+      "file": "Sources/DaBin/DetailScreen.swift",
+      "line": 552,
+      "kind": "Button",
+      "declaration": "Button(\"Try text recognition again\") { state.retryContentIndex(capture) }"
+    },
+    {
+      "file": "Sources/DaBin/ExplorerItems.swift",
+      "line": 99,
+      "kind": "Button",
+      "declaration": "Button(action: select) {"
+    },
+    {
+      "file": "Sources/DaBin/ExplorerItems.swift",
+      "line": 164,
+      "kind": "Button",
+      "declaration": "Button { state.toggleTaskCompletion(capture) } label: {"
+    },
+    {
+      "file": "Sources/DaBin/ExplorerItems.swift",
+      "line": 176,
+      "kind": "BuddyIconButton",
+      "declaration": "BuddyIconButton(symbol: \"checklist\", title: \"Turn into task\") { state.convertToTask(capture) }"
+    },
+    {
+      "file": "Sources/DaBin/ExplorerItems.swift",
+      "line": 201,
+      "kind": "Menu",
+      "declaration": "Menu {"
+    },
+    {
+      "file": "Sources/DaBin/ExplorerItems.swift",
+      "line": 237,
+      "kind": "Button",
+      "declaration": "Button(\"Details\", systemImage: \"slider.horizontal.3\") { state.openCapture(capture.id) }"
+    },
+    {
+      "file": "Sources/DaBin/ExplorerItems.swift",
+      "line": 247,
+      "kind": "Button",
+      "declaration": "Button { state.openCapture(parentID) } label: { Label(\"Attached to \\(parent.title)\", systemImage: \"paperclip\") }"
+    },
+    {
+      "file": "Sources/DaBin/ExplorerItems.swift",
+      "line": 252,
+      "kind": "Button",
+      "declaration": "Button(\"Reveal saved file\", systemImage: \"folder\") { NSWorkspace.shared.activateFileViewerSelecting([url]) }"
+    },
+    {
+      "file": "Sources/DaBin/ExplorerItems.swift",
+      "line": 275,
+      "kind": "Button",
+      "declaration": "Button(\"Open details\", systemImage: \"rectangle.and.text.magnifyingglass\") { state.openCapture(capture.id) }"
+    },
+    {
+      "file": "Sources/DaBin/ExplorerItems.swift",
+      "line": 276,
+      "kind": "Button",
+      "declaration": "Button(\"Copy\", systemImage: \"doc.on.doc\") { state.copyCapturesToClipboard([capture]) }"
+    },
+    {
+      "file": "Sources/DaBin/ExplorerItems.swift",
+      "line": 279,
+      "kind": "Button",
+      "declaration": "Button(\"Copy as plain text\", systemImage: \"text.alignleft\") {"
+    },
+    {
+      "file": "Sources/DaBin/ExplorerItems.swift",
+      "line": 285,
+      "kind": "Button",
+      "declaration": "Button(\"Open saved file\", systemImage: \"arrow.up.forward.square\") { state.openOriginal(capture) }"
+    },
+    {
+      "file": "Sources/DaBin/ExplorerItems.swift",
+      "line": 286,
+      "kind": "Button",
+      "declaration": "Button(\"Reveal saved file\", systemImage: \"folder\") {"
+    },
+    {
+      "file": "Sources/DaBin/ExplorerItems.swift",
+      "line": 292,
+      "kind": "Button",
+      "declaration": "Button(\"Copy saved path\", systemImage: \"link\") {"
+    },
+    {
+      "file": "Sources/DaBin/ExplorerItems.swift",
+      "line": 298,
+      "kind": "Button",
+      "declaration": "Button(capture.isPinned ? \"Unpin\" : \"Pin\", systemImage: capture.isPinned ? \"pin.slash\" : \"pin\") { state.togglePinned(capture) }"
+    },
+    {
+      "file": "Sources/DaBin/ExplorerItems.swift",
+      "line": 300,
+      "kind": "Button",
+      "declaration": "Button(workspace.shelfCaptureIDs.contains(capture.id) ? \"Remove from shelf; keep capture\" : \"Add to shelf\", systemImage: \"tray\") {"
+    },
+    {
+      "file": "Sources/DaBin/ExplorerItems.swift",
+      "line": 305,
+      "kind": "Button",
+      "declaration": "Button(\"Turn into task\", systemImage: \"checkmark.circle\") {"
+    },
+    {
+      "file": "Sources/DaBin/ExplorerItems.swift",
+      "line": 308,
+      "kind": "Menu",
+      "declaration": "if capture.parentTaskID == nil { Menu {"
+    },
+    {
+      "file": "Sources/DaBin/ExplorerItems.swift",
+      "line": 310,
+      "kind": "Button",
+      "declaration": "Button(task.title, systemImage: \"paperclip\") {"
+    },
+    {
+      "file": "Sources/DaBin/ExplorerItems.swift",
+      "line": 320,
+      "kind": "Button",
+      "declaration": "Button(\"Move to Recently Deleted\u2026\", systemImage: \"trash\", role: .destructive) { state.requestRemoval(capture) }"
+    },
+    {
+      "file": "Sources/DaBin/ExplorerItems.swift",
+      "line": 346,
+      "kind": "Button",
+      "declaration": "Button { presented.toggle() } label: {"
+    },
+    {
+      "file": "Sources/DaBin/ExplorerScreen.swift",
+      "line": 73,
+      "kind": "Button",
+      "declaration": "Button(\"Retry\") { documentRefreshRevision &+= 1 }.font(.system(size: 11))"
+    },
+    {
+      "file": "Sources/DaBin/ExplorerScreen.swift",
+      "line": 121,
+      "kind": "Button",
+      "declaration": "Button { state.performSearchCommand() } label: {"
+    },
+    {
+      "file": "Sources/DaBin/ExplorerScreen.swift",
+      "line": 130,
+      "kind": "BuddyIconButton",
+      "declaration": "BuddyIconButton(symbol: \"doc.on.clipboard\", title: \"Paste\") { intake.paste(project: state.libraryProject) }"
+    },
+    {
+      "file": "Sources/DaBin/ExplorerScreen.swift",
+      "line": 132,
+      "kind": "BuddyIconButton",
+      "declaration": "BuddyIconButton(symbol: \"folder\", title: \"Open folder\") { state.showProjectFiles() }"
+    },
+    {
+      "file": "Sources/DaBin/ExplorerScreen.swift",
+      "line": 134,
+      "kind": "BuddyIconButton",
+      "declaration": "BuddyIconButton(symbol: \"folder.badge.plus\", title: \"Add files\") { intake.chooseFiles(project: state.libraryProject) }"
+    },
+    {
+      "file": "Sources/DaBin/ExplorerScreen.swift",
+      "line": 141,
+      "kind": "Menu",
+      "declaration": "Menu {"
+    },
+    {
+      "file": "Sources/DaBin/ExplorerScreen.swift",
+      "line": 143,
+      "kind": "Button",
+      "declaration": "Button { workspace.explorerGrouping = grouping } label: {"
+    },
+    {
+      "file": "Sources/DaBin/ExplorerScreen.swift",
+      "line": 266,
+      "kind": "Button",
+      "declaration": "Button(\"Clear filters\") {"
+    },
+    {
+      "file": "Sources/DaBin/ExplorerScreen.swift",
+      "line": 275,
+      "kind": "Button",
+      "declaration": "Button {"
+    },
+    {
+      "file": "Sources/DaBin/ExplorerScreen.swift",
+      "line": 296,
+      "kind": "Button",
+      "declaration": "Button(\"Open daily file\", systemImage: \"doc.text\") { openDocument(day) }"
+    },
+    {
+      "file": "Sources/DaBin/ExplorerScreen.swift",
+      "line": 297,
+      "kind": "Button",
+      "declaration": "Button(\"Copy daily file\", systemImage: \"doc.on.doc\") { copyDocument(day) }"
+    },
+    {
+      "file": "Sources/DaBin/ExplorerScreen.swift",
+      "line": 298,
+      "kind": "Button",
+      "declaration": "Button(\"Reveal in Finder\", systemImage: \"folder\") { NSWorkspace.shared.activateFileViewerSelecting([day.url]) }"
+    },
+    {
+      "file": "Sources/DaBin/ExplorerScreen.swift",
+      "line": 299,
+      "kind": "Button",
+      "declaration": "Button(\"Copy path\", systemImage: \"link\") { copyPath(day.url) }"
+    },
+    {
+      "file": "Sources/DaBin/ExplorerScreen.swift",
+      "line": 310,
+      "kind": "Button",
+      "declaration": "Button(\"Open\", systemImage: \"arrow.up.forward.square\") { openDocument(day) }"
+    },
+    {
+      "file": "Sources/DaBin/ExplorerScreen.swift",
+      "line": 311,
+      "kind": "Button",
+      "declaration": "Button(\"Copy file\", systemImage: \"doc.on.doc\") { copyDocument(day) }"
+    },
+    {
+      "file": "Sources/DaBin/ExplorerScreen.swift",
+      "line": 334,
+      "kind": "Button",
+      "declaration": "Button { workspace.explorerShowsDailyFiles.toggle() } label: {"
+    },
+    {
+      "file": "Sources/DaBin/ExplorerScreen.swift",
+      "line": 342,
+      "kind": "BuddyIconButton",
+      "declaration": "BuddyIconButton(symbol: \"arrow.uturn.backward\", title: \"Undo move\") { intake.undoLastMove() }"
+    },
+    {
+      "file": "Sources/DaBin/ExplorerScreen.swift",
+      "line": 346,
+      "kind": "Button",
+      "declaration": "Button { exportZIP(presentation: presentation) } label: {"
+    },
+    {
+      "file": "Sources/DaBin/FittedPDFPreview.swift",
+      "line": 29,
+      "kind": "Button",
+      "declaration": "Button(action: { model.movePage(by: -1) }) {"
+    },
+    {
+      "file": "Sources/DaBin/FittedPDFPreview.swift",
+      "line": 42,
+      "kind": "Button",
+      "declaration": "Button(action: { model.movePage(by: 1) }) {"
+    },
+    {
+      "file": "Sources/DaBin/GroupedCaptureCard.swift",
+      "line": 64,
+      "kind": "Button",
+      "declaration": "Button { state.toggleMinimized(group.captures) } label: {"
+    },
+    {
+      "file": "Sources/DaBin/GroupedCaptureCard.swift",
+      "line": 69,
+      "kind": "BuddyIconButton",
+      "declaration": "BuddyIconButton(symbol: \"trash\", title: \"Move batch to Recently Deleted\") { confirmsRemoval = true }"
+    },
+    {
+      "file": "Sources/DaBin/GroupedCaptureCard.swift",
+      "line": 72,
+      "kind": "Menu",
+      "declaration": "Menu {"
+    },
+    {
+      "file": "Sources/DaBin/GroupedCaptureCard.swift",
+      "line": 73,
+      "kind": "Button",
+      "declaration": "Button(primary.comment.isEmpty ? \"Add note\" : \"Edit note\", systemImage: \"text.bubble\") { state.openCapture(primary.id, focus: \"comment\") }"
+    },
+    {
+      "file": "Sources/DaBin/GroupedCaptureCard.swift",
+      "line": 74,
+      "kind": "Button",
+      "declaration": "Button(primary.reminderAt == nil ? \"Add reminder\" : \"Edit reminder\", systemImage: \"clock\") { state.openCapture(primary.id, focus: \"reminder\") }"
+    },
+    {
+      "file": "Sources/DaBin/GroupedCaptureCard.swift",
+      "line": 90,
+      "kind": "Button",
+      "declaration": "Button(\"Cancel\", role: .cancel) { }"
+    },
+    {
+      "file": "Sources/DaBin/GroupedCaptureCard.swift",
+      "line": 91,
+      "kind": "Button",
+      "declaration": "Button(\"Move \\(group.captures.count) items\", role: .destructive) {"
+    },
+    {
+      "file": "Sources/DaBin/GroupedCaptureCard.swift",
+      "line": 102,
+      "kind": "Button",
+      "declaration": "Button { state.toggleMinimized(group.captures) } label: {"
+    },
+    {
+      "file": "Sources/DaBin/GroupedCaptureCard.swift",
+      "line": 200,
+      "kind": "Button",
+      "declaration": "Button(action: action) {"
+    },
+    {
+      "file": "Sources/DaBin/GroupedCaptureCard.swift",
+      "line": 235,
+      "kind": "Button",
+      "declaration": "Button { state.openCapture(capture.id) } label: {"
+    },
+    {
+      "file": "Sources/DaBin/HourlyCaptureCard.swift",
+      "line": 49,
+      "kind": "Button",
+      "declaration": "Button(action: toggleExpansion) {"
+    },
+    {
+      "file": "Sources/DaBin/HourlyCaptureCard.swift",
+      "line": 90,
+      "kind": "Button",
+      "declaration": "Button(action: toggleExpansion) {"
+    },
+    {
+      "file": "Sources/DaBin/InboxScreen.swift",
+      "line": 25,
+      "kind": "Menu",
+      "declaration": "Menu {"
+    },
+    {
+      "file": "Sources/DaBin/InboxScreen.swift",
+      "line": 26,
+      "kind": "Button",
+      "declaration": "Button(\"Save note\", systemImage: \"note.text\") { saveQuick(asTask: false) }"
+    },
+    {
+      "file": "Sources/DaBin/InboxScreen.swift",
+      "line": 27,
+      "kind": "Button",
+      "declaration": "Button(\"Create task\", systemImage: \"checkmark.circle\") { saveQuick(asTask: true) }"
+    },
+    {
+      "file": "Sources/DaBin/InboxScreen.swift",
+      "line": 35,
+      "kind": "Button",
+      "declaration": "Button { state.pasteClipboard() } label: { Label(\"Paste\", systemImage: \"doc.on.clipboard\").frame(minHeight: 32) }"
+    },
+    {
+      "file": "Sources/DaBin/InboxScreen.swift",
+      "line": 36,
+      "kind": "Button",
+      "declaration": "Button { state.importFiles() } label: { Label(\"Add files\", systemImage: \"folder.badge.plus\").frame(minHeight: 32) }"
+    },
+    {
+      "file": "Sources/DaBin/InboxScreen.swift",
+      "line": 37,
+      "kind": "Button",
+      "declaration": "Button { state.openNewNote() } label: { Label(\"Note editor\", systemImage: \"square.and.pencil\").frame(minHeight: 32) }"
+    },
+    {
+      "file": "Sources/DaBin/InboxScreen.swift",
+      "line": 40,
+      "kind": "Button",
+      "declaration": "Button { state.openNewTask() } label: { Label(\"Task\", systemImage: \"plus.circle\").frame(minHeight: 32) }"
+    },
+    {
+      "file": "Sources/DaBin/LibraryScreen.swift",
+      "line": 65,
+      "kind": "Button",
+      "declaration": "Button { state.navigateWorkspaceMode(mode) } label: {"
+    },
+    {
+      "file": "Sources/DaBin/LibraryScreen.swift",
+      "line": 85,
+      "kind": "BuddyIconButton",
+      "declaration": "BuddyIconButton(symbol: filter.buddySymbol,"
+    },
+    {
+      "file": "Sources/DaBin/LibraryScreen.swift",
+      "line": 97,
+      "kind": "BuddyIconButton",
+      "declaration": "BuddyIconButton(symbol: workspace.snippetsOnly ? \"text.badge.star\" : \"clock.arrow.circlepath\","
+    },
+    {
+      "file": "Sources/DaBin/LibraryScreen.swift",
+      "line": 102,
+      "kind": "BuddyIconButton",
+      "declaration": "BuddyIconButton(symbol: \"pin\", title: \"Show pinned captures\", isActive: state.libraryPinnedOnly) { state.libraryPinnedOnly.toggle() }"
+    },
+    {
+      "file": "Sources/DaBin/LibraryScreen.swift",
+      "line": 109,
+      "kind": "Menu",
+      "declaration": "Menu {"
+    },
+    {
+      "file": "Sources/DaBin/LibraryScreen.swift",
+      "line": 110,
+      "kind": "Menu",
+      "declaration": "Menu {"
+    },
+    {
+      "file": "Sources/DaBin/LibraryScreen.swift",
+      "line": 112,
+      "kind": "Button",
+      "declaration": "Button { workspace.dateFilter = value } label: {"
+    },
+    {
+      "file": "Sources/DaBin/LibraryScreen.swift",
+      "line": 117,
+      "kind": "Menu",
+      "declaration": "Menu {"
+    },
+    {
+      "file": "Sources/DaBin/LibraryScreen.swift",
+      "line": 118,
+      "kind": "Button",
+      "declaration": "Button(\"All applications\", systemImage: \"square.grid.2x2\") { workspace.sourceApplication = nil }"
+    },
+    {
+      "file": "Sources/DaBin/LibraryScreen.swift",
+      "line": 120,
+      "kind": "Button",
+      "declaration": "Button { workspace.sourceApplication = application } label: {"
+    },
+    {
+      "file": "Sources/DaBin/LibraryScreen.swift",
+      "line": 125,
+      "kind": "Menu",
+      "declaration": "Menu {"
+    },
+    {
+      "file": "Sources/DaBin/LibraryScreen.swift",
+      "line": 127,
+      "kind": "Button",
+      "declaration": "Button { workspace.originFilter = origin } label: {"
+    },
+    {
+      "file": "Sources/DaBin/LibraryScreen.swift",
+      "line": 134,
+      "kind": "Button",
+      "declaration": "Button(\"Clear extra filters\", systemImage: \"line.3.horizontal.decrease.circle\") { clearFilters() }"
+    },
+    {
+      "file": "Sources/DaBin/LibraryScreen.swift",
+      "line": 147,
+      "kind": "Button",
+      "declaration": "Button(\"Paste\", systemImage: \"doc.on.clipboard\") { shelfCapture.paste() }.fixedSize()"
+    },
+    {
+      "file": "Sources/DaBin/LibraryScreen.swift",
+      "line": 148,
+      "kind": "Button",
+      "declaration": "Button(\"Open folder\", systemImage: \"folder\") { state.showProjectFiles() }"
+    },
+    {
+      "file": "Sources/DaBin/LibraryScreen.swift",
+      "line": 152,
+      "kind": "Button",
+      "declaration": "Button(\"Add files\", systemImage: \"plus\") { shelfCapture.chooseFiles() }"
+    },
+    {
+      "file": "Sources/DaBin/LibraryScreen.swift",
+      "line": 162,
+      "kind": "Button",
+      "declaration": "Button { exportShelf() } label: { Label(exporting ? \"Exporting\u2026\" : \"Export shelf\", systemImage: \"arrow.down.to.line\") }"
+    },
+    {
+      "file": "Sources/DaBin/LibraryScreen.swift",
+      "line": 186,
+      "kind": "Button",
+      "declaration": "Button(\"Clear filters\") { clearFilters(); state.filter = .all; state.libraryPinnedOnly = false }"
+    },
+    {
+      "file": "Sources/DaBin/NewNoteScreen.swift",
+      "line": 25,
+      "kind": "Button",
+      "declaration": "Button(\"Cancel\") { state.cancelNewNote() }.buttonStyle(.bordered)"
+    },
+    {
+      "file": "Sources/DaBin/NewNoteScreen.swift",
+      "line": 26,
+      "kind": "Button",
+      "declaration": "Button(\"Save note\") { state.saveNewNote() }.buttonStyle(.borderedProminent)"
+    },
+    {
+      "file": "Sources/DaBin/PrivacyInformation.swift",
+      "line": 89,
+      "kind": "Button",
+      "declaration": "Button(\"Done\") { dismiss() }.keyboardShortcut(.cancelAction)"
+    },
+    {
+      "file": "Sources/DaBin/PrivacyInformation.swift",
+      "line": 106,
+      "kind": "Button",
+      "declaration": "Button {"
+    },
+    {
+      "file": "Sources/DaBin/PrivacyInformation.swift",
+      "line": 113,
+      "kind": "Link",
+      "declaration": "Link(\"Privacy policy online\", destination: url).foregroundStyle(accent)"
+    },
+    {
+      "file": "Sources/DaBin/PrivacyInformation.swift",
+      "line": 116,
+      "kind": "Link",
+      "declaration": "Link(\"Contact & support\", destination: url).foregroundStyle(accent)"
+    },
+    {
+      "file": "Sources/DaBin/ProjectPickerView.swift",
+      "line": 248,
+      "kind": "Button",
+      "declaration": "Button { name = query; creating = true; error = nil; field = .name } label: {"
+    },
+    {
+      "file": "Sources/DaBin/ProjectPickerView.swift",
+      "line": 279,
+      "kind": "Button",
+      "declaration": "Button { colorHex = choice.hex } label: {"
+    },
+    {
+      "file": "Sources/DaBin/ProjectPickerView.swift",
+      "line": 294,
+      "kind": "Button",
+      "declaration": "Button(\"Cancel\") { creating = false; error = nil; field = .search }"
+    },
+    {
+      "file": "Sources/DaBin/ProjectPickerView.swift",
+      "line": 296,
+      "kind": "Button",
+      "declaration": "Button(\"Create project\", action: create).buttonStyle(.borderedProminent).tint(accent)"
+    },
+    {
+      "file": "Sources/DaBin/ProjectPickerView.swift",
+      "line": 417,
+      "kind": "Button",
+      "declaration": "Button(action: select) {"
+    },
+    {
+      "file": "Sources/DaBin/ProjectPickerView.swift",
+      "line": 430,
+      "kind": "Menu",
+      "declaration": "Menu {"
+    },
+    {
+      "file": "Sources/DaBin/ProjectPickerView.swift",
+      "line": 432,
+      "kind": "Button",
+      "declaration": "Button { setColor(choice.hex) } label: {"
+    },
+    {
+      "file": "Sources/DaBin/ProjectPickerView.swift",
+      "line": 493,
+      "kind": "Button",
+      "declaration": "Button { presented.toggle() } label: {"
+    },
+    {
+      "file": "Sources/DaBin/ProjectWorkspaceCard.swift",
+      "line": 161,
+      "kind": "Button",
+      "declaration": "else { Button(\"Edit project notes\", systemImage: \"note.text\", action: details) }"
+    },
+    {
+      "file": "Sources/DaBin/ProjectWorkspaceCard.swift",
+      "line": 178,
+      "kind": "Button",
+      "declaration": "Button(action: open) {"
+    },
+    {
+      "file": "Sources/DaBin/ProjectWorkspaceCard.swift",
+      "line": 218,
+      "kind": "Button",
+      "declaration": "Button(action: details) {"
+    },
+    {
+      "file": "Sources/DaBin/ProjectWorkspaceCard.swift",
+      "line": 255,
+      "kind": "Button",
+      "declaration": "Button(action: select) {"
+    },
+    {
+      "file": "Sources/DaBin/ProjectWorkspaceCard.swift",
+      "line": 269,
+      "kind": "Button",
+      "declaration": "Button(action: open) {"
+    },
+    {
+      "file": "Sources/DaBin/ProjectWorkspaceCard.swift",
+      "line": 347,
+      "kind": "Button",
+      "declaration": "Button(action: details) {"
+    },
+    {
+      "file": "Sources/DaBin/ProjectWorkspaceCard.swift",
+      "line": 378,
+      "kind": "Button",
+      "declaration": "Button { state.toggleTaskCompletion(capture) } label: {"
+    },
+    {
+      "file": "Sources/DaBin/ProjectWorkspaceCard.swift",
+      "line": 388,
+      "kind": "Menu",
+      "declaration": "Menu {"
+    },
+    {
+      "file": "Sources/DaBin/ProjectWorkspaceCard.swift",
+      "line": 389,
+      "kind": "Button",
+      "declaration": "Button(\"Move earlier\", systemImage: \"arrow.up\", action: earlier)"
+    },
+    {
+      "file": "Sources/DaBin/ProjectWorkspaceCard.swift",
+      "line": 390,
+      "kind": "Button",
+      "declaration": "Button(\"Move later\", systemImage: \"arrow.down\", action: later)"
+    },
+    {
+      "file": "Sources/DaBin/ProjectWorkspaceView.swift",
+      "line": 252,
+      "kind": "Button",
+      "declaration": "Button(\"Undo task conversion\") { undoTasks() }.accessibilityIdentifier(\"project-undo-tasks\")"
+    },
+    {
+      "file": "Sources/DaBin/ProjectWorkspaceView.swift",
+      "line": 273,
+      "kind": "Button",
+      "declaration": "HStack { Text(\"Project notes\").font(.headline); Spacer(); Button(\"Done\") { notePresented = false }.keyboardShortcut(.cancelAction) }.padding()"
+    },
+    {
+      "file": "Sources/DaBin/ProjectWorkspaceView.swift",
+      "line": 296,
+      "kind": "Menu",
+      "declaration": "return Menu {"
+    },
+    {
+      "file": "Sources/DaBin/ProjectWorkspaceView.swift",
+      "line": 297,
+      "kind": "Button",
+      "declaration": "Button(\"Add files\u2026\", systemImage: \"folder.badge.plus\") { intake.chooseFiles(project: project) }"
+    },
+    {
+      "file": "Sources/DaBin/ProjectWorkspaceView.swift",
+      "line": 298,
+      "kind": "Button",
+      "declaration": "Button(\"Paste into project\", systemImage: \"doc.on.clipboard\") { intake.paste(project: project) }"
+    },
+    {
+      "file": "Sources/DaBin/ProjectWorkspaceView.swift",
+      "line": 299,
+      "kind": "Button",
+      "declaration": "Button(\"Project notes\", systemImage: \"note.text\") { notePresented = true }"
+    },
+    {
+      "file": "Sources/DaBin/ProjectWorkspaceView.swift",
+      "line": 300,
+      "kind": "Button",
+      "declaration": "Button(\"Open folder\", systemImage: \"folder\") { state.showProjectFiles() }"
+    },
+    {
+      "file": "Sources/DaBin/ProjectWorkspaceView.swift",
+      "line": 302,
+      "kind": "Button",
+      "declaration": "Button(copyTitle, systemImage: \"doc.on.doc\") { copy(items, summary: false, scope: scope) }"
+    },
+    {
+      "file": "Sources/DaBin/ProjectWorkspaceView.swift",
+      "line": 304,
+      "kind": "Button",
+      "declaration": "Button(summaryTitle, systemImage: \"text.alignleft\") { copy(items, summary: true, scope: scope) }"
+    },
+    {
+      "file": "Sources/DaBin/ProjectWorkspaceView.swift",
+      "line": 307,
+      "kind": "Button",
+      "declaration": "Button(\"Clipboard view\") { state.navigateWorkspaceMode(.clipboard) }"
+    },
+    {
+      "file": "Sources/DaBin/ProjectWorkspaceView.swift",
+      "line": 308,
+      "kind": "Button",
+      "declaration": "Button(\"Shelf view\") { state.navigateWorkspaceMode(.shelf) }"
+    },
+    {
+      "file": "Sources/DaBin/ProjectWorkspaceView.swift",
+      "line": 321,
+      "kind": "Button",
+      "declaration": "Button { state.performSearchCommand() } label: {"
+    },
+    {
+      "file": "Sources/DaBin/ProjectWorkspaceView.swift",
+      "line": 330,
+      "kind": "Button",
+      "declaration": "Button { export(items, scope: scope) } label: {"
+    },
+    {
+      "file": "Sources/DaBin/ProjectWorkspaceView.swift",
+      "line": 351,
+      "kind": "Button",
+      "declaration": "Button { filter = value; selection.removeAll(); selectionAnchor = nil } label: {"
+    },
+    {
+      "file": "Sources/DaBin/ProjectWorkspaceView.swift",
+      "line": 364,
+      "kind": "Menu",
+      "declaration": "Menu {"
+    },
+    {
+      "file": "Sources/DaBin/ProjectWorkspaceView.swift",
+      "line": 366,
+      "kind": "Button",
+      "declaration": "Button { dateFilter = date; selection.removeAll(); selectionAnchor = nil } label: {"
+    },
+    {
+      "file": "Sources/DaBin/ProjectWorkspaceView.swift",
+      "line": 371,
+      "kind": "Menu",
+      "declaration": "Menu {"
+    },
+    {
+      "file": "Sources/DaBin/ProjectWorkspaceView.swift",
+      "line": 372,
+      "kind": "Button",
+      "declaration": "Button { newestFirst = false } label: { Label(\"My order\", systemImage: newestFirst ? \"line.3.horizontal\" : \"checkmark\") }"
+    },
+    {
+      "file": "Sources/DaBin/ProjectWorkspaceView.swift",
+      "line": 374,
+      "kind": "Button",
+      "declaration": "Button { newestFirst = true } label: { Label(\"Newest first\", systemImage: newestFirst ? \"checkmark\" : \"clock\") }"
+    },
+    {
+      "file": "Sources/DaBin/ProjectWorkspaceView.swift",
+      "line": 377,
+      "kind": "Button",
+      "declaration": "Button { compact.toggle() } label: {"
+    },
+    {
+      "file": "Sources/DaBin/ProjectWorkspaceView.swift",
+      "line": 404,
+      "kind": "Button",
+      "declaration": "Button { selection.removeAll(); selectionAnchor = nil } label: { Image(systemName: \"xmark.circle.fill\").frame(width: 28, height: 28) }"
+    },
+    {
+      "file": "Sources/DaBin/ProjectWorkspaceView.swift",
+      "line": 413,
+      "kind": "Button",
+      "declaration": "Button(\"Select all\") { selection = Set(visible.map(\\.id)); selectionAnchor = visible.first?.id }"
+    },
+    {
+      "file": "Sources/DaBin/ProjectWorkspaceView.swift",
+      "line": 417,
+      "kind": "Button",
+      "declaration": "Button(\"Make tasks\", systemImage: \"checkmark.circle\") { makeTasks(selected) }"
+    },
+    {
+      "file": "Sources/DaBin/ProjectWorkspaceView.swift",
+      "line": 421,
+      "kind": "Menu",
+      "declaration": "Menu {"
+    },
+    {
+      "file": "Sources/DaBin/ProjectWorkspaceView.swift",
+      "line": 422,
+      "kind": "Button",
+      "declaration": "Button(\"Move earlier\", systemImage: \"arrow.up\") { moveSelection(earlier: true) }"
+    },
+    {
+      "file": "Sources/DaBin/ProjectWorkspaceView.swift",
+      "line": 423,
+      "kind": "Button",
+      "declaration": "Button(\"Move later\", systemImage: \"arrow.down\") { moveSelection(earlier: false) }"
+    },
+    {
+      "file": "Sources/DaBin/ReminderClockEditor.swift",
+      "line": 79,
+      "kind": "Button",
+      "declaration": "Button { enabled.toggle() } label: {"
+    },
+    {
+      "file": "Sources/DaBin/ReminderClockEditor.swift",
+      "line": 105,
+      "kind": "Button",
+      "declaration": "Button(action: action) {"
+    },
+    {
+      "file": "Sources/DaBin/ReminderClockEditor.swift",
+      "line": 129,
+      "kind": "Button",
+      "declaration": "Button { mode = target } label: {"
+    },
+    {
+      "file": "Sources/DaBin/RemindersScreen.swift",
+      "line": 14,
+      "kind": "Button",
+      "declaration": "Button(\"New task\") { state.openNewTask() }.font(.system(size: 12))"
+    },
+    {
+      "file": "Sources/DaBin/RemindersScreen.swift",
+      "line": 38,
+      "kind": "Button",
+      "declaration": "Button { state.completeFollowUp(capture) } label: { Label(\"Complete\", systemImage: \"checkmark.circle\") }"
+    },
+    {
+      "file": "Sources/DaBin/RemindersScreen.swift",
+      "line": 39,
+      "kind": "Button",
+      "declaration": "Button { state.snoozeFollowUp(capture) } label: { Label(\"Snooze\", systemImage: \"clock.arrow.circlepath\") }"
+    },
+    {
+      "file": "Sources/DaBin/ScratchpadView.swift",
+      "line": 41,
+      "kind": "Button",
+      "declaration": "Button(\"Retry save\", systemImage: \"arrow.clockwise\") {"
+    },
+    {
+      "file": "Sources/DaBin/ScratchpadView.swift",
+      "line": 46,
+      "kind": "Button",
+      "declaration": "Button(\"Save note\", systemImage: \"square.and.arrow.down\") { saveNote(asTask: false) }"
+    },
+    {
+      "file": "Sources/DaBin/ScratchpadView.swift",
+      "line": 48,
+      "kind": "Button",
+      "declaration": "Button(\"Make task\", systemImage: \"checkmark.circle\") { saveNote(asTask: true) }"
+    },
+    {
+      "file": "Sources/DaBin/SearchResultCard.swift",
+      "line": 72,
+      "kind": "Button",
+      "declaration": "Button {"
+    },
+    {
+      "file": "Sources/DaBin/SearchResultCard.swift",
+      "line": 126,
+      "kind": "SmallIcon",
+      "declaration": "SmallIcon(symbol: \"arrow.up.forward.square\", label: \"Open details\", size: 28) { state.openCapture(capture.id) }"
+    },
+    {
+      "file": "Sources/DaBin/SearchResultCard.swift",
+      "line": 137,
+      "kind": "Menu",
+      "declaration": "Menu {"
+    },
+    {
+      "file": "Sources/DaBin/SearchResultCard.swift",
+      "line": 138,
+      "kind": "Button",
+      "declaration": "Button(\"Unfiled\", systemImage: \"tray\") { state.assignProject(capture, name: nil) }"
+    },
+    {
+      "file": "Sources/DaBin/SearchResultCard.swift",
+      "line": 140,
+      "kind": "Button",
+      "declaration": "Button(project, systemImage: \"folder\") { state.assignProject(capture, name: project) }"
+    },
+    {
+      "file": "Sources/DaBin/SearchResultCard.swift",
+      "line": 145,
+      "kind": "Button",
+      "declaration": "Button(\"Show nearby captures\", systemImage: \"rectangle.stack\") { nearbyPresented = true }"
+    },
+    {
+      "file": "Sources/DaBin/SearchResultCard.swift",
+      "line": 154,
+      "kind": "Button",
+      "declaration": "Button { state.openSearchNote(note) } label: {"
+    },
+    {
+      "file": "Sources/DaBin/SearchResultCard.swift",
+      "line": 174,
+      "kind": "SmallIcon",
+      "declaration": "SmallIcon(symbol: \"square.and.pencil\", label: \"Edit note\", size: 28) { state.openSearchNote(note) }"
+    },
+    {
+      "file": "Sources/DaBin/SearchResultCard.swift",
+      "line": 176,
+      "kind": "SmallIcon",
+      "declaration": "SmallIcon(symbol: copiedNote ? \"checkmark\" : \"doc.on.doc\", label: copiedNote ? \"Note copied\" : \"Copy note\", size: 28) {"
+    },
+    {
+      "file": "Sources/DaBin/SearchScreen.swift",
+      "line": 29,
+      "kind": "Button",
+      "declaration": "Button(\"Clear filters\") { state.clearSearchFilters() }"
+    },
+    {
+      "file": "Sources/DaBin/SearchScreen.swift",
+      "line": 74,
+      "kind": "SmallIcon",
+      "declaration": "SmallIcon(symbol: \"xmark\", label: \"Close preview\", size: 28) { state.searchSelectedResultID = nil }"
+    },
+    {
+      "file": "Sources/DaBin/SearchScreen.swift",
+      "line": 116,
+      "kind": "Button",
+      "declaration": "Button(action: remove) {"
+    },
+    {
+      "file": "Sources/DaBin/SearchScreen.swift",
+      "line": 134,
+      "kind": "SmallIcon",
+      "declaration": "SmallIcon(symbol: \"chevron.left\", label: \"Newer dates\", size: 28) { state.searchDateAnchor = page.newerAnchor }"
+    },
+    {
+      "file": "Sources/DaBin/SearchScreen.swift",
+      "line": 136,
+      "kind": "SmallIcon",
+      "declaration": "SmallIcon(symbol: \"chevron.right\", label: \"Older dates\", size: 28) { state.searchDateAnchor = page.olderAnchor }"
+    },
+    {
+      "file": "Sources/DaBin/SearchScreen.swift",
+      "line": 216,
+      "kind": "Button",
+      "declaration": "Button { presented.toggle() } label: {"
+    },
+    {
+      "file": "Sources/DaBin/SearchScreen.swift",
+      "line": 261,
+      "kind": "Button",
+      "declaration": "Button(\"Clear filters\") { state.clearSearchFilters() }.accessibilityIdentifier(\"search-clear-filters\")"
+    },
+    {
+      "file": "Sources/DaBin/SearchScreen.swift",
+      "line": 263,
+      "kind": "Button",
+      "declaration": "Button(\"Done\") { presented = false }.keyboardShortcut(.defaultAction)"
+    },
+    {
+      "file": "Sources/DaBin/SettingsScreen.swift",
+      "line": 105,
+      "kind": "Button",
+      "declaration": "Button(needsScreenshotPermission ? \"Choose screenshot folder\u2026\" : \"Change folder\u2026\") {"
+    },
+    {
+      "file": "Sources/DaBin/SettingsScreen.swift",
+      "line": 112,
+      "kind": "Button",
+      "declaration": "Button(autoCaptureSettings.isPaused ? \"Resume capture\" : \"Pause capture\") {"
+    },
+    {
+      "file": "Sources/DaBin/SettingsScreen.swift",
+      "line": 118,
+      "kind": "Button",
+      "declaration": "Button(\"Excluded applications\u2026\") { showExcludedApplications = true }"
+    },
+    {
+      "file": "Sources/DaBin/SettingsScreen.swift",
+      "line": 179,
+      "kind": "Button",
+      "declaration": "Button(\"Use solid background\", systemImage: \"circle.fill\") { theme.setBoardOpacity(1) }"
+    },
+    {
+      "file": "Sources/DaBin/SettingsScreen.swift",
+      "line": 195,
+      "kind": "Button",
+      "declaration": "Button { theme.select(preset) } label: {"
+    },
+    {
+      "file": "Sources/DaBin/SettingsScreen.swift",
+      "line": 216,
+      "kind": "Button",
+      "declaration": "Button(\"Reset\") { theme.select(.purple) }"
+    },
+    {
+      "file": "Sources/DaBin/SettingsScreen.swift",
+      "line": 255,
+      "kind": "Button",
+      "declaration": "Button { showPrivacyPolicy = true } label: {"
+    },
+    {
+      "file": "Sources/DaBin/SettingsScreen.swift",
+      "line": 259,
+      "kind": "Link",
+      "declaration": "Link(\"Contact & support\", destination: url)"
+    },
+    {
+      "file": "Sources/DaBin/SettingsScreen.swift",
+      "line": 269,
+      "kind": "Button",
+      "declaration": "Button(\"Open notification settings\") {"
+    },
+    {
+      "file": "Sources/DaBin/SettingsScreen.swift",
+      "line": 325,
+      "kind": "Button",
+      "declaration": "Button { state.showArchiveFolder() } label: {"
+    },
+    {
+      "file": "Sources/DaBin/SettingsScreen.swift",
+      "line": 329,
+      "kind": "Button",
+      "declaration": "Button { state.rebuildContentIndex() } label: {"
+    },
+    {
+      "file": "Sources/DaBin/SettingsScreen.swift",
+      "line": 472,
+      "kind": "Button",
+      "declaration": "Button(action: runTutorial) {"
+    },
+    {
+      "file": "Sources/DaBin/SettingsScreen.swift",
+      "line": 557,
+      "kind": "Link",
+      "declaration": "Link(destination: release) {"
+    },
+    {
+      "file": "Sources/DaBin/SettingsScreen.swift",
+      "line": 582,
+      "kind": "Button",
+      "declaration": "Button(updates.phase == .checking ? \"Checking\u2026\" : \"Check for updates\") {"
+    },
+    {
+      "file": "Sources/DaBin/SettingsScreen.swift",
+      "line": 593,
+      "kind": "Button",
+      "declaration": "Button(\"Download & install\") { updates.downloadAndInstall() }"
+    },
+    {
+      "file": "Sources/DaBin/SettingsScreen.swift",
+      "line": 633,
+      "kind": "Button",
+      "declaration": "Button(role: .destructive, action: quitApplication) {"
+    },
+    {
+      "file": "Sources/DaBin/SettingsScreen.swift",
+      "line": 677,
+      "kind": "Button",
+      "declaration": "Button(\"Not now\", action: cancel).keyboardShortcut(.cancelAction)"
+    },
+    {
+      "file": "Sources/DaBin/SettingsScreen.swift",
+      "line": 679,
+      "kind": "Button",
+      "declaration": "Button(channel == .clipboard ? \"Turn on clipboard capture\" : \"Choose screenshot folder\u2026\", action: continueAction)"
+    },
+    {
+      "file": "Sources/DaBin/SettingsScreen.swift",
+      "line": 701,
+      "kind": "Button",
+      "declaration": "Button(\"Done\") { dismiss() }.keyboardShortcut(.defaultAction)"
+    },
+    {
+      "file": "Sources/DaBin/SettingsScreen.swift",
+      "line": 721,
+      "kind": "Button",
+      "declaration": "Button {"
+    },
+    {
+      "file": "Sources/DaBin/SettingsScreen.swift",
+      "line": 736,
+      "kind": "Button",
+      "declaration": "Button(\"Add application\u2026\", action: addApplication)"
+    },
+    {
+      "file": "Sources/DaBin/SettingsScreen.swift",
+      "line": 739,
+      "kind": "Button",
+      "declaration": "Button(\"Restore defaults\") {"
+    },
+    {
+      "file": "Sources/DaBin/TaskAttachmentsView.swift",
+      "line": 25,
+      "kind": "BuddyIconButton",
+      "declaration": "BuddyIconButton(symbol: \"doc.on.clipboard\", title: \"Paste into task\") { state.pasteAttachments(to: task) }"
+    },
+    {
+      "file": "Sources/DaBin/TaskAttachmentsView.swift",
+      "line": 27,
+      "kind": "BuddyIconButton",
+      "declaration": "BuddyIconButton(symbol: \"plus\", title: \"Add files to task\") { state.importTaskAttachments(to: task) }"
+    },
+    {
+      "file": "Sources/DaBin/TaskAttachmentsView.swift",
+      "line": 38,
+      "kind": "Button",
+      "declaration": "Button { state.openCapture(item.id) } label: {"
+    },
+    {
+      "file": "Sources/DaBin/TaskEditorScreen.swift",
+      "line": 47,
+      "kind": "Button",
+      "declaration": "Button(\"Cancel\") { state.cancelNewTask() }.buttonStyle(.bordered)"
+    },
+    {
+      "file": "Sources/DaBin/TaskEditorScreen.swift",
+      "line": 48,
+      "kind": "Button",
+      "declaration": "Button(\"Add task\") { state.saveNewTask() }.buttonStyle(.borderedProminent)"
+    },
+    {
+      "file": "Sources/DaBin/TaskFocusControls.swift",
+      "line": 39,
+      "kind": "Button",
+      "declaration": "Button { _ = state.resetTaskFocus(capture) } label: {"
+    },
+    {
+      "file": "Sources/DaBin/TaskFocusControls.swift",
+      "line": 71,
+      "kind": "Button",
+      "declaration": "Button { _ = state.resetTaskFocus(capture) } label: { Label(\"Reset\", systemImage: \"arrow.counterclockwise\") }"
+    },
+    {
+      "file": "Sources/DaBin/TaskFocusControls.swift",
+      "line": 83,
+      "kind": "Button",
+      "declaration": "Button(action: openDuration) {"
+    },
+    {
+      "file": "Sources/DaBin/TaskFocusControls.swift",
+      "line": 93,
+      "kind": "Button",
+      "declaration": "Button {"
+    },
+    {
+      "file": "Sources/DaBin/TaskFocusControls.swift",
+      "line": 110,
+      "kind": "Button",
+      "declaration": "Button(action: openSchedule) {"
+    },
+    {
+      "file": "Sources/DaBin/TaskFocusControls.swift",
+      "line": 151,
+      "kind": "Button",
+      "declaration": "Button(\"\\(value)m\") { hours = String(value / 60); minutes = String(value % 60); error = nil }"
+    },
+    {
+      "file": "Sources/DaBin/TaskFocusControls.swift",
+      "line": 159,
+      "kind": "Button",
+      "declaration": "Button(\"Cancel\") { showDuration = false }.keyboardShortcut(.cancelAction)"
+    },
+    {
+      "file": "Sources/DaBin/TaskFocusControls.swift",
+      "line": 161,
+      "kind": "Button",
+      "declaration": "Button(\"Save\") { saveDuration(start: false) }"
+    },
+    {
+      "file": "Sources/DaBin/TaskFocusControls.swift",
+      "line": 162,
+      "kind": "Button",
+      "declaration": "Button(\"Start\") { saveDuration(start: true) }.buttonStyle(.borderedProminent).disabled(capture.isCompleted)"
+    },
+    {
+      "file": "Sources/DaBin/TaskFocusControls.swift",
+      "line": 185,
+      "kind": "Button",
+      "declaration": "Button(\"Today\") { quickSchedule(0) }.buttonStyle(.bordered)"
+    },
+    {
+      "file": "Sources/DaBin/TaskFocusControls.swift",
+      "line": 186,
+      "kind": "Button",
+      "declaration": "Button(\"Tomorrow\") { quickSchedule(1) }.buttonStyle(.bordered)"
+    },
+    {
+      "file": "Sources/DaBin/TaskFocusControls.swift",
+      "line": 187,
+      "kind": "Button",
+      "declaration": "Button(\"Clear\") {"
+    },
+    {
+      "file": "Sources/DaBin/TaskFocusControls.swift",
+      "line": 203,
+      "kind": "Button",
+      "declaration": "Button(\"Cancel\") { showSchedule = false }.keyboardShortcut(.cancelAction)"
+    },
+    {
+      "file": "Sources/DaBin/TaskFocusControls.swift",
+      "line": 205,
+      "kind": "Button",
+      "declaration": "Button(\"Save schedule\") {"
+    },
+    {
+      "file": "Sources/DaBin/TaskPlanningEditor.swift",
+      "line": 82,
+      "kind": "Button",
+      "declaration": "Button(\"Unplanned\") { planning.plannedDay = nil; planning.plannedTime = nil; planning.order = nil }"
+    },
+    {
+      "file": "Sources/DaBin/TaskPlanningEditor.swift",
+      "line": 98,
+      "kind": "Button",
+      "declaration": "Button { planning.priority = priority } label: {"
+    },
+    {
+      "file": "Sources/DaBin/TaskPlanningEditor.swift",
+      "line": 115,
+      "kind": "Button",
+      "declaration": "Button(\"\\(value)m\") { planning.effortMinutes = value }"
+    },
+    {
+      "file": "Sources/DaBin/TaskPlanningEditor.swift",
+      "line": 120,
+      "kind": "Button",
+      "declaration": "Button(\"Clear\", systemImage: \"xmark\") { planning.effortMinutes = nil }"
+    },
+    {
+      "file": "Sources/DaBin/TaskPlanningEditor.swift",
+      "line": 149,
+      "kind": "Button",
+      "declaration": "Button { planning.deadline = Date().addingTimeInterval(3_600) } label: {"
+    },
+    {
+      "file": "Sources/DaBin/TaskPlanningEditor.swift",
+      "line": 160,
+      "kind": "Menu",
+      "declaration": "Menu {"
+    },
+    {
+      "file": "Sources/DaBin/TaskPlanningEditor.swift",
+      "line": 162,
+      "kind": "Button",
+      "declaration": "Button { planning.recurrence = recurrence } label: {"
+    },
+    {
+      "file": "Sources/DaBin/TaskPlanningEditor.swift",
+      "line": 191,
+      "kind": "Button",
+      "declaration": "Button { planning.deadline = nil } label: {"
+    },
+    {
+      "file": "Sources/DaBin/TaskPlanningEditor.swift",
+      "line": 217,
+      "kind": "Button",
+      "declaration": "Button(action: addChecklistItem) { Label(\"Add step\", systemImage: \"plus\").frame(minHeight: 32) }"
+    },
+    {
+      "file": "Sources/DaBin/TaskPlanningEditor.swift",
+      "line": 239,
+      "kind": "Button",
+      "declaration": "Button { let id = item.id; planning.checklist.removeAll { $0.id == id } } label: {"
+    },
+    {
+      "file": "Sources/DaBin/TaskPlanningEditor.swift",
+      "line": 267,
+      "kind": "Button",
+      "declaration": "Button(title) {"
+    },
+    {
+      "file": "Sources/DaBin/TaskPlanningEditor.swift",
+      "line": 325,
+      "kind": "Button",
+      "declaration": "Button(\"\\(value)m\") { hoursText = String(value / 60); minutesText = String(value % 60); update() }"
+    },
+    {
+      "file": "Sources/DaBin/TimelineCalendarPicker.swift",
+      "line": 100,
+      "kind": "Button",
+      "declaration": "Button(weekly ? \"Last 7 days\" : \"Today\") {"
+    },
+    {
+      "file": "Sources/DaBin/TimelineCalendarPicker.swift",
+      "line": 116,
+      "kind": "Button",
+      "declaration": "Button(\"Clear\") { selection.removeAll(); useCurrentWeek = false }"
+    },
+    {
+      "file": "Sources/DaBin/TimelineCalendarPicker.swift",
+      "line": 120,
+      "kind": "Button",
+      "declaration": "Button(\"Cancel\", action: dismiss).buttonStyle(.plain).frame(minHeight: 32)"
+    },
+    {
+      "file": "Sources/DaBin/TimelineCalendarPicker.swift",
+      "line": 122,
+      "kind": "Button",
+      "declaration": "Button {"
+    },
+    {
+      "file": "Sources/DaBin/TimelineCalendarPicker.swift",
+      "line": 143,
+      "kind": "Button",
+      "declaration": "Button {"
+    },
+    {
+      "file": "Sources/DaBin/TimelineCalendarPicker.swift",
+      "line": 159,
+      "kind": "Button",
+      "declaration": "return Button {"
+    },
+    {
+      "file": "Sources/DaBin/TodayPlanningScreen.swift",
+      "line": 46,
+      "kind": "BuddyIconButton",
+      "declaration": "BuddyIconButton(symbol: \"plus.circle\", title: \"Add task for today\") {"
+    },
+    {
+      "file": "Sources/DaBin/TodayPlanningScreen.swift",
+      "line": 51,
+      "kind": "Menu",
+      "declaration": "Menu {"
+    },
+    {
+      "file": "Sources/DaBin/TodayPlanningScreen.swift",
+      "line": 52,
+      "kind": "Button",
+      "declaration": "Button(\"All projects\", systemImage: \"square.stack.3d.up\") { state.libraryProject = nil }"
+    },
+    {
+      "file": "Sources/DaBin/TodayPlanningScreen.swift",
+      "line": 53,
+      "kind": "Button",
+      "declaration": "ForEach(projects, id: \\.self) { project in Button(project, systemImage: \"folder\") { state.libraryProject = project } }"
+    },
+    {
+      "file": "Sources/DaBin/TodayTaskCard.swift",
+      "line": 49,
+      "kind": "BuddyIconButton",
+      "declaration": "BuddyIconButton(symbol: \"arrow.up\", title: \"Move task up: \\(capture.title)\") { onMove(index, -1) }"
+    },
+    {
+      "file": "Sources/DaBin/TodayTaskCard.swift",
+      "line": 51,
+      "kind": "BuddyIconButton",
+      "declaration": "BuddyIconButton(symbol: \"arrow.down\", title: \"Move task down: \\(capture.title)\") { onMove(index, 1) }"
+    },
+    {
+      "file": "Sources/DaBin/TodayTaskCard.swift",
+      "line": 60,
+      "kind": "Button",
+      "declaration": "Button(action: perform) {"
+    },
+    {
+      "file": "Sources/DaBin/TrashScreen.swift",
+      "line": 26,
+      "kind": "Button",
+      "declaration": "Button(\"Restore\") { Task { await state.restoreCapture(capture) } }"
+    },
+    {
+      "file": "Sources/DaBin/TrashScreen.swift",
+      "line": 28,
+      "kind": "Button",
+      "declaration": "Button(\"Delete permanently\u2026\", role: .destructive) { pendingPermanentRemoval = capture }"
+    },
+    {
+      "file": "Sources/DaBin/TrashScreen.swift",
+      "line": 40,
+      "kind": "Button",
+      "declaration": "Button(\"Cancel\", role: .cancel) { pendingPermanentRemoval = nil }"
+    },
+    {
+      "file": "Sources/DaBin/TrashScreen.swift",
+      "line": 41,
+      "kind": "Button",
+      "declaration": "Button(\"Delete permanently\", role: .destructive) {"
+    },
+    {
+      "file": "Sources/DaBin/WeeklyScopeActions.swift",
+      "line": 90,
+      "kind": "Button",
+      "declaration": "Button(action: action) {"
+    },
+    {
+      "file": "Sources/DaBin/WeeklyScreen.swift",
+      "line": 80,
+      "kind": "Button",
+      "declaration": "Button { state.selectWeeklyDay(day) } label: {"
+    },
+    {
+      "file": "Sources/DaBin/WeeklyScreen.swift",
+      "line": 189,
+      "kind": "Button",
+      "declaration": "Button(action: toggle) {"
+    },
+    {
+      "file": "Sources/DaBin/WeeklyScreen.swift",
+      "line": 207,
+      "kind": "BuddyIconButton",
+      "declaration": "BuddyIconButton(symbol: \"trash\", title: \"Move batch to Recently Deleted\") { confirmsRemoval = true }"
+    },
+    {
+      "file": "Sources/DaBin/WeeklyScreen.swift",
+      "line": 211,
+      "kind": "BuddyIconButton",
+      "declaration": "BuddyIconButton(symbol: isExpanded ? \"minus\" : \"chevron.down\","
+    },
+    {
+      "file": "Sources/DaBin/WeeklyScreen.swift",
+      "line": 243,
+      "kind": "BuddyIconButton",
+      "declaration": "BuddyIconButton(symbol: primary.comment.isEmpty ? \"text.bubble\" : \"text.bubble.fill\", title: \"Comment on \" + primary.title) { state.openCapture(primary.id, focus: \"comment\") }"
+    },
+    {
+      "file": "Sources/DaBin/WeeklyScreen.swift",
+      "line": 244,
+      "kind": "BuddyIconButton",
+      "declaration": "BuddyIconButton(symbol: primary.reminderAt == nil ? \"bell\" : \"bell.fill\", title: \"Reminder for \" + primary.title) { state.openCapture(primary.id, focus: \"reminder\") }"
+    },
+    {
+      "file": "Sources/DaBin/WeeklyScreen.swift",
+      "line": 251,
+      "kind": "Button",
+      "declaration": "Button(\"Cancel\", role: .cancel) { }"
+    },
+    {
+      "file": "Sources/DaBin/WeeklyScreen.swift",
+      "line": 252,
+      "kind": "Button",
+      "declaration": "Button(\"Move \\(captures.count) items\", role: .destructive) { Task { await state.removeCaptures(captures) } }"
+    },
+    {
+      "file": "Sources/DaBin/WeeklyScreen.swift",
+      "line": 290,
+      "kind": "Button",
+      "declaration": "Button { state.openCapture(capture.id) } label: {"
+    },
+    {
+      "file": "Sources/DaBin/WeeklyScreen.swift",
+      "line": 321,
+      "kind": "BuddyIconButton",
+      "declaration": "BuddyIconButton(symbol: capture.comment.isEmpty ? \"text.bubble\" : \"text.bubble.fill\", title: \"Comment on \\(capture.title)\") {"
+    },
+    {
+      "file": "Sources/DaBin/WeeklyScreen.swift",
+      "line": 324,
+      "kind": "BuddyIconButton",
+      "declaration": "BuddyIconButton(symbol: capture.reminderAt == nil ? \"bell\" : \"bell.fill\", title: \"Reminder for \\(capture.title)\") {"
+    },
+    {
+      "file": "Sources/DaBin/WeeklyScreen.swift",
+      "line": 328,
+      "kind": "BuddyIconButton",
+      "declaration": "BuddyIconButton(symbol: \"timer\", title: \"Focus and schedule task\") { showsFocus = true }"
+    },
+    {
+      "file": "Sources/DaBin/WeeklyScreen.swift",
+      "line": 356,
+      "kind": "Button",
+      "declaration": "Button(capture.isMinimized ? \"Expand capture\" : \"Minimize capture\", systemImage: capture.isMinimized ? \"chevron.down\" : \"chevron.up\") { state.toggleMinimized(capture) }"
+    },
+    {
+      "file": "Sources/DaBin/WorkspaceItemCard.swift",
+      "line": 29,
+      "kind": "BuddyIconButton",
+      "declaration": "BuddyIconButton(symbol: copied ? \"checkmark\" : \"doc.on.doc\", title: copied ? \"Copied\" : \"Copy \\(capture.title)\") { copy() }"
+    },
+    {
+      "file": "Sources/DaBin/WorkspaceItemCard.swift",
+      "line": 35,
+      "kind": "Button",
+      "declaration": "Button {"
+    },
+    {
+      "file": "Sources/DaBin/WorkspaceItemCard.swift",
+      "line": 73,
+      "kind": "BuddyIconButton",
+      "declaration": "BuddyIconButton(symbol: onShelf ? \"tray.full.fill\" : \"tray.and.arrow.down\", title: onShelf ? \"Remove from shelf; keep capture\" : \"Add to shelf\", isActive: onShelf) { toggleShelf() }"
+    },
+    {
+      "file": "Sources/DaBin/WorkspaceItemCard.swift",
+      "line": 74,
+      "kind": "Menu",
+      "declaration": "Menu { itemActions(includesRemoval: false, includesCardButtons: false) } label: {"
+    },
+    {
+      "file": "Sources/DaBin/WorkspaceItemCard.swift",
+      "line": 88,
+      "kind": "Button",
+      "declaration": "Button(\"Cancel\", role: .cancel) { }"
+    },
+    {
+      "file": "Sources/DaBin/WorkspaceItemCard.swift",
+      "line": 89,
+      "kind": "Button",
+      "declaration": "Button(\"Save\") { saveSnippet() }.disabled(snippetName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)"
+    },
+    {
+      "file": "Sources/DaBin/WorkspaceItemCard.swift",
+      "line": 94,
+      "kind": "Button",
+      "declaration": "Button(\"Open details\", systemImage: \"rectangle.and.text.magnifyingglass\") { workspace.selectedCaptureID = capture.id; state.openCapture(capture.id) }"
+    },
+    {
+      "file": "Sources/DaBin/WorkspaceItemCard.swift",
+      "line": 96,
+      "kind": "Button",
+      "declaration": "Button(\"Copy\", systemImage: \"doc.on.doc\") { copy() }"
+    },
+    {
+      "file": "Sources/DaBin/WorkspaceItemCard.swift",
+      "line": 99,
+      "kind": "Button",
+      "declaration": "Button(\"Copy as plain text\", systemImage: \"text.alignleft\") {"
+    },
+    {
+      "file": "Sources/DaBin/WorkspaceItemCard.swift",
+      "line": 103,
+      "kind": "Button",
+      "declaration": "Button(alias == nil ? \"Save as snippet\u2026\" : \"Rename snippet\u2026\", systemImage: \"text.badge.star\") {"
+    },
+    {
+      "file": "Sources/DaBin/WorkspaceItemCard.swift",
+      "line": 108,
+      "kind": "Button",
+      "declaration": "Button(\"Remove snippet name\", systemImage: \"text.badge.minus\") {"
+    },
+    {
+      "file": "Sources/DaBin/WorkspaceItemCard.swift",
+      "line": 113,
+      "kind": "Button",
+      "declaration": "Button(capture.isPinned ? \"Unpin\" : \"Pin\", systemImage: capture.isPinned ? \"pin.slash\" : \"pin\") { state.togglePinned(capture) }"
+    },
+    {
+      "file": "Sources/DaBin/WorkspaceItemCard.swift",
+      "line": 116,
+      "kind": "Button",
+      "declaration": "Button(onShelf ? \"Remove from shelf; keep capture\" : \"Add to shelf\", systemImage: onShelf ? \"tray\" : \"tray.and.arrow.down\") { toggleShelf() }"
+    },
+    {
+      "file": "Sources/DaBin/WorkspaceItemCard.swift",
+      "line": 120,
+      "kind": "Button",
+      "declaration": "Button(\"Turn into task\", systemImage: \"checkmark.circle\") { state.convertToTask(capture) }"
+    },
+    {
+      "file": "Sources/DaBin/WorkspaceItemCard.swift",
+      "line": 122,
+      "kind": "Menu",
+      "declaration": "if capture.parentTaskID == nil { Menu {"
+    },
+    {
+      "file": "Sources/DaBin/WorkspaceItemCard.swift",
+      "line": 124,
+      "kind": "Button",
+      "declaration": "Button(task.title, systemImage: \"paperclip\") {"
+    },
+    {
+      "file": "Sources/DaBin/WorkspaceItemCard.swift",
+      "line": 138,
+      "kind": "Button",
+      "declaration": "Button(\"Open saved file\", systemImage: \"arrow.up.forward.square\") { state.openOriginal(capture) }"
+    },
+    {
+      "file": "Sources/DaBin/WorkspaceItemCard.swift",
+      "line": 139,
+      "kind": "Button",
+      "declaration": "Button(\"Reveal saved file\", systemImage: \"folder\") {"
+    },
+    {
+      "file": "Sources/DaBin/WorkspaceItemCard.swift",
+      "line": 143,
+      "kind": "Button",
+      "declaration": "Button(\"Copy saved file path\", systemImage: \"link\") {"
+    },
+    {
+      "file": "Sources/DaBin/WorkspaceItemCard.swift",
+      "line": 149,
+      "kind": "Button",
+      "declaration": "Button(capture.isMinimized ? \"Expand capture\" : \"Minimize capture\", systemImage: capture.isMinimized ? \"chevron.down\" : \"chevron.up\") { state.toggleMinimized(capture) }"
+    },
+    {
+      "file": "Sources/DaBin/WorkspaceItemCard.swift",
+      "line": 150,
+      "kind": "Button",
+      "declaration": "Button(\"Comment\", systemImage: \"text.bubble\") { state.openCapture(capture.id, focus: \"comment\") }"
+    },
+    {
+      "file": "Sources/DaBin/WorkspaceItemCard.swift",
+      "line": 151,
+      "kind": "Button",
+      "declaration": "Button(\"Reminder\", systemImage: \"bell\") { state.openCapture(capture.id, focus: \"reminder\") }"
+    },
+    {
+      "file": "Sources/DaBin/WorkspaceItemCard.swift",
+      "line": 153,
+      "kind": "Button",
+      "declaration": "Button(\"Move to Recently Deleted\u2026\", systemImage: \"trash\", role: .destructive) { state.requestRemoval(capture) }"
+    }
+  ]
+}

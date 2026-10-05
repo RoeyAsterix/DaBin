@@ -1,0 +1,1 @@
+PASS: 17 Store update checks; disabled direct actions, stable Store-managed state, zero HTTP(S) requests; no signing, installed app, or user archive used.

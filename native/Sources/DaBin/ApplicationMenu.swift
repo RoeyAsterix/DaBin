@@ -36,7 +36,9 @@ final class ApplicationMenu: NSObject, NSMenuItemValidation {
         let appRoot = menu.addItem(withTitle: "DaBin", action: nil, keyEquivalent: "")
         let appMenu = NSMenu(title: "DaBin")
         appMenu.addItem(withTitle: "About DaBin", action: #selector(NSApplication.orderFrontStandardAboutPanel(_:)), keyEquivalent: "")
+        #if DABIN_DIRECT_UPDATES
         add("Check for Updates…", #selector(checkForUpdates), key: "", to: appMenu)
+        #endif
         appMenu.addItem(.separator())
         add("Open DaBin", #selector(openDaily), key: "o", to: appMenu)
         add("Focus robot for paste", #selector(focusRobot), key: "v", modifiers: [.command, .shift], to: appMenu)

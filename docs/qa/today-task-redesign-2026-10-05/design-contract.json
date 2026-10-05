@@ -1,0 +1,47 @@
+{
+  "version": "0.4.33",
+  "build": "88",
+  "status": "verified",
+  "goals": [
+    "Today always includes all live captures and drops received that day, regardless of task planning, project or type filters",
+    "Compact task planning and checklist with direct work-day choices, inline editing and clear progress",
+    "Two-action reminder presets: choose preset, Apply reminder or Save changes",
+    "Compact Today receipt cards keep the full capture feed readable without large previews"
+  ],
+  "planning": [
+    "Direct Today, Tomorrow and Unplanned choices",
+    "One-click priority choices",
+    "Direct Add deadline and Repeat selection",
+    "Checklist composer before existing steps; Return continues adding steps",
+    "Compact focus row retaining duration, start/pause and reset"
+  ],
+  "reminder": [
+    "15-minute, 1-hour and tomorrow-at-9 presets enable the draft",
+    "Native custom countdown/date/time entries",
+    "Explicit reminder-only Apply preserves other pending changes",
+    "Snooze, remove, retry, pause and notification status retained"
+  ],
+  "researchSources": [
+    "https://developer.apple.com/design/human-interface-guidelines/entering-data",
+    "https://developer.apple.com/design/human-interface-guidelines/pop-up-buttons",
+    "https://developer.apple.com/design/human-interface-guidelines/toggles",
+    "https://developer.apple.com/design/human-interface-guidelines/pickers",
+    "https://developer.apple.com/design/human-interface-guidelines/disclosure-controls",
+    "https://developer.apple.com/design/human-interface-guidelines/motion"
+  ],
+  "verification": "15 selected relevant native suites passed with unchanged current production inputs; real receipt, planning, checklist and reminder bindings; narrow/expanded windows and 150/200-percent Today zoom.",
+  "uploaded": false,
+  "today": [
+    "Always show current-day receipts across all projects, capture types and task scopes",
+    "Preserve completed, filed and attached captures in the receipt feed",
+    "Direct native drop and Paste stay on Today",
+    "Compact receipt card provides title, project, capture time, category, completion, Copy and More; full editor remains one click away",
+    "Retain conversion Undo and direct parent-task navigation from compact receipts"
+  ],
+  "frozenBuildSourceFingerprint": "d4dcadc575a98e4e0b273171bfc6c3abd503428db3bd9d7604affe02ef602510",
+  "verificationReport": "verification.json",
+  "buildSourceFingerprint": "d4dcadc575a98e4e0b273171bfc6c3abd503428db3bd9d7604affe02ef602510",
+  "integrated": true,
+  "releaseCompilation": "completed",
+  "testFlightStatus": "waiting_for_keychain_authentication"
+}

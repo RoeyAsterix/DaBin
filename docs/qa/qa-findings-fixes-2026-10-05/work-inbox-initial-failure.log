@@ -1,0 +1,7 @@
+2026-10-05 05:58:19.696 WorkInboxTests[86376:26679539] IOPMScheduleUserActivityLevelNotification returned 0
+2026-10-05 05:58:19.698 WorkInboxTests[86376:26679539] IOPMScheduleUserActivityLevelNotification returned 0
+2026-10-05 05:58:19.844 WorkInboxTests[86376:26679539] IOPMScheduleUserActivityLevelNotification returned 0
+2026-10-05 05:58:19.845 WorkInboxTests[86376:26679539] IOPMScheduleUserActivityLevelNotification returned 0
+2026-10-05 05:58:19.849 WorkInboxTests[86376:26679539] IOPMScheduleUserActivityLevelNotification returned 0
+2026-10-05 05:58:19.851 WorkInboxTests[86376:26679539] IOPMScheduleUserActivityLevelNotification returned 0
+Swift/ErrorType.swift:254: Fatal error: Error raised at top level: Error Domain=WorkInboxTests Code=2 "Reminder completion persists against the live fixture without archive errors" UserInfo={NSLocalizedDescription=Reminder completion persists against the live fixture without archive errors}

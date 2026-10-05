@@ -160,7 +160,8 @@ struct CaptureSourceView: View {
                     .accessibilityValue(showLocation ? "Expanded" : "Collapsed")
                     Spacer(minLength: 0)
                     BuddyIconButton(symbol: copied ? "checkmark" : "doc.on.doc",
-                                    title: copied ? "\(locationName) copied" : "Copy \(locationName.lowercased())") {
+                                    title: copied ? "\(locationName) copied" : "Copy \(locationName.lowercased())",
+                                    visualLabel: copied ? "Copied" : "Copy") {
                         copyLocation(location)
                     }
                 }

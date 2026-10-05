@@ -149,6 +149,21 @@ struct TaskPlanningTests {
         let beforeDST = date("2026-03-07T14:00:00Z")
         try expect(TaskRecurrence.daily.nextDate(after: beforeDST, notBefore: beforeDST, calendar: dstCalendar) == date("2026-03-08T13:00:00Z"),
                    "Recurrence retains the local time through daylight-saving changes")
+        let pendingPlan = TaskPlanning(checklist: [TaskChecklistItem(text: "Already added")])
+        let appended = try ChecklistDraftPolicy.committing("  Pending typed step \n", to: pendingPlan)
+        try expect(appended.checklist.count == 2 && appended.checklist.last?.text == "Pending typed step"
+            && pendingPlan.checklist.count == 1, "Primary commit builds a trimmed candidate without mutating the pending plan")
+        let whitespacePlan = try ChecklistDraftPolicy.committing(" \n\t", to: pendingPlan)
+        try expect(whitespacePlan == pendingPlan,
+            "Whitespace-only pending text does not create an empty step")
+        let boundaryStep = String(repeating: "x", count: 500)
+        try expect(ChecklistDraftPolicy.isValid(boundaryStep, planning: pendingPlan), "A 500-character pending step remains valid")
+        try expect(!ChecklistDraftPolicy.isValid(boundaryStep + "x", planning: pendingPlan), "A 501-character pending step cannot be committed")
+        let fullPlan = TaskPlanning(checklist: (0..<100).map { TaskChecklistItem(text: "Step \($0)") })
+        try expect(!ChecklistDraftPolicy.isValid("One more", planning: fullPlan), "Pending text cannot silently exceed 100 checklist steps")
+        var rejectedPending = false
+        do { _ = try ChecklistDraftPolicy.committing("One more", to: fullPlan) } catch { rejectedPending = true }
+        try expect(rejectedPending && fullPlan.checklist.count == 100, "Rejected pending append leaves every existing step intact")
         print("PASS: \(checks) task planning checks; synthetic local archive only.")
     }
 }

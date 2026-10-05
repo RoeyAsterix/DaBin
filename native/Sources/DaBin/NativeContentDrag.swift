@@ -17,6 +17,7 @@ extension View {
 
 @MainActor
 private struct NativeContentDragSurface: NSViewRepresentable {
+    @Environment(\.isEnabled) private var isEnabled
     let label: String
     let excluding: [CGRect]
     let items: () throws -> [NSPasteboardWriting]
@@ -31,6 +32,7 @@ private struct NativeContentDragSurface: NSViewRepresentable {
     }
 
     func updateNSView(_ view: NativeContentDragView, context: Context) {
+        view.isDragEnabled = isEnabled
         view.dragLabel = label
         view.excludedRects = excluding
         view.items = items
@@ -51,6 +53,7 @@ private struct NativeContentDragSurface: NSViewRepresentable {
 @MainActor
 class NativeContentDragView: NSView, NSGestureRecognizerDelegate, NSDraggingSource {
     var dragLabel = "Item"
+    var isDragEnabled = true
     var excludedRects: [CGRect] = []
     var items: () throws -> [NSPasteboardWriting] = { [] }
     var onError: (Error) -> Void = { _ in }
@@ -95,7 +98,7 @@ class NativeContentDragView: NSView, NSGestureRecognizerDelegate, NSDraggingSour
 
     func gestureRecognizer(_ gestureRecognizer: NSGestureRecognizer,
                            shouldAttemptToRecognizeWith event: NSEvent) -> Bool {
-        guard event.type == .leftMouseDown, event.window === window,
+        guard isDragEnabled, event.type == .leftMouseDown, event.window === window,
               !event.modifierFlags.contains(.control), !isHiddenOrHasHiddenAncestor,
               window?.attachedSheet == nil else { return false }
         let point = convert(event.locationInWindow, from: nil)
@@ -122,7 +125,7 @@ class NativeContentDragView: NSView, NSGestureRecognizerDelegate, NSDraggingSour
     /// This method never changes the general clipboard or any source record.
     @discardableResult
     func beginContentDrag(with event: NSEvent) -> NSDraggingSession? {
-        guard window != nil, activeSession == nil else { return nil }
+        guard isDragEnabled, window != nil, activeSession == nil else { return nil }
         do {
             let writers = try items()
             guard !writers.isEmpty else { onEnd(); return nil }

@@ -1,0 +1,13 @@
+{
+  "date": "2026-10-04",
+  "rootCause": "Normal cold launches only showed Daily when first-ever-launch preference was false or --show-daily supplied; LSUIElement means otherwise no main window or Dock icon.",
+  "additionalFinding": "Installed and development app bundles were both running; both closed using normal Quit before validation.",
+  "repair": "Every normal app launch shows the existing main window. Explicit reopen continues to restore the current work. Coordinator hidden mode remains available for isolated QA.",
+  "desktopTarget": "/Users/roeylibfeld/Applications/DaBin.app",
+  "existingDesktopLink": "/Users/roeylibfeld/Desktop/DaBin.app",
+  "sources": {
+    "Sources/DaBin/AppDelegate.swift": "9a35bbd220df09e657a752961c96ce266013d784d5059f8f61762fa4b9066cd7",
+    "Sources/DaBin/ApplicationCoordinator.swift": "ee775c6327dc49029933594d717b4b3e683334c56baf7bafd900bfab6946aefa",
+    "Tests/ApplicationLifecycleTests.swift": "2992c5df8af1e39c53c238c16361719fdae8559c937774da3962aea31a5aa922"
+  }
+}

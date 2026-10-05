@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "status": "compiled_not_run",
+  "compiledAtUTC": "2026-10-05T03:22:22.107947+00:00",
+  "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/table-warning/StandaloneVariableHeightListProbe.swift",
+  "sourceSHA256": "9cf1cb9effd7cad3272dca56013e16d8d15b3ffae8bd23f1f49657a2aaa5df63",
+  "sourceUnchangedDuringCompile": true,
+  "executable": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa-cache/standalone-variable-list-9cf1cb9effd7cad3/StandaloneVariableHeightListProbe",
+  "executableSHA256": "1719b41925c3422f41c72386b77e700d6dad7df5d541ce7c2597510f32bbfff0",
+  "command": [
+    "xcrun",
+    "swiftc",
+    "-O",
+    "-whole-module-optimization",
+    "-warnings-as-errors",
+    "-parse-as-library",
+    "-target",
+    "arm64-apple-macosx14.0",
+    "-module-cache-path",
+    "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa-cache/standalone-variable-list-9cf1cb9effd7cad3/ModuleCache",
+    "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/table-warning/StandaloneVariableHeightListProbe.swift",
+    "-o",
+    "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa-cache/standalone-variable-list-9cf1cb9effd7cad3/StandaloneVariableHeightListProbe"
+  ],
+  "compileLog": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa-cache/standalone-variable-list-9cf1cb9effd7cad3/compile.log",
+  "compileLogSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "compileExitCode": 0,
+  "compileSeconds": 3.565239458112046,
+  "runtimeLaunchedByAgent": false,
+  "importsOnly": [
+    "AppKit",
+    "Darwin",
+    "Foundation",
+    "SwiftUI"
+  ],
+  "linksDaBinModule": false,
+  "warningReproductionEstablished": false
+}

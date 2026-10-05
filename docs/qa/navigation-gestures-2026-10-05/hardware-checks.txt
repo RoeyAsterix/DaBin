@@ -1,0 +1,14 @@
+DaBin navigation hardware checks
+
+1. Record build, macOS version, trackpad/mouse model, Natural scrolling, Swipe between pages, and DaBin Trackpad Back and Forward settings. Visit three destinations and leave an unsaved task draft.
+2. Complete two-finger Back/Forward gestures over header, content, and footer. Each completion moves one history step; short/cancelled gestures and momentum move none. Repeat with Natural scrolling changed.
+3. Test the three-finger page-swipe option if available. A recognized right swipe goes Back; left goes Forward. The app navigation toggle disables both recognized and fluid paths.
+4. Pan/scroll documents, previews, and horizontal lists without changing history. Move the pointer midgesture: the initial surface keeps ownership. A fresh workspace gesture works afterward.
+5. Return to an unsaved task/comment/checklist/reminder draft; verify text, selection, and scroll position. IME composition and modal sheets block navigation.
+6. Press, hold, and release mouse Back/Forward: one history step per pair. Test two independent presses, focus loss during a press, and driver keyboard mappings. Middle/right clicks retain native behavior.
+
+Apple references
+https://developer.apple.com/documentation/appkit/nsevent/deltax
+https://developer.apple.com/documentation/appkit/nsevent/isswipetrackingfromscrolleventsenabled
+https://developer.apple.com/documentation/appkit/nsevent/buttonnumber
+https://support.apple.com/en-hk/guide/mac-help/mchlp1226/mac

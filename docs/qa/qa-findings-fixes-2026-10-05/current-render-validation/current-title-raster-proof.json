@@ -1,0 +1,92 @@
+{
+  "scope": "Read-only actual full-Board raster at native field geometry; no GUI launch or image modification",
+  "candidate": [
+    {
+      "file": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/task-plan-redesign-2026-10-05/native/full-board-380-task-zoom100@2x.png",
+      "sha256": "356c7e49859812b813fb1b22278d4b8a6129c517a38df20392f9e5019761f30d",
+      "imagePixels": [
+        760,
+        1360
+      ],
+      "titleFrameTopLeft": {
+        "height": 50,
+        "width": 308,
+        "x": 56,
+        "y": 90
+      },
+      "cropPixels": [
+        114,
+        182,
+        726,
+        278
+      ],
+      "theme": "light",
+      "firstLineForegroundPixels": 6920,
+      "secondLineForegroundPixels": 7041,
+      "firstLineInkRows": 36,
+      "secondLineInkRows": 37,
+      "twoLinesPainted": true,
+      "zoom": 1
+    },
+    {
+      "file": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/task-plan-redesign-2026-10-05/native/full-board-380-task-zoom200@2x.png",
+      "sha256": "d252c9df862d39f08433632e8e36c6bba3b53240538fadf23fbf2174453eea79",
+      "imagePixels": [
+        760,
+        1360
+      ],
+      "titleFrameTopLeft": {
+        "height": 58,
+        "width": 276,
+        "x": 72,
+        "y": 90
+      },
+      "cropPixels": [
+        146,
+        182,
+        694,
+        294
+      ],
+      "theme": "dark",
+      "firstLineForegroundPixels": 7082,
+      "secondLineForegroundPixels": 7236,
+      "firstLineInkRows": 46,
+      "secondLineInkRows": 37,
+      "twoLinesPainted": true,
+      "zoom": 2
+    }
+  ],
+  "baseline": {
+    "file": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/native-title-probe/output/cache-display-visible-window@2x.png",
+    "sha256": "8478db575e4fad3a5ca61f407d5b9755ba462ad5b41a320951b6048543539f92",
+    "imagePixels": [
+      760,
+      1360
+    ],
+    "titleFrameTopLeft": {
+      "x": 54.0,
+      "y": 90.0,
+      "width": 312.0,
+      "height": 48.0
+    },
+    "cropPixels": [
+      110,
+      182,
+      730,
+      274
+    ],
+    "theme": "light",
+    "firstLineForegroundPixels": 6920,
+    "secondLineForegroundPixels": 0,
+    "firstLineInkRows": 36,
+    "secondLineInkRows": 0,
+    "twoLinesPainted": false,
+    "defectReproduced": true
+  },
+  "nativeInteractionReport": {
+    "file": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/task-plan-redesign-2026-10-05/native/native-task-plan-report.json",
+    "sha256": "ad078f610bc8395635079e0059a4a7aa0879ee4b9c7833e4ad841e6743f97b06",
+    "checks": 379
+  },
+  "status": "passed"
+}

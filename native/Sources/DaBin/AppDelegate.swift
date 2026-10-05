@@ -17,8 +17,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         do {
             let application = try ApplicationCoordinator()
             self.application = application
-            let firstLaunch = application.claimFirstLaunchDailyPresentation()
-            application.start(showDaily: firstLaunch || CommandLine.arguments.contains("--show-daily"))
+            // Launching the app in Finder must always show its window. As an
+            // accessory app, a hidden cold launch otherwise looks like failure.
+            // Background capture continues only after the user hides the board.
+            application.start(showDaily: true)
         } catch {
             NSApp.activate(ignoringOtherApps: true)
             let alert = NSAlert()

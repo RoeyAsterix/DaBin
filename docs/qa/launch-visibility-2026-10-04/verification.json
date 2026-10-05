@@ -1,0 +1,27 @@
+{
+  "status": "passed",
+  "localVersion": "0.4.31",
+  "build": "86",
+  "sourceFingerprint": "5e94e01f639412c9e33340118b22f4c1a3a5505d64d67f666b432fc2e8b69188",
+  "executableSHA256": "eafc7609feed25ffbe5a113997da2119afea388ac00a350f7fdc354d18b7a323",
+  "strictSignature": "passed",
+  "desktopShortcut": "/Users/roeylibfeld/Desktop/DaBin.app",
+  "shortcutTarget": "/Users/roeylibfeld/Applications/DaBin.app",
+  "coldLaunchCommand": [
+    "open",
+    "/Users/roeylibfeld/Desktop/DaBin.app"
+  ],
+  "coldLaunchShowDailyArgument": false,
+  "coldLaunchUI": "DaBin Daily with Inbox controls visible in accessibility tree after normal desktop shortcut launch.",
+  "nativeSuites": {
+    "ApplicationLifecycleTests": 74,
+    "WindowTests": 260
+  },
+  "installedProductionProcesses": [
+    "21533 /Users/roeylibfeld/Applications/DaBin.app/Contents/MacOS/DaBin"
+  ],
+  "liveReopenCheck": "Not completed; computer-use reported user interaction and user was working in Projects. Left the running app undisturbed. Existing native reopen regression checks passed.",
+  "rollbackApp": "/Users/roeylibfeld/Applications/.DaBinBackups/20261004-170705-5ea37e52.app",
+  "personalContentInEvidence": false,
+  "publicPush": false
+}

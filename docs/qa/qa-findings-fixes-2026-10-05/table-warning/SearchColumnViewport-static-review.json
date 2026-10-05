@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "reviewedAtUTC": "2026-10-05T03:24:19.793953+00:00",
+  "kind": "static_callback_safety_review_not_causal_runtime_proof",
+  "productionChanged": false,
+  "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Sources/DaBin/SearchColumnViewport.swift",
+  "sourceSHA256": "858090f1c4e40ae0e11cc95aa96fd2be7f8b424cbc2f9117bef6eba5cc882294",
+  "callbackEntryLine": 74,
+  "synchronousGeometryReadLine": 88,
+  "deferredPublicationLine": 94,
+  "observation": "The clip bounds notification calls rememberVisibleRow synchronously. That method calls native rows(in:) before the deferred SwiftUI state publication. Estimated row queries may request native height/span calculation while an enclosing AppKit layout notification is still delivering.",
+  "safeMinimalDesign": [
+    "Move geometry read and chosen-row identity resolution into one coalesced DispatchWorkItem on the next main-loop turn.",
+    "Capture table identity, viewportGeneration and searchPositionRevision at scheduling. Recheck stopped, table identity, generation, revision, route search, no workspace zoom, current native row count matching rowIDs, and row index bounds before geometry/publish.",
+    "Cancel and clear pending work on stop, table rebind and rowIDs/context generation replacement. Queue a fresh read after the replacement; never allow a rejected old callback to suppress the new context.",
+    "Read latest clip geometry after deferral. Only publish changed column identity. Do not instantiate offscreen row views or alter native delegate/automatic heights."
+  ],
+  "reasonNotAnAllWarningsFix": "ProjectWorkspaceView never mounts SearchColumnViewport. Its native warning trace contains OutlineListCoordinator.diffRows and native estimated-height caching during initial window ordering and resize, not this callback. Therefore this static improvement cannot be credited with closing all table warnings without a matching cause trace and clean regression receipts.",
+  "existingRequiredRegressions": [
+    "SearchWindowTests",
+    "ViewportLifecycleTests",
+    "NavigationHistoryTests",
+    "WorkspaceZoomLayoutTests",
+    "WorkspaceInputTests"
+  ],
+  "existingAcceptance": "Retain scoped date-column identity, search revision, Back/Forward scroll restoration, context cancellation, native typing/keyboard selection and virtualization. Require complete affected-suite logs without the reentrant warning.",
+  "publicAPIDiagnosticAttempts": [
+    {
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/table-warning/ProjectWorkspaceTableEstimateProbe.swift",
+      "sourceSHA256": "f571da32ba94807cb30b188a625f9648c949804d6fbb9d3dac8b4af2f3904651",
+      "log": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/table-warning/project-native-table-estimates.log",
+      "logSHA256": "8a1974b918cd74cbc3d329090cb52f1e34d30cd3d69406d8a49fd243a94be02e",
+      "disposition": "Root-reported209semantic checks retainautomatic heights; measured/realistic native rowHeight estimates did not remove all5 warnings. SwiftUI later restores estimate24. No source workaround promoted."
+    },
+    {
+      "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/table-warning/ProjectWorkspaceTableRealisticEstimateTrial.swift",
+      "sourceSHA256": "8f85c03055759edbf37c2aebf792c389770e2ecd531ff837badde2553c693873",
+      "log": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/table-warning/project-realistic-estimate-trial.log",
+      "logSHA256": "99cb29d5cdd4735afe66340614b870ef2d2d84e87baa4ce7d96b7d45edb99d32",
+      "disposition": "Root-reported209semantic checks retainautomatic heights; measured/realistic native rowHeight estimates did not remove all5 warnings. SwiftUI later restores estimate24. No source workaround promoted."
+    }
+  ],
+  "standaloneFrameworkProbe": {
+    "source": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/table-warning/StandaloneVariableHeightListProbe.swift",
+    "sourceSHA256": "9cf1cb9effd7cad3272dca56013e16d8d15b3ffae8bd23f1f49657a2aaa5df63",
+    "compileReceipt": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/table-warning/standalone-variable-list-compile.json",
+    "compileReceiptSHA256": "097f897531d210fbaa65c55e4afb9a452933d38d9529c1c92387a4956239167f",
+    "runtime": "parent_run_passed74_with5matchingwarnings",
+    "warningReproductionEstablished": true,
+    "runtimeEvidence": {
+      "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/table-warning/framework-reproduction.json",
+      "sha256": "58ea049421e68d104914ac9d75b0661c1fa5a33b1c77d713b1f86938c846c64e"
+    }
+  },
+  "productionChangeRequiresMatchingCauseTrace": true
+}

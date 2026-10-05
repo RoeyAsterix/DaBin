@@ -1,0 +1,109 @@
+{
+  "context" : "empty-week",
+  "nodes" : [
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19992, -19960}, {1008, 912}}",
+      "identifier" : "weekly-columns",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19992, -19108}, {139, 60}}",
+      "identifier" : "weekly-day-2026-09-08",
+      "label" : "Tuesday, 8 September 2026, 0 captures, open Daily"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19954.571428571428, -19553.75}, {64, 14}}",
+      "identifier" : "",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19847, -19108}, {138.5, 60}}",
+      "identifier" : "weekly-day-2026-09-09",
+      "label" : "Wednesday, 9 September 2026, 0 captures, open Daily"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19809.714285714286, -19553.75}, {64, 14}}",
+      "identifier" : "",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19702.5, -19108}, {139, 60}}",
+      "identifier" : "weekly-day-2026-09-10",
+      "label" : "Thursday, 10 September 2026, 0 captures, open Daily"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19664.857142857141, -19553.75}, {64, 14}}",
+      "identifier" : "",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19557.5, -19108}, {139, 60}}",
+      "identifier" : "weekly-day-2026-09-11",
+      "label" : "Friday, 11 September 2026, 0 captures, open Daily"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19520, -19553.75}, {64, 14}}",
+      "identifier" : "",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19412.5, -19108}, {139, 60}}",
+      "identifier" : "weekly-day-2026-09-12",
+      "label" : "Saturday, 12 September 2026, 0 captures, open Daily"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19375.142857142859, -19553.75}, {64, 14}}",
+      "identifier" : "",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19267.5, -19108}, {138.5, 60}}",
+      "identifier" : "weekly-day-2026-09-13",
+      "label" : "Sunday, 13 September 2026, 0 captures, open Daily"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19230.285714285714, -19553.75}, {64, 14}}",
+      "identifier" : "",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19123, -19108}, {139, 60}}",
+      "identifier" : "weekly-day-2026-09-14",
+      "label" : "Monday, 14 September 2026, 0 captures, open Daily"
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19085.428571428572, -19553.75}, {64, 14}}",
+      "identifier" : "",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19983, -19991}, {117.5, 14}}",
+      "identifier" : "",
+      "label" : ""
+    },
+    {
+      "class" : "SwiftUI.AccessibilityNode",
+      "frame" : "{{-19129.5, -19991}, {136.5, 14}}",
+      "identifier" : "",
+      "label" : ""
+    }
+  ],
+  "totalNodes" : 45,
+  "viewport" : "{{-20000, -20000}, {1024, 960}}"
+}

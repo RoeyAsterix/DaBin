@@ -1,0 +1,269 @@
+{
+  "checks" : 995,
+  "fixtures" : [
+    {
+      "context" : "full-board-380-zoom200-long-title",
+      "height" : 680,
+      "readingPaneFrame" : "{{-10000, -9918}, {380, 289}}",
+      "readingPaneHeight" : 289,
+      "width" : 380,
+      "zoom" : 2
+    },
+    {
+      "context" : "navigation-380-zoom75",
+      "destinations" : [
+        "preview",
+        "task",
+        "comments",
+        "reminder",
+        "text",
+        "details"
+      ],
+      "fixedControlFrames" : {
+        "copy" : "{{-9985.5, -9444}, {71, 32}}",
+        "detail-actions-more" : "{{-9908.5, -9444}, {68, 32}}",
+        "detail-save" : "{{-9741, -9987}, {108, 24}}",
+        "detail-section-navigation" : "{{-9985.5, -9496}, {351, 32}}",
+        "detail-title" : "{{-9945.5, -9356}, {311, 24}}"
+      },
+      "height" : 680,
+      "width" : 380,
+      "zoom" : 0.75
+    },
+    {
+      "context" : "navigation-380-zoom100",
+      "destinations" : [
+        "preview",
+        "task",
+        "comments",
+        "reminder",
+        "text",
+        "details"
+      ],
+      "fixedControlFrames" : {
+        "copy" : "{{-9984, -9467}, {73, 32}}",
+        "detail-actions-more" : "{{-9905, -9467}, {70.5, 32}}",
+        "detail-save" : "{{-9741, -9987}, {108, 24}}",
+        "detail-section-navigation" : "{{-9984, -9519}, {348, 32}}",
+        "detail-title" : "{{-9944, -9357}, {308, 25}}"
+      },
+      "height" : 680,
+      "width" : 380,
+      "zoom" : 1
+    },
+    {
+      "context" : "navigation-380-zoom200",
+      "destinations" : [
+        "preview",
+        "task",
+        "comments",
+        "reminder",
+        "text",
+        "details"
+      ],
+      "fixedControlFrames" : {
+        "copy" : "{{-9968, -9491}, {82, 32}}",
+        "detail-actions-more" : "{{-9880, -9491}, {79, 32}}",
+        "detail-save" : "{{-9741, -9987}, {108, 24}}",
+        "detail-section-navigation" : "{{-9968, -9543}, {316, 32}}",
+        "detail-title" : "{{-9928, -9390}, {276, 58}}"
+      },
+      "height" : 680,
+      "width" : 380,
+      "zoom" : 2
+    },
+    {
+      "context" : "navigation-600-zoom75",
+      "destinations" : [
+        "preview",
+        "task",
+        "comments",
+        "reminder",
+        "text",
+        "details"
+      ],
+      "fixedControlFrames" : {
+        "copy" : "{{-9982, -9444}, {71, 32}}",
+        "detail-actions-more" : "{{-9905, -9444}, {68, 32}}",
+        "detail-save" : "{{-9521, -9987}, {108, 24}}",
+        "detail-section-navigation" : "{{-9895.5, -9496}, {391, 32}}",
+        "detail-title" : "{{-9942, -9358}, {524, 26}}"
+      },
+      "height" : 680,
+      "width" : 600,
+      "zoom" : 0.75
+    },
+    {
+      "context" : "navigation-600-zoom100",
+      "destinations" : [
+        "preview",
+        "task",
+        "comments",
+        "reminder",
+        "text",
+        "details"
+      ],
+      "fixedControlFrames" : {
+        "copy" : "{{-9978.5, -9444}, {73, 32}}",
+        "detail-actions-more" : "{{-9899.5, -9444}, {70.5, 32}}",
+        "detail-save" : "{{-9521, -9987}, {108, 24}}",
+        "detail-section-navigation" : "{{-9978.5, -9496}, {557, 32}}",
+        "detail-title" : "{{-9938.5, -9359}, {517, 27}}"
+      },
+      "height" : 680,
+      "width" : 600,
+      "zoom" : 1
+    },
+    {
+      "context" : "navigation-600-zoom200",
+      "destinations" : [
+        "preview",
+        "task",
+        "comments",
+        "reminder",
+        "text",
+        "details"
+      ],
+      "fixedControlFrames" : {
+        "copy" : "{{-9968, -9444}, {82, 32}}",
+        "detail-actions-more" : "{{-9880, -9444}, {79, 32}}",
+        "detail-save" : "{{-9521, -9987}, {108, 24}}",
+        "detail-section-navigation" : "{{-9968, -9496}, {536, 32}}",
+        "detail-title" : "{{-9928, -9365}, {496, 33}}"
+      },
+      "height" : 680,
+      "width" : 600,
+      "zoom" : 2
+    },
+    {
+      "context" : "navigation-1200-zoom75",
+      "destinations" : [
+        "preview",
+        "task",
+        "comments",
+        "reminder",
+        "text",
+        "details"
+      ],
+      "fixedControlFrames" : {
+        "copy" : "{{-9982, -9444}, {71, 32}}",
+        "detail-actions-more" : "{{-9905, -9444}, {68, 32}}",
+        "detail-save" : "{{-8921, -9987}, {108, 24}}",
+        "detail-section-navigation" : "{{-9595.5, -9496}, {391, 32}}",
+        "detail-title" : "{{-9942, -9364}, {1124, 32}}"
+      },
+      "height" : 680,
+      "width" : 1200,
+      "zoom" : 0.75
+    },
+    {
+      "context" : "navigation-1200-zoom100",
+      "destinations" : [
+        "preview",
+        "task",
+        "comments",
+        "reminder",
+        "text",
+        "details"
+      ],
+      "fixedControlFrames" : {
+        "copy" : "{{-9976, -9444}, {73, 32}}",
+        "detail-actions-more" : "{{-9897, -9444}, {70.5, 32}}",
+        "detail-save" : "{{-8921, -9987}, {108, 24}}",
+        "detail-section-navigation" : "{{-9601.5, -9496}, {403, 32}}",
+        "detail-title" : "{{-9936, -9365}, {1112, 33}}"
+      },
+      "height" : 680,
+      "width" : 1200,
+      "zoom" : 1
+    },
+    {
+      "context" : "navigation-1200-zoom200",
+      "destinations" : [
+        "preview",
+        "task",
+        "comments",
+        "reminder",
+        "text",
+        "details"
+      ],
+      "fixedControlFrames" : {
+        "copy" : "{{-9957, -9444}, {82, 32}}",
+        "detail-actions-more" : "{{-9869, -9444}, {79, 32}}",
+        "detail-save" : "{{-8921, -9987}, {108, 24}}",
+        "detail-section-navigation" : "{{-9957, -9496}, {1114, 32}}",
+        "detail-title" : "{{-9917, -9365}, {1074, 33}}"
+      },
+      "height" : 680,
+      "width" : 1200,
+      "zoom" : 2
+    },
+    {
+      "context" : "native-more-menu-metadata",
+      "items" : [
+        {
+          "accessibilityIdentifier" : "arrow.up.left.and.arrow.down.right",
+          "accessibilityLabel" : "",
+          "enabled" : true,
+          "hasAction" : true,
+          "hidden" : false,
+          "identifier" : "menuAction:",
+          "resolvedAccessibilityLabel" : "Open Extended View",
+          "role" : "AXMenuItem",
+          "supportsAccessibilityLabel" : true,
+          "title" : "Open Extended View"
+        },
+        {
+          "accessibilityIdentifier" : "detail-action-open-original",
+          "accessibilityLabel" : "",
+          "enabled" : true,
+          "hasAction" : true,
+          "hidden" : false,
+          "identifier" : "menuAction:",
+          "resolvedAccessibilityLabel" : "Open original",
+          "role" : "AXMenuItem",
+          "supportsAccessibilityLabel" : true,
+          "title" : "Open original"
+        },
+        {
+          "accessibilityIdentifier" : "detail-action-folder",
+          "accessibilityLabel" : "",
+          "enabled" : true,
+          "hasAction" : true,
+          "hidden" : false,
+          "identifier" : "menuAction:",
+          "resolvedAccessibilityLabel" : "Saved folder",
+          "role" : "AXMenuItem",
+          "supportsAccessibilityLabel" : true,
+          "title" : "Saved folder"
+        },
+        {
+          "accessibilityIdentifier" : "",
+          "accessibilityLabel" : "",
+          "enabled" : false,
+          "hasAction" : false,
+          "hidden" : false,
+          "identifier" : "",
+          "resolvedAccessibilityLabel" : "",
+          "role" : "AXMenuItem",
+          "supportsAccessibilityLabel" : true,
+          "title" : ""
+        },
+        {
+          "accessibilityIdentifier" : "capture-trash-E7CB57FB-B797-4C39-92C7-EBCE0F5F5AA0",
+          "accessibilityLabel" : "",
+          "enabled" : true,
+          "hasAction" : true,
+          "hidden" : false,
+          "identifier" : "menuAction:",
+          "resolvedAccessibilityLabel" : "Trash",
+          "role" : "AXMenuItem",
+          "supportsAccessibilityLabel" : true,
+          "title" : "Trash"
+        }
+      ]
+    }
+  ],
+  "privacy" : "Synthetic metadata, private preferences, own-process accessibility and native menu-item actions; no personal archive, general clipboard, Finder, external app or notification permission access.",
+  "suite" : "CaptureDetailNavigationTests"
+}

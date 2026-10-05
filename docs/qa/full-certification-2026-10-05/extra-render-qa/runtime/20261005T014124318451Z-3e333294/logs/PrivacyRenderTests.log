@@ -1,0 +1,6 @@
+FAIL: Error Domain=PrivacyRenderTests Code=1 "Unconfigured public policy/support links are absent" UserInfo={NSLocalizedDescription=Unconfigured public policy/support links are absent}
+PASS: Real policy resource is present in the isolated app bundle
+PASS: Full current privacy policy is loaded with every required topic
+PASS: Policy describes recoverable removal and its current control label
+PASS: Policy distinguishes permanent deletion from the preserved source files
+PASS: Policy explains that minimizing preserves saved content

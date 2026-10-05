@@ -296,8 +296,9 @@ struct WeeklyStateTests {
             try expect(keys(state.weeklyDays) == historicalExpected
                        && CaptureCalendar.dayString(state.weekEndingDay) == "2024-01-03",
                        "An empty \(filter.title) toggle keeps seven dates ending on the selected day")
-            try expect(state.filter == filter && state.weeklyDays.count == 7 && state.weeklyVisibleDays.isEmpty,
-                       "An empty \(filter.title) week keeps its seven-date range without rendering empty days")
+            try expect(state.filter == filter && state.weeklyDays.count == 7
+                       && state.weeklyVisibleDays == state.weeklyDays && state.weeklyActiveDays.isEmpty,
+                       "An empty \(filter.title) week renders all seven selected dates with no active dates")
             let emptyDay = state.weeklyDays[2]
             state.selectWeeklyDay(emptyDay)
             try expect(state.route == .daily && Calendar.current.isDate(state.selectedDay, inSameDayAs: emptyDay)
@@ -337,12 +338,14 @@ struct WeeklyStateTests {
         try expect(keys(state.weeklyDays) == ["2023-12-28", "2023-12-29", "2023-12-30", "2023-12-31", "2024-01-01", "2024-01-02", "2024-01-03"],
                    "A sparse week retains the complete seven-date navigation range")
         let active = ["2023-12-28", "2024-01-01", "2024-01-03"]
-        try expect(keys(state.weeklyVisibleDays) == active,
-                   "A sparse week renders only its three nonconsecutive active dates")
+        try expect(keys(state.weeklyActiveDays) == active,
+                   "A sparse week identifies its three nonconsecutive active dates")
+        try expect(state.weeklyVisibleDays == state.weeklyDays,
+                   "A sparse week renders all seven selected dates, including its four empty dates")
         for filter in CaptureFilter.allCases {
             state.filter = filter
-            try expect(keys(state.weeklyVisibleDays) == active,
-                       "The \(filter.title) filter does not reintroduce empty dates or hide active dates")
+            try expect(keys(state.weeklyActiveDays) == active && state.weeklyVisibleDays == state.weeklyDays,
+                       "The \(filter.title) filter preserves all seven columns and the three active-date count")
         }
     }
 
@@ -406,12 +409,15 @@ struct WeeklyStateTests {
         try expect(state.isCustomWeekSelection && keys(state.weeklyDays) == expected
                    && CaptureCalendar.dayString(state.weekEndingDay) == "2024-01-04",
                    "The selected date set becomes the week source of truth with its latest day as anchor")
-        try expect(keys(state.weeklyVisibleDays) == ["2024-01-01", "2024-01-04"],
-                   "Only selected dates with captures render; an unselected active day and selected empty day stay hidden")
+        try expect(keys(state.weeklyActiveDays) == ["2024-01-01", "2024-01-04"],
+                   "Only selected populated dates contribute to the active-date count")
+        try expect(keys(state.weeklyVisibleDays) == expected,
+                   "Every selected date renders, including the empty date; an unselected active date stays hidden")
         for filter in CaptureFilter.allCases {
             state.filter = filter
-            try expect(keys(state.weeklyVisibleDays) == ["2024-01-01", "2024-01-04"],
-                       "\(filter.title) filtering does not alter the selected active-date layout")
+            try expect(keys(state.weeklyActiveDays) == ["2024-01-01", "2024-01-04"]
+                       && keys(state.weeklyVisibleDays) == expected,
+                       "\(filter.title) filtering preserves selected columns and their active-date count")
         }
         state.filter = .text
         try expect(CaptureCalendar.dayString(state.weeklyActionDay) == "2024-01-04",
@@ -456,8 +462,8 @@ struct WeeklyStateTests {
         try expect(!state.isCustomWeekSelection && state.weeklyDays.count == 7,
                    "Choosing a conventional week ending resets explicit dates to a trailing seven-day range")
         try expect(state.setWeeklyDays([date("2024-01-03 12:00")]) && state.weeklyDays.count == 1
-                   && state.weeklyVisibleDays.isEmpty,
-                   "One chosen empty day remains a valid scope with no empty column")
+                   && keys(state.weeklyVisibleDays) == ["2024-01-03"] && state.weeklyActiveDays.isEmpty,
+                   "One chosen empty day remains visible as a single date column")
         state.openSearch(week: state.weeklyDays)
         try expect(state.searchScopeTitle == prettyDay("2024-01-03"),
                    "A single selected day has one readable search date without a repeated range")
@@ -508,7 +514,7 @@ struct WeeklyStateTests {
         })
         state.selectedDay = date("2024-01-03 12:00")
         state.openWeekly()
-        try expect(keys(state.weeklyVisibleDays) == dayKeys,
+        try expect(keys(state.weeklyVisibleDays) == dayKeys && keys(state.weeklyActiveDays) == dayKeys,
                    "A fully active week renders all seven dates")
         let selectedBeforeReading = state.selectedDay
         let rangeBeforeReading = state.weekEndingDay
@@ -526,8 +532,8 @@ struct WeeklyStateTests {
                    "Reading all seven columns does not mutate Daily or Weekly navigation")
         for filter in CaptureFilter.allCases {
             state.filter = filter
-            try expect(keys(state.weeklyVisibleDays) == dayKeys,
-                       "The \(filter.title) filter preserves the active-date columns")
+            try expect(keys(state.weeklyVisibleDays) == dayKeys && keys(state.weeklyActiveDays) == dayKeys,
+                       "The \(filter.title) filter preserves the seven date columns and active-date count")
             let values = state.weeklyDays.flatMap { state.captures(for: $0) }
             switch filter {
             case .all: try expect(values.count == expected.flatMap { $0 }.count, "All filter restores all seven columns")

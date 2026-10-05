@@ -44,6 +44,12 @@ import SwiftUI
         typealias Getter = @convention(c) (AnyObject, Selector) -> NSRect
         return unsafeBitCast(object.method(for: selector), to: Getter.self)(object, selector)
     }
+    func press() -> Bool {
+        let selector = NSSelectorFromString("accessibilityPerformPress")
+        guard object.responds(to: selector) else { return false }
+        typealias Action = @convention(c) (AnyObject, Selector) -> Bool
+        return unsafeBitCast(object.method(for: selector), to: Action.self)(object, selector)
+    }
     var children: [Any] {
         var result: [Any] = []
         for name in ["accessibilityChildren", "accessibilityChildrenInNavigationOrder", "accessibilityContents"] {
@@ -269,6 +275,10 @@ import SwiftUI
             try checkCapture(source(label: note.title, anchor: title, in: host, window: window), expected: [note], store: store)
             let preview = try await find("detail-preview-open-extended", in: host)
             try checkCapture(source(label: note.title, anchor: preview, in: host, window: window), expected: [note], store: store)
+            let comments = try await find("detail-section-comments", in: host)
+            try expect(comments.press(), "Detail Comments opens through its real native section action")
+            try await settle(host)
+            try expect(state.detailFocus == "comment", "The comment drag check uses the active Comments section")
             let editor = try await find("capture-comment-composer", in: host)
             try outsideSources(editor, in: host, window: window, reason: "Detail comment editor retains editing gestures outside all native sources")
         }
@@ -307,11 +317,24 @@ import SwiftUI
             try outsideSources(copy, in: host, window: window, reason: "CaptureRow copy remains an independent control outside comment and excerpt drag sources")
         }
         state.filter = .tasks; state.weekEndingDay = at
-        try await withView(WeeklyScreen(state: state), size: CGSize(width: 760, height: 900)) { host, window in
-            let comment = try await find("capture-comment-\(task.id.uuidString)", in: host)
-            try checkComment(source(label: "Comment for \(task.title)", anchor: comment, in: host, window: window), exactText: task.comment)
-            let copy = try await find(CaptureCopyButton.accessibilityIdentifier(for: [task]), in: host)
-            try outsideSources(copy, in: host, window: window, reason: "Weekly copy button remains outside the static comment source")
+        for width: CGFloat in [420, 1024] {
+            try await withView(WeeklyScreen(state: state), size: CGSize(width: width, height: 900)) { host, window in
+                // Week opens at the full display width in the app. A manually
+                // narrowed fixture must scroll to the task's final date before
+                // trying to drag its visible caption.
+                for scroll in nativeViews(in: host).compactMap({ $0 as? NSScrollView }) {
+                    guard let document = scroll.documentView,
+                          document.bounds.width > scroll.contentView.bounds.width + 1 else { continue }
+                    scroll.contentView.scroll(to: CGPoint(x: document.bounds.maxX - scroll.contentView.bounds.width,
+                                                         y: scroll.contentView.bounds.minY))
+                    scroll.reflectScrolledClipView(scroll.contentView)
+                }
+                try await settle(host)
+                let comment = try await find("capture-comment-\(task.id.uuidString)", in: host)
+                try checkComment(source(label: "Comment for \(task.title)", anchor: comment, in: host, window: window), exactText: task.comment)
+                let copy = try await find(CaptureCopyButton.accessibilityIdentifier(for: [task]), in: host)
+                try outsideSources(copy, in: host, window: window, reason: "Weekly copy button remains outside the static comment source at \(width) points")
+            }
         }
         state.filter = .all
         for compact in [false, true] {

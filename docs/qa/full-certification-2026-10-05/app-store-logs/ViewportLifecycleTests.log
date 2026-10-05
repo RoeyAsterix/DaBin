@@ -1,0 +1,1 @@
+PASS: 16 viewport lifecycle checks; delayed insertion settle, bounded expiry, context cancellation, generation-safe history, keyboard selection scroll ownership

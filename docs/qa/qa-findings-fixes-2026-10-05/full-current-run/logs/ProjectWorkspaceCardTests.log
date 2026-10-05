@@ -1,0 +1,9 @@
+FIXTURE: /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa/project-workspace-card/04B858BE-0517-4082-AC2A-C0BB2D9C944A/completed-image-task-light@2x.png
+FIXTURE: /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa/project-workspace-card/04B858BE-0517-4082-AC2A-C0BB2D9C944A/project-types-grid-light@2x.png
+FIXTURE: /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa/project-workspace-card/04B858BE-0517-4082-AC2A-C0BB2D9C944A/project-types-compact-320-light@2x.png
+FIXTURE: /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa/project-workspace-card/04B858BE-0517-4082-AC2A-C0BB2D9C944A/project-types-grid-dark@2x.png
+FIXTURE: /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa/project-workspace-card/04B858BE-0517-4082-AC2A-C0BB2D9C944A/project-types-compact-320-dark@2x.png
+FIXTURE: /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa/project-workspace-card/04B858BE-0517-4082-AC2A-C0BB2D9C944A/project-tasks-content-height-light@2x.png
+FIXTURE: /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa/project-workspace-card/04B858BE-0517-4082-AC2A-C0BB2D9C944A/project-tasks-content-height-dark@2x.png
+FIXTURE: /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa/project-workspace-card/04B858BE-0517-4082-AC2A-C0BB2D9C944A/project-task-compact-medium-light@2x.png
+PASS: 379 project card checks; Task/Note/Capture semantics, real live task updates, light/dark/grid/320-point compact fixtures, original previews and independent selection; no personal archive, clipboard, network, or external opening.

@@ -1,0 +1,18 @@
+{
+  "compileReceiptSHA256": "9a8cb2d4195435e01168a056403148821d1e33697446a1b62b38fc1f90d716df",
+  "executable": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/zoom-profile-stage-a/20261005T025239413386Z/display-profile/WorkspaceZoomPerformanceTests",
+  "executableSHA256": "952208e6a7c777d6718bd22861c8a4731e0d42875f195b0f585ae970640116b4",
+  "exitCode": 1,
+  "measurementScope": "Diagnostic sampled run: sample overhead means this run is not the unsampled repeated performance acceptance result",
+  "owned-process-sample.txtSHA256": "4d0e42616d09a1e03b66b2babedab2b7d60f26ffd2afaf93bdc5ff3de7ef22ea",
+  "ownedPID": 87882,
+  "runtime/performance.jsonSHA256": "01c4b5cc32bfb8b577ebf684e11b3b0770686b2fd42afede9f9bd8acac4e04ad",
+  "runtimeLogSHA256": "9bd665f0adf712561767205394755c5eb0099e42df38659ee994b02d375c253d",
+  "runtimeScope": "Normal desktop, prohibited activation/non-key offscreen synthetic fixture; no external app, personal archive, general clipboard or real notification writes",
+  "sampleExitCode": 0,
+  "sampledOwnProcessOnly": true,
+  "schemaVersion": 1,
+  "seconds": 34.68003054196015,
+  "sourceModule": "Exact frozen stage-A module; no production optimization",
+  "startedAtUTC": "2026-10-05T03:13:05.651535+00:00"
+}

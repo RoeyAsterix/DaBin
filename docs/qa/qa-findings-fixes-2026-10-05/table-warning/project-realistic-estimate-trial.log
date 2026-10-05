@@ -1,0 +1,34 @@
+2026-10-05 06:17:31.797 ProjectWorkspaceTableRealisticEstimateTrial[88683:26712395] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future.
+2026-10-05 06:17:39.228 ProjectWorkspaceTableRealisticEstimateTrial[88683:26712395] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future.
+2026-10-05 06:17:41.919 ProjectWorkspaceTableRealisticEstimateTrial[88683:26712395] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future.
+2026-10-05 06:17:42.292 ProjectWorkspaceTableRealisticEstimateTrial[88683:26712395] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future.
+2026-10-05 06:17:43.419 ProjectWorkspaceTableRealisticEstimateTrial[88683:26712395] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future.
+ESTIMATE_TRIAL: native rowHeight=294, automatic=true
+ROWS: project grid logical=334, materialized=25
+TABLE: auto=true, rowHeight=294.0, delegate=Optional(<_TtGC7SwiftUI22OutlineListCoordinatorGOS_19SelectionManagerBoxOs5Never__: 0x95b1fc900>)
+FIXTURE: /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa/project-workspace-view/C8F8A40D-C0CA-4C11-B371-DCA01CC1C066/project-grid-wide@2x.png
+FIXTURE: /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa/project-workspace-view/C8F8A40D-C0CA-4C11-B371-DCA01CC1C066/project-selected-narrow@2x.png
+ROWS: project grid logical=501, materialized=3
+TABLE: auto=true, rowHeight=24.0, delegate=Optional(<_TtGC7SwiftUI22OutlineListCoordinatorGOS_19SelectionManagerBoxOs5Never__: 0x95b1fc900>)
+ROWS: project grid logical=1002, materialized=3
+TABLE: auto=true, rowHeight=24.0, delegate=Optional(<_TtGC7SwiftUI22OutlineListCoordinatorGOS_19SelectionManagerBoxOs5Never__: 0x95b1fc900>)
+ROWS: project grid logical=1002, materialized=3
+TABLE: auto=true, rowHeight=24.0, delegate=Optional(<_TtGC7SwiftUI22OutlineListCoordinatorGOS_19SelectionManagerBoxOs5Never__: 0x95b1fc900>)
+FIXTURE: /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa/project-workspace-view/C8F8A40D-C0CA-4C11-B371-DCA01CC1C066/project-grid-narrow@2x.png
+ROWS: project grid logical=334, materialized=3
+TABLE: auto=true, rowHeight=24.0, delegate=Optional(<_TtGC7SwiftUI22OutlineListCoordinatorGOS_19SelectionManagerBoxOs5Never__: 0x95b1fc900>)
+ROWS: project grid logical=1002, materialized=8
+TABLE: auto=true, rowHeight=24.0, delegate=Optional(<_TtGC7SwiftUI22OutlineListCoordinatorGOS_19SelectionManagerBoxOs5Never__: 0x95b1fc900>)
+ROWS: project grid logical=334, materialized=3
+TABLE: auto=true, rowHeight=24.0, delegate=Optional(<_TtGC7SwiftUI22OutlineListCoordinatorGOS_19SelectionManagerBoxOs5Never__: 0x95b1fc900>)
+ROWS: project grid logical=335, materialized=3
+TABLE: auto=true, rowHeight=24.0, delegate=Optional(<_TtGC7SwiftUI22OutlineListCoordinatorGOS_19SelectionManagerBoxOs5Never__: 0x95b1fc900>)
+ROWS: project grid logical=335, materialized=3
+TABLE: auto=true, rowHeight=24.0, delegate=Optional(<_TtGC7SwiftUI22OutlineListCoordinatorGOS_19SelectionManagerBoxOs5Never__: 0x95b1fc900>)
+ROWS: project grid logical=335, materialized=3
+TABLE: auto=true, rowHeight=24.0, delegate=Optional(<_TtGC7SwiftUI22OutlineListCoordinatorGOS_19SelectionManagerBoxOs5Never__: 0x95b1fc900>)
+ROWS: project grid logical=336, materialized=4
+TABLE: auto=true, rowHeight=24.0, delegate=Optional(<_TtGC7SwiftUI22OutlineListCoordinatorGOS_19SelectionManagerBoxOs5Never__: 0x95b1fc900>)
+ROWS: project grid logical=336, materialized=4
+TABLE: auto=true, rowHeight=24.0, delegate=Optional(<_TtGC7SwiftUI22OutlineListCoordinatorGOS_19SelectionManagerBoxOs5Never__: 0x95b1fc900>)
+PASS: 209 project workspace UI checks; 1,000 synthetic text captures plus image and editable project note; native mixed-selection drag payloads on a private pasteboard; no personal archive, network, general clipboard or external opening. At most 25 simultaneously materialized native rows.

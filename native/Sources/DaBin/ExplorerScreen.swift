@@ -12,6 +12,7 @@ private struct ExplorerBrowserScope: Equatable {
 /// Grouping changes the presentation; the inspector always shows the real path.
 @MainActor struct ExplorerScreen: View {
     @ObservedObject var state: AppState
+    let showsSearchEntry: Bool
     @ObservedObject private var workspace: WorkspaceStore
     @ObservedObject private var store: CaptureStore
     @ObservedObject private var intake: ExplorerCaptureController
@@ -26,8 +27,9 @@ private struct ExplorerBrowserScope: Equatable {
     @State private var lastBrowserRestorationRevision: UInt = 0
     @FocusState private var keyboardSelection: UUID?
 
-    init(state: AppState) {
+    init(state: AppState, showsSearchEntry: Bool = true) {
         self.state = state
+        self.showsSearchEntry = showsSearchEntry
         _workspace = ObservedObject(wrappedValue: state.workspace)
         _store = ObservedObject(wrappedValue: state.store)
         _intake = ObservedObject(wrappedValue: state.explorerInput)
@@ -115,17 +117,19 @@ private struct ExplorerBrowserScope: Equatable {
 
     private var toolbar: some View {
         HStack(spacing: 6) {
-            Button { state.performSearchCommand() } label: {
-                Label("Search everything", systemImage: "magnifyingglass")
-                    .font(.system(size: 13)).foregroundStyle(Palette.muted)
-                    .frame(maxWidth: .infinity, alignment: .leading).contentShape(Rectangle())
-            }.buttonStyle(.plain).accessibilityLabel("Search everything saved in DaBin")
-                .accessibilityIdentifier("explorer-search")
-                .padding(8).background(Palette.surface, in: RoundedRectangle(cornerRadius: 8))
-                .overlay(RoundedRectangle(cornerRadius: 8).strokeBorder(Palette.line))
+            if showsSearchEntry {
+                Button { state.performSearchCommand() } label: {
+                    Label("Search everything", systemImage: "magnifyingglass")
+                        .font(.system(size: 13)).foregroundStyle(Palette.muted)
+                        .frame(maxWidth: .infinity, alignment: .leading).contentShape(Rectangle())
+                }.buttonStyle(.plain).accessibilityLabel("Search everything saved in DaBin")
+                    .accessibilityIdentifier("explorer-search")
+                    .padding(8).background(Palette.surface, in: RoundedRectangle(cornerRadius: 8))
+                    .overlay(RoundedRectangle(cornerRadius: 8).strokeBorder(Palette.line))
+            }
             BuddyIconButton(symbol: "doc.on.clipboard", title: "Paste") { intake.paste(project: state.libraryProject) }
                 .accessibilityIdentifier("explorer-paste")
-            BuddyIconButton(symbol: "folder", title: "Files") { state.showProjectFiles() }
+            BuddyIconButton(symbol: "folder", title: "Open folder") { state.showProjectFiles() }
                 .accessibilityIdentifier("explorer-open-files")
             BuddyIconButton(symbol: "folder.badge.plus", title: "Add files") { intake.chooseFiles(project: state.libraryProject) }
                 .accessibilityIdentifier("explorer-add-files")
@@ -259,7 +263,7 @@ private struct ExplorerBrowserScope: Equatable {
                 message: "Drop files, paste a link or save a note. Your project’s files stay organized locally.")
             if state.filter != .all || state.libraryPinnedOnly || workspace.dateFilter != .anytime
                 || workspace.sourceApplication != nil || workspace.originFilter != .all {
-                Button("Clear filters and search") {
+                Button("Clear filters") {
                     state.filter = .all; state.libraryPinnedOnly = false; workspace.explorerQuery = ""
                     workspace.dateFilter = .anytime; workspace.sourceApplication = nil; workspace.originFilter = .all
                 }.font(.system(size: 12)).padding(.bottom, 10)
@@ -347,8 +351,6 @@ private struct ExplorerBrowserScope: Equatable {
                 .accessibilityIdentifier("explorer-export-visible")
                 .buddyHelp("Save the items shown by your current filters as a ZIP")
                 .disabled((workspace.explorerShowsDailyFiles ? presentation.dailyFiles.isEmpty : presentation.items.isEmpty) || exporting || intake.isBusy)
-            BuddyIconButton(symbol: "folder", title: "Open this project in Finder") { state.showProjectFiles() }
-                .accessibilityIdentifier("explorer-open-project-folder")
         }.padding(.horizontal, 12).padding(.vertical, 3).background(Palette.surface).overlay(alignment: .top) { Rectangle().fill(Palette.line).frame(height: 1) }
     }
 

@@ -1,0 +1,5 @@
+MENU tracking began: ["Does not repeat", "Every day", "Every weekday", "Every week", "Every month"]
+MENU tracking ended
+MENU tracking began: ["Preview", "Task", "Comments", "Reminder", "Details"]
+MENU tracking ended
+Task plan interaction QA failed: Error Domain=TaskPlanInteractionTests Code=1 "Task title measures at its real available width and never reserves a third line" UserInfo={NSLocalizedDescription=Task title measures at its real available width and never reserves a third line}

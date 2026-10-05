@@ -1,0 +1,33 @@
+{
+  "QAInputFingerprint": "206badd60f8e8639b925fb4f0f4f69168c23245e91b46364d51bf57757d9e293",
+  "artifacts": [
+    {
+      "SHA256": "517b7601642650e13855fcfbf9bc66c41ab506673c68f84c3eed3c9058adecc3",
+      "bytes": 999,
+      "path": "README.txt"
+    },
+    {
+      "SHA256": "7ef74dd8dc46ef40ffd231218d4dca210cf71b5aa57399da2678c4cb10c46b97",
+      "bytes": 21246,
+      "path": "store-candidate-receipt.json"
+    },
+    {
+      "SHA256": "3185396f156f35ca73d76a5316de4fc6430ef96756d29e5e9fe4bcc9437aa005",
+      "bytes": 3482,
+      "path": "unsigned-packaging-preflight.log"
+    },
+    {
+      "SHA256": "05c44c24f87cfb7ba6a037f4b7756590aeeb7ad963b1b5a151c06bf0553a89c3",
+      "bytes": 3196,
+      "path": "verification.json"
+    },
+    {
+      "SHA256": "452dff45ee6d4e86eb147fde1158f7a3bd81eb0d3f1d28eec4afb00e7eb4b027",
+      "bytes": 126672,
+      "path": "xcodebuild-release.log"
+    }
+  ],
+  "schemaVersion": 1,
+  "scope": "Unsigned compilation/packaging proof only; overall current full campaign has a strict performance failure.",
+  "sourceFingerprint": "e038196eea54714eec07d2403b1e48a9eeb2393037b67fc2515123d68e06d456"
+}

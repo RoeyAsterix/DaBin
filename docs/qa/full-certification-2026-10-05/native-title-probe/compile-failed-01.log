@@ -1,0 +1,350 @@
+/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/native-title-probe/DaBinTitleRenderProbe.swift:33:56: error: main actor-isolated class property 'linkPreviewPreference' can not be referenced from a nonisolated context; this is an error in the Swift 6 language mode
+ 31 |             root = FileManager.default.temporaryDirectory.appendingPathComponent("DaBin-NativeTitleProbe-\(UUID().uuidString)")
+ 32 |             defaults = UserDefaults(suiteName: preferencesName)!
+ 33 |             defaults.set(false, forKey: PreviewService.linkPreviewPreference)
+    |                                                        `- error: main actor-isolated class property 'linkPreviewPreference' can not be referenced from a nonisolated context; this is an error in the Swift 6 language mode
+ 34 |             do { store = try CaptureStore(root: root, repairArchiveOnOpen: false) }
+ 35 |             catch {
+
+/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Sources/DaBin/PreviewService.swift:12:16: note: class property declared here
+ 10 | @MainActor
+ 11 | final class PreviewService {
+ 12 |     static let linkPreviewPreference = "DaBin.linkPreviewsEnabled"
+    |                `- note: class property declared here
+ 13 |     private let store: CaptureStore
+ 14 |     private let defaults: UserDefaults
+
+/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/native-title-probe/DaBinTitleRenderProbe.swift:34:30: error: call to main actor-isolated initializer 'init(root:repairArchiveOnOpen:)' in a synchronous nonisolated context [#ActorIsolatedCall]
+ 32 |             defaults = UserDefaults(suiteName: preferencesName)!
+ 33 |             defaults.set(false, forKey: PreviewService.linkPreviewPreference)
+ 34 |             do { store = try CaptureStore(root: root, repairArchiveOnOpen: false) }
+    |                              `- error: call to main actor-isolated initializer 'init(root:repairArchiveOnOpen:)' in a synchronous nonisolated context [#ActorIsolatedCall]
+ 35 |             catch {
+ 36 |                 defaults.removePersistentDomain(forName: preferencesName)
+
+/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Sources/DaBin/CaptureStore.swift:25:5: note: calls to initializer 'init(root:repairArchiveOnOpen:)' from outside of its actor context are implicitly asynchronous
+  23 |     var pendingArchiveRepairCount: Int { pendingArchiveRepairIDs.count }
+  24 | 
+  25 |     init(root requestedRoot: URL? = nil, repairArchiveOnOpen: Bool = true) throws {
+     |     `- note: calls to initializer 'init(root:repairArchiveOnOpen:)' from outside of its actor context are implicitly asynchronous
+  26 |         let manager = FileManager.default
+  27 |         let base = try requestedRoot ?? manager.url(for: .applicationSupportDirectory, in: .userDomainMask,
+
+/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/native-title-probe/DaBinTitleRenderProbe.swift:40:24: error: call to main actor-isolated initializer 'init(store:defaults:thumbnailWriter:)' in a synchronous nonisolated context [#ActorIsolatedCall]
+ 38 |                 throw error
+ 39 |             }
+ 40 |             previews = PreviewService(store: store, defaults: defaults)
+    |                        `- error: call to main actor-isolated initializer 'init(store:defaults:thumbnailWriter:)' in a synchronous nonisolated context [#ActorIsolatedCall]
+ 41 |             auto = AutoCaptureService(settings: AutoCaptureSettings(defaults: defaults), input: InputService(store: store),
+ 42 |                 pasteboardProvider: { fatalError("Title probe must not read the clipboard") }, sourceApplicationProvider: { nil })
+
+/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Sources/DaBin/PreviewService.swift:26:5: note: calls to initializer 'init(store:defaults:thumbnailWriter:)' from outside of its actor context are implicitly asynchronous
+ 24 |     private let maximumConcurrentJobs = 2
+ 25 | 
+ 26 |     init(store: CaptureStore, defaults: UserDefaults = .standard,
+    |     `- note: calls to initializer 'init(store:defaults:thumbnailWriter:)' from outside of its actor context are implicitly asynchronous
+ 27 |          thumbnailWriter: (@Sendable (Data, URL, UUID) async -> String?)? = nil) {
+ 28 |         self.store = store
+
+/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/native-title-probe/DaBinTitleRenderProbe.swift:41:20: error: call to main actor-isolated initializer 'init(settings:input:pasteboardProvider:sourceApplicationProvider:screenshotMonitorFactory:bookmarkCreator:bookmarkResolver:dateProvider:timeZoneProvider:pollInterval:clipboardImageDelay:duplicateInterval:)' in a synchronous nonisolated context [#ActorIsolatedCall]
+ 39 |             }
+ 40 |             previews = PreviewService(store: store, defaults: defaults)
+ 41 |             auto = AutoCaptureService(settings: AutoCaptureSettings(defaults: defaults), input: InputService(store: store),
+    |                    `- error: call to main actor-isolated initializer 'init(settings:input:pasteboardProvider:sourceApplicationProvider:screenshotMonitorFactory:bookmarkCreator:bookmarkResolver:dateProvider:timeZoneProvider:pollInterval:clipboardImageDelay:duplicateInterval:)' in a synchronous nonisolated context [#ActorIsolatedCall]
+ 42 |                 pasteboardProvider: { fatalError("Title probe must not read the clipboard") }, sourceApplicationProvider: { nil })
+ 43 |             state = AppState(store: store, previews: previews,
+
+/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Sources/DaBin/AutoCaptureService.swift:97:5: note: calls to initializer 'init(settings:input:pasteboardProvider:sourceApplicationProvider:screenshotMonitorFactory:bookmarkCreator:bookmarkResolver:dateProvider:timeZoneProvider:pollInterval:clipboardImageDelay:duplicateInterval:)' from outside of its actor context are implicitly asynchronous
+ 95 |     private var activeSourceIsExcluded = false
+ 96 | 
+ 97 |     init(settings: AutoCaptureSettings,
+    |     `- note: calls to initializer 'init(settings:input:pasteboardProvider:sourceApplicationProvider:screenshotMonitorFactory:bookmarkCreator:bookmarkResolver:dateProvider:timeZoneProvider:pollInterval:clipboardImageDelay:duplicateInterval:)' from outside of its actor context are implicitly asynchronous
+ 98 |          input: InputService,
+ 99 |          pasteboardProvider: @escaping () -> NSPasteboard = { .general },
+
+/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/native-title-probe/DaBinTitleRenderProbe.swift:41:49: error: call to main actor-isolated initializer 'init(defaults:ownBundleIdentifier:)' in a synchronous nonisolated context [#ActorIsolatedCall]
+ 39 |             }
+ 40 |             previews = PreviewService(store: store, defaults: defaults)
+ 41 |             auto = AutoCaptureService(settings: AutoCaptureSettings(defaults: defaults), input: InputService(store: store),
+    |                                                 `- error: call to main actor-isolated initializer 'init(defaults:ownBundleIdentifier:)' in a synchronous nonisolated context [#ActorIsolatedCall]
+ 42 |                 pasteboardProvider: { fatalError("Title probe must not read the clipboard") }, sourceApplicationProvider: { nil })
+ 43 |             state = AppState(store: store, previews: previews,
+
+/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Sources/DaBin/AutoCaptureSettings.swift:90:5: note: calls to initializer 'init(defaults:ownBundleIdentifier:)' from outside of its actor context are implicitly asynchronous
+ 88 |     private let ownBundleIdentifier: String
+ 89 | 
+ 90 |     init(defaults: UserDefaults? = .standard,
+    |     `- note: calls to initializer 'init(defaults:ownBundleIdentifier:)' from outside of its actor context are implicitly asynchronous
+ 91 |          ownBundleIdentifier: String = Bundle.main.bundleIdentifier ?? "com.dabin.mac") {
+ 92 |         self.defaults = defaults
+
+/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/native-title-probe/DaBinTitleRenderProbe.swift:41:97: error: call to main actor-isolated initializer 'init(store:promiseTimeout:stagingRoot:promiseReader:)' in a synchronous nonisolated context [#ActorIsolatedCall]
+ 39 |             }
+ 40 |             previews = PreviewService(store: store, defaults: defaults)
+ 41 |             auto = AutoCaptureService(settings: AutoCaptureSettings(defaults: defaults), input: InputService(store: store),
+    |                                                                                                 `- error: call to main actor-isolated initializer 'init(store:promiseTimeout:stagingRoot:promiseReader:)' in a synchronous nonisolated context [#ActorIsolatedCall]
+ 42 |                 pasteboardProvider: { fatalError("Title probe must not read the clipboard") }, sourceApplicationProvider: { nil })
+ 43 |             state = AppState(store: store, previews: previews,
+
+/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Sources/DaBin/InputService.swift:63:5: note: calls to initializer 'init(store:promiseTimeout:stagingRoot:promiseReader:)' from outside of its actor context are implicitly asynchronous
+ 61 |     }()
+ 62 | 
+ 63 |     init(store: CaptureStore, promiseTimeout: TimeInterval = 60, stagingRoot: URL? = nil,
+    |     `- note: calls to initializer 'init(store:promiseTimeout:stagingRoot:promiseReader:)' from outside of its actor context are implicitly asynchronous
+ 64 |          promiseReader: ((NSPasteboard) -> [InputFilePromise])? = nil) {
+ 65 |         self.store = store
+
+/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/native-title-probe/DaBinTitleRenderProbe.swift:43:21: error: call to main actor-isolated initializer 'init(store:previews:contentIndex:reminders:updates:robotPlacement:autoCapture:captureClipboard:quickAccessSettings:workspaceZoom:manualInput:folderOpener:)' in a synchronous nonisolated context [#ActorIsolatedCall]
+ 41 |             auto = AutoCaptureService(settings: AutoCaptureSettings(defaults: defaults), input: InputService(store: store),
+ 42 |                 pasteboardProvider: { fatalError("Title probe must not read the clipboard") }, sourceApplicationProvider: { nil })
+ 43 |             state = AppState(store: store, previews: previews,
+    |                     `- error: call to main actor-isolated initializer 'init(store:previews:contentIndex:reminders:updates:robotPlacement:autoCapture:captureClipboard:quickAccessSettings:workspaceZoom:manualInput:folderOpener:)' in a synchronous nonisolated context [#ActorIsolatedCall]
+ 44 |                 reminders: ReminderService(store: store, client: ProbeNotifications()),
+ 45 |                 updates: SoftwareUpdateService(bundle: .main), autoCapture: auto,
+
+/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Sources/DaBin/AppState.swift:457:5: note: calls to initializer 'init(store:previews:contentIndex:reminders:updates:robotPlacement:autoCapture:captureClipboard:quickAccessSettings:workspaceZoom:manualInput:folderOpener:)' from outside of its actor context are implicitly asynchronous
+ 455 |     private var searchDateCache: [SearchDateGroup] = []
+ 456 | 
+ 457 |     init(store: CaptureStore, previews: PreviewService, contentIndex: ContentIndexService? = nil,
+     |     `- note: calls to initializer 'init(store:previews:contentIndex:reminders:updates:robotPlacement:autoCapture:captureClipboard:quickAccessSettings:workspaceZoom:manualInput:folderOpener:)' from outside of its actor context are implicitly asynchronous
+ 458 |          reminders: ReminderService,
+ 459 |          updates: SoftwareUpdateService? = nil, robotPlacement: RobotPlacementSettings? = nil,
+
+/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/native-title-probe/DaBinTitleRenderProbe.swift:44:28: error: call to main actor-isolated initializer 'init(store:client:)' in a synchronous nonisolated context [#ActorIsolatedCall]
+ 42 |                 pasteboardProvider: { fatalError("Title probe must not read the clipboard") }, sourceApplicationProvider: { nil })
+ 43 |             state = AppState(store: store, previews: previews,
+ 44 |                 reminders: ReminderService(store: store, client: ProbeNotifications()),
+    |                            `- error: call to main actor-isolated initializer 'init(store:client:)' in a synchronous nonisolated context [#ActorIsolatedCall]
+ 45 |                 updates: SoftwareUpdateService(bundle: .main), autoCapture: auto,
+ 46 |                 captureClipboard: CaptureClipboardService(writer: { _ in fatalError("Title probe must not write the clipboard") }),
+
+/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Sources/DaBin/ReminderService.swift:32:5: note: calls to initializer 'init(store:client:)' from outside of its actor context are implicitly asynchronous
+ 30 | 
+ 31 |     // Dependency injection keeps tests away from real notification permission and scheduling.
+ 32 |     init(store: CaptureStore, client: ReminderNotificationClient) {
+    |     `- note: calls to initializer 'init(store:client:)' from outside of its actor context are implicitly asynchronous
+ 33 |         self.store = store
+ 34 |         self.client = client
+
+/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/native-title-probe/DaBinTitleRenderProbe.swift:44:66: error: call to main actor-isolated initializer 'init()' in a synchronous nonisolated context [#ActorIsolatedCall]
+  5 | import SwiftUI
+  6 | 
+  7 | @MainActor private final class ProbeNotifications: ReminderNotificationClient {
+    |                                `- note: calls to initializer 'init()' from outside of its actor context are implicitly asynchronous
+  8 |     func authorization() async -> ReminderAuthorization { .undetermined }
+  9 |     func requestAuthorization() async throws -> Bool { fatalError("Title probe must not request notification permission") }
+    :
+ 42 |                 pasteboardProvider: { fatalError("Title probe must not read the clipboard") }, sourceApplicationProvider: { nil })
+ 43 |             state = AppState(store: store, previews: previews,
+ 44 |                 reminders: ReminderService(store: store, client: ProbeNotifications()),
+    |                                                                  `- error: call to main actor-isolated initializer 'init()' in a synchronous nonisolated context [#ActorIsolatedCall]
+ 45 |                 updates: SoftwareUpdateService(bundle: .main), autoCapture: auto,
+ 46 |                 captureClipboard: CaptureClipboardService(writer: { _ in fatalError("Title probe must not write the clipboard") }),
+
+/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/native-title-probe/DaBinTitleRenderProbe.swift:45:26: error: call to main actor-isolated initializer 'init(bundle:)' in a synchronous nonisolated context [#ActorIsolatedCall]
+ 43 |             state = AppState(store: store, previews: previews,
+ 44 |                 reminders: ReminderService(store: store, client: ProbeNotifications()),
+ 45 |                 updates: SoftwareUpdateService(bundle: .main), autoCapture: auto,
+    |                          `- error: call to main actor-isolated initializer 'init(bundle:)' in a synchronous nonisolated context [#ActorIsolatedCall]
+ 46 |                 captureClipboard: CaptureClipboardService(writer: { _ in fatalError("Title probe must not write the clipboard") }),
+ 47 |                 folderOpener: { _ in fatalError("Title probe must not open Finder") })
+
+/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Sources/DaBin/SoftwareUpdateService.swift:435:5: note: calls to initializer 'init(bundle:)' from outside of its actor context are implicitly asynchronous
+433 |     var versionLabel: String { "DaBin \(currentVersion) (\(currentBuild))" }
+434 | 
+435 |     init(bundle: Bundle = .main) {
+    |     `- note: calls to initializer 'init(bundle:)' from outside of its actor context are implicitly asynchronous
+436 |         currentVersion = bundle.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "0.0.0"
+437 |         currentBuild = bundle.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "0"
+
+/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/native-title-probe/DaBinTitleRenderProbe.swift:46:35: error: call to main actor-isolated initializer 'init(writer:)' in a synchronous nonisolated context [#ActorIsolatedCall]
+ 44 |                 reminders: ReminderService(store: store, client: ProbeNotifications()),
+ 45 |                 updates: SoftwareUpdateService(bundle: .main), autoCapture: auto,
+ 46 |                 captureClipboard: CaptureClipboardService(writer: { _ in fatalError("Title probe must not write the clipboard") }),
+    |                                   `- error: call to main actor-isolated initializer 'init(writer:)' in a synchronous nonisolated context [#ActorIsolatedCall]
+ 47 |                 folderOpener: { _ in fatalError("Title probe must not open Finder") })
+ 48 |             theme = ThemeSettings(defaults: defaults)
+
+/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Sources/DaBin/CaptureClipboard.swift:40:5: note: calls to initializer 'init(writer:)' from outside of its actor context are implicitly asynchronous
+ 38 |     private let writer: PayloadWriter
+ 39 | 
+ 40 |     init(writer: @escaping PayloadWriter) {
+    |     `- note: calls to initializer 'init(writer:)' from outside of its actor context are implicitly asynchronous
+ 41 |         self.writer = writer
+ 42 |     }
+
+/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/native-title-probe/DaBinTitleRenderProbe.swift:48:21: error: call to main actor-isolated initializer 'init(defaults:systemDarkMode:)' in a synchronous nonisolated context [#ActorIsolatedCall]
+ 46 |                 captureClipboard: CaptureClipboardService(writer: { _ in fatalError("Title probe must not write the clipboard") }),
+ 47 |                 folderOpener: { _ in fatalError("Title probe must not open Finder") })
+ 48 |             theme = ThemeSettings(defaults: defaults)
+    |                     `- error: call to main actor-isolated initializer 'init(defaults:systemDarkMode:)' in a synchronous nonisolated context [#ActorIsolatedCall]
+ 49 |             theme.setShowTooltips(false); theme.setDarkMode(false)
+ 50 |             exports = DayExportActionController(pasteboardWriter: { _ in fatalError("Title probe must not export to clipboard") },
+
+/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Sources/DaBin/ThemeSettings.swift:51:5: note: calls to initializer 'init(defaults:systemDarkMode:)' from outside of its actor context are implicitly asynchronous
+ 49 |     private let defaults: UserDefaults
+ 50 | 
+ 51 |     init(defaults: UserDefaults = .standard, systemDarkMode: Bool? = nil) {
+    |     `- note: calls to initializer 'init(defaults:systemDarkMode:)' from outside of its actor context are implicitly asynchronous
+ 52 |         self.defaults = defaults
+ 53 |         showTooltips = defaults.object(forKey: Self.showTooltipsKey) as? Bool ?? true
+
+/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/native-title-probe/DaBinTitleRenderProbe.swift:49:19: error: call to main actor-isolated instance method 'setShowTooltips' in a synchronous nonisolated context [#ActorIsolatedCall]
+ 47 |                 folderOpener: { _ in fatalError("Title probe must not open Finder") })
+ 48 |             theme = ThemeSettings(defaults: defaults)
+ 49 |             theme.setShowTooltips(false); theme.setDarkMode(false)
+    |                   `- error: call to main actor-isolated instance method 'setShowTooltips' in a synchronous nonisolated context [#ActorIsolatedCall]
+ 50 |             exports = DayExportActionController(pasteboardWriter: { _ in fatalError("Title probe must not export to clipboard") },
+ 51 |                 destinationChooser: { _, _ in .cancelled }, fileWriter: { _, _ in fatalError("Title probe must not export files") })
+
+/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Sources/DaBin/ThemeSettings.swift:94:10: note: calls to instance method 'setShowTooltips' from outside of its actor context are implicitly asynchronous
+ 92 |     }
+ 93 | 
+ 94 |     func setShowTooltips(_ enabled: Bool) {
+    |          `- note: calls to instance method 'setShowTooltips' from outside of its actor context are implicitly asynchronous
+ 95 |         if showTooltips != enabled { showTooltips = enabled }
+ 96 |         defaults.set(enabled, forKey: Self.showTooltipsKey)
+
+/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/native-title-probe/DaBinTitleRenderProbe.swift:49:49: error: call to main actor-isolated instance method 'setDarkMode' in a synchronous nonisolated context [#ActorIsolatedCall]
+ 47 |                 folderOpener: { _ in fatalError("Title probe must not open Finder") })
+ 48 |             theme = ThemeSettings(defaults: defaults)
+ 49 |             theme.setShowTooltips(false); theme.setDarkMode(false)
+    |                                                 `- error: call to main actor-isolated instance method 'setDarkMode' in a synchronous nonisolated context [#ActorIsolatedCall]
+ 50 |             exports = DayExportActionController(pasteboardWriter: { _ in fatalError("Title probe must not export to clipboard") },
+ 51 |                 destinationChooser: { _, _ in .cancelled }, fileWriter: { _, _ in fatalError("Title probe must not export files") })
+
+/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Sources/DaBin/ThemeSettings.swift:89:10: note: calls to instance method 'setDarkMode' from outside of its actor context are implicitly asynchronous
+ 87 |     }
+ 88 | 
+ 89 |     func setDarkMode(_ enabled: Bool) {
+    |          `- note: calls to instance method 'setDarkMode' from outside of its actor context are implicitly asynchronous
+ 90 |         if darkModeEnabled != enabled { darkModeEnabled = enabled }
+ 91 |         defaults.set(enabled, forKey: Self.darkModeKey)
+
+/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/native-title-probe/DaBinTitleRenderProbe.swift:50:23: error: call to main actor-isolated initializer 'init(pasteboardWriter:destinationChooser:fileWriter:accessibilityAnnouncer:)' in a synchronous nonisolated context [#ActorIsolatedCall]
+ 48 |             theme = ThemeSettings(defaults: defaults)
+ 49 |             theme.setShowTooltips(false); theme.setDarkMode(false)
+ 50 |             exports = DayExportActionController(pasteboardWriter: { _ in fatalError("Title probe must not export to clipboard") },
+    |                       `- error: call to main actor-isolated initializer 'init(pasteboardWriter:destinationChooser:fileWriter:accessibilityAnnouncer:)' in a synchronous nonisolated context [#ActorIsolatedCall]
+ 51 |                 destinationChooser: { _, _ in .cancelled }, fileWriter: { _, _ in fatalError("Title probe must not export files") })
+ 52 |         }
+
+/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Sources/DaBin/DayExportUI.swift:127:5: note: calls to initializer 'init(pasteboardWriter:destinationChooser:fileWriter:accessibilityAnnouncer:)' from outside of its actor context are implicitly asynchronous
+125 |     private var outsideClickMonitor: Any?
+126 | 
+127 |     init(pasteboardWriter: @escaping PasteboardWriter,
+    |     `- note: calls to initializer 'init(pasteboardWriter:destinationChooser:fileWriter:accessibilityAnnouncer:)' from outside of its actor context are implicitly asynchronous
+128 |          destinationChooser: @escaping DestinationChooser,
+129 |          fileWriter: @escaping FileWriter,
+
+/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/native-title-probe/DaBinTitleRenderProbe.swift:54:22: error: call to main actor-isolated instance method 'shutdown()' in a synchronous nonisolated context [#ActorIsolatedCall]
+ 51 |                 destinationChooser: { _, _ in .cancelled }, fileWriter: { _, _ in fatalError("Title probe must not export files") })
+ 52 |         }
+ 53 |         func close() {
+    |              `- note: add '@MainActor' to make instance method 'close()' part of global actor 'MainActor'
+ 54 |             previews.shutdown(); auto.shutdown(); state.focusSessions.shutdown()
+    |                      `- error: call to main actor-isolated instance method 'shutdown()' in a synchronous nonisolated context [#ActorIsolatedCall]
+ 55 |             state.shutdownNotificationPresentation(); store.cancelArchiveRepair()
+ 56 |             defaults.removePersistentDomain(forName: preferencesName)
+
+/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Sources/DaBin/PreviewService.swift:147:10: note: calls to instance method 'shutdown()' from outside of its actor context are implicitly asynchronous
+145 |     /// One-way application teardown. Existing preferences, records and cache
+146 |     /// files remain intact; unfinished previews will be retried on next launch.
+147 |     func shutdown() {
+    |          `- note: calls to instance method 'shutdown()' from outside of its actor context are implicitly asynchronous
+148 |         guard !hasShutDown else { return }
+149 |         hasShutDown = true
+
+/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/native-title-probe/DaBinTitleRenderProbe.swift:54:39: error: call to main actor-isolated instance method 'shutdown()' in a synchronous nonisolated context [#ActorIsolatedCall]
+ 51 |                 destinationChooser: { _, _ in .cancelled }, fileWriter: { _, _ in fatalError("Title probe must not export files") })
+ 52 |         }
+ 53 |         func close() {
+    |              `- note: add '@MainActor' to make instance method 'close()' part of global actor 'MainActor'
+ 54 |             previews.shutdown(); auto.shutdown(); state.focusSessions.shutdown()
+    |                                       `- error: call to main actor-isolated instance method 'shutdown()' in a synchronous nonisolated context [#ActorIsolatedCall]
+ 55 |             state.shutdownNotificationPresentation(); store.cancelArchiveRepair()
+ 56 |             defaults.removePersistentDomain(forName: preferencesName)
+
+/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Sources/DaBin/AutoCaptureService.swift:243:10: note: calls to instance method 'shutdown()' from outside of its actor context are implicitly asynchronous
+241 |     }
+242 | 
+243 |     func shutdown() {
+    |          `- note: calls to instance method 'shutdown()' from outside of its actor context are implicitly asynchronous
+244 |         let status: AutoCaptureStatus = settings.isEnabled
+245 |             ? (settings.isPaused ? .paused : .ready) : .disabled
+
+/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/native-title-probe/DaBinTitleRenderProbe.swift:54:71: error: call to main actor-isolated instance method 'shutdown()' in a synchronous nonisolated context [#ActorIsolatedCall]
+ 51 |                 destinationChooser: { _, _ in .cancelled }, fileWriter: { _, _ in fatalError("Title probe must not export files") })
+ 52 |         }
+ 53 |         func close() {
+    |              `- note: add '@MainActor' to make instance method 'close()' part of global actor 'MainActor'
+ 54 |             previews.shutdown(); auto.shutdown(); state.focusSessions.shutdown()
+    |                                                                       `- error: call to main actor-isolated instance method 'shutdown()' in a synchronous nonisolated context [#ActorIsolatedCall]
+ 55 |             state.shutdownNotificationPresentation(); store.cancelArchiveRepair()
+ 56 |             defaults.removePersistentDomain(forName: preferencesName)
+
+/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Sources/DaBin/TaskFocusSession.swift:123:10: note: calls to instance method 'shutdown()' from outside of its actor context are implicitly asynchronous
+121 |     }
+122 | 
+123 |     func shutdown() {
+    |          `- note: calls to instance method 'shutdown()' from outside of its actor context are implicitly asynchronous
+124 |         guard !isShutDown else { return }
+125 |         isShutDown = true
+
+/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/native-title-probe/DaBinTitleRenderProbe.swift:54:57: error: main actor-isolated property 'focusSessions' can not be referenced from a nonisolated context
+ 51 |                 destinationChooser: { _, _ in .cancelled }, fileWriter: { _, _ in fatalError("Title probe must not export files") })
+ 52 |         }
+ 53 |         func close() {
+    |              `- note: add '@MainActor' to make instance method 'close()' part of global actor 'MainActor'
+ 54 |             previews.shutdown(); auto.shutdown(); state.focusSessions.shutdown()
+    |                                                         `- error: main actor-isolated property 'focusSessions' can not be referenced from a nonisolated context
+ 55 |             state.shutdownNotificationPresentation(); store.cancelArchiveRepair()
+ 56 |             defaults.removePersistentDomain(forName: preferencesName)
+
+/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Sources/DaBin/AppState.swift:290:9: note: property declared here
+ 288 |     }()
+ 289 |     let clipboardRetention: ClipboardRetentionService
+ 290 |     let focusSessions: TaskFocusCoordinator
+     |         `- note: property declared here
+ 291 |     @Published private(set) var lastConvertedCaptureID: UUID?
+ 292 |     private var lastConversionParentID: UUID?
+
+/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/native-title-probe/DaBinTitleRenderProbe.swift:55:19: error: call to main actor-isolated instance method 'shutdownNotificationPresentation()' in a synchronous nonisolated context [#ActorIsolatedCall]
+ 51 |                 destinationChooser: { _, _ in .cancelled }, fileWriter: { _, _ in fatalError("Title probe must not export files") })
+ 52 |         }
+ 53 |         func close() {
+    |              `- note: add '@MainActor' to make instance method 'close()' part of global actor 'MainActor'
+ 54 |             previews.shutdown(); auto.shutdown(); state.focusSessions.shutdown()
+ 55 |             state.shutdownNotificationPresentation(); store.cancelArchiveRepair()
+    |                   `- error: call to main actor-isolated instance method 'shutdownNotificationPresentation()' in a synchronous nonisolated context [#ActorIsolatedCall]
+ 56 |             defaults.removePersistentDomain(forName: preferencesName)
+ 57 |             try? FileManager.default.removeItem(at: root)
+
+/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Sources/DaBin/AppState.swift:563:10: note: calls to instance method 'shutdownNotificationPresentation()' from outside of its actor context are implicitly asynchronous
+ 561 |     func dismissNotification() { notifications.dismiss() }
+ 562 | 
+ 563 |     func shutdownNotificationPresentation() {
+     |          `- note: calls to instance method 'shutdownNotificationPresentation()' from outside of its actor context are implicitly asynchronous
+ 564 |         notifications.shutdown()
+ 565 |         reminders.shutdownPresentation()
+
+/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/native-title-probe/DaBinTitleRenderProbe.swift:55:61: error: call to main actor-isolated instance method 'cancelArchiveRepair()' in a synchronous nonisolated context [#ActorIsolatedCall]
+ 51 |                 destinationChooser: { _, _ in .cancelled }, fileWriter: { _, _ in fatalError("Title probe must not export files") })
+ 52 |         }
+ 53 |         func close() {
+    |              `- note: add '@MainActor' to make instance method 'close()' part of global actor 'MainActor'
+ 54 |             previews.shutdown(); auto.shutdown(); state.focusSessions.shutdown()
+ 55 |             state.shutdownNotificationPresentation(); store.cancelArchiveRepair()
+    |                                                             `- error: call to main actor-isolated instance method 'cancelArchiveRepair()' in a synchronous nonisolated context [#ActorIsolatedCall]
+ 56 |             defaults.removePersistentDomain(forName: preferencesName)
+ 57 |             try? FileManager.default.removeItem(at: root)
+
+/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Sources/DaBin/CaptureStore.swift:75:10: note: calls to instance method 'cancelArchiveRepair()' from outside of its actor context are implicitly asynchronous
+  73 |     }
+  74 | 
+  75 |     func cancelArchiveRepair() {
+     |          `- note: calls to instance method 'cancelArchiveRepair()' from outside of its actor context are implicitly asynchronous
+  76 |         archiveRepairGeneration &+= 1
+  77 |         archiveRepairTask?.cancel()
+
+[#ActorIsolatedCall]: <https://docs.swift.org/compiler/documentation/diagnostics/actor-isolated-call>

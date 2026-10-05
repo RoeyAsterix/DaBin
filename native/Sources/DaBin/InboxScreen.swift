@@ -6,6 +6,7 @@ struct InboxScreen: View {
     @ObservedObject var state: AppState
     @Environment(\.daBinAccent) private var accent
     @Environment(\.daBinTutorialTargets) private var tutorialTargets
+    var showsNewTaskEntry = true
     private var items: [Capture] {
         state.store.captures.filter {
             $0.parentTaskID == nil && $0.projectName == nil && !$0.isCompleted
@@ -16,7 +17,6 @@ struct InboxScreen: View {
     var body: some View {
         VStack(spacing: 0) {
             VStack(alignment: .leading, spacing: 9) {
-                Text("Capture now. Organize later.").font(.system(size: 14, weight: .medium))
                 HStack(spacing: 8) {
                     TextField("A thought or a next step…", text: $state.newNoteText, axis: .vertical)
                         .lineLimit(1...3).textFieldStyle(.plain).font(.system(size: 14))
@@ -31,10 +31,14 @@ struct InboxScreen: View {
                         .accessibilityLabel("Save quick capture").buddyHelp("Save note or task")
                 }.padding(12).background(Palette.surface, in: RoundedRectangle(cornerRadius: 8))
                     .overlay(RoundedRectangle(cornerRadius: 8).strokeBorder(Palette.line, lineWidth: 0.7))
-                HStack(spacing: 13) {
-                    Button { state.pasteClipboard() } label: { Label("Paste", systemImage: "doc.on.clipboard") }
-                    Button { state.importFiles() } label: { Label("Files", systemImage: "folder.badge.plus") }
-                    Button { state.openNewTask() } label: { Label("Task", systemImage: "plus.circle") }
+                BuddyActionFlow(spacing: 13) {
+                    Button { state.pasteClipboard() } label: { Label("Paste", systemImage: "doc.on.clipboard").frame(minHeight: 32) }
+                    Button { state.importFiles() } label: { Label("Add files", systemImage: "folder.badge.plus").frame(minHeight: 32) }
+                    Button { state.openNewNote() } label: { Label("Note editor", systemImage: "square.and.pencil").frame(minHeight: 32) }
+                        .accessibilityLabel("Open note editor").accessibilityIdentifier("inbox-note-editor")
+                    if showsNewTaskEntry {
+                        Button { state.openNewTask() } label: { Label("Task", systemImage: "plus.circle").frame(minHeight: 32) }
+                    }
                     Spacer(minLength: 0)
                     CaptureFilterMenu(selection: $state.filter)
                 }.buttonStyle(.plain).font(.system(size: 12)).foregroundStyle(accent)

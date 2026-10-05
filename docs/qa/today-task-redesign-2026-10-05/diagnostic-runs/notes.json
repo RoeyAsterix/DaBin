@@ -1,0 +1,10 @@
+{
+  "originalRun": "20261004T225841672378Z-app-store",
+  "status": "failed",
+  "acceptanceEvidence": false,
+  "issues": [
+    "DailyCapture fixture focused an inactive mounted Comments composer; repaired by selecting the active Comments section first",
+    "WorkspaceWindow fixture assumed plan reorder controls were mounted above the new receipt feed and simultaneously mounted task/comments; repaired with real native scrolling and exclusive-section actions"
+  ],
+  "finalSourceRefinement": "Compact receipt density, conversion Undo and parent-task navigation added after this run; final production inputs are verified separately."
+}

@@ -1,0 +1,2593 @@
+{
+  "finishedAtUTC": "2026-10-05T01:42:20.360183+00:00",
+  "limitations": "Render evidence requires separate human inspection. Island sampling timestamps/deadlines are not physical display refresh-rate measurements. Wrappers use the recorded test sources verbatim; the verified production module is unchanged.",
+  "moduleDirectory": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa-cache/app-store-70feee950c20ceae70b7bcf9494d1b269c9a089191bf243f85ee35071457d45b",
+  "nativeRoot": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native",
+  "resourceInputs": {
+    "Resources/AppIcon.icns": "9ba9c0e655b1b9956a016d9d1a547d5fa598522664d1d21d2caf292ef6a1dadd",
+    "Resources/Assets.xcassets/AppIcon.appiconset/Contents.json": "023560f7a29a7bddd154ad3c5144fc77e5f96fa307512b5c1561bde8df6edf60",
+    "Resources/Assets.xcassets/AppIcon.appiconset/icon_128x128.png": "d8fecc1e2018b8ec74c7eefb490a9d2ce0a6dd437f94d3b0213400a3216d8661",
+    "Resources/Assets.xcassets/AppIcon.appiconset/icon_128x128@2x.png": "da8ef141c6683fde940dfd51bc8650628dcd0b9f5ed73c04448f94736f1965e3",
+    "Resources/Assets.xcassets/AppIcon.appiconset/icon_16x16.png": "21cb38653ce20e298bede7ccf80adc1c8ba36f403518375ed43dc77dd13caee2",
+    "Resources/Assets.xcassets/AppIcon.appiconset/icon_16x16@2x.png": "6496c5db46085442ab9b892b7fd0ce6529a702c6da594bd16bbbbf94e0ad16a2",
+    "Resources/Assets.xcassets/AppIcon.appiconset/icon_256x256.png": "da8ef141c6683fde940dfd51bc8650628dcd0b9f5ed73c04448f94736f1965e3",
+    "Resources/Assets.xcassets/AppIcon.appiconset/icon_256x256@2x.png": "ab096acf94ba95d4ff7b6df845b604fd701485517f17cbdd0d118a6a6e9f4708",
+    "Resources/Assets.xcassets/AppIcon.appiconset/icon_32x32.png": "6496c5db46085442ab9b892b7fd0ce6529a702c6da594bd16bbbbf94e0ad16a2",
+    "Resources/Assets.xcassets/AppIcon.appiconset/icon_32x32@2x.png": "83740f8aa58b08af2356f3e110ab58ada92c038951bcb45e8b799df2ab55ff97",
+    "Resources/Assets.xcassets/AppIcon.appiconset/icon_512x512.png": "ab096acf94ba95d4ff7b6df845b604fd701485517f17cbdd0d118a6a6e9f4708",
+    "Resources/Assets.xcassets/AppIcon.appiconset/icon_512x512@2x.png": "44ad308890153268409b08ee22050d66557327c92cbd3f9bb8d0f071c03e72b5",
+    "Resources/Assets.xcassets/Contents.json": "a3393322cd7b4c1e0aa93bebe09abaa91ad891290d1225b0b5d10b5c6f216025",
+    "Resources/DaBin.entitlements": "10612525a986757263c6905a0c3bdd19bb214235b0d83e58cc8e4a756f8ff14a",
+    "Resources/Info.plist": "a5656f8a57b7a363a15a484fe6881907bded4d39223b1f4adf29462807057b07",
+    "Resources/PrivacyInfo.xcprivacy": "a9863c850f76e33c454b61aea834e1a9980db80a6d1d659b0d7a68ae835ee014",
+    "Resources/PrivacyPolicy.md": "9b3065a0256f11cee42dc8ae4d84a6f862638ae89ce34f1d4eada3647a70da8d",
+    "Resources/robot.svg": "20bd5c1de92dd5e79ef259430c441e2b9a1d3608812ae79e5b2999a64eaf8a7a"
+  },
+  "runDirectory": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294",
+  "runner": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/run_extra_renders.py",
+  "runnerSHA256": "2438196928d81a64e877774a8dc0f90da9e532267934649ae550217d1c9c7b38",
+  "runtimeRequested": true,
+  "schemaVersion": 1,
+  "scope": "Standalone native offscreen view/presentation renders and declared model actions; no general clipboard, network, permissions or installed-user-app recording.",
+  "sourceChangedDuringRun": false,
+  "startedAtUTC": "2026-10-05T01:41:24.324431+00:00",
+  "status": "failed",
+  "suites": [
+    {
+      "artifactError": "Incomplete or empty PNG evidence for NativeRenderTests",
+      "artifacts": [
+        {
+          "bytes": 61629,
+          "path": "native-view-responsive-comment-dark-1200x430.png",
+          "sha256": "669c094c73e3267abb984c649210566044a46d122998d14fb7ccc46758960040"
+        },
+        {
+          "bytes": 89818,
+          "path": "native-view-responsive-comment-dark-1200x900.png",
+          "sha256": "ac34de65f470f392156d70e6f67052ade6bf80888dedd3a72c838d64fe1c66c5"
+        },
+        {
+          "bytes": 49493,
+          "path": "native-view-responsive-comment-dark-380x430.png",
+          "sha256": "b69a4d188fa966cd70b893b49d9798607cc3c6b280e6eb535a14e038db17024e"
+        },
+        {
+          "bytes": 75738,
+          "path": "native-view-responsive-comment-dark-760x680.png",
+          "sha256": "f81130c6d07e55344169f24f07796a61b2dd05d74036ba94780e2939a2359f6e"
+        },
+        {
+          "bytes": 60511,
+          "path": "native-view-responsive-comment-light-1200x430.png",
+          "sha256": "b147a0e9d13b7b703bf7847d89f3937698978e9e87a3687569e9371e6b1ca2bf"
+        },
+        {
+          "bytes": 88245,
+          "path": "native-view-responsive-comment-light-1200x900.png",
+          "sha256": "e037cedf0b3bafb1ce92b92a14bbdec1b569a2988b88b46fb738996ca34829fd"
+        },
+        {
+          "bytes": 48786,
+          "path": "native-view-responsive-comment-light-380x430.png",
+          "sha256": "1efec97f852ff2257dc740ab8cb9de71f394ada8bf768bcdd3e8583feac8b562"
+        },
+        {
+          "bytes": 74428,
+          "path": "native-view-responsive-comment-light-760x680.png",
+          "sha256": "d5d6bd32070b887394c7f1b72cda27cfaf930769a70a51265c03873ca790a6a7"
+        },
+        {
+          "bytes": 61578,
+          "path": "native-view-responsive-image-dark-1200x430.png",
+          "sha256": "9cc524740226550d133dab0b8ca50425834627f61ca6dce8f8bc264edbff7116"
+        },
+        {
+          "bytes": 78230,
+          "path": "native-view-responsive-image-dark-1200x900.png",
+          "sha256": "d7a4cd547c948fcbbe63d6068ef39fe66fc00641cb5701a4d7d1bd93be71ee69"
+        },
+        {
+          "bytes": 48131,
+          "path": "native-view-responsive-image-dark-380x430.png",
+          "sha256": "be419461f517104f8a5b7291f2358d415588e87975b32d1ef99f096ba0a840fc"
+        },
+        {
+          "bytes": 64555,
+          "path": "native-view-responsive-image-dark-760x680.png",
+          "sha256": "702f7ced2f29a78d2cb0506a7fc7a55922e01c4f0ae25c979e70597500217e66"
+        },
+        {
+          "bytes": 60384,
+          "path": "native-view-responsive-image-light-1200x430.png",
+          "sha256": "8c93d154c34ff3d4b135fd824b62f9d7789d5c859209800799c00a31a261e4e0"
+        },
+        {
+          "bytes": 76861,
+          "path": "native-view-responsive-image-light-1200x900.png",
+          "sha256": "8d099959d516f20125540edc03dc3b8d93b8c904d49818a2df0915580a19bad4"
+        },
+        {
+          "bytes": 47304,
+          "path": "native-view-responsive-image-light-380x430.png",
+          "sha256": "6ad0949f3b3e2419cd38ad3fc1de9ad22c5cfc3ff5deb9ab9ad0410a8dcea55e"
+        },
+        {
+          "bytes": 63196,
+          "path": "native-view-responsive-image-light-760x680.png",
+          "sha256": "68a8fdf19224008483b087e4b98ef9f211ed5b16796590eac0f1b86800067708"
+        },
+        {
+          "bytes": 69485,
+          "path": "native-view-responsive-task-dark-1200x430.png",
+          "sha256": "2a9323973678ba95312589904632afd6e7f3136bb830cf3821b849c3a6d9d086"
+        },
+        {
+          "bytes": 129332,
+          "path": "native-view-responsive-task-dark-1200x900.png",
+          "sha256": "dd4ea95020367a51788995f85115c6ecf1b4f8778e2c81f7a4445e7fe515d3a8"
+        },
+        {
+          "bytes": 52202,
+          "path": "native-view-responsive-task-dark-380x430.png",
+          "sha256": "7f4ae8206e73ecb274baaf6584e4f9e2ed8086a2e7d0a9d929f11770966d4f35"
+        },
+        {
+          "bytes": 92199,
+          "path": "native-view-responsive-task-dark-760x680.png",
+          "sha256": "a208553c766bc5da30c0da6609bf9c307b98fda95a17c6b6f039a8ad596d88b1"
+        },
+        {
+          "bytes": 68354,
+          "path": "native-view-responsive-task-light-1200x430.png",
+          "sha256": "bbe3048c945687db10442a0dc5e2c6cc12a4de31b492b8b98ebcd81f69ed72f2"
+        },
+        {
+          "bytes": 127129,
+          "path": "native-view-responsive-task-light-1200x900.png",
+          "sha256": "c07783c510c0cbdd3c088f5c244d907e5db4a443300048d2e993d57729954f4c"
+        },
+        {
+          "bytes": 51561,
+          "path": "native-view-responsive-task-light-380x430.png",
+          "sha256": "d505ed45cc28cca5eb0b653435d5bd1768355c22578d005df1cb33bc53b11b83"
+        },
+        {
+          "bytes": 90716,
+          "path": "native-view-responsive-task-light-760x680.png",
+          "sha256": "1c066a040b6bf49a345365ad0c69bade5b0467de6cc8b6c25d805db367bfd7da"
+        },
+        {
+          "bytes": 15117,
+          "path": "responsive-detail-renders.json",
+          "sha256": "0bc3e5f9b85492e319972c25ef7d5d4fb92a5d71854835daea91d5f9f473c33f"
+        }
+      ],
+      "bundle": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/apps/NativeRenderTests.app",
+      "bundleInfoOverrides": {
+        "CFBundleExecutable": "NativeRenderTests",
+        "CFBundleIdentifier": "com.dabin.mac.qa.extra.nativerendertests",
+        "CFBundleName": "NativeRenderTests",
+        "LSUIElement": true
+      },
+      "bundleInfoSHA256": "00302acbeec0d191a7b504a63428c8d09edb70470bf5b9910caf0be12c57156d",
+      "compile": {
+        "command": [
+          "xcrun",
+          "swiftc",
+          "-swift-version",
+          "5",
+          "-target",
+          "arm64-apple-macosx14.0",
+          "-module-cache-path",
+          "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/ModuleCache",
+          "-warnings-as-errors",
+          "-parse-as-library",
+          "-O",
+          "-whole-module-optimization",
+          "-I",
+          "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa-cache/app-store-70feee950c20ceae70b7bcf9494d1b269c9a089191bf243f85ee35071457d45b",
+          "-L",
+          "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa-cache/app-store-70feee950c20ceae70b7bcf9494d1b269c9a089191bf243f85ee35071457d45b",
+          "-lDaBinTestCore",
+          "-Xlinker",
+          "-rpath",
+          "-Xlinker",
+          "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa-cache/app-store-70feee950c20ceae70b7bcf9494d1b269c9a089191bf243f85ee35071457d45b",
+          "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/fixture/NativeRenderTests.swift",
+          "-o",
+          "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/apps/NativeRenderTests.app/Contents/MacOS/NativeRenderTests"
+        ],
+        "exitCode": 0,
+        "log": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/logs/NativeRenderTests-compile.log",
+        "logSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "seconds": 15.799,
+        "shellCommand": "xcrun swiftc -swift-version 5 -target arm64-apple-macosx14.0 -module-cache-path /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/ModuleCache -warnings-as-errors -parse-as-library -O -whole-module-optimization -I /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa-cache/app-store-70feee950c20ceae70b7bcf9494d1b269c9a089191bf243f85ee35071457d45b -L /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa-cache/app-store-70feee950c20ceae70b7bcf9494d1b269c9a089191bf243f85ee35071457d45b -lDaBinTestCore -Xlinker -rpath -Xlinker /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa-cache/app-store-70feee950c20ceae70b7bcf9494d1b269c9a089191bf243f85ee35071457d45b /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/fixture/NativeRenderTests.swift -o /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/apps/NativeRenderTests.app/Contents/MacOS/NativeRenderTests",
+        "status": "passed",
+        "timeoutSeconds": 180,
+        "workingDirectory": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/fixture/native"
+      },
+      "compileCommand": [
+        "xcrun",
+        "swiftc",
+        "-swift-version",
+        "5",
+        "-target",
+        "arm64-apple-macosx14.0",
+        "-module-cache-path",
+        "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/ModuleCache",
+        "-warnings-as-errors",
+        "-parse-as-library",
+        "-O",
+        "-whole-module-optimization",
+        "-I",
+        "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa-cache/app-store-70feee950c20ceae70b7bcf9494d1b269c9a089191bf243f85ee35071457d45b",
+        "-L",
+        "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa-cache/app-store-70feee950c20ceae70b7bcf9494d1b269c9a089191bf243f85ee35071457d45b",
+        "-lDaBinTestCore",
+        "-Xlinker",
+        "-rpath",
+        "-Xlinker",
+        "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa-cache/app-store-70feee950c20ceae70b7bcf9494d1b269c9a089191bf243f85ee35071457d45b",
+        "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/fixture/NativeRenderTests.swift",
+        "-o",
+        "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/apps/NativeRenderTests.app/Contents/MacOS/NativeRenderTests"
+      ],
+      "executableSHA256": "7afe6448c442426fe1c7c7fa8fffedc18ecaef98fa0e77659f948601aea13f05",
+      "name": "NativeRenderTests",
+      "output": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/renders/NativeRenderTests",
+      "resourceSHA256": {
+        "AppIcon.icns": "9ba9c0e655b1b9956a016d9d1a547d5fa598522664d1d21d2caf292ef6a1dadd",
+        "PrivacyInfo.xcprivacy": "a9863c850f76e33c454b61aea834e1a9980db80a6d1d659b0d7a68ae835ee014",
+        "PrivacyPolicy.md": "9b3065a0256f11cee42dc8ae4d84a6f862638ae89ce34f1d4eada3647a70da8d",
+        "robot.svg": "20bd5c1de92dd5e79ef259430c441e2b9a1d3608812ae79e5b2999a64eaf8a7a"
+      },
+      "runtime": {
+        "command": [
+          "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/apps/NativeRenderTests.app/Contents/MacOS/NativeRenderTests",
+          "--responsive-detail",
+          "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/renders/NativeRenderTests"
+        ],
+        "exitCode": 0,
+        "log": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/logs/NativeRenderTests.log",
+        "logSHA256": "f864fc0b03644ecfb5fa07e65233920f881b36e8d3c1919872970c8946ce88ef",
+        "seconds": 10.819,
+        "shellCommand": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/apps/NativeRenderTests.app/Contents/MacOS/NativeRenderTests --responsive-detail /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/renders/NativeRenderTests",
+        "status": "passed",
+        "timeoutSeconds": 180,
+        "workingDirectory": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/fixture/native"
+      },
+      "runtimeCommand": [
+        "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/apps/NativeRenderTests.app/Contents/MacOS/NativeRenderTests",
+        "--responsive-detail",
+        "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/renders/NativeRenderTests"
+      ],
+      "scope": "Only the injected-preferences responsive detail branch, before legacy UserDefaults.standard mutation.",
+      "status": "artifact_failed",
+      "testSource": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Tests/NativeRenderTests.swift",
+      "testSourceSHA256": "d28c63673e75b9d1c1b77c657d99c54cd49b6ce1ea90a5a324601a24a08f57e5",
+      "timeoutSeconds": 180,
+      "workingDirectory": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/fixture/native",
+      "wrapper": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/fixture/NativeRenderTests.swift",
+      "wrapperSHA256": "95ff290ca613e16b7a79b4cfdb868c24dd488c63ffa2e373d1991f634a6e4d13"
+    },
+    {
+      "artifacts": [],
+      "bundle": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/apps/PrivacyRenderTests.app",
+      "bundleInfoOverrides": {
+        "CFBundleExecutable": "PrivacyRenderTests",
+        "CFBundleIdentifier": "com.dabin.mac.qa.extra.privacyrendertests",
+        "CFBundleName": "PrivacyRenderTests",
+        "LSUIElement": true
+      },
+      "bundleInfoSHA256": "860c12bd6d15af91c5a1577565918694cef5246758932071ac7a8044b4932cdb",
+      "compile": {
+        "command": [
+          "xcrun",
+          "swiftc",
+          "-swift-version",
+          "5",
+          "-target",
+          "arm64-apple-macosx14.0",
+          "-module-cache-path",
+          "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/ModuleCache",
+          "-warnings-as-errors",
+          "-parse-as-library",
+          "-O",
+          "-whole-module-optimization",
+          "-I",
+          "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa-cache/app-store-70feee950c20ceae70b7bcf9494d1b269c9a089191bf243f85ee35071457d45b",
+          "-L",
+          "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa-cache/app-store-70feee950c20ceae70b7bcf9494d1b269c9a089191bf243f85ee35071457d45b",
+          "-lDaBinTestCore",
+          "-Xlinker",
+          "-rpath",
+          "-Xlinker",
+          "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa-cache/app-store-70feee950c20ceae70b7bcf9494d1b269c9a089191bf243f85ee35071457d45b",
+          "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/fixture/PrivacyRenderTests.swift",
+          "-o",
+          "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/apps/PrivacyRenderTests.app/Contents/MacOS/PrivacyRenderTests"
+        ],
+        "exitCode": 0,
+        "log": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/logs/PrivacyRenderTests-compile.log",
+        "logSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "seconds": 1.011,
+        "shellCommand": "xcrun swiftc -swift-version 5 -target arm64-apple-macosx14.0 -module-cache-path /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/ModuleCache -warnings-as-errors -parse-as-library -O -whole-module-optimization -I /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa-cache/app-store-70feee950c20ceae70b7bcf9494d1b269c9a089191bf243f85ee35071457d45b -L /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa-cache/app-store-70feee950c20ceae70b7bcf9494d1b269c9a089191bf243f85ee35071457d45b -lDaBinTestCore -Xlinker -rpath -Xlinker /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa-cache/app-store-70feee950c20ceae70b7bcf9494d1b269c9a089191bf243f85ee35071457d45b /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/fixture/PrivacyRenderTests.swift -o /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/apps/PrivacyRenderTests.app/Contents/MacOS/PrivacyRenderTests",
+        "status": "passed",
+        "timeoutSeconds": 180,
+        "workingDirectory": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/fixture/native"
+      },
+      "compileCommand": [
+        "xcrun",
+        "swiftc",
+        "-swift-version",
+        "5",
+        "-target",
+        "arm64-apple-macosx14.0",
+        "-module-cache-path",
+        "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/ModuleCache",
+        "-warnings-as-errors",
+        "-parse-as-library",
+        "-O",
+        "-whole-module-optimization",
+        "-I",
+        "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa-cache/app-store-70feee950c20ceae70b7bcf9494d1b269c9a089191bf243f85ee35071457d45b",
+        "-L",
+        "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa-cache/app-store-70feee950c20ceae70b7bcf9494d1b269c9a089191bf243f85ee35071457d45b",
+        "-lDaBinTestCore",
+        "-Xlinker",
+        "-rpath",
+        "-Xlinker",
+        "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa-cache/app-store-70feee950c20ceae70b7bcf9494d1b269c9a089191bf243f85ee35071457d45b",
+        "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/fixture/PrivacyRenderTests.swift",
+        "-o",
+        "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/apps/PrivacyRenderTests.app/Contents/MacOS/PrivacyRenderTests"
+      ],
+      "executableSHA256": "d3604c71e7a155c404b537a72c2491a94e26f64f7db22b7e76ef6e69cb3e2eac",
+      "name": "PrivacyRenderTests",
+      "output": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/renders/PrivacyRenderTests",
+      "resourceSHA256": {
+        "AppIcon.icns": "9ba9c0e655b1b9956a016d9d1a547d5fa598522664d1d21d2caf292ef6a1dadd",
+        "PrivacyInfo.xcprivacy": "a9863c850f76e33c454b61aea834e1a9980db80a6d1d659b0d7a68ae835ee014",
+        "PrivacyPolicy.md": "9b3065a0256f11cee42dc8ae4d84a6f862638ae89ce34f1d4eada3647a70da8d",
+        "robot.svg": "20bd5c1de92dd5e79ef259430c441e2b9a1d3608812ae79e5b2999a64eaf8a7a"
+      },
+      "runtime": {
+        "command": [
+          "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/apps/PrivacyRenderTests.app/Contents/MacOS/PrivacyRenderTests",
+          "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/renders/PrivacyRenderTests"
+        ],
+        "exitCode": 1,
+        "log": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/logs/PrivacyRenderTests.log",
+        "logSHA256": "b0763c8415305c82cad61c70c99ebce57b9393299802157f890691f200438531",
+        "seconds": 0.379,
+        "shellCommand": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/apps/PrivacyRenderTests.app/Contents/MacOS/PrivacyRenderTests /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/renders/PrivacyRenderTests",
+        "status": "failed",
+        "timeoutSeconds": 60,
+        "workingDirectory": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/fixture/native"
+      },
+      "runtimeCommand": [
+        "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/apps/PrivacyRenderTests.app/Contents/MacOS/PrivacyRenderTests",
+        "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/renders/PrivacyRenderTests"
+      ],
+      "scope": "Real bundled local policy in offscreen non-key windows; no folder button is pressed.",
+      "status": "failed",
+      "testSource": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Tests/PrivacyRenderTests.swift",
+      "testSourceSHA256": "92874838181437e6f9b82f124022ee7146670f6011c4faaf1053c8d091e8a648",
+      "timeoutSeconds": 60,
+      "workingDirectory": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/fixture/native",
+      "wrapper": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/fixture/PrivacyRenderTests.swift",
+      "wrapperSHA256": "2439d829573ece9d18b017919f28f06035160ce9e3c2cf16f0e2eb304c9a7e17"
+    },
+    {
+      "artifactCheck": {
+        "manifest": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/renders/WalkthroughRenderTests/walkthrough-renders.json",
+        "manifestSHA256": "965d45d64cc4f4851c86794b626f9f9e94b428344862d8f2e8bffb8d5852608e",
+        "meaning": "Artifacts and declared checks exist; visual inspection remains separate.",
+        "pngCount": 31,
+        "status": "passed"
+      },
+      "artifacts": [
+        {
+          "bytes": 128798,
+          "path": "01-daily-before@2x.png",
+          "sha256": "2afa89cbc1ec7e129b95231a324fed1072f6cc7342c96d1d976b191e104ab614"
+        },
+        {
+          "bytes": 129566,
+          "path": "02-drop-target@2x.png",
+          "sha256": "aa0c562161a3b95ab18c21ade45821e82768859dc11df9683e85c9778fb84371"
+        },
+        {
+          "bytes": 172095,
+          "path": "03-capture-success@2x.png",
+          "sha256": "607f5e09ce20d69317c789ed059a29a1fefabf600177650b74afd94c751d3af7"
+        },
+        {
+          "bytes": 166606,
+          "path": "04-daily-captured@2x.png",
+          "sha256": "a7b6eb5bcba379e80638f9fca1d993916355372c3b410330b33ebb83b152a508"
+        },
+        {
+          "bytes": 148227,
+          "path": "05-daily-files@2x.png",
+          "sha256": "9d792d4a7ab78eb464a2a3b96c3ae2ba739886528c115f8fe241e62324868b78"
+        },
+        {
+          "bytes": 236826,
+          "path": "06-weekly@2x.png",
+          "sha256": "5ff1b19aa79043c45fbeda3b14c91126aaf00d235992c0180faf45b8d92a7557"
+        },
+        {
+          "bytes": 31275,
+          "path": "07-week-search-menu@2x.png",
+          "sha256": "fede3e5f8cb9d605705e6c13faccfdd01d77c9e74622710ea0d6092bc14495d3"
+        },
+        {
+          "bytes": 175664,
+          "path": "08-search-empty@2x.png",
+          "sha256": "168d8eda553ae83dde1584e3a119569726dd1ce4a1232b6b0741c634e89f86a6"
+        },
+        {
+          "bytes": 143414,
+          "path": "09-search-launch@2x.png",
+          "sha256": "bc32303a74f85c5c1e5a434f52f439fa13b4d59f9c0ce9badbf97ade946d7dd7"
+        },
+        {
+          "bytes": 144872,
+          "path": "10-search-launch-check@2x.png",
+          "sha256": "aabc71b9baad1f4ac56adf55dd69d738157304ba8d88e283ccfdaea78e3fec16"
+        },
+        {
+          "bytes": 145672,
+          "path": "11-search-result@2x.png",
+          "sha256": "738abd1ec1e2613c36be0dc37f9102b3273d08789c97540c6a18068e09670562"
+        },
+        {
+          "bytes": 139379,
+          "path": "12-detail-before@2x.png",
+          "sha256": "3146df2b71b1463b4983692308c9be04fc6dca88b9e39f66d70e1be4e31445a4"
+        },
+        {
+          "bytes": 150448,
+          "path": "13-comment-empty@2x.png",
+          "sha256": "7d35cf2b31e87be94d593c869ae11f5249d23601025dc475d46dfaa954847f7b"
+        },
+        {
+          "bytes": 159826,
+          "path": "14-comment-draft@2x.png",
+          "sha256": "3607dbab8c62916b6ec9c35639c35ff6792b3156db29d5ad3df4717a4599e308"
+        },
+        {
+          "bytes": 145156,
+          "path": "15-comment-saved@2x.png",
+          "sha256": "7cd39537a5738cfe39c58209b88e73d9c114e1f5392486d5b41f90b0cd4ba471"
+        },
+        {
+          "bytes": 138023,
+          "path": "16-before-task@2x.png",
+          "sha256": "ca0879f64baab27d79491d1da7e1ab240ac7a30dcc8c168c37e309143599b1a5"
+        },
+        {
+          "bytes": 177743,
+          "path": "17-task-created@2x.png",
+          "sha256": "0fe6c189dedf7a89339a328d6c6c90b50c900f169479edd6e19a735cd7831237"
+        },
+        {
+          "bytes": 173861,
+          "path": "18-daily-task@2x.png",
+          "sha256": "37a09f9fa332a37bd2d45da8f399b0b3548a0890bd057ffe4f9f45c672dad943"
+        },
+        {
+          "bytes": 169782,
+          "path": "19-daily-completed@2x.png",
+          "sha256": "5b72ed1849fb44ec1f3fcc555ddc88acac050dc7741f4ef98a1e19829117eeff"
+        },
+        {
+          "bytes": 195383,
+          "path": "20-settings-auto-off@2x.png",
+          "sha256": "6ae5c45674cc6007002b822a4a58016081cc5d57096fa671265a4660a54fe8fd"
+        },
+        {
+          "bytes": 212784,
+          "path": "21-settings-local@2x.png",
+          "sha256": "191aea31a1f19f131cb95bd41ba8719f09192bf3f2ac9451b48818a8e57a1907"
+        },
+        {
+          "bytes": 174871,
+          "path": "22-weekly-export@2x.png",
+          "sha256": "83e09f269a68b04dabc51a1bdb45fa66a733ec22ff9f5d687a3f74cd2e25d595"
+        },
+        {
+          "bytes": 42690,
+          "path": "23-export-menu@2x.png",
+          "sha256": "60cf011e987edd57bb3e1d557828651e7be201290ccfb1faecb8c24e4e855ff2"
+        },
+        {
+          "bytes": 47110,
+          "path": "24-export-copied@2x.png",
+          "sha256": "b1417588d8fb678384adf937b7eb8a9177665fd13e5262dd4e003a20ea098f08"
+        },
+        {
+          "bytes": 169782,
+          "path": "25-daily-final@2x.png",
+          "sha256": "5b72ed1849fb44ec1f3fcc555ddc88acac050dc7741f4ef98a1e19829117eeff"
+        },
+        {
+          "bytes": 636,
+          "path": "DaBin-2026-10-05.txt",
+          "sha256": "7fc7e99c3326641d4029eac95ae2ed985db116e76648fcdd11701d4d5f2b9895"
+        },
+        {
+          "bytes": 889,
+          "path": "DaBin-Week-2026-09-29-to-2026-10-05.txt",
+          "sha256": "6f79c90a3c94df9a2236d26bb5a2d47a975f103dc03590d3a2ec237d4a1c0944"
+        },
+        {
+          "bytes": 14039,
+          "path": "Launch-plan.pdf",
+          "sha256": "b581ecbc81835d87476b0a305258a22e9bc2e4d198abab1577e8066183c85772"
+        },
+        {
+          "bytes": 4555,
+          "path": "fixture-file-icon@2x.png",
+          "sha256": "aa90e20e1bcffed174d66eaf3d770160e3f156d9baa15d5e582bb19621004061"
+        },
+        {
+          "bytes": 42617,
+          "path": "robot-curious@2x.png",
+          "sha256": "6c884fca79ac659de847039414b5325f3fc9f6e932c831b82ec2c03167198389"
+        },
+        {
+          "bytes": 42354,
+          "path": "robot-digesting@2x.png",
+          "sha256": "610ae0ebf151a0d2d2c14c69161d25405bec8919efdc05f1b97d606d73420a45"
+        },
+        {
+          "bytes": 42332,
+          "path": "robot-hungry@2x.png",
+          "sha256": "abacb458ee19d6ea1b969fe2a644c17650f85310635f1cffccacf39a28a06a48"
+        },
+        {
+          "bytes": 42617,
+          "path": "robot-idle@2x.png",
+          "sha256": "6c884fca79ac659de847039414b5325f3fc9f6e932c831b82ec2c03167198389"
+        },
+        {
+          "bytes": 42708,
+          "path": "robot-success@2x.png",
+          "sha256": "726859421929ceb22108b8e3a949e766544d8a264d1551f8ef9de47b2c49fc61"
+        },
+        {
+          "bytes": 9412,
+          "path": "walkthrough-renders.json",
+          "sha256": "965d45d64cc4f4851c86794b626f9f9e94b428344862d8f2e8bffb8d5852608e"
+        }
+      ],
+      "bundle": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/apps/WalkthroughRenderTests.app",
+      "bundleInfoOverrides": {
+        "CFBundleExecutable": "WalkthroughRenderTests",
+        "CFBundleIdentifier": "com.dabin.mac.qa.extra.walkthroughrendertests",
+        "CFBundleName": "WalkthroughRenderTests",
+        "LSUIElement": true
+      },
+      "bundleInfoSHA256": "77cec0e4c264cbd97828967e32fda0640779c6126e7838425858689c3c979246",
+      "compile": {
+        "command": [
+          "xcrun",
+          "swiftc",
+          "-swift-version",
+          "5",
+          "-target",
+          "arm64-apple-macosx14.0",
+          "-module-cache-path",
+          "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/ModuleCache",
+          "-warnings-as-errors",
+          "-parse-as-library",
+          "-O",
+          "-whole-module-optimization",
+          "-I",
+          "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa-cache/app-store-70feee950c20ceae70b7bcf9494d1b269c9a089191bf243f85ee35071457d45b",
+          "-L",
+          "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa-cache/app-store-70feee950c20ceae70b7bcf9494d1b269c9a089191bf243f85ee35071457d45b",
+          "-lDaBinTestCore",
+          "-Xlinker",
+          "-rpath",
+          "-Xlinker",
+          "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa-cache/app-store-70feee950c20ceae70b7bcf9494d1b269c9a089191bf243f85ee35071457d45b",
+          "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/fixture/WalkthroughRenderTests.swift",
+          "-o",
+          "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/apps/WalkthroughRenderTests.app/Contents/MacOS/WalkthroughRenderTests"
+        ],
+        "exitCode": 0,
+        "log": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/logs/WalkthroughRenderTests-compile.log",
+        "logSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "seconds": 2.416,
+        "shellCommand": "xcrun swiftc -swift-version 5 -target arm64-apple-macosx14.0 -module-cache-path /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/ModuleCache -warnings-as-errors -parse-as-library -O -whole-module-optimization -I /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa-cache/app-store-70feee950c20ceae70b7bcf9494d1b269c9a089191bf243f85ee35071457d45b -L /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa-cache/app-store-70feee950c20ceae70b7bcf9494d1b269c9a089191bf243f85ee35071457d45b -lDaBinTestCore -Xlinker -rpath -Xlinker /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa-cache/app-store-70feee950c20ceae70b7bcf9494d1b269c9a089191bf243f85ee35071457d45b /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/fixture/WalkthroughRenderTests.swift -o /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/apps/WalkthroughRenderTests.app/Contents/MacOS/WalkthroughRenderTests",
+        "status": "passed",
+        "timeoutSeconds": 180,
+        "workingDirectory": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/fixture/native"
+      },
+      "compileCommand": [
+        "xcrun",
+        "swiftc",
+        "-swift-version",
+        "5",
+        "-target",
+        "arm64-apple-macosx14.0",
+        "-module-cache-path",
+        "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/ModuleCache",
+        "-warnings-as-errors",
+        "-parse-as-library",
+        "-O",
+        "-whole-module-optimization",
+        "-I",
+        "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa-cache/app-store-70feee950c20ceae70b7bcf9494d1b269c9a089191bf243f85ee35071457d45b",
+        "-L",
+        "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa-cache/app-store-70feee950c20ceae70b7bcf9494d1b269c9a089191bf243f85ee35071457d45b",
+        "-lDaBinTestCore",
+        "-Xlinker",
+        "-rpath",
+        "-Xlinker",
+        "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa-cache/app-store-70feee950c20ceae70b7bcf9494d1b269c9a089191bf243f85ee35071457d45b",
+        "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/fixture/WalkthroughRenderTests.swift",
+        "-o",
+        "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/apps/WalkthroughRenderTests.app/Contents/MacOS/WalkthroughRenderTests"
+      ],
+      "executableSHA256": "ea25f04f5cb70ea5a9ff66426e748f09868d73390b3bc627298f0e7ffc7aef4a",
+      "name": "WalkthroughRenderTests",
+      "output": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/renders/WalkthroughRenderTests",
+      "resourceSHA256": {
+        "AppIcon.icns": "9ba9c0e655b1b9956a016d9d1a547d5fa598522664d1d21d2caf292ef6a1dadd",
+        "PrivacyInfo.xcprivacy": "a9863c850f76e33c454b61aea834e1a9980db80a6d1d659b0d7a68ae835ee014",
+        "PrivacyPolicy.md": "9b3065a0256f11cee42dc8ae4d84a6f862638ae89ce34f1d4eada3647a70da8d",
+        "robot.svg": "20bd5c1de92dd5e79ef259430c441e2b9a1d3608812ae79e5b2999a64eaf8a7a"
+      },
+      "runtime": {
+        "command": [
+          "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/apps/WalkthroughRenderTests.app/Contents/MacOS/WalkthroughRenderTests",
+          "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/renders/WalkthroughRenderTests",
+          "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/fixture/fictional-launch-checklist.txt"
+        ],
+        "exitCode": 0,
+        "log": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/logs/WalkthroughRenderTests.log",
+        "logSHA256": "eb7ab316cf867c4f0b442cd4d0e58f3d70dd982d11abca485c433d8c039e5a7f",
+        "seconds": 11.972,
+        "shellCommand": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/apps/WalkthroughRenderTests.app/Contents/MacOS/WalkthroughRenderTests /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/renders/WalkthroughRenderTests /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/fixture/fictional-launch-checklist.txt",
+        "status": "passed",
+        "timeoutSeconds": 180,
+        "workingDirectory": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/fixture/native"
+      },
+      "runtimeCommand": [
+        "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/apps/WalkthroughRenderTests.app/Contents/MacOS/WalkthroughRenderTests",
+        "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/renders/WalkthroughRenderTests",
+        "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/fixture/fictional-launch-checklist.txt"
+      ],
+      "scope": "Synthetic PDF import/index/search/comment/task/export/archive arc; direct-channel fixture refuses network/installer, App Store branch uses the production inert updater.",
+      "status": "passed",
+      "testSource": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Tests/WalkthroughRenderTests.swift",
+      "testSourceSHA256": "44631784de1ad2dcf05ca32d96c83e5311dde5240f22a48478aa4de98347f2bd",
+      "timeoutSeconds": 180,
+      "workingDirectory": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/fixture/native",
+      "wrapper": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/fixture/WalkthroughRenderTests.swift",
+      "wrapperSHA256": "22f31a6d7a5496f693f5ac2fa892ce191cc9ce627600a3b54c7618cbb174519a"
+    },
+    {
+      "artifactCheck": {
+        "manifest": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/renders/IslandPlaygroundRender/native-render.json",
+        "manifestSHA256": "8af3ee58e349b5be26f55b390dde6ea6fcb8be80ab4f4fbde0cd3d84181bc792",
+        "meaning": "Artifacts and declared checks exist; visual inspection remains separate.",
+        "pngCount": 328,
+        "status": "passed"
+      },
+      "artifacts": [
+        {
+          "bytes": 516370,
+          "path": "contact-sheet.png",
+          "sha256": "d01209c9d37ddd16f5c9e78c31d7e7e8189468f22bdf1307cfd8bfba3105b17c"
+        },
+        {
+          "bytes": 231370,
+          "path": "frames/frame-00000.png",
+          "sha256": "1741a5d48191ea90f2eec2b4fbb5f71c584788a516daf5dc2c0bbb25c9c9b601"
+        },
+        {
+          "bytes": 252361,
+          "path": "frames/frame-00001.png",
+          "sha256": "53f5571dcd961c77b25dcf0b95e2a364591522d21f81857020147df42f507e22"
+        },
+        {
+          "bytes": 256494,
+          "path": "frames/frame-00002.png",
+          "sha256": "3bad2e80000888d723edcf13d56a698ecf2411fa0eb7746ea42aec25a65542ad"
+        },
+        {
+          "bytes": 256537,
+          "path": "frames/frame-00003.png",
+          "sha256": "6d170177bd946a770e8fe979996ac52cb41da50abad9f80a1d49f6af371b54ea"
+        },
+        {
+          "bytes": 256539,
+          "path": "frames/frame-00004.png",
+          "sha256": "0016d83dcccc15186e83ae69a9a6fad5140ac4b23f4d7e389b4ed06675ff8504"
+        },
+        {
+          "bytes": 256579,
+          "path": "frames/frame-00005.png",
+          "sha256": "cc142d1cc94052240c1a0656a2923e4efd8bb59a63a5fc7643875416ff4342a1"
+        },
+        {
+          "bytes": 256413,
+          "path": "frames/frame-00006.png",
+          "sha256": "bb753d05fc95e1ae9b139e4a0a2fb8776d328400cb79dbd1e7019829e16ba87d"
+        },
+        {
+          "bytes": 256917,
+          "path": "frames/frame-00007.png",
+          "sha256": "6dfcc85453f0fea129a97a64661ec0394ac859ef800f6a6221f4d16b2d045cda"
+        },
+        {
+          "bytes": 256663,
+          "path": "frames/frame-00008.png",
+          "sha256": "9455477260d60b556a7c18533851779ee644c0ca13cd7ce52a461748fbfccc99"
+        },
+        {
+          "bytes": 256802,
+          "path": "frames/frame-00009.png",
+          "sha256": "8f4d9864103188b1560a2d000d4f0bd569156042a55fb81d08ba087a1d649e8a"
+        },
+        {
+          "bytes": 256888,
+          "path": "frames/frame-00010.png",
+          "sha256": "ecd51d65ab22fbbc4676389278917cd33e3d79987e2d4bedf2bd9308a6aab4e4"
+        },
+        {
+          "bytes": 257241,
+          "path": "frames/frame-00011.png",
+          "sha256": "624bc47ea993ff07b32871ac5c462d73f5abd4cc2fea94dd3ad5be53537125bb"
+        },
+        {
+          "bytes": 257476,
+          "path": "frames/frame-00012.png",
+          "sha256": "ed604283a9e2082d824888670b8cd2033a6dfe51dd8b5f27a0e4c9167d546753"
+        },
+        {
+          "bytes": 257660,
+          "path": "frames/frame-00013.png",
+          "sha256": "2cb83f742e172f691b815678afbf3695c21188812ef877380ccf5dfc3b7b36c2"
+        },
+        {
+          "bytes": 257404,
+          "path": "frames/frame-00014.png",
+          "sha256": "e3098039e666f5a3b7fb1b66e3b2e7673fbab39e2a9c9aa3ac3ea75f391d5f69"
+        },
+        {
+          "bytes": 257709,
+          "path": "frames/frame-00015.png",
+          "sha256": "663aaa4e528c6457fddd77c5ebc3efaa49280b3474daa47b0e0d4967b0a74a1e"
+        },
+        {
+          "bytes": 257592,
+          "path": "frames/frame-00016.png",
+          "sha256": "62d435effefc06ad24a0207c1f92fc627053e0f78ba4a9a7382a4377298671f8"
+        },
+        {
+          "bytes": 257605,
+          "path": "frames/frame-00017.png",
+          "sha256": "6df880aacf2b8da38ffc4b31f63763923b02f8df1ba79cf2b98eeed061418abe"
+        },
+        {
+          "bytes": 257452,
+          "path": "frames/frame-00018.png",
+          "sha256": "cce16e392a5924f7c20a6dbfceba652a68e08f6fbaa0a8f620816327f642301f"
+        },
+        {
+          "bytes": 257115,
+          "path": "frames/frame-00019.png",
+          "sha256": "4b0b74b5a88e4ee1d0d80611297cbef5d60948cf4cc89d19843ce75adf9881ac"
+        },
+        {
+          "bytes": 256851,
+          "path": "frames/frame-00020.png",
+          "sha256": "1e7c04e73fcc8f7ebe4245240ac341d16055a998dffa0d143fd2eac293b2361c"
+        },
+        {
+          "bytes": 261455,
+          "path": "frames/frame-00021.png",
+          "sha256": "4efa49342ff6fa4ee705c1940afa180b7bf259e416f816414b1a05dd610005c1"
+        },
+        {
+          "bytes": 263843,
+          "path": "frames/frame-00022.png",
+          "sha256": "5aafd876ed76a830b7cbc37e347831b89949f1c3c10312f6994aca7791370ccd"
+        },
+        {
+          "bytes": 264536,
+          "path": "frames/frame-00023.png",
+          "sha256": "1669bb64ffac5ba6fcb7bbb213cfc1ae7abb1283d36d62af4f2a9740effcf851"
+        },
+        {
+          "bytes": 264757,
+          "path": "frames/frame-00024.png",
+          "sha256": "38f0dd257174aadc69b7b7d65f8eb7a236ea8c666a0bc5a945b3d9ddddc7c30a"
+        },
+        {
+          "bytes": 264703,
+          "path": "frames/frame-00025.png",
+          "sha256": "a86be896a5e6ffb668c23e752f9814e5d3d18e9944930d261e139c0e9e750606"
+        },
+        {
+          "bytes": 265869,
+          "path": "frames/frame-00026.png",
+          "sha256": "7ad782788d01066a22d34462ac558950bb179cad61bd5f79f667eebd1363e0dd"
+        },
+        {
+          "bytes": 266204,
+          "path": "frames/frame-00027.png",
+          "sha256": "f7c82da1bb3a267676ae6aac2e3584c727d997aa3656d372d05ee942fa20afbc"
+        },
+        {
+          "bytes": 263290,
+          "path": "frames/frame-00028.png",
+          "sha256": "220b8a93a5e9dddb096d6f88b24fa5b2eced4ec9d0e591dbcc8799c2ca267d9a"
+        },
+        {
+          "bytes": 262758,
+          "path": "frames/frame-00029.png",
+          "sha256": "a1349f8c782490e43b95776d01a8ab4c1e5876d1fa0ee18e4cff20644f30281c"
+        },
+        {
+          "bytes": 262144,
+          "path": "frames/frame-00030.png",
+          "sha256": "6a56c0f086b8f018616814d7bfe93a0dff18fafff2709224cc22884cec8bafeb"
+        },
+        {
+          "bytes": 261356,
+          "path": "frames/frame-00031.png",
+          "sha256": "11054bc9967f6ac4f8aa7e4e5ddf60814a4c5ac1d4176a66e74fe8d786889d26"
+        },
+        {
+          "bytes": 259927,
+          "path": "frames/frame-00032.png",
+          "sha256": "eddf383b43aa7197d41126c7c23d26daf5ad0ba4efd01b673643b0d7bbe82d95"
+        },
+        {
+          "bytes": 259851,
+          "path": "frames/frame-00033.png",
+          "sha256": "a37d3762f79eac614031903a81aae0a96758c756bcc2bd512ccb95398e154970"
+        },
+        {
+          "bytes": 260640,
+          "path": "frames/frame-00034.png",
+          "sha256": "25d028c45ab12a7aa1ad8b73f03bfefa1530d469ac269b639579071ecc1f6ef3"
+        },
+        {
+          "bytes": 261028,
+          "path": "frames/frame-00035.png",
+          "sha256": "6c0752ce8a3920d1945c5e0df0681b5c509fbc6b2bbf0312ff100afba123fdd1"
+        },
+        {
+          "bytes": 258484,
+          "path": "frames/frame-00036.png",
+          "sha256": "4aec1d2732822cb2531d8406ad1afbfb21aa95298c00a3676236ccbdca3f8b82"
+        },
+        {
+          "bytes": 257599,
+          "path": "frames/frame-00037.png",
+          "sha256": "a900633eea7b5295317a7bdd169a9fc3b6cdac4c6ce650be4a3664b664fa8564"
+        },
+        {
+          "bytes": 256351,
+          "path": "frames/frame-00038.png",
+          "sha256": "0bc44117639e52462904fe7c1ab0bc0c61c5f85caab67a365294495c38a34301"
+        },
+        {
+          "bytes": 256068,
+          "path": "frames/frame-00039.png",
+          "sha256": "6fbd62a4f5cb09c97f6ac38f5bf4a2986752573fe192e8f344eebe3a38d464a4"
+        },
+        {
+          "bytes": 256149,
+          "path": "frames/frame-00040.png",
+          "sha256": "620412101aaeab1d2cdbeadf71bf7066f6c072a92d1ca6e710d6fbf82502f361"
+        },
+        {
+          "bytes": 256345,
+          "path": "frames/frame-00041.png",
+          "sha256": "731678bf09b085292168e91cae95e90ba59d9f132b6d9bfcba2218201b774004"
+        },
+        {
+          "bytes": 256613,
+          "path": "frames/frame-00042.png",
+          "sha256": "1fd5afbff68d49111c4b26bbec8719532d02c04b6bf62d4953ef4b2d39f5f9de"
+        },
+        {
+          "bytes": 257153,
+          "path": "frames/frame-00043.png",
+          "sha256": "e2f1fd19bb1628adb64453efde340d37823c8a79259794ea40ce5c003f91a34e"
+        },
+        {
+          "bytes": 257190,
+          "path": "frames/frame-00044.png",
+          "sha256": "12d9f7b7349d5ba3365fe7ef2239b33373ab8c2358fbca1524b3939b1c13098b"
+        },
+        {
+          "bytes": 257469,
+          "path": "frames/frame-00045.png",
+          "sha256": "c40911ee26b047b78105e64b6e94482048800edb1af7b8b19e86f4373e59bdef"
+        },
+        {
+          "bytes": 257729,
+          "path": "frames/frame-00046.png",
+          "sha256": "faa80fec49f94dfbb92e30f0ed69422d91158494b5f00a639c48d16f5dc4e750"
+        },
+        {
+          "bytes": 258686,
+          "path": "frames/frame-00047.png",
+          "sha256": "9fe61c81020fdec5a05d8a03d44f8ed16aba2b4da8b9da30a2fc4eb3f2e64680"
+        },
+        {
+          "bytes": 262727,
+          "path": "frames/frame-00048.png",
+          "sha256": "ecb0eaf6310762647b280c9f69f73e242394b0a46f761ae1384c60ebb1b20cf0"
+        },
+        {
+          "bytes": 262538,
+          "path": "frames/frame-00049.png",
+          "sha256": "9c21e6ff8f3ce88160efaf355ed46bebf0b7dfab12f3de0486bca6724c3d76ff"
+        },
+        {
+          "bytes": 263313,
+          "path": "frames/frame-00050.png",
+          "sha256": "c65f946299d70141c0a07375e6fc4f5947ef1e18bd0bc3b30cdd97203ce4fcb2"
+        },
+        {
+          "bytes": 262954,
+          "path": "frames/frame-00051.png",
+          "sha256": "bd9b32835500ecb81a9641831db24621578a713650e5bd0584a0dcd78065e5a3"
+        },
+        {
+          "bytes": 262856,
+          "path": "frames/frame-00052.png",
+          "sha256": "19ed48b9c65db3b5e2f7b6ccb3530539cd4931aa43d8fe219ae20ecdc1fbf50b"
+        },
+        {
+          "bytes": 262859,
+          "path": "frames/frame-00053.png",
+          "sha256": "1f561c5497a78e1cfc58639269af75f8e2949625d4096c53d27bb9bcf609e788"
+        },
+        {
+          "bytes": 262838,
+          "path": "frames/frame-00054.png",
+          "sha256": "8d1d3e27a0fda385689084b7ad4368cd43d136f32e9bebfe15dcf0fbcc483918"
+        },
+        {
+          "bytes": 262943,
+          "path": "frames/frame-00055.png",
+          "sha256": "2b04da4e7867083f87f64d71ead0748119a5d2fcf92e1d8d754a809413880d01"
+        },
+        {
+          "bytes": 262643,
+          "path": "frames/frame-00056.png",
+          "sha256": "8766ce4b9ea15a7fadf0c460d252a2bafb94142e271a394750c2644eb99cfda5"
+        },
+        {
+          "bytes": 262412,
+          "path": "frames/frame-00057.png",
+          "sha256": "32bacc52fc1ef6d8d87b4b2550307f576cc80e9165cb7cdb4a42713c64488b4c"
+        },
+        {
+          "bytes": 262641,
+          "path": "frames/frame-00058.png",
+          "sha256": "f94d3747ac9179bf257850cec6461e2ccfb77e39485b9101a3cb6546aef6be5e"
+        },
+        {
+          "bytes": 262595,
+          "path": "frames/frame-00059.png",
+          "sha256": "3235d2340862d7a6e56bd98cc7d3db689c87b6f471709b79f233fa4b4932cb41"
+        },
+        {
+          "bytes": 262482,
+          "path": "frames/frame-00060.png",
+          "sha256": "199425b4fb5d3e3aa08b5819be1ba364e775a5c00c4f2e53e9ef0c814cf13dc2"
+        },
+        {
+          "bytes": 262400,
+          "path": "frames/frame-00061.png",
+          "sha256": "b8651dacde960981c67ec884392e9291a693fa68354a73d7f0e7ecff9753c868"
+        },
+        {
+          "bytes": 263386,
+          "path": "frames/frame-00062.png",
+          "sha256": "cf12c4da5f003dd33f332cc143dd30c06268415cce2136e1e04aa7df2946f186"
+        },
+        {
+          "bytes": 258044,
+          "path": "frames/frame-00063.png",
+          "sha256": "1b2b439be226022277c5fb0914d9f4c9e9cc6797c821d86291edece86338db1a"
+        },
+        {
+          "bytes": 253231,
+          "path": "frames/frame-00064.png",
+          "sha256": "74d5f46a587197f9f8479ed3f333816c387885cc7edcb1564aa69dc1584357ae"
+        },
+        {
+          "bytes": 249456,
+          "path": "frames/frame-00065.png",
+          "sha256": "2599ed5c9bc0ca375a77d4b3d9b775de30d657223f32eac69554a790d7437ad3"
+        },
+        {
+          "bytes": 247180,
+          "path": "frames/frame-00066.png",
+          "sha256": "2b3dc5a1bb0cbe334194af5f253b25cc4d5e0ae1f05d3028ae996c2120bcbd2e"
+        },
+        {
+          "bytes": 243907,
+          "path": "frames/frame-00067.png",
+          "sha256": "51adb515abef1e98c10ae036ec775eebe404f9b15cba1ad4b8872a88c45b175e"
+        },
+        {
+          "bytes": 241684,
+          "path": "frames/frame-00068.png",
+          "sha256": "b471aed1b639bd390e769d8c6e5fe431f4b3cff3369aac91b80a27038ab6e707"
+        },
+        {
+          "bytes": 239642,
+          "path": "frames/frame-00069.png",
+          "sha256": "2d73c964e8f6f9af81d412e7fb0629bd3349b748c2fa7a1d4c65aba18f5b2f79"
+        },
+        {
+          "bytes": 237698,
+          "path": "frames/frame-00070.png",
+          "sha256": "40857c98856435e4d36ba720bbc0c70039c56f7ad9cccfeb404ebd6a340bc6d3"
+        },
+        {
+          "bytes": 235911,
+          "path": "frames/frame-00071.png",
+          "sha256": "1d95d3301725c90dbab643a80f70426499404125f0d4f1ad8329a27a282ce1c7"
+        },
+        {
+          "bytes": 234938,
+          "path": "frames/frame-00072.png",
+          "sha256": "5ff71e69eb9ab32923a062ee0aafb4c3b24d77383fd9f704d00594e7f8747875"
+        },
+        {
+          "bytes": 233167,
+          "path": "frames/frame-00073.png",
+          "sha256": "aaa46db2a758100826089f83bd9c489003b02d1a4427c4db0ced2403adfee446"
+        },
+        {
+          "bytes": 231412,
+          "path": "frames/frame-00074.png",
+          "sha256": "f34d5c22ec4f608279c0c167ea50d02ef5e3e284023a87f942e46ecee9d3502d"
+        },
+        {
+          "bytes": 256438,
+          "path": "frames/frame-00075.png",
+          "sha256": "965c583d32e8911fc79b4142a146d7395f06d33c267218d780fae1296e146bb6"
+        },
+        {
+          "bytes": 256438,
+          "path": "frames/frame-00076.png",
+          "sha256": "965c583d32e8911fc79b4142a146d7395f06d33c267218d780fae1296e146bb6"
+        },
+        {
+          "bytes": 256438,
+          "path": "frames/frame-00077.png",
+          "sha256": "965c583d32e8911fc79b4142a146d7395f06d33c267218d780fae1296e146bb6"
+        },
+        {
+          "bytes": 256438,
+          "path": "frames/frame-00078.png",
+          "sha256": "965c583d32e8911fc79b4142a146d7395f06d33c267218d780fae1296e146bb6"
+        },
+        {
+          "bytes": 256438,
+          "path": "frames/frame-00079.png",
+          "sha256": "965c583d32e8911fc79b4142a146d7395f06d33c267218d780fae1296e146bb6"
+        },
+        {
+          "bytes": 256438,
+          "path": "frames/frame-00080.png",
+          "sha256": "965c583d32e8911fc79b4142a146d7395f06d33c267218d780fae1296e146bb6"
+        },
+        {
+          "bytes": 256438,
+          "path": "frames/frame-00081.png",
+          "sha256": "965c583d32e8911fc79b4142a146d7395f06d33c267218d780fae1296e146bb6"
+        },
+        {
+          "bytes": 256438,
+          "path": "frames/frame-00082.png",
+          "sha256": "965c583d32e8911fc79b4142a146d7395f06d33c267218d780fae1296e146bb6"
+        },
+        {
+          "bytes": 256438,
+          "path": "frames/frame-00083.png",
+          "sha256": "965c583d32e8911fc79b4142a146d7395f06d33c267218d780fae1296e146bb6"
+        },
+        {
+          "bytes": 234893,
+          "path": "frames/frame-00084.png",
+          "sha256": "a1b9ff45a7a17273aac6c053d9c681b05844b0499ef8a954b7bf8ee72df76586"
+        },
+        {
+          "bytes": 258672,
+          "path": "frames/frame-00085.png",
+          "sha256": "b150f94b95368e5f1e3ebbe103ca761fff05938e4b420c24ea666f9fe6a147ff"
+        },
+        {
+          "bytes": 260368,
+          "path": "frames/frame-00086.png",
+          "sha256": "6be612ac5724ddb510655863e19823aa9318f9de76d76c15b7395d39f171bcaa"
+        },
+        {
+          "bytes": 259982,
+          "path": "frames/frame-00087.png",
+          "sha256": "848b06d785429812a64d9f413e88e9006cb3e0ec08f580f95fd586b55a33c97e"
+        },
+        {
+          "bytes": 259948,
+          "path": "frames/frame-00088.png",
+          "sha256": "0ffe3b34c05cb09da78e9f1c847456aa9bb802e5736af1c73c05d182a25ba71f"
+        },
+        {
+          "bytes": 259874,
+          "path": "frames/frame-00089.png",
+          "sha256": "b5561882630aa23635b1407e44084f8facba014b58dcf65a6d28f35e2e33ba03"
+        },
+        {
+          "bytes": 259933,
+          "path": "frames/frame-00090.png",
+          "sha256": "a2de46f1234292b683318b7f5ed45f2ea8c0178b86adcd4254614e9300b65341"
+        },
+        {
+          "bytes": 260435,
+          "path": "frames/frame-00091.png",
+          "sha256": "a4dcbad94f6557bfbc5c618f1c55b4312e6942efad6712ad257695389bdc8fc5"
+        },
+        {
+          "bytes": 260356,
+          "path": "frames/frame-00092.png",
+          "sha256": "8ef02873f66fd637eeebead65b7090cc788cadf14e1fed3dc1f22f1d692866fb"
+        },
+        {
+          "bytes": 260082,
+          "path": "frames/frame-00093.png",
+          "sha256": "d854cac7e00275221fa959763b97dd92f64985326168c15ee25c037ea7e47338"
+        },
+        {
+          "bytes": 260066,
+          "path": "frames/frame-00094.png",
+          "sha256": "371a2e3bf6cdb0acc0fa936709f367a9826d84d16b63525ea5f04ad276020d46"
+        },
+        {
+          "bytes": 260792,
+          "path": "frames/frame-00095.png",
+          "sha256": "096e27951eb93f95e7cb3d92fa4487e842bf759ac8557de795e808eeff9880fd"
+        },
+        {
+          "bytes": 261014,
+          "path": "frames/frame-00096.png",
+          "sha256": "b599363714598939c60674301890d18920e233f49e6b44ee3601490619535c7f"
+        },
+        {
+          "bytes": 260532,
+          "path": "frames/frame-00097.png",
+          "sha256": "897e73e3725aca360b22d3b571f297bd3792738f0adf711ec720e0b0e18198f8"
+        },
+        {
+          "bytes": 260833,
+          "path": "frames/frame-00098.png",
+          "sha256": "b4b67c7ddcde28f535471e5699ff59d8de33339e17f67403b9ed382610121b09"
+        },
+        {
+          "bytes": 261033,
+          "path": "frames/frame-00099.png",
+          "sha256": "fb108b0cc2bdbbe82adfd55689f6041ee5e016a31acd09e0f445133619fbf042"
+        },
+        {
+          "bytes": 261002,
+          "path": "frames/frame-00100.png",
+          "sha256": "61b54efc897b559fe44b05d60db26020746db5b67feb20d075fafbe9d72cf0cb"
+        },
+        {
+          "bytes": 261027,
+          "path": "frames/frame-00101.png",
+          "sha256": "178b38a2fc9facc9b1469071d4e55d5513883dca7c9d8b67bd2cbc488cbabfdd"
+        },
+        {
+          "bytes": 260870,
+          "path": "frames/frame-00102.png",
+          "sha256": "45a64f8b21a3032fca266cd2bc4718aa0fa333d9442b5a8d3c36209b08588a92"
+        },
+        {
+          "bytes": 260469,
+          "path": "frames/frame-00103.png",
+          "sha256": "59572b66664275aa58a45e049774ee61d84dfbec11680b1080cc18acf5859b1a"
+        },
+        {
+          "bytes": 260139,
+          "path": "frames/frame-00104.png",
+          "sha256": "41bade6923720d7683f77b00d66752380837d5096b62c6e8b52be8368ada105c"
+        },
+        {
+          "bytes": 273626,
+          "path": "frames/frame-00105.png",
+          "sha256": "e2071f75968c9e75cb12065b61310ca6eaf9f02bef4d639b670e0398cd6dd046"
+        },
+        {
+          "bytes": 252915,
+          "path": "frames/frame-00106.png",
+          "sha256": "5e9c464d01a5ea0921bde52eccd1dbc863b087df7d9395e5ba3a473cbabedcaf"
+        },
+        {
+          "bytes": 234834,
+          "path": "frames/frame-00107.png",
+          "sha256": "78d4ed8887cc8627e946c3773d572c27cc6832405b690c6727fedcc437fd66a9"
+        },
+        {
+          "bytes": 229787,
+          "path": "frames/frame-00108.png",
+          "sha256": "b44fb2b7e083ab7f78372fe829f8a4708d93d3234cf6bc901c24ef61114a0da1"
+        },
+        {
+          "bytes": 229180,
+          "path": "frames/frame-00109.png",
+          "sha256": "ef86e86428221f9e27c4c43325eb825912bdf01d650aca00c4daaac4cb802789"
+        },
+        {
+          "bytes": 226462,
+          "path": "frames/frame-00110.png",
+          "sha256": "59913715c9c748b367c148340fe95724f81156e85d33edecf71cbf6b63da8d07"
+        },
+        {
+          "bytes": 224646,
+          "path": "frames/frame-00111.png",
+          "sha256": "b7837b4d75e2104a04b37f89d7c109eb7f0472b19087c1076af1c5bf1262fd62"
+        },
+        {
+          "bytes": 251014,
+          "path": "frames/frame-00112.png",
+          "sha256": "bdf790b3b4a0a759d212f9224064b8d000f0afc748d606c980349333680bd1b2"
+        },
+        {
+          "bytes": 261388,
+          "path": "frames/frame-00113.png",
+          "sha256": "85c7a29da5b631ef365901221f9ad1d9a81aa20bcaae00f89c0045f33be52bf4"
+        },
+        {
+          "bytes": 266405,
+          "path": "frames/frame-00114.png",
+          "sha256": "860fddfb899438af7822125c4e6550ab1f8dafb69ea53e173cc30fcd18a56685"
+        },
+        {
+          "bytes": 270018,
+          "path": "frames/frame-00115.png",
+          "sha256": "fe9f3916bba6b91ae335f46fdb25f2696ef230a82e85b1ff1cccd4ef08e69f3f"
+        },
+        {
+          "bytes": 269265,
+          "path": "frames/frame-00116.png",
+          "sha256": "4d14f28275106d7e9c9fb8a5d88477f2e0f0ff39ea5463141aac617ab562781b"
+        },
+        {
+          "bytes": 269300,
+          "path": "frames/frame-00117.png",
+          "sha256": "273cf2a3d71f6e24f1c4d4526000290fed16788adbd174cff9b66affd32128c5"
+        },
+        {
+          "bytes": 270935,
+          "path": "frames/frame-00118.png",
+          "sha256": "761c047cf1d4aae06dd4633ce1d4f148e3b42603bb839913fbd0e649b4430354"
+        },
+        {
+          "bytes": 272872,
+          "path": "frames/frame-00119.png",
+          "sha256": "2ca71612863fde8047f2eaeccaaee7f5cf9d5780a82bafe087dd9e10996c4c5d"
+        },
+        {
+          "bytes": 270586,
+          "path": "frames/frame-00120.png",
+          "sha256": "13451752e007ebe0b240745dbcf59afaa7b0983c7f8b648d42ecc4f7836c1d63"
+        },
+        {
+          "bytes": 270732,
+          "path": "frames/frame-00121.png",
+          "sha256": "70e599f1f9dcf07f6e8b676294b65f75c3978f89043412f920616e66672cb277"
+        },
+        {
+          "bytes": 266437,
+          "path": "frames/frame-00122.png",
+          "sha256": "edac6f29628401e9145c56398996b115715f074c962c4ea6f755fbc1edf76c39"
+        },
+        {
+          "bytes": 262169,
+          "path": "frames/frame-00123.png",
+          "sha256": "deb31811a12ee3c2f807c53fb944a281f1a5d50cc71f0402cc850245d4fefe2b"
+        },
+        {
+          "bytes": 260480,
+          "path": "frames/frame-00124.png",
+          "sha256": "167cbf84e933bc0bf41adb183daa498007e94214c22b90ae186cbabef4e1a684"
+        },
+        {
+          "bytes": 259720,
+          "path": "frames/frame-00125.png",
+          "sha256": "a3033ee65c4465fd24ed2c1c16f18c9d423dd52b57fea534507e66c8e8d645a9"
+        },
+        {
+          "bytes": 260828,
+          "path": "frames/frame-00126.png",
+          "sha256": "c2954ef88fc0aad8720b902fa5ed236216e944aa32176c1019523367130f32f2"
+        },
+        {
+          "bytes": 266876,
+          "path": "frames/frame-00127.png",
+          "sha256": "d9db37093838f9ad11d46ea90f6b2605a877b583809f2aa99d983005165870cb"
+        },
+        {
+          "bytes": 268280,
+          "path": "frames/frame-00128.png",
+          "sha256": "956731462d4e524f81e288bd2d96b59d5550254c4cb3123829d2b145910a06fa"
+        },
+        {
+          "bytes": 269677,
+          "path": "frames/frame-00129.png",
+          "sha256": "c2538c8b49e78671673fb087df093ed18c267ff724b5f3fa12a325c3c67cecbc"
+        },
+        {
+          "bytes": 270255,
+          "path": "frames/frame-00130.png",
+          "sha256": "b2bd093fae36920fc2afbfe0f097430c3a9ff55917cc559c8631d43ab963a149"
+        },
+        {
+          "bytes": 270938,
+          "path": "frames/frame-00131.png",
+          "sha256": "96939029663ac68a1ea7ade40457bc1ff36af6acf8ef98bd88f1974e4c10c215"
+        },
+        {
+          "bytes": 275416,
+          "path": "frames/frame-00132.png",
+          "sha256": "4a0ea0a0e2679b16196f2b435fbdfecbc5144176617cad9dbb845a542150b475"
+        },
+        {
+          "bytes": 275332,
+          "path": "frames/frame-00133.png",
+          "sha256": "5bd8a645a0ad231d4d2a6c7c983b3e8e325f6c180078cd624b7d459ae6f40ad6"
+        },
+        {
+          "bytes": 270023,
+          "path": "frames/frame-00134.png",
+          "sha256": "69e6fe96e387c349b744e27cd28cc4ac1f8d456a2215cd3429abf298126db601"
+        },
+        {
+          "bytes": 267711,
+          "path": "frames/frame-00135.png",
+          "sha256": "27493f72192c6d7f7ef7d58c2f341868e35956864810eff95533f60c7ded397b"
+        },
+        {
+          "bytes": 269543,
+          "path": "frames/frame-00136.png",
+          "sha256": "e958ebbe5565762afb345a3a371ecccfa9c2e237ab8f842912f70c4d7f6ff8db"
+        },
+        {
+          "bytes": 270101,
+          "path": "frames/frame-00137.png",
+          "sha256": "c0f8a2cd41171f5bad88e3738b350ca673ef881263e5de7f11abf67a33357917"
+        },
+        {
+          "bytes": 270216,
+          "path": "frames/frame-00138.png",
+          "sha256": "b6a5f5b17ca706ee0dc5cc19741496f8ef4a156f5635a7d1bb5e80fdc42412ec"
+        },
+        {
+          "bytes": 270417,
+          "path": "frames/frame-00139.png",
+          "sha256": "c2d9c20af06f40e5283f4e56c3f8bd024765b0472dd46b257469c1ececc59203"
+        },
+        {
+          "bytes": 269192,
+          "path": "frames/frame-00140.png",
+          "sha256": "33fa8e874700a85aec83a2c86435dbf16134c3263bf3a1a548476a1bba7b9bb3"
+        },
+        {
+          "bytes": 267811,
+          "path": "frames/frame-00141.png",
+          "sha256": "72710d30562a94963c3360849a33dc51866bee280412c352dc85134615a92560"
+        },
+        {
+          "bytes": 267003,
+          "path": "frames/frame-00142.png",
+          "sha256": "12df65173f63a1080a4a300bc6dcffdddaf31271846fa310ca7ceb3e03c94833"
+        },
+        {
+          "bytes": 266537,
+          "path": "frames/frame-00143.png",
+          "sha256": "68bab2f4d9b5462c15ce9344fd39c7e5893cfcd00b357f0d8e016690554f5461"
+        },
+        {
+          "bytes": 266096,
+          "path": "frames/frame-00144.png",
+          "sha256": "f13275bdc0425744d55f4689d093decd5f1b53cdc879b22d68a03c1db49b54ae"
+        },
+        {
+          "bytes": 265911,
+          "path": "frames/frame-00145.png",
+          "sha256": "b5a1c80f9c1099ca6d69b7dc38c990ef877a2a61da274979b1bb5104c17abd08"
+        },
+        {
+          "bytes": 266872,
+          "path": "frames/frame-00146.png",
+          "sha256": "0d2fead5af2ad7f8d36d3bbfd625d62c830502af1fc27aced442499cb90c7d9f"
+        },
+        {
+          "bytes": 262590,
+          "path": "frames/frame-00147.png",
+          "sha256": "f75a3d3694849e8ee2bae84045a15b79950adc2ffb89d57f779a8fb7e5eb3b27"
+        },
+        {
+          "bytes": 257831,
+          "path": "frames/frame-00148.png",
+          "sha256": "3a55aff3298c70fe1cb31e0b60e1687bad2fd1c703d1baa00c9cb509ae94f88a"
+        },
+        {
+          "bytes": 251673,
+          "path": "frames/frame-00149.png",
+          "sha256": "ee8a4ece152fa1b49e5227d5b0220586d69e52126215dbd8361857cef3de05c6"
+        },
+        {
+          "bytes": 248451,
+          "path": "frames/frame-00150.png",
+          "sha256": "0ddfbbe8ebf029c579eaa7adfb81a3f2d201f20f49d14b0d12941298763ce487"
+        },
+        {
+          "bytes": 246175,
+          "path": "frames/frame-00151.png",
+          "sha256": "6076d56d191de4ae6ace0104a5cf33791cd179f9c9f7e507df79c487529f5b7e"
+        },
+        {
+          "bytes": 244492,
+          "path": "frames/frame-00152.png",
+          "sha256": "a6ad2a2a626e22f0960a88b2e34f0f09f4539cc9b17cc3088c8f2fc3a01904f4"
+        },
+        {
+          "bytes": 242599,
+          "path": "frames/frame-00153.png",
+          "sha256": "27a7c624c4137ac3b571d0d227558dd4dc6607a3d61ad6c7784d057c30db5541"
+        },
+        {
+          "bytes": 241250,
+          "path": "frames/frame-00154.png",
+          "sha256": "e9dd3ce7c896953adabf4ac8ed3033ce41280319831ff8af89f5d42344da69b5"
+        },
+        {
+          "bytes": 239318,
+          "path": "frames/frame-00155.png",
+          "sha256": "2f48c7a161c929364bb1bb17ee5d9e721241308a91357d15c88817f7c089688c"
+        },
+        {
+          "bytes": 238491,
+          "path": "frames/frame-00156.png",
+          "sha256": "3054da28b5602203a68d0593f8d8b45d2052f09328af1ef329367e5f0ed71ced"
+        },
+        {
+          "bytes": 236718,
+          "path": "frames/frame-00157.png",
+          "sha256": "ae539ca14e07bfacfce6614d21ead9dae2028e54c2e167f812cb9c7edaba4d51"
+        },
+        {
+          "bytes": 234939,
+          "path": "frames/frame-00158.png",
+          "sha256": "b651854c889d5cf5482cd453f130a118f16d669848bd8256f0314bd075dc20b9"
+        },
+        {
+          "bytes": 259818,
+          "path": "frames/frame-00159.png",
+          "sha256": "b187b727e48137b76028fe863efb08112e932171711c1985c0ee4400ba9371a0"
+        },
+        {
+          "bytes": 259818,
+          "path": "frames/frame-00160.png",
+          "sha256": "b187b727e48137b76028fe863efb08112e932171711c1985c0ee4400ba9371a0"
+        },
+        {
+          "bytes": 259818,
+          "path": "frames/frame-00161.png",
+          "sha256": "b187b727e48137b76028fe863efb08112e932171711c1985c0ee4400ba9371a0"
+        },
+        {
+          "bytes": 259818,
+          "path": "frames/frame-00162.png",
+          "sha256": "b187b727e48137b76028fe863efb08112e932171711c1985c0ee4400ba9371a0"
+        },
+        {
+          "bytes": 259818,
+          "path": "frames/frame-00163.png",
+          "sha256": "b187b727e48137b76028fe863efb08112e932171711c1985c0ee4400ba9371a0"
+        },
+        {
+          "bytes": 259818,
+          "path": "frames/frame-00164.png",
+          "sha256": "b187b727e48137b76028fe863efb08112e932171711c1985c0ee4400ba9371a0"
+        },
+        {
+          "bytes": 259818,
+          "path": "frames/frame-00165.png",
+          "sha256": "b187b727e48137b76028fe863efb08112e932171711c1985c0ee4400ba9371a0"
+        },
+        {
+          "bytes": 259818,
+          "path": "frames/frame-00166.png",
+          "sha256": "b187b727e48137b76028fe863efb08112e932171711c1985c0ee4400ba9371a0"
+        },
+        {
+          "bytes": 259818,
+          "path": "frames/frame-00167.png",
+          "sha256": "b187b727e48137b76028fe863efb08112e932171711c1985c0ee4400ba9371a0"
+        },
+        {
+          "bytes": 231190,
+          "path": "frames/frame-00168.png",
+          "sha256": "99dd0113b423cb08375c98b57f6421d3ab1801e56354a4e68644280384bf4c7d"
+        },
+        {
+          "bytes": 252106,
+          "path": "frames/frame-00169.png",
+          "sha256": "8e51d40785eff67e79d72a2f28e8f2f2eda64fa1e427c88720a5cf5475b82b54"
+        },
+        {
+          "bytes": 256590,
+          "path": "frames/frame-00170.png",
+          "sha256": "d32f24fb82de5e662d082ef2c5b2877ffc038c41998124b51c7684c08f01ed95"
+        },
+        {
+          "bytes": 256367,
+          "path": "frames/frame-00171.png",
+          "sha256": "3e00a7dee1817938c85673b4c9cde91f34282bcc417c9615cff2b9f799bf3444"
+        },
+        {
+          "bytes": 256449,
+          "path": "frames/frame-00172.png",
+          "sha256": "c3f1adbdcc1bc76836d2a61e531b8d896a980eb38f1908655513ae231e49e650"
+        },
+        {
+          "bytes": 256355,
+          "path": "frames/frame-00173.png",
+          "sha256": "d0b0ef45d5f2bdecdcba856f587edb30b65524e4eff2d2bff3bcdaaf590631f0"
+        },
+        {
+          "bytes": 256395,
+          "path": "frames/frame-00174.png",
+          "sha256": "791733fce258335cf84977d3e616359c24a4b8a8705b30143d07af7f241a765a"
+        },
+        {
+          "bytes": 256938,
+          "path": "frames/frame-00175.png",
+          "sha256": "65b3150f63525e46f12bfa27cc493d09995eae8b272bda26834168c01851e4cd"
+        },
+        {
+          "bytes": 256686,
+          "path": "frames/frame-00176.png",
+          "sha256": "ffd4b60cacc7e9701d93afef8c8e60e3a2bb80697f0480c0e17072804daa40df"
+        },
+        {
+          "bytes": 256709,
+          "path": "frames/frame-00177.png",
+          "sha256": "7bc00a96f72e7bfda34ffd518921176f2238da776d310bff4ce1118c49cee9d0"
+        },
+        {
+          "bytes": 256446,
+          "path": "frames/frame-00178.png",
+          "sha256": "2dc896c5ad02ef527992956477a7243fc4836cb2e50fa71706c836a2f00daec4"
+        },
+        {
+          "bytes": 257173,
+          "path": "frames/frame-00179.png",
+          "sha256": "c4e015a69a0b124a5130dbbea1b786c5b43a963568c2309fd1d0e3cb08061e41"
+        },
+        {
+          "bytes": 257411,
+          "path": "frames/frame-00180.png",
+          "sha256": "ccbe3252e27b6428b44a925947b42db217209cc6f0d8b6a59e93b0586fe6bce1"
+        },
+        {
+          "bytes": 257216,
+          "path": "frames/frame-00181.png",
+          "sha256": "dfee73cadb73d44447b58486740d8577e7fa7016072eef6aa10d2b47edf2659a"
+        },
+        {
+          "bytes": 257190,
+          "path": "frames/frame-00182.png",
+          "sha256": "9b70ee5437d3d5d298c134270a7308947bc57d6f2412a8eabf15081a23a60ff1"
+        },
+        {
+          "bytes": 257462,
+          "path": "frames/frame-00183.png",
+          "sha256": "e07d0bab92e5775b23d7a0aea19a7c805903e23b58907e23f257c83b19ffe389"
+        },
+        {
+          "bytes": 257290,
+          "path": "frames/frame-00184.png",
+          "sha256": "1011c0a71ff8539337148647e5f955231627b02b4a7e38371cbf535585724064"
+        },
+        {
+          "bytes": 257501,
+          "path": "frames/frame-00185.png",
+          "sha256": "431d8f8c6ebcd9c44e54ddd33e013d5fe5dedcc1bc957228eb6567799527904a"
+        },
+        {
+          "bytes": 257055,
+          "path": "frames/frame-00186.png",
+          "sha256": "75d0c6c9ba1ea17b0cc65b79780d821e70a9532476f4d508a1d76e4e2c747f1c"
+        },
+        {
+          "bytes": 256799,
+          "path": "frames/frame-00187.png",
+          "sha256": "fc6c5c82cae408eba6aae3f0af73618a43365d422e8b3402960445742873ba35"
+        },
+        {
+          "bytes": 256810,
+          "path": "frames/frame-00188.png",
+          "sha256": "4a9774c0ff4a017e791c589b229fd052039d670ebc1ac7878574fe92d376438d"
+        },
+        {
+          "bytes": 259158,
+          "path": "frames/frame-00189.png",
+          "sha256": "ba9de5945f0a6193fbdf1e391db2c26b27032584a3d3e75f51bfb9ba79907a90"
+        },
+        {
+          "bytes": 265738,
+          "path": "frames/frame-00190.png",
+          "sha256": "52b0f84c251ad49e472176c6c45c08f6ee585d86f4be7c3c7d31f38f0c68ec9d"
+        },
+        {
+          "bytes": 266371,
+          "path": "frames/frame-00191.png",
+          "sha256": "73bb2485299d3de9d76bafc97e34e77a41ec790d346c6e9dd7a0db43e4e240e8"
+        },
+        {
+          "bytes": 266576,
+          "path": "frames/frame-00192.png",
+          "sha256": "b3c189d23ac794ebd06de1cef59b34998851d399d16a57badbbf32c9c77fc8ee"
+        },
+        {
+          "bytes": 266632,
+          "path": "frames/frame-00193.png",
+          "sha256": "1093e790c2bd96b07b47f92fb14a9299c5025fd0d010637ea883649d82c97b47"
+        },
+        {
+          "bytes": 269999,
+          "path": "frames/frame-00194.png",
+          "sha256": "75c16cf99d9dde5c305f2cef563a0a7e862f59cedb5a77c52b482e5e1d0545d8"
+        },
+        {
+          "bytes": 272134,
+          "path": "frames/frame-00195.png",
+          "sha256": "a7071197b113991bc318e26c73f5ca036c7c6d693aa11c1b24eeced7b6960e42"
+        },
+        {
+          "bytes": 272217,
+          "path": "frames/frame-00196.png",
+          "sha256": "4e327cc7fd2d2b82427c9bd51bc7551b2ac75caa28c09e55c9bc9dd448e86c43"
+        },
+        {
+          "bytes": 272305,
+          "path": "frames/frame-00197.png",
+          "sha256": "6ee4ed97f4b55d57b47fbe413025e0cf7b63a82f1ad5616578469e934abfcde6"
+        },
+        {
+          "bytes": 271456,
+          "path": "frames/frame-00198.png",
+          "sha256": "ef6bf0c7facb5954cfe74e8d530e3d3753635ce5467af44466bc0877b07451c7"
+        },
+        {
+          "bytes": 270340,
+          "path": "frames/frame-00199.png",
+          "sha256": "2edd7d164ed14de4387cc60ad019930e2334eb6e745c80d9bb73d029c3fa50d6"
+        },
+        {
+          "bytes": 270475,
+          "path": "frames/frame-00200.png",
+          "sha256": "6fda1a629efafb767f1aef0f33e5f7823878d3f939091aa15ffab646f2f3899f"
+        },
+        {
+          "bytes": 271330,
+          "path": "frames/frame-00201.png",
+          "sha256": "0fd78b03e93b674e33bb11681fde99c9b2afde5f4b2c5b5b78e7fcdff984db15"
+        },
+        {
+          "bytes": 268919,
+          "path": "frames/frame-00202.png",
+          "sha256": "9d282c16bd56725e77de53c871181b78675f554dfb997a4cd8bc01d0abc13ca0"
+        },
+        {
+          "bytes": 263972,
+          "path": "frames/frame-00203.png",
+          "sha256": "689ca572df99a2f5354c106fd5781610374c9c6f881d6f24a0ec27316d687dd6"
+        },
+        {
+          "bytes": 261656,
+          "path": "frames/frame-00204.png",
+          "sha256": "ec73e5d288e9f6a10916ae1cde5a97f6508d502c188994b959b3c00de9844979"
+        },
+        {
+          "bytes": 259357,
+          "path": "frames/frame-00205.png",
+          "sha256": "8f441d9e160520eea7aa2b25278c3f0d54383013fb4a4d0c77fd5faec88e099f"
+        },
+        {
+          "bytes": 259022,
+          "path": "frames/frame-00206.png",
+          "sha256": "23de82f126ec6a5b4a81c6427004e70fdc1ef2479d6e57ed4845f89c8d8566e7"
+        },
+        {
+          "bytes": 258606,
+          "path": "frames/frame-00207.png",
+          "sha256": "4cf31c94fd9d783cc646dd7bf467b58fe78d86af094560f6956a82c1c5abdad2"
+        },
+        {
+          "bytes": 256816,
+          "path": "frames/frame-00208.png",
+          "sha256": "e518745f4771d9b7b05260e1ccabd097548aabc1346e0a604996c167477c7149"
+        },
+        {
+          "bytes": 256782,
+          "path": "frames/frame-00209.png",
+          "sha256": "92f223c249cbb362669d27d47f0e8f352bee6cf03dfb1eac96944caa493ee6e5"
+        },
+        {
+          "bytes": 256369,
+          "path": "frames/frame-00210.png",
+          "sha256": "2828c091399b2c7f98051eaffb835137f94c87ef072c5cde613f5e8a3b6ccde5"
+        },
+        {
+          "bytes": 257314,
+          "path": "frames/frame-00211.png",
+          "sha256": "57e3b991997926424699187db5e65eb3e80021632f3057e377d937240e4cf7d9"
+        },
+        {
+          "bytes": 256983,
+          "path": "frames/frame-00212.png",
+          "sha256": "16a43e57cbef440e8f222301d0c742e63f87ad92759af191409b3a7f9da8a6f2"
+        },
+        {
+          "bytes": 257220,
+          "path": "frames/frame-00213.png",
+          "sha256": "86c509a65132b4b4b4ede19663f16f75109b3d557ed4d368b44c5893614f367e"
+        },
+        {
+          "bytes": 257543,
+          "path": "frames/frame-00214.png",
+          "sha256": "60332fa3a7f4a22133727dfc693be1a7ff8b487d74b7fe1345cc3ee971a7e726"
+        },
+        {
+          "bytes": 257277,
+          "path": "frames/frame-00215.png",
+          "sha256": "df7cb7ce17d6ff8220070effd944b9ff926b6d8307e7a575e3333549192f781c"
+        },
+        {
+          "bytes": 262243,
+          "path": "frames/frame-00216.png",
+          "sha256": "b0e8163fda9385d7d78f4f33cfbbd1971ddf81b116a3bec60d9d1fdaeff0ae72"
+        },
+        {
+          "bytes": 262737,
+          "path": "frames/frame-00217.png",
+          "sha256": "8319c720c257ae787b3cd568d89af454687f49d4484ed2c0f20286518db19f5a"
+        },
+        {
+          "bytes": 262975,
+          "path": "frames/frame-00218.png",
+          "sha256": "55f3aa194fd47d3f314de5979d91d53f0b5c6a154d5290b06aff9836206899ed"
+        },
+        {
+          "bytes": 262546,
+          "path": "frames/frame-00219.png",
+          "sha256": "5c16b886537a12539bb5dd48d235e8a5be839b36a21ab7b54de1e42a52e3adae"
+        },
+        {
+          "bytes": 262917,
+          "path": "frames/frame-00220.png",
+          "sha256": "0878a8135f38abe0fe33a8416b59e8aa92c190a8ef9b61f4742a230985c0f8d0"
+        },
+        {
+          "bytes": 262365,
+          "path": "frames/frame-00221.png",
+          "sha256": "f98bbefc9ddf68c6c559d179dea1747b8e51a64dd58f18e50e67d4555e316be0"
+        },
+        {
+          "bytes": 262607,
+          "path": "frames/frame-00222.png",
+          "sha256": "40da86df9a3e4face06bfe29711f79ba7d815dee02f276d24e8d535d9947a5a0"
+        },
+        {
+          "bytes": 262784,
+          "path": "frames/frame-00223.png",
+          "sha256": "d46ae71a7e110271c5e53a226590f9a48a9838f73e00f888088d6b15a30b953f"
+        },
+        {
+          "bytes": 262476,
+          "path": "frames/frame-00224.png",
+          "sha256": "f265742f9eff7c9758f1afbd5d3860d5f1f1a9c349bc2e9f0a063cbf02fe85d7"
+        },
+        {
+          "bytes": 262312,
+          "path": "frames/frame-00225.png",
+          "sha256": "c5d9651a9b1466890530a1d4face7a51bb3f6ecb922264cd8fdf00e6c148a7df"
+        },
+        {
+          "bytes": 262375,
+          "path": "frames/frame-00226.png",
+          "sha256": "89baa3781a898a4db9780d218e4cf0d5736740e4a47515e4430dc79576f4c66c"
+        },
+        {
+          "bytes": 262321,
+          "path": "frames/frame-00227.png",
+          "sha256": "93832e52b3f043226a7802107708902ff24e63cc9a2440985977b52d447c29d0"
+        },
+        {
+          "bytes": 262319,
+          "path": "frames/frame-00228.png",
+          "sha256": "de9bba4e329ceb76699bfcbe776247f1a24a32ee626373b8c9b1307adfc18779"
+        },
+        {
+          "bytes": 262174,
+          "path": "frames/frame-00229.png",
+          "sha256": "55eac9c2a101161d20df5b6274832aae6fb130c06341809c2a9d4c938232281a"
+        },
+        {
+          "bytes": 264513,
+          "path": "frames/frame-00230.png",
+          "sha256": "2dc33c9353870774a0efa6c677c0d31ccb2c18886ee4327734d260bdcfaecaee"
+        },
+        {
+          "bytes": 259843,
+          "path": "frames/frame-00231.png",
+          "sha256": "89509f871277b5af3d72c90070447751e12182794218c9c99fb6003f79441bbf"
+        },
+        {
+          "bytes": 254621,
+          "path": "frames/frame-00232.png",
+          "sha256": "7c074511ef699af2f21cadd2e33f4d111cdfb6021ceeb90b9aac12999134ed31"
+        },
+        {
+          "bytes": 248698,
+          "path": "frames/frame-00233.png",
+          "sha256": "d446aa11af322e9955112a41f9394067880424eb8c192259de61fb647ae743bc"
+        },
+        {
+          "bytes": 245025,
+          "path": "frames/frame-00234.png",
+          "sha256": "dadf0016d9a3807d8ca2d5a640df8f35a4a2fa2b9050ee8e539e5f621acffe21"
+        },
+        {
+          "bytes": 243653,
+          "path": "frames/frame-00235.png",
+          "sha256": "204011a8a7db3a42103fa9fff5e7c0a88d09808cb9b0a79f2486e2b5561a59f3"
+        },
+        {
+          "bytes": 240714,
+          "path": "frames/frame-00236.png",
+          "sha256": "ea64655c1f2c041eb35d938e1e311ccd1ebbb587b7ae9360b3a3faa7bb49dcc7"
+        },
+        {
+          "bytes": 238766,
+          "path": "frames/frame-00237.png",
+          "sha256": "4039b0f068b047b26b6fd4bdc17607f5b853f79a4cde17cc8684d94858e79678"
+        },
+        {
+          "bytes": 237532,
+          "path": "frames/frame-00238.png",
+          "sha256": "8a9973202a87546450e6967321ec756fe5acef320e6a6f39986a84127984c5c7"
+        },
+        {
+          "bytes": 235785,
+          "path": "frames/frame-00239.png",
+          "sha256": "3d45e1347a85b28c5307a55c4690a99119fde48be59e87557e8b194c3cb2104f"
+        },
+        {
+          "bytes": 234842,
+          "path": "frames/frame-00240.png",
+          "sha256": "6197deb9d3d16360efd7ca94db08d33c624ebc0d5d46fbcecc5d9dfd0103be62"
+        },
+        {
+          "bytes": 233181,
+          "path": "frames/frame-00241.png",
+          "sha256": "edd45d6209e233fdcdd104ee73a85eb7a603a719c07d34d544a09cfc80bc42ab"
+        },
+        {
+          "bytes": 231240,
+          "path": "frames/frame-00242.png",
+          "sha256": "ff5d76c105b1227bac55551cc433f180522b071a624d914985b75d88791ec17c"
+        },
+        {
+          "bytes": 256282,
+          "path": "frames/frame-00243.png",
+          "sha256": "f3e0a35531f771c575590f2e1b16777721dabe72d497d75e72d3ed7b1c364747"
+        },
+        {
+          "bytes": 256282,
+          "path": "frames/frame-00244.png",
+          "sha256": "f3e0a35531f771c575590f2e1b16777721dabe72d497d75e72d3ed7b1c364747"
+        },
+        {
+          "bytes": 256282,
+          "path": "frames/frame-00245.png",
+          "sha256": "f3e0a35531f771c575590f2e1b16777721dabe72d497d75e72d3ed7b1c364747"
+        },
+        {
+          "bytes": 256282,
+          "path": "frames/frame-00246.png",
+          "sha256": "f3e0a35531f771c575590f2e1b16777721dabe72d497d75e72d3ed7b1c364747"
+        },
+        {
+          "bytes": 256282,
+          "path": "frames/frame-00247.png",
+          "sha256": "f3e0a35531f771c575590f2e1b16777721dabe72d497d75e72d3ed7b1c364747"
+        },
+        {
+          "bytes": 256282,
+          "path": "frames/frame-00248.png",
+          "sha256": "f3e0a35531f771c575590f2e1b16777721dabe72d497d75e72d3ed7b1c364747"
+        },
+        {
+          "bytes": 256282,
+          "path": "frames/frame-00249.png",
+          "sha256": "f3e0a35531f771c575590f2e1b16777721dabe72d497d75e72d3ed7b1c364747"
+        },
+        {
+          "bytes": 256282,
+          "path": "frames/frame-00250.png",
+          "sha256": "f3e0a35531f771c575590f2e1b16777721dabe72d497d75e72d3ed7b1c364747"
+        },
+        {
+          "bytes": 256282,
+          "path": "frames/frame-00251.png",
+          "sha256": "f3e0a35531f771c575590f2e1b16777721dabe72d497d75e72d3ed7b1c364747"
+        },
+        {
+          "bytes": 231289,
+          "path": "frames/frame-00252.png",
+          "sha256": "f21255aeb7a5c847df95150cccc1ad0f241fbe0eb225c18ebf9cea3f248adcc7"
+        },
+        {
+          "bytes": 231941,
+          "path": "frames/frame-00253.png",
+          "sha256": "f2a15367d274f14f321c2af71047dae724cc51ec20a288541bc0ca127144d19b"
+        },
+        {
+          "bytes": 232248,
+          "path": "frames/frame-00254.png",
+          "sha256": "a0472fd931d0c705a800de58792bd307fb689f29b1c6571bb094789dd7d11635"
+        },
+        {
+          "bytes": 232339,
+          "path": "frames/frame-00255.png",
+          "sha256": "77d5788429b84d1317fb498ee1a9bed620439ab137c2b8ddb2dd1e6df4c18ce6"
+        },
+        {
+          "bytes": 232418,
+          "path": "frames/frame-00256.png",
+          "sha256": "bc9a8ae9a18f9ca5b76b6e1361705d99e8cb1bf28387dd6e13f6977aa57e1618"
+        },
+        {
+          "bytes": 232412,
+          "path": "frames/frame-00257.png",
+          "sha256": "387cccfbc7689e9f82d6c930247eabc6dcbe40f528f63f8ca0f1b7a6c7989fb4"
+        },
+        {
+          "bytes": 232277,
+          "path": "frames/frame-00258.png",
+          "sha256": "38f011f5c23c39fc203911ba98c30529430cb6fe9f80c604772bd41819ac81f8"
+        },
+        {
+          "bytes": 232348,
+          "path": "frames/frame-00259.png",
+          "sha256": "00e9d9921d50fe9878c325c01f42f0d2440ae2e32298ea95967e8f19baf3d8e7"
+        },
+        {
+          "bytes": 232788,
+          "path": "frames/frame-00260.png",
+          "sha256": "7f8f999249fa7ebf535d071bc11c44819b9c1bbe3624578186b9d68b596a8d7e"
+        },
+        {
+          "bytes": 232848,
+          "path": "frames/frame-00261.png",
+          "sha256": "9a1d05680e6b13365049eece1a1f267602d44016f5e6c85a2fe33abe626ddfe6"
+        },
+        {
+          "bytes": 232873,
+          "path": "frames/frame-00262.png",
+          "sha256": "3bc3c5ec5dc5a2c186e01f5e111a6d58045a1d597672457355464ef7cb6a9b7d"
+        },
+        {
+          "bytes": 232761,
+          "path": "frames/frame-00263.png",
+          "sha256": "5e1d5c6d6af0c23cfac884b48f59c1ebe735adb697553ba478be64c0e2e291e5"
+        },
+        {
+          "bytes": 232384,
+          "path": "frames/frame-00264.png",
+          "sha256": "b3c874eac951ad7e7e77ae5afd8b367afb736a8e488c04b6ee570fbf71208812"
+        },
+        {
+          "bytes": 232364,
+          "path": "frames/frame-00265.png",
+          "sha256": "ea6525d76059354eb5a1bdb068e2faff37e16f5cec158b55b81c28c44f9808df"
+        },
+        {
+          "bytes": 232376,
+          "path": "frames/frame-00266.png",
+          "sha256": "a4f15011cc24aff6f608bf01f19e7ea4ef12fe7fc1b1fb5e1b8e351926d86c0a"
+        },
+        {
+          "bytes": 232308,
+          "path": "frames/frame-00267.png",
+          "sha256": "be2c3ad583dda6adb2a60f89af78342a0660c17480f8d9ca0661902095d65e96"
+        },
+        {
+          "bytes": 233697,
+          "path": "frames/frame-00268.png",
+          "sha256": "8e51ac6f2e8d6126afdba5f982369a7a0cd1a1fd4d10dac964d1317a7f8064f1"
+        },
+        {
+          "bytes": 235721,
+          "path": "frames/frame-00269.png",
+          "sha256": "ee0aff068a9a4d4eeab8621ab9837f7e1b38e66be914c0f8262c51a7f7cc347b"
+        },
+        {
+          "bytes": 237328,
+          "path": "frames/frame-00270.png",
+          "sha256": "49226174c8e80b1c374bfc0abee17d7721b0828877d0b56cdd95a71c73235ff7"
+        },
+        {
+          "bytes": 238416,
+          "path": "frames/frame-00271.png",
+          "sha256": "44e84b8903d4856e2d9b7bd31370748ac8e64da95d71f4e7b1ac88faab811671"
+        },
+        {
+          "bytes": 239299,
+          "path": "frames/frame-00272.png",
+          "sha256": "1699b4e9fc8a93329412adfd477c1b402c162f12f59ed7c1f0d577a709559738"
+        },
+        {
+          "bytes": 239215,
+          "path": "frames/frame-00273.png",
+          "sha256": "0262dba1330526a95590bcc98c408de896aa064df353d068e199e101f42920db"
+        },
+        {
+          "bytes": 239283,
+          "path": "frames/frame-00274.png",
+          "sha256": "00a775946760c762485272b9ba955ed78cda7a076b7261f766639c9acbbf277a"
+        },
+        {
+          "bytes": 239211,
+          "path": "frames/frame-00275.png",
+          "sha256": "7f3eae2054eaada7ca44c7542f95dbed0de83048ae9f6dbf8ba230bb59cbbc18"
+        },
+        {
+          "bytes": 239277,
+          "path": "frames/frame-00276.png",
+          "sha256": "a8b7c26d2a6037dbf44b08f30558e2758546f61a718bdd9968b03a23e0e4bb98"
+        },
+        {
+          "bytes": 239297,
+          "path": "frames/frame-00277.png",
+          "sha256": "fc355997c7d0af1a1b9a468b8c9917207e414b52af2e375be35bedcec7ecaeeb"
+        },
+        {
+          "bytes": 239266,
+          "path": "frames/frame-00278.png",
+          "sha256": "647db4aa6f1f818a9364ccd19191f0fe917e4bdc1289396feb7b8ad3ef545d6e"
+        },
+        {
+          "bytes": 239316,
+          "path": "frames/frame-00279.png",
+          "sha256": "93d17e9c8844e5a0cc42bde50d89dd416b0921546ecada95ca68a0a9afbda62c"
+        },
+        {
+          "bytes": 239209,
+          "path": "frames/frame-00280.png",
+          "sha256": "01e441b2a3e38164610dc151aeb50bc6aadc3b2a010d1ead522dc18a3636810f"
+        },
+        {
+          "bytes": 239237,
+          "path": "frames/frame-00281.png",
+          "sha256": "a2c0c5f98fdcfece5dcd0c5b020294636117cc5a92172449b19f766261991937"
+        },
+        {
+          "bytes": 239519,
+          "path": "frames/frame-00282.png",
+          "sha256": "8167babe15eb01c1885eb8b2bea728c0c9675de46e66b3cba17293389f67b4ee"
+        },
+        {
+          "bytes": 239572,
+          "path": "frames/frame-00283.png",
+          "sha256": "fc3b9912da5bf62b56f04f8778b1c4170bad93b50e367ecdf5f6733099d733d3"
+        },
+        {
+          "bytes": 239616,
+          "path": "frames/frame-00284.png",
+          "sha256": "cd63790e6b9cfb802e79a657a20287a72293a49ce51149311667c23995a236d7"
+        },
+        {
+          "bytes": 239786,
+          "path": "frames/frame-00285.png",
+          "sha256": "d7ccc02aa321af07023cc2b68b38e7fdaa79a3039cdfba20e9c8dc131be1cab5"
+        },
+        {
+          "bytes": 239720,
+          "path": "frames/frame-00286.png",
+          "sha256": "16e3bd12467aca91f69fa9f4d7550d605e60e0d8d846ea4528986f2da426c0e9"
+        },
+        {
+          "bytes": 239779,
+          "path": "frames/frame-00287.png",
+          "sha256": "15ee322f7b06633126621045536976047485dc84f98031d96507575a89971703"
+        },
+        {
+          "bytes": 239825,
+          "path": "frames/frame-00288.png",
+          "sha256": "688bc140f209962e658c5b8d6afe86560d6fab5cdde7b092ff5aa59d97558e82"
+        },
+        {
+          "bytes": 239706,
+          "path": "frames/frame-00289.png",
+          "sha256": "b1e8d261768483f86deface36c3c5a3160cfff5b2e36aba0b321c4b5a551f611"
+        },
+        {
+          "bytes": 239729,
+          "path": "frames/frame-00290.png",
+          "sha256": "b707a008bdda0fa015c11f2d6476d3499f9e3bfa3d8b1c7d2e03bc81cbe60701"
+        },
+        {
+          "bytes": 239867,
+          "path": "frames/frame-00291.png",
+          "sha256": "0ca373ad06e8df26529e94d1c4040bfd1e118cf6b94420ccb16e4bfdff2044a7"
+        },
+        {
+          "bytes": 240058,
+          "path": "frames/frame-00292.png",
+          "sha256": "8390ee135e9fff91a5f32c356b1663df944218572b66c64cf478deede16f6864"
+        },
+        {
+          "bytes": 239975,
+          "path": "frames/frame-00293.png",
+          "sha256": "81131081c394ef87fe06081489fc18777ddae9540b5aba10beb5444959e5733d"
+        },
+        {
+          "bytes": 239787,
+          "path": "frames/frame-00294.png",
+          "sha256": "2ed7318e2bf65ceb35e0f29f36aa1c98fa8f730b671b413e2959efff252b4982"
+        },
+        {
+          "bytes": 239642,
+          "path": "frames/frame-00295.png",
+          "sha256": "794d568590b46b793a1b90162b2f1f87912704a8000ff1eefc1f09976c9254b0"
+        },
+        {
+          "bytes": 239724,
+          "path": "frames/frame-00296.png",
+          "sha256": "6642b3f82648a35a61a647001fed9df93ab89aede38af136dbae9132a47a770b"
+        },
+        {
+          "bytes": 239693,
+          "path": "frames/frame-00297.png",
+          "sha256": "0092c0b7c25c6d1d1315564d3ca3c7a340b44d0e7042ac243973f25434f46283"
+        },
+        {
+          "bytes": 239666,
+          "path": "frames/frame-00298.png",
+          "sha256": "c841d591fbf42f8b9e10c8b4a912d93879814c78121a03fa80d39bf836da8957"
+        },
+        {
+          "bytes": 239686,
+          "path": "frames/frame-00299.png",
+          "sha256": "afae818ecb997918da2ab339cd0b5aa5c31304c3873b73960faeedd41fc421da"
+        },
+        {
+          "bytes": 239434,
+          "path": "frames/frame-00300.png",
+          "sha256": "5c5adeb37fc6e6f1b88953d8268a2ba91b3186f52eb3f42a0bdb8ae9ef8ca1e4"
+        },
+        {
+          "bytes": 239533,
+          "path": "frames/frame-00301.png",
+          "sha256": "c3360a1126103005abe26e4b20f8caa4e43a0d0a6553c13ad7247ff879bd66aa"
+        },
+        {
+          "bytes": 239259,
+          "path": "frames/frame-00302.png",
+          "sha256": "80f5cccc31feb88b0b9bbe133f521fd79888af70c55022692ce812c4393fb368"
+        },
+        {
+          "bytes": 239022,
+          "path": "frames/frame-00303.png",
+          "sha256": "c21f7a761be20b3175c1e30396ceb20f852e583e40db3a4648ae97c821ec5a2d"
+        },
+        {
+          "bytes": 238479,
+          "path": "frames/frame-00304.png",
+          "sha256": "bde071218bbe5446d6a846e211a1e3f44a8be542e5d70fbe397e1bbd482ec4a6"
+        },
+        {
+          "bytes": 237138,
+          "path": "frames/frame-00305.png",
+          "sha256": "71718ccbdc088a3151411cc3ce89a68b97d66418f08d1599829db4225e083d77"
+        },
+        {
+          "bytes": 235074,
+          "path": "frames/frame-00306.png",
+          "sha256": "91f093b04daf1dd0f8c9cd6ca6b87d58d924098c642e3f42925308b75e16403b"
+        },
+        {
+          "bytes": 232716,
+          "path": "frames/frame-00307.png",
+          "sha256": "f18b4b71f65c55f0d9170f9b780a8412be0a0a273e54fb43fd9ab3b68c37945a"
+        },
+        {
+          "bytes": 232329,
+          "path": "frames/frame-00308.png",
+          "sha256": "62378275068247ccaed990cf888775b24b2c90f906f45748295c2fe5d91b640b"
+        },
+        {
+          "bytes": 232403,
+          "path": "frames/frame-00309.png",
+          "sha256": "62e78df111af3397e67f19b28ebfa2ba9ca9f508a079e537eaaa0f7bd669f0a9"
+        },
+        {
+          "bytes": 232483,
+          "path": "frames/frame-00310.png",
+          "sha256": "696dd0e08b680cb18d4e2bf1655d9dd4be5e6bf2ce1203b4490a9abf2271154e"
+        },
+        {
+          "bytes": 232476,
+          "path": "frames/frame-00311.png",
+          "sha256": "612e7f81e5a753402e2c832ed11edd8ba71d8207efdfbb4f1c98a85c8978c6ce"
+        },
+        {
+          "bytes": 232490,
+          "path": "frames/frame-00312.png",
+          "sha256": "ce138393f3577473508a28ed418dd06805f05bfdbafc43d9760a2061d226d16e"
+        },
+        {
+          "bytes": 232900,
+          "path": "frames/frame-00313.png",
+          "sha256": "2bf4457d086fe2f3da0f385ff6a9a4a4821affc7794261e7c77b1fb15a5854ea"
+        },
+        {
+          "bytes": 233081,
+          "path": "frames/frame-00314.png",
+          "sha256": "b14b45ce2c75f171644f608c8591b2614af9899a742792852c6cb3e556b3e6f0"
+        },
+        {
+          "bytes": 233051,
+          "path": "frames/frame-00315.png",
+          "sha256": "c5402131d9c9dfb62b2ac4d858f2443593acfad4e8446a5ac7ae27b0e467984a"
+        },
+        {
+          "bytes": 232872,
+          "path": "frames/frame-00316.png",
+          "sha256": "a9d9df9bb531898d2049056bf1612c08a4eac7764c6a4ac8300aba1121ce4f36"
+        },
+        {
+          "bytes": 232456,
+          "path": "frames/frame-00317.png",
+          "sha256": "cedc8a18073cef0dbc6a949d57549de041fd0d3d9fd7ac913eabe9f4e433aa37"
+        },
+        {
+          "bytes": 248480,
+          "path": "frames/frame-00318.png",
+          "sha256": "c3d41be76aafffeeec10bdac0e5157be344c1c03c93dd3048d1cf3b288846224"
+        },
+        {
+          "bytes": 248480,
+          "path": "frames/frame-00319.png",
+          "sha256": "c3d41be76aafffeeec10bdac0e5157be344c1c03c93dd3048d1cf3b288846224"
+        },
+        {
+          "bytes": 248480,
+          "path": "frames/frame-00320.png",
+          "sha256": "c3d41be76aafffeeec10bdac0e5157be344c1c03c93dd3048d1cf3b288846224"
+        },
+        {
+          "bytes": 248480,
+          "path": "frames/frame-00321.png",
+          "sha256": "c3d41be76aafffeeec10bdac0e5157be344c1c03c93dd3048d1cf3b288846224"
+        },
+        {
+          "bytes": 248480,
+          "path": "frames/frame-00322.png",
+          "sha256": "c3d41be76aafffeeec10bdac0e5157be344c1c03c93dd3048d1cf3b288846224"
+        },
+        {
+          "bytes": 248480,
+          "path": "frames/frame-00323.png",
+          "sha256": "c3d41be76aafffeeec10bdac0e5157be344c1c03c93dd3048d1cf3b288846224"
+        },
+        {
+          "bytes": 248480,
+          "path": "frames/frame-00324.png",
+          "sha256": "c3d41be76aafffeeec10bdac0e5157be344c1c03c93dd3048d1cf3b288846224"
+        },
+        {
+          "bytes": 248480,
+          "path": "frames/frame-00325.png",
+          "sha256": "c3d41be76aafffeeec10bdac0e5157be344c1c03c93dd3048d1cf3b288846224"
+        },
+        {
+          "bytes": 248480,
+          "path": "frames/frame-00326.png",
+          "sha256": "c3d41be76aafffeeec10bdac0e5157be344c1c03c93dd3048d1cf3b288846224"
+        },
+        {
+          "bytes": 131651,
+          "path": "native-render.json",
+          "sha256": "8af3ee58e349b5be26f55b390dde6ea6fcb8be80ab4f4fbde0cd3d84181bc792"
+        }
+      ],
+      "bundle": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/apps/IslandPlaygroundRender.app",
+      "bundleInfoOverrides": {
+        "CFBundleExecutable": "IslandPlaygroundRender",
+        "CFBundleIdentifier": "com.dabin.mac.qa.extra.islandplaygroundrender",
+        "CFBundleName": "IslandPlaygroundRender",
+        "LSUIElement": true
+      },
+      "bundleInfoSHA256": "6ce9efa403580a3beaaf49a31c5a8623cf3575d598a23d8bf03c1323a635eef9",
+      "compile": {
+        "command": [
+          "xcrun",
+          "swiftc",
+          "-swift-version",
+          "5",
+          "-target",
+          "arm64-apple-macosx14.0",
+          "-module-cache-path",
+          "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/ModuleCache",
+          "-warnings-as-errors",
+          "-parse-as-library",
+          "-O",
+          "-whole-module-optimization",
+          "-I",
+          "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa-cache/app-store-70feee950c20ceae70b7bcf9494d1b269c9a089191bf243f85ee35071457d45b",
+          "-L",
+          "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa-cache/app-store-70feee950c20ceae70b7bcf9494d1b269c9a089191bf243f85ee35071457d45b",
+          "-lDaBinTestCore",
+          "-Xlinker",
+          "-rpath",
+          "-Xlinker",
+          "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa-cache/app-store-70feee950c20ceae70b7bcf9494d1b269c9a089191bf243f85ee35071457d45b",
+          "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/fixture/IslandPlaygroundRender.swift",
+          "-o",
+          "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/apps/IslandPlaygroundRender.app/Contents/MacOS/IslandPlaygroundRender"
+        ],
+        "exitCode": 0,
+        "log": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/logs/IslandPlaygroundRender-compile.log",
+        "logSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "seconds": 1.411,
+        "shellCommand": "xcrun swiftc -swift-version 5 -target arm64-apple-macosx14.0 -module-cache-path /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/ModuleCache -warnings-as-errors -parse-as-library -O -whole-module-optimization -I /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa-cache/app-store-70feee950c20ceae70b7bcf9494d1b269c9a089191bf243f85ee35071457d45b -L /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa-cache/app-store-70feee950c20ceae70b7bcf9494d1b269c9a089191bf243f85ee35071457d45b -lDaBinTestCore -Xlinker -rpath -Xlinker /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa-cache/app-store-70feee950c20ceae70b7bcf9494d1b269c9a089191bf243f85ee35071457d45b /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/fixture/IslandPlaygroundRender.swift -o /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/apps/IslandPlaygroundRender.app/Contents/MacOS/IslandPlaygroundRender",
+        "status": "passed",
+        "timeoutSeconds": 180,
+        "workingDirectory": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/fixture/native"
+      },
+      "compileCommand": [
+        "xcrun",
+        "swiftc",
+        "-swift-version",
+        "5",
+        "-target",
+        "arm64-apple-macosx14.0",
+        "-module-cache-path",
+        "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/ModuleCache",
+        "-warnings-as-errors",
+        "-parse-as-library",
+        "-O",
+        "-whole-module-optimization",
+        "-I",
+        "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa-cache/app-store-70feee950c20ceae70b7bcf9494d1b269c9a089191bf243f85ee35071457d45b",
+        "-L",
+        "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa-cache/app-store-70feee950c20ceae70b7bcf9494d1b269c9a089191bf243f85ee35071457d45b",
+        "-lDaBinTestCore",
+        "-Xlinker",
+        "-rpath",
+        "-Xlinker",
+        "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa-cache/app-store-70feee950c20ceae70b7bcf9494d1b269c9a089191bf243f85ee35071457d45b",
+        "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/fixture/IslandPlaygroundRender.swift",
+        "-o",
+        "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/apps/IslandPlaygroundRender.app/Contents/MacOS/IslandPlaygroundRender"
+      ],
+      "executableSHA256": "95b934bde19b582d63678ddc9be900bb56a38926d154ae099180a6835d83977a",
+      "name": "IslandPlaygroundRender",
+      "output": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/renders/IslandPlaygroundRender",
+      "resourceSHA256": {
+        "AppIcon.icns": "9ba9c0e655b1b9956a016d9d1a547d5fa598522664d1d21d2caf292ef6a1dadd",
+        "PrivacyInfo.xcprivacy": "a9863c850f76e33c454b61aea834e1a9980db80a6d1d659b0d7a68ae835ee014",
+        "PrivacyPolicy.md": "9b3065a0256f11cee42dc8ae4d84a6f862638ae89ce34f1d4eada3647a70da8d",
+        "robot.svg": "20bd5c1de92dd5e79ef259430c441e2b9a1d3608812ae79e5b2999a64eaf8a7a"
+      },
+      "runtime": {
+        "command": [
+          "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/apps/IslandPlaygroundRender.app/Contents/MacOS/IslandPlaygroundRender",
+          "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/renders/IslandPlaygroundRender"
+        ],
+        "exitCode": 0,
+        "log": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/logs/IslandPlaygroundRender.log",
+        "logSHA256": "d38f464517bad4e87fc762a777063bedfdeea25474f47750f6e0b9058598b735",
+        "seconds": 11.418,
+        "shellCommand": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/apps/IslandPlaygroundRender.app/Contents/MacOS/IslandPlaygroundRender /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/renders/IslandPlaygroundRender",
+        "status": "passed",
+        "timeoutSeconds": 180,
+        "workingDirectory": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/fixture/native"
+      },
+      "runtimeCommand": [
+        "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/apps/IslandPlaygroundRender.app/Contents/MacOS/IslandPlaygroundRender",
+        "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/renders/IslandPlaygroundRender"
+      ],
+      "scope": "Offscreen production character presentation layers, fictional vector desktop, fresh frame sequence; no installed-app recording.",
+      "status": "passed",
+      "testSource": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Tests/IslandPlaygroundRender.swift",
+      "testSourceSHA256": "ff3afc2f684f3505adbd940d0dd0bcdafb6754b5f0226b0d4f062caf757726cb",
+      "timeoutSeconds": 180,
+      "workingDirectory": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/fixture/native",
+      "wrapper": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/fixture/IslandPlaygroundRender.swift",
+      "wrapperSHA256": "510dd81f96d7af9788f1249674db50764f1a14f4d44dbcb1108564f5d4b444e7"
+    }
+  ],
+  "syntheticFixture": {
+    "path": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/full-certification-2026-10-05/extra-render-qa/runtime/20261005T014124318451Z-3e333294/fixture/fictional-launch-checklist.txt",
+    "sha256": "146a2944a6c1bfd479089174586fc593ca804436e2c5c79a7ba92c91e49a599f"
+  },
+  "verifiedModule": {
+    "compileDefinitions": [],
+    "compiler": "swift-driver version: 1.168.6 Apple Swift version 6.4 (swiftlang-6.4.0.34.1 clang-2100.3.34.1)\nTarget: arm64-apple-macosx26.0",
+    "configuration": "Release",
+    "distribution": "app-store",
+    "moduleArtifacts": {
+      "DaBinTestCore.swiftmodule": "feebfac496136e0ec58c6c032e69399070782f64941878cf72d711a324fabdcb",
+      "libDaBinTestCore.dylib": "cfcd623cefc11df01f93fb005e14ed048eaeaf8ebb5ff0de75788bbf1886b35e"
+    },
+    "moduleReadyStamp": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/build/qa-cache/app-store-70feee950c20ceae70b7bcf9494d1b269c9a089191bf243f85ee35071457d45b/module-ready.json",
+    "moduleReadyStampSHA256": "d330095a97cdbfb35fa6640f747b32be2b28e55cdd41b85d31047584e0911fa1",
+    "productionSources": {
+      "Sources/DaBin/AccessibilityAnnouncement.swift": "c9083061b9a5078cf27d3b9e343dde407c9773624807dc3393e5cbd84ed779d9",
+      "Sources/DaBin/AppDelegate.swift": "9a35bbd220df09e657a752961c96ce266013d784d5059f8f61762fa4b9066cd7",
+      "Sources/DaBin/AppState.swift": "116a823caaa1769ac630515e937e2a29f8a023fb57fda9639a00e9c91de44752",
+      "Sources/DaBin/ApplicationCoordinator.swift": "ee775c6327dc49029933594d717b4b3e683334c56baf7bafd900bfab6946aefa",
+      "Sources/DaBin/ApplicationMenu.swift": "93cf464964a97d0c3bd477cd04ccdf9442bf30ddc2694f0ad4a4415d67ef52b6",
+      "Sources/DaBin/ArchiveBackup.swift": "f551d5b1710ec375902f32fa4cab14752a8bf9c7b1683e715f96da93c4555e69",
+      "Sources/DaBin/AutoCaptureFingerprint.swift": "0320a731330888a7ff57c8074fd8338cabf06a863d17af06d6dd099ba1a7a1cd",
+      "Sources/DaBin/AutoCaptureRobotCelebration.swift": "40d2885824e9e862d3e2ae693dd4e7319be518b3f5b2d9bd95aab1142029db7f",
+      "Sources/DaBin/AutoCaptureRobotPresenter.swift": "0c47a79c4f501d487dda0ae2c45fe362a78ee0fc65dfb7cce77ee1819a6b015e",
+      "Sources/DaBin/AutoCaptureService.swift": "4fc07bf2adf559ea6bc814cc1f4fd58475ddccb2a1e47846580b4aaad59cede7",
+      "Sources/DaBin/AutoCaptureSettings.swift": "f5e53774d1bf9421261feef5852e51a6954ba6a831172c46481c539c8cb2b2d0",
+      "Sources/DaBin/AutoCaptureSignMotion.swift": "ec71875c13e196d044eb356d82cb3a5a79974ffe9fb102ec0db18dfaef37e3d6",
+      "Sources/DaBin/AutoCaptureSignRouting.swift": "36c3135cf388a31589a1e873f885a8a83de3b9a1245d79a4f4a3d8ad2877020f",
+      "Sources/DaBin/AutoCaptureSignView.swift": "8e32fbf38aaded7852f35cdcbc5c10d2a9e98e0da5747e3793f1f68d34ac045c",
+      "Sources/DaBin/AutoRecordIndicator.swift": "4779953834173163b8df464ef66c2e80f4a0f64b899640f04013403527ed8518",
+      "Sources/DaBin/BoardComponents.swift": "f137f82296c5f417c2e4a3b65662f68833c4440b22dcdcb6511dac030ebec857",
+      "Sources/DaBin/BoardResizeGeometry.swift": "e0292eaee1f5df8a1ab75c5f03c891e35ce10e5b7622d49ab3652dea29f92bf6",
+      "Sources/DaBin/BoardView.swift": "3eead1acf077b238432095603dde8f2fa09c29f61af774a132124a5792eaaef2",
+      "Sources/DaBin/BoardWindowChrome.swift": "b6e2796780c467cdba4555bbede7d0d0ad95eedc5ed82b2742eb55d0987be1ac",
+      "Sources/DaBin/BoredRobotView.swift": "056c0c103cd3eb756d441e85df7ae6cd66906abb2ae00baa848cde94414fdb82",
+      "Sources/DaBin/BuddyControls.swift": "4139cf84a96039a1ee90ef52e856273e107a54eb9692fe2b0f3e18e6c3db565d",
+      "Sources/DaBin/CaptureAnnotations.swift": "8a1fd8bd6188e3c782ad848447ff3876e27d077671fe5e051bc4f094b595d208",
+      "Sources/DaBin/CaptureCardGroup.swift": "c02ee506059dfb885dc7db6ff1f87afdaa7d9538d45aeca2bc223e359cd7d503",
+      "Sources/DaBin/CaptureCards.swift": "be93d26dd0814237ff7527480627510f2b41af5d235de92fce97cc19b17a0635",
+      "Sources/DaBin/CaptureClipboard.swift": "2be98006bc0acc65893e45e55496bea9bac36dad143385ca04e88a7a96d9adef",
+      "Sources/DaBin/CaptureCopyButton.swift": "698775c8df7a2ba0fcefd961ba4f0b57df90ef3776f281dba3d4ea788463cc9a",
+      "Sources/DaBin/CaptureDetailPanels.swift": "df311d725f77671a2f23bd92d1607a68425d1043e72b314a1c0432fd3db75865",
+      "Sources/DaBin/CaptureExtendedCanvas.swift": "5d0a85de06fd9ec829f9ac7a61bba49aaab0606c3f06861c8cff197fe2075a8d",
+      "Sources/DaBin/CaptureExtendedWindow.swift": "8594c3fbcca4f3436a4d53cb5bd6505c781bbc33a2c7d180d487c182e7e76946",
+      "Sources/DaBin/CaptureFilterStrip.swift": "2618b9794c1291c6d8bf175473ba4e53c0047a6e54fd817af5eae49adf2e8361",
+      "Sources/DaBin/CaptureInboxActions.swift": "0143fa0beb6e7d0822fafe12fa20596fd9264fb328e7c9e2e8f4181c46cc6ebf",
+      "Sources/DaBin/CapturePresentation.swift": "3a73426a784f9850391b3e5e66cc7f4212e0105b6d3d64da4417472bb221e360",
+      "Sources/DaBin/CapturePreviews.swift": "83946800de9b22ad7209c3e188045839501b712bb5c2a178826603b83219abba",
+      "Sources/DaBin/CaptureProvenance.swift": "d1ac5b8dccde9651f4d569bef4e348f2740097b6aec73bd72196a2e068ec3e5e",
+      "Sources/DaBin/CaptureRemoval.swift": "8b60e54b541d7a722c236d7fd0e98b1a86062cb08a4a18667dc0e02ed809709f",
+      "Sources/DaBin/CaptureRepository.swift": "51e0bf85feb85c01c498f2403479ac33fa0bf6cb41f265860d2ffaa533d4b318",
+      "Sources/DaBin/CaptureSourceView.swift": "be605137504045c87199f066653e5611fe50d9ba8a94f710cb7e242ef213bd30",
+      "Sources/DaBin/CaptureStore.swift": "4050da3f388369dc72c07cb84e87b8aa4d380de8d264e5c3d9b7851de729c230",
+      "Sources/DaBin/CaptureTrailView.swift": "63f5961291f5cfdbd4303656c6e1759c3026c612bfc8d1d8c741999dfa4a5068",
+      "Sources/DaBin/ClipboardRetentionService.swift": "b106a3054918d47378f7bc2b6407d8aa71b678c359e8bd50e6ba512e4a44ae3a",
+      "Sources/DaBin/ClipboardRetentionSettings.swift": "ddbf828492a12a7d9218d4b64458e585df3aa66f6fb19130baebf4f03edc8988",
+      "Sources/DaBin/CollectionPreviewMosaic.swift": "43c364232cc708b58a30a5efa1904e93ecdaf837209dc8dabcb008898afda9e6",
+      "Sources/DaBin/ContentIndexService.swift": "c1d27d28092c9e97b5fac1ebe8bdac511701b55eb1027eb4ab80b860a3ec6f6b",
+      "Sources/DaBin/CornerController.swift": "ab2d411780e13a60160493b05d6db7dbf026a74e1952f18d9088a6f832656e97",
+      "Sources/DaBin/DaBinLogo.swift": "443656366ed7172baa53a4f589861e9617ffcc0710e659ab58cb4f4dbbeada56",
+      "Sources/DaBin/DailyArchive.swift": "f9097332732a44e2a705c02eda1df9628cde45b8c16a80ecd3d43c7b1ef7fafa",
+      "Sources/DaBin/DailyCaptureView.swift": "f46a663f75c87a4f49cce1d22def9814c4817e2eca6fc3976afa44b9b20c3561",
+      "Sources/DaBin/DailyScreen.swift": "e8d5c3cc6bbcf3516b291ac65b47b6118b867ddb12dc4fca93e8cdd0ce390942",
+      "Sources/DaBin/DayExport.swift": "604f447a16ac6a67bd1e170d9779fe35c929e686a67dd6ea70e6ca363cd2a2a9",
+      "Sources/DaBin/DayExportUI.swift": "713a6ffb7501342aa9d022c599328d38784618d5af9011e0e2ccfde9184ee4c3",
+      "Sources/DaBin/DetailScreen.swift": "2419831a28166a15c4cf58666e482f5cf5200faa33ed8ba132fe937af81c428c",
+      "Sources/DaBin/Domain.swift": "2b56ee47dc9d54ac40adf4d419b6073361330eefb3a8eb8d29759ca2c9e3a526",
+      "Sources/DaBin/DraftArchive.swift": "0a5601ec9dc987ced2c3cf42cd37bd5ac6e9175fdf7e69e32da600b0f9d85a49",
+      "Sources/DaBin/ExplorerItems.swift": "bd7fcf24ab3e1231072d92e4f158c238c02e1a758f4db2ac2f7d8b469e9e3ba9",
+      "Sources/DaBin/ExplorerQuery.swift": "491d1ca752db038c2e877df94b15cc1242c64a1d472bd80d04d581a31f019e96",
+      "Sources/DaBin/ExplorerScreen.swift": "a55f44e37454b493479a50cbab794a6c0ecaf511cab17f339583e423de850777",
+      "Sources/DaBin/ExplorerTransfer.swift": "df65d1ebcba64aeaae568f61d1cfc1063830ae706856467e92f501f158ef7b64",
+      "Sources/DaBin/ExplorerViewport.swift": "e106d7aa1e79aea0938b842d4513c8d54ab021ad43add30e053b93bad7e28889",
+      "Sources/DaBin/FittedPDFPreview.swift": "1d4dcbd97e6181c5b207aac6aee652208f16b45a7cfd29cef3e49fa5a3f5972e",
+      "Sources/DaBin/GroupedCaptureCard.swift": "a3079c8be13f434177d690036e339a333d806b6595eb77adfa34354c0f16e5ed",
+      "Sources/DaBin/HourlyCaptureCard.swift": "800e0d9b9491644a0f5a66d51ff15a3891ca8fed7021e47af80c094ebd1aa503",
+      "Sources/DaBin/HourlyCaptureFeed.swift": "3571fea72a92986b27e7ce644d29189f5bc938ef32af76354546e258820bc484",
+      "Sources/DaBin/HoverTooltips.swift": "9a88e8df2ec0a418087a28fa085212b38d5a37411def53d917e07c0d16789c71",
+      "Sources/DaBin/InboxScreen.swift": "82165270963da0f62084b99f802e64a89dcf7837cfc51906e24f7fb476d3231d",
+      "Sources/DaBin/InputService.swift": "f461a08ffc71034d53e63d582e1ad0d6e020fde643cdb0a79d6af344ddd27239",
+      "Sources/DaBin/IslandRobotChoreography.swift": "169d408033ca94901c6dcf34d97097acd16f3a3481c24060621a31535b1ac68a",
+      "Sources/DaBin/LibraryScreen.swift": "c32247022024412a69ed07adf8d00481c624c26dd44b96e87a8fd607a35cf46b",
+      "Sources/DaBin/LocalDOCXTextExtractor.swift": "ac67d00b2cb58bd96c7e110963b9da57c300eea70df23beb72a9399735a100cb",
+      "Sources/DaBin/NativeContentDrag.swift": "c21b1347954d5e2bde5e69c858d18cd24873830eceb2245babc2f46d84cf60d9",
+      "Sources/DaBin/NavigationHistory.swift": "a1726a091fc51459436ce1b4f4e22bbb36f0207e2d7a1abb86b3d04cd18e0c88",
+      "Sources/DaBin/NewNoteScreen.swift": "ab63d442ce94dc02edd101d6a6ef9a8d525c280e3ed3d303edeb951a63f72f1a",
+      "Sources/DaBin/OriginalFileStorage.swift": "0374224915bf5ec6997ed692ec8b43288f70bc7455d54a78a2ac72237ed0df73",
+      "Sources/DaBin/PreviewRequest.swift": "10ce1b308afd4000b3362585bae85bd1c643f900a8e7132bbefefb4049cec14e",
+      "Sources/DaBin/PreviewService.swift": "9fdc470a83ed03aeaa1adfd62a9065ade23fbc6ab167a670d6d870bce5b0a4b4",
+      "Sources/DaBin/PrivacyInformation.swift": "ddbaf27f5a1f2fd1abbeb7dab67719e9631a974b67e93a9822ce7c6fd08df2e3",
+      "Sources/DaBin/ProjectFileArchive.swift": "f09beae00eeb1bd3af8f92e2beb571bfea25d83d7067b0a656fccc2b72bd76d1",
+      "Sources/DaBin/ProjectPickerView.swift": "103ba2f551dc4dbbb5bfe08afe3fff74843bd9b588dd48405671486722b7f64d",
+      "Sources/DaBin/ProjectWorkspaceCard.swift": "b3bf00e37b8dfcf9de0f25ddb15e441df99bc43826a2af302690595ed6222c83",
+      "Sources/DaBin/ProjectWorkspaceExport.swift": "5126852a7222ebfd20252034202e2fd1aebe690c163cd2e8c520a268e323a11a",
+      "Sources/DaBin/ProjectWorkspaceState.swift": "950f6592ab94ee9da7a68ae2fb001f93212a5bfe06db135ea9c690735b4e5452",
+      "Sources/DaBin/ProjectWorkspaceTasks.swift": "27af10ddac9a3bd4602f222b36a5e7708727124061c4c92f6397dfce1b160267",
+      "Sources/DaBin/ProjectWorkspaceView.swift": "4817da1144d75e27575ff4f91996cc7d0f16908be69c2c4db5e76276e2cfcd3d",
+      "Sources/DaBin/QuickAccess.swift": "02709d3b0024cf4bec0aab85f58cff9d7352c2647bf7c2c49dda538bc4b18c94",
+      "Sources/DaBin/QuietOrbitGeometry.swift": "36b3f90f64f747d03243c37e897b37d611a1ffc818a61bd587c296ea73fcf293",
+      "Sources/DaBin/QuietOrbitVisualStyle.swift": "07c1ae899900482f87b2a8a55d8978b91f862ffa1d4b394b44fea98d8f1224ae",
+      "Sources/DaBin/ReminderAlertCoordinator.swift": "3e90479eba606f37e2d87f47ee360267c55efa60623e1d8113a3a85d1d09ded1",
+      "Sources/DaBin/ReminderClockEditor.swift": "c094d6526cf5bdac09ba5b12e85e389f98458e9133b81b29ba9635786199a6fc",
+      "Sources/DaBin/ReminderLifecycle.swift": "ad737601ca776d7b5a3b4fe2ea1e80b36d06ea006330f98907b8b9fd4f9141f2",
+      "Sources/DaBin/ReminderSchedule.swift": "e73797fe946c24b4297b379e61a54a21ff9e41ccbd99992c699b99c55782eee6",
+      "Sources/DaBin/ReminderService.swift": "de94b19e5a4ad194a19737d9cde3e409c3e26c7a8f8546658dd653c2c45c9a0a",
+      "Sources/DaBin/RemindersScreen.swift": "5c423815ff31262ab96524b6fa2536982da679de0813bee50f364b5262d651bf",
+      "Sources/DaBin/RobotAppFrameView.swift": "0edbd249a3998343c5e1f83cf412833597f3e74e7e02f70914792e1c23cf8809",
+      "Sources/DaBin/RobotCharacterView.swift": "efacf4bcad0b7b9dd201d31889e890090e21a13eb693113f207700b5bd630af3",
+      "Sources/DaBin/RobotLifecycle.swift": "22843ec1cb73d3d47ef002c0e861779bdb1c8fb05dbaa7f08f5731f334472e56",
+      "Sources/DaBin/RobotMotion.swift": "f2321a5d2bbbd73cbfc9dca81cf1d763b59ff08b6fcee0f1d34f2f2f6c51ab37",
+      "Sources/DaBin/RobotPlacementSettings.swift": "407722bd2be418ef5b7a7544519cdb46abb2e4e7bad8abea7173eca15ce1c4e7",
+      "Sources/DaBin/RobotProjectSignView.swift": "525f7da712a6f009b56db7944eba12f74eeb48e3be94a03e4779d8bc9c235c30",
+      "Sources/DaBin/RobotView.swift": "ad21eb0ce63d79d725dd7db66c422efdb3bf37374141de350d812b56fd07d0ee",
+      "Sources/DaBin/ScratchpadView.swift": "7cab34131c519729c439f62bb9b2d72bda7f80fb7e8d752efbbfbb78e6122e1b",
+      "Sources/DaBin/ScreenshotFolderMonitor.swift": "7057f0aff481db96009f0ba9a7ec06262fc3c987744c59d00646e208be0b48df",
+      "Sources/DaBin/SearchColumnViewport.swift": "858090f1c4e40ae0e11cc95aa96fd2be7f8b424cbc2f9117bef6eba5cc882294",
+      "Sources/DaBin/SearchDateBoard.swift": "701238360bc2a78bca2c0d79e1dbe8c7586a730dfe1183edbd45468244ed36e5",
+      "Sources/DaBin/SearchResultCard.swift": "13e42e01ee02246e678afeeb9a7c9019ccd4fdc7f64596de58d995df4b9dbefb",
+      "Sources/DaBin/SearchScreen.swift": "6c8303d70339a94c8d0fa20ea23097b58d9358a9b27e0c642b323ec978ff01b2",
+      "Sources/DaBin/SettingsScreen.swift": "e838f82c6ba376d072511b5ec1978ea199146ae187b01d48742f4d3b4956890d",
+      "Sources/DaBin/ShelfCaptureController.swift": "b6f191ed4b75be328e8c523122238a5711ea3df631e82e02cea6a45ddf8e84ee",
+      "Sources/DaBin/ShelfExport.swift": "67589f74ba21c927ca0358ea37110e802ddd7fa16a1bba29faf4ca0c01b0b8b3",
+      "Sources/DaBin/SoftwareUpdateService.swift": "3b088ea8deff38bf5085370c06e4c32e02d2d7933622eb0f0f9eae18f1dd6623",
+      "Sources/DaBin/StatusBarController.swift": "e072b9b40864bccdb3ca80aaab27dccb3ae1cf5a4f98ec4d5822121b94a6bc7e",
+      "Sources/DaBin/TaskAttachmentsView.swift": "5db337ce90abc6d37a538f523d858256e1e1522df4cfe9c585feb2d1df4ac1b6",
+      "Sources/DaBin/TaskEditorScreen.swift": "8ed30bff65ef8d14c715ca03d84cf6a86260fa6079d9728476b16f4fcb39cab9",
+      "Sources/DaBin/TaskFocusControls.swift": "45f4e53d72a22b30c6b200c79683a96806b21c2bfce95b5f4a2bb2df6f5ecd2f",
+      "Sources/DaBin/TaskFocusSession.swift": "de294c1282271b95047d0794a35b98341cc95eff6c7db663cfce2e2b790e42c2",
+      "Sources/DaBin/TaskPlanning.swift": "2bb41688aac453364b545cf1074a344dc306f701ae54d23ae23f8ebdca44c94a",
+      "Sources/DaBin/TaskPlanningEditor.swift": "af989b732a43dfefab7189c249d2f11585ab9a11d028166a487bb9f2c6a9d48a",
+      "Sources/DaBin/TaskTimerAlarmMotion.swift": "be1b0246a89002c16121aedae36f3f97c96339f49249ba54e20460654ecc427e",
+      "Sources/DaBin/TaskTimerRobotPresenter.swift": "36f232e6f824fe802113d4f3198a15c833e69dc42a145bc1bff14bc2f475784f",
+      "Sources/DaBin/TaskTimerRobotView.swift": "8c839f239d7bb5f715c4a37927f7948bb2c617647faa094822beb20c75b18552",
+      "Sources/DaBin/ThemeSettings.swift": "4201ea8ef5a06c254ae7600e980d51f8aaa605fd79871221d67d120375549a8d",
+      "Sources/DaBin/TimelineCalendarPicker.swift": "49ed15f8935b2ae6d6446f408651df234d938a7f439992bb4ab5d0663fcb8dc3",
+      "Sources/DaBin/TodayPlanningScreen.swift": "d7f58a5fce478283eae8cc57d02b688c05676d274ba160f488077cb442b8a27a",
+      "Sources/DaBin/TodayTaskCard.swift": "65e176df9526b532e8f6626d06a718a3afeabf9775f22f2d443d2523d5983ab7",
+      "Sources/DaBin/TransientMessagePresentation.swift": "eb8a50bcbd2f86d9d6ae4c1a787c9f0bb6284bc75b24d0223c3098abed0da4f9",
+      "Sources/DaBin/TrashScreen.swift": "867409a9486b1d91618aaec197c3481f6e80154b22ff71be6c026f6466e4fb83",
+      "Sources/DaBin/UpdateHandoff.swift": "aa8fadb66cc79ea16080dae270b1748b2b002ad36e3466e0bdb47b681654602a",
+      "Sources/DaBin/WeeklyDateSelection.swift": "1945fdd2318500ac794a75a392130a63d82e6f77bdc0aef741ab2b23aa725159",
+      "Sources/DaBin/WeeklyScopeActions.swift": "37e617e5aaa2a0d7c77caf311bd65478ac17007720666dccf5313551110eb494",
+      "Sources/DaBin/WeeklyScreen.swift": "0e171c504fa895c89d9b0e4b56f0fd5d64104b3d56f04d7380ea55fff842df9d",
+      "Sources/DaBin/WindowDragHandle.swift": "9ee0df83a6c93cbf4b18a10ff081b0a4afa11e12ab55520c0da3beab20e509d3",
+      "Sources/DaBin/WorkspaceClipboard.swift": "5a218b19565697b003e708d071fced032cefd6e8d6a11a5c99ab9c6364668f94",
+      "Sources/DaBin/WorkspaceInput.swift": "f1458efaae48b07936952cf4a3407325a41e192987e315e6798dd7ad7f846f80",
+      "Sources/DaBin/WorkspaceItemCard.swift": "8edd471627d2227678d616c1e6d44befc399bfd6922747dc97a11bdd811661ca",
+      "Sources/DaBin/WorkspaceQuery.swift": "406a22328b8e2569ccaa62f8116bddd45bbcf8fb9d7b7e3336f426f25f66e366",
+      "Sources/DaBin/WorkspaceStore.swift": "d566b571ff130cfc5f5abadd0d1a8d36f858df2bbe1149b288509be545a8982b",
+      "Sources/DaBin/WorkspaceZoom.swift": "738510220a5c70b25e7816f299b5ea33d2d4eed7f546761146ce936c0d884913",
+      "Sources/DaBin/WorkspaceZoomLayout.swift": "f2525e486361ae71d544b529a73391cf2a24ea573ab9540c89a1ed62a1da6773",
+      "Sources/DaBin/WorkspaceZoomScrollAnchor.swift": "acff299991d03a4792e04d33eb29adc5f9dd737283872124768183c6d10dd812"
+    },
+    "sdk": "27.0",
+    "target": "arm64-apple-macosx14.0"
+  }
+}

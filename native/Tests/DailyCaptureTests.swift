@@ -185,10 +185,90 @@ import Foundation
         state.openCapture(task.id)
         try await checkRoundTrip(text: task.title, target: .detailTitle)
         let draft = try unwrap(state.selectedDraft, "Production task owns a draft")
+        // Detail panes stay mounted across section changes. Select Comments
+        // before focusing its native editor so this fixture exercises a visible
+        // production destination rather than an inactive mounted text view.
+        state.openCapture(task.id, focus: "comment")
+        try await settle()
+        try expect(NavigationEditorRegionView.regions(in: host).contains {
+            $0.target == .commentComposer && $0.isActive
+        }, "Production Comments destination exposes its active composer region")
         draft.commentComposer = "Fictional unfinished reply retains its selection"
         try await checkRoundTrip(text: draft.commentComposer, target: .commentComposer)
         try expect(state.selectedDraft === draft && task.comment.isEmpty && draft.commentComposer.hasPrefix("Fictional unfinished"),
                    "Focus restoration retains the live draft without posting or saving its text")
+    }
+
+    @MainActor private static func verifyTodayCaptures(root: URL) async throws {
+        let suite = "DaBinTodayDropQA.\(UUID())"
+        let defaults = UserDefaults(suiteName: suite)!
+        let store = try CaptureStore(root: root)
+        let input = InputService(store: store, stagingRoot: root.appendingPathComponent("Promises"))
+        let previews = PreviewService(store: store, defaults: defaults)
+        let state = AppState(store: store, previews: previews,
+            reminders: ReminderService(store: store, client: DailyNotificationClient()), manualInput: input)
+        let controller = CornerController(state: state, input: input, placementDefaults: nil, animateRobotTransitions: false)
+        defer {
+            controller.shutdown(); previews.shutdown(); state.focusSessions.shutdown(); state.shutdownNotificationPresentation()
+            defaults.removePersistentDomain(forName: suite)
+        }
+        state.showReminders(); state.todayPlanningScope = "later"
+        state.libraryProject = "Other project"; state.filter = .files
+        let browsedDay = Calendar.current.date(byAdding: .day, value: -7, to: Date())!
+        state.selectedDay = browsedDay
+        controller.openDaily()
+        let host = try unwrap(controller.board.captureHostingView, "Today uses the native capture host")
+        try expect(controller.board.makeFirstResponder(host), "Today background accepts native focus")
+        try expect(host.canPasteCapture, "Today enables background Paste without an active editor")
+        let textBoard = try board([item("Fictional Today drop")])
+        defer { textBoard.releaseGlobally() }
+        let drag = DailyDropFixture(textBoard); drag.draggingDestinationWindow = controller.board
+        try expect(host.draggingEntered(drag) == .copy && state.isDailyDropTargeted,
+            "Today exposes the native drop target")
+        try expect(host.prepareForDragOperation(drag) && host.performDragOperation(drag), "Today accepts a direct native text drop")
+        host.concludeDragOperation(drag)
+        try await wait("Today text drop persists") { store.captures.count == 1 && !input.isBusy }
+        try expect(state.route == .reminders && state.selectedDay == browsedDay && state.filter == .files
+            && state.todayPlanningScope == "later" && !state.isDailyDropTargeted,
+            "A successful Today drop retains Today, task scope and browsed history")
+        try expect(state.currentTodayCaptures.map(\.id) == store.captures.map(\.id),
+            "Today shows the text receipt despite a file filter and unrelated selected project")
+        let source = root.appendingPathComponent("Older original.txt")
+        let bytes = Data("Fictional old original received today".utf8)
+        try bytes.write(to: source)
+        try FileManager.default.setAttributes([.modificationDate: browsedDay], ofItemAtPath: source.path)
+        let fileBoard = try board([item(source.absoluteString, type: .fileURL)])
+        defer { fileBoard.releaseGlobally() }
+        let fileDrag = DailyDropFixture(fileBoard); fileDrag.draggingDestinationWindow = controller.board
+        try expect(host.performDragOperation(fileDrag), "Today accepts a file drop with an older modification date")
+        try await wait("Today file drop persists") { store.captures.count == 2 && !input.isBusy }
+        let file = try unwrap(store.captures.first { $0.originalFilename == source.lastPathComponent }, "Today file receipt exists")
+        try expect(file.captureDay == state.currentDayKey && state.currentTodayCaptures.contains { $0.id == file.id }
+            && state.route == .reminders, "Today includes the file by receipt date and retains its route")
+        let managed = try unwrap(store.managedURL(for: file), "Today file has an archived original")
+        try expect(try Data(contentsOf: source) == bytes && Data(contentsOf: managed) == bytes,
+            "Today file drop preserves both source and managed bytes")
+        let pasteBoard = try board([item("Fictional Today paste")])
+        defer { pasteBoard.releaseGlobally() }
+        state.pasteClipboard(from: pasteBoard)
+        try await wait("Today private Paste persists") { store.captures.count == 3 && !input.isBusy }
+        try expect(state.route == .reminders && state.currentTodayCaptures.count == 3 && state.selectedDay == browsedDay,
+            "Today Paste stays on the complete current receipt feed")
+        try expect(host.performDragOperation(drag), "A slow Today capture starts before a new draft")
+        state.openNewNote(); state.newNoteText = "Keep the later draft open"
+        try await wait("Today capture finishes after navigation") { store.captures.count == 4 && !input.isBusy }
+        try expect(state.route == .newNote && state.newNoteText == "Keep the later draft open",
+            "A completing Today capture cannot pull the user out of a later draft")
+        state.cancelNewNote(); state.showReminders()
+        let editor = NSTextView(frame: NSRect(x: 0, y: 0, width: 140, height: 40))
+        editor.isEditable = true; editor.string = "An editor keeps its text"
+        host.addSubview(editor)
+        try expect(controller.board.makeFirstResponder(editor), "Today editor receives native focus")
+        try expect(!host.canPasteCapture && host.draggingEntered(drag).isEmpty && !host.performDragOperation(drag),
+            "Today background capture yields Paste and drops to an active native editor")
+        try expect(store.captures.count == 4 && editor.string == "An editor keeps its text",
+            "Editor refusal preserves content and creates no additional receipt")
+        editor.removeFromSuperview()
     }
 
     static func main() {
@@ -224,6 +304,7 @@ import Foundation
         defer { previews.cancelNetwork() }
         try await verifyFocusRestoration(state)
         try await verifyProductionEditorRestoration(root: root.appendingPathComponent("ProductionEditors"))
+        try await verifyTodayCaptures(root: root.appendingPathComponent("TodayInputs"))
         let hosting = DailyCaptureHostingView(state: state)
         hosting.sizingOptions = []
         let panel = DailyCapturePanel(contentRect: NSRect(x: 60, y: 60, width: 380, height: 500),
@@ -413,7 +494,13 @@ import Foundation
         try expect(pasteCalls == 8, "Panel Command V fallback does not create captures while editing")
         panel.makeFirstResponder(hosting); probe.removeFromSuperview()
 
-        for route: BoardRoute in [.weekly, .search, .newTask, .detail, .reminders, .settings] {
+        state.showReminders()
+        try expect(hosting.canPasteCapture && panel.validateUserInterfaceItem(pasteMenu),
+                   "Today enables the native background Paste fallback")
+        try expect(hosting.draggingEntered(textDrag) == .copy && hosting.prepareForDragOperation(textDrag),
+                   "Today supports background drops through the same native destination")
+        hosting.draggingExited(textDrag)
+        for route: BoardRoute in [.weekly, .search, .newTask, .detail, .settings] {
             state.route = route
             try expect(!hosting.handlePasteShortcut(shortcut(.control, time: 20, window: panel)), "\(route) never captures a Daily shortcut")
             try expect(hosting.draggingEntered(textDrag).isEmpty && !hosting.prepareForDragOperation(textDrag) && !hosting.performDragOperation(textDrag),

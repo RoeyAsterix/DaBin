@@ -1,0 +1,10 @@
+--- baseline/DetailScreen.swift
++++ candidate/DetailScreen.swift
+@@ -280,6 +280,7 @@
+                         TextField("Task title", text: $draft.title, axis: .vertical)
+                             .background(NavigationEditorRegion(target: .detailTitle))
+                             .textFieldStyle(.plain).lineLimit(1...2)
++                            .fixedSize(horizontal: false, vertical: true)
+                             .accessibilityLabel("Task title").accessibilityIdentifier("detail-title")
+                             .focused($focusedField, equals: "title")
+                             .onChange(of: draft.title) { _, _ in draft.message = nil }

@@ -1,0 +1,1 @@
+PASS: 138 local DOCX checks; paragraphs/tables/Unicode, strict OOXML, stored/deflated ZIP, descriptors, CRC/size/path guards, bounded inflation/XML, entity rejection, cancellation and no remote/converter loading.

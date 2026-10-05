@@ -286,6 +286,7 @@ private actor MessageFixtureSleeper {
         let theme = ThemeSettings(defaults: defaults, systemDarkMode: false); theme.setDarkMode(false); theme.setShowTooltips(false)
         let export = DayExportActionController(pasteboardWriter: { _ in false }, destinationChooser: { _, _ in .cancelled }, fileWriter: { _, _ in })
         let board = mount(BoardView(state: state, theme: theme, dayExportController: export), size: CGSize(width: 380, height: 560), dark: false)
+        state.detailFocus = "reminder"
         let detail = mount(DetailScreen(state: state, capture: capture, draft: draft), size: CGSize(width: 650, height: 900), dark: true)
         let settings = mount(SettingsScreen(state: state, theme: theme, quitApplication: {}), size: CGSize(width: 600, height: 2_400), dark: false)
         let fixtures = [board, detail, settings], views = fixtures.map(\.0)
@@ -299,6 +300,13 @@ private actor MessageFixtureSleeper {
         }.value
         try expect(activation == .success && fixtures.allSatisfy { $0.1.frame.maxX < 0 && !$0.1.isKeyWindow }, "Native message fixtures initialize only own offscreen non-key windows")
         await settle(views)
+        let reminderNodes = nodes(detail.0)
+        try expect(["reminder-preset-15", "reminder-preset-60", "reminder-preset-tomorrow"].allSatisfy { id in
+            reminderNodes.contains { $0.identifier == id }
+        }, "Actual Detail exposes reminder presets before enabling a reminder")
+        try expect(!draft.reminderEnabled && !draft.reminderChanged
+            && !reminderNodes.contains { $0.identifier == "capture-save-reminder" },
+                   "An unchanged reminder-off pane omits its inactive Apply action")
         let baseline = try captureData(store.captures), baselineHeight = CornerGeometry.dailyPanelHeight(for: state)
         try expect(baselineHeight == 380, "An empty selected day has no reserved banner height")
         let status = AppStatusMessage(text: "Fictional capture saved successfully.", severity: .success)

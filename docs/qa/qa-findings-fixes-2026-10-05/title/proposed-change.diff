@@ -1,0 +1,317 @@
+--- /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Sources/DaBin/DetailScreen.swift
++++ /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/title/DetailScreen.swift
+@@ -153,6 +153,159 @@
+     }
+ }
+ 
++/// AppKit owns both wrapping and the field editor. A finite preferred width and
++/// explicit two-line cell keep the unfocused title readable at normal zoom;
++/// editing still uses the native field editor with its undo/IME/selection state.
++@MainActor
++private struct CaptureTaskTitleField: NSViewRepresentable {
++    @Environment(\.isEnabled) private var isEnabled
++    @Binding var text: String
++    let fontSize: CGFloat
++    @Binding var isFocused: Bool
++
++    func makeCoordinator() -> Coordinator { Coordinator(parent: self) }
++
++    func makeNSView(context: Context) -> CaptureTaskTitleTextField {
++        let field = CaptureTaskTitleTextField()
++        field.isEditable = true; field.isSelectable = true
++        field.isBordered = false; field.isBezeled = false; field.drawsBackground = false
++        field.focusRingType = .none; field.usesSingleLineMode = false
++        field.maximumNumberOfLines = 2
++        field.cell?.wraps = true; field.cell?.isScrollable = false
++        field.cell?.lineBreakMode = .byWordWrapping
++        field.cell?.truncatesLastVisibleLine = true
++        field.placeholderString = "Task title"
++        field.identifier = NSUserInterfaceItemIdentifier("detail-title")
++        field.setAccessibilityElement(true); field.setAccessibilityRole(.textField)
++        field.setAccessibilityIdentifier("detail-title"); field.setAccessibilityLabel("Task title")
++        field.delegate = context.coordinator
++        field.onWindowChanged = { [weak field, weak coordinator = context.coordinator] in
++            guard let field else { return }; coordinator?.applyFocus(to: field)
++        }
++        field.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
++        updateNSView(field, context: context)
++        return field
++    }
++
++    func updateNSView(_ field: CaptureTaskTitleTextField, context: Context) {
++        context.coordinator.parent = self
++        let editor = field.currentEditor() as? NSTextView
++        if editor?.hasMarkedText() != true, field.stringValue != text, editor?.string != text {
++            let selection = editor?.selectedRange()
++            field.stringValue = text
++            if let editor, let selection {
++                let count = (text as NSString).length, start = min(selection.location, count)
++                editor.setSelectedRange(NSRange(location: start, length: min(selection.length, count - start)))
++            }
++        }
++        let system = NSFont.systemFont(ofSize: fontSize, weight: .semibold)
++        let font = system.fontDescriptor.withDesign(.rounded).flatMap { NSFont(descriptor: $0, size: fontSize) } ?? system
++        if field.font != font {
++            if let editor, field.window?.firstResponder === editor {
++                // Updating NSControl.font may end field editing. Update the
++                // public cell while the native editor owns input instead, and
++                // keep its selection when typography changes during resize.
++                if !editor.hasMarkedText() {
++                    let selections = editor.selectedRanges
++                    field.cell?.font = font; editor.font = font
++                    let count = (editor.string as NSString).length
++                    editor.selectedRanges = selections.map { value in
++                        let range = value.rangeValue, start = min(count, range.location)
++                        return NSValue(range: NSRange(location: start, length: min(range.length, count - start)))
++                    }
++                    field.invalidateIntrinsicContentSize()
++                }
++            } else { field.font = font }
++        }
++        field.textColor = NSColor(Palette.foreground)
++        if field.isEnabled != isEnabled { field.isEnabled = isEnabled }
++        field.setAccessibilityHelp(text)
++        context.coordinator.applyFocus(to: field)
++    }
++
++    func sizeThatFits(_ proposal: ProposedViewSize, nsView field: CaptureTaskTitleTextField,
++                      context: Context) -> CGSize? {
++        guard let width = proposal.width, width.isFinite, width > 0 else { return nil }
++        if abs(field.preferredMaxLayoutWidth - width) > 0.25 { field.preferredMaxLayoutWidth = width }
++        let font = field.font ?? .systemFont(ofSize: fontSize, weight: .semibold)
++        let line = ceil(NSLayoutManager().defaultLineHeight(for: font))
++        let measured = field.sizeThatFits(NSSize(width: width, height: .greatestFiniteMagnitude))
++        // Cell padding is included, but the title never reserves a third line.
++        return CGSize(width: width, height: min(line * 2 + 4, max(line + 4, ceil(measured.height))))
++    }
++
++    static func dismantleNSView(_ field: CaptureTaskTitleTextField, coordinator: Coordinator) {
++        field.onWindowChanged = nil; field.delegate = nil
++        if let window = field.window, let editor = field.currentEditor(), window.firstResponder === editor {
++            window.makeFirstResponder(nil)
++        }
++    }
++
++    @MainActor final class Coordinator: NSObject, NSTextFieldDelegate {
++        var parent: CaptureTaskTitleField
++        private var focusRevision = 0
++        private var previousFocusIntent: Bool?
++        private var pendingFocusClear = false
++        init(parent: CaptureTaskTitleField) { self.parent = parent }
++
++        func applyFocus(to field: NSTextField) {
++            // A false binding records no programmatic focus request. Native
++            // click/Tab focus can precede the delegate's first text edit, so
++            // replaying an unchanged false value would cancel user input.
++            if previousFocusIntent == true && !parent.isFocused { pendingFocusClear = true }
++            if parent.isFocused { pendingFocusClear = false }
++            previousFocusIntent = parent.isFocused
++            focusRevision += 1; let revision = focusRevision
++            DispatchQueue.main.async { [weak self, weak field] in
++                guard let self, let field, self.focusRevision == revision, let window = field.window else { return }
++                let owned = field.currentEditor().map { window.firstResponder === $0 } ?? (window.firstResponder === field)
++                if self.parent.isEnabled && self.parent.isFocused {
++                    self.pendingFocusClear = false
++                    if !owned { window.makeFirstResponder(field) }
++                } else if owned && (!self.parent.isEnabled || self.pendingFocusClear) {
++                    self.pendingFocusClear = false; window.makeFirstResponder(nil)
++                } else if !owned { self.pendingFocusClear = false }
++            }
++        }
++        func controlTextDidBeginEditing(_ notification: Notification) {
++            parent.isFocused = true
++        }
++        func controlTextDidChange(_ notification: Notification) {
++            guard let field = notification.object as? NSTextField else { return }
++            let value = (field.currentEditor() as? NSTextView)?.string ?? field.stringValue
++            if parent.text != value { parent.text = value }
++        }
++        func controlTextDidEndEditing(_ notification: Notification) {
++            if let field = notification.object as? NSTextField, parent.text != field.stringValue { parent.text = field.stringValue }
++            parent.isFocused = false
++        }
++        func control(_ control: NSControl, textView: NSTextView, doCommandBy commandSelector: Selector) -> Bool {
++            // A vertical title field keeps Return as text input; primary Save
++            // remains explicit and cannot accidentally commit another draft.
++            if commandSelector == #selector(NSResponder.insertNewline(_:)) {
++                textView.insertNewlineIgnoringFieldEditor(nil); return true
++            }
++            return false
++        }
++    }
++}
++
++@MainActor
++private final class CaptureTaskTitleTextField: NSTextField {
++    // This borderless representable measures its whole view. Standard field
++    // alignment adds two points on each side, making SwiftUI's proposed width
++    // disagree with the native frame and repeatedly changing wrapping width.
++    override var alignmentRectInsets: NSEdgeInsets { NSEdgeInsets(top: 0, left: 0, bottom: 0, right: 0) }
++    var onWindowChanged: (() -> Void)?
++    override func viewDidMoveToWindow() { super.viewDidMoveToWindow(); onWindowChanged?() }
++    override func layout() {
++        super.layout()
++        if bounds.width > 0, abs(preferredMaxLayoutWidth - bounds.width) > 0.25 {
++            preferredMaxLayoutWidth = bounds.width
++        }
++    }
++}
++
+ /// Page navigation stays outside the scrolling reading/editing surfaces.
+ /// The mounted panes retain local edits, OCR selection, and media/PDF state.
+ enum CapturePageSection: String, CaseIterable, Identifiable {
+@@ -190,7 +343,9 @@
+     @ObservedObject var state: AppState
+     @ObservedObject var capture: Capture
+     @ObservedObject var draft: CaptureDraft
+-    @FocusState private var focusedField: String?
++    // The native title editor owns focus; this state records explicit focus
++    // intent and follows its delegate without a second SwiftUI focus engine.
++    @State private var focusedField: String?
+     @State private var copiedSearchableText = false
+     @State private var pageSection: CapturePageSection = .preview
+ 
+@@ -277,11 +432,13 @@
+                 if capture.isTask { TaskStatusButton(state: state, capture: capture) }
+                 Group {
+                     if capture.isTask {
+-                        TextField("Task title", text: $draft.title, axis: .vertical)
++                        CaptureTaskTitleField(text: $draft.title, fontSize: layout.titleSize,
++                            isFocused: Binding(get: { focusedField == "title" }, set: { focused in
++                                if focused { focusedField = "title" }
++                                else if focusedField == "title" { focusedField = nil }
++                            }))
+                             .background(NavigationEditorRegion(target: .detailTitle))
+-                            .textFieldStyle(.plain).lineLimit(1...2)
+                             .accessibilityLabel("Task title").accessibilityIdentifier("detail-title")
+-                            .focused($focusedField, equals: "title")
+                             .onChange(of: draft.title) { _, _ in draft.message = nil }
+                             .buddyHelp(draft.title)
+                     } else {
+--- /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/native/Tests/TaskPlanInteractionTests.swift
++++ /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/docs/qa/qa-findings-fixes-2026-10-05/title/TaskPlanInteractionTests.swift
+@@ -783,7 +783,43 @@
+                 for priority in TaskPriority.allCases {
+                     try contained(try await find(host, id: "task-priority-choice-" + priority.rawValue), window: window, horizontalOnly: true)
+                 }
+-                try render(host, name: "full-board-380-task-zoom\(Int(factor * 100))", output: output)
++                let titleNode = try await find(host, id: "detail-title")
++                let titleField = try nativeControl(titleNode, in: host, type: NSTextField.self)
++                try expect(window.makeFirstResponder(nil), "Unfocused task-title raster is captured outside field editing")
++                await settle(host)
++                let titleFrame = titleField.convert(titleField.bounds, to: host)
++                let titleTop = host.isFlipped ? titleFrame.minY : host.bounds.height - titleFrame.maxY
++                let titleLine = ceil(NSLayoutManager().defaultLineHeight(for: titleField.font!))
++                let titleDiagnostic: [String: Any] = ["zoom": factor, "fieldClass": String(describing: type(of: titleField)),
++                    "frame": NSStringFromRect(titleField.frame), "bounds": NSStringFromRect(titleField.bounds),
++                    "preferredWidth": titleField.preferredMaxLayoutWidth, "lineHeight": titleLine,
++                    "alignmentRect": NSStringFromRect(titleField.alignmentRect(forFrame: titleField.frame)),
++                    "alignmentInsets": ["left": titleField.alignmentRectInsets.left, "right": titleField.alignmentRectInsets.right,
++                        "top": titleField.alignmentRectInsets.top, "bottom": titleField.alignmentRectInsets.bottom],
++                    "drawingRect": NSStringFromRect(titleField.cell!.drawingRect(forBounds: titleField.bounds)),
++                    "fontSize": titleField.font!.pointSize, "intrinsicSize": NSStringFromSize(titleField.intrinsicContentSize),
++                    "fitSize": NSStringFromSize(titleField.sizeThatFits(NSSize(width: titleField.bounds.width, height: .greatestFiniteMagnitude))),
++                    "titleFrameTopLeft": ["x": titleFrame.minX, "y": titleTop, "width": titleFrame.width, "height": titleFrame.height],
++                    "text": titleField.stringValue, "maximumLines": titleField.maximumNumberOfLines,
++                    "hostFlipped": host.isFlipped]
++                try JSONSerialization.data(withJSONObject: titleDiagnostic, options: [.prettyPrinted, .sortedKeys])
++                    .write(to: output.appendingPathComponent("title-geometry-zoom\(Int(factor * 100)).json"))
++                try render(host, name: "title-geometry-zoom\(Int(factor * 100))", output: output)
++                try expect(titleField.maximumNumberOfLines == 2 && titleField.cell?.wraps == true
++                    && titleField.cell?.truncatesLastVisibleLine == true && titleField.cell?.isScrollable == false,
++                    "Task title uses native bounded wrapping and a visible final-line truncation")
++                try expect(abs(titleField.preferredMaxLayoutWidth - titleField.bounds.width) < 1
++                    && titleField.bounds.height <= titleLine * 2 + 4.5,
++                    "Task title measures at its real available width and never reserves a third line")
++                try expect(titleField.stringValue == capture.title && titleField.currentEditor() == nil,
++                    "Unfocused bounded title retains the complete task title")
++                let titleRender = "full-board-380-task-zoom\(Int(factor * 100))"
++                try render(host, name: titleRender, output: output)
++                evidence.append(["context": "unfocused-title-raster", "file": titleRender + "@2x.png",
++                    "pixelScale": 2, "zoom": factor, "theme": factor == 2 ? "dark" : "light",
++                    "titleFrameTopLeft": ["x": titleFrame.minX, "y": titleTop,
++                        "width": titleFrame.width, "height": titleFrame.height], "lineHeight": titleLine,
++                    "fontSize": titleField.font!.pointSize, "completeTitleRetained": true])
+                 try await press(host, id: "detail-section-reminder")
+                 try await press(host, id: "reminder-preset-15")
+                 for id in ["reminder-preset-15", "reminder-preset-60", "reminder-preset-tomorrow", "reminder-countdown-hours", "reminder-countdown-minutes", "capture-save-reminder", "detail-save"] {
+@@ -801,6 +837,71 @@
+             }
+             try expect(services.notifications.requests == 0 && services.notifications.additions == 0,
+                 "Responsive fixtures do not ask for permission or deliver notifications")
++        }
++    }
++
++    private static func nativeTitleEditing(output: URL) async throws {
++        let services = try Services(); defer { services.close() }
++        let original = "Fictional long native title for a compact desktop workspace that needs two readable lines"
++        let capture = try services.store.createTask(text: original)
++        services.state.openCapture(capture.id, focus: "title")
++        let draft = services.state.selectedDraft!, theme = ThemeSettings(defaults: services.defaults)
++        theme.setDarkMode(false); theme.setShowTooltips(false)
++        try await withHost(AnyView(BoardView(state: services.state, theme: theme)), size: CGSize(width: 380, height: 680)) { host, window in
++            let field = try nativeControl(try await find(host, id: "detail-title"), in: host, type: NSTextField.self)
++            try expect(field.currentEditor() != nil, "Explicit task-title focus enters the native field editor")
++            let edited = "Fictional Δ title 日本語 with a recoverable native selection and readable wrapping"
++            try await enter(edited, id: "detail-title", in: host)
++            try expect(draft.title == edited && draft.hasChanges && capture.title == original,
++                "Native title typing updates the existing recoverable draft and leaves the stored task unchanged")
++            try expect(window.makeFirstResponder(field), "Native task title reopens the same field editor")
++            guard let editor = field.currentEditor() as? NSTextView else { throw NSError(domain: "TaskPlanInteractionTests", code: 21) }
++            editor.setSelectedRange(NSRange(location: 11, length: 6))
++            let identity = ObjectIdentifier(field), selection = editor.selectedRange()
++            for width in [CGFloat(600), 1200, 380] {
++                window.setContentSize(CGSize(width: width, height: 680))
++                host.frame = NSRect(x: 0, y: 0, width: width, height: 680); await settle(host)
++                let resized = try nativeControl(try await find(host, id: "detail-title"), in: host, type: NSTextField.self)
++                let resizeDiagnostic: [String: Any] = ["width": width,
++                    "originalFieldID": String(describing: identity), "resizedFieldID": String(describing: ObjectIdentifier(resized)),
++                    "sameField": ObjectIdentifier(resized) == identity, "sameEditor": resized.currentEditor() === editor,
++                    "firstResponderIsEditor": window.firstResponder === editor,
++                    "firstResponderClass": window.firstResponder.map { String(describing: type(of: $0)) } ?? "nil",
++                    "originalEditorID": String(describing: ObjectIdentifier(editor)),
++                    "currentEditorID": resized.currentEditor().map { String(describing: ObjectIdentifier($0)) } ?? "nil",
++                    "expectedSelection": NSStringFromRange(selection), "originalEditorSelection": NSStringFromRange(editor.selectedRange()),
++                    "currentEditorSelection": (resized.currentEditor() as? NSTextView).map { NSStringFromRange($0.selectedRange()) } ?? "nil",
++                    "originalEditorText": editor.string, "resizedText": resized.stringValue,
++                    "fieldWindowPresent": field.window === window, "resizedWindowPresent": resized.window === window,
++                    "bounds": NSStringFromRect(resized.bounds), "preferredWidth": resized.preferredMaxLayoutWidth]
++                try JSONSerialization.data(withJSONObject: resizeDiagnostic, options: [.prettyPrinted, .sortedKeys])
++                    .write(to: output.appendingPathComponent("title-resize-\(Int(width)).json"))
++                try render(host, name: "title-resize-\(Int(width))", output: output)
++                try expect(ObjectIdentifier(resized) == identity && resized.currentEditor() === editor
++                    && window.firstResponder === editor && editor.selectedRange() == selection,
++                    "Continuous native title resize to\(Int(width)) preserves field/editor identity and UTF16 selection")
++                try expect(resized.stringValue == edited && draft.title == edited
++                    && abs(resized.preferredMaxLayoutWidth - resized.bounds.width) < 1,
++                    "Native title resize rewraps the complete draft at the actual available width")
++            }
++            editor.setSelectedRange(NSRange(location: (editor.string as NSString).length, length: 0))
++            let time = ProcessInfo.processInfo.systemUptime
++            for eventType in [NSEvent.EventType.keyDown, .keyUp] {
++                let event = NSEvent.keyEvent(with: eventType, location: .zero, modifierFlags: [], timestamp: time,
++                    windowNumber: window.windowNumber, context: nil, characters: "\r", charactersIgnoringModifiers: "\r",
++                    isARepeat: false, keyCode: 36)!
++                window.sendEvent(event)
++            }
++            await settle(host)
++            try expect(draft.title == edited + "\n" && field.currentEditor() === editor && capture.title == original,
++                "Focused Return stays native multiline title input and cannot commit unrelated drafts")
++            try expect(window.makeFirstResponder(nil), "Native title ends editing without losing its pending text")
++            await settle(host)
++            try expect(draft.title == edited + "\n", "Ending native title editing keeps the complete pending value")
++            try await press(host, id: "detail-save")
++            try expect(capture.title == edited && draft.title == edited && !draft.hasChanges,
++                "Explicit Save commits the native title through existing normalized task-draft validation")
++            try render(host, name: "native-title-edit-resize-save", output: output)
+         }
+     }
+ 
+@@ -816,6 +917,7 @@
+         try await pendingChecklistNavigation()
+         try await completedReminderRetry()
+         try await fullBoardMatrix(output: output)
++        try await nativeTitleEditing(output: output)
+         let report: [String: Any] = ["suite": "TaskPlanInteractionTests", "checks": checks, "fixtures": evidence,
+             "privacy": "Disposable fictional task metadata, private preferences, own-process native bindings and menus; no real archive, clipboard, Finder, notification permission or OS notification access."]
+         try JSONSerialization.data(withJSONObject: report, options: [.prettyPrinted, .sortedKeys])

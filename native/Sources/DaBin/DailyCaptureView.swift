@@ -13,8 +13,16 @@ enum NavigationEditorTarget: String {
 
 @MainActor struct NavigationEditorRegion: NSViewRepresentable {
     let target: NavigationEditorTarget
-    func makeNSView(context: Context) -> NavigationEditorRegionView { NavigationEditorRegionView(target: target) }
-    func updateNSView(_ view: NavigationEditorRegionView, context: Context) { view.target = target }
+    var isActive = true
+    func makeNSView(context: Context) -> NavigationEditorRegionView {
+        let view = NavigationEditorRegionView(target: target)
+        view.isActive = isActive
+        return view
+    }
+    func updateNSView(_ view: NavigationEditorRegionView, context: Context) {
+        view.target = target; view.isActive = isActive
+        view.rememberMountedEditor()
+    }
 }
 
 /// The region is attached directly to one editor. SwiftUI does not copy its
@@ -23,9 +31,32 @@ enum NavigationEditorTarget: String {
 /// user text, a translated label, or its position in a list of controls.
 @MainActor final class NavigationEditorRegionView: NSView {
     var target: NavigationEditorTarget
+    var isActive = true {
+        didSet {
+            guard oldValue, !isActive, let window, let responder = window.firstResponder,
+                  let editor = mountedEditor, editor.window === window else { return }
+            if responder === editor || (editor as? NSTextField)?.currentEditor() === responder {
+                window.makeFirstResponder(nil)
+            }
+        }
+    }
+    private weak var mountedEditor: NSView?
     init(target: NavigationEditorTarget) { self.target = target; super.init(frame: .zero) }
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
     override func hitTest(_ point: NSPoint) -> NSView? { nil }
+    override func layout() {
+        super.layout()
+        rememberMountedEditor()
+    }
+    override func viewDidMoveToWindow() {
+        super.viewDidMoveToWindow()
+        DispatchQueue.main.async { [weak self] in self?.rememberMountedEditor() }
+    }
+
+    func rememberMountedEditor() {
+        guard isActive, let root = window?.contentView, let editor = editor(in: root) else { return }
+        mountedEditor = editor
+    }
 
     static func regions(in view: NSView) -> [NavigationEditorRegionView] {
         (view as? NavigationEditorRegionView).map { [$0] } ?? view.subviews.flatMap { regions(in: $0) }
@@ -33,7 +64,7 @@ enum NavigationEditorTarget: String {
 
     func editor(in root: NSView) -> NSView? {
         let region = convert(bounds, to: root)
-        guard region.width > 0, region.height > 0, !isHiddenOrHasHiddenAncestor else { return nil }
+        guard isActive, region.width > 0, region.height > 0, !isHiddenOrHasHiddenAncestor else { return nil }
         func controls(in view: NSView) -> [NSView] {
             if let field = view as? NSTextField, field.isEditable { return [field] }
             if let text = view as? NSTextView, text.isEditable, !text.isFieldEditor { return [text] }
@@ -79,7 +110,7 @@ final class DailyCaptureHostingView: NSHostingView<BoardView> {
     @MainActor required dynamic init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
 
     private var acceptsCapture: Bool {
-        state?.route == .daily || state?.route == .inbox
+        state?.route == .daily || state?.route == .inbox || state?.route == .reminders
             || (state?.route == .library && state?.workspace.mode == .collection)
             || (state?.route == .detail && state?.selectedCapture?.isTask == true)
     }

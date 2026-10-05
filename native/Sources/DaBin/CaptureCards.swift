@@ -42,6 +42,9 @@ struct CaptureRow: View {
     var showsProject = true
     var planningActions: AnyView? = nil
     var planningMetadata: AnyView? = nil
+    var navigationItemID: String? = nil
+    /// A receipt summary for Today; it never changes saved minimization state.
+    var compactReceipt = false
     @State private var copied = false
     @State private var copyGeneration = 0
     @State private var dropTargeted = false
@@ -50,6 +53,10 @@ struct CaptureRow: View {
     private var projectName: String? { ExplorerQuery.project(of: capture, in: state.store.captures) }
 
     var body: some View {
+        Group {
+        if compactReceipt {
+            compactReceiptContent
+        } else {
         VStack(alignment: .leading, spacing: zoom.value(capture.isTask ? 10 : 12)) {
             if showsProject {
                 CaptureProjectPriorityHeader(state: state, capture: capture)
@@ -103,20 +110,77 @@ struct CaptureRow: View {
             }
             secondaryActions
         }
-        .padding(zoom.value(embeddedInCard ? 4 : capture.isTask ? 14 : 16))
-        .workspaceZoomItem("capture:" + capture.id.uuidString)
+        }
+        }
+        .padding(zoom.value(embeddedInCard ? 4 : compactReceipt ? 8 : capture.isTask ? 14 : 16))
+        .workspaceZoomItem(navigationItemID ?? "capture:" + capture.id.uuidString)
         .projectCardBackground(workspace: state.workspace, projectName: projectName,
                                enabled: !embeddedInCard)
         .projectCardFrame(workspace: state.workspace, projectName: projectName, activeProject: nil,
                           fallbackColor: embeddedInCard ? .clear : dropTargeted ? accent : taskAtTop ? accent.opacity(0.55) : Palette.line,
                           fallbackWidth: embeddedInCard ? 0 : dropTargeted ? 1.5 : 0.7)
-        .padding(.vertical, embeddedInCard ? 0 : 6)
-        .contextMenu { CaptureActionMenuItems(state: state, capture: capture, includesRemoval: true) }
+        .padding(.vertical, embeddedInCard ? 0 : compactReceipt ? 4 : 6)
+        .contextMenu { CaptureActionMenuItems(state: state, capture: capture, includesRemoval: true, allowsMinimization: !compactReceipt, showsParentTask: compactReceipt) }
         .onDrop(of: TaskAttachmentTypes.identifiers, isTargeted: $dropTargeted) { providers in
             guard capture.isTask else { return false }
             return state.receiveTaskAttachments(providers, to: capture)
         }
         .animation(reduceMotion ? nil : .easeOut(duration: 0.18), value: capture.isTask)
+    }
+
+    private var compactReceiptContent: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            HStack(alignment: .top, spacing: 6) {
+                if capture.isTask { TaskStatusButton(state: state, capture: capture) }
+                Button { state.openCapture(capture.id) } label: {
+                    Text(capture.title.isEmpty ? "Untitled capture" : capture.title)
+                        .font(.system(size: zoom.fontSize(15), weight: .semibold))
+                        .strikethrough(capture.isTask && capture.isCompleted, color: Palette.muted)
+                        .foregroundStyle(capture.isCompleted ? Palette.muted : Palette.foreground)
+                        .lineLimit(2).fixedSize(horizontal: false, vertical: true)
+                        .frame(maxWidth: .infinity, minHeight: 32, alignment: .leading)
+                        .multilineTextAlignment(.leading).contentShape(Rectangle())
+                }.buttonStyle(.plain)
+                    .accessibilityLabel("Open \(capture.title), \(capture.isTask ? "task" : captureTypeLabel(capture.kind)), saved \(prettyDay(capture.captureDay)) at \(captureClock(capture))")
+                    .accessibilityIdentifier("capture-compact-open-\(capture.id.uuidString)")
+                    .captureDragSource(state: state, capture: capture)
+                    .buddyHelp(capture.title)
+                    .layoutPriority(1)
+                if capture.isPinned {
+                    Image(systemName: "pin.fill").font(.system(size: zoom.fontSize(10)))
+                        .foregroundStyle(accent).accessibilityLabel("Pinned")
+                }
+                if showsCopyButton {
+                    Button(action: copy) {
+                        Label(copied ? "Copied" : "Copy", systemImage: copied ? "checkmark" : "doc.on.doc")
+                            .font(.system(size: min(15, max(12, zoom.fontSize(13))), weight: .medium))
+                            .padding(.horizontal, 6).frame(minHeight: 32).contentShape(Rectangle())
+                    }.buttonStyle(.plain).foregroundStyle(accent)
+                        .fixedSize(horizontal: true, vertical: false)
+                        .accessibilityLabel(copied ? "Copied" : "Copy \(capture.title)")
+                        .accessibilityIdentifier(CaptureCopyButton.accessibilityIdentifier(for: [capture]))
+                        .buddyHelp(copied ? "Copied" : "Copy \(capture.title)")
+                }
+                Menu { CaptureActionMenuItems(state: state, capture: capture, includesRemoval: true, allowsMinimization: false, showsParentTask: true) } label: {
+                    Label("More", systemImage: "ellipsis")
+                        .font(.system(size: min(15, max(12, zoom.fontSize(13))), weight: .medium))
+                        .padding(.horizontal, 6).frame(minHeight: 32).contentShape(Rectangle())
+                }.menuStyle(.button).buttonStyle(.plain).menuIndicator(.hidden).fixedSize()
+                    .foregroundStyle(accent).buddyHelp("More capture actions")
+                    .accessibilityLabel("More actions for \(capture.title)")
+                    .accessibilityIdentifier("capture-more-\(capture.id.uuidString)")
+                    .disabled(state.removingCaptureID == capture.id)
+                    .daBinTutorialAnchor(.captureActions)
+            }
+            if showsProject {
+                CaptureProjectPriorityHeader(state: state, capture: capture)
+            } else {
+                CaptureTaskPriorityTag(capture: capture)
+            }
+            CaptureReceiptView(capture: capture, category: captureTypeLabel(capture.kind))
+            CaptureConversionUndo(state: state, capture: capture)
+        }.accessibilityElement(children: .contain)
+            .accessibilityIdentifier("capture-compact-receipt-\(capture.id.uuidString)")
     }
 
     private var header: some View {
@@ -284,9 +348,10 @@ struct CaptureReceiptView: View {
 struct CaptureTrashButton: View {
     @ObservedObject var state: AppState
     @ObservedObject var capture: Capture
+    var visualLabel: String? = nil
 
     var body: some View {
-        BuddyIconButton(symbol: "trash", title: "Move to Recently Deleted") {
+        BuddyIconButton(symbol: "trash", title: "Move to Recently Deleted", visualLabel: visualLabel) {
             state.requestRemoval(capture)
         }
         .accessibilityLabel("Move \(capture.title.isEmpty ? "capture" : capture.title) to Recently Deleted")
@@ -304,10 +369,16 @@ struct CaptureConversionUndo: View {
     @ObservedObject var capture: Capture
     var body: some View {
         if state.lastConvertedCaptureID == capture.id, state.canUndoTaskConversion {
-            HStack {
-                Label("Task ready", systemImage: "checkmark").foregroundStyle(Palette.muted)
-                Spacer(minLength: 0)
-                Button("Undo") { state.undoTaskConversion() }.buttonStyle(.plain)
+            ViewThatFits(in: .horizontal) {
+                HStack {
+                    Label("Task ready", systemImage: "checkmark").foregroundStyle(Palette.muted)
+                    Spacer(minLength: 0)
+                    Button("Undo") { state.undoTaskConversion() }.buttonStyle(.plain)
+                }
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Task ready").foregroundStyle(Palette.muted)
+                    Button("Undo") { state.undoTaskConversion() }.buttonStyle(.plain)
+                }
             }.font(.system(size: 11)).accessibilityIdentifier("capture-conversion-undo-\(capture.id.uuidString)")
         }
     }
@@ -365,18 +436,27 @@ private struct CaptureActionMenuItems: View {
     @ObservedObject var state: AppState
     @ObservedObject var capture: Capture
     let includesRemoval: Bool
+    var allowsMinimization = true
+    var showsParentTask = false
     var body: some View {
         Button("Open capture", systemImage: "arrow.up.forward.square") { state.openCapture(capture.id) }
-        Button(capture.comment.isEmpty ? "Add note" : "Edit note", systemImage: "text.bubble") { state.openCapture(capture.id, focus: "comment") }
+        Button(capture.comment.isEmpty ? "Add comment" : "Edit comment", systemImage: "text.bubble") { state.openCapture(capture.id, focus: "comment") }
         Button(capture.reminderAt == nil ? "Add reminder" : "Edit reminder", systemImage: "bell") { state.openCapture(capture.id, focus: "reminder") }
         Button(capture.isPinned ? "Unpin" : "Pin", systemImage: capture.isPinned ? "pin.slash" : "pin") { state.togglePinned(capture) }
+        CaptureReturnToInboxMenuItem(state: state, capture: capture)
         CaptureTaskConversionMenu(state: state, capture: capture)
         if capture.isTask {
             Button("Add task attachments", systemImage: "paperclip") { state.openCapture(capture.id, focus: "task") }
             Button(capture.isCompleted ? "Mark incomplete" : "Complete task", systemImage: "checkmark.circle") { state.toggleTaskCompletion(capture) }
         }
         Divider()
-        Button(capture.isMinimized ? "Expand capture" : "Minimize capture", systemImage: capture.isMinimized ? "chevron.down" : "chevron.up") { state.toggleMinimized(capture) }
+        if showsParentTask, let parentID = capture.parentTaskID {
+            Button("Open parent task", systemImage: "arrow.turn.up.left") { state.openCapture(parentID, focus: "task") }
+                .accessibilityIdentifier("capture-parent-task-menu-\(capture.id.uuidString)")
+        }
+        if allowsMinimization {
+            Button(capture.isMinimized ? "Expand capture" : "Minimize capture", systemImage: capture.isMinimized ? "chevron.down" : "chevron.up") { state.toggleMinimized(capture) }
+        }
         Button("Show capture day", systemImage: "calendar") { state.showCaptureDay(capture) }
         if includesRemoval {
             Button("Move to Recently Deleted", systemImage: "trash", role: .destructive) { state.requestRemoval(capture) }
@@ -389,8 +469,9 @@ struct CaptureTaskConversionButton: View {
     @Environment(\.daBinAccent) private var accent
     @ObservedObject var state: AppState
     @ObservedObject var capture: Capture
+    var visualLabel: String? = nil
     var body: some View {
-        BuddyIconButton(symbol: "checkmark.square", title: "Turn into task") { state.convertToTask(capture) }
+        BuddyIconButton(symbol: "checkmark.square", title: "Turn into task", visualLabel: visualLabel) { state.convertToTask(capture) }
             .accessibilityLabel("Turn \(capture.title) into a task")
             .accessibilityHint("Keeps the captured content, note and reminder")
             .accessibilityIdentifier("capture-convert-to-task-\(capture.id.uuidString)")

@@ -1,0 +1,95 @@
+{
+  "benchmarkContract": "Coupled display:true window resizing, forced layouts, 1 ms scheduling wait, 15 ms inter-input spacing, 5,000 items, 100 durable burst/arrivals and functional invariants retained. Existing 50 ms input / 33 ms steady p95 thresholds now strict pass gates. Reports precede failures.",
+  "confirmed": "The synchronous coupled NSWindow.setFrame(display:true) call dominates measured synthetic input completion. The entirety of RobotAppFrameView.layout is below 0.15 ms at every measured callback in stage A, ruling out its own geometry/backing-scale work as a material cause of47\u201352ms native resize.",
+  "evidence": "stage-a/runtime/performance.json",
+  "evidenceSHA256": "7d52bdd48da8497adb0e16211ef51d9b89b44dfbf975fd3bdb225a98e5285dd1",
+  "inputStages": [
+    {
+      "count": 160,
+      "maximumMilliseconds": 51.63612496107817,
+      "medianMilliseconds": 0.016583362594246864,
+      "p95Milliseconds": 0.033416785299777985,
+      "stage": "firstLayout"
+    },
+    {
+      "count": 160,
+      "maximumMilliseconds": 11.347208172082901,
+      "medianMilliseconds": 4.083666484802961,
+      "p95Milliseconds": 5.765875102952123,
+      "stage": "schedulingWait"
+    },
+    {
+      "count": 160,
+      "maximumMilliseconds": 2.905541565269232,
+      "medianMilliseconds": 0.20945817232131958,
+      "p95Milliseconds": 0.6367084570229053,
+      "stage": "secondLayout"
+    },
+    {
+      "count": 160,
+      "maximumMilliseconds": 75.70683327503502,
+      "medianMilliseconds": 45.39775010198355,
+      "p95Milliseconds": 51.53558333404362,
+      "stage": "update.coupledResize"
+    },
+    {
+      "count": 160,
+      "maximumMilliseconds": 0.1262917649000883,
+      "medianMilliseconds": 0.07845810614526272,
+      "p95Milliseconds": 0.10462501086294651,
+      "stage": "update.excludingCoupledResize"
+    },
+    {
+      "count": 160,
+      "maximumMilliseconds": 75.83312503993511,
+      "medianMilliseconds": 45.47491646371782,
+      "p95Milliseconds": 51.6245833132416,
+      "stage": "update.total"
+    }
+  ],
+  "inputToLayoutP95Milliseconds": 57.75224999524653,
+  "limits": "Synthetic offscreen own-process results are not physical input-to-display timings or a multi-hour memory/GPU stability claim.",
+  "nativeFrameStages": [
+    {
+      "count": 150,
+      "maximumMilliseconds": 0.012749806046485901,
+      "medianMilliseconds": 0.008916715160012245,
+      "p95Milliseconds": 0.010249903425574303,
+      "stage": "backingScale"
+    },
+    {
+      "count": 150,
+      "maximumMilliseconds": 0.11312495917081833,
+      "medianMilliseconds": 0.04191650077700615,
+      "p95Milliseconds": 0.04866672679781914,
+      "stage": "chromeGeometry"
+    },
+    {
+      "count": 150,
+      "maximumMilliseconds": 0.0015832483768463135,
+      "medianMilliseconds": 0.0005834735929965973,
+      "p95Milliseconds": 0.0007085036486387253,
+      "stage": "cursorRects"
+    },
+    {
+      "count": 150,
+      "maximumMilliseconds": 0.05933316424489021,
+      "medianMilliseconds": 0.01629185862839222,
+      "p95Milliseconds": 0.019624829292297363,
+      "stage": "hostedFrameAssignment"
+    },
+    {
+      "count": 150,
+      "maximumMilliseconds": 0.14945841394364834,
+      "medianMilliseconds": 0.07183314301073551,
+      "p95Milliseconds": 0.08266675285995007,
+      "stage": "total"
+    }
+  ],
+  "notYetEstablished": "Existing stages do not attribute work inside native resize/display to SwiftUI/native List layout, drawing or WindowServer calls. A2 adds public NSWindow.display/displayIfNeeded timings against the identical frozen production module; own-process stack sampling is requested.",
+  "productionChanges": "Optional nil-by-default Robot frame-layout stage observer only. No layout/coupling/cache semantics changed.",
+  "productionOptimizationsApplied": false,
+  "schemaVersion": 1,
+  "status": "Measured bottleneck located; optimization and repeated pass gates pending",
+  "steadyZoomTimerP95Milliseconds": 67.87358340807259
+}

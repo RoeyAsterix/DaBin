@@ -1,0 +1,32 @@
+{
+  "scope": "Read-only actual full-Board raster at native field geometry; no GUI launch or image modification",
+  "candidate": [],
+  "baseline": {
+    "file": "docs/qa/full-certification-2026-10-05/native-title-probe/output/cache-display-visible-window@2x.png",
+    "sha256": "8478db575e4fad3a5ca61f407d5b9755ba462ad5b41a320951b6048543539f92",
+    "imagePixels": [
+      760,
+      1360
+    ],
+    "titleFrameTopLeft": {
+      "x": 54.0,
+      "y": 90.0,
+      "width": 312.0,
+      "height": 48.0
+    },
+    "cropPixels": [
+      110,
+      182,
+      730,
+      274
+    ],
+    "theme": "light",
+    "firstLineForegroundPixels": 6920,
+    "secondLineForegroundPixels": 0,
+    "firstLineInkRows": 36,
+    "secondLineInkRows": 0,
+    "twoLinesPainted": false,
+    "defectReproduced": true
+  },
+  "status": "baseline-defect-reproduced"
+}

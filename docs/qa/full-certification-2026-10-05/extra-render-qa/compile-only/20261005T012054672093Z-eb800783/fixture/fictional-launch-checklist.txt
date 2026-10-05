@@ -1,0 +1,6 @@
+Fictional launch checklist
+Synthetic local review fixture
+launch checklist: Review the welcome screen.
+Confirm the fictional preview layout.
+Check readable headings, task planning and local export.
+No real customer, project, attachment or personal content is used.

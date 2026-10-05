@@ -1,0 +1,333 @@
+DABIN_QA_WARNING_STACK_BEGIN
+WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future.
+0   libDaBinQAWarnTrace.dylib           0x0000000100a0086c traceWarning + 176
+1   libDaBinQAWarnTrace.dylib           0x0000000100a00798 tracedNSLog + 64
+2   AppKit                              0x00000001905bd3d4 -[NSTableRowHeightData _cacheRowSpansInRange:heightProvider:] + 92
+3   AppKit                              0x00000001905bbb48 -[NSTableRowHeightData _cacheRowSpansInRange:] + 100
+4   Foundation                          0x000000018cbc9d14 __NSINDEXSET_IS_CALLING_OUT_TO_A_RANGE_BLOCK__ + 24
+5   Foundation                          0x000000018cbe2ef4 __NSIndexSetEnumerate + 1312
+6   AppKit                              0x00000001905bd81c -[NSTableRowHeightData _estimatedSpanForRow:cacheIfNecessary:] + 256
+7   AppKit                              0x00000001905bad14 -[NSTableRowHeightData _estimatedSpanForRowsInRange:] + 72
+8   AppKit                              0x00000001905badcc -[NSTableRowHeightData computeTotalRowsSpanAssumingNumberOfRows:] + 140
+9   AppKit                              0x000000018f84ad7c -[NSTableView _totalHeightOfTableView] + 72
+10  AppKit                              0x000000018f84abe8 -[NSTableView _minimumFrameSize] + 72
+11  AppKit                              0x00000001903d99e0 -[NSTableView _updateTableViewSize] + 60
+12  AppKit                              0x00000001905bd9ac -[NSTableRowHeightData _adjustRowSpansStartingAtRow:] + 136
+13  AppKit                              0x00000001905bd66c -[NSTableRowHeightData _cacheRowSpansInRange:heightProvider:] + 756
+14  AppKit                              0x00000001905bbb48 -[NSTableRowHeightData _cacheRowSpansInRange:] + 100
+15  Foundation                          0x000000018cbc9d14 __NSINDEXSET_IS_CALLING_OUT_TO_A_RANGE_BLOCK__ + 24
+16  Foundation                          0x000000018cbe2ef4 __NSIndexSetEnumerate + 1312
+17  AppKit                              0x00000001905bd81c -[NSTableRowHeightData _estimatedSpanForRow:cacheIfNecessary:] + 256
+18  AppKit                              0x00000001905bacfc -[NSTableRowHeightData _estimatedSpanForRowsInRange:] + 48
+19  AppKit                              0x00000001905bae30 -[NSTableRowHeightData computeTotalRowsSpan] + 68
+20  AppKit                              0x00000001905bb040 -[NSTableRowHeightData _estimatedRowAtOffset:] + 36
+21  AppKit                              0x000000018f85ddd8 -[NSTableView rowAtPoint:] + 204
+22  AppKit                              0x000000019064f53c -[NSTableRowData _keepTopRowStableAtLeastOnce:andDoWorkUntilDone:] + 192
+23  AppKit                              0x000000018f86c0e8 -[NSTableRowData _updateVisibleViewsBasedOnUpdateItems] + 1332
+24  AppKit                              0x000000018f855250 -[NSTableRowData endUpdates] + 352
+25  AppKit                              0x000000018f8550ac -[NSTableView _endUpdateWithTile:] + 108
+26  AppKit                              0x000000018f906de4 -[NSTableView endUpdates] + 28
+27  SwiftUI                             0x00000001c12f9cec $s7SwiftUI22OutlineListCoordinatorC8diffRows2of2toyAA0a9UIOutlineD4ViewC_AA0kD4TreeVtF + 96
+28  SwiftUI                             0x00000001c12f5998 $s7SwiftUI22OutlineListCoordinatorC6update4diff04viewD4Tree13configureRows18idSelectionChanged010navigationm4SeedN0011templateRowN011transactionySb_AA04ViewdI0VS4bAA11TransactionVtFyycfU_yyXEfU_ + 176
+29  SwiftUI                             0x00000001c12ef6d4 $s7SwiftUI22OutlineListCoordinatorC24withSelectionUpdateGuard33_BE7B171B0BEE2A9E27ED12968C3771F8LLyySS_yyXEtF + 1168
+30  SwiftUI                             0x00000001c12f5688 $s7SwiftUI22OutlineListCoordinatorC6update4diff04viewD4Tree13configureRows18idSelectionChanged010navigationm4SeedN0011templateRowN011transactionySb_AA04ViewdI0VS4bAA11TransactionVtFyycfU_ + 900
+31  SwiftUICore                         0x0000000238c94d44 $s7SwiftUI6UpdateO15dispatchActionsyyFZ + 1660
+32  SwiftUICore                         0x0000000238c93b68 $s7SwiftUI6UpdateO3endyyFZ + 72
+33  SwiftUI                             0x00000001c0f8e98c $s7SwiftUI13NSHostingViewC13responderNodeAA09ResponderF0CSgvg + 272
+34  SwiftUI                             0x00000001c0aeb890 $s7SwiftUI14FocusNavigatorV8allItemsAA0C18NavigationSequenceVSgvg + 364
+35  SwiftUI                             0x00000001c0ef3f64 $s7SwiftUI11FocusBridgeC24updateDefaultKeyViewLoopSo6NSViewCSgyF + 1160
+36  SwiftUI                             0x00000001c0faeba0 $s7SwiftUI13NSHostingViewC023_recursiveSetDefaultKeyD4LoopSo6NSViewCSgyFTm + 76
+37  SwiftUI                             0x00000001c0fae250 $s7SwiftUI13NSHostingViewC023_recursiveSetDefaultKeyD4LoopSo6NSViewCSgyFTo + 48
+38  AppKit                              0x000000018f864ea8 -[NSView _setDefaultKeyViewLoop] + 240
+39  AppKit                              0x000000018f8d0da0 -[NSWindow recalculateKeyViewLoop] + 72
+40  AppKit                              0x000000018f8d0b34 -[NSWindow _setUpFirstResponder] + 168
+41  AppKit                              0x000000018f8cdfb4 -[NSWindow _doWindowWillBeVisibleAsSheet:] + 108
+42  AppKit                              0x000000019051e57c -[NSWindow _reallyDoOrderWindowAboveOrBelow:] + 1092
+43  AppKit                              0x000000019051f138 -[NSWindow _reallyDoOrderWindow:] + 64
+44  AppKit                              0x000000019051fb10 __27-[NSWindow _doOrderWindow:]_block_invoke.750 + 44
+45  AppKit                              0x000000018f8172d8 NSPerformVisuallyAtomicChange + 128
+46  AppKit                              0x000000019051f62c -[NSWindow _doOrderWindow:] + 924
+47  ProjectWorkspaceViewTests           0x000000010097ac94 $s25ProjectWorkspaceViewTestsAA33_36E5A91EF594616EE8D7F603CD43A886LLC3runyyYaKFZTY4_ + 8704
+48  ProjectWorkspaceViewTests           0x0000000100976835 $s25ProjectWorkspaceViewTestsAA33_36E5A91EF594616EE8D7F603CD43A886LLC29applicationDidFinishLaunchingyy10Foundation12NotificationVFyyYacfU_TQ0_ + 1
+49  ProjectWorkspaceViewTests           0x00000001009b0c25 $sxIeAgHr_xs5Error_pIegHrzo_s8SendableRzs5NeverORs_r0_lTRSo7AXErrorV_TG5TA.151TQ0_ + 1
+50  ProjectWorkspaceViewTests           0x00000001009b781d $sxIeAgHr_xs5Error_pIegHrzo_s8SendableRzs5NeverORs_r0_lTRyt_Tg5TQ0_ + 1
+51  ProjectWorkspaceViewTests           0x00000001009b7819 $sxIeAgHr_xs5Error_pIegHrzo_s8SendableRzs5NeverORs_r0_lTRyt_Tg5TA.10TQ0_ + 1
+52  libswift_Concurrency.dylib          0x00000002909ffec5 _ZL23completeTaskWithClosurePN5swift12AsyncContextEPNS_10SwiftErrorE + 1
+DABIN_QA_WARNING_STACK_END
+2026-10-05 05:56:42.567 ProjectWorkspaceViewTests[86272:26677255] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future.
+DABIN_QA_WARNING_STACK_BEGIN
+WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future.
+0   libDaBinQAWarnTrace.dylib           0x0000000100a0086c traceWarning + 176
+1   libDaBinQAWarnTrace.dylib           0x0000000100a00798 tracedNSLog + 64
+2   AppKit                              0x00000001905bd3d4 -[NSTableRowHeightData _cacheRowSpansInRange:heightProvider:] + 92
+3   AppKit                              0x00000001905bbb48 -[NSTableRowHeightData _cacheRowSpansInRange:] + 100
+4   Foundation                          0x000000018cbc9d14 __NSINDEXSET_IS_CALLING_OUT_TO_A_RANGE_BLOCK__ + 24
+5   Foundation                          0x000000018cbe2ef4 __NSIndexSetEnumerate + 1312
+6   AppKit                              0x00000001905bd81c -[NSTableRowHeightData _estimatedSpanForRow:cacheIfNecessary:] + 256
+7   AppKit                              0x00000001905bad14 -[NSTableRowHeightData _estimatedSpanForRowsInRange:] + 72
+8   AppKit                              0x00000001905badcc -[NSTableRowHeightData computeTotalRowsSpanAssumingNumberOfRows:] + 140
+9   AppKit                              0x000000018f84ad7c -[NSTableView _totalHeightOfTableView] + 72
+10  AppKit                              0x000000018f84abe8 -[NSTableView _minimumFrameSize] + 72
+11  AppKit                              0x00000001903d99e0 -[NSTableView _updateTableViewSize] + 60
+12  AppKit                              0x00000001905bd9ac -[NSTableRowHeightData _adjustRowSpansStartingAtRow:] + 136
+13  AppKit                              0x00000001905bd66c -[NSTableRowHeightData _cacheRowSpansInRange:heightProvider:] + 756
+14  AppKit                              0x00000001905bbb48 -[NSTableRowHeightData _cacheRowSpansInRange:] + 100
+15  Foundation                          0x000000018cbc9d14 __NSINDEXSET_IS_CALLING_OUT_TO_A_RANGE_BLOCK__ + 24
+16  Foundation                          0x000000018cbe2ef4 __NSIndexSetEnumerate + 1312
+17  AppKit                              0x00000001905bd81c -[NSTableRowHeightData _estimatedSpanForRow:cacheIfNecessary:] + 256
+18  AppKit                              0x00000001905bad14 -[NSTableRowHeightData _estimatedSpanForRowsInRange:] + 72
+19  AppKit                              0x00000001905bae30 -[NSTableRowHeightData computeTotalRowsSpan] + 68
+20  AppKit                              0x00000001905bb040 -[NSTableRowHeightData _estimatedRowAtOffset:] + 36
+21  AppKit                              0x000000018f85ddd8 -[NSTableView rowAtPoint:] + 204
+22  AppKit                              0x000000019064f53c -[NSTableRowData _keepTopRowStableAtLeastOnce:andDoWorkUntilDone:] + 192
+23  AppKit                              0x000000018f86c0e8 -[NSTableRowData _updateVisibleViewsBasedOnUpdateItems] + 1332
+24  AppKit                              0x000000018f855250 -[NSTableRowData endUpdates] + 352
+25  AppKit                              0x000000018f8550ac -[NSTableView _endUpdateWithTile:] + 108
+26  AppKit                              0x000000018f906de4 -[NSTableView endUpdates] + 28
+27  SwiftUI                             0x00000001c12f9cec $s7SwiftUI22OutlineListCoordinatorC8diffRows2of2toyAA0a9UIOutlineD4ViewC_AA0kD4TreeVtF + 96
+28  SwiftUI                             0x00000001c12f5998 $s7SwiftUI22OutlineListCoordinatorC6update4diff04viewD4Tree13configureRows18idSelectionChanged010navigationm4SeedN0011templateRowN011transactionySb_AA04ViewdI0VS4bAA11TransactionVtFyycfU_yyXEfU_ + 176
+29  SwiftUI                             0x00000001c12ef6d4 $s7SwiftUI22OutlineListCoordinatorC24withSelectionUpdateGuard33_BE7B171B0BEE2A9E27ED12968C3771F8LLyySS_yyXEtF + 1168
+30  SwiftUI                             0x00000001c12f5688 $s7SwiftUI22OutlineListCoordinatorC6update4diff04viewD4Tree13configureRows18idSelectionChanged010navigationm4SeedN0011templateRowN011transactionySb_AA04ViewdI0VS4bAA11TransactionVtFyycfU_ + 900
+31  SwiftUICore                         0x0000000238c94d44 $s7SwiftUI6UpdateO15dispatchActionsyyFZ + 1660
+32  SwiftUICore                         0x000000023947ed80 $s7SwiftUI25ViewGraphRootValueUpdaterPAAE6render8interval17updateDisplayList15targetTimestampySd_SbAA4TimeVSgtFyyXEfU_ + 876
+33  SwiftUICore                         0x000000023947cf7c $s7SwiftUI25ViewGraphRootValueUpdaterPAAE6render8interval17updateDisplayList15targetTimestampySd_SbAA4TimeVSgtF + 584
+34  SwiftUI                             0x00000001c0fa4d6c $s7SwiftUI13NSHostingViewC6layoutyyFySo18NSAnimationContextCXEfU_ + 484
+35  SwiftUI                             0x00000001c0fbffcc $sSo14NSItemProviderC7SwiftUIE32loadFileSystemItemAsynchronously33_0BC2519238CC4854E8BA774CC855AC9ALL3for_17completionHandleryxm_22UniformTypeIdentifiers6UTTypeVyAC13LoadingResultAELLCyxGctAC17PasteboardUtilityV0fgH0RzlFyAMcfU_AO0F0C_Tg5TA + 28
+36  SwiftUI                             0x00000001c0f9f084 $sSo13RBDisplayListCIegg_ABIyBy_TR + 44
+37  AppKit                              0x000000018f7ecf58 +[NSAnimationContext runAnimationGroup:] + 56
+38  SwiftUI                             0x00000001c0fa4ae4 $s7SwiftUI13NSHostingViewC6layoutyyF + 480
+39  SwiftUI                             0x00000001c0fa5060 $s7SwiftUI13NSHostingViewC6layoutyyFTo + 28
+40  AppKit                              0x000000018fd0150c __getCGDisplayListGetHashSymbolLoc_block_invoke + 1516
+41  AppKit                              0x000000018fd01534 __getCGDisplayListGetHashSymbolLoc_block_invoke + 1556
+42  AppKit                              0x000000018fcc67a0 block_destroy_helper + 9428
+43  AppKit                              0x000000018fcc6dec block_destroy_helper + 11040
+44  AppKit                              0x000000019050a078 ___NSViewLayout_block_invoke + 624
+45  AppKit                              0x000000018f8172d8 NSPerformVisuallyAtomicChange + 128
+46  AppKit                              0x000000018f81bc10 _NSViewLayout + 96
+47  AppKit                              0x00000001904ffd6c __36-[NSView _layoutSubtreeWithOldSize:]_block_invoke + 372
+48  AppKit                              0x000000018f8172d8 NSPerformVisuallyAtomicChange + 128
+49  AppKit                              0x000000018f81bba4 -[NSView _layoutSubtreeWithOldSize:] + 100
+50  AppKit                              0x00000001904ffea4 __36-[NSView _layoutSubtreeWithOldSize:]_block_invoke + 684
+51  AppKit                              0x000000018f8172d8 NSPerformVisuallyAtomicChange + 128
+52  AppKit                              0x000000018f81bba4 -[NSView _layoutSubtreeWithOldSize:] + 100
+53  AppKit                              0x000000019050093c __56-[NSView _layoutSubtreeIfNeededAndAllowTemporaryEngine:]_block_invoke + 908
+54  AppKit                              0x000000018f8172d8 NSPerformVisuallyAtomicChange + 128
+55  AppKit                              0x000000018f81b780 -[NSView _layoutSubtreeIfNeededAndAllowTemporaryEngine:] + 100
+56  AppKit                              0x000000018f8172d8 NSPerformVisuallyAtomicChange + 128
+57  AppKit                              0x000000018f81b710 -[NSView layoutSubtreeIfNeeded] + 96
+58  AppKit                              0x00000001907de958 -[NSWindow(NSConstraintBasedLayoutInternal) _layoutViewTree] + 120
+59  AppKit                              0x000000018f8193a8 -[NSWindow _oldPlaceWindow:fromServer:] + 620
+60  AppKit                              0x000000018f818868 -[NSWindow _setFrameCommon:display:fromServer:] + 1876
+61  ProjectWorkspaceViewTests           0x000000010098685c $s25ProjectWorkspaceViewTestsAA33_36E5A91EF594616EE8D7F603CD43A886LLC3runyyYaKFZTY57_ + 64
+62  ProjectWorkspaceViewTests           0x0000000100976835 $s25ProjectWorkspaceViewTestsAA33_36E5A91EF594616EE8D7F603CD43A886LLC29applicationDidFinishLaunchingyy10Foundation12NotificationVFyyYacfU_TQ0_ + 1
+63  ProjectWorkspaceViewTests           0x00000001009b0c25 $sxIeAgHr_xs5Error_pIegHrzo_s8SendableRzs5NeverORs_r0_lTRSo7AXErrorV_TG5TA.151TQ0_ + 1
+64  ProjectWorkspaceViewTests           0x00000001009b781d $sxIeAgHr_xs5Error_pIegHrzo_s8SendableRzs5NeverORs_r0_lTRyt_Tg5TQ0_ + 1
+65  ProjectWorkspaceViewTests           0x00000001009b7819 $sxIeAgHr_xs5Error_pIegHrzo_s8SendableRzs5NeverORs_r0_lTRyt_Tg5TA.10TQ0_ + 1
+66  libswift_Concurrency.dylib          0x00000002909ffec5 _ZL23completeTaskWithClosurePN5swift12AsyncContextEPNS_10SwiftErrorE + 1
+DABIN_QA_WARNING_STACK_END
+2026-10-05 05:56:50.142 ProjectWorkspaceViewTests[86272:26677255] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future.
+DABIN_QA_WARNING_STACK_BEGIN
+WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future.
+0   libDaBinQAWarnTrace.dylib           0x0000000100a0086c traceWarning + 176
+1   libDaBinQAWarnTrace.dylib           0x0000000100a00798 tracedNSLog + 64
+2   AppKit                              0x00000001905bd3d4 -[NSTableRowHeightData _cacheRowSpansInRange:heightProvider:] + 92
+3   AppKit                              0x00000001905bbb48 -[NSTableRowHeightData _cacheRowSpansInRange:] + 100
+4   Foundation                          0x000000018cbc9d14 __NSINDEXSET_IS_CALLING_OUT_TO_A_RANGE_BLOCK__ + 24
+5   Foundation                          0x000000018cbe2ef4 __NSIndexSetEnumerate + 1312
+6   AppKit                              0x00000001905bd81c -[NSTableRowHeightData _estimatedSpanForRow:cacheIfNecessary:] + 256
+7   AppKit                              0x00000001905bad14 -[NSTableRowHeightData _estimatedSpanForRowsInRange:] + 72
+8   AppKit                              0x00000001905badcc -[NSTableRowHeightData computeTotalRowsSpanAssumingNumberOfRows:] + 140
+9   AppKit                              0x000000018f84ad7c -[NSTableView _totalHeightOfTableView] + 72
+10  AppKit                              0x000000018f84abe8 -[NSTableView _minimumFrameSize] + 72
+11  AppKit                              0x00000001903d99e0 -[NSTableView _updateTableViewSize] + 60
+12  AppKit                              0x00000001905bd9ac -[NSTableRowHeightData _adjustRowSpansStartingAtRow:] + 136
+13  AppKit                              0x00000001905bd66c -[NSTableRowHeightData _cacheRowSpansInRange:heightProvider:] + 756
+14  AppKit                              0x00000001905bbb48 -[NSTableRowHeightData _cacheRowSpansInRange:] + 100
+15  Foundation                          0x000000018cbc9d14 __NSINDEXSET_IS_CALLING_OUT_TO_A_RANGE_BLOCK__ + 24
+16  Foundation                          0x000000018cbe2ef4 __NSIndexSetEnumerate + 1312
+17  AppKit                              0x00000001905bd81c -[NSTableRowHeightData _estimatedSpanForRow:cacheIfNecessary:] + 256
+18  AppKit                              0x00000001905bad14 -[NSTableRowHeightData _estimatedSpanForRowsInRange:] + 72
+19  AppKit                              0x00000001905bae30 -[NSTableRowHeightData computeTotalRowsSpan] + 68
+20  AppKit                              0x00000001905bb040 -[NSTableRowHeightData _estimatedRowAtOffset:] + 36
+21  AppKit                              0x000000018f85ddd8 -[NSTableView rowAtPoint:] + 204
+22  AppKit                              0x000000019064f53c -[NSTableRowData _keepTopRowStableAtLeastOnce:andDoWorkUntilDone:] + 192
+23  AppKit                              0x000000018f86c0e8 -[NSTableRowData _updateVisibleViewsBasedOnUpdateItems] + 1332
+24  AppKit                              0x000000018f855250 -[NSTableRowData endUpdates] + 352
+25  AppKit                              0x000000018f8550ac -[NSTableView _endUpdateWithTile:] + 108
+26  AppKit                              0x000000018f906de4 -[NSTableView endUpdates] + 28
+27  SwiftUI                             0x00000001c12f9cec $s7SwiftUI22OutlineListCoordinatorC8diffRows2of2toyAA0a9UIOutlineD4ViewC_AA0kD4TreeVtF + 96
+28  SwiftUI                             0x00000001c12f5998 $s7SwiftUI22OutlineListCoordinatorC6update4diff04viewD4Tree13configureRows18idSelectionChanged010navigationm4SeedN0011templateRowN011transactionySb_AA04ViewdI0VS4bAA11TransactionVtFyycfU_yyXEfU_ + 176
+29  SwiftUI                             0x00000001c12ef6d4 $s7SwiftUI22OutlineListCoordinatorC24withSelectionUpdateGuard33_BE7B171B0BEE2A9E27ED12968C3771F8LLyySS_yyXEtF + 1168
+30  SwiftUI                             0x00000001c12f5688 $s7SwiftUI22OutlineListCoordinatorC6update4diff04viewD4Tree13configureRows18idSelectionChanged010navigationm4SeedN0011templateRowN011transactionySb_AA04ViewdI0VS4bAA11TransactionVtFyycfU_ + 900
+31  SwiftUICore                         0x0000000238c94d44 $s7SwiftUI6UpdateO15dispatchActionsyyFZ + 1660
+32  SwiftUICore                         0x000000023947ed80 $s7SwiftUI25ViewGraphRootValueUpdaterPAAE6render8interval17updateDisplayList15targetTimestampySd_SbAA4TimeVSgtFyyXEfU_ + 876
+33  SwiftUICore                         0x000000023947cf7c $s7SwiftUI25ViewGraphRootValueUpdaterPAAE6render8interval17updateDisplayList15targetTimestampySd_SbAA4TimeVSgtF + 584
+34  SwiftUI                             0x00000001c0fa4d6c $s7SwiftUI13NSHostingViewC6layoutyyFySo18NSAnimationContextCXEfU_ + 484
+35  SwiftUI                             0x00000001c0fbffcc $sSo14NSItemProviderC7SwiftUIE32loadFileSystemItemAsynchronously33_0BC2519238CC4854E8BA774CC855AC9ALL3for_17completionHandleryxm_22UniformTypeIdentifiers6UTTypeVyAC13LoadingResultAELLCyxGctAC17PasteboardUtilityV0fgH0RzlFyAMcfU_AO0F0C_Tg5TA + 28
+36  SwiftUI                             0x00000001c0f9f084 $sSo13RBDisplayListCIegg_ABIyBy_TR + 44
+37  AppKit                              0x000000018f7ecf58 +[NSAnimationContext runAnimationGroup:] + 56
+38  SwiftUI                             0x00000001c0fa4ae4 $s7SwiftUI13NSHostingViewC6layoutyyF + 480
+39  SwiftUI                             0x00000001c0fa5060 $s7SwiftUI13NSHostingViewC6layoutyyFTo + 28
+40  AppKit                              0x000000018fd0150c __getCGDisplayListGetHashSymbolLoc_block_invoke + 1516
+41  AppKit                              0x000000018fd01534 __getCGDisplayListGetHashSymbolLoc_block_invoke + 1556
+42  AppKit                              0x000000018fcc67a0 block_destroy_helper + 9428
+43  AppKit                              0x000000018fcc6dec block_destroy_helper + 11040
+44  AppKit                              0x000000019050a078 ___NSViewLayout_block_invoke + 624
+45  AppKit                              0x000000018f8172d8 NSPerformVisuallyAtomicChange + 128
+46  AppKit                              0x000000018f81bc10 _NSViewLayout + 96
+47  AppKit                              0x00000001904ffd6c __36-[NSView _layoutSubtreeWithOldSize:]_block_invoke + 372
+48  AppKit                              0x000000018f8172d8 NSPerformVisuallyAtomicChange + 128
+49  AppKit                              0x000000018f81bba4 -[NSView _layoutSubtreeWithOldSize:] + 100
+50  AppKit                              0x00000001904ffea4 __36-[NSView _layoutSubtreeWithOldSize:]_block_invoke + 684
+51  AppKit                              0x000000018f8172d8 NSPerformVisuallyAtomicChange + 128
+52  AppKit                              0x000000018f81bba4 -[NSView _layoutSubtreeWithOldSize:] + 100
+53  AppKit                              0x000000019050093c __56-[NSView _layoutSubtreeIfNeededAndAllowTemporaryEngine:]_block_invoke + 908
+54  AppKit                              0x000000018f8172d8 NSPerformVisuallyAtomicChange + 128
+55  AppKit                              0x000000018f81b780 -[NSView _layoutSubtreeIfNeededAndAllowTemporaryEngine:] + 100
+56  AppKit                              0x000000018f8172d8 NSPerformVisuallyAtomicChange + 128
+57  AppKit                              0x000000018f81b710 -[NSView layoutSubtreeIfNeeded] + 96
+58  AppKit                              0x00000001907de958 -[NSWindow(NSConstraintBasedLayoutInternal) _layoutViewTree] + 120
+59  AppKit                              0x000000018f8193a8 -[NSWindow _oldPlaceWindow:fromServer:] + 620
+60  AppKit                              0x000000018f818868 -[NSWindow _setFrameCommon:display:fromServer:] + 1876
+61  ProjectWorkspaceViewTests           0x000000010098e9c0 $s25ProjectWorkspaceViewTestsAA33_36E5A91EF594616EE8D7F603CD43A886LLC3runyyYaKFZTY95_ + 76
+62  ProjectWorkspaceViewTests           0x0000000100976835 $s25ProjectWorkspaceViewTestsAA33_36E5A91EF594616EE8D7F603CD43A886LLC29applicationDidFinishLaunchingyy10Foundation12NotificationVFyyYacfU_TQ0_ + 1
+63  ProjectWorkspaceViewTests           0x00000001009b0c25 $sxIeAgHr_xs5Error_pIegHrzo_s8SendableRzs5NeverORs_r0_lTRSo7AXErrorV_TG5TA.151TQ0_ + 1
+64  ProjectWorkspaceViewTests           0x00000001009b781d $sxIeAgHr_xs5Error_pIegHrzo_s8SendableRzs5NeverORs_r0_lTRyt_Tg5TQ0_ + 1
+65  ProjectWorkspaceViewTests           0x00000001009b7819 $sxIeAgHr_xs5Error_pIegHrzo_s8SendableRzs5NeverORs_r0_lTRyt_Tg5TA.10TQ0_ + 1
+66  libswift_Concurrency.dylib          0x00000002909ffec5 _ZL23completeTaskWithClosurePN5swift12AsyncContextEPNS_10SwiftErrorE + 1
+DABIN_QA_WARNING_STACK_END
+2026-10-05 05:56:52.893 ProjectWorkspaceViewTests[86272:26677255] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future.
+DABIN_QA_WARNING_STACK_BEGIN
+WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future.
+0   libDaBinQAWarnTrace.dylib           0x0000000100a0086c traceWarning + 176
+1   libDaBinQAWarnTrace.dylib           0x0000000100a00798 tracedNSLog + 64
+2   AppKit                              0x00000001905bd3d4 -[NSTableRowHeightData _cacheRowSpansInRange:heightProvider:] + 92
+3   AppKit                              0x00000001905bbb48 -[NSTableRowHeightData _cacheRowSpansInRange:] + 100
+4   Foundation                          0x000000018cbc9d14 __NSINDEXSET_IS_CALLING_OUT_TO_A_RANGE_BLOCK__ + 24
+5   Foundation                          0x000000018cbe2ef4 __NSIndexSetEnumerate + 1312
+6   AppKit                              0x00000001905bd81c -[NSTableRowHeightData _estimatedSpanForRow:cacheIfNecessary:] + 256
+7   AppKit                              0x00000001905bad14 -[NSTableRowHeightData _estimatedSpanForRowsInRange:] + 72
+8   AppKit                              0x00000001905badcc -[NSTableRowHeightData computeTotalRowsSpanAssumingNumberOfRows:] + 140
+9   AppKit                              0x000000018f84ad7c -[NSTableView _totalHeightOfTableView] + 72
+10  AppKit                              0x000000018f84abe8 -[NSTableView _minimumFrameSize] + 72
+11  AppKit                              0x00000001903d99e0 -[NSTableView _updateTableViewSize] + 60
+12  AppKit                              0x00000001905bd9ac -[NSTableRowHeightData _adjustRowSpansStartingAtRow:] + 136
+13  AppKit                              0x00000001905bd66c -[NSTableRowHeightData _cacheRowSpansInRange:heightProvider:] + 756
+14  AppKit                              0x00000001905bbb48 -[NSTableRowHeightData _cacheRowSpansInRange:] + 100
+15  Foundation                          0x000000018cbc9d14 __NSINDEXSET_IS_CALLING_OUT_TO_A_RANGE_BLOCK__ + 24
+16  Foundation                          0x000000018cbe2ef4 __NSIndexSetEnumerate + 1312
+17  AppKit                              0x00000001905bd81c -[NSTableRowHeightData _estimatedSpanForRow:cacheIfNecessary:] + 256
+18  AppKit                              0x00000001905bad14 -[NSTableRowHeightData _estimatedSpanForRowsInRange:] + 72
+19  AppKit                              0x00000001905bae30 -[NSTableRowHeightData computeTotalRowsSpan] + 68
+20  AppKit                              0x00000001905bb040 -[NSTableRowHeightData _estimatedRowAtOffset:] + 36
+21  AppKit                              0x000000018f85ddd8 -[NSTableView rowAtPoint:] + 204
+22  AppKit                              0x000000019064f53c -[NSTableRowData _keepTopRowStableAtLeastOnce:andDoWorkUntilDone:] + 192
+23  AppKit                              0x000000018f86c0e8 -[NSTableRowData _updateVisibleViewsBasedOnUpdateItems] + 1332
+24  AppKit                              0x000000018f855250 -[NSTableRowData endUpdates] + 352
+25  AppKit                              0x000000018f8550ac -[NSTableView _endUpdateWithTile:] + 108
+26  AppKit                              0x000000018f906de4 -[NSTableView endUpdates] + 28
+27  SwiftUI                             0x00000001c12f9cec $s7SwiftUI22OutlineListCoordinatorC8diffRows2of2toyAA0a9UIOutlineD4ViewC_AA0kD4TreeVtF + 96
+28  SwiftUI                             0x00000001c12f5998 $s7SwiftUI22OutlineListCoordinatorC6update4diff04viewD4Tree13configureRows18idSelectionChanged010navigationm4SeedN0011templateRowN011transactionySb_AA04ViewdI0VS4bAA11TransactionVtFyycfU_yyXEfU_ + 176
+29  SwiftUI                             0x00000001c12ef6d4 $s7SwiftUI22OutlineListCoordinatorC24withSelectionUpdateGuard33_BE7B171B0BEE2A9E27ED12968C3771F8LLyySS_yyXEtF + 1168
+30  SwiftUI                             0x00000001c12f5688 $s7SwiftUI22OutlineListCoordinatorC6update4diff04viewD4Tree13configureRows18idSelectionChanged010navigationm4SeedN0011templateRowN011transactionySb_AA04ViewdI0VS4bAA11TransactionVtFyycfU_ + 900
+31  SwiftUICore                         0x0000000238c94d44 $s7SwiftUI6UpdateO15dispatchActionsyyFZ + 1660
+32  SwiftUICore                         0x000000023947ed80 $s7SwiftUI25ViewGraphRootValueUpdaterPAAE6render8interval17updateDisplayList15targetTimestampySd_SbAA4TimeVSgtFyyXEfU_ + 876
+33  SwiftUICore                         0x000000023947cf7c $s7SwiftUI25ViewGraphRootValueUpdaterPAAE6render8interval17updateDisplayList15targetTimestampySd_SbAA4TimeVSgtF + 584
+34  SwiftUI                             0x00000001c0fa4d6c $s7SwiftUI13NSHostingViewC6layoutyyFySo18NSAnimationContextCXEfU_ + 484
+35  SwiftUI                             0x00000001c0fbffcc $sSo14NSItemProviderC7SwiftUIE32loadFileSystemItemAsynchronously33_0BC2519238CC4854E8BA774CC855AC9ALL3for_17completionHandleryxm_22UniformTypeIdentifiers6UTTypeVyAC13LoadingResultAELLCyxGctAC17PasteboardUtilityV0fgH0RzlFyAMcfU_AO0F0C_Tg5TA + 28
+36  SwiftUI                             0x00000001c0f9f084 $sSo13RBDisplayListCIegg_ABIyBy_TR + 44
+37  AppKit                              0x000000018f7ecf58 +[NSAnimationContext runAnimationGroup:] + 56
+38  SwiftUI                             0x00000001c0fa4ae4 $s7SwiftUI13NSHostingViewC6layoutyyF + 480
+39  SwiftUI                             0x00000001c0fa5060 $s7SwiftUI13NSHostingViewC6layoutyyFTo + 28
+40  AppKit                              0x000000018fd0150c __getCGDisplayListGetHashSymbolLoc_block_invoke + 1516
+41  AppKit                              0x000000018fd01534 __getCGDisplayListGetHashSymbolLoc_block_invoke + 1556
+42  AppKit                              0x000000018fcc67a0 block_destroy_helper + 9428
+43  AppKit                              0x000000018fcc6dec block_destroy_helper + 11040
+44  AppKit                              0x000000019050a078 ___NSViewLayout_block_invoke + 624
+45  AppKit                              0x000000018f8172d8 NSPerformVisuallyAtomicChange + 128
+46  AppKit                              0x000000018f81bc10 _NSViewLayout + 96
+47  AppKit                              0x00000001904ffd6c __36-[NSView _layoutSubtreeWithOldSize:]_block_invoke + 372
+48  AppKit                              0x000000018f8172d8 NSPerformVisuallyAtomicChange + 128
+49  AppKit                              0x000000018f81bba4 -[NSView _layoutSubtreeWithOldSize:] + 100
+50  AppKit                              0x00000001904ffea4 __36-[NSView _layoutSubtreeWithOldSize:]_block_invoke + 684
+51  AppKit                              0x000000018f8172d8 NSPerformVisuallyAtomicChange + 128
+52  AppKit                              0x000000018f81bba4 -[NSView _layoutSubtreeWithOldSize:] + 100
+53  AppKit                              0x000000019050093c __56-[NSView _layoutSubtreeIfNeededAndAllowTemporaryEngine:]_block_invoke + 908
+54  AppKit                              0x000000018f8172d8 NSPerformVisuallyAtomicChange + 128
+55  AppKit                              0x000000018f81b780 -[NSView _layoutSubtreeIfNeededAndAllowTemporaryEngine:] + 100
+56  AppKit                              0x000000018f8172d8 NSPerformVisuallyAtomicChange + 128
+57  AppKit                              0x000000018f81b710 -[NSView layoutSubtreeIfNeeded] + 96
+58  AppKit                              0x00000001907de958 -[NSWindow(NSConstraintBasedLayoutInternal) _layoutViewTree] + 120
+59  AppKit                              0x000000018f8193a8 -[NSWindow _oldPlaceWindow:fromServer:] + 620
+60  AppKit                              0x000000018f818868 -[NSWindow _setFrameCommon:display:fromServer:] + 1876
+61  ProjectWorkspaceViewTests           0x00000001009907c0 $s25ProjectWorkspaceViewTestsAA33_36E5A91EF594616EE8D7F603CD43A886LLC3runyyYaKFZTY102_ + 2180
+62  ProjectWorkspaceViewTests           0x0000000100976835 $s25ProjectWorkspaceViewTestsAA33_36E5A91EF594616EE8D7F603CD43A886LLC29applicationDidFinishLaunchingyy10Foundation12NotificationVFyyYacfU_TQ0_ + 1
+63  ProjectWorkspaceViewTests           0x00000001009b0c25 $sxIeAgHr_xs5Error_pIegHrzo_s8SendableRzs5NeverORs_r0_lTRSo7AXErrorV_TG5TA.151TQ0_ + 1
+64  ProjectWorkspaceViewTests           0x00000001009b781d $sxIeAgHr_xs5Error_pIegHrzo_s8SendableRzs5NeverORs_r0_lTRyt_Tg5TQ0_ + 1
+65  ProjectWorkspaceViewTests           0x00000001009b7819 $sxIeAgHr_xs5Error_pIegHrzo_s8SendableRzs5NeverORs_r0_lTRyt_Tg5TA.10TQ0_ + 1
+66  libswift_Concurrency.dylib          0x00000002909ffec5 _ZL23completeTaskWithClosurePN5swift12AsyncContextEPNS_10SwiftErrorE + 1
+DABIN_QA_WARNING_STACK_END
+2026-10-05 05:56:53.285 ProjectWorkspaceViewTests[86272:26677255] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future.
+DABIN_QA_WARNING_STACK_BEGIN
+WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future.
+0   libDaBinQAWarnTrace.dylib           0x0000000100a0086c traceWarning + 176
+1   libDaBinQAWarnTrace.dylib           0x0000000100a00798 tracedNSLog + 64
+2   AppKit                              0x00000001905bd3d4 -[NSTableRowHeightData _cacheRowSpansInRange:heightProvider:] + 92
+3   AppKit                              0x00000001905bbb48 -[NSTableRowHeightData _cacheRowSpansInRange:] + 100
+4   Foundation                          0x000000018cbc9d14 __NSINDEXSET_IS_CALLING_OUT_TO_A_RANGE_BLOCK__ + 24
+5   Foundation                          0x000000018cbe2ef4 __NSIndexSetEnumerate + 1312
+6   AppKit                              0x00000001905bd81c -[NSTableRowHeightData _estimatedSpanForRow:cacheIfNecessary:] + 256
+7   AppKit                              0x00000001905bad14 -[NSTableRowHeightData _estimatedSpanForRowsInRange:] + 72
+8   AppKit                              0x00000001905badcc -[NSTableRowHeightData computeTotalRowsSpanAssumingNumberOfRows:] + 140
+9   AppKit                              0x000000018f84ad7c -[NSTableView _totalHeightOfTableView] + 72
+10  AppKit                              0x000000018f84abe8 -[NSTableView _minimumFrameSize] + 72
+11  AppKit                              0x00000001903d99e0 -[NSTableView _updateTableViewSize] + 60
+12  AppKit                              0x00000001905bd9ac -[NSTableRowHeightData _adjustRowSpansStartingAtRow:] + 136
+13  AppKit                              0x00000001905bd66c -[NSTableRowHeightData _cacheRowSpansInRange:heightProvider:] + 756
+14  AppKit                              0x00000001905bbb48 -[NSTableRowHeightData _cacheRowSpansInRange:] + 100
+15  Foundation                          0x000000018cbc9d14 __NSINDEXSET_IS_CALLING_OUT_TO_A_RANGE_BLOCK__ + 24
+16  Foundation                          0x000000018cbe2ef4 __NSIndexSetEnumerate + 1312
+17  AppKit                              0x00000001905bd81c -[NSTableRowHeightData _estimatedSpanForRow:cacheIfNecessary:] + 256
+18  AppKit                              0x00000001905bad14 -[NSTableRowHeightData _estimatedSpanForRowsInRange:] + 72
+19  AppKit                              0x00000001905bae30 -[NSTableRowHeightData computeTotalRowsSpan] + 68
+20  AppKit                              0x00000001905bb040 -[NSTableRowHeightData _estimatedRowAtOffset:] + 36
+21  AppKit                              0x000000018f85ddd8 -[NSTableView rowAtPoint:] + 204
+22  AppKit                              0x000000019064f53c -[NSTableRowData _keepTopRowStableAtLeastOnce:andDoWorkUntilDone:] + 192
+23  AppKit                              0x000000018f86c0e8 -[NSTableRowData _updateVisibleViewsBasedOnUpdateItems] + 1332
+24  AppKit                              0x000000018f855250 -[NSTableRowData endUpdates] + 352
+25  AppKit                              0x000000018f8550ac -[NSTableView _endUpdateWithTile:] + 108
+26  AppKit                              0x000000018f906de4 -[NSTableView endUpdates] + 28
+27  SwiftUI                             0x00000001c12f9cec $s7SwiftUI22OutlineListCoordinatorC8diffRows2of2toyAA0a9UIOutlineD4ViewC_AA0kD4TreeVtF + 96
+28  SwiftUI                             0x00000001c12f5998 $s7SwiftUI22OutlineListCoordinatorC6update4diff04viewD4Tree13configureRows18idSelectionChanged010navigationm4SeedN0011templateRowN011transactionySb_AA04ViewdI0VS4bAA11TransactionVtFyycfU_yyXEfU_ + 176
+29  SwiftUI                             0x00000001c12ef6d4 $s7SwiftUI22OutlineListCoordinatorC24withSelectionUpdateGuard33_BE7B171B0BEE2A9E27ED12968C3771F8LLyySS_yyXEtF + 1168
+30  SwiftUI                             0x00000001c12f5688 $s7SwiftUI22OutlineListCoordinatorC6update4diff04viewD4Tree13configureRows18idSelectionChanged010navigationm4SeedN0011templateRowN011transactionySb_AA04ViewdI0VS4bAA11TransactionVtFyycfU_ + 900
+31  SwiftUICore                         0x0000000238c94d44 $s7SwiftUI6UpdateO15dispatchActionsyyFZ + 1660
+32  SwiftUICore                         0x000000023947ed6c $s7SwiftUI25ViewGraphRootValueUpdaterPAAE6render8interval17updateDisplayList15targetTimestampySd_SbAA4TimeVSgtFyyXEfU_ + 856
+33  SwiftUICore                         0x000000023947cf7c $s7SwiftUI25ViewGraphRootValueUpdaterPAAE6render8interval17updateDisplayList15targetTimestampySd_SbAA4TimeVSgtF + 584
+34  SwiftUI                             0x00000001c10530e0 $s7SwiftUI17AccessibilityNodeC10sendAction_5valueSbx_5ValueQztAA0cF0RzlFAA0c4VoidF0V_TB5 + 1400
+35  SwiftUI                             0x00000001c10439e0 $s7SwiftUI17AccessibilityNodeC25accessibilityPerformPressSbyFTo + 44
+36  ProjectWorkspaceViewTests           0x00000001009765c8 $s25ProjectWorkspaceViewTests0aB2AX33_36E5A91EF594616EE8D7F603CD43A886LLV5pressSbyF + 112
+37  ProjectWorkspaceViewTests           0x000000010099094c $s25ProjectWorkspaceViewTestsAA33_36E5A91EF594616EE8D7F603CD43A886LLC3runyyYaKFZTY104_ + 80
+38  ProjectWorkspaceViewTests           0x0000000100976835 $s25ProjectWorkspaceViewTestsAA33_36E5A91EF594616EE8D7F603CD43A886LLC29applicationDidFinishLaunchingyy10Foundation12NotificationVFyyYacfU_TQ0_ + 1
+39  ProjectWorkspaceViewTests           0x00000001009b0c25 $sxIeAgHr_xs5Error_pIegHrzo_s8SendableRzs5NeverORs_r0_lTRSo7AXErrorV_TG5TA.151TQ0_ + 1
+40  ProjectWorkspaceViewTests           0x00000001009b781d $sxIeAgHr_xs5Error_pIegHrzo_s8SendableRzs5NeverORs_r0_lTRyt_Tg5TQ0_ + 1
+41  ProjectWorkspaceViewTests           0x00000001009b7819 $sxIeAgHr_xs5Error_pIegHrzo_s8SendableRzs5NeverORs_r0_lTRyt_Tg5TA.10TQ0_ + 1
+42  libswift_Concurrency.dylib          0x00000002909ffec5 _ZL23completeTaskWithClosurePN5swift12AsyncContextEPNS_10SwiftErrorE + 1
+DABIN_QA_WARNING_STACK_END
+2026-10-05 05:56:54.398 ProjectWorkspaceViewTests[86272:26677255] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future.
+ROWS: project grid logical=334, materialized=25
+FIXTURE: /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/build/qa/project-workspace-view/6772CCBA-CB2E-4067-99DF-AB38B7022CD5/project-grid-wide@2x.png
+FIXTURE: /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/build/qa/project-workspace-view/6772CCBA-CB2E-4067-99DF-AB38B7022CD5/project-selected-narrow@2x.png
+ROWS: project grid logical=501, materialized=3
+ROWS: project grid logical=1002, materialized=3
+ROWS: project grid logical=1002, materialized=3
+FIXTURE: /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/build/qa/project-workspace-view/6772CCBA-CB2E-4067-99DF-AB38B7022CD5/project-grid-narrow@2x.png
+ROWS: project grid logical=334, materialized=3
+ROWS: project grid logical=1002, materialized=7
+ROWS: project grid logical=334, materialized=3
+ROWS: project grid logical=335, materialized=4
+ROWS: project grid logical=335, materialized=3
+ROWS: project grid logical=335, materialized=3
+ROWS: project grid logical=336, materialized=4
+ROWS: project grid logical=336, materialized=4
+PASS: 209 project workspace UI checks; 1,000 synthetic text captures plus image and editable project note; native mixed-selection drag payloads on a private pasteboard; no personal archive, network, general clipboard or external opening. At most 25 simultaneously materialized native rows.
