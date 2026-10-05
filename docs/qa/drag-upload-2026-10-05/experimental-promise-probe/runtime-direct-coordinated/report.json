@@ -1,0 +1,19 @@
+{
+  "callbackCount" : 0,
+  "callbacks" : [
+
+  ],
+  "case" : "direct-coordinated",
+  "events" : [
+    "case direct-coordinated",
+    "direct.types com.apple.NSFilePromiseItemMetaData,com.apple.pasteboard.promised-file-name,com.apple.pasteboard.promised-suggested-file-name,com.apple.pasteboard.promised-file-content-type,com.apple.pasteboard.NSFilePromiseID",
+    "board.written true",
+    "receivers 1",
+    "delegate.filename public.plain-text"
+  ],
+  "passed" : false,
+  "privatePasteboard" : true,
+  "receiverCount" : 1,
+  "sourceBytesUnchanged" : true,
+  "windows" : 0
+}

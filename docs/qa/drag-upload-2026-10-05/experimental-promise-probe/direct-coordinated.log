@@ -1,0 +1,7 @@
+EVENT: case direct-coordinated
+EVENT: direct.types com.apple.NSFilePromiseItemMetaData,com.apple.pasteboard.promised-file-name,com.apple.pasteboard.promised-suggested-file-name,com.apple.pasteboard.promised-file-content-type,com.apple.pasteboard.NSFilePromiseID
+EVENT: board.written true
+EVENT: receivers 1
+EVENT: delegate.filename public.plain-text
+PROBE_RESULT: direct-coordinated passed=false callbacks=0
+COMPLETE: result=2

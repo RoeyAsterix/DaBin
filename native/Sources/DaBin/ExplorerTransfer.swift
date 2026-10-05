@@ -28,12 +28,13 @@ enum ExplorerTransfer {
     static let acceptedTypeIdentifiers = acceptedTypes
 
     /// One native drag item per capture, in the caller's selection order. The
-    /// original NSURL writer is retained for file drags, including its sandbox
-    /// representations; a string containing the path is never a substitute.
+    /// native NSURL and lazy image representations are retained. Files
+    /// use independent snapshots so later filing or deletion cannot break a
+    /// receiving application's delayed read. Paths are never plain-text fallbacks.
     /// Validate the entire selection before handing any writers to AppKit.
     @MainActor
     static func pasteboardWriters(for captures: [Capture], store: CaptureStore,
-                                 includeInternalReference: Bool = true) throws -> [NSPasteboardWriting] {
+                                 includeInternalReference: Bool = true, stagingRoot: URL? = nil) throws -> [NSPasteboardWriting] {
         let current = Dictionary(uniqueKeysWithValues: store.captures.map { ($0.id, $0) })
         guard Set(captures.map(\.id)).count == captures.count,
               captures.allSatisfy({ capture in
@@ -42,10 +43,10 @@ enum ExplorerTransfer {
             throw ExplorerTransferError.unavailableCapture
         }
         let payload = try CaptureClipboardService(writer: { _ in true }).payload(for: captures, managedURL: store.managedURL(for:))
+        var exportedNames = Set<String>()
         return try zip(captures, payload.items).map { capture, item in
+            let identity = includeInternalReference ? try JSONEncoder().encode([capture.id]) : nil
             let base: NSPasteboardWriting
-            var image: LazyImageRepresentation?
-            var fileURL: URL?
             switch item {
             case .text(let text): base = text as NSString
             case .webURL(let value):
@@ -59,17 +60,18 @@ enum ExplorerTransfer {
             case .file(let url):
                 do { _ = try freshRegularFile(url) }
                 catch { throw CaptureClipboardError.missingSavedOriginal(capture.originalFilename ?? capture.title) }
-                base = url as NSURL
-                fileURL = url
-                image = LazyImageRepresentation(url: url)
+                let requested = try OutgoingFileSnapshot.exportFilename(capture.originalFilename ?? url.lastPathComponent)
+                let name = uniqueExportFilename(requested, used: &exportedNames)
+                let snapshot = try OutgoingFileSnapshot.prepare(source: url, filename: name, stagingRoot: stagingRoot)
+                return NativeCaptureWriter(base: snapshot.url as NSURL, identity: identity,
+                    image: LazyImageRepresentation(url: snapshot.url), fileURL: snapshot.url, snapshot: snapshot)
             }
-            let identity = includeInternalReference ? try JSONEncoder().encode([capture.id]) : nil
-            return NativeCaptureWriter(base: base, identity: identity, image: image, fileURL: fileURL)
+            return NativeCaptureWriter(base: base, identity: identity, image: nil, fileURL: nil)
         }
     }
 
     @MainActor
-    static func itemProvider(for capture: Capture, store: CaptureStore, includeInternalReference: Bool = true) throws -> NSItemProvider {
+    static func itemProvider(for capture: Capture, store: CaptureStore, includeInternalReference: Bool = true, stagingRoot: URL? = nil) throws -> NSItemProvider {
         guard capture.deletedAt == nil, store.captures.contains(where: { $0 === capture }) else {
             throw ExplorerTransferError.unavailableCapture
         }
@@ -79,7 +81,7 @@ enum ExplorerTransfer {
             guard let url = store.managedURL(for: capture) else {
                 throw CaptureClipboardError.missingSavedOriginal(capture.originalFilename ?? capture.title)
             }
-            provider = try documentProvider(url: url)
+            provider = try documentProvider(url: url, filename: capture.originalFilename, stagingRoot: stagingRoot)
         case .link:
             guard let raw = capture.originalURL ?? capture.originalText, let url = URL(string: raw),
                   ["https", "http"].contains(url.scheme?.lowercased() ?? ""), url.host != nil else {
@@ -107,26 +109,29 @@ enum ExplorerTransfer {
 
     /// Used for generated daily Markdown and saved originals. Never fabricates a
     /// placeholder file or falls back to the source application's original path.
-    static func documentProvider(url: URL) throws -> NSItemProvider {
+    static func documentProvider(url: URL, filename: String? = nil, stagingRoot: URL? = nil) throws -> NSItemProvider {
         do { _ = try freshRegularFile(url) }
         catch { throw ExplorerTransferError.missingDocument(url.lastPathComponent) }
-        let provider = NSItemProvider(object: url as NSURL)
-        provider.suggestedName = url.lastPathComponent
-        let type = UTType(filenameExtension: url.pathExtension) ?? .data
+        let snapshot = try OutgoingFileSnapshot.prepare(source: url, filename: filename, stagingRoot: stagingRoot)
+        let provider = NSItemProvider(object: snapshot.url as NSURL)
+        provider.suggestedName = snapshot.url.lastPathComponent
+        let type = UTType(filenameExtension: snapshot.url.pathExtension) ?? .data
         provider.registerFileRepresentation(forTypeIdentifier: type.identifier, fileOptions: [], visibility: .all) { completion in
             do {
-                let current = try freshRegularFile(url)
+                let current = try freshRegularFile(snapshot.url)
                 completion(current, false, nil)
-            } catch { completion(nil, false, ExplorerTransferError.missingDocument(url.lastPathComponent)) }
+            } catch { completion(nil, false, ExplorerTransferError.missingDocument(snapshot.url.lastPathComponent)) }
             return nil
         }
-        if let image = LazyImageRepresentation(url: url) {
-            // Registering a drag performs no image read or decoding. Destination
-            // apps request the exact encoded original only when accepting it.
+        if let image = LazyImageRepresentation(url: snapshot.url) {
+            // Snapshot preparation freezes the file without image decoding.
+            // Encoded-image validation/materialization waits for a destination.
             provider.registerDataRepresentation(forTypeIdentifier: image.type.identifier, visibility: .all) { completion in
                 DispatchQueue.global(qos: .utility).async {
-                    do { completion(try image.read(), nil) }
-                    catch { completion(nil, error) }
+                    withExtendedLifetime(snapshot) {
+                        do { completion(try image.read(), nil) }
+                        catch { completion(nil, error) }
+                    }
                 }
                 return nil
             }
@@ -175,7 +180,7 @@ enum ExplorerTransfer {
     /// Additional native representations surround rather than replace Apple's
     /// URL/string writers. Image data is promised and materialized only when a
     /// receiving application asks for it. AppKit's callback is synchronous and
-    /// waits for its requested data; no image bytes are read at drag start.
+    /// waits for its requested data; images are not decoded at drag start.
     private final class NativeCaptureWriter: NSObject, NSPasteboardWriting {
         private final class ImageReadResult: @unchecked Sendable {
             private let lock = NSLock()
@@ -187,9 +192,11 @@ enum ExplorerTransfer {
         private let identity: Data?
         private let image: LazyImageRepresentation?
         private let fileURL: URL?
+        private let snapshot: OutgoingFileSnapshot?
         private static let imageQueue = DispatchQueue(label: "com.dabin.drag-image", qos: .utility)
-        init(base: NSPasteboardWriting, identity: Data?, image: LazyImageRepresentation?, fileURL: URL?) {
+        init(base: NSPasteboardWriting, identity: Data?, image: LazyImageRepresentation?, fileURL: URL?, snapshot: OutgoingFileSnapshot? = nil) {
             self.base = base; self.identity = identity; self.image = image; self.fileURL = fileURL
+            self.snapshot = snapshot
         }
         func writableTypes(for pasteboard: NSPasteboard) -> [NSPasteboard.PasteboardType] {
             var types = base.writableTypes(for: pasteboard)
@@ -217,6 +224,17 @@ enum ExplorerTransfer {
             }
             if let fileURL { do { _ = try ExplorerTransfer.freshRegularFile(fileURL) } catch { return nil } }
             return base.pasteboardPropertyList(forType: type)
+        }
+    }
+
+    private static func uniqueExportFilename(_ filename: String, used: inout Set<String>) -> String {
+        func key(_ value: String) -> String { value.precomposedStringWithCanonicalMapping.lowercased() }
+        if used.insert(key(filename)).inserted { return filename }
+        var index = 2
+        while true {
+            let candidate = OutgoingFileSnapshot.boundedFilename(filename, suffix: " (\(index))")
+            if used.insert(key(candidate)).inserted { return candidate }
+            index += 1
         }
     }
 

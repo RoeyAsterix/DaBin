@@ -1,0 +1,12 @@
+EVENT: case wrapped-plain
+EVENT: direct.types com.apple.NSFilePromiseItemMetaData,com.apple.pasteboard.promised-file-name,com.apple.pasteboard.promised-suggested-file-name,com.apple.pasteboard.promised-file-content-type,com.apple.pasteboard.NSFilePromiseID
+EVENT: wrapper.types public.file-url,com.apple.NSFilePromiseItemMetaData,com.apple.pasteboard.promised-file-name,com.apple.pasteboard.promised-suggested-file-name,com.apple.pasteboard.promised-file-content-type,com.apple.pasteboard.NSFilePromiseID
+EVENT: wrapper.property public.file-url
+EVENT: wrapper.property com.apple.NSFilePromiseItemMetaData
+EVENT: wrapper.property com.apple.pasteboard.promised-file-content-type
+EVENT: wrapper.property com.apple.pasteboard.NSFilePromiseID
+EVENT: board.written true
+EVENT: receivers 1
+EVENT: wrapper.property com.apple.pasteboard.promised-file-name
+PROBE_RESULT: wrapped-plain passed=false callbacks=0
+COMPLETE: result=2

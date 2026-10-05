@@ -257,8 +257,21 @@ import SwiftUI
             switch item {
             case .capture(let capture):
                 if let original = store.managedURL(for: capture) {
-                    try expect(output.string(forType: .fileURL) == original.absoluteString,
-                        "Project file drags retain their managed file URL in visible selection order")
+                    guard let raw = output.string(forType: .fileURL), let snapshot = URL(string: raw), snapshot.isFileURL else {
+                        throw failure("Project file drag must expose a real native snapshot file URL")
+                    }
+                    let attributes = try FileManager.default.attributesOfItem(atPath: snapshot.path)
+                    let values = try snapshot.resourceValues(forKeys: [.isRegularFileKey, .isSymbolicLinkKey, .isAliasFileKey])
+                    try expect(snapshot.standardizedFileURL != original.standardizedFileURL
+                        && snapshot.resolvingSymlinksInPath() != original.resolvingSymlinksInPath()
+                        && attributes[.type] as? FileAttributeType == .typeRegular
+                        && values.isRegularFile == true && values.isSymbolicLink != true && values.isAliasFile != true,
+                        "Project file drags retain independent regular, nonalias snapshot URLs in visible selection order")
+                    try expect(snapshot.lastPathComponent == (capture.originalFilename ?? original.lastPathComponent)
+                        && snapshot.lastPathComponent.utf8.count <= 255,
+                        "Project drag snapshot preserves its safe recognizable original fixture filename")
+                    try expect(try Data(contentsOf: snapshot) == Data(contentsOf: original),
+                        "Project file drag snapshot preserves the exact saved original bytes")
                     if capture.kind == .image {
                         try expect(output.data(forType: .png) == (try Data(contentsOf: original)),
                             "A project image drag exposes its exact saved PNG bytes to native image receivers")

@@ -1,0 +1,112 @@
+{
+  "schemaVersion": 1,
+  "verifiedAtUTC": "2026-10-05T15:32:55.933538+00:00",
+  "status": "affected_native_regressions_and_unsigned_release_verified",
+  "sourceFingerprint": "24e49b499b3e8977e2e562c72e1c52a4fe8fd93f2d9f3d4eda650170b2610398",
+  "canonicalProductionInputCount": 169,
+  "version": "0.4.33",
+  "build": "88",
+  "reportedError": "Attachment upload failed for 1 file(s) (OD_PROTOCOL_PROXY_FAILED)",
+  "baselineStaleManagedUrlFailureReproduced": true,
+  "baselineFailedTransferLanes": 8,
+  "receivingApplicationConfirmed": false,
+  "reportedProxyErrorReproduced": false,
+  "finalSourcePassedSuites": 13,
+  "finalSourceFailedSuites": 0,
+  "finalSuites": [
+    {
+      "name": "ExplorerTransferTests",
+      "status": "passed",
+      "reportedSummary": "PASS: 130 Explorer transfer checks; native representations, projects, preservation, Undo, asynchronous destinations and failures."
+    },
+    {
+      "name": "CaptureClipboardTests",
+      "status": "passed",
+      "reportedSummary": "PASS: 29 capture clipboard checks; text, links, tasks, files, batches, native types and failures."
+    },
+    {
+      "name": "ExternalTransferProcessTests",
+      "status": "passed",
+      "reportedSummary": "PASS: 46 external transfer process checks; 6 mixed production items, exact Unicode text/URL, PNG/JPEG promised bytes and file hashes. Cross-process data availability only; physical drops, sandboxed destinations and browsers are not exercised."
+    },
+    {
+      "name": "ProjectWorkspaceExportTests",
+      "status": "passed",
+      "reportedSummary": "PASS: 49 project ZIP, ordering, metadata, notes, scope, safe publication, missing-original, and private clipboard checks"
+    },
+    {
+      "name": "ProjectWorkspaceViewTests",
+      "status": "passed",
+      "reportedSummary": "PASS: 367 project workspace UI checks; 1,000 synthetic text captures plus image and editable project note; native mixed-selection drag payloads on a private pasteboard; no personal archive, network, general clipboard or external opening. At most 24 simultaneously materialized native rows."
+    },
+    {
+      "name": "ProjectWorkspaceCardTests",
+      "status": "passed",
+      "reportedSummary": "PASS: 782 project card checks; Task/Note/Capture semantics, real live task updates, light/dark/grid/320-point compact fixtures, original previews and independent selection; no personal archive, clipboard, network, or external opening."
+    },
+    {
+      "name": "OutgoingFileSnapshotTests",
+      "status": "passed",
+      "reportedSummary": "PASS: 99 outgoing snapshot immutability, filename and metadata override, publisher lifetime, unsafe-source rejection, failed-publication, retention, active-lease, and conservative-cleanup checks"
+    },
+    {
+      "name": "DetailPreviewInteractionTests",
+      "status": "passed",
+      "reportedSummary": "PASS: 110 detail-preview native open-action checks; no external app launched"
+    },
+    {
+      "name": "CaptureExtendedInteractionTests",
+      "status": "passed",
+      "reportedSummary": ""
+    },
+    {
+      "name": "CollectionCardPresentationTests",
+      "status": "passed",
+      "reportedSummary": "PASS: 1359 collection selection, layout, native preview, theme, AX expansion and data preservation checks. /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/collection-card-presentation/F6325A5D-347D-4152-88B9-A00734C069A2"
+    },
+    {
+      "name": "NativeContentDragTests",
+      "status": "passed",
+      "reportedSummary": "PASS: 38 native content drag checks; clicks, mixed native items, copy-only external transfers and source preservation."
+    },
+    {
+      "name": "CaptionDragTests",
+      "status": "passed",
+      "reportedSummary": "PASS: 167 production caption drag checks; full capture/collection payloads, exact comment text, independent controls and editors."
+    },
+    {
+      "name": "OutgoingFileBatchTests",
+      "status": "passed",
+      "reportedSummary": "PASS: 134 outgoing native file batch checks; nine actual NSURL reads and exact receiving copies, bounded/case-equivalent filenames, source filing/trash/removal, no-overwrite and publication lifetime. Own-process native URL delivery only."
+    }
+  ],
+  "registeredSuites": 126,
+  "fullRegisteredRun": false,
+  "nativeChecks": 3334,
+  "productionInputsUnchangedBetweenFinalNativeRunsAndUnsignedCandidate": true,
+  "batchNativeURLItems": 9,
+  "separateProcessMixedItems": 6,
+  "nativeBatchAndExternalCompletionMarkersVerified": true,
+  "packagingUnitTestsPassed": 32,
+  "deterministicProjectCheckPassed": true,
+  "unsignedReleaseActualInfoAndBinaryVerified": true,
+  "unsignedReleaseReceipt": "store-candidate-receipt.json",
+  "unsignedReleaseReceiptSHA256": "6b2887947d500be6d47909680cfece0acb91fbe8c4bcf7526ffac7737bda624f",
+  "signed": false,
+  "uploaded": false,
+  "sandboxRuntimeVerified": false,
+  "allFindingsFixed": false,
+  "knownOpenFindings": [
+    "Historical strict zoom performance budget failure remains open and was not rerun for this transfer change",
+    "Framework-reproduced native table warnings"
+  ],
+  "manualBoundaries": [
+    "Physical receiving-app drag and live attachment upload",
+    "Sandbox grants and distribution installation",
+    "Large cross-volume drag-start responsiveness",
+    "Hardware/OS matrix"
+  ],
+  "diagnosticFailuresPreserved": "campaign.json",
+  "receiverResearch": "receiver-research.md",
+  "appleDragTestBoundary": "apple-drag-test-boundary.md"
+}

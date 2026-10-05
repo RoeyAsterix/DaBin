@@ -1,0 +1,1 @@
+FAIL: Outgoing file promise QA: Error Domain=OutgoingFilePromiseTests Code=27 "Native image bytes remain readable after the source moved to Recently Deleted" UserInfo={NSLocalizedDescription=Native image bytes remain readable after the source moved to Recently Deleted}

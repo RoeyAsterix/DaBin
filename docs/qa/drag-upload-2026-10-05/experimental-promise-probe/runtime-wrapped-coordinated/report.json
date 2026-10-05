@@ -1,0 +1,24 @@
+{
+  "callbackCount" : 0,
+  "callbacks" : [
+
+  ],
+  "case" : "wrapped-coordinated",
+  "events" : [
+    "case wrapped-coordinated",
+    "direct.types com.apple.NSFilePromiseItemMetaData,com.apple.pasteboard.promised-file-name,com.apple.pasteboard.promised-suggested-file-name,com.apple.pasteboard.promised-file-content-type,com.apple.pasteboard.NSFilePromiseID",
+    "wrapper.types public.file-url,com.apple.NSFilePromiseItemMetaData,com.apple.pasteboard.promised-file-name,com.apple.pasteboard.promised-suggested-file-name,com.apple.pasteboard.promised-file-content-type,com.apple.pasteboard.NSFilePromiseID",
+    "wrapper.property public.file-url",
+    "wrapper.property com.apple.NSFilePromiseItemMetaData",
+    "wrapper.property com.apple.pasteboard.promised-file-content-type",
+    "wrapper.property com.apple.pasteboard.NSFilePromiseID",
+    "board.written true",
+    "receivers 1",
+    "wrapper.property com.apple.pasteboard.promised-file-name"
+  ],
+  "passed" : false,
+  "privatePasteboard" : true,
+  "receiverCount" : 1,
+  "sourceBytesUnchanged" : true,
+  "windows" : 0
+}

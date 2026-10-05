@@ -1,0 +1,1 @@
+Swift/ErrorType.swift:254: Fatal error: Error raised at top level: Error Domain=ExplorerTransferTests Code=1 "A native image destination can request the promised exact PNG bytes" UserInfo={NSLocalizedDescription=A native image destination can request the promised exact PNG bytes}

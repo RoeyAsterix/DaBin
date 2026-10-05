@@ -1,0 +1,264 @@
+[
+  {
+    "console": "affected-flows-final-console.log",
+    "report": "runs/20261005T152248146612Z-app-store/report.json",
+    "status": "passed",
+    "runnerInputFingerprint": "b98a81b0cb30f0fcb0e2cc6a0b30d4231d3f48efa015aa40a2764f1301acb272",
+    "sourceChangedDuringRun": false,
+    "passed": 12,
+    "failed": 0,
+    "requested": [
+      {
+        "name": "ExplorerTransferTests",
+        "status": "passed",
+        "reportedSummary": "PASS: 130 Explorer transfer checks; native representations, projects, preservation, Undo, asynchronous destinations and failures."
+      },
+      {
+        "name": "CaptureClipboardTests",
+        "status": "passed",
+        "reportedSummary": "PASS: 29 capture clipboard checks; text, links, tasks, files, batches, native types and failures."
+      },
+      {
+        "name": "ExternalTransferProcessTests",
+        "status": "passed",
+        "reportedSummary": "PASS: 46 external transfer process checks; 6 mixed production items, exact Unicode text/URL, PNG/JPEG promised bytes and file hashes. Cross-process data availability only; physical drops, sandboxed destinations and browsers are not exercised."
+      },
+      {
+        "name": "ProjectWorkspaceExportTests",
+        "status": "passed",
+        "reportedSummary": "PASS: 49 project ZIP, ordering, metadata, notes, scope, safe publication, missing-original, and private clipboard checks"
+      },
+      {
+        "name": "ProjectWorkspaceViewTests",
+        "status": "passed",
+        "reportedSummary": "PASS: 367 project workspace UI checks; 1,000 synthetic text captures plus image and editable project note; native mixed-selection drag payloads on a private pasteboard; no personal archive, network, general clipboard or external opening. At most 24 simultaneously materialized native rows."
+      },
+      {
+        "name": "ProjectWorkspaceCardTests",
+        "status": "passed",
+        "reportedSummary": "PASS: 782 project card checks; Task/Note/Capture semantics, real live task updates, light/dark/grid/320-point compact fixtures, original previews and independent selection; no personal archive, clipboard, network, or external opening."
+      },
+      {
+        "name": "OutgoingFileSnapshotTests",
+        "status": "passed",
+        "reportedSummary": "PASS: 99 outgoing snapshot immutability, filename and metadata override, publisher lifetime, unsafe-source rejection, failed-publication, retention, active-lease, and conservative-cleanup checks"
+      },
+      {
+        "name": "DetailPreviewInteractionTests",
+        "status": "passed",
+        "reportedSummary": "PASS: 110 detail-preview native open-action checks; no external app launched"
+      },
+      {
+        "name": "CaptureExtendedInteractionTests",
+        "status": "passed",
+        "reportedSummary": ""
+      },
+      {
+        "name": "CollectionCardPresentationTests",
+        "status": "passed",
+        "reportedSummary": "PASS: 1359 collection selection, layout, native preview, theme, AX expansion and data preservation checks. /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/collection-card-presentation/F6325A5D-347D-4152-88B9-A00734C069A2"
+      },
+      {
+        "name": "NativeContentDragTests",
+        "status": "passed",
+        "reportedSummary": "PASS: 38 native content drag checks; clicks, mixed native items, copy-only external transfers and source preservation."
+      },
+      {
+        "name": "CaptionDragTests",
+        "status": "passed",
+        "reportedSummary": "PASS: 167 production caption drag checks; full capture/collection payloads, exact comment text, independent controls and editors."
+      }
+    ]
+  },
+  {
+    "console": "baseline-relocation-console.log",
+    "report": "runs/20261005T143246423386Z-app-store/report.json",
+    "status": "failed",
+    "runnerInputFingerprint": "86b1d938ccbf73bc25c5479648c70e9df6d0e11797b6061c6de02c128d341598",
+    "sourceChangedDuringRun": false,
+    "passed": 0,
+    "failed": 1,
+    "requested": [
+      {
+        "name": "ExplorerTransferTests",
+        "status": "failed",
+        "reportedSummary": ""
+      }
+    ]
+  },
+  {
+    "console": "core-composition-final-console.log",
+    "report": "runs/20261005T150427717145Z-app-store/report.json",
+    "status": "failed",
+    "runnerInputFingerprint": "a84e3935a6d03b7b9970c52d2187a9299d2ad965793f9e47ade7f10318232692",
+    "sourceChangedDuringRun": false,
+    "passed": 3,
+    "failed": 2,
+    "requested": [
+      {
+        "name": "ExplorerTransferTests",
+        "status": "passed",
+        "reportedSummary": "PASS: 130 Explorer transfer checks; native representations, projects, preservation, Undo, asynchronous destinations and failures."
+      },
+      {
+        "name": "CaptureClipboardTests",
+        "status": "passed",
+        "reportedSummary": "PASS: 29 capture clipboard checks; text, links, tasks, files, batches, native types and failures."
+      },
+      {
+        "name": "ExternalTransferProcessTests",
+        "status": "passed",
+        "reportedSummary": "PASS: 46 external transfer process checks; 6 mixed production items, exact Unicode text/URL, PNG/JPEG promised bytes and file hashes. Cross-process data availability only; physical drops, sandboxed destinations and browsers are not exercised."
+      },
+      {
+        "name": "OutgoingFilePromiseTests",
+        "status": "failed",
+        "reportedSummary": ""
+      },
+      {
+        "name": "OutgoingFileSnapshotTests",
+        "status": "failed",
+        "reportedSummary": ""
+      }
+    ]
+  },
+  {
+    "console": "core-handoff-console.log",
+    "report": "runs/20261005T144529812225Z-app-store/report.json",
+    "status": "failed",
+    "runnerInputFingerprint": "0c35e8bc71cc3d35ae5bd327935eff43bc2d8f20987e98485517ef705e1a5b89",
+    "sourceChangedDuringRun": false,
+    "passed": 1,
+    "failed": 4,
+    "requested": [
+      {
+        "name": "ExplorerTransferTests",
+        "status": "failed",
+        "reportedSummary": ""
+      },
+      {
+        "name": "CaptureClipboardTests",
+        "status": "passed",
+        "reportedSummary": "PASS: 29 capture clipboard checks; text, links, tasks, files, batches, native types and failures."
+      },
+      {
+        "name": "ExternalTransferProcessTests",
+        "status": "failed",
+        "reportedSummary": ""
+      },
+      {
+        "name": "OutgoingFilePromiseTests",
+        "status": "failed",
+        "reportedSummary": ""
+      },
+      {
+        "name": "OutgoingFileSnapshotTests",
+        "status": "compile_failed"
+      }
+    ]
+  },
+  {
+    "console": "core-handoff-recheck-console.log",
+    "report": "runs/20261005T145604420747Z-app-store/report.json",
+    "status": "failed",
+    "runnerInputFingerprint": "d46dc6351666df274e9c1cabd6fec7c78af5fe23bd78282c93ad0a4249ced7f6",
+    "sourceChangedDuringRun": false,
+    "passed": 1,
+    "failed": 4,
+    "requested": [
+      {
+        "name": "ExplorerTransferTests",
+        "status": "failed",
+        "reportedSummary": ""
+      },
+      {
+        "name": "CaptureClipboardTests",
+        "status": "passed",
+        "reportedSummary": "PASS: 29 capture clipboard checks; text, links, tasks, files, batches, native types and failures."
+      },
+      {
+        "name": "ExternalTransferProcessTests",
+        "status": "failed",
+        "reportedSummary": "\" UserInfo={NSLocalizedDescription=Separate consumer completed successfully: External consumer failed: Error Domain=ExternalTransferProcessTests Code=6 \"External process could not materialize promised public.png bytes\" UserInfo={NSLocalizedDescription=External process could not materialize promised public.png bytes}"
+      },
+      {
+        "name": "OutgoingFilePromiseTests",
+        "status": "failed",
+        "reportedSummary": ""
+      },
+      {
+        "name": "OutgoingFileSnapshotTests",
+        "status": "failed",
+        "reportedSummary": ""
+      }
+    ]
+  },
+  {
+    "console": "core-routing-recheck-console.log",
+    "report": "runs/20261005T151439621817Z-app-store/report.json",
+    "status": "failed",
+    "runnerInputFingerprint": "b2ab4080c30db766f02a0b5aacd27f2a1f27e9dcd410c9f484d9f79747519606",
+    "sourceChangedDuringRun": false,
+    "passed": 4,
+    "failed": 1,
+    "requested": [
+      {
+        "name": "ExplorerTransferTests",
+        "status": "passed",
+        "reportedSummary": "PASS: 130 Explorer transfer checks; native representations, projects, preservation, Undo, asynchronous destinations and failures."
+      },
+      {
+        "name": "CaptureClipboardTests",
+        "status": "passed",
+        "reportedSummary": "PASS: 29 capture clipboard checks; text, links, tasks, files, batches, native types and failures."
+      },
+      {
+        "name": "ExternalTransferProcessTests",
+        "status": "passed",
+        "reportedSummary": "PASS: 46 external transfer process checks; 6 mixed production items, exact Unicode text/URL, PNG/JPEG promised bytes and file hashes. Cross-process data availability only; physical drops, sandboxed destinations and browsers are not exercised."
+      },
+      {
+        "name": "OutgoingFilePromiseTests",
+        "status": "failed",
+        "reportedSummary": ""
+      },
+      {
+        "name": "OutgoingFileSnapshotTests",
+        "status": "passed",
+        "reportedSummary": "PASS: 99 outgoing snapshot immutability, filename and metadata override, publisher lifetime, unsafe-source rejection, failed-publication, retention, active-lease, and conservative-cleanup checks"
+      }
+    ]
+  },
+  {
+    "console": "native-batch-canonical-recheck-console.log",
+    "report": "runs/20261005T152933168513Z-app-store/report.json",
+    "status": "passed",
+    "runnerInputFingerprint": "859c2c4572e4355a2bc24f8a6e91007ae523c8993de037c0edf135649cd9cff6",
+    "sourceChangedDuringRun": false,
+    "passed": 1,
+    "failed": 0,
+    "requested": [
+      {
+        "name": "OutgoingFileBatchTests",
+        "status": "passed",
+        "reportedSummary": "PASS: 134 outgoing native file batch checks; nine actual NSURL reads and exact receiving copies, bounded/case-equivalent filenames, source filing/trash/removal, no-overwrite and publication lifetime. Own-process native URL delivery only."
+      }
+    ]
+  },
+  {
+    "console": "native-batch-final-console.log",
+    "report": "runs/20261005T152631957807Z-app-store/report.json",
+    "status": "failed",
+    "runnerInputFingerprint": "fe02c9f3953817ef1cae4586a4771c4fe00df6077da9dfd3264c22dbde2f71b7",
+    "sourceChangedDuringRun": false,
+    "passed": 0,
+    "failed": 1,
+    "requested": [
+      {
+        "name": "OutgoingFileBatchTests",
+        "status": "failed",
+        "reportedSummary": ""
+      }
+    ]
+  }
+]

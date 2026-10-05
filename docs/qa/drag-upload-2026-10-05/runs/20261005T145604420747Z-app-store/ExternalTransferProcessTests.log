@@ -1,0 +1,3 @@
+External transfer process QA failed: Error Domain=ExternalTransferProcessTests Code=12 "Separate consumer completed successfully: External consumer failed: Error Domain=ExternalTransferProcessTests Code=6 "External process could not materialize promised public.png bytes" UserInfo={NSLocalizedDescription=External process could not materialize promised public.png bytes}
+" UserInfo={NSLocalizedDescription=Separate consumer completed successfully: External consumer failed: Error Domain=ExternalTransferProcessTests Code=6 "External process could not materialize promised public.png bytes" UserInfo={NSLocalizedDescription=External process could not materialize promised public.png bytes}
+}

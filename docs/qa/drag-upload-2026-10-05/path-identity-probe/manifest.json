@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "scope": "Immutable Foundation-only synthetic path identity probe and raw evidence. No AppKit, native QA, production writes, auth or network.",
+  "finding": "Same native directory device/inode: registration path /var, enumeration path /private/var; raw keys differ, standardized/resolved keys agree.",
+  "ownSyntheticDirectoryRemoved": true,
+  "productionFixStatus": "Root applied consistent standardizedFileURL.path keys; its native QA validation remains root-owned.",
+  "files": [
+    {
+      "path": "/private/tmp/dabin-path-identity-proof-bundle/probe.swift",
+      "sourcePath": "/private/tmp/dabin-outgoing-path-identity-20261005/probe.swift",
+      "sha256": "30cf1bece647803d01dcb05c208e802dfa61838ea9375ae7e178c536ef562072",
+      "bytes": 2488
+    },
+    {
+      "path": "/private/tmp/dabin-path-identity-proof-bundle/report.json",
+      "sourcePath": "/private/tmp/dabin-outgoing-path-identity-20261005/report.json",
+      "sha256": "352ce78d28831d482dc8dcb2a31e8be8cf1b285a1b471623cdaa8563134aec50",
+      "bytes": 4416
+    },
+    {
+      "path": "/private/tmp/dabin-path-identity-proof-bundle/provenance.json",
+      "sourcePath": "/private/tmp/dabin-outgoing-path-identity-20261005/provenance.json",
+      "sha256": "8fbb145955480d6788b8c145c95e1f37f6649ff4301d220b897bb0e9c1b464fd",
+      "bytes": 988
+    }
+  ]
+}

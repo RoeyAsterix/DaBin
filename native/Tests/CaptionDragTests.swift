@@ -194,7 +194,21 @@ import SwiftUI
         try expect(items.count == expected.count, "Whole collections remain distinct native pasteboard items")
         for (item, capture) in zip(items, expected) {
             if let url = store.managedURL(for: capture) {
-                try expect(item.string(forType: .fileURL) == url.absoluteString, "File caption transfers its saved managed original, not a filename or excerpt")
+                guard let raw = item.string(forType: .fileURL), let snapshot = URL(string: raw), snapshot.isFileURL else {
+                    throw failure("File caption must transfer a real native snapshot file URL")
+                }
+                let attributes = try FileManager.default.attributesOfItem(atPath: snapshot.path)
+                let values = try snapshot.resourceValues(forKeys: [.isRegularFileKey, .isSymbolicLinkKey, .isAliasFileKey])
+                try expect(snapshot.standardizedFileURL != url.standardizedFileURL
+                    && snapshot.resolvingSymlinksInPath() != url.resolvingSymlinksInPath()
+                    && attributes[.type] as? FileAttributeType == .typeRegular
+                    && values.isRegularFile == true && values.isSymbolicLink != true && values.isAliasFile != true,
+                    "File caption transfers an independent regular, nonalias snapshot rather than the mutable managed original")
+                try expect(snapshot.lastPathComponent == (capture.originalFilename ?? url.lastPathComponent)
+                    && snapshot.lastPathComponent.utf8.count <= 255,
+                    "File caption snapshot preserves its safe recognizable original fixture filename")
+                try expect(try Data(contentsOf: snapshot) == Data(contentsOf: url),
+                    "File caption snapshot transfers every saved original byte rather than a filename or excerpt")
             } else if capture.kind == .link {
                 try expect(item.string(forType: .URL) == capture.originalURL, "Link caption transfers its saved URL")
             } else {

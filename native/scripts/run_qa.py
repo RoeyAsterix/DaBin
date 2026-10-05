@@ -76,6 +76,8 @@ WINDOW.append("VisualAnimationStressTests")
 WINDOW.append("VideoPlaybackIntegrationTests")
 WINDOW += ["ProjectBrowsingNavigationTests", "SnippetNamingInteractionTests"]
 WINDOW.append("CardDeletionInteractionTests")
+NONFOCUS.append("OutgoingFileBatchTests")
+NONFOCUS.append("OutgoingFileSnapshotTests")
 
 
 def capture(arguments):

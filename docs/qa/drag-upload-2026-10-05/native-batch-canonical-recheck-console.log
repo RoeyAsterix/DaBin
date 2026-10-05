@@ -1,0 +1,2 @@
+PASSED OutgoingFileBatchTests: PASS: 134 outgoing native file batch checks; nine actual NSURL reads and exact receiving copies, bounded/case-equivalent filenames, source filing/trash/removal, no-overwrite and publication lifetime. Own-process native URL delivery only.
+QA app-store passed: 1/1 requested suites passed. Report: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/runs/20261005T152933168513Z-app-store/report.json

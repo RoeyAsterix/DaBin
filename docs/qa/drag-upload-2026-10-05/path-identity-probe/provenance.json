@@ -1,0 +1,18 @@
+{
+  "scope": "Foundation-only own synthetic temporary directory; no AppKit, pasteboard, native QA, production edits, auth or network.",
+  "command": [
+    "xcrun",
+    "swift",
+    "-module-cache-path",
+    "/private/tmp/dabin-outgoing-path-identity-20261005/ModuleCache",
+    "/private/tmp/dabin-outgoing-path-identity-20261005/probe.swift"
+  ],
+  "scriptSHA256": "30cf1bece647803d01dcb05c208e802dfa61838ea9375ae7e178c536ef562072",
+  "reportSHA256": "352ce78d28831d482dc8dcb2a31e8be8cf1b285a1b471623cdaa8563134aec50",
+  "sameNativeDirectory": true,
+  "rawPathEquality": false,
+  "normalizedPathEquality": true,
+  "ownSyntheticDirectoryRemoved": true,
+  "finding": "Constructed normalized child key uses /var; FileManager enumeration returns same inode at /private/var. Cleanup raw-string active membership fails.",
+  "recommendedFix": "Use identical normalized directory keys at registry insertion/deinit and both cleanup membership checks; preserve strict24h and active lease tests."
+}

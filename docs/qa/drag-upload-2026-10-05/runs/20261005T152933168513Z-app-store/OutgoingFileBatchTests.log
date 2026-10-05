@@ -1,0 +1,2 @@
+PASS: 134 outgoing native file batch checks; nine actual NSURL reads and exact receiving copies, bounded/case-equivalent filenames, source filing/trash/removal, no-overwrite and publication lifetime. Own-process native URL delivery only.
+COMPLETE: OutgoingFileBatchTests finished all native URL reads, copies, delayed reads and cleanup

@@ -1,0 +1,140 @@
+{
+  "oldTest": {
+    "source": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/Tests/OutgoingFilePromiseTests.swift",
+    "preserved": "/private/tmp/dabin-outgoing-file-batch-20261005/OutgoingFilePromiseTests.preserved.swift",
+    "SHA256": "a353512e3f196eca45458073cf09089ad9489ac5077fc7ed91cc75b7844478e7",
+    "probeDirectory": "/private/tmp/dabin-native-file-promise-probe-20261005"
+  },
+  "probeArtifacts": [
+    {
+      "path": "/private/tmp/dabin-native-file-promise-probe-20261005/NativePromiseProbe.swift",
+      "SHA256": "ebfe7fa05550c7ab6cb48f68688d3a4ab6c9f6cae97735ad62c87070a5474e2b",
+      "bytes": 10536
+    },
+    {
+      "path": "/private/tmp/dabin-native-file-promise-probe-20261005/direct-coordinated-released.log",
+      "SHA256": "75a7c9d4d1b0c072612d01da00e979dbd492e044e5e0c3def78d39de27605463",
+      "bytes": 460
+    },
+    {
+      "path": "/private/tmp/dabin-native-file-promise-probe-20261005/direct-coordinated.log",
+      "SHA256": "36876bbccbf2eb6132f81a2ad10d6dc53183c7768366df44de35579abeda1284",
+      "bytes": 427
+    },
+    {
+      "path": "/private/tmp/dabin-native-file-promise-probe-20261005/direct-plain-released.log",
+      "SHA256": "ea03f8882a548319af6f780463bcc104f6a73e94389fa72d155a9a869c330129",
+      "bytes": 448
+    },
+    {
+      "path": "/private/tmp/dabin-native-file-promise-probe-20261005/direct-plain.log",
+      "SHA256": "bb2546d9badeffa1405e130212c7dff6c0e4a076b71c6c601af39dfa6bec8adc",
+      "bytes": 415
+    },
+    {
+      "path": "/private/tmp/dabin-native-file-promise-probe-20261005/initial-NativePromiseProbe.swift",
+      "SHA256": "1da01f4350ec9dd84d1e10e1c5e866036766a08494371cc61a2ef4fd4dd5c83d",
+      "bytes": 8861
+    },
+    {
+      "path": "/private/tmp/dabin-native-file-promise-probe-20261005/initial-run-results.json",
+      "SHA256": "92b6fd7020b28abed24db4863e7c88d1d94d8cb03d98859e920ce6b5c6e77ccd",
+      "bytes": 850
+    },
+    {
+      "path": "/private/tmp/dabin-native-file-promise-probe-20261005/run-results.json",
+      "SHA256": "98cc94dde5aa32f66915cdfcb27c57b2a24d3c31406ead22cccce7cb9aeec9ce",
+      "bytes": 1200
+    },
+    {
+      "path": "/private/tmp/dabin-native-file-promise-probe-20261005/run_probe.py",
+      "SHA256": "7a7484eda317716cb8b5a4e1c7d78490aff175af869a6a4c60b50ae507bacac4",
+      "bytes": 1880
+    },
+    {
+      "path": "/private/tmp/dabin-native-file-promise-probe-20261005/runtime-direct-coordinated/report.json",
+      "SHA256": "8497fed67745ed7bcdc670bb9eb23cdd3f0dcd1ad31110d00077e87fab1eba0d",
+      "bytes": 574
+    },
+    {
+      "path": "/private/tmp/dabin-native-file-promise-probe-20261005/runtime-direct-coordinated-released/report.json",
+      "SHA256": "465ad21bac1247052dfb94254f8a3139fe40732167061151770cb470b1d38b23",
+      "bytes": 607
+    },
+    {
+      "path": "/private/tmp/dabin-native-file-promise-probe-20261005/runtime-direct-plain/report.json",
+      "SHA256": "3692f2c1c0d326ef39b344c05d7fd9e35c1d1546afa27ef66b9817290f4c1110",
+      "bytes": 562
+    },
+    {
+      "path": "/private/tmp/dabin-native-file-promise-probe-20261005/runtime-direct-plain-released/report.json",
+      "SHA256": "a04f3de2d55e8be13acf596ce258b77aa437891288a9943b0f1e685052c5aa94",
+      "bytes": 595
+    },
+    {
+      "path": "/private/tmp/dabin-native-file-promise-probe-20261005/runtime-wrapped-coordinated/report.json",
+      "SHA256": "d72a0343e385a373324bfc495ee96d7bceafc88f1d24fc65a183b778f49220a8",
+      "bytes": 1078
+    },
+    {
+      "path": "/private/tmp/dabin-native-file-promise-probe-20261005/runtime-wrapped-coordinated-released/report.json",
+      "SHA256": "ab1aa9f822519c2569de73995fb86ec2067a7b6a256acaed5581be5b4cb55693",
+      "bytes": 1738
+    },
+    {
+      "path": "/private/tmp/dabin-native-file-promise-probe-20261005/runtime-wrapped-coordinated-retained-routed/report.json",
+      "SHA256": "45f849966763b320ba75fe66207bf9019ceab3a7d2c2521907c7eabf21837c51",
+      "bytes": 1759
+    },
+    {
+      "path": "/private/tmp/dabin-native-file-promise-probe-20261005/runtime-wrapped-plain/report.json",
+      "SHA256": "13b7237cc8e661a103fb7d28c43254ff0847b986ff944eefb98373eb6421d4dc",
+      "bytes": 1066
+    },
+    {
+      "path": "/private/tmp/dabin-native-file-promise-probe-20261005/runtime-wrapped-plain-released/report.json",
+      "SHA256": "029d2206735afc41b1bd87d15c08360c4aaf9430acc0a730cfcf64a6f25b6c76",
+      "bytes": 1720
+    },
+    {
+      "path": "/private/tmp/dabin-native-file-promise-probe-20261005/runtime-wrapped-plain-retained-routed/report.json",
+      "SHA256": "0e8186b54320a99adc3897c0de32e0e4dd95ebf09ea822d0a605066f10adb97e",
+      "bytes": 1741
+    },
+    {
+      "path": "/private/tmp/dabin-native-file-promise-probe-20261005/wrapped-coordinated-released.log",
+      "SHA256": "7ef8b511ad159af93028f90dfba80504449e1370e6e952f7deaee3c62760e4d6",
+      "bytes": 1578
+    },
+    {
+      "path": "/private/tmp/dabin-native-file-promise-probe-20261005/wrapped-coordinated-retained-routed.log",
+      "SHA256": "bee37380d9f7cb2b3bd7bf97c33e34c616375e75d6b078777b173a834224fea0",
+      "bytes": 1599
+    },
+    {
+      "path": "/private/tmp/dabin-native-file-promise-probe-20261005/wrapped-coordinated.log",
+      "SHA256": "b0259902ceb66e00c13ecaba918f46a54ceab5fa9912e648cfc304ecbbf24591",
+      "bytes": 931
+    },
+    {
+      "path": "/private/tmp/dabin-native-file-promise-probe-20261005/wrapped-plain-released.log",
+      "SHA256": "68ed04d99a0903ed59518fcc254209b9a9127a985967dc7f8c9b3c3968704984",
+      "bytes": 1560
+    },
+    {
+      "path": "/private/tmp/dabin-native-file-promise-probe-20261005/wrapped-plain-retained-routed.log",
+      "SHA256": "09a792195955459c75ae049bd18d238859a951f79fa5e97b55b56e0ba61fae34",
+      "bytes": 1581
+    },
+    {
+      "path": "/private/tmp/dabin-native-file-promise-probe-20261005/wrapped-plain.log",
+      "SHA256": "5599a17fc72eb5ef5ff72f8a07e8c71c8996c1a8ef7d50c25654f900d42a20a3",
+      "bytes": 919
+    }
+  ],
+  "runtimeProcessesComplete": true,
+  "actualDeliveryVerified": false,
+  "privateBoardCallbackCounts": 0,
+  "windowsCreated": 0,
+  "repositoryProductionChangedByAgent": false
+}

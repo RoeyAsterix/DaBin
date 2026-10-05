@@ -1,0 +1,7 @@
+Compiling app-store Release test module (138 production sources)…
+FAILED ExplorerTransferTests
+PASSED CaptureClipboardTests: PASS: 29 capture clipboard checks; text, links, tasks, files, batches, native types and failures.
+FAILED ExternalTransferProcessTests: " UserInfo={NSLocalizedDescription=Separate consumer completed successfully: External consumer failed: Error Domain=ExternalTransferProcessTests Code=6 "External process could not materialize promised public.png bytes" UserInfo={NSLocalizedDescription=External process could not materialize promised public.png bytes}
+FAILED OutgoingFilePromiseTests
+FAILED OutgoingFileSnapshotTests
+QA app-store failed: 1/5 requested suites passed. Report: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/runs/20261005T145604420747Z-app-store/report.json

@@ -1,0 +1,33 @@
+{
+  "probeSourceSHA256": "1da01f4350ec9dd84d1e10e1c5e866036766a08494371cc61a2ef4fd4dd5c83d",
+  "executableSHA256": "652351f4515f92dd970d7ac1dd55e2cb1f05849f8c7d3918b1f5050da1eeb988",
+  "cases": [
+    {
+      "case": "direct-plain",
+      "exitCode": 2,
+      "elapsedSeconds": 8.480386625044048,
+      "explicitComplete": true
+    },
+    {
+      "case": "direct-coordinated",
+      "exitCode": 2,
+      "elapsedSeconds": 8.064946833066642,
+      "explicitComplete": true
+    },
+    {
+      "case": "wrapped-plain",
+      "exitCode": 2,
+      "elapsedSeconds": 8.066946666920558,
+      "explicitComplete": true
+    },
+    {
+      "case": "wrapped-coordinated",
+      "exitCode": 2,
+      "elapsedSeconds": 8.066914291121066,
+      "explicitComplete": true
+    }
+  ],
+  "repositoryImports": false,
+  "windowCount": 0,
+  "generalClipboardUsed": false
+}

@@ -1,0 +1,1 @@
+FAIL: Outgoing file promise QA: Error Domain=OutgoingFilePromiseTests Code=29 "Every actual NSFilePromiseReceiver produces exactly one bounded completion (got 0/4)" UserInfo={NSLocalizedDescription=Every actual NSFilePromiseReceiver produces exactly one bounded completion (got 0/4)}

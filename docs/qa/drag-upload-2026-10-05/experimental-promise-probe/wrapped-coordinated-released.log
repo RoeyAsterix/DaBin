@@ -1,0 +1,20 @@
+EVENT: case wrapped-coordinated-released
+EVENT: direct.types com.apple.NSFilePromiseItemMetaData,com.apple.pasteboard.promised-file-name,com.apple.pasteboard.promised-suggested-file-name,com.apple.pasteboard.promised-file-content-type,com.apple.pasteboard.NSFilePromiseID
+EVENT: wrapper.types public.file-url,com.apple.NSFilePromiseItemMetaData,com.apple.pasteboard.promised-file-name,com.apple.pasteboard.promised-suggested-file-name,com.apple.pasteboard.promised-file-content-type,com.apple.pasteboard.NSFilePromiseID
+EVENT: wrapper.property public.file-url
+EVENT: wrapper.result public.file-url = Optional(file:///private/tmp/dabin-native-file-promise-probe-20261005/runtime-wrapped-coordinated-released/Fictional.txt)
+EVENT: wrapper.property com.apple.NSFilePromiseItemMetaData
+EVENT: wrapper.result com.apple.NSFilePromiseItemMetaData = Optional({
+    "com.apple.pasteboard.promised-file-content-type" = "public.plain-text";
+})
+EVENT: wrapper.property com.apple.pasteboard.promised-file-content-type
+EVENT: wrapper.result com.apple.pasteboard.promised-file-content-type = Optional(public.plain-text)
+EVENT: wrapper.property com.apple.pasteboard.NSFilePromiseID
+EVENT: wrapper.result com.apple.pasteboard.NSFilePromiseID = Optional(<5014d226 09000000>)
+EVENT: board.written true
+EVENT: ownership provider=true delegate=true writer=true
+EVENT: receivers 1
+EVENT: wrapper.property com.apple.pasteboard.promised-file-name
+EVENT: wrapper.result com.apple.pasteboard.promised-file-name = nil
+PROBE_RESULT: wrapped-coordinated-released passed=false callbacks=0
+COMPLETE: result=2

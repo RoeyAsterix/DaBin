@@ -1,0 +1,7 @@
+Compiling app-store Release test module (138 production sources)…
+FAILED ExplorerTransferTests
+PASSED CaptureClipboardTests: PASS: 29 capture clipboard checks; text, links, tasks, files, batches, native types and failures.
+FAILED ExternalTransferProcessTests
+FAILED OutgoingFilePromiseTests
+COMPILE_FAILED OutgoingFileSnapshotTests
+QA app-store failed: 1/5 requested suites passed. Report: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/runs/20261005T144529812225Z-app-store/report.json

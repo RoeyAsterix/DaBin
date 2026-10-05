@@ -1,0 +1,7 @@
+Compiling app-store Release test module (138 production sources)…
+PASSED ExplorerTransferTests: PASS: 130 Explorer transfer checks; native representations, projects, preservation, Undo, asynchronous destinations and failures.
+PASSED CaptureClipboardTests: PASS: 29 capture clipboard checks; text, links, tasks, files, batches, native types and failures.
+PASSED ExternalTransferProcessTests: PASS: 46 external transfer process checks; 6 mixed production items, exact Unicode text/URL, PNG/JPEG promised bytes and file hashes. Cross-process data availability only; physical drops, sandboxed destinations and browsers are not exercised.
+FAILED OutgoingFilePromiseTests
+PASSED OutgoingFileSnapshotTests: PASS: 99 outgoing snapshot immutability, filename and metadata override, publisher lifetime, unsafe-source rejection, failed-publication, retention, active-lease, and conservative-cleanup checks
+QA app-store failed: 4/5 requested suites passed. Report: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/runs/20261005T151439621817Z-app-store/report.json

@@ -34,7 +34,7 @@ private struct ExternalTransferReport: Codable {
     private static let fixturePrefix = "DaBinExternalTransferQA-"
     private static let pasteboardPrefix = "DaBin.ExternalTransferQA."
     private static var checks = 0
-    private var result: Int32 = 0
+    private var result: Int32 = 1
 
     static func main() {
         setbuf(stdout, nil)
@@ -54,7 +54,11 @@ private struct ExternalTransferReport: Codable {
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         Task {
-            do { try await Self.produce() }
+            do {
+                try await Self.produce()
+                result = 0
+                print("COMPLETE: ExternalTransferProcessTests finished every fixture and cleanup")
+            }
             catch { result = 1; fputs("External transfer process QA failed: \(error)\n", stderr) }
             NSApp.stop(nil)
             NSApp.postEvent(NSEvent.otherEvent(with: .applicationDefined, location: .zero,
@@ -131,7 +135,7 @@ private struct ExternalTransferReport: Codable {
         encoder.outputFormatting = [.sortedKeys]
         let snapshots = try captures.map { try encoder.encode(CaptureSnapshot($0)) }
         var managedHashes: [URL: String] = [:]
-        let expected: [ExternalTransferManifest.Item] = try captures.map { capture in
+        var expected: [ExternalTransferManifest.Item] = try captures.map { capture in
             if let file = store.managedURL(for: capture) {
                 let bytes = try Data(contentsOf: file)
                 managedHashes[file] = hash(bytes)
@@ -148,10 +152,23 @@ private struct ExternalTransferReport: Codable {
         }
         let pasteboard = NSPasteboard(name: .init(pasteboardPrefix + UUID().uuidString))
         defer { pasteboard.releaseGlobally() }
-        let writers = try ExplorerTransfer.pasteboardWriters(for: captures, store: store)
+        let writers = try ExplorerTransfer.pasteboardWriters(for: captures, store: store,
+            stagingRoot: root.appendingPathComponent("outgoing-snapshots", isDirectory: true))
         defer { withExtendedLifetime(writers) {} }
         try expect(writers.count == expected.count, "Production emits one native writer per selected capture")
-        for (writer, item) in zip(writers, expected) {
+        for (index, writer) in writers.enumerated() {
+            let item = expected[index]
+            if item.kind == "file" {
+                guard let raw = writer.pasteboardPropertyList(forType: .fileURL) as? String,
+                      let snapshot = URL(string: raw), snapshot.isFileURL else {
+                    throw failure("Production file writer has no native snapshot URL")
+                }
+                try expect(snapshot != item.fileURL && snapshot.lastPathComponent == captures[index].originalFilename,
+                    "A file handoff has an independent location and retains its exact filename")
+                try expect(snapshot.standardizedFileURL.path.hasPrefix(root.standardizedFileURL.path + "/"), "Export snapshot stays in this isolated fixture")
+                expected[index] = .init(kind: item.kind, text: item.text, fileURL: snapshot,
+                    imageType: item.imageType, byteCount: item.byteCount, sha256: item.sha256)
+            }
             if let imageType = item.imageType {
                 try expect(writer.writingOptions?(forType: .init(imageType), pasteboard: pasteboard) == .promised,
                            "Production defers original image bytes until a receiving process requests them")
@@ -249,13 +266,13 @@ private struct ExternalTransferReport: Codable {
                       let raw = item.string(forType: .fileURL), let url = URL(string: raw), url.isFileURL else {
                     throw failure("External file item \(index) has no native file URL")
                 }
-                try expect(url == expectedURL, "External item \(index) resolves the saved original in selection order")
+                try expect(url == expectedURL, "External item \(index) resolves the stable exported snapshot in selection order")
                 guard url.resolvingSymlinksInPath().path.hasPrefix(root.path + "/") else {
                     throw failure("Consumer refuses files outside its synthetic fixture")
                 }
                 let bytes = try Data(contentsOf: url)
                 try expect(bytes.count == expected.byteCount && hash(bytes) == expected.sha256,
-                           "External file reader receives the saved original byte count and SHA-256")
+                           "External file reader receives the exact original byte count and SHA-256 from its independent snapshot")
                 if let type = expected.imageType {
                     try expect(item.types.contains(.init(type)), "Original image encoding is advertised to the other process")
                     guard let promised = item.data(forType: .init(type)) else {

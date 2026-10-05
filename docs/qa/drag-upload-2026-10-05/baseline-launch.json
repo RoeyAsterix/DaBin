@@ -1,0 +1,19 @@
+{
+  "startedAtUTC": "2026-10-05T14:32:46.382668+00:00",
+  "command": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "scripts/run_qa.py",
+    "--distribution",
+    "app-store",
+    "--configuration",
+    "Release",
+    "--timeout",
+    "180",
+    "--only",
+    "ExplorerTransferTests"
+  ],
+  "console": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/drag-upload-2026-10-05/baseline-relocation-console.log",
+  "expectedProductionFingerprint": "6b013ca1385c4aaf1d837e924e12eaa9bbeeba5ad3544fea2ede31b88f83d909",
+  "exitCode": 1,
+  "finishedAtUTC": "2026-10-05T14:32:52.383751+00:00"
+}

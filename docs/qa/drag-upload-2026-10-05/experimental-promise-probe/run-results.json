@@ -1,0 +1,45 @@
+{
+  "probeSourceSHA256": "ebfe7fa05550c7ab6cb48f68688d3a4ab6c9f6cae97735ad62c87070a5474e2b",
+  "executableSHA256": "e8e409336ba4f9253987a3c094925d074de6d9cd0d7a1511ffafb24eec831eb0",
+  "cases": [
+    {
+      "case": "direct-plain-released",
+      "exitCode": 2,
+      "elapsedSeconds": 8.430976541014388,
+      "explicitComplete": true
+    },
+    {
+      "case": "direct-coordinated-released",
+      "exitCode": 2,
+      "elapsedSeconds": 8.051818874897435,
+      "explicitComplete": true
+    },
+    {
+      "case": "wrapped-plain-released",
+      "exitCode": 2,
+      "elapsedSeconds": 8.051927499938756,
+      "explicitComplete": true
+    },
+    {
+      "case": "wrapped-coordinated-released",
+      "exitCode": 2,
+      "elapsedSeconds": 8.06570391706191,
+      "explicitComplete": true
+    },
+    {
+      "case": "wrapped-plain-retained-routed",
+      "exitCode": 2,
+      "elapsedSeconds": 8.07319733290933,
+      "explicitComplete": true
+    },
+    {
+      "case": "wrapped-coordinated-retained-routed",
+      "exitCode": 2,
+      "elapsedSeconds": 8.077734916936606,
+      "explicitComplete": true
+    }
+  ],
+  "repositoryImports": false,
+  "windowCount": 0,
+  "generalClipboardUsed": false
+}

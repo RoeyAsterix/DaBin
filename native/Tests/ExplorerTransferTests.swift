@@ -107,7 +107,7 @@ private final class ExplorerLatePromiseFixture: InputFilePromise {
         let laterEdited = try store.capture(text: "Later edited move original", projectName: "Origin")[0]
         let items = [first, second, laterEdited]
         let originals = items.map { ($0.id, $0.originalText, $0.capturedAt) }
-        let providers = try items.map { try ExplorerTransfer.itemProvider(for: $0, store: store) }
+        let providers = try items.map { try ExplorerTransfer.itemProvider(for: $0, store: store, stagingRoot: root.appendingPathComponent("Outgoing snapshots")) }
         let controller = ExplorerCaptureController(state: state, input: InputService(store: store))
         try expect(controller.receive(providers, project: "Destination"), "A mixed Undo fixture moves one existing identity per provider")
         try await waitForIdle(controller)
@@ -192,6 +192,109 @@ private final class ExplorerLatePromiseFixture: InputFilePromise {
         return provider
     }
 
+    /// Preparing a transfer must not bind its future reads to an archive path
+    /// that an ordinary project move can retire. This is a delayed-read model
+    /// regression, not proof of a physical drop or a sandbox extension grant.
+    @MainActor private static func delayedOutgoingRelocation(_ root: URL) async throws {
+        let files = FileManager.default
+        let store = try CaptureStore(root: root)
+        defer { store.cancelArchiveRepair() }
+        let clipboardRevision = NSPasteboard.general.changeCount
+        let binary = Data([0, 1, 2, 127, 128, 254, 255]) + Data("Fictional delayed transfer\n".utf8)
+        let png = Data(base64Encoded: "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+j8ocAAAAASUVORK5CYII=")!
+        let file = try await store.importData(binary, filename: "Delayed-original.bin", projectName: "Before drag")
+        let image = try await store.importData(png, filename: "Delayed-original.png", projectName: "Before drag")
+        let captures = [file, image]
+        let immutable = captures.map {
+            ($0.id, $0.capturedAt, $0.captureDay, $0.captureUTCOffsetSeconds,
+             $0.originalFilename, $0.originalText, $0.originalURL, $0.byteCount)
+        }
+        let oldFile = store.managedURL(for: file)!
+        let oldImage = store.managedURL(for: image)!
+        let fileProvider = try ExplorerTransfer.itemProvider(for: file, store: store, stagingRoot: root.appendingPathComponent("Outgoing snapshots"))
+        let imageProvider = try ExplorerTransfer.itemProvider(for: image, store: store, stagingRoot: root.appendingPathComponent("Outgoing snapshots"))
+        let documentProvider = try ExplorerTransfer.documentProvider(url: oldFile, stagingRoot: root.appendingPathComponent("Outgoing snapshots"))
+        let writers = try ExplorerTransfer.pasteboardWriters(for: captures, store: store, stagingRoot: root.appendingPathComponent("Outgoing snapshots"))
+        let pasteboard = NSPasteboard(name: .init("DaBin.DelayedOutgoingRelocation.\(UUID())"))
+        defer { pasteboard.releaseGlobally(); withExtendedLifetime(writers) {} }
+        try expect(writers.count == captures.count, "Relocation fixture prepares one writer per saved original")
+
+        // A real organization write synchronizes Explorer and retires the old
+        // path. No original is removed or substituted by this test.
+        try store.setOrganization(file, pinned: true, projectName: "After drag")
+        try store.setOrganization(image, pinned: false, projectName: "After drag")
+        let currentFile = store.managedURL(for: file)!
+        let currentImage = store.managedURL(for: image)!
+        try expect(currentFile != oldFile && currentImage != oldImage
+            && !files.fileExists(atPath: oldFile.path) && !files.fileExists(atPath: oldImage.path),
+            "Project filing genuinely relocates both managed originals after outgoing payload preparation")
+        try expect(try Data(contentsOf: currentFile) == binary && Data(contentsOf: currentImage) == png,
+            "Both live saved originals remain valid with exact bytes after relocation")
+        let encoder = JSONEncoder(); encoder.outputFormatting = [.sortedKeys]
+        let afterMove = try captures.map { try encoder.encode(CaptureSnapshot($0)) }
+        let fileType = (UTType(filenameExtension: oldFile.pathExtension) ?? .data).identifier
+        var failures: [String] = []
+        func verify(_ name: String, expected: Data, read: () async throws -> Data) async {
+            do {
+                let bytes = try await read()
+                if bytes != expected { failures.append(name + ": bytes changed") }
+            } catch { failures.append(name + ": " + error.localizedDescription) }
+        }
+        await verify("capture file representation", expected: binary) {
+            try await readFileBytes(fileProvider, type: fileType)
+        }
+        await verify("explicit document file representation", expected: binary) {
+            try await readFileBytes(documentProvider, type: fileType)
+        }
+        await verify("image file representation", expected: png) {
+            try await readFileBytes(imageProvider, type: UTType.png.identifier)
+        }
+        await verify("image data representation", expected: png) {
+            try await load(imageProvider, type: UTType.png.identifier)
+        }
+        await verify("generic image representation", expected: png) {
+            try await load(imageProvider, type: UTType.image.identifier)
+        }
+        for (index, pair) in zip(writers, [binary, png]).enumerated() {
+            let (writer, expected) = pair
+            await verify("native file URL item \(index)", expected: expected) {
+                guard let raw = writer.pasteboardPropertyList(forType: .fileURL) as? String,
+                      let url = URL(string: raw), url.isFileURL else {
+                    throw ExplorerTransferError.missingDocument("delayed native file URL")
+                }
+                return try Data(contentsOf: url)
+            }
+        }
+        await verify("native promised image", expected: png) {
+            guard let bytes = writers[1].pasteboardPropertyList(forType: .png) as? Data else {
+                throw ExplorerTransferError.missingDocument("delayed native image")
+            }
+            return bytes
+        }
+
+        let providerIDs = try await ExplorerTransfer.internalCaptureIDs(in: [fileProvider, imageProvider])
+        try expect(providerIDs == captures.map(\.id), "Delayed providers retain their original internal capture identities")
+        for (index, capture) in captures.enumerated() {
+            let data = writers[index].pasteboardPropertyList(forType: ExplorerTransfer.pasteboardType) as? Data
+            try expect(data.flatMap { try? ExplorerTransfer.decodeIDs($0) } == [capture.id],
+                "Delayed native writers retain exactly one original capture identity")
+            let original = immutable[index]
+            try expect(capture.id == original.0 && capture.capturedAt == original.1
+                && capture.captureDay == original.2 && capture.captureUTCOffsetSeconds == original.3
+                && capture.originalFilename == original.4 && capture.originalText == original.5
+                && capture.originalURL == original.6 && capture.byteCount == original.7,
+                "Project relocation and delayed outgoing reads preserve immutable capture metadata")
+            try expect(try encoder.encode(CaptureSnapshot(capture)) == afterMove[index],
+                "Delayed outgoing requests do not alter organization, annotations or file metadata")
+        }
+        try expect(store.captures.count == 2 && store.trashedCaptures.isEmpty,
+            "Relocation and delayed transfer do not remove, restore or duplicate a source capture")
+        try expect(NSPasteboard.general.changeCount == clipboardRevision,
+            "Delayed outgoing regression never changes the general clipboard")
+        try expect(failures.isEmpty,
+            "Prepared outgoing payloads remain readable after project relocation: " + failures.joined(separator: "; "))
+    }
+
     /// Exercise real outgoing representations using synthetic originals and a
     /// private pasteboard. Nothing is written to the user's clipboard or apps.
     @MainActor private static func outgoingNativeSelection(_ store: CaptureStore, root: URL,
@@ -202,10 +305,10 @@ private final class ExplorerLatePromiseFixture: InputFilePromise {
         try png.write(to: source)
         let image = try await store.importFile(source)
         let managedImage = store.managedURL(for: image)!
-        let provider = try ExplorerTransfer.itemProvider(for: image, store: store)
+        let provider = try ExplorerTransfer.itemProvider(for: image, store: store, stagingRoot: root.appendingPathComponent("Outgoing snapshots"))
         try expect(provider.hasItemConformingToTypeIdentifier(UTType.image.identifier)
             && provider.hasItemConformingToTypeIdentifier(UTType.fileURL.identifier),
-            "Image drags advertise both native image content and their managed file URL")
+            "Image drags advertise both native image content and a frozen file URL")
         try files.removeItem(at: source)
         let imageData = try await load(provider, type: UTType.png.identifier)
         try expect(imageData == png, "A destination requesting image data receives exact original PNG bytes")
@@ -219,26 +322,35 @@ private final class ExplorerLatePromiseFixture: InputFilePromise {
         let pasteboard = NSPasteboard(name: .init("DaBin.NativeOutgoingSelection.\(UUID())"))
         defer { pasteboard.releaseGlobally() }
         let captures = [note, file, link, task, image]
-        let writers = try ExplorerTransfer.pasteboardWriters(for: captures, store: store)
+        let writers = try ExplorerTransfer.pasteboardWriters(for: captures, store: store, stagingRoot: root.appendingPathComponent("Outgoing snapshots"))
         try expect(writers.count == captures.count, "A mixed native drag publishes one writer per capture in selection order")
         for (capture, writer) in zip(captures, writers) {
             let data = writer.pasteboardPropertyList(forType: ExplorerTransfer.pasteboardType) as? Data
             try expect(data.flatMap { try? ExplorerTransfer.decodeIDs($0) } == [capture.id],
                 "Each native drag item carries only its own capture identity")
         }
-        let fileURL = store.managedURL(for: file)!
+        guard let fileRaw = writers[1].pasteboardPropertyList(forType: .fileURL) as? String,
+              let fileURL = URL(string: fileRaw), fileURL.isFileURL,
+              let imageRaw = writers[4].pasteboardPropertyList(forType: .fileURL) as? String,
+              let imageURL = URL(string: imageRaw), imageURL.isFileURL else {
+            throw ExplorerTransferError.missingDocument("outgoing immutable file URLs")
+        }
+        try expect(fileURL != store.managedURL(for: file) && imageURL != managedImage,
+            "Native outgoing files use independent snapshots instead of live managed paths")
+        try expect(fileURL.lastPathComponent == file.originalFilename && imageURL.lastPathComponent == image.originalFilename,
+            "Native outgoing snapshots preserve exact recognizable original filenames")
         let base = fileURL as NSURL
         let nativeTypes = base.writableTypes(for: pasteboard)
         try expect(Array(writers[1].writableTypes(for: pasteboard).prefix(nativeTypes.count)) == nativeTypes,
-            "Managed-file writers preserve NSURL's native type priority and sandbox representations")
+            "Outgoing file writers preserve native NSURL type priority before additional file promises")
         for type in nativeTypes {
             let actualProperty = writers[1].pasteboardPropertyList(forType: type) as? NSObject
             let expectedProperty = base.pasteboardPropertyList(forType: type) as? NSObject
             try expect(actualProperty == expectedProperty,
-                "Managed-file writers retain NSURL's property list for \(type.rawValue)")
+                "Outgoing file writers retain NSURL's property list for \(type.rawValue)")
             let expectedOptions = base.writingOptions(forType: type, pasteboard: pasteboard)
             try expect(writers[1].writingOptions?(forType: type, pasteboard: pasteboard) == expectedOptions,
-                "Managed-file writers retain NSURL's writing options for \(type.rawValue)")
+                "Outgoing file writers retain NSURL's writing options for \(type.rawValue)")
         }
         try expect(writers[4].writingOptions?(forType: .png, pasteboard: pasteboard) == .promised,
             "Native image bytes remain promised rather than loaded while starting a drag")
@@ -248,7 +360,7 @@ private final class ExplorerLatePromiseFixture: InputFilePromise {
         try expect(items[0].string(forType: .string) == note.originalText,
             "Native text drags preserve exact original whitespace and multilingual words")
         try expect(items[1].string(forType: .fileURL) == fileURL.absoluteString,
-            "File drags transfer a real managed file URL rather than a text-only path")
+            "File drags transfer a real immutable file URL rather than a text-only path")
         try expect(items[2].string(forType: .URL) == link.originalURL
             && items[2].string(forType: .string) == link.originalURL,
             "Native link drags offer exact URL and plain-text representations")
@@ -257,14 +369,14 @@ private final class ExplorerLatePromiseFixture: InputFilePromise {
         try expect(items[4].data(forType: .png) == png,
             "A native image destination can request the promised exact PNG bytes")
         let fileReaders = pasteboard.readObjects(forClasses: [NSURL.self], options: [.urlReadingFileURLsOnly: true]) as? [URL] ?? []
-        try expect(Set(fileReaders) == Set([fileURL, managedImage]),
-            "Finder-style NSURL readers retain both managed files in a mixed native drag")
-        let publicWriters = try ExplorerTransfer.pasteboardWriters(for: captures, store: store, includeInternalReference: false)
+        try expect(Set(fileReaders) == Set([fileURL, imageURL]),
+            "Finder-style NSURL readers retain both immutable file snapshots in a mixed native drag")
+        let publicWriters = try ExplorerTransfer.pasteboardWriters(for: captures, store: store, includeInternalReference: false, stagingRoot: root.appendingPathComponent("Outgoing snapshots"))
         try expect(publicWriters.allSatisfy { !$0.writableTypes(for: pasteboard).contains(ExplorerTransfer.pasteboardType) },
             "Native public-only transfers omit internal identity while retaining their public representations")
 
         let disguised = try await store.importData(Data("This is not image content".utf8), filename: "Disguised.png")
-        let disguisedProvider = try ExplorerTransfer.itemProvider(for: disguised, store: store)
+        let disguisedProvider = try ExplorerTransfer.itemProvider(for: disguised, store: store, stagingRoot: root.appendingPathComponent("Outgoing snapshots"))
         var rejectedNonImage = false
         do { _ = try await load(disguisedProvider, type: UTType.png.identifier) } catch { rejectedNonImage = true }
         try expect(rejectedNonImage, "An image filename does not fabricate image content for non-image bytes")
@@ -272,24 +384,27 @@ private final class ExplorerLatePromiseFixture: InputFilePromise {
         try files.removeItem(at: managedImage)
         // Restore the historical source to prove that no fallback reads it.
         try png.write(to: source)
-        var rejectedMissingImage = false
-        do { _ = try await load(provider, type: UTType.png.identifier) } catch { rejectedMissingImage = true }
-        try expect(rejectedMissingImage && writers[4].pasteboardPropertyList(forType: .png) == nil,
-            "An original removed after drag start fails both provider and native promised-image materialization")
-        try expect(writers[4].pasteboardPropertyList(forType: .fileURL) == nil,
-            "A vanished native original does not publish a stale file URL on later request")
+        let frozenImage = try await load(provider, type: UTType.png.identifier)
+        try expect(frozenImage == png && writers[4].pasteboardPropertyList(forType: .png) as? Data == png,
+            "A prepared outgoing image retains exact frozen bytes after the managed original disappears")
+        try expect(writers[4].pasteboardPropertyList(forType: .fileURL) as? String == imageURL.absoluteString
+            && (try Data(contentsOf: imageURL)) == png,
+            "A prepared native file URL remains readable after its original disappears")
         let beforeFailure = pasteboard.pasteboardItems?.count
         var rejectedSelection = false
-        do { _ = try ExplorerTransfer.pasteboardWriters(for: [note, image, task], store: store) }
+        do { _ = try ExplorerTransfer.pasteboardWriters(for: [note, image, task], store: store, stagingRoot: root.appendingPathComponent("Outgoing snapshots")) }
         catch CaptureClipboardError.missingSavedOriginal { rejectedSelection = true }
         try expect(rejectedSelection && pasteboard.pasteboardItems?.count == beforeFailure,
             "An unavailable original rejects the complete selection before yielding writers or changing a pasteboard")
         try files.createSymbolicLink(at: managedImage, withDestinationURL: source)
+        let frozenAfterSubstitution = try await load(provider, type: UTType.png.identifier)
+        try expect(frozenAfterSubstitution == png && writers[4].pasteboardPropertyList(forType: .png) as? Data == png,
+            "Replacing the managed source with a symbolic link cannot change a prepared outgoing image")
         var rejectedSymlink = false
-        do { _ = try await load(provider, type: UTType.png.identifier) } catch { rejectedSymlink = true }
-        try expect(rejectedSymlink && writers[4].pasteboardPropertyList(forType: .png) == nil,
-            "A substituted symbolic image path is never followed by outgoing drag materialization")
-        try expect(try Data(contentsOf: source) == png, "Failed outgoing materialization leaves the historical source untouched")
+        do { _ = try ExplorerTransfer.itemProvider(for: image, store: store, stagingRoot: root.appendingPathComponent("Outgoing snapshots")) }
+        catch CaptureClipboardError.missingSavedOriginal { rejectedSymlink = true }
+        try expect(rejectedSymlink, "A symbolic-link source is rejected before any new outgoing preparation")
+        try expect(try Data(contentsOf: source) == png, "Outgoing snapshots never mutate or read a substituted historical source")
         try files.removeItem(at: managedImage)
         try png.write(to: managedImage)
     }
@@ -309,7 +424,7 @@ private final class ExplorerLatePromiseFixture: InputFilePromise {
         let note = try store.capture(text: text)[0]
         note.comment = "Follow up with the client"
         try store.setOrganization(note, pinned: true, projectName: "Client A")
-        let noteProvider = try ExplorerTransfer.itemProvider(for: note, store: store)
+        let noteProvider = try ExplorerTransfer.itemProvider(for: note, store: store, stagingRoot: root.appendingPathComponent("Outgoing snapshots"))
         try expect(ExplorerTransfer.containsInternalReference(noteProvider), "Outgoing captures carry an internal identity")
         let noteIDs = try await ExplorerTransfer.internalCaptureIDs(in: [noteProvider, noteProvider])
         try expect(noteIDs == [note.id], "Repeated providers resolve one distinct capture identity")
@@ -320,7 +435,7 @@ private final class ExplorerLatePromiseFixture: InputFilePromise {
         try expect(noIdentity == nil, "External providers are clearly distinct from internal references")
 
         let link = try store.capture(text: "https://example.com/brief?q=review#part")[0]
-        let linkProvider = try ExplorerTransfer.itemProvider(for: link, store: store)
+        let linkProvider = try ExplorerTransfer.itemProvider(for: link, store: store, stagingRoot: root.appendingPathComponent("Outgoing snapshots"))
         try expect(linkProvider.hasItemConformingToTypeIdentifier(UTType.url.identifier)
                    && linkProvider.hasItemConformingToTypeIdentifier(UTType.plainText.identifier),
                    "Links expose both URL and plain text for native apps and browsers")
@@ -331,7 +446,7 @@ private final class ExplorerLatePromiseFixture: InputFilePromise {
         let original = Data("A saved document fixture".utf8)
         try original.write(to: source)
         let file = try await store.importFile(source)
-        let fileProvider = try ExplorerTransfer.itemProvider(for: file, store: store)
+        let fileProvider = try ExplorerTransfer.itemProvider(for: file, store: store, stagingRoot: root.appendingPathComponent("Outgoing snapshots"))
         try expect(fileProvider.suggestedName == "Proposal.pdf", "Outgoing files preserve their recognizable filename")
         try expect(fileProvider.hasItemConformingToTypeIdentifier(UTType.fileURL.identifier), "Native file drops expose a file URL to Finder and browser upload targets")
         try files.removeItem(at: source)
@@ -341,16 +456,17 @@ private final class ExplorerLatePromiseFixture: InputFilePromise {
         let daily = root.appendingPathComponent("2026-09-30 - Captures and Links.md")
         let dailyBytes = Data("# 30 September 2026\n\nA daily capture and link record.\n".utf8)
         try dailyBytes.write(to: daily)
-        let dailyProvider = try ExplorerTransfer.documentProvider(url: daily)
+        let dailyProvider = try ExplorerTransfer.documentProvider(url: daily, stagingRoot: root.appendingPathComponent("Outgoing snapshots"))
         try expect(!ExplorerTransfer.containsInternalReference(dailyProvider), "Generated daily documents transfer as files rather than fake capture IDs")
         let markdown = UTType(filenameExtension: "md") ?? .data
         let dailyTransferred = try await readFileBytes(dailyProvider, type: markdown.identifier)
         try expect(dailyTransferred == dailyBytes, "The actual UTF-8 daily document is transferable byte-for-byte")
 
         let task = try store.createTask(text: "Send the revised proposal")
-        let taskProvider = try ExplorerTransfer.itemProvider(for: task, store: store)
+        let taskProvider = try ExplorerTransfer.itemProvider(for: task, store: store, stagingRoot: root.appendingPathComponent("Outgoing snapshots"))
         let taskBytes = try await load(taskProvider, type: UTType.utf8PlainText.identifier)
         try expect(String(data: taskBytes, encoding: .utf8) == task.originalText, "A task has a readable text representation outside DaBin")
+        try await delayedOutgoingRelocation(root.appendingPathComponent("Delayed outgoing relocation"))
         try await outgoingNativeSelection(store, root: root, note: note, link: link, file: file, task: task)
 
         let beforeMove = store.captures.count
@@ -425,7 +541,7 @@ private final class ExplorerLatePromiseFixture: InputFilePromise {
 
         let attached = try store.capture(text: "Supporting capture")[0]
         try store.attachCapture(attached, to: task)
-        let attachmentProvider = try ExplorerTransfer.itemProvider(for: attached, store: store)
+        let attachmentProvider = try ExplorerTransfer.itemProvider(for: attached, store: store, stagingRoot: root.appendingPathComponent("Outgoing snapshots"))
         try expect(controller.receive([attachmentProvider], project: "Different project"), "Attachment project drop is handled explicitly")
         try await waitForIdle(controller)
         try expect(attached.parentTaskID == task.id && state.status?.severity == .error,
@@ -433,7 +549,7 @@ private final class ExplorerLatePromiseFixture: InputFilePromise {
 
         let independentFile = try await store.importData(Data("Task reference bytes".utf8), filename: "Reference.txt")
         let existingFileCount = store.captures.count
-        let referenceProvider = try ExplorerTransfer.itemProvider(for: independentFile, store: store)
+        let referenceProvider = try ExplorerTransfer.itemProvider(for: independentFile, store: store, stagingRoot: root.appendingPathComponent("Outgoing snapshots"))
         try expect(controller.receive([referenceProvider, referenceProvider], attachingTo: task), "An Explorer file can be dropped onto a task")
         try await waitForIdle(controller)
         try expect(independentFile.parentTaskID == task.id && store.captures.count == existingFileCount,
@@ -460,7 +576,7 @@ private final class ExplorerLatePromiseFixture: InputFilePromise {
 
         try store.moveToTrash(link)
         do {
-            _ = try ExplorerTransfer.itemProvider(for: link, store: store)
+            _ = try ExplorerTransfer.itemProvider(for: link, store: store, stagingRoot: root.appendingPathComponent("Outgoing snapshots"))
             try expect(false, "Trashed items cannot start outgoing drags")
         } catch ExplorerTransferError.unavailableCapture { }
         try expect(controller.receive([linkProvider], project: "Client A"), "A drag started before deletion is validated on arrival")
@@ -471,17 +587,15 @@ private final class ExplorerLatePromiseFixture: InputFilePromise {
         let managed = store.managedURL(for: file)!
         try files.removeItem(at: managed)
         do {
-            _ = try ExplorerTransfer.itemProvider(for: file, store: store)
+            _ = try ExplorerTransfer.itemProvider(for: file, store: store, stagingRoot: root.appendingPathComponent("Outgoing snapshots"))
             try expect(false, "A missing managed original must not publish a drag")
         } catch CaptureClipboardError.missingSavedOriginal { }
-        var failedAfterDeletion = false
-        do { _ = try await readFileBytes(fileProvider, type: UTType.pdf.identifier) }
-        catch { failedAfterDeletion = true }
-        try expect(failedAfterDeletion && !files.fileExists(atPath: managed.path),
-                   "A file deleted after dragging starts must fail materialization without fabricating a replacement")
+        let frozenAfterDeletion = try await readFileBytes(fileProvider, type: UTType.pdf.identifier)
+        try expect(frozenAfterDeletion == original && !files.fileExists(atPath: managed.path),
+                   "A prepared file remains exactly readable after its original disappears without resurrecting that path")
         try files.removeItem(at: daily)
         do {
-            _ = try ExplorerTransfer.documentProvider(url: daily)
+            _ = try ExplorerTransfer.documentProvider(url: daily, stagingRoot: root.appendingPathComponent("Outgoing snapshots"))
             try expect(false, "Missing daily records report failure")
         } catch ExplorerTransferError.missingDocument { }
 
