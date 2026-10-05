@@ -405,18 +405,20 @@ import SwiftUI
             identifiers: ["project-select-capture:" + task.id.uuidString, "project-preview-capture:" + task.id.uuidString,
                           "project-task-toggle-capture:" + task.id.uuidString, "task-priority-tag-" + task.id.uuidString],
             name: "project-compact-380-200", height: 440, output: output)
-        try await narrowFixture(AnyView(TodayTaskCard(state: state, capture: task, reorderIndex: 1, reorderCount: 3)),
-            identifiers: ["capture-project-picker-", "task-priority-tag-", "today-plan-day-", "today-plan-task-",
-                          "today-move-up-", "today-move-down-", "capture-collapse-", "capture-more-"]
-                .map { $0 + task.id.uuidString }, name: "today-380-200", height: 720, output: output)
+        for width in [CGFloat(320), 380, 760] {
+            try await narrowFixture(AnyView(TodayTaskCard(state: state, capture: task, reorderIndex: 1, reorderCount: 3)),
+                identifiers: ["capture-project-picker-", "task-priority-tag-", "capture-task-status-", "today-plan-day-", "today-plan-task-",
+                              "task-focus-duration-", "capture-more-"]
+                    .map { $0 + task.id.uuidString }, name: "today-\(Int(width))-200", height: 720, output: output, width: width)
+        }
     }
-    private static func narrowFixture(_ card: AnyView, identifiers: [String], name: String, height: CGFloat, output: URL) async throws {
-        let content = VStack { card; Spacer(minLength: 0) }.padding(12).frame(width: 380, height: height, alignment: .topLeading)
+    private static func narrowFixture(_ card: AnyView, identifiers: [String], name: String, height: CGFloat, output: URL, width: CGFloat = 380) async throws {
+        let content = VStack { card; Spacer(minLength: 0) }.padding(12).frame(width: width, height: height, alignment: .topLeading)
             .environment(\.workspaceZoom, WorkspaceZoomLayout(factor: 2))
             .environment(\.displayScale, 2).environment(\.daBinTooltipsEnabled, false)
             .preferredColorScheme(.dark).background(Palette.background)
         let host = NSHostingView(rootView: content)
-        let window = ZoomLayoutWindow(contentRect: NSRect(x: -10000, y: -10000, width: 380, height: height),
+        let window = ZoomLayoutWindow(contentRect: NSRect(x: -10000, y: -10000, width: width, height: height),
                                       styleMask: [.borderless], backing: .buffered, defer: false)
         window.isReleasedWhenClosed = false; window.contentView = host; window.orderFront(nil)
         defer { window.orderOut(nil); window.contentView = nil; window.close() }
@@ -441,13 +443,26 @@ import SwiftUI
             try expect(node != nil, "Narrow zoom fixture exposes \(id); available \(nodes.compactMap(\.identifier))")
             if let node {
                 try expect(node.frame.width > 0 && window.frame.insetBy(dx: -1, dy: -1).contains(node.frame),
-                           "200% control remains visible within 380-point frame: \(id), \(node.frame)")
+                           "200% control remains visible within \(Int(width))-point frame: \(id), \(node.frame)")
             }
         }
-        guard let bitmap = NSBitmapImageRep(bitmapDataPlanes: nil, pixelsWide: 760, pixelsHigh: Int(height * 2),
+        if name.hasPrefix("today-") {
+            let durationID = identifiers.first { $0.hasPrefix("task-focus-duration-") }!
+            let duration = nodes.first { $0.identifier == durationID }!
+            let label = duration.value("accessibilityLabel") as? String
+            try expect(label == "Set focus time"
+                && duration.object.responds(to: NSSelectorFromString("accessibilityPerformPress")),
+                       "Unconfigured task exposes one labeled accessible Set focus time action at200%")
+            try expect(duration.frame.width >= 31.5 && duration.frame.height >= 31.5,
+                       "Unconfigured focus keeps its32-point native target")
+            let playID = durationID.replacingOccurrences(of: "task-focus-duration-", with: "task-focus-play-")
+            try expect(!nodes.contains { $0.identifier == playID },
+                       "Unconfigured task does not duplicate duration setup with an unavailable play control")
+        }
+        guard let bitmap = NSBitmapImageRep(bitmapDataPlanes: nil, pixelsWide: Int(width * 2), pixelsHigh: Int(height * 2),
             bitsPerSample: 8, samplesPerPixel: 4, hasAlpha: true, isPlanar: false, colorSpaceName: .deviceRGB,
             bytesPerRow: 0, bitsPerPixel: 0) else { throw NSError(domain: "Bitmap", code: 1) }
-        bitmap.size = NSSize(width: 380, height: height); host.cacheDisplay(in: host.bounds, to: bitmap)
+        bitmap.size = NSSize(width: width, height: height); host.cacheDisplay(in: host.bounds, to: bitmap)
         guard let data = bitmap.representation(using: .png, properties: [:]) else { throw NSError(domain: "PNG", code: 1) }
         try data.write(to: output.appendingPathComponent(name + "@2x.png"))
     }

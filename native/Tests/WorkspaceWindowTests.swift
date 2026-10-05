@@ -829,15 +829,22 @@ import SwiftUI
         try store.planTask(nextTask, on: CaptureCalendar.dayString(Date()))
         try store.reorderTasks([task, nextTask], on: CaptureCalendar.dayString(Date()))
         window.setContentSize(NSSize(width: 380, height: 680)); state.showReminders(); settle()
-        for direction in ["up", "down"] {
-            let action = try await scrollControlIntoView(hosting, id: "today-move-\(direction)-\(task.id.uuidString)", window: window)
-            try expect(action.frame.width >= 28 && action.frame.height >= 28, "Task reorder \(direction) has a usable hit target")
-        }
-        let moveDown = try await scrollControlIntoView(hosting, id: "today-move-down-\(task.id.uuidString)", window: window)
-        try expect(moveDown.press(), "Task reorder works through accessibility")
-        settle()
-        try expect(TaskPlanningPolicy.today(store.captures).filter { $0.projectName == "Client A" }.map(\.id) == [nextTask.id, task.id],
-            "Accessible reorder persists the intended task order")
+        let planCard = try await scrollControlIntoView(hosting, id: "today-task-card-\(task.id.uuidString)", window: window)
+        guard let taskMore = nodes(hosting).first(where: {
+            $0.identifier == "capture-more-\(task.id.uuidString)" && planCard.frame.contains($0.frame)
+        }) else { throw NSError(domain: "WorkspaceWindowTests", code: 12,
+                                 userInfo: [NSLocalizedDescriptionKey: "The planned task card needs its own More control"]) }
+        let moreTarget: NSRect
+        if let cell = taskMore.object as? NSCell, let view = cell.controlView {
+            moreTarget = window.convertToScreen(view.convert(view.bounds, to: nil))
+        } else { moreTarget = taskMore.frame }
+        try expect(moreTarget.width >= 32 && moreTarget.height >= 32,
+                   "Task actions remain reachable through one aligned More target")
+        // Real native menu reordering and restart persistence are exercised by
+        // TodayTaskCardTests. This full-board fixture verifies the action stays
+        // reachable without restoring separate always-visible reorder arrows.
+        try expect(TaskPlanningPolicy.today(store.captures).filter { $0.projectName == "Client A" }.map(\.id) == [task.id, nextTask.id],
+                   "Rendering the simplified card leaves planned task order unchanged")
 
         // Navigation restores the remembered card. Incoming copies are not
         // navigation and must not force the viewport back to it or to the top.

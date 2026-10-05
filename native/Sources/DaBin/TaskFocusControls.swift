@@ -9,7 +9,11 @@ struct TaskFocusControls: View {
     var compact = true
     var showsSchedule = true
     var emphasizesCountdown = true
+    /// Today's task cards opt into one readable focus action; other hosts keep
+    /// the existing compact or detailed controls.
+    var taskCardStyle = false
     @Environment(\.daBinAccent) private var accent
+    @Environment(\.workspaceZoom) private var zoom
     @State private var showDuration = false
     @State private var showSchedule = false
     @State private var hours = "0"
@@ -78,7 +82,10 @@ struct TaskFocusControls: View {
         }
     }
 
-    private var focusControl: some View {
+    @ViewBuilder private var focusControl: some View {
+        if taskCardStyle {
+            taskCardFocusControl
+        } else {
                 HStack(spacing: 2) {
                     Button(action: openDuration) {
                         HStack(spacing: 5) {
@@ -105,7 +112,60 @@ struct TaskFocusControls: View {
                         .buddyHelp(running ? "Pause focus" : "Start focus")
                 }.padding(2).background(Palette.surface, in: RoundedRectangle(cornerRadius: 9))
                     .overlay(RoundedRectangle(cornerRadius: 9).stroke(Palette.line, lineWidth: 1))
+        }
     }
+
+    private var taskCardActionTitle: String {
+        if running { return "Pause" }
+        if let session, let duration = capture.taskPlanning?.effortMinutes,
+           session.remainingSeconds > 0, session.remainingSeconds < TimeInterval(duration * 60) {
+            return "Resume"
+        }
+        return "Start"
+    }
+
+    private var taskCardFocusControl: some View {
+        HStack(spacing: 6) {
+            Button(action: openDuration) {
+                HStack(spacing: 5) {
+                    Image(systemName: "timer").font(.system(size: zoom.fontSize(12)))
+                    if capture.taskPlanning?.effortMinutes == nil {
+                        Text("Set focus time").lineLimit(1)
+                    } else {
+                        countdown(large: false)
+                    }
+                }
+                .font(.system(size: zoom.fontSize(12), weight: .medium))
+                .padding(.horizontal, 8).frame(minHeight: 32)
+                .contentShape(RoundedRectangle(cornerRadius: 8))
+                .background(Palette.surface, in: RoundedRectangle(cornerRadius: 8))
+                .overlay(RoundedRectangle(cornerRadius: 8).stroke(Palette.line, lineWidth: 1))
+            }.buttonStyle(.plain).foregroundStyle(Palette.muted)
+                .accessibilityLabel(capture.taskPlanning?.effortMinutes == nil ? "Set focus time" : "Set focus duration")
+                .accessibilityIdentifier("task-focus-duration-\(capture.id.uuidString)")
+                .buddyHelp("Set hours and minutes")
+                .popover(isPresented: $showDuration, arrowEdge: .bottom) { durationForm.hoverTooltips() }
+            if capture.taskPlanning?.effortMinutes != nil {
+                Button {
+                    if capture.taskPlanning?.effortMinutes == nil { openDuration() }
+                    else { _ = state.toggleTaskFocus(capture) }
+                } label: {
+                    Label(taskCardActionTitle, systemImage: running ? "pause.fill" : "play.fill")
+                        .font(.system(size: zoom.fontSize(12), weight: .semibold))
+                        .padding(.horizontal, 10).frame(minHeight: 32)
+                        .contentShape(RoundedRectangle(cornerRadius: 8))
+                        .background(running ? accent.opacity(0.12) : accent, in: RoundedRectangle(cornerRadius: 8))
+                        .foregroundStyle(running ? accent : Palette.background)
+                }.buttonStyle(.plain).disabled(capture.isCompleted)
+                    .fixedSize(horizontal: true, vertical: false)
+                    .accessibilityLabel(running ? "Pause focus session" : taskCardActionTitle == "Resume"
+                        ? "Resume focus session" : "Start or restart focus session")
+                    .accessibilityIdentifier("task-focus-play-\(capture.id.uuidString)")
+                    .buddyHelp(running ? "Pause focus" : taskCardActionTitle == "Resume" ? "Resume focus" : "Start focus")
+            }
+        }
+    }
+
     private var scheduleControl: some View {
                 Button(action: openSchedule) {
                     Label(scheduleLabel, systemImage: "calendar")
@@ -122,7 +182,7 @@ struct TaskFocusControls: View {
         TimelineView(.animation(minimumInterval: 1, paused: !running || !state.isBoardVisible)) { context in
             let seconds = session?.remaining(at: context.date) ?? TimeInterval((capture.taskPlanning?.effortMinutes ?? 0) * 60)
             Text(capture.taskPlanning?.effortMinutes == nil && !large ? "Set time" : TaskFocusSession.clock(seconds))
-                .font(.system(size: large ? 36 : 12, weight: .regular, design: .monospaced))
+                .font(.system(size: large ? 36 : taskCardStyle ? zoom.fontSize(12) : 12, weight: .regular, design: .monospaced))
                 .monospacedDigit().fixedSize(horizontal: true, vertical: false)
                 .accessibilityLabel(capture.taskPlanning?.effortMinutes == nil ? "No focus duration set" : "Focus time remaining \(TaskFocusSession.clock(seconds))")
         }

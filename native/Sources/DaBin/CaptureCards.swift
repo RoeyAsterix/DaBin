@@ -432,14 +432,15 @@ struct CaptureControls: View {
 }
 
 @MainActor
-private struct CaptureActionMenuItems: View {
+struct CaptureActionMenuItems: View {
     @ObservedObject var state: AppState
     @ObservedObject var capture: Capture
     let includesRemoval: Bool
     var allowsMinimization = true
     var showsParentTask = false
+    var openingLabel = "Open capture"
     var body: some View {
-        Button("Open capture", systemImage: "arrow.up.forward.square") { state.openCapture(capture.id) }
+        Button(openingLabel, systemImage: "arrow.up.forward.square") { state.openCapture(capture.id) }
         Button(capture.comment.isEmpty ? "Add comment" : "Edit comment", systemImage: "text.bubble") { state.openCapture(capture.id, focus: "comment") }
         Button(capture.reminderAt == nil ? "Add reminder" : "Edit reminder", systemImage: "bell") { state.openCapture(capture.id, focus: "reminder") }
         Button(capture.isPinned ? "Unpin" : "Pin", systemImage: capture.isPinned ? "pin.slash" : "pin") { state.togglePinned(capture) }
