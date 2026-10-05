@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "updatedAtUTC": "2026-10-05T04:13:54.390704+00:00",
+  "status": "code_pushed_archive_waiting_for_human_signing_authorization",
+  "version": "0.4.33",
+  "build": "88",
+  "bundleIdentifier": "com.dabin.mac",
+  "appStoreConnectAppID": "6815956446",
+  "codeCommit": "b7ebfb196231dc568a31e80ad36092fb98f43d50",
+  "codeCommitURL": "https://github.com/RoeyAsterix/DaBin/commit/b7ebfb196231dc568a31e80ad36092fb98f43d50",
+  "codePushVerified": true,
+  "sourceFingerprint": "e038196eea54714eec07d2403b1e48a9eeb2393037b67fc2515123d68e06d456",
+  "nativeQa": {
+    "registeredSuites": 121,
+    "passed": 120,
+    "failed": 1,
+    "failedSuiteNames": [
+      "WorkspaceZoomPerformanceTests"
+    ],
+    "allFindingsFixed": false,
+    "knownOpenFindings": [
+      "Strict zoom performance budgets not met",
+      "Framework-reproduced native table warnings"
+    ]
+  },
+  "requestedArchivePath": "/Users/roeylibfeld/Library/Developer/Xcode/Archives/2026-10-05/DaBin-0.4.33-88-TestFlight-internal-20261005T040949Z.xcarchive",
+  "archiveComplete": false,
+  "archiveExecSession": 73384,
+  "archiveHelperPID": 96268,
+  "archiveLogPath": "/private/tmp/dabin-testflight-internal-20261005T040949Z.log",
+  "compilationReached": "CodeSign",
+  "signed": false,
+  "uploaded": false,
+  "appleProcessingVerified": false,
+  "internalTestingVerified": false,
+  "requestedDistribution": "Normal App Store Connect upload, assign current build to existing internal testers",
+  "requiredUserInput": [
+    "Complete macOS Keychain/codesign authentication for this DaBin archive",
+    "Renew expired App Store Connect session in Chrome"
+  ],
+  "authenticationBoundary": "Protected SecurityAgent control was rejected by automatic approval review earlier; no authentication UI is inspected or operated",
+  "manualBoundaries": [
+    "Physical trackpad and mouse inputs",
+    "Native AVKit transport button use",
+    "Extended soak and hardware/OS coverage"
+  ],
+  "privateLocalEvidenceExcluded": [
+    "docs/qa/testflight-0.4.31-2026-10-04/internal-tester-invited.jpg"
+  ],
+  "followUp": {
+    "automationId": "finish-dabin-testflight-internal-testing",
+    "status": "ACTIVE",
+    "intervalMinutes": 30,
+    "notifyOnlyOnMeaningfulChange": true
+  }
+}

@@ -2,10 +2,12 @@
   "allQaFindingsFixed": false,
   "appStoreConnectAppID": "6815956446",
   "archiveComplete": false,
-  "archiveExecSession": null,
-  "archivePath": null,
+  "archiveExecSession": 73384,
+  "archivePath": "/Users/roeylibfeld/Library/Developer/Xcode/Archives/2026-10-05/DaBin-0.4.33-88-TestFlight-internal-20261005T040949Z.xcarchive",
   "automaticApprovalReview": "Protected SecurityAgent UI inspection rejected because it crosses an authentication security boundary; no authentication UI was operated",
   "build": "88",
+  "codeCommit": "b7ebfb196231dc568a31e80ad36092fb98f43d50",
+  "codePushVerified": true,
   "currentNativeQaCoverage": "All121 registered suites executed with unchanged inputs: 120 passed, 1 failed. Strict zoom failures remain failures; framework NSTableView warnings remain open. No new signed archive or upload.",
   "currentNativeQaFailedSuiteNames": [
     "WorkspaceZoomPerformanceTests"
@@ -14,6 +16,7 @@
   "currentNativeQaStatus": "failed",
   "currentNativeQaSuitesFailed": 1,
   "currentNativeQaSuitesPassed": 120,
+  "currentPublicationCheckpoint": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/testflight-internal-0.4.33-2026-10-05/status.json",
   "currentUnsignedStoreCandidate": {
     "appStoreApproved": false,
     "archiveCreated": false,
@@ -55,7 +58,7 @@
   "signed": false,
   "sourceFingerprint": "e038196eea54714eec07d2403b1e48a9eeb2393037b67fc2515123d68e06d456",
   "sourceFingerprintKind": "canonical168release_inputs",
-  "status": "qa_findings_fixes_integrated_previous_testflight_superseded",
+  "status": "code_pushed_archive_waiting_for_human_signing_authorization",
   "supersededArchivePath": "/Users/roeylibfeld/Library/Developer/Xcode/Archives/2026-10-05/DaBin-0.4.33-88-TestFlight-today-task-redesign.xcarchive",
   "supersededButtonFlowArchivePath": "/Users/roeylibfeld/Library/Developer/Xcode/Archives/2026-10-05/DaBin-0.4.33-88-TestFlight-button-flow-audit.xcarchive",
   "supersededFullCertificationArchivePath": "/Users/roeylibfeld/Library/Developer/Xcode/Archives/2026-10-05/DaBin-0.4.33-88-TestFlight-full-certification.xcarchive",
