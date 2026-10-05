@@ -1,8 +1,9 @@
 {
   "allQaFindingsFixed": false,
   "appStoreConnectAppID": "6815956446",
+  "appStoreConnectSessionVerified": true,
   "archiveComplete": false,
-  "archiveExecSession": 73384,
+  "archiveExecSession": null,
   "archivePath": "/Users/roeylibfeld/Library/Developer/Xcode/Archives/2026-10-05/DaBin-0.4.33-88-TestFlight-internal-20261005T040949Z.xcarchive",
   "automaticApprovalReview": "Protected SecurityAgent UI inspection rejected because it crosses an authentication security boundary; no authentication UI was operated",
   "build": "88",
@@ -54,11 +55,14 @@
   "priorTaskRedesignQaSourceFingerprint": "d4dcadc575a98e4e0b273171bfc6c3abd503428db3bd9d7604affe02ef602510",
   "priorTaskRedesignQaSuitesPassed": 15,
   "releaseCompilation": "unsigned_store_release_compiled_packaging_checked",
+  "requiredUserInput": [
+    "Run the prepared helper from the signed-in Mac interactive Terminal and complete the normal macOS signing prompt; then reply done"
+  ],
   "sandboxRuntimeVerified": false,
   "signed": false,
   "sourceFingerprint": "e038196eea54714eec07d2403b1e48a9eeb2393037b67fc2515123d68e06d456",
   "sourceFingerprintKind": "canonical168release_inputs",
-  "status": "code_pushed_archive_waiting_for_human_signing_authorization",
+  "status": "source_pushed_signing_failed_interactive_handoff_required",
   "supersededArchivePath": "/Users/roeylibfeld/Library/Developer/Xcode/Archives/2026-10-05/DaBin-0.4.33-88-TestFlight-today-task-redesign.xcarchive",
   "supersededButtonFlowArchivePath": "/Users/roeylibfeld/Library/Developer/Xcode/Archives/2026-10-05/DaBin-0.4.33-88-TestFlight-button-flow-audit.xcarchive",
   "supersededFullCertificationArchivePath": "/Users/roeylibfeld/Library/Developer/Xcode/Archives/2026-10-05/DaBin-0.4.33-88-TestFlight-full-certification.xcarchive",

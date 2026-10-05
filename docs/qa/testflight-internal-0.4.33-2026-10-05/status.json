@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "updatedAtUTC": "2026-10-05T04:13:54.390704+00:00",
-  "status": "code_pushed_archive_waiting_for_human_signing_authorization",
+  "updatedAtUTC": "2026-10-05T04:31:08.221910+00:00",
+  "status": "source_pushed_signing_failed_interactive_handoff_required",
   "version": "0.4.33",
   "build": "88",
   "bundleIdentifier": "com.dabin.mac",
@@ -25,8 +25,8 @@
   },
   "requestedArchivePath": "/Users/roeylibfeld/Library/Developer/Xcode/Archives/2026-10-05/DaBin-0.4.33-88-TestFlight-internal-20261005T040949Z.xcarchive",
   "archiveComplete": false,
-  "archiveExecSession": 73384,
-  "archiveHelperPID": 96268,
+  "archiveExecSession": null,
+  "archiveHelperPID": null,
   "archiveLogPath": "/private/tmp/dabin-testflight-internal-20261005T040949Z.log",
   "compilationReached": "CodeSign",
   "signed": false,
@@ -35,8 +35,7 @@
   "internalTestingVerified": false,
   "requestedDistribution": "Normal App Store Connect upload, assign current build to existing internal testers",
   "requiredUserInput": [
-    "Complete macOS Keychain/codesign authentication for this DaBin archive",
-    "Renew expired App Store Connect session in Chrome"
+    "Run the prepared helper from the signed-in Mac interactive Terminal and complete the normal macOS signing prompt; then reply done"
   ],
   "authenticationBoundary": "Protected SecurityAgent control was rejected by automatic approval review earlier; no authentication UI is inspected or operated",
   "manualBoundaries": [
@@ -52,5 +51,46 @@
     "status": "ACTIVE",
     "intervalMinutes": 30,
     "notifyOnlyOnMeaningfulChange": true
+  },
+  "archiveAttempts": [
+    {
+      "attempt": 1,
+      "requestedArchivePath": "/Users/roeylibfeld/Library/Developer/Xcode/Archives/2026-10-05/DaBin-0.4.33-88-TestFlight-internal-20261005T040949Z.xcarchive",
+      "logFile": "archive-attempt-1.log",
+      "logSHA256": "1e422ad880d30e39ae8f4e87556a4a5ad1045479d7c4fe8bfa747ef193b4501b",
+      "exitCode": 65,
+      "outcome": "failed_with_errSecInternalComponent",
+      "archiveComplete": false
+    },
+    {
+      "attempt": 2,
+      "requestedArchivePath": "/Users/roeylibfeld/Library/Developer/Xcode/Archives/2026-10-05/DaBin-0.4.33-88-TestFlight-internal-retry-20261005T041937Z.xcarchive",
+      "logFile": "archive-attempt-2.log",
+      "logSHA256": "07558f84b20a0207ececa00e7e2fef2129a2d78052a6b9233fc042ab92e083c3",
+      "exitCode": 65,
+      "outcome": "agent_stopped_own_stalled_codesign_before_interactive_retry",
+      "archiveComplete": false
+    }
+  ],
+  "publicSigningIdentityValid": true,
+  "appStoreConnectSessionVerified": true,
+  "existingInternalGroup": {
+    "id": "88bf737b-ecd4-48ed-b084-73cee2f3a93c",
+    "name": "Personal Testing",
+    "type": "Internal Group",
+    "testers": 1,
+    "currentBuild": "0.4.31 (86)",
+    "currentBuildState": "Testing"
+  },
+  "computerUseRestriction": "Computer Use refused Terminal app control for safety reasons; no Terminal interaction performed",
+  "interactiveHandoff": {
+    "scriptPath": "/Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/run-testflight-interactive-20261005.py",
+    "scriptSHA256": "39e688974311cfde38aea0321f9c9309e1a230584e4439b0efcef2c35207f42a",
+    "pythonExecutable": "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "receiptGlob": "/private/tmp/dabin-testflight-interactive-*-receipt.json",
+    "command": "/opt/homebrew/opt/python@3.14/bin/python3.14 /Users/roeylibfeld/Documents/ChatGPT/DaBin/capture-fix/run-testflight-interactive-20261005.py",
+    "usesExistingArchiveHelper": true,
+    "checksExactSourceFingerprint": true,
+    "status": "prepared_not_executed"
   }
 }
