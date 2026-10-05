@@ -31,7 +31,7 @@
     "Tasks",
     "Captions"
   ],
-  "visualInspection": "Reviewed task card native renders at320/380/760 points and75/100/200 percent zoom in light and dark, plus native menus and compact/active/completed states. Preview captures only the real card bounds.",
+  "visualInspection": "Inspected native 380-point/100% dark and light card-only previews plus 320-point/200% dark and an earlier 380-point/200% render. All 18 width/zoom/appearance profiles pass native target, overlap, bounds and density checks.",
   "knownLimits": [
     "Physical global shortcut activation, trackpad/mouse hardware coverage and minimum-OS runtime are not claimed.",
     "Menu operations and task persistence use isolated native fixtures and a private clipboard writer; no general pasteboard or personal archive is touched.",
