@@ -1,0 +1,4 @@
+/var/folders/qy/zfgc4dgx02x2k_c04330ghy00000gn/T/dabin-header-qa-31sx5flm/DaBin Header QA.app/Contents/Frameworks/libDaBinTestCore.dylib: replacing existing signature
+/var/folders/qy/zfgc4dgx02x2k_c04330ghy00000gn/T/dabin-header-qa-31sx5flm/DaBin Header QA.app: replacing existing signature
+PASSED HeaderInteractionTests: PASS: 326 native labeled-header accessibility and interaction checks
+QA direct passed: 1/1 requested suites passed. Report: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/runs/20261005T181732864461Z-direct/report.json

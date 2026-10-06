@@ -1,0 +1,28 @@
+{
+  "alignmentInsets" : {
+    "bottom" : 0,
+    "left" : 0,
+    "right" : 0,
+    "top" : 0
+  },
+  "alignmentRect" : "{{0, 0}, {310, 50}}",
+  "bounds" : "{{0, 0}, {310, 50}}",
+  "drawingRect" : "{{0, 0}, {310, 50}}",
+  "fieldClass" : "CaptureTaskTitleTextField",
+  "fitSize" : "{289.49911868572235, 50}",
+  "fontSize" : 21,
+  "frame" : "{{0, 0}, {310, 50}}",
+  "hostFlipped" : true,
+  "intrinsicSize" : "{-1, 25}",
+  "lineHeight" : 24,
+  "maximumLines" : 2,
+  "preferredWidth" : 310,
+  "text" : "Fictional longer task title for a narrow desktop companion window with readable planning controls",
+  "titleFrameTopLeft" : {
+    "height" : 50,
+    "width" : 310,
+    "x" : 54,
+    "y" : 90
+  },
+  "zoom" : 1
+}

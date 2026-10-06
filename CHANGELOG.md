@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.4.43 (98) - 2026-10-06, tested internal TestFlight candidate
+
+- Hides all companion robots and recording signs immediately when Auto Capture is paused, including active and delayed save gestures, hover peeks, corner/island placement and expanded-board decoration. The board remains usable. Timer reminders retain their state and reappear after Resume.
+- Routes emitted Pause state before presenter callbacks to prevent a brief stale-state reveal. All11 affected Store Release suites pass against the final frozen source.
+- Verifies forward data compatibility using the exact uploaded0.4.31 (86) production core: fictional captures, projects, task metadata, drafts, IDs and original attachment bytes survive upgrade, save and two fresh reopen processes. This does not verify a physical TestFlight replacement. After saving schema 11 data, downgrade to86 is unsupported; back up the archive before updating and use TestFlight Update without deleting the app.
+- Includes the recent compact Captions/Tasks/Projects controls, green-to-red priority tags, populated-day weekly view, day/week project picker, selected-item ZIP export, whole-body companion gestures and external-transfer refinements.
+- Includes the0.4.42 (97) clipboard/privacy, archive/backup, consent, screenshot-folder, update ZIP and installer hardening. Optional website previews and direct updates retain their documented network behavior; local archives are not separately encrypted. Prior full QA and performance limitations remain qualified in the evidence.
+- The latest verified local installation is0.4.42 (97); build 98 is the current source candidate. Its archive compiled to CodeSign but was stopped awaiting protected macOS signing authorization. Build98 has not been uploaded, processed, assigned to a tester group or submitted for public App Store review. The last verified internal tester build is0.4.31 (86).
+
+See [release notes](docs/RELEASE_NOTES_0.4.43.md), [validation summary](docs/qa/testflight-upgrade-0.4.43-98-2026-10-06/validation-summary.json) and [current signing/upload status](docs/qa/testflight-upgrade-0.4.43-98-2026-10-06/status.json).
+
 ## 0.4.31 (86) - 2026-10-04, installed local build and App Store preparation
 
 - Adds navigation history and adaptive workspace zoom, with editor/selection/scroll restoration and native input handling. Full QA repairs and platform/performance limits are recorded in the [navigation QA report](docs/qa/full-qa-navigation-2026-10-04/README.md).

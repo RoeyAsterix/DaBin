@@ -1,0 +1,1 @@
+Initial pause implementation native test attempt retained. Peer review found a Published will-set visibility race; one render test has an optional String compile assertion error. Neither version was archived or uploaded. Corrected implementation will be frozen separately. Native run: native/build/qa/runs/20261006T050000473203Z-app-store

@@ -1,0 +1,137 @@
+{
+  "status": "FAIL",
+  "submissionReady": false,
+  "checks": [
+    {
+      "result": "PASS",
+      "check": "name contains 1-30 characters"
+    },
+    {
+      "result": "PASS",
+      "check": "subtitle contains 1-30 characters"
+    },
+    {
+      "result": "PASS",
+      "check": "promotionalText contains 1-170 characters"
+    },
+    {
+      "result": "PASS",
+      "check": "description contains 1-4000 characters"
+    },
+    {
+      "result": "PASS",
+      "check": "keywords fit Apple's 100-byte limit"
+    },
+    {
+      "result": "PASS",
+      "check": "each keyword is longer than two characters"
+    },
+    {
+      "result": "PASS",
+      "check": "review notes fit Apple's 4000-byte limit"
+    },
+    {
+      "result": "PASS",
+      "check": "draft matches the no-account implementation"
+    },
+    {
+      "result": "PASS",
+      "check": "candidate bundleIdentifier matches source Info.plist"
+    },
+    {
+      "result": "PASS",
+      "check": "candidate version matches source Info.plist"
+    },
+    {
+      "result": "PASS",
+      "check": "candidate build matches source Info.plist"
+    },
+    {
+      "result": "PASS",
+      "check": "draft privacy URL matches source bundle configuration"
+    },
+    {
+      "result": "PASS",
+      "check": "description is plain text, without HTML"
+    },
+    {
+      "result": "FAIL",
+      "check": "owner confirmed supportURL"
+    },
+    {
+      "result": "FAIL",
+      "check": "owner confirmed copyright"
+    },
+    {
+      "result": "FAIL",
+      "check": "owner confirmed review contactName"
+    },
+    {
+      "result": "FAIL",
+      "check": "owner confirmed review contactEmail"
+    },
+    {
+      "result": "FAIL",
+      "check": "owner confirmed review contactPhone"
+    },
+    {
+      "result": "FAIL",
+      "check": "owner confirmed legalRightsHolder"
+    },
+    {
+      "result": "FAIL",
+      "check": "owner confirmed supportEmail"
+    },
+    {
+      "result": "FAIL",
+      "check": "owner confirmed price"
+    },
+    {
+      "result": "FAIL",
+      "check": "owner confirmed territories"
+    },
+    {
+      "result": "FAIL",
+      "check": "owner confirmed releaseMethod"
+    },
+    {
+      "result": "FAIL",
+      "check": "owner confirmed EUTraderStatus"
+    },
+    {
+      "result": "FAIL",
+      "check": "all externally verified submission gates are resolved"
+    }
+  ],
+  "errors": [
+    "owner confirmed supportURL",
+    "owner confirmed copyright",
+    "owner confirmed review contactName",
+    "owner confirmed review contactEmail",
+    "owner confirmed review contactPhone",
+    "owner confirmed legalRightsHolder",
+    "owner confirmed supportEmail",
+    "owner confirmed price",
+    "owner confirmed territories",
+    "owner confirmed releaseMethod",
+    "owner confirmed EUTraderStatus",
+    "all externally verified submission gates are resolved"
+  ],
+  "pendingGates": [
+    "Resolve the strict zoom timing failure on the final source-unchanged Release Store campaign (125/126 suites passed). The 30-second input/steady-timer p95 was 51.3154/61.2394 ms; the completed unsampled 600.019883-second workload was 53.6320/63.0316 ms against unchanged 50/33 ms gates. An AppKit reentrant-delegate warning remains. Unsigned Store build/preflight, 2/2 XCTest readback, fresh-temp enforced sandbox and four privacy visual inspections passed within their stated fixture scope. Current screenshots and draft artifacts are being generated from frozen source; no submission readiness is implied.",
+    "Owner-confirmed legal rights/copyright, maintained public support with contact details, private review contacts, price/availability/release method and EU trader status.",
+    "Publish the reviewed 5 October 2026 bundled privacy policy at the configured public URL, then verify exact text parity. The public URL currently serves the older 4 October policy; HTTP 200 alone does not satisfy parity.",
+    "Obtain or select a valid Mac Installer Distribution identity; export and validate the final App Store package without changing the tested source.",
+    "Confirm the com.dabin.mac App Store Connect record, build-number availability, current agreements and required compliance/declaration answers.",
+    "Complete signed app runtime acceptance: fresh install and upgrade, real picker/bookmark persistence, clipboard/screenshots consent, external app/browser drops, notifications and quit behavior.",
+    "Test minimum macOS14 and the current shipping macOS, accessibility with VoiceOver/keyboard, energy under realistic recording, and optional previews on IPv6-only networking.",
+    "Compare current fictional screenshots against the final distribution-signed app; owner confirm artwork rights; upload and process build and metadata only after authorization; Apple review still required."
+  ],
+  "limits": {
+    "descriptionCharacters": 1723,
+    "promotionalTextCharacters": 152,
+    "keywordBytes": 86,
+    "reviewNoteBytes": 3116
+  },
+  "boundary": "This offline check does not verify Apple approval, declarations, signing, screenshots, public URLs or owner identity."
+}

@@ -1,0 +1,53 @@
+DABIN - FRIENDLY PRODUCT COPY
+
+Version 0.4.31 (86)
+
+A little robot for the useful bits of your day.
+
+DaBin keeps your ideas, links, images and files together on your Mac. Drop something onto the robot, keep it with a project, and find it again when you need it.
+
+ROBOT-LED QUICK GUIDE
+
+Hi, I'm DaBin.
+I keep the useful bits of your day - an idea, a link, an image or a file - so you can find them again and get back to work.
+
+Catch me in a corner.
+Move your pointer to a screen corner. Drop something onto my body, or hover over me and press Command-V. Double-click me to open DaBin.
+Prefer the camera island? Choose it in Settings. On other displays, I'll use the top-right corner.
+
+Choose a project
+Keep notes, tasks, links and files together. Use All, Files or Tasks to narrow the workspace.
+
+Three places to begin
+Inbox catches new things. Today helps you focus. Projects keeps related work together.
+
+Search all saved work
+Click Search to look across your saved DaBin content, even when you start inside a project.
+
+Take work with you
+Export project saves a local ZIP. Select cards to export just those items. The nearby menu opens the project folder in Finder.
+
+Save it. Find it. Pick it up again.
+Three small habits, plus a little help when you want it.
+
+Find it by a few words.
+In Search, type or paste a word. Matches line up in date columns, newest first. Use filters when you want to narrow things down.
+Search covers your saved content. Files can contribute locally extracted text when available.
+
+Save now. Sort later.
+Drop or paste something into Inbox. Open a card to add a comment or choose its project.
+Drag a card preview, title or caption into an app that accepts that content. Your saved original stays here.
+
+Give one task your attention.
+Click + to open New task. Priority tags go from green (Low), through amber (Medium), to red (High).
+Set a focus time and press Play. When time is up, the robot reminds you; mark the task done when you finish.
+
+A little help saving? Your choice.
+Auto Capture is off by default. In Settings, choose Clipboard, Screenshots, or both; screenshots need a folder you select. It saves new changes, not a recording of your screen.
+When running, the header's red dot grows; it dances unless Reduce Motion is on. Check Destination; pause anytime.
+
+Make yourself comfortable.
+Drag an empty spot at the top to move between monitors. Resize from an edge or use Expand. Saved content stays on this Mac. Website previews are optional.
+
+Your things stay on your Mac.
+No account or cloud sync. Link previews only contact websites if you turn them on.

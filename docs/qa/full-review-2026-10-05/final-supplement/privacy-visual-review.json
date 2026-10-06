@@ -1,0 +1,132 @@
+{
+  "dataFolderButtonActivated": false,
+  "headerPixelVerification": [
+    {
+      "DoneButtonRows": [
+        18,
+        41
+      ],
+      "DoneTextForegroundRows": [
+        26,
+        34
+      ],
+      "RGBAHeaderSHA256": "8903e099e2448f86e579408421c5f9339bdd005396f96f186785d541166a5c1f",
+      "appearance": "light",
+      "rectanglePixels": [
+        0,
+        0,
+        350,
+        60
+      ],
+      "titleForegroundRows": [
+        23,
+        39
+      ],
+      "topAndBottomBytesEqual": true
+    },
+    {
+      "DoneButtonRows": [
+        18,
+        41
+      ],
+      "DoneTextForegroundRows": [
+        26,
+        34
+      ],
+      "RGBAHeaderSHA256": "755bcf2683b405d3cabdaae65820d6648593cbc0224d903a24977fef4fdd46bd",
+      "appearance": "dark",
+      "rectanglePixels": [
+        0,
+        0,
+        350,
+        60
+      ],
+      "titleForegroundRows": [
+        23,
+        39
+      ],
+      "topAndBottomBytesEqual": true
+    }
+  ],
+  "images": [
+    {
+      "appearance": "light",
+      "findings": [
+        "Complete fixed title and Done control are visible.",
+        "Policy paragraphs are readable with suitable light/dark contrast.",
+        "Updated 5 October 2026 is readable; policy continues in the scroll area."
+      ],
+      "height": 440,
+      "inspectionResolution": "original",
+      "path": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/full-review-2026-10-05/final-supplement/privacy/20261005T221217661712Z-57a3c867/renders/privacy-policy-light-top.png",
+      "scrollPosition": "top",
+      "sha256": "aad84cc57b72b5d64d9ab94f23ab53e80e6ad1ddc431c24b588a4fe2814bd5d6",
+      "status": "PASS",
+      "width": 350
+    },
+    {
+      "appearance": "light",
+      "findings": [
+        "Complete fixed title and Done control are visible.",
+        "Policy paragraphs are readable with suitable light/dark contrast.",
+        "Final backup/security paragraphs and complete Show DaBin data folder control are visible."
+      ],
+      "height": 440,
+      "inspectionResolution": "original",
+      "path": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/full-review-2026-10-05/final-supplement/privacy/20261005T221217661712Z-57a3c867/renders/privacy-policy-light-bottom.png",
+      "scrollPosition": "bottom",
+      "sha256": "dc23dfb1f7d2eba92417856ab5d22ac8a48735ca816d1c7dcf0d87d0f51a9a98",
+      "status": "PASS",
+      "width": 350
+    },
+    {
+      "appearance": "dark",
+      "findings": [
+        "Complete fixed title and Done control are visible.",
+        "Policy paragraphs are readable with suitable light/dark contrast.",
+        "Updated 5 October 2026 is readable; policy continues in the scroll area."
+      ],
+      "height": 440,
+      "inspectionResolution": "original",
+      "path": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/full-review-2026-10-05/final-supplement/privacy/20261005T221217661712Z-57a3c867/renders/privacy-policy-dark-top.png",
+      "scrollPosition": "top",
+      "sha256": "4a2a6c34f2915b25acf788913798c1dedd1a55816dfbc141934cbde5eb7ada5b",
+      "status": "PASS",
+      "width": 350
+    },
+    {
+      "appearance": "dark",
+      "findings": [
+        "Complete fixed title and Done control are visible.",
+        "Policy paragraphs are readable with suitable light/dark contrast.",
+        "Final backup/security paragraphs and complete Show DaBin data folder control are visible."
+      ],
+      "height": 440,
+      "inspectionResolution": "original",
+      "path": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/full-review-2026-10-05/final-supplement/privacy/20261005T221217661712Z-57a3c867/renders/privacy-policy-dark-bottom.png",
+      "scrollPosition": "bottom",
+      "sha256": "218baeed6c3eba502f5c19f0deaea8dc40e944f6e3ed11bbcc3ceeaceff75a2b",
+      "status": "PASS",
+      "width": 350
+    }
+  ],
+  "imagesEdited": false,
+  "imagesRegenerated": false,
+  "limitations": [
+    "Offscreen350x440 inspection does not certify public-policy parity, physical interaction or App Store review."
+  ],
+  "nativeRenderCommandStatus": "PASS",
+  "nativeRenderManifest": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/full-review-2026-10-05/final-supplement/privacy/20261005T221217661712Z-57a3c867/renders/privacy-renders.json",
+  "nativeRenderManifestSHA256": "42d2d2e8f087a78b58bbacbb5acf0910b52444b9a2313f7dbdd064ad5674bbd1",
+  "nativeRenderReport": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/full-review-2026-10-05/final-supplement/privacy/20261005T221217661712Z-57a3c867/report.json",
+  "nativeRenderReportSHA256": "48c8c6c37a04bf7d7b568932ab84de806863506189c6b677fce626a58503f9c4",
+  "observationCorrection": "An initial inline-preview impression suggested bottom-header clipping. Original PNG pixel comparison disproves it: each top/bottom 350x60 header is byte-identical with a complete Done control. No production regression is established.",
+  "policySHA256": "f7cc72938d2e4bfb109eab7dcb3ad580f7043c16129e49cd73d472249fbf5e67",
+  "policyUpdated": "Updated 5 October 2026",
+  "recordedUTC": "2026-10-05T22:23:42.671702+00:00",
+  "schemaVersion": 1,
+  "scope": "Original-resolution inspection of four existing isolated production privacy-policy PNGs",
+  "sourceAndModuleUnchanged": true,
+  "status": "PASS",
+  "submissionReady": false
+}

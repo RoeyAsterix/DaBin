@@ -1,0 +1,198 @@
+{
+  "status": "PASS",
+  "recordedUTC": "2026-10-06T03:26:45.783131+00:00",
+  "historicalPack": {
+    "path": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/app-store/submission-pack-0.4.31-86",
+    "version": "0.4.31",
+    "build": "86",
+    "manifestSHA256": "da4e435f321f959f5fe89cd06a780e42e09489d74fbfe7366c2d00903fc5f36b",
+    "manifestFileCount": 19,
+    "allManifestFilesByteIdentical": true,
+    "files": [
+      {
+        "file": "Assets/AppIcon.icns",
+        "bytes": 531662,
+        "sha256": "9ba9c0e655b1b9956a016d9d1a547d5fa598522664d1d21d2caf292ef6a1dadd"
+      },
+      {
+        "file": "Assets/DaBin-App-Icon-1024.png",
+        "bytes": 280161,
+        "sha256": "44ad308890153268409b08ee22050d66557327c92cbd3f9bb8d0f071c03e72b5"
+      },
+      {
+        "file": "Copy/DaBin-Friendly-Copy.txt",
+        "bytes": 2593,
+        "sha256": "c592dc017c63a0800d1da4bdc57be88b9abb2623bc47aefe1316873608090440"
+      },
+      {
+        "file": "Copy/PrivacyPolicy.md",
+        "bytes": 12657,
+        "sha256": "9b3065a0256f11cee42dc8ae4d84a6f862638ae89ce34f1d4eada3647a70da8d"
+      },
+      {
+        "file": "Copy/description.txt",
+        "bytes": 1717,
+        "sha256": "c7ddf7c1c0f9e658aeaccc9cf7e6296b206bf4e5911ce23cfaf9842d4bb729a1"
+      },
+      {
+        "file": "Copy/keywords.txt",
+        "bytes": 87,
+        "sha256": "d84e0bbce04ae6b21da1f36056e0b843cf515d876f89c57f0265cafb730a06c7"
+      },
+      {
+        "file": "Copy/metadata-en-US.json",
+        "bytes": 7199,
+        "sha256": "27776e26db155ea293e5a51d3df8a7341d5e42b58a7e4b1ce56ae6abfa80f822"
+      },
+      {
+        "file": "Copy/name.txt",
+        "bytes": 6,
+        "sha256": "b6cb5597897bce05c7e876e0c4cad876aec95a0cc7251fa0171fc1f073075e57"
+      },
+      {
+        "file": "Copy/promotional-text.txt",
+        "bytes": 153,
+        "sha256": "e12ad72f6edb2cc3f38cc1d56c025ccc0c1e09d6d0c7288c6d6a6b0f3d118bf7"
+      },
+      {
+        "file": "Copy/review-notes.txt",
+        "bytes": 2532,
+        "sha256": "b9894fe97f6e87c6185976a223a150dc8416d47f45b644236432248b3b06b527"
+      },
+      {
+        "file": "Copy/subtitle.txt",
+        "bytes": 25,
+        "sha256": "5d481a4ee26468fd99f4b966a8fb016d49f736c20f84bf16ee099a6d3c12759a"
+      },
+      {
+        "file": "Copy/support-page.txt",
+        "bytes": 2534,
+        "sha256": "0612b42d01f5c39f312cb372f01cbdcdb88a3c42ee1df218c14a908d5df8c6e5"
+      },
+      {
+        "file": "Copy/whats-new-for-a-subsequent-app-store-version-only.txt",
+        "bytes": 245,
+        "sha256": "9cbed3bd335c02a5ee0bf1033c4fe79d6eebb5772c3cadc7893f5d7bcfb3981a"
+      },
+      {
+        "file": "DaBin-App-Store-Content.docx",
+        "bytes": 310149,
+        "sha256": "2a0aed6d4ba240af86fd08e4d1c358014b682727c949db90bf3bac6e3bfdf258"
+      },
+      {
+        "file": "DaBin-Quick-Guide.pdf",
+        "bytes": 576456,
+        "sha256": "74b04eab53733fe91fbeb20c871042dbdef31406b7201f344f57692920a756de"
+      },
+      {
+        "file": "README.txt",
+        "bytes": 1909,
+        "sha256": "5ddb85146aee76f5331cbfbc04502f47456f699e8f18dcb69bc46ab529f72a4f"
+      },
+      {
+        "file": "Screenshots/DABIN__APP_STORE__01_INBOX.png",
+        "bytes": 84870,
+        "sha256": "81f3b56bba14721df16ff5dd9f11f81f387f8197ba33ac326b527dcbd15b0773"
+      },
+      {
+        "file": "Screenshots/DABIN__APP_STORE__02_PROJECTS.png",
+        "bytes": 105146,
+        "sha256": "6cf0cd118d1a04658bbe28a1633d54d193c0eaebdec9ebfa0232705a4325583c"
+      },
+      {
+        "file": "Screenshots/DABIN__APP_STORE__03_FOCUS.png",
+        "bytes": 82399,
+        "sha256": "3e9189425a9e953191c13796a5aa875f50bee69c399ccd455dbfe9c5440d5091"
+      }
+    ]
+  },
+  "previousGuideInputsAndDeliveredPDF": {
+    "path": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/design/onepager/archive/guide-before-0.4.41-20261005",
+    "manifestSHA256": "a6ea0c2ce24fa1f45450fdc944e44b753c3cec1b5b861f2fb9df4f0637b5eaae",
+    "manifestFileCount": 15,
+    "allManifestFilesByteIdentical": true,
+    "files": [
+      {
+        "file": "design/onepager/README.md",
+        "bytes": 4125,
+        "sha256": "1c2b96c28e1d3d3d4a6c6993270e31ab9a39b979c5c70260bf655eeb7d630469"
+      },
+      {
+        "file": "design/onepager/assets/DABIN__GUIDE__INBOX.png",
+        "bytes": 130523,
+        "sha256": "0146856604aec0dea51927a5d820bc1b78681a0097c34262046294b6def91c35"
+      },
+      {
+        "file": "design/onepager/assets/DABIN__GUIDE__PROJECTS.png",
+        "bytes": 216892,
+        "sha256": "997ea3bbc94c760e5a114a47aa84bffb101657135c06bac5e6f28e42ad8bcde5"
+      },
+      {
+        "file": "design/onepager/assets/DABIN__GUIDE__ROBOT.png",
+        "bytes": 133160,
+        "sha256": "ee95624ca95102af33f8ed3507f6ca0509c101cb5ea8fc880a2ff07fc07f5432"
+      },
+      {
+        "file": "design/onepager/assets/DABIN__GUIDE__SEARCH.png",
+        "bytes": 227936,
+        "sha256": "9475346beee8df72e02c5e3dec336e2a9de8d88e644e19d5d2e8f26871770e3f"
+      },
+      {
+        "file": "design/onepager/assets/DABIN__GUIDE__TASK.png",
+        "bytes": 141561,
+        "sha256": "644a6cdc2d7da0211da502813f67eadd79692890b8f9ba47f1ec2400dac5fee0"
+      },
+      {
+        "file": "design/onepager/assets/DaBin-logo.png",
+        "bytes": 47204,
+        "sha256": "5997fb512c7399023d7e9f6fa0ba50119697ba1bd1607582c5d85ec481eb71f1"
+      },
+      {
+        "file": "design/onepager/assets/guide-assets.json",
+        "bytes": 1267,
+        "sha256": "3c4ae60a347aff09b6d19ad72635b682e1f335c056eff86cb6e475315a483937"
+      },
+      {
+        "file": "design/onepager/assets/guide-native-renders.json",
+        "bytes": 44369,
+        "sha256": "71f975f5ce283cdc4588d55601e4faa806af4e03a2a8a23568d209f090379142"
+      },
+      {
+        "file": "design/onepager/assets/guide-native-source-manifest.json",
+        "bytes": 17232,
+        "sha256": "3d6a4d80ec5236d8b2979c1fb5f38fdcbafc6cc4468ed58ff7bce47e33ba691e"
+      },
+      {
+        "file": "design/onepager/copy.json",
+        "bytes": 3794,
+        "sha256": "4084c3ab9ae452df1cdf1bce1bd125d1d32d39a9bd908f56dae493b59a6264db"
+      },
+      {
+        "file": "docs/DaBin-Friendly-Copy.txt",
+        "bytes": 2593,
+        "sha256": "c592dc017c63a0800d1da4bdc57be88b9abb2623bc47aefe1316873608090440"
+      },
+      {
+        "file": "docs/DaBin-Quick-Guide.pdf",
+        "bytes": 576456,
+        "sha256": "74b04eab53733fe91fbeb20c871042dbdef31406b7201f344f57692920a756de"
+      },
+      {
+        "file": "docs/app-store/APP_STORE_CONNECT_DRAFT.md",
+        "bytes": 14149,
+        "sha256": "8b6c0865a1ebd6798fcf2a186629e55ed451a8d214c3b67b5bd0f963e0772f85"
+      },
+      {
+        "file": "docs/app-store/metadata-en-US.json",
+        "bytes": 7199,
+        "sha256": "fd160697596d05041dfbf4bcf831998675c3e5285a7ec22ec3db49282ffae6af"
+      }
+    ]
+  },
+  "currentGuidePDF": {
+    "path": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/DaBin-Quick-Guide.pdf",
+    "sha256": "1510c0cd35698ff1e9e47fff809398095e8acae6a95273ee1cabe1d81bc7f24a",
+    "outputCopySHA256": "1510c0cd35698ff1e9e47fff809398095e8acae6a95273ee1cabe1d81bc7f24a"
+  },
+  "scope": "Original historical pack and explicit guide backup verified against their existing manifests; current new version is separate."
+}

@@ -1,0 +1,20 @@
+test_current_copy_constraints (test_app_store_metadata.StoreMetadataTests.test_current_copy_constraints) ... ok
+test_current_draft_is_not_submission_complete (test_app_store_metadata.StoreMetadataTests.test_current_draft_is_not_submission_complete) ... ok
+test_description_boundary (test_app_store_metadata.StoreMetadataTests.test_description_boundary) ... ok
+test_description_limit (test_app_store_metadata.StoreMetadataTests.test_description_limit) ... ok
+test_empty_description (test_app_store_metadata.StoreMetadataTests.test_empty_description) ... ok
+test_keywords_are_measured_in_utf8_bytes (test_app_store_metadata.StoreMetadataTests.test_keywords_are_measured_in_utf8_bytes) ... ok
+test_name_limit (test_app_store_metadata.StoreMetadataTests.test_name_limit) ... ok
+test_owner_fields_never_imply_apple_approval (test_app_store_metadata.StoreMetadataTests.test_owner_fields_never_imply_apple_approval) ... ok
+test_plain_text_description (test_app_store_metadata.StoreMetadataTests.test_plain_text_description) ... ok
+test_promo_limit (test_app_store_metadata.StoreMetadataTests.test_promo_limit) ... ok
+test_review_notes_are_measured_in_utf8_bytes (test_app_store_metadata.StoreMetadataTests.test_review_notes_are_measured_in_utf8_bytes) ... ok
+test_short_keywords_rejected (test_app_store_metadata.StoreMetadataTests.test_short_keywords_rejected) ... ok
+test_source_bundle_mismatch (test_app_store_metadata.StoreMetadataTests.test_source_bundle_mismatch) ... ok
+test_source_version_mismatch (test_app_store_metadata.StoreMetadataTests.test_source_version_mismatch) ... ok
+test_subtitle_limit (test_app_store_metadata.StoreMetadataTests.test_subtitle_limit) ... ok
+
+----------------------------------------------------------------------
+Ran 15 tests in 0.008s
+
+OK

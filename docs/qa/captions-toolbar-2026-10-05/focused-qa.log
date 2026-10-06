@@ -1,0 +1,9 @@
+Compiling direct Release test module (138 production sources)…
+PASSED ProductFoundationTests: PASS: 92 connected product foundation checks
+PASSED WorkInboxTests: PASS: 93 work inbox checks
+PASSED NavigationHistoryTests: PASS: 123 bounded history, branch, project, draft, search, deletion and navigation safety checks
+/var/folders/qy/zfgc4dgx02x2k_c04330ghy00000gn/T/dabin-header-qa-nhbv1zsz/DaBin Header QA.app/Contents/Frameworks/libDaBinTestCore.dylib: replacing existing signature
+/var/folders/qy/zfgc4dgx02x2k_c04330ghy00000gn/T/dabin-header-qa-nhbv1zsz/DaBin Header QA.app: replacing existing signature
+PASSED HeaderInteractionTests: PASS: 326 native labeled-header accessibility and interaction checks
+FAILED WorkspaceWindowTests: Workspace window QA failed: Error Domain=WorkspaceWindowTests Code=1 "Typing captures the selected project as the draft destination" UserInfo={NSLocalizedDescription=Typing captures the selected project as the draft destination}
+QA direct failed: 4/5 requested suites passed. Report: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/runs/20261005T182847379669Z-direct/report.json

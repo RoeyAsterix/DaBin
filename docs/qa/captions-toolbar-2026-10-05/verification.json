@@ -1,0 +1,89 @@
+{
+  "verifiedAtUTC": "2026-10-05T18:38:53.831289+00:00",
+  "version": "0.4.37",
+  "buildNumber": "92",
+  "sourceFingerprint": "ce6a2ceb952c219a40b4fccf0851d7fd79a410e1a66311756a87eb0aa4879d7f",
+  "changes": [
+    "Day, Week, and all six caption type filters share one row across Inbox, Day, and Week",
+    "Removed Captions Paste and Add files controls and their extra action row/hint; removed empty Day paste button",
+    "Input placeholder: An Idea/Task for [actual destination]",
+    "Fresh inline ideas/tasks save to the selected Projects destination; existing drafts retain their project or explicit Unfiled destination",
+    "Updated tutorial to reflect the simplified composer"
+  ],
+  "scope": "Five targeted native suites; not a full QA campaign or App Store validation",
+  "passingSuites": {
+    "ProductFoundationTests": {
+      "report": "initial-qa-report.json",
+      "status": "passed",
+      "summary": "PASS: 92 connected product foundation checks",
+      "currentInputsMatch": true
+    },
+    "WorkInboxTests": {
+      "report": "initial-qa-report.json",
+      "status": "passed",
+      "summary": "PASS: 93 work inbox checks",
+      "currentInputsMatch": true
+    },
+    "NavigationHistoryTests": {
+      "report": "initial-qa-report.json",
+      "status": "passed",
+      "summary": "PASS: 123 bounded history, branch, project, draft, search, deletion and navigation safety checks",
+      "currentInputsMatch": true
+    },
+    "HeaderInteractionTests": {
+      "report": "initial-qa-report.json",
+      "status": "passed",
+      "summary": "PASS: 326 native labeled-header accessibility and interaction checks",
+      "currentInputsMatch": true
+    },
+    "WorkspaceWindowTests": {
+      "report": "workspace-retry-report.json",
+      "status": "passed",
+      "summary": "PASS: 876 native workspace interaction and responsive layout checks",
+      "currentInputsMatch": true
+    }
+  },
+  "totalPassingChecks": 1510,
+  "initialFailure": "WorkspaceWindowTests new input check initially targeted a synthetic accessibility element. The test was corrected to enter text through the actual native NSTextField field editor; all 876 native checks then passed without production changes.",
+  "visualQA": {
+    "requestedWidths": [
+      320,
+      380,
+      760
+    ],
+    "actualNativeWidths": [
+      328,
+      380,
+      760
+    ],
+    "minimumWidthNote": "Native Board window clamps the requested 320-point probe to 328 points. Those screenshots are named requested320-actual328.",
+    "appearances": [
+      "light",
+      "dark"
+    ],
+    "routes": [
+      "inbox",
+      "daily",
+      "weekly"
+    ],
+    "inspectedImages": [
+      "workspace-renders/captions-inbox-requested320-actual328x680-light.png",
+      "workspace-renders/captions-daily-380x680-dark.png"
+    ]
+  },
+  "installedApp": "/Users/roeylibfeld/Applications/DaBin.app",
+  "installedExecutableMatchesReceipt": true,
+  "installedUpdaterMatchesReceipt": true,
+  "strictDeepSignatureVerified": true,
+  "archiveMetadataUnchangedByInstall": true,
+  "backup": "/Users/roeylibfeld/Applications/.DaBinBackups/20261005-213754-8f4e4f6d.app",
+  "runtimeVerification": {
+    "method": "CUA native accessibility inspection of launched installed app",
+    "captionsToolbarPresent": true,
+    "allEightViewAndFilterControlsPresentAndEnabled": true,
+    "placeholderMatchesSelectedProject": true,
+    "saveHintReferencesProjects": true,
+    "removedButtonsAbsent": true,
+    "leftOpenOn": "Captions"
+  }
+}

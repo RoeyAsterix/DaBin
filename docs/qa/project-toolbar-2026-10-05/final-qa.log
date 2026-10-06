@@ -1,0 +1,12 @@
+Compiling direct Release test module (138 production sources)…
+PASSED ProjectWorkspaceStateTests: PASS: 265 project-workspace checks; stable ordering, scoped selection, complete project counts, backup-compatible persistence, atomic task conversion, inherited ownership and guarded undo.
+PASSED ProjectWorkspaceExportTests: PASS: 49 project ZIP, ordering, metadata, notes, scope, safe publication, missing-original, and private clipboard checks
+FAILED ProjectWorkspaceViewTests: Project workspace view QA failed: Error Domain=ProjectWorkspaceViewTests Code=9 "Toolbar control project-filter-menu fits the 1080-point project: SwiftUIPopupButtonCell [AXMenuButton] AX={{-9948, -9271}, {22, 14}}, hit={{-9953, -9271}, {27, 14}}, actions=["AXPress"]" UserInfo={NSLocalizedDescription=Toolbar control project-filter-menu fits the 1080-point project: SwiftUIPopupButtonCell [AXMenuButton] AX={{-9948, -9271}, {22, 14}}, hit={{-9953, -9271}, {27, 14}}, actions=["AXPress"]}
+PASSED ProjectWorkspaceCardTests: PASS: 782 project card checks; Task/Note/Capture semantics, real live task updates, light/dark/grid/320-point compact fixtures, original previews and independent selection; no personal archive, clipboard, network, or external opening.
+PASSED NavigationHistoryTests: PASS: 123 bounded history, branch, project, draft, search, deletion and navigation safety checks
+PASSED WorkspaceWindowTests: PASS: 327 native workspace interaction and responsive layout checks
+PASSED LocalFileLocationTests: PASS: 94 local-folder resolution, project scope, native button, read-only byte preservation, and failure-feedback checks
+PASSED WorkspaceZoomLayoutTests: PASS: 806 workspace zoom layout checks; finite metrics, logical columns, pointer/item anchoring, history offset, native cards at 75/100/150/200%
+PASSED ProjectBrowsingNavigationTests: PASS: 74 native project browsing checks; real Board All/Unfiled/named history, native cross-project Notes/retry, late-blocked selection/creation and metadata-filing isolation
+FAILED CardDeletionInteractionTests
+QA direct failed: 8/10 requested suites passed. Report: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/runs/20261005T175935888484Z-direct/report.json

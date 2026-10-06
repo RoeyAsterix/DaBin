@@ -1,0 +1,97 @@
+{
+  "schemaVersion": 1,
+  "reviewedAtUTC": "2026-10-05T21:35:45.018501+00:00",
+  "reviewer": "companion_save_reactions",
+  "visualResult": "pass_for_the_four_reviewed_isolated_fixtures",
+  "method": "Each pre-existing PNG was opened with view_image at original resolution; no application was opened, rendered, built or modified for this review.",
+  "fixture": "One retained ProjectWorkspaceView host; fictional captures and local blue/gold PNG; 960 by 820 logical points at 2x backing scale; isolated archive/defaults, offscreen non-key window and private pasteboards.",
+  "qaReport": {
+    "file": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/runs/20261005T213022192993Z-direct/report.json",
+    "sha256": "f13da2a023f1d840a2db8acca0f77980270fd40182d17fb02ded29ca09d42e5f",
+    "suites": [
+      {
+        "name": "ProjectWorkspaceViewTests",
+        "status": "passed",
+        "reportedSummary": "PASS: 918 project workspace UI checks; 1,000 synthetic text captures plus image and editable project note; retained-host live zoom, observable edits and replacement identities; native mixed-selection drag payloads on a private pasteboard; no personal archive, network, general clipboard or external opening. At most 27 simultaneously materialized native rows."
+      },
+      {
+        "name": "ProjectWorkspaceCardTests",
+        "status": "passed",
+        "reportedSummary": "PASS: 782 project card checks; Task/Note/Capture semantics, real live task updates, light/dark/grid/320-point compact fixtures, original previews and independent selection; no personal archive, clipboard, network, or external opening."
+      },
+      {
+        "name": "NativeContentDragTests",
+        "status": "passed",
+        "reportedSummary": "PASS: 38 native content drag checks; clicks, mixed native items, copy-only external transfers and source preservation."
+      }
+    ]
+  },
+  "images": [
+    {
+      "file": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/project-workspace-view/3002BB7D-2C99-4BAB-BBC5-EF3B0D6CF658/project-live-note-initial@2x.png",
+      "sha256": "8ae178fc7904bb8177d9e1d59ab1fb237284ee9d352eb2c8e6737988e947fbb2",
+      "bytes": 188801,
+      "widthPixels": 1920,
+      "heightPixels": 1640,
+      "inspectionDetail": "original",
+      "result": "pass_for_this_fixture",
+      "findings": [
+        "The Project notes card visibly contains “Fictional initial live project note” in full.",
+        "The image card shows the blue/gold fictional source, a deliberate two-line title ellipsis, project, role and immutable receipt.",
+        "The ordinary task remains unchecked with a readable original-text excerpt, and all four cards and their receipts fit the viewport."
+      ]
+    },
+    {
+      "file": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/project-workspace-view/3002BB7D-2C99-4BAB-BBC5-EF3B0D6CF658/project-live-note-edited@2x.png",
+      "sha256": "6d9dc9ac9ed9a680501fa3809126498cdcaf836ff749edce07c1fe2db9e5e2f5",
+      "bytes": 199173,
+      "widthPixels": 1920,
+      "heightPixels": 1640,
+      "inspectionDetail": "original",
+      "result": "pass_for_this_fixture",
+      "findings": [
+        "The same Project notes card now visibly contains “Fictional live note edited after the retained browser zoom”, wrapping onto two readable lines; the initial text is absent.",
+        "The restored task shows its current title with the intentional two-line limit, strikethrough, checked completion control, green edge and “Task · Done” status.",
+        "The saved image and previous-day capture remain visible; no card controls overlap the edited note text."
+      ]
+    },
+    {
+      "file": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/project-workspace-view/3002BB7D-2C99-4BAB-BBC5-EF3B0D6CF658/project-live-zoom-75@2x.png",
+      "sha256": "f266f330864286e45cfd1b88117d6d9d590d17ebe2348e03b7edf67c2bea8d11",
+      "bytes": 182685,
+      "widthPixels": 1920,
+      "heightPixels": 1640,
+      "inspectionDetail": "original",
+      "result": "pass_for_this_fixture",
+      "findings": [
+        "Typography and the actual blue/gold media preview are visibly smaller than in the 200% image; the complete source remains fitted within the rounded preview.",
+        "Titles, project labels, excerpts, roles and date/clock receipts remain readable and separated.",
+        "Selection and completion controls remain distinct from titles and More controls; all four cards fit without clipped receipts."
+      ]
+    },
+    {
+      "file": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/project-workspace-view/3002BB7D-2C99-4BAB-BBC5-EF3B0D6CF658/project-live-zoom-200@2x.png",
+      "sha256": "9d074c64234290cfc46e303fa2aad63e02656e274af5f14a59c2a134a8af2c38",
+      "bytes": 204767,
+      "widthPixels": 1920,
+      "heightPixels": 1640,
+      "inspectionDetail": "original",
+      "result": "pass_for_this_fixture",
+      "findings": [
+        "The actual media preview and typography grow relative to the 75% image while the project toolbar, footer and selection/completion artwork retain their own sizes.",
+        "Long card titles use the intended two-line ellipsis and supporting excerpts wrap naturally without covering controls.",
+        "The note, task and capture keep distinct visible roles and receipts; all four cards fit the viewport with no observed overlap or clipped card content."
+      ]
+    }
+  ],
+  "pairedFindings": [
+    "The initial and edited note images prove visible old-to-new scratchpad content on the retained host, separately from accessibility values.",
+    "The 75% and 200% images show live typography/media scaling and readable complete card content; deliberate title truncation is preserved.",
+    "The new integration assertions additionally verify native 32-point targets, the same table and gesture-locked rows, replacement capture actions, focus/selection, filters/dates and latest native drag payloads."
+  ],
+  "limitations": [
+    "Static offscreen screenshots do not establish animation quality, input latency, GPU frame pacing, every display configuration, dark mode, contrast compliance or App Store approval.",
+    "The strict unsampled zoom performance gate remains unresolved; this visual pass does not override the 50 ms input and 33 ms timer thresholds.",
+    "Pre-existing native table reentrancy/truncation warnings remain separately documented in layout-candidate-4/profile/analysis.md."
+  ]
+}

@@ -1,0 +1,191 @@
+{
+  "schemaVersion": 1,
+  "candidate": {
+    "version": "0.4.41",
+    "build": "96"
+  },
+  "preparedDate": "6 October 2026",
+  "appleAuditDate": "5 October 2026",
+  "policyUpdated": "5 October 2026",
+  "status": "COMPLETE_LOCAL_REVIEW_DRAFT",
+  "nativeAssetExecutionReleased": true,
+  "artifactAuthoringStarted": true,
+  "artifactMarkersRun": true,
+  "submissionReady": false,
+  "sourceFreeze": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/full-review-2026-10-05/final-candidate/source-freeze.json",
+  "sourceFreezeSHA256": "d46f408a901a8764fb57400833c01642b19b89ceee2c104040e7434c8de2153c",
+  "productionFingerprint": "d6a7dd7fd2e2de4f167476ba91d8be232917024ecf745679bc4a5f3c83fab5fa",
+  "moduleReceipt": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa-cache/app-store-5013654b8c68f93cbaa913c1212168402be85ff94c7d33fca10d7e15c3e13e7e/module-ready.json",
+  "moduleReceiptSHA256": "89f25de3e32aefc90e4a262ba587631ac58479a85079dff7807419d537fbd787",
+  "moduleOutputs": {
+    "DaBinTestCore.swiftmodule": "5c59fe08a5bf797d9e5617ff26698fd7e434a6022e2b17dbd110e78e5b8bcd43",
+    "libDaBinTestCore.dylib": "9664ad04df275e317cb5911809b9f9b5f907e5c3033ed14a05723c29d1a941d9"
+  },
+  "fullStoreReport": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/runs/20261005T213352249116Z-app-store/report.json",
+  "fullStoreReportSHA256": "5d8c0dec20236f0de08803694224ca4b75dda00c0e330248b2f7311e426fa0eb",
+  "qaStatus": "failed",
+  "qaSummary": "The final source-unchanged Release Store campaign completed with 125 of 126 suites passing; strict zoom performance is the sole native-suite failure. The unsigned Store compile/preflight passed. Completed XCTest readback confirms 2 of 2 tests passed with 0 failures and preserves the unsigned executable hash. A fresh/private/tmp ad-hoc sandbox fixture passed save and reopen/export. The privacy render command and all 4 original-resolution visual inspections passed. The original coordinator report retains the timing failure and the earlier collector/FileProvider failures; separate readback/rerun receipts retain their correction evidence. The local direct Release version was updated to 0.4.41 (96) with the prior app backed up and both archive inventories preserved; the two direct updater suites passed. Normal product launch and the physical external drop matrix remain untested.",
+  "performanceStatus": "failed",
+  "performanceSummary": "Strict zoom performance remains failed against unchanged 50 ms input-to-layout and 33 ms steady-timer budgets. The 30-second campaign measured p95 input 51.3154 ms and steady timer 61.2394 ms. The original unsampled 600-second workload completed 600.02 measured seconds with 5,399 captures and 5 zoom/navigation cycles; p95 input 53.6320 ms and steady timer 63.0316 ms still exceeded the gates. Completion is not performance acceptance. These synthetic offscreen measurements do not measure physical input-to-display latency or certify absence of leaks.",
+  "knownIssues": [
+    "Strict zoom timing exceeds the unchanged internal 50 ms input-to-layout and 33 ms steady-timer budgets.",
+    "An unresolved reentrant NSTableView warning remains in the zoom fixture logs.",
+    "Physical input and a second monitor remain untested. An isolated fictional same-app note drop passed; real external app/browser drop acceptance remains untested.",
+    "The public policy serves older 4 October text; exact parity with the bundled 5 October policy awaits authorized publication.",
+    "Owner fields, distribution signing/validation and Apple account/review steps remain pending."
+  ],
+  "executionPrerequisites": [
+    "Parent releases native fixture rendering after all coordinated GUI QA finishes.",
+    "Reverify source freeze, Store module receipt and output hashes immediately before each native export.",
+    "Update pending supplemental statements from actual final receipts before document authoring.",
+    "Open every native screenshot and guide image at original resolution before recording visual PASS.",
+    "Run Documents/PDF artifact markers exactly once immediately before each corresponding authoring operation; both required operation markers ran exactly once.",
+    "Render and inspect every DOCX/PDF page; packaging requires actual source-parity/all-page approval receipts."
+  ],
+  "commands": {
+    "screenshots": [
+      "/Users/roeylibfeld/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "design/app-store-pack/export_screenshots.py",
+      "--render",
+      "--version",
+      "0.4.41",
+      "--build",
+      "96",
+      "--native-root",
+      "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native",
+      "--module-cache",
+      "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa-cache/app-store-5013654b8c68f93cbaa913c1212168402be85ff94c7d33fca10d7e15c3e13e7e"
+    ],
+    "guideAssets": [
+      "/Users/roeylibfeld/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "design/onepager/export_guide_assets.py",
+      "--render",
+      "--version",
+      "0.4.41",
+      "--build",
+      "96",
+      "--native-root",
+      "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native",
+      "--module-cache",
+      "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa-cache/app-store-5013654b8c68f93cbaa913c1212168402be85ff94c7d33fca10d7e15c3e13e7e",
+      "--distribution",
+      "app-store"
+    ],
+    "guidePDF": [
+      "/Users/roeylibfeld/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "design/onepager/build_guide.py",
+      "--build-pdf",
+      "--version",
+      "0.4.41",
+      "--build",
+      "96",
+      "--native-root",
+      "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native",
+      "--module-cache",
+      "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa-cache/app-store-5013654b8c68f93cbaa913c1212168402be85ff94c7d33fca10d7e15c3e13e7e"
+    ],
+    "contentDocument": [
+      "/Users/roeylibfeld/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "design/app-store-pack/build_content_pack.py",
+      "--build-docx",
+      "--version",
+      "0.4.41",
+      "--build",
+      "96",
+      "--native-root",
+      "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native",
+      "--module-cache",
+      "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa-cache/app-store-5013654b8c68f93cbaa913c1212168402be85ff94c7d33fca10d7e15c3e13e7e",
+      "--qa-report",
+      "native/build/qa/runs/20261005T213352249116Z-app-store/report.json",
+      "--prepared-date",
+      "6 October 2026",
+      "--apple-audit-date",
+      "5 October 2026",
+      "--qa-status",
+      "failed",
+      "--qa-summary",
+      "The final source-unchanged Release Store campaign completed with 125 of 126 suites passing; strict zoom performance is the sole native-suite failure. The unsigned Store compile/preflight passed. Completed XCTest readback confirms 2 of 2 tests passed with 0 failures and preserves the unsigned executable hash. A fresh/private/tmp ad-hoc sandbox fixture passed save and reopen/export. The privacy render command and all 4 original-resolution visual inspections passed. The original coordinator report retains the timing failure and the earlier collector/FileProvider failures; separate readback/rerun receipts retain their correction evidence. The local direct Release version was updated to 0.4.41 (96) with the prior app backed up and both archive inventories preserved; the two direct updater suites passed. Normal product launch and the physical external drop matrix remain untested.",
+      "--performance-status",
+      "failed",
+      "--performance-summary",
+      "Strict zoom performance remains failed against unchanged 50 ms input-to-layout and 33 ms steady-timer budgets. The 30-second campaign measured p95 input 51.3154 ms and steady timer 61.2394 ms. The original unsampled 600-second workload completed 600.02 measured seconds with 5,399 captures and 5 zoom/navigation cycles; p95 input 53.6320 ms and steady timer 63.0316 ms still exceeded the gates. Completion is not performance acceptance. These synthetic offscreen measurements do not measure physical input-to-display latency or certify absence of leaks.",
+      "--known-issue",
+      "Strict zoom timing exceeds the unchanged internal 50 ms input-to-layout and 33 ms steady-timer budgets.",
+      "--known-issue",
+      "An unresolved reentrant NSTableView warning remains in the zoom fixture logs.",
+      "--known-issue",
+      "Physical input and a second monitor remain untested. An isolated fictional same-app note drop passed; real external app/browser drop acceptance remains untested.",
+      "--known-issue",
+      "The public policy serves older 4 October text; exact parity with the bundled 5 October policy awaits authorized publication.",
+      "--known-issue",
+      "Owner fields, distribution signing/validation and Apple account/review steps remain pending.",
+      "--replace-draft"
+    ]
+  },
+  "supplementalEvidenceUpdatedUTC": "2026-10-05T22:28:00.119523+00:00",
+  "supplementalEvidence": [
+    {
+      "path": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/full-review-2026-10-05/final-supplement/sustained-readback.json",
+      "sha256": "3146b3419ebff31d48ba032a2daee67bcc04ebae5030c3754dc4168fb86570bb",
+      "status": "COMPLETED_WITH_STRICT_TIMING_FAILURE"
+    },
+    {
+      "path": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/full-review-2026-10-05/final-supplement/xctest-readback-receipt.json",
+      "sha256": "0b6412e428376d051dee529dfa6000a0d8f8ad049f684e8ba359a6af61ee6a99",
+      "status": "PASS"
+    },
+    {
+      "path": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/full-review-2026-10-05/final-supplement/sandbox-temporary-rerun-readback.json",
+      "sha256": "6eef22d81974ba6183eec15df25719280957eb26f752ec82d9f2596a5807a273",
+      "status": "PASS"
+    },
+    {
+      "path": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/full-review-2026-10-05/final-supplement/privacy-visual-review.json",
+      "sha256": "17be8de424fd37e65dce5d5ef656d19beef7880aed39dcb08180a034d5eaea3b",
+      "status": "PASS"
+    }
+  ],
+  "releasedUTC": "2026-10-06T03:13:43.212975+00:00",
+  "nativeExportsComplete": true,
+  "nativeAssetsOriginalResolutionInspected": true,
+  "nativeExportsCompletedUTC": "2026-10-06T03:18:16.496682+00:00",
+  "markerOperations": [
+    {
+      "kind": "edit",
+      "format": "pdf",
+      "expectedOutputCount": 1,
+      "runCount": 1
+    },
+    {
+      "kind": "create",
+      "format": "docx",
+      "expectedOutputCount": 1,
+      "runCount": 1
+    }
+  ],
+  "artifactAuthoringStartedUTC": "2026-10-06T03:18:51.474548+00:00",
+  "completedUTC": "2026-10-06T03:35:07.930981+00:00",
+  "allDocumentAndGuidePagesOriginalResolutionInspected": true,
+  "documentPages": 15,
+  "guidePages": 2,
+  "finalVerificationReceipt": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/full-review-2026-10-05/review-pack-final-verification.json",
+  "finalVisualReceipt": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/full-review-2026-10-05/review-pack-final-visual.json",
+  "finalOutputs": {
+    "docx": {
+      "path": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/app-store/submission-pack-0.4.41-96/DaBin-App-Store-Content.docx",
+      "bytes": 346486,
+      "sha256": "7af09b4b702ac0283471a12f85e49446ebb926b1e1a170539f21921f6ad0c0f0"
+    },
+    "guidePDF": {
+      "path": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/DaBin-Quick-Guide.pdf",
+      "bytes": 566933,
+      "sha256": "1510c0cd35698ff1e9e47fff809398095e8acae6a95273ee1cabe1d81bc7f24a"
+    },
+    "zip": {
+      "path": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/output/DaBin-App-Store-Pack-0.4.41-96.zip",
+      "bytes": 1905388,
+      "sha256": "575df8ecc5ef1536c5b7ba9585db72ccba332e9fa3507466a34f5e79f7db4329"
+    }
+  }
+}

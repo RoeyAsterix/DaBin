@@ -1,0 +1,65 @@
+{
+  "recordedUTC": "2026-10-06T04:24:55.438410+00:00",
+  "roots": [
+    {
+      "root": "/Users/roeylibfeld/Library/Containers/com.dabin.mac/Data/Library/Application Support/DaBin",
+      "managedDirectories": {
+        ".": {
+          "mode": "0o700",
+          "isRealDirectory": true
+        },
+        "Originals": {
+          "mode": "0o700",
+          "isRealDirectory": true
+        },
+        "Staging": {
+          "mode": "0o700",
+          "isRealDirectory": true
+        },
+        "Imports": {
+          "mode": "0o700",
+          "isRealDirectory": true
+        },
+        "Deletions": {
+          "mode": "0o700",
+          "isRealDirectory": true
+        }
+      },
+      "aggregateTimestampEvents": {
+        "fileMtimeInPackageInstallInterval": 1,
+        "directoryCtimeInPackageInstallInterval": 0,
+        "fileCtimeInPackageInstallInterval": 1
+      }
+    },
+    {
+      "root": "/Users/roeylibfeld/Library/Application Support/DaBin",
+      "managedDirectories": {
+        ".": {
+          "mode": "0o755",
+          "isRealDirectory": true
+        },
+        "Originals": {
+          "mode": "0o755",
+          "isRealDirectory": true
+        },
+        "Staging": {
+          "mode": "0o755",
+          "isRealDirectory": true
+        },
+        "Imports": {
+          "mode": "0o755",
+          "isRealDirectory": true
+        },
+        "Deletions": {
+          "mode": "0o755",
+          "isRealDirectory": true
+        }
+      },
+      "aggregateTimestampEvents": {
+        "fileMtimeInPackageInstallInterval": 0,
+        "directoryCtimeInPackageInstallInterval": 0,
+        "fileCtimeInPackageInstallInterval": 0
+      }
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "comparedAtUTC": "2026-10-05T20:31:02.027368+00:00",
+  "boundary": "Local-only comparison of previously fetched public text with current local source. No network, publication, tests, build, signing, app launch or account actions.",
+  "publicObservationAtUTC": "2026-10-05T20:15:10.941646+00:00",
+  "publicSnapshot": "docs/qa/full-review-2026-10-05/public-links-20261005T201510941646Z/public-policy.md",
+  "publicHTTPReceipt": "docs/qa/full-review-2026-10-05/public-links-20261005T201510941646Z/verification.json",
+  "localSource": "native/Resources/PrivacyPolicy.md",
+  "localSnapshot": "local-policy-snapshot.md",
+  "publicSHA256": "9b3065a0256f11cee42dc8ae4d84a6f862638ae89ce34f1d4eada3647a70da8d",
+  "localSHA256": "f7cc72938d2e4bfb109eab7dcb3ad580f7043c16129e49cd73d472249fbf5e67",
+  "publicUpdatedLine": "Updated 4 October 2026",
+  "localUpdatedLine": "Updated 5 October 2026",
+  "exactBytesMatch": false,
+  "normalizedTextMatch": false,
+  "diff": "public-to-local.diff",
+  "scope": "This is evidence of mismatch with the preserved public observation, not a fresh HTTP verification. The production inputs are not frozen; final bundled copy, privacy regression/render tests and submission-pack policy parity remain pending.",
+  "changedContent": [
+    "Update date advanced from 4 to 5 October 2026.",
+    "Confirmation text describes kind or combined Saved N items, one-click opening while moving, and static presentation under Quiet Mode/Reduce Motion.",
+    "Persistent project/Paused/Unfiled labels and possible on-screen project-name exposure are disclosed."
+  ]
+}

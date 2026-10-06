@@ -1,0 +1,3 @@
+PASSED SoftwareUpdateTests: PASS: 48 software update checks; no external network, installed app or user archive used.
+PASSED UpdateConfigurationTests: PASS: 41 update-channel configuration checks
+QA direct passed: 2/2 requested suites passed. Report: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/runs/20261006T031711534613Z-direct/report.json

@@ -1,0 +1,53 @@
+{
+  "status": "PASS",
+  "recordedUTC": "2026-10-06T03:18:16.496682+00:00",
+  "version": "0.4.41",
+  "build": "96",
+  "screenshots": [
+    {
+      "path": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/app-store/screenshots/0.4.41-96/DABIN__APP_STORE__01_INBOX.png",
+      "sha256": "b65cf07118223a49d6c07dcd17bd7137dd8e7f748a7e362a454054215871e61e",
+      "finding": "DABIN__APP_STORE__01_INBOX.png complete current native UI and marketing heading; actual fictional content, readable controls and no overlap."
+    },
+    {
+      "path": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/app-store/screenshots/0.4.41-96/DABIN__APP_STORE__02_PROJECTS.png",
+      "sha256": "92e33be77e5679dd7bbe830f586d1fd3a5712ee1c5baf34ca55087ffd8992363",
+      "finding": "DABIN__APP_STORE__02_PROJECTS.png complete current native UI and marketing heading; actual fictional content, readable controls and no overlap."
+    },
+    {
+      "path": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/app-store/screenshots/0.4.41-96/DABIN__APP_STORE__03_FOCUS.png",
+      "sha256": "1d58778c902327cbb6ca7b7bd9e8b42c2a00ef254196da260f56cf570996d5cf",
+      "finding": "DABIN__APP_STORE__03_FOCUS.png complete current native UI and marketing heading; actual fictional content, readable controls and no overlap."
+    }
+  ],
+  "guideAssets": [
+    {
+      "path": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/design/onepager/assets/DABIN__GUIDE__INBOX.png",
+      "sha256": "3aaf16b30d8a184d9418877bdfdeaab5b9046c2483bd6f40b463c1c597d7ad39",
+      "finding": "Original-resolution native asset inspected; current content/controls readable and source PNG unchanged."
+    },
+    {
+      "path": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/design/onepager/assets/DABIN__GUIDE__PROJECTS.png",
+      "sha256": "f4ffd9eafcf038fe39eb91514a8f8cef13b6b95f22e02bdc3285839607e3a34a",
+      "finding": "Original-resolution native asset inspected; current content/controls readable and source PNG unchanged."
+    },
+    {
+      "path": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/design/onepager/assets/DABIN__GUIDE__ROBOT.png",
+      "sha256": "ee95624ca95102af33f8ed3507f6ca0509c101cb5ea8fc880a2ff07fc07f5432",
+      "finding": "Original-resolution native asset inspected; current content/controls readable and source PNG unchanged."
+    },
+    {
+      "path": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/design/onepager/assets/DABIN__GUIDE__SEARCH.png",
+      "sha256": "044b024b94664516980fb81921bbfe2eebb855dbd80b633fcbe9f6ccab32b0d9",
+      "finding": "Original-resolution native asset inspected; current content/controls readable and source PNG unchanged."
+    },
+    {
+      "path": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/design/onepager/assets/DABIN__GUIDE__TASK.png",
+      "sha256": "40dd640b9ac42f13fbc2f191a81ac87c162b6d3bbf7293d9e145105214631110",
+      "finding": "Original-resolution native asset inspected; current content/controls readable and source PNG unchanged."
+    }
+  ],
+  "sourceVerifiedStoreModule": "89f25de3e32aefc90e4a262ba587631ac58479a85079dff7807419d537fbd787",
+  "nativeExportsComplete": true,
+  "scope": "Local fictional fixtures; source parity and visual review only. Distribution signing, rights and physical destination matrix remain separate."
+}

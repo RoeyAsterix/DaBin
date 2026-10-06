@@ -1,0 +1,5 @@
+2026-10-06 01:16:26.442 xcodebuild[56457:29247225]  DVTFilePathFSEvents: Failed to start fs event stream.
+2026-10-06 01:16:26.625 xcodebuild[56457:29247223] [MT] DVTDeveloperPaths: Failed to get length of DARWIN_USER_CACHE_DIR from confstr(3), error = Error Domain=NSPOSIXErrorDomain Code=5 "Input/output error". Using NSCachesDirectory instead.
+Error: You don’t have permission to save the file “41C565AB-5929-4588-AB43-597DE21E76AD” in the folder “TestReport”.
+Usage: xcresulttool <subcommand>
+  See 'xcresulttool --help' for more information.

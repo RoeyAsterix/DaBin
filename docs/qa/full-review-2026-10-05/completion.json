@@ -1,0 +1,52 @@
+{
+  "completedUTC": "2026-10-06T03:36:21.389636+00:00",
+  "status": "LOCAL_TESTING_AND_REVIEW_DRAFT_PREPARED",
+  "qaStatus": "failed",
+  "performanceStatus": "failed",
+  "fullStoreSuites": {
+    "requested": 126,
+    "passed": 125,
+    "failed": 1
+  },
+  "sustainedMeasuredSeconds": 600.019883,
+  "sustainedStatus": "completed_with_timing_failure",
+  "version": "0.4.41",
+  "build": "96",
+  "sourceFingerprint": "d6a7dd7fd2e2de4f167476ba91d8be232917024ecf745679bc4a5f3c83fab5fa",
+  "productionAndSwiftTestsStillExact": true,
+  "localAppInstalled": true,
+  "localArchiveBytesPreserved": true,
+  "normalInstalledAppLaunch": "not_tested",
+  "reviewDocuments": {
+    "docx": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/app-store/submission-pack-0.4.41-96/DaBin-App-Store-Content.docx",
+    "pages": 15,
+    "guide": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/DaBin-Quick-Guide.pdf",
+    "guidePages": 2
+  },
+  "zip": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/output/DaBin-App-Store-Pack-0.4.41-96.zip",
+  "zipSHA256": "575df8ecc5ef1536c5b7ba9585db72ccba332e9fa3507466a34f5e79f7db4329",
+  "zipManifestFilesVerified": 20,
+  "screenshots": {
+    "count": 3,
+    "size": [
+      1440,
+      900
+    ],
+    "mode": "RGB"
+  },
+  "metadataAndPolicyByteParity": true,
+  "submissionReady": false,
+  "uploaded": false,
+  "submitted": false,
+  "publicPolicyPublished": false,
+  "storeArchiveCreated": false,
+  "remainingGates": [
+    "Strict zoom timing and AppKit reentrancy warning",
+    "Mac Installer Distribution identity and protected-key distribution signing/package validation",
+    "Owner legal/support/private review contacts and pricing/availability/trader/declarations",
+    "Public privacy policy parity",
+    "Physical cross-app drag and final signed-product consent/bookmark/notification/install acceptance",
+    "Minimum/current OS, another Mac, VoiceOver, energy and IPv6 optional previews"
+  ],
+  "artifactEvidence": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/full-review-2026-10-05/review-pack-final-verification.json"
+}

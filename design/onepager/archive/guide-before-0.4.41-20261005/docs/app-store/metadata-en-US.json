@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "status": "DRAFT_NOT_FOR_UPLOAD",
+  "locale": "en-US",
+  "candidate": {
+    "bundleIdentifier": "com.dabin.mac",
+    "version": "0.4.33",
+    "build": "88",
+    "minimumMacOS": "14.0",
+    "architecture": "arm64"
+  },
+  "productPage": {
+    "name": "DaBin",
+    "subtitle": "Save, organize and focus",
+    "primaryCategory": "PRODUCTIVITY",
+    "promotionalText": "A little robot for the useful bits of your day. Save ideas, links and files, keep projects together, and give one task your attention - all on your Mac.",
+    "description": "DaBin keeps the useful bits of your day together on your Mac: notes, links, images, files and tasks.\n\nSave and find\nPaste content, drop files, or create a note or task. Search your saved content across DaBin and browse results in date columns. Local text recognition helps find words in supported images and documents. Search covers content saved into DaBin, not every file on your Mac.\n\nOrganize your projects\nKeep related captures and tasks in projects with recognizable colors. Preview saved content, add notes, use priority tags and export project material to a location you choose.\n\nFocus on a task\nPlan your day and choose a focus duration. When a running timer finishes, the little desktop robot shows an alarm with the first three words of your task title. Click the robot to dismiss it; the task stays open until you complete it.\n\nOptional Auto Capture\nAuto Capture starts off. After you enable it, DaBin can save later clipboard changes and new images from a screenshot folder you select. It does not record your screen or import existing screenshots. Choose a destination and pause at any time. A red recording symbol in the menu bar shows active monitoring. App exclusions and sensitive-clipboard checks help reduce unwanted captures, but cannot guarantee that all sensitive content is detected.\n\nLocal by design\nNo account, advertising, analytics or cloud sync. Saved captures, notes and recognized text stay on this Mac. Website previews are optional and off by default; enabling them can contact manually saved websites. Automatically captured links never fetch previews. You control exports, local backups, Recently Deleted and permanent deletion.\n\nMade for Apple Silicon Macs with macOS 14 or later.",
+    "keywords": "clipboard,screenshots,notes,files,tasks,projects,focus,reminders,organizer,local,robot",
+    "privacyPolicyURL": "https://github.com/RoeyAsterix/DaBin/blob/main/native/Resources/PrivacyPolicy.md",
+    "supportURL": null,
+    "copyright": null,
+    "marketingURL": null
+  },
+  "review": {
+    "contactName": null,
+    "contactEmail": null,
+    "contactPhone": null,
+    "signInRequired": false,
+    "notes": "DaBin is an Apple Silicon macOS menu-bar/desktop app. It requires macOS 14 or later and has no login, paid unlock, ads or server account.\n\nStart: Open DaBin; use its menu-bar item or double-click the desktop robot to open the board. The upper + opens a new task directly. Quit through the menu bar or Settings. Closing the board leaves the menu-bar app running; Quit shuts its services down.\n\nManual capture: Paste text or a link with Cmd-V, or drop a fictional image/file into the app. Create a note/task, assign a project and search for its content. Search accepts typing, context-menu paste and Cmd-V; results are grouped by date. Export and archive backup use native destination pickers. Local OCR/document search is limited to saved supported content.\n\nAuto Capture: OFF on first launch. Enable it through its explicit consent flow, choose clipboard and/or screenshots, and choose a destination. Screenshot monitoring requires selecting a folder in the macOS picker; it monitors only new regular images, not existing files or the live display. The menu-bar icon becomes a red recording symbol while monitoring, even with the board closed or Quiet mode on. Ready, Paused and Off are separate states. Pause or turn off to stop monitoring. Automatically captured links never fetch remote previews. Source-app exclusions and sensitive-pasteboard checks are best-effort.\n\nPrivacy: Settings → Privacy policy & data controls contains the full bundled policy, local deletion instructions and online policy/support links. Captures are stored on device. Website previews are optional, off by default, and only apply to manually saved links. There is no analytics, advertising or cloud-sync SDK. The app does not request Accessibility, Screen Recording, camera or microphone access. Reminder permission is requested only when a reminder is saved; notifications use generic text. A completed focus timer can show the first three words of the task title locally.\n\nStore build: App Sandbox is enabled. User-selected files and scoped bookmarks support import/export and screenshot-folder access. The direct-download updater and installer are excluded from this binary; updates are managed by the Mac App Store. No automatic launch-at-login or privileged helper is installed.\n\nSuggested review: verify manual save/search/task/project/export; opt into clipboard capture using fictional text; opt into a new screenshot in a chosen temporary folder; pause and confirm monitoring stops; disable capture and quit. No demo credentials are needed."
+  },
+  "ownerDecisions": {
+    "legalRightsHolder": null,
+    "supportEmail": null,
+    "price": null,
+    "territories": null,
+    "releaseMethod": null,
+    "EUTraderStatus": null
+  },
+  "privacyDraft": {
+    "tracking": false,
+    "developerDataCollection": "Data Not Collected - owner must confirm against the exact signed build and current Apple questionnaire",
+    "thirdPartySDKs": "None found in the local source inventory",
+    "accounts": false,
+    "usesNonExemptEncryption": false,
+    "ageRating": "Owner must complete the current questionnaire; no numeric rating assigned locally",
+    "accessibilityLabels": "Do not declare features without evaluating the exact signed build against Apple's criteria"
+  },
+  "pendingGates": [
+    "Owner-confirmed legal rights/copyright, maintained public support with contact details, private review contacts, price/availability/release method and EU trader status.",
+    "Publish the reviewed 4 October privacy policy at the bundled public URL, then verify exact text parity.",
+    "Obtain or select a valid Mac Installer Distribution identity; export and validate the final App Store package without changing the tested source.",
+    "Confirm the com.dabin.mac App Store Connect record, build-number availability, current agreements and required compliance/declaration answers.",
+    "Complete signed app runtime acceptance: fresh install and upgrade, real picker/bookmark persistence, clipboard/screenshots consent, external app/browser drops, notifications and quit behavior.",
+    "Test minimum macOS14 and the current shipping macOS, accessibility with VoiceOver/keyboard, energy under realistic recording, and optional previews on IPv6-only networking.",
+    "Compare current fictional screenshots against the final distribution-signed app; owner confirm artwork rights; upload and process build and metadata only after authorization; Apple review still required."
+  ]
+}

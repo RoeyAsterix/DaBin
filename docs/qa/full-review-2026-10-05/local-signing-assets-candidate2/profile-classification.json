@@ -1,0 +1,31 @@
+{
+  "UUID": "d9f1e483-830d-4ab5-90ac-6980c42b64d0",
+  "Name": "Mac Team Store Provisioning Profile: com.dabin.mac",
+  "AppIDName": "DaBin",
+  "IsXcodeManaged": true,
+  "LocalProvision": null,
+  "topLevelKeys": [
+    "AppIDName",
+    "ApplicationIdentifierPrefix",
+    "CreationDate",
+    "DER-Encoded-Profile",
+    "DeveloperCertificates",
+    "Entitlements",
+    "ExpirationDate",
+    "IsXcodeManaged",
+    "Name",
+    "PPQCheck",
+    "Platform",
+    "TeamIdentifier",
+    "TeamName",
+    "TimeToLive",
+    "UUID",
+    "Version"
+  ],
+  "EntitlementKeys": [
+    "com.apple.application-identifier",
+    "com.apple.developer.team-identifier",
+    "keychain-access-groups"
+  ],
+  "limitation": "The sole installed profile is explicitly IsXcodeManaged=true. Matching certificate membership does not establish that Xcode will accept this profile with CODE_SIGN_STYLE=Manual. No archive/signing attempt was made; preserve any selection error without downloading/replacing profiles."
+}

@@ -49,11 +49,11 @@
   ],
   "scope" : "Synthetic temporary archives; no GUI, real archive, network, clipboard or notifications",
   "seconds" : {
-    "backupRestoreSeconds" : 22.605246067047119,
-    "injectedRecoverySeconds" : 0.45292699337005615,
-    "mixedStressSeconds" : 31.823137998580933,
-    "processKillRecoverySeconds" : 0.18115496635437012,
-    "totalSeconds" : 32.459733009338379
+    "backupRestoreSeconds" : 25.321791052818298,
+    "injectedRecoverySeconds" : 0.44453597068786621,
+    "mixedStressSeconds" : 35.159868001937866,
+    "processKillRecoverySeconds" : 0.18733608722686768,
+    "totalSeconds" : 35.794458031654358
   },
   "seed" : "240454283431941",
   "status" : "passed"

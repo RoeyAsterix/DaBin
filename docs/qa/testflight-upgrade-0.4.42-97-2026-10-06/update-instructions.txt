@@ -1,0 +1,12 @@
+DaBin TestFlight update — existing internal testers
+
+1. In the current DaBin app on the Mac being updated, choose ••• → Back up archive… and save a backup on that Mac. Do not delete the app or its Library/Containers data.
+2. Once build0.4.42(97) is marked Testing for the existing Personal Testing group, open TestFlight on the same Mac/account already testing DaBin. Choose DaBin → Update. Apple also supports Automatic Updates under the app’s App Settings.
+3. Open DaBin and verify your existing captures, projects, tasks, attachments and drafts. Existing off/paused Auto Capture and optional preview preferences should carry forward.
+4. Keep the pre-update backup. Do not select build86 again after saving in build97: downgrade of newly saved schema11 captures is unsupported.
+
+The update uses the existing app record6815956446, bundlecom.dabin.mac and team8QG4967CSU. It does not create a separate app or reset the archive. This preserves each Mac’s existing local archive; the same Apple Account does not sync DaBin data between Macs.
+
+Availability requires completed Apple signing, upload, processing and assignment to the existing tester group. A prepared local build is not proof that TestFlight currently offers Update.
+
+Apple instructions: https://testflight.apple.com/

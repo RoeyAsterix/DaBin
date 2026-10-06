@@ -1,0 +1,9 @@
+Compiling direct Release test module (140 production sources)…
+PASSED ProjectWorkspaceStateTests: PASS: 304 project-workspace checks; stable ordering, scoped selection, calendar day/week filters, complete project counts, backup-compatible persistence, atomic task conversion, inherited ownership and guarded undo.
+PASSED ProjectWorkspaceViewTests: PASS: 762 project workspace UI checks; 1,000 synthetic text captures plus image and editable project note; native mixed-selection drag payloads on a private pasteboard; no personal archive, network, general clipboard or external opening. At most 27 simultaneously materialized native rows.
+PASSED NavigationHistoryTests: PASS: 123 bounded history, branch, project, draft, search, deletion and navigation safety checks
+/var/folders/qy/zfgc4dgx02x2k_c04330ghy00000gn/T/dabin-header-qa-_50zx688/DaBin Header QA.app/Contents/Frameworks/libDaBinTestCore.dylib: replacing existing signature
+/var/folders/qy/zfgc4dgx02x2k_c04330ghy00000gn/T/dabin-header-qa-_50zx688/DaBin Header QA.app: replacing existing signature
+PASSED HeaderInteractionTests: PASS: 326 native labeled-header accessibility and interaction checks
+PASSED WorkspaceWindowTests: PASS: 876 native workspace interaction and responsive layout checks
+QA direct passed: 5/5 requested suites passed. Report: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/runs/20261005T185126089570Z-direct/report.json

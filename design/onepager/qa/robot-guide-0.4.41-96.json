@@ -1,0 +1,30 @@
+{
+  "version": "0.4.41",
+  "build": "96",
+  "result": "PASS",
+  "recordedUTC": "2026-10-06T03:26:45.783131+00:00",
+  "pdf_sha256": "1510c0cd35698ff1e9e47fff809398095e8acae6a95273ee1cabe1d81bc7f24a",
+  "page_count": 2,
+  "page_size": "A4 landscape",
+  "native_asset_hash_check": "PASS",
+  "current_native_source_hash_check": "PASS",
+  "visual_review": "PASS: both final Poppler pages opened at original resolution. Current Captions/Tasks labels, readable customer copy, complete robot/project hero, current Search date columns, unobstructed controls/callout endpoints, priority wording and footers; no clipping, overlap or unexpected page breaks.",
+  "inspectedPages": [
+    {
+      "page": 1,
+      "path": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/tmp/pdfs/guide-0.4.41-96-render-2/page-1.png",
+      "sha256": "1e8e3cc4c757813bc6de626606fec4a0972dd31b22f29fdec5a965534198127f",
+      "finding": "Project picker/main-tabs/Search/export callouts point to current controls without crossing label text."
+    },
+    {
+      "page": 2,
+      "path": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/tmp/pdfs/guide-0.4.41-96-render-2/page-2.png",
+      "sha256": "e34358bc2d4dd2e16fe31d496a1288412690091a287baaeb6fc8997576e678f1",
+      "finding": "Search excerpt and three habits readable; auto-capture/privacy/motion copy and both footer lines fit."
+    }
+  ],
+  "guideAssetsManifestSHA256": "e7dd19182c2b2df1b156f02361043dae7a89de1de86c8f5c838a61e2360abf4b",
+  "guideNativeSourceManifestSHA256": "cc19396594dbb8e34db8df83780807d0425809c0a3d3efc2785f73ca45e6c2be",
+  "guideCopySourceSHA256": "a2df051953e4d165dd49991ff169a4522934eb4634ddaa472c27b678fe4f7527",
+  "scope": "Customer guide from source-matched Store QA module fixtures; no distribution-signed acceptance claim."
+}

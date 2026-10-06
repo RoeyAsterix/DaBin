@@ -1,19 +1,31 @@
 # DaBin App Store Connect preparation
 
-## Current candidate — 0.4.31 (86), 4 October 2026
+## Current source candidate —0.4.43 (98), 6 October 2026
 
-This is a local preparation draft. Nothing has been uploaded, submitted or released by this preparation. The canonical current copy is [metadata-en-US.json](metadata-en-US.json); use it instead of the historical copy below.
+The current listing JSON targets 0.4.43 (98). Auto Capture Pause hides robot/sign/save feedback and expanded-board decoration immediately while leaving workspace content usable. Timer reminders remain pending until Resume. Eleven affected Store Release suites and the exact uploaded 86→98 fictional data upgrade/save/two-reopen fixture pass. [Validated scope](../qa/testflight-upgrade-0.4.43-98-2026-10-06/validation-summary.json).
 
-- [Current QA and blocking gates](../qa/app-store-preparation-2026-10-04/README.md)
-- [Apple requirements audit](APPLE_REQUIREMENTS_2026-10-04.md)
-- [Current native screenshot drafts](screenshots/0.4.31-86/README.md)
-- [Signing/export options](../qa/app-store-preparation-2026-10-04/ExportOptions-PENDING-SIGNING.plist)
+The signed archive attempt compiled to CodeSign and was stopped awaiting human macOS signing authorization. Build 98 has not been uploaded, processed or assigned to internal testers; no public App Store review was submitted. The last verified Personal Testing build is0.4.31 (86). [Current signing and upload status](../qa/testflight-upgrade-0.4.43-98-2026-10-06/status.json), [release notes](../RELEASE_NOTES_0.4.43.md).
 
-The owner still needs to supply the legal/copyright holder, public support contact, private App Review contact, price, territories, release method and EU trader status. Do not infer these from the signing certificate. Check agreements, app record/build availability, age rating, privacy, encryption and rights in App Store Connect. Do not enter private App Review contact information into a public repository.
+The delivered Word/PDF/content pack and screenshots below were rendered for 0.4.41 (96) and remain historical review drafts. They do not establish signed-build 98 parity. The 6 October privacy changes, current copy, signed runtime/device acceptance and owner declarations must be reconciled before any public review submission. Prior strict zoom performance remains an open gate.
 
-The current editable [App Store content document](submission-pack-0.4.31-86/DaBin-App-Store-Content.docx) assembles the listing, reviewer notes, native screenshot pages, owner fields, support copy and full privacy policy. Its [companion folder](submission-pack-0.4.31-86/) contains the original PNGs and plain text fields. The [updated Quick Guide](../DaBin-Quick-Guide.pdf) explains the 0.4.31 interface. These are prepared content assets; the release gates below remain open.
 
-The bundled 4 October policy needs publication before submission; existing privacy/support URLs are reachable, but contact adequacy remains pending. Complete signed-app acceptance, distribution export/validation and screenshot comparison before upload. The pending export options specify local export and no upload.
+## Historical 0.4.41 (96) review-pack preparation
+
+Prepared 6 October 2026 locally. Apple references were verified 5 October 2026 UTC. The canonical draft copy is [metadata-en-US.json](metadata-en-US.json). The planned candidate incorporates the compact Captions, Tasks and Projects controls, day/week project date picker, selected-items ZIP export and clickable companion. Production source is locked by the [final candidate freeze](../qa/full-review-2026-10-05/final-candidate/source-freeze.json). The final full Store QA run is complete with one performance failure; supplemental checks and asset regeneration remain pending. This preparation performs no upload, submission or publication.
+
+The [final Release app-store QA report](../../native/build/qa/runs/20261005T213352249116Z-app-store/report.json) passes 125 of 126 suites with unchanged source inputs. Workspace Zoom Performance is the only failure: the [30-second synthetic native fixture](../qa/full-review-2026-10-05/final-store/zoom-performance/performance.json) records input-to-layout p95 of 51.3154 ms against the unchanged 50 ms budget and steady zoom timer p95 of 61.2394 ms against 33 ms. These measurements do not establish physical input-to-display latency or the separate 600-second stress result. The [sequential supplement plan](../qa/full-review-2026-10-05/supplement-plan.json) covers that longer run, the unsigned Release build, XCTest, enforced sandbox and privacy renders; results remain pending.
+
+Live note accessibility/content regression verification passed. The earlier integration failure concerned observing the displayed excerpt through its explicit AX action label; visual staleness was not established. Frozen production exposes displayed non-media text as its AX value. The [focused direct-channel functional report](../../native/build/qa/runs/20261005T213022192993Z-direct/report.json) passes all three selected suites with unchanged inputs: Project Workspace View (918 checks), Project Workspace Card (782) and Native Content Drag (38). The final full Store run also passes those functional suites. Strict performance, supplemental, physical input/drop, signing and owner requirements remain release gates. This candidate is a draft with `submissionReady: false`. [Prepared asset and authoring arguments](../qa/full-review-2026-10-05/review-pack-authoring-plan.json) pin the exact Store module and failed QA result; native exports and final artifact authoring remain paused until the coordinated asset stage is released.
+
+Use the parameterized [local asset workflow](../../design/app-store-pack/README.md) after coordinated Store-channel QA. It generates fictional native screenshots, refreshes the two-page customer guide and creates a new versioned content pack. Preserve the existing [0.4.31 content pack](submission-pack-0.4.31-86/) and [0.4.31 screenshot set](screenshots/0.4.31-86/README.md) as historical material. The delivered [Quick Guide PDF](../DaBin-Quick-Guide.pdf) was rebuilt and visually reviewed for 0.4.41 (96); it remains a historical review draft pending final current signed-build parity.
+
+Current copy instructions are single-click opening and **Export Selected** for checked items only. Manual companion movement follows the pointer near the selected edge or island. Successful automatic saves use generic acknowledgements, with rapid saves sharing a count. Quiet mode and Reduce Motion use a static expression. Active recording status can show the destination project. While Auto Capture is paused, the robot and sign remain hidden. Timer alarms can show the first three task-title words locally after Resume.
+
+The owner still needs to provide the legal/copyright holder, public support URL/contact, private App Review contact, price, territories, release method and EU trader status. Keep private review details out of a public repository. Confirm agreements, the app record/build availability, age rating, privacy, encryption and rights in App Store Connect rather than inferring them from signing certificates.
+
+The bundled privacy policy is **Updated 5 October 2026**. The [local publication copy](privacy-policy-2026-10-05.md) matches its current bytes. The public URL returns HTTP 200 but still serves the **4 October** text, so publication and byte-for-byte parity remain pending. No policy publication is performed here.
+
+Before submission, publish and verify parity with the final bundled policy, prepare and validate the exact distribution-signed package, finish signed fresh-install/upgrade and supported-OS checks, and compare each screenshot with that app. The [4 October requirements audit](APPLE_REQUIREMENTS_2026-10-04.md) is historical evidence and needs a current candidate-specific refresh. Current tests or screenshot drafts do not establish Apple approval.
 
 ## Historical preparation — superseded copy and evidence
 

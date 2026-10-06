@@ -1,0 +1,102 @@
+{
+  "verifiedAtUTC": "2026-10-05T18:10:02.905083+00:00",
+  "version": "0.4.35",
+  "buildNumber": "90",
+  "sourceFingerprint": "29a150433f1fa4ca160e650969937b7da2e2bc4e97e39f8f71b9c74909280131",
+  "changes": [
+    "Project type/date/list controls share one toolbar row with Export and actions.",
+    "Newest-first ordering is unconditional; manual sorting and reordering actions are removed.",
+    "Standalone Inbox/Captions Note editor button removed; project notes and quick capture drafts preserved."
+  ],
+  "validation": {
+    "suites": {
+      "ProjectWorkspaceStateTests": {
+        "report": "second-qa-report.json",
+        "status": "passed",
+        "currentProductionAndOwnTestInputsVerified": true,
+        "summary": "PASS: 265 project-workspace checks; stable ordering, scoped selection, complete project counts, backup-compatible persistence, atomic task conversion, inherited ownership and guarded undo."
+      },
+      "ProjectWorkspaceExportTests": {
+        "report": "second-qa-report.json",
+        "status": "passed",
+        "currentProductionAndOwnTestInputsVerified": true,
+        "summary": "PASS: 49 project ZIP, ordering, metadata, notes, scope, safe publication, missing-original, and private clipboard checks"
+      },
+      "ProjectWorkspaceCardTests": {
+        "report": "second-qa-report.json",
+        "status": "passed",
+        "currentProductionAndOwnTestInputsVerified": true,
+        "summary": "PASS: 782 project card checks; Task/Note/Capture semantics, real live task updates, light/dark/grid/320-point compact fixtures, original previews and independent selection; no personal archive, clipboard, network, or external opening."
+      },
+      "NavigationHistoryTests": {
+        "report": "second-qa-report.json",
+        "status": "passed",
+        "currentProductionAndOwnTestInputsVerified": true,
+        "summary": "PASS: 123 bounded history, branch, project, draft, search, deletion and navigation safety checks"
+      },
+      "WorkspaceWindowTests": {
+        "report": "second-qa-report.json",
+        "status": "passed",
+        "currentProductionAndOwnTestInputsVerified": true,
+        "summary": "PASS: 327 native workspace interaction and responsive layout checks"
+      },
+      "LocalFileLocationTests": {
+        "report": "second-qa-report.json",
+        "status": "passed",
+        "currentProductionAndOwnTestInputsVerified": true,
+        "summary": "PASS: 94 local-folder resolution, project scope, native button, read-only byte preservation, and failure-feedback checks"
+      },
+      "WorkspaceZoomLayoutTests": {
+        "report": "second-qa-report.json",
+        "status": "passed",
+        "currentProductionAndOwnTestInputsVerified": true,
+        "summary": "PASS: 806 workspace zoom layout checks; finite metrics, logical columns, pointer/item anchoring, history offset, native cards at 75/100/150/200%"
+      },
+      "ProjectBrowsingNavigationTests": {
+        "report": "second-qa-report.json",
+        "status": "passed",
+        "currentProductionAndOwnTestInputsVerified": true,
+        "summary": "PASS: 74 native project browsing checks; real Board All/Unfiled/named history, native cross-project Notes/retry, late-blocked selection/creation and metadata-filing isolation"
+      },
+      "ProjectWorkspaceViewTests": {
+        "report": "toolbar-qa-report.json",
+        "status": "passed",
+        "currentProductionAndOwnTestInputsVerified": true,
+        "summary": "PASS: 476 project workspace UI checks; 1,000 synthetic text captures plus image and editable project note; native mixed-selection drag payloads on a private pasteboard; no personal archive, network, general clipboard or external opening. At most 27 simultaneously materialized native rows."
+      },
+      "CardDeletionInteractionTests": {
+        "report": "deletion-qa-report.json",
+        "status": "passed",
+        "currentProductionAndOwnTestInputsVerified": true,
+        "summary": ""
+      }
+    },
+    "coverage": "10 focused direct Release suites, aggregated from matching-input runs; not a full QA or App Store validation.",
+    "visualReview": [
+      "project-renders/project-grid-wide@2x.png",
+      "project-renders/project-selected-narrow@2x.png"
+    ],
+    "widthsTested": [
+      320,
+      400,
+      760,
+      1080
+    ],
+    "installedSignatureAndExecutableHashes": "passed",
+    "archiveMetadataBeforeAfterInstaller": "identical",
+    "installedUI": {
+      "projectToolbarControlsVerified": true,
+      "sortControlAbsent": true,
+      "standaloneNoteEditorAbsent": true,
+      "quickCapturePreserved": true,
+      "projectOpened": true
+    }
+  },
+  "repairs": [
+    "Added full content shapes to icon controls.",
+    "Toolbar tests distinguish standard native menu bounds from button hit targets.",
+    "Deletion test waits for asynchronous removal completion before checking unchanged preservation assertions."
+  ],
+  "installedApp": "/Users/roeylibfeld/Applications/DaBin.app",
+  "previousAppBackup": "/Users/roeylibfeld/Applications/.DaBinBackups/20261005-210824-5c92c454.app"
+}

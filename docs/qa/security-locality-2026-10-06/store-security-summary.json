@@ -1,0 +1,14 @@
+{
+  "uniquePassingSuites": 36,
+  "initialRequested": 36,
+  "initialPassed": 35,
+  "initialFailure": "PreviewLifecycleTests wrapper compile error (wrong test-only API reference)",
+  "repairReceipt": "docs/qa/security-locality-2026-10-06/test-repair.json",
+  "correctedPreviewPassed": true,
+  "reports": [
+    "native/build/qa/runs/20261006T040402454751Z-app-store/report.json",
+    "native/build/qa/runs/20261006T040854038733Z-app-store/report.json"
+  ],
+  "productionUnchanged": true,
+  "coverage": "Selected security/storage/capture/search/export/stress/drag suites; not full registered application QA"
+}

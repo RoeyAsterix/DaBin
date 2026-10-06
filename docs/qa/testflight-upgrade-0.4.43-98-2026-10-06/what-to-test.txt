@@ -1,0 +1,11 @@
+DaBin 0.4.43 (98)
+
+Update your existing DaBin installation through TestFlight without deleting it. Before updating, make a local archive backup using DaBin’s ••• → Back up archive… menu; keep it on your Mac. Verify existing captures, projects, task notes, priorities, attachments, saved drafts and search after updating. Auto Capture should preserve its prior off/paused state. Website previews remain optional.
+
+After updating, do not switch back to build86: the older app cannot read newly saved schema11 captures. Keep the pre-update backup for recovery.
+
+Pausing Auto Capture hides the robot and its destination sign immediately, including hover and in-flight gestures. Resume restores the active companion. Timers keep running while the robot is hidden; outstanding robot alerts appear after Resume. Please test Pause and Resume at different screen placements.
+
+This build adds clipboard privacy guards, local file and backup protections, stricter preview consent and security fixes. It includes compact Captions/Tasks/Projects controls, selected-item export and companion gestures. Test manual save/search, export selected items, and external dragging with fictional content. Known limitation: strict zoom timing targets remain unmet under stress.
+
+This is internal beta testing; it is not a public App Store release.

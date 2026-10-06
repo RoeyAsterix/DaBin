@@ -11,30 +11,30 @@
       0.035
     ],
     "3": [
-      -0.035,
-      0.216
+      0.82,
+      0.026
     ],
     "4": [
       1.025,
-      0.216
+      0.185
     ]
   },
   "project_callout_targets": {
     "1": [
-      0.24,
-      0.075
+      0.238,
+      0.078
     ],
     "2": [
       0.51,
       0.145
     ],
     "3": [
-      0.036,
-      0.216
+      0.802,
+      0.086
     ],
     "4": [
-      0.95,
-      0.216
+      0.91,
+      0.194
     ]
   },
   "step_crops": {
@@ -48,20 +48,24 @@
       0.026,
       0.438,
       0.398,
-      0.866
+      0.766
     ],
     "DABIN__GUIDE__TASK.png": [
       0.04,
-      0.27,
+      0.54,
       0.965,
-      0.448
+      0.835
     ],
     "DABIN__GUIDE__SEARCH.png": [
       0.02,
       0.125,
       0.98,
-      0.585
+      0.58
     ]
   },
-  "coordinate_note": "Normalized top-left PNG coordinates for verified 0.4.31 native renders. PDF clipping preserves source PNGs. Numbered callouts identify the picker, main tabs, Search everything and project actions next to Export project; markers avoid readable controls. Screen excerpts are illustrative; adjacent prose supplies instructions."
+  "coordinate_note": "Normalized top-left PNG coordinates measured against the original-resolution 0.4.41 (96) Store QA-module renders. Callouts point to the project picker, main tabs, top-right Search icon and compact Export Selected; badges avoid readable controls. Search clipping preserves the search input, two newest date headers and actual match titles. Other source crops retain relevant saved card/input/focus controls and are available for reuse; the current two-page guide uses the project hero and Search crop. Source PNGs remain unmodified. First PDF inspection corrected the labels to Captions/Tasks and moved leader endpoints to the picker arrow and upper export-button edge to keep label text clear.",
+  "version": "0.4.41",
+  "build": "96",
+  "visualReview": "PASS: all five original-resolution assets inspected, with readable current UI and complete robot artwork. Compact narrow views intentionally scroll; no screenshot certification against a distribution-signed app.",
+  "visualReviewRecordedUTC": "2026-10-06T03:18:16.496682+00:00"
 }

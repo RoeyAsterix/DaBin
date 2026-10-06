@@ -1,5 +1,5 @@
 {
-  "checks" : 560,
+  "checks" : 599,
   "fixtures" : [
     {
       "bodyFrame" : "{{-9976.5, -10243}, {333, 879}}",
@@ -270,8 +270,14 @@
       "contentBounds" : "{{-9984, -10000}, {348, 900}}",
       "context" : "detail-integration",
       "detailFrame" : "{{-10000, -10000}, {380, 900}}",
-      "inferredPanelHorizontalBounds" : "{{-9984, -10056}, {348, 297.5}}",
-      "nativeScrollFrame" : "{{-9972, -10056}, {324, 297.5}}",
+      "inferredPanelHorizontalBounds" : "{{-9984, -9575.5}, {348, 227.5}}",
+      "moreActionIDs" : [
+        "detail-action-open-original",
+        "detail-action-folder",
+        "capture-trash-6C8D31A9-1FB0-4B08-BB48-1178B996B434"
+      ],
+      "moreFrame" : "{{-9796.5, -9240}, {70.5, 32}}",
+      "nativeScrollFrame" : "{{-9972, -9575.5}, {324, 227.5}}",
       "readerFontPoints" : 15,
       "viewportWidth" : 380,
       "zoom" : 1
@@ -281,8 +287,14 @@
       "contentBounds" : "{{-9968, -10000}, {536, 900}}",
       "context" : "detail-integration",
       "detailFrame" : "{{-10000, -10000}, {600, 900}}",
-      "inferredPanelHorizontalBounds" : "{{-9968, -10191}, {536, 297.5}}",
-      "nativeScrollFrame" : "{{-9944, -10191}, {488, 297.5}}",
+      "inferredPanelHorizontalBounds" : "{{-9968, -9581}, {536, 233}}",
+      "moreActionIDs" : [
+        "detail-action-open-original",
+        "detail-action-folder",
+        "capture-trash-6C8D31A9-1FB0-4B08-BB48-1178B996B434"
+      ],
+      "moreFrame" : "{{-9757, -9225}, {79, 32}}",
+      "nativeScrollFrame" : "{{-9944, -9581}, {488, 233}}",
       "readerFontPoints" : 17,
       "viewportWidth" : 600,
       "zoom" : 2
@@ -292,8 +304,14 @@
       "contentBounds" : "{{-9976, -10000}, {1152, 900}}",
       "context" : "detail-integration",
       "detailFrame" : "{{-10000, -10000}, {1200, 900}}",
-      "inferredPanelHorizontalBounds" : "{{-9976, -10068}, {1152, 297.5}}",
-      "nativeScrollFrame" : "{{-9964, -10068}, {1128, 297.5}}",
+      "inferredPanelHorizontalBounds" : "{{-9976, -9566}, {1152, 233}}",
+      "moreActionIDs" : [
+        "detail-action-open-original",
+        "detail-action-folder",
+        "capture-trash-6C8D31A9-1FB0-4B08-BB48-1178B996B434"
+      ],
+      "moreFrame" : "{{-9788.5, -9225}, {70.5, 32}}",
+      "nativeScrollFrame" : "{{-9964, -9566}, {1128, 233}}",
       "readerFontPoints" : 17,
       "viewportWidth" : 1200,
       "zoom" : 1

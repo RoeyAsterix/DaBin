@@ -1,0 +1,13 @@
+{
+  "recordedUTC": "2026-10-06T04:28:07.767947+00:00",
+  "isolatedTestsExactRootDigestsUnchanged": true,
+  "installPeriodRootDigestEquality": false,
+  "fileCountAndByteCountUnchanged": true,
+  "modifiedFileTimestampClassification": {
+    "count": 1,
+    "allKnownDraftRecoveryFile": true,
+    "bytes": 931,
+    "lastWriteUTC": "2026-10-06T04:22:28.569710+00:00"
+  },
+  "qualification": "The active aggregate root digest changed across a normal quit of the old app. Drafts.json is the only regular file with a write timestamp between post-test and post-install hashing. Draft persistence runs during orderly quit. No committed-capture/original modification action was performed. Baseline receipts retain aggregate hashes only, so full post-install byte identity is not certified. Build97 intentionally tightens managed directory modes at launch. The inactive legacy archive aggregate bytes/structure matched before and after installation."
+}

@@ -1,0 +1,6 @@
+/var/folders/qy/zfgc4dgx02x2k_c04330ghy00000gn/T/dabin-update-package-rd5ikkm7/DaBin-0.4.42-Update/DaBin Update.app: replacing existing signature
+Installed DaBin 0.4.42 (97) at /var/folders/qy/zfgc4dgx02x2k_c04330ghy00000gn/T/dabin-update-package-rd5ikkm7/qa-home/Applications/DaBin.app
+Installed DaBin 0.4.42 (97) at /var/folders/qy/zfgc4dgx02x2k_c04330ghy00000gn/T/dabin-update-package-rd5ikkm7/qa-home/Applications/DaBin.app
+Previous app backed up at /var/folders/qy/zfgc4dgx02x2k_c04330ghy00000gn/T/dabin-update-package-rd5ikkm7/qa-home/Applications/.DaBinBackups/20261006-071753-FD726441.app
+Created and verified /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/../docs/qa/security-locality-2026-10-06/DaBin-0.4.42-Update.zip
+Updater QA passed fresh install, replacement, backup, signature and hash checks.

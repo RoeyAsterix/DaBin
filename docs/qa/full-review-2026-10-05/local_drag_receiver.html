@@ -1,0 +1,39 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; connect-src 'none'; img-src 'none'; media-src 'none'; object-src 'none'; frame-src 'none'; form-action 'none'; base-uri 'none'">
+<title>DaBin fictional local drag receiver</title>
+<style>
+body { max-width: 850px; margin: 36px auto; padding: 20px; font: 18px system-ui; color: #222; background: #fafafa; }
+#drop { padding: 55px 25px; border: 3px dashed #6d5089; border-radius: 12px; background: #f0eaf8; }
+pre { white-space: pre-wrap; overflow-wrap: anywhere; padding: 20px; background: white; border: 1px solid #ddd; }
+</style>
+<h1>Fictional local drag receiver</h1>
+<p>This file has no network requests, uploads, clipboard APIs, links or persistence. It displays only explicitly dropped fictional data in this tab.</p>
+<div id="drop" role="region" aria-label="Drop fictional DaBin samples here">Drop the fictional note, link, file or mixed selection here.</div>
+<pre id="result" role="status">No drop received.</pre>
+<script>
+let sequence = 0;
+document.addEventListener('dragover', event => { event.preventDefault(); event.dataTransfer.dropEffect = 'copy'; });
+document.addEventListener('drop', async event => {
+  event.preventDefault();
+  event.stopPropagation();
+  const current = ++sequence;
+  const transfer = event.dataTransfer;
+  const text = transfer.getData('text/plain');
+  const uri = transfer.getData('text/uri-list');
+  const types = Array.from(transfer.types);
+  const files = Array.from(transfer.files);
+  const result = {drop: current, types, text, uri, noteExact: text === 'Fictional DaBin note', files: []};
+  for (const file of files) {
+    const entry = {name: file.name, type: file.type, size: file.size};
+    if (file.size <= 1048576) {
+      const bytes = new Uint8Array(await file.arrayBuffer());
+      const expected = new TextEncoder().encode('Fictional DaBin attachment for native drag QA.\n');
+      entry.fixtureBytesExact = bytes.length === expected.length && bytes.every((byte, index) => byte === expected[index]);
+      entry.content = new TextDecoder().decode(bytes);
+    } else { entry.readSkipped = 'File exceeds the 1 MiB fictional-fixture bound'; }
+    result.files.push(entry);
+  }
+  if (current === sequence) document.getElementById('result').textContent = JSON.stringify(result, null, 2);
+});
+</script>

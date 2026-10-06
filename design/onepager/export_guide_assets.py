@@ -19,13 +19,19 @@ def digest(path):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--render', action='store_true', required=True, help='Render only after coordinated QA')
+    parser.add_argument('--version', help='Expected version; defaults to copy.json')
+    parser.add_argument('--build', help='Expected build; defaults to copy.json')
+    parser.add_argument('--output-dir', type=Path, default=HERE / 'assets')
     parser.add_argument('--native-root', type=Path, default=ROOT / 'native',
                         help='Production source root. Select a verified frozen candidate explicitly.')
     parser.add_argument('--module-cache', type=Path,
                         help='Exact QA cache directory; otherwise choose the newest matching receipt.')
-    parser.add_argument('--distribution', choices=['direct', 'app-store'], default='direct')
+    parser.add_argument('--distribution', choices=['direct', 'app-store'], default='app-store')
     args = parser.parse_args()
     native = args.native_root.resolve()
+    if not native.is_relative_to(ROOT / 'native'):
+        raise SystemExit('Choose the project native root or an explicitly frozen descendant.')
     # Import the inventory from the chosen root, never from the changing workspace.
     spec = importlib.util.spec_from_file_location('guide_project_inventory', native / 'scripts/project_inventory.py')
     inventory = importlib.util.module_from_spec(spec)
@@ -36,7 +42,8 @@ def main():
     info_hash = digest(info_path)
     info = plistlib.loads(info_path.read_bytes())
     copy = json.loads((HERE / 'copy.json').read_text())
-    if (info['CFBundleShortVersionString'], info['CFBundleVersion']) != (copy['version'], copy['build']):
+    if ((args.version or copy['version'], args.build or copy['build']) != (copy['version'], copy['build'])
+            or (info['CFBundleShortVersionString'], info['CFBundleVersion']) != (copy['version'], copy['build'])):
         raise SystemExit('Copy version/build must match the explicitly selected native source.')
     stamps = [args.module_cache.resolve() / 'module-ready.json'] if args.module_cache else (native / 'build/qa-cache').glob('*/module-ready.json')
     verified = []
@@ -60,18 +67,19 @@ def main():
         raise SystemExit('No matching hash-verified Release QA module for the selected source and channel.')
     _, stamp, receipt = max(verified, key=lambda item: item[0])
     cache = stamp.parent
-    destination = native / 'build/guide-export'
+    destination = ROOT / f"tmp/app-store-assets/{copy['version']}-{copy['build']}/guide"
     destination.mkdir(parents=True, exist_ok=True)
     for resource in inventory.resources():
         shutil.copyfile(resource, destination / resource.name)
     executable = destination / 'ExportGuide'
     command = ['xcrun', 'swiftc', '-swift-version', '5', '-target', inventory.TARGET,
-        '-module-cache-path', str(native / 'build/ModuleCache'), '-warnings-as-errors', '-O',
+        '-module-cache-path', str(destination / 'ModuleCache'), '-warnings-as-errors', '-O',
         *[value for flag in expected_definitions for value in ('-D', flag)],
         '-parse-as-library', '-I', str(cache), '-L', str(cache), '-lDaBinTestCore',
         '-Xlinker', '-rpath', '-Xlinker', str(cache), str(HERE / 'ExportGuide.swift'), '-o', str(executable)]
     subprocess.run(command, cwd=native, check=True)
-    output = HERE / 'assets'
+    output = args.output_dir.resolve()
+    output.mkdir(parents=True, exist_ok=True)
     subprocess.run([str(executable), str(output)], cwd=native, check=True, timeout=90)
     if (inventory.hashes(inventory.sources(False)) != current_sources
             or inventory.hashes(inventory.resources()) != current_resources or digest(info_path) != info_hash):
@@ -85,7 +93,7 @@ def main():
         'sourceSHA256': current_sources, 'resourceSHA256': current_resources, 'infoSHA256': info_hash,
         'exportSourceSHA256': digest(HERE / 'ExportGuide.swift'),
         'exportScriptSHA256': digest(Path(__file__)),
-        'verifiedModuleReceipt': str(stamp.relative_to(native)), 'verifiedModuleReceiptSHA256': digest(stamp),
+        'verifiedModuleReceipt': str(stamp.relative_to(native)) if stamp.is_relative_to(native) else str(stamp), 'verifiedModuleReceiptSHA256': digest(stamp),
         'moduleOutputs': receipt['outputs'], 'compilerArguments': command,
         'assetsSHA256': {path.name: digest(path) for path in sorted(output.glob('DABIN__GUIDE__*.png'))},
         'nativeRenderManifestSHA256': digest(output / 'guide-native-renders.json'),

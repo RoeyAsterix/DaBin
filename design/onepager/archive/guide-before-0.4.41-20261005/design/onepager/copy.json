@@ -1,0 +1,70 @@
+{
+  "version": "0.4.31",
+  "build": "86",
+  "headline": "A little robot for the useful bits of your day.",
+  "description": "DaBin keeps your ideas, links, images and files together on your Mac. Drop something onto the robot, keep it with a project, and find it again when you need it.",
+  "page_one": {
+    "eyebrow": "MEET YOUR QUIET HELPER",
+    "title": "Hi, I'm DaBin.",
+    "intro": "I keep the useful bits of your day - an idea, a link, an image or a file - so you can find them again and get back to work.",
+    "quick_start": "Find me in a screen corner. Drop something onto me, press Command-V while hovering, or double-click to open.",
+    "robot_bubble": "Let me show you around.",
+    "callouts": [
+      {
+        "number": 1,
+        "title": "Choose a project",
+        "body": "Keep notes, tasks, links and files together. Use All, Files or Tasks to narrow the workspace."
+      },
+      {
+        "number": 2,
+        "title": "Three places to begin",
+        "body": "Inbox catches new things. Today helps you focus. Projects keeps related work together."
+      },
+      {
+        "number": 3,
+        "title": "Search all saved work",
+        "body": "Click Search to look across your saved DaBin content, even when you start inside a project."
+      },
+      {
+        "number": 4,
+        "title": "Take work with you",
+        "body": "Export project saves a local ZIP. Select cards to export just those items. The nearby menu opens the project folder in Finder."
+      }
+    ],
+    "meet_title": "Catch me in a corner.",
+    "meet_body": "Move your pointer to a screen corner. Drop something onto my body, or hover over me and press Command-V. Double-click me to open DaBin.",
+    "island_note": "Prefer the camera island? Choose it in Settings. On other displays, I'll use the top-right corner."
+  },
+  "page_two": {
+    "eyebrow": "A FEW EASY HABITS",
+    "title": "Save it. Find it. Pick it up again.",
+    "subtitle": "Three small habits, plus a little help when you want it.",
+    "steps": [
+      {
+        "number": 1,
+        "title": "Find it by a few words.",
+        "body": "In Search, type or paste a word. Matches line up in date columns, newest first. Use filters when you want to narrow things down.",
+        "tip": "Search covers your saved content. Files can contribute locally extracted text when available."
+      },
+      {
+        "number": 2,
+        "title": "Save now. Sort later.",
+        "body": "Drop or paste something into Inbox. Open a card to add a comment or choose its project.",
+        "tip": "Drag a card preview, title or caption into an app that accepts that content. Your saved original stays here."
+      },
+      {
+        "number": 3,
+        "title": "Give one task your attention.",
+        "body": "Click + to open New task. Priority tags go from green (Low), through amber (Medium), to red (High).",
+        "tip": "Set a focus time and press Play. When time is up, the robot reminds you; mark the task done when you finish."
+      }
+    ],
+    "auto_title": "A little help saving? Your choice.",
+    "auto_body": "Auto Capture is off by default. In Settings, choose Clipboard, Screenshots, or both; screenshots need a folder you select. It saves new changes, not a recording of your screen.",
+    "auto_tip": "When running, the header's red dot grows; it dances unless Reduce Motion is on. Check Destination; pause anytime.",
+    "comfort_title": "Make yourself comfortable.",
+    "comfort_body": "Drag an empty spot at the top to move between monitors. Resize from an edge or use Expand. Saved content stays on this Mac. Website previews are optional.",
+    "privacy_title": "Your things stay on your Mac.",
+    "privacy_body": "No account or cloud sync. Link previews only contact websites if you turn them on."
+  }
+}

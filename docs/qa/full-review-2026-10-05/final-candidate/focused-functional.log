@@ -1,0 +1,5 @@
+Compiling direct Release test module (141 production sources)…
+PASSED ProjectWorkspaceViewTests: PASS: 918 project workspace UI checks; 1,000 synthetic text captures plus image and editable project note; retained-host live zoom, observable edits and replacement identities; native mixed-selection drag payloads on a private pasteboard; no personal archive, network, general clipboard or external opening. At most 27 simultaneously materialized native rows.
+PASSED ProjectWorkspaceCardTests: PASS: 782 project card checks; Task/Note/Capture semantics, real live task updates, light/dark/grid/320-point compact fixtures, original previews and independent selection; no personal archive, clipboard, network, or external opening.
+PASSED NativeContentDragTests: PASS: 38 native content drag checks; clicks, mixed native items, copy-only external transfers and source preservation.
+QA direct passed: 3/3 requested suites passed. Report: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/runs/20261005T213022192993Z-direct/report.json

@@ -1,0 +1,9 @@
+Compiling direct Release test module (140 production sources)…
+PASSED ProjectWorkspaceStateTests: PASS: 304 project-workspace checks; stable ordering, scoped selection, calendar day/week filters, complete project counts, backup-compatible persistence, atomic task conversion, inherited ownership and guarded undo.
+FAILED ProjectWorkspaceViewTests: Project workspace view QA failed: Error Domain=ProjectWorkspaceViewTests Code=493 "Calendar control project-date-any has a visible usable hit target: (29.0, -9212.0, 47.5, 14.0)" UserInfo={NSLocalizedDescription=Calendar control project-date-any has a visible usable hit target: (29.0, -9212.0, 47.5, 14.0)}
+PASSED NavigationHistoryTests: PASS: 123 bounded history, branch, project, draft, search, deletion and navigation safety checks
+/var/folders/qy/zfgc4dgx02x2k_c04330ghy00000gn/T/dabin-header-qa-gs5f926t/DaBin Header QA.app/Contents/Frameworks/libDaBinTestCore.dylib: replacing existing signature
+/var/folders/qy/zfgc4dgx02x2k_c04330ghy00000gn/T/dabin-header-qa-gs5f926t/DaBin Header QA.app: replacing existing signature
+PASSED HeaderInteractionTests: PASS: 326 native labeled-header accessibility and interaction checks
+PASSED WorkspaceWindowTests: PASS: 876 native workspace interaction and responsive layout checks
+QA direct failed: 4/5 requested suites passed. Report: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/runs/20261005T184620306556Z-direct/report.json

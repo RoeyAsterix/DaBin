@@ -1,0 +1,9 @@
+Compiling direct Release test module (138 production sources)…
+PASSED TaskPlanningTests: PASS: 45 task planning checks; synthetic local archive only.
+PASSED NavigationHistoryTests: PASS: 123 bounded history, branch, project, draft, search, deletion and navigation safety checks
+/var/folders/qy/zfgc4dgx02x2k_c04330ghy00000gn/T/dabin-header-qa-n3d5l6c3/DaBin Header QA.app/Contents/Frameworks/libDaBinTestCore.dylib: replacing existing signature
+/var/folders/qy/zfgc4dgx02x2k_c04330ghy00000gn/T/dabin-header-qa-n3d5l6c3/DaBin Header QA.app: replacing existing signature
+FAILED HeaderInteractionTests: Native Header QA failed: Error Domain=HeaderInteractionTests Code=1 "Shift-Tab exits shortcut capture and moves backward to the previous field" UserInfo={NSLocalizedDescription=Shift-Tab exits shortcut capture and moves backward to the previous field}
+PASSED WorkspaceWindowTests: PASS: 327 native workspace interaction and responsive layout checks
+PASSED TodayTaskCardTests: PASS: 1262 modern task card and toolbar checks; 320/380/760,75/100/200%,light/dark,compact hierarchy,focus/minimization,title/checklist,native More dispatch,receipt and reorder persistence,single-line task toolbar,native task scopes/project menu/plus. Evidence: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/tasks-toolbar-2026-10-05/task-renders
+QA direct failed: 4/5 requested suites passed. Report: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/runs/20261005T181342768179Z-direct/report.json

@@ -1,0 +1,70 @@
+{
+  "verifiedAtUTC": "2026-10-05T19:12:04.297573+00:00",
+  "version": "0.4.39",
+  "buildNumber": "94",
+  "sourceFingerprint": "ec01b05c8332d0666f05899bb28bd0b09c753929a5f193c5ed59c6b2c4f7ea32",
+  "changes": [
+    "Smaller 28-point Projects export button permanently labeled Export Selected",
+    "Export disabled until visible items are selected; empty or busy actions never invoke the save chooser",
+    "Only checked visible items are exported with selection scope; selecting all explicitly still works",
+    "Original file bytes, text, links, selected live notes and task metadata are preserved in the selected ZIP"
+  ],
+  "scope": "Four targeted native suites, not a full QA campaign or App Store validation",
+  "passingSuites": {
+    "ProjectWorkspaceStateTests": {
+      "status": "passed",
+      "summary": "PASS: 304 project-workspace checks; stable ordering, scoped selection, calendar day/week filters, complete project counts, backup-compatible persistence, atomic task conversion, inherited ownership and guarded undo.",
+      "currentInputsMatch": true
+    },
+    "ProjectWorkspaceExportTests": {
+      "status": "passed",
+      "summary": "PASS: 71 project ZIP, ordering, metadata, notes, scope, safe publication, missing-original, and private clipboard checks",
+      "currentInputsMatch": true
+    },
+    "ProjectWorkspaceViewTests": {
+      "status": "passed",
+      "summary": "PASS: 809 project workspace UI checks; 1,000 synthetic text captures plus image and editable project note; native mixed-selection drag payloads on a private pasteboard; no personal archive, network, general clipboard or external opening. At most 27 simultaneously materialized native rows.",
+      "currentInputsMatch": true
+    },
+    "WorkspaceWindowTests": {
+      "status": "passed",
+      "summary": "PASS: 876 native workspace interaction and responsive layout checks",
+      "currentInputsMatch": true
+    }
+  },
+  "totalPassingChecks": 2060,
+  "sourceChangedDuringQA": false,
+  "zipVerification": [
+    "Native button creates selected image/text/live-note ZIP with exact manifest identities and no unchecked capture files",
+    "Notes-only selected ZIP contains notes and no captures",
+    "Task-only ZIP excludes unselected attachments; attachment-only ZIP retains parent identity but excludes parent content",
+    "Missing-original, concurrent destination, and overwrite protections pass"
+  ],
+  "visualQA": {
+    "toolbarWidthsPoints": [
+      320,
+      400,
+      760,
+      1080
+    ],
+    "buttonHeightPoints": 28,
+    "fullLabelFitsNarrowWindow": true,
+    "inspectedImages": [
+      "project-renders/project-selected-narrow@2x.png",
+      "project-renders/project-grid-wide@2x.png"
+    ]
+  },
+  "installedApp": "/Users/roeylibfeld/Applications/DaBin.app",
+  "installedExecutableMatchesReceipt": true,
+  "installedUpdaterMatchesReceipt": true,
+  "strictDeepSignatureVerified": true,
+  "archiveMetadataUnchangedByInstall": true,
+  "backup": "/Users/roeylibfeld/Applications/.DaBinBackups/20261005-221057-1ffe8da9.app",
+  "runtimeVerification": {
+    "method": "CUA native accessibility inspection of the installed app",
+    "projectsShowsExportSelected": true,
+    "disabledWithNoSelection": true,
+    "help": "Select items to export a ZIP",
+    "leftOpenOn": "Projects"
+  }
+}

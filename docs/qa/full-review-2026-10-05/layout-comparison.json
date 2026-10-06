@@ -1,0 +1,77 @@
+{
+  "scope": "Unsampled original 30-second workload; no acceptance thresholds relaxed. Intermediate failed candidates retained.",
+  "measurements": [
+    {
+      "candidate": "0.4.40 baseline",
+      "inputToLayoutP95Milliseconds": 73.26966663822532,
+      "steadyZoomTimerP95Milliseconds": 81.97287493385375,
+      "coupledResizeP95Milliseconds": 65.88908331468701,
+      "performanceGates": {
+        "inputToLayoutP95MaximumMilliseconds": 50,
+        "passed": false,
+        "steadyZoomTimerP95MaximumMilliseconds": 33
+      },
+      "availableNativeRows": 5,
+      "limitations": [
+        "No physical trackpad or mouse-driver coverage",
+        "Offscreen native rendering cannot measure presentation timestamps",
+        "RSS includes the growing fixture archive, caches and retained timing arrays"
+      ],
+      "evidence": "baseline-direct/zoom-performance/performance.json"
+    },
+    {
+      "candidate": "0.4.41 title layout",
+      "inputToLayoutP95Milliseconds": 66.72308314591646,
+      "steadyZoomTimerP95Milliseconds": 77.66491663642228,
+      "coupledResizeP95Milliseconds": 59.21695823781192,
+      "performanceGates": {
+        "inputToLayoutP95MaximumMilliseconds": 50,
+        "passed": false,
+        "steadyZoomTimerP95MaximumMilliseconds": 33
+      },
+      "availableNativeRows": 5,
+      "limitations": [
+        "No physical trackpad or mouse-driver coverage",
+        "Offscreen native rendering cannot measure presentation timestamps",
+        "RSS includes the growing fixture archive, caches and retained timing arrays"
+      ],
+      "evidence": "layout-candidate-1/zoom-performance/performance.json"
+    },
+    {
+      "candidate": "0.4.41 equal-column row layout",
+      "inputToLayoutP95Milliseconds": 63.81787499412894,
+      "steadyZoomTimerP95Milliseconds": 68.1234581861645,
+      "coupledResizeP95Milliseconds": 50.79325009137392,
+      "performanceGates": {
+        "inputToLayoutP95MaximumMilliseconds": 50,
+        "passed": false,
+        "steadyZoomTimerP95MaximumMilliseconds": 33
+      },
+      "availableNativeRows": 5,
+      "limitations": [
+        "No physical trackpad or mouse-driver coverage",
+        "Offscreen native rendering cannot measure presentation timestamps",
+        "RSS includes the growing fixture archive, caches and retained timing arrays"
+      ],
+      "evidence": "layout-candidate-2/zoom-performance/performance.json"
+    },
+    {
+      "candidate": "0.4.41 natural-height card and footer",
+      "inputToLayoutP95Milliseconds": 61.14266673102975,
+      "steadyZoomTimerP95Milliseconds": 70.8403333555907,
+      "coupledResizeP95Milliseconds": 51.46112502552569,
+      "performanceGates": {
+        "inputToLayoutP95MaximumMilliseconds": 50,
+        "passed": false,
+        "steadyZoomTimerP95MaximumMilliseconds": 33
+      },
+      "availableNativeRows": 5,
+      "limitations": [
+        "No physical trackpad or mouse-driver coverage",
+        "Offscreen native rendering cannot measure presentation timestamps",
+        "RSS includes the growing fixture archive, caches and retained timing arrays"
+      ],
+      "evidence": "layout-candidate-3/zoom-performance/performance.json"
+    }
+  ]
+}

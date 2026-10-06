@@ -1,0 +1,5 @@
+CoreData: debug: WAL checkpoint: Database did checkpoint. Log size: 1887 checkpointed: 1887
+2026-10-06 00:59:36.908 WorkspaceZoomPerformanceTests[53826:29205431] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future.
+CoreData: debug: WAL checkpoint: Database did checkpoint. Log size: 1000 checkpointed: 1000
+CoreData: debug: WAL checkpoint: Database did checkpoint. Log size: 1001 checkpointed: 1001
+Workspace zoom performance QA failed: Error Domain=WorkspaceZoomPerformanceTests Code=1 "Synthetic input-to-layout p95 must stay within the existing 50 ms budget; report: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/full-review-2026-10-05/final-supplement/sustained/native-performance" UserInfo={NSLocalizedDescription=Synthetic input-to-layout p95 must stay within the existing 50 ms budget; report: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/full-review-2026-10-05/final-supplement/sustained/native-performance}

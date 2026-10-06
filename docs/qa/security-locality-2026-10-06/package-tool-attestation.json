@@ -1,0 +1,6 @@
+{
+  "path": "native/UpdateTools/package_update.py",
+  "SHA256": "aa4b41c67d04e467c6525fe9eb671671e233c09fa9fdc8dc3f4ec1a6c58adc21",
+  "change": "Compile the shared ZIP validator into the standalone update helper, matching embedded-helper build wiring.",
+  "productionInventoryScope": "UpdateTools/package_update.py is not included by the existing build_inventory; its exact final hash is separately pinned here."
+}

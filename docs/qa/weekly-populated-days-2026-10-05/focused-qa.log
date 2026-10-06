@@ -1,0 +1,9 @@
+Compiling direct Release test module (138 production sources)…
+PASSED WeeklyStateTests: PASS: 195 weekly state checks; isolated store, local calendar, fake notifications.
+PASSED NavigationHistoryTests: PASS: 123 bounded history, branch, project, draft, search, deletion and navigation safety checks
+PASSED WindowTests: PASS: 272 window checks across 2 real screen(s); no cursor synthesis, clipboard access, network or notification permission.
+PASSED WeeklyWindowTests
+PASSED FilterResizeTests
+PASSED TimelineCalendarTests: PASS: Timeline calendar 33 checks passed
+PASSED WeeklyLayoutTests: PASS: 3229 native weekly layout, bounds, expanded collection and data preservation checks. /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/week-layout
+QA direct passed: 7/7 requested suites passed. Report: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/runs/20261005T172624794765Z-direct/report.json

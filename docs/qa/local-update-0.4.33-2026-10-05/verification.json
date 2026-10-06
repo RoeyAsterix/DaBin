@@ -1,0 +1,72 @@
+{
+  "requestedAtUTC": "2026-10-05T04:24:10.280198+00:00",
+  "requestedVersion": "0.4.33",
+  "requestedBuild": "88",
+  "sourceFingerprint": "e038196eea54714eec07d2403b1e48a9eeb2393037b67fc2515123d68e06d456",
+  "previousInstallation": {
+    "path": "/Users/roeylibfeld/Applications/DaBin.app",
+    "version": "0.4.31",
+    "build": "86",
+    "sourceFingerprint": "4e3bf6e33210ed5cf1a17883ec465a675f0290e3baa0f76ef835361a0d818f5e",
+    "executableSHA256": "b7f5c415714b954ab9fd74c27ed1b671f02d9ae17a4c84dfc2cab8b3b4b9436e"
+  },
+  "buildState": "passed",
+  "focusedQAState": "passed",
+  "installed": true,
+  "existingFullCampaign": {
+    "path": "../qa-findings-fixes-2026-10-05/zoom/full-current/campaign-report.json",
+    "matchesCurrentInputs": true,
+    "passedSuites": 120,
+    "requestedSuites": 121,
+    "knownFailure": "WorkspaceZoomPerformanceTests strict timing thresholds; no claim of a fully passing current campaign"
+  },
+  "scope": "Local direct-channel build/install only; no TestFlight or App Store changes.",
+  "buildConfiguration": "Release",
+  "buildChannel": "github",
+  "installedVersion": "0.4.33",
+  "installedBuild": "88",
+  "installedPath": "/Users/roeylibfeld/Applications/DaBin.app",
+  "installedMainHashMatches": true,
+  "installedUpdaterHashMatches": true,
+  "installedSourceMatches": true,
+  "installedStrictSignaturePassed": true,
+  "backupPath": "/Users/roeylibfeld/Applications/.DaBinBackups/20261005-072645-e923238b.app",
+  "dataPreservation": [
+    {
+      "path": "/Users/roeylibfeld/Library/Containers/com.dabin.mac/Data/Library/Application Support/DaBin",
+      "fileCount": 445,
+      "inventorySHA256": "1b08719e39f2570608ff90c3fc3e44f8b4ccb0be5756123f9b91e3ba964f1f21",
+      "unchangedAcrossInstall": true
+    },
+    {
+      "path": "/Users/roeylibfeld/Library/Application Support/DaBin",
+      "fileCount": 55,
+      "inventorySHA256": "232d27693e7ffc86f248424b1ac10551949a4aa4ebca7a08e81e9794d47e0681",
+      "unchangedAcrossInstall": true
+    }
+  ],
+  "focusedPassedSuites": 6,
+  "focusedRequestedSuites": 6,
+  "launchVerified": true,
+  "updatedAtUTC": "2026-10-05T04:27:50.445038+00:00",
+  "visibleInstalledVersion": "DaBin 0.4.33 (88)",
+  "startupState": "Inbox loaded successfully, then Settings opened and remained responsive",
+  "visibleInboxToOrganizeCount": 33,
+  "preservedSettings": {
+    "autoCapturePaused": true,
+    "clipboardSelected": true,
+    "screenshotsSelected": true,
+    "screenshotFolderRetained": true,
+    "clipboardCleanup": "Never",
+    "globalShortcuts": true,
+    "shortcutKeys": "Control + Option",
+    "quietMode": false,
+    "darkMode": false,
+    "tooltips": true,
+    "opacityPercent": 90,
+    "theme": "Purple",
+    "linkPreviews": false,
+    "robotHome": "Around camera island"
+  },
+  "evidenceScreenshot": "installed-settings.png"
+}

@@ -1,0 +1,18 @@
+{
+  "recordedUTC": "2026-10-06T04:28:07.768399+00:00",
+  "installedVersion": "0.4.42",
+  "installedBuild": "97",
+  "applicationPath": "/Users/roeylibfeld/Applications/DaBin.app",
+  "runningPID": 73646,
+  "launchMethod": "CUA getApp for the exact installed path",
+  "observationMethod": "CUA accessibility; only readiness controls and paused status retained",
+  "window": "DaBin Daily",
+  "newTaskEnabled": true,
+  "searchCapturesEnabled": true,
+  "settingsEnabled": true,
+  "autoCapture": "Paused \u00b7 existing captures remain",
+  "websitePreviewPreferences": "False in both sandbox and legacy preference scopes",
+  "existingCapturesDisplayed": true,
+  "generalClipboardRead": false,
+  "testCaptureCreatedInRealArchive": false
+}

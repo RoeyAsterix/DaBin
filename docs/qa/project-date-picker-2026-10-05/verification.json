@@ -1,0 +1,75 @@
+{
+  "verifiedAtUTC": "2026-10-05T18:59:48.795267+00:00",
+  "version": "0.4.38",
+  "buildNumber": "93",
+  "sourceFingerprint": "90f075b9f2a855fb0ad7955af33de9e669532fab82e772f3d77886c2d848b4af",
+  "changes": [
+    "Replaced Projects relative-date menu with a compact 288-point calendar popover",
+    "Day and Week modes select one civil day or a full locale calendar week with immediate filtering",
+    "Continuous week highlighting covers adjacent-month dates; saved-item activity dots, month navigation, keyboard arrows, Escape",
+    "Any date, Today and This week shortcuts use 32-point native click targets",
+    "Range-aware visible cache and viewport keys preserve filtering; date changes clear hidden selection; Show all resets type and date range",
+    "Session project navigation preserves selected calendar ranges while keeping the existing workspace archive schema"
+  ],
+  "scope": "Five targeted native suites, not a full QA campaign or App Store validation",
+  "passingSuites": {
+    "ProjectWorkspaceStateTests": {
+      "status": "passed",
+      "summary": "PASS: 304 project-workspace checks; stable ordering, scoped selection, calendar day/week filters, complete project counts, backup-compatible persistence, atomic task conversion, inherited ownership and guarded undo.",
+      "currentInputsMatch": true
+    },
+    "ProjectWorkspaceViewTests": {
+      "status": "passed",
+      "summary": "PASS: 762 project workspace UI checks; 1,000 synthetic text captures plus image and editable project note; native mixed-selection drag payloads on a private pasteboard; no personal archive, network, general clipboard or external opening. At most 27 simultaneously materialized native rows.",
+      "currentInputsMatch": true
+    },
+    "NavigationHistoryTests": {
+      "status": "passed",
+      "summary": "PASS: 123 bounded history, branch, project, draft, search, deletion and navigation safety checks",
+      "currentInputsMatch": true
+    },
+    "HeaderInteractionTests": {
+      "status": "passed",
+      "summary": "PASS: 326 native labeled-header accessibility and interaction checks",
+      "currentInputsMatch": true
+    },
+    "WorkspaceWindowTests": {
+      "status": "passed",
+      "summary": "PASS: 876 native workspace interaction and responsive layout checks",
+      "currentInputsMatch": true
+    }
+  },
+  "totalPassingChecks": 2391,
+  "initialIssueFixed": "First native calendar geometry check found14-point footer shortcut hit targets. Button-label sizing was moved inside the clickable content with a32-point minimum; the complete five-suite campaign then passed on current production sources.",
+  "visualQA": {
+    "calendarContentWidthPoints": 288,
+    "projectWidths": [
+      320,
+      400,
+      760
+    ],
+    "appearances": [
+      "light",
+      "dark"
+    ],
+    "inspectedImages": [
+      "project-renders/project-calendar-week-light@2x.png",
+      "project-renders/project-calendar-320-dark@2x.png"
+    ],
+    "dayWeekAndCrossYearFilteringVerified": true
+  },
+  "installedApp": "/Users/roeylibfeld/Applications/DaBin.app",
+  "installedExecutableMatchesReceipt": true,
+  "installedUpdaterMatchesReceipt": true,
+  "strictDeepSignatureVerified": true,
+  "archiveMetadataUnchangedByInstall": true,
+  "backup": "/Users/roeylibfeld/Applications/.DaBinBackups/20261005-215751-6ded7b55.app",
+  "runtimeVerification": {
+    "method": "CUA native accessibility inspection of the installed app",
+    "projectDateButtonOpensCompactCalendar": true,
+    "dayWeekModesPresent": true,
+    "monthNavigationAndThreeShortcutsPresent": true,
+    "projectFilterWasAnyDate": true,
+    "leftOpenOn": "Projects with date picker open"
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "recordedUTC": "2026-10-06T03:16:20.012530+00:00",
+  "candidate": {
+    "version": "0.4.41",
+    "build": "96"
+  },
+  "productionFingerprint": "d6a7dd7fd2e2de4f167476ba91d8be232917024ecf745679bc4a5f3c83fab5fa",
+  "stagingReceipt": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/full-review-2026-10-05/manual-drag-staging-output.json",
+  "fixtureBundleIdentifier": "com.dabin.qa.crossapp.cc0c949f1e3e407e9ddc5a954c675fe6",
+  "sameProcessGesture": {
+    "status": "PASS",
+    "action": "CUA App.drag from fictional note button to the fixture native text receiver",
+    "receivedText": "Drop fictional text or a link here.\nFictional DaBin note",
+    "nativeStatus": "Drag ended 1 time(s). Preview clicks: 0. Preview clicks: 0",
+    "externalAcceptance": false
+  },
+  "browser": {
+    "status": "NOT_TESTED",
+    "pageLoaded": true,
+    "observedResult": "No drop received.",
+    "destination": "single-route fictional loopback receiver",
+    "tabClosed": true
+  },
+  "TextEdit": {
+    "status": "NOT_TESTED",
+    "ownedBlankDocumentCreated": true,
+    "ownedBlankDocumentClosed": true,
+    "noContentEnteredOrSaved": true
+  },
+  "Finder": {
+    "status": "NOT_TESTED"
+  },
+  "controllerLimit": "The supported native bindings expose cropped per-window state/actions without documented cross-window coordinate mapping. No invented global coordinates or alternative system-event automation was used. Opening the fixture took16461.95seconds and TextEdit944.09seconds; cross-app destination acceptance was not established.",
+  "fixtureQuitVerifiedByCUAInventory": true,
+  "serverReceipts": [
+    {
+      "source": "/private/tmp/DaBin-Drag-Receiver-ohayb_gv/server-receipt.json",
+      "copy": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/full-review-2026-10-05/manual-drag/DaBin-Drag-Receiver-ohayb_gv/server-receipt.json",
+      "SHA256": "d52b54c42ea702f8d974151cf9b0e80330ce9afed1187650572f4c6c2d6737d6"
+    },
+    {
+      "source": "/private/tmp/DaBin-Drag-Receiver-s1lig6wy/server-receipt.json",
+      "copy": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/full-review-2026-10-05/manual-drag/DaBin-Drag-Receiver-s1lig6wy/server-receipt.json",
+      "SHA256": "a2c2d913e59937ba686448262760ed5040321f11feabddef225d8d2dda539e68"
+    },
+    {
+      "source": "/private/tmp/DaBin-Drag-Receiver-w9hktj2l/server-receipt.json",
+      "copy": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/full-review-2026-10-05/manual-drag/DaBin-Drag-Receiver-w9hktj2l/server-receipt.json",
+      "SHA256": "b8c27da5e600e6a6b5b6de304ed7c7fd5c8cb6dab22e6b09120af7cfea402c5c"
+    }
+  ],
+  "scope": "Production native gesture/basic ASCII NSString payload in an isolated fictional fixture. Not archive-backed exporter, physical external drag, Unicode transfer, browser input-field or sandbox transfer grant acceptance.",
+  "releaseAcceptance": false,
+  "uploaded": false
+}

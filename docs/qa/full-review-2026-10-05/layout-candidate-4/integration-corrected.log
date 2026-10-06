@@ -1,0 +1,2 @@
+FAILED ProjectWorkspaceViewTests: Project workspace view QA failed: Error Domain=ProjectWorkspaceViewTests Code=561 "Live scratchpad text changes in the existing project card after zoom" UserInfo={NSLocalizedDescription=Live scratchpad text changes in the existing project card after zoom}
+QA direct failed: 0/1 requested suites passed. Report: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/runs/20261005T212634873410Z-direct/report.json

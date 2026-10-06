@@ -1,0 +1,11 @@
+{
+  "version": "0.4.43",
+  "build": "98",
+  "purpose": "Human-controlled macOS signing authentication if protected private-key access blocks archive. Runner archives exact frozeninputs; it never uploads.",
+  "runnerSHA256": "0848e1f914fab7ef1995f996467f5353979e631e4e5ea6ba9127a9cf59376114",
+  "launcherSHA256": "d20a4442f8f2c04204709d5042891781aa055c86863333b3be9f86c61f35dd3b",
+  "status": "ready_for_human_signing",
+  "configurationFreezeSHA256": "168c9e74fd05197934d36ddabda4d9ce389ee37db6c4bac6c2597e90c2b3673f",
+  "sourceFreezeSHA256": "d926237bd4f1dca7249ecde0be703b538520746bd7f9c9b1be63c6483ca31e46",
+  "validationSummarySHA256": "39d1769b0fd82fb2c3e2ea026ea77f73bb161171aca89d25dc13d624338ef377"
+}

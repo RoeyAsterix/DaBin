@@ -1,0 +1,18 @@
+{
+  "createdAtUTC": "2026-10-05T04:26:42.991463+00:00",
+  "roots": [
+    {
+      "path": "/Users/roeylibfeld/Library/Containers/com.dabin.mac/Data/Library/Application Support/DaBin",
+      "exists": true,
+      "fileCount": 445,
+      "inventorySHA256": "1b08719e39f2570608ff90c3fc3e44f8b4ccb0be5756123f9b91e3ba964f1f21"
+    },
+    {
+      "path": "/Users/roeylibfeld/Library/Application Support/DaBin",
+      "exists": true,
+      "fileCount": 55,
+      "inventorySHA256": "232d27693e7ffc86f248424b1ac10551949a4aa4ebca7a08e81e9794d47e0681"
+    }
+  ],
+  "stage": "after normal quit, immediately before installer"
+}

@@ -1,0 +1,70 @@
+{
+  "boundary": "Read-only public unauthenticated GET requests. No private app data, uploads, publication, account changes, signing or application actions.",
+  "checkedAtUTC": "2026-10-05T20:15:10.941646+00:00",
+  "policyComparison": {
+    "exactBytesMatch": true,
+    "localChangedDuringFetch": false,
+    "localPath": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/Resources/PrivacyPolicy.md",
+    "localSHA256": "9b3065a0256f11cee42dc8ae4d84a6f862638ae89ce34f1d4eada3647a70da8d",
+    "localUpdatedLine": "Updated 4 October 2026",
+    "normalizedTextMatch": true,
+    "publicSHA256": "9b3065a0256f11cee42dc8ae4d84a6f862638ae89ce34f1d4eada3647a70da8d",
+    "publicUpdatedLine": "Updated 4 October 2026"
+  },
+  "results": {
+    "configuredPolicyPage": {
+      "authenticated": false,
+      "bodyBytes": 296637,
+      "bodySHA256": "161fecfec0c384c441ee2105e609fbeb48809556d60d3bd7231591f144930812",
+      "contentType": "text/html; charset=utf-8",
+      "elapsedSeconds": 0.799,
+      "etag": "W/\"9f2d98119bd47dc3a152c1bee0850cc4\"",
+      "finalURL": "https://github.com/RoeyAsterix/DaBin/blob/main/native/Resources/PrivacyPolicy.md",
+      "httpStatus": 200,
+      "label": "configuredPolicyPage",
+      "lastModified": null,
+      "pageTitle": "DaBin/native/Resources/PrivacyPolicy.md at main \u00b7 RoeyAsterix/DaBin \u00b7 GitHub",
+      "reachable": true,
+      "requestMethod": "GET",
+      "requestedURL": "https://github.com/RoeyAsterix/DaBin/blob/main/native/Resources/PrivacyPolicy.md",
+      "timeoutSeconds": 12
+    },
+    "configuredSupportPage": {
+      "authenticated": false,
+      "bodyBytes": 251424,
+      "bodySHA256": "867df74129d8709e659d9a34f31be519066a8b85a9fb0c73dabf8842706d2abb",
+      "contentType": "text/html; charset=utf-8",
+      "elapsedSeconds": 0.478,
+      "etag": "W/\"235003e77129053058fe01be5bbddaec\"",
+      "finalURL": "https://github.com/RoeyAsterix/DaBin/issues",
+      "httpStatus": 200,
+      "label": "configuredSupportPage",
+      "lastModified": null,
+      "pageTitle": "Issues \u00b7 RoeyAsterix/DaBin \u00b7 GitHub",
+      "reachable": true,
+      "requestMethod": "GET",
+      "requestedURL": "https://github.com/RoeyAsterix/DaBin/issues",
+      "timeoutSeconds": 12
+    },
+    "publicPolicyMarkdown": {
+      "authenticated": false,
+      "bodyBytes": 12657,
+      "bodySHA256": "9b3065a0256f11cee42dc8ae4d84a6f862638ae89ce34f1d4eada3647a70da8d",
+      "contentType": "text/plain; charset=utf-8",
+      "elapsedSeconds": 0.51,
+      "etag": "\"3ee11078b2aa5f99349aca2c27c72edad98cb90dba391572832d5d6d95b57c8f\"",
+      "finalURL": "https://raw.githubusercontent.com/RoeyAsterix/DaBin/main/native/Resources/PrivacyPolicy.md",
+      "httpStatus": 200,
+      "label": "publicPolicyMarkdown",
+      "lastModified": null,
+      "reachable": true,
+      "requestMethod": "GET",
+      "requestedURL": "https://raw.githubusercontent.com/RoeyAsterix/DaBin/main/native/Resources/PrivacyPolicy.md",
+      "savedMarkdown": "public-policy.md",
+      "timeoutSeconds": 12,
+      "updatedLine": "Updated 4 October 2026"
+    }
+  },
+  "sourceScriptSHA256": "ae14392fe85043840cadb0edbc768c6e7c8d5fd5d5008fa9965c1a114acac474",
+  "supportContactAdequacy": "Not established by HTTP reachability; owner contact review remains pending."
+}

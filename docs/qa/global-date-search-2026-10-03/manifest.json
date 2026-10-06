@@ -14,7 +14,7 @@
       "pixelWidth" : 640,
       "query" : "saffron atlas",
       "visibleDates" : [
-        "2026-10-04"
+        "2026-10-06"
       ]
     },
     {
@@ -27,7 +27,7 @@
       "pixelWidth" : 760,
       "query" : "saffron atlas",
       "visibleDates" : [
-        "2026-10-04"
+        "2026-10-06"
       ]
     },
     {
@@ -40,8 +40,8 @@
       "pixelWidth" : 1472,
       "query" : "saffron atlas",
       "visibleDates" : [
-        "2026-10-04",
-        "2026-10-03"
+        "2026-10-06",
+        "2026-10-05"
       ]
     },
     {
@@ -54,9 +54,9 @@
       "pixelWidth" : 2120,
       "query" : "saffron atlas",
       "visibleDates" : [
-        "2026-10-04",
-        "2026-10-03",
-        "2026-10-02"
+        "2026-10-06",
+        "2026-10-05",
+        "2026-10-04"
       ]
     },
     {
@@ -69,7 +69,7 @@
       "pixelWidth" : 760,
       "query" : "saffron atlas",
       "visibleDates" : [
-        "2026-10-04"
+        "2026-10-06"
       ]
     },
     {
@@ -81,7 +81,7 @@
       "pixelScale" : 2,
       "pixelWidth" : 2120,
       "query" : "saffron atlas",
-      "selectedResult" : "capture:739B8A5D-7B17-491A-ACEA-DF6751F95BD7"
+      "selectedResult" : "capture:995BA3AD-6BF2-44F2-B346-414FE2C7AEB3"
     },
     {
       "appearance" : "light",
@@ -123,7 +123,7 @@
       "pixelWidth" : 640,
       "query" : "saffron atlas",
       "visibleDates" : [
-        "2026-10-04"
+        "2026-10-06"
       ]
     },
     {
@@ -136,7 +136,7 @@
       "pixelWidth" : 760,
       "query" : "saffron atlas",
       "visibleDates" : [
-        "2026-10-04"
+        "2026-10-06"
       ]
     },
     {
@@ -149,8 +149,8 @@
       "pixelWidth" : 1472,
       "query" : "saffron atlas",
       "visibleDates" : [
-        "2026-10-04",
-        "2026-10-03"
+        "2026-10-06",
+        "2026-10-05"
       ]
     },
     {
@@ -163,9 +163,9 @@
       "pixelWidth" : 2120,
       "query" : "saffron atlas",
       "visibleDates" : [
-        "2026-10-04",
-        "2026-10-03",
-        "2026-10-02"
+        "2026-10-06",
+        "2026-10-05",
+        "2026-10-04"
       ]
     },
     {
@@ -178,7 +178,7 @@
       "pixelWidth" : 760,
       "query" : "saffron atlas",
       "visibleDates" : [
-        "2026-10-04"
+        "2026-10-06"
       ]
     },
     {
@@ -190,7 +190,7 @@
       "pixelScale" : 2,
       "pixelWidth" : 2120,
       "query" : "saffron atlas",
-      "selectedResult" : "capture:739B8A5D-7B17-491A-ACEA-DF6751F95BD7"
+      "selectedResult" : "capture:995BA3AD-6BF2-44F2-B346-414FE2C7AEB3"
     },
     {
       "appearance" : "dark",
@@ -225,12 +225,12 @@
   ],
   "stressResultCount" : 2000,
   "timings" : {
-    "cached500Seconds" : 0.0012192500289529562,
-    "cachedAverageMicroseconds" : 2.4385000579059124,
+    "cached500Seconds" : 0.0012331667821854353,
+    "cachedAverageMicroseconds" : 2.4663335643708706,
     "cachedReadCount" : 500,
-    "coldSearchSeconds" : 0.028748000040650368,
+    "coldSearchSeconds" : 0.028777374885976315,
     "matches" : 295,
     "records" : 5000,
-    "repositoryBatchSeconds" : 0.10201829159632325
+    "repositoryBatchSeconds" : 0.10700816661119461
   }
 }

@@ -26,3 +26,13 @@ tmp/
 
 # Keep the original tester-account screenshot local.
 docs/qa/testflight-0.4.31-2026-10-04/internal-tester-invited.jpg
+
+# Keep generated native QA binaries and compiler caches local; commit their receipts.
+docs/qa/**/ModuleCache/
+docs/qa/**/*.app/
+docs/qa/**/*.xcresult/
+docs/qa/full-review-2026-10-05/.final-supplement.lock
+
+# Preserve local File Provider render copies; canonical evidence is unsuffixed.
+docs/qa/global-date-search-2026-10-03/**/* 3.*
+docs/qa/global-date-search-2026-10-03/**/* 4.*

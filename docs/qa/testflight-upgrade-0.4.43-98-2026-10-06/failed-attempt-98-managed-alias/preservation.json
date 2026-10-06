@@ -1,0 +1,18 @@
+{
+  "originalFailedRun": "/private/tmp/DaBin-Upgrade-98-xbvakb51",
+  "originalReportSHA256": "0ba5d77b15520b9a8d358de8c90efd2bb8a2979528d15833141e033873620f7f",
+  "retainedSHA256": {
+    "README.md": "729d50744d97d0d35a333ebe68752c9f33964bb1f97e968d40b1fef95b27be3b",
+    "UpgradeFixture.swift": "001df655895ac6c6fee19c418335914fb87cfb2a16cd8e84ecc7d0c4c59bfa92",
+    "failed-run/expected.json": "64c747e3024dffc5718c78c4ab1a28ec03233dab90d98eec88bd452b4929ff75",
+    "failed-run/logs/compile-new.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "failed-run/logs/compile-old.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "failed-run/logs/current-upgrade.log": "cc02449cee5d41263c1f8930eeac781a6dcf68407a90a789013c74384261c9ff",
+    "failed-run/logs/old-write.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "failed-run/old-write.json": "730c8b91416d263c03748be0d4c7fb9945227a336b5cd003c1bbb2fba62f45fc",
+    "failed-run/report.json": "0ba5d77b15520b9a8d358de8c90efd2bb8a2979528d15833141e033873620f7f",
+    "prepared-inputs.json": "78ade5596b17a0a78c3623c7d5c78842f5a6a15565bca52766c27b324153e431",
+    "run_upgrade_fixture.py": "d10bc0a75fc951f4e5dc7ec8a4c0e21211253647738de406c9d9592851f81dd2"
+  },
+  "status": "failed_current_reader_managed_original_raw_alias_containment"
+}

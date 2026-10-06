@@ -1,0 +1,94 @@
+{
+  "candidate": {
+    "version": "0.4.41",
+    "build": "96"
+  },
+  "bundledPolicyUpdated": "5 October 2026",
+  "bundledPolicyPath": "native/Resources/PrivacyPolicy.md",
+  "publicationCopyPath": "docs/app-store/privacy-policy-2026-10-05.md",
+  "bundledPolicySHA256": "f7cc72938d2e4bfb109eab7dcb3ad580f7043c16129e49cd73d472249fbf5e67",
+  "publicationCopySHA256": "f7cc72938d2e4bfb109eab7dcb3ad580f7043c16129e49cd73d472249fbf5e67",
+  "localCopyParity": "PASS",
+  "publicURL": "https://github.com/RoeyAsterix/DaBin/blob/main/native/Resources/PrivacyPolicy.md",
+  "publicPolicyUpdated": "4 October 2026",
+  "publicHTTPStatusReportedByRoot": 200,
+  "publicPolicyParity": "FAIL_PENDING_PUBLICATION",
+  "publicationPerformed": false,
+  "sourceFreeze": "LOCKED_FINAL_CANDIDATE_FULL_STORE_QA_FAILED_SUPPLEMENTS_PENDING",
+  "scope": "Local text/copy alignment only; no network request, publication, fixture render or document/PDF authoring in this operation.",
+  "sourceFreezePath": "docs/qa/full-review-2026-10-05/final-candidate/source-freeze.json",
+  "sourceFreezeFileSHA256": "d46f408a901a8764fb57400833c01642b19b89ceee2c104040e7434c8de2153c",
+  "productionFingerprint": "d6a7dd7fd2e2de4f167476ba91d8be232917024ecf745679bc4a5f3c83fab5fa",
+  "liveNoteRegression": "Focused functional verification PASS; earlier AX observation failure did not establish visual staleness. The final full Store run passes the functional suites; only strict zoom timing fails.",
+  "focusedFunctionalEvidence": {
+    "report": "native/build/qa/runs/20261005T213022192993Z-direct/report.json",
+    "reportSHA256": "f13da2a023f1d840a2db8acca0f77980270fd40182d17fb02ded29ca09d42e5f",
+    "status": "passed",
+    "distribution": "direct",
+    "passedSuites": 3,
+    "sourceChangedDuringRun": false,
+    "suites": [
+      {
+        "name": "ProjectWorkspaceViewTests",
+        "status": "passed",
+        "reportedSummary": "PASS: 918 project workspace UI checks; 1,000 synthetic text captures plus image and editable project note; retained-host live zoom, observable edits and replacement identities; native mixed-selection drag payloads on a private pasteboard; no personal archive, network, general clipboard or external opening. At most 27 simultaneously materialized native rows."
+      },
+      {
+        "name": "ProjectWorkspaceCardTests",
+        "status": "passed",
+        "reportedSummary": "PASS: 782 project card checks; Task/Note/Capture semantics, real live task updates, light/dark/grid/320-point compact fixtures, original previews and independent selection; no personal archive, clipboard, network, or external opening."
+      },
+      {
+        "name": "NativeContentDragTests",
+        "status": "passed",
+        "reportedSummary": "PASS: 38 native content drag checks; clicks, mixed native items, copy-only external transfers and source preservation."
+      }
+    ]
+  },
+  "fullStoreEvidence": {
+    "report": "native/build/qa/runs/20261005T213352249116Z-app-store/report.json",
+    "reportSHA256": "5d8c0dec20236f0de08803694224ca4b75dda00c0e330248b2f7311e426fa0eb",
+    "status": "failed",
+    "distribution": "app-store",
+    "configuration": "Release",
+    "passedSuites": 125,
+    "totalSuites": 126,
+    "failedSuites": [
+      "WorkspaceZoomPerformanceTests"
+    ],
+    "sourceChangedDuringRun": false,
+    "qaRunnerSourceFingerprint": "2aeea5999079e497250affa175b7cd50a75c418fd243920679e567cb69ac2029",
+    "sourceFingerprintScope": "The QA runner fingerprint and frozen production fingerprint use separate inventories; both original receipts are retained."
+  },
+  "strictZoomEvidence": {
+    "report": "docs/qa/full-review-2026-10-05/final-store/zoom-performance/performance.json",
+    "reportSHA256": "ae9a933d78f61dd4b8c719995a388fb2bcfe25a9cb9e1ef1183ec8758051d5e3",
+    "status": "failed",
+    "inputToLayoutP95Milliseconds": 51.315416814759374,
+    "inputToLayoutP95MaximumMilliseconds": 50,
+    "steadyZoomTimerP95Milliseconds": 61.23941671103239,
+    "steadyZoomTimerP95MaximumMilliseconds": 33,
+    "durationSeconds": 30.005661208415404,
+    "fullTenMinuteRun": false,
+    "measurement": "Synthetic native input-to-layout flush and main-runloop timer intervals; not physical input-to-display latency",
+    "limitations": [
+      "No physical trackpad or mouse-driver coverage",
+      "Offscreen native rendering cannot measure presentation timestamps",
+      "RSS includes the growing fixture archive, caches and retained timing arrays"
+    ]
+  },
+  "supplementalEvidence": {
+    "plan": "docs/qa/full-review-2026-10-05/supplement-plan.json",
+    "status": "IN_PROGRESS_RESULTS_PENDING",
+    "stageOrder": [
+      "sustained-600s",
+      "unsigned-store-build",
+      "release-xctest",
+      "enforced-sandbox-smoke",
+      "privacy-render"
+    ],
+    "moduleReceipt": "native/build/qa-cache/app-store-5013654b8c68f93cbaa913c1212168402be85ff94c7d33fca10d7e15c3e13e7e/module-ready.json",
+    "moduleReceiptSHA256": "89f25de3e32aefc90e4a262ba587631ac58479a85079dff7807419d537fbd787"
+  },
+  "submissionReady": false
+}

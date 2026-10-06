@@ -1,5 +1,19 @@
 # Releasing DaBin
 
+## Internal TestFlight updates
+
+Use the existing App Store Connect record 6815956446, bundle `com.dabin.mac`, signing team `8QG4967CSU` and Personal Testing internal group. Increase the build number; preserve archive paths, models, preference keys and forward data compatibility. Git publication does not upload an Apple binary.
+
+For the current 0.4.43 (98) candidate, the exact source/configuration freeze and qualified validation are under `qa/testflight-upgrade-0.4.43-98-2026-10-06/`. Eleven selected Store suites and a network-denied old 86→98 fictional archive/save/two-reopen fixture pass. The last signing attempt stopped at CodeSign awaiting protected signing-key access; upload and internal availability remain unverified.
+
+1. Confirm `status.json`, `validation-summary.json` and all pinned source/project/signing inputs are current. Do not change frozen production inputs after testing.
+2. Run `Prepare DaBin TestFlight Update.command` from that campaign locally. Complete any protected Keychain authentication yourself. The helper uses installed signing assets, writes a fresh archive under the local Xcode Archives directory, verifies final identity/source/configuration and never uploads or changes authentication settings.
+3. After the signed archive passes validation, distribute the exact0.4.43 (98) through Xcode to TestFlight for internal testing. Preserve its version/build and use the existing app; do not create a second app or submit public App Store review.
+4. Verify actual upload success, Apple processing, required compliance answers and build assignment to Personal Testing. A prepared or compiled local app does not establish tester availability.
+5. Before each Mac updates, choose DaBin **••• → Back up archive…**. In TestFlight choose **Update**, keeping the existing app/container. Check existing captures, projects, tasks, attachments and drafts afterward. Each Mac keeps its own local data; an Apple account does not sync it.
+
+Build86 reads schemas through 10; current captures save schema 11. Do not select 86 after newer saves. Keep the pre-update backup for recovery. Physical TestFlight upgrade acceptance remains a separate gate from the synthetic fixture.
+
 The direct channel and Mac App Store are separate builds. The standalone build enables `DABIN_DIRECT_UPDATES` and embeds `DaBin Update.app`. The generated Xcode Release configuration does neither; a Mac App Store build must use Apple’s update channel.
 
 ## Direct GitHub release

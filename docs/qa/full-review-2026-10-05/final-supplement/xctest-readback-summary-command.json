@@ -1,0 +1,18 @@
+{
+  "command": [
+    "xcrun",
+    "xcresulttool",
+    "get",
+    "test-results",
+    "summary",
+    "--path",
+    "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/full-review-2026-10-05/final-supplement/DaBinSmoke.xcresult"
+  ],
+  "startedUTC": "2026-10-05T22:16:27.444578+00:00",
+  "finishedUTC": "2026-10-05T22:16:27.536905+00:00",
+  "exitCode": 64,
+  "output": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/full-review-2026-10-05/final-supplement/xctest-readback-summary.json",
+  "stderr": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/full-review-2026-10-05/final-supplement/xctest-readback-summary.stderr.log",
+  "temporaryDirectory": "/private/tmp/DaBin-XCResult-Readback-prooilm7",
+  "stdoutSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

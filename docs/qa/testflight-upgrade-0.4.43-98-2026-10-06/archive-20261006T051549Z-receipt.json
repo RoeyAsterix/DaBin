@@ -1,0 +1,20 @@
+{
+  "startedUTC": "2026-10-06T05:15:49.129568+00:00",
+  "sourceFingerprint": "10398967c8129c9a3eceee7d660db94300dd44c589c8738989b91b51ec915304",
+  "version": "0.4.43",
+  "build": "98",
+  "archive": "/Users/roeylibfeld/Library/Developer/Xcode/Archives/2026-10-06/DaBin-0.4.43-98-TestFlight-20261006T051549Z.xcarchive",
+  "log": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/testflight-upgrade-0.4.43-98-2026-10-06/archive-20261006T051549Z.log",
+  "status": "archive_incomplete",
+  "runnerPID": 80544,
+  "uploaded": false,
+  "scope": "Existing archive helper and installed signing identities only; no provisioning downloads, authentication control or upload.",
+  "archiveHelperPID": 80551,
+  "interrupted": true,
+  "finishedUTC": "2026-10-06T05:21:38.182075+00:00",
+  "exitCode": 75,
+  "inputsUnchanged": true,
+  "configurationUnchanged": true,
+  "archiveIdentityMatchesFrozenInputs": false,
+  "logSHA256": "36ac564452a547a36b374cd4fd8bab80710a6724e7746a7350939561c7a176f5"
+}

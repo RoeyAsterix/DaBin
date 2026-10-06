@@ -1,0 +1,12 @@
+{
+  "pythonExecutable": "/opt/homebrew/Cellar/python@3.14/3.14.5/Frameworks/Python.framework/Versions/3.14/bin/python3.14",
+  "script": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/testflight-upgrade-0.4.42-97-2026-10-06/Prepare DaBin TestFlight Update.command",
+  "scriptSHA256": "c8300547cb59d71c1d10ef839c0ac001f5a88ff69bd8417c73cfdc5a379a00ae",
+  "archiveRunner": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/testflight-upgrade-0.4.42-97-2026-10-06/prepare_archive.py",
+  "archiveRunnerSHA256": "64a311f96b8b0c74442c6b732715279781e63524923e50cc1e6c42b9b5865490",
+  "action": "User double-clicks the command file in Finder or runs the Python archive helper from their Mac Terminal and completes normal signing authentication. This step never uploads.",
+  "afterSuccess": "Agent verifies the exact archive signature/profile/preflight, then uploads internal TestFlight and assigns the build to existing Personal Testing after Apple processing.",
+  "noProtectedAuthenticationAutomation": true,
+  "configurationFreeze": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/testflight-upgrade-0.4.42-97-2026-10-06/archive-configuration-freeze.json",
+  "configurationFreezeSHA256": "c78f341ffa4ba72d7b09c1a76412c7ea2c7ac41abac7c3b6db605ca3b65dff43"
+}

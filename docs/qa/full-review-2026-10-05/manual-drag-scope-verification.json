@@ -1,0 +1,13 @@
+{
+  "checkedAtUTC": "2026-10-05T21:32:10.391412+00:00",
+  "scope": "Offline synthetic JSON receipt-gate tests only; subprocess, compiler, signing and GUI entry points not called. No real fixture prepared or launched.",
+  "testsRun": 13,
+  "status": "passed",
+  "log": "manual-drag-scope-regressions.log",
+  "stagerSHA256": "4faf3f07220f4072cbec4c1c9462fb4e54c23f81debd44d220329d1406b6ea88",
+  "testSHA256": "0f9aceb54b035ea98bd531c971ae84a40f764331eefc9dbe6bfe687993d0db66",
+  "logSHA256": "9844d2eb70874c409cd440f7831bf2c5199b6541851522391815406ad7a0ea1e",
+  "defaultScope": "full-pass",
+  "explicitScope": "manual-fixture-only",
+  "releaseAcceptance": false
+}

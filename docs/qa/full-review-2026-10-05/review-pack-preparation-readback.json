@@ -1,0 +1,49 @@
+{
+  "artifactMarkersExecuted": false,
+  "authoringPlan": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/full-review-2026-10-05/review-pack-authoring-plan.json",
+  "authoringPlanSHA256": "0463a9db692142c6246b9d9bdc515990f542cdf4872e8094400a38b027945bab",
+  "dependencyBundle": "26.915.20218",
+  "documentsAuthored": false,
+  "exactStoreModuleOutputs": {
+    "DaBinTestCore.swiftmodule": "5c59fe08a5bf797d9e5617ff26698fd7e434a6022e2b17dbd110e78e5b8bcd43",
+    "libDaBinTestCore.dylib": "9664ad04df275e317cb5911809b9f9b5f907e5c3033ed14a05723c29d1a941d9"
+  },
+  "frozenNativeProductionAndTestsUnchanged": true,
+  "nativeExportsExecuted": false,
+  "node": "/Users/roeylibfeld/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+  "python": "/Users/roeylibfeld/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+  "recordedUTC": "2026-10-05T22:30:28.140056+00:00",
+  "remainingLocalAuthoring": [
+    "Explicit parent release for native fixture export",
+    "Inspect three screenshots and five guide source images at original resolution",
+    "Re-measure guide crop/callout coordinates against new exported UI",
+    "Run one appropriate PDF/DOCX marker immediately before each authoring operation",
+    "Render every PDF/DOCX page and inspect all pages before writing approval receipts",
+    "Package only with current source-parity and actual visual approvals"
+  ],
+  "schemaVersion": 1,
+  "scriptSyntax": "PASS AST parsing only; helpers were not executed",
+  "scriptsSHA256": {
+    "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/design/app-store-pack/build_content_pack.py": "36450f722184868fa77bb8b10d8cc61bbd35ab632f7f09a68f1b48d970485bf4",
+    "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/design/app-store-pack/export_screenshots.py": "c6618516605c891b5481a261886df68c6d1f5f5241af4e801b4e655a1d407976",
+    "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/design/app-store-pack/package_content.py": "ed0b86f09a89f8694e55ac9e8031f25db38dd88056c3ab49d90524a017577477",
+    "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/design/app-store-pack/release_inputs.py": "cc58e46ba9222fbc2781e49cd805219ed554fe757ce5873de901600905635f41",
+    "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/design/app-store-pack/render_document.py": "cbf8b56eaaed6b98fcec068372e901ee1154fb3c5e65f3277279676639d342b2",
+    "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/design/app-store-pack/verify_content_pack.py": "6165c63d0683289a519ddc0c40d23884244341448929745a51a511cb8eaa1596",
+    "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/design/onepager/build_guide.py": "86416e53f6b5bf7e179a541ce95787d273787e12256994394331991ed7486372",
+    "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/design/onepager/export_guide_assets.py": "63eeb37253379545554ff095f8cfe1fa2ed7c3f0fc6fe216b18f4ad609717921"
+  },
+  "skillReferencesReadSHA256": {
+    "/Users/roeylibfeld/.codex/plugins/cache/openai-primary-runtime/documents/26.915.20218/skills/documents/SKILL.md": "301a03028a52a54d392691c2ebf175653555fadec35eb086f0f8902a90b931cf",
+    "/Users/roeylibfeld/.codex/plugins/cache/openai-primary-runtime/documents/26.915.20218/skills/documents/references/clarification-questions.md": "11dc5642df60cc730ad0ade0e50639ac479e1a52bb89b78d6ea883c0871754f5",
+    "/Users/roeylibfeld/.codex/plugins/cache/openai-primary-runtime/documents/26.915.20218/skills/documents/tasks/create_edit.md": "f5e4712c6eebd0b8aa7cf94c65bb4e9e7a63b5ba4a8d96215c56209946e2397b",
+    "/Users/roeylibfeld/.codex/plugins/cache/openai-primary-runtime/documents/26.915.20218/skills/documents/tasks/verify_render.md": "101feb9bdd4906d38a4d3493b93d4afface2e1beb16a7607a498f63477cc7dbf",
+    "/Users/roeylibfeld/.codex/plugins/cache/openai-primary-runtime/documents/26.915.20218/skills/documents/template-create.md": "ed6bd38d3fcedb33ca481f9337bf14a9b7b236ef7151c8f6034fab33e05440f0",
+    "/Users/roeylibfeld/.codex/plugins/cache/openai-primary-runtime/documents/26.915.20218/skills/documents/template-distill.md": "f9b829cd868732d56c3218473a1afa234ceca4aa808fbe0f96a1ab5470d768a1",
+    "/Users/roeylibfeld/.codex/plugins/cache/openai-primary-runtime/documents/26.915.20218/skills/documents/writing_quality.md": "30baf502bdea6b565d41344f87e46bf04840e1b99f84a11009992bf6e63596e8",
+    "/Users/roeylibfeld/.codex/plugins/cache/openai-primary-runtime/pdf/26.915.20218/skills/pdf/SKILL.md": "65f4a606b5ec8e564d6d9782254b34c2bb2ce0a573e9349fb46b1173449c72fa"
+  },
+  "sourceFreezeProductionFingerprint": "d6a7dd7fd2e2de4f167476ba91d8be232917024ecf745679bc4a5f3c83fab5fa",
+  "status": "PREPARED_WAITING_COORDINATED_RENDER_RELEASE",
+  "submissionReady": false
+}

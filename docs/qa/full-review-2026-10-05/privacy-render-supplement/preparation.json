@@ -1,0 +1,24 @@
+{
+  "status": "PREPARED_NOT_EXECUTED",
+  "version": "0.4.41",
+  "build": "96",
+  "moduleNameDiscovered": "DaBinTestCore",
+  "sourceFrozen": false,
+  "nativeCompilationPerformed": false,
+  "privacyFixtureRunPerformed": false,
+  "originalTestModified": false,
+  "originalTestSHA256": "92874838181437e6f9b82f124022ee7146670f6011c4faaf1053c8d091e8a648",
+  "currentBundledPolicySHA256": "f7cc72938d2e4bfb109eab7dcb3ad580f7043c16129e49cd73d472249fbf5e67",
+  "preparedScriptSHA256": "906fbbd45f4370f8d37ffe7c923823e3e2c87546a9315e3aa9e14155e94a96a2",
+  "checks": [
+    "Python AST syntax PASS",
+    "CLI --help PASS without compile/run",
+    "Literal MODULE discovered from selected runner"
+  ],
+  "pending": [
+    "Root source freeze",
+    "Exact final app-store Release module",
+    "Root coordinated GUI stage release",
+    "Four original-resolution privacy PNG inspections"
+  ]
+}

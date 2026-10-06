@@ -1,0 +1,6 @@
+{
+  "checks" : 9,
+  "downgradeSupported" : false,
+  "reason" : "The original could not be saved: The metadata schema or identity is unsupported. The store was preserved.",
+  "status" : "passed"
+}

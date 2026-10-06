@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "Sandbox app preferences",
+    "websitePreviewsExplicitlyEnabled": false
+  },
+  {
+    "scope": "Legacy app preferences",
+    "websitePreviewsExplicitlyEnabled": false
+  }
+]

@@ -1,0 +1,49 @@
+{
+  "verifiedAtUTC": "2026-10-05T17:32:52.421482+00:00",
+  "request": "In weekly view do not show days without captions",
+  "version": "0.4.34",
+  "buildNumber": "89",
+  "installedApp": "/Users/roeylibfeld/Applications/DaBin.app",
+  "sourceFingerprint": "cbf0c5905f9c834b0793074fcc52268925ec80fbd6aba7ff74f822115a5336f6",
+  "behavior": [
+    "Only selected days with visible cards receive weekly columns; type filters apply.",
+    "Selected date range, task carryover/reminder placement, search/export scopes and window geometry are retained.",
+    "Empty selections show one descriptive empty state; live capture insertion/removal adds/hides columns."
+  ],
+  "validation": {
+    "focusedSuitesPassed": [
+      "WeeklyStateTests",
+      "NavigationHistoryTests",
+      "WindowTests",
+      "WeeklyWindowTests",
+      "FilterResizeTests",
+      "TimelineCalendarTests",
+      "WeeklyLayoutTests"
+    ],
+    "weeklyStateChecks": 195,
+    "weeklyLayoutChecks": 3229,
+    "calendarChecks": 33,
+    "navigationChecks": 123,
+    "windowChecks": 272,
+    "testedDisplays": 2,
+    "sourceAndInstalledHashesMatch": true,
+    "strictInstalledSignatureVerified": true,
+    "archiveMetadataUnchangedByInstaller": true,
+    "projectInventoryCheck": "passed",
+    "visualReview": [
+      "week-two-of-three-selected-days.png",
+      "week-empty-week-light@2x.png"
+    ],
+    "installedUI": {
+      "weeklyRange": "29 Sep\u20135 Oct 2026",
+      "shownDayCount": 6,
+      "selectedDayCount": 7,
+      "hiddenEmptyDay": "2026-09-29",
+      "allShownHeadersHaveCaptures": true,
+      "autoCaptureStillPaused": true
+    }
+  },
+  "scope": "Seven focused direct Release regression suites; this is not a full QA campaign or App Store validation.",
+  "backup": "/Users/roeylibfeld/Applications/.DaBinBackups/20261005-203112-db28e117.app",
+  "installationNote": "Initial installer guard correctly refused while the old app remained running; quit through the app menu, installed and reopened successfully."
+}

@@ -1,0 +1,16 @@
+{
+  "recordedUTC": "2026-10-06T03:22:07.175264+00:00",
+  "version": "0.4.41",
+  "build": "96",
+  "productionFingerprint": "d6a7dd7fd2e2de4f167476ba91d8be232917024ecf745679bc4a5f3c83fab5fa",
+  "productionInputsUnchanged": true,
+  "all133SwiftTestFilesUnchanged": true,
+  "fullStoreQAInputsStillCurrent": true,
+  "fullStoreQAFingerprint": "2aeea5999079e497250affa175b7cd50a75c418fd243920679e567cb69ac2029",
+  "fullStorePassed": 125,
+  "fullStoreRequested": 126,
+  "fullStoreStatus": "failed",
+  "submissionReady": false,
+  "uploaded": false,
+  "boundary": "Exact source/test linkage; does not relabel failed performance or establish distribution/manual acceptance"
+}

@@ -1,0 +1,14 @@
+{
+  "files": [
+    "Resources/Info.plist",
+    "Sources/DaBin/ApplicationCoordinator.swift",
+    "Sources/DaBin/AutoCaptureRobotPresenter.swift",
+    "Sources/DaBin/CornerController.swift",
+    "Sources/DaBin/RobotAppFrameView.swift",
+    "Sources/DaBin/RobotProjectSignView.swift",
+    "Sources/DaBin/RobotView.swift",
+    "Sources/DaBin/TaskTimerRobotPresenter.swift"
+  ],
+  "oldSourceFingerprint": "14d251986c487911eefc6cda4aaac647f9fc7252e949144213eaba1f072962f3",
+  "newSourceFingerprint": "9b6717724f11d7e6a551e1dba5f7be593f174caf60f83ee3468f4d08c37bbfdb"
+}

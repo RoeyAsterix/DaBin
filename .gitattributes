@@ -1,3 +1,8 @@
 *.icns binary
 *.pdf binary
 *.png binary
+
+# Diagnostic evidence retains exact tool output and recorded hashes.
+# Source and documentation whitespace checks remain enabled.
+docs/qa/**/*.log -whitespace
+docs/qa/**/*.diff -whitespace

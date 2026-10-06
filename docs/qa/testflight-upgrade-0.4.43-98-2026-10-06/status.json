@@ -1,0 +1,30 @@
+{
+  "version": "0.4.43",
+  "build": "98",
+  "status": "blocked_on_human_signing_authorization",
+  "uploaded": false,
+  "signedArchiveComplete": false,
+  "processingComplete": false,
+  "internalAvailability": false,
+  "supersedesPrepared97": true,
+  "priorAttempts": "../testflight-upgrade-0.4.42-97-2026-10-06",
+  "publicAppStoreSubmission": false,
+  "sourceFingerprint": "10398967c8129c9a3eceee7d660db94300dd44c589c8738989b91b51ec915304",
+  "nativeRun": "native/build/qa/runs/20261006T050402238325Z-app-store/report.json",
+  "priorRun": "native/build/qa/runs/20261006T050000473203Z-app-store/report.json",
+  "nativePassedSuites": 11,
+  "nativeRequestedSuites": 11,
+  "upgradeAttempt": "/private/tmp/DaBin-Upgrade-98-bz21en6p/report.json",
+  "upgradeAttempts": [
+    "/private/tmp/DaBin-Upgrade-98-bz21en6p/report.json",
+    "/private/tmp/DaBin-Upgrade-98-xbvakb51/report.json"
+  ],
+  "upgradePassed": true,
+  "upgradeReport": "/private/tmp/DaBin-Upgrade-98-d_zj3i5k/report.json",
+  "archiveCandidate": "/Users/roeylibfeld/Library/Developer/Xcode/Archives/2026-10-06/DaBin-0.4.43-98-TestFlight-20261006T051549Z.xcarchive",
+  "signingLog": "archive-20261006T051549Z.log",
+  "humanActionRequestedUTC": "2026-10-06T05:18:22.722740+00:00",
+  "archiveAttemptReceipt": "archive-20261006T051549Z-receipt.json",
+  "archiveAttemptInterrupted": true,
+  "reason": "Compiled to CodeSign, did not complete; stopped owned attempt after awaiting protected signing authorization. Human launcher archives exact tested source; no upload occurred."
+}

@@ -1,0 +1,38 @@
+{
+  "version": "0.4.41",
+  "build": "96",
+  "preparedDate": "6 October 2026",
+  "metadataSHA256": "6ac4d64c284aa5fef029c41aeee236c31ee8ea00704bb019ab22da906a0a0025",
+  "screenshotManifestSHA256": "2bc8337c8b8325cfa8a126e8f542f5b7772a7e2fecd61c8ba64406eae3adbe41",
+  "nativeRoot": "native",
+  "moduleReceipt": "build/qa-cache/app-store-5013654b8c68f93cbaa913c1212168402be85ff94c7d33fca10d7e15c3e13e7e/module-ready.json",
+  "moduleReceiptSHA256": "89f25de3e32aefc90e4a262ba587631ac58479a85079dff7807419d537fbd787",
+  "policySHA256": "f7cc72938d2e4bfb109eab7dcb3ad580f7043c16129e49cd73d472249fbf5e67",
+  "qaReport": "native/build/qa/runs/20261005T213352249116Z-app-store/report.json",
+  "qaReportSHA256": "5d8c0dec20236f0de08803694224ca4b75dda00c0e330248b2f7311e426fa0eb",
+  "qaStatus": "failed",
+  "qaSummary": "The final source-unchanged Release Store campaign completed with 125 of 126 suites passing; strict zoom performance is the sole native-suite failure. The unsigned Store compile/preflight passed. Completed XCTest readback confirms 2 of 2 tests passed with 0 failures and preserves the unsigned executable hash. A fresh/private/tmp ad-hoc sandbox fixture passed save and reopen/export. The privacy render command and all 4 original-resolution visual inspections passed. The original coordinator report retains the timing failure and the earlier collector/FileProvider failures; separate readback/rerun receipts retain their correction evidence. The local direct Release version was updated to 0.4.41 (96) with the prior app backed up and both archive inventories preserved; the two direct updater suites passed. Normal product launch and the physical external drop matrix remain untested.",
+  "performanceStatus": "failed",
+  "performanceSummary": "Strict zoom performance remains failed against unchanged 50 ms input-to-layout and 33 ms steady-timer budgets. The 30-second campaign measured p95 input 51.3154 ms and steady timer 61.2394 ms. The original unsampled 600-second workload completed 600.02 measured seconds with 5,399 captures and 5 zoom/navigation cycles; p95 input 53.6320 ms and steady timer 63.0316 ms still exceeded the gates. Completion is not performance acceptance. These synthetic offscreen measurements do not measure physical input-to-display latency or certify absence of leaks.",
+  "knownIssues": [
+    "Strict zoom timing exceeds the unchanged internal 50 ms input-to-layout and 33 ms steady-timer budgets.",
+    "An unresolved reentrant NSTableView warning remains in the zoom fixture logs.",
+    "Physical input and a second monitor remain untested. An isolated fictional same-app note drop passed; real external app/browser drop acceptance remains untested.",
+    "The public policy serves older 4 October text; exact parity with the bundled 5 October policy awaits authorized publication.",
+    "Owner fields, distribution signing/validation and Apple account/review steps remain pending."
+  ],
+  "pendingReleaseGates": [
+    "Resolve the strict zoom timing failure on the final source-unchanged Release Store campaign (125/126 suites passed). The 30-second input/steady-timer p95 was 51.3154/61.2394 ms; the completed unsampled 600.019883-second workload was 53.6320/63.0316 ms against unchanged 50/33 ms gates. An AppKit reentrant-delegate warning remains. Unsigned Store build/preflight, 2/2 XCTest readback, fresh-temp enforced sandbox and four privacy visual inspections passed within their stated fixture scope. Current-source fictional screenshots and review materials remain drafts; comparison against the final distribution-signed app is still required. No submission readiness is implied.",
+    "Owner-confirmed legal rights/copyright, maintained public support with contact details, private review contacts, price/availability/release method and EU trader status.",
+    "Publish the reviewed 5 October 2026 bundled privacy policy at the configured public URL, then verify exact text parity. The public URL currently serves the older 4 October policy; HTTP 200 alone does not satisfy parity.",
+    "Obtain or select a valid Mac Installer Distribution identity; export and validate the final App Store package without changing the tested source.",
+    "Confirm the com.dabin.mac App Store Connect record, build-number availability, current agreements and required compliance/declaration answers.",
+    "Complete signed app runtime acceptance: fresh install and upgrade, real picker/bookmark persistence, clipboard/screenshots consent, external app/browser drops, notifications and quit behavior.",
+    "Test minimum macOS14 and the current shipping macOS, accessibility with VoiceOver/keyboard, energy under realistic recording, and optional previews on IPv6-only networking.",
+    "Compare current fictional screenshots against the final distribution-signed app; owner confirm artwork rights; upload and process build and metadata only after authorization; Apple review still required."
+  ],
+  "submissionReady": false,
+  "visualReview": "PASS: every rendered page opened and inspected; no clipping, overlap, broken tables or image overflow.",
+  "visualReviewReceipt": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/design/app-store-pack/qa/0.4.41-96/document-verification.json",
+  "renderedPDFSHA256": "ed042f2fabf1bca89d36adc4ab454e631870ed082c5bb3e220606b24cbc0ca74"
+}

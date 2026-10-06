@@ -1,0 +1,9 @@
+{
+  "task": "Security and locality audit with bounded fixes",
+  "data": "Local source code and synthetic fixtures; real archive files hashed locally for aggregate preservation checks, plus fixed-path preference/directory-mode checks. No private filenames or contents are retained in receipts. General clipboard contents were not read. Live app accessibility was checked for readiness and paused state.",
+  "historicalCandidate": "0.4.41(96)",
+  "candidate": "0.4.42(97)",
+  "publicationAuthorized": false,
+  "appStoreSubmissionAuthorized": false,
+  "runtimePacketCapturePerformed": false
+}

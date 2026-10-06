@@ -1,0 +1,18 @@
+DaBin keeps the useful bits of your day together on your Mac: notes, links, images, files and tasks.
+
+Save and find
+Paste content, drop files, or create a note or task. Search your saved content across DaBin and browse results in date columns. Local text recognition helps find words in supported images and documents. Search covers content saved into DaBin, not every file on your Mac.
+
+Organize your projects
+Keep related captures and tasks in projects with recognizable colors. Preview saved content, add notes, use priority tags and export selected items as a ZIP to a location you choose.
+
+Focus on a task
+Plan your day and choose a focus duration. When a running timer finishes, the little desktop robot shows an alarm with the first three words of your task title. Click the robot to dismiss it; the task stays open until you complete it.
+
+Optional Auto Capture
+Auto Capture starts off. After you enable it, DaBin can save later clipboard changes and new images from a screenshot folder you select. It does not record your screen or import existing screenshots. Choose a destination and pause at any time. A red recording symbol in the menu bar shows active monitoring. App exclusions and sensitive-clipboard checks help reduce unwanted captures, but cannot guarantee that all sensitive content is detected.
+
+Local by design
+No account, advertising, analytics or cloud sync. Saved captures, notes and recognized text stay on this Mac. Website previews are optional and off by default; enabling them can contact manually saved websites. Automatically captured links never fetch previews. You control exports, local backups, Recently Deleted and permanent deletion.
+
+Made for Apple Silicon Macs with macOS 14 or later.

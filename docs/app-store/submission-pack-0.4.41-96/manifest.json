@@ -1,0 +1,154 @@
+{
+  "product": "DaBin",
+  "version": "0.4.41",
+  "build": "96",
+  "locale": "en-US",
+  "status": "CONTENT_PREPARED_OWNER_FIELDS_AND_RELEASE_GATES_PENDING",
+  "submissionReady": false,
+  "qaStatus": "failed",
+  "performanceStatus": "failed",
+  "knownIssues": [
+    "Strict zoom timing exceeds the unchanged internal 50 ms input-to-layout and 33 ms steady-timer budgets.",
+    "An unresolved reentrant NSTableView warning remains in the zoom fixture logs.",
+    "Physical input and a second monitor remain untested. An isolated fictional same-app note drop passed; real external app/browser drop acceptance remains untested.",
+    "The public policy serves older 4 October text; exact parity with the bundled 5 October policy awaits authorized publication.",
+    "Owner fields, distribution signing/validation and Apple account/review steps remain pending."
+  ],
+  "pendingReleaseGates": [
+    "Resolve the strict zoom timing failure on the final source-unchanged Release Store campaign (125/126 suites passed). The 30-second input/steady-timer p95 was 51.3154/61.2394 ms; the completed unsampled 600.019883-second workload was 53.6320/63.0316 ms against unchanged 50/33 ms gates. An AppKit reentrant-delegate warning remains. Unsigned Store build/preflight, 2/2 XCTest readback, fresh-temp enforced sandbox and four privacy visual inspections passed within their stated fixture scope. Current-source fictional screenshots and review materials remain drafts; comparison against the final distribution-signed app is still required. No submission readiness is implied.",
+    "Owner-confirmed legal rights/copyright, maintained public support with contact details, private review contacts, price/availability/release method and EU trader status.",
+    "Publish the reviewed 5 October 2026 bundled privacy policy at the configured public URL, then verify exact text parity. The public URL currently serves the older 4 October policy; HTTP 200 alone does not satisfy parity.",
+    "Obtain or select a valid Mac Installer Distribution identity; export and validate the final App Store package without changing the tested source.",
+    "Confirm the com.dabin.mac App Store Connect record, build-number availability, current agreements and required compliance/declaration answers.",
+    "Complete signed app runtime acceptance: fresh install and upgrade, real picker/bookmark persistence, clipboard/screenshots consent, external app/browser drops, notifications and quit behavior.",
+    "Test minimum macOS14 and the current shipping macOS, accessibility with VoiceOver/keyboard, energy under realistic recording, and optional previews on IPv6-only networking.",
+    "Compare current fictional screenshots against the final distribution-signed app; owner confirm artwork rights; upload and process build and metadata only after authorization; Apple review still required."
+  ],
+  "docxPages": 15,
+  "quickGuidePages": 2,
+  "documentVerificationSHA256": "503eca38be9517e530ba542838ad345cf4c3daaea2da724c2b623ce1bbfff8ee",
+  "guideVerificationSHA256": "1940abe53b0b749cc8fa22f88aa8d7cc792813a1ea35490081f3779946b5992a",
+  "screenshots": {
+    "dimensions": [
+      1440,
+      900
+    ],
+    "format": "PNG",
+    "mode": "RGB",
+    "alpha": false,
+    "order": [
+      "Captions",
+      "Projects",
+      "Focus"
+    ],
+    "source": "Native Store views with fictional records",
+    "finalSignedAppComparison": "pending"
+  },
+  "sourceScreenshotHashes": {
+    "DABIN__APP_STORE__01_INBOX.png": "b65cf07118223a49d6c07dcd17bd7137dd8e7f748a7e362a454054215871e61e",
+    "DABIN__APP_STORE__02_PROJECTS.png": "92e33be77e5679dd7bbe830f586d1fd3a5712ee1c5baf34ca55087ffd8992363",
+    "DABIN__APP_STORE__03_FOCUS.png": "1d58778c902327cbb6ca7b7bd9e8b42c2a00ef254196da260f56cf570996d5cf"
+  },
+  "files": [
+    {
+      "file": "Assets/AppIcon.icns",
+      "bytes": 531662,
+      "sha256": "9ba9c0e655b1b9956a016d9d1a547d5fa598522664d1d21d2caf292ef6a1dadd"
+    },
+    {
+      "file": "Assets/DaBin-App-Icon-1024.png",
+      "bytes": 280161,
+      "sha256": "44ad308890153268409b08ee22050d66557327c92cbd3f9bb8d0f071c03e72b5"
+    },
+    {
+      "file": "Copy/DaBin-Friendly-Copy.txt",
+      "bytes": 2706,
+      "sha256": "8293ebc211538575f00953a15335e9782a1cb941b93b6307b6faca7c96317325"
+    },
+    {
+      "file": "Copy/PrivacyPolicy.md",
+      "bytes": 12870,
+      "sha256": "f7cc72938d2e4bfb109eab7dcb3ad580f7043c16129e49cd73d472249fbf5e67"
+    },
+    {
+      "file": "Copy/description.txt",
+      "bytes": 1724,
+      "sha256": "2ed231aa0affbb1175f0827c41c984882058d52a927f656f7da40c13c78ae637"
+    },
+    {
+      "file": "Copy/keywords.txt",
+      "bytes": 87,
+      "sha256": "d84e0bbce04ae6b21da1f36056e0b843cf515d876f89c57f0265cafb730a06c7"
+    },
+    {
+      "file": "Copy/metadata-en-US.json",
+      "bytes": 8589,
+      "sha256": "6ac4d64c284aa5fef029c41aeee236c31ee8ea00704bb019ab22da906a0a0025"
+    },
+    {
+      "file": "Copy/name.txt",
+      "bytes": 6,
+      "sha256": "b6cb5597897bce05c7e876e0c4cad876aec95a0cc7251fa0171fc1f073075e57"
+    },
+    {
+      "file": "Copy/promotional-text.txt",
+      "bytes": 153,
+      "sha256": "e12ad72f6edb2cc3f38cc1d56c025ccc0c1e09d6d0c7288c6d6a6b0f3d118bf7"
+    },
+    {
+      "file": "Copy/review-notes.txt",
+      "bytes": 3117,
+      "sha256": "55214430d0b168c2b1dd49b4e3e7a897e7c8887a8e3370fbad8245c9b09e3ee2"
+    },
+    {
+      "file": "Copy/subtitle.txt",
+      "bytes": 25,
+      "sha256": "5d481a4ee26468fd99f4b966a8fb016d49f736c20f84bf16ee099a6d3c12759a"
+    },
+    {
+      "file": "Copy/support-page.txt",
+      "bytes": 3228,
+      "sha256": "ed2c058d18a6362397b24a23a1042b410961a27e273f054d38ee27b2e688ac56"
+    },
+    {
+      "file": "Copy/whats-new-for-a-subsequent-app-store-version-only.txt",
+      "bytes": 382,
+      "sha256": "dc7e456b6ee6d6578b378b21c3de4a03b47a3b21668409006da6fb1d903c91dc"
+    },
+    {
+      "file": "DaBin-App-Store-Content.docx",
+      "bytes": 346486,
+      "sha256": "7af09b4b702ac0283471a12f85e49446ebb926b1e1a170539f21921f6ad0c0f0"
+    },
+    {
+      "file": "DaBin-Quick-Guide.pdf",
+      "bytes": 566933,
+      "sha256": "1510c0cd35698ff1e9e47fff809398095e8acae6a95273ee1cabe1d81bc7f24a"
+    },
+    {
+      "file": "README.txt",
+      "bytes": 1530,
+      "sha256": "639ad8d973dae2200719806c2d481d70f011236e79b318e645c39964c4a34420"
+    },
+    {
+      "file": "Screenshots/DABIN__APP_STORE__01_INBOX.png",
+      "bytes": 88993,
+      "sha256": "b65cf07118223a49d6c07dcd17bd7137dd8e7f748a7e362a454054215871e61e"
+    },
+    {
+      "file": "Screenshots/DABIN__APP_STORE__02_PROJECTS.png",
+      "bytes": 107787,
+      "sha256": "92e33be77e5679dd7bbe830f586d1fd3a5712ee1c5baf34ca55087ffd8992363"
+    },
+    {
+      "file": "Screenshots/DABIN__APP_STORE__03_FOCUS.png",
+      "bytes": 110284,
+      "sha256": "1d58778c902327cbb6ca7b7bd9e8b42c2a00ef254196da260f56cf570996d5cf"
+    },
+    {
+      "file": "authoring-inputs.json",
+      "bytes": 5324,
+      "sha256": "a6ec7d8984b71ab9223cba8bb99aeb0ed8970ca8b416c64744e6c9b6d460b0f1"
+    }
+  ]
+}

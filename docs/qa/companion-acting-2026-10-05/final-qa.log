@@ -1,0 +1,22 @@
+Compiling direct Release test module (141 production sources)…
+PASSED QuickAccessTests: PASS: 87 quick access checks
+PASSED ApplicationLifecycleTests: PASS: 80 application lifecycle checks; isolated preferences, events, pointer samples and fake notifications, no focus or personal data.
+PASSED AutoCaptureServiceTests: PASS: 75 auto-capture service checks
+PASSED AutoCaptureRobotPresenterTests: PASS: 82 automatic-capture robot presenter checks
+PASSED AutoCaptureRobotCelebrationTests: PASS: 1397 auto-capture celebration rotation and performance checks
+PASSED RobotMotionTests: PASS: 166 robot motion and personality checks
+PASSED IslandRobotChoreographyTests: PASS: 28695 island choreography contact, timing, and envelope checks
+PASSED RobotLifecycleTests: PASS: 38 robot lifecycle checks
+PASSED RobotAppFrameTests: PASS: 88 robot application frame geometry, gaze and lifecycle checks
+PASSED QuietOrbitRenderTests: PASS: 91 Quiet Orbit artwork, idle, reaction, burst-count, cleanup, and Reduce Motion checks passed. /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/quiet-orbit
+PASSED RobotProjectSignRenderTests: PASS: 63 native recording-board checks; renders: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/project-recording-sign-compact-2026-10-03/renders
+PASSED AutoCaptureSignMotionTests: Auto capture sign motion checks passed: 5201
+PASSED AutoCaptureSignPresenterTests: PASS: 105 typed Auto Capture sign presenter, queue, interruption, privacy and service receipt checks
+PASSED AutoCaptureSignRenderTests: PASS: 398 native confirmation-sign checks; renders: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/companion-acting-2026-10-05/sign-renders
+PASSED WindowTests: PASS: 272 window checks across 2 real screen(s); no cursor synthesis, clipboard access, network or notification permission.
+PASSED RobotDropTests: PASS: 187 robot drop checks (private pasteboards, isolated archive, native destination callbacks and corner panels)
+PASSED RobotWindowTransitionTests
+PASSED RobotVisualConsistencyTests: PASS: 106 robot visual consistency, native frame layout, click-through, and Reduce Motion checks. /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/robot-visual-consistency
+PASSED TaskTimerRobotTests: PASS: 523 task timer title, geometry, presenter, durable expiry, integration, native 2x artwork and acknowledgment checks. /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/task-timer-robot/B4D4FD23-5D89-4616-B71F-7E5B5A2E822D
+PASSED ProjectRecordingRobotTests: PASS: 43 project recording robot checks passed
+QA direct passed: 20/20 requested suites passed. Report: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/runs/20261005T195102661388Z-direct/report.json

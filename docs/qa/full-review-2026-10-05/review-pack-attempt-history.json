@@ -1,0 +1,72 @@
+{
+  "recordedUTC": "2026-10-06T03:35:07.932452+00:00",
+  "nativeProductionInputsChanged": false,
+  "artifactMarkersPerOperation": {
+    "pdfEdit": 1,
+    "docxCreate": 1
+  },
+  "repairs": [
+    {
+      "stage": "guide-first-render",
+      "status": "REPAIRED",
+      "issue": "Stale Inbox/Today guide prose did not match current Captions/Tasks tab labels; leader lines crossed picker/export label text.",
+      "evidence": "tmp/pdfs/guide-0.4.41-96-render-1",
+      "repair": "Current Captions/Tasks prose and measured leader endpoints, with all original native asset PNGs retained."
+    },
+    {
+      "stage": "guide-rebuild",
+      "status": "REPAIRED",
+      "exitCode": 1,
+      "issue": "Guide required-phrase list still asserted Inbox after current-label prose correction.",
+      "repair": "Required exact Captions and Tasks labels now match actual UI and guide."
+    },
+    {
+      "stage": "document-first-verification",
+      "status": "REPAIRED_VERIFIER_ONLY",
+      "exitCode": 1,
+      "observedError": "Document policy-body parity failed.",
+      "cause": "Verifier inserted spaces between formatted Word runs, separating the full source sentence Auto Capture is off by default. into default and a detached period.",
+      "proof": "Exactly one source block failed the previous verifier; every full non-heading policy block was present when preserving actual displayed run concatenation within paragraphs.",
+      "repair": "Concatenate Word runs within paragraphs before whitespace normalization. Exact source-copy and full-policy comparison retained."
+    },
+    {
+      "stage": "metadata-final-refresh",
+      "status": "UPDATED_AT_PARENT_REQUEST",
+      "beforeSHA256": "edd7504903f689b37f77b75ce841057564290fb46a36ecb875d87b31ae90a525",
+      "afterSHA256": "6ac4d64c284aa5fef029c41aeee236c31ee8ea00704bb019ab22da906a0a0025",
+      "field": "pendingGates[0] last sentence",
+      "beforeSentence": "Current screenshots and draft artifacts are being generated from frozen source; no submission readiness is implied.",
+      "afterSentence": "Current-source fictional screenshots and review materials remain drafts; comparison against the final distribution-signed app is still required. No submission readiness is implied.",
+      "otherMetadataFieldsChanged": false
+    },
+    {
+      "stage": "artifact-label-and-scope-final-render",
+      "status": "REPAIRED_AND_VISUALLY_VERIFIED",
+      "repair": "Changed support and screenshot captions to current Captions tab wording; clarified verified local direct update is separate from signed Store acceptance. DOCX render-4 all 15 pages inspected.",
+      "finalRender": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/design/app-store-pack/qa/0.4.41-96/render-4",
+      "metadataAndNativeInputsUnchanged": true
+    },
+    {
+      "stage": "final-package-source-copy",
+      "status": "REPAIRED_AND_REVERIFIED",
+      "issue": "Generator normalized metadata JSON into identical values with different bytes, and authoring snapshot retained a stale pending visual field.",
+      "repair": "Copy exact source metadata bytes; record actual completed all-page visual receipt; package rejects metadata hash drift.",
+      "previousNormalizedCopySHA256": "bf5a5724c4d9a81e83745e009e71ec4b9017f8fb30df22aae85866d00d5f90de",
+      "exactSourceAndCopySHA256": "6ac4d64c284aa5fef029c41aeee236c31ee8ea00704bb019ab22da906a0a0025",
+      "firstZIPRetained": {
+        "path": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/full-review-2026-10-05/review-pack-attempts/initial-package.zip",
+        "bytes": 1905239,
+        "sha256": "39abf75313e577240642a8801137c1cd99f5c5878f8a8af9497a328406cf3d1e"
+      },
+      "finalZIP": {
+        "path": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/output/DaBin-App-Store-Pack-0.4.41-96.zip",
+        "bytes": 1905388,
+        "sha256": "575df8ecc5ef1536c5b7ba9585db72ccba332e9fa3507466a34f5e79f7db4329"
+      },
+      "documentAndGuideBytesChanged": false,
+      "nativeAndSourceMetadataBytesChanged": false
+    }
+  ],
+  "screenshotFirstTimeoutReceipt": "docs/qa/full-review-2026-10-05/screenshot-first-attempt.json",
+  "finalVerificationReceipt": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/full-review-2026-10-05/review-pack-final-verification.json"
+}

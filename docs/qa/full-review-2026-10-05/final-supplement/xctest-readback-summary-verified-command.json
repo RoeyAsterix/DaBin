@@ -1,0 +1,19 @@
+{
+  "command": [
+    "xcrun",
+    "xcresulttool",
+    "get",
+    "test-results",
+    "summary",
+    "--path",
+    "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/full-review-2026-10-05/final-supplement/DaBinSmoke.xcresult"
+  ],
+  "shellCommand": "xcrun xcresulttool get test-results summary --path '/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/full-review-2026-10-05/final-supplement/DaBinSmoke.xcresult' > '/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/full-review-2026-10-05/final-supplement/xctest-readback-summary-verified.json'",
+  "startedUTC": "2026-10-05T22:18:23.796Z",
+  "finishedUTC": "2026-10-05T22:18:29.113Z",
+  "exitCode": 0,
+  "wallSeconds": 0.000006459,
+  "output": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/full-review-2026-10-05/final-supplement/xctest-readback-summary-verified.json",
+  "stderr": "",
+  "scope": "Read-only existing xcresult metadata; local Apple cache access only, no test execution"
+}

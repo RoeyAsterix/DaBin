@@ -1,0 +1,38 @@
+{
+  "recordedUTC": "2026-10-06T04:23:26.316555+00:00",
+  "version": "0.4.42",
+  "build": "97",
+  "sourceFingerprint": "14d251986c487911eefc6cda4aaac647f9fc7252e949144213eaba1f072962f3",
+  "productionInputsMatchFreeze": true,
+  "testHashesMatchWithRecordedRepair": true,
+  "packageToolMatchesSeparateAttestation": true,
+  "ZIP": {
+    "path": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/security-locality-2026-10-06/DaBin-0.4.42-Update.zip",
+    "bytes": 7010893,
+    "SHA256": "e82d89b96f364e95019157b9d43f7ab6c40efc2486b97a473becf8f95cc25d76",
+    "entries": 17,
+    "CRC": "passed",
+    "allManifestHashes": "passed",
+    "updaterQA": {
+      "backup": "passed",
+      "freshInstall": "passed",
+      "installedExecutableHash": "passed",
+      "installedSignature": "passed",
+      "replacement": "passed",
+      "sandboxCompatibleDocumentHandoff": "passed",
+      "verifySource": "passed"
+    }
+  },
+  "installedApp": "/Users/roeylibfeld/Applications/DaBin.app",
+  "strictSignatureVerified": true,
+  "mainSHA256": "854ad262213dff988db5603ee0d5a6f0b16ee744f49bd0fe24c2203768f639f8",
+  "embeddedHelperSHA256": "243eea721f1610da47e80f5fcc1248c433176bf3dcb7eaf7e88df0e7cad6f36a",
+  "installedResourcesMatch": true,
+  "entitlements": {
+    "com.apple.security.app-sandbox": true,
+    "com.apple.security.files.bookmarks.app-scope": true,
+    "com.apple.security.files.user-selected.read-write": true,
+    "com.apple.security.network.client": true
+  },
+  "installLog": "Previous app preserved at /Users/roeylibfeld/Applications/.DaBinBackups/20261006-072250-c3fdc337.app\nInstalled /Users/roeylibfeld/Applications/DaBin.app\nYour archive was not modified. Open DaBin to use the installed version.\n"
+}

@@ -1,0 +1,9 @@
+{
+  "captureCount" : 4,
+  "checks" : 235,
+  "mode" : "upgrade",
+  "originalSHA256" : "04747f2a69c69e9d2631ad64585e139f090b7965e1d0492a61b55c90b23bee25",
+  "reader" : "0.4.43 (98)",
+  "snapshotSchema" : 11,
+  "status" : "passed"
+}

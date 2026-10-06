@@ -1,0 +1,1 @@
+Swift/ErrorType.swift:254: Fatal error: Error raised at top level: Error Domain=DaBinUpgradeFixture Code=1 "Managed original stays inside owned archive" UserInfo={NSLocalizedDescription=Managed original stays inside owned archive}

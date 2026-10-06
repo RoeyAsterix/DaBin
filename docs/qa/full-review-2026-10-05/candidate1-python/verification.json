@@ -1,0 +1,149 @@
+{
+  "startedAtUTC": "2026-10-05T20:32:44.779701+00:00",
+  "finishedAtUTC": "2026-10-05T20:32:44.995778+00:00",
+  "candidate": {
+    "version": "0.4.41",
+    "build": "96"
+  },
+  "sourceFingerprintBefore": "213d9dfb791936111b8b710211f8a342c5cf5a23cdca376198d54cc233350000",
+  "sourceFingerprintAfter": "213d9dfb791936111b8b710211f8a342c5cf5a23cdca376198d54cc233350000",
+  "expectedSourceFingerprint": "213d9dfb791936111b8b710211f8a342c5cf5a23cdca376198d54cc233350000",
+  "productionInputsUnchanged": true,
+  "checkedInputsUnchanged": true,
+  "checks": [
+    {
+      "name": "python-discovery",
+      "command": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "Tests",
+        "-p",
+        "test_*.py",
+        "-v"
+      ],
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "exitMatchedExpectation": true,
+      "seconds": 0.205,
+      "log": "python-discovery.log",
+      "logSHA256": "66fbc689549f7cc77de76ff3ca87e99ec83193e2a8c46d4f32c776cb36c83de4",
+      "testsRun": 58
+    },
+    {
+      "name": "preflight-regressions",
+      "command": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-B",
+        "scripts/test_app_store_preflight.py"
+      ],
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "exitMatchedExpectation": true,
+      "seconds": 0.08,
+      "log": "preflight-regressions.log",
+      "logSHA256": "6d15218a5fe849602a5512b0f75ba4fb9f74ed4f1ebbb9d0fd42fe804d661542",
+      "testsRun": 32
+    },
+    {
+      "name": "generated-project",
+      "command": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-B",
+        "scripts/generate_project.py",
+        "--check"
+      ],
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "exitMatchedExpectation": true,
+      "seconds": 0.049,
+      "log": "generated-project.log",
+      "logSHA256": "5aacf42b96da30b2e84af2636a8b450c221bcff6edcbc3599caf4f5545787b6f"
+    },
+    {
+      "name": "static-preflight",
+      "command": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-B",
+        "scripts/app_store_preflight.py",
+        "--static-only"
+      ],
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "exitMatchedExpectation": true,
+      "seconds": 0.145,
+      "log": "static-preflight.log",
+      "logSHA256": "fe6b5f2161d5d33553e661d66d43ca01c86946cb45121a61b9b010533312e4e6"
+    },
+    {
+      "name": "metadata-draft",
+      "command": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-B",
+        "scripts/validate_app_store_metadata.py"
+      ],
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "exitMatchedExpectation": true,
+      "seconds": 0.05,
+      "log": "metadata-draft.log",
+      "logSHA256": "f13b436c0c5fda8d34a15b99f29f26d66deea5fa1c2285e72d636635deb78689",
+      "status": "LOCAL_DRAFT_CHECKS_PASS",
+      "submissionReady": false,
+      "errors": [],
+      "pendingGates": [
+        "Owner-confirmed legal rights/copyright, maintained public support with contact details, private review contacts, price/availability/release method and EU trader status.",
+        "Publish the reviewed 5 October 2026 bundled privacy policy at the configured public URL, then verify exact text parity. The public URL currently serves the older 4 October policy; HTTP 200 alone does not satisfy parity.",
+        "Obtain or select a valid Mac Installer Distribution identity; export and validate the final App Store package without changing the tested source.",
+        "Confirm the com.dabin.mac App Store Connect record, build-number availability, current agreements and required compliance/declaration answers.",
+        "Complete signed app runtime acceptance: fresh install and upgrade, real picker/bookmark persistence, clipboard/screenshots consent, external app/browser drops, notifications and quit behavior.",
+        "Test minimum macOS14 and the current shipping macOS, accessibility with VoiceOver/keyboard, energy under realistic recording, and optional previews on IPv6-only networking.",
+        "Compare current fictional screenshots against the final distribution-signed app; owner confirm artwork rights; upload and process build and metadata only after authorization; Apple review still required."
+      ]
+    },
+    {
+      "name": "metadata-strict",
+      "command": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-B",
+        "scripts/validate_app_store_metadata.py",
+        "--require-complete"
+      ],
+      "exitCode": 1,
+      "expectedExitCode": 1,
+      "exitMatchedExpectation": true,
+      "seconds": 0.042,
+      "log": "metadata-strict.log",
+      "logSHA256": "974d72d6d142a007a47db649edebc190ccf315bbece6d3a95bb1e9bb433aa102",
+      "status": "FAIL",
+      "submissionReady": false,
+      "errors": [
+        "owner confirmed supportURL",
+        "owner confirmed copyright",
+        "owner confirmed review contactName",
+        "owner confirmed review contactEmail",
+        "owner confirmed review contactPhone",
+        "owner confirmed legalRightsHolder",
+        "owner confirmed supportEmail",
+        "owner confirmed price",
+        "owner confirmed territories",
+        "owner confirmed releaseMethod",
+        "owner confirmed EUTraderStatus",
+        "all externally verified submission gates are resolved"
+      ],
+      "pendingGates": [
+        "Owner-confirmed legal rights/copyright, maintained public support with contact details, private review contacts, price/availability/release method and EU trader status.",
+        "Publish the reviewed 5 October 2026 bundled privacy policy at the configured public URL, then verify exact text parity. The public URL currently serves the older 4 October policy; HTTP 200 alone does not satisfy parity.",
+        "Obtain or select a valid Mac Installer Distribution identity; export and validate the final App Store package without changing the tested source.",
+        "Confirm the com.dabin.mac App Store Connect record, build-number availability, current agreements and required compliance/declaration answers.",
+        "Complete signed app runtime acceptance: fresh install and upgrade, real picker/bookmark persistence, clipboard/screenshots consent, external app/browser drops, notifications and quit behavior.",
+        "Test minimum macOS14 and the current shipping macOS, accessibility with VoiceOver/keyboard, energy under realistic recording, and optional previews on IPv6-only networking.",
+        "Compare current fictional screenshots against the final distribution-signed app; owner confirm artwork rights; upload and process build and metadata only after authorization; Apple review still required."
+      ]
+    }
+  ],
+  "boundary": "Offline Python fixture tests and static/draft validators only. No native build, GUI, signing, provisioning, upload, account action or private archive/clipboard interaction. Strict metadata failure is retained and is not a pass for submission readiness."
+}

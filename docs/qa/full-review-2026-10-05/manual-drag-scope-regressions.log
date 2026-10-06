@@ -1,0 +1,18 @@
+test_changed_inputs_and_resources_rejected (__main__.ManualDragScopeTests.test_changed_inputs_and_resources_rejected) ... ok
+test_crash_timeout_compile_and_other_assertions_rejected (__main__.ManualDragScopeTests.test_crash_timeout_compile_and_other_assertions_rejected) ... ok
+test_default_full_pass_stays_strict (__main__.ManualDragScopeTests.test_default_full_pass_stays_strict) ... ok
+test_explicit_scope_retains_failed_performance (__main__.ManualDragScopeTests.test_explicit_scope_retains_failed_performance) ... ok
+test_full_scope_does_not_union_partial_reports (__main__.ManualDragScopeTests.test_full_scope_does_not_union_partial_reports) ... ok
+test_functional_failure_is_not_waived_or_superseded (__main__.ManualDragScopeTests.test_functional_failure_is_not_waived_or_superseded) ... ok
+test_mismatched_counts_and_inventory_rejected (__main__.ManualDragScopeTests.test_mismatched_counts_and_inventory_rejected) ... ok
+test_missing_native_drag_result_rejected (__main__.ManualDragScopeTests.test_missing_native_drag_result_rejected) ... ok
+test_mixed_module_configurations_rejected (__main__.ManualDragScopeTests.test_mixed_module_configurations_rejected) ... ok
+test_multiple_current_selected_receipts (__main__.ManualDragScopeTests.test_multiple_current_selected_receipts) ... ok
+test_no_failed_performance_evidence_rejected (__main__.ManualDragScopeTests.test_no_failed_performance_evidence_rejected) ... ok
+test_source_changed_during_run_rejected (__main__.ManualDragScopeTests.test_source_changed_during_run_rejected) ... ok
+test_unrequested_does_not_count_as_passed (__main__.ManualDragScopeTests.test_unrequested_does_not_count_as_passed) ... ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 0.005s
+
+OK

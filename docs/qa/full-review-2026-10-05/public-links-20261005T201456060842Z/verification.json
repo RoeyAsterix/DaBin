@@ -1,0 +1,51 @@
+{
+  "boundary": "Read-only public unauthenticated GET requests. No private app data, uploads, publication, account changes, signing or application actions.",
+  "checkedAtUTC": "2026-10-05T20:14:56.060842+00:00",
+  "policyComparison": {
+    "exactBytesMatch": null,
+    "localChangedDuringFetch": false,
+    "localPath": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/Resources/PrivacyPolicy.md",
+    "localSHA256": "9b3065a0256f11cee42dc8ae4d84a6f862638ae89ce34f1d4eada3647a70da8d",
+    "localUpdatedLine": "Updated 4 October 2026",
+    "normalizedTextMatch": null,
+    "publicSHA256": null,
+    "publicUpdatedLine": null
+  },
+  "results": {
+    "configuredPolicyPage": {
+      "authenticated": false,
+      "elapsedSeconds": 0.014,
+      "error": "<urlopen error [Errno 8] nodename nor servname provided, or not known>",
+      "errorType": "URLError",
+      "label": "configuredPolicyPage",
+      "reachable": false,
+      "requestMethod": "GET",
+      "requestedURL": "https://github.com/RoeyAsterix/DaBin/blob/main/native/Resources/PrivacyPolicy.md",
+      "timeoutSeconds": 12
+    },
+    "configuredSupportPage": {
+      "authenticated": false,
+      "elapsedSeconds": 0.014,
+      "error": "<urlopen error [Errno 8] nodename nor servname provided, or not known>",
+      "errorType": "URLError",
+      "label": "configuredSupportPage",
+      "reachable": false,
+      "requestMethod": "GET",
+      "requestedURL": "https://github.com/RoeyAsterix/DaBin/issues",
+      "timeoutSeconds": 12
+    },
+    "publicPolicyMarkdown": {
+      "authenticated": false,
+      "elapsedSeconds": 0.014,
+      "error": "<urlopen error [Errno 8] nodename nor servname provided, or not known>",
+      "errorType": "URLError",
+      "label": "publicPolicyMarkdown",
+      "reachable": false,
+      "requestMethod": "GET",
+      "requestedURL": "https://raw.githubusercontent.com/RoeyAsterix/DaBin/main/native/Resources/PrivacyPolicy.md",
+      "timeoutSeconds": 12
+    }
+  },
+  "sourceScriptSHA256": "ae14392fe85043840cadb0edbc768c6e7c8d5fd5d5008fa9965c1a114acac474",
+  "supportContactAdequacy": "Not established by HTTP reachability; owner contact review remains pending."
+}

@@ -1,0 +1,253 @@
+{
+  "checkedAtUTC": "2026-10-05T20:46:38.120208+00:00",
+  "team": "8QG4967CSU",
+  "bundleIdentifier": "com.dabin.mac",
+  "productionFingerprintBefore": "165db67e4b9e488b48422b3c4ff56312c00b39dfd226c9a43a597e4c4f449281",
+  "productionFingerprintAfter": "165db67e4b9e488b48422b3c4ff56312c00b39dfd226c9a43a597e4c4f449281",
+  "productionInputsUnchanged": true,
+  "identities": {
+    "codesigning": [
+      {
+        "SHA1": "7A381F9E6466C3E2CA33AD38660334C08FB30232",
+        "commonName": "Apple Distribution: Roey Libfeld (8QG4967CSU)"
+      },
+      {
+        "SHA1": "587FFF4ABCE7B751AE3CB11DFC0EBA9666193AC4",
+        "commonName": "Developer ID Application: Roey Libfeld (8QG4967CSU)"
+      },
+      {
+        "SHA1": "D71587B10060E08FD5E2312876531CDEE97266B6",
+        "commonName": "Apple Development: Roey Libfeld (PDK64QFH76)"
+      }
+    ],
+    "basic": [
+      {
+        "SHA1": "7A381F9E6466C3E2CA33AD38660334C08FB30232",
+        "commonName": "Apple Distribution: Roey Libfeld (8QG4967CSU)"
+      },
+      {
+        "SHA1": "587FFF4ABCE7B751AE3CB11DFC0EBA9666193AC4",
+        "commonName": "Developer ID Application: Roey Libfeld (8QG4967CSU)"
+      },
+      {
+        "SHA1": "D71587B10060E08FD5E2312876531CDEE97266B6",
+        "commonName": "Apple Development: Roey Libfeld (PDK64QFH76)"
+      }
+    ]
+  },
+  "publicCertificates": [
+    {
+      "subject": "C=US,O=Roey Libfeld,OU=8QG4967CSU,CN=Apple Distribution: Roey Libfeld (8QG4967CSU),UID=8QG4967CSU",
+      "issuer": "C=US,O=Apple Inc.,OU=G3,CN=Apple Worldwide Developer Relations Certification Authority",
+      "notBefore": "Sep 24 15:40:13 2026 GMT",
+      "notAfter": "Sep 24 15:40:12 2027 GMT",
+      "serial": "329F7AF9502F4E75B9473E3261232220",
+      "SHA1": "7A381F9E6466C3E2CA33AD38660334C08FB30232",
+      "SHA256": "1826e552470c02acbb649fbc774c26d3865f15323859deeabb7f27c639070b24",
+      "subjectOU": "8QG4967CSU",
+      "decodeExitCode": 0,
+      "validIdentityListed": true
+    },
+    {
+      "subject": "C=US,O=Roey Libfeld,OU=8QG4967CSU,CN=Apple Development: Roey Libfeld (PDK64QFH76),UID=97P4HVN7GW",
+      "issuer": "C=US,O=Apple Inc.,OU=G3,CN=Apple Worldwide Developer Relations Certification Authority",
+      "notBefore": "Sep 24 15:42:56 2026 GMT",
+      "notAfter": "Sep 24 15:42:55 2027 GMT",
+      "serial": "3BBF4A97CD9E1E041D006EDBAB15B30F",
+      "SHA1": "D71587B10060E08FD5E2312876531CDEE97266B6",
+      "SHA256": "636c9f5556eabd240ef64920dcdd1d06f8ecae7bd6e4b6a84e5dce5065e03c93",
+      "subjectOU": "8QG4967CSU",
+      "decodeExitCode": 0,
+      "validIdentityListed": true
+    },
+    {
+      "subject": "C=US,O=Roey Libfeld,OU=8QG4967CSU,CN=Developer ID Application: Roey Libfeld (8QG4967CSU),UID=8QG4967CSU",
+      "issuer": "C=US,O=Apple Inc.,OU=Apple Certification Authority,CN=Developer ID Certification Authority",
+      "notBefore": "Sep 24 15:40:36 2026 GMT",
+      "notAfter": "Feb  1 22:12:15 2027 GMT",
+      "serial": "66CA3D81663BC093",
+      "SHA1": "587FFF4ABCE7B751AE3CB11DFC0EBA9666193AC4",
+      "SHA256": "396008173d850044bfa4cbefba780cb099be8f062b6fb159cf9753bd29942056",
+      "subjectOU": "8QG4967CSU",
+      "decodeExitCode": 0,
+      "validIdentityListed": true
+    }
+  ],
+  "profileSearch": [
+    {
+      "root": "/Users/roeylibfeld/Library/MobileDevice/Provisioning Profiles",
+      "exists": false,
+      "profileFiles": 0
+    },
+    {
+      "root": "/Users/roeylibfeld/Library/Developer/Xcode/UserData/Provisioning Profiles",
+      "exists": true,
+      "profileFiles": 1
+    }
+  ],
+  "profilesForTargetTeamOrBundle": [
+    {
+      "path": "/Users/roeylibfeld/Library/Developer/Xcode/UserData/Provisioning Profiles/d9f1e483-830d-4ab5-90ac-6980c42b64d0.provisionprofile",
+      "fileSHA256": "555ebfc18f612c9e136bef104acef68f4c31186a81d21e3d509f47a2b3b36d27",
+      "uuid": "d9f1e483-830d-4ab5-90ac-6980c42b64d0",
+      "name": "Mac Team Store Provisioning Profile: com.dabin.mac",
+      "teamIdentifiers": [
+        "8QG4967CSU"
+      ],
+      "platforms": [
+        "OSX"
+      ],
+      "applicationIdentifierPrefix": [
+        "8QG4967CSU"
+      ],
+      "applicationIdentifier": "8QG4967CSU.com.dabin.mac",
+      "entitlementTeam": "8QG4967CSU",
+      "expirationUTC": "2027-09-27T18:03:32+00:00",
+      "expired": false,
+      "deviceCount": 0,
+      "provisionsAllDevices": false,
+      "getTaskAllow": null,
+      "capabilityClaims": {},
+      "storeProfileViolations": [],
+      "allowedPublicCertificates": [
+        {
+          "subject": "C=US,O=Roey Libfeld,OU=8QG4967CSU,CN=Apple Distribution: Roey Libfeld (8QG4967CSU),UID=8QG4967CSU",
+          "issuer": "C=US,O=Apple Inc.,OU=G3,CN=Apple Worldwide Developer Relations Certification Authority",
+          "notBefore": "Sep 24 15:40:13 2026 GMT",
+          "notAfter": "Sep 24 15:40:12 2027 GMT",
+          "serial": "329F7AF9502F4E75B9473E3261232220",
+          "SHA1": "7A381F9E6466C3E2CA33AD38660334C08FB30232",
+          "SHA256": "1826e552470c02acbb649fbc774c26d3865f15323859deeabb7f27c639070b24",
+          "subjectOU": "8QG4967CSU",
+          "decodeExitCode": 0,
+          "validIdentityListed": true,
+          "installedPublicCertificateFound": true
+        },
+        {
+          "subject": "C=US,O=Roey Libfeld,OU=8QG4967CSU,CN=Apple Distribution: Roey Libfeld (8QG4967CSU),UID=8QG4967CSU",
+          "issuer": "C=US,O=Apple Inc.,OU=G3,CN=Apple Worldwide Developer Relations Certification Authority",
+          "notBefore": "Sep 27 18:03:33 2026 GMT",
+          "notAfter": "Sep 27 18:03:32 2027 GMT",
+          "serial": "3DAA1F75F6B2D7A36ED143A787EE0F41",
+          "SHA1": "8E5B6BB9E48E4AED036132138B9910ED6563F706",
+          "SHA256": "5a227d9158f86b67d8a33193c63c857235b3d094db93c98eee611555eda9ad4f",
+          "subjectOU": "8QG4967CSU",
+          "decodeExitCode": 0,
+          "validIdentityListed": false,
+          "installedPublicCertificateFound": false
+        }
+      ]
+    }
+  ],
+  "unrelatedProfilesOmitted": 0,
+  "profileDecodeErrors": [],
+  "queries": [
+    {
+      "command": [
+        "/usr/bin/security",
+        "find-identity",
+        "-v",
+        "-p",
+        "codesigning"
+      ],
+      "exitCode": 0,
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/usr/bin/security",
+        "find-identity",
+        "-v",
+        "-p",
+        "basic"
+      ],
+      "exitCode": 0,
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/usr/bin/security",
+        "find-certificate",
+        "-a",
+        "-c",
+        "Apple Distribution",
+        "-p"
+      ],
+      "exitCode": 0,
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/usr/bin/security",
+        "find-certificate",
+        "-a",
+        "-c",
+        "Apple Development",
+        "-p"
+      ],
+      "exitCode": 0,
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/usr/bin/security",
+        "find-certificate",
+        "-a",
+        "-c",
+        "Developer ID Application",
+        "-p"
+      ],
+      "exitCode": 0,
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/usr/bin/security",
+        "find-certificate",
+        "-a",
+        "-c",
+        "Mac Installer Distribution",
+        "-p"
+      ],
+      "exitCode": 0,
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/usr/bin/security",
+        "find-certificate",
+        "-a",
+        "-c",
+        "3rd Party Mac Developer Installer",
+        "-p"
+      ],
+      "exitCode": 0,
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/usr/bin/security",
+        "find-certificate",
+        "-a",
+        "-c",
+        "3rd Party Mac Developer Application",
+        "-p"
+      ],
+      "exitCode": 0,
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/usr/bin/security",
+        "find-certificate",
+        "-a",
+        "-c",
+        "Mac Developer",
+        "-p"
+      ],
+      "exitCode": 0,
+      "stderr": ""
+    }
+  ],
+  "boundary": "Read-only installed signing identity listings, public certificate metadata, and locally installed provisioning profiles in the two standard directories. No private-key export/use, signing, Keychain mutation, GUI, network, Apple account action, profile download or source mutation. Identity availability does not prove protected private-key access during signing."
+}

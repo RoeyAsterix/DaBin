@@ -1,0 +1,66 @@
+{
+  "observedAtUTC": "2026-10-05T21:45:05.363159+00:00",
+  "status": "PREPARED_NOT_STARTED",
+  "checks": {
+    "pythonAST": "PASS",
+    "argumentHelp": "PASS"
+  },
+  "runtimeServerVerified": false,
+  "fixtureStaged": false,
+  "fixtureLaunched": false,
+  "browserOpened": false,
+  "physicalDragAttempted": false,
+  "releaseAcceptance": false,
+  "files": [
+    {
+      "path": "docs/qa/full-review-2026-10-05/serve_local_drag_receiver.py",
+      "sha256": "936d2746c8f7b733f55165514bf439d11fe897dbbc1ba02a485d527e71b0834a"
+    },
+    {
+      "path": "docs/qa/full-review-2026-10-05/local_drag_receiver.html",
+      "sha256": "4170f54fa420abcb5c4b7321e78693d165605fed1135dca03e075227c9117091"
+    },
+    {
+      "path": "native/Tests/NativeContentDragTests.swift",
+      "sha256": "f2a173a14cee2f94f9ae5feb96ad33ed1abd9a95819d39c5a4432cb12fbcf900"
+    }
+  ],
+  "expectedPayloads": {
+    "text": "Fictional DaBin note",
+    "textContainsNonASCII": false,
+    "url": "https://example.invalid/fixture",
+    "fileName": "Fixture.txt",
+    "fileUTF8": "Fictional DaBin attachment for native drag QA.\n",
+    "fileBytes": 47,
+    "nativeMixedWriterCount": 3,
+    "fileSHA256": "0afec1ee5594170ee3b8af53022229ff5ae8a72197157a4c2687630dd2b82cd2"
+  },
+  "currentReceiver": {
+    "kind": "drop_region",
+    "urlInputField": false,
+    "urlNavigation": false,
+    "uploads": false,
+    "maxDroppedFileReadBytes": 1048576,
+    "rawFormatsAreNotItemCount": true
+  },
+  "loopbackDesign": {
+    "host": "127.0.0.1",
+    "port": "OS selected by default",
+    "routes": "one random exact HTML path",
+    "servesWorkspace": false,
+    "acceptsUploads": false,
+    "opensBrowser": false,
+    "initiatesConnections": false,
+    "runtimeVerified": false
+  },
+  "remainingGaps": [
+    "Non-ASCII Unicode text fidelity",
+    "Browser URL input-field acceptance",
+    "Actual global pointer crossing and destination acceptance",
+    "Actual mixed-item representation preservation per destination",
+    "Archive-backed ExplorerTransfer outgoing snapshot path",
+    "Distribution sandbox transfer grants",
+    "Loopback receiver runtime and CSP enforcement"
+  ],
+  "acceptanceRule": "A source drag/session-ended event is insufficient. Require actual destination content/bytes and per-representation results; retain controller limitations and partial results explicitly."
+}

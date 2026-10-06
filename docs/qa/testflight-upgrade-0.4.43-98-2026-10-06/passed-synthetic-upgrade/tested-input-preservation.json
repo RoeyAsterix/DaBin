@@ -1,0 +1,9 @@
+{
+  "scope": "Original exact QA input files from the successful run, retained before documentation refresh. Native production inputs have not changed.",
+  "files": {
+    "run_upgrade_fixture.py": "d10bc0a75fc951f4e5dc7ec8a4c0e21211253647738de406c9d9592851f81dd2",
+    "UpgradeFixture.swift": "88dca57a366bb3f89e4942dc4a6f189c3fb08446ff8ddda4e5a6b6ae45144afb",
+    "README.md": "a4e3efd8d40b5b3e6464e0400d261a2744c125dde199ce6712ee2a36a8112704",
+    "prepared-inputs.json": "f6d0d100ff2c73e924f8e76fef7463e27432f48295572ede4c59254d513d79bc"
+  }
+}

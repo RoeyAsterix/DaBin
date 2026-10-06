@@ -1,0 +1,20 @@
+{
+  "recordedUTC": "2026-10-06T04:23:25.928294+00:00",
+  "scope": "Local byte/structure hash only; no file names or contents emitted; symlinks not followed",
+  "roots": [
+    {
+      "root": "/Users/roeylibfeld/Library/Containers/com.dabin.mac/Data/Library/Application Support/DaBin",
+      "exists": true,
+      "fileCount": 455,
+      "totalBytes": 285915321,
+      "contentAndStructureSHA256": "6cb593a20c73137745be0a12b63aafb389d0a9c644c8b9be6c7689f01f38cdef"
+    },
+    {
+      "root": "/Users/roeylibfeld/Library/Application Support/DaBin",
+      "exists": true,
+      "fileCount": 55,
+      "totalBytes": 2037065,
+      "contentAndStructureSHA256": "482978f8bb71c82190f9505d5bca6501bb87c8e29211ad76b15e0ec170d7f102"
+    }
+  ]
+}

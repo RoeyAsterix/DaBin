@@ -1,0 +1,8 @@
+{
+  "recordedUTC": "2026-10-06T04:27:08.384234+00:00",
+  "path": "/Users/roeylibfeld/Library/Application Support/DaBin",
+  "beforeMode": "0o755",
+  "afterMode": "0o700",
+  "sameDeviceAndInode": true,
+  "scope": "Only the existing inactive legacy archive root mode changed; no child content was read, moved or rewritten."
+}

@@ -1,0 +1,160 @@
+{
+  "schemaVersion": 1,
+  "recordedAtUTC": "2026-10-06T04:38:49.574127+00:00",
+  "status": "STATIC_FORWARD_CONTINUITY_CONFIRMED_SYNTHETIC_AND_SIGNED_INSTALL_VALIDATION_SEPARATE",
+  "scope": "Read-only production configuration and historical repository source/receipt audit. This JSON receipt is the only file created. No build, upload, settings changes, real capture archive access, or real archive content writes.",
+  "historicalDistributedBuild": {
+    "version": "0.4.31",
+    "build": "86",
+    "bundleIdentifier": "com.dabin.mac",
+    "developerTeam": "8QG4967CSU",
+    "developerTeamEvidence": "Historical installer identity and unchanged Config/AppStoreSigning.json; archive-preflight records matching app signature team.",
+    "appStoreConnectAppID": "6815956446",
+    "appStoreConnectBuildID": "d14741b6-9384-4e0f-84f8-792a40ac5d20",
+    "groupName": "Personal Testing",
+    "groupID": "88bf737b-ecd4-48ed-b084-73cee2f3a93c",
+    "processingState": "COMPLETE",
+    "testingState": "Ready to Test (internal)",
+    "automaticDistribution": false,
+    "sourceFingerprint": "cda5504ffbd21b7d090c142f54cf635f8d139adedd61be14a3ab85e045ce62c5",
+    "frozenSource": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/store-preparation-20261004/native",
+    "uploadReceipt": "docs/qa/testflight-0.4.31-2026-10-04/status.json",
+    "sourceReceipt": "native/build/store-preparation-20261004/native/build/store-unsigned-0.4.31-86/store-candidate-receipt.json",
+    "architecture": "arm64",
+    "minimumMacOS": "14.0",
+    "sandbox": true
+  },
+  "historicalPreparedBuild88": {
+    "version": "0.4.33",
+    "build": "88",
+    "signed": false,
+    "archiveComplete": false,
+    "uploaded": false,
+    "receipt": "docs/qa/testflight-internal-0.4.33-2026-10-05/status.json",
+    "meaning": "Prepared candidate, not evidence of a distributed TestFlight version."
+  },
+  "currentSourceIdentity": {
+    "version": "0.4.42",
+    "build": "97",
+    "bundleIdentifier": "com.dabin.mac",
+    "developerTeam": "8QG4967CSU",
+    "minimumMacOS": "14.0",
+    "sameEntitlementSource": true,
+    "finalSignedApplicationIdentifierAndProfile": "Must verify from the final archive/export; static source identity alone is not that verification."
+  },
+  "continuity": {
+    "archiveRootCodeUnchanged": "FileManager applicationSupportDirectory in userDomainMask, appending DaBin. The sandboxed app with the same bundle identity normally resolves to ~/Library/Containers/com.dabin.mac/Data/Library/Application Support/DaBin.",
+    "containerQualification": "Same-container reuse is the intended identity-based upgrade path. It is an inference from unchanged bundle, team, sandbox capabilities and root code; an actual Apple-signed TestFlight update on the tester Mac remains a separate acceptance check. No cross-Mac capture synchronization is implemented.",
+    "coreDataModelInitializerByteIdentical": true,
+    "coreDataModel": "DaBinV1; CaptureRecord entity; captureID UUID nonoptional; payload binaryData nonoptional; captureID uniqueness constraint.",
+    "persistentStore": "metadata.store; automatic/inferred Core Data migrations disabled; no reset fallback.",
+    "capturePayload": "Old86 writes10/reads1...10. Current97 writes11/reads1...11. Optional commentEntries and reminderAcknowledgment decode absent old fields without inventing dates.",
+    "workspace": "Workspace.json schema1 retained; deletedScratchpads additive and optional. Old project notes/colors/orders/selections remain decodable.",
+    "drafts": "Drafts.json version1 retained; new checklist/comment editing fields optional. Legacy project destination recovery retained.",
+    "taskPlanningAndOriginalLayout": "TaskPlanning.swift and ProjectFileArchive.swift byte-identical to frozen86. Immutable capture timestamps/day/time zone/offset/originals retain their identity. DailyArchive adds derived comment/acknowledgment presentation, so generated mirror bytes may change.",
+    "preferences": "AutoCaptureSettings.swift byte-identical to frozen86; bundle-scoped preferences/bookmarks and saved opt-in retain the same namespace.",
+    "permissions": "Current root/Originals/Staging/Imports/Deletions must be owned real directories; hardened to0700. Existing leaf symlinks deliberately cause a preserved-data startup error rather than being followed.",
+    "failureBehavior": "Unreadable metadata prevents startup without creating a replacement archive. Unreadable Workspace.json/Drafts.json are preserved and further writes blocked."
+  },
+  "materialRisks": [
+    "Downgrading through TestFlight to0.4.31(86) after any capture is saved by97 is unsupported: old reader rejects schema11. This does not mean the archive is deleted, but the old app can fail to open it.",
+    "Replacing an ad-hoc/direct build with Store signing is a separate channel-switch acceptance case; final signed application identifier/team and container authorization need verification. Standard TestFlight86-to97 update keeps its existing signed app identity.",
+    "Manual internal group distribution was disabled historically; upload/processing alone does not make the new build available to Personal Testing. Add the processed build to the same group.",
+    "Same Apple Account on another Mac permits TestFlight access but does not transfer DaBin local captures. Preserve each Mac own archive.",
+    "A normal old-app quit saves Drafts.json and current launch may repair derived mirrors/indexes. Compare immutable originals and semantic saved records after a clean quit; avoid claiming every SQLite/JSON byte remains identical."
+  ],
+  "recommendedBoundedSyntheticValidation": [
+    "Compile isolated historical86 writer from receipt-verified frozen production sources and current97 reader from the exact upload inputs. Use only fictional fixture data in one explicit temporary root and an isolated UserDefaults suite; no default archive/clipboard/network/service startup.",
+    "Writer86 creates ordinary and whitespace-comment text, task with reminder/planning/checklist/focus state, parent-task attachment and independent imported file, trashed receipt, Unicode project/note/color, shelf/snippet/order/selection, and composer/detail drafts. Capture full semantic expected state plus per-file SHA256 and original receipt timestamps/day/time-zone/offset.",
+    "Reader97 opens that same SQLite archive, Workspace.json and Drafts.json; verifies identities, exact original bytes and legacy comments, reminders/planning, notes/colors, saved selection/order and recovered drafts. Assert old optional fields decode without invented posting dates or acknowledgments.",
+    "Make one normal save/new reply in97 and reopen twice; assert schema11 committed, all unrelated records/originals/receipt dates retained, root managed permissions0700 and repair idempotence. Handle mirrors as derived outputs, not immutable originals.",
+    "Separately confirm final signed/exported product bundle/team/application identifier, required sandbox/bookmark capabilities, Store-managed update channel/no direct updater, increasing unused build number. After Apple processing assign to Personal Testing; confirm the already-installed tester sees Update and validate its own archive after updating without uninstalling."
+  ],
+  "execution": "No native tests or builds executed by this audit agent. Companion agent is preparing the exact old86-writer/current97-reader synthetic campaign for centralized execution.",
+  "sourceComparisons": [
+    {
+      "path": "Resources/Info.plist",
+      "historicalSHA256": "6a78a53a33bab6f2caa4d306b46b08bc83f52ad5072390dc2c49000c54205916",
+      "historicalReceiptMatches": true,
+      "currentSHA256": "ef24add0cac291dc69f44da71c3ee26c8dd0e95edb52520cee8786b46deaf03c",
+      "byteIdentical": false
+    },
+    {
+      "path": "Resources/DaBin.entitlements",
+      "historicalSHA256": "10612525a986757263c6905a0c3bdd19bb214235b0d83e58cc8e4a756f8ff14a",
+      "historicalReceiptMatches": true,
+      "currentSHA256": "10612525a986757263c6905a0c3bdd19bb214235b0d83e58cc8e4a756f8ff14a",
+      "byteIdentical": true
+    },
+    {
+      "path": "Config/AppStoreSigning.json",
+      "historicalSHA256": "a6072c1ad444175cf204f71d3f8d8d39e0d15bcd3d74d672a4a1924ac525ddf5",
+      "historicalReceiptMatches": true,
+      "currentSHA256": "a6072c1ad444175cf204f71d3f8d8d39e0d15bcd3d74d672a4a1924ac525ddf5",
+      "byteIdentical": true
+    },
+    {
+      "path": "Sources/DaBin/CaptureRepository.swift",
+      "historicalSHA256": "1b05245e65f444d714901127f196e92661124d07b8cf9441553c3cc0ae54f78e",
+      "historicalReceiptMatches": true,
+      "currentSHA256": "51e0bf85feb85c01c498f2403479ac33fa0bf6cb41f265860d2ffaa533d4b318",
+      "byteIdentical": false
+    },
+    {
+      "path": "Sources/DaBin/Domain.swift",
+      "historicalSHA256": "704bc150d28dc4c0e85a5a16a9857c6b98fa8115cbafe892920722d19605b5df",
+      "historicalReceiptMatches": true,
+      "currentSHA256": "390c2261ed56275667dbccee24e3bfd411cd7dc83cf70cb2cd93a3d5767eb1cb",
+      "byteIdentical": false
+    },
+    {
+      "path": "Sources/DaBin/CaptureStore.swift",
+      "historicalSHA256": "05e7f56af879fee9038dcef28c3603ec082aae8f1eec9973ed2159b35beeb90d",
+      "historicalReceiptMatches": true,
+      "currentSHA256": "bceda050a3608a281cf5e178373ff2835470524a5ca5f2797c5bc2e8d252f2f8",
+      "byteIdentical": false
+    },
+    {
+      "path": "Sources/DaBin/WorkspaceStore.swift",
+      "historicalSHA256": "d566b571ff130cfc5f5abadd0d1a8d36f858df2bbe1149b288509be545a8982b",
+      "historicalReceiptMatches": true,
+      "currentSHA256": "7063676747d0ee49945833e767631ce8245151395a6a56c8e1259e594abf3e3d",
+      "byteIdentical": false
+    },
+    {
+      "path": "Sources/DaBin/DraftArchive.swift",
+      "historicalSHA256": "7c28cfaefbb0bca3659c3f50f44fd32c653bdf2312ad3ad76735d4c198d462a0",
+      "historicalReceiptMatches": true,
+      "currentSHA256": "0a5601ec9dc987ced2c3cf42cd37bd5ac6e9175fdf7e69e32da600b0f9d85a49",
+      "byteIdentical": false
+    },
+    {
+      "path": "Sources/DaBin/TaskPlanning.swift",
+      "historicalSHA256": "2bb41688aac453364b545cf1074a344dc306f701ae54d23ae23f8ebdca44c94a",
+      "historicalReceiptMatches": true,
+      "currentSHA256": "2bb41688aac453364b545cf1074a344dc306f701ae54d23ae23f8ebdca44c94a",
+      "byteIdentical": true
+    },
+    {
+      "path": "Sources/DaBin/ProjectFileArchive.swift",
+      "historicalSHA256": "f09beae00eeb1bd3af8f92e2beb571bfea25d83d7067b0a656fccc2b72bd76d1",
+      "historicalReceiptMatches": true,
+      "currentSHA256": "f09beae00eeb1bd3af8f92e2beb571bfea25d83d7067b0a656fccc2b72bd76d1",
+      "byteIdentical": true
+    },
+    {
+      "path": "Sources/DaBin/DailyArchive.swift",
+      "historicalSHA256": "818dca419ba050fd3462196d28ed96ffa4c466f82feeb4f0816868c67b6f5f14",
+      "historicalReceiptMatches": true,
+      "currentSHA256": "f9097332732a44e2a705c02eda1df9628cde45b8c16a80ecd3d43c7b1ef7fafa",
+      "byteIdentical": false
+    },
+    {
+      "path": "Sources/DaBin/AutoCaptureSettings.swift",
+      "historicalSHA256": "f5e53774d1bf9421261feef5852e51a6954ba6a831172c46481c539c8cb2b2d0",
+      "historicalReceiptMatches": true,
+      "currentSHA256": "f5e53774d1bf9421261feef5852e51a6954ba6a831172c46481c539c8cb2b2d0",
+      "byteIdentical": true
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "command": [
+    "/usr/bin/sample",
+    "36850",
+    "5",
+    "1",
+    "-file",
+    "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/full-review-2026-10-05/layout-candidate-1/profile/owned-process-sample.txt"
+  ],
+  "completed": true,
+  "exitCode": 0,
+  "requested": true,
+  "secondsAfterLaunch": 8.627,
+  "targetPID": 36850,
+  "trigger": "First completed production-fixture cycle; mixed steady zoom/arrival/idle sample"
+}

@@ -1,0 +1,16 @@
+usage: serve_local_drag_receiver.py [-h] [--serve] [--port PORT]
+                                    [--duration DURATION]
+
+Explicit, bounded loopback-only server for the fixed fictional drag receiver.
+Without --serve, prints the plan and creates no files/socket/process. With
+--serve, copies only local_drag_receiver.html to a fresh /private/tmp
+directory, serves its already-read bytes on one random route, and writes an
+owned receipt. Never serves a directory, opens a browser, accepts uploads or
+contacts a server.
+
+options:
+  -h, --help           show this help message and exit
+  --serve              Explicitly start after coordinated GUI/stress QA
+                       finishes
+  --port PORT          Loopback port; default 0 chooses a fresh available port
+  --duration DURATION  Maximum serving seconds, 1–1800; default 900

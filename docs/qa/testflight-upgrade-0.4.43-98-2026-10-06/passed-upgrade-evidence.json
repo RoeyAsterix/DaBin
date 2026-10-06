@@ -1,0 +1,21 @@
+{
+  "source": "/private/tmp/DaBin-Upgrade-98-d_zj3i5k",
+  "status": "passed",
+  "retainedFiles": {
+    "report.json": "2c3c1b836b3d3c6c4374e72a17b4ee8422d454d75cbba7856aa639340bc8c0ea",
+    "expected.json": "9cd8277554a4780bb2d61419246713c1f90dcc4be535d175fc12cabcee73632c",
+    "current-upgrade.json": "518fcf5fba0e3d7b1c09cae7a6365d2ddc2856eb6e6d8e2ff12eb25682647017",
+    "current-reopen-2.json": "09535bef8f2f92788835c90f1d76b793a010e6749dbe92ebe400068e52ebbed2",
+    "old-downgrade-rejection.json": "e87571a321a44e799c0a61a8524cfc6d0750b6772f2f25d541274b2918877f1b",
+    "current-reopen-1.json": "09535bef8f2f92788835c90f1d76b793a010e6749dbe92ebe400068e52ebbed2",
+    "old-write.json": "730c8b91416d263c03748be0d4c7fb9945227a336b5cd003c1bbb2fba62f45fc",
+    "FixtureOwner.json": "078e70dfcaa6163e6864a8f48aa7127c9edafef1dae00aff8d12896c15c5f93c",
+    "logs/old-write.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "logs/old-downgrade-rejection.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "logs/compile-old.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "logs/current-upgrade.log": "adeaeb0f013f871575124c43e814abf7e25c19ab5f52f69975a74ba3455f8649",
+    "logs/compile-new.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "logs/current-reopen-2.log": "adeaeb0f013f871575124c43e814abf7e25c19ab5f52f69975a74ba3455f8649",
+    "logs/current-reopen-1.log": "adeaeb0f013f871575124c43e814abf7e25c19ab5f52f69975a74ba3455f8649"
+  }
+}

@@ -1,0 +1,195 @@
+{
+  "checkedAtUTC": "2026-10-05T22:12:53.844820+00:00",
+  "scope": "Readback/hash verification of completed local receipts only; no native process/build/UI launched by this audit.",
+  "status": "COMPLETED_WITH_STRICT_TIMING_FAILURE",
+  "releaseAcceptance": false,
+  "productionFingerprint": "d6a7dd7fd2e2de4f167476ba91d8be232917024ecf745679bc4a5f3c83fab5fa",
+  "version": "0.4.41",
+  "build": "96",
+  "wrapper": {
+    "path": "final-supplement/sustained/wrapper-report.json",
+    "sha256": "d62218f40e735fad96f8be9d9109098067be1b55998edabbfa2f6d9a93ae23cd"
+  },
+  "nativeReport": {
+    "path": "final-supplement/sustained/native-performance/performance.json",
+    "sha256": "491ae7c1a7360285bbbfb3d1188f8180de5ae612f8add9a9db3f85ee82ff4cc2"
+  },
+  "coordinatorPhase": {
+    "command": [
+      "/Users/roeylibfeld/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/full-review-2026-10-05/profile_workspace_zoom.py",
+      "--run-report",
+      "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/runs/20261005T213352249116Z-app-store/report.json",
+      "--mode",
+      "sustained",
+      "--timeout",
+      "900",
+      "--output",
+      "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/full-review-2026-10-05/final-supplement/sustained"
+    ],
+    "exitCode": 1,
+    "finishedUTC": "2026-10-05T22:09:39.751371+00:00",
+    "log": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/full-review-2026-10-05/final-supplement/sustained-600s.log",
+    "logSHA256": "5f907246f3c78649685393aeeac7d7cdac39cdbf0be4da391194f0abf834cce3",
+    "name": "sustained-600s",
+    "ownedPID": 53818,
+    "receiptSHA256": "d62218f40e735fad96f8be9d9109098067be1b55998edabbfa2f6d9a93ae23cd",
+    "seconds": 604.63,
+    "sourceAndModuleUnchanged": true,
+    "startedUTC": "2026-10-05T21:59:35.121102+00:00",
+    "status": "failed",
+    "timeoutSeconds": 950,
+    "verificationError": "Original strict sustained performance gates failed; failure retained",
+    "workingDirectory": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native"
+  },
+  "completed": true,
+  "exitCode": 1,
+  "sourceChangedDuringRun": false,
+  "sampling": {
+    "completed": false,
+    "requested": false
+  },
+  "strictWorkloadPassed": false,
+  "unsampledBurstAcceptance": false,
+  "measuredDurationSeconds": 600.0198825001717,
+  "wholeOwnedProcessSeconds": 604.16,
+  "fullTenMinuteRun": true,
+  "initialRecords": 5000,
+  "automaticArrivals": 399,
+  "retainedCaptureModels": 5399,
+  "inputSamples": 160,
+  "validatedManagedOriginals": 2000,
+  "validatedImageThumbnails": 1000,
+  "cycles": [
+    {
+      "anchorAfter": "capture:1E686CAF-37B5-481B-A9C1-BBBD4DF55508",
+      "anchorBefore": "capture:1E686CAF-37B5-481B-A9C1-BBBD4DF55508",
+      "captures": 5101,
+      "cycle": 1,
+      "durationSeconds": 3.9493885000701994,
+      "rssBytes": 247332864
+    },
+    {
+      "anchorAfter": "capture:1E686CAF-37B5-481B-A9C1-BBBD4DF55508",
+      "anchorBefore": "capture:1E686CAF-37B5-481B-A9C1-BBBD4DF55508",
+      "captures": 5161,
+      "cycle": 2,
+      "durationSeconds": 2.1717723335605115,
+      "rssBytes": 248987648
+    },
+    {
+      "anchorAfter": "capture:1E686CAF-37B5-481B-A9C1-BBBD4DF55508",
+      "anchorBefore": "capture:1E686CAF-37B5-481B-A9C1-BBBD4DF55508",
+      "captures": 5221,
+      "cycle": 3,
+      "durationSeconds": 2.1292949167545885,
+      "rssBytes": 249298944
+    },
+    {
+      "anchorAfter": "capture:1E686CAF-37B5-481B-A9C1-BBBD4DF55508",
+      "anchorBefore": "capture:1E686CAF-37B5-481B-A9C1-BBBD4DF55508",
+      "captures": 5281,
+      "cycle": 4,
+      "durationSeconds": 2.1822172915562987,
+      "rssBytes": 249561088
+    },
+    {
+      "anchorAfter": "capture:1E686CAF-37B5-481B-A9C1-BBBD4DF55508",
+      "anchorBefore": "capture:1E686CAF-37B5-481B-A9C1-BBBD4DF55508",
+      "captures": 5341,
+      "cycle": 5,
+      "durationSeconds": 2.16909462492913,
+      "rssBytes": 250068992
+    }
+  ],
+  "allRecordedCycleAnchorsPreserved": true,
+  "reportedAssertionCheckCount": null,
+  "assertionCountExplanation": "Native JSON has no assertion-count field. The first timing assertion throws before the final PASS/check-count print, so no total check count is claimed. InputSamples, validated assets and cycle counts are separately measured quantities.",
+  "inputToLayoutP95Milliseconds": 53.63204167224467,
+  "steadyZoomTimerP95Milliseconds": 63.03158332593739,
+  "coupledResizeP95Milliseconds": 45.97249999642372,
+  "performanceGates": {
+    "inputToLayoutP95MaximumMilliseconds": 50,
+    "passed": false,
+    "steadyZoomTimerP95MaximumMilliseconds": 33
+  },
+  "wholeRunTimerSamples": 34518,
+  "wholeRunTimerIntervalsAbove100Milliseconds": 41,
+  "wholeRunTimerMaximumMilliseconds": 118.64608339965343,
+  "benchmarkResources": {
+    "cpuPercentOverWholeProcessLifetime": 6.742037208686441,
+    "maximumRSSBytes": 251412480,
+    "scope": "Exact wait4 accounting for owned benchmark PID only; maximum RSS units are bytes on macOS; lifetime includes seed, rendering, and cleanup",
+    "systemCPUSeconds": 4.125783,
+    "userCPUSeconds": 36.606909
+  },
+  "memory": [
+    {
+      "phase": "baseline",
+      "rssBytes": 232751104
+    },
+    {
+      "phase": "cycle 1",
+      "rssBytes": 247332864
+    },
+    {
+      "phase": "cycle 2",
+      "rssBytes": 248987648
+    },
+    {
+      "phase": "cycle 3",
+      "rssBytes": 249298944
+    },
+    {
+      "phase": "cycle 4",
+      "rssBytes": 249561088
+    },
+    {
+      "phase": "cycle 5",
+      "rssBytes": 250068992
+    },
+    {
+      "phase": "end of measured run",
+      "rssBytes": 247742464
+    }
+  ],
+  "retainedTimerCapacityBytes": 794208,
+  "diagnosticWarning": "2026-10-06 00:59:36.908 WorkspaceZoomPerformanceTests[53826:29205431] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future.",
+  "failureInterpretation": "Completed normal exit 1 at the strict input-to-layout timing assertion; no recorded crash or timeout. Timer p95 also exceeds its unchanged gate in the native data. Completion does not turn this failed workload into a stability/performance PASS.",
+  "workloadInterpretation": "Five round-trip zoom/navigation cycles spread across ten measured minutes, one 100-capture burst, arrivals at two-second cadence, and intervening idle; not continuous ten-minute zoom.",
+  "limitations": [
+    "No physical trackpad or mouse-driver coverage",
+    "Offscreen native rendering cannot measure presentation timestamps",
+    "RSS includes the growing fixture archive, caches and retained timing arrays",
+    "CPU percentage covers entire owned process lifetime including seed, idle, rendering and cleanup; it is not zoom-only load or energy measurement.",
+    "No independent disk I/O count or exhaustive leak certification.",
+    "AppKit reentrant NSTableView delegate warning is retained unresolved; it was not a crash or additional recorded suite failure.",
+    "Other sequential supplement phases and fixture GUI/staging release are controlled by the coordinator."
+  ],
+  "verifiedEvidence": [
+    {
+      "path": "final-supplement/sustained/module-receipt.json",
+      "sha256": "3c8a6f5842a5ba2a2f91d287107393b6aa2abc10ae74944a413be4217af5fa5e"
+    },
+    {
+      "path": "final-supplement/sustained/native-performance/performance.json",
+      "sha256": "491ae7c1a7360285bbbfb3d1188f8180de5ae612f8add9a9db3f85ee82ff4cc2"
+    },
+    {
+      "path": "final-supplement/sustained/sample-metadata.json",
+      "sha256": "e5445d6ac937e662e25ea9bddbd41c1397137697b35504ab683551b98e83e3d5"
+    },
+    {
+      "path": "final-supplement/sustained/stderr.log",
+      "sha256": "f5648089cffc8b1c6a8b77b5430f0a0e203763198ece749f62c5505c031f3f40"
+    },
+    {
+      "path": "final-supplement/sustained/stdout.log",
+      "sha256": "3517e40e1b7be626f43cccda778ffd9fea4d852d821c3f09c788d020d83ce9dc"
+    },
+    {
+      "path": "final-supplement/sustained/test-receipt.json",
+      "sha256": "a9fc3627acdd449f585a1a2a765a47fb622993fae27251a977ee563db855d1c3"
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "appPath": "/Users/roeylibfeld/Applications/DaBin.app",
+  "archivePreserved": true,
+  "buildNumber": "95",
+  "executableMatchesReceipt": true,
+  "passedNativeSuites": 20,
+  "renderReview": "PASS: peek eyes, grip orientation, bounded palms, visible feet, readable aggregate signs in light and dark appearance",
+  "runtimeVerification": {
+    "clipboardAndCapturePreferencesChanged": false,
+    "installedAppLaunched": true,
+    "openedWindowControlsImmediatelyEnabled": true,
+    "pausedDestinationLabelVisible": true,
+    "runningExecutablePathVerified": true,
+    "singleClickOnRobotOpenedDaBin": true
+  },
+  "sourceFingerprint": "b7a83d50ddf1fd3a0da72b000093c55280603cbc0ab2455d54fe6da8721d465a",
+  "strictSignatureVerified": true,
+  "updaterMatchesReceipt": true,
+  "version": "0.4.40",
+  "visualFixturesReviewed": {
+    "companionFramesGenerated": 50,
+    "placements": [
+      "island-bottom",
+      "island-left",
+      "island-right",
+      "screen-left",
+      "screen-right"
+    ],
+    "signFramesGenerated": 97,
+    "themes": [
+      "light",
+      "dark"
+    ]
+  }
+}

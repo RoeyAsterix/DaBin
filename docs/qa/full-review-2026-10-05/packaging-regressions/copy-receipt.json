@@ -1,0 +1,19 @@
+{
+  "copiedAtUTC": "2026-10-05T20:15:52.298296+00:00",
+  "originalDirectory": "/private/tmp/dabin-store-readiness-audit-q41cmdp6",
+  "originalFilesUnmodified": true,
+  "files": [
+    {
+      "path": "verification.json",
+      "sha256": "f86bcb4d4669819ab638d06708d68cc8d9291ca51a68e34e53d98e09752acdbe"
+    },
+    {
+      "path": "preflight-regressions.log",
+      "sha256": "6d15218a5fe849602a5512b0f75ba4fb9f74ed4f1ebbb9d0fd42fe804d661542"
+    },
+    {
+      "path": "archive-location-regressions.log",
+      "sha256": "6b84dc08f2069d7f013b9db054ea614517b03c0f31b81703e5721b0672e0eda5"
+    }
+  ]
+}

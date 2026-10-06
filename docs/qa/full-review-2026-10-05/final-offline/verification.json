@@ -1,0 +1,90 @@
+{
+  "startedUTC": "2026-10-06T03:19:21.191610+00:00",
+  "changedPriorToolingInputs": [
+    "docs/app-store/metadata-en-US.json"
+  ],
+  "unchangedPriorToolingInputs": 30,
+  "carriedForwardPythonTests": 75,
+  "rerunAffectedMetadataTests": 15,
+  "submissionReady": false,
+  "checks": [
+    {
+      "name": "metadata-unit",
+      "command": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "Tests",
+        "-p",
+        "test_app_store_metadata.py",
+        "-v"
+      ],
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "log": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/full-review-2026-10-05/final-offline/metadata-unit.log",
+      "SHA256": "68c4b66ea0065e62dbe5cde67768e4eb626ac6d904f95517911d9af853a1c029"
+    },
+    {
+      "name": "metadata-draft",
+      "command": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-B",
+        "scripts/validate_app_store_metadata.py"
+      ],
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "log": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/full-review-2026-10-05/final-offline/metadata-draft.log",
+      "SHA256": "01af45fd5203019056dd4bf20af72d322dc18d2e04373aeedfa9d38f53c8e81c"
+    },
+    {
+      "name": "metadata-strict",
+      "command": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-B",
+        "scripts/validate_app_store_metadata.py",
+        "--require-complete"
+      ],
+      "exitCode": 1,
+      "expectedExitCode": 1,
+      "log": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/full-review-2026-10-05/final-offline/metadata-strict.log",
+      "SHA256": "63c47d60aadcf1aecd94d28d230518545f8b519d4b399f4e0cbc0f0200b1bdd3"
+    },
+    {
+      "name": "project",
+      "command": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-B",
+        "scripts/generate_project.py",
+        "--check"
+      ],
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "log": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/full-review-2026-10-05/final-offline/project.log",
+      "SHA256": "5aacf42b96da30b2e84af2636a8b450c221bcff6edcbc3599caf4f5545787b6f"
+    },
+    {
+      "name": "preflight",
+      "command": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-B",
+        "scripts/app_store_preflight.py"
+      ],
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "log": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/full-review-2026-10-05/final-offline/preflight.log",
+      "SHA256": "29e0e2fa78057f3d174089563613a3e7df22ce5ffbf4f0d10d245d780b61062a"
+    }
+  ],
+  "directUpdater": {
+    "passedSuites": 2,
+    "checks": 89,
+    "sourceReport": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/runs/20261006T031711534613Z-direct/report.json",
+    "reportSHA256": "bb326ca8ca7052e05c8a303c82b47e721b40fce47c37d2b46f5ce05d8345723e",
+    "scope": "SoftwareUpdate48 and UpdateConfiguration41 checks; direct channel only, separate from3focused/126Store scope"
+  },
+  "finishedUTC": "2026-10-06T03:19:21.774031+00:00",
+  "status": "PASS_WITH_SUBMISSION_GATES"
+}

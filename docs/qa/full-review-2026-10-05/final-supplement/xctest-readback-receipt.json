@@ -1,0 +1,193 @@
+{
+  "addedReadbackIndexSHA256": {
+    "database.sqlite3": "7793bed15f0629925de5a5c7cf0120cb35c5ee8217d58d5a63b3af35643eb624"
+  },
+  "artifacts": {
+    "testBundle": {
+      "CFBundleExecutable": "DaBinTests",
+      "bundle": "/private/tmp/DaBin-Final-XCTest-n7xemsjo/derived-data/Build/Products/Release/DaBin.app/Contents/PlugIns/DaBinTests.xctest",
+      "executable": "/private/tmp/DaBin-Final-XCTest-n7xemsjo/derived-data/Build/Products/Release/DaBin.app/Contents/PlugIns/DaBinTests.xctest/Contents/MacOS/DaBinTests",
+      "executableSHA256": "cf22a077114e9dbb4149684e538c7858a3bead3a2023d96a9a33640ef7081477",
+      "info": "/private/tmp/DaBin-Final-XCTest-n7xemsjo/derived-data/Build/Products/Release/DaBin.app/Contents/PlugIns/DaBinTests.xctest/Contents/Info.plist",
+      "infoSHA256": "63787e7c98c4cf3223f741b4e5b8476ec07f8a51042dae4ad3d30c02b3e0644a"
+    },
+    "testHost": {
+      "CFBundleExecutable": "DaBin",
+      "bundle": "/private/tmp/DaBin-Final-XCTest-n7xemsjo/derived-data/Build/Products/Release/DaBin.app",
+      "executable": "/private/tmp/DaBin-Final-XCTest-n7xemsjo/derived-data/Build/Products/Release/DaBin.app/Contents/MacOS/DaBin",
+      "executableSHA256": "c4912263aa745441b5e4aca93c2beeca128b65663b6f9c1dcda4d5f1999884b9",
+      "info": "/private/tmp/DaBin-Final-XCTest-n7xemsjo/derived-data/Build/Products/Release/DaBin.app/Contents/Info.plist",
+      "infoSHA256": "cbbfc1d197b0fc722b8036b5ffcc21dd8f3d02e7cfdeed302ddaf7fdd65cf393"
+    }
+  },
+  "correction": "DaBinTests.xctest is embedded under DaBin.app/Contents/PlugIns; bundle Info.plist CFBundleExecutable locates the executable.",
+  "exactStoreModuleOutputs": {
+    "DaBinTestCore.swiftmodule": "5c59fe08a5bf797d9e5617ff26698fd7e434a6022e2b17dbd110e78e5b8bcd43",
+    "libDaBinTestCore.dylib": "9664ad04df275e317cb5911809b9f9b5f907e5c3033ed14a05723c29d1a941d9"
+  },
+  "frozenNativeProductionAndTestsUnchanged": true,
+  "metadataReadCommands": [
+    {
+      "command": [
+        "xcrun",
+        "xcresulttool",
+        "get",
+        "test-results",
+        "tests",
+        "--path",
+        "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/full-review-2026-10-05/final-supplement/DaBinSmoke.xcresult"
+      ],
+      "exitCode": 0,
+      "finishedUTC": "2026-10-05T22:18:28.257Z",
+      "output": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/full-review-2026-10-05/final-supplement/xctest-readback-tests-verified.json",
+      "scope": "Read-only existing xcresult metadata; local Apple cache access only, no test execution",
+      "shellCommand": "xcrun xcresulttool get test-results tests --path '/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/full-review-2026-10-05/final-supplement/DaBinSmoke.xcresult' > '/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/full-review-2026-10-05/final-supplement/xctest-readback-tests-verified.json'",
+      "startedUTC": "2026-10-05T22:18:23.795Z",
+      "stderr": "",
+      "wallSeconds": 7.083e-06
+    },
+    {
+      "command": [
+        "xcrun",
+        "xcresulttool",
+        "get",
+        "test-results",
+        "summary",
+        "--path",
+        "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/full-review-2026-10-05/final-supplement/DaBinSmoke.xcresult"
+      ],
+      "exitCode": 0,
+      "finishedUTC": "2026-10-05T22:18:29.113Z",
+      "output": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/full-review-2026-10-05/final-supplement/xctest-readback-summary-verified.json",
+      "scope": "Read-only existing xcresult metadata; local Apple cache access only, no test execution",
+      "shellCommand": "xcrun xcresulttool get test-results summary --path '/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/full-review-2026-10-05/final-supplement/DaBinSmoke.xcresult' > '/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/full-review-2026-10-05/final-supplement/xctest-readback-summary-verified.json'",
+      "startedUTC": "2026-10-05T22:18:23.796Z",
+      "stderr": "",
+      "wallSeconds": 6.459e-06
+    }
+  ],
+  "metadataReadSideEffect": "Apple xcresulttool added a database.sqlite3 index to the copied result bundle; all original files remain unchanged and none were removed.",
+  "nativeSourcesEdited": false,
+  "nativeTestsRerun": false,
+  "originalCollectorError": "[Errno 2] No such file or directory: '/private/tmp/DaBin-Final-XCTest-n7xemsjo/derived-data/Build/Products/Release/DaBinTests.xctest/Contents/MacOS/DaBinTests'",
+  "originalCollectorStatus": "failed",
+  "originalCommand": [
+    "xcrun",
+    "xcodebuild",
+    "-project",
+    "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/DaBin.xcodeproj",
+    "-scheme",
+    "DaBin",
+    "-configuration",
+    "Release",
+    "-destination",
+    "platform=macOS,arch=arm64",
+    "-derivedDataPath",
+    "/private/tmp/DaBin-Final-XCTest-n7xemsjo/derived-data",
+    "-resultBundlePath",
+    "/private/tmp/DaBin-Final-XCTest-n7xemsjo/DaBinSmoke.xcresult",
+    "-disableAutomaticPackageResolution",
+    "-parallel-testing-enabled",
+    "NO",
+    "-only-testing:DaBinTests/DaBinTests/testSearchIncludesOnlySameDayNeighborsAcrossTypeFilter",
+    "-only-testing:DaBinTests/DaBinTests/testStoredOriginalAndDaySurviveReopen",
+    "CODE_SIGNING_ALLOWED=NO",
+    "CODE_SIGNING_REQUIRED=NO",
+    "CODE_SIGN_IDENTITY=",
+    "SWIFT_ACTIVE_COMPILATION_CONDITIONS=",
+    "ENABLE_TESTABILITY=YES",
+    "ARCHS=arm64",
+    "ONLY_ACTIVE_ARCH=NO",
+    "test"
+  ],
+  "originalExitCode": 0,
+  "originalFinishedUTC": "2026-10-05T22:12:13.253096+00:00",
+  "originalLog": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/full-review-2026-10-05/final-supplement/release-xctest.log",
+  "originalLogSHA256": "253354a663cb6cd007ae387efacc1df9e7b40d73f3e0e326776c1b39038362d1",
+  "originalReport": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/full-review-2026-10-05/final-supplement/report.json",
+  "originalReportModified": false,
+  "originalReportSHA256": "9f33eb38f93c879784c465c489e6a3bbd58b7aa020b59a46974b866a33913681",
+  "originalResultFileCount": 31,
+  "originalResultFilesUnchanged": true,
+  "originalStartedUTC": "2026-10-05T22:11:00.212546+00:00",
+  "productionFingerprint": "d6a7dd7fd2e2de4f167476ba91d8be232917024ecf745679bc4a5f3c83fab5fa",
+  "recordedUTC": "2026-10-05T22:23:42.663369+00:00",
+  "resultBundleCurrentSHA256": {
+    "Data/data.0~2krHbBvr93iJsLFu778m_DcuJAIu7kI1FmPYRj-yioVgBhP9kaQQGZrNYiNpm8fi_NjjbDRmfsPUc9-i-rCWEQ==": "daa5e12e06ec8f35e7841957e1d51751623761b80c26a4d605035833af1c4fca",
+    "Data/data.0~38UFIOGQsrpakGSIlDnY1yc9aau344PtXWBcopiPrOz6m11eUWwIKoG3pNKWhBTN4WG5BRy2P9vC0-WKWZqcEw==": "2c58a39b5cb846f4d5295f43491f149dfe78577ef8a768ec5694d34bd3d18a4d",
+    "Data/data.0~3O0C98KRevnbDd75pC7RQL_ZWbUr-xJw1PaMVbFjp0cT27R9HO2yUNPmMvvpdiHjO9oQTn9HIYpoflCqcUYt-w==": "a123e6e53705d79c7ae6ce9bc82ebce73c7c5b5242b64f203988e90a0c64addc",
+    "Data/data.0~5B8JNVK6qZhr0sLjD-nBq1hoc70MA9iGR8fxDFzr4dkRYsXAx5MmyiIpwARx_AfcUq2V5rqsgjKtAXknfK32cw==": "8b53ba5dbf12cd6b718424d4ed9d80772b11d5d0246109270f9009c2da833367",
+    "Data/data.0~NHjfQx0D6VBbGOpUT3WwGQIh5ww-xMZKBcpuLagTJogWU3C94PZdH0PS0vnn7UuiCfgXsFHMxq3d8Vb48CyJyw==": "f27a201a736599a65b8ce6663cf64d8d2f1d41a9652d875a9a731beb751a5dc1",
+    "Data/data.0~NfKktYDFyyzcBHu9tVjnfBoRqick5J75-6wcKhwgRC7WhD61SblgCK_0R0g91z23dbeG4YmzCAO6McS1kA7Tvw==": "77820ebd1db1ca37517a461e065b6405d1f4127021ef033133c6679190c187cc",
+    "Data/data.0~NwCPSkp0Zy1dp-j4sjzoeoP83QiCMxkQYJpexzAB7sLRRqAzGJKttvga0bu6RrC1WsGh2Gk6ZtHNL3o_GL1R9w==": "d91473e620f2f3e9c07f61357e3614d3301cecd0293842e9986d2e699478b4a6",
+    "Data/data.0~RNhZuDwe5pO1kqjVTXJIGlt1SYRCJpRnXzyY4kckaW-IKV9acYyg2UzxdthC3k-vN5hW4VAe-Tmy3SlGkmtVmQ==": "904f9fdfb1f65639f514986e16487d363ea291fb4f670f7d8a8d6f2dc62c38c3",
+    "Data/data.0~S5ZnxlhBQpD333D9zzBjNWvsYMXj2l9koAUB_uqwyQeJ-ao1d5tJBbsFdDIVKeq26lRzS_bMp24-D4a_VeN9OA==": "1e571b06fe326a6ad62c6eee64522b34ae1a6970facfd7839bc5dab166ca62ab",
+    "Data/data.0~UEfc-Q9Ini09Er0Bf8pk9jzdu9BFp0LS0LLNJL7J_BCiAelPOTmHIJY4fS5pM0KUyMluUI5uVhASbNWlRquCkw==": "bf36bb84141df6c5e8126c87b1389427d7590b9a1478285ba79c5b746eb3ff13",
+    "Data/data.0~hwjH6tzd1ttFovlOAXb1fWDYCL2lSAIVHKWbCVJrNtNBee2I99qg3bcyiC-Z3jtMqKh1irLyZZ1DYWqjW5UgHg==": "a1435dc4dce5e4ebb02b30c045fb64da47cf437ece278bc72edef3396b55387f",
+    "Data/data.0~iDS0Y46Wx16t7-43J1enhlYuHu15Ej7sS6KNkqpILsUIon0Jz7e-yojsdlKCrBFjF5n6HNNrxuIoVoruWqEYhg==": "f5a93428d37d0b6a1c5fb760eb57e6ad62f8212bbbd60cace642b49782e372ae",
+    "Data/data.0~ldFZqBY6r_grmChbZO9Jhl-eTui9xB638hXImvPsZIQUcioIF04qvELW1kdsysDUfPT0lFrSEyvn4uIXP_l4rw==": "03ce3691299ea4152bd9ccc91e8071e45434a528adb8614e1cafc2417b929fd9",
+    "Data/data.0~ox2vZ_KRqxYekfG4IwAEymoFyYpMUlIYxw-Yt80xIZAaHzlFucaNkfOsiwFB74QSPZLiByW2xaY11alw9ZwfBg==": "c6734c8f2e683db7e43e46b1d0c7df5b7da705bb15c83ff1b119482849034e55",
+    "Data/data.0~pM1J5OQ5FKPRkE-uUQd5FDx3NrKXdn7qEubQAegU6FsqUoalY1x7c8mi1T6gnbaQkF_A3ImIgKsIreigQSa0cQ==": "354f2e000e09b32eeda126acf7058fd458990259352de2bb1c82cfa9e43f4b17",
+    "Data/refs.0~2krHbBvr93iJsLFu778m_DcuJAIu7kI1FmPYRj-yioVgBhP9kaQQGZrNYiNpm8fi_NjjbDRmfsPUc9-i-rCWEQ==": "ace1df4008074fda3af416430fb77b3bd1a8e9e1c522a4bd31aed6e28c89d537",
+    "Data/refs.0~38UFIOGQsrpakGSIlDnY1yc9aau344PtXWBcopiPrOz6m11eUWwIKoG3pNKWhBTN4WG5BRy2P9vC0-WKWZqcEw==": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d",
+    "Data/refs.0~3O0C98KRevnbDd75pC7RQL_ZWbUr-xJw1PaMVbFjp0cT27R9HO2yUNPmMvvpdiHjO9oQTn9HIYpoflCqcUYt-w==": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d",
+    "Data/refs.0~5B8JNVK6qZhr0sLjD-nBq1hoc70MA9iGR8fxDFzr4dkRYsXAx5MmyiIpwARx_AfcUq2V5rqsgjKtAXknfK32cw==": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d",
+    "Data/refs.0~NHjfQx0D6VBbGOpUT3WwGQIh5ww-xMZKBcpuLagTJogWU3C94PZdH0PS0vnn7UuiCfgXsFHMxq3d8Vb48CyJyw==": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d",
+    "Data/refs.0~NfKktYDFyyzcBHu9tVjnfBoRqick5J75-6wcKhwgRC7WhD61SblgCK_0R0g91z23dbeG4YmzCAO6McS1kA7Tvw==": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d",
+    "Data/refs.0~NwCPSkp0Zy1dp-j4sjzoeoP83QiCMxkQYJpexzAB7sLRRqAzGJKttvga0bu6RrC1WsGh2Gk6ZtHNL3o_GL1R9w==": "0c94c613718b6b55df4f3d84ebed0db917c04c6f9cb7a661d1ab1ff52be7bb1f",
+    "Data/refs.0~RNhZuDwe5pO1kqjVTXJIGlt1SYRCJpRnXzyY4kckaW-IKV9acYyg2UzxdthC3k-vN5hW4VAe-Tmy3SlGkmtVmQ==": "c62edd47a2ce823fae04102a66166299eece68e92299141b17191f8f29ccf7f9",
+    "Data/refs.0~S5ZnxlhBQpD333D9zzBjNWvsYMXj2l9koAUB_uqwyQeJ-ao1d5tJBbsFdDIVKeq26lRzS_bMp24-D4a_VeN9OA==": "73bef4d78c060079d8b24c3ae7e46eb5fd7e7a64cc14c174a21ed002c9210587",
+    "Data/refs.0~UEfc-Q9Ini09Er0Bf8pk9jzdu9BFp0LS0LLNJL7J_BCiAelPOTmHIJY4fS5pM0KUyMluUI5uVhASbNWlRquCkw==": "e0777a52173e06c83b9b4bdde2d23b28adc0633539506bf3c020168ecaa57860",
+    "Data/refs.0~hwjH6tzd1ttFovlOAXb1fWDYCL2lSAIVHKWbCVJrNtNBee2I99qg3bcyiC-Z3jtMqKh1irLyZZ1DYWqjW5UgHg==": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d",
+    "Data/refs.0~iDS0Y46Wx16t7-43J1enhlYuHu15Ej7sS6KNkqpILsUIon0Jz7e-yojsdlKCrBFjF5n6HNNrxuIoVoruWqEYhg==": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d",
+    "Data/refs.0~ldFZqBY6r_grmChbZO9Jhl-eTui9xB638hXImvPsZIQUcioIF04qvELW1kdsysDUfPT0lFrSEyvn4uIXP_l4rw==": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d",
+    "Data/refs.0~ox2vZ_KRqxYekfG4IwAEymoFyYpMUlIYxw-Yt80xIZAaHzlFucaNkfOsiwFB74QSPZLiByW2xaY11alw9ZwfBg==": "a9ca29993644bfbcb91256bad8e93a4cc12a87796a678fa8cddeb9a87271c12d",
+    "Data/refs.0~pM1J5OQ5FKPRkE-uUQd5FDx3NrKXdn7qEubQAegU6FsqUoalY1x7c8mi1T6gnbaQkF_A3ImIgKsIreigQSa0cQ==": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d",
+    "Info.plist": "b44f63a0b772f5442e07a1b33987268b6d2516cb0513a2de21027f3c3ce17bd6",
+    "database.sqlite3": "7793bed15f0629925de5a5c7cf0120cb35c5ee8217d58d5a63b3af35643eb624"
+  },
+  "retainedResultBundle": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/full-review-2026-10-05/final-supplement/DaBinSmoke.xcresult",
+  "schemaVersion": 1,
+  "scope": "Metadata readback of an already completed Release XCTest run; no rerun/build",
+  "status": "PASS",
+  "submissionReady": false,
+  "summary": {
+    "expectedFailures": 0,
+    "failedTests": 0,
+    "passedTests": 2,
+    "result": "Passed",
+    "skippedTests": 0,
+    "totalTestCount": 2
+  },
+  "testCases": [
+    {
+      "duration": "0.049s",
+      "durationInSeconds": 0.04940497875213623,
+      "name": "testSearchIncludesOnlySameDayNeighborsAcrossTypeFilter()",
+      "nodeIdentifier": "DaBinTests/testSearchIncludesOnlySameDayNeighborsAcrossTypeFilter()",
+      "nodeIdentifierURL": "test://com.apple.xcode/DaBin/DaBinTests/DaBinTests/testSearchIncludesOnlySameDayNeighborsAcrossTypeFilter",
+      "nodeType": "Test Case",
+      "result": "Passed"
+    },
+    {
+      "duration": "0.024s",
+      "durationInSeconds": 0.02433598041534424,
+      "name": "testStoredOriginalAndDaySurviveReopen()",
+      "nodeIdentifier": "DaBinTests/testStoredOriginalAndDaySurviveReopen()",
+      "nodeIdentifierURL": "test://com.apple.xcode/DaBin/DaBinTests/DaBinTests/testStoredOriginalAndDaySurviveReopen",
+      "nodeType": "Test Case",
+      "result": "Passed"
+    }
+  ],
+  "unsignedAfterSHA256": "92f1b2d5929ca78d4cadc0a10d12b90d698e3f56f6981caf7235bc31df78c0a1",
+  "unsignedBeforeSHA256": "92f1b2d5929ca78d4cadc0a10d12b90d698e3f56f6981caf7235bc31df78c0a1",
+  "unsignedCandidateExecutable": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/store-unsigned-final-supplement-20261005T215934920865Z-2f494218/derived-data/Build/Products/Release/DaBin.app/Contents/MacOS/DaBin",
+  "unsignedCandidatePreserved": true,
+  "unsignedCurrentSHA256": "92f1b2d5929ca78d4cadc0a10d12b90d698e3f56f6981caf7235bc31df78c0a1",
+  "verifiedMetadataSHA256": {
+    "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/full-review-2026-10-05/final-supplement/xctest-readback-summary-verified.json": "073c9e8a3bf2bfc317aab772ff781a8a9b32702013af46f053bde5b8d80192d9",
+    "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/full-review-2026-10-05/final-supplement/xctest-readback-tests-verified.json": "604feff9e3bb18d9fe61dcffbab159dfbf2855b64e1c0f09aee2ab4f7da72fb7"
+  },
+  "xcresultFinishUTC": "2026-10-05T22:12:13.163000+00:00",
+  "xcresultStartUTC": "2026-10-05T22:11:02.982000+00:00"
+}

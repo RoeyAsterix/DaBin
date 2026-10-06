@@ -1,0 +1,417 @@
+{
+  "recordedAtUTC": "2026-10-05T21:01:53.120477+00:00",
+  "scope": "Read-only inventory and hashes of retained completed QA receipts; documentation updates only, no test/build/GUI execution.",
+  "focusedCandidates": [
+    {
+      "candidate": 1,
+      "originalReport": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/runs/20261005T203124083382Z-direct/report.json",
+      "retainedReport": "layout-candidate-1/focused-qa-report.json",
+      "reportSHA256": "bbb1e357f125d5c434cee6492105ae47f5e1fc83bc62ffeb8917a3f1656db044",
+      "productionFingerprint": "213d9dfb791936111b8b710211f8a342c5cf5a23cdca376198d54cc233350000",
+      "freezeRecordedUTC": "2026-10-05T20:31:18.398196+00:00",
+      "startedAtUTC": "2026-10-05T20:31:24.083382+00:00",
+      "finishedAtUTC": "2026-10-05T20:35:31.655698+00:00",
+      "status": "failed",
+      "passedSuites": 6,
+      "failedSuites": 1,
+      "coverage": "selected_suites",
+      "sourceChangedDuringRun": false,
+      "failedNames": [
+        "WorkspaceZoomPerformanceTests"
+      ],
+      "durationSeconds": 30.004579999949783,
+      "fullTenMinuteRun": false,
+      "inputToLayoutP95Milliseconds": 66.72308314591646,
+      "steadyZoomTimerP95Milliseconds": 77.66491663642228,
+      "performanceGates": {
+        "inputToLayoutP95MaximumMilliseconds": 50,
+        "passed": false,
+        "steadyZoomTimerP95MaximumMilliseconds": 33
+      }
+    },
+    {
+      "candidate": 2,
+      "originalReport": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/runs/20261005T204449702635Z-direct/report.json",
+      "retainedReport": "layout-candidate-2/focused-qa-report.json",
+      "reportSHA256": "f4c4840ec0455ce15038dba0e14faa847c76a323ec3e1fe47b4150cba282ca81",
+      "productionFingerprint": "165db67e4b9e488b48422b3c4ff56312c00b39dfd226c9a43a597e4c4f449281",
+      "freezeRecordedUTC": "2026-10-05T20:44:45.003974+00:00",
+      "startedAtUTC": "2026-10-05T20:44:49.702635+00:00",
+      "finishedAtUTC": "2026-10-05T20:49:03.637270+00:00",
+      "status": "failed",
+      "passedSuites": 6,
+      "failedSuites": 1,
+      "coverage": "selected_suites",
+      "sourceChangedDuringRun": false,
+      "failedNames": [
+        "WorkspaceZoomPerformanceTests"
+      ],
+      "durationSeconds": 30.025855166837573,
+      "fullTenMinuteRun": false,
+      "inputToLayoutP95Milliseconds": 63.81787499412894,
+      "steadyZoomTimerP95Milliseconds": 68.1234581861645,
+      "performanceGates": {
+        "inputToLayoutP95MaximumMilliseconds": 50,
+        "passed": false,
+        "steadyZoomTimerP95MaximumMilliseconds": 33
+      }
+    },
+    {
+      "candidate": 3,
+      "originalReport": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/runs/20261005T205124249037Z-direct/report.json",
+      "retainedReport": "layout-candidate-3/focused-qa-report.json",
+      "reportSHA256": "31f33824bf6da987279d367cd0662624421b3b1632961c045a034726e387f900",
+      "productionFingerprint": "7669f98e5ac828afccfb88d4d1b45fe1f1819e707b90e2532f0a98e136e4ed28",
+      "freezeRecordedUTC": "2026-10-05T20:51:18.241791+00:00",
+      "startedAtUTC": "2026-10-05T20:51:24.249037+00:00",
+      "finishedAtUTC": "2026-10-05T20:55:31.834559+00:00",
+      "status": "failed",
+      "passedSuites": 6,
+      "failedSuites": 1,
+      "coverage": "selected_suites",
+      "sourceChangedDuringRun": false,
+      "failedNames": [
+        "WorkspaceZoomPerformanceTests"
+      ],
+      "durationSeconds": 30.013938708463684,
+      "fullTenMinuteRun": false,
+      "inputToLayoutP95Milliseconds": 61.14266673102975,
+      "steadyZoomTimerP95Milliseconds": 70.8403333555907,
+      "performanceGates": {
+        "inputToLayoutP95MaximumMilliseconds": 50,
+        "passed": false,
+        "steadyZoomTimerP95MaximumMilliseconds": 33
+      }
+    },
+    {
+      "candidate": 4,
+      "originalReport": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/runs/20261005T211610317127Z-direct/report.json",
+      "retainedReport": "layout-candidate-4/focused-qa-report.json",
+      "reportSHA256": "f0ffde2e9c4a8e40d1b0263f196dd2f9bdb43b67a74f87a29911c7b5bc90ff65",
+      "productionFingerprint": "acc6ed006a280dec35598510a3e784e9a5da382b804ac06060588171f297fc19",
+      "freezeRecordedUTC": "2026-10-05T21:16:04.957207+00:00",
+      "startedAtUTC": "2026-10-05T21:16:10.317127+00:00",
+      "finishedAtUTC": "2026-10-05T21:20:08.071965+00:00",
+      "status": "failed",
+      "passedSuites": 5,
+      "failedSuites": 2,
+      "coverage": "selected_suites",
+      "sourceChangedDuringRun": false,
+      "failedNames": [
+        "ProjectWorkspaceViewTests",
+        "WorkspaceZoomPerformanceTests"
+      ],
+      "durationSeconds": 30.005316583206877,
+      "fullTenMinuteRun": false,
+      "inputToLayoutP95Milliseconds": 53.56000014580786,
+      "steadyZoomTimerP95Milliseconds": 61.797416768968105,
+      "performanceGates": {
+        "inputToLayoutP95MaximumMilliseconds": 50,
+        "passed": false,
+        "steadyZoomTimerP95MaximumMilliseconds": 33
+      },
+      "originalProjectViewTestSHA256": "4f1337b5dcfa4a2f509c3f718a92725fb7aed6febe8f326356612f42cf0e1da3",
+      "projectViewCorrectionStatus": "Historical first run failed nested AX lookup. First corrected query also failed a live-note AX text lookup; neither receipt is replaced. The later bounded displayed-excerpt AX fix passed new direct and Store functional suites; see final candidate receipts.",
+      "sampledProfile": {
+        "path": "layout-candidate-4/profile/wrapper-report.json",
+        "SHA256": "6ef0594ffd70d66391f3d9d35f37173f53db81220faa01218c572f11f1d6ba24",
+        "completed": true,
+        "exitCode": 1,
+        "sourceChangedDuringRun": false,
+        "timingInterpretation": "Sampled diagnostic; not unsampled acceptance",
+        "unsampledBurstAcceptance": false
+      }
+    }
+  ],
+  "updatedAtUTC": "2026-10-06T03:36:21.389636+00:00",
+  "candidate4CorrectedQueryFirstAttempt": {
+    "originalReport": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/runs/20261005T212634873410Z-direct/report.json",
+    "retainedReport": "layout-candidate-4/integration-first-corrected-query-report.json",
+    "reportSHA256": "338d310bf1859b49ae23779031f4651b93487807eeef40beccf39cec3b2f397b",
+    "startedAtUTC": "2026-10-05T21:26:34.873410+00:00",
+    "finishedAtUTC": "2026-10-05T21:27:27.196620+00:00",
+    "status": "failed",
+    "passedSuites": 0,
+    "failedSuites": 1,
+    "sourceChangedDuringRun": false,
+    "requestedResults": [
+      {
+        "name": "ProjectWorkspaceViewTests",
+        "reportedSummary": "Project workspace view QA failed: Error Domain=ProjectWorkspaceViewTests Code=561 \"Live scratchpad text changes in the existing project card after zoom\" UserInfo={NSLocalizedDescription=Live scratchpad text changes in the existing project card after zoom}",
+        "status": "failed"
+      }
+    ],
+    "interpretation": "Later investigation found the explicit preview accessibility label hid descendant text; the failed lookup did not prove visual staleness. A bounded displayed-excerpt AX fix subsequently passed 918 direct and 917 Store ProjectWorkspaceView assertions. Original failed receipt is retained; paired image inspection remains separately pending."
+  },
+  "finalCandidateFocusedFunctional": {
+    "originalReport": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/runs/20261005T213022192993Z-direct/report.json",
+    "retainedReport": "final-candidate/focused-functional-report.json",
+    "reportSHA256": "f13da2a023f1d840a2db8acca0f77980270fd40182d17fb02ded29ca09d42e5f",
+    "productionFreeze": "final-candidate/source-freeze.json",
+    "productionFingerprint": "d6a7dd7fd2e2de4f167476ba91d8be232917024ecf745679bc4a5f3c83fab5fa",
+    "qaInputFingerprint": "2597c1bfe134be3c39f19b5d2409a0c09126e4a3d57c05940c9ff3b8f21b758e",
+    "startedAtUTC": "2026-10-05T21:30:22.192993+00:00",
+    "finishedAtUTC": "2026-10-05T21:33:14.940603+00:00",
+    "status": "passed",
+    "coverage": "selected_suites",
+    "distribution": "direct",
+    "passedSuites": 3,
+    "failedSuites": 0,
+    "sourceChangedDuringRun": false,
+    "requestedResults": [
+      {
+        "name": "ProjectWorkspaceViewTests",
+        "reportedSummary": "PASS: 918 project workspace UI checks; 1,000 synthetic text captures plus image and editable project note; retained-host live zoom, observable edits and replacement identities; native mixed-selection drag payloads on a private pasteboard; no personal archive, network, general clipboard or external opening. At most 27 simultaneously materialized native rows.",
+        "status": "passed"
+      },
+      {
+        "name": "ProjectWorkspaceCardTests",
+        "reportedSummary": "PASS: 782 project card checks; Task/Note/Capture semantics, real live task updates, light/dark/grid/320-point compact fixtures, original previews and independent selection; no personal archive, clipboard, network, or external opening.",
+        "status": "passed"
+      },
+      {
+        "name": "NativeContentDragTests",
+        "reportedSummary": "PASS: 38 native content drag checks; clicks, mixed native items, copy-only external transfers and source preservation.",
+        "status": "passed"
+      }
+    ],
+    "scope": "Three focused functional suites only. Does not run the full registered suite or performance gate, does not establish sandbox/distribution signing, and is not physical cross-app drag acceptance."
+  },
+  "finalStoreFull": {
+    "originalReport": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/runs/20261005T213352249116Z-app-store/report.json",
+    "retainedReport": "final-store/full-qa-report.json",
+    "reportSHA256": "5d8c0dec20236f0de08803694224ca4b75dda00c0e330248b2f7311e426fa0eb",
+    "productionFreeze": "final-candidate/source-freeze.json",
+    "productionFingerprint": "d6a7dd7fd2e2de4f167476ba91d8be232917024ecf745679bc4a5f3c83fab5fa",
+    "qaInputFingerprint": "2aeea5999079e497250affa175b7cd50a75c418fd243920679e567cb69ac2029",
+    "startedAtUTC": "2026-10-05T21:33:52.249116+00:00",
+    "finishedAtUTC": "2026-10-05T21:58:07.618739+00:00",
+    "status": "failed",
+    "coverage": "full_registered_suite",
+    "distribution": "app-store",
+    "configuration": "Release",
+    "passedSuites": 125,
+    "failedSuites": 1,
+    "sourceChangedDuringRun": false,
+    "runtimeScope": "Native test executables; no distribution signing, sandbox entitlement enforcement, installer, or App Store validation.",
+    "requestedSuiteCount": 126,
+    "failedNames": [
+      "WorkspaceZoomPerformanceTests"
+    ],
+    "selectedPassingResults": [
+      {
+        "name": "PrivacyInformationTests",
+        "status": "passed",
+        "reportedSummary": "PASS: 39 privacy information checks",
+        "log": "build/qa/runs/20261005T213352249116Z-app-store/PrivacyInformationTests.log"
+      },
+      {
+        "name": "ProjectWorkspaceViewTests",
+        "status": "passed",
+        "reportedSummary": "PASS: 917 project workspace UI checks; 1,000 synthetic text captures plus image and editable project note; retained-host live zoom, observable edits and replacement identities; native mixed-selection drag payloads on a private pasteboard; no personal archive, network, general clipboard or external opening. At most 27 simultaneously materialized native rows.",
+        "log": "build/qa/runs/20261005T213352249116Z-app-store/ProjectWorkspaceViewTests.log"
+      },
+      {
+        "name": "ProjectWorkspaceCardTests",
+        "status": "passed",
+        "reportedSummary": "PASS: 782 project card checks; Task/Note/Capture semantics, real live task updates, light/dark/grid/320-point compact fixtures, original previews and independent selection; no personal archive, clipboard, network, or external opening.",
+        "log": "build/qa/runs/20261005T213352249116Z-app-store/ProjectWorkspaceCardTests.log"
+      },
+      {
+        "name": "DurabilityStressTests",
+        "status": "passed",
+        "reportedSummary": "PASS: 8586 durability checks; 1000 seeded records, 320 mixed operations, 25 restart comparisons, backup/restore and 4 real SIGKILL boundaries.",
+        "log": "build/qa/runs/20261005T213352249116Z-app-store/DurabilityStressTests.log"
+      },
+      {
+        "name": "FlowActionStressTests",
+        "status": "passed",
+        "reportedSummary": "PASS: 11674 flow/action stress checks; all12 routes, bounded branch/history churn, pending draft ownership, atomic failed-save retries, comments/checklists, timing/lifecycle, private copying, Inbox/organization, removal/restore and repeated local restart. Semantic handlers only; native activation, system dialogs, rendering and animation are separate coverage.",
+        "log": "build/qa/runs/20261005T213352249116Z-app-store/FlowActionStressTests.log"
+      },
+      {
+        "name": "NativeContentDragTests",
+        "status": "passed",
+        "reportedSummary": "PASS: 38 native content drag checks; clicks, mixed native items, copy-only external transfers and source preservation.",
+        "log": "build/qa/runs/20261005T213352249116Z-app-store/NativeContentDragTests.log"
+      },
+      {
+        "name": "SearchInputTests",
+        "status": "passed",
+        "reportedSummary": "PASS: 65 production Search typing, focus, clear, private direct/Cmd V paste, unrelated-editor and immediate/animated reopen checks",
+        "log": "build/qa/runs/20261005T213352249116Z-app-store/SearchInputTests.log"
+      },
+      {
+        "name": "VisualAnimationStressTests",
+        "status": "passed",
+        "reportedSummary": "PASS: 109041 seeded native graphics, animation interruption, visible-control and disposal checks; /Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/full-review-2026-10-05/final-store/graphics",
+        "log": "build/qa/runs/20261005T213352249116Z-app-store/VisualAnimationStressTests.log"
+      },
+      {
+        "name": "VideoPlaybackIntegrationTests",
+        "status": "passed",
+        "reportedSummary": "PASS: 113 native video playback checks;2 production components \u00d72 actual MOV captures, clock and decoded-frame advancement, pause/seek/end/replay, fitted resize, capture replacement, native close and deallocation; no external effects. seconds=14.090",
+        "log": "build/qa/runs/20261005T213352249116Z-app-store/VideoPlaybackIntegrationTests.log"
+      }
+    ],
+    "performance": {
+      "path": "final-store/zoom-performance/performance.json",
+      "SHA256": "ae9a933d78f61dd4b8c719995a388fb2bcfe25a9cb9e1ef1183ec8758051d5e3",
+      "durationSeconds": 30.005661208415404,
+      "fullTenMinuteRun": false,
+      "initialRecords": 5000,
+      "automaticArrivals": 114,
+      "inputToLayoutP95Milliseconds": 51.315416814759374,
+      "steadyZoomTimerP95Milliseconds": 61.23941671103239,
+      "performanceGates": {
+        "inputToLayoutP95MaximumMilliseconds": 50,
+        "passed": false,
+        "steadyZoomTimerP95MaximumMilliseconds": 33
+      }
+    },
+    "graphicsReport": {
+      "path": "final-store/graphics/visual-animation-stress-report.json",
+      "SHA256": "d735a8a6f0dfb3e8c45d99bb2c74bd6d53c25713641bcc64cadcf2f59a887ba7"
+    },
+    "releaseAcceptance": false,
+    "remaining": "Completed sustained 600.019883-second unsampled workload also failed strict timing. XCTest, unsigned Store product inspection, sandbox/privacy renders, signing/archive, physical drag/install and final artifacts remain pending coordinator receipts/release."
+  },
+  "finalSustained": {
+    "status": "COMPLETED_WITH_STRICT_TIMING_FAILURE",
+    "releaseAcceptance": false,
+    "productionFingerprint": "d6a7dd7fd2e2de4f167476ba91d8be232917024ecf745679bc4a5f3c83fab5fa",
+    "wrapper": {
+      "path": "final-supplement/sustained/wrapper-report.json",
+      "sha256": "d62218f40e735fad96f8be9d9109098067be1b55998edabbfa2f6d9a93ae23cd"
+    },
+    "nativeReport": {
+      "path": "final-supplement/sustained/native-performance/performance.json",
+      "sha256": "491ae7c1a7360285bbbfb3d1188f8180de5ae612f8add9a9db3f85ee82ff4cc2"
+    },
+    "coordinatorPhase": {
+      "command": [
+        "/Users/roeylibfeld/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/full-review-2026-10-05/profile_workspace_zoom.py",
+        "--run-report",
+        "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/runs/20261005T213352249116Z-app-store/report.json",
+        "--mode",
+        "sustained",
+        "--timeout",
+        "900",
+        "--output",
+        "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/full-review-2026-10-05/final-supplement/sustained"
+      ],
+      "exitCode": 1,
+      "finishedUTC": "2026-10-05T22:09:39.751371+00:00",
+      "log": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/full-review-2026-10-05/final-supplement/sustained-600s.log",
+      "logSHA256": "5f907246f3c78649685393aeeac7d7cdac39cdbf0be4da391194f0abf834cce3",
+      "name": "sustained-600s",
+      "ownedPID": 53818,
+      "receiptSHA256": "d62218f40e735fad96f8be9d9109098067be1b55998edabbfa2f6d9a93ae23cd",
+      "seconds": 604.63,
+      "sourceAndModuleUnchanged": true,
+      "startedUTC": "2026-10-05T21:59:35.121102+00:00",
+      "status": "failed",
+      "timeoutSeconds": 950,
+      "verificationError": "Original strict sustained performance gates failed; failure retained",
+      "workingDirectory": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native"
+    },
+    "completed": true,
+    "exitCode": 1,
+    "sourceChangedDuringRun": false,
+    "sampling": {
+      "completed": false,
+      "requested": false
+    },
+    "measuredDurationSeconds": 600.0198825001717,
+    "wholeOwnedProcessSeconds": 604.16,
+    "fullTenMinuteRun": true,
+    "initialRecords": 5000,
+    "automaticArrivals": 399,
+    "retainedCaptureModels": 5399,
+    "inputSamples": 160,
+    "reportedAssertionCheckCount": null,
+    "inputToLayoutP95Milliseconds": 53.63204167224467,
+    "steadyZoomTimerP95Milliseconds": 63.03158332593739,
+    "performanceGates": {
+      "inputToLayoutP95MaximumMilliseconds": 50,
+      "passed": false,
+      "steadyZoomTimerP95MaximumMilliseconds": 33
+    },
+    "benchmarkResources": {
+      "cpuPercentOverWholeProcessLifetime": 6.742037208686441,
+      "maximumRSSBytes": 251412480,
+      "scope": "Exact wait4 accounting for owned benchmark PID only; maximum RSS units are bytes on macOS; lifetime includes seed, rendering, and cleanup",
+      "systemCPUSeconds": 4.125783,
+      "userCPUSeconds": 36.606909
+    },
+    "failureInterpretation": "Completed normal exit 1 at the strict input-to-layout timing assertion; no recorded crash or timeout. Timer p95 also exceeds its unchanged gate in the native data. Completion does not turn this failed workload into a stability/performance PASS.",
+    "workloadInterpretation": "Five round-trip zoom/navigation cycles spread across ten measured minutes, one 100-capture burst, arrivals at two-second cadence, and intervening idle; not continuous ten-minute zoom.",
+    "readback": "final-supplement/sustained-readback.json",
+    "readbackSHA256": "3146b3419ebff31d48ba032a2daee67bcc04ebae5030c3754dc4168fb86570bb"
+  },
+  "completedSupplementReadbacks": [
+    {
+      "path": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/full-review-2026-10-05/final-supplement/xctest-readback-receipt.json",
+      "SHA256": "0b6412e428376d051dee529dfa6000a0d8f8ad049f684e8ba359a6af61ee6a99"
+    },
+    {
+      "path": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/full-review-2026-10-05/final-supplement/sandbox-temporary-rerun-readback.json",
+      "SHA256": "6eef22d81974ba6183eec15df25719280957eb26f752ec82d9f2596a5807a273"
+    },
+    {
+      "path": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/full-review-2026-10-05/final-supplement/privacy-visual-review.json",
+      "SHA256": "17be8de424fd37e65dce5d5ef656d19beef7880aed39dcb08180a034d5eaea3b"
+    },
+    {
+      "path": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/full-review-2026-10-05/manual-drag/receipt.json",
+      "SHA256": "88f6d13d083523527859523195df45a1f57ca614e8674201f89be470b700c664"
+    },
+    {
+      "path": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/full-review-2026-10-05/final-offline/verification.json",
+      "SHA256": "21daffc88687970f86c99c027776827ae76da9ee8f41c4b0d38a2e58265e0851"
+    },
+    {
+      "path": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/full-review-2026-10-05/local-install/verification.json",
+      "SHA256": "0854c47156d9c6aff5283e10fb2fc95cf2d46046ea1ad2b6841937179c7cdca5"
+    },
+    {
+      "path": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/full-review-2026-10-05/final-source-attestation.json",
+      "SHA256": "499b9907a3ca6d3cbae6a3cb37395b9552f97a5d5d59f724978274c85b049176"
+    }
+  ],
+  "overallQAStatus": "failed",
+  "submissionReady": false,
+  "uploaded": false,
+  "currentProductionFingerprint": "d6a7dd7fd2e2de4f167476ba91d8be232917024ecf745679bc4a5f3c83fab5fa",
+  "finalArtifacts": [
+    {
+      "path": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/full-review-2026-10-05/completion.json",
+      "SHA256": "89b62833cb2e4979b586ca41d40c5c99b06f1ecbf1d726c89f7389835b688739"
+    },
+    {
+      "path": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/full-review-2026-10-05/review-pack-final-verification.json",
+      "SHA256": "3db526f17f696645661e408d3fa61b87f9a77e04677daba4d2aef2068d8ca348"
+    },
+    {
+      "path": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/full-review-2026-10-05/review-pack-final-visual.json",
+      "SHA256": "f0e5e8e08ea24222179325dd94a9aece4978317282ee112292d460b7c0d13a74"
+    },
+    {
+      "path": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/full-review-2026-10-05/final-metadata/verification.json",
+      "SHA256": "9975e25304950e064bbb412909fcb868828f7f7638341fbb744caf3e9691f263"
+    },
+    {
+      "path": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/app-store/submission-pack-0.4.41-96/DaBin-App-Store-Content.docx",
+      "SHA256": "7af09b4b702ac0283471a12f85e49446ebb926b1e1a170539f21921f6ad0c0f0"
+    },
+    {
+      "path": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/DaBin-Quick-Guide.pdf",
+      "SHA256": "1510c0cd35698ff1e9e47fff809398095e8acae6a95273ee1cabe1d81bc7f24a"
+    },
+    {
+      "path": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/output/DaBin-App-Store-Pack-0.4.41-96.zip",
+      "SHA256": "575df8ecc5ef1536c5b7ba9585db72ccba332e9fa3507466a34f5e79f7db4329"
+    }
+  ]
+}

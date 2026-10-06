@@ -1,0 +1,8 @@
+Compiling direct Release test module (137 production sources)…
+PASSED PrivacyInformationTests: PASS: 38 privacy information checks
+PASSED ApplicationLifecycleTests: PASS: 75 application lifecycle checks; isolated preferences, events, pointer samples and fake notifications, no focus or personal data.
+PASSED SoftwareUpdateTests: PASS: 48 software update checks; no external network, installed app or user archive used.
+PASSED UpdateConfigurationTests: PASS: 41 update-channel configuration checks
+PASSED HeaderInteractionTests
+PASSED TaskPlanInteractionTests: PASS: 379 native task-plan/checklist/reminder binding, focus, persistence, validation and responsive checks; renders: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/local-update-0.4.33-2026-10-05/task-title
+QA direct passed: 6/6 requested suites passed. Report: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/runs/20261005T042251350390Z-direct/report.json

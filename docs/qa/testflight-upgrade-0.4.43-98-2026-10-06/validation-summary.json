@@ -1,0 +1,17 @@
+{
+  "version": "0.4.43",
+  "build": "98",
+  "sourceFingerprint": "10398967c8129c9a3eceee7d660db94300dd44c589c8738989b91b51ec915304",
+  "approvedForInternalArchive": true,
+  "validatedUTC": "2026-10-06T05:15:44.131642+00:00",
+  "nativeSuitesPassed": 11,
+  "nativeSuitesRequested": 11,
+  "nativeReportSHA256": "5027b9acf0fb5d4a6de9f12e911c7016a0d10a79a4a70a2477261d7930e381a6",
+  "upgradeReport": "/private/tmp/DaBin-Upgrade-98-d_zj3i5k/report.json",
+  "upgradeReportSHA256": "2c3c1b836b3d3c6c4374e72a17b4ee8422d454d75cbba7856aa639340bc8c0ea",
+  "upgradePassed": true,
+  "upgradeScope": "Headless synthetic production-core forward data upgrade. No signed application/TestFlight install, real archive, clipboard, network, preference domains or GUI.",
+  "actualTestFlightReplacementVerified": false,
+  "downgradeTo86SupportedAfterCurrentSave": false,
+  "publicAppStoreSubmission": false
+}

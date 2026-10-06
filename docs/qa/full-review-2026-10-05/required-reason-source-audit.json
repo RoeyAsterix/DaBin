@@ -1,0 +1,293 @@
+{
+  "checkedAtUTC": "2026-10-05T22:06:18.489211+00:00",
+  "status": "SOURCE_AUDIT_NO_CONCRETE_TIMESTAMP_REASON_GAP",
+  "productionFingerprint": "d6a7dd7fd2e2de4f167476ba91d8be232917024ecf745679bc4a5f3c83fab5fa",
+  "version": "0.4.41",
+  "build": "96",
+  "sourceFreeze": "final-candidate/source-freeze.json",
+  "allCheckedHashesMatchFreeze": true,
+  "nativeProcessesStarted": false,
+  "nativeInputsChanged": false,
+  "runtimeAcceptance": false,
+  "declaredReasons": {
+    "UserDefaults": [
+      "CA92.1"
+    ],
+    "SystemBootTime": [
+      "35F9.1"
+    ],
+    "FileTimestamp": [
+      "C617.1"
+    ]
+  },
+  "officialAppleSource": {
+    "url": "https://developer.apple.com/documentation/bundleresources/app-privacy-configuration/nsprivacyaccessedapitypes/nsprivacyaccessedapitype",
+    "retrieval": "Official Apple documentation search content verified during this audit; direct HTML required JavaScript and the linked Markdown fetch was unsupported by the web reader. No third-party source used.",
+    "reasonInterpretation": {
+      "C617.1": "Metadata access within app, app-group or CloudKit containers. Not a blanket authorization for arbitrary app-owned external files.",
+      "3B52.1": "Metadata access for files/directories the user specifically granted access to. No concrete current external timestamp API use was found to justify adding this reason.",
+      "APIListBoundary": "Apple lists date properties/keys and POSIX stat/fstat/lstat/getattrlist families. Generic attributesOfItem and fileSizeKey are not named in that timestamp API list."
+    }
+  },
+  "findings": [
+    {
+      "path": "native/Sources/DaBin/CapturePreviews.swift",
+      "lines": [
+        11,
+        17,
+        58,
+        70,
+        82,
+        84,
+        88
+      ],
+      "usage": "Creation/modification timestamps form a decoded-image cache stamp. References originate from store.root with validated owned original/thumbnail relative paths and DailyArchive.safeURL; not external sourceFilePath."
+    },
+    {
+      "path": "native/Sources/DaBin/OutgoingFileSnapshot.swift",
+      "lines": [
+        41,
+        51,
+        55,
+        59,
+        103,
+        106,
+        107
+      ],
+      "usage": "fstat before/after copy checks size and modification time; lstat checks default outgoing temporary root. Shipping ExplorerTransfer callers supply managed originals or generated daily Markdown. Explicit stagingRoot injection is for isolated tests; no production caller supplies an external override."
+    },
+    {
+      "path": "native/Sources/DaBin/ExplorerTransfer.swift",
+      "lines": [
+        44,
+        65,
+        81,
+        84,
+        112,
+        115
+      ],
+      "usage": "Outgoing sources resolve through store.managedURL; documentProvider also receives generated archive daily Markdown. ExplorerScreen362 and ExplorerQuery68-75 trace that URL to store.root."
+    },
+    {
+      "path": "native/Sources/DaBin/CaptureStore.swift",
+      "lines": [
+        32,
+        144,
+        149,
+        151,
+        152,
+        157
+      ],
+      "usage": "Default store root is Application Support/DaBin; incoming external user-granted file URL is checked for type and copied into managed storage. No source timestamp read."
+    },
+    {
+      "path": "native/Sources/DaBin/ScreenshotFolderMonitor.swift",
+      "lines": [
+        68,
+        213,
+        215,
+        221,
+        230,
+        231
+      ],
+      "usage": "External chosen-folder enumeration uses regular-file/symlink/type and size keys; no timestamp keys or listed POSIX timestamp API."
+    },
+    {
+      "path": "native/Sources/DaBin/OriginalFileStorage.swift",
+      "lines": [
+        60,
+        61,
+        67
+      ],
+      "usage": "External source validation uses regular-file/directory/symlink/alias flags. Integrity verification hashes read bytes; no timestamp read."
+    },
+    {
+      "path": "native/Sources/DaBin/ArchiveBackup.swift",
+      "lines": [
+        66,
+        131,
+        336,
+        340,
+        371,
+        372,
+        418,
+        422
+      ],
+      "usage": "User-selected backup directories/files and export staging are inspected for entry existence, type, device and inode. No timestamp fields are consumed and no listed POSIX timestamp API is used. Backup createdAt is generated Date(), not filesystem creation time."
+    },
+    {
+      "paths": [
+        "native/Sources/DaBin/DailyArchive.swift",
+        "native/Sources/DaBin/DraftArchive.swift",
+        "native/Sources/DaBin/CaptureRepository.swift",
+        "native/Sources/DaBin/WorkspaceStore.swift",
+        "native/Sources/DaBin/ContentIndexService.swift",
+        "native/Sources/DaBin/UpdateHandoff.swift",
+        "native/Sources/DaBin/SoftwareUpdateService.swift"
+      ],
+      "usage": "Other metadata sites inspected for type, size, owner, permissions or identity. No additional filesystem date consumption found."
+    }
+  ],
+  "limitations": [
+    "This is source tracing, not binary dependency analysis, Apple approval or runtime acceptance.",
+    "Shipping Store sandbox behavior must confirm actual Application Support and temporary roots resolve within the app container. The current ordinary native QA harness is unsandboxed.",
+    "Custom injected archive/staging roots in tests may be external; that is not proof of an external shipping timestamp path.",
+    "No extra reason is recommended solely because an external file is opened or generic Foundation metadata is inspected. Reaudit if a new external date/stat API path is added."
+  ],
+  "coordinatorAdditionalSearch": {
+    "attribution": "Reported by root in task message; not independently rerun by this audit",
+    "result": "No release-source matches for AppleKeyboard/AppleInterface/global CFPreferences/UserDefaults external-suite access."
+  },
+  "files": [
+    {
+      "path": "native/Resources/PrivacyInfo.xcprivacy",
+      "absolutePath": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/Resources/PrivacyInfo.xcprivacy",
+      "sha256": "a9863c850f76e33c454b61aea834e1a9980db80a6d1d659b0d7a68ae835ee014",
+      "matchesFrozenInput": true
+    },
+    {
+      "path": "native/Sources/DaBin/ApplicationCoordinator.swift",
+      "absolutePath": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/Sources/DaBin/ApplicationCoordinator.swift",
+      "sha256": "4943fc63baeb82ffa76875b6e7a681a92304578e09088b0e4a8f6fbdde566cb4",
+      "matchesFrozenInput": true
+    },
+    {
+      "path": "native/Sources/DaBin/CaptureStore.swift",
+      "absolutePath": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/Sources/DaBin/CaptureStore.swift",
+      "sha256": "0ade3d0b992dcc5d284f70b13fc477995e82934f07f1dac59c2ccdb7c9f40098",
+      "matchesFrozenInput": true
+    },
+    {
+      "path": "native/Sources/DaBin/CapturePreviews.swift",
+      "absolutePath": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/Sources/DaBin/CapturePreviews.swift",
+      "sha256": "83946800de9b22ad7209c3e188045839501b712bb5c2a178826603b83219abba",
+      "matchesFrozenInput": true
+    },
+    {
+      "path": "native/Sources/DaBin/OutgoingFileSnapshot.swift",
+      "absolutePath": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/Sources/DaBin/OutgoingFileSnapshot.swift",
+      "sha256": "fc37977b95e3a79cb2af295d3ee6e9159ec27a4ada7d84e9a96f7fdbc1e27048",
+      "matchesFrozenInput": true
+    },
+    {
+      "path": "native/Sources/DaBin/ExplorerTransfer.swift",
+      "absolutePath": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/Sources/DaBin/ExplorerTransfer.swift",
+      "sha256": "578b24a46a5001b99eb3cde729a0f8bf593c9b5e847b47dcc29ed2aa00caafa0",
+      "matchesFrozenInput": true
+    },
+    {
+      "path": "native/Sources/DaBin/ExplorerScreen.swift",
+      "absolutePath": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/Sources/DaBin/ExplorerScreen.swift",
+      "sha256": "a55f44e37454b493479a50cbab794a6c0ecaf511cab17f339583e423de850777",
+      "matchesFrozenInput": true
+    },
+    {
+      "path": "native/Sources/DaBin/ExplorerQuery.swift",
+      "absolutePath": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/Sources/DaBin/ExplorerQuery.swift",
+      "sha256": "491d1ca752db038c2e877df94b15cc1242c64a1d472bd80d04d581a31f019e96",
+      "matchesFrozenInput": true
+    },
+    {
+      "path": "native/Sources/DaBin/OriginalFileStorage.swift",
+      "absolutePath": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/Sources/DaBin/OriginalFileStorage.swift",
+      "sha256": "0374224915bf5ec6997ed692ec8b43288f70bc7455d54a78a2ac72237ed0df73",
+      "matchesFrozenInput": true
+    },
+    {
+      "path": "native/Sources/DaBin/ScreenshotFolderMonitor.swift",
+      "absolutePath": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/Sources/DaBin/ScreenshotFolderMonitor.swift",
+      "sha256": "7057f0aff481db96009f0ba9a7ec06262fc3c987744c59d00646e208be0b48df",
+      "matchesFrozenInput": true
+    },
+    {
+      "path": "native/Sources/DaBin/ArchiveBackup.swift",
+      "absolutePath": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/Sources/DaBin/ArchiveBackup.swift",
+      "sha256": "f551d5b1710ec375902f32fa4cab14752a8bf9c7b1683e715f96da93c4555e69",
+      "matchesFrozenInput": true
+    },
+    {
+      "path": "native/Sources/DaBin/DailyArchive.swift",
+      "absolutePath": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/Sources/DaBin/DailyArchive.swift",
+      "sha256": "f9097332732a44e2a705c02eda1df9628cde45b8c16a80ecd3d43c7b1ef7fafa",
+      "matchesFrozenInput": true
+    },
+    {
+      "path": "native/Sources/DaBin/DraftArchive.swift",
+      "absolutePath": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/Sources/DaBin/DraftArchive.swift",
+      "sha256": "0a5601ec9dc987ced2c3cf42cd37bd5ac6e9175fdf7e69e32da600b0f9d85a49",
+      "matchesFrozenInput": true
+    },
+    {
+      "path": "native/Sources/DaBin/CaptureRepository.swift",
+      "absolutePath": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/Sources/DaBin/CaptureRepository.swift",
+      "sha256": "51e0bf85feb85c01c498f2403479ac33fa0bf6cb41f265860d2ffaa533d4b318",
+      "matchesFrozenInput": true
+    },
+    {
+      "path": "native/Sources/DaBin/WorkspaceStore.swift",
+      "absolutePath": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/Sources/DaBin/WorkspaceStore.swift",
+      "sha256": "7063676747d0ee49945833e767631ce8245151395a6a56c8e1259e594abf3e3d",
+      "matchesFrozenInput": true
+    },
+    {
+      "path": "native/Sources/DaBin/ContentIndexService.swift",
+      "absolutePath": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/Sources/DaBin/ContentIndexService.swift",
+      "sha256": "c1d27d28092c9e97b5fac1ebe8bdac511701b55eb1027eb4ab80b860a3ec6f6b",
+      "matchesFrozenInput": true
+    },
+    {
+      "path": "native/Sources/DaBin/InputService.swift",
+      "absolutePath": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/Sources/DaBin/InputService.swift",
+      "sha256": "f461a08ffc71034d53e63d582e1ad0d6e020fde643cdb0a79d6af344ddd27239",
+      "matchesFrozenInput": true
+    },
+    {
+      "path": "native/Sources/DaBin/AppState.swift",
+      "absolutePath": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/Sources/DaBin/AppState.swift",
+      "sha256": "c689b1cddc8335138bce51e78e788b7ea4a8fdc532147bf306fa7588c03c34ae",
+      "matchesFrozenInput": true
+    },
+    {
+      "path": "native/Sources/DaBin/UpdateHandoff.swift",
+      "absolutePath": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/Sources/DaBin/UpdateHandoff.swift",
+      "sha256": "aa8fadb66cc79ea16080dae270b1748b2b002ad36e3466e0bdb47b681654602a",
+      "matchesFrozenInput": true
+    },
+    {
+      "path": "native/Sources/DaBin/SoftwareUpdateService.swift",
+      "absolutePath": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/Sources/DaBin/SoftwareUpdateService.swift",
+      "sha256": "3b088ea8deff38bf5085370c06e4c32e02d2d7933622eb0f0f9eae18f1dd6623",
+      "matchesFrozenInput": true
+    },
+    {
+      "path": "native/Sources/DaBin/AutoCaptureService.swift",
+      "absolutePath": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/Sources/DaBin/AutoCaptureService.swift",
+      "sha256": "4fc07bf2adf559ea6bc814cc1f4fd58475ddccb2a1e47846580b4aaad59cede7",
+      "matchesFrozenInput": true
+    },
+    {
+      "path": "native/Sources/DaBin/AutoCaptureSettings.swift",
+      "absolutePath": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/Sources/DaBin/AutoCaptureSettings.swift",
+      "sha256": "f5e53774d1bf9421261feef5852e51a6954ba6a831172c46481c539c8cb2b2d0",
+      "matchesFrozenInput": true
+    },
+    {
+      "path": "native/Sources/DaBin/ShelfExport.swift",
+      "absolutePath": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/Sources/DaBin/ShelfExport.swift",
+      "sha256": "67589f74ba21c927ca0358ea37110e802ddd7fa16a1bba29faf4ca0c01b0b8b3",
+      "matchesFrozenInput": true
+    },
+    {
+      "path": "native/Sources/DaBin/DayExport.swift",
+      "absolutePath": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/Sources/DaBin/DayExport.swift",
+      "sha256": "604f447a16ac6a67bd1e170d9779fe35c929e686a67dd6ea70e6ca363cd2a2a9",
+      "matchesFrozenInput": true
+    },
+    {
+      "path": "native/Sources/DaBin/ProjectWorkspaceExport.swift",
+      "absolutePath": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/Sources/DaBin/ProjectWorkspaceExport.swift",
+      "sha256": "5126852a7222ebfd20252034202e2fd1aebe690c163cd2e8c520a268e323a11a",
+      "matchesFrozenInput": true
+    }
+  ]
+}

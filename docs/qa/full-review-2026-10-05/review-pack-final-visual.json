@@ -1,0 +1,201 @@
+{
+  "status": "PASS",
+  "recordedUTC": "2026-10-06T03:35:07.923706+00:00",
+  "method": "Every final rendered page opened at original resolution; inspection is visual, not inferred from file count.",
+  "document": {
+    "path": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/app-store/submission-pack-0.4.41-96/DaBin-App-Store-Content.docx",
+    "bytes": 346486,
+    "sha256": "7af09b4b702ac0283471a12f85e49446ebb926b1e1a170539f21921f6ad0c0f0"
+  },
+  "documentPDF": {
+    "path": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/design/app-store-pack/qa/0.4.41-96/render-4/DaBin-App-Store-Content.pdf",
+    "bytes": 488475,
+    "sha256": "ed042f2fabf1bca89d36adc4ab454e631870ed082c5bb3e220606b24cbc0ca74"
+  },
+  "documentPages": [
+    {
+      "page": 1,
+      "render": {
+        "path": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/design/app-store-pack/qa/0.4.41-96/render-4/page-1.png",
+        "bytes": 256501,
+        "sha256": "d48cb59ee760fbee1f56661e6bb0a92971cef5a8b0f56fc6c2fe23212740c85a"
+      },
+      "result": "PASS",
+      "finding": "Clear title, complete current app-information table and draft readiness statement."
+    },
+    {
+      "page": 2,
+      "render": {
+        "path": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/design/app-store-pack/qa/0.4.41-96/render-4/page-2.png",
+        "bytes": 324265,
+        "sha256": "b8123908756599630e3260341b1e8272935422abf0072eb0d4188dc62f34c83c"
+      },
+      "result": "PASS",
+      "finding": "Complete listing description and release copy; readable headings and no text overflow."
+    },
+    {
+      "page": 3,
+      "render": {
+        "path": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/design/app-store-pack/qa/0.4.41-96/render-4/page-3.png",
+        "bytes": 447765,
+        "sha256": "fccef124086a651d3216656b239dabab99234a485f7ef01755c113a6c632081f"
+      },
+      "result": "PASS",
+      "finding": "Complete reviewer notes with readable current Captions, Tasks and Export Selected labels."
+    },
+    {
+      "page": 4,
+      "render": {
+        "path": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/design/app-store-pack/qa/0.4.41-96/render-4/page-4.png",
+        "bytes": 308521,
+        "sha256": "38ccb5291b9313c4180015c69a52a0a191dc1dc68a87ca4c9eede391fa0b16af"
+      },
+      "result": "PASS",
+      "finding": "Captions screenshot and caption preserve original aspect ratio and readable native controls."
+    },
+    {
+      "page": 5,
+      "render": {
+        "path": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/design/app-store-pack/qa/0.4.41-96/render-4/page-5.png",
+        "bytes": 427787,
+        "sha256": "5940da6af67fd434a512f200fc2aa1a3a4b5c105e61cbfb9332923b3984301ed"
+      },
+      "result": "PASS",
+      "finding": "Projects screenshot and caption are complete; current controls and selected export remain readable."
+    },
+    {
+      "page": 6,
+      "render": {
+        "path": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/design/app-store-pack/qa/0.4.41-96/render-4/page-6.png",
+        "bytes": 393818,
+        "sha256": "0bbfadc58bc3d25ec063352e4b786e4e90d043c783dddaf952e64f58ceb1968d"
+      },
+      "result": "PASS",
+      "finding": "Focus screenshot and caption preserve readable task-priority colors and focus controls."
+    },
+    {
+      "page": 7,
+      "render": {
+        "path": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/design/app-store-pack/qa/0.4.41-96/render-4/page-7.png",
+        "bytes": 343347,
+        "sha256": "5b7b16482304494e990fd38b68cbf00011f108262c58a0eb2b4f5111484ef598"
+      },
+      "result": "PASS",
+      "finding": "Privacy/declaration table is complete with readable cells and no invented owner details."
+    },
+    {
+      "page": 8,
+      "render": {
+        "path": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/design/app-store-pack/qa/0.4.41-96/render-4/page-8.png",
+        "bytes": 421607,
+        "sha256": "d856ea2ad4acaf0d9e86fc7fffd6af6ecf804817c8b4a5231a54232d8cc270f8"
+      },
+      "result": "PASS",
+      "finding": "Owner fields and QA appendix explicitly retain failed timing budgets and distinguish local update from runtime acceptance."
+    },
+    {
+      "page": 9,
+      "render": {
+        "path": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/design/app-store-pack/qa/0.4.41-96/render-4/page-9.png",
+        "bytes": 203247,
+        "sha256": "8197e0ced1527f780880efaa45b404abd2eeba8596e639ff366843d738477b10"
+      },
+      "result": "PASS",
+      "finding": "Remaining owner field and submission conditions are complete; intentional section whitespace."
+    },
+    {
+      "page": 10,
+      "render": {
+        "path": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/design/app-store-pack/qa/0.4.41-96/render-4/page-10.png",
+        "bytes": 399117,
+        "sha256": "fbce75492e6307259b1a53967c1bd3904de688da3c19ef48c17da0093325abd1"
+      },
+      "result": "PASS",
+      "finding": "Support FAQ uses current Captions label and describes export and native drag without clipping."
+    },
+    {
+      "page": 11,
+      "render": {
+        "path": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/design/app-store-pack/qa/0.4.41-96/render-4/page-11.png",
+        "bytes": 92622,
+        "sha256": "4cb034e9dfb4ecf06fe507e13bbbea059724a331d94ea2f3015b9ecff4e6b608"
+      },
+      "result": "PASS",
+      "finding": "Support continuation and policy link are complete; intentional page break before full policy."
+    },
+    {
+      "page": 12,
+      "render": {
+        "path": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/design/app-store-pack/qa/0.4.41-96/render-4/page-12.png",
+        "bytes": 538367,
+        "sha256": "7278f273a7a1c6056b4b1c46a80fc831d8e2c1f79bbef86960d9adb90aa5514a"
+      },
+      "result": "PASS",
+      "finding": "Full current policy begins with readable local storage, OCR and manual/automatic capture statements."
+    },
+    {
+      "page": 13,
+      "render": {
+        "path": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/design/app-store-pack/qa/0.4.41-96/render-4/page-13.png",
+        "bytes": 580125,
+        "sha256": "052b678c392277054e8c4f76d73a656b81b3f3a3fa9cdec67ebc83a313bde4ad"
+      },
+      "result": "PASS",
+      "finding": "Policy continuation, companion confirmations, optional previews and update channels are complete and readable."
+    },
+    {
+      "page": 14,
+      "render": {
+        "path": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/design/app-store-pack/qa/0.4.41-96/render-4/page-14.png",
+        "bytes": 565214,
+        "sha256": "93997e978213364bb81be48bfb1b7c21370672aa8f82f88ceac24973134364c7"
+      },
+      "result": "PASS",
+      "finding": "Complete reminders, retention, deletion, backups and sandbox text without overlap or footer clipping."
+    },
+    {
+      "page": 15,
+      "render": {
+        "path": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/design/app-store-pack/qa/0.4.41-96/render-4/page-15.png",
+        "bytes": 312969,
+        "sha256": "9e96cef84437c243e06eb6086daab9851ad50790055dd179319886618b0f6370"
+      },
+      "result": "PASS",
+      "finding": "Package contents and verification scope correctly separate local direct-update evidence from pending distribution-signed Store acceptance; all references complete."
+    }
+  ],
+  "guidePDF": {
+    "path": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/DaBin-Quick-Guide.pdf",
+    "bytes": 566933,
+    "sha256": "1510c0cd35698ff1e9e47fff809398095e8acae6a95273ee1cabe1d81bc7f24a"
+  },
+  "guidePages": [
+    {
+      "page": 1,
+      "render": {
+        "path": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/tmp/pdfs/guide-0.4.41-96-render-2/page-1.png",
+        "bytes": 290136,
+        "sha256": "1e8e3cc4c757813bc6de626606fec4a0972dd31b22f29fdec5a965534198127f"
+      },
+      "result": "PASS",
+      "finding": "Current native project hero, measured callout leaders and Captions/Tasks prose readable with no clipped labels."
+    },
+    {
+      "page": 2,
+      "render": {
+        "path": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/tmp/pdfs/guide-0.4.41-96-render-2/page-2.png",
+        "bytes": 314268,
+        "sha256": "e34358bc2d4dd2e16fe31d496a1288412690091a287baaeb6fc8997576e678f1"
+      },
+      "result": "PASS",
+      "finding": "Date-column Search crop, priority colors, capture habits, companion/quiet/reduced-motion and privacy prose readable; complete footer."
+    }
+  ],
+  "nativeAssetsReceipt": {
+    "path": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/full-review-2026-10-05/review-pack-native-assets-visual.json",
+    "bytes": 3305,
+    "sha256": "c0e78dcae301ae3c78395da915b42ddfc74c95d4ecfd9b28e36c23fe94273b1f"
+  },
+  "releaseScope": "Current-source fictional Store views and review drafts; comparison with distribution-signed final app remains pending.",
+  "submissionReady": false
+}

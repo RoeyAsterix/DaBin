@@ -1,0 +1,92 @@
+{
+  "status": "SCRIPT_PREPARATION_ONLY_FINAL_RENDER_PENDING",
+  "candidate": {
+    "version": "0.4.41",
+    "build": "96"
+  },
+  "checks": [
+    "AST syntax and --help for all executable builders",
+    "Historical submission pack manifest matches all existing files",
+    "Previous delivered PDF unchanged and preserved in archive"
+  ],
+  "nativeBuildOrTestsRun": false,
+  "nativeFixturesRendered": false,
+  "artifactAuthoringStarted": false,
+  "files": [
+    {
+      "file": "design/onepager/README.md",
+      "bytes": 4125,
+      "sha256": "1c2b96c28e1d3d3d4a6c6993270e31ab9a39b979c5c70260bf655eeb7d630469"
+    },
+    {
+      "file": "design/onepager/assets/DABIN__GUIDE__INBOX.png",
+      "bytes": 130523,
+      "sha256": "0146856604aec0dea51927a5d820bc1b78681a0097c34262046294b6def91c35"
+    },
+    {
+      "file": "design/onepager/assets/DABIN__GUIDE__PROJECTS.png",
+      "bytes": 216892,
+      "sha256": "997ea3bbc94c760e5a114a47aa84bffb101657135c06bac5e6f28e42ad8bcde5"
+    },
+    {
+      "file": "design/onepager/assets/DABIN__GUIDE__ROBOT.png",
+      "bytes": 133160,
+      "sha256": "ee95624ca95102af33f8ed3507f6ca0509c101cb5ea8fc880a2ff07fc07f5432"
+    },
+    {
+      "file": "design/onepager/assets/DABIN__GUIDE__SEARCH.png",
+      "bytes": 227936,
+      "sha256": "9475346beee8df72e02c5e3dec336e2a9de8d88e644e19d5d2e8f26871770e3f"
+    },
+    {
+      "file": "design/onepager/assets/DABIN__GUIDE__TASK.png",
+      "bytes": 141561,
+      "sha256": "644a6cdc2d7da0211da502813f67eadd79692890b8f9ba47f1ec2400dac5fee0"
+    },
+    {
+      "file": "design/onepager/assets/DaBin-logo.png",
+      "bytes": 47204,
+      "sha256": "5997fb512c7399023d7e9f6fa0ba50119697ba1bd1607582c5d85ec481eb71f1"
+    },
+    {
+      "file": "design/onepager/assets/guide-assets.json",
+      "bytes": 1267,
+      "sha256": "3c4ae60a347aff09b6d19ad72635b682e1f335c056eff86cb6e475315a483937"
+    },
+    {
+      "file": "design/onepager/assets/guide-native-renders.json",
+      "bytes": 44369,
+      "sha256": "71f975f5ce283cdc4588d55601e4faa806af4e03a2a8a23568d209f090379142"
+    },
+    {
+      "file": "design/onepager/assets/guide-native-source-manifest.json",
+      "bytes": 17232,
+      "sha256": "3d6a4d80ec5236d8b2979c1fb5f38fdcbafc6cc4468ed58ff7bce47e33ba691e"
+    },
+    {
+      "file": "design/onepager/copy.json",
+      "bytes": 3794,
+      "sha256": "4084c3ab9ae452df1cdf1bce1bd125d1d32d39a9bd908f56dae493b59a6264db"
+    },
+    {
+      "file": "docs/DaBin-Friendly-Copy.txt",
+      "bytes": 2593,
+      "sha256": "c592dc017c63a0800d1da4bdc57be88b9abb2623bc47aefe1316873608090440"
+    },
+    {
+      "file": "docs/DaBin-Quick-Guide.pdf",
+      "bytes": 576456,
+      "sha256": "74b04eab53733fe91fbeb20c871042dbdef31406b7201f344f57692920a756de"
+    },
+    {
+      "file": "docs/app-store/APP_STORE_CONNECT_DRAFT.md",
+      "bytes": 14149,
+      "sha256": "8b6c0865a1ebd6798fcf2a186629e55ed451a8d214c3b67b5bd0f963e0772f85"
+    },
+    {
+      "file": "docs/app-store/metadata-en-US.json",
+      "bytes": 7199,
+      "sha256": "fd160697596d05041dfbf4bcf831998675c3e5285a7ec22ec3db49282ffae6af"
+    }
+  ]
+}

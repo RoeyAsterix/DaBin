@@ -1,0 +1,24 @@
+{
+  "status": "STOPPED",
+  "startedAtUTC": "2026-10-05T22:20:57.018124+00:00",
+  "ownedPID": 56956,
+  "ownedUID": 501,
+  "script": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/full-review-2026-10-05/serve_local_drag_receiver.py",
+  "scriptSHA256": "936d2746c8f7b733f55165514bf439d11fe897dbbc1ba02a485d527e71b0834a",
+  "stage": "/private/tmp/DaBin-Drag-Receiver-ohayb_gv",
+  "stagedHTML": "/private/tmp/DaBin-Drag-Receiver-ohayb_gv/receiver.html",
+  "receipt": "/private/tmp/DaBin-Drag-Receiver-ohayb_gv/server-receipt.json",
+  "receiverSHA256": "4170f54fa420abcb5c4b7321e78693d165605fed1135dca03e075227c9117091",
+  "bindHost": "127.0.0.1",
+  "durationLimitSeconds": 900,
+  "browserLaunched": false,
+  "scope": "One fixed fictional receiver route; no arbitrary directory/file serving, uploads, source archive/clipboard access, workspace/KARI data, outbound connections or GUI action. HTTP receipt alone is not drag acceptance.",
+  "error": "[Errno 1] Operation not permitted",
+  "stoppedAtUTC": "2026-10-05T22:20:57.018366+00:00",
+  "stopReason": "server_error",
+  "requestCounts": {
+    "receiverGET": 0,
+    "receiverHEAD": 0,
+    "denied": 0
+  }
+}

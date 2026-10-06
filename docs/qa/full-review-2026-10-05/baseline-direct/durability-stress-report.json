@@ -1,0 +1,60 @@
+{
+  "checks" : 8586,
+  "counts" : {
+    "backupRecords" : 1008,
+    "failedMutations" : 19,
+    "importInterruptionChecks" : 3,
+    "mixedOperations" : 320,
+    "operationKind0" : 46,
+    "operationKind1" : 35,
+    "operationKind2" : 43,
+    "operationKind3" : 36,
+    "operationKind4" : 43,
+    "operationKind5" : 35,
+    "operationKind6" : 39,
+    "operationKind7" : 43,
+    "originalFiles" : 8,
+    "processKillBoundaries" : 4,
+    "repositoryBatchRollbacks" : 1,
+    "restarts" : 25,
+    "restoreRollbackChecks" : 2,
+    "seededRecords" : 1000,
+    "workspaceWriteRetries" : 1
+  },
+  "processBoundaries" : [
+    {
+      "checkpoint" : "reached",
+      "mode" : "import-moved",
+      "recovery" : "passed",
+      "termination" : "SIGKILL"
+    },
+    {
+      "checkpoint" : "reached",
+      "mode" : "import-committed",
+      "recovery" : "passed",
+      "termination" : "SIGKILL"
+    },
+    {
+      "checkpoint" : "reached",
+      "mode" : "delete-precommit",
+      "recovery" : "passed",
+      "termination" : "SIGKILL"
+    },
+    {
+      "checkpoint" : "reached",
+      "mode" : "delete-committed",
+      "recovery" : "passed",
+      "termination" : "SIGKILL"
+    }
+  ],
+  "scope" : "Synthetic temporary archives; no GUI, real archive, network, clipboard or notifications",
+  "seconds" : {
+    "backupRestoreSeconds" : 27.811447024345398,
+    "injectedRecoverySeconds" : 0.48335897922515869,
+    "mixedStressSeconds" : 37.167171001434326,
+    "processKillRecoverySeconds" : 0.19907701015472412,
+    "totalSeconds" : 37.852836012840271
+  },
+  "seed" : "240454283431941",
+  "status" : "passed"
+}

@@ -1,0 +1,122 @@
+{
+  "HOMEOverridden": false,
+  "currentBuild": "98",
+  "currentFreezeSHA256": "f5f8ef3a223a4868f3e695f1ead953e3b0a855dea2770e0d0c86fd17a572cc54",
+  "currentVersion": "0.4.43",
+  "downgradeSupportedAfterCurrentSave": false,
+  "endedAtUTC": "2026-10-06T05:07:50.548297+00:00",
+  "error": "Phase failed: old-write; see /private/tmp/DaBin-Upgrade-98-bz21en6p/logs/old-write.log",
+  "fixtureRoot": "/private/tmp/DaBin-Upgrade-98-bz21en6p",
+  "moduleOutputSHA256": {
+    "new": {
+      "DaBinTestCore.swiftmodule": "7006d4750d94542365bef3dc60acd67b663b0dad98d70d62672560e2a833daa4",
+      "libDaBinTestCore.dylib": "083b930f49a66d8f975a739efb2e140b59ea4b0e0df73c40491456447d70746d"
+    },
+    "old": {
+      "DaBinTestCore.swiftmodule": "687c1551740c2dcec8ac85f9c05b779aa77feba3ce04d5cbab0d2ab6325d9255",
+      "libDaBinTestCore.dylib": "45ed376eb743afff149ce09e96706221784da98ed7290a4454131a3c60e9f2f8"
+    }
+  },
+  "moduleReceiptSHA256": {
+    "new": "80dad493b68bae57e0e69ad3ef574d7ed85c1d21d788ef4fe9ac0bb2d2a061d5",
+    "old": "70fe5ab7d956c115bb8b3be23e68ca8e8251edd7c2053afcf050dc77f424ee51"
+  },
+  "moduleReceipts": {
+    "new": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa-cache/app-store-e7702e1de0ab8539d967cdb0d65d29b45091705d1fe55a1212631818dbd0b8a3/module-ready.json",
+    "old": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/store-preparation-20261004/native/build/qa-cache/app-store-34dd658724d8a131934a15dd329a81843c7c8c7af3aad201a34ea2bf28acde4a/module-ready.json"
+  },
+  "oldCandidateReceiptSHA256": "25d9131d3df2cfa2637f4a63c17e18700cd6acde4f0948c0ff4aa783ea762874",
+  "oldSourceFingerprint": "cda5504ffbd21b7d090c142f54cf635f8d139adedd61be14a3ab85e045ce62c5",
+  "phases": [
+    {
+      "command": [
+        "xcrun",
+        "swiftc",
+        "-swift-version",
+        "5",
+        "-target",
+        "arm64-apple-macosx14.0",
+        "-parse-as-library",
+        "-O",
+        "-warnings-as-errors",
+        "-module-cache-path",
+        "/private/tmp/DaBin-Upgrade-98-bz21en6p/module-cache",
+        "-D",
+        "OLD_BUILD",
+        "-I",
+        "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/store-preparation-20261004/native/build/qa-cache/app-store-34dd658724d8a131934a15dd329a81843c7c8c7af3aad201a34ea2bf28acde4a",
+        "-L",
+        "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/store-preparation-20261004/native/build/qa-cache/app-store-34dd658724d8a131934a15dd329a81843c7c8c7af3aad201a34ea2bf28acde4a",
+        "-lDaBinTestCore",
+        "-Xlinker",
+        "-rpath",
+        "-Xlinker",
+        "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/store-preparation-20261004/native/build/qa-cache/app-store-34dd658724d8a131934a15dd329a81843c7c8c7af3aad201a34ea2bf28acde4a",
+        "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/testflight-upgrade-0.4.43-98-2026-10-06/UpgradeFixture.swift",
+        "-o",
+        "/private/tmp/DaBin-Upgrade-98-bz21en6p/old-fixture"
+      ],
+      "endedAtUTC": "2026-10-06T05:07:48.544660+00:00",
+      "exitCode": 0,
+      "log": "/private/tmp/DaBin-Upgrade-98-bz21en6p/logs/compile-old.log",
+      "logSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "name": "compile-old",
+      "startedAtUTC": "2026-10-06T05:07:43.559777+00:00"
+    },
+    {
+      "command": [
+        "xcrun",
+        "swiftc",
+        "-swift-version",
+        "5",
+        "-target",
+        "arm64-apple-macosx14.0",
+        "-parse-as-library",
+        "-O",
+        "-warnings-as-errors",
+        "-module-cache-path",
+        "/private/tmp/DaBin-Upgrade-98-bz21en6p/module-cache",
+        "-I",
+        "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa-cache/app-store-e7702e1de0ab8539d967cdb0d65d29b45091705d1fe55a1212631818dbd0b8a3",
+        "-L",
+        "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa-cache/app-store-e7702e1de0ab8539d967cdb0d65d29b45091705d1fe55a1212631818dbd0b8a3",
+        "-lDaBinTestCore",
+        "-Xlinker",
+        "-rpath",
+        "-Xlinker",
+        "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa-cache/app-store-e7702e1de0ab8539d967cdb0d65d29b45091705d1fe55a1212631818dbd0b8a3",
+        "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/testflight-upgrade-0.4.43-98-2026-10-06/UpgradeFixture.swift",
+        "-o",
+        "/private/tmp/DaBin-Upgrade-98-bz21en6p/new-fixture"
+      ],
+      "endedAtUTC": "2026-10-06T05:07:49.882889+00:00",
+      "exitCode": 0,
+      "log": "/private/tmp/DaBin-Upgrade-98-bz21en6p/logs/compile-new.log",
+      "logSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "name": "compile-new",
+      "startedAtUTC": "2026-10-06T05:07:48.615313+00:00"
+    },
+    {
+      "command": [
+        "/usr/bin/sandbox-exec",
+        "-p",
+        "(version 1) (allow default) (deny network*)",
+        "/private/tmp/DaBin-Upgrade-98-bz21en6p/old-fixture",
+        "write",
+        "/private/tmp/DaBin-Upgrade-98-bz21en6p/Archive",
+        "/private/tmp/DaBin-Upgrade-98-bz21en6p/old-write.json"
+      ],
+      "endedAtUTC": "2026-10-06T05:07:50.511668+00:00",
+      "exitCode": -5,
+      "log": "/private/tmp/DaBin-Upgrade-98-bz21en6p/logs/old-write.log",
+      "logSHA256": "e29f30bab38736f59f03593de2d1ab5c1f070fde383ede27611887d0229db020",
+      "name": "old-write",
+      "startedAtUTC": "2026-10-06T05:07:49.953067+00:00"
+    }
+  ],
+  "schemaVersion": 1,
+  "scope": "Headless synthetic production-core forward data upgrade. No signed application/TestFlight install, real archive, clipboard, network, preference domains or GUI.",
+  "startedAtUTC": "2026-10-06T05:07:43.524653+00:00",
+  "status": "failed",
+  "submissionReady": false
+}

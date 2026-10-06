@@ -1,0 +1,2 @@
+PASSED ProjectWorkspaceViewTests: PASS: 476 project workspace UI checks; 1,000 synthetic text captures plus image and editable project note; native mixed-selection drag payloads on a private pasteboard; no personal archive, network, general clipboard or external opening. At most 27 simultaneously materialized native rows.
+QA direct passed: 1/1 requested suites passed. Report: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/runs/20261005T180552033779Z-direct/report.json

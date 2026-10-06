@@ -1,38 +1,30 @@
-# DaBin robot-led quick guide
+# DaBin Quick Guide source
 
-The updated [DaBin Quick Guide](../../docs/DaBin-Quick-Guide.pdf) and [Friendly Copy](../../docs/DaBin-Friendly-Copy.txt) describe **0.4.31 (86)**. The PDF preserves the friendly Quiet Orbit robot voice and two A4 landscape pages. Page one introduces the current project workspace, global Search, export and Finder. Page two gives the native date-column Search view a wide, readable panel, followed by saving/dragging, new tasks and colored priorities, optional Auto Capture, and moving between monitors.
+The latest source candidate is 0.4.43 (98); its paused companion and security changes are documented in [current release notes](../../docs/RELEASE_NOTES_0.4.43.md). The PDF and render assets here remain the visually reviewed 0.4.41 (96) draft. They have not been regenerated or compared with a distribution-signed 98 app. [Current validation and signing status](../../docs/qa/testflight-upgrade-0.4.43-98-2026-10-06/status.json).
 
-`copy.json` is the shared copy source. `build_guide.py` writes identical PDF copies to `output/pdf/` and `docs/`, and identical text copies to `output/copy/` and `docs/`. Rebuilding resets visual QA to pending. The guide is a quick introduction, not an exhaustive manual or a claim that every receiving app accepts every drag type.
 
-## Verified native assets
+The current [DaBin Quick Guide](../../docs/DaBin-Quick-Guide.pdf) and [Friendly Copy](../../docs/DaBin-Friendly-Copy.txt) describe **0.4.41 (96)**. Both landscape A4 pages were rendered and opened at original resolution after the coordinated Store QA and asset-export stage. The guide explains one-click opening, compact Captions/Tasks/Projects controls, the day/week date picker, Export Selected, colored priorities and the companion’s still response in Quiet mode or Reduce Motion. Page one uses the current native project workspace with measured callouts. Page two shows the date-column Search view and everyday saving habits.
 
-The five current assets were exported locally from the frozen 0.4.31 Store-channel QA module through `ExportGuide.swift`: Projects, Inbox, Search, Task and the canonical robot. The delivered PDF uses Projects, Search and the robot; Inbox and Task remain available as supporting native excerpts. All fixtures are fictional, in an ephemeral archive with isolated preferences. No user captures, KARI material, actual clipboard, network requests, live app windows or notification delivery were used.
+The [local review workflow](../app-store-pack/README.md) records export, authoring, rendering and packaging commands. Exact current source/module paths and output hashes are in [review-pack-authoring-plan.json](../../docs/qa/full-review-2026-10-05/review-pack-authoring-plan.json). The [guide visual receipt](qa/robot-guide-0.4.41-96.json) and [final all-page review](../../docs/qa/full-review-2026-10-05/review-pack-final-visual.json) record actual inspection findings. The guide remains a local review draft: strict zoom performance failed, and distribution signing, signed-app acceptance, owner declarations and Apple review remain pending.
 
-The frozen source is explicitly selected at:
+## Source and native assets
 
-`native/build/store-preparation-20261004/native`
+`copy.json` is the shared guide prose. `build_guide.py` writes identical PDF copies to `output/pdf/` and `docs/`, and identical text copies to `output/copy/` and `docs/`. Rebuilding resets visual QA to pending. The guide is a quick introduction, not an exhaustive manual or a claim that every receiving app accepts every drag type.
 
-This is intentional: separate unverified tutorial edits in the shared `native/Sources/DaBin` tree are excluded. `export_guide_assets.py` accepts an explicit `--native-root`, `--module-cache` and `--distribution`; it requires a matching Release receipt, full source inventory/hashes, channel flags, target, and module/library hashes. It rechecks source, resource and Info hashes after rendering. The PDF builder independently checks the same frozen inputs, receipt, binary outputs, exporter and asset hashes. It does not silently fall back to stale artwork or disable source checks.
+Five current assets were exported locally through `ExportGuide.swift` from the frozen Release Store-channel QA module: Projects, Captions (legacy `INBOX` filename), Search, Task and the canonical robot. The PDF uses Projects, Search and the robot; Captions and Task remain supporting excerpts. All fixtures are fictional and use an ephemeral archive with isolated preferences. No user captures, KARI material, personal clipboard, network requests, live app windows or notification delivery were used.
 
-## Rebuild
+The selected source is `native/`, verified against the final-candidate source freeze. The module cache is `native/build/qa-cache/app-store-5013654b8c68f93cbaa913c1212168402be85ff94c7d33fca10d7e15c3e13e7e/`. Source inventory, Release configuration, channel flags, target and module/library hashes are checked before and after native rendering. The PDF builder independently verifies the same source, module, exporter and asset hashes.
 
-From the repository root, using the bundled Python with ReportLab and pypdf:
+Native provenance and accessibility anchors are in `assets/guide-native-source-manifest.json` and `assets/guide-native-renders.json`. `assets/guide-assets.json` records crop/callout positions measured against the current images; leaders were repaired to avoid native label text. The final PDF page render is `tmp/pdfs/guide-0.4.41-96-render-2/`. Its structural layout receipt is `tmp/pdfs/robot-guide-layout-check.json`; structural checks alone are not visual approval.
 
-```sh
-python3 design/onepager/export_guide_assets.py \
-  --native-root native/build/store-preparation-20261004/native \
-  --module-cache native/build/store-preparation-20261004/native/build/qa-cache/app-store-34dd658724d8a131934a15dd329a81843c7c8c7af3aad201a34ea2bf28acde4a \
-  --distribution app-store
-python3 design/onepager/build_guide.py
-pdftoppm -r 180 -png docs/DaBin-Quick-Guide.pdf tmp/pdfs/robot-guide-0.4.31
-```
+## Regeneration
 
-Coordinate native rendering with other GUI QA. It uses its own non-key offscreen windows and may require scoped host access to native macOS window services. It never launches or installs DaBin. When changing the source/version, provide the newly verified source and cache explicitly and re-render; do not rewrite hashes to bless stale assets.
+Use the bundled workspace Python/ReportLab/pypdf runtime and Poppler paths in the local review workflow. Provide the selected version/build, source and module explicitly. Coordinate native rendering with GUI QA; the fixture uses non-key offscreen windows and may require scoped access to native macOS window services. It never launches or installs DaBin.
 
-Inspect both rendered pages at original resolution, then update the [final QA record](qa/robot-guide-2026-10-04.json). The measured layout record is `tmp/pdfs/robot-guide-layout-check.json`. Native provenance and anchors are in `assets/guide-native-source-manifest.json` and `assets/guide-native-renders.json`. `guide-assets.json` contains PDF-only clipping and callout positions; no native pixels are painted over.
+Run the PDF artifact marker once immediately before the first authoring command for a new operation. Do not repeat the marker during repairs of that operation. Render and inspect both final pages at original resolution after each meaningful layout repair. Record the exact PDF hash, actual page findings and current asset/source provenance in the versioned guide receipt only after inspection. Do not rewrite old version numbers or hashes to bless stale assets.
 
-## Preservation and scope
+## Preservation and limits
 
-The previous 0.4.19 PDF, copy, source scripts and asset set are preserved with checksums under `archive/guide-before-0.4.31-20261004/`; older archived PDFs remain intact. This documentation update changes no production application source, installed app or user archive.
+The previous 0.4.31 guide inputs, native assets, PDF, friendly copy and metadata remain under `archive/guide-before-0.4.41-20261005/`. All 15 files were reverified against the preservation manifest. The previous App Store content pack remains separate with all 19 files byte identical. Earlier guide revisions remain in their own archives. [Package verification](../../docs/qa/full-review-2026-10-05/review-pack-final-verification.json) records this preservation and exact parity of the current PDF copies.
 
-The screenshots reflect the verified native Store module, not a final distribution-signed sandbox upload. This guide does not establish physical drop completion in every external app, an App Store approval, or availability in the Store. Dragging is described only for destinations that accept the content. Auto Capture is off by default; the header's dot grows while running and animates unless Reduce Motion is enabled. Screenshot-folder capture does not record the live screen.
+Screenshots reflect current native Store-module views, not an accepted distribution-signed Store app. Physical cross-application/browser drop completion and a second monitor remain untested in the final campaign. Dragging instructions concern destinations that accept the content. Auto Capture is off by default; screenshot-folder capture does not record the live screen. This artifact work changes no production native source or personal archive and performs no upload, submission or account action. The separately completed local direct-app installation is documented in its own verification receipt.

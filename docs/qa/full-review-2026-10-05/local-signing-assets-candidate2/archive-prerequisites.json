@@ -1,0 +1,43 @@
+{
+  "checkedAtUTC": "2026-10-05T20:47:19.444145+00:00",
+  "checks": [
+    {
+      "command": [
+        "/usr/bin/xcode-select",
+        "-p"
+      ],
+      "exitCode": 0,
+      "output": "/Applications/Xcode.app/Contents/Developer"
+    },
+    {
+      "command": [
+        "/usr/bin/xcrun",
+        "xcodebuild",
+        "-version"
+      ],
+      "exitCode": 0,
+      "output": "Xcode 27.0\nBuild version 27A266a"
+    },
+    {
+      "command": [
+        "/usr/bin/xcrun",
+        "--sdk",
+        "macosx",
+        "--show-sdk-version"
+      ],
+      "exitCode": 0,
+      "output": "27.0"
+    },
+    {
+      "command": [
+        "/bin/df",
+        "-k",
+        "/private/tmp"
+      ],
+      "exitCode": 0,
+      "output": "Filesystem   1024-blocks      Used Available Capacity iused      ifree %iused  Mounted on\n/dev/disk3s5   971298980 599168096 326097412    65% 3594782 3260974120    0%   /System/Volumes/Data"
+    }
+  ],
+  "projectHasSwiftPackageReference": false,
+  "boundary": "Read-only tool selection/version, disk capacity and project text. No xcodebuild build, test, archive or signing."
+}

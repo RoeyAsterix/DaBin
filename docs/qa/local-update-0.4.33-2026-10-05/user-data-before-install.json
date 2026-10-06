@@ -1,0 +1,17 @@
+{
+  "createdAtUTC": "2026-10-05T04:22:09.834754+00:00",
+  "roots": [
+    {
+      "path": "/Users/roeylibfeld/Library/Containers/com.dabin.mac/Data/Library/Application Support/DaBin",
+      "exists": true,
+      "fileCount": 445,
+      "inventorySHA256": "e2060cf2c530522362a11f808d296e0870e4394f6e4b3e0abbf3f0319577a952"
+    },
+    {
+      "path": "/Users/roeylibfeld/Library/Application Support/DaBin",
+      "exists": true,
+      "fileCount": 55,
+      "inventorySHA256": "232d27693e7ffc86f248424b1ac10551949a4aa4ebca7a08e81e9794d47e0681"
+    }
+  ]
+}

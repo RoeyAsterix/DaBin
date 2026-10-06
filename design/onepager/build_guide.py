@@ -2,6 +2,7 @@
 from pathlib import Path
 from shutil import copy2
 from html import escape
+import argparse
 import hashlib
 import json
 import plistlib
@@ -18,13 +19,25 @@ from pypdf import PdfReader
 
 ROOT = Path(__file__).resolve().parents[2]
 DESIGN = ROOT / "design/onepager"
-ASSETS = DESIGN / "assets"
-COPY = json.loads((DESIGN / "copy.json").read_text())
-OUT = ROOT / "output/pdf/DaBin-Quick-Guide.pdf"
-DOC_COPY = ROOT / "docs/DaBin-Quick-Guide.pdf"
-COPY_OUT = ROOT / "output/copy/DaBin-Friendly-Copy.txt"
-QA_PATH = ROOT / "tmp/pdfs/robot-guide-layout-check.json"
-MANIFEST = ASSETS / "guide-assets.json"
+parser = argparse.ArgumentParser(description=__doc__)
+parser.add_argument('--build-pdf', action='store_true', required=True, help='Create the PDF after the artifact marker and native asset review')
+parser.add_argument('--version')
+parser.add_argument('--build')
+parser.add_argument('--native-root', type=Path)
+parser.add_argument('--module-cache', type=Path)
+parser.add_argument('--copy-file', type=Path, default=DESIGN / 'copy.json')
+parser.add_argument('--assets-dir', type=Path, default=DESIGN / 'assets')
+parser.add_argument('--output', type=Path, default=ROOT / 'output/pdf/DaBin-Quick-Guide.pdf')
+parser.add_argument('--docs-output', type=Path, default=ROOT / 'docs/DaBin-Quick-Guide.pdf')
+parser.add_argument('--copy-output', type=Path, default=ROOT / 'output/copy/DaBin-Friendly-Copy.txt')
+parser.add_argument('--qa-output', type=Path, default=ROOT / 'tmp/pdfs/robot-guide-layout-check.json')
+args = parser.parse_args()
+ASSETS = args.assets_dir.resolve()
+COPY = json.loads(args.copy_file.read_text())
+if ((args.version or COPY['version'], args.build or COPY['build']) != (COPY['version'], COPY['build'])):
+    raise SystemExit('Version/build arguments must match guide copy.')
+OUT, DOC_COPY, COPY_OUT, QA_PATH = args.output, args.docs_output, args.copy_output, args.qa_output
+MANIFEST = ASSETS / 'guide-assets.json'
 
 INK = colors.HexColor("#30283D")
 BODY = colors.HexColor("#625B6A")
@@ -57,6 +70,8 @@ for name in required_assets:
 assert hashlib.sha256((DESIGN / "ExportGuide.swift").read_bytes()).hexdigest() == native_provenance["exportSourceSHA256"]
 assert native_provenance["schemaVersion"] == 2, "Re-export with explicit source provenance"
 native_root = (ROOT / native_provenance["nativeRoot"]).resolve()
+if args.native_root is not None and args.native_root.resolve() != native_root:
+    raise SystemExit("Selected native root differs from verified guide provenance")
 assert native_root.is_relative_to(ROOT / "native"), "Native provenance must refer to local project or frozen inputs"
 source_paths = {str(path.relative_to(native_root)) for path in (native_root / "Sources/DaBin").glob("*.swift") if path.name != "DaBinMain.swift"}
 assert source_paths == set(native_provenance["sourceSHA256"]), "Source inventory changed; re-export guide assets"
@@ -69,6 +84,8 @@ info = plistlib.loads(info_path.read_bytes())
 assert (info["CFBundleShortVersionString"], info["CFBundleVersion"]) == (COPY["version"], COPY["build"])
 assert (native_provenance["version"], native_provenance["build"]) == (COPY["version"], COPY["build"])
 receipt_path = native_root / native_provenance["verifiedModuleReceipt"]
+if args.module_cache is not None and args.module_cache.resolve() != receipt_path.parent:
+    raise SystemExit("Selected module cache differs from verified guide provenance")
 assert hashlib.sha256(receipt_path.read_bytes()).hexdigest() == native_provenance["verifiedModuleReceiptSHA256"]
 receipt = json.loads(receipt_path.read_text())
 assert receipt["inputs"]["sources"] == native_provenance["sourceSHA256"]
@@ -78,14 +95,14 @@ for name, digest in receipt["outputs"].items():
     assert hashlib.sha256((receipt_path.parent / name).read_bytes()).hexdigest() == digest
 assert hashlib.sha256((DESIGN / "export_guide_assets.py").read_bytes()).hexdigest() == native_provenance["exportScriptSHA256"]
 assert hashlib.sha256((ASSETS / "guide-native-renders.json").read_bytes()).hexdigest() == native_provenance["nativeRenderManifestSHA256"]
-for folder in [OUT.parent, COPY_OUT.parent, QA_PATH.parent]:
+for folder in [OUT.parent, DOC_COPY.parent, COPY_OUT.parent, QA_PATH.parent]:
     folder.mkdir(parents=True, exist_ok=True)
 
 # Preserve the previous delivered PDF before replacing either stable copy.
 for previous in [DOC_COPY, OUT]:
     if previous.is_file():
         digest = hashlib.sha256(previous.read_bytes()).hexdigest()[:12]
-        archive = DESIGN / "archive" / f"DaBin-Quick-Guide__before_0.4.31_refresh__{digest}.pdf"
+        archive = DESIGN / "archive" / f"DaBin-Quick-Guide__before_{COPY['version']}_{COPY['build']}_refresh__{digest}.pdf"
         archive.parent.mkdir(parents=True, exist_ok=True)
         if not archive.exists():
             copy2(previous, archive)
@@ -291,10 +308,10 @@ assert len(reader.pages) == 2
 extracted = "\n".join(p.extract_text() for p in reader.pages)
 searchable_text = " ".join(extracted.split()).lower()
 assert "\ufffd" not in extracted
-required = ["Hi, I'm DaBin.", "Choose a project", "Inbox", "Today", "Projects",
+required = ["Hi, I'm DaBin.", "Choose a project", "Captions", "Tasks", "Projects",
             "Search all saved work", "Save now. Sort later.", "Auto Capture", "off by default",
             "date columns", "type or paste", "New task", "green (Low)", "red (High)",
-            "local ZIP", "Finder", "between monitors", "accepts that content", "not a recording of your screen"]
+            "Export Selected", "local ZIP", "Finder", "between monitors", "accepts that content", "not a recording of your screen"]
 for phrase in required:
     assert phrase.lower() in searchable_text, phrase
 for block in blocks:
@@ -306,10 +323,11 @@ for item in images:
 copy2(OUT, DOC_COPY)
 assert OUT.read_bytes() == DOC_COPY.read_bytes()
 QA_PATH.write_text(json.dumps(dict(
+    version=COPY["version"], build=COPY["build"],
     page_count=2, page_size="A4 landscape", word_count=len(extracted.split()),
     paragraphs=blocks, images=images, native_annotations=annotations,
     pdf_sha256=hashlib.sha256(OUT.read_bytes()).hexdigest(),
-    copy_source_sha256=hashlib.sha256((DESIGN / "copy.json").read_bytes()).hexdigest(),
+    copy_source_sha256=hashlib.sha256(args.copy_file.read_bytes()).hexdigest(),
     native_asset_manifest=str(MANIFEST.relative_to(ROOT)),
     embedded_fonts={name: str(path) for name, path in FONT_FILES.items()},
     native_asset_hash_check="PASS",

@@ -1,0 +1,298 @@
+{
+  "automaticID" : "6CDCB251-C580-4A4B-87CD-84F0DC74D0A1",
+  "captures" : [
+    {
+      "capturedAt" : 811721554,
+      "captureDay" : "2026-09-22",
+      "captureOriginRaw" : "manual",
+      "captureTimeZoneID" : "GMT+0300",
+      "captureUTCOffsetSeconds" : 10800,
+      "comment" : "",
+      "contentIndexCanRetry" : false,
+      "contentIndexState" : "idle",
+      "contentIndexVersion" : 0,
+      "convertedToTask" : false,
+      "createdAt" : 812956513.73970497,
+      "id" : "299AE4EA-1664-4ADD-89AC-005587813705",
+      "indexedText" : "",
+      "isCompleted" : false,
+      "isMinimized" : false,
+      "isPinned" : true,
+      "kindRaw" : "text",
+      "notificationState" : "none",
+      "originalText" : "  Violet idea\r\nSecond line\tעברית 🟣\n\n",
+      "pasteHistory" : [
+
+      ],
+      "previewDescription" : "",
+      "previewState" : "idle",
+      "projectName" : "Fictional Violet",
+      "reminderRevision" : 0,
+      "schemaVersion" : 10,
+      "sourceFilePath" : "\/Fictional\/Studio notes.txt",
+      "sourceURL" : "https:\/\/example.invalid\/notes",
+      "title" : "Violet idea\r\nSecond line\tעברית 🟣",
+      "updatedAt" : 812956513.74756503
+    },
+    {
+      "capturedAt" : 811721554,
+      "captureDay" : "2026-09-22",
+      "captureOriginRaw" : "manual",
+      "captureTimeZoneID" : "GMT+0300",
+      "captureUTCOffsetSeconds" : 10800,
+      "comment" : "  Spruce legacy comment\nSecond aggregate line\n",
+      "contentIndexCanRetry" : false,
+      "contentIndexState" : "idle",
+      "contentIndexVersion" : 0,
+      "convertedToTask" : false,
+      "createdAt" : 812956513.75260305,
+      "id" : "2C006FF9-F167-4C51-9647-5F5B6437A7D4",
+      "indexedText" : "",
+      "isCompleted" : false,
+      "isMinimized" : false,
+      "isPinned" : false,
+      "kindRaw" : "task",
+      "notificationState" : "pending",
+      "originalText" : "Prepare fictional launch",
+      "pasteHistory" : [
+
+      ],
+      "previewDescription" : "",
+      "previewState" : "idle",
+      "projectName" : "Fictional Violet",
+      "reminderAt" : 3092724000,
+      "reminderRevision" : 1,
+      "reminderTimeZoneID" : "UTC",
+      "schemaVersion" : 10,
+      "taskPlanning" : {
+        "checklist" : [
+          {
+            "id" : "8C8E6692-2EE2-4611-9572-6A783B996493",
+            "isCompleted" : false,
+            "text" : "Review fictional palette"
+          },
+          {
+            "id" : "FD382B1C-4A1E-42D8-9AF9-0D67074298E7",
+            "isCompleted" : true,
+            "text" : "Keep original"
+          }
+        ],
+        "deadline" : 3092817600,
+        "effortMinutes" : 25,
+        "order" : 0,
+        "plannedDay" : "2099-01-02",
+        "plannedTime" : "09:30",
+        "priority" : "high",
+        "recurrence" : "weekly",
+        "recurrenceAnchor" : 3092720400
+      },
+      "title" : "Prepare fictional launch",
+      "updatedAt" : 812956513.76529002
+    },
+    {
+      "attachmentRelativePath" : "Projects\/Fictional Violet — bd47a50812d7\/2026\/09 September\/22 Tuesday September 2026\/Files\/fictional-original — C552AD49-2968-49FC-96EC-1E8A7A374271.txt",
+      "byteCount" : 33,
+      "capturedAt" : 811721554,
+      "captureDay" : "2026-09-22",
+      "captureOriginRaw" : "manual",
+      "captureTimeZoneID" : "GMT+0300",
+      "captureUTCOffsetSeconds" : 10800,
+      "comment" : "",
+      "contentIndexCanRetry" : false,
+      "contentIndexState" : "idle",
+      "contentIndexVersion" : 0,
+      "contentType" : "public.plain-text",
+      "convertedToTask" : false,
+      "createdAt" : 812956513.77306199,
+      "id" : "C552AD49-2968-49FC-96EC-1E8A7A374271",
+      "indexedText" : "",
+      "isCompleted" : false,
+      "isMinimized" : false,
+      "isPinned" : false,
+      "kindRaw" : "document",
+      "notificationState" : "none",
+      "originalFilename" : "fictional-original.txt",
+      "parentTaskID" : "2C006FF9-F167-4C51-9647-5F5B6437A7D4",
+      "pasteHistory" : [
+
+      ],
+      "previewDescription" : "",
+      "previewState" : "idle",
+      "projectName" : "Fictional Violet",
+      "reminderRevision" : 0,
+      "schemaVersion" : 10,
+      "sourceFilePath" : "\/tmp\/DaBin-Upgrade-98-d_zj3i5k\/fictional-original.txt",
+      "title" : "fictional-original.txt",
+      "updatedAt" : 812956513.77306199
+    },
+    {
+      "automaticActionID" : "CA66FFFE-820B-477E-A704-6E652895CEF5",
+      "capturedAt" : 811721554,
+      "captureDay" : "2026-09-22",
+      "captureOriginRaw" : "automaticClipboard",
+      "captureTimeZoneID" : "GMT+0300",
+      "captureUTCOffsetSeconds" : 10800,
+      "comment" : "",
+      "contentIndexCanRetry" : false,
+      "contentIndexState" : "idle",
+      "contentIndexVersion" : 0,
+      "convertedToTask" : false,
+      "createdAt" : 812956513.779019,
+      "id" : "6CDCB251-C580-4A4B-87CD-84F0DC74D0A1",
+      "indexedText" : "",
+      "isCompleted" : false,
+      "isMinimized" : false,
+      "isPinned" : false,
+      "kindRaw" : "text",
+      "notificationState" : "none",
+      "originalText" : "Fictional automatic receipt",
+      "pasteHistory" : [
+
+      ],
+      "previewDescription" : "",
+      "previewState" : "idle",
+      "reminderRevision" : 0,
+      "schemaVersion" : 10,
+      "sourceApplicationBundleIdentifier" : "invalid.fixture.editor",
+      "sourceApplicationName" : "Fixture Editor",
+      "title" : "Fictional automatic receipt",
+      "updatedAt" : 812956513.779019
+    }
+  ],
+  "draft" : {
+    "details" : [
+      {
+        "captureID" : "2C006FF9-F167-4C51-9647-5F5B6437A7D4",
+        "comment" : "Uncommitted comment",
+        "committedPlanning" : {
+          "checklist" : [
+            {
+              "id" : "8C8E6692-2EE2-4611-9572-6A783B996493",
+              "isCompleted" : false,
+              "text" : "Review fictional palette"
+            },
+            {
+              "id" : "FD382B1C-4A1E-42D8-9AF9-0D67074298E7",
+              "isCompleted" : true,
+              "text" : "Keep original"
+            }
+          ],
+          "deadline" : 3092817600,
+          "effortMinutes" : 25,
+          "order" : 0,
+          "plannedDay" : "2099-01-02",
+          "plannedTime" : "09:30",
+          "priority" : "high",
+          "recurrence" : "weekly",
+          "recurrenceAnchor" : 3092720400
+        },
+        "committedReminderRevision" : 1,
+        "countdownHours" : 0,
+        "countdownMinutes" : 30,
+        "planning" : {
+          "checklist" : [
+            {
+              "id" : "8C8E6692-2EE2-4611-9572-6A783B996493",
+              "isCompleted" : false,
+              "text" : "Review fictional palette"
+            },
+            {
+              "id" : "FD382B1C-4A1E-42D8-9AF9-0D67074298E7",
+              "isCompleted" : true,
+              "text" : "Keep original"
+            }
+          ],
+          "deadline" : 3092817600,
+          "effortMinutes" : 25,
+          "plannedDay" : "2099-01-02",
+          "plannedTime" : "09:30",
+          "priority" : "high",
+          "recurrence" : "weekly"
+        },
+        "reminderDate" : 3092724000,
+        "reminderEnabled" : true,
+        "reminderMode" : "date",
+        "title" : "Draft task title"
+      }
+    ],
+    "note" : "  Unsaved fictional note\n",
+    "noteDestination" : {
+      "projectName" : "Fictional Violet"
+    },
+    "task" : {
+      "countdownHours" : 0,
+      "countdownMinutes" : 30,
+      "destination" : {
+        "projectName" : "Fictional Violet"
+      },
+      "planning" : {
+        "checklist" : [
+          {
+            "id" : "8C8E6692-2EE2-4611-9572-6A783B996493",
+            "isCompleted" : false,
+            "text" : "Review fictional palette"
+          },
+          {
+            "id" : "FD382B1C-4A1E-42D8-9AF9-0D67074298E7",
+            "isCompleted" : true,
+            "text" : "Keep original"
+          }
+        ],
+        "deadline" : 3092817600,
+        "effortMinutes" : 25,
+        "plannedDay" : "2099-01-02",
+        "plannedTime" : "09:30",
+        "priority" : "high",
+        "recurrence" : "weekly"
+      },
+      "reminderDate" : 812960113.78897405,
+      "reminderEnabled" : false,
+      "reminderMode" : "date",
+      "text" : "Unfinished fictional task"
+    },
+    "version" : 1
+  },
+  "fileID" : "C552AD49-2968-49FC-96EC-1E8A7A374271",
+  "noteID" : "299AE4EA-1664-4ADD-89AC-005587813705",
+  "originalSHA256" : "04747f2a69c69e9d2631ad64585e139f090b7965e1d0492a61b55c90b23bee25",
+  "taskID" : "2C006FF9-F167-4C51-9647-5F5B6437A7D4",
+  "workspace" : {
+    "dateFilter" : "anytime",
+    "mode" : "collection",
+    "originFilter" : "all",
+    "processedInboxIDs" : [
+
+    ],
+    "projectColors" : {
+      "Fictional Violet" : "34A853"
+    },
+    "projectItemOrders" : {
+      "project:Fictional Violet" : [
+        "capture:2C006FF9-F167-4C51-9647-5F5B6437A7D4",
+        "capture:299AE4EA-1664-4ADD-89AC-005587813705",
+        "note:project:Fictional Violet"
+      ]
+    },
+    "projectSelections" : {
+      "project:Fictional Violet" : "299AE4EA-1664-4ADD-89AC-005587813705"
+    },
+    "schemaVersion" : 1,
+    "scratchpads" : {
+      "project:Fictional Violet" : {
+        "projectName" : "Fictional Violet",
+        "text" : "  Project scratchpad\nRetain spacing\t\n",
+        "updatedAt" : 812956513.785478
+      }
+    },
+    "selectedCaptureID" : "299AE4EA-1664-4ADD-89AC-005587813705",
+    "selectedProject" : "Fictional Violet",
+    "shelfCaptureIDs" : [
+      "299AE4EA-1664-4ADD-89AC-005587813705",
+      "C552AD49-2968-49FC-96EC-1E8A7A374271"
+    ],
+    "snippetNames" : {
+
+    },
+    "snippetsOnly" : false
+  }
+}

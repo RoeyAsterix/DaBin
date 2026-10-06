@@ -1,0 +1,13 @@
+test_direct_source_tree_destination_is_refused (test_app_store_archive_location.ArchiveLocationTests.test_direct_source_tree_destination_is_refused) ... ok
+test_dots_inside_an_ordinary_filename_are_not_traversal (test_app_store_archive_location.ArchiveLocationTests.test_dots_inside_an_ordinary_filename_are_not_traversal) ... ok
+test_existing_destination_is_preserved_and_refused (test_app_store_archive_location.ArchiveLocationTests.test_existing_destination_is_preserved_and_refused) ... ok
+test_nested_missing_external_parents_are_accepted (test_app_store_archive_location.ArchiveLocationTests.test_nested_missing_external_parents_are_accepted) ... ok
+test_new_external_archive_is_accepted_without_creating_it (test_app_store_archive_location.ArchiveLocationTests.test_new_external_archive_is_accepted_without_creating_it) ... ok
+test_parent_traversal_after_existing_component_is_refused (test_app_store_archive_location.ArchiveLocationTests.test_parent_traversal_after_existing_component_is_refused) ... ok
+test_parent_traversal_after_missing_component_is_refused (test_app_store_archive_location.ArchiveLocationTests.test_parent_traversal_after_missing_component_is_refused) ... ok
+test_symlink_parent_is_refused (test_app_store_archive_location.ArchiveLocationTests.test_symlink_parent_is_refused) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.004s
+
+OK

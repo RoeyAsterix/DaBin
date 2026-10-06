@@ -1,0 +1,25 @@
+{
+  "status": "STOPPED",
+  "startedAtUTC": "2026-10-06T02:56:09.964419+00:00",
+  "ownedPID": 63806,
+  "ownedUID": 501,
+  "script": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/full-review-2026-10-05/serve_local_drag_receiver.py",
+  "scriptSHA256": "936d2746c8f7b733f55165514bf439d11fe897dbbc1ba02a485d527e71b0834a",
+  "stage": "/private/tmp/DaBin-Drag-Receiver-w9hktj2l",
+  "stagedHTML": "/private/tmp/DaBin-Drag-Receiver-w9hktj2l/receiver.html",
+  "receipt": "/private/tmp/DaBin-Drag-Receiver-w9hktj2l/server-receipt.json",
+  "receiverSHA256": "4170f54fa420abcb5c4b7321e78693d165605fed1135dca03e075227c9117091",
+  "bindHost": "127.0.0.1",
+  "durationLimitSeconds": 900,
+  "browserLaunched": false,
+  "scope": "One fixed fictional receiver route; no arbitrary directory/file serving, uploads, source archive/clipboard access, workspace/KARI data, outbound connections or GUI action. HTTP receipt alone is not drag acceptance.",
+  "port": 52637,
+  "url": "http://127.0.0.1:52637/5bbb43032ae644bbbb9a3a7f73fa0315/receiver.html",
+  "stoppedAtUTC": "2026-10-06T03:11:10.093714+00:00",
+  "stopReason": "duration_limit",
+  "requestCounts": {
+    "receiverGET": 1,
+    "receiverHEAD": 0,
+    "denied": 0
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "startedUTC": "2026-10-06T03:26:54.703287+00:00",
+  "metadataSHA256": "6ac4d64c284aa5fef029c41aeee236c31ee8ea00704bb019ab22da906a0a0025",
+  "checks": [
+    {
+      "name": "unit",
+      "command": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "Tests",
+        "-p",
+        "test_app_store_metadata.py",
+        "-v"
+      ],
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "SHA256": "0f0a8ec904be4aef90f48889d4095ec650d9a5de48997a9b18b84d912906d0ee",
+      "log": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/full-review-2026-10-05/final-metadata/unit.log"
+    },
+    {
+      "name": "draft",
+      "command": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-B",
+        "scripts/validate_app_store_metadata.py"
+      ],
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "SHA256": "c3da099920b706cb57638d2cf2e08b5aaacd0c164beff4b20fb85a7892845c50",
+      "log": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/full-review-2026-10-05/final-metadata/draft.log"
+    },
+    {
+      "name": "strict",
+      "command": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-B",
+        "scripts/validate_app_store_metadata.py",
+        "--require-complete"
+      ],
+      "exitCode": 1,
+      "expectedExitCode": 1,
+      "SHA256": "56de9e7b3803e11e6342f0b7db4f490c3ff765dfbfff6278fab25f5f68d2255a",
+      "log": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/full-review-2026-10-05/final-metadata/strict.log"
+    }
+  ],
+  "submissionReady": false,
+  "status": "LOCAL_DRAFT_PASS_SUBMISSION_INCOMPLETE",
+  "metadataUnchangedDuringChecks": true,
+  "affectedUnitTestsPassed": 15,
+  "finishedUTC": "2026-10-06T03:26:54.843935+00:00"
+}

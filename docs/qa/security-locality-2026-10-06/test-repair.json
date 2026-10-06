@@ -1,0 +1,9 @@
+{
+  "recordedUTC": "2026-10-06T04:09:17.026289+00:00",
+  "test": "Tests/PreviewLifecycleTests.swift",
+  "beforeSHA256": "d7009c24ae22087925d13a7ab1a2e260755da489b65a1841985fa0b80e003900",
+  "afterSHA256": "3dba54ed572e2dbb9acf36581950eb607388957bccff8c8b32821618323ece96",
+  "correction": "Removed a reference to pendingCount, which PreviewService does not expose; the immediate unavailable state assertion detects improper worker queueing without supplying any URL.",
+  "productionInputsUnchanged": true,
+  "productionFingerprint": "14d251986c487911eefc6cda4aaac647f9fc7252e949144213eaba1f072962f3"
+}

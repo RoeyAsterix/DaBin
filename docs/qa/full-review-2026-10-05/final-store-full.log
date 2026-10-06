@@ -1,0 +1,132 @@
+Compiling app-store Release test module (141 production sources)…
+PASSED ProjectFileArchiveTests: PASS: 56 project file layout, daily records, move recovery, file ownership, trash, and backup checks
+PASSED ExplorerTransferTests: PASS: 130 Explorer transfer checks; native representations, projects, preservation, Undo, asynchronous destinations and failures.
+PASSED ExplorerQueryTests: PASS: 24 Explorer filtering, grouping and persistence checks
+PASSED CaptureProvenanceTests: PASS: 66 provenance checks; legacy records, truthful origins, bounded manual ledger, compact grouping, rollback, conversion, recurrence, restart, backup, day/week exports and readable sidecars.
+PASSED TaskFocusTests: PASS: 82 task focus, local schedule, lifecycle, recovery and draft checks; synthetic archive only.
+PASSED ProjectPickerTests: PASS: 23 shared project picker and scope checks
+PASSED QuickAccessTests: PASS: 87 quick access checks
+PASSED ProductFoundationTests: PASS: 92 connected product foundation checks
+PASSED ConnectedWorkflowTests: PASS: 19 connected capture, client collection, clipboard reuse, task planning, restart and backup scenarios
+PASSED WorkInboxTests: PASS: 93 work inbox checks
+PASSED WorkspaceTests: PASS: 83 workspace, clipboard, scratchpad, collection and ZIP checks
+PASSED ManualCaptureLifecycleTests: PASS: 20 manual capture lifecycle checks (private named pasteboards)
+PASSED ArchiveRecoveryTests: PASS: 61 recoverable-trash and archive backup/restore assertions
+PASSED ArchiveBackupTests: PASS: 31 workspace backup, conflict, rollback, restart, and legacy checks.
+PASSED ThemeSettingsTests: PASS: 621 theme settings checks
+PASSED PrivacyInformationTests: PASS: 39 privacy information checks
+PASSED DomainTests: PASS: 218 assertions; 10 search fixtures; managed-copy reopen, immutable dates, import compensation and interruption recovery.
+PASSED ArchiveLayoutTests: PASS: 50 archive layout, provenance, exact-content, edit preservation, and path safety checks
+PASSED ArchiveStoreTests: PASS: 116 archive-store integration assertions; dated originals, readable records, updates, migration, legacy/current recovery, retryable mirror failure, and single-publication incremental inserts.
+PASSED DeferredArchiveRepairTests: PASS: 16 deferred archive readiness, cancellation, recovery, edit, and deletion checks.
+PASSED RepositoryBatchTests: PASS: 10 repository batching, duplicate, mixed-update, rollback, and restart checks.
+PASSED CaptureRemovalTests: PASS: 76 capture removal/minimize checks
+PASSED ServiceTests: PASS: 61 service checks (isolated store, fake notifications, no network).
+PASSED QAStorageScopedSaveTests: PASS: 31 scoped-storage assertions; touched-record saves, no-op previews, transaction rollback, reminder retry, retained archive warnings, and 1,000-record benchmark.
+PASSED QALifecycleTests: PASS: 22 lifecycle/cache checks; isolated event centers, store and fake notifications, no network.
+PASSED ApplicationLifecycleTests: PASS: 79 application lifecycle checks; isolated preferences, events, pointer samples and fake notifications, no focus or personal data.
+PASSED PreviewLifecycleTests: PASS: 130 preview cancellation/shutdown checks; isolated callbacks, preferences and archive only
+PASSED TaskStateTests: PASS: 131 task workflow checks; isolated store and fake notifications.
+PASSED TaskPlanningTests: PASS: 45 task planning checks; synthetic local archive only.
+PASSED CaptureActionTests: PASS: 31 capture action checks; confirmation, minimize, search, draft cleanup and delayed reminder deletion in an isolated archive.
+PASSED CaptureClipboardTests: PASS: 29 capture clipboard checks; text, links, tasks, files, batches, native types and failures.
+PASSED ClipboardRetentionTests: PASS: 25 clipboard retention, recovery, protected-work, and note-capture checks.
+PASSED CaptureTaskConversionTests: PASS: 183 capture-to-task checks; originals, legacy data, persistence, atomic failure, drafts, routes, filters, carryover, reminders and receipt exports.
+PASSED LocalContentSearchTests: PASS: 91 local content-search checks; schema compatibility, persistence, OCR snippets, filters, scopes, task conversion, queueing, cancellation, shutdown, removal, retry, native Vision/PDF/text extraction and privacy boundaries.
+PASSED LocalDOCXTextExtractorTests: PASS: 138 local DOCX checks; paragraphs/tables/Unicode, strict OOXML, stored/deflated ZIP, descriptors, CRC/size/path guards, bounded inflation/XML, entity rejection, cancellation and no remote/converter loading.
+PASSED SearchScopeStateTests: PASS: 126 scoped-search checks; project/type/source intersection, live attachment inheritance, capture-day ranges, scratchpads, DST and Back restoration
+PASSED HourlyGroupingTests: PASS: 31 hourly grouping checks; action identity, fourth-action threshold, filters, fixed local hours, stable IDs and accessible collapse.
+PASSED DayExportTests: PASS: 126 day/week export checks; deterministic content, exact selected date scopes, cutoff, grouping and UTF-8 identity.
+PASSED DayExportUITests: PASS: 36 export UI checks; day/week copy and download, ordered header actions, popover presentation, feedback, cancellation, failure and exact bytes.
+PASSED WeeklyStateTests: PASS: 195 weekly state checks; isolated store, local calendar, fake notifications.
+PASSED InputTests: PASS: 136 input lifecycle checks (private named pasteboards; general clipboard untouched)
+PASSED AutoCaptureServiceTests: PASS: 75 auto-capture service checks
+PASSED AutoCaptureRobotPresenterTests: PASS: 82 automatic-capture robot presenter checks
+PASSED AutoCaptureRobotCelebrationTests: PASS: 1397 auto-capture celebration rotation and performance checks
+PASSED SoftwareUpdateTests: PASS: 17 Store update checks; disabled direct actions, stable Store-managed state, zero HTTP(S) requests; no signing, installed app, or user archive used.
+PASSED UpdateConfigurationTests: PASS: 41 update-channel configuration checks
+PASSED RobotMotionTests: PASS: 106 robot motion and personality checks
+PASSED IslandRobotChoreographyTests: PASS: 28695 island choreography contact, timing, and envelope checks
+PASSED RobotLifecycleTests: PASS: 38 robot lifecycle checks
+PASSED RobotAppFrameTests: PASS: 88 robot application frame geometry, gaze and lifecycle checks
+PASSED QuietOrbitRenderTests: PASS: 91 Quiet Orbit artwork, idle, reaction, burst-count, cleanup, and Reduce Motion checks passed. /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/quiet-orbit
+PASSED CaptureZoomStateTests: PASS: 30 capture extended-canvas zoom, fit, pan, resize, PDF, text and native-input checks
+PASSED RobotProjectSignRenderTests: PASS: 63 native recording-board checks; renders: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/project-recording-sign-compact-2026-10-03/renders
+PASSED AutoCaptureSignMotionTests: Auto capture sign motion checks passed: 5201
+PASSED AutoCaptureSignPresenterTests: PASS: 105 typed Auto Capture sign presenter, queue, interruption, privacy and service receipt checks
+PASSED AutoCaptureSignRenderTests: PASS: 398 native confirmation-sign checks; renders: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/auto-capture-sign-2026-10-03/renders
+PASSED CapturePreviewPerformanceTests: PASS: 15 bounded background preview/cache checks; no main-thread decode
+PASSED BoredRobotArtworkTests: PASS: 12 canonical empty-state robot hosting, static rendering and cleanup checks
+PASSED TooltipBehaviorTests: PASS: 158 tooltip delay, cancellation, preference, suppression, active-only anchors and clamped-layout checks
+PASSED SearchDateBoardTests: PASS: 44 date search grouping, chronology, note semantics, context counts and bounded paging checks
+PASSED SearchResultExcerptTests: PASS: 21 search result excerpt bounds, matching evidence, labels and Unicode checks
+PASSED CaptureAnnotationTests: PASS: 96 annotation checks; legacy threads, edits, exact comment deletion/additive Undo, search/export, restart/backup, exact reminder/focus acknowledgments and atomic rollback.
+PASSED ReminderAlertCoordinatorTests: PASS: 26 reminder alert coordinator checks; scheduled delivery, wake/clock refresh, occurrence identity, filtering, restart and durable focus receipts.
+PASSED CommentDraftArchiveTests: PASS: 37 comment draft checks; legacy compatibility, recoverable composer/edit identity, posting/failure and unrelated task-draft preservation.
+PASSED ExternalTransferProcessTests: PASS: 46 external transfer process checks; 6 mixed production items, exact Unicode text/URL, PNG/JPEG promised bytes and file hashes. Cross-process data availability only; physical drops, sandboxed destinations and browsers are not exercised.
+PASSED ProjectWorkspaceStateTests: PASS: 304 project-workspace checks; stable ordering, scoped selection, calendar day/week filters, complete project counts, backup-compatible persistence, atomic task conversion, inherited ownership and guarded undo.
+PASSED ProjectWorkspaceExportTests: PASS: 71 project ZIP, ordering, metadata, notes, scope, safe publication, missing-original, and private clipboard checks
+PASSED ProjectWorkspaceViewTests: PASS: 917 project workspace UI checks; 1,000 synthetic text captures plus image and editable project note; retained-host live zoom, observable edits and replacement identities; native mixed-selection drag payloads on a private pasteboard; no personal archive, network, general clipboard or external opening. At most 27 simultaneously materialized native rows.
+PASSED ProjectWorkspaceCardTests: PASS: 782 project card checks; Task/Note/Capture semantics, real live task updates, light/dark/grid/320-point compact fixtures, original previews and independent selection; no personal archive, clipboard, network, or external opening.
+PASSED NavigationHistoryTests: PASS: 123 bounded history, branch, project, draft, search, deletion and navigation safety checks
+PASSED DurabilityStressTests: PASS: 8586 durability checks; 1000 seeded records, 320 mixed operations, 25 restart comparisons, backup/restore and 4 real SIGKILL boundaries.
+PASSED FlowActionStressTests: PASS: 11674 flow/action stress checks; all12 routes, bounded branch/history churn, pending draft ownership, atomic failed-save retries, comments/checklists, timing/lifecycle, private copying, Inbox/organization, removal/restore and repeated local restart. Semantic handlers only; native activation, system dialogs, rendering and animation are separate coverage.
+PASSED MediaIntegrationTests: 39/39 media integration checks passed; 0 failed
+PASSED OutgoingFileBatchTests: PASS: 134 outgoing native file batch checks; nine actual NSURL reads and exact receiving copies, bounded/case-equivalent filenames, source filing/trash/removal, no-overwrite and publication lifetime. Own-process native URL delivery only.
+PASSED OutgoingFileSnapshotTests: PASS: 99 outgoing snapshot immutability, filename and metadata override, publisher lifetime, unsafe-source rejection, failed-publication, retention, active-lease, and conservative-cleanup checks
+PASSED RedesignInteractionTests: PASS: 119 native redesign interaction checks
+PASSED WindowResizeInteractionTests: PASS: 38 native window resize and movement interaction checks; 2 attached displays
+PASSED WindowTests: PASS: 272 window checks across 2 real screen(s); no cursor synthesis, clipboard access, network or notification permission.
+PASSED WeeklyWindowTests
+PASSED FilterResizeTests
+PASSED RobotDropTests: PASS: 187 robot drop checks (private pasteboards, isolated archive, native destination callbacks and corner panels)
+PASSED DailyCaptureTests: PASS: 207 Daily capture checks (private pasteboards, local archive, native drop callbacks, shortcut/editor routing and controller integration)
+/var/folders/qy/zfgc4dgx02x2k_c04330ghy00000gn/T/dabin-header-qa-x3nofz51/DaBin Header QA.app/Contents/Frameworks/libDaBinTestCore.dylib: replacing existing signature
+/var/folders/qy/zfgc4dgx02x2k_c04330ghy00000gn/T/dabin-header-qa-x3nofz51/DaBin Header QA.app: replacing existing signature
+PASSED HeaderInteractionTests: PASS: 326 native labeled-header accessibility and interaction checks
+PASSED WorkspaceWindowTests: PASS: 876 native workspace interaction and responsive layout checks
+PASSED RobotWindowTransitionTests
+PASSED DetailPreviewInteractionTests: PASS: 110 detail-preview native open-action checks; no external app launched
+PASSED CaptureDetailReadabilityTests: PASS: 599 capture-detail readability and labeled-action checks; 27 native panel fixtures. Renders: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/capture-detail-fix-2026-10-04
+PASSED CaptureDetailNavigationTests: PASS: 995 capture-detail navigation, fixed-control, draft-resumption and action checks; renders: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/capture-detail-redesign-2026-10-04/navigation
+PASSED TaskPlanInteractionTests: PASS: 379 native task-plan/checklist/reminder binding, focus, persistence, validation and responsive checks; renders: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/task-plan-redesign-2026-10-05/native
+PASSED CaptureExtendedInteractionTests
+PASSED ExtendedMediaInteractionTests
+PASSED CaptureTimestampPresentationTests: Capture timestamp presentation QA passed: 351 checks; original receipt formatting, narrow/high-zoom collection and search actions, compact date-before-category cards, enlarged detail date navigation. Evidence: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/capture-timestamp-density
+PASSED RobotVisualConsistencyTests: PASS: 106 robot visual consistency, native frame layout, click-through, and Reduce Motion checks. /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/robot-visual-consistency
+PASSED NativeTooltipPreferenceTests: PASS: 31 native tooltip preference, persistence, accessibility, drag interaction, and lifecycle checks
+PASSED TooltipPresentationTests: PASS: 146 native tooltip visibility, actual anchors, preference, focus and click-through checks. /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/tooltips
+PASSED RobotCloseVisualTests: PASS: 1338 actual robot opening/closing motion, presentation, reversal, cleanup and encoded video checks. /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/robot-close-visual/0F362EC7-C8CC-4D97-9B00-4B49F971F08C
+PASSED CollectionCardPresentationTests: PASS: 1359 collection selection, layout, native preview, theme, AX expansion and data preservation checks. /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/collection-card-presentation/14CB1E33-3D3D-4C49-93B4-9E4A067FBAEC
+PASSED TaskTimerRobotTests: PASS: 523 task timer title, geometry, presenter, durable expiry, integration, native 2x artwork and acknowledgment checks. /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/task-timer-robot/CDB6E3A8-8939-47D9-BF6A-4C4D72191A4E
+PASSED ExplorerCaptureCardPresentationTests: PASS: 726 Explorer native preview, complete-image corners, metadata, actions, selection and capture preservation checks. /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/explorer-capture-cards/63A03F46-AA29-45E9-928D-6A50CF77CFB1
+PASSED AutoCaptureExplorerResponsivenessTests: PASS: 169 Explorer responsiveness checks; production DailyCaptureHostingView and RobotAppFrameView, actual BoardView, 128 automatic captures, late local previews, 16 insertion bursts, selected-middle-image scrolling, mixed paste trails/tasks, exact narrow/wide breakpoint resizing, visible tooltip overlay, native close/reopen and interrupted reversal. Native table had at most 20 simultaneously available row views. Background 8-second run-loop watchdog remained healthy.
+PASSED ExplorerKeyboardTests: PASS: 75 native Explorer keyboard checks; 45 Up/Down transitions, recycled rows, project restoration, incoming capture, viewport-guard cancellation, and Return. Available rows: 3.
+PASSED NotificationPresentationTests: PASS: 63 notification presentation checks; exact monotonic expiry, identical restarts, stale cancellation, native Board/Detail/Settings, persistent diagnostics and unchanged captures. Evidence: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/notification-presentation/BC88F1E7-6E32-4B9C-B10A-E20F630D20A5
+PASSED WindowChromePresentationTests: PASS: 50904 window chrome checks; visible/physical resize grips, direct native drags, smooth shared corner masks and 1x/2x appearance. Evidence: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/window-chrome/67F7558F-BC22-4620-9A07-F1B0B7015A7E
+PASSED ProjectRecordingRobotTests: PASS: 43 project recording robot checks passed
+/var/folders/qy/zfgc4dgx02x2k_c04330ghy00000gn/T/dabin-search-qa-_9rq77c2/DaBin Search QA.app/Contents/Frameworks/libDaBinTestCore.dylib: replacing existing signature
+/var/folders/qy/zfgc4dgx02x2k_c04330ghy00000gn/T/dabin-search-qa-_9rq77c2/DaBin Search QA.app: replacing existing signature
+PASSED SearchWindowTests: PASS: 106 native global Search checks; keyboard verification passed: native focus, Tab retained filter focus with Keyboard Navigation disabled, Escape dismissal and Return activates Done.
+PASSED TaskPriorityTagTests: PASS: 464 task priority tag checks; real choices/save/persistence, adjacent project/priority geometry and green–amber–red cards at 380/760 in light/dark; fictional local archive only. PNG evidence: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/task-priority-tags
+PASSED LocalFileLocationTests: PASS: 94 local-folder resolution, project scope, native button, read-only byte preservation, and failure-feedback checks
+PASSED NativeContentDragTests: PASS: 38 native content drag checks; clicks, mixed native items, copy-only external transfers and source preservation.
+PASSED CaptionDragTests: PASS: 167 production caption drag checks; full capture/collection payloads, exact comment text, independent controls and editors.
+PASSED SearchInputTests: PASS: 65 production Search typing, focus, clear, private direct/Cmd V paste, unrelated-editor and immediate/animated reopen checks
+PASSED AutoRecordIndicatorTests: PASS: 117 Auto Record state, native geometry, compositor motion, reduced-motion and lifecycle checks
+PASSED TimelineCalendarTests: PASS: Timeline calendar 33 checks passed
+PASSED TodayTaskCardTests: PASS: 1262 modern task card and toolbar checks; 320/380/760,75/100/200%,light/dark,compact hierarchy,focus/minimization,title/checklist,native More dispatch,receipt and reorder persistence,single-line task toolbar,native task scopes/project menu/plus. Evidence: /var/folders/qy/zfgc4dgx02x2k_c04330ghy00000gn/T/DaBinTodayCards-9C2BF2E3-9955-474B-B5FA-1BF98A1FE6F1/renders
+PASSED WeeklyLayoutTests: PASS: 3229 native weekly layout, bounds, expanded collection and data preservation checks. /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/week-layout
+PASSED DailyGridLayoutTests: PASS: 1339 native Daily grid, bounds, resizing, filter, history and data-preservation checks. /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/day-grid
+PASSED WorkspaceZoomTests: Workspace zoom: 94 checks passed
+PASSED WorkspaceZoomLayoutTests: PASS: 806 workspace zoom layout checks; finite metrics, logical columns, pointer/item anchoring, history offset, native cards at 75/100/150/200%
+PASSED WorkspaceInputTests: PASS: 96 native workspace command, owner, cancellation, child precedence, IME, modal and dedup checks; synthetic device coverage only
+FAILED WorkspaceZoomPerformanceTests: Workspace zoom performance QA failed: Error Domain=WorkspaceZoomPerformanceTests Code=1 "Synthetic input-to-layout p95 must stay within the existing 50 ms budget; report: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/full-review-2026-10-05/final-store/zoom-performance" UserInfo={NSLocalizedDescription=Synthetic input-to-layout p95 must stay within the existing 50 ms budget; report: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/full-review-2026-10-05/final-store/zoom-performance}
+PASSED ViewportLifecycleTests: PASS: 16 viewport lifecycle checks; delayed insertion settle, bounded expiry, context cancellation, generation-safe history, keyboard selection scroll ownership
+PASSED NavigationGestureTests: PASS NavigationGestureTests 72 checks; real panel dispatch, 12 routes, header/body/footer, both swipe directions, mouse pairing and task draft/focus restoration
+PASSED VisualAnimationStressTests: PASS: 109041 seeded native graphics, animation interruption, visible-control and disposal checks; /Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/full-review-2026-10-05/final-store/graphics
+PASSED VideoPlaybackIntegrationTests: PASS: 113 native video playback checks;2 production components ×2 actual MOV captures, clock and decoded-frame advancement, pause/seek/end/replay, fitted resize, capture replacement, native close and deallocation; no external effects. seconds=14.090
+PASSED ProjectBrowsingNavigationTests: PASS: 74 native project browsing checks; real Board All/Unfiled/named history, native cross-project Notes/retry, late-blocked selection/creation and metadata-filing isolation
+PASSED SnippetNamingInteractionTests: PASS: 55 native Projects Clipboard/Shelf naming checks; real More dispatch, native text entry, retained failed drafts, visible retry, exactly-once save, restart, cancellation, and immutable capture; no general clipboard or external access
+PASSED CardDeletionInteractionTests
+QA app-store failed: 125/126 requested suites passed. Report: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/native/build/qa/runs/20261005T213352249116Z-app-store/report.json

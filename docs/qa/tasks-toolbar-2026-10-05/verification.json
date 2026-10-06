@@ -1,0 +1,79 @@
+{
+  "verifiedAtUTC": "2026-10-05T18:22:04.981899+00:00",
+  "version": "0.4.36",
+  "buildNumber": "91",
+  "sourceFingerprint": "aedd7d56646e0e25d51b7bf0377a02443180427c590f06a3c656b31e897ee240",
+  "changes": [
+    "Removed internal Tasks heading and Work plan view label",
+    "Aligned project, Today, Upcoming, Completed, planned summary, and plus in a single toolbar row",
+    "Preserved tooltips, accessibility labels, selected view indication, and new-task planned date/project behavior"
+  ],
+  "scope": "Five targeted native suites; not a full QA campaign or App Store approval",
+  "passingSuites": {
+    "TaskPlanningTests": {
+      "report": "focused-qa-report.json",
+      "status": "passed",
+      "summary": "PASS: 45 task planning checks; synthetic local archive only.",
+      "currentInputsMatch": true
+    },
+    "NavigationHistoryTests": {
+      "report": "focused-qa-report.json",
+      "status": "passed",
+      "summary": "PASS: 123 bounded history, branch, project, draft, search, deletion and navigation safety checks",
+      "currentInputsMatch": true
+    },
+    "WorkspaceWindowTests": {
+      "report": "focused-qa-report.json",
+      "status": "passed",
+      "summary": "PASS: 327 native workspace interaction and responsive layout checks",
+      "currentInputsMatch": true
+    },
+    "TodayTaskCardTests": {
+      "report": "focused-qa-report.json",
+      "status": "passed",
+      "summary": "PASS: 1262 modern task card and toolbar checks; 320/380/760,75/100/200%,light/dark,compact hierarchy,focus/minimization,title/checklist,native More dispatch,receipt and reorder persistence,single-line task toolbar,native task scopes/project menu/plus. Evidence: /Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/tasks-toolbar-2026-10-05/task-renders",
+      "currentInputsMatch": true
+    },
+    "HeaderInteractionTests": {
+      "report": "header-retry-report.json",
+      "status": "passed",
+      "summary": "PASS: 326 native labeled-header accessibility and interaction checks",
+      "currentInputsMatch": true
+    }
+  },
+  "retryNote": "Initial HeaderInteractionTests run failed on the unrelated Settings Shift-Tab shortcut-recorder focus assertion. Isolated rerun passed all 326 checks without source or test changes.",
+  "visualQA": {
+    "testedWidths": [
+      320,
+      380,
+      760
+    ],
+    "appearances": [
+      "light",
+      "dark"
+    ],
+    "inspectedImages": [
+      "task-renders/task-toolbar-320-dark@2x.png",
+      "workspace-renders/today-long-project-380x430-light.png"
+    ]
+  },
+  "installedApp": "/Users/roeylibfeld/Applications/DaBin.app",
+  "installedExecutableMatchesReceipt": true,
+  "installedUpdaterMatchesReceipt": true,
+  "strictDeepSignatureVerified": true,
+  "archiveMetadataUnchangedByInstall": true,
+  "backup": "/Users/roeylibfeld/Applications/.DaBinBackups/20261005-211905-b6ffc379.app",
+  "runtimeVerification": {
+    "method": "CUA native accessibility inspection after launching installed app and opening Tasks",
+    "taskControlsPresent": [
+      "today-project-picker",
+      "task-view-today",
+      "task-view-later",
+      "task-view-done",
+      "today-plan-summary",
+      "today-add-task"
+    ],
+    "selectedView": "Today",
+    "leftOpenOn": "Tasks"
+  }
+}

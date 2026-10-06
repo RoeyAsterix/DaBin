@@ -1,0 +1,28 @@
+{
+  "checkedAtUTC": "2026-10-05T20:09:19.745540+00:00",
+  "scope": "Offline Python fixture regressions only; no native build, signing, app launch, network, or source edits",
+  "results": [
+    {
+      "check": "preflight-regressions",
+      "exitCode": 0,
+      "log": "/private/tmp/dabin-store-readiness-audit-q41cmdp6/preflight-regressions.log",
+      "summary": [
+        "----------------------------------------------------------------------",
+        "Ran 32 tests in 0.003s",
+        "",
+        "OK"
+      ]
+    },
+    {
+      "check": "archive-location-regressions",
+      "exitCode": 0,
+      "log": "/private/tmp/dabin-store-readiness-audit-q41cmdp6/archive-location-regressions.log",
+      "summary": [
+        "----------------------------------------------------------------------",
+        "Ran 8 tests in 0.004s",
+        "",
+        "OK"
+      ]
+    }
+  ]
+}

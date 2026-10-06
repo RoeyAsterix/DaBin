@@ -1,0 +1,33 @@
+{
+  "recordedUTC": "2026-10-06T03:20:20.064470+00:00",
+  "status": "PASS_LOCAL_INSTALL",
+  "version": "0.4.41",
+  "build": "96",
+  "installedApp": "/Users/roeylibfeld/Applications/DaBin.app",
+  "sourceFingerprint": "d6a7dd7fd2e2de4f167476ba91d8be232917024ecf745679bc4a5f3c83fab5fa",
+  "installedExecutableSHA256": "bc36b66cdd495b782bf8773f9ce13b7a75df3ab3a521c7460c9a9387e38d535b",
+  "localSignatureStrictVerifyExitCode": 0,
+  "archiveBytesAndStructureUnchanged": true,
+  "archiveRoots": [
+    {
+      "root": "/Users/roeylibfeld/Library/Containers/com.dabin.mac/Data/Library/Application Support/DaBin",
+      "exists": true,
+      "fileCount": 455,
+      "totalBytes": 285874121,
+      "contentAndStructureSHA256": "2af12d801d8d79f21100b8f28208e152da1d614bd72e94cc61c4d80234d95e71"
+    },
+    {
+      "root": "/Users/roeylibfeld/Library/Application Support/DaBin",
+      "exists": true,
+      "fileCount": 55,
+      "totalBytes": 2037065,
+      "contentAndStructureSHA256": "482978f8bb71c82190f9505d5bca6501bb87c8e29211ad76b15e0ec170d7f102"
+    }
+  ],
+  "backup": "/Users/roeylibfeld/Applications/.DaBinBackups/20261006-061935-2ddf48fa.app",
+  "installedProductLaunched": false,
+  "runtimeAcceptance": "Pending; retained native fixtures do not establish the final installed product runtime",
+  "scope": "Verified local direct Release update with backup; separate from App Store distribution signing/installer acceptance",
+  "uploaded": false,
+  "archiveCreated": false
+}

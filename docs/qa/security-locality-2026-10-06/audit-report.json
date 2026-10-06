@@ -1,0 +1,262 @@
+{
+  "schemaVersion": 1,
+  "status": "COMPLETE_WITH_DOCUMENTED_LIMITS",
+  "candidate": "0.4.42 (97)",
+  "scope": "Local source audit and synthetic adversarial, sandbox and package fixtures. Real archives are hashed locally for aggregate preservation checks without displaying filenames or contents. General clipboard is not read; no outbound DaBin preview/update requests are made.",
+  "findings": [
+    {
+      "area": "Automatic clipboard",
+      "fix": "Skip concealed, transient, auto-generated and legacy password-manager marked actions before reading payload, including markers on later items."
+    },
+    {
+      "area": "Pending capture",
+      "fix": "Recheck source exclusions immediately before committing queued clipboard, delayed-image and screenshot saves."
+    },
+    {
+      "area": "Screenshot watcher",
+      "fix": "Close canceled baseline-failure descriptors and reject replaced symlink folders through fresh metadata and no-follow directory descriptors."
+    },
+    {
+      "area": "Archive storage",
+      "fix": "Reject existing/dangling leaf links and enforce 0700 managed directory modes; verify originals on non-following descriptors with change detection."
+    },
+    {
+      "area": "Backup storage",
+      "fix": "Create new backup packages with 0700 modes; user-selected destinations remain under their own sync and backup settings."
+    },
+    {
+      "area": "Preview consent",
+      "fix": "Require explicit known manual receipt before optional website fetching. Unknown import origins remain preserved for recovery."
+    },
+    {
+      "area": "Updater network",
+      "fix": "Block non-allowlisted redirects before contact, avoid cookies/credentials/cache, reject unsafe cache directory redirects."
+    },
+    {
+      "area": "Updater install",
+      "fix": "Freeze descriptor-pinned hash-verified package bytes; preflight ZIP paths/modes/CRC and actual expansion; use exclusive commits and owned quarantine rollback."
+    },
+    {
+      "area": "Manual installer",
+      "fix": "Use exclusive atomic moves and ownership-bound rollback/cleanup to preserve competing apps."
+    },
+    {
+      "area": "Manifest validation",
+      "fix": "Reject overflowing/non-ASCII numeric release fields."
+    },
+    {
+      "area": "Privacy declarations",
+      "fix": "Declare user-authorized file metadata reason 3B52.1 alongside container reason C617.1 and update local consent wording."
+    },
+    {
+      "area": "Inactive legacy local archive",
+      "fix": "Locally restricted the existing owner-controlled real legacy archive root from 0755 to 0700 using a pinned non-following directory descriptor. Child content/modes were preserved; parent protection blocks other users from traversal."
+    }
+  ],
+  "assuranceLimits": [
+    "Saved data and backups are not separately encrypted by DaBin; account and disk protections apply.",
+    "Clipboard markers and source-app attribution are best-effort; unmarked secrets may be captured.",
+    "Optional user-enabled manual website previews and user-initiated GitHub updates contact external services.",
+    "User-selected exports/backups can be synchronized by another service.",
+    "No claim of resistance to every hostile process sharing the same macOS user; local direct builds remain ad-hoc signed and do not add publisher pinning.",
+    "No packet-capture campaign or signed App Store runtime acceptance was performed by this audit.",
+    "Historical strict zoom performance and outstanding App Store owner/signing/acceptance gates remain open."
+  ],
+  "appleRequiredReasonSource": "https://developer.apple.com/documentation/bundleresources/app-privacy-configuration/nsprivacyaccessedapitypes/nsprivacyaccessedapitypereasons",
+  "uploaded": false,
+  "published": false,
+  "appStoreSubmissionReady": false,
+  "completedUTC": "2026-10-06T04:30:00.479545+00:00",
+  "validation": {
+    "productionFingerprint": "14d251986c487911eefc6cda4aaac647f9fc7252e949144213eaba1f072962f3",
+    "productionInputsMatchFreeze": true,
+    "testHashesMatchWithRecordedRepair": true,
+    "storeNative": {
+      "uniqueSelectedPassingSuites": 36,
+      "initialPassed": 35,
+      "initialRequested": 36,
+      "testOnlyCompileFailureRepaired": "PreviewLifecycleTests wrong API reference; corrected suite passes136 checks. Initial failure retained.",
+      "fullRegisteredSuiteRun": false
+    },
+    "directNative": {
+      "selectedPassingSuites": 4,
+      "failedSuites": 0,
+      "scope": "Preview lifecycle, software update security, update configuration and ZIP security."
+    },
+    "python": {
+      "nativeToolingTests": 63,
+      "storePreflightTests": 33,
+      "totalPassingTests": 96,
+      "actualFilesystemInstallerCases": 5,
+      "qualification": "Tooling tests include mocks; the installer cases exercise actual macOS exclusive rename/rollback filesystem behavior."
+    },
+    "zipAdversarial": "93 checks pass in both native channels and standalone validator fixture; stored/deflated/descriptor/ditto paths exercised.",
+    "stress": "Selected production durability and flow suites pass, including restart, backup, fault injection and actual SIGKILL recovery fixtures. This is separate from historical strict zoom performance failure.",
+    "sandbox": {
+      "checks": 31,
+      "status": "passed",
+      "ungrantedFictionalReadAndWriteDenied": true,
+      "errno": 1,
+      "scope": "Unique ad-hoc sandbox fixture linked to exact Store module; no network or file-access grants; not final distribution-signed application acceptance."
+    },
+    "storeCandidate": {
+      "unsignedReleaseBuild": "passed",
+      "packagingPreflight": "passed",
+      "inputsUnchanged": true,
+      "archiveCreated": false,
+      "uploaded": false
+    },
+    "localDistribution": {
+      "releaseBuild": "passed",
+      "strictSignatureAndByteHashes": "passed",
+      "installerFreshReplacementBackup": "passed",
+      "ZIPCRCAndAllManifestHashes": "passed",
+      "embeddedHelperDocumentHandoff": "passed",
+      "packageToolSeparatelyPinned": true
+    },
+    "independentReview": "Final read-only peer review matched all173 production inventory inputs, corrected-test attestation and receipts; no additional material flaw found in the reviewed storage/updater scope."
+  },
+  "localDeployment": {
+    "version": "0.4.42",
+    "build": "97",
+    "installedAt": "/Users/roeylibfeld/Applications/DaBin.app",
+    "previousAppBackup": "/Users/roeylibfeld/Applications/.DaBinBackups/20261006-072250-c3fdc337.app",
+    "relaunch": "CUA ready window with enabled New task/Search/Settings",
+    "autoCapture": "Paused",
+    "websitePreviewsEnabled": false,
+    "initialInstallGuard": "First attempt refused because old DaBin was running; no install attempted. Quit normally, then guarded install passed.",
+    "activeManagedDirectories": "0700 verified",
+    "legacyRoot": "0700 verified; child modes unchanged"
+  },
+  "archivePreservation": {
+    "isolatedTests": "Exact aggregate byte/structure/mode receipts match before and after isolated tests.",
+    "postInstall": "Counts and total bytes are unchanged. Active aggregate digest differs; known Drafts.json is the only regular file with a write timestamp across normal old-app quit. Aggregate-only baseline cannot certify full post-install byte identity. Managed directory modes intentionally tightened on build97 launch.",
+    "legacyArchive": "Aggregate child byte/structure/mode digest remains exact after root-only permission repair.",
+    "generalClipboardRead": false,
+    "realCaptureModificationAction": false,
+    "receipt": "archive-preservation-qualification.json"
+  },
+  "evidence": {
+    "scope.json": {
+      "path": "docs/qa/security-locality-2026-10-06/scope.json",
+      "SHA256": "1b183ea4ded224a27f54e8ed955ac869ad171e38ad642fd7f2e9db1c4b54906a"
+    },
+    "source-freeze.json": {
+      "path": "docs/qa/security-locality-2026-10-06/source-freeze.json",
+      "SHA256": "f5968c10842f55564bc1f1662b8e35c908e9fb33b38714004958cef2a15000fd"
+    },
+    "test-repair.json": {
+      "path": "docs/qa/security-locality-2026-10-06/test-repair.json",
+      "SHA256": "3f81b6adabb8e2ac53405a3809b68eb6e56b1741a11649f5dd3b8613fae4b98d"
+    },
+    "store-security-initial.json": {
+      "path": "docs/qa/security-locality-2026-10-06/store-security-initial.json",
+      "SHA256": "35cfe50dfaf183587fd298efb61c58bf4b7fa8e0bfd9184ee4634f926b0aeef0"
+    },
+    "store-preview-corrected.json": {
+      "path": "docs/qa/security-locality-2026-10-06/store-preview-corrected.json",
+      "SHA256": "46d01de1e19c28bf383af6dc4ed42b7f7f181abf8d8a5b36adff3c2416904fdb"
+    },
+    "store-security-summary.json": {
+      "path": "docs/qa/security-locality-2026-10-06/store-security-summary.json",
+      "SHA256": "fcad89c3137acd07226ca2a1e97e6f6ae8579bf206aada96e8067e47ab7bf165"
+    },
+    "direct-security-report.json": {
+      "path": "docs/qa/security-locality-2026-10-06/direct-security-report.json",
+      "SHA256": "e808bb11359cbb2bdd54fbed92eae9612858a5e01d66b938995ab56d60ca46eb"
+    },
+    "python-tooling.log": {
+      "path": "docs/qa/security-locality-2026-10-06/python-tooling.log",
+      "SHA256": "56002829480502dbc4d6a4aae50bfb8c388e30e4323ddd9d0b82390ed6026686"
+    },
+    "preflight-tests.log": {
+      "path": "docs/qa/security-locality-2026-10-06/preflight-tests.log",
+      "SHA256": "c611ab9ffcc93d863abfffb1fb35942fc890698a5909f604df4e69b634287516"
+    },
+    "sandbox-report.json": {
+      "path": "docs/qa/security-locality-2026-10-06/sandbox-report.json",
+      "SHA256": "7be265a3ce87678f3e7ddfead0cf2b75d82cf5771c050e35053af9d072a8a96c"
+    },
+    "store-build-receipt.json": {
+      "path": "docs/qa/security-locality-2026-10-06/store-build-receipt.json",
+      "SHA256": "ce9c329de94e5025ba0388def61f03cf3427928eab4f3d09abe5245aa072d468"
+    },
+    "direct-build-receipt.json": {
+      "path": "docs/qa/security-locality-2026-10-06/direct-build-receipt.json",
+      "SHA256": "cbd026159868aca61a2d196f2870f469a63d1bb7b6d96e542aa8b2d4a254a1a9"
+    },
+    "package-tool-attestation.json": {
+      "path": "docs/qa/security-locality-2026-10-06/package-tool-attestation.json",
+      "SHA256": "d3874aefff760652a3a1d3b87e73a81325b89c280065edd37f0bb0e986a356e3"
+    },
+    "package-qa.log": {
+      "path": "docs/qa/security-locality-2026-10-06/package-qa.log",
+      "SHA256": "83891423acb0fd51f4d9a9900ff6b85263ac496e4cc5423d8d1d8cff502352ca"
+    },
+    "install-package-verification.json": {
+      "path": "docs/qa/security-locality-2026-10-06/install-package-verification.json",
+      "SHA256": "0d21298082559896d315e94387e75dbb80243a853caac019d5e399fca7163aff"
+    },
+    "local-relaunch-verification.json": {
+      "path": "docs/qa/security-locality-2026-10-06/local-relaunch-verification.json",
+      "SHA256": "bbeac0518c6ded7d28c662a17f429341d6d659067416fa3e20716fd335e6acdb"
+    },
+    "privacy-preferences-after-launch.json": {
+      "path": "docs/qa/security-locality-2026-10-06/privacy-preferences-after-launch.json",
+      "SHA256": "1a6fd9f8f07b7ffb5ce5cc083b0f6a1316a8765e6e5c85104bcd167397faaffd"
+    },
+    "archive-preservation-qualification.json": {
+      "path": "docs/qa/security-locality-2026-10-06/archive-preservation-qualification.json",
+      "SHA256": "1cf22cbd49739a861ca874b964160dc1e4357d4e7561118c0fa409fd2f16ef1a"
+    },
+    "archive-before.json": {
+      "path": "docs/qa/security-locality-2026-10-06/archive-before.json",
+      "SHA256": "0491570b2911339d832fb3d8c0f1f39b670d0d0b88337efcd873f984409f7e5a"
+    },
+    "archive-after-tests.json": {
+      "path": "docs/qa/security-locality-2026-10-06/archive-after-tests.json",
+      "SHA256": "2b0fc2db511fd9273de2451ecf90ba375f1aa350fcf28afa3071ea19a99caf26"
+    },
+    "archive-after-install.json": {
+      "path": "docs/qa/security-locality-2026-10-06/archive-after-install.json",
+      "SHA256": "5021f7f122466532076ab9962c0f2330d9df015f17bcf09370fb02dd935f1d34"
+    },
+    "archive-final.json": {
+      "path": "docs/qa/security-locality-2026-10-06/archive-final.json",
+      "SHA256": "4448b3a0a3489c0c94c39064499c8c3c6f3f47a460ef339acda32ef6e23f8b58"
+    },
+    "local-directory-modes-final.json": {
+      "path": "docs/qa/security-locality-2026-10-06/local-directory-modes-final.json",
+      "SHA256": "6546e314b08a207ccad42bde15a75a8080ddf59f8f081622c7553077b2fbe9cf"
+    },
+    "legacy-root-permission-receipt.json": {
+      "path": "docs/qa/security-locality-2026-10-06/legacy-root-permission-receipt.json",
+      "SHA256": "7488a8755af14252b62bde3b9521dccd14762377f7155f70456426681299890b"
+    },
+    "protect_legacy_archive.py": {
+      "path": "docs/qa/security-locality-2026-10-06/protect_legacy_archive.py",
+      "SHA256": "20d702a141ad9f21e17b01952725a659bd85e3d62655ea62ad4aa140fae745f4"
+    },
+    "local-install.log": {
+      "path": "docs/qa/security-locality-2026-10-06/local-install.log",
+      "SHA256": "f2b0077ffcde452fc53bf8cacbd306f365a87354145ca62e0f8e61b13a8ee777"
+    },
+    "local-install-retry.log": {
+      "path": "docs/qa/security-locality-2026-10-06/local-install-retry.log",
+      "SHA256": "30619f0e138f358ad1cb45bc0498ad6e2e1df9233b556d6240701a92af429ab5"
+    },
+    "updateZIP": {
+      "path": "docs/qa/security-locality-2026-10-06/DaBin-0.4.42-Update.zip",
+      "SHA256": "e82d89b96f364e95019157b9d43f7ab6c40efc2486b97a473becf8f95cc25d76"
+    },
+    "finalMetadataValidation": {
+      "path": "docs/qa/security-locality-2026-10-06/metadata-validation-final.json",
+      "SHA256": "ebafc69b8a190bd65cc64bd781b94f301a2ec85804c91c3ca47de583eeaa4045"
+    }
+  },
+  "finalProductionInputRecheck": {
+    "recordedUTC": "2026-10-06T04:30:43.426299+00:00",
+    "unchanged": true,
+    "fingerprint": "14d251986c487911eefc6cda4aaac647f9fc7252e949144213eaba1f072962f3"
+  }
+}

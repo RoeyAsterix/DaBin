@@ -1,0 +1,11 @@
+{
+  "version": "0.4.42",
+  "build": "97",
+  "developmentTeam": "8QG4967CSU",
+  "bundleIdentifier": "com.dabin.mac",
+  "files": {
+    "Config/AppStoreSigning.json": "a6072c1ad444175cf204f71d3f8d8d39e0d15bcd3d74d672a4a1924ac525ddf5",
+    "DaBin.xcodeproj/project.pbxproj": "d388ae9bb42d44ac7d39ee07c8340cc4e928dded0c28ab0f561194a032bcc8bf",
+    "DaBin.xcodeproj/xcshareddata/xcschemes/DaBin.xcscheme": "0922aad38e86918dc38f90b76d197e0405997d7dcd571bde62063ae96e4db283"
+  }
+}
