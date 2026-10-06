@@ -108,8 +108,7 @@ import SwiftUI
     var body: some View {
         ProjectWorkspaceCard(state: state, item: .capture(capture), selected: false, compact: true,
             color: ProjectColorChoice.color(for: "7568D8"), focus: $focus,
-            open: {}, select: {}, details: {}, makeTask: {}, earlier: {}, later: {},
-            canReorder: true, drag: { [] })
+            open: {}, select: {}, details: {}, makeTask: {}, drag: { [] })
     }
 }
 @MainActor private struct ZoomLayoutAX {

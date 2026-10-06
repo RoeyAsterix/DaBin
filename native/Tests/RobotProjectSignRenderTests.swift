@@ -98,14 +98,19 @@ import QuartzCore
                                    isEnabled: true, isPaused: true)
         corner.layoutSubtreeIfNeeded()
         try expect(!corner.recordingSignIsVisible && corner.recordingProjectName == nil
-                   && corner.recordingStatusLabel == nil && !character.nativeArmsAreHidden,
-                   "Paused recording removes the sign and restores the robot's native arms")
+                   && corner.recordingStatusLabel == nil && !corner.isPresented && character.isHidden,
+                   "Pause removes both the destination sign and its robot artwork")
         corner.present(from: .right)
-        try expect(!corner.recordingSignIsVisible,
-                   "An ordinary reveal cannot resurrect a paused recording board")
+        corner.presentCompanion(from: .right)
+        _ = corner.peekFromIsland()
+        corner.climbFromIsland()
+        corner.digest(success: true)
+        try expect(!corner.recordingSignIsVisible && !corner.isPresented && character.isHidden,
+                   "Reveal, hover, island peek and late save feedback cannot show paused artwork")
         try render(corner, name: "corner-paused", directory: directory)
         corner.setProjectRecording(projectName: "Project Atlas", color: .systemTeal,
                                    isEnabled: true, isPaused: false)
+        corner.present(from: .right)
         try expect(corner.recordingSignIsVisible && character.nativeArmsAreHidden,
                    "Resuming reinstates the compact board and connected sign arms")
         corner.setProjectRecording(projectName: "Project Atlas — International Research and Production",
@@ -188,8 +193,9 @@ import QuartzCore
         fullBoard.setProjectRecording(projectName: "Project Atlas", color: .systemTeal,
                                       isEnabled: true, isPaused: true)
         fullBoard.layoutSubtreeIfNeeded()
-        try expect(!fullBoard.recordingSignIsVisible && fullBoard.recordingProjectName == nil,
-                   "Pausing removes the open-frame board even after another layout pass")
+        try expect(!fullBoard.recordingSignIsVisible && fullBoard.recordingProjectName == nil
+                   && fullBoard.robotCharacterIsSuppressed && fullBoard.isFrameVisible && !content.isHidden,
+                   "Pause removes the frame sign and decorative character while content remains usable")
         try render(fullBoard, name: "full-board-paused", directory: directory)
         fullBoard.setProjectRecording(projectName: "Project Atlas", color: .systemTeal,
                                       isEnabled: true, isPaused: false)

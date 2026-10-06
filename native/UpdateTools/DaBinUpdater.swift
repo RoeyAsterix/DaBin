@@ -130,21 +130,19 @@ private final class PreparedUpdate {
             source = updaterBundle.bundleURL.deletingLastPathComponent().appendingPathComponent("DaBin.app")
             return
         }
-        let values = try package.resourceValues(forKeys: [.isRegularFileKey, .isSymbolicLinkKey, .fileSizeKey])
-        guard values.isRegularFile == true, values.isSymbolicLink != true,
-              let bytes = values.fileSize, bytes > 0, bytes <= 1_073_741_824 else {
-            throw UpdateFailure.message("The downloaded update is not a normal ZIP file or is unexpectedly large.")
-        }
-        guard try Self.sha256(package) == expectedHash else {
-            throw UpdateFailure.message("The update ZIP does not match the checksum published by DaBin’s GitHub release.")
-        }
         let root = files.temporaryDirectory.appendingPathComponent("DaBinUpdate-\(UUID().uuidString)", isDirectory: true)
-        try files.createDirectory(at: root, withIntermediateDirectories: false)
+        try files.createDirectory(at: root, withIntermediateDirectories: false,
+                                  attributes: [.posixPermissions: 0o700])
         temporaryRoot = root
         do {
-            _ = try Self.run("/usr/bin/ditto", ["-x", "-k", package.path, root.path])
-            try Self.rejectSymlinks(in: root)
-            let entries = try files.contentsOfDirectory(at: root, includingPropertiesForKeys: [.isDirectoryKey, .isSymbolicLinkKey],
+            let frozen = try DaBinUpdatePackageCopy.freeze(package, sha256: expectedHash, in: root)
+            try DaBinUpdateArchiveValidator.validate(frozen)
+            let payload = root.appendingPathComponent("Payload", isDirectory: true)
+            try files.createDirectory(at: payload, withIntermediateDirectories: false,
+                                      attributes: [.posixPermissions: 0o700])
+            _ = try Self.run("/usr/bin/ditto", ["-x", "-k", frozen.path, payload.path])
+            try Self.rejectSymlinks(in: payload)
+            let entries = try files.contentsOfDirectory(at: payload, includingPropertiesForKeys: [.isDirectoryKey, .isSymbolicLinkKey],
                                                         options: [.skipsHiddenFiles])
             guard entries.count == 1, entries[0].lastPathComponent.hasPrefix("DaBin-"),
                   try entries[0].resourceValues(forKeys: [.isDirectoryKey, .isSymbolicLinkKey]).isDirectory == true,
@@ -165,18 +163,6 @@ private final class PreparedUpdate {
 
     deinit {
         if let temporaryRoot { try? files.removeItem(at: temporaryRoot) }
-    }
-
-    private static func sha256(_ url: URL) throws -> String {
-        let handle = try FileHandle(forReadingFrom: url)
-        defer { try? handle.close() }
-        var hasher = SHA256()
-        while true {
-            let data = try handle.read(upToCount: 1024 * 1024) ?? Data()
-            if data.isEmpty { break }
-            hasher.update(data: data)
-        }
-        return hasher.finalize().map { String(format: "%02x", $0) }.joined()
     }
 
     private static func run(_ executable: String, _ arguments: [String]) throws -> String {
@@ -323,8 +309,16 @@ private final class DaBinInstaller {
         }
         try files.createDirectory(at: applications, withIntermediateDirectories: true)
         let stage = applications.appendingPathComponent(".DaBin-update-\(UUID().uuidString).app")
+        try files.createDirectory(at: stage, withIntermediateDirectories: false,
+                                  attributes: [.posixPermissions: 0o700])
+        let ownedStage = try DaBinUpdateCommit.directoryIdentity(stage)
         var backup: URL?
-        defer { if files.fileExists(atPath: stage.path) { try? files.removeItem(at: stage) } }
+        defer {
+            if files.fileExists(atPath: stage.path) {
+                do { try DaBinUpdateCommit.removeOwnedDirectory(stage, matching: ownedStage) }
+                catch { fputs("DaBin Update: \(error.localizedDescription)\n", stderr) }
+            }
+        }
 
         _ = try run("/usr/bin/ditto", ["--noextattr", "--norsrc", source.path, stage.path])
         let stagedIdentity = try AppIdentity(app: stage, requireRelease: true)
@@ -346,20 +340,13 @@ private final class DaBinInstaller {
             backup = backupURL
         }
 
-        do {
-            try files.moveItem(at: stage, to: destination)
+        try DaBinUpdateCommit.install(stage: stage, destination: destination, backup: backup) { destination in
             _ = try run("/usr/bin/codesign", ["--verify", "--deep", "--strict", destination.path])
             let installed = try AppIdentity(app: destination, requireRelease: true)
             guard installed.version == sourceIdentity.version,
                   installed.build == sourceIdentity.build else {
                 throw UpdateFailure.message("The installed DaBin version does not match the update.")
             }
-        } catch {
-            if files.fileExists(atPath: destination.path) { try? files.removeItem(at: destination) }
-            if let backup, files.fileExists(atPath: backup.path) {
-                try? files.moveItem(at: backup, to: destination)
-            }
-            throw error
         }
 
         if launch {

@@ -5,6 +5,27 @@ import QuartzCore
 /// lifecycle; this decorative view cannot receive input or initiate a capture.
 @MainActor
 final class AutoCaptureSignView: NSView {
+    var onOpen: (() -> Void)? {
+        didSet {
+            setAccessibilityElement(onOpen != nil)
+            if onOpen != nil {
+                setAccessibilityRole(.button)
+                setAccessibilityIdentifier("auto-capture-companion")
+                setAccessibilityLabel(accessibilityStatus)
+                setAccessibilityHelp("Click once to open DaBin, even while he moves")
+            }
+        }
+    }
+    /// Artwork moves; the native target is the same neutral 44-point robot.
+    var interactionBounds: CGRect {
+        guard receipt != nil, !isHidden else { return .zero }
+        let art = RobotCharacterView.transitionArtworkFrame(in: neutralRobotFrame)
+        let body = CGRect(x: art.midX - max(64, art.width) / 2,
+                      y: art.midY - max(64, art.height) / 2,
+                      width: max(64, art.width), height: max(64, art.height))
+        let firstPeek = CGRect(x: neutralRobotFrame.midX - 16, y: ledgeY - 13, width: 32, height: 13)
+        return body.union(firstPeek).intersection(bounds)
+    }
     static let plaqueSize = CGSize(width: 190, height: 32)
     static var messageFont: NSFont {
         let base = NSFont.systemFont(ofSize: 12, weight: .semibold)
@@ -49,6 +70,7 @@ final class AutoCaptureSignView: NSView {
     var countRequiredWidth: CGFloat { ceil(count.cell?.cellSize.width ?? count.intrinsicContentSize.width) }
     private(set) var countUsesSecondRow = false
     var usesIsland: Bool { islandRect != nil }
+    var housingRect: CGRect? { islandRect }
     var reduceMotion: Bool { performance?.reduceMotion ?? false }
     var nativeArmsAreHidden: Bool { character.nativeArmsAreHidden }
     var hasArmConnection: Bool { arms.path != nil && hands.path != nil && receipt != nil }
@@ -201,7 +223,8 @@ final class AutoCaptureSignView: NSView {
     /// choreography intact when another successfully saved capture arrives.
     func updateReceipt(_ receipt: AutoCaptureSignReceipt) {
         self.receipt = receipt
-        message.stringValue = receipt.message
+        message.stringValue = receipt.count > 999_999 ? "Items saved" : receipt.message
+        if onOpen != nil { setAccessibilityLabel(receipt.accessibilityText) }
         count.stringValue = receipt.count > 1 ? "×\(receipt.count)" : ""
         icon.image = NSImage(systemSymbolName: receipt.icon, accessibilityDescription: nil)
         messageLayer.string = message.stringValue
@@ -249,7 +272,22 @@ final class AutoCaptureSignView: NSView {
         CATransaction.flush()
     }
 
-    override func hitTest(_ point: NSPoint) -> NSView? { nil }
+    override func acceptsFirstMouse(for event: NSEvent?) -> Bool { true }
+    func containsInteraction(_ point: CGPoint) -> Bool {
+        onOpen != nil && !interactionBounds.isEmpty && interactionBounds.contains(point)
+            && !(islandRect?.contains(point) ?? false)
+    }
+    override func hitTest(_ point: NSPoint) -> NSView? {
+        containsInteraction(convert(point, from: superview)) ? self : nil
+    }
+    override func mouseDown(with event: NSEvent) {
+        guard event.clickCount == 1, !isHidden else { return }
+        onOpen?()
+    }
+    override func accessibilityPerformPress() -> Bool {
+        guard !isHidden, let onOpen else { return false }
+        onOpen(); return true
+    }
 
     private var ledgeY: CGFloat { min(bounds.maxY - (usesIsland ? 0 : 8), islandRect?.minY ?? bounds.maxY) }
 
@@ -415,8 +453,9 @@ final class AutoCaptureSignView: NSView {
 
     private func shoulder(_ left: Bool, frame: AutoCaptureSignFrame) -> CGPoint {
         let scale = neutralRobotFrame.width / 64
+        let shoulderY = 66 + (40.58 - 66) * frame.torsoScaleY
         let point = CGPoint(x: neutralRobotFrame.minX + (left ? 12.26 : 51.74) * scale,
-                            y: neutralRobotFrame.maxY - 40.58 * scale)
+                            y: neutralRobotFrame.maxY - shoulderY * scale)
         return transformedPoint(point, in: neutralRobotFrame, x: frame.robotTranslationX,
                                 y: frame.robotTranslationY, scaleX: frame.robotScaleX,
                                 scaleY: frame.robotScaleY, angle: frame.robotRotationDegrees)
@@ -516,7 +555,8 @@ final class AutoCaptureSignView: NSView {
     private func partPose(_ frame: AutoCaptureSignFrame, performance: AutoCaptureSignPerformance) -> RobotCaptureSignPartPose {
         guard !performance.reduceMotion else {
             return RobotCaptureSignPartPose(normalizedTime: frame.normalizedTime, gaze: .zero,
-                                             headOpacity: 1, torsoOpacity: 0.7, eyeScaleY: 1)
+                                             headOpacity: 1, torsoOpacity: 1, eyeScaleY: 1,
+                                             eyeBrightness: frame.eyeBrightness)
         }
         let entry = max(0.001, performance.entranceEndTime / performance.totalDuration)
         let progress = min(1, max(0, frame.normalizedTime / entry))
@@ -525,7 +565,12 @@ final class AutoCaptureSignView: NSView {
         let blink: CGFloat = progress > 0.65 && progress < 0.76 ? 0.24 : 1
         return RobotCaptureSignPartPose(normalizedTime: frame.normalizedTime,
             gaze: CGPoint(x: frame.gazeX, y: frame.gazeY), headOpacity: Float(head),
-            torsoOpacity: Float(torso), eyeScaleY: blink)
+            torsoOpacity: Float(torso), eyeScaleY: blink,
+            head: RobotPartTransform(rotationDegrees: frame.headRotationDegrees),
+            torso: RobotPartTransform(scaleY: frame.torsoScaleY),
+            feet: RobotPartTransform(translation: CGPoint(x: 0, y: -frame.feetTranslationY),
+                                     rotationDegrees: frame.feetRotationDegrees),
+            eyeBrightness: frame.eyeBrightness)
     }
 
     private func peekOpacity(_ frame: AutoCaptureSignFrame, performance: AutoCaptureSignPerformance) -> Float {

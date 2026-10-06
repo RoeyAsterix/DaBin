@@ -39,10 +39,11 @@ final class PreviewService {
             guard !hasShutDown else { return }
             defaults.set(newValue, forKey: Self.linkPreviewPreference)
             if newValue {
-                for capture in store.captures where capture.kind == .link && capture.previewState == "unavailable" && running[capture.id] != nil {
+                for capture in store.captures where capture.kind == .link && capture.permitsWebsitePreview
+                    && capture.previewState == "unavailable" && running[capture.id] != nil {
                     restartAfterCancellation.insert(capture.id)
                 }
-                process(store.captures.filter { $0.kind == .link && !$0.captureOrigin.isAutomatic })
+                process(store.captures.filter { $0.kind == .link && $0.permitsWebsitePreview })
             } else {
                 cancelNetwork()
             }
@@ -59,7 +60,7 @@ final class PreviewService {
             FileManager.default.isReadableFile(atPath: $0.path)
         } ?? false
         if capture.kind == .link {
-            return enabled && capture.thumbnailRelativePath != nil && !thumbnailReadable
+            return enabled && capture.permitsWebsitePreview && capture.thumbnailRelativePath != nil && !thumbnailReadable
         }
         return !thumbnailReadable
     }
@@ -78,9 +79,9 @@ final class PreviewService {
                 }
                 continue
             }
-            if capture.kind == .link && (capture.captureOrigin.isAutomatic || !enabled) {
-                let message = capture.captureOrigin.isAutomatic
-                    ? "Automatic captures stay local. Open the saved link when you choose."
+            if capture.kind == .link && (!capture.permitsWebsitePreview || !enabled) {
+                let message = !capture.permitsWebsitePreview
+                    ? "This capture stays local. Open the saved link when you choose."
                     : "Website previews are off. The saved link is available."
                 if capture.previewState != "unavailable" || capture.previewError != message {
                     capture.previewState = "unavailable"
@@ -186,6 +187,7 @@ final class PreviewService {
 
     private func linkPreview(_ job: PreviewJob) async -> PreviewResult {
         guard enabled, job.networkGeneration == networkGeneration,
+              store.captures.first(where: { $0.id == job.id })?.permitsWebsitePreview == true,
               let url = job.originalURL,
               ["http", "https"].contains(url.scheme?.lowercased() ?? "") else {
             return .unavailable("Website previews are off. The saved link is available.")
@@ -228,6 +230,7 @@ final class PreviewService {
         guard !hasShutDown, tokens[job.id] == job.token,
               job.kind != "link" || (enabled && job.networkGeneration == networkGeneration),
               let capture = store.captures.first(where: { $0.id == job.id }) else { return }
+        guard job.kind != "link" || capture.permitsWebsitePreview else { return }
         var relativePath: String?
         if let png = result.png {
             relativePath = await thumbnailWriter(png, store.root, job.id)
@@ -235,7 +238,7 @@ final class PreviewService {
         guard !hasShutDown else { return }
         // Disabling website previews during an image fetch/write must also suppress its UI update.
         guard tokens[job.id] == job.token,
-              job.kind != "link" || (enabled && job.networkGeneration == networkGeneration),
+              job.kind != "link" || (enabled && job.networkGeneration == networkGeneration && capture.permitsWebsitePreview),
               store.captures.contains(where: { $0 === capture }) else {
             // Defensive cleanup also covers removal outside the normal cancel-
             // then-delete flow while the thumbnail write was suspended.

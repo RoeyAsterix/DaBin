@@ -37,7 +37,32 @@ import CryptoKit
         try await trashLifecycle(root.appendingPathComponent("trash"))
         try await trashJournalRecovery(root.appendingPathComponent("journals"))
         try await backupRoundTrip(root.appendingPathComponent("backups"))
+        try await unknownImportReceipt(root.appendingPathComponent("unknown-receipt"))
         print("PASS: \(checks) recoverable-trash and archive backup/restore assertions")
+    }
+
+    @MainActor private static func unknownImportReceipt(_ root: URL) async throws {
+        var store: CaptureStore? = try CaptureStore(root: root)
+        store!.failureInjector = { if $0 == .afterCopy { throw CaptureStoreError.injectedInterruption } }
+        let original = Data("Fictional pending import".utf8)
+        var interrupted = false
+        do { _ = try await store!.importData(original, filename: "fixture.txt") }
+        catch CaptureStoreError.injectedInterruption { interrupted = true }
+        try expect(interrupted, "Fixture stops after copying a recoverable original")
+        store = nil
+        let journals = try files.contentsOfDirectory(at: root.appendingPathComponent("Imports"), includingPropertiesForKeys: nil)
+        try expect(journals.count == 1, "Interrupted import has one owned receipt")
+        let journalURL = journals[0]
+        var payload = try JSONSerialization.jsonObject(with: contents(journalURL)) as! [String: Any]
+        let staging = root.appendingPathComponent(payload["stagingRelativePath"] as! String)
+        payload["captureOriginRaw"] = "futureAutomaticSource"
+        let damaged = try JSONSerialization.data(withJSONObject: payload)
+        try damaged.write(to: journalURL)
+        let reopened = try CaptureStore(root: root)
+        try expect(reopened.captures.isEmpty && reopened.error != nil,
+                   "An unknown import origin is preserved for recovery instead of acquiring manual consent")
+        try expect(try contents(journalURL) == damaged && contents(staging) == original,
+                   "Rejected origin leaves both receipt and original bytes untouched")
     }
 
     @MainActor private static func trashLifecycle(_ root: URL) async throws {

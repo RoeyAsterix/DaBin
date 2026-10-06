@@ -74,7 +74,7 @@ class AppStorePreflightTests(unittest.TestCase):
                 "NSPrivacyCollectedDataTypes": [],
                 "NSPrivacyAccessedAPITypes": [
                     {"NSPrivacyAccessedAPIType": category,
-                     "NSPrivacyAccessedAPITypeReasons": [reason]}
+                     "NSPrivacyAccessedAPITypeReasons": [reason, "3B52.1"] if category == "NSPrivacyAccessedAPICategoryFileTimestamp" else [reason]}
                     for category, reason in preflight.REQUIRED_PRIVACY_REASONS.items()
                 ]}
 
@@ -85,6 +85,12 @@ class AppStorePreflightTests(unittest.TestCase):
         manifest = self.privacy_manifest()
         manifest["NSPrivacyAccessedAPITypes"].pop()
         self.assertIn("NSPrivacyAccessedAPICategoryFileTimestamp / C617.1",
+                      preflight.privacy_manifest_violations(manifest))
+
+    def test_missing_user_authorized_file_reason_fails(self):
+        manifest = self.privacy_manifest()
+        manifest["NSPrivacyAccessedAPITypes"][-1]["NSPrivacyAccessedAPITypeReasons"] = ["C617.1"]
+        self.assertIn("NSPrivacyAccessedAPICategoryFileTimestamp / 3B52.1",
                       preflight.privacy_manifest_violations(manifest))
 
     def test_tracking_or_collection_change_requires_review(self):

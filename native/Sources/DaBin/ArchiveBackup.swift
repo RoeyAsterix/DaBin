@@ -73,7 +73,11 @@ enum ArchiveBackupError: LocalizedError {
         guard !entryExists(target) else { throw ArchiveBackupError.conflict("The backup destination already exists. Choose a new name.") }
         try validateDirectory(target.deletingLastPathComponent())
         let staging = target.deletingLastPathComponent().appendingPathComponent(".DaBin-backup-\(UUID().uuidString)", isDirectory: true)
-        try files.createDirectory(at: staging, withIntermediateDirectories: false)
+        // A backup contains authored text and originals. Keep the staging
+        // package private even when the user selected a shared parent folder;
+        // the final same-directory move retains these permissions.
+        try files.createDirectory(at: staging, withIntermediateDirectories: false,
+                                  attributes: [.posixPermissions: 0o700])
         defer { try? files.removeItem(at: staging) }
         let sourceArchive = DailyArchive(root: archiveRoot)
         _ = try sourceArchive.safeURL(WorkspaceStore.filename)

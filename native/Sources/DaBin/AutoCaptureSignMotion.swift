@@ -25,27 +25,32 @@ struct AutoCaptureSignReceipt: Equatable, Sendable {
         let safeCount = max(1, count)
         self.kind = kind
         self.count = safeCount
+        let singleMessage: String
+        let singleAccessibilityText: String
 
         switch kind {
         case .screenshot:
             icon = "camera.viewfinder"
-            message = "Screenshot saved!"
-            accessibilityText = safeCount == 1
+            singleMessage = "Screenshot saved!"
+            singleAccessibilityText = safeCount == 1
                 ? "Screenshot saved"
                 : "\(safeCount) screenshots saved"
         case .clipboard:
             icon = "doc.on.clipboard.fill"
-            message = "Copied!"
-            accessibilityText = safeCount == 1
+            singleMessage = "Copied!"
+            singleAccessibilityText = safeCount == 1
                 ? "Copied"
                 : "\(safeCount) clipboard captures saved"
         case .mixed:
             icon = "square.stack.3d.up.fill"
-            message = "Captures saved!"
-            accessibilityText = safeCount == 1
+            singleMessage = "Captures saved!"
+            singleAccessibilityText = safeCount == 1
                 ? "Capture saved"
                 : "\(safeCount) captures saved"
         }
+
+        message = safeCount > 1 ? "Saved \(safeCount) items" : singleMessage
+        accessibilityText = safeCount > 1 ? "Saved \(safeCount) items" : singleAccessibilityText
     }
 
     /// Combines rapid successful captures without losing any represented save.
@@ -63,6 +68,9 @@ struct AutoCaptureSignReceipt: Equatable, Sendable {
 
 /// The complete live rotation requested for the robot's confirmation placard.
 enum AutoCaptureSignReaction: String, CaseIterable, Identifiable, Sendable {
+    case happyNod = "happy-nod"
+    case happyWiggle = "happy-wiggle"
+    case happyRaise = "happy-raise"
     case proudRaise = "proud-raise"
     case oversizedUnfold = "oversized-unfold"
     case heavyPullDown = "heavy-pull-down"
@@ -76,11 +84,20 @@ enum AutoCaptureSignReaction: String, CaseIterable, Identifiable, Sendable {
     case mechanicalBillboard = "mechanical-billboard"
     case lastMomentCatch = "last-moment-catch"
 
+    /// Live saves use small, readable whole-body gestures. Historical reactions
+    /// remain available for recorded render fixtures and saved diagnostics.
+    static let companionReactions: [Self] = [.happyNod, .happyWiggle, .happyRaise]
+
+    var isCompanionReaction: Bool { Self.companionReactions.contains(self) }
+
     var id: String { rawValue }
     var testIdentifier: String { "auto-capture-sign-reaction-\(rawValue)" }
 
     var displayName: String {
         switch self {
+        case .happyNod: return "Enthusiastic Nod"
+        case .happyWiggle: return "Happy Wiggle"
+        case .happyRaise: return "Triumphant Sign Raise"
         case .proudRaise: return "Proud Raise"
         case .oversizedUnfold: return "Oversized Unfold"
         case .heavyPullDown: return "Heavy Pull Down"
@@ -98,6 +115,7 @@ enum AutoCaptureSignReaction: String, CaseIterable, Identifiable, Sendable {
 
     fileprivate var baseDuration: TimeInterval {
         switch self {
+        case .happyNod, .happyWiggle, .happyRaise: return 2.4
         case .proudRaise: return 1.88
         case .oversizedUnfold: return 1.90
         case .heavyPullDown: return 1.92
@@ -115,6 +133,7 @@ enum AutoCaptureSignReaction: String, CaseIterable, Identifiable, Sendable {
 
     fileprivate var gazeBias: Double {
         switch self {
+        case .happyNod, .happyWiggle, .happyRaise: return 0
         case .proudRaise, .oversizedUnfold, .gentleBonk: return 0.12
         case .heavyPullDown, .hangAndClimb, .lastMomentCatch: return -0.12
         case .wrongSideFlip, .spinToFace, .mechanicalBillboard: return 0.08
@@ -124,6 +143,7 @@ enum AutoCaptureSignReaction: String, CaseIterable, Identifiable, Sendable {
 
     fileprivate var isBurstFriendly: Bool {
         switch self {
+        case .happyRaise: return true
         case .oversizedUnfold, .heavyPullDown, .mechanicalBillboard: return true
         default: return false
         }
@@ -172,6 +192,11 @@ struct AutoCaptureSignFrame: Equatable, Sendable {
     let leftArmPose: AutoCaptureSignArmPose
     let rightArmPose: AutoCaptureSignArmPose
     let checkmarkProgress: Double
+    let headRotationDegrees: Double
+    let torsoScaleY: Double
+    let feetTranslationY: Double
+    let feetRotationDegrees: Double
+    let eyeBrightness: Double
 
     fileprivate init(normalizedTime: Double,
                      robotTranslationX: Double = 0,
@@ -191,7 +216,12 @@ struct AutoCaptureSignFrame: Equatable, Sendable {
                      gazeY: Double = 0,
                      leftArmPose: AutoCaptureSignArmPose = .signHold,
                      rightArmPose: AutoCaptureSignArmPose = .signHold,
-                     checkmarkProgress: Double = 0) {
+                     checkmarkProgress: Double = 0,
+                     headRotationDegrees: Double = 0,
+                     torsoScaleY: Double = 1,
+                     feetTranslationY: Double = 0,
+                     feetRotationDegrees: Double = 0,
+                     eyeBrightness: Double = 1) {
         self.normalizedTime = Self.unit(normalizedTime)
         self.robotTranslationX = Self.finite(robotTranslationX)
         self.robotTranslationY = Self.finite(robotTranslationY)
@@ -211,6 +241,11 @@ struct AutoCaptureSignFrame: Equatable, Sendable {
         self.leftArmPose = leftArmPose
         self.rightArmPose = rightArmPose
         self.checkmarkProgress = Self.unit(checkmarkProgress)
+        self.headRotationDegrees = Self.finite(headRotationDegrees)
+        self.torsoScaleY = Self.positive(torsoScaleY)
+        self.feetTranslationY = Self.finite(feetTranslationY)
+        self.feetRotationDegrees = Self.finite(feetRotationDegrees)
+        self.eyeBrightness = Self.clamp(Self.finite(eyeBrightness), lower: 0.5, upper: 1.3)
     }
 
     private static func finite(_ value: Double) -> Double { value.isFinite ? value : 0 }
@@ -240,6 +275,14 @@ struct AutoCaptureSignPerformance: Equatable, Sendable {
     let entranceEndTime: TimeInterval
     let exitStartTime: TimeInterval
 
+    /// A late count must have time to be read before retreat. Companion saves
+    /// share the active happy sequence rather than restarting its entrance.
+    func mergeWindowDuration(maximumDuration: TimeInterval) -> TimeInterval {
+        let maximum = maximumDuration.isFinite ? max(0, maximumDuration) : totalDuration
+        let fraction = reaction.isCompanionReaction && !reduceMotion ? 0.82 : 0.65
+        return max(0, min(maximum * fraction, readableEndTime - 0.30))
+    }
+
     static func make(reaction: AutoCaptureSignReaction,
                      variation: AutoCaptureRobotVariation = .standard,
                      entrance: RobotEntrance,
@@ -248,10 +291,10 @@ struct AutoCaptureSignPerformance: Equatable, Sendable {
             let duration = 1.0 * variation.timingScale
             let gaze = clampedGaze(variation.gazeX + reaction.gazeBias)
             let frames = [
-                frame(0, robotOpacity: 0, signOpacity: 0, gazeX: gaze),
-                frame(0.16, robotOpacity: 1, signOpacity: 1, gazeX: gaze),
-                frame(0.84, robotOpacity: 1, signOpacity: 1, gazeX: gaze),
-                frame(1, robotOpacity: 0, signOpacity: 0, gazeX: gaze)
+                frame(0, robotOpacity: 0, signOpacity: 0, gazeX: gaze, eyeBrightness: 1.16),
+                frame(0.16, robotOpacity: 1, signOpacity: 1, gazeX: gaze, eyeBrightness: 1.16),
+                frame(0.84, robotOpacity: 1, signOpacity: 1, gazeX: gaze, eyeBrightness: 1.16),
+                frame(1, robotOpacity: 0, signOpacity: 0, gazeX: gaze, eyeBrightness: 1.16)
             ]
             return Self(reaction: reaction, variation: variation, entrance: entrance,
                         reduceMotion: true, frames: frames, totalDuration: duration,
@@ -262,14 +305,31 @@ struct AutoCaptureSignPerformance: Equatable, Sendable {
         }
 
         let duration = reaction.baseDuration * variation.timingScale
-        let frames = normalFrames(reaction: reaction, variation: variation,
-                                  entrance: entrance)
+        let frames = reaction.isCompanionReaction
+            ? companionFrames(reaction: reaction, variation: variation, entrance: entrance)
+            : normalFrames(reaction: reaction, variation: variation, entrance: entrance)
         return Self(reaction: reaction, variation: variation, entrance: entrance,
                     reduceMotion: false, frames: frames, totalDuration: duration,
-                    readableStartTime: duration * 0.48,
+                    readableStartTime: duration * (reaction.isCompanionReaction ? 0.28 : 0.48),
                     readableEndTime: duration * 0.86,
-                    entranceEndTime: duration * 0.28,
+                    entranceEndTime: duration * (reaction.isCompanionReaction ? 0.20 : 0.28),
                     exitStartTime: duration * 0.86)
+    }
+
+    /// Switching an already-present receipt to Quiet Mode or Reduce Motion
+    /// keeps it visible until its original completion. There is no fresh peek,
+    /// entrance, or early fade that could leave an invisible clickable robot.
+    func expressionOnly(remainingDuration: TimeInterval) -> Self {
+        let duration = remainingDuration.isFinite ? max(0.001, remainingDuration) : 0.001
+        let gaze = Self.clampedGaze(variation.gazeX + reaction.gazeBias)
+        let staticFrames = [
+            Self.frame(0, gazeX: gaze, eyeBrightness: 1.16),
+            Self.frame(1, gazeX: gaze, eyeBrightness: 1.16)
+        ]
+        return Self(reaction: reaction, variation: variation, entrance: entrance,
+                    reduceMotion: true, frames: staticFrames, totalDuration: duration,
+                    readableStartTime: 0, readableEndTime: duration,
+                    entranceEndTime: 0, exitStartTime: duration)
     }
 
     /// Deterministically samples the keyframe track. Numeric values ease into
@@ -323,8 +383,88 @@ struct AutoCaptureSignPerformance: Equatable, Sendable {
             gazeY: value(lower.gazeY, upper.gazeY),
             leftArmPose: useUpperPose ? upper.leftArmPose : lower.leftArmPose,
             rightArmPose: useUpperPose ? upper.rightArmPose : lower.rightArmPose,
-            checkmarkProgress: value(lower.checkmarkProgress, upper.checkmarkProgress)
+            checkmarkProgress: value(lower.checkmarkProgress, upper.checkmarkProgress),
+            headRotationDegrees: value(lower.headRotationDegrees, upper.headRotationDegrees),
+            torsoScaleY: value(lower.torsoScaleY, upper.torsoScaleY),
+            feetTranslationY: value(lower.feetTranslationY, upper.feetTranslationY),
+            feetRotationDegrees: value(lower.feetRotationDegrees, upper.feetRotationDegrees),
+            eyeBrightness: value(lower.eyeBrightness, upper.eyeBrightness)
         )
+    }
+
+    private static func companionFrames(reaction: AutoCaptureSignReaction,
+                                        variation: AutoCaptureRobotVariation,
+                                        entrance: RobotEntrance) -> [AutoCaptureSignFrame] {
+        let side = entrance == .left ? -1.0 : 1.0
+        let entryX = entrance == .top ? variation.entranceOffset : side * 18
+        let entryY = entrance == .top ? 20.0 : variation.entranceOffset
+        let gaze = clampedGaze(variation.gazeX * 0.5)
+        var result = [
+            frame(0, robotX: entryX, robotY: entryY, robotOpacity: 0,
+                  signOpacity: 0, gazeX: gaze, leftArm: .rest, rightArm: .rest),
+            frame(0.08, robotX: entryX * 0.7, robotY: entryY * 0.7,
+                  signOpacity: 1, gazeX: gaze, gazeY: -0.15,
+                  leftArm: .ledgeGrip, rightArm: .ledgeGrip, torsoScaleY: 0.95),
+            frame(0.20, robotY: -2, gazeX: gaze, leftArm: .signHold,
+                  rightArm: .signHold, torsoScaleY: 0.94, feetRotation: -4),
+            frame(0.28, robotY: 3, gazeX: gaze, torsoScaleY: 1.03,
+                  feetY: 2, feetRotation: 8, eyeBrightness: 1.2)
+        ]
+        switch reaction {
+        case .happyNod:
+            result.append(contentsOf: [
+                frame(0.38, robotY: 1, gazeX: gaze, gazeY: -0.15,
+                      headRotation: -7, torsoScaleY: 0.97, feetY: 2,
+                      feetRotation: -11, eyeBrightness: 1.2),
+                frame(0.48, robotY: 3, gazeX: gaze, headRotation: 4,
+                      torsoScaleY: 1.02, feetY: 2, feetRotation: 9, eyeBrightness: 1.2),
+                frame(0.58, robotY: 1, gazeX: gaze, headRotation: -4,
+                      torsoScaleY: 0.99, feetRotation: -5, eyeBrightness: 1.16),
+                frame(0.68, gazeX: gaze * 0.5, headRotation: 1, eyeBrightness: 1.12)
+            ])
+        case .happyWiggle:
+            result.append(contentsOf: [
+                frame(0.38, robotX: -2, robotY: 2, robotRotation: -4,
+                      gazeX: gaze, headRotation: 3, torsoScaleY: 0.98,
+                      feetY: 3, feetRotation: 12, eyeBrightness: 1.2),
+                frame(0.48, robotX: 2, robotY: 3, robotRotation: 4,
+                      gazeX: gaze, headRotation: -3, torsoScaleY: 1.02,
+                      feetY: 2, feetRotation: -12, eyeBrightness: 1.2),
+                frame(0.58, robotX: -1, robotY: 1, robotRotation: -2,
+                      gazeX: gaze, headRotation: 1, feetY: 1,
+                      feetRotation: 6, eyeBrightness: 1.16),
+                frame(0.68, gazeX: gaze * 0.5, eyeBrightness: 1.12)
+            ])
+        case .happyRaise:
+            result.append(contentsOf: [
+                frame(0.38, robotY: 5, signY: 10, gazeX: gaze, gazeY: 0.15,
+                      leftArm: .signRaise, rightArm: .signRaise,
+                      headRotation: 3, torsoScaleY: 1.04,
+                      feetY: 3, feetRotation: -12, eyeBrightness: 1.2),
+                frame(0.48, robotY: 6, signY: 10, gazeX: gaze, gazeY: 0.12,
+                      leftArm: .signRaise, rightArm: .signRaise,
+                      headRotation: 1, torsoScaleY: 0.98,
+                      feetY: 2, feetRotation: 9, eyeBrightness: 1.2),
+                frame(0.58, robotY: 6, signY: 10, gazeX: gaze,
+                      leftArm: .signRaise, rightArm: .signRaise,
+                      torsoScaleY: 1.01, feetRotation: -4, eyeBrightness: 1.16),
+                frame(0.68, robotY: 5, signY: 10, gazeX: gaze * 0.5,
+                      leftArm: .signRaise, rightArm: .signRaise, eyeBrightness: 1.12)
+            ])
+        default: break
+        }
+        let raise = reaction == .happyRaise
+        result.append(frame(0.84, robotY: raise ? 5 : 0, signY: raise ? 10 : 0,
+                            gazeX: gaze * 0.4,
+                            leftArm: raise ? .signRaise : .signHold,
+                            rightArm: raise ? .signRaise : .signHold, eyeBrightness: 1.08))
+        result.append(frame(0.89, robotX: entryX * 0.12, robotY: entryY * 0.12,
+                            signY: raise ? 20 : 0, gazeX: gaze * 0.3,
+                            leftArm: .recover, rightArm: .recover, torsoScaleY: 0.98))
+        result.append(frame(1, robotX: entryX, robotY: entryY, robotOpacity: 0,
+                            signY: raise ? 20 : 0, signOpacity: 0, gazeX: gaze * 0.3,
+                            leftArm: .rest, rightArm: .rest))
+        return result
     }
 
     private static func normalFrames(reaction: AutoCaptureSignReaction,
@@ -388,6 +528,7 @@ struct AutoCaptureSignPerformance: Equatable, Sendable {
     private static func reactionFrames(_ reaction: AutoCaptureSignReaction,
                                        gaze: Double) -> [AutoCaptureSignFrame] {
         switch reaction {
+        case .happyNod, .happyWiggle, .happyRaise: return []
         case .proudRaise:
             return [
                 frame(0.30, robotY: -18, signY: 34, signScaleX: 0.9, signScaleY: 0.9,
@@ -554,7 +695,10 @@ struct AutoCaptureSignPerformance: Equatable, Sendable {
                               gazeX: Double = 0, gazeY: Double = 0,
                               leftArm: AutoCaptureSignArmPose = .signHold,
                               rightArm: AutoCaptureSignArmPose = .signHold,
-                              checkmark: Double = 0) -> AutoCaptureSignFrame {
+                              checkmark: Double = 0,
+                              headRotation: Double = 0, torsoScaleY: Double = 1,
+                              feetY: Double = 0, feetRotation: Double = 0,
+                              eyeBrightness: Double = 1) -> AutoCaptureSignFrame {
         AutoCaptureSignFrame(
             normalizedTime: time,
             robotTranslationX: robotX, robotTranslationY: robotY,
@@ -565,7 +709,9 @@ struct AutoCaptureSignPerformance: Equatable, Sendable {
             signRotationDegrees: signRotation, signYRotationDegrees: signYRotation,
             signOpacity: signOpacity, gazeX: gazeX, gazeY: gazeY,
             leftArmPose: leftArm, rightArmPose: rightArm,
-            checkmarkProgress: checkmark
+            checkmarkProgress: checkmark, headRotationDegrees: headRotation,
+            torsoScaleY: torsoScaleY, feetTranslationY: feetY,
+            feetRotationDegrees: feetRotation, eyeBrightness: eyeBrightness
         )
     }
 
@@ -574,15 +720,19 @@ struct AutoCaptureSignPerformance: Equatable, Sendable {
     }
 }
 
-/// A seeded shuffled bag. Every bag contains all twelve reactions exactly once,
-/// and no choice may repeat any of the three most recent performances.
+/// A seeded shuffled bag. Live gestures alternate without an immediate repeat;
+/// the complete historical library can be supplied for diagnostic rotation.
 struct AutoCaptureSignDeck: Sendable {
     private var generator: AutoCaptureSignSplitMix64
     private var remaining: [AutoCaptureSignReaction] = []
     private(set) var previousThree: [AutoCaptureSignReaction] = []
+    private let reactions: [AutoCaptureSignReaction]
 
-    init(seed: UInt64) {
+    init(seed: UInt64, reactions: [AutoCaptureSignReaction] = AutoCaptureSignReaction.companionReactions) {
         generator = AutoCaptureSignSplitMix64(seed: seed)
+        var unique: [AutoCaptureSignReaction] = []
+        for reaction in reactions where !unique.contains(reaction) { unique.append(reaction) }
+        self.reactions = unique.isEmpty ? AutoCaptureSignReaction.companionReactions : unique
     }
 
     init() {
@@ -602,7 +752,10 @@ struct AutoCaptureSignDeck: Sendable {
             remaining.swapAt(0, burstIndex)
         }
 
-        let index = remaining.firstIndex { !previousThree.contains($0) } ?? 0
+        // Three gestures rotate without an immediate repeat across bag edges.
+        // Larger diagnostic libraries retain their previous-three exclusion.
+        let excluded = reactions.count > 3 ? previousThree : Array(previousThree.suffix(1))
+        let index = remaining.firstIndex { !excluded.contains($0) } ?? 0
         let reaction = remaining.remove(at: index)
         previousThree.append(reaction)
         if previousThree.count > 3 {
@@ -631,7 +784,7 @@ struct AutoCaptureSignDeck: Sendable {
     }
 
     private mutating func refill() {
-        remaining = AutoCaptureSignReaction.allCases
+        remaining = reactions
         guard remaining.count > 1 else { return }
         for upper in stride(from: remaining.count - 1, through: 1, by: -1) {
             let index = randomIndex(upperBound: upper + 1)

@@ -63,7 +63,43 @@ private final class RequestProbe: @unchecked Sendable {
         try await bridgeChecks()
         try await directoryChecks()
         try await shutdownChecks()
+        try receiptConsentChecks()
         print("PASS: \(checks) preview cancellation/shutdown checks; isolated callbacks, preferences and archive only")
+    }
+
+    private static func receiptConsentChecks() throws {
+        let files = FileManager.default
+        let root = files.temporaryDirectory.appendingPathComponent("DaBinPreviewConsent-\(UUID())")
+        let suite = "DaBin.PreviewConsent.\(UUID())"
+        let defaults = UserDefaults(suiteName: suite)!
+        defer { try? files.removeItem(at: root); defaults.removePersistentDomain(forName: suite) }
+        try files.createDirectory(at: root, withIntermediateDirectories: true)
+        let repository = try CaptureRepository(root: root)
+        for origin in ["futureAutomaticSource", "", "MANUAL"] {
+            // No URL is supplied, so even a broken eligibility check cannot
+            // send this regression fixture to a website.
+            let capture = Capture(kind: .link, title: "Fictional unknown-source link")
+            var payload = try JSONSerialization.jsonObject(with: JSONEncoder().encode(CaptureSnapshot(capture))) as! [String: Any]
+            payload["captureOriginRaw"] = origin
+            let snapshot = try JSONDecoder().decode(CaptureSnapshot.self, from: JSONSerialization.data(withJSONObject: payload))
+            var rejected = false
+            do { try repository.saveSnapshots([snapshot]) } catch { rejected = true }
+            try expect(rejected && (try repository.load()).isEmpty,
+                       "Unknown explicit origins are rejected by persistence before website work")
+        }
+        let automatic = Capture(kind: .link, title: "Fictional automatic link",
+                                receipt: .automatic(.automaticClipboard))
+        try repository.save([automatic])
+        let store = try CaptureStore(root: root)
+        let previews = PreviewService(store: store, defaults: defaults)
+        try expect(!previews.enabled, "Fresh preferences keep website access off")
+        previews.enabled = true
+        previews.process(store.captures)
+        try expect(store.captures.allSatisfy { $0.previewState == "unavailable" },
+                   "Automatic receipts stay unavailable without starting a preview worker, even after opt-in")
+        try expect(store.captures.allSatisfy { !$0.permitsWebsitePreview },
+                   "Restored automatic receipts cannot gain manual website permission")
+        previews.shutdown()
     }
 
     private static func directoryChecks() async throws {

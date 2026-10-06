@@ -63,6 +63,11 @@ public final class RobotAppFrameView: NSView {
     var recordingSignIsVisible: Bool { !projectRecordingSign.isHidden }
     var recordingSignFrame: CGRect { projectRecordingSign.boardFrame }
     var recordingSignFontSize: CGFloat { projectRecordingSign.fontSize }
+    private var isCapturePaused = false
+    var robotCharacterIsSuppressed: Bool { characterDecorationLayers.allSatisfy(\.isHidden) }
+    private var characterDecorationLayers: [CALayer] {
+        [headLayer, leftArmLayer, rightArmLayer, legsLayer, compactBodyLayer]
+    }
 
     private let leftTorsoLayer = CAGradientLayer()
     private let rightTorsoLayer = CAGradientLayer()
@@ -173,6 +178,13 @@ public final class RobotAppFrameView: NSView {
 
     func setProjectRecording(projectName: String?, color: NSColor?, isEnabled: Bool,
                              isPaused: Bool = false, statusText: String? = nil) {
+        isCapturePaused = isPaused
+        withoutActions { characterDecorationLayers.forEach { $0.isHidden = isPaused } }
+        if isPaused {
+            characterDecorationLayers.forEach { $0.removeAllAnimations() }
+            resetEyes()
+            nextBlinkTime = .greatestFiniteMagnitude
+        }
         projectRecordingSign.configure(projectName: isEnabled ? projectName : nil,
                                        color: color, isPaused: isPaused, statusText: statusText)
         projectRecordingSign.setAccessibilityElement(projectRecordingSign.projectName != nil)
@@ -326,7 +338,7 @@ public final class RobotAppFrameView: NSView {
     /// Feedback is local to the already-visible robot; it creates no window,
     /// focus change or sound. The coordinator calls this only after persistence.
     func celebrateTaskCompletion(reduceMotion: Bool) {
-        guard phase == .open, isFrameVisible, !isHidden else { return }
+        guard !isCapturePaused, phase == .open, isFrameVisible, !isHidden else { return }
         taskCelebrationCount += 1
         // Core Animation path morphing needs the same element topology as
         // the canonical idle mouth (one move and three straight segments).
@@ -395,7 +407,7 @@ public final class RobotAppFrameView: NSView {
     /// no timer: it only eases the mint eyes to the latest clamped target and uses
     /// the same tick to trigger an occasional blink.
     public func updatePointer(screenPoint: CGPoint?, displayFrame: CGRect) {
-        guard isFrameVisible, phase == .open else { return }
+        guard !isCapturePaused, isFrameVisible, phase == .open else { return }
         guard !reduceMotionActive else { resetEyes(); return }
         let eyeCenter = eyeCenterInScreen()
         let offset = RobotAppFrameGaze.offset(pointer: screenPoint,

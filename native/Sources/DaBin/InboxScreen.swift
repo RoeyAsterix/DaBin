@@ -4,9 +4,7 @@ import SwiftUI
 struct InboxScreen: View {
     @Environment(\.workspaceZoom) private var zoom
     @ObservedObject var state: AppState
-    @Environment(\.daBinAccent) private var accent
     @Environment(\.daBinTutorialTargets) private var tutorialTargets
-    var showsNewTaskEntry = true
     private var items: [Capture] {
         state.store.captures.filter {
             $0.parentTaskID == nil && $0.projectName == nil && !$0.isCompleted
@@ -18,9 +16,10 @@ struct InboxScreen: View {
         VStack(spacing: 0) {
             VStack(alignment: .leading, spacing: 9) {
                 HStack(spacing: 8) {
-                    TextField("A thought or a next step…", text: $state.newNoteText, axis: .vertical)
+                    TextField(state.quickCapturePlaceholder, text: $state.newNoteText, axis: .vertical)
                         .lineLimit(1...3).textFieldStyle(.plain).font(.system(size: 14))
                         .accessibilityLabel("Quick capture text").accessibilityIdentifier("inbox-quick-text")
+                        .accessibilityHint("Saves to \(state.quickCaptureProject ?? "Unfiled") in Projects")
                         .onSubmit { saveQuick(asTask: false) }
                     Menu {
                         Button("Save note", systemImage: "note.text") { saveQuick(asTask: false) }
@@ -28,28 +27,15 @@ struct InboxScreen: View {
                     } label: { Image(systemName: "arrow.up.circle.fill").font(.system(size: 20)) }
                         .menuStyle(.borderlessButton).menuIndicator(.hidden).fixedSize()
                         .disabled(state.newNoteText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
-                        .accessibilityLabel("Save quick capture").buddyHelp("Save note or task")
+                        .accessibilityLabel("Save quick capture").accessibilityIdentifier("inbox-quick-save")
+                        .buddyHelp("Save idea or task to \(state.quickCaptureProject ?? "Unfiled") in Projects")
                 }.padding(12).background(Palette.surface, in: RoundedRectangle(cornerRadius: 8))
                     .overlay(RoundedRectangle(cornerRadius: 8).strokeBorder(Palette.line, lineWidth: 0.7))
-                BuddyActionFlow(spacing: 13) {
-                    Button { state.pasteClipboard() } label: { Label("Paste", systemImage: "doc.on.clipboard").frame(minHeight: 32) }
-                    Button { state.importFiles() } label: { Label("Add files", systemImage: "folder.badge.plus").frame(minHeight: 32) }
-                    Button { state.openNewNote() } label: { Label("Note editor", systemImage: "square.and.pencil").frame(minHeight: 32) }
-                        .accessibilityLabel("Open note editor").accessibilityIdentifier("inbox-note-editor")
-                    if showsNewTaskEntry {
-                        Button { state.openNewTask() } label: { Label("Task", systemImage: "plus.circle").frame(minHeight: 32) }
-                    }
-                    Spacer(minLength: 0)
-                    CaptureFilterMenu(selection: $state.filter)
-                }.buttonStyle(.plain).font(.system(size: 12)).foregroundStyle(accent)
-                    .daBinTutorialAnchor(.inboxActions)
-                if let project = state.newNoteProject, !state.newNoteText.isEmpty {
-                    Label("Draft for \(project)", systemImage: "folder")
+                if !state.newNoteText.isEmpty {
+                    Label("Saves to \(state.quickCaptureProject ?? "Unfiled") in Projects", systemImage: "folder")
                         .font(.system(size: 11)).foregroundStyle(Palette.muted).lineLimit(1)
-                        .buddyHelp("This unfinished draft will be saved to \(project)")
-                } else {
-                    Text("Drop items here. Everything stays on this Mac.")
-                        .font(.system(size: 11)).foregroundStyle(Palette.muted)
+                        .accessibilityIdentifier("inbox-quick-destination")
+                        .buddyHelp("This draft will be saved to \(state.quickCaptureProject ?? "Unfiled") in Projects")
                 }
             }.padding(14)
                 .daBinTutorialAnchor(.inboxComposer)
@@ -59,7 +45,7 @@ struct InboxScreen: View {
                         DaBinTutorialSampleCaptureCard()
                     } else {
                         EmptyMessage(symbol: "tray", title: state.filter == .all ? "Room for your next idea" : "No matching items",
-                                     message: "Paste, drop a file, or jot a note above. Day and Week show everything you captured by date.")
+                                     message: "Write an idea or task above, or drop a file here. Day and Week show your captions by date.")
                     }
                 } else {
                     ScrollViewReader { proxy in
@@ -93,7 +79,7 @@ struct InboxScreen: View {
             if asTask { _ = try state.store.createTask(text: text, reminderAt: nil, projectName: project) }
             else { let capture = try state.store.createNote(text: text, projectName: project); state.didCapture([capture]) }
             state.clearNewNoteDraft()
-            let destination = project ?? "Captions"
+            let destination = project ?? "Unfiled"
             state.status = AppStatusMessage(text: asTask ? "Task added to \(destination)." : "Note saved to \(destination).", severity: .success)
         } catch { state.reportFailure(error.localizedDescription) }
     }

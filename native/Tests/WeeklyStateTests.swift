@@ -297,8 +297,8 @@ struct WeeklyStateTests {
                        && CaptureCalendar.dayString(state.weekEndingDay) == "2024-01-03",
                        "An empty \(filter.title) toggle keeps seven dates ending on the selected day")
             try expect(state.filter == filter && state.weeklyDays.count == 7
-                       && state.weeklyVisibleDays == state.weeklyDays && state.weeklyActiveDays.isEmpty,
-                       "An empty \(filter.title) week renders all seven selected dates with no active dates")
+                       && state.weeklyVisibleDays.isEmpty && state.weeklyActiveDays.isEmpty,
+                       "An empty \(filter.title) week hides all columns while retaining its seven selected dates")
             let emptyDay = state.weeklyDays[2]
             state.selectWeeklyDay(emptyDay)
             try expect(state.route == .daily && Calendar.current.isDate(state.selectedDay, inSameDayAs: emptyDay)
@@ -340,13 +340,54 @@ struct WeeklyStateTests {
         let active = ["2023-12-28", "2024-01-01", "2024-01-03"]
         try expect(keys(state.weeklyActiveDays) == active,
                    "A sparse week identifies its three nonconsecutive active dates")
-        try expect(state.weeklyVisibleDays == state.weeklyDays,
-                   "A sparse week renders all seven selected dates, including its four empty dates")
+        try expect(keys(state.weeklyVisibleDays) == active,
+                   "A sparse week renders only its three populated dates in chronological order")
         for filter in CaptureFilter.allCases {
             state.filter = filter
-            try expect(keys(state.weeklyActiveDays) == active && state.weeklyVisibleDays == state.weeklyDays,
-                       "The \(filter.title) filter preserves all seven columns and the three active-date count")
+            let expected: [String]
+            switch filter {
+            case .all: expected = active
+            case .text: expected = ["2023-12-28", "2024-01-01"]
+            case .tasks: expected = ["2024-01-03"]
+            case .links, .files, .media: expected = []
+            }
+            try expect(keys(state.weeklyActiveDays) == active && keys(state.weeklyVisibleDays) == expected,
+                       "The \(filter.title) filter shows only matching populated dates without changing the activity count")
         }
+
+        let selectedDates = state.weeklyDays
+        state.filter = .links
+        let link = try store.capture(text: "https://example.invalid/sparse-week", at: date("2023-12-29 09:00"))[0]
+        try expect(keys(state.weeklyVisibleDays) == ["2023-12-29"],
+                   "Adding the first matching capture reveals its previously hidden day immediately")
+        let note = try store.capture(text: "A note hidden by the links filter", at: date("2023-12-30 09:00"))[0]
+        try expect(keys(state.weeklyVisibleDays) == ["2023-12-29"],
+                   "Adding a nonmatching capture does not create an empty filtered column")
+        _ = try store.remove(link)
+        try expect(state.weeklyVisibleDays.isEmpty && state.weeklyDays == selectedDates,
+                   "Removing the last matching capture hides its column without changing the selected dates")
+        state.filter = .all
+        try expect(keys(state.weeklyVisibleDays) == ["2023-12-28", "2023-12-30", "2024-01-01", "2024-01-03"],
+                   "Clearing the filter restores the remaining populated dates")
+        _ = try store.remove(note)
+        try expect(keys(state.weeklyVisibleDays) == active,
+                   "Removing a day's final capture hides that date from the unfiltered board")
+
+        state.filter = .tasks
+        let carry = try store.createTask(text: "Sparse carried task", at: date("2023-12-27 09:00"))
+        try expect(state.weeklyVisibleDays == selectedDates,
+                   "An unfinished carried task keeps every selected day visible even without a capture created that day")
+        try store.setTaskCompleted(carry, completed: true)
+        try expect(keys(state.weeklyVisibleDays) == ["2024-01-03"],
+                   "Completing a carried task hides days whose only card was that task")
+        let scheduled = try store.createTask(text: "Sparse reminder task", at: date("2023-12-27 09:00"))
+        try store.update(scheduled, comment: "Keep the reminder day visible", reminderAt: date("2024-01-02 10:00"),
+                         reminderTimeZoneID: TimeZone.current.identifier)
+        try expect(keys(state.weeklyVisibleDays) == ["2024-01-02", "2024-01-03"],
+                   "A reminder keeps its selected date visible when the task was captured outside the week")
+        try store.setTaskCompleted(scheduled, completed: true)
+        try expect(keys(state.weeklyVisibleDays) == ["2024-01-03"] && state.weeklyDays == selectedDates,
+                   "Completing the reminder task hides its now-empty day while preserving the calendar selection")
     }
 
     @MainActor private static func checkDateSelectionModel() throws {
@@ -411,13 +452,14 @@ struct WeeklyStateTests {
                    "The selected date set becomes the week source of truth with its latest day as anchor")
         try expect(keys(state.weeklyActiveDays) == ["2024-01-01", "2024-01-04"],
                    "Only selected populated dates contribute to the active-date count")
-        try expect(keys(state.weeklyVisibleDays) == expected,
-                   "Every selected date renders, including the empty date; an unselected active date stays hidden")
+        try expect(keys(state.weeklyVisibleDays) == ["2024-01-01", "2024-01-04"],
+                   "Only populated selected dates render; empty selected dates and unselected active dates stay hidden")
         for filter in CaptureFilter.allCases {
             state.filter = filter
+            let visible = filter == .all || filter == .text ? ["2024-01-01", "2024-01-04"] : []
             try expect(keys(state.weeklyActiveDays) == ["2024-01-01", "2024-01-04"]
-                       && keys(state.weeklyVisibleDays) == expected,
-                       "\(filter.title) filtering preserves selected columns and their active-date count")
+                       && keys(state.weeklyVisibleDays) == visible && keys(state.weeklyDays) == expected,
+                       "\(filter.title) filtering hides dates without matching cards while preserving the selection and activity count")
         }
         state.filter = .text
         try expect(CaptureCalendar.dayString(state.weeklyActionDay) == "2024-01-04",
@@ -462,8 +504,8 @@ struct WeeklyStateTests {
         try expect(!state.isCustomWeekSelection && state.weeklyDays.count == 7,
                    "Choosing a conventional week ending resets explicit dates to a trailing seven-day range")
         try expect(state.setWeeklyDays([date("2024-01-03 12:00")]) && state.weeklyDays.count == 1
-                   && keys(state.weeklyVisibleDays) == ["2024-01-03"] && state.weeklyActiveDays.isEmpty,
-                   "One chosen empty day remains visible as a single date column")
+                   && state.weeklyVisibleDays.isEmpty && state.weeklyActiveDays.isEmpty,
+                   "One chosen empty day remains selected without rendering an empty column")
         state.openSearch(week: state.weeklyDays)
         try expect(state.searchScopeTitle == prettyDay("2024-01-03"),
                    "A single selected day has one readable search date without a repeated range")
@@ -532,8 +574,16 @@ struct WeeklyStateTests {
                    "Reading all seven columns does not mutate Daily or Weekly navigation")
         for filter in CaptureFilter.allCases {
             state.filter = filter
-            try expect(keys(state.weeklyVisibleDays) == dayKeys && keys(state.weeklyActiveDays) == dayKeys,
-                       "The \(filter.title) filter preserves the seven date columns and active-date count")
+            let visible: [String]
+            switch filter {
+            case .all, .text, .tasks: visible = dayKeys
+            case .links: visible = ["2023-12-30"]
+            case .files: visible = ["2023-12-31"]
+            case .media: visible = ["2024-01-02"]
+            }
+            try expect(keys(state.weeklyVisibleDays) == visible && keys(state.weeklyActiveDays) == dayKeys
+                       && keys(state.weeklyDays) == dayKeys,
+                       "The \(filter.title) filter shows only matching columns while preserving selected and active dates")
             let values = state.weeklyDays.flatMap { state.captures(for: $0) }
             switch filter {
             case .all: try expect(values.count == expected.flatMap { $0 }.count, "All filter restores all seven columns")

@@ -83,7 +83,8 @@ def main():
         resources.mkdir()
         run(['xcrun', 'swiftc', '-swift-version', '5', '-target', TARGET,
              '-warnings-as-errors', '-O', '-whole-module-optimization', '-parse-as-library',
-             ROOT / 'Sources/DaBin/UpdateHandoff.swift', ROOT / 'UpdateTools/DaBinUpdater.swift', '-o', executable])
+             ROOT / 'Sources/DaBin/UpdateHandoff.swift', ROOT / 'Sources/DaBin/UpdateArchiveValidator.swift',
+             ROOT / 'UpdateTools/DaBinUpdater.swift', '-o', executable])
         updater_info = {
             'CFBundleIdentifier': 'com.dabin.mac.updater.local',
             'CFBundleName': 'DaBin Update',

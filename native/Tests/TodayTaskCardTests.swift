@@ -366,6 +366,113 @@ import SwiftUI
                          "controls": Dictionary(uniqueKeysWithValues: zip(ids, controls).map { ($0.0, NSStringFromRect($0.1.interactionFrame)) })])
     }
 
+    private static func assertToolbar(_ fixture: Fixture, project: String) async throws {
+        let toolbar = try await find(fixture.hosting, id: "today-toolbar")
+        let visible = fixture.window.frame.insetBy(dx: -1, dy: -1)
+        var controls: [TodayCardAX] = []
+        for id in ["task-view-today", "task-view-later", "task-view-done", "today-project-picker", "today-add-task"] {
+            _ = try await find(fixture.hosting, id: id)
+            let matches = nodes(fixture.hosting).filter { $0.identifier == id }
+            guard let control = matches.first(where: {
+                ["AXButton", "AXMenuButton", "AXPopUpButton"].contains($0.role)
+                    || $0.actions.contains("AXPress") || $0.actions.contains("AXShowMenu")
+            }) else { throw failure("Task toolbar needs an actionable native control for \(id)") }
+            try expect(control.frame.width > 0 && control.frame.height > 0 && visible.contains(control.frame)
+                && visible.contains(control.interactionFrame), "Task toolbar control \(id) stays inside its compact viewport")
+            if id != "today-project-picker" {
+                try expect(control.interactionFrame.width >= 28 && control.interactionFrame.height >= 28,
+                           "Task toolbar button \(id) retains a usable native target")
+            }
+            controls.append(control)
+        }
+        let add = controls.last!
+        try expect(controls.allSatisfy { abs($0.frame.midY - add.frame.midY) <= 2 },
+                   "Task views, project filter and Add share one line at \(Int(fixture.hosting.bounds.width)) points")
+        let horizontal = controls.map(\.frame).sorted { $0.minX < $1.minX }
+        try expect(zip(horizontal, horizontal.dropFirst()).allSatisfy { $0.0.maxX <= $0.1.minX + 1 },
+                   "Task toolbar icons remain distinct without overlap")
+        try expect(toolbar.frame.height > 0 && toolbar.frame.height <= 44
+            && controls.allSatisfy { toolbar.frame.insetBy(dx: -1, dy: -1).contains($0.frame) },
+                   "Task toolbar retains a single compact row containing every control")
+        let projectControl = controls.first { $0.identifier == "today-project-picker" }!
+        try expect(projectControl.label.contains(project), "Icon-only project filter exposes its complete selected project name")
+        let summary = try await find(fixture.hosting, id: "today-plan-summary")
+        try expect(summary.frame.width > 0 && summary.frame.height > 0 && visible.contains(summary.frame)
+            && abs(summary.frame.midY - add.frame.midY) <= 3,
+                   "Task summary stays on the same visible line without wrapping")
+        try expect(controls.allSatisfy { control in
+            let overlap = control.frame.intersection(summary.frame)
+            return overlap.isNull || overlap.width <= 1 || overlap.height <= 1
+        }, "Task summary never overlaps an actionable icon")
+        try expect(!nodes(fixture.hosting).contains {
+            $0.role == "AXStaticText" && ["Tasks", "Work plan view"].contains($0.accessibleValue ?? $0.label)
+        }, "Tasks has neither a repeated heading nor a visible Work plan view label")
+        for (id, label) in [("task-view-today", "Today"), ("task-view-later", "Upcoming"), ("task-view-done", "Completed")] {
+            try expect(controls.first { $0.identifier == id }?.label == label,
+                       "Task view icon \(id) retains its descriptive accessibility label")
+        }
+        geometry.append(["surface": "task-toolbar", "width": fixture.hosting.bounds.width,
+                         "toolbar": NSStringFromRect(toolbar.frame), "summary": NSStringFromRect(summary.frame),
+                         "controls": Dictionary(uniqueKeysWithValues: controls.map { ($0.identifier!, NSStringFromRect($0.frame)) })])
+    }
+
+    private static func checkToolbar(state: AppState, todayTask: Capture, unfiledTask: Capture,
+                                     evidence: URL, captured: Date, tomorrow: String) async throws {
+        let project = todayTask.projectName!
+        let future = try state.store.createTask(text: "Fictional future project review", at: captured,
+                                                planning: TaskPlanning(plannedDay: tomorrow))
+        try state.store.setOrganization(future, pinned: false, projectName: project)
+        let finished = try state.store.createTask(text: "Fictional approved project handover", at: captured)
+        try state.store.setOrganization(finished, pinned: false, projectName: project)
+        try state.store.setTaskCompleted(finished, completed: true)
+        state.showReminders(); state.libraryProject = project; state.todayPlanningScope = "today"
+        for width in [CGFloat(320), 380, 760] { for dark in [false, true] {
+            let screen = try await fixture(TodayPlanningScreen(state: state), size: NSSize(width: width, height: 1100), dark: dark)
+            do {
+                try await assertToolbar(screen, project: project)
+                try snapshot(screen.hosting, at: evidence.appendingPathComponent("task-toolbar-\(Int(width))-\(dark ? "dark" : "light")@2x.png"))
+                screen.close()
+            } catch { screen.close(); throw error }
+        } }
+        let screen = try await fixture(TodayPlanningScreen(state: state), size: NSSize(width: 380, height: 1400))
+        defer { screen.close() }
+        let cardID: (Capture) -> String = { "today-task-card-" + $0.id.uuidString }
+        _ = try await find(screen.hosting, id: cardID(todayTask))
+        try expect(!nodes(screen.hosting).contains { $0.identifier == cardID(unfiledTask) },
+                   "The selected project filters today's task cards")
+        let upcoming = try await find(screen.hosting, id: "task-view-later")
+        try expect(upcoming.press(), "Upcoming icon supports native activation")
+        await settle(screen.hosting)
+        try expect(state.todayPlanningScope == "later", "Upcoming icon selects the future task scope")
+        _ = try await find(screen.hosting, id: cardID(future))
+        try expect(!nodes(screen.hosting).contains { $0.identifier == cardID(finished) },
+                   "Upcoming excludes completed tasks")
+        let completed = try await find(screen.hosting, id: "task-view-done")
+        try expect(completed.press(), "Completed icon supports native activation")
+        await settle(screen.hosting)
+        try expect(state.todayPlanningScope == "done", "Completed icon selects the finished task scope")
+        _ = try await find(screen.hosting, id: cardID(finished))
+        try expect(!nodes(screen.hosting).contains { $0.identifier == cardID(future) },
+                   "Completed excludes unfinished future tasks")
+        let today = try await find(screen.hosting, id: "task-view-today")
+        try expect(today.press(), "Today icon supports native activation")
+        await settle(screen.hosting)
+        try expect(state.todayPlanningScope == "today", "Today icon restores the current plan")
+        _ = try await find(screen.hosting, id: cardID(todayTask))
+        try await selectMenu(screen, id: "today-project-picker", title: "All projects")
+        try expect(state.libraryProject == nil, "Native project icon menu restores all projects")
+        _ = try await find(screen.hosting, id: cardID(unfiledTask))
+        try await selectMenu(screen, id: "today-project-picker", title: project)
+        try expect(state.libraryProject == project, "Native project icon menu selects the complete project name")
+        try expect(!nodes(screen.hosting).contains { $0.identifier == cardID(unfiledTask) },
+                   "Project selection immediately filters the displayed task cards")
+        let add = try await find(screen.hosting, id: "today-add-task")
+        try expect(add.press(), "The aligned plus retains its native action")
+        await settle(screen.hosting)
+        try expect(state.route == .newTask && state.newTaskDraft.planning.plannedDay == state.currentDayKey
+            && state.newTaskProject == project, "Toolbar plus creates a task planned for today in the selected project")
+    }
+
 
     private static func run() async throws {
         let root = FileManager.default.temporaryDirectory.appendingPathComponent("DaBinTodayCards-\(UUID())", isDirectory: true)
@@ -553,9 +660,11 @@ import SwiftUI
             && followup.originalText == followupReceipt.2 && followup.comment == "Keep the original note",
                    "Follow-up snooze/Done preserve the original note, comment and receipt")
         try snapshot(followupFixture.hosting, at: evidence.appendingPathComponent("follow-up-minimized-320-dark@2x.png"))
+        try await checkToolbar(state: state, todayTask: task, unfiledTask: second,
+                               evidence: evidence, captured: captured, tomorrow: tomorrow)
         try JSONSerialization.data(withJSONObject: ["checks": checks, "fixtures": geometry,
             "scope": "Fictional own-process native task cards; private copy writer; bounded owned More menu tracking; no general clipboard, global input or notifications"], options: [.prettyPrinted, .sortedKeys])
             .write(to: evidence.appendingPathComponent("today-card-geometry.json"), options: .atomic)
-        print("PASS: \(checks) modern task card checks; 320/380/760,75/100/200%,light/dark,compact hierarchy,focus/minimization,title/checklist,native More dispatch,receipt and reorder persistence. Evidence: \(evidence.path)")
+        print("PASS: \(checks) modern task card and toolbar checks; 320/380/760,75/100/200%,light/dark,compact hierarchy,focus/minimization,title/checklist,native More dispatch,receipt and reorder persistence,single-line task toolbar,native task scopes/project menu/plus. Evidence: \(evidence.path)")
     }
 }

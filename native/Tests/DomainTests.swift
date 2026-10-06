@@ -283,6 +283,18 @@ private struct Fixtures: Decodable { let entries: [FixtureEntry]; let cases: [Fi
                    && legacyCapture.sourceURL == nil && legacyCapture.captureOrigin == .manual
                    && legacyCapture.automaticActionID == nil,
                    "Version 1 payload migrates with unknown source and manual origin")
+        try expect(legacyCapture.permitsWebsitePreview, "Legacy absent origins retain manual preview eligibility")
+        for unrecognizedOrigin in ["futureAutomaticSource", "", "MANUAL"] {
+            var payload = try JSONSerialization.jsonObject(with: JSONEncoder().encode(CaptureSnapshot(sourcedText))) as! [String: Any]
+            payload["captureOriginRaw"] = unrecognizedOrigin
+            let snapshot = try JSONDecoder().decode(CaptureSnapshot.self, from: JSONSerialization.data(withJSONObject: payload))
+            let unknown = Capture(snapshot: snapshot)
+            try expect(!unknown.permitsWebsitePreview && unknown.captureOriginRaw == unrecognizedOrigin,
+                       "Unknown explicit origins do not acquire manual network permission on restore")
+            let reopened = try Capture(snapshot: JSONDecoder().decode(CaptureSnapshot.self, from: JSONEncoder().encode(CaptureSnapshot(unknown))))
+            try expect(!reopened.permitsWebsitePreview && reopened.captureOriginRaw == unrecognizedOrigin,
+                       "Unknown origins retain the closed network boundary through a second serialization")
+        }
         for version in [1, 2] {
             var payload = try JSONSerialization.jsonObject(with: JSONEncoder().encode(CaptureSnapshot(sourcedText))) as! [String: Any]
             payload["schemaVersion"] = version

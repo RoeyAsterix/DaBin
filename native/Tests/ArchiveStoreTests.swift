@@ -39,6 +39,7 @@ import Combine
         let root = files.temporaryDirectory.appendingPathComponent("DaBinArchiveStoreTests-\(UUID().uuidString)", isDirectory: true)
         try files.createDirectory(at: root, withIntermediateDirectories: true)
         defer { try? files.removeItem(at: root) }
+        try storageBoundaryChecks(root.appendingPathComponent("storage-boundaries"))
         try await currentArchive(root.appendingPathComponent("current"))
         try legacyMigration(root.appendingPathComponent("legacy"), conflictingDestination: false)
         try legacyMigration(root.appendingPathComponent("legacy-conflict"), conflictingDestination: true)
@@ -46,6 +47,66 @@ import Combine
         try mirrorFailure(root.appendingPathComponent("mirror-failure"))
         try await incrementalInsertionChecks(root.appendingPathComponent("incremental-inserts"))
         print("PASS: \(checks) archive-store integration assertions; dated originals, readable records, updates, migration, legacy/current recovery, retryable mirror failure, and single-publication incremental inserts.")
+    }
+
+    @MainActor static func storageBoundaryChecks(_ root: URL) throws {
+        try files.createDirectory(at: root, withIntermediateDirectories: true)
+        let existing = root.appendingPathComponent("Existing archive")
+        try files.createDirectory(at: existing, withIntermediateDirectories: false)
+        try files.setAttributes([.posixPermissions: 0o755], ofItemAtPath: existing.path)
+        let preserved = existing.appendingPathComponent("Keep fictional local content.txt")
+        let preservedBytes = Data("Existing local content remains unchanged".utf8)
+        try preservedBytes.write(to: preserved)
+        let store = try CaptureStore(root: existing)
+        for directory in [store.root] + ["Originals", "Staging", "Imports", "Deletions"].map({ store.root.appendingPathComponent($0) }) {
+            let permissions = try files.attributesOfItem(atPath: directory.path)[.posixPermissions] as? NSNumber
+            try expect(permissions?.intValue == 0o700, "Archive root and owned import directories are private to their owner")
+        }
+        try expect(try bytes(preserved) == preservedBytes, "Making the archive private does not rewrite or remove existing content")
+
+        let outside = root.appendingPathComponent("Outside directory")
+        try files.createDirectory(at: outside, withIntermediateDirectories: false)
+        try files.setAttributes([.posixPermissions: 0o755], ofItemAtPath: outside.path)
+        let external = outside.appendingPathComponent("External fictional content.txt")
+        try preservedBytes.write(to: external)
+        let outsideEntries = try files.contentsOfDirectory(atPath: outside.path)
+        let outsideMode = try files.attributesOfItem(atPath: outside.path)[.posixPermissions] as? NSNumber
+        let linkedRoot = root.appendingPathComponent("Linked archive", isDirectory: true)
+        try files.createSymbolicLink(at: linkedRoot, withDestinationURL: outside)
+        var rejected = false
+        do { _ = try CaptureStore(root: linkedRoot) } catch { rejected = true }
+        try expect(rejected, "An existing archive-root leaf symlink is rejected before creating metadata or managed folders")
+        try expect(try files.contentsOfDirectory(atPath: outside.path) == outsideEntries
+                   && bytes(external) == preservedBytes
+                   && (files.attributesOfItem(atPath: outside.path)[.posixPermissions] as? NSNumber) == outsideMode,
+                   "Rejecting the linked root preserves every external target entry, byte and permission")
+
+        let absent = root.appendingPathComponent("Absent target")
+        let danglingRoot = root.appendingPathComponent("Dangling archive", isDirectory: true)
+        try files.createSymbolicLink(at: danglingRoot, withDestinationURL: absent)
+        rejected = false
+        do { _ = try CaptureStore(root: danglingRoot) } catch { rejected = true }
+        try expect(rejected && !files.fileExists(atPath: absent.path), "A dangling archive-root link is preserved and its target is never created")
+        for child in ["Originals", "Staging", "Imports", "Deletions"] {
+            let blocked = root.appendingPathComponent("Dangling \(child)")
+            try files.createDirectory(at: blocked, withIntermediateDirectories: false)
+            let link = blocked.appendingPathComponent(child, isDirectory: true)
+            try files.createSymbolicLink(at: link, withDestinationURL: absent)
+            rejected = false
+            do { _ = try CaptureStore(root: blocked) } catch { rejected = true }
+            try expect(rejected && !files.fileExists(atPath: absent.path)
+                       && (try files.destinationOfSymbolicLink(atPath: link.path)) == absent.path,
+                       "A dangling owned \(child) directory link is rejected without changing the link or target")
+        }
+
+        let canonicalParent = URL(fileURLWithPath: "/private/tmp", isDirectory: true)
+            .appendingPathComponent("DaBinPrivateArchiveParent-\(UUID().uuidString)", isDirectory: true)
+        try files.createDirectory(at: canonicalParent, withIntermediateDirectories: false)
+        defer { try? files.removeItem(at: canonicalParent) }
+        let aliasParent = URL(fileURLWithPath: "/tmp", isDirectory: true).appendingPathComponent(canonicalParent.lastPathComponent)
+        let aliased = try CaptureStore(root: aliasParent.appendingPathComponent("Archive"))
+        try expect(aliased.root.path == canonicalParent.appendingPathComponent("Archive").standardizedFileURL.path,
+                   "The system /tmp parent alias remains supported while the archive leaf stays private")
     }
 
     @MainActor static func currentArchive(_ root: URL) async throws {

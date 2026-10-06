@@ -47,10 +47,8 @@ struct DailyScreen: View {
                     if state.receiptCaptures(for: state.selectedDay).isEmpty {
                         Text("Drop a file here, paste from the clipboard, or write a note.")
                             .font(.system(size: 12)).foregroundStyle(Palette.muted).multilineTextAlignment(.center)
-                        HStack(spacing: 12) {
-                            Button("Paste clipboard") { state.pasteClipboard() }
-                            Button("New note") { state.openNewNote() }
-                        }.font(.system(size: 12)).padding(.top, 10)
+                        Button("New note") { state.openNewNote() }
+                            .font(.system(size: 12)).padding(.top, 10)
                     } else {
                         Button("Show all captures") { state.filter = .all }
                             .buttonStyle(.plain).font(.system(size: 11)).foregroundStyle(accent)

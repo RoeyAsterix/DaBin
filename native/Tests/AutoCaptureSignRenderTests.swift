@@ -48,6 +48,15 @@ import QuartzCore
         defer { stage.stop(); host.orderOut(nil); host.contentView = nil; host.close() }
         let island = CGRect(x: 40, y: 132, width: 144, height: 34)
         let variation = AutoCaptureRobotVariation.standard
+        let historicalReactions: Set<String> = ["proud-raise", "oversized-unfold", "heavy-pull-down",
+            "wrong-side-flip", "spin-to-face", "gentle-bonk", "hang-and-climb", "checkmark-stamp",
+            "slide-overshoot", "proud-bow", "mechanical-billboard", "last-moment-catch"]
+        try expect(AutoCaptureSignReaction.allCases.count == 15
+                   && historicalReactions.isSubset(of: Set(AutoCaptureSignReaction.allCases.map(\.rawValue))),
+                   "Three companion celebrations preserve the twelve historical render reactions")
+        try expect(Set(AutoCaptureSignReaction.companionReactions.map(\.rawValue))
+                   == Set(["happy-nod", "happy-wiggle", "happy-raise"]),
+                   "Live companion saves rotate among the three requested readable gestures")
         for theme in [NSAppearance.Name.aqua, .darkAqua] {
             host.appearance = NSAppearance(named: theme)
             let name = theme == .aqua ? "light" : "dark"
@@ -72,8 +81,9 @@ import QuartzCore
                         try expect(!stage.signFrame.intersects(island), "Hardware cannot obscure the readable message")
                         try expect(stage.hasArmConnection && stage.nativeArmsAreHidden,
                                    "Jointed grip arms replace the normal arms, without duplicate hands")
-                        try expect(stage.signMessage == "Screenshot saved!" && stage.countText == "×3",
-                                   "The screenshot receipt and exact aggregate remain visible")
+                        try expect(stage.signMessage == "Saved 3 items" && stage.countText == "×3"
+                                   && stage.accessibilityStatus == "Saved 3 items",
+                                   "An aggregate reports its exact saved-item count visibly and accessibly")
                         try expect(stage.messageFontSize == 12, "Native twelve-point receipt remains readable")
                         try expect(stage.messageTextFrame.width >= stage.messageRequiredWidth
                                    && stage.countTextFrame.width >= stage.countRequiredWidth,
@@ -100,13 +110,53 @@ import QuartzCore
         }
         for count in [1, 3, 125, 1234, Int.max] {
             stage.updateReceipt(AutoCaptureSignReceipt(kind: .mixed, count: count))
-            try expect(stage.accessibilityStatus == (count == 1 ? "Capture saved" : "\(count) captures saved"),
+            try expect(stage.accessibilityStatus == (count == 1 ? "Capture saved" : "Saved \(count) items"),
                        "Accessible status preserves every successfully stored capture")
             try expect(stage.messageTextFrame.width >= stage.messageRequiredWidth
                        && (count == 1 || stage.countTextFrame.width >= stage.countRequiredWidth),
                        "Large counts remain fully legible without truncation")
             try render(stage, name: "mixed-count-\(count)", directory: directory)
         }
+        for kind in AutoCaptureSignKind.allCases {
+            stage.updateReceipt(AutoCaptureSignReceipt(kind: kind, count: 7))
+            try expect(stage.signMessage == "Saved 7 items" && stage.accessibilityStatus == "Saved 7 items",
+                       "Rapid saves use the same exact aggregate wording for \(kind.rawValue)")
+        }
+        stage.stop()
+        var openCount = 0
+        stage.onOpen = { openCount += 1 }
+        stage.begin(performance: AutoCaptureSignPerformance.make(reaction: .happyNod, variation: variation,
+                        entrance: .top, reduceMotion: false),
+                    receipt: AutoCaptureSignReceipt(kind: .mixed, count: 3), islandRect: island, accent: .systemPurple)
+        let steadyTarget = stage.interactionBounds
+        try expect(!steadyTarget.isEmpty && stage.bounds.contains(steadyTarget),
+                   "An interactive confirmation owns a bounded native target")
+        let clickPoint = CGPoint(x: steadyTarget.midX, y: steadyTarget.midY)
+        for time in [0.06, 0.38, 0.66, 0.95] {
+            stage.applySample(normalizedTime: time)
+            stage.layoutSubtreeIfNeeded()
+            try expect(stage.interactionBounds == steadyTarget && steadyTarget.contains(clickPoint)
+                       && stage.hitTest(stage.convert(clickPoint, to: stage.superview)) === stage,
+                       "Sign motion keeps the same target at normalized time \(time)")
+            let cameraPoint = CGPoint(x: island.midX, y: island.midY)
+            try expect(stage.hitTest(stage.convert(cameraPoint, to: stage.superview)) == nil,
+                       "Interactive confirmations preserve camera-housing pass-through")
+            try expect(stage.hitTest(stage.convert(CGPoint(x: 1, y: 1), to: stage.superview)) == nil,
+                       "The unused sign stage never becomes an invisible input blocker")
+        }
+        func click(_ count: Int) -> NSEvent {
+            NSEvent.mouseEvent(with: .leftMouseDown, location: stage.convert(clickPoint, to: nil),
+                modifierFlags: [], timestamp: Double(count), windowNumber: host.windowNumber, context: nil,
+                eventNumber: count, clickCount: count, pressure: 1)!
+        }
+        stage.hitTest(stage.convert(clickPoint, to: stage.superview))?.mouseDown(with: click(1))
+        try expect(openCount == 1, "One native confirmation click dispatches the immediate-open callback")
+        stage.mouseDown(with: click(2))
+        try expect(openCount == 1, "A second click in the same sequence does not dispatch another open")
+        stage.stop()
+        try expect(stage.hitTest(stage.convert(clickPoint, to: stage.superview)) == nil,
+                   "Stopped confirmations cannot retain an invisible native target")
+        stage.onOpen = nil
         stage.stop()
         try expect(!stage.hasActiveAnimations && stage.signMessage.isEmpty && stage.countText == nil,
                    "Final cleanup retains no transient receipt")

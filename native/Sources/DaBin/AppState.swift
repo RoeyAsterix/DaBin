@@ -300,12 +300,18 @@ final class AppState: ObservableObject {
             // Replacing all text briefly yields an empty value. Keep the
             // draft's destination until it is saved or explicitly canceled.
             if !newNoteText.isEmpty && newNoteDestination == nil {
-                newNoteDestination = ComposerDestination(projectName: composerProjectContext)
+                newNoteDestination = ComposerDestination(projectName: route == .inbox ? libraryProject : composerProjectContext)
             }
         }
     }
     @Published private var newNoteDestination: ComposerDestination?
     var newNoteProject: String? { newNoteDestination?.projectName }
+    var quickCaptureProject: String? {
+        // A draft owns its destination, including an explicit Unfiled choice.
+        if let destination = newNoteDestination { return destination.projectName }
+        return libraryProject
+    }
+    var quickCapturePlaceholder: String { "An Idea/Task for \(quickCaptureProject ?? "Unfiled")" }
     var newTaskProject: String? { newTaskDraft.destination?.projectName }
     @Published private var libraryProjectStorage: String?
     var libraryProject: String? {
@@ -606,7 +612,8 @@ final class AppState: ObservableObject {
         guard let snapshot = draftArchive.load() else { draftPersistenceError = draftArchive.recoveryError; return }
         // Older recovery files followed the selected Workspace project. Keep
         // that destination on migration and disclose it in the composer.
-        newNoteDestination = snapshot.noteDestination ?? ComposerDestination(projectName: libraryProject)
+        newNoteDestination = snapshot.note.isEmpty ? nil :
+            (snapshot.noteDestination ?? ComposerDestination(projectName: libraryProject))
         newNoteText = snapshot.note
         newTaskDraft.destination = snapshot.task.destination ?? ComposerDestination(projectName: libraryProject)
         newTaskDraft.text = snapshot.task.text
@@ -654,9 +661,9 @@ final class AppState: ObservableObject {
         customWeeklyDays ?? WeeklyDateSelection.trailingWeek(ending: weekEndingDay)
     }
     var isCustomWeekSelection: Bool { customWeeklyDays != nil }
-    /// Keep the chosen calendar dates visible even when a filter or an empty
-    /// day has no cards. Week is a stable overview of the complete selection.
-    var weeklyVisibleDays: [Date] { weeklyDays }
+    /// Keep the calendar selection intact, but only give dates with visible
+    /// cards a column. Use the feed's task placement and type-filter rules.
+    var weeklyVisibleDays: [Date] { weeklyDays.filter { !captures(for: $0).isEmpty } }
     var weeklyActiveDays: [Date] { weeklyDays.filter { !allCaptures(for: $0).isEmpty } }
 
     func allCaptures(for day: Date) -> [Capture] {

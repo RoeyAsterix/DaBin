@@ -33,14 +33,11 @@ struct CaptureCommentRemovalReceipt: Equatable, Sendable {
         let manager = FileManager.default
         let base = try requestedRoot ?? manager.url(for: .applicationSupportDirectory, in: .userDomainMask,
                                                     appropriateFor: nil, create: true).appendingPathComponent("DaBin", isDirectory: true)
-        try manager.createDirectory(at: base, withIntermediateDirectories: true)
+        try OriginalFileStorage.ensurePrivateDirectory(base)
         self.root = base.standardizedFileURL.resolvingSymlinksInPath()
         for directory in ["Originals", "Staging", "Imports", "Deletions"] {
             let url = self.root.appendingPathComponent(directory, isDirectory: true)
-            if manager.fileExists(atPath: url.path) {
-                let values = try url.resourceValues(forKeys: [.isSymbolicLinkKey, .isDirectoryKey])
-                guard values.isSymbolicLink != true, values.isDirectory == true else { throw CaptureStoreError.invalidManagedPath }
-            } else { try manager.createDirectory(at: url, withIntermediateDirectories: true) }
+            try OriginalFileStorage.ensurePrivateDirectory(url, withIntermediateDirectories: false)
         }
         self.repository = try CaptureRepository(root: self.root)
         self.archive = DailyArchive(root: self.root)
@@ -1329,6 +1326,9 @@ struct CaptureCommentRemovalReceipt: Equatable, Sendable {
                 let journal = try JSONDecoder().decode(ImportJournal.self, from: Data(contentsOf: journalURL))
                 // Treat journal paths as untrusted persisted input; IDs bind ownership and filenames.
                 guard journalURL.lastPathComponent == "\(journal.id.uuidString).json",
+                      journal.captureOriginRaw.map({ CaptureOrigin(rawValue: $0) != nil }) ?? true,
+                      !(journal.captureOriginRaw.flatMap(CaptureOrigin.init(rawValue:))?.isAutomatic ?? false)
+                        || journal.automaticActionID != nil,
                       isOwnedOriginalPath(journal.relativePath, id: journal.id, capturedAt: journal.capturedAt,
                           captureDay: journal.captureDay, utcOffset: journal.utcOffset, filename: journal.originalFilename, kind: journal.kind),
                       journal.stagingRelativePath == "Staging/\(journal.id.uuidString)/\(CaptureClassifier.storageFilename(journal.originalFilename))" else {

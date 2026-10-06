@@ -147,6 +147,103 @@ struct RobotPartTransform: Equatable {
     static let identity = RobotPartTransform()
 }
 
+/// A pointer encounter changes the artwork inside a fixed interaction target.
+/// Hands live in stage space: one keeps its purchase on the edge while the
+/// shoulders carry the character's weight and the other reaches for the cursor.
+struct RobotCompanionPose: Equatable {
+    var body = RobotPartTransform.identity
+    var head = RobotPartTransform.identity
+    var feet = RobotPartTransform.identity
+    var gaze = CGPoint.zero
+    var peekEyesOffset = CGPoint.zero
+    var leftHand = CGPoint.zero
+    var rightHand = CGPoint.zero
+    var grippingHandIndex = 0
+    var headOpacity: Float = 0
+    var torsoOpacity: Float = 0
+    var handOpacity: Float = 0
+    var peekEyeOpacity: Float = 0
+    var eyeBrightness: CGFloat = 1
+    var isExpressionOnly = false
+
+    static func make(revealProgress: CGFloat, pointer: CGPoint, entrance: RobotEntrance,
+                     expressionOnly: Bool, gripPoint: CGPoint? = nil) -> RobotCompanionPose {
+        func finite(_ value: CGFloat, fallback: CGFloat = 0) -> CGFloat {
+            value.isFinite ? value : fallback
+        }
+        func unit(_ value: CGFloat) -> CGFloat { min(1, max(0, finite(value))) }
+        func smooth(_ value: CGFloat) -> CGFloat {
+            let clamped = unit(value)
+            return clamped * clamped * (3 - 2 * clamped)
+        }
+        let progress = unit(revealProgress)
+        let pointer = CGPoint(x: min(1, max(-1, finite(pointer.x))),
+                              y: min(1, max(-1, finite(pointer.y))))
+        var pose = RobotCompanionPose()
+        pose.isExpressionOnly = expressionOnly
+        pose.grippingHandIndex = entrance == .right ? 1 : 0
+        let defaultGrip: CGPoint
+        switch entrance {
+        case .top: defaultGrip = CGPoint(x: 12, y: 20)
+        case .left: defaultGrip = CGPoint(x: 7, y: 31)
+        case .right: defaultGrip = CGPoint(x: 57, y: 31)
+        }
+        let grip = gripPoint.map { CGPoint(x: finite($0.x, fallback: defaultGrip.x),
+                                          y: finite($0.y, fallback: defaultGrip.y)) } ?? defaultGrip
+        pose.leftHand = grip
+        pose.rightHand = grip
+        // The first eyes appear immediately outside the contact edge, rather
+        // than floating at the full body's eventual face position.
+        let peekCenter: CGPoint
+        switch entrance {
+        case .top: peekCenter = CGPoint(x: 32, y: grip.y + 7)
+        case .left: peekCenter = CGPoint(x: grip.x + 14, y: grip.y - 6)
+        case .right: peekCenter = CGPoint(x: grip.x - 14, y: grip.y - 6)
+        }
+        pose.peekEyesOffset = CGPoint(x: peekCenter.x - 32, y: peekCenter.y - 36.17)
+        guard progress > 0 else { return pose }
+
+        pose.gaze = CGPoint(x: pointer.x * 2.1, y: pointer.y * 1.4)
+        pose.eyeBrightness = 1.12
+        if expressionOnly {
+            // Quiet Mode and Reduce Motion use one still, curious expression.
+            // Their approach threshold changes visibility, never body geometry.
+            pose.headOpacity = 1
+            pose.torsoOpacity = 1
+            pose.handOpacity = 0
+            return pose
+        }
+
+        let climb = smooth((progress - 0.30) / 0.70)
+        let anticipation = sin(min(1, max(0, (progress - 0.25) / 0.36)) * .pi)
+        let settle = sin(min(1, max(0, (progress - 0.65) / 0.35)) * .pi)
+        let hidden = entrance.hiddenTranslation
+        pose.body.translation = CGPoint(x: hidden.x * (1 - climb),
+                                        y: hidden.y * (1 - climb) + anticipation * 1.8 - settle * 1.2)
+        pose.body.scaleX = 1 + anticipation * 0.035
+        pose.body.scaleY = 1 - anticipation * 0.055
+        pose.body.rotationDegrees = entrance.revealRotationDegrees * (1 - climb) + pointer.x * 3.4 * climb
+        pose.head.translation = CGPoint(x: pointer.x * 1.1 * climb, y: pointer.y * 0.6 * climb)
+        pose.head.rotationDegrees = pointer.x * 4.5 * climb
+        pose.feet.translation.y = anticipation * 0.6 - settle * 1.8
+        pose.feet.rotationDegrees = -pointer.x * 4 * climb + settle * (entrance == .left ? -5 : 5)
+        pose.headOpacity = Float(smooth((progress - 0.25) / 0.34))
+        pose.torsoOpacity = Float(smooth((progress - 0.43) / 0.42))
+        pose.handOpacity = Float(smooth((progress - 0.32) / 0.25))
+        pose.peekEyeOpacity = Float(smooth(progress / 0.16) * (1 - smooth((progress - 0.25) / 0.34)))
+
+        let side: CGFloat = pose.grippingHandIndex == 0 ? 1 : -1
+        let shoulder = CGPoint(x: pose.grippingHandIndex == 0 ? 51.74 : 12.26, y: 40.58)
+        // A reach stays inside the fixed renderer stage, including its palm.
+        // Extending the native window would move the user's click destination.
+        let reach = CGPoint(x: min(60, max(4, shoulder.x + side * (8 + climb * 9) + pointer.x * 9 * climb)),
+                            y: shoulder.y + pointer.y * 11 * climb - 3 * climb)
+        if pose.grippingHandIndex == 0 { pose.rightHand = reach }
+        else { pose.leftHand = reach }
+        return pose
+    }
+}
+
 /// A value-only description of the target pose. It lets tests validate motion
 /// policy without creating an AppKit view or relying on animation timing.
 struct RobotMotionDescriptor: Equatable {

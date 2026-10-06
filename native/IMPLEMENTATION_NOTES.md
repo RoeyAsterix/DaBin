@@ -1,3 +1,13 @@
+## Current implementation —0.4.43 (98)
+
+The source candidate uses the compact Captions, Tasks and Projects controls, newest-first project browsing, selected-item export and a day/week project picker. Search accepts typing and native keyboard paste. The standalone Note editor shortcut is removed; saved project notes remain. The companion uses body gestures for successful captures and one click opens DaBin during motion.
+
+Auto Capture Pause is also a presentation boundary. CornerController consumes the emitted paused value before save/timer presenter visibility callbacks can read stale Published state. It cancels hover/peek/feedback, hides the robot/sign immediately and suppresses frame character decoration while retaining usable workspace content. Both presenters reject paused presentation; timer occurrences and escalation remain available after Resume. Monitoring settings and saved data are preserved.
+
+The prior security update skips marked sensitive clipboard payloads before reading, checks exclusions again before commit, protects screenshot-folder/file/backup access and validates direct-update transport, ZIP content and installer publication. Store builds exclude the direct updater. Optional manually saved website previews remain separately consented; no analytics or cloud sync was added.
+
+Final build 98 affected-scope verification passes 11 Store Release suites. Exact old 86→98 fictional production-core upgrade/save/reopen checks pass; no actual TestFlight replacement was performed. Latest local install 97 and last verified internal TestFlight build 86 remain separate from source 98. Current archive/upload status is in `../docs/qa/testflight-upgrade-0.4.43-98-2026-10-06/status.json`; signing needs human keychain authorization and no public App Store submission occurred. Earlier update notes below are historical.
+
 # Implementation notes
 
 ## Latest conversation takes precedence

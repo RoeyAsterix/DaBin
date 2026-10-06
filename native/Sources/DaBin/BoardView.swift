@@ -149,7 +149,7 @@ struct BoardView: View {
 
     @ViewBuilder private var routeContent: some View {
         switch state.route {
-        case .inbox: InboxScreen(state: state, showsNewTaskEntry: false)
+        case .inbox: InboxScreen(state: state)
         case .daily: DailyScreen(state: state)
         case .weekly: WeeklyScreen(state: state)
         case .library: LibraryScreen(state: state)
@@ -356,9 +356,7 @@ struct BoardView: View {
     private var timelineControls: some View {
         VStack(spacing: 4) {
             HStack(spacing: 4) {
-                if state.route == .inbox {
-                    Spacer(minLength: 0)
-                } else {
+                if isTimeline {
                     SmallIcon(symbol: "chevron.left", label: state.route == .weekly ? "Previous week" : "Previous day", size: 26) { moveTimeline(-1) }
                         .disabled(state.isNavigationBlocked)
                     Button { showCalendar.toggle() } label: {
@@ -381,7 +379,6 @@ struct BoardView: View {
                     SmallIcon(symbol: "chevron.right", label: state.route == .weekly ? "Next week" : "Next day", size: 26) { moveTimeline(1) }
                         .disabled(state.isNavigationBlocked || Calendar.current.isDateInToday(state.route == .weekly ? state.weekEndingDay : state.selectedDay))
                 }
-                timelineModeToggle
                 if isTimeline && !Calendar.current.isDateInToday(state.route == .weekly ? state.weekEndingDay : state.selectedDay) {
                     Button {
                         if state.route == .weekly { state.showCurrentWeek() } else { state.openDaily() }
@@ -391,7 +388,14 @@ struct BoardView: View {
                         .disabled(state.isNavigationBlocked)
                 }
             }
-            if isTimeline { CaptureFilterStrip(selection: $state.filter) }
+            HStack(spacing: 6) {
+                timelineModeToggle
+                CaptureFilterStrip(selection: $state.filter, spacing: 2)
+                Spacer(minLength: 0)
+            }
+            .accessibilityElement(children: .contain)
+            .accessibilityLabel("Captions views and type filters")
+            .accessibilityIdentifier("captions-toolbar")
         }
     }
 
@@ -402,7 +406,7 @@ struct BoardView: View {
                 Button { state.selectTimelineMode(mode) } label: {
                     Text(mode == .daily ? "Day" : "Week")
                         .font(.system(size: 12, weight: .semibold))
-                        .frame(width: mode == .daily ? 44 : 50, height: 30)
+                        .frame(width: 38, height: 32)
                         .contentShape(RoundedRectangle(cornerRadius: 7))
                 }.buttonStyle(.plain)
                     .foregroundStyle(selected ? accent : Palette.muted)
@@ -572,7 +576,7 @@ enum DaBinTutorialStep: String, CaseIterable, Identifiable {
         case .capture:
             return "This is the drop and quick-capture area. After the tour, drop text, links, files, images, or video here—or hover over me and paste."
         case .inbox:
-            return "Captions is the landing zone. These controls are where you paste the clipboard, import files, jot a note, or create a task."
+            return "Write an idea or task here. The input shows its project destination, and saved items appear in Projects. Use Day, Week, and the type filters to browse your captions."
         case .day:
             return "Day keeps captures in their real timeline. Use the highlighted switch to move between one day and the seven-day view."
         case .week:
@@ -619,7 +623,7 @@ enum DaBinTutorialStep: String, CaseIterable, Identifiable {
         case .welcome, .finish: return [.settingsTutorial, .routeBody]
         case .capture: return [.inboxComposer, .routeBody]
         case .projectRecording: return [.captureDestination, .projectPicker, .routeBody]
-        case .inbox: return [.inboxActions, .inboxComposer, .routeBody]
+        case .inbox: return [.inboxComposer, .routeBody]
         case .day: return [.timelineModes, .routeBody]
         case .week: return [.captureFilters, .timelineModes, .routeBody]
         case .captureActions: return [.captureActions, .captureFeed, .routeBody]

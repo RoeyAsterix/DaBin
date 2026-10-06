@@ -1,5 +1,6 @@
 import Foundation
 import CryptoKit
+import Darwin
 
 enum CaptureStoreError: LocalizedError {
     case emptyInput, directoryNotSupported, symbolicLinkNotSupported, invalidManagedPath
@@ -58,7 +59,19 @@ struct OriginalVerification: Sendable {
 /// File integrity and import receipt types, independent of metadata persistence.
 enum OriginalFileStorage {
     static func validateRegularFile(_ url: URL) throws {
-        let values = try url.resourceValues(forKeys: [.isSymbolicLinkKey, .isDirectoryKey, .isRegularFileKey, .isAliasFileKey])
+        guard url.isFileURL else { throw CaptureStoreError.invalidManagedPath }
+        // URL resource metadata is cached. Inspect the current directory entry
+        // as well, including dangling links and special files, without following
+        // a leaf link left in place of a previously validated original.
+        var entry = stat()
+        guard url.path.withCString({ Darwin.lstat($0, &entry) }) == 0 else { throw posixError() }
+        let type = entry.st_mode & S_IFMT
+        guard type != S_IFLNK else { throw CaptureStoreError.symbolicLinkNotSupported }
+        guard type != S_IFDIR else { throw CaptureStoreError.directoryNotSupported }
+        guard type == S_IFREG else { throw CaptureStoreError.invalidOriginal("This is not a regular file.") }
+        var current = url
+        current.removeAllCachedResourceValues()
+        let values = try current.resourceValues(forKeys: [.isSymbolicLinkKey, .isDirectoryKey, .isRegularFileKey, .isAliasFileKey])
         guard values.isSymbolicLink != true, values.isAliasFile != true else { throw CaptureStoreError.symbolicLinkNotSupported }
         guard values.isDirectory != true else { throw CaptureStoreError.directoryNotSupported }
         guard values.isRegularFile == true else { throw CaptureStoreError.invalidOriginal("This is not a regular file.") }
@@ -66,8 +79,18 @@ enum OriginalFileStorage {
 
     static func verify(_ url: URL) throws -> OriginalVerification {
         try validateRegularFile(url)
-        let handle = try FileHandle(forReadingFrom: url)
+        // Read a validated descriptor, rather than reopening a checked pathname
+        // with link-following semantics. Nonblocking open also prevents a FIFO
+        // substituted after validation from hanging the import/restore worker.
+        let descriptor = url.path.withCString { Darwin.open($0, O_RDONLY | O_NOFOLLOW | O_NONBLOCK) }
+        guard descriptor >= 0 else { throw posixError() }
+        let handle = FileHandle(fileDescriptor: descriptor, closeOnDealloc: true)
         defer { try? handle.close() }
+        var before = stat()
+        guard Darwin.fstat(descriptor, &before) == 0 else { throw posixError() }
+        guard before.st_mode & S_IFMT == S_IFREG else {
+            throw CaptureStoreError.invalidOriginal("This is not a regular file.")
+        }
         var hasher = SHA256()
         var size: Int64 = 0
         while try autoreleasepool(invoking: {
@@ -80,7 +103,45 @@ enum OriginalFileStorage {
             return true
         }) {
         }
+        var after = stat()
+        guard Darwin.fstat(descriptor, &after) == 0 else { throw posixError() }
+        guard before.st_dev == after.st_dev, before.st_ino == after.st_ino,
+              before.st_size == after.st_size, size == Int64(after.st_size),
+              before.st_mtimespec.tv_sec == after.st_mtimespec.tv_sec,
+              before.st_mtimespec.tv_nsec == after.st_mtimespec.tv_nsec,
+              before.st_ctimespec.tv_sec == after.st_ctimespec.tv_sec,
+              before.st_ctimespec.tv_nsec == after.st_ctimespec.tv_nsec else {
+            throw CaptureStoreError.importVerificationFailed
+        }
         return OriginalVerification(byteCount: size, sha256: hasher.finalize().map { String(format: "%02x", $0) }.joined())
     }
 
+    /// DaBin-owned roots are private directories, never symbolic-link redirects.
+    /// Parent system aliases such as /tmp remain usable; only the requested leaf
+    /// is constrained. The descriptor binds chmod to the inspected directory.
+    static func ensurePrivateDirectory(_ url: URL, withIntermediateDirectories: Bool = true) throws {
+        guard url.isFileURL else { throw CaptureStoreError.invalidManagedPath }
+        var entry = stat()
+        let exists = url.path.withCString { Darwin.lstat($0, &entry) } == 0
+        if exists {
+            guard entry.st_mode & S_IFMT == S_IFDIR else { throw CaptureStoreError.invalidManagedPath }
+        } else {
+            guard errno == ENOENT else { throw posixError() }
+            try FileManager.default.createDirectory(at: url, withIntermediateDirectories: withIntermediateDirectories,
+                                                    attributes: [.posixPermissions: 0o700])
+        }
+        let descriptor = url.path.withCString { Darwin.open($0, O_RDONLY | O_DIRECTORY | O_NOFOLLOW | O_NONBLOCK) }
+        guard descriptor >= 0 else { throw posixError() }
+        defer { Darwin.close(descriptor) }
+        var opened = stat()
+        guard Darwin.fstat(descriptor, &opened) == 0 else { throw posixError() }
+        guard opened.st_mode & S_IFMT == S_IFDIR, opened.st_uid == Darwin.geteuid() else {
+            throw CaptureStoreError.invalidManagedPath
+        }
+        guard Darwin.fchmod(descriptor, mode_t(0o700)) == 0 else { throw posixError() }
+    }
+
+    private static func posixError() -> NSError {
+        NSError(domain: NSPOSIXErrorDomain, code: Int(errno), userInfo: nil)
+    }
 }

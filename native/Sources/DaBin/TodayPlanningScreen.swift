@@ -3,6 +3,7 @@ import SwiftUI
 @MainActor
 struct TodayPlanningScreen: View {
     @Environment(\.workspaceZoom) private var zoom
+    @Environment(\.daBinAccent) private var accent
     @ObservedObject var state: AppState
     private var scope: String {
         get { state.todayPlanningScope }
@@ -39,37 +40,8 @@ struct TodayPlanningScreen: View {
     }
     var body: some View {
         VStack(spacing: 0) {
-            VStack(alignment: .leading, spacing: 6) {
-                HStack {
-                    Text("Tasks").font(.system(size: 14, weight: .semibold))
-                    Spacer(minLength: 0)
-                    BuddyIconButton(symbol: "plus.circle", title: "Add task for today") {
-                        state.openNewTask(); state.newTaskDraft.planning.plannedDay = todayKey
-                    }.accessibilityIdentifier("today-add-task")
-                }
-                HStack {
-                    Menu {
-                        Button("All projects", systemImage: "square.stack.3d.up") { state.libraryProject = nil }
-                        ForEach(projects, id: \.self) { project in Button(project, systemImage: "folder") { state.libraryProject = project } }
-                    } label: {
-                        Label("Plan: \(state.libraryProject ?? "All projects")", systemImage: "folder")
-                            .lineLimit(1).truncationMode(.tail)
-                    }
-                        .menuStyle(.borderlessButton).font(.system(size: 12))
-                        .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
-                        .accessibilityLabel("Work plan project, \(state.libraryProject ?? "all projects")")
-                        .accessibilityIdentifier("today-project-picker")
-                        .buddyHelp(state.libraryProject ?? "Show tasks from all projects")
-                    Spacer(minLength: 0)
-                    Text("\(planned.count) planned\(effortLabel)").font(.system(size: 11)).foregroundStyle(Palette.muted)
-                        .fixedSize().accessibilityIdentifier("today-plan-summary")
-                }
-                Picker("Work plan view", selection: Binding(get: { scope }, set: { scope = $0 })) {
-                    Text("Today").tag("today")
-                    Text("Upcoming").tag("later")
-                    Text("Completed").tag("done")
-                }.pickerStyle(.segmented).accessibilityLabel("Work plan view").accessibilityIdentifier("task-view-scope")
-            }.padding(.horizontal, 14).padding(.vertical, 8)
+            toolbar
+                .padding(.horizontal, 14).padding(.vertical, 8)
                 .daBinTutorialAnchor(.todayControls)
             ScrollViewReader { proxy in
             ScrollView {
@@ -104,6 +76,52 @@ struct TodayPlanningScreen: View {
             }
         }
     }
+    private var toolbar: some View {
+        HStack(spacing: 6) {
+            Menu {
+                Button("All projects", systemImage: state.libraryProject == nil ? "checkmark" : "square.stack.3d.up") {
+                    state.libraryProject = nil
+                }
+                ForEach(projects, id: \.self) { project in
+                    Button(project, systemImage: state.libraryProject == project ? "checkmark" : "folder") {
+                        state.libraryProject = project
+                    }
+                }
+            } label: {
+                Image(systemName: "folder").frame(width: 32, height: 32)
+                    .background(state.libraryProject == nil ? Color.clear : accent.opacity(0.13), in: RoundedRectangle(cornerRadius: 8))
+                    .contentShape(Rectangle())
+            }.menuStyle(.borderlessButton).menuIndicator(.hidden).fixedSize()
+                .foregroundStyle(state.libraryProject == nil ? Palette.muted : accent)
+                .accessibilityLabel("Work plan project, \(state.libraryProject ?? "all projects")")
+                .accessibilityIdentifier("today-project-picker")
+                .buddyHelp(state.libraryProject ?? "Show tasks from all projects")
+            HStack(spacing: 2) {
+                scopeButton("Today", symbol: "sun.max", value: "today")
+                scopeButton("Upcoming", symbol: "calendar.badge.clock", value: "later")
+                scopeButton("Completed", symbol: "checkmark.circle", value: "done")
+            }.fixedSize()
+                .accessibilityElement(children: .contain).accessibilityLabel("Task views")
+                .accessibilityIdentifier("task-view-scope")
+            Text("\(planned.count) planned\(effortLabel)")
+                .font(.system(size: 11)).foregroundStyle(Palette.muted)
+                .lineLimit(1).truncationMode(.tail)
+                .frame(maxWidth: .infinity, alignment: .trailing)
+                .accessibilityIdentifier("today-plan-summary")
+            BuddyIconButton(symbol: "plus", title: "Add task for today") {
+                state.openNewTask(); state.newTaskDraft.planning.plannedDay = todayKey
+            }.background(accent.opacity(0.1), in: RoundedRectangle(cornerRadius: 8))
+                .accessibilityIdentifier("today-add-task")
+        }.font(.system(size: 12))
+            .accessibilityElement(children: .contain).accessibilityLabel("Task controls")
+            .accessibilityIdentifier("today-toolbar")
+    }
+
+    private func scopeButton(_ title: String, symbol: String, value: String) -> some View {
+        BuddyIconButton(symbol: symbol, title: title, isActive: scope == value) { scope = value }
+            .accessibilityIdentifier("task-view-" + value)
+    }
+
     @ViewBuilder private var capturedToday: some View {
         let receipts = state.currentTodayCaptures
         HStack {

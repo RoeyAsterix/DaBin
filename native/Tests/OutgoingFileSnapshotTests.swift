@@ -254,6 +254,40 @@ import Foundation
         withExtendedLifetime((exact, shortened, maximum)) {}
     }
 
+    static func staleOriginalValidation(root: URL) throws {
+        try directory(root)
+        let outside = root.appendingPathComponent("External fictional secret.txt")
+        let bytes = Data("External fictional content must remain untouched".utf8)
+        try bytes.write(to: outside)
+        var cached = root.appendingPathComponent("Previously regular.txt")
+        try Data("Former source".utf8).write(to: cached)
+        _ = try cached.resourceValues(forKeys: [.isSymbolicLinkKey, .isDirectoryKey, .isRegularFileKey, .isAliasFileKey])
+        // Reproduce a caller carrying cached regular-file metadata even though
+        // the directory entry changed after the original UI selection.
+        cached.setTemporaryResourceValue(false, forKey: .isSymbolicLinkKey)
+        cached.setTemporaryResourceValue(false, forKey: .isDirectoryKey)
+        cached.setTemporaryResourceValue(true, forKey: .isRegularFileKey)
+        cached.setTemporaryResourceValue(false, forKey: .isAliasFileKey)
+        try files.removeItem(at: cached)
+        try files.createSymbolicLink(at: cached, withDestinationURL: outside)
+        try rejects("Regular-file validation rejects a replacement link despite cached metadata") {
+            try OriginalFileStorage.validateRegularFile(cached)
+        }
+        try rejects("Original hashing rejects a replacement link despite cached metadata") {
+            _ = try OriginalFileStorage.verify(cached)
+        }
+        try expect(try Data(contentsOf: outside) == bytes,
+                   "Validation and hashing leave the external target unchanged")
+        try rejects("Original verification accepts only local file URLs") {
+            _ = try OriginalFileStorage.verify(URL(string: "https://example.invalid/fictional.txt")!)
+        }
+        let ordinary = root.appendingPathComponent("Regular original.txt")
+        try bytes.write(to: ordinary)
+        let verification = try OriginalFileStorage.verify(ordinary)
+        try expect(verification.byteCount == Int64(bytes.count) && verification.sha256.count == 64,
+                   "Descriptor-based verification still hashes the complete regular original")
+    }
+
     static func expiryBoundaries(root: URL, now: Date) throws {
         let staging = root.appendingPathComponent("Snapshots")
         let source = root.appendingPathComponent("Fictional.bin")
@@ -398,6 +432,7 @@ import Foundation
         try snapshotIsolation(root: root.appendingPathComponent("Isolation"), now: now)
         try failedPreparation(root: root.appendingPathComponent("Rejections"), now: now)
         try filenameOverrides(root: root.appendingPathComponent("Filename overrides"), now: now)
+        try staleOriginalValidation(root: root.appendingPathComponent("Stale original metadata"))
         try expiryBoundaries(root: root.appendingPathComponent("Expiry"), now: now)
         try conservativeCleanup(root: root.appendingPathComponent("Conservative cleanup"), now: now)
         print("PASS: \(checks) outgoing snapshot immutability, filename and metadata override, publisher lifetime, unsafe-source rejection, failed-publication, retention, active-lease, and conservative-cleanup checks")

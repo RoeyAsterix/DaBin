@@ -20,6 +20,29 @@ import SwiftUI
     func removeDelivered(_ identifiers: [String]) { }
 }
 
+/// One retained host follows the production zoom model. Descendants receive
+/// BoardView's real content environment rather than a freshly replaced root
+/// or a second independently rendered card for each measurement.
+@MainActor private struct ProjectWorkspaceLiveZoomFixture: View {
+    let state: AppState
+    let project: String
+    let pasteboard: NSPasteboard
+    @ObservedObject private var zoom: WorkspaceZoomSettings
+
+    init(state: AppState, project: String, pasteboard: NSPasteboard) {
+        self.state = state; self.project = project; self.pasteboard = pasteboard
+        _zoom = ObservedObject(wrappedValue: state.workspaceZoom)
+    }
+
+    var body: some View {
+        ProjectWorkspaceView(state: state, project: project, pasteboard: pasteboard,
+            chooseExportDestination: { _ in nil })
+            .environment(\.workspaceZoom, WorkspaceZoomLayout(factor: zoom.factor, isInteracting: zoom.isInteracting))
+            .environment(\.daBinTooltipsEnabled, false).environment(\.displayScale, 2).preferredColorScheme(.light)
+            .transaction { $0.animation = nil; $0.disablesAnimations = true }
+    }
+}
+
 @MainActor private struct ProjectWorkspaceAX {
     let object: NSObject
     private func value(_ name: String) -> Any? {
@@ -51,6 +74,12 @@ import SwiftUI
             return window.convertToScreen(view.convert(view.bounds, to: nil))
         }
         return frame
+    }
+    var isEnabled: Bool {
+        let selector = NSSelectorFromString("isAccessibilityEnabled")
+        guard object.responds(to: selector) else { return false }
+        typealias Getter = @convention(c) (AnyObject, Selector) -> Bool
+        return unsafeBitCast(object.method(for: selector), to: Getter.self)(object, selector)
     }
     func press() -> Bool {
         let selector = NSSelectorFromString("accessibilityPerformPress")
@@ -194,8 +223,9 @@ import SwiftUI
         let action = try await find("project-export", in: view)
         let label = action.label.replacingOccurrences(of: ",", with: "")
             .replacingOccurrences(of: "\u{202f}", with: "")
-        let expected = selectedCount == 0 ? "Export project" : "Export selected (\(selectedCount))"
-        try expect(label == expected, "Export states its current scope: \(label), expected \(expected)")
+        try expect(label == "Export Selected", "Export keeps its clear selection-only label: \(label)")
+        try expect(action.isEnabled == (selectedCount > 0),
+            "Export is enabled exactly when visible items are selected (\(selectedCount))")
         try expect(action.role == "AXButton", "Export is one direct button rather than another menu")
         let available = nodes(in: view).filter { $0.frame.width > 0 && $0.frame.height > 0 }
         let exportFrames = Set(available.filter { $0.identifier == "project-export" }.map { NSStringFromRect($0.frame) })
@@ -205,6 +235,108 @@ import SwiftUI
                 || ["Copy project", "Copy", "Export ZIP"].contains($0.label)
         }, "Separate project/selection export buttons and standalone copy menus are absent")
         _ = try await find("project-actions", in: view)
+    }
+
+    private static func checkWrittenSelection(_ destination: URL, in view: NSView,
+                                              document: ProjectWorkspaceExportDocument,
+                                              image: Capture, original: Data, text: Capture,
+                                              notes: String, excluded: [Capture]) async throws {
+        for _ in 0..<100 where !FileManager.default.fileExists(atPath: destination.path) {
+            try await Task.sleep(for: .milliseconds(35))
+        }
+        try expect(FileManager.default.fileExists(atPath: destination.path),
+            "Pressing the native selected export button publishes the chosen ZIP destination")
+        try await settle(view)
+        try await checkExportAction(in: view, selectedCount: 3)
+        let unpacked = destination.deletingLastPathComponent().appendingPathComponent("Selected-unpacked")
+        let extract = Process()
+        extract.executableURL = URL(fileURLWithPath: "/usr/bin/ditto")
+        extract.arguments = ["-x", "-k", destination.path, unpacked.path]
+        try extract.run(); extract.waitUntilExit()
+        try expect(extract.terminationStatus == 0, "The button's ZIP opens with macOS's native ZIP reader")
+        let bundle = unpacked.appendingPathComponent("DaBin project")
+        let manifestData = try Data(contentsOf: bundle.appendingPathComponent("manifest.json"))
+        guard let manifest = try JSONSerialization.jsonObject(with: manifestData) as? [String: Any],
+              let items = manifest["items"] as? [[String: Any]],
+              let content = manifest["content"] as? [[String: Any]] else {
+            throw failure("Native selection export must contain a readable manifest")
+        }
+        try expect(manifest["scope"] as? String == "selection"
+            && items.compactMap { $0["id"] as? String } == [image.id.uuidString, text.id.uuidString]
+            && manifest["orderedItemIDs"] as? [String] == document.orderedItemIDs,
+            "The written manifest includes exactly checked captures and their selected live-note position")
+        try expect(manifest["notesPath"] as? String == "Notes.md" && content.count == 2,
+            "The selected live note is included once alongside exactly two capture payloads")
+        let itemFiles = try FileManager.default.contentsOfDirectory(at: bundle.appendingPathComponent("Items"),
+            includingPropertiesForKeys: nil).map(\.lastPathComponent)
+        try expect(Set(itemFiles) == Set(document.items.map { URL(fileURLWithPath: $0.contentPath).lastPathComponent }),
+            "The ZIP has no hidden or unchecked capture files")
+        let exportedImage = document.items.first { $0.id == image.id }!
+        let exportedText = document.items.first { $0.id == text.id }!
+        try expect(try Data(contentsOf: bundle.appendingPathComponent(exportedImage.contentPath)) == original,
+            "Native selected export preserves the original checked image bytes")
+        try expect(try String(contentsOf: bundle.appendingPathComponent(exportedText.contentPath), encoding: .utf8) == text.originalText,
+            "Native selected export preserves the exact checked capture text")
+        try expect(try String(contentsOf: bundle.appendingPathComponent("Notes.md"), encoding: .utf8) == notes,
+            "Native selected export preserves the exact checked live note")
+        let summary = try String(contentsOf: bundle.appendingPathComponent("Project.md"), encoding: .utf8)
+        let manifestText = String(decoding: manifestData, as: UTF8.self)
+        try expect(summary == document.summary && summary.contains("Scope: Selected items")
+            && excluded.allSatisfy { capture in
+                !manifestText.contains(capture.id.uuidString)
+                    && !summary.contains(capture.originalText ?? capture.title)
+            }, "The ZIP summary and manifest exclude unchecked project content and unrelated projects")
+    }
+
+    private static func checkToolbar(in view: NSView) async throws {
+        guard let window = view.window else { throw failure("Project toolbar needs its fixture window") }
+        let boundary = window.convertToScreen(view.bounds).insetBy(dx: -1, dy: -1)
+        let menuIDs: Set<String> = ["project-filter-menu", "project-actions"]
+        var controls: [ProjectWorkspaceAX] = []
+        for identifier in ["project-search", "project-filter-menu", "project-date-filter",
+                           "project-view-toggle", "project-export", "project-actions"] {
+            _ = try await find(identifier, in: view)
+            let matches = nodes(in: view).filter { $0.identifier == identifier }
+            let diagnostic = matches.map {
+                "\(type(of: $0.object)) [\($0.role)] AX=\(NSStringFromRect($0.frame)), hit=\(NSStringFromRect($0.interactionFrame)), actions=\($0.actions)"
+            }.joined(separator: "; ")
+            // An identifier may also reach an image descendant. Inspect the
+            // actionable button rather than its decorative label.
+            guard let control = matches.first(where: {
+                ["AXButton", "AXMenuButton", "AXPopUpButton"].contains($0.role)
+                    || $0.actions.contains("AXPress") || $0.actions.contains("AXShowMenu")
+            }) else { throw failure("Toolbar \(identifier) has no actionable control: \(diagnostic)") }
+            let frame = control.interactionFrame
+            try expect(control.frame.width > 0 && control.frame.height > 0 && boundary.contains(control.frame)
+                && frame.width > 0 && frame.height > 0 && boundary.contains(frame),
+                "Toolbar control \(identifier) fits the \(Int(view.bounds.width))-point project: \(diagnostic)")
+            if menuIDs.contains(identifier) {
+                // Native borderless menu cells use intrinsic symbol-sized
+                // hosts. Their real action is exercised by nativeMenu below,
+                // separately from icon Buttons' minimum hit-target checks.
+                try expect(control.actions.contains("AXPress") || control.actions.contains("AXShowMenu")
+                    || control.object.responds(to: NSSelectorFromString("accessibilityPerformPress")),
+                    "Native toolbar menu \(identifier) retains an accessible action: \(diagnostic)")
+            } else {
+                try expect(frame.width >= 24 && frame.height >= 24,
+                    "Toolbar button \(identifier) retains a usable hit target: \(diagnostic)")
+            }
+            controls.append(control)
+        }
+        guard let export = controls.first(where: { $0.identifier == "project-export" }) else {
+            throw failure("Toolbar has no export control")
+        }
+        // AX frames describe rendered controls. Native popup backing views
+        // include an invisible left inset that is not a visible overlap.
+        try expect(controls.allSatisfy { abs($0.frame.midY - export.frame.midY) <= 1 },
+            "Search, filters, date, list/grid, export, and actions share one line at width \(Int(view.bounds.width))")
+        let horizontal = controls.map(\.frame).sorted { $0.minX < $1.minX }
+        try expect(zip(horizontal, horizontal.dropFirst()).allSatisfy { $0.0.maxX <= $0.1.minX + 1 },
+            "The single project toolbar has distinct, nonoverlapping controls")
+        try expect(!nodes(in: view).contains {
+            ["project-sort-order", "project-sort-custom", "project-sort-newest", "project-reorder-selection"].contains($0.identifier ?? "")
+                || $0.label == "My order" || $0.label == "Reorder selected items"
+        }, "Project sorting and selection expose no manual-order controls")
     }
 
     private static func nativeViews(in view: NSView) -> [NSView] {
@@ -222,7 +354,7 @@ import SwiftUI
     }
 
     private static func checkNativeProjectDrag(in view: NSView, label: String, expected: [ProjectWorkspaceItem],
-                                               reorder: Bool, store: CaptureStore) async throws {
+                                               store: CaptureStore) async throws {
         let source = try await dragSource(label: label, in: view)
         // This is the closure installed by the production project card and
         // workspace, rather than a second implementation of their selection.
@@ -233,12 +365,8 @@ import SwiftUI
         try expect(writers.count == expected.count, "Rendered project drag supplies one native writer per checked capture or live note")
         let marker = NSPasteboard.PasteboardType("com.dabin.project-item-order")
         let marked = writers.filter { $0.writableTypes(for: pasteboard).contains(marker) }
-        try expect(marked.count == (reorder ? 1 : 0),
-            "Project reorder marker appears once in My order and is absent outside the reorder scope")
-        if reorder {
-            try expect(writers[0].pasteboardPropertyList(forType: marker) as? Data == Data("reorder".utf8),
-                "Reordering supplements the first item's public content with an explicit local marker")
-        }
+        try expect(marked.isEmpty,
+            "Newest-first project drags contain public item payloads without a manual-reorder marker")
         for (writer, item) in zip(writers, expected) {
             switch item {
             case .capture(let capture):
@@ -292,6 +420,61 @@ import SwiftUI
     private static func press(_ identifier: String, in view: NSView, message: String) async throws {
         let node = try await find(identifier, in: view)
         try expect(node.press(), message)
+    }
+
+    private static func calendarPopover() -> (window: NSWindow, content: NSView)? {
+        for window in NSApp.windows where window.isVisible {
+            guard let content = window.contentView,
+                  nodes(in: content).contains(where: { $0.identifier == "project-date-picker" }) else { continue }
+            return (window, content)
+        }
+        return nil
+    }
+
+    private static func openCalendar(_ host: NSView) async throws -> (window: NSWindow, content: NSView) {
+        try await press("project-date-filter", in: host, message: "Project calendar opens through its native toolbar button")
+        for _ in 0..<8 {
+            if let popup = calendarPopover() {
+                try expect(popup.window !== host.window, "Project dates open in one anchored popover, leaving the project window available")
+                try await settle(popup.content)
+                return popup
+            }
+            try await settle(host)
+        }
+        throw failure("Project date button did not open its real calendar popover")
+    }
+
+    private static func chooseCalendarAction(_ identifier: String, in host: NSView) async throws {
+        let popup = try await openCalendar(host)
+        try await press(identifier, in: popup.content, message: "Calendar \(identifier) performs its real selection action")
+        for _ in 0..<8 where calendarPopover() != nil { try await settle(host) }
+        try expect(calendarPopover() == nil, "A project date selection dismisses its calendar immediately")
+        try await settle(host)
+    }
+
+    private static func checkCalendarGeometry(_ popup: (window: NSWindow, content: NSView)) async throws {
+        let picker = try await find("project-date-picker", in: popup.content)
+        try expect(picker.frame.width > 0 && picker.frame.width <= 316 && picker.frame.height <= 440,
+            "Project calendar stays compact: \(picker.frame)")
+        let day = try await find("project-date-mode-day", in: popup.content)
+        let week = try await find("project-date-mode-week", in: popup.content)
+        try expect(abs(day.frame.midY - week.frame.midY) <= 1 && day.frame.maxX <= week.frame.minX + 1,
+            "Day and Week share a distinct aligned mode row")
+        for identifier in ["project-date-mode-day", "project-date-mode-week", "project-calendar-prev",
+                           "project-calendar-next", "project-date-any", "project-date-today", "project-date-this-week"] {
+            let control = try await find(identifier, in: popup.content)
+            let frame = control.interactionFrame
+            try expect(frame.width >= 24 && frame.height >= 24
+                && popup.window.frame.insetBy(dx: -1, dy: -1).contains(frame),
+                "Calendar control \(identifier) has a visible usable hit target: \(frame)")
+        }
+        let days = nodes(in: popup.content).filter {
+            $0.identifier?.hasPrefix("project-calendar-day-") == true && $0.role == "AXButton"
+        }
+        try expect(days.count >= 28 && days.count <= 42, "The calendar exposes one bounded month of individual date buttons")
+        try expect(days.allSatisfy { $0.interactionFrame.width >= 24 && $0.interactionFrame.height >= 24
+            && popup.window.frame.insetBy(dx: -1, dy: -1).contains($0.interactionFrame) },
+            "Every calendar date remains a reachable native button inside its compact popover")
     }
 
     private static func clearSelection(in view: NSView) async throws {
@@ -351,12 +534,8 @@ import SwiftUI
 
     private static func checkScrolledInsertions(_ view: NSView, state: AppState, project: String,
                                                 imageID: UUID, existingCount: Int) async throws -> Int {
-        // Remove the key altogether: an explicitly saved empty sequence still
-        // selects manual ordering, unlike a never-reordered project.
-        // New captures must prepend without rebuilding every full grid row.
-        var initialWorkspace = state.workspace.snapshot
-        initialWorkspace.projectItemOrders?.removeValue(forKey: WorkspaceSnapshot.projectKey(project))
-        try state.workspace.save(initialWorkspace)
+        // The old saved manual order stays on disk. Arriving captures still
+        // prepend in newest-first order without rebuilding every full grid row.
         state.openLibrary()
         try await settle(view)
         guard let table = table(in: view), let scroll = table.enclosingScrollView else {
@@ -521,7 +700,14 @@ import SwiftUI
         let imageID = ProjectWorkspaceIdentity.capture(image.id)
         let textID = ProjectWorkspaceIdentity.capture(text.id)
         let noteID = ProjectWorkspaceIdentity.note(project: project)
-        let initialOrder = [imageID, textID, noteID] + seeded.dropFirst().map { ProjectWorkspaceIdentity.capture($0.id) }
+        // Pin the live note between the two newest captures, then restore a
+        // conflicting legacy manual order. The UI must still
+        // render, drag, copy, and export in newest-first order.
+        var legacyWorkspace = state.workspace.snapshot
+        legacyWorkspace.scratchpads[WorkspaceSnapshot.projectKey(project)]?.updatedAt = at.addingTimeInterval(-1.5)
+        try state.workspace.save(legacyWorkspace)
+        let initialOrder = Array(([imageID, textID, noteID]
+            + seeded.dropFirst().map { ProjectWorkspaceIdentity.capture($0.id) }).reversed())
         try state.workspace.saveProjectItemOrder(initialOrder, project: project)
         let encoder = JSONEncoder(); encoder.outputFormatting = [.sortedKeys]
         let before = try Dictionary(uniqueKeysWithValues: store.captures.map { ($0.id, try encoder.encode(CaptureSnapshot($0))) })
@@ -536,8 +722,9 @@ import SwiftUI
         let clipboard = NSPasteboard(name: .init("DaBin.ProjectActionsQA.\(UUID().uuidString)"))
         defer { clipboard.releaseGlobally() }
         var preparedExports: [ProjectWorkspaceExportDocument] = []
+        var exportDestination: URL?
         let hosting = NSHostingView(rootView: ProjectWorkspaceView(state: state, project: project, pasteboard: clipboard,
-            chooseExportDestination: { document in preparedExports.append(document); return nil })
+            chooseExportDestination: { document in preparedExports.append(document); return exportDestination })
             .environment(\.daBinTooltipsEnabled, false).environment(\.displayScale, 2).preferredColorScheme(.light)
             .transaction { $0.animation = nil; $0.disablesAnimations = true })
         hosting.frame = CGRect(x: 0, y: 0, width: 1_080, height: 760)
@@ -566,17 +753,17 @@ import SwiftUI
         try expect(!nodes(in: hosting).contains {
             $0.frame.width > 0 && ($0.label == project || $0.label.contains("One place for your project"))
         }, "The project grid does not repeat the dropdown's project name or the removed tagline")
+        try await checkToolbar(in: hosting)
         try saveFixtureImage(hosting, filename: "project-grid-wide@2x.png", directory: fixtures)
 
         let initialSelection = try await selectionText(in: hosting)
         try expect(initialSelection.contains("1002") && !initialSelection.contains("selected"),
                    "Project starts unselected and includes all captures plus its one live note")
         try await checkExportAction(in: hosting)
-        try await press("project-export", in: hosting, message: "Whole-project export directly prepares a destination choice")
+        _ = try await find("project-export", in: hosting).press()
         try await settle(hosting)
-        try expect(preparedExports.count == 1 && preparedExports.last?.scope == .project
-            && preparedExports.last?.itemCount == 1_002 && preparedExports.last?.notes != nil,
-            "The direct project action includes every capture and the live project note")
+        try expect(preparedExports.isEmpty,
+            "An empty selection cannot open the ZIP chooser or fall back to the whole project")
         try expect(!nodes(in: hosting).contains { $0.identifier == "project-make-tasks" && $0.frame.width > 0 },
                    "Bulk conversion controls remain hidden until selection")
         let filePreview = try await find("project-preview-" + imageID, in: hosting)
@@ -602,18 +789,31 @@ import SwiftUI
         try await checkExportAction(in: hosting, selectedCount: 2)
         try await press("project-export", in: hosting, message: "The same export action directly prepares the selected items")
         try await settle(hosting)
-        try expect(preparedExports.count == 2 && preparedExports.last?.scope == .selection
+        try expect(preparedExports.count == 1 && preparedExports.last?.scope == .selection
             && preparedExports.last?.itemCount == 2 && preparedExports.last?.notes == nil
             && Set(preparedExports.last?.items.map(\.id) ?? []) == Set([image.id, text.id]),
             "Selected export includes exactly the two checked captures, with no unselected live note")
         try expect(state.route == .library, "Selecting cards never opens capture details")
         try await press("project-select-" + noteID, in: hosting, message: "Live project notes can join a capture and image selection")
         try await settle(hosting)
-        let liveNote = WorkspaceScratchpad(text: state.workspace.scratchpad(project: project), projectName: project, updatedAt: at)
+        let liveNote = WorkspaceScratchpad(text: state.workspace.scratchpad(project: project),
+            projectName: project, updatedAt: at.addingTimeInterval(-1.5))
+        let selectedZIP = root.appendingPathComponent("Selected.zip")
+        exportDestination = selectedZIP
+        try await press("project-export", in: hosting,
+            message: "Checked image, text and live notes export directly to one selected ZIP")
+        exportDestination = nil
+        try expect(preparedExports.count == 2 && preparedExports.last?.scope == .selection
+            && preparedExports.last?.itemCount == 3 && preparedExports.last?.notes == liveNote.text,
+            "Native selected export prepares exactly the three checked items")
+        guard let writtenSelection = preparedExports.last else { throw failure("Native selected ZIP document missing") }
+        try await checkWrittenSelection(selectedZIP, in: hosting, document: writtenSelection,
+            image: image, original: original, text: text, notes: liveNote.text, excluded: [seeded[1], other])
         try await checkNativeProjectDrag(in: hosting, label: image.title,
-            expected: [.capture(image), .capture(text), .note(liveNote)], reorder: true, store: store)
+            expected: [.capture(image), .capture(text), .note(liveNote)], store: store)
         try await settle(hosting)
         try await clearSelection(in: hosting)
+        try await checkExportAction(in: hosting)
 
         let selectAll = try await find("project-select-all", in: hosting)
         try expect(selectAll.press(), "Select all performs its real accessibility action")
@@ -621,6 +821,14 @@ import SwiftUI
         let allSelected = try await selectionText(in: hosting)
         try expect(allSelected.contains("1002 selected"), "Select all includes the complete project and live note, never other projects")
         try await checkExportAction(in: hosting, selectedCount: 1_002)
+        try await press("project-export", in: hosting,
+            message: "Explicitly selecting all exports all checked items through the selection-only button")
+        try await settle(hosting)
+        try expect(preparedExports.count == 3 && preparedExports.last?.scope == .selection
+            && preparedExports.last?.itemCount == 1_002 && preparedExports.last?.notes == liveNote.text
+            && preparedExports.last?.items.prefix(2).map(\.id) == [image.id, text.id],
+            "Select-all export retains newest-first order and live notes without changing its selection scope")
+        try await checkToolbar(in: hosting)
         window.setContentSize(CGSize(width: 320, height: 760))
         try await settle(hosting)
         try await checkExportAction(in: hosting, selectedCount: 1_002)
@@ -628,23 +836,21 @@ import SwiftUI
         let narrowSelectedExport = try await find("project-export", in: hosting)
         try expect(narrowSelectedExport.frame.width > 0
             && narrowBoundary.insetBy(dx: -1, dy: -1).contains(narrowSelectedExport.frame),
-            "The full selected export label fits the 320-point project window: \(narrowSelectedExport.frame) in \(narrowBoundary)")
+            "Selected export stays visible in the 320-point project window: \(narrowSelectedExport.frame) in \(narrowBoundary)")
+        try await checkToolbar(in: hosting)
         try saveFixtureImage(hosting, filename: "project-selected-narrow@2x.png", directory: fixtures)
         window.setContentSize(CGSize(width: 1_080, height: 760))
         try await settle(hosting)
         try await clearSelection(in: hosting)
 
-        let filesFilter = try await find("project-filter-Files", in: hosting)
-        try expect(filesFilter.press(), "Files filter performs its accessibility action")
-        try await settle(hosting)
+        try await selectMenu(hosting, id: "project-filter-menu", title: "Files")
         let filtered = try await selectionText(in: hosting)
         try expect(filtered.contains("1 of 1002"), "Files filter shows one file while retaining the whole-project count")
         try await checkExportAction(in: hosting)
-        try await press("project-export", in: hosting, message: "Unselected filtered view still exports the complete project")
+        _ = try await find("project-export", in: hosting).press()
         try await settle(hosting)
-        try expect(preparedExports.count == 3 && preparedExports.last?.scope == .project
-            && preparedExports.last?.itemCount == 1_002 && preparedExports.last?.notes != nil,
-            "Viewing only Files never silently narrows whole-project export")
+        try expect(preparedExports.count == 3,
+            "Filtering without choosing any items cannot prepare an export")
         try await press("project-select-all", in: hosting, message: "Select all works on the filtered file view")
         try await settle(hosting)
         let filteredSelection = try await selectionText(in: hosting)
@@ -657,21 +863,24 @@ import SwiftUI
             && preparedExports.last?.notes == nil,
             "Filtered selected export contains the checked file and no hidden captures or notes")
         try await checkNativeProjectDrag(in: hosting, label: image.title,
-            expected: [.capture(image)], reorder: false, store: store)
-        try await press("project-filter-All", in: hosting, message: "All filter restores the complete project")
-        try await settle(hosting)
+            expected: [.capture(image)], store: store)
+        try await selectMenu(hosting, id: "project-filter-menu", title: "All")
         let clearedByFilter = try await selectionText(in: hosting)
         try expect(!clearedByFilter.contains("selected"), "Changing filters clears hidden selection")
         try await checkExportAction(in: hosting)
+        try await chooseCalendarAction("project-date-this-week", in: hosting)
+        try expect(state.projectPresentation[project]?.selectedDateRange?.mode == .week
+            && state.projectPresentation[project]?.dateFilter == .anytime,
+            "The toolbar calendar applies the actual current calendar week without a hidden relative preset")
+        try await checkToolbar(in: hosting)
+        try await chooseCalendarAction("project-date-any", in: hosting)
+        try expect(state.projectPresentation[project]?.dateFilter == .anytime
+            && state.projectPresentation[project]?.selectedDateRange == nil,
+            "The toolbar calendar restores the complete project date range")
 
-        // Open and dispatch the production native menus inside this process.
-        try await selectMenu(hosting, id: "project-sort-order", title: "Newest first")
-        try expect(state.projectPresentation[project]?.newestFirst == true, "Native sort menu changes project ordering")
-        try await checkNativeProjectDrag(in: hosting, label: image.title, expected: [.capture(image)], reorder: false, store: store)
-        try await selectMenu(hosting, id: "project-sort-order", title: "My order")
-        try expect(state.projectPresentation[project]?.newestFirst == false, "Custom order returns through the same native menu")
-        // Changing order intentionally preserves a browsing viewport. Position
-        // this fixture at its known first item before inspecting that item.
+        try await checkNativeProjectDrag(in: hosting, label: image.title, expected: [.capture(image)], store: store)
+        // Filtering preserves the browsing viewport. Position this fixture at
+        // its newest item before measuring every supported compact width.
         state.projectPresentation[project, default: ProjectNavigationPresentation()].viewport = nil
         try await scrollToStart(hosting)
 
@@ -687,6 +896,7 @@ import SwiftUI
                     "Project control \(identifier) fits width \(width): \(control.frame) in \(boundary)")
             }
             try await checkExportAction(in: hosting)
+            try await checkToolbar(in: hosting)
             maximumRows = max(maximumRows, try checkNativeRows(hosting, itemCount: 1_002))
             if width == 320 { try saveFixtureImage(hosting, filename: "project-grid-narrow@2x.png", directory: fixtures) }
         }
@@ -718,26 +928,28 @@ import SwiftUI
         try expect(try originalBytes(store: store, capture: image) == original,
                    "Project preview, resizing, and selection preserve original file bytes")
         maximumRows = max(maximumRows, try checkNativeRows(hosting, itemCount: 1_006))
-        let availableOrder = ProjectWorkspaceContents.captures(in: project, from: store.captures).map { ProjectWorkspaceIdentity.capture($0.id) } + [noteID]
-        let restoredOrder = ProjectWorkspaceOrdering.ordered(availableOrder, saved: initialOrder)
-        try state.workspace.saveProjectItemOrder(restoredOrder, project: project)
         state.projectPresentation[project, default: ProjectNavigationPresentation()].viewport = nil
         try await scrollToStart(hosting)
-        let boundaryMenu = try await nativeMenu(hosting, id: "project-more-" + imageID, containing: "Move earlier")
-        try expect(menuItems(boundaryMenu).first { $0.title == "Move earlier" }?.isEnabled == false,
-            "The first item cannot offer a no-op Move earlier action")
-        try await selectMenu(hosting, id: "project-more-" + imageID, title: "Move later")
-        try expect(state.workspace.orderedProjectItemIDs(initialOrder, project: project).prefix(2) == [textID, imageID],
-            "Native item action moves the saved item exactly one position")
-        state.projectPresentation[project, default: ProjectNavigationPresentation()].viewport = nil
-        try await scrollToStart(hosting)
-        try await selectMenu(hosting, id: "project-more-" + imageID, title: "Move earlier")
-        try expect(state.workspace.orderedProjectItemIDs(initialOrder, project: project).prefix(2) == [imageID, textID],
-            "Native reverse reorder restores custom positions")
-        try await scrollToStart(hosting)
-        try await clearSelection(in: hosting)
+        let itemMenu = try await nativeMenu(hosting, id: "project-more-" + imageID, containing: "Open details")
+        try expect(!menuItems(itemMenu).contains { ["Move earlier", "Move later", "My order"].contains($0.title) },
+            "Item actions no longer offer manual reordering")
+        try await checkExportAction(in: hosting)
+        try await press("project-select-all", in: hosting,
+            message: "Newly arriving captures can be explicitly selected before export")
+        try await settle(hosting)
+        try await checkExportAction(in: hosting, selectedCount: 1_006)
+        try await press("project-export", in: hosting, message: "Newest-first selected export includes checked arriving captures")
+        try await settle(hosting)
+        let arrivingIDs = store.captures.filter { $0.originalText?.hasPrefix("Fictional arriving automatic capture ") == true }
+            .sorted { $0.capturedAt > $1.capturedAt }.map(\.id)
+        try expect(preparedExports.count == 5 && preparedExports.last?.scope == .selection
+            && preparedExports.last?.itemCount == 1_006
+            && preparedExports.last?.items.prefix(4).map(\.id) == arrivingIDs,
+            "New arrivals precede older project captures despite the legacy saved manual order")
+        try expect(state.workspace.snapshot.projectItemOrders?[WorkspaceSnapshot.projectKey(project)] == initialOrder,
+            "Ignoring obsolete manual ordering preserves the legacy workspace data")
 
-        // Narrow widths expose every type through a visible menu; an empty
+        // Every width exposes item types through one icon menu; an empty
         // combination offers one action to clear both type and date filtering.
         state.openLibrary()
         window.setContentSize(CGSize(width: 320, height: 760)); try await settle(hosting)
@@ -746,7 +958,8 @@ import SwiftUI
         try await press("project-reset-filters", in: hosting, message: "Empty filtered project resets in one click")
         try await settle(hosting)
         try expect(state.projectPresentation[project]?.filterRawValue == "All"
-            && state.projectPresentation[project]?.dateFilter == .anytime, "Reset restores both All types and Any date")
+            && state.projectPresentation[project]?.dateFilter == .anytime
+            && state.projectPresentation[project]?.selectedDateRange == nil, "Reset restores both All types and Any date")
         try saveFixtureImage(hosting, filename: "project-filter-menu-narrow@2x.png", directory: fixtures)
         window.setContentSize(CGSize(width: 1_080, height: 760)); try await settle(hosting)
 
@@ -830,7 +1043,357 @@ import SwiftUI
         try expect(!nodes(in: hosting).contains { $0.identifier == "project-undo-tasks" && $0.frame.width > 0 },
             "After later task edits the project hides an invalid conversion Undo instead of offering an action that must fail")
         try expect(!window.isKeyWindow && !window.isMainWindow, "Project menus and sheet returns stay inside the isolated fixture")
-        print("PASS: \(checks) project workspace UI checks; 1,000 synthetic text captures plus image and editable project note; native mixed-selection drag payloads on a private pasteboard; no personal archive, network, general clipboard or external opening. At most \(maximumRows) simultaneously materialized native rows.")
+        try await checkLiveZoomBrowser(fixtures: fixtures)
+        try await checkCalendarFiltering(fixtures: fixtures)
+        print("PASS: \(checks) project workspace UI checks; 1,000 synthetic text captures plus image and editable project note; retained-host live zoom, observable edits and replacement identities; native mixed-selection drag payloads on a private pasteboard; no personal archive, network, general clipboard or external opening. At most \(maximumRows) simultaneously materialized native rows.")
+    }
+
+    private static func checkLiveZoomBrowser(fixtures: URL) async throws {
+        let root = FileManager.default.temporaryDirectory.appendingPathComponent("DaBinProjectLiveZoomQA-\(UUID())")
+        let suite = "DaBinProjectLiveZoomQA.\(UUID())"
+        let defaults = UserDefaults(suiteName: suite)!
+        defaults.set(false, forKey: PreviewService.linkPreviewPreference)
+        defaults.set(1, forKey: WorkspaceZoomSettings.factorKey)
+        try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
+        defer { defaults.removePersistentDomain(forName: suite); try? FileManager.default.removeItem(at: root) }
+        let project = "Fictional live zoom project"
+        let at = Calendar.current.startOfDay(for: Date()).addingTimeInterval(12 * 3_600)
+        let taskSeed = Capture(capturedAt: at.addingTimeInterval(2), kind: .task,
+            originalText: "Fictional task original preserved across zoom and replacement", title: "Fictional original task")
+        taskSeed.projectName = project
+        let olderSeed = Capture(capturedAt: Calendar.current.date(byAdding: .day, value: -1, to: at)!,
+            kind: .text, originalText: "Fictional previous-day capture excluded by today's selection", title: "Fictional previous-day capture")
+        olderSeed.projectName = project
+        try CaptureRepository(root: root).save([taskSeed, olderSeed])
+        let store = try CaptureStore(root: root, repairArchiveOnOpen: false)
+        guard let task = store.captures.first(where: { $0.id == taskSeed.id }),
+              let older = store.captures.first(where: { $0.id == olderSeed.id }) else { throw failure("Live zoom seed is missing") }
+        let png = try fixturePNG()
+        let image = try await store.importData(png, filename: "Fictional zoom poster.png",
+            at: at.addingTimeInterval(3), projectName: project)
+        guard let thumbnail = await PreviewService.writeThumbnail(png, root: root, id: image.id) else {
+            throw failure("Live zoom fixture needs its real local thumbnail")
+        }
+        image.thumbnailRelativePath = thumbnail; image.previewState = "ready"
+        image.title = "Fictional retained project picture title spanning two readable lines across the saved poster"
+        try store.save(captures: [image])
+        let previews = PreviewService(store: store, defaults: defaults)
+        let auto = AutoCaptureService(settings: AutoCaptureSettings(defaults: defaults), input: InputService(store: store),
+            pasteboardProvider: { fatalError("Live zoom QA must not read the clipboard") }, sourceApplicationProvider: { nil })
+        let zoom = WorkspaceZoomSettings(defaults: defaults)
+        let state = AppState(store: store, previews: previews,
+            reminders: ReminderService(store: store, client: ProjectWorkspaceFixtureNotifications()), autoCapture: auto,
+            captureClipboard: CaptureClipboardService(writer: { _ in fatalError("Live zoom QA must not write the clipboard") }),
+            workspaceZoom: zoom, folderOpener: { _ in fatalError("Live zoom QA must not open external folders") })
+        defer { previews.shutdown(); auto.shutdown(); state.focusSessions.shutdown(); store.cancelArchiveRepair() }
+        state.libraryProject = project; state.workspace.mode = .collection; state.openLibrary()
+        let initialNote = "Fictional initial live project note"
+        try state.workspace.setScratchpad(text: initialNote, project: project)
+        var workspace = state.workspace.snapshot
+        workspace.scratchpads[WorkspaceSnapshot.projectKey(project)]?.updatedAt = at.addingTimeInterval(1)
+        try state.workspace.save(workspace)
+        let pasteboard = NSPasteboard(name: .init("DaBin.ProjectLiveZoomQA.\(UUID())"))
+        defer { pasteboard.releaseGlobally() }
+        let host = NSHostingView(rootView: ProjectWorkspaceLiveZoomFixture(state: state, project: project, pasteboard: pasteboard))
+        host.frame = CGRect(x: 0, y: 0, width: 960, height: 820)
+        host.sizingOptions = []; host.autoresizingMask = [.width, .height]
+        let window = ProjectWorkspaceFixtureWindow(contentRect: host.frame.offsetBy(dx: -10_000, dy: -10_000),
+            styleMask: [.borderless], backing: .buffered, defer: false)
+        window.isReleasedWhenClosed = false; window.contentView = host
+        zoom.onInteractionBegan = { WorkspaceZoomViewport.begin(in: window); return true }
+        zoom.onInteractionEnded = { WorkspaceZoomViewport.end(in: window) }
+        defer {
+            zoom.finishInteraction(); zoom.onInteractionBegan = nil; zoom.onInteractionEnded = nil
+            window.orderOut(nil); window.contentView = nil; window.close()
+        }
+        window.orderFront(nil); try await settle(host)
+        let imageID = ProjectWorkspaceIdentity.capture(image.id), taskID = ProjectWorkspaceIdentity.capture(task.id)
+        let noteID = ProjectWorkspaceIdentity.note(project: project)
+        let initialNotePreview = try await find("project-preview-" + noteID, in: host)
+        try expect(initialNotePreview.valueText == initialNote,
+            "The initial non-media note preview exposes the same excerpt as its rendered text")
+        try saveFixtureImage(host, filename: "project-live-note-initial@2x.png", directory: fixtures)
+        guard let originalTable = table(in: host) else { throw failure("Live project zoom needs its native List") }
+        let originalRows = originalTable.numberOfRows
+        try expect(zoom.beginInteraction(), "The retained project host begins its real zoom interaction")
+        var titleHeights: [CGFloat: CGFloat] = [:], previewHeights: [CGFloat: CGFloat] = [:]
+        for factor in [CGFloat(0.75), 2, 1] {
+            zoom.update(to: factor); try await settle(host)
+            let title = try await find("project-details-" + imageID, in: host)
+            let media = try await find("project-preview-" + imageID, in: host)
+            // List exposes the outer card's containing AX group and its real
+            // buttons. The redundant non-task inner group is merged away;
+            // standalone card QA also uses this outer group for card bounds.
+            let content = try await find("project-card-" + imageID, in: host)
+            let expectedHeight = min(192, ExplorerCaptureCardPresentation.previewHeight(for: media.frame.width / factor) * factor)
+            titleHeights[factor] = title.frame.height; previewHeights[factor] = media.frame.height
+            try expect(zoom.isInteracting && table(in: host) === originalTable && originalTable.numberOfRows == originalRows,
+                "\(Int(factor * 100))% zoom retains the same native table and gesture-locked row identities")
+            try expect(title.frame.height > 32 && abs(media.frame.height - expectedHeight) < 1
+                && content.frame.width > 0 && content.frame.height > media.frame.height
+                && content.frame.insetBy(dx: -1, dy: -1).contains(title.frame)
+                && content.frame.insetBy(dx: -1, dy: -1).contains(media.frame),
+                "Live \(Int(factor * 100))% zoom keeps naturally measured two-line title, scaled media and complete card content")
+            for identifier in ["project-select-" + imageID, "project-select-" + taskID, "project-task-toggle-" + taskID] {
+                let control = try await find(identifier, in: host)
+                try expect(abs(control.interactionFrame.width - 32) <= 1 && abs(control.interactionFrame.height - 32) <= 1,
+                    "Zoom keeps the native \(identifier) target at 32 points")
+            }
+            if factor != 1 { try saveFixtureImage(host, filename: "project-live-zoom-\(Int(factor * 100))@2x.png", directory: fixtures) }
+        }
+        zoom.finishInteraction(); try await settle(host)
+        try expect(titleHeights[2]! > titleHeights[0.75]! + 2 && titleHeights[1]! < titleHeights[2]!
+            && previewHeights[2]! > previewHeights[0.75]! + 20 && previewHeights[1]! < previewHeights[2]!,
+            "The same hosted title and real preview grow at 200% and return at 100%, independently of stable List equality")
+        try expect(!zoom.isInteracting && !WorkspaceZoomViewport.isZooming(in: window), "Live project zoom releases its viewport interaction owner")
+
+        // An observable edit must repaint even before a store-wide revision.
+        task.title = "Fictional observable task edit after zoom"
+        try await settle(host)
+        let editedTitle = try await find("project-details-" + taskID, in: host)
+        try expect(editedTitle.label.contains(task.title), "A live Capture observer updates its title through the stable browser boundary")
+        try store.save(captures: [task])
+        try store.moveToTrash(task); try await settle(host)
+        try expect(!nodes(in: host).contains { $0.identifier == "project-card-" + taskID && $0.frame.width > 0 },
+            "A removed capture leaves the same retained native browser")
+        guard let trashed = store.trashedCaptures.first(where: { $0.id == task.id }) else { throw failure("Replacement fixture must enter local trash") }
+        try store.restoreFromTrash(trashed)
+        guard let replacement = store.captures.first(where: { $0.id == task.id }) else { throw failure("Replacement fixture must return to its project") }
+        try expect(replacement !== task, "Restoring the fixture supplies a genuinely new Capture object with the same row identity")
+        task.title = "Fictional obsolete capture instance"
+        replacement.title = "Fictional current restored task after zoom"
+        try store.save(captures: [replacement]); try await settle(host)
+        let restoredTitle = try await find("project-details-" + taskID, in: host)
+        try expect(restoredTitle.label.contains(replacement.title) && !restoredTitle.label.contains(task.title),
+            "Content revision replaces an obsolete capture while preserving its logical card ID")
+        try await press("project-task-toggle-" + taskID, in: host, message: "Restored card completion performs its current native action")
+        try await settle(host)
+        try expect(replacement.isCompleted && !task.isCompleted && state.store.error == nil,
+            "The retained completion callback targets the current replacement, not its rejected obsolete instance")
+
+        let revisedNote = "Fictional live note edited after the retained browser zoom"
+        try state.workspace.setScratchpad(text: revisedNote, project: project)
+        workspace = state.workspace.snapshot
+        workspace.scratchpads[WorkspaceSnapshot.projectKey(project)]?.updatedAt = at.addingTimeInterval(1)
+        try state.workspace.save(workspace); try await settle(host)
+        try saveFixtureImage(host, filename: "project-live-note-edited@2x.png", directory: fixtures)
+        let revisedNotePreview = try await find("project-preview-" + noteID, in: host)
+        try expect(nodes(in: host).contains { ($0.label + " " + $0.valueText).contains(revisedNote) && $0.frame.width > 0 },
+            "Live scratchpad text changes in the existing project card after zoom")
+        try expect(revisedNotePreview.valueText == revisedNote && revisedNotePreview.valueText != initialNote,
+            "The same hosted note preview replaces its initial excerpt with the latest workspace edit")
+        try await press("project-select-" + taskID, in: host, message: "Restored capture remains independently selectable")
+        try await press("project-select-" + noteID, in: host, message: "Edited project notes join the current selection")
+        try await settle(host)
+        try expect(state.projectPresentation[project]?.selectedIDs == [taskID, noteID]
+            && state.projectPresentation[project]?.focusedID == noteID,
+            "Post-zoom native selection preserves the live focus binding and both checked items")
+        let currentNote = WorkspaceScratchpad(text: revisedNote, projectName: project, updatedAt: at.addingTimeInterval(1))
+        try await checkNativeProjectDrag(in: host, label: replacement.title,
+            expected: [.capture(replacement), .note(currentNote)], store: store)
+        try await selectMenu(host, id: "project-filter-menu", title: "Files")
+        try await press("project-select-all", in: host, message: "Post-zoom Files selection uses only its current visible item")
+        try await settle(host)
+        try expect(state.projectPresentation[project]?.selectedIDs == [imageID], "Filtering replaces the previously selected task and note with the visible image")
+        try await checkNativeProjectDrag(in: host, label: image.title, expected: [.capture(image)], store: store)
+        try await selectMenu(host, id: "project-filter-menu", title: "All")
+        try await chooseCalendarAction("project-date-today", in: host)
+        try await press("project-select-all", in: host, message: "Post-zoom calendar selection uses only today's visible items")
+        try await settle(host)
+        try expect(state.projectPresentation[project]?.selectedIDs == [imageID, taskID, noteID], "Exact date filtering excludes the previous-day capture")
+        try await checkNativeProjectDrag(in: host, label: image.title,
+            expected: [.capture(image), .capture(replacement), .note(currentNote)], store: store)
+        state.projectPresentation[project, default: ProjectNavigationPresentation()].selectedDateRange =
+            ProjectDateSelection(date: older.capturedAt, mode: .day)
+        try await settle(host)
+        try await press("project-select-all", in: host, message: "A restored date context selects its newly visible previous-day capture")
+        try await settle(host)
+        try expect(state.projectPresentation[project]?.selectedIDs == [ProjectWorkspaceIdentity.capture(older.id)],
+            "A changed date context prunes hidden selection and updates the stable action holder")
+        try await checkNativeProjectDrag(in: host, label: older.title, expected: [.capture(older)], store: store)
+        try expect(!window.isKeyWindow && !window.isMainWindow && window.frame.maxX < 0,
+            "Zoom, mutation, replacement, notes, dates and actual native drag payload checks stay in the fictional offscreen fixture")
+    }
+
+    private static func checkCalendarFiltering(fixtures: URL) async throws {
+        let root = FileManager.default.temporaryDirectory.appendingPathComponent("DaBinProjectCalendarQA-\(UUID().uuidString)")
+        let suite = "DaBinProjectCalendarQA.\(UUID().uuidString)"
+        let defaults = UserDefaults(suiteName: suite)!
+        defaults.set(false, forKey: PreviewService.linkPreviewPreference)
+        try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
+        defer { defaults.removePersistentDomain(forName: suite); try? FileManager.default.removeItem(at: root) }
+        let project = "Fictional calendar project", calendar = Calendar.current
+        func date(_ key: String, timeZone: TimeZone = .current, hour: Int = 12) -> Date {
+            var civil = Calendar(identifier: .gregorian); civil.timeZone = timeZone
+            let parts = key.split(separator: "-").compactMap { Int($0) }
+            return civil.date(from: DateComponents(year: parts[0], month: parts[1], day: parts[2], hour: hour))!
+        }
+        let start = date("2025-12-25")
+        var captures = (0..<15).map { offset -> Capture in
+            let at = calendar.date(byAdding: .day, value: offset, to: start)!
+            let capture = Capture(capturedAt: at, kind: .text, originalText: "Fictional receipt \(offset)", title: "Receipt \(offset)")
+            capture.projectName = project
+            return capture
+        }
+        // This timestamp displays on an adjacent day on the Mac. Project day
+        // filtering must use its immutable Jan 1 capture-zone receipt instead.
+        let eastward = calendar.timeZone.secondsFromGMT(for: date("2026-01-01")) < 14 * 3_600
+        let receiptZone = TimeZone(secondsFromGMT: (eastward ? 14 : -12) * 3_600)!
+        let shifted = Capture(capturedAt: date("2026-01-01", timeZone: receiptZone, hour: eastward ? 0 : 23), timeZone: receiptZone,
+            kind: .text, originalText: "Fictional date-line receipt", title: "Date-line receipt")
+        shifted.projectName = project; captures.append(shifted)
+        try expect(shifted.captureDay == "2026-01-01" && CaptureCalendar.dayString(shifted.capturedAt) != shifted.captureDay,
+            "The calendar fixture contains a real capture-zone date-line difference")
+        try CaptureRepository(root: root).save(captures)
+        let store = try CaptureStore(root: root, repairArchiveOnOpen: false)
+        let previews = PreviewService(store: store, defaults: defaults)
+        let auto = AutoCaptureService(settings: AutoCaptureSettings(defaults: defaults), input: InputService(store: store),
+            pasteboardProvider: { fatalError("Project calendar QA must not read the clipboard") }, sourceApplicationProvider: { nil })
+        let state = AppState(store: store, previews: previews,
+            reminders: ReminderService(store: store, client: ProjectWorkspaceFixtureNotifications()), autoCapture: auto,
+            captureClipboard: CaptureClipboardService(writer: { _ in fatalError("Project calendar QA must not write the clipboard") }))
+        defer { previews.shutdown(); auto.shutdown(); state.focusSessions.shutdown(); store.cancelArchiveRepair() }
+        state.libraryProject = project; state.workspace.mode = .collection; state.openLibrary()
+        try state.workspace.setScratchpad(text: "Fictional project note dated Jan 2", project: project)
+        var workspace = state.workspace.snapshot
+        workspace.scratchpads[WorkspaceSnapshot.projectKey(project)]?.updatedAt = date("2026-01-02")
+        try state.workspace.save(workspace)
+        let initialWorkspace = state.workspace.snapshot
+        let encoder = JSONEncoder(); encoder.outputFormatting = [.sortedKeys]
+        let before = try Dictionary(uniqueKeysWithValues: store.captures.map { ($0.id, try encoder.encode(CaptureSnapshot($0))) })
+        state.projectPresentation[project, default: ProjectNavigationPresentation()].selectedDateRange =
+            ProjectDateSelection(date: date("2025-12-31"), mode: .day)
+        state.projectPresentation[project, default: ProjectNavigationPresentation()].dateFilter = .lastSevenDays
+        let pasteboard = NSPasteboard(name: .init("DaBin.ProjectCalendarQA.\(UUID().uuidString)"))
+        defer { pasteboard.releaseGlobally() }
+        let host = NSHostingView(rootView: ProjectWorkspaceView(state: state, project: project, pasteboard: pasteboard,
+            chooseExportDestination: { _ in nil })
+            .environment(\.daBinTooltipsEnabled, false).environment(\.displayScale, 2).preferredColorScheme(.light)
+            .transaction { $0.animation = nil; $0.disablesAnimations = true })
+        host.frame = CGRect(x: 0, y: 0, width: 760, height: 760)
+        host.sizingOptions = []; host.autoresizingMask = [.width, .height]
+        let window = ProjectWorkspaceFixtureWindow(contentRect: CGRect(x: -10_000, y: -10_000, width: 760, height: 760),
+            styleMask: [.borderless], backing: .buffered, defer: false)
+        window.isReleasedWhenClosed = false; window.contentView = host
+        defer { window.orderOut(nil); window.contentView = nil; window.close() }
+        window.orderFront(nil); try await settle(host)
+        let initialCount = try await selectionText(in: host)
+        try expect(initialCount.contains("1 of 17"), "An exact civil day takes precedence over a stale relative preset")
+
+        var popup = try await openCalendar(host)
+        try await checkCalendarGeometry(popup)
+        try await press("project-date-mode-week", in: popup.content, message: "Week mode can be selected inside the native calendar")
+        try await settle(popup.content)
+        try expect(calendarPopover() != nil, "Changing Day/Week mode keeps the calendar available until a date is chosen")
+        try await press("project-calendar-day-2025-12-31", in: popup.content, message: "A December date selects its entire calendar week")
+        try await settle(host)
+        try expect(calendarPopover() == nil, "Choosing a week closes the native calendar immediately")
+        let interval = calendar.dateInterval(of: .weekOfYear, for: date("2025-12-31"))!
+        let weekStart = CaptureCalendar.dayString(interval.start, timeZone: calendar.timeZone)
+        let weekEnd = CaptureCalendar.dayString(calendar.date(byAdding: .day, value: -1, to: interval.end)!, timeZone: calendar.timeZone)
+        let selectedWeek = state.projectPresentation[project]?.selectedDateRange
+        try expect(selectedWeek?.mode == .week && selectedWeek?.startDay == weekStart && selectedWeek?.endDay == weekEnd
+            && weekStart.hasPrefix("2025-12-") && weekEnd.hasPrefix("2026-01-"),
+            "Week selection honors the Mac's calendar boundaries across both month and year")
+        try expect(state.projectPresentation[project]?.dateFilter == .anytime,
+            "Selecting a week clears any hidden rolling-date preset")
+        let weekCount = captures.filter { $0.captureDay >= weekStart && $0.captureDay <= weekEnd }.count
+            + ((weekStart...weekEnd).contains("2026-01-02") ? 1 : 0)
+        let weekCountText = try await selectionText(in: host)
+        try expect(weekCountText.contains("\(weekCount) of 17"),
+            "The native week action filters exact receipt days and the live note's updated day")
+
+        popup = try await openCalendar(host)
+        try expect(state.projectPresentation[project]?.selectedDateRange == selectedWeek,
+            "Reopening the date picker preserves its committed calendar week")
+        let reopenedWeekDay = try await find("project-calendar-day-2025-12-31", in: popup.content)
+        try expect(reopenedWeekDay.valueText.contains("Selected"),
+            "The reopened calendar visibly and accessibly marks the previously chosen week")
+        try saveFixtureImage(popup.content, filename: "project-calendar-week-light@2x.png", directory: fixtures)
+        try await press("project-date-mode-day", in: popup.content, message: "Day mode restores individual date selection")
+        try await press("project-calendar-next", in: popup.content, message: "Month navigation moves December into January")
+        try await settle(popup.content)
+        _ = try await find("project-calendar-day-2026-01-01", in: popup.content)
+        try saveFixtureImage(popup.content, filename: "project-calendar-january-light@2x.png", directory: fixtures)
+        try await press("project-calendar-day-2026-01-01", in: popup.content, message: "Jan 1 is selected through its native date button")
+        try await settle(host)
+        try expect(calendarPopover() == nil && state.projectPresentation[project]?.selectedDateRange?.startDay == "2026-01-01"
+            && state.projectPresentation[project]?.selectedDateRange?.endDay == "2026-01-01",
+            "Day mode commits exactly one date and dismisses the picker")
+        let dayCount = try await selectionText(in: host)
+        try expect(dayCount.contains("2 of 17"), "Jan 1 contains its normal capture and date-line receipt, excluding Jan 2 project notes")
+        _ = try await find("project-card-" + ProjectWorkspaceIdentity.capture(shifted.id), in: host)
+        try expect(!nodes(in: host).contains { $0.identifier == "project-card-" + ProjectWorkspaceIdentity.note(project: project) },
+            "A live note is filtered by its updatedAt day rather than the capture receipt day")
+
+        try await chooseCalendarAction("project-calendar-day-2026-01-02", in: host)
+        let noteDayCount = try await selectionText(in: host)
+        try expect(noteDayCount.contains("2 of 17"), "Jan 2 includes its capture and its one live project note")
+        _ = try await find("project-card-" + ProjectWorkspaceIdentity.note(project: project), in: host)
+        let selectedDay = state.projectPresentation[project]?.selectedDateRange
+        try await selectMenu(host, id: "project-actions", title: "Clipboard view")
+        state.back(); try await settle(host)
+        try expect(state.route == .library && state.libraryProject == project
+            && state.projectPresentation[project]?.selectedDateRange == selectedDay,
+            "Returning to the project preserves its exact calendar day")
+
+        popup = try await openCalendar(host)
+        let reopenedDay = try await find("project-calendar-day-2026-01-02", in: popup.content)
+        try expect(reopenedDay.valueText.contains("Selected"),
+            "The reopened calendar retains the selected individual day")
+        try saveFixtureImage(popup.content, filename: "project-calendar-day-light@2x.png", directory: fixtures)
+        try await press("project-calendar-prev", in: popup.content, message: "Previous month navigates across January into December")
+        try await settle(popup.content)
+        _ = try await find("project-calendar-day-2025-12-31", in: popup.content)
+        try await press("project-calendar-next", in: popup.content, message: "Forward month restores January without changing the committed date")
+        try await settle(popup.content)
+        try expect(state.projectPresentation[project]?.selectedDateRange == selectedDay,
+            "Browsing months leaves the committed project date unchanged")
+        try await press("project-date-any", in: popup.content, message: "Any date clears calendar refinement in one click")
+        try await settle(host)
+        let unfilteredCount = try await selectionText(in: host)
+        try expect(calendarPopover() == nil && unfilteredCount.contains("17") && !unfilteredCount.contains(" of ")
+            && state.projectPresentation[project]?.selectedDateRange == nil && state.projectPresentation[project]?.dateFilter == .anytime,
+            "Any date closes the picker and restores all captures and live project notes")
+
+        try await chooseCalendarAction("project-date-today", in: host)
+        let today = CaptureCalendar.dayString(Date())
+        try expect(state.projectPresentation[project]?.selectedDateRange?.mode == .day
+            && state.projectPresentation[project]?.selectedDateRange?.startDay == today
+            && state.projectPresentation[project]?.selectedDateRange?.endDay == today,
+            "Today shortcut selects exactly the current civil day")
+        try await selectMenu(host, id: "project-filter-menu", title: "Tasks")
+        try await press("project-reset-filters", in: host, message: "Show all items clears both type and exact date filtering")
+        try await settle(host)
+        try expect(state.projectPresentation[project]?.filterRawValue == "All"
+            && state.projectPresentation[project]?.selectedDateRange == nil && state.projectPresentation[project]?.dateFilter == .anytime,
+            "The empty state resets the calendar range along with the item filter")
+
+        for scheme in [ColorScheme.light, .dark] {
+            state.projectPresentation[project, default: ProjectNavigationPresentation()].selectedDateRange = selectedDay
+            host.rootView = ProjectWorkspaceView(state: state, project: project, pasteboard: pasteboard,
+                chooseExportDestination: { _ in nil })
+                .environment(\.daBinTooltipsEnabled, false).environment(\.displayScale, 2).preferredColorScheme(scheme)
+                .transaction { $0.animation = nil; $0.disablesAnimations = true }
+            for width in [CGFloat(320), 400, 760] {
+                window.setContentSize(CGSize(width: width, height: 760)); try await settle(host)
+                try await checkToolbar(in: host)
+                popup = try await openCalendar(host)
+                try await checkCalendarGeometry(popup)
+                if width == 320 {
+                    try saveFixtureImage(popup.content,
+                        filename: "project-calendar-320-\(scheme == .light ? "light" : "dark")@2x.png", directory: fixtures)
+                }
+                try await press("project-date-any", in: popup.content, message: "Calendar dismissal remains reachable at width \(Int(width))")
+                try await settle(host)
+                try expect(calendarPopover() == nil, "Compact \(scheme) calendar selection closes its popover")
+            }
+        }
+        let after = try Dictionary(uniqueKeysWithValues: store.captures.map { ($0.id, try encoder.encode(CaptureSnapshot($0))) })
+        try expect(before == after && state.workspace.snapshot.scratchpads == initialWorkspace.scratchpads,
+            "Calendar opening, mode changes, month browsing, filtering, clear, reset, and history preserve all saved content")
+        try expect(!window.isKeyWindow && !window.isMainWindow,
+            "Calendar regression uses only its own offscreen project fixture")
     }
 
     private static func originalBytes(store: CaptureStore, capture: Capture) throws -> Data {

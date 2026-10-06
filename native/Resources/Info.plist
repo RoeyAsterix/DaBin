@@ -13,9 +13,9 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>0.4.33</string>
+	<string>0.4.43</string>
 	<key>CFBundleVersion</key>
-	<string>88</string>
+	<string>98</string>
 	<key>DaBinBuildConfiguration</key>
 	<string>$(CONFIGURATION)</string>
 	<key>LSApplicationCategoryType</key>

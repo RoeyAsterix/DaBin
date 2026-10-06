@@ -1,5 +1,15 @@
 # DaBin QA results
 
+## Security and locality audit — 6 October 2026
+
+DaBin **0.4.42 (97)** fixes marked-clipboard reads, pending capture exclusions, screenshot watcher descriptor/link handling, archive/backup directory privacy, preview-origin validation, updater redirects/cache paths, bounded ZIP validation, frozen package bytes and ownership-bound install/rollback. Local privacy declarations and wording are updated. The inactive legacy archive root is also protected with owner-only traversal.
+
+**36 selected Store native suites, 4 direct native suites, 96 Python tests and 31 enforced sandbox checks pass.** A test-only PreviewLifecycle wrapper compile error was corrected; original failure evidence remains. Unsigned Store Release/preflight and local package fresh-install/replacement/backup, CRC/hash/signature and helper handoff checks pass. This was a selected security campaign, not a full registered-suite rerun; the historical strict zoom performance gate remains open.
+
+The installed app and embedded helper match the frozen Release bytes (`14d251986c487911…`), strict signatures pass, and the relaunched live window is ready with Auto Capture paused and website previews off. Real archive aggregates match before/after isolated tests; post-install full byte identity is qualified because normal quit wrote the draft recovery file and launch intentionally tightened directory modes. No real capture-edit action or general clipboard read was performed.
+
+Saved data has no separate app-level encryption. Clipboard markers/source attribution are best-effort; manual opt-in website previews and the direct channel's manual updater can contact external services. This audit does not prove every hostile same-user race, packet-level absence of traffic, universal physical other-app drops, or final distribution-signed Store acceptance. Nothing was published or sent to Apple. [Evidence, deployment and limits](../docs/qa/security-locality-2026-10-06/audit-report.json).
+
 ## Restrained zoom typography — 4 October 2026
 
 All eight targeted native Release suites pass after separating font/line spacing from full preview scaling. Workspace text maps 75–200% zoom to 95–120% size; capture-detail titles/body stay capped at 28/17 points without shrinking at fixed window widths. Light/dark renders and narrow controls were checked. The installed main app and updater match the current Release receipt, with strict signature verification and a running local instance. This focused run follows the full QA below. [Evidence](../docs/qa/zoom-typography-2026-10-04/README.md).
@@ -940,3 +950,13 @@ Permission approval was requested from the user. **Real notification delivery, d
 ## Environment
 
 Apple Silicon; macOS **26.6.2 (25G83)**; Apple Swift **6.3.2**; Command Line Tools macOS SDK **26.5**; Swift 5 language mode; macOS 14 minimum target. Full Xcode is not installed. Data and QA artifacts stayed local; only synthetic DaBin fixtures were used.
+
+## 6 October 2026 — paused companion / internal TestFlight update0.4.43(98)
+
+Auto Capture Pause now hides the corner/island robot, project sign, save reactions, timer robot and expanded-board decoration. Workspace content remains usable. An emitted Pause value is routed to CornerController before synchronous presenter visibility callbacks, preventing a Published will-set race. Timer receipts and escalation are retained until Resume; saved data is untouched.
+
+Final source fingerprint: `10398967c8129c9a3eceee7d660db94300dd44c589c8738989b91b51ec915304`. All11 selected Store Release suites passed against frozen inputs: ApplicationLifecycle, AutoCaptureService, AutoCaptureRobotPresenter, RobotLifecycle, RobotAppFrame, RobotProjectSignRender, AutoCaptureSignPresenter, RobotWindowTransition, RobotVisualConsistency, TaskTimerRobot and ProjectRecordingRobot. This is affected-scope QA, not a full registered-suite rerun. Initial invalidated/native compile attempts remain recorded.
+
+Exact uploaded build86 production core wrote a fictional schema10 archive. Final build98 read and saved all four records into schema11 and reopened twice, retaining old fields, UUIDs, projects, task planning/comments, drafts and original-file SHA256. Network was denied; explicit temporary roots were used and HOME/CODEX_HOME were preserved. Two harness path-alias failures are retained separately; corrected final run passed. Downgrade to build86 after newer saves is unsupported. No real tester archive or physical TestFlight replacement was tested.
+
+Evidence: `../docs/qa/testflight-upgrade-0.4.43-98-2026-10-06/validation-summary.json`, native run `build/qa/runs/20261006T050402238325Z-app-store/report.json`, upgrade run `/private/tmp/DaBin-Upgrade-98-d_zj3i5k/report.json`. Signed archive/upload/Apple processing/internal assignment are tracked separately in campaign status; public App Store submission is not authorized.

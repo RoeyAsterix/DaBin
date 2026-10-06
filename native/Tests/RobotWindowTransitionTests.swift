@@ -23,6 +23,150 @@ final class RobotWindowTransitionTests: NSObject, NSApplicationDelegate {
         }
     }
     private static func wait(_ seconds: Double) async { try? await Task.sleep(for: .seconds(seconds)) }
+    private static func companionEncounterChecks() throws {
+        var encounter = RobotCompanionEncounter()
+        let pointer = CGPoint(x: 0.6, y: -0.4)
+        var sample = encounter.update(proximity: nil, pointer: pointer, at: 0)
+        try expect(sample.phase == .hidden && !sample.isVisible && sample.progress == 0,
+                   "An absent pointer encounter leaves no visible companion")
+        sample = encounter.update(proximity: 0.1, pointer: pointer, at: 0.1)
+        try expect(sample.phase == .peeking && sample.isVisible && sample.progress > 0 && sample.progress < 0.4,
+                   "The outer approach exposes an eyes-first peek before a climb")
+        sample = encounter.update(proximity: 1, pointer: pointer, at: 0.2)
+        try expect(sample.phase == .climbing && sample.progress < 0.9,
+                   "A closer pointer traverses the climb instead of jumping to a full reveal")
+        sample = encounter.update(proximity: 1, pointer: pointer, at: 0.4)
+        try expect(sample.phase == .reaching && sample.progress == 1 && sample.pointer == pointer,
+                   "A sustained close approach reaches the pointer with its current gaze")
+        let departure = 0.4
+        sample = encounter.update(proximity: nil, pointer: pointer, at: departure + 0.64)
+        try expect(sample.phase == .watching && sample.progress == 1,
+                   "Leaving the approach zone earns a watchful pause without immediate retreat")
+        sample = encounter.update(proximity: nil, pointer: pointer, at: departure + 0.74)
+        try expect(sample.phase == .retreating && sample.progress > 0 && sample.progress < 1,
+                   "Retreat starts only after the 650-millisecond departure grace")
+        let retreatProgress = sample.progress
+        sample = encounter.update(proximity: 1, pointer: CGPoint(x: -0.8, y: 0.2), at: departure + 0.84)
+        try expect(sample.isVisible && sample.phase != .retreating && sample.progress > retreatProgress,
+                   "Returning during retreat reverses it from the existing visible progress")
+        sample = encounter.update(proximity: 1, pointer: pointer, at: departure + 1.04)
+        let lastNear = departure + 1.04
+        for offset in [0.64, 0.74, 0.94, 1.14, 1.34] {
+            sample = encounter.update(proximity: nil, pointer: pointer, at: lastNear + offset)
+            try expect(sample.progress.isFinite && (0...1).contains(sample.progress),
+                       "Every watch and retreat sample stays within the normalized visual range")
+        }
+        try expect(sample.phase == .hidden && !sample.isVisible && sample.progress == 0,
+                   "Completed retreat removes the companion without a frozen last pose")
+        try expect(RobotCompanionEncounter.retreatDelay == 0.65 && RobotCompanionEncounter.retreatDuration == 0.42,
+                   "The encounter retains its explicit pause and finite retreat timing")
+
+        var sparse = RobotCompanionEncounter()
+        _ = sparse.update(proximity: 1, pointer: pointer, at: 10)
+        _ = sparse.update(proximity: 1, pointer: pointer, at: 10.2)
+        sample = sparse.update(proximity: 1, pointer: pointer, at: 10.4)
+        try expect(sample.progress == 1, "The sparse-sampling fixture starts fully revealed")
+        var boundary = sparse
+        var directBoundary = sparse
+        sample = sparse.update(proximity: nil, pointer: pointer, at: 13.4)
+        try expect(sample.phase == .hidden && sample.progress == 0 && !sample.isVisible,
+                   "One away sample after three seconds completes the real-time retreat")
+        sample = sparse.update(proximity: 0.1, pointer: pointer, at: 13.5)
+        try expect(sample.phase == .peeking && sample.progress > 0 && sample.progress < 0.4,
+                   "A completed sparse retreat permits a fresh encounter at another target")
+        sample = boundary.update(proximity: nil, pointer: pointer, at: 11.04)
+        try expect(sample.phase == .watching && sample.progress == 1,
+                   "The last sample before the grace boundary consumes no retreat time")
+        sample = boundary.update(proximity: nil, pointer: pointer, at: 11.14)
+        let boundaryProgress = CGFloat(1 - 0.09 / RobotCompanionEncounter.retreatDuration)
+        try expect(sample.phase == .retreating && abs(sample.progress - boundaryProgress) < 0.000_001,
+                   "Crossing the grace boundary subtracts only the 90 milliseconds after it")
+        let directSample = directBoundary.update(proximity: nil, pointer: pointer, at: 11.14)
+        try expect(abs(directSample.progress - sample.progress) < 0.000_001,
+                   "Skipping watch samples does not change the retreat pose at the same elapsed time")
+        sample = boundary.update(proximity: nil, pointer: pointer, at: 11.24)
+        try expect(abs(sample.progress - CGFloat(1 - 0.19 / RobotCompanionEncounter.retreatDuration)) < 0.000_001,
+                   "Later retreat samples consume each elapsed interval exactly once")
+
+        var expressions = RobotCompanionEncounter()
+        sample = expressions.update(proximity: 1, pointer: pointer, at: 0, expressionOnly: true)
+        try expect(sample.isVisible && sample.progress == 1 && sample.pointer == pointer,
+                   "Quiet and Reduce Motion retain a static visible face and pointer expression")
+        sample = expressions.update(proximity: nil, pointer: pointer, at: 0.64, expressionOnly: true)
+        try expect(sample.phase == .watching && sample.progress == 1,
+                   "Expression-only presentation retains the same departure grace")
+        sample = expressions.update(proximity: nil, pointer: pointer, at: 0.8, expressionOnly: true)
+        try expect(!sample.isVisible && sample.progress == 0,
+                   "Expression-only retreat hides without a body-motion sequence")
+        sample = expressions.update(proximity: .nan, pointer: CGPoint(x: CGFloat.nan, y: CGFloat.infinity), at: .nan)
+        try expect(sample.progress.isFinite && sample.pointer == .zero,
+                   "Malformed proximity, time and gaze samples never reach native layers as NaN")
+
+        let housing = CGRect(x: -850, y: 950, width: 140, height: 32)
+        try expect(RobotCompanionProximity.island(CGPoint(x: housing.midX, y: housing.minY - 8), housing: housing) == 1,
+                   "A close approach below a negative-origin camera is fully engaged")
+        try expect(RobotCompanionProximity.island(CGPoint(x: housing.midX, y: housing.minY - 64), housing: housing) == nil,
+                   "The camera approach has a bounded outer edge")
+        let anchor = CGPoint(x: -1512, y: -200)
+        try expect(RobotCompanionProximity.corner(CGPoint(x: anchor.x + 12, y: anchor.y + 12), anchor: anchor) == 1,
+                   "Corner proximity uses display coordinates without assuming positive origins")
+        try expect(RobotCompanionProximity.corner(CGPoint(x: anchor.x + 96, y: anchor.y), anchor: anchor) == nil,
+                   "An ordinary distant pointer cannot summon a corner companion")
+    }
+
+    private static func immediateCompanionClicks(screen: NSScreen, state: AppState, store: CaptureStore) async throws {
+        for retreating in [false, true] {
+            let controller = CornerController(state: state, input: InputService(store: store),
+                placementDefaults: nil, robotReduceMotion: { false })
+            defer { controller.shutdown() }
+            var opens = 0
+            controller.onWillOpenBoard = { opens += 1 }
+            controller.reveal(on: screen, corner: .topRight)
+            // Fictional hardware makes the moving-island fixture independent of
+            // whether this machine's selected display has a physical notch.
+            let housing = CGRect(x: screen.frame.midX - 72, y: screen.frame.maxY - 34, width: 144, height: 34)
+            let layout = QuietOrbitLayout(cameraIsland: housing, displayFrame: screen.frame)!
+            controller.bin.setFrame(layout.panelFrame, display: true)
+            controller.robot.presentCompanion(from: .top, orbit: layout, perch: .bottom)
+            let target = layout.interactionRegions(for: .bottom, local: true).first!
+            let local = CGPoint(x: target.midX, y: target.midY)
+            let stableTarget = controller.robot.interactionBounds
+            var encounter = RobotCompanionEncounter()
+            var snapshot = encounter.update(proximity: 0.1, pointer: .zero, at: 0)
+            if retreating {
+                _ = encounter.update(proximity: 1, pointer: .zero, at: 0.2)
+                _ = encounter.update(proximity: 1, pointer: .zero, at: 0.4)
+                snapshot = encounter.update(proximity: nil, pointer: .zero, at: 1.14)
+                try expect(snapshot.phase == .retreating && snapshot.progress > 0 && snapshot.progress < 1,
+                           "The click fixture is inside the live companion's finite retreat")
+            } else {
+                try expect(snapshot.phase == .peeking, "The first-click fixture begins during the eyes-first reveal")
+            }
+            controller.robot.updateCompanion(snapshot)
+            try expect(controller.robot.interactionBounds == stableTarget
+                       && controller.robot.containsInteraction(local),
+                       "The fixed companion target remains usable while \(retreating ? "retreating" : "revealing")")
+            let parentPoint = controller.robot.convert(local, to: controller.robot.superview)
+            let receiver = controller.robot.hitTest(parentPoint)
+            try expect(receiver === controller.robot, "Native hit testing reaches the moving companion")
+            func click(_ count: Int) -> NSEvent {
+                NSEvent.mouseEvent(with: .leftMouseDown,
+                    location: controller.robot.convert(local, to: nil), modifierFlags: [], timestamp: Double(count),
+                    windowNumber: controller.bin.windowNumber, context: nil, eventNumber: count,
+                    clickCount: count, pressure: 1)!
+            }
+            receiver?.mouseDown(with: click(1))
+            try expect(opens == 1 && controller.board.isVisible && !controller.bin.isVisible
+                       && controller.robotLifecycle.state == .fullScreen && !controller.appFrame.isTransitioning,
+                       "One native click opens usable content immediately during companion motion")
+            controller.robot.mouseDown(with: click(2))
+            try expect(opens == 1, "The second click in a double-click sequence cannot reopen content")
+            await wait(0.55)
+            try expect(opens == 1 && controller.board.isVisible && !controller.bin.isVisible
+                       && controller.robotLifecycle.state == .fullScreen,
+                       "An interrupted companion completion cannot hide or reopen the user's content")
+        }
+    }
     private static func frameInScreen(_ view: NSView, window: NSWindow) -> NSRect {
         window.convertToScreen(view.convert(view.bounds, to: nil))
     }
@@ -95,6 +239,7 @@ final class RobotWindowTransitionTests: NSObject, NSApplicationDelegate {
         }
     }
     static func runChecks() async throws {
+        try companionEncounterChecks()
         guard let screen = NSScreen.screens.first else {
             throw NSError(domain: "RobotWindowTransitionTests", code: 2,
                           userInfo: [NSLocalizedDescriptionKey: "A display is required"])
@@ -118,11 +263,11 @@ final class RobotWindowTransitionTests: NSObject, NSApplicationDelegate {
         controller.onDidCloseBoard = { closeCount += 1 }
         controller.reveal(on: screen, corner: .topRight)
         let source = controller.bin.convertToScreen(controller.robot.convert(controller.robot.transitionBodyBounds, to: nil))
-        controller.robot.onDaily?()
+        controller.showBoard()
         let openingDestination = frameInScreen(controller.appFrame, window: controller.board)
         let openingContentSize = controller.captureHostingView.frame.size
         try checkTransitionStage(controller, source: source, destination: openingDestination)
-        try expect(controller.robotLifecycle.state == .preparingToExpand, "Double-click entry starts preparation")
+        try expect(controller.robotLifecycle.state == .preparingToExpand, "An explicit animated opening starts preparation")
         try expect(controller.appFrame.isTransitioning, "The real content wrapper animates")
         try expect(!controller.bin.isVisible && controller.board.isVisible, "Exactly one robot/app surface opens")
         try expect(controller.board.captureHostingView === controller.captureHostingView, "Paste and drop keep their hosting view")
@@ -253,6 +398,7 @@ final class RobotWindowTransitionTests: NSObject, NSApplicationDelegate {
         try expect(controller.isShutDown && !controller.board.isVisible && !controller.appFrame.isTransitioning,
                    "No delayed work resurrects a terminated controller")
         try expect(closeCount == 3, "Shutdown invalidates delayed callbacks without replaying close feedback")
+        try await immediateCompanionClicks(screen: screen, state: state, store: store)
         print("PASS \(checks) robot window transition checks")
     }
 }

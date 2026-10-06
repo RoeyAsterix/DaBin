@@ -51,6 +51,44 @@ private struct ProjectWorkspaceRows {
     let groups: [[String]]
 }
 
+/// Grid columns have equal widths. Propose that final width directly to each
+/// card so a native row resize does not negotiate complete card layouts at
+/// multiple minimum/maximum widths. The tallest real card determines the row.
+private struct ProjectWorkspaceRowLayout: Layout {
+    let spacing: CGFloat
+    let direction: LayoutDirection
+
+    private func dimensions(proposedWidth: CGFloat?, subviews: Subviews) -> (width: CGFloat, columnWidth: CGFloat) {
+        let gaps = spacing * CGFloat(max(0, subviews.count - 1))
+        let width: CGFloat
+        if let proposedWidth, proposedWidth.isFinite {
+            width = max(gaps, proposedWidth)
+        } else {
+            let ideal = subviews.map { $0.sizeThatFits(.unspecified).width }.filter(\.isFinite).max() ?? 0
+            width = max(0, ideal) * CGFloat(subviews.count) + gaps
+        }
+        return (width, max(0, width - gaps) / CGFloat(max(1, subviews.count)))
+    }
+
+    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+        guard !subviews.isEmpty else { return .zero }
+        let dimensions = dimensions(proposedWidth: proposal.width, subviews: subviews)
+        let cardProposal = ProposedViewSize(width: dimensions.columnWidth, height: nil)
+        let height = subviews.map { $0.sizeThatFits(cardProposal).height }.max() ?? 0
+        return CGSize(width: dimensions.width, height: height)
+    }
+
+    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
+        let dimensions = dimensions(proposedWidth: bounds.width, subviews: subviews)
+        let cardProposal = ProposedViewSize(width: dimensions.columnWidth, height: nil)
+        for index in subviews.indices {
+            let offset = CGFloat(index) * (dimensions.columnWidth + spacing)
+            let x = direction == .rightToLeft ? bounds.maxX - offset - dimensions.columnWidth : bounds.minX + offset
+            subviews[index].place(at: CGPoint(x: x, y: bounds.minY), anchor: .topLeading, proposal: cardProposal)
+        }
+    }
+}
+
 /// Keep sorting/filtering work tied to archive/workspace changes, not every
 /// magnification tick. Cached rows retain Capture identities and native List
 /// virtualization; thumbnail requests remain independent of layout scale.
@@ -61,12 +99,11 @@ private struct ProjectWorkspaceRows {
     private var visibleKey: String?
     private var visibleValue: [ProjectWorkspaceItem] = []
     private(set) var visibleIDs: [String] = []
+    private(set) var visibleRevision: UInt64 = 0
     private var visibleLookup: [String: ProjectWorkspaceItem] = [:]
-    private var visiblePositions: [String: Int] = [:]
     private var selectedIDs: Set<String>?
     private var selectedItems: [ProjectWorkspaceItem] = []
-    private struct RowKey: Hashable { var columns: Int; var newestFirst: Bool }
-    private var layouts: [RowKey: ProjectWorkspaceRows] = [:]
+    private var layouts: [Int: ProjectWorkspaceRows] = [:]
     init(store: CaptureStore, workspace: WorkspaceStore) {
         subscriptions = [store.objectWillChange.sink { [weak self] _ in self?.invalidate() },
                          workspace.objectWillChange.sink { [weak self] _ in self?.invalidate() }]
@@ -79,17 +116,16 @@ private struct ProjectWorkspaceRows {
     func visible(key: String, build: () -> [ProjectWorkspaceItem]) -> [ProjectWorkspaceItem] {
         if visibleKey != key {
             visibleValue = build(); visibleKey = key
+            visibleRevision &+= 1
             // UUID string formatting is surprisingly expensive at archive
             // scale. Build identity/lookup storage once, not for every pinch.
             visibleIDs = visibleValue.map(\.id)
             visibleLookup = Dictionary(uniqueKeysWithValues: zip(visibleIDs, visibleValue))
-            visiblePositions = Dictionary(uniqueKeysWithValues: visibleIDs.enumerated().map { ($0.element, $0.offset) })
             layouts.removeAll(keepingCapacity: true)
             selectedIDs = nil; selectedItems = []
         }
         return visibleValue
     }
-    func position(of id: String) -> Int? { visiblePositions[id] }
     func selected(_ ids: Set<String>) -> [ProjectWorkspaceItem] {
         guard !ids.isEmpty else { return [] }
         if selectedIDs != ids {
@@ -98,12 +134,12 @@ private struct ProjectWorkspaceRows {
         }
         return selectedItems
     }
-    func layout(columns: Int, newestFirst: Bool) -> ProjectWorkspaceRows {
+    func layout(columns: Int) -> ProjectWorkspaceRows {
         // Workspace column policy permits only these three variants. Bound
         // the cache even if a malformed future caller passes another number.
-        let key = RowKey(columns: min(3, max(1, columns)), newestFirst: newestFirst)
+        let key = min(3, max(1, columns))
         if let cached = layouts[key] { return cached }
-        let groups = ProjectWorkspaceOrdering.rows(ids: visibleIDs, columns: key.columns, newestFirst: newestFirst)
+        let groups = ProjectWorkspaceOrdering.rows(ids: visibleIDs, columns: key, newestFirst: true)
         let rows = groups.map { group in
             ProjectWorkspaceRow(id: group[0], items: group.compactMap { visibleLookup[$0] })
         }
@@ -113,22 +149,237 @@ private struct ProjectWorkspaceRows {
     }
 }
 
-/// A local reorder marker supplements the first item's public content. It must
-/// never replace that content or leak the project name into an external drop.
-private final class ProjectReorderWriter: NSObject, NSPasteboardWriting {
-    let content: NSPasteboardWriting
-    let marker: NSPasteboard.PasteboardType
-    init(content: NSPasteboardWriting, type: String) {
-        self.content = content; self.marker = .init(type)
+/// Actions resolve the latest project snapshot at invocation time. Keeping
+/// this holder stable avoids rebuilding native List content just to replace
+/// closures during a zoom. Bindings preserve the parent's focus and sheets;
+/// the context does not retain the view or this holder through a callback.
+@MainActor private final class ProjectWorkspaceBrowserActions {
+    @MainActor private struct Context {
+        let state: AppState
+        let project: String
+        let visible: [ProjectWorkspaceItem]
+        let visibleIDs: [String]
+        let focus: FocusState<String?>.Binding
+        let notePresented: Binding<Bool>
+        let undoReceipt: Binding<ProjectTaskConversionReceipt?>
+
+        var presentation: ProjectNavigationPresentation {
+            get { state.projectPresentation[project] ?? ProjectNavigationPresentation() }
+            nonmutating set { state.projectPresentation[project] = newValue }
+        }
     }
-    func writableTypes(for pasteboard: NSPasteboard) -> [NSPasteboard.PasteboardType] {
-        content.writableTypes(for: pasteboard) + [marker]
+
+    private var context: Context?
+    private var current: Context {
+        guard let context else { preconditionFailure("Project browser actions must be configured before use") }
+        return context
     }
-    func pasteboardPropertyList(forType type: NSPasteboard.PasteboardType) -> Any? {
-        type == marker ? Data("reorder".utf8) : content.pasteboardPropertyList(forType: type)
+
+    func update(state: AppState, project: String, visible: [ProjectWorkspaceItem], visibleIDs: [String],
+                focus: FocusState<String?>.Binding, notePresented: Binding<Bool>,
+                undoReceipt: Binding<ProjectTaskConversionReceipt?>) {
+        context = Context(state: state, project: project, visible: visible, visibleIDs: visibleIDs,
+                          focus: focus, notePresented: notePresented, undoReceipt: undoReceipt)
     }
-    func writingOptions(forType type: NSPasteboard.PasteboardType, pasteboard: NSPasteboard) -> NSPasteboard.WritingOptions {
-        type == marker ? [] : content.writingOptions?(forType: type, pasteboard: pasteboard) ?? []
+
+    func select(_ item: ProjectWorkspaceItem) {
+        let context = current
+        var presentation = context.presentation
+        if NSEvent.modifierFlags.contains(.shift), let anchor = presentation.selectionAnchor,
+           let from = context.visibleIDs.firstIndex(of: anchor), let to = context.visibleIDs.firstIndex(of: item.id) {
+            presentation.selectedIDs.formUnion(context.visibleIDs[min(from, to)...max(from, to)])
+        } else {
+            if !presentation.selectedIDs.insert(item.id).inserted { presentation.selectedIDs.remove(item.id) }
+            presentation.selectionAnchor = item.id
+        }
+        context.presentation = presentation
+        context.focus.wrappedValue = item.id
+    }
+
+    func open(_ item: ProjectWorkspaceItem) {
+        if NSEvent.modifierFlags.contains(.command) || NSEvent.modifierFlags.contains(.shift) { select(item); return }
+        let context = current
+        guard let capture = item.capture else { context.notePresented.wrappedValue = true; return }
+        context.state.workspace.selectedCaptureID = capture.id
+        if capture.attachmentRelativePath != nil || capture.kind == .link { context.state.openOriginal(capture) }
+        else { context.state.openCapture(capture.id) }
+    }
+
+    func details(_ item: ProjectWorkspaceItem) {
+        let context = current
+        if let capture = item.capture { context.state.openCapture(capture.id) }
+        else { context.notePresented.wrappedValue = true }
+    }
+
+    func makeTasks(_ items: [ProjectWorkspaceItem]) {
+        let context = current
+        do {
+            let receipt = try context.state.convertProjectItemsToTasks(items.compactMap(\.capture))
+            context.undoReceipt.wrappedValue = receipt
+            let count = receipt.count
+            let hasNotes = items.contains { if case .note = $0 { return true }; return false }
+            context.state.status = AppStatusMessage(text: (count == 1 ? "1 capture is now a task. Originals are kept." : "\(count) captures are now tasks. Originals are kept.")
+                + (hasNotes ? " Live project notes remain notes." : ""), severity: .success)
+        } catch { context.state.reportFailure(error.localizedDescription) }
+    }
+
+    func drag(_ item: ProjectWorkspaceItem) throws -> [NSPasteboardWriting] {
+        let context = current
+        let selection = context.presentation.selectedIDs
+        let identities = selection.contains(item.id) ? selection : [item.id]
+        // Selection and transfer order always come from the current visible
+        // project, including after a filter, date or scratchpad change.
+        let items = context.visible.filter { identities.contains($0.id) }
+        let captures = items.compactMap(\.capture)
+        let captureWriters = captures.isEmpty ? [] : try ExplorerTransfer.pasteboardWriters(for: captures, store: context.state.store)
+        var iterator = captureWriters.makeIterator()
+        return items.map { value in
+            switch value {
+            case .capture: return iterator.next()!
+            case .note(let note): return note.text as NSString
+            }
+        }
+    }
+
+    func selectAll() {
+        let context = current
+        var presentation = context.presentation
+        presentation.selectedIDs = Set(context.visibleIDs)
+        presentation.selectionAnchor = context.visibleIDs.first
+        context.presentation = presentation
+    }
+
+    func resetFilters() {
+        let context = current
+        var presentation = context.presentation
+        presentation.filterRawValue = ProjectWorkspaceFilter.all.rawValue
+        presentation.selectedDateRange = nil
+        presentation.dateFilter = .anytime
+        presentation.selectedIDs.removeAll()
+        presentation.selectionAnchor = nil
+        context.presentation = presentation
+    }
+
+    func recordHistory(_ anchor: NavigationViewportAnchor) { current.presentation.viewport = anchor }
+}
+
+/// These are all non-zoom inputs to the browser. The revision changes whenever
+/// archive/workspace content is rebuilt, including replacement captures and
+/// scratchpad text. Independent Capture observers still deliver live edits.
+private struct ProjectWorkspaceBrowserInputs: Equatable {
+    let actionsID: ObjectIdentifier
+    let stateID: ObjectIdentifier
+    let storeID: ObjectIdentifier
+    let revision: UInt64
+    let project: String
+    let filter: String
+    let dateFilter: String
+    let columns: Int
+    let compact: Bool
+    let selection: Set<String>
+    let selectionAnchor: String?
+    let focusedItem: String?
+    let historyAnchor: NavigationViewportAnchor?
+    let color: Color
+    let emptyProject: Bool
+    let busy: Bool
+    let navigationBlocked: Bool
+}
+
+/// Font/preview scaling remains inside ProjectWorkspaceCard. The equality
+/// boundary only keeps the row's zoom spacing from replacing card callbacks
+/// and focus controls that have otherwise retained the same content/state.
+@MainActor private struct ProjectWorkspaceBrowserCard: View, Equatable {
+    let item: ProjectWorkspaceItem
+    let itemID: String
+    let inputs: ProjectWorkspaceBrowserInputs
+    let state: AppState
+    let actions: ProjectWorkspaceBrowserActions
+    let focus: FocusState<String?>.Binding
+
+    nonisolated static func == (lhs: Self, rhs: Self) -> Bool {
+        lhs.itemID == rhs.itemID && lhs.inputs == rhs.inputs
+    }
+
+    var body: some View {
+        ProjectWorkspaceCard(state: state, item: item, selected: inputs.selection.contains(itemID),
+            compact: inputs.compact, color: inputs.color, focus: focus,
+            open: { actions.open(item) }, select: { actions.select(item) }, details: { actions.details(item) },
+            makeTask: { actions.makeTasks([item]) }, drag: { try actions.drag(item) })
+            .onKeyPress("a", phases: .down) { press in
+                guard press.modifiers.contains(.command) else { return .ignored }
+                actions.selectAll(); return .handled
+            }
+    }
+}
+
+@MainActor private struct ProjectWorkspaceBrowserRow: View {
+    let row: ProjectWorkspaceRow
+    let inputs: ProjectWorkspaceBrowserInputs
+    let state: AppState
+    let actions: ProjectWorkspaceBrowserActions
+    let focus: FocusState<String?>.Binding
+    @Environment(\.workspaceZoom) private var zoom
+    @Environment(\.layoutDirection) private var layoutDirection
+
+    var body: some View {
+        ProjectWorkspaceRowLayout(spacing: zoom.value(12), direction: layoutDirection) {
+            ForEach(row.items) { item in
+                ProjectWorkspaceBrowserCard(item: item, itemID: item.id, inputs: inputs,
+                    state: state, actions: actions, focus: focus).equatable().frame(maxWidth: .infinity)
+            }
+            ForEach(0..<max(0, inputs.columns - row.items.count), id: \.self) { _ in
+                Color.clear.frame(maxWidth: .infinity)
+            }
+        }
+    }
+}
+
+/// Native List structure is independent of each typography tick. Its children
+/// and viewport bridge observe live zoom themselves, so automatic card height,
+/// resize anchoring and the native focus/key loop continue to update normally.
+@MainActor private struct ProjectWorkspaceBrowser: View, Equatable {
+    let layout: ProjectWorkspaceRows
+    let inputs: ProjectWorkspaceBrowserInputs
+    let state: AppState
+    let store: CaptureStore
+    let actions: ProjectWorkspaceBrowserActions
+    let focus: FocusState<String?>.Binding
+
+    nonisolated static func == (lhs: Self, rhs: Self) -> Bool { lhs.inputs == rhs.inputs }
+
+    var body: some View {
+        List {
+            if layout.rows.isEmpty {
+                VStack(spacing: 8) {
+                    EmptyMessage(symbol: "folder", title: inputs.emptyProject ? "Make room for your next idea" : "No matching items",
+                        message: inputs.emptyProject ? "Drop a file or paste something into this project. Your notes, links and tasks will live here too." : "Try another filter or show the complete project.")
+                    if !inputs.emptyProject {
+                        Button("Show all items") { actions.resetFilters() }
+                            .frame(minHeight: 32).accessibilityIdentifier("project-reset-filters")
+                    }
+                }.listRowSeparator(.hidden).listRowBackground(Color.clear)
+            }
+            ForEach(layout.rows) { row in
+                ProjectWorkspaceBrowserRow(row: row, inputs: inputs, state: state, actions: actions, focus: focus)
+                    .listRowInsets(EdgeInsets(top: 5, leading: 16, bottom: 7, trailing: 16))
+                    .listRowSeparator(.hidden).listRowBackground(Color.clear)
+            }
+        }.listStyle(.plain).scrollContentBackground(.hidden)
+            .transaction { $0.animation = nil; $0.disablesAnimations = true }
+            .background {
+                ExplorerViewport(store: store, rowIDs: layout.rowIDs,
+                    context: ExplorerViewportContext(project: inputs.project, unfiledOnly: false, dailyFiles: false,
+                        query: "", filter: inputs.filter, pinnedOnly: false, dateFilter: inputs.dateFilter,
+                        source: nil, origin: "all", grouping: "project-\(inputs.columns)-\(inputs.compact)-newest", selectedID: nil), handlesZoom: false)
+                    .allowsHitTesting(false).accessibilityHidden(true)
+            }
+            .background {
+                WorkspaceZoomViewport(groups: layout.groups, historyAnchor: inputs.historyAnchor,
+                    onHistoryAnchor: { actions.recordHistory($0) })
+                    .allowsHitTesting(false).accessibilityHidden(true)
+            }
+            .accessibilityIdentifier("project-items")
     }
 }
 
@@ -150,14 +401,10 @@ private final class ProjectReorderWriter: NSObject, NSPasteboardWriting {
         get { ProjectWorkspaceFilter(rawValue: presentation.filterRawValue) ?? .all }
         nonmutating set { presentation.filterRawValue = newValue.rawValue }
     }
-    private var dateFilter: WorkspaceDateFilter {
-        get { presentation.dateFilter }
-        nonmutating set { presentation.dateFilter = newValue }
-    }
-    private var newestFirst: Bool {
-        get { presentation.newestFirst }
-        nonmutating set { presentation.newestFirst = newValue }
-    }
+    private var dateFilter: WorkspaceDateFilter { presentation.dateFilter }
+    private var dateFilterTitle: String { presentation.selectedDateRange?.displayTitle ?? dateFilter.title }
+    private var dateFilterKey: String { presentation.selectedDateRange?.cacheKey ?? dateFilter.rawValue }
+    private var hasDateFilter: Bool { presentation.selectedDateRange != nil || dateFilter != .anytime }
     private var compact: Bool {
         get { presentation.compact }
         nonmutating set { presentation.compact = newValue }
@@ -173,13 +420,13 @@ private final class ProjectReorderWriter: NSObject, NSPasteboardWriting {
     @State private var gestureColumns: Int?
     @State private var settledColumns = 1
     @State private var contentCache: ProjectWorkspaceContentCache
-    @State private var dragging = Set<String>()
+    @State private var browserActions = ProjectWorkspaceBrowserActions()
     @State private var targeted = false
     @State private var exporting = false
     @State private var notePresented = false
+    @State private var datePickerPresented = false
     @State private var undoReceipt: ProjectTaskConversionReceipt?
     @FocusState private var focusedItem: String?
-    private static let reorderType = "com.dabin.project-item-order"
 
     init(state: AppState, project: String, showsSearchEntry: Bool = true, pasteboard: NSPasteboard = .general,
          chooseExportDestination: @escaping @MainActor (ProjectWorkspaceExportDocument) -> URL? = { document in
@@ -205,9 +452,8 @@ private final class ProjectReorderWriter: NSObject, NSPasteboardWriting {
         ProjectColorChoice.color(for: workspace.projectColorHex(for: project) ?? WorkspaceStore.defaultProjectColorHex)
     }
     private var busy: Bool { exporting || intake.isBusy || state.isArchiveOperationRunning }
-    private var canReorder: Bool { !newestFirst && filter == .all && dateFilter == .anytime && !busy }
     private var allItems: [ProjectWorkspaceItem] {
-        contentCache.items(key: "\(project)-\(newestFirst)") { buildAllItems() }
+        contentCache.items(key: project) { buildAllItems() }
     }
     private func buildAllItems() -> [ProjectWorkspaceItem] {
         var items = ProjectWorkspaceContents.captures(in: project, from: store.captures).map(ProjectWorkspaceItem.capture)
@@ -217,13 +463,15 @@ private final class ProjectReorderWriter: NSObject, NSPasteboardWriting {
             items.append(.note(WorkspaceScratchpad(text: text, projectName: project, updatedAt: saved?.updatedAt ?? Date())))
         }
         items.sort { $0.date == $1.date ? $0.id < $1.id : $0.date > $1.date }
-        guard !newestFirst else { return items }
-        let lookup = Dictionary(uniqueKeysWithValues: items.map { ($0.id, $0) })
-        return workspace.orderedProjectItemIDs(items.map(\.id), project: project).compactMap { lookup[$0] }
+        return items
     }
     private func visibleItems(_ all: [ProjectWorkspaceItem]) -> [ProjectWorkspaceItem] {
-        contentCache.visible(key: "\(filter.rawValue)-\(dateFilter.rawValue)") {
-            all.filter { filter.includes($0) && dateFilter.includes($0.capture?.captureDay ?? CaptureCalendar.dayString($0.date)) }
+        contentCache.visible(key: "\(filter.rawValue)-\(dateFilterKey)") {
+            all.filter { item in
+                let day = item.capture?.captureDay ?? CaptureCalendar.dayString(item.date)
+                let included = presentation.selectedDateRange?.includes(day: day) ?? dateFilter.includes(day)
+                return filter.includes(item) && included
+            }
         }
     }
 
@@ -232,16 +480,16 @@ private final class ProjectReorderWriter: NSObject, NSPasteboardWriting {
         let visible = visibleItems(all)
         let selected = contentCache.selected(selection)
         let visibleIDs = contentCache.visibleIDs
+        browserActions.update(state: state, project: project, visible: visible, visibleIDs: visibleIDs,
+                              focus: $focusedItem, notePresented: $notePresented, undoReceipt: $undoReceipt)
         return VStack(spacing: 0) {
             header(all: all, selected: selected)
-            filters
             selectionBar(all: all, visible: visible, selected: selected)
             GeometryReader { geometry in
                 let proposedColumns = WorkspaceZoomLayout(factor: zoom.factor).columns(for: geometry.size.width, compact: compact)
                 let columns = compact ? 1 : zoom.isInteracting ? (gestureColumns ?? settledColumns) : proposedColumns
-                let layout = contentCache.layout(columns: columns,
-                    newestFirst: newestFirst || workspace.snapshot.projectItemOrders?[WorkspaceSnapshot.projectKey(project)] == nil)
-                browser(layout: layout, visible: visible, columns: columns, emptyProject: all.isEmpty)
+                let layout = contentCache.layout(columns: columns)
+                browser(layout: layout, columns: columns, emptyProject: all.isEmpty)
                     .onAppear { settledColumns = proposedColumns }
                     .onChange(of: proposedColumns) { _, value in if !zoom.isInteracting { settledColumns = value } }
                     .onChange(of: zoom.isInteracting) { _, active in
@@ -296,11 +544,12 @@ private final class ProjectReorderWriter: NSObject, NSPasteboardWriting {
     }
 
     private func header(all: [ProjectWorkspaceItem], selected: [ProjectWorkspaceItem]) -> some View {
-        HStack(spacing: 8) {
-            headerActions(all: all, selected: selected)
+        HStack(spacing: 6) {
+            headerActions(selected: selected)
             projectActions(all: all, selected: selected)
         }.font(.system(size: 12)).controlSize(.regular)
-            .padding(.horizontal, 18).padding(.vertical, 12)
+            .padding(.horizontal, 14).padding(.vertical, 8)
+            .accessibilityElement(children: .contain).accessibilityIdentifier("project-toolbar")
     }
 
     private func projectActions(all: [ProjectWorkspaceItem], selected: [ProjectWorkspaceItem]) -> some View {
@@ -321,94 +570,97 @@ private final class ProjectReorderWriter: NSObject, NSPasteboardWriting {
             Divider()
             Button("Clipboard view") { state.navigateWorkspaceMode(.clipboard) }.disabled(state.isNavigationBlocked)
             Button("Shelf view") { state.navigateWorkspaceMode(.shelf) }.disabled(state.isNavigationBlocked)
-        } label: { Image(systemName: "ellipsis").frame(width: 32, height: 32) }
+        } label: { Image(systemName: "ellipsis").frame(width: 32, height: 32).contentShape(Rectangle()) }
             .menuStyle(.borderlessButton).menuIndicator(.hidden).fixedSize().accessibilityLabel("Project actions")
             .accessibilityIdentifier("project-actions")
             .disabled(busy)
     }
 
-    private func headerActions(all: [ProjectWorkspaceItem], selected: [ProjectWorkspaceItem]) -> some View {
-        let items = selected.isEmpty ? all : selected
-        let scope: ProjectWorkspaceExportScope = selected.isEmpty ? .project : .selection
-        let title = selected.isEmpty ? "Export project" : "Export selected (\(selected.count))"
-        return HStack(spacing: 8) {
+    private func headerActions(selected: [ProjectWorkspaceItem]) -> some View {
+        let canExport = !selected.isEmpty && !busy
+        return HStack(spacing: 6) {
             if showsSearchEntry {
                 Button { state.performSearchCommand() } label: {
-                    ViewThatFits(in: .horizontal) {
-                        Label("Search everything", systemImage: "magnifyingglass").fixedSize()
-                        Image(systemName: "magnifyingglass").frame(width: 32, height: 32)
-                    }
+                    Image(systemName: "magnifyingglass").frame(width: 32, height: 32).contentShape(Rectangle())
                 }.buttonStyle(.plain).foregroundStyle(Palette.muted).accessibilityLabel("Search everything saved in DaBin")
                     .accessibilityIdentifier("project-search").buddyHelp("Search across DaBin; refine by project in Filters")
             }
-            Spacer(minLength: 4)
-            Button { export(items, scope: scope) } label: {
-                Label(exporting ? "Exporting…" : title, systemImage: "arrow.down.to.line")
-                    .lineLimit(1).fixedSize()
-            }.buttonStyle(.borderedProminent).tint(color).disabled(items.isEmpty || busy)
-                .accessibilityLabel(title).accessibilityIdentifier("project-export")
-                .buddyHelp("Save \(scope.title.lowercased()) as a ZIP with original files, notes and task details")
+            filterMenu
+            viewOptions
+            Spacer(minLength: 0)
+            Button { exportSelected(selected) } label: {
+                Label(exporting ? "Exporting…" : "Export Selected", systemImage: "arrow.down.to.line")
+                    .font(.system(size: 11, weight: .medium)).fixedSize()
+                    .padding(.horizontal, 9).frame(height: 28)
+                    .foregroundStyle(canExport ? color : Palette.muted)
+                    .background(color.opacity(canExport ? 0.12 : 0.05), in: RoundedRectangle(cornerRadius: 7))
+                    .overlay(RoundedRectangle(cornerRadius: 7).stroke(color.opacity(canExport ? 0.24 : 0.1), lineWidth: 1))
+                    .contentShape(Rectangle())
+            }.buttonStyle(.plain).disabled(!canExport)
+                .accessibilityLabel("Export Selected").accessibilityIdentifier("project-export")
+                .buddyHelp(selected.isEmpty ? "Select items to export a ZIP" : "Save \(selected.count) selected \(selected.count == 1 ? "item" : "items") as a ZIP with original files, notes and task details")
         }
     }
 
-    private var filters: some View {
-        ViewThatFits(in: .horizontal) {
-            HStack(spacing: 6) { filterChips; Spacer(minLength: 4); viewOptions }
-            VStack(alignment: .leading, spacing: 8) {
-                HStack {
-                    Menu {
-                        ForEach(ProjectWorkspaceFilter.allCases) { value in
-                            Button { selectFilter(value) } label: {
-                                Label(value.rawValue, systemImage: filter == value ? "checkmark" : "line.3.horizontal.decrease")
-                            }.accessibilityIdentifier("project-filter-\(value.id)")
-                        }
-                    } label: { Label(filter.rawValue, systemImage: "line.3.horizontal.decrease") }
-                        .menuStyle(.borderlessButton).frame(minHeight: 32).fixedSize()
-                        .accessibilityLabel("Project item type: \(filter.rawValue)")
-                        .accessibilityIdentifier("project-filter-menu")
-                    Spacer(minLength: 0)
-                }
-                HStack { viewOptions; Spacer(minLength: 0) }
+    private var filterMenu: some View {
+        Menu {
+            ForEach(ProjectWorkspaceFilter.allCases) { value in
+                Button { selectFilter(value) } label: {
+                    Label(value.rawValue, systemImage: filter == value ? "checkmark" : "line.3.horizontal.decrease")
+                }.accessibilityIdentifier("project-filter-\(value.id)")
             }
-        }.padding(.horizontal, 18).padding(.bottom, 8)
-    }
-
-    private var filterChips: some View {
-        ForEach(ProjectWorkspaceFilter.allCases) { value in
-            Button { selectFilter(value) } label: {
-                Text(value.rawValue).font(.system(size: 12, weight: filter == value ? .semibold : .regular))
-                    .padding(.horizontal, 10).frame(height: 32)
-                    .background(filter == value ? color.opacity(0.13) : Palette.surface, in: Capsule())
-                    .overlay(Capsule().strokeBorder(filter == value ? color.opacity(0.32) : Palette.line, lineWidth: 0.6))
-            }.buttonStyle(.plain).foregroundStyle(filter == value ? color : Palette.muted)
-                .accessibilityAddTraits(filter == value ? .isSelected : [])
-                .accessibilityIdentifier("project-filter-\(value.id)")
-        }
+        } label: {
+            Image(systemName: "line.3.horizontal.decrease").frame(width: 32, height: 32)
+                .background(filter == .all ? Color.clear : color.opacity(0.13), in: RoundedRectangle(cornerRadius: 7))
+                .contentShape(Rectangle())
+        }.menuStyle(.borderlessButton).menuIndicator(.hidden).fixedSize()
+            .foregroundStyle(filter == .all ? Palette.muted : color)
+            .accessibilityLabel("Project item type: \(filter.rawValue)")
+            .accessibilityIdentifier("project-filter-menu").buddyHelp("Filter items: \(filter.rawValue)")
     }
 
     private var viewOptions: some View {
         HStack(spacing: 6) {
-            Menu {
-                ForEach(WorkspaceDateFilter.allCases) { date in
-                    Button { dateFilter = date; selection.removeAll(); selectionAnchor = nil } label: {
-                        Label(date.title, systemImage: dateFilter == date ? "checkmark" : "calendar")
-                    }
+            Button { datePickerPresented.toggle() } label: {
+                Image(systemName: "calendar").frame(width: 32, height: 32)
+                    .background(hasDateFilter ? color.opacity(0.13) : Color.clear, in: RoundedRectangle(cornerRadius: 7))
+                    .contentShape(Rectangle())
+            }.buttonStyle(.plain).fixedSize()
+                .foregroundStyle(hasDateFilter ? color : Palette.muted)
+                .accessibilityLabel("Project date: \(presentation.selectedDateRange?.accessibilityLabel ?? dateFilter.title)")
+                .accessibilityIdentifier("project-date-filter").buddyHelp("Date: \(dateFilterTitle)")
+                .popover(isPresented: $datePickerPresented, arrowEdge: .bottom) {
+                    ProjectDatePicker(selection: presentation.selectedDateRange, dateFilter: dateFilter,
+                        activityDays: Set(allItems.map { $0.capture?.captureDay ?? CaptureCalendar.dayString($0.date) }),
+                        onSelect: selectDate, onClear: clearDate,
+                        dismiss: { datePickerPresented = false })
+                        .environment(\.daBinAccent, color)
+                        .hoverTooltips()
                 }
-            } label: { Label(dateFilter.title, systemImage: "calendar") }.frame(minHeight: 32).fixedSize()
-                .accessibilityIdentifier("project-date-filter")
-            Menu {
-                Button { newestFirst = false } label: { Label("My order", systemImage: newestFirst ? "line.3.horizontal" : "checkmark") }
-                    .accessibilityIdentifier("project-sort-custom")
-                Button { newestFirst = true } label: { Label("Newest first", systemImage: newestFirst ? "checkmark" : "clock") }
-                    .accessibilityIdentifier("project-sort-newest")
-            } label: { Text(newestFirst ? "Newest first" : "My order") }.frame(minHeight: 32).fixedSize()
-                .accessibilityLabel("Project sort order").accessibilityIdentifier("project-sort-order")
             Button { compact.toggle() } label: {
-                Label(compact ? "Grid" : "List", systemImage: compact ? "square.grid.2x2" : "list.bullet")
-                    .padding(.horizontal, 6).frame(minWidth: 32, minHeight: 32).contentShape(Rectangle())
+                Image(systemName: compact ? "square.grid.2x2" : "list.bullet")
+                    .frame(width: 32, height: 32).contentShape(Rectangle())
             }.buttonStyle(.plain).accessibilityLabel(compact ? "Show preview grid" : "Show compact list")
-                .accessibilityIdentifier("project-view-toggle")
-        }.font(.system(size: 11)).foregroundStyle(Palette.muted).menuStyle(.borderlessButton)
+                .accessibilityIdentifier("project-view-toggle").buddyHelp(compact ? "Show preview grid" : "Show compact list")
+        }.font(.system(size: 12)).foregroundStyle(Palette.muted).fixedSize()
+    }
+
+    private func selectDate(_ range: ProjectDateSelection) {
+        var next = presentation
+        next.selectedDateRange = range
+        next.dateFilter = .anytime
+        next.selectedIDs.removeAll()
+        next.selectionAnchor = nil
+        presentation = next
+    }
+
+    private func clearDate() {
+        var next = presentation
+        next.selectedDateRange = nil
+        next.dateFilter = .anytime
+        next.selectedIDs.removeAll()
+        next.selectionAnchor = nil
+        presentation = next
     }
 
     private func selectionBar(all: [ProjectWorkspaceItem], visible: [ProjectWorkspaceItem], selected: [ProjectWorkspaceItem]) -> some View {
@@ -448,147 +700,25 @@ private final class ProjectReorderWriter: NSObject, NSPasteboardWriting {
                 .disabled(busy || !selected.contains { $0.capture?.isTask == false })
                 .buddyHelp("Keeps each capture and file. Edit live project notes before saving them as a task.")
                 .accessibilityIdentifier("project-make-tasks")
-            Menu {
-                Button("Move earlier", systemImage: "arrow.up") { moveSelection(earlier: true) }
-                    .disabled(!canMoveSelection(earlier: true))
-                Button("Move later", systemImage: "arrow.down") { moveSelection(earlier: false) }
-                    .disabled(!canMoveSelection(earlier: false))
-            } label: { Image(systemName: "arrow.up.arrow.down").frame(width: 32, height: 32) }
-                .menuStyle(.borderlessButton).menuIndicator(.hidden).fixedSize().disabled(!canReorder)
-                .accessibilityLabel("Reorder selected items").accessibilityIdentifier("project-reorder-selection").buddyHelp("Reorder in All items, Any date, My order")
+
         }
     }
 
-    private func browser(layout: ProjectWorkspaceRows, visible: [ProjectWorkspaceItem], columns: Int, emptyProject: Bool) -> some View {
-        List {
-            if layout.rows.isEmpty {
-                VStack(spacing: 8) {
-                    EmptyMessage(symbol: "folder", title: emptyProject ? "Make room for your next idea" : "No matching items",
-                        message: emptyProject ? "Drop a file or paste something into this project. Your notes, links and tasks will live here too." : "Try another filter or show the complete project.")
-                    if !emptyProject {
-                        Button("Show all items") { selectFilter(.all); dateFilter = .anytime }
-                            .frame(minHeight: 32).accessibilityIdentifier("project-reset-filters")
-                    }
-                }.listRowSeparator(.hidden).listRowBackground(Color.clear)
-            }
-            ForEach(layout.rows) { row in
-                HStack(alignment: .top, spacing: zoom.value(12)) {
-                    ForEach(row.items) { item in
-                        card(item, visible: visible).frame(maxWidth: .infinity)
-                    }
-                    ForEach(0..<max(0, columns - row.items.count), id: \.self) { _ in Color.clear.frame(maxWidth: .infinity) }
-                }.listRowInsets(EdgeInsets(top: 5, leading: 16, bottom: 7, trailing: 16))
-                    .listRowSeparator(.hidden).listRowBackground(Color.clear)
-            }
-        }.listStyle(.plain).scrollContentBackground(.hidden)
-            .transaction { $0.animation = nil; $0.disablesAnimations = true }
-            .background {
-                ExplorerViewport(store: store, rowIDs: layout.rowIDs,
-                    context: ExplorerViewportContext(project: project, unfiledOnly: false, dailyFiles: false,
-                        query: "", filter: filter.rawValue, pinnedOnly: false, dateFilter: dateFilter.rawValue,
-                        source: nil, origin: "all", grouping: "project-\(columns)-\(compact)-\(newestFirst)", selectedID: nil), handlesZoom: false)
-                    .allowsHitTesting(false).accessibilityHidden(true)
-            }
-            .background {
-                WorkspaceZoomViewport(groups: layout.groups,
-                    historyAnchor: presentation.viewport, onHistoryAnchor: { presentation.viewport = $0 })
-                    .allowsHitTesting(false).accessibilityHidden(true)
-            }
-            .accessibilityIdentifier("project-items")
-    }
-
-    private func card(_ item: ProjectWorkspaceItem, visible: [ProjectWorkspaceItem]) -> some View {
-        ProjectWorkspaceCard(state: state, item: item, selected: selection.contains(item.id), compact: compact,
-            color: color, focus: $focusedItem, open: { open(item) }, select: { select(item, visible: visible) },
-            details: { if let capture = item.capture { state.openCapture(capture.id) } else { notePresented = true } },
-            makeTask: { makeTasks([item]) },
-            earlier: { selection = [item.id]; moveSelection(earlier: true) },
-            later: { selection = [item.id]; moveSelection(earlier: false) }, canReorder: canReorder,
-            drag: {
-                let identities = selection.contains(item.id) ? selection : [item.id]
-                // The visible project order also determines multi-item drop order.
-                // Resolve the complete selection before starting a native session.
-                let items = visible.filter { identities.contains($0.id) }
-                let captures = items.compactMap(\.capture)
-                let captureWriters = captures.isEmpty ? [] : try ExplorerTransfer.pasteboardWriters(for: captures, store: store)
-                var iterator = captureWriters.makeIterator()
-                var writers: [NSPasteboardWriting] = items.map { value in
-                    switch value {
-                    case .capture: return iterator.next()!
-                    case .note(let note): return note.text as NSString
-                    }
-                }
-                dragging = canReorder ? identities : []
-                if canReorder, let first = writers.first {
-                    writers[0] = ProjectReorderWriter(content: first, type: Self.reorderType)
-                }
-                return writers
-            }, dragEnded: { dragging.removeAll() },
-            canMoveEarlier: canMoveItem(item.id, earlier: true), canMoveLater: canMoveItem(item.id, earlier: false))
-            .onDrop(of: [Self.reorderType], isTargeted: nil) { _ in
-                guard canReorder, !dragging.isEmpty, !dragging.contains(item.id) else { return false }
-                saveOrder(ProjectWorkspaceOrdering.moving(allItems.map(\.id), selected: dragging, before: item.id))
-                selection = dragging; dragging.removeAll(); return true
-            }
-            .onKeyPress("a", phases: .down) { press in
-                guard press.modifiers.contains(.command) else { return .ignored }
-                selection = Set(visible.map(\.id)); selectionAnchor = visible.first?.id; return .handled
-            }
-    }
-
-    private func select(_ item: ProjectWorkspaceItem, visible: [ProjectWorkspaceItem]) {
-        let flags = NSEvent.modifierFlags
-        if flags.contains(.shift), let anchor = selectionAnchor,
-           let from = visible.firstIndex(where: { $0.id == anchor }), let to = visible.firstIndex(where: { $0.id == item.id }) {
-            selection.formUnion(visible[min(from, to)...max(from, to)].map(\.id))
-        } else {
-            if !selection.insert(item.id).inserted { selection.remove(item.id) }
-            selectionAnchor = item.id
-        }
-        focusedItem = item.id
-    }
-    private func open(_ item: ProjectWorkspaceItem) {
-        if NSEvent.modifierFlags.contains(.command) || NSEvent.modifierFlags.contains(.shift) {
-            select(item, visible: visibleItems(allItems)); return
-        }
-        guard let capture = item.capture else { notePresented = true; return }
-        workspace.selectedCaptureID = capture.id
-        if capture.attachmentRelativePath != nil || capture.kind == .link { state.openOriginal(capture) }
-        else { state.openCapture(capture.id) }
+    private func browser(layout: ProjectWorkspaceRows, columns: Int, emptyProject: Bool) -> some View {
+        let inputs = ProjectWorkspaceBrowserInputs(actionsID: ObjectIdentifier(browserActions),
+            stateID: ObjectIdentifier(state), storeID: ObjectIdentifier(store), revision: contentCache.visibleRevision,
+            project: project, filter: filter.rawValue, dateFilter: dateFilterKey, columns: columns, compact: compact,
+            selection: selection, selectionAnchor: selectionAnchor, focusedItem: focusedItem,
+            historyAnchor: presentation.viewport, color: color, emptyProject: emptyProject,
+            busy: busy, navigationBlocked: state.isNavigationBlocked)
+        return ProjectWorkspaceBrowser(layout: layout, inputs: inputs, state: state, store: store,
+            actions: browserActions, focus: $focusedItem).equatable()
     }
     private func selectFilter(_ value: ProjectWorkspaceFilter) {
         filter = value; selection.removeAll(); selectionAnchor = nil
     }
-    private func canMoveSelection(earlier: Bool) -> Bool {
-        guard canReorder else { return false }
-        let ids = contentCache.visibleIDs
-        guard ids.count > 1, !selection.isEmpty else { return false }
-        return ids.indices.contains { index in
-            guard selection.contains(ids[index]) else { return false }
-            let neighbor = earlier ? index - 1 : index + 1
-            return ids.indices.contains(neighbor) && !selection.contains(ids[neighbor])
-        }
-    }
-    private func canMoveItem(_ id: String, earlier: Bool) -> Bool {
-        guard canReorder, let index = contentCache.position(of: id) else { return false }
-        return earlier ? index > 0 : index + 1 < contentCache.visibleIDs.count
-    }
-    private func moveSelection(earlier: Bool) {
-        guard canMoveSelection(earlier: earlier) else { return }
-        saveOrder(ProjectWorkspaceOrdering.move(allItems.map(\.id), selected: selection,
-            direction: earlier ? .earlier : .later))
-    }
-    private func saveOrder(_ ids: [String]) {
-        do { try workspace.saveProjectItemOrder(ids, project: project) }
-        catch { state.reportFailure(error.localizedDescription) }
-    }
     private func makeTasks(_ items: [ProjectWorkspaceItem]) {
-        do {
-            undoReceipt = try state.convertProjectItemsToTasks(items.compactMap(\.capture))
-            let count = undoReceipt?.count ?? 0
-            state.status = AppStatusMessage(text: (count == 1 ? "1 capture is now a task. Originals are kept." : "\(count) captures are now tasks. Originals are kept.")
-                + (notes(in: items) == nil ? "" : " Live project notes remain notes."), severity: .success)
-        } catch { state.reportFailure(error.localizedDescription) }
+        browserActions.makeTasks(items)
     }
     private func undoTasks() {
         guard let receipt = undoReceipt else { return }
@@ -611,10 +741,11 @@ private final class ProjectReorderWriter: NSObject, NSPasteboardWriting {
             state.status = AppStatusMessage(text: "\(items.count) items copied\(summary ? " as a summary" : "").", severity: .success)
         } catch { state.reportFailure(error.localizedDescription) }
     }
-    private func export(_ items: [ProjectWorkspaceItem], scope: ProjectWorkspaceExportScope) {
+    private func exportSelected(_ items: [ProjectWorkspaceItem]) {
+        guard !items.isEmpty && !busy else { return }
         do {
             let document = try ProjectWorkspaceExport.document(project: project, captures: items.compactMap(\.capture), store: store,
-                notes: notes(in: items), scope: scope, orderedItemIDs: items.map(\.id))
+                notes: notes(in: items), scope: .selection, orderedItemIDs: items.map(\.id))
             guard let url = chooseExportDestination(document) else { return }
             exporting = true
             Task { @MainActor in
@@ -623,7 +754,7 @@ private final class ProjectReorderWriter: NSObject, NSPasteboardWriting {
                 defer { if access { url.stopAccessingSecurityScopedResource() } }
                 do {
                     try await ProjectWorkspaceExport.export(document, to: url)
-                    state.status = AppStatusMessage(text: scope == .project ? "Project ZIP saved." : "\(document.itemCount) selected items saved as ZIP.", severity: .success)
+                    state.status = AppStatusMessage(text: "\(document.itemCount) selected \(document.itemCount == 1 ? "item" : "items") saved as ZIP.", severity: .success)
                 } catch { state.reportFailure(error.localizedDescription) }
             }
         } catch { state.reportFailure(error.localizedDescription) }

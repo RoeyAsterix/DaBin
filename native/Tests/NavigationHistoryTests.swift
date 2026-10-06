@@ -269,7 +269,7 @@ import Foundation
         let itemID = ProjectWorkspaceIdentity.capture(task.id)
         let neighbor = ProjectWorkspaceIdentity.capture(attachment.id)
         state.projectPresentation["Example Client"] = ProjectNavigationPresentation(filterRawValue: "Tasks",
-            dateFilter: .lastSevenDays, newestFirst: true, compact: true, selectedIDs: [itemID],
+            dateFilter: .lastSevenDays, compact: true, selectedIDs: [itemID],
             selectionAnchor: itemID, focusedID: itemID,
             viewport: NavigationViewportAnchor(itemID: itemID, offset: -14, neighbors: [neighbor]))
         state.openCapture(task.id, focus: "comment")
@@ -286,7 +286,7 @@ import Foundation
         try expect(state.route == .library && state.libraryProject == "Example Client", "Second Back restores project")
         let presentation = state.projectPresentation["Example Client"]!
         try expect(presentation.filterRawValue == "Tasks" && presentation.dateFilter == .lastSevenDays
-            && presentation.compact && presentation.newestFirst && presentation.selectedIDs == [itemID]
+            && presentation.compact && presentation.selectedIDs == [itemID]
             && presentation.viewport?.itemID == itemID && presentation.viewport?.offset == -14,
                    "Project refinements, selection and stable viewport return intact")
         state.forward()

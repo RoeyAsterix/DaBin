@@ -66,6 +66,9 @@ def privacy_manifest_violations(manifest):
     for category, reason in REQUIRED_PRIVACY_REASONS.items():
         if not isinstance(reasons.get(category), list) or reason not in reasons[category]:
             result.append(category + " / " + reason)
+    authorized_file_reasons = reasons.get("NSPrivacyAccessedAPICategoryFileTimestamp", [])
+    if not isinstance(authorized_file_reasons, list) or "3B52.1" not in authorized_file_reasons:
+        result.append("NSPrivacyAccessedAPICategoryFileTimestamp / 3B52.1")
     return result
 
 

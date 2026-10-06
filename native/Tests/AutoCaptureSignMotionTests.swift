@@ -21,9 +21,11 @@ private struct AutoCaptureSignMotionTests {
     static func main() throws {
         try checkReceipts()
         try checkReactionLibraryAndDeck()
+        try checkCompanionActing()
         try checkNormalPerformances()
         try checkVisibleSignBounds()
         try checkReducedMotion()
+        try checkExpressionOnlyContinuation()
         print("Auto capture sign motion checks passed: \(checks)")
     }
 
@@ -38,16 +40,16 @@ private struct AutoCaptureSignMotionTests {
 
         let clipboard = AutoCaptureSignReceipt(kind: .clipboard, count: 3)
         try expect(clipboard.icon == "doc.on.clipboard.fill"
-                   && clipboard.message == "Copied!"
-                   && clipboard.accessibilityText == "3 clipboard captures saved",
-                   "Clipboard copy remains concise while accessibility reports the burst")
+                   && clipboard.message == "Saved 3 items"
+                   && clipboard.accessibilityText == "Saved 3 items",
+                   "A clipboard burst shows its exact saved-item acknowledgement")
 
         let mixed = screenshot.merging(clipboard)
         try expect(mixed.kind == .mixed && mixed.count == 4,
                    "Different capture kinds merge into one accurate mixed receipt")
         try expect(mixed.icon == "square.stack.3d.up.fill"
-                   && mixed.message == "Captures saved!"
-                   && mixed.accessibilityText == "4 captures saved",
+                   && mixed.message == "Saved 4 items"
+                   && mixed.accessibilityText == "Saved 4 items",
                    "A mixed receipt uses only fixed aggregate copy")
 
         let sameKind = AutoCaptureSignReceipt(kind: .screenshot, count: 2)
@@ -70,15 +72,15 @@ private struct AutoCaptureSignMotionTests {
 
     private static func checkReactionLibraryAndDeck() throws {
         let reactions = AutoCaptureSignReaction.allCases
-        try expect(reactions.count == 12, "The sign library contains all twelve requested reactions")
-        try expect(Set(reactions.map(\.rawValue)).count == 12
-                   && Set(reactions.map(\.testIdentifier)).count == 12,
+        try expect(reactions.count == 15, "The sign library preserves twelve historical and three companion gestures")
+        try expect(Set(reactions.map(\.rawValue)).count == reactions.count
+                   && Set(reactions.map(\.testIdentifier)).count == reactions.count,
                    "Every reaction has stable unique identifiers")
         try expect(reactions.allSatisfy { !$0.displayName.isEmpty },
                    "Every reaction has a readable diagnostic name")
 
-        var firstDeck = AutoCaptureSignDeck(seed: 0x51_61_6E)
-        var secondDeck = AutoCaptureSignDeck(seed: 0x51_61_6E)
+        var firstDeck = AutoCaptureSignDeck(seed: 0x51_61_6E, reactions: reactions)
+        var secondDeck = AutoCaptureSignDeck(seed: 0x51_61_6E, reactions: reactions)
         let first = (0..<(reactions.count * 10)).map { _ in firstDeck.next() }
         let second = (0..<(reactions.count * 10)).map { _ in secondDeck.next() }
         try expect(first == second, "A seed reproduces the complete shuffled rotation")
@@ -98,13 +100,13 @@ private struct AutoCaptureSignMotionTests {
 
         var burstDeck = AutoCaptureSignDeck(seed: 917)
         let burst = burstDeck.next(captureCount: 8)
-        try expect([.oversizedUnfold, .heavyPullDown, .mechanicalBillboard].contains(burst),
-                   "A fresh aggregate uses a reaction suited to multiple captures")
+        try expect(burst == .happyRaise,
+                   "A fresh aggregate proudly raises its readable sign")
         var burstHistory = [burst]
         for _ in 0..<100 {
             let reaction = burstDeck.next(captureCount: 4)
-            try expect(!burstHistory.suffix(3).contains(reaction),
-                       "Burst-friendly selection preserves the previous-three exclusion")
+            try expect(burstHistory.last != reaction,
+                       "The three live gestures avoid an immediate repeat")
             burstHistory.append(reaction)
         }
 
@@ -146,8 +148,9 @@ private struct AutoCaptureSignMotionTests {
                                && performance.entrance == entrance
                                && !performance.reduceMotion,
                                "A normal plan retains its complete selection inputs")
-                    try expect((1.5...2.0).contains(performance.totalDuration),
-                               "\(reaction.rawValue) remains within the 1.5–2 second target")
+                    let durationBounds = reaction.isCompanionReaction ? 2.3...2.6 : 1.5...2.0
+                    try expect(durationBounds.contains(performance.totalDuration),
+                               "\(reaction.rawValue) keeps its complete gesture brief")
                     try expect(performance.entranceEndTime > 0
                                && performance.entranceEndTime < performance.readableStartTime
                                && performance.readableStartTime < performance.readableEndTime
@@ -255,12 +258,66 @@ private struct AutoCaptureSignMotionTests {
                         && frame.signScaleX == 1 && frame.signScaleY == 1
                         && frame.signRotationDegrees == 0 && frame.signYRotationDegrees == 0
                         && frame.leftArmPose == .signHold && frame.rightArmPose == .signHold
+                        && frame.headRotationDegrees == 0 && frame.torsoScaleY == 1
+                        && frame.feetTranslationY == 0 && frame.feetRotationDegrees == 0
+                        && frame.eyeBrightness == 1.16
                 }, "Reduce Motion removes climbing, travel, bounce, spin and overshoot")
                 try expect(performance.readableEndTime > performance.readableStartTime
                            && performance.readableEndTime - performance.readableStartTime >= 0.65
                            && performance.exitStartTime == performance.readableEndTime,
                            "The reduced sign retains a readable static interval")
             }
+        }
+    }
+
+    private static func checkExpressionOnlyContinuation() throws {
+        let variation = AutoCaptureRobotVariation(timingScale: 1.02, gazeX: 0.24,
+                                                  entranceOffset: -1)
+        for reaction in AutoCaptureSignReaction.allCases {
+            for entrance in RobotEntrance.allCases {
+                let active = AutoCaptureSignPerformance.make(reaction: reaction,
+                    variation: variation, entrance: entrance, reduceMotion: false)
+                let reducedGaze = AutoCaptureSignPerformance.make(reaction: reaction,
+                    variation: variation, entrance: entrance, reduceMotion: true).frames[0].gazeX
+                for remaining in [0.08, 0.85, 2.15] {
+                    let continuation = active.expressionOnly(remainingDuration: remaining)
+                    try expect(continuation.reduceMotion && continuation.reaction == active.reaction
+                               && continuation.variation == active.variation
+                               && continuation.entrance == active.entrance
+                               && continuation.totalDuration == remaining
+                               && continuation.readableStartTime == 0
+                               && continuation.readableEndTime == remaining
+                               && continuation.entranceEndTime == 0
+                               && continuation.exitStartTime == remaining,
+                               "An active acknowledgement becomes static for precisely its remaining lifetime")
+                    try expect(continuation.frames.count == 2
+                               && continuation.frames.first?.normalizedTime == 0
+                               && continuation.frames.last?.normalizedTime == 1,
+                               "Expression-only continuation has no new entrance or exit phases")
+                    for time in [-1.0, 0, 0.08, 0.5, 0.84, 1, 2] {
+                        let frame = continuation.frame(atNormalizedTime: time)
+                        try expect(valid(frame) && frame.robotOpacity == 1 && frame.signOpacity == 1
+                                   && frame.robotTranslationX == 0 && frame.robotTranslationY == 0
+                                   && frame.robotScaleX == 1 && frame.robotScaleY == 1
+                                   && frame.robotRotationDegrees == 0
+                                   && frame.signTranslationX == 0 && frame.signTranslationY == 0
+                                   && frame.signScaleX == 1 && frame.signScaleY == 1
+                                   && frame.signRotationDegrees == 0 && frame.signYRotationDegrees == 0
+                                   && frame.headRotationDegrees == 0 && frame.torsoScaleY == 1
+                                   && frame.feetTranslationY == 0 && frame.feetRotationDegrees == 0
+                                   && frame.eyeBrightness == 1.16 && frame.gazeX == reducedGaze,
+                                   "The static happy expression and sign remain fully visible at every sample")
+                    }
+                }
+            }
+        }
+        let active = AutoCaptureSignPerformance.make(reaction: .happyNod, entrance: .top,
+                                                     reduceMotion: false)
+        for malformed in [-10.0, 0, .nan, .infinity, -.infinity] {
+            let continuation = active.expressionOnly(remainingDuration: malformed)
+            try expect(continuation.totalDuration == 0.001
+                       && continuation.frames.allSatisfy { $0.robotOpacity == 1 && $0.signOpacity == 1 },
+                       "Malformed remaining time cannot create a nonfinite, empty or invisible continuation")
         }
     }
 
@@ -333,15 +390,62 @@ private struct AutoCaptureSignMotionTests {
             frame.signTranslationX, frame.signTranslationY,
             frame.signScaleX, frame.signScaleY, frame.signRotationDegrees,
             frame.signYRotationDegrees, frame.signOpacity,
-            frame.gazeX, frame.gazeY, frame.checkmarkProgress
+            frame.gazeX, frame.gazeY, frame.checkmarkProgress,
+            frame.headRotationDegrees, frame.torsoScaleY, frame.feetTranslationY,
+            frame.feetRotationDegrees, frame.eyeBrightness
         ]
         return values.allSatisfy(\.isFinite)
             && frame.robotScaleX > 0 && frame.robotScaleY > 0
             && frame.signScaleX > 0 && frame.signScaleY > 0
+            && frame.torsoScaleY > 0 && (0.5...1.3).contains(frame.eyeBrightness)
             && (0...1).contains(frame.robotOpacity)
             && (0...1).contains(frame.signOpacity)
             && (-1...1).contains(frame.gazeX)
             && (-1...1).contains(frame.gazeY)
             && (0...1).contains(frame.checkmarkProgress)
+    }
+
+    private static func checkCompanionActing() throws {
+        var deck = AutoCaptureSignDeck(seed: 0xC0_5A_6E)
+        let rotation = (0..<90).map { _ in deck.next() }
+        try expect(Set(rotation) == Set(AutoCaptureSignReaction.companionReactions),
+                   "Live save reactions rotate only the small companion gestures")
+        try expect(zip(rotation, rotation.dropFirst()).allSatisfy { $0 != $1 },
+                   "Consecutive celebrations always alternate gestures")
+        for start in stride(from: 0, to: rotation.count, by: 3) {
+            try expect(Set(rotation[start..<(start + 3)]) == Set(AutoCaptureSignReaction.companionReactions),
+                       "Every live bag includes a nod, wiggle and triumphant raise")
+        }
+
+        for reaction in AutoCaptureSignReaction.companionReactions {
+            for entrance in RobotEntrance.allCases {
+                let performance = AutoCaptureSignPerformance.make(reaction: reaction,
+                    entrance: entrance, reduceMotion: false)
+                let anticipation = performance.frame(atNormalizedTime: 0.20)
+                let lift = performance.frame(atNormalizedTime: 0.28)
+                let settle = performance.frame(atNormalizedTime: 0.84)
+                try expect(anticipation.torsoScaleY < 1 && lift.torsoScaleY > 1
+                           && lift.robotTranslationY > anticipation.robotTranslationY,
+                           "The body takes weight before each small bounce")
+                try expect(performance.frames.contains { $0.feetRotationDegrees < -8 }
+                           && performance.frames.contains { $0.feetRotationDegrees > 8 }
+                           && performance.frames.contains { $0.eyeBrightness >= 1.2 },
+                           "Each save brightens the eyes and kicks the feet in both directions")
+                try expect(settle.headRotationDegrees == 0 && settle.torsoScaleY == 1
+                           && settle.feetTranslationY == 0 && settle.feetRotationDegrees == 0,
+                           "Every gesture gently settles before slipping behind its edge")
+                for step in 8...86 {
+                    let frame = performance.frame(atNormalizedTime: Double(step) / 100)
+                    try expect(frame.signScaleX == 1 && frame.signScaleY == 1
+                               && frame.signRotationDegrees == 0 && frame.signYRotationDegrees == 0
+                               && frame.signOpacity == 1,
+                               "The acknowledgement stays upright and readable throughout the acting")
+                }
+                try expect(performance.mergeWindowDuration(maximumDuration: performance.totalDuration) > 1.5
+                           && performance.readableEndTime - performance.mergeWindowDuration(
+                            maximumDuration: performance.totalDuration) >= 0.299,
+                           "Rapid saves blend into one sequence while leaving time to read the final count")
+            }
+        }
     }
 }

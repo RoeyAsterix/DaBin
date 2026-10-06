@@ -141,6 +141,9 @@ final class Capture: ObservableObject, Identifiable {
     var kind: CaptureKind { CaptureKind(rawValue: kindRaw) ?? .file }
     var isTask: Bool { kind == .task || convertedToTask }
     var captureOrigin: CaptureOrigin { CaptureOrigin(rawValue: captureOriginRaw) ?? .manual }
+    // Website access requires a positively known manual receipt. The display
+    // fallback for legacy/future origins must never grant network consent.
+    var permitsWebsitePreview: Bool { captureOriginRaw == CaptureOrigin.manual.rawValue }
     var commentThread: [CaptureCommentEntry] {
         CaptureCommentThread.resolved(commentEntries, legacyText: comment, captureID: id)
     }
@@ -243,6 +246,9 @@ final class Capture: ObservableObject, Identifiable {
                     sourceApplicationName: snapshot.sourceApplicationName,
                     sourceApplicationBundleIdentifier: snapshot.sourceApplicationBundleIdentifier),
                   parentTaskID: snapshot.parentTaskID)
+        // Preserve explicit future/damaged values so reopening cannot turn an
+        // unknown receipt into a manual capture eligible for website requests.
+        self.captureOriginRaw = snapshot.captureOriginRaw ?? CaptureOrigin.manual.rawValue
         self.previewDescription = snapshot.previewDescription
         self.thumbnailRelativePath = snapshot.thumbnailRelativePath
         self.previewState = snapshot.previewState

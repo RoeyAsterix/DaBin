@@ -69,6 +69,7 @@ private final class TaskTimerRobotPanel: NSPanel {
     private(set) var pending: [TaskTimerCompletion] = []
     private(set) var isReturning = false
     private(set) var isSuspendedForInteraction = false
+    private(set) var isCapturePaused = false
     private(set) var isShutDown = false
     private(set) var presentationCount = 0
     private(set) var escalationLevel = 0
@@ -228,6 +229,16 @@ private final class TaskTimerRobotPanel: NSPanel {
         isSuspendedForInteraction = false
         showNextIfPossible()
     }
+    /// Hide presentation without acknowledging reminders or cancelling focus
+    /// timers. Every outstanding occurrence is still available after Resume.
+    func setCapturePaused(_ paused: Bool) {
+        guard !isShutDown, paused != isCapturePaused else { return }
+        isCapturePaused = paused
+        if paused {
+            interruptReturnIfNeeded()
+            hideSurface()
+        } else { showNextIfPossible() }
+    }
     func displayConfigurationChanged() {
         guard !isShutDown else { return }
         interruptReturnIfNeeded()
@@ -287,7 +298,7 @@ private final class TaskTimerRobotPanel: NSPanel {
     }
 
     private func showNextIfPossible() {
-        guard !isShutDown, !isSuspendedForInteraction, !isReturning, !panel.isVisible,
+        guard !isShutDown, !isCapturePaused, !isSuspendedForInteraction, !isReturning, !panel.isVisible,
               let screen = primaryScreen() else { return }
         let reduced = reduceMotion()
         let frame = TaskTimerRobotGeometry.panelFrame(on: screen, reduceMotion: reduced)
@@ -303,7 +314,7 @@ private final class TaskTimerRobotPanel: NSPanel {
                      animateEntrance: elapsedBeforePause == 0)
         panel.alphaValue = 1
         reportVisibility(true)
-        guard !isShutDown, !isSuspendedForInteraction, self.current != nil else { return }
+        guard !isShutDown, !isCapturePaused, !isSuspendedForInteraction, self.current != nil else { return }
         panel.orderFrontRegardless()
         presentationCount += 1
         resumeEscalation()
@@ -317,7 +328,7 @@ private final class TaskTimerRobotPanel: NSPanel {
     }
     private func resumeEscalation() {
         escalationTask?.cancel(); escalationTask = nil
-        guard !reduceMotion(), panel.isVisible, !isReturning, !isSuspendedForInteraction else { return }
+        guard !reduceMotion(), !isCapturePaused, panel.isVisible, !isReturning, !isSuspendedForInteraction else { return }
         activeSince = ProcessInfo.processInfo.systemUptime
         let elapsed = elapsedBeforePause
         escalationTask = Task { @MainActor [weak self] in

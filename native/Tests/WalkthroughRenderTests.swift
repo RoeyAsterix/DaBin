@@ -125,8 +125,8 @@ private final class WalkthroughRenderTests: NSObject, NSApplicationDelegate {
         try await board(state, "05-daily-files")
         state.filter = .all
         state.selectTimelineMode(.weekly)
-        guard state.weeklyVisibleDays.count == 7, state.weeklyActiveDays.count == 3 else {
-            throw Failure(message: "Expected all 7 selected dates with exactly 3 active days")
+        guard state.weeklyDays.count == 7, state.weeklyVisibleDays.count == 3, state.weeklyActiveDays.count == 3 else {
+            throw Failure(message: "Expected only the 3 active days from 7 selected dates")
         }
         try await board(state, "06-weekly", width: 1440)
         try await popover(WeeklySearchPopover(state: state, isPresented: .constant(true)),

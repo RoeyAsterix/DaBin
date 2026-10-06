@@ -119,7 +119,7 @@ import SwiftUI
     var body: some View {
         ProjectWorkspaceCard(state: state, item: .note(note), selected: false, compact: false,
             color: .purple, focus: $focus, open: {}, select: {}, details: {}, makeTask: {},
-            earlier: {}, later: {}, canReorder: false, drag: { [] })
+            drag: { [] })
     }
 }
 
@@ -482,6 +482,20 @@ import SwiftUI
     }
 
     private static func groupChecks(state: AppState, host: NSHostingView<AnyView>) async throws {
+        func awaitRemoval(of values: [Capture]) async throws {
+            let expectedIDs = Set(values.map(\.id))
+            let deadline = ContinuousClock.now + .seconds(4)
+            // The native alert starts an async removal task. Layout settling
+            // alone does not await preview cancellation or reminder cleanup.
+            while ContinuousClock.now < deadline {
+                let removedIDs = Set(state.store.trashedCaptures.map(\.id))
+                if expectedIDs.isSubset(of: removedIDs) && state.removingCaptureID == nil { return }
+                host.layoutSubtreeIfNeeded()
+                try await Task.sleep(for: .milliseconds(35))
+            }
+            let stillLive = state.store.captures.filter { expectedIDs.contains($0.id) }.map(\.id)
+            throw failure("Native deletion did not finish for \(expectedIDs.count) captures; still live=\(stillLive), removing=\(String(describing: state.removingCaptureID)), status=\(state.status?.text ?? "none")")
+        }
         let at = Calendar.current.startOfDay(for: Date()).addingTimeInterval(12 * 3600)
         let zone = TimeZone.current
         let captures = try (0..<5).map { index in
@@ -512,6 +526,7 @@ import SwiftUI
                 sourceApplicationBundleIdentifier: "com.dabin.fixture"))[0]
         try await mount(HourlyCaptureCard(state: state, group: group(visible + [arriving])).frame(width: 430), in: host)
         try await answer("Delete 3 visible captures", host: host)
+        try await awaitRemoval(of: visible)
         try expect(visible.allSatisfy { removed in state.store.trashedCaptures.contains { $0.id == removed.id } },
             "Hourly Delete removes only frozen visible capture identities")
         try expect((hidden + [arriving]).allSatisfy { kept in state.store.captures.contains { $0 === kept } },
@@ -526,6 +541,7 @@ import SwiftUI
         let action = visible[0]
         try await selectMenu(host, id: "capture-more-action-" + action.automaticActionID!.uuidString, title: "Delete 1 visible capture…")
         try await answer("Delete 1 visible capture", host: host)
+        try await awaitRemoval(of: [action])
         try expect(state.store.trashedCaptures.contains { $0.id == action.id } && visible.dropFirst().allSatisfy { value in
             state.store.captures.contains { $0 === value }
         }, "Automatic action Delete keeps other actions in the hour")
@@ -543,6 +559,7 @@ import SwiftUI
                 sourceApplicationBundleIdentifier: "com.dabin.fixture"))[0]
         try await settle(host)
         try await answer("Delete 4 visible captures", host: host)
+        try await awaitRemoval(of: visible + [arriving])
         try expect((visible + [arriving]).allSatisfy { removed in state.store.trashedCaptures.contains { $0.id == removed.id } }
             && state.store.captures.contains { $0 === weeklyArrival },
             "Weekly hourly confirmation survives a new primary and keeps its frozen deletion scope")

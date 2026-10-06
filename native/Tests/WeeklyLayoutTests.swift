@@ -35,7 +35,8 @@ import SwiftUI
     }
     var identifier: String? { (value("accessibilityIdentifier") as? String) ?? (attribute("AXIdentifier") as? String) }
     var label: String {
-        [value("accessibilityLabel"), value("accessibilityTitle"), attribute("AXTitle"), attribute("AXDescription")]
+        [value("accessibilityLabel"), value("accessibilityTitle"), value("accessibilityValue"),
+         attribute("AXTitle"), attribute("AXDescription"), attribute("AXValue")]
             .compactMap { $0 as? String }.first { !$0.isEmpty } ?? ""
     }
     var frame: NSRect {
@@ -55,7 +56,7 @@ import SwiftUI
     }
 }
 
-/// Seven real production columns with fictional records, an isolated archive,
+/// Production weekly columns and empty states with fictional records, an isolated archive,
 /// disabled link previews, and clipboard implementations that fail if called.
 @main @MainActor private final class WeeklyLayoutTests: NSObject, NSApplicationDelegate {
     private static var checks = 0
@@ -175,7 +176,7 @@ import SwiftUI
         }
         var headers: [String: NSRect] = [:]
         var headerIdentifierFallbacks: [String] = []
-        for day in state.weeklyDays {
+        for day in state.weeklyVisibleDays {
             let key = CaptureCalendar.dayString(day)
             let headerLabel = "\(day.formatted(date: .complete, time: .omitted)), \(state.captures(for: day).count) captures, open Daily"
             // Parent accessibility identifiers may be inherited by SwiftUI's
@@ -190,10 +191,16 @@ import SwiftUI
             try expect(viewport.insetBy(dx: -1, dy: -1).contains(header.frame),
                        "\(context): Entire \(key) day header is visible: \(header.frame), viewport \(viewport)")
         }
-        try expect(headers.count == 7, "\(context): Every selected day has a rendered header")
-        let ordered = state.weeklyDays.compactMap { headers[CaptureCalendar.dayString($0)] }
+        try expect(headers.count == state.weeklyVisibleDays.count, "\(context): Every visible day has a rendered header")
+        for day in state.weeklyDays where !state.weeklyVisibleDays.contains(day) {
+            let key = CaptureCalendar.dayString(day)
+            let headerLabel = "\(day.formatted(date: .complete, time: .omitted)), 0 captures, open Daily"
+            try expect(!all.contains { $0.identifier == "weekly-day-" + key || $0.label == headerLabel },
+                       "\(context): Empty selected day \(key) has no rendered header")
+        }
+        let ordered = state.weeklyVisibleDays.compactMap { headers[CaptureCalendar.dayString($0)] }
         try expect(zip(ordered, ordered.dropFirst()).allSatisfy { $0.0.maxX <= $0.1.minX + 1 },
-                   "\(context): Seven chronological day columns do not overlap")
+                   "\(context): Populated chronological day columns do not overlap")
         try expect(ordered.allSatisfy { abs($0.minY - ordered[0].minY) < 1 },
                    "\(context): Every day header stays in the same visible row")
         try expect(all.contains { $0.identifier == "weekly-columns" }, "\(context): The real weekly column container renders")
@@ -218,7 +225,8 @@ import SwiftUI
             }
         }
         if !captures.isEmpty {
-            try expect(checkedControls >= 7, "\(context): Native inspection found real card controls across the populated week")
+            try expect(checkedControls >= state.weeklyVisibleDays.count,
+                       "\(context): Native inspection found real controls across the populated date columns")
         }
         for node in all where node.label == "Project" && node.frame.width > 0 && node.frame.height > 0 {
             let frame = node.frame
@@ -231,9 +239,22 @@ import SwiftUI
             try expect(document.bounds.width <= scroll.contentView.bounds.width + 1,
                        "\(context): Day content needs no horizontal scrolling: document \(document.bounds), viewport \(scroll.contentView.bounds)")
         }
-        return ["context": context, "days": state.weeklyDays.map { CaptureCalendar.dayString($0) },
+        return ["context": context, "selectedDays": state.weeklyDays.map { CaptureCalendar.dayString($0) },
+                "days": state.weeklyVisibleDays.map { CaptureCalendar.dayString($0) },
                 "headers": ordered.map(NSStringFromRect), "checkedCardElements": checkedControls,
                 "nativeScrollViews": scrolls.count, "headerIdentifierFallbacks": headerIdentifierFallbacks]
+    }
+
+    private static func checkEmptyState(_ view: NSView, state: AppState, title: String,
+                                       context: String) throws {
+        let all = nodes(view)
+        try expect(all.contains { $0.identifier == "weekly-empty-state" },
+                   "\(context): A single weekly empty-state container renders")
+        try expect(all.contains { $0.label == title }, "\(context): Empty state explains the selected captures or filter")
+        try expect(!all.contains { $0.identifier == "weekly-columns" || $0.identifier?.hasPrefix("weekly-day-") == true },
+                   "\(context): No empty date columns or day headers render")
+        reports.append(["context": context, "selectedDays": state.weeklyDays.count,
+                        "visibleDays": state.weeklyVisibleDays.count, "emptyStateTitle": title])
     }
 
     private static func fixturePNG() throws -> Data {
@@ -402,14 +423,43 @@ import SwiftUI
             reports.append(["context": "narrow-420-zoom200", "headersInScrollContent": headers.map(NSStringFromRect),
                             "horizontalOverflowPoints": overflow, "checkedCardElements": checkedControls])
         }
+        // Filters remove days without matching cards while preserving the
+        // selected calendar range. Inspect the actual remaining native columns.
+        for (filter, expectedIndices) in [(CaptureFilter.files, [2, 3]), (.media, [1])] {
+            state.filter = filter
+            state.weeklyColumnViewports = [:]
+            try expect(state.weeklyDays.count == 7
+                       && state.weeklyVisibleDays == expectedIndices.map { calendar.startOfDay(for: days[$0]) },
+                       "\(filter.title) shows only its populated dates from the selected week")
+            try await withWeek(state: state, width: 1024, zoom: 1, dark: false) { view, window in
+                let context = "filtered-" + filter.rawValue
+                try snapshot(view, to: output.appendingPathComponent("week-\(context)@2x.png"))
+                reports.append(try checkColumns(view, window: window, state: state,
+                    context: context, captures: store.captures.filter(filter.includes)))
+            }
+        }
+        state.filter = .links
+        try expect(state.weeklyDays.count == 7 && state.weeklyActiveDays.count == 7
+                   && state.weeklyVisibleDays.isEmpty,
+                   "A nonmatching filter hides every column without changing calendar or activity dates")
+        try await withWeek(state: state, width: 1024, zoom: 1, dark: false) { view, _ in
+            try checkEmptyState(view, state: state, title: "No links in these days", context: "filtered-empty")
+            try snapshot(view, to: output.appendingPathComponent("week-filtered-empty@2x.png"))
+        }
+
         // No record belongs to these earlier dates; open task carryover cannot
-        // populate them. Every selected date must still have an empty column.
+        // populate them. Render one clear empty state with no blank day columns.
+        state.filter = .all
         state.weekEndingDay = calendar.date(byAdding: .day, value: -20, to: end)!
         state.weeklyColumnViewports = [:]
-        try expect(state.weeklyActiveDays.isEmpty, "Empty-week fixture has no activity")
-        try await withWeek(state: state, width: 1024, zoom: 2, dark: false) { view, window in
-            try snapshot(view, to: output.appendingPathComponent("week-empty-1024-zoom200@2x.png"))
-            reports.append(try checkColumns(view, window: window, state: state, context: "empty-week", captures: []))
+        try expect(state.weeklyDays.count == 7 && state.weeklyActiveDays.isEmpty
+                   && state.weeklyVisibleDays.isEmpty, "Empty-week fixture retains selection without visible days")
+        for dark in [false, true] {
+            try await withWeek(state: state, width: 1024, zoom: 2, dark: dark) { view, _ in
+                let context = "empty-week-" + (dark ? "dark" : "light")
+                try checkEmptyState(view, state: state, title: "No captures in these days", context: context)
+                try snapshot(view, to: output.appendingPathComponent("week-\(context)@2x.png"))
+            }
         }
         try expect(try immutableSnapshots(store.captures) == baseline,
                    "Layout and collection expansion preserve all capture content and metadata")

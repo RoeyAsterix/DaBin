@@ -262,6 +262,72 @@ import Foundation
                    "A new approach cancels an old retreat without hiding the robot")
         orbitRobot.stopFeedback()
 
+        // The compositor may move the artwork, but a user's fixed pointer must
+        // continue to hit the same target throughout a reveal and its retreat.
+        let movingRobot = RobotView(frame: orbitHost.bounds, reduceMotion: { false })
+        orbitHost.addSubview(movingRobot)
+        defer { movingRobot.stopFeedback(); movingRobot.removeFromSuperview() }
+        movingRobot.presentCompanion(from: .top, orbit: orbitLayout, perch: .bottom)
+        let steadyBounds = movingRobot.interactionBounds
+        let steadyRegion = orbitLayout.interactionRegions(for: .bottom, local: true).first!
+        let steadyPoint = CGPoint(x: steadyRegion.midX, y: steadyRegion.midY)
+        let hardwarePoint = CGPoint(x: orbitLayout.cameraFrameInPanel.midX, y: orbitLayout.cameraFrameInPanel.midY)
+        func checkSteadyTarget(_ context: String) throws {
+            try expect(movingRobot.interactionBounds == steadyBounds
+                       && movingRobot.containsInteraction(steadyPoint)
+                       && movingRobot.hitTest(movingRobot.convert(steadyPoint, to: orbitHost)) === movingRobot,
+                       "\(context) retains the same usable native target")
+            try expect(!movingRobot.containsInteraction(hardwarePoint)
+                       && movingRobot.hitTest(movingRobot.convert(hardwarePoint, to: orbitHost)) == nil,
+                       "\(context) never intercepts the camera housing")
+            let margin = CGPoint(x: movingRobot.bounds.minX + 1, y: movingRobot.bounds.minY + 1)
+            try expect(movingRobot.hitTest(movingRobot.convert(margin, to: orbitHost)) == nil,
+                       "\(context) leaves transparent animation margins pass-through")
+        }
+        var companion = RobotCompanionEncounter()
+        let companionSamples: [(CGFloat?, TimeInterval, RobotCompanionEncounter.Phase)] = [
+            (0.1, 0, .peeking), (1, 0.1, .climbing), (1, 0.3, .reaching),
+            (nil, 0.94, .watching), (nil, 1.04, .retreating)
+        ]
+        for (proximity, time, phase) in companionSamples {
+            let snapshot = companion.update(proximity: proximity, pointer: CGPoint(x: 0.8, y: -0.6), at: time)
+            try expect(snapshot.phase == phase, "The native target fixture visits companion \(phase.rawValue)")
+            movingRobot.updateCompanion(snapshot)
+            movingRobot.layoutSubtreeIfNeeded()
+            try checkSteadyTarget("Companion \(phase.rawValue)")
+        }
+        movingRobot.revealOrbit(in: orbitLayout, at: .bottom)
+        try checkSteadyTarget("Initial reveal")
+        try await Task.sleep(for: .milliseconds(100))
+        try checkSteadyTarget("Moving reveal")
+        var finishedRetreat = false
+        movingRobot.retreatOrbit { finishedRetreat = true }
+        try checkSteadyTarget("Initial retreat")
+        try await Task.sleep(for: .milliseconds(100))
+        try checkSteadyTarget("Moving retreat")
+        var movingDrops = 0
+        var movingPastes = 0
+        movingRobot.onDrop = { _ in movingDrops += 1 }
+        movingRobot.onPaste = { movingPastes += 1 }
+        let movingTransfer = DropFixture(textBoard)
+        movingTransfer.draggingLocation = movingRobot.convert(steadyPoint, to: nil)
+        try expect(movingRobot.draggingEntered(movingTransfer) == .copy
+                   && movingRobot.performDragOperation(movingTransfer) && movingDrops == 1,
+                   "A supported drop remains usable during retreat and dispatches exactly once")
+        movingRobot.concludeDragOperation(movingTransfer)
+        let pasteEvent = NSEvent.keyEvent(with: .keyDown, location: .zero, modifierFlags: .command,
+            timestamp: 501, windowNumber: 0, context: nil, characters: "v", charactersIgnoringModifiers: "v",
+            isARepeat: false, keyCode: 9)!
+        try expect(movingRobot.handlePasteShortcut(pasteEvent)
+                   && movingRobot.handlePasteShortcut(pasteEvent) && movingPastes == 1,
+                   "Moving companion paste uses its injected handler once without reading the general clipboard")
+        movingRobot.revealOrbit(in: orbitLayout, at: .bottom)
+        try await Task.sleep(for: .milliseconds(500))
+        try expect(!finishedRetreat && movingRobot.isPresented,
+                   "Interaction followed by renewed approach invalidates the former retreat completion")
+        try checkSteadyTarget("Renewed approach")
+        movingRobot.stopFeedback()
+
         // A first-open board has no saved placement yet. Revealing its robot at
         // another corner must not re-anchor the board when the import resizes it.
         if let initialScreen = NSScreen.main {
@@ -345,6 +411,70 @@ import Foundation
             try expect(!controller.bin.isVisible, "Moving DaBin's own header to a corner does not summon robot")
         }
         try expect(notifications.permissionRequests == 0 && notifications.additions == 0, "Drop tests never request notifications or schedule reminders")
+
+        // Movement events must refresh the small native input region before a
+        // following click, independently of the slower approach/retreat clock.
+        // A fictional housing also covers monitors that have no actual notch.
+        if let screen = NSScreen.screens.first {
+            controller.reveal(on: screen, target: .cameraIsland)
+            let housing = CGRect(x: screen.frame.midX - 72, y: screen.frame.maxY - 34,
+                                 width: 144, height: 34)
+            let layout = QuietOrbitLayout(cameraIsland: housing, displayFrame: screen.frame)!
+            controller.bin.setFrame(layout.panelFrame, display: true)
+            controller.robot.frame = CGRect(origin: .zero, size: layout.panelFrame.size)
+            controller.robot.presentCompanion(from: .top, orbit: layout, perch: .bottom)
+            controller.robot.updateCompanion(.init(phase: .peeking, progress: 0.22,
+                                                   pointer: CGPoint(x: 0.4, y: -0.2)))
+            let targetRegion = layout.interactionRegions(for: .bottom, local: true).first!
+            let targetLocal = CGPoint(x: targetRegion.midX, y: targetRegion.midY)
+            let marginLocal = CGPoint(x: 1, y: 1)
+            let hardwareLocal = CGPoint(x: layout.cameraFrameInPanel.midX, y: layout.cameraFrameInPanel.midY)
+            func screenPoint(_ local: CGPoint) -> NSPoint {
+                controller.bin.convertPoint(toScreen: controller.robot.convert(local, to: nil))
+            }
+            let targetPoint = screenPoint(targetLocal)
+            let marginPoint = screenPoint(marginLocal)
+            let hardwarePoint = screenPoint(hardwareLocal)
+            try expect(controller.robot.containsInteraction(targetLocal)
+                       && !controller.robot.containsInteraction(marginLocal)
+                       && !controller.robot.containsInteraction(hardwareLocal),
+                       "The immediate pointer fixture distinguishes the robot, transparent margin and physical housing")
+            let progressBeforeSample = controller.robot.companionProgress
+            let moodBeforeSample = controller.robot.mood
+            let targetBeforeSample = controller.robot.interactionBounds
+            let frameBeforeSample = controller.bin.frame
+            var pointerSamples: [NSPoint] = []
+            controller.onPointerSample = { pointerSamples.append($0) }
+            controller.bin.ignoresMouseEvents = true
+            controller.sampleCompanionPointer(at: targetPoint)
+            try expect(!controller.bin.ignoresMouseEvents && pointerSamples == [targetPoint],
+                       "A movement sample immediately makes the actual robot clickable and forwards the exact point to the save-sign coordinator")
+            controller.sampleCompanionPointer(at: marginPoint)
+            try expect(controller.bin.ignoresMouseEvents && pointerSamples == [targetPoint, marginPoint],
+                       "A movement sample immediately restores transparent margins while still forwarding pointer position")
+            controller.sampleCompanionPointer(at: targetPoint)
+            try expect(!controller.bin.ignoresMouseEvents,
+                       "Returning to the actual robot restores click acceptance without waiting for a polling tick")
+            controller.sampleCompanionPointer(at: hardwarePoint)
+            try expect(controller.bin.ignoresMouseEvents
+                       && pointerSamples == [targetPoint, marginPoint, targetPoint, hardwarePoint],
+                       "The housing stays pass-through and every movement sample reaches save-sign coordination once")
+            try expect(controller.robot.companionProgress == progressBeforeSample
+                       && controller.robot.mood == moodBeforeSample
+                       && controller.robot.interactionBounds == targetBeforeSample
+                       && controller.bin.frame == frameBeforeSample,
+                       "Immediate input samples leave the approach clock, pose, fixed target and panel placement unchanged")
+            controller.shutdown()
+            try expect(controller.isShutDown && controller.onPointerSample == nil,
+                       "Shutdown clears the coordinator callback and marks pointer monitoring disposed")
+            var latePointerSamples = 0
+            controller.onPointerSample = { _ in latePointerSamples += 1 }
+            controller.bin.ignoresMouseEvents = false
+            controller.sampleCompanionPointer(at: marginPoint)
+            try expect(latePointerSamples == 0 && !controller.bin.ignoresMouseEvents,
+                       "A queued movement sample after shutdown cannot call a replacement observer or change native click acceptance")
+            controller.onPointerSample = nil
+        }
         print("PASS: \(checks) robot drop checks (private pasteboards, isolated archive, native destination callbacks and corner panels)")
     }
 

@@ -260,15 +260,15 @@ private struct AutoCaptureRobotPresenterTests {
                    && recordingPresenter.currentProjectName == nil
                    && recordingPresenter.panel.isVisible
                    && recordingPresenter.state.visibleCount == 1,
-                   "Pausing removes an existing sign immediately without losing saved success feedback")
+                   "An inactive destination removes its sign without losing manual saved feedback")
         try expect(recordingPresenter.present(additionalCaptureCount: 2, projectName: "Atlas")
                    && !recordingPresenter.projectSignIsVisible
                    && recordingPresenter.state.visibleCount == 3,
-                   "Late committed saves update the count but cannot restore a paused sign")
+                   "Late manual saves update the count without restoring an inactive destination sign")
         recordingPresenter.suspendForBoard()
         try expect(recordingPresenter.present(additionalCaptureCount: 4, projectName: "Atlas")
                    && recordingPresenter.pendingCaptureCount == 7,
-                   "Pausing the sign preserves already-saved bursts during board suspension")
+                   "An inactive destination preserves manual feedback during board suspension")
         try expect(recordingPresenter.resumeAfterBoard()
                    && !recordingPresenter.projectSignIsVisible
                    && recordingPresenter.state.visibleCount == 7,
@@ -280,6 +280,51 @@ private struct AutoCaptureRobotPresenterTests {
                    && recordingPresenter.state.visibleCount == 8,
                    "Resuming allows a fresh success to show the project without discarding earlier counts")
         recordingPresenter.shutdown()
+
+        for reduced in [false, true] {
+            let pausedPresenter = AutoCaptureRobotPresenter(dismissDelay: 0.50,
+                primaryScreen: { external }, reduceMotion: { reduced },
+                reactionDeck: AutoCaptureRobotReactionDeck(seed: 93))
+            try expect(pausedPresenter.present(projectName: "Atlas") && pausedPresenter.panel.isVisible,
+                       "A receipt is active before exercising Pause in either motion setting")
+            pausedPresenter.suspendForBoard()
+            _ = pausedPresenter.present(additionalCaptureCount: 2, projectName: "Atlas")
+            pausedPresenter.setCapturePaused(true)
+            pausedPresenter.setProjectRecordingActive(false)
+            try expect(!pausedPresenter.panel.isVisible && pausedPresenter.state.visibleCount == 0
+                       && pausedPresenter.pendingCaptureCount == 0 && !pausedPresenter.projectSignIsVisible
+                       && pausedPresenter.currentPerformance == nil && pausedPresenter.currentSignReceipt == nil,
+                       "Pause immediately clears active and queued visual feedback without retaining a robot surface")
+            try expect(!pausedPresenter.present(projectName: "Atlas")
+                       && !pausedPresenter.present(confirmation: AutoCaptureSignReceipt(kind: .clipboard, count: 1)),
+                       "Both manual and automatic late receipts are rejected while paused")
+            _ = pausedPresenter.resumeAfterBoard()
+            pausedPresenter.suspendForInteraction()
+            _ = pausedPresenter.resumeAfterInteraction()
+            pausedPresenter.suspendForTaskTimer()
+            _ = pausedPresenter.resumeAfterTaskTimer()
+            pausedPresenter.setScreenCaptureInProgress(true)
+            pausedPresenter.setScreenCaptureInProgress(false)
+            pausedPresenter.displayConfigurationChanged()
+            pausedPresenter.refreshMotionPreference()
+            try expect(!pausedPresenter.panel.isVisible && pausedPresenter.pendingCaptureCount == 0,
+                       "Board, timer, interaction, screenshot, display and motion changes cannot redisplay paused feedback")
+            pausedPresenter.setCapturePaused(false)
+            pausedPresenter.setProjectRecordingActive(true)
+            try expect(!pausedPresenter.panel.isVisible && pausedPresenter.present(projectName: "Atlas")
+                       && pausedPresenter.state.visibleCount == 1 && pausedPresenter.projectSignIsVisible,
+                       "Resume presents only a fresh save rather than replaying obsolete paused feedback")
+            pausedPresenter.setCapturePaused(true)
+            pausedPresenter.setCapturePaused(false)
+            try expect(pausedPresenter.present(confirmation: AutoCaptureSignReceipt(kind: .clipboard, count: 1)),
+                       "A live automatic sign begins before testing immediate Pause")
+            pausedPresenter.setCapturePaused(true)
+            pausedPresenter.setConfirmationEnabled(true)
+            try expect(!pausedPresenter.panel.isVisible && pausedPresenter.currentSignReceipt == nil
+                       && !pausedPresenter.signHasActiveAnimations,
+                       "Pause cancels an active automatic sign and later preference changes cannot redisplay it")
+            pausedPresenter.shutdown()
+        }
 
         let exactPresenter = AutoCaptureRobotPresenter(
             dismissDelay: 0.20,

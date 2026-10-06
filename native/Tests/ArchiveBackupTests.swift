@@ -88,6 +88,8 @@ struct ArchiveBackupTests {
         workspace.selectedProject = "Client A"
         let backup = root.appendingPathComponent("Complete.dabinbackup")
         try source.exportBackup(to: backup)
+        try expect((try files.attributesOfItem(atPath: backup.path)[.posixPermissions] as? NSNumber)?.intValue == 0o700,
+                   "The complete backup retains owner-only staging permissions inside any chosen parent folder")
         let manifest = try JSONDecoder().decode(ArchiveBackup.Manifest.self,
             from: Data(contentsOf: backup.appendingPathComponent("Manifest.json")))
         try expect(manifest.workspace == workspace.snapshot, "Backup records scratchpads, shelf references, snippet names, and processed Inbox IDs")

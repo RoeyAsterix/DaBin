@@ -62,8 +62,8 @@ private final class WeeklyWindowNotificationClient: ReminderNotificationClient {
         for filter in CaptureFilter.allCases {
             state.filter = filter
             settle()
-            expect(state.weeklyDays.count == 7 && state.weeklyVisibleDays.count == 7,
-                   "An empty \(filter.title) week renders all seven selected date columns")
+            expect(state.weeklyDays.count == 7 && state.weeklyVisibleDays.isEmpty,
+                   "An empty \(filter.title) week retains its selection without empty date columns")
             expect(controller.board.frame == expanded,
                    "Filtering an empty \(filter.title) week keeps the full view")
         }
@@ -126,11 +126,11 @@ private final class WeeklyWindowNotificationClient: ReminderNotificationClient {
         controller.showBoard()
         settle()
         let expanded = screen.visibleFrame
-        expect(state.weeklyVisibleDays.count == 7 && controller.board.frame == expanded,
-               "Entering Week opens full view with all seven selected dates, including empty dates")
+        expect(state.weeklyDays.count == 7 && state.weeklyVisibleDays.count == 4 && controller.board.frame == expanded,
+               "Entering Week opens full view with only its four populated date columns")
         expect(defaults.array(forKey: CornerController.boardSizeKey) as? [Double] == savedSize,
                "Automatic Week expansion preserves the normal saved window dimensions")
-        try render(controller.board, name: coupledSizing ? "week-seven-days-from-zoom" : "week-seven-days-full-view")
+        try render(controller.board, name: coupledSizing ? "week-four-populated-days-from-zoom" : "week-four-populated-days-full-view")
         controller.toggleExpandedWindow()
         settle()
         expect(controller.board.frame == normal,
@@ -142,25 +142,25 @@ private final class WeeklyWindowNotificationClient: ReminderNotificationClient {
 
         expect(state.setWeeklyDays([days[0], days[5], days[6]]), "Three selected dates are accepted")
         settle()
-        expect(state.weeklyDays.count == 3 && state.weeklyVisibleDays.count == 3
+        expect(state.weeklyDays.count == 3 && state.weeklyVisibleDays == [days[0], days[6]]
                && controller.board.frame == expanded,
-               "A custom three-date selection includes its empty date and retains full view")
+               "A custom three-date selection shows only its two populated dates and retains full view")
         expect(controller.board.frame.maxY == screen.visibleFrame.maxY,
                "Changing the selection retains the expanded header position")
-        try render(controller.board, name: coupledSizing ? "week-three-days-from-zoom" : "week-three-selected-days")
+        try render(controller.board, name: coupledSizing ? "week-two-populated-days-from-zoom" : "week-two-of-three-selected-days")
         let inserted = try store.capture(text: "A newly populated selected day", at: days[5].addingTimeInterval(60))[0]
         settle()
         expect(state.weeklyVisibleDays.count == 3 && controller.board.frame == expanded,
-               "Saving the first capture on an empty date leaves its existing column and full view in place")
+               "Saving the first capture on an empty selected date adds its column without resizing the full view")
         _ = try store.remove(inserted)
         settle()
-        expect(state.weeklyVisibleDays.count == 3 && controller.board.frame == expanded,
-               "Removing the last capture keeps the selected date visible in full view")
+        expect(state.weeklyDays.count == 3 && state.weeklyVisibleDays == [days[0], days[6]] && controller.board.frame == expanded,
+               "Removing the last capture hides its column while retaining the date selection and full view")
 
         state.filter = .files
         settle()
-        expect(controller.board.frame == expanded,
-               "Content filters do not collapse populated date columns or move the header")
+        expect(state.weeklyVisibleDays.isEmpty && controller.board.frame == expanded,
+               "A filter with no matching captures hides every column without moving the header")
         controller.resizeBoardFromUser(to: NSRect(x: normal.minX, y: normal.maxY - 570,
                                                   width: 700, height: 570))
         controller.finishBoardResize()
@@ -283,9 +283,9 @@ private final class WeeklyWindowNotificationClient: ReminderNotificationClient {
                    "Animation frames do not overwrite the user's compact placement")
             state.moveWeek(-1)
             settle()
-            expect(state.weeklyVisibleDays.count == 7 && controller.board.frame == expanded
+            expect(state.weeklyDays.count == 7 && state.weeklyVisibleDays.isEmpty && controller.board.frame == expanded
                    && state.weeklyExpansionDirection == expectedDirection,
-                   "Browsing an empty week retains seven selected columns in the full view")
+                   "Browsing an empty week retains its selected dates and full view without empty columns")
             state.moveWeek(1)
             settle()
             expect(state.weeklyVisibleDays.count == 7 && controller.board.frame == expanded,

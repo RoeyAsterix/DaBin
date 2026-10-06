@@ -732,9 +732,53 @@ import QuartzCore
                    "Growth never clears retry feedback, the full title or any outstanding receipt")
     }
 
+    private static func pausedVisibility() throws {
+        for reduced in [false, true] {
+            var screen: AutoCaptureRobotScreen? = display
+            let presenter = TaskTimerRobotPresenter(primaryScreen: { screen }, reduceMotion: { reduced })
+            defer { presenter.shutdown() }
+            let first = TaskTimerCompletion(taskID: UUID(), title: "Fictional reminder waiting for Resume")
+            let second = TaskTimerCompletion(taskID: UUID(), title: "Fictional timer expiring while paused")
+            var acknowledgments = 0
+            presenter.onAcknowledge = { _ in acknowledgments += 1; return true }
+            _ = presenter.present(task: first)
+            presenter.advanceEscalation(elapsed: 8)
+            let level = presenter.escalationLevel
+            presenter.setCapturePaused(true)
+            try expect(!presenter.panel.isVisible && presenter.current == first
+                       && presenter.outstandingReceipts == [first] && !presenter.content.isRinging,
+                       "Pause hides active reminder artwork without acknowledging its receipt")
+            presenter.acknowledge()
+            _ = presenter.present(task: second)
+            presenter.suspendForInteraction(); presenter.resumeAfterInteraction()
+            screen = external; presenter.displayConfigurationChanged()
+            presenter.refreshMotionPreference()
+            presenter.reconcile(validTaskIDs: [first.taskID, second.taskID], validReminderReceiptIDs: [])
+            try expect(!presenter.panel.isVisible && presenter.outstandingReceipts == [first, second]
+                       && acknowledgments == 0 && presenter.escalationLevel == level,
+                       "Paused expiries, display/motion changes and interaction completion retain alarms without showing them")
+            presenter.suspendForInteraction()
+            presenter.setCapturePaused(false)
+            try expect(!presenter.panel.isVisible && presenter.outstandingReceipts.count == 2,
+                       "Resume respects an independently active manual interaction")
+            presenter.resumeAfterInteraction()
+            try expect(presenter.panel.isVisible && presenter.current == first
+                       && presenter.content.reminderCount == 2 && presenter.escalationLevel == level,
+                       "Resume restores both unacknowledged alarms and their previous escalation")
+            presenter.setCapturePaused(true)
+            presenter.reconcile(validTaskIDs: [second.taskID], validReminderReceiptIDs: [])
+            try expect(!presenter.panel.isVisible && presenter.outstandingReceipts == [second],
+                       "Normal task reconciliation remains effective while presentation is paused")
+            presenter.setCapturePaused(false)
+            try expect(presenter.panel.isVisible && presenter.current == second && acknowledgments == 0,
+                       "Resume presents the surviving alarm without manufacturing acknowledgment")
+        }
+    }
+
     private static func run() async throws {
         try titleAndGeometry()
         try await presenterLifecycle()
+        try pausedVisibility()
         try await durableExpiry()
         try independentAutoCaptureOwnership()
         let output = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)

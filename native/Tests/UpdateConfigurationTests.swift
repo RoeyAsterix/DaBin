@@ -313,7 +313,9 @@ private enum UpdateConfigurationTests {
                     && rootReadme.contains("releases/latest/download/DaBin-Latest-Update.zip")
                     && rootReadme.contains("releases/latest/download/DaBin-Latest-AppleSilicon.zip"),
                    "Release instructions and the repository front page expose permanent latest downloads")
-        try expect(helper.contains("The update ZIP does not match the checksum")
+        try expect(helper.contains("DaBinUpdatePackageCopy.freeze")
+                    && handoff.contains("The update ZIP does not match the checksum")
+                    && helper.contains("DaBinUpdateArchiveValidator.validate")
                     && helper.contains("rejectSymlinks") && helper.contains("codesign")
                     && helper.contains("informativeText = error.localizedDescription"),
                    "The installer rechecks the ZIP, extracted layout and app signature")

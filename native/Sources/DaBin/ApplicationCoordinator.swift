@@ -59,11 +59,14 @@ final class ApplicationCoordinator {
         let autoCaptureSettings = AutoCaptureSettings(defaults: defaults)
         let autoCapture = AutoCaptureService(settings: autoCaptureSettings, input: autoInput)
         let theme = ThemeSettings(defaults: defaults)
+        let quickAccess = QuickAccessSettings(defaults: defaults)
         let autoCaptureRobot = AutoCaptureRobotPresenter(
+            reduceMotion: { [weak quickAccess] in
+                quickAccess?.quietMode == true || NSWorkspace.shared.accessibilityDisplayShouldReduceMotion
+            },
             accent: { [weak theme] in ThemeSettings.accentNSColor(for: theme?.selectedHex ?? ThemeSettings.defaultHex) },
             appearance: { [weak theme] in NSAppearance(named: theme?.darkModeEnabled == true ? .darkAqua : .aqua) })
         let robotPlacement = RobotPlacementSettings(defaults: defaults)
-        let quickAccess = QuickAccessSettings(defaults: defaults)
         let taskTimerRobot = TaskTimerRobotPresenter(primaryScreen: taskTimerPrimaryScreen,
             reduceMotion: { [weak quickAccess] in
                 quickAccess?.quietMode == true || NSWorkspace.shared.accessibilityDisplayShouldReduceMotion
@@ -92,6 +95,11 @@ final class ApplicationCoordinator {
         self.theme = theme
         self.robotPlacement = robotPlacement
         self.corners = corners
+        autoCaptureRobot.onOpen = { [weak corners] in corners?.showBoard(immediate: true) }
+        autoCaptureRobot.confirmationTarget = { [weak corners, weak robotPlacement] in
+            robotPlacement?.home == .corners ? (corners?.companionRevealTarget ?? .corner(.topRight)) : .cameraIsland
+        }
+        corners.onPointerSample = { [weak autoCaptureRobot] point in autoCaptureRobot?.updatePointerAcceptance(at: point) }
         autoCaptureRobot.setProjectRecordingActive(false)
         corners.onProjectRecordingChanged = { [weak taskTimerRobot, weak autoCaptureRobot] project, paused in
             taskTimerRobot?.content.setProjectRecording(projectName: project, isPaused: paused)
@@ -172,9 +180,9 @@ final class ApplicationCoordinator {
         autoCapture.onCommitted = { [weak state] action in
             state?.didAutoCapture(action.captures)
         }
-        autoCapture.onSaved = { [weak autoCaptureRobot, weak quickAccess, weak autoCapture] action in
+        autoCapture.onSaved = { [weak autoCaptureRobot, weak autoCapture] action in
             // One receipt is one action, including a grouped multi-file paste.
-            guard quickAccess?.quietMode != true, let autoCapture,
+            guard let autoCapture,
                   autoCapture.isRunning, autoCapture.settings.isEnabled, !autoCapture.settings.isPaused,
                   let confirmation = AutoCaptureSignReceipt(savedAction: action) else { return }
             autoCaptureRobot?.setScreenCaptureInProgress(AutoCaptureScreenshotActivity.isSystemCaptureTool(
@@ -214,14 +222,18 @@ final class ApplicationCoordinator {
             recording: { [weak corners] in corners?.toggleRecordingFromShortcut() })
         quietSubscription = quickAccess.$quietMode.sink { [weak autoCaptureRobot, weak taskTimerRobot] quiet in
             if quiet {
-                autoCaptureRobot?.dismiss()
+                // Published preferences announce before their stored value.
+                DispatchQueue.main.async { autoCaptureRobot?.refreshMotionPreference() }
                 taskTimerRobot?.refreshMotionPreference()
             }
         }
         confirmationSubscription = Publishers.CombineLatest4(autoCaptureSettings.$isEnabled,
             autoCaptureSettings.$isPaused, autoCapture.$isRunning, quickAccess.$quietMode)
-            .sink { [weak autoCaptureRobot] enabled, paused, running, quiet in
-                autoCaptureRobot?.setConfirmationEnabled(enabled && running && !paused && !quiet)
+            .sink { [weak corners, weak autoCaptureRobot, weak taskTimerRobot] enabled, paused, running, _ in
+                corners?.setCapturePaused(paused)
+                autoCaptureRobot?.setCapturePaused(paused)
+                taskTimerRobot?.setCapturePaused(paused)
+                autoCaptureRobot?.setConfirmationEnabled(enabled && running && !paused)
             }
     }
 

@@ -307,6 +307,8 @@ final class CornerController: NSObject {
     var onRobotInteractionBegan: (() -> Void)?
     var onRobotInteractionEnded: (() -> Void)?
     var onProjectRecordingChanged: ((String?, Bool) -> Void)?
+    var onPointerSample: ((NSPoint) -> Void)?
+    var companionRevealTarget: RobotRevealTarget { activeTarget }
     private var restoreBoardAfterDisplayLoss = false
     var isCaptureRobotVisible: () -> Bool = { false }
     var isTaskTimerRobotVisible: () -> Bool = { false }
@@ -318,6 +320,8 @@ final class CornerController: NSObject {
     private var robotTransitionTask: Task<Void, Never>?
     private var idlePeekTask: Task<Void, Never>?
     private var orbitDwell = QuietOrbitPerchDwell()
+    private var companionEncounter = RobotCompanionEncounter()
+    private var companionEncounterActive = false
     private var idlePeeking = false
     private var timer: Timer?
     private(set) var isShutDown = false
@@ -332,6 +336,8 @@ final class CornerController: NSObject {
     private var focusPoint = NSPoint.zero
     private var suppressUntilExit = false
     private var escapeMonitor: Any?
+    private var localPointerMonitor: Any?
+    private var globalPointerMonitor: Any?
     private var message: NSPopover?
     private var messageExpiry: Task<Void, Never>?
     private var layoutSubscription: AnyCancellable?
@@ -349,6 +355,8 @@ final class CornerController: NSObject {
     }
     private var recordingSignState: RecordingSignState?
     var hasPersistentProjectRecording: Bool { robot.recordingProjectName != nil }
+    private var emittedCapturePause: Bool?
+    private var isRobotPresentationPaused: Bool { emittedCapturePause ?? state.autoCapture.settings.isPaused }
     private let appearanceSettings: ThemeSettings
     private let placementDefaults: UserDefaults?
     private var boardTopLeft: NSPoint?
@@ -458,6 +466,7 @@ final class CornerController: NSObject {
         robot.onDrop = { [weak self] pasteboard in self?.input.receive(pasteboard) }
         robot.onDragState = { [weak self] active in
             self?.dragActive = active
+            if active { self?.companionEncounter.reset(); self?.companionEncounterActive = false }
             if active, let self { self.orbitDwell.reset(to: self.robot.orbitPerch) }
             self?.lastInteraction = Date()
             self?.updateHoverFocus(at: NSEvent.mouseLocation, pressedMouseButtons: NSEvent.pressedMouseButtons)
@@ -471,6 +480,7 @@ final class CornerController: NSObject {
         }
         input.onBusy = { [weak self] busy in
             self?.saving = busy; self?.robot.isSaving = busy
+            if busy { self?.companionEncounter.reset(); self?.companionEncounterActive = false }
             if busy, let self { self.orbitDwell.reset(to: self.robot.orbitPerch) }
         }
         input.onResult = { [weak self] captures, errors in self?.received(captures, errors: errors) }
@@ -537,6 +547,16 @@ final class CornerController: NSObject {
     func start(pointerPosition: @escaping () -> NSPoint = { NSEvent.mouseLocation }) {
         guard timer == nil, !isShutDown else { return }
         refreshProjectRecording()
+        // Native movement updates the small input region before the next click;
+        // the slower clock remains responsible for animation and retreat time.
+        // Mouse-only monitors need no access to other applications' keystrokes.
+        localPointerMonitor = NSEvent.addLocalMonitorForEvents(matching: [.mouseMoved, .leftMouseDragged, .leftMouseDown]) { [weak self] event in
+            MainActor.assumeIsolated { self?.sampleCompanionPointer(at: pointerPosition()) }
+            return event
+        }
+        globalPointerMonitor = NSEvent.addGlobalMonitorForEvents(matching: [.mouseMoved, .leftMouseDragged]) { [weak self] _ in
+            MainActor.assumeIsolated { self?.sampleCompanionPointer(at: pointerPosition()) }
+        }
         // Global pointer position needs no global key monitor, clipboard poll or Accessibility grant.
         let timer = Timer(timeInterval: 0.10, repeats: true) { [weak self] _ in
             MainActor.assumeIsolated { self?.pollPointer(at: pointerPosition()) }
@@ -544,6 +564,12 @@ final class CornerController: NSObject {
         timer.tolerance = 0.025
         RunLoop.main.add(timer, forMode: .common)
         self.timer = timer
+    }
+
+    func sampleCompanionPointer(at point: NSPoint) {
+        guard !isShutDown else { return }
+        onPointerSample?(point)
+        updatePointerAcceptance(at: point)
     }
 
     /// One-way disposal removes every native event source owned by this session.
@@ -567,6 +593,7 @@ final class CornerController: NSObject {
         onWillOpenBoard = nil; onDidCloseBoard = nil
         onRobotInteractionBegan = nil; onRobotInteractionEnded = nil
         onProjectRecordingChanged = nil
+        onPointerSample = nil
         layoutSubscription?.cancel(); layoutSubscription = nil
         placementSubscription?.cancel(); placementSubscription = nil
         appearanceSubscription?.cancel(); appearanceSubscription = nil
@@ -574,6 +601,9 @@ final class CornerController: NSObject {
         projectRecordingSubscription?.cancel(); projectRecordingSubscription = nil
         if let escapeMonitor { NSEvent.removeMonitor(escapeMonitor) }
         escapeMonitor = nil
+        if let localPointerMonitor { NSEvent.removeMonitor(localPointerMonitor) }
+        if let globalPointerMonitor { NSEvent.removeMonitor(globalPointerMonitor) }
+        localPointerMonitor = nil; globalPointerMonitor = nil
         NotificationCenter.default.removeObserver(self)
         NSWorkspace.shared.notificationCenter.removeObserver(self)
         dismissMessage()
@@ -600,22 +630,31 @@ final class CornerController: NSObject {
     func pollPointer(at simulatedPoint: NSPoint? = nil, now: Date = Date(), pressedMouseButtons: Int = NSEvent.pressedMouseButtons) {
         if state.quickAccessSettings.quietMode { cancelIdlePeek() }
         guard !isShutDown else { return }
+        if isRobotPresentationPaused {
+            cancelIdlePeek()
+            hideRobot(force: true)
+            return
+        }
         ensureProjectRecordingRobot()
+        let point = simulatedPoint ?? NSEvent.mouseLocation
+        sampleCompanionPointer(at: point)
         // A persistent timer acknowledgement owns the island. Hover must not
         // reveal a second robot over its clickable clock/sign surface.
         if isTaskTimerRobotVisible() { cancelIdlePeek(); return }
-        let point = simulatedPoint ?? NSEvent.mouseLocation
-        updatePointerAcceptance(at: point)
         if state.isBoardVisible, let screen = activeScreen {
             appFrame.updatePointer(screenPoint: screen.frame.contains(point) ? point : nil, displayFrame: screen.frame)
         }
         guard robotTransitionTarget == nil else { return }
+        if !hasPersistentProjectRecording, !board.isVisible, !saving, !dragActive,
+           pressedMouseButtons == 0, !keyboardHold, now > feedbackUntil,
+           !isCaptureRobotVisible(), !suppressUntilExit,
+           pollCompanion(at: point, now: now) { return }
         let target = NSScreen.screens.compactMap { screen -> (NSScreen, RobotRevealTarget)? in
             guard let target = CornerGeometry.revealTarget(at: point, on: screen,
                                                            home: state.robotPlacement.home) else { return nil }
             return (screen, target)
         }.first
-        if target == nil { suppressUntilExit = false }
+        if target == nil && companionApproachTarget(at: point) == nil { suppressUntilExit = false }
         if isCaptureRobotVisible(), target == nil {
             cancelIdlePeek()
             return
@@ -663,29 +702,94 @@ final class CornerController: NSObject {
         }
     }
 
+    private func companionProximity(at point: NSPoint, screen: NSScreen,
+                                    target: RobotRevealTarget) -> CGFloat? {
+        guard screen.frame.contains(point) else { return nil }
+        switch target {
+        case .cameraIsland:
+            guard let housing = CornerGeometry.cameraIslandRect(on: screen) else { return nil }
+            return RobotCompanionProximity.island(point, housing: housing)
+        case .corner(let corner):
+            return RobotCompanionProximity.corner(point, anchor: CGPoint(
+                x: corner.isRight ? screen.frame.maxX : screen.frame.minX,
+                y: corner.isTop ? screen.frame.maxY : screen.frame.minY))
+        }
+    }
+
+    private func companionApproachTarget(at point: NSPoint) -> (NSScreen, RobotRevealTarget, CGFloat)? {
+        for screen in NSScreen.screens where screen.frame.contains(point) {
+            let targets: [RobotRevealTarget] = state.robotPlacement.home == .cameraIsland
+                ? [CornerGeometry.cameraIslandRect(on: screen) == nil ? .corner(.topRight) : .cameraIsland]
+                : ScreenCorner.allCases.map(RobotRevealTarget.corner)
+            for target in targets {
+                if let proximity = companionProximity(at: point, screen: screen, target: target) {
+                    return (screen, target, proximity)
+                }
+            }
+        }
+        return nil
+    }
+
+    /// The entry perch remains fixed until this encounter finishes. The cursor
+    /// moves his gaze and free hand, rather than moving his native click target.
+    private func pollCompanion(at point: NSPoint, now: Date) -> Bool {
+        if !companionEncounterActive {
+            guard let (screen, target, _) = companionApproachTarget(at: point) else { return false }
+            reveal(on: screen, target: target, pointer: point, companion: true)
+            companionEncounterActive = true
+        }
+        guard let screen = activeScreen else { return false }
+        let local = robot.convert(bin.convertPoint(fromScreen: point), from: nil)
+        let bounds = robot.interactionBounds
+        let pointer = CGPoint(x: bounds.width > 0 ? (local.x - bounds.midX) / (bounds.width / 2) : 0,
+                              y: bounds.height > 0 ? (bounds.midY - local.y) / (bounds.height / 2) : 0)
+        let proximity = robot.containsInteraction(local) ? 1
+            : companionProximity(at: point, screen: screen, target: activeTarget)
+        let snapshot = companionEncounter.update(proximity: proximity, pointer: pointer,
+            at: now.timeIntervalSinceReferenceDate, expressionOnly: robotReduceMotion())
+        robot.updateCompanion(snapshot)
+        updateHoverFocus(at: point, pressedMouseButtons: 0)
+        if !snapshot.isVisible { hideRobot() }
+        return true
+    }
+
     /// The sign describes actual monitoring, rather than the stored preference.
-    /// Keep the project selected when paused, excluded or awaiting permission.
+    /// Pause hides the robot and sign without changing the selected project.
+    func setCapturePaused(_ paused: Bool) {
+        // Published values arrive before their stored setting changes. Latch
+        // the emitted value before receipt/timer hide callbacks can reenter us.
+        emittedCapturePause = paused
+        refreshProjectRecording()
+    }
+
     func refreshProjectRecording() {
         guard !isShutDown else { return }
         let settings = state.autoCapture.settings
+        let paused = isRobotPresentationPaused
         let normalized = state.libraryProject?.trimmingCharacters(in: .whitespacesAndNewlines)
             .precomposedStringWithCanonicalMapping
         let project = normalized.flatMap { $0.isEmpty ? nil : String($0.prefix(180)) }
         let colorHex = project.flatMap { state.workspace.projectColorHex(for: $0) }
-        let isRecording = settings.isEnabled && !settings.isPaused
+        let isRecording = settings.isEnabled && !paused
             && state.autoCapture.isRunning && settings.status == .monitoring
+        let showsStatus = isRecording
         let status: String? = isRecording ? "Capturing to" : nil
         let next = RecordingSignState(project: project, colorHex: colorHex,
-                                      enabled: isRecording, paused: settings.isPaused, status: status)
-        guard next != recordingSignState else { ensureProjectRecordingRobot(); return }
+                                      enabled: showsStatus, paused: paused, status: status)
+        guard next != recordingSignState else {
+            if paused { hidePausedRobot() }
+            else { ensureProjectRecordingRobot() }
+            return
+        }
         recordingSignState = next
         let color = colorHex.map { ProjectColorChoice.nsColor(for: $0) }
         let wasEnabled = hasPersistentProjectRecording
-        robot.setProjectRecording(projectName: project, color: color, isEnabled: isRecording,
-                                  isPaused: settings.isPaused, statusText: status)
-        appFrame.setProjectRecording(projectName: project, color: color, isEnabled: isRecording,
-                                     isPaused: settings.isPaused, statusText: status)
-        onProjectRecordingChanged?(isRecording ? project : nil, settings.isPaused)
+        robot.setProjectRecording(projectName: project, color: color, isEnabled: showsStatus,
+                                  isPaused: paused, statusText: status)
+        appFrame.setProjectRecording(projectName: project, color: color, isEnabled: showsStatus,
+                                     isPaused: paused, statusText: status)
+        onProjectRecordingChanged?(showsStatus ? project : nil, paused)
+        if paused { hidePausedRobot(); return }
         if !hasPersistentProjectRecording {
             if wasEnabled { hideRobot() }
             return
@@ -694,7 +798,7 @@ final class CornerController: NSObject {
     }
 
     private func ensureProjectRecordingRobot() {
-        guard hasPersistentProjectRecording, !isShutDown, !NSApp.isHidden,
+        guard !isRobotPresentationPaused, hasPersistentProjectRecording, !isShutDown, !NSApp.isHidden,
               !board.isVisible, robotTransitionTarget == nil else { return }
         if isTaskTimerRobotVisible() || isCaptureRobotVisible() {
             if bin.isVisible { hideRobot() }
@@ -819,8 +923,11 @@ final class CornerController: NSObject {
         reveal(on: screen, target: .corner(corner), focus: focus)
     }
 
-    func reveal(on screen: NSScreen, target: RobotRevealTarget, focus: Bool = false, pointer: NSPoint? = nil) {
-        guard !isShutDown, robotTransitionTarget == nil else { return }
+    func reveal(on screen: NSScreen, target: RobotRevealTarget, focus: Bool = false, pointer: NSPoint? = nil,
+                companion: Bool = false) {
+        guard !isShutDown, !isRobotPresentationPaused, robotTransitionTarget == nil else { return }
+        if !companion { companionEncounter.reset(); companionEncounterActive = false }
+        let initializingCompanion = companion && !companionEncounterActive
         cancelIdlePeek()
         if hasPersistentProjectRecording { beginProjectRecordingInteraction() }
         else { onRobotInteractionBegan?() }
@@ -841,13 +948,13 @@ final class CornerController: NSObject {
         let original = CornerGeometry.robotFrame(target: target, on: screen)
         robot.orbitContentOffset = hasPersistentProjectRecording && target == .cameraIsland
             ? CGPoint(x: original.minX - frame.minX, y: original.minY - frame.minY) : .zero
-        if !bin.isVisible || changed || robot.isOrbitRetreating {
+        if !bin.isVisible || changed || robot.isOrbitRetreating || initializingCompanion {
             let entering = !bin.isVisible
             bin.cameraStageDisplayFrame = target == .cameraIsland ? screen.frame : nil
             bin.setFrame(frame, display: true)
             bin.alphaValue = 1
             bin.orderFrontRegardless()
-            if entering || changed || robot.isOrbitRetreating {
+            if entering || changed || robot.isOrbitRetreating || initializingCompanion {
                 let entrance: RobotEntrance
                 switch target {
                 case .corner(let corner): entrance = corner.isRight ? .right : .left
@@ -859,8 +966,10 @@ final class CornerController: NSObject {
                     let perch: QuietOrbitPerch = hasPersistentProjectRecording ? .bottom
                         : layout.perch(at: pointer ?? NSEvent.mouseLocation)
                     orbitDwell = QuietOrbitPerchDwell(current: perch)
-                    robot.revealOrbit(in: layout, at: perch)
+                    if companion { robot.presentCompanion(from: entrance, orbit: layout, perch: perch) }
+                    else { robot.revealOrbit(in: layout, at: perch) }
                 }
+                else if companion { robot.presentCompanion(from: entrance) }
                 else { robot.present(from: entrance) }
             }
         }
@@ -875,6 +984,7 @@ final class CornerController: NSObject {
     }
 
     private func updateOrbitPerch(at point: NSPoint, now: Date) {
+        guard !companionEncounterActive else { return }
         guard !hasPersistentProjectRecording else { orbitDwell.cancel(); return }
         guard let layout = robot.orbitLayout, !saving, !dragActive,
               !robot.isOrbitRetreating, now > feedbackUntil,
@@ -886,6 +996,7 @@ final class CornerController: NSObject {
 
     func focusRobot() {
         guard !isShutDown else { return }
+        if isRobotPresentationPaused { showBoard(immediate: true); return }
         guard let screen = NSScreen.screens.first(where: { $0.frame.contains(NSEvent.mouseLocation) }) ?? NSScreen.main else { return }
         if hasPersistentProjectRecording { beginProjectRecordingInteraction() }
         else { onRobotInteractionBegan?() }
@@ -1078,7 +1189,7 @@ final class CornerController: NSObject {
            !screen.frame.contains(NSPoint(x: topLeft.x + 20, y: topLeft.y - 20)) {
             boardTopLeft = nil
         }
-        showBoard()
+        showBoard(immediate: true)
     }
 
     func showBoard(immediate: Bool = false) {
@@ -1119,7 +1230,7 @@ final class CornerController: NSObject {
         onRobotInteractionEnded?()
         robotLifecycle.send(.openRequested)
         NSApp.activate(ignoringOtherApps: true)
-        if wasVisible || !animateRobotTransitions || immediate || state.quickAccessSettings.quietMode {
+        if wasVisible || !animateRobotTransitions || immediate || state.quickAccessSettings.quietMode || isRobotPresentationPaused {
             robotLifecycle.send(.interrupt(toward: .fullScreen))
             appFrame.cancelTransition(open: true)
             board.makeKeyAndOrderFront(nil)
@@ -1573,7 +1684,7 @@ final class CornerController: NSObject {
         let destination = robotTransitionTarget ?? board.frame
         let ongoingSource = robotTransitionSource
         robotLifecycle.send(.closeRequested)
-        guard animateRobotTransitions, let screen = boardScreen() else {
+        guard animateRobotTransitions, !isRobotPresentationPaused, let screen = boardScreen() else {
             settleRobotTransition(open: false)
             return
         }
@@ -1581,13 +1692,21 @@ final class CornerController: NSObject {
         beginRobotTransition(source: source, destination: destination, opening: false)
     }
 
-    private func hideRobot(animated: Bool = false) {
-        guard !saving && !dragActive else { return }
+    private func hidePausedRobot() {
+        cancelIdlePeek()
+        dismissMessage()
+        feedbackUntil = .distantPast
+        hideRobot(force: true)
+    }
+
+    private func hideRobot(animated: Bool = false, force: Bool = false) {
+        guard force || (!saving && !dragActive) else { return }
+        companionEncounter.reset()
+        companionEncounterActive = false
         recordingInteractionActive = false
         if animated, animateRobotTransitions, robot.orbitLayout != nil {
             guard !robot.isOrbitRetreating else { return }
             releaseHoverFocus()
-            bin.ignoresMouseEvents = true
             robot.retreatOrbit { [weak self] in
                 guard let self else { return }
                 self.bin.orderOut(nil)
@@ -1605,10 +1724,11 @@ final class CornerController: NSObject {
     }
 
     private func received(_ captures: [Capture], errors: [String]) {
+        companionEncounter.reset(); companionEncounterActive = false
         orbitDwell.reset(to: robot.orbitPerch)
         keyboardHold = false
         feedbackUntil = Date().addingTimeInterval(errors.isEmpty ? 1.3 : 4)
-        robot.digest(success: !captures.isEmpty, partial: !errors.isEmpty)
+        if !isRobotPresentationPaused { robot.digest(success: !captures.isEmpty, partial: !errors.isEmpty) }
         state.reportCaptureResult(captures, errors: errors)
         if !errors.isEmpty {
             if let summary = state.notificationMessage?.text { showMessage(summary) }

@@ -32,6 +32,7 @@ import SwiftUI
          value("accessibilityValue"), attribute("AXValue")].compactMap { $0 as? String }.first { !$0.isEmpty }
     }
     var valueText: String { (value("accessibilityValue") as? String) ?? (attribute("AXValue") as? String) ?? "" }
+    var help: String? { (value("accessibilityHelp") as? String) ?? (attribute("AXHelp") as? String) }
     var frame: NSRect {
         let selector = NSSelectorFromString("accessibilityFrame")
         guard object.responds(to: selector) else { return .zero }
@@ -235,8 +236,8 @@ import SwiftUI
     @MainActor private static func menuItems(_ menu: NSMenu) -> [NSMenuItem] {
         menu.items.flatMap { [$0] + ($0.submenu.map(menuItems) ?? []) }
     }
-    @MainActor private static func nativeProjectFilterMenu(_ host: NSView, containing title: String) async throws -> NSMenu {
-        let target = try find(host, id: "project-filter-menu")
+    @MainActor private static func nativeWorkspaceMenu(_ host: NSView, id: String = "project-filter-menu", containing title: String) async throws -> NSMenu {
+        let target = try find(host, id: id)
         guard let window = host.window else {
             throw NSError(domain: "WorkspaceWindowTests", code: 14,
                 userInfo: [NSLocalizedDescriptionKey: "Project filter menu needs its owned fixture window"])
@@ -314,7 +315,7 @@ import SwiftUI
     }
     @MainActor private static func selectProjectFilter(_ title: String, in host: NSView, message: String) async throws {
         if nodes(host).contains(where: { $0.identifier == "project-filter-menu" && $0.frame.width > 0 && $0.frame.height > 0 }) {
-            let menu = try await nativeProjectFilterMenu(host, containing: title)
+            let menu = try await nativeWorkspaceMenu(host, containing: title)
             let identifier = "project-filter-" + title
             guard let item = menuItems(menu).first(where: {
                 $0.identifier?.rawValue == identifier || WorkspaceAXNode(object: $0).identifier == identifier
@@ -352,6 +353,180 @@ import SwiftUI
             throw NSError(domain: "WorkspaceWindowTests", code: 4)
         }
         try data.write(to: url, options: .atomic)
+    }
+
+    @MainActor private static func checkCaptions(state: AppState, theme: ThemeSettings, hosting: NSView,
+                                               window: NSWindow, evidence: URL) async throws {
+        state.workspaceZoom.reset()
+        state.filter = .all
+        state.clearNewNoteDraft()
+        state.libraryProject = "Fictional captions project A"
+        state.openInbox()
+        window.setContentSize(NSSize(width: 380, height: 680))
+        theme.setDarkMode(false)
+        await settleNavigation()
+
+        func checkPlaceholder(_ project: String) throws {
+            let expected = "An Idea/Task for " + project
+            let field = try findLabeled(hosting, label: expected)
+            try expect((field.object as? NSTextField)?.placeholderString == expected,
+                "The actual quick text field names its full saved destination: \(expected)")
+            let quickText = try find(hosting, id: "inbox-quick-text")
+            try expect(quickText.help?.contains(project) == true,
+                "Quick capture accessibility describes the complete destination \(project)")
+        }
+        func saveQuick(_ title: String) async throws {
+            let menu = try await nativeWorkspaceMenu(hosting, id: "inbox-quick-save", containing: title)
+            guard let item = menuItems(menu).first(where: { $0.title == title }), let owner = item.menu else {
+                throw NSError(domain: "WorkspaceWindowTests", code: 18,
+                    userInfo: [NSLocalizedDescriptionKey: "Quick save menu needs its native \(title) action"])
+            }
+            try expect(item.isEnabled && !item.isHidden && item.action != nil,
+                "\(title) is available through the quick capture's real native save menu")
+            owner.performActionForItem(at: owner.index(of: item))
+            await settleNavigation()
+        }
+        func typeQuick(_ text: String, project: String, message: String) async throws {
+            // The ID may belong to SwiftUI's synthetic AX element. Its bare
+            // value setter changes the display without an editing notification.
+            // Resolve the actual field by its native placeholder so insertion
+            // follows the same AppKit field-editor path as keyboard typing.
+            let input = try findLabeled(hosting, label: "An Idea/Task for " + project)
+            try expect((input.object as? NSTextField)?.window === window,
+                "Quick capture typing uses the actual field owned by the fixture window")
+            try expect(input.setText(text), message)
+            await settleNavigation()
+            fputs("Quick capture native typing: target=\(String(describing: type(of: input.object))) route=\(state.route) expectedCharacters=\(text.count) actualCharacters=\(state.newNoteText.count) draftProject=\(state.newNoteProject ?? "Unfiled") selectedProject=\(state.libraryProject ?? "Unfiled")\n", stderr)
+        }
+        try checkPlaceholder("Fictional captions project A")
+        let noteText = "A fictional idea that retains its original project while typing"
+        try await typeQuick(noteText, project: "Fictional captions project A",
+            message: "Captions accepts real native field-editor text")
+        try expect(state.newNoteText == noteText && state.newNoteProject == "Fictional captions project A",
+            "Typing captures the selected project as the draft destination")
+        state.libraryProject = "Fictional captions project B"
+        await settleNavigation()
+        try checkPlaceholder("Fictional captions project A")
+        try await saveQuick("Save note")
+        try expect(state.store.captures.contains { $0.originalText == noteText && $0.projectName == "Fictional captions project A" && !$0.isTask },
+            "The native Save note action saves to the displayed draft project after the selection changes")
+        try expect(state.newNoteText.isEmpty && state.newNoteProject == nil && state.route == .inbox,
+            "Saving clears only the quick draft and leaves Captions open")
+        try checkPlaceholder("Fictional captions project B")
+        let taskText = "A fictional next task for the latest selected project"
+        try await typeQuick(taskText, project: "Fictional captions project B",
+            message: "A fresh quick draft accepts a task in the newly selected project")
+        try await saveQuick("Create task")
+        try expect(state.store.captures.contains { $0.originalText == taskText && $0.projectName == "Fictional captions project B" && $0.isTask },
+            "The native Create task action saves the quick draft to the project named in its placeholder")
+
+        // An explicitly unfiled draft is distinct from having no draft. A
+        // later project selection must not silently change where it is saved.
+        state.libraryProject = nil
+        state.openInbox()
+        await settleNavigation()
+        try checkPlaceholder("Unfiled")
+        let unfiledText = "A fictional unfiled idea that must stay unfiled"
+        try await typeQuick(unfiledText, project: "Unfiled",
+            message: "Quick capture can begin explicitly unfiled")
+        state.libraryProject = "Fictional captions project A"
+        await settleNavigation()
+        try checkPlaceholder("Unfiled")
+        try await saveQuick("Save note")
+        try expect(state.store.captures.contains { $0.originalText == unfiledText && $0.projectName == nil },
+            "An explicitly unfiled draft stays unfiled after selecting another project")
+        try checkPlaceholder("Fictional captions project A")
+
+        _ = try state.store.capture(text: "Fictional unfiled caption text")
+        _ = try state.store.capture(text: "https://example.invalid/fictional-caption-reference")
+        _ = try state.store.createTask(text: "Fictional unfiled caption task")
+        _ = try await state.store.importData(Data("Fictional caption attachment".utf8), filename: "Fictional-caption.dat")
+        let image = NSImage(size: NSSize(width: 24, height: 24), flipped: false) { bounds in
+            NSColor.systemPurple.setFill(); bounds.fill(); return true
+        }
+        guard let tiff = image.tiffRepresentation,
+              let png = NSBitmapImageRep(data: tiff)?.representation(using: .png, properties: [:]) else {
+            throw NSError(domain: "WorkspaceWindowTests", code: 19)
+        }
+        _ = try await state.store.importData(png, filename: "Fictional-caption.png")
+        state.libraryProject = nil
+        state.clearNewNoteDraft()
+        state.selectedDay = Date()
+        state.setWeekEndingDay(Date())
+        let rowIDs = ["timeline-mode-daily", "timeline-mode-weekly"]
+            + CaptureFilter.allCases.map { "capture-filter-" + $0.rawValue }
+        for dark in [false, true] {
+            theme.setDarkMode(dark)
+            for width in [CGFloat(320), 380, 760] {
+                window.setContentSize(NSSize(width: width, height: 680))
+                for route in [BoardRoute.inbox, .daily, .weekly] {
+                    state.route = route
+                    state.filter = .all
+                    await settleNavigation()
+                    let viewport = window.convertToScreen(hosting.convert(hosting.bounds, to: nil)).insetBy(dx: -1, dy: -1)
+                    let row = try find(hosting, id: "captions-toolbar")
+                    let controls = try rowIDs.map { try find(hosting, id: $0) }
+                    try expect(row.frame.width > 0 && row.frame.height > 0 && viewport.contains(row.frame),
+                        "Captions has a wholly visible toolbar on \(route) at \(Int(width)) points in \(dark ? "dark" : "light") mode")
+                    for control in controls {
+                        try expect(control.isEnabled && control.frame.width >= 28 && control.frame.height >= 28
+                            && viewport.contains(control.frame),
+                            "\(control.identifier ?? "Captions control") has a visible usable target on \(route) at \(Int(width)) points")
+                        try expect(abs(control.frame.midY - controls[0].frame.midY) <= 2,
+                            "Day, Week and every caption filter share one aligned row on \(route) at \(Int(width)) points")
+                    }
+                    for index in 1..<controls.count {
+                        try expect(controls[index - 1].frame.maxX <= controls[index].frame.minX + 0.5,
+                            "Adjacent caption controls do not overlap on \(route) at \(Int(width)) points")
+                    }
+                    if route != .inbox {
+                        let date = try find(hosting, id: "timeline-date")
+                        try expect(viewport.contains(date.frame) && date.frame.minY >= row.frame.maxY - 1,
+                            "Date navigation remains above the shared caption control row")
+                    } else {
+                        let available = nodes(hosting)
+                        try expect(!available.contains { $0.frame.width > 0 && $0.frame.height > 0
+                            && (["Paste", "Add files", "Add items"].contains($0.label ?? "")
+                                || $0.label?.contains("Drop items here.") == true) },
+                            "Captions no longer renders the removed Paste, add-items controls or drop-items hint")
+                        try checkPlaceholder("Unfiled")
+                    }
+                    try saveImage(hosting, to: evidence.appendingPathComponent("captions-\(route)-\(Int(width))x680-\(dark ? "dark" : "light").png"))
+                    if !dark && width == 760 {
+                        for filter in CaptureFilter.allCases {
+                            try expect(try find(hosting, id: "capture-filter-" + filter.rawValue).press(),
+                                "The real \(filter.title) caption filter activates on \(route)")
+                            await settleNavigation()
+                            let filtered = state.store.captures.filter { filter.includes($0) }
+                            try expect(state.filter == filter && !filtered.isEmpty,
+                                "Native \(filter.title) filtering has matching archived fixture content on \(route)")
+                            if route == .daily {
+                                try expect(!state.dailyCaptures.isEmpty && state.dailyCaptures.allSatisfy { filter.includes($0) },
+                                    "Daily content obeys its selected native caption filter")
+                            } else if route == .weekly {
+                                let weekly = state.weeklyVisibleDays.flatMap { state.captures(for: $0) }
+                                try expect(!weekly.isEmpty && weekly.allSatisfy { filter.includes($0) },
+                                    "Weekly content obeys its selected native caption filter")
+                            }
+                        }
+                        state.filter = .all
+                    }
+                }
+            }
+        }
+        theme.setDarkMode(false)
+        state.route = .inbox
+        state.filter = .all
+        window.setContentSize(NSSize(width: 380, height: 680))
+        await settleNavigation()
+        try expect(try find(hosting, id: "timeline-mode-daily").press(), "Day activates from the unified Captions row")
+        await settleNavigation()
+        try expect(state.route == .daily, "The real Day control opens the daily caption view")
+        try expect(try find(hosting, id: "timeline-mode-weekly").press(), "Week activates from the same caption row")
+        await settleNavigation()
+        try expect(state.route == .weekly, "The real Week control opens the weekly caption view")
+        state.openInbox()
+        await settleNavigation()
     }
 
     @MainActor private static func checkExplorer(state: AppState, hosting boardHosting: NSView, window: NSWindow, evidence: URL) async throws {
@@ -811,8 +986,8 @@ import SwiftUI
                     }
                     try expect(!nodes(hosting).contains { ["project-search", "explorer-search"].contains($0.identifier ?? "") },
                         "Projects retains header Search without a duplicate inner entry at \(Int(size.width))-point width")
-                    try expect(try find(hosting, id: "project-export").label == "Export project",
-                        "Project export keeps its explicit text at \(Int(size.width))-point width")
+                    try expect(try find(hosting, id: "project-export").label == "Export Selected",
+                        "Selection export keeps its explicit text at \(Int(size.width))-point width")
                     try expect(!nodes(hosting).contains {
                         $0.frame.width > 0 && (["project-export-all", "project-export-selection"].contains($0.identifier ?? "")
                             || ["Export", "Copy project", "Copy", "Export ZIP"].contains($0.label ?? ""))
@@ -1088,6 +1263,7 @@ import SwiftUI
         try expect(editorDraft.planning.checklist.count == 2 && editorDraft.planning.checklist.last?.text.count == 500,
             "A maximum-length valid step is stored exactly after trimming outer spaces")
         try await checkExplorer(state: state, hosting: hosting, window: window, evidence: evidence)
+        try await checkCaptions(state: state, theme: theme, hosting: hosting, window: window, evidence: evidence)
         print("PASS: \(checks) native workspace interaction and responsive layout checks")
         print("Workspace screenshots: \(evidence.path)")
     }

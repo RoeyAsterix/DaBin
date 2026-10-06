@@ -82,8 +82,9 @@ final class RobotProjectSignView: NSView {
         self.statusText = self.projectName == nil ? "" : (statusText ?? "Recording to")
         let accent = (color ?? .systemPurple).usingColorSpace(.sRGB) ?? .systemPurple
         board.layer?.borderColor = accent.cgColor
-        statusDot.fillColor = accent.cgColor
+        statusDot.fillColor = (isPaused ? NSColor.systemOrange : accent).cgColor
         isHidden = self.projectName == nil
+        if isPaused { cancelAttachmentMotion() }
         needsLayout = true
     }
 

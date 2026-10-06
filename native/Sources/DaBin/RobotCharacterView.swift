@@ -9,6 +9,10 @@ struct RobotCaptureSignPartPose {
     let headOpacity: Float
     let torsoOpacity: Float
     let eyeScaleY: CGFloat
+    var head = RobotPartTransform.identity
+    var torso = RobotPartTransform.identity
+    var feet = RobotPartTransform.identity
+    var eyeBrightness: CGFloat = 1
 }
 
 /// Small native character renderer used inside an existing interaction surface.
@@ -20,6 +24,12 @@ final class RobotCharacterView: NSView {
     private(set) var motionState = RobotMotionState()
     var mood: RobotMood { motionState.mood }
     var hasActiveAmbientMotion: Bool { ambientTask != nil }
+    var hasActiveCompanionAnimations: Bool {
+        ([artLayer, bodyLayer, faceLayer, shellLayer, feetLayer, leftEyeLayer, rightEyeLayer]
+            + companionPeekEyes + islandRigLayers).contains { target in
+                (target.animationKeys() ?? []).contains { $0.hasPrefix("robot.companion.") }
+            }
+    }
 
     private let reduceMotionProvider: ReduceMotionProvider
     private var ambientTask: Task<Void, Never>?
@@ -28,6 +38,7 @@ final class RobotCharacterView: NSView {
     private var islandResting = false
     private var islandStageEnabled = false
     private var islandCompletionTask: Task<Void, Never>?
+    private(set) var currentCompanionPose: RobotCompanionPose?
 
     private let artLayer = CALayer()
     private let shadowLayer = CAShapeLayer()
@@ -45,6 +56,7 @@ final class RobotCharacterView: NSView {
     private let faceScreenLayer = CAShapeLayer()
     private let leftEyeLayer = CAShapeLayer()
     private let rightEyeLayer = CAShapeLayer()
+    private let companionPeekEyes = [CAShapeLayer(), CAShapeLayer()]
     private let mouthLayer = CAShapeLayer()
     private let lidLayer = CALayer()
     private let leftArmLayer = CAShapeLayer()
@@ -123,6 +135,9 @@ final class RobotCharacterView: NSView {
             shellLayer.transform = CATransform3DIdentity
             faceLayer.transform = CATransform3DIdentity
             feetLayer.transform = CATransform3DIdentity
+            // The short feet must remain visible when they kick across the
+            // lower chest silhouette in this dedicated held-sign scene.
+            feetLayer.zPosition = 1
             shellLayer.opacity = 1
             faceLayer.opacity = 1
             feetLayer.opacity = 1
@@ -150,9 +165,13 @@ final class RobotCharacterView: NSView {
             faceLayer.opacity = min(1, max(0, pose.headOpacity))
             shellLayer.opacity = min(1, max(0, pose.torsoOpacity))
             feetLayer.opacity = min(1, max(0, pose.torsoOpacity))
+            faceLayer.transform = transform(pose.head)
+            shellLayer.transform = transform(pose.torso)
+            feetLayer.transform = transform(pose.feet)
             for eye in [leftEyeLayer, rightEyeLayer] {
                 eye.transform = transform(RobotPartTransform(translation: gaze,
                     scaleY: min(1.2, max(0.08, pose.eyeScaleY))))
+                applyEyeBrightness(pose.eyeBrightness, to: eye)
             }
         }
     }
@@ -175,6 +194,11 @@ final class RobotCharacterView: NSView {
         track(faceLayer, keyPath: "opacity", values: poses.map(\.headOpacity), suffix: "head")
         track(shellLayer, keyPath: "opacity", values: poses.map(\.torsoOpacity), suffix: "torso")
         track(feetLayer, keyPath: "opacity", values: poses.map(\.torsoOpacity), suffix: "feet")
+        for (target, poses, suffix) in [(faceLayer, poses.map(\.head), "head-motion"),
+                                       (shellLayer, poses.map(\.torso), "torso-motion"),
+                                       (feetLayer, poses.map(\.feet), "feet-motion")] {
+            track(target, keyPath: "transform", values: poses.map { NSValue(caTransform3D: transform($0)) }, suffix: suffix)
+        }
         for (index, eye) in [leftEyeLayer, rightEyeLayer].enumerated() {
             let values = poses.map { pose in
                 NSValue(caTransform3D: transform(RobotPartTransform(
@@ -182,6 +206,8 @@ final class RobotCharacterView: NSView {
                     scaleY: min(1.2, max(0.08, pose.eyeScaleY)))))
             }
             track(eye, keyPath: "transform", values: values, suffix: "eye-\(index)")
+            track(eye, keyPath: "fillColor", values: poses.map { eyeColor(brightness: $0.eyeBrightness) }, suffix: "eye-color-\(index)")
+            track(eye, keyPath: "shadowOpacity", values: poses.map { eyeGlow(brightness: $0.eyeBrightness) }, suffix: "eye-glow-\(index)")
         }
     }
 
@@ -259,11 +285,12 @@ final class RobotCharacterView: NSView {
             return
         }
         cancelIslandCompletion()
-        if currentAutoCaptureReaction != nil || islandMotionActive {
+        if currentAutoCaptureReaction != nil || islandMotionActive || currentCompanionPose != nil {
             removeAllAnimations()
             resetAutomaticCelebrationLayers()
         }
         currentAutoCaptureReaction = nil
+        currentCompanionPose = nil
         islandMotionActive = false
         islandResting = false
         let previous = motionState
@@ -292,7 +319,7 @@ final class RobotCharacterView: NSView {
     func refreshMotionPreference() {
         // An automatic performance samples Reduce Motion once when it begins.
         // Do not replace its coherent timeline with the generic mood renderer.
-        guard currentAutoCaptureReaction == nil else { return }
+        guard currentAutoCaptureReaction == nil, currentCompanionPose == nil else { return }
         let reduceMotion = reduceMotionProvider()
         if islandMotionActive && !reduceMotion { return }
         if reduceMotion {
@@ -311,6 +338,7 @@ final class RobotCharacterView: NSView {
     func stopMotion() {
         cancelIslandCompletion()
         currentAutoCaptureReaction = nil
+        currentCompanionPose = nil
         islandMotionActive = false
         motionState.send(.hide)
         stopAmbientMotion()
@@ -358,7 +386,9 @@ final class RobotCharacterView: NSView {
 
         configureArms()
         configureShell()
+        configureContainer(feetLayer, anchor: CGPoint(x: 32, y: 62))
         configureFace()
+        configureCompanionPeekEyes()
         configureIntakeCard()
         configureLid()
         configureAutomaticCelebrationLayers()
@@ -495,6 +525,134 @@ final class RobotCharacterView: NSView {
         QuietOrbitHeadArtwork.install(in: faceLayer, canvas: Self.designSize,
             headRect: orbitRect(150, 57, 100, 68), topDown: true,
             visor: faceScreenLayer, leftEye: leftEyeLayer, rightEye: rightEyeLayer, mouth: mouthLayer)
+    }
+
+    private func configureCompanionPeekEyes() {
+        for (index, eye) in companionPeekEyes.enumerated() {
+            let original = index == 0 ? leftEyeLayer : rightEyeLayer
+            eye.name = "robot.companion.peek-eye-\(index)"
+            eye.bounds = original.bounds
+            eye.anchorPoint = original.anchorPoint
+            eye.position = original.position
+            eye.path = original.path
+            eye.fillColor = original.fillColor
+            eye.strokeColor = Self.color(0x423448)
+            eye.lineWidth = 0.7
+            eye.shadowColor = Self.color(0x423448)
+            eye.shadowRadius = 0.9
+            eye.shadowOffset = .zero
+            eye.opacity = 0
+            artLayer.addSublayer(eye)
+        }
+    }
+
+    private func eyeColor(brightness: CGFloat) -> CGColor {
+        let amount = min(1.35, max(0.75, brightness.isFinite ? brightness : 1))
+        let base = NSColor(cgColor: Self.color(QuietOrbitVisualStyle.eye)) ?? .systemMint
+        return (base.blended(withFraction: min(1, max(0, (amount - 1) / 0.35)), of: .white) ?? base).cgColor
+    }
+
+    private func eyeGlow(brightness: CGFloat) -> Float {
+        Float(min(0.55, max(0.08, 0.16 + (brightness.isFinite ? brightness - 1 : 0) * 1.1)))
+    }
+
+    private func applyEyeBrightness(_ brightness: CGFloat, to eye: CAShapeLayer) {
+        eye.fillColor = eyeColor(brightness: brightness)
+        eye.shadowOpacity = eyeGlow(brightness: brightness)
+    }
+
+    /// The caller owns approach thresholds and a finite reveal/retreat clock.
+    /// This renderer moves only layers, so its parent can retain one steady
+    /// clickable region throughout a peek, reach, interruption or retreat.
+    func applyCompanionPose(revealProgress: CGFloat, pointer: CGPoint, entrance: RobotEntrance,
+                            expressionOnly: Bool = false, duration: TimeInterval = 0.12,
+                            gripPoint: CGPoint? = nil) {
+        if currentCompanionPose == nil {
+            cancelIslandCompletion()
+            stopAmbientMotion()
+            removeAllAnimations()
+            resetAutomaticCelebrationLayers()
+            currentAutoCaptureReaction = nil
+            islandMotionActive = false
+            islandResting = false
+        }
+        let pose = RobotCompanionPose.make(revealProgress: revealProgress, pointer: pointer,
+            entrance: entrance, expressionOnly: expressionOnly || reduceMotionProvider(), gripPoint: gripPoint)
+        currentCompanionPose = pose
+        let isVisible = revealProgress.isFinite && revealProgress > 0
+        if isVisible {
+            motionState.send(.reveal(entrance))
+            motionState.send(.hover(true, pointer: pointer))
+        } else {
+            motionState.send(.hide)
+        }
+        let duration = pose.isExpressionOnly ? 0 : min(0.25, max(0, duration.isFinite ? duration : 0))
+        animateTransform(bodyLayer, to: transform(pose.body), duration: duration, key: "robot.companion.body")
+        animateTransform(faceLayer, to: transform(pose.head), duration: duration, key: "robot.companion.head")
+        animateTransform(feetLayer, to: transform(pose.feet), duration: duration, key: "robot.companion.feet")
+        animateOpacity(faceLayer, to: pose.headOpacity, duration: duration, key: "robot.companion.head-visibility")
+        animateOpacity(shellLayer, to: pose.torsoOpacity, duration: duration, key: "robot.companion.torso-visibility")
+        animateOpacity(feetLayer, to: pose.torsoOpacity, duration: duration, key: "robot.companion.feet-visibility")
+        animateOpacity(artLayer, to: isVisible ? 1 : 0, duration: duration, key: "robot.companion.visibility")
+        withoutActions {
+            leftArmLayer.opacity = pose.isExpressionOnly ? pose.torsoOpacity : 0
+            rightArmLayer.opacity = pose.isExpressionOnly ? pose.torsoOpacity : 0
+            feetLayer.zPosition = pose.isExpressionOnly ? 0 : 1
+            shadowLayer.opacity = 0
+            mouthLayer.path = mouthPath(for: .curious(pointer: pointer))
+        }
+        for (index, eye) in [leftEyeLayer, rightEyeLayer].enumerated() {
+            let gaze = transform(RobotPartTransform(translation: pose.gaze))
+            animateTransform(eye, to: gaze, duration: duration, key: "robot.companion.eye-\(index)")
+            let peek = companionPeekEyes[index]
+            let peekPose = RobotPartTransform(translation: CGPoint(x: pose.gaze.x + pose.peekEyesOffset.x,
+                                                                   y: pose.gaze.y + pose.peekEyesOffset.y))
+            animateTransform(peek, to: transform(peekPose), duration: duration, key: "robot.companion.peek-gaze-\(index)")
+            animateOpacity(peek, to: pose.peekEyeOpacity, duration: duration, key: "robot.companion.peek-\(index)")
+            withoutActions {
+                applyEyeBrightness(pose.eyeBrightness, to: eye)
+                applyEyeBrightness(pose.eyeBrightness, to: peek)
+            }
+        }
+        for index in 0..<2 {
+            let hand = index == 0 ? pose.leftHand : pose.rightHand
+            let path = companionArmPath(pose, index: index)
+            animatePath(hangingArms[index], to: path, duration: duration, key: "robot.companion.arm-\(index)")
+            animatePath(hangingArmHighlights[index], to: path, duration: duration, key: "robot.companion.arm-highlight-\(index)")
+            let palm = hangingHands[index]
+            let oldPosition = palm.presentation()?.position ?? palm.position
+            withoutActions { palm.position = hand }
+            if duration > 0 {
+                let motion = CABasicAnimation(keyPath: "position")
+                motion.fromValue = NSValue(point: oldPosition)
+                motion.toValue = NSValue(point: hand)
+                motion.duration = duration
+                motion.timingFunction = CAMediaTimingFunction(name: .easeOut)
+                palm.add(motion, forKey: "robot.companion.hand-\(index)")
+            } else { palm.removeAnimation(forKey: "robot.companion.hand-\(index)") }
+            for (partIndex, part) in [hangingArms[index], hangingArmHighlights[index], palm].enumerated() {
+                animateOpacity(part, to: pose.handOpacity, duration: duration,
+                    key: "robot.companion.limb-visibility-\(index)-\(partIndex)")
+            }
+        }
+    }
+
+    private func companionArmPath(_ pose: RobotCompanionPose, index: Int) -> CGPath {
+        let anchor = CGPoint(x: 32, y: 69)
+        let local = CGPoint(x: (index == 0 ? 12.26 : 51.74) - anchor.x, y: 40.58 - anchor.y)
+        let angle = pose.body.rotationDegrees * .pi / 180
+        let shoulder = CGPoint(x: anchor.x + pose.body.translation.x + cos(angle) * local.x * pose.body.scaleX
+                                    - sin(angle) * local.y * pose.body.scaleY,
+                               y: anchor.y + pose.body.translation.y + sin(angle) * local.x * pose.body.scaleX
+                                    + cos(angle) * local.y * pose.body.scaleY)
+        let hand = index == 0 ? pose.leftHand : pose.rightHand
+        let side: CGFloat = index == 0 ? -1 : 1
+        let bend = min(7, max(2, abs(hand.y - shoulder.y) * 0.15))
+        let path = CGMutablePath()
+        path.move(to: shoulder)
+        path.addCurve(to: hand, control1: CGPoint(x: shoulder.x + side * bend, y: shoulder.y + 3),
+                      control2: CGPoint(x: hand.x - side * bend, y: hand.y + 6))
+        return path
     }
 
     private func configureIntakeCard() {
@@ -1371,9 +1529,16 @@ final class RobotCharacterView: NSView {
 
     private func resetAutomaticCelebrationLayers() {
         islandResting = false
+        currentCompanionPose = nil
         withoutActions {
             configureContainer(bodyLayer, anchor: CGPoint(x: 32, y: 69))
+            configureContainer(feetLayer, anchor: CGPoint(x: 32, y: 62))
             feetLayer.transform = CATransform3DIdentity
+            feetLayer.zPosition = 0
+            shellLayer.transform = CATransform3DIdentity
+            faceLayer.opacity = 1
+            for eye in companionPeekEyes { eye.opacity = 0 }
+            for eye in [leftEyeLayer, rightEyeLayer] { applyEyeBrightness(1, to: eye) }
             for part in islandRigLayers { part.opacity = 0 }
             for part in [autoTokenLayer, autoSuccessBadgeLayer, autoSuccessCheckLayer] {
                 artLayer.addSublayer(part)
@@ -1630,17 +1795,40 @@ final class RobotCharacterView: NSView {
     private func animateDelight(_ descriptor: RobotMotionDescriptor) {
         let values = [
             RobotPartTransform.identity,
+            RobotPartTransform(translation: CGPoint(x: 0, y: 1.3), scaleX: 1.035, scaleY: 0.94),
             RobotPartTransform(translation: CGPoint(x: 0, y: -4), scaleX: 1.04, scaleY: 1.04),
             RobotPartTransform(translation: CGPoint(x: 0, y: 0.5), scaleX: 0.99, scaleY: 0.99),
-            descriptor.body
+            RobotPartTransform.identity
         ].map { NSValue(caTransform3D: transform($0)) }
-        addKeyframes(values, keyTimes: [0, 0.34, 0.70, 1], duration: descriptor.duration,
+        setModelTransform(bodyLayer, CATransform3DIdentity)
+        addKeyframes(values, keyTimes: [0, 0.16, 0.43, 0.76, 1], duration: descriptor.duration,
                      to: bodyLayer, keyPath: "transform", key: "robot.delight.body")
         let armValues = [-4.0, 25.0, -10.0, 22.0].map {
             NSValue(caTransform3D: transform(RobotPartTransform(rotationDegrees: CGFloat($0))))
         }
         addKeyframes(armValues, keyTimes: [0, 0.34, 0.68, 1], duration: descriptor.duration,
                      to: rightArmLayer, keyPath: "transform", key: "robot.delight.wave")
+        setModelTransform(feetLayer, CATransform3DIdentity)
+        let feet = [RobotPartTransform.identity,
+                    RobotPartTransform(translation: CGPoint(x: 0, y: -1.5), rotationDegrees: -11),
+                    RobotPartTransform(translation: CGPoint(x: 0, y: -0.5), rotationDegrees: 8),
+                    RobotPartTransform.identity].map { NSValue(caTransform3D: transform($0)) }
+        addKeyframes(feet, keyTimes: [0, 0.43, 0.70, 1], duration: descriptor.duration,
+                     to: feetLayer, keyPath: "transform", key: "robot.delight.feet")
+        let nod = [RobotPartTransform.identity,
+                   RobotPartTransform(translation: CGPoint(x: 0, y: 0.7), rotationDegrees: -5),
+                   RobotPartTransform(translation: CGPoint(x: 0, y: -0.5), rotationDegrees: 3),
+                   RobotPartTransform.identity].map { NSValue(caTransform3D: transform($0)) }
+        setModelTransform(faceLayer, CATransform3DIdentity)
+        addKeyframes(nod, keyTimes: [0, 0.22, 0.52, 1], duration: descriptor.duration,
+                     to: faceLayer, keyPath: "transform", key: "robot.delight.head")
+        for (index, eye) in [leftEyeLayer, rightEyeLayer].enumerated() {
+            let color = CAKeyframeAnimation(keyPath: "fillColor")
+            color.values = [eyeColor(brightness: 1), eyeColor(brightness: 1.3), eyeColor(brightness: 1)]
+            color.keyTimes = [0, 0.38, 1]
+            color.duration = descriptor.duration
+            eye.add(color, forKey: "robot.delight.eye-color-\(index)")
+        }
     }
 
     private func animatePartialSuccess(_ descriptor: RobotMotionDescriptor) {
@@ -1765,7 +1953,7 @@ final class RobotCharacterView: NSView {
                       leftEyeLayer, rightEyeLayer, mouthLayer, lidLayer, leftArmLayer,
                       rightArmLayer, intakeLayer, autoPropLayer, autoPropDetailLayer,
                       autoSuccessBadgeLayer, autoSuccessCheckLayer, autoFlashLayer,
-                      autoConfettiLayer, autoTokenLayer, autoCountLayer, islandGripLayer, feetLayer] + autoConfettiPieces + islandRigLayers {
+                      autoConfettiLayer, autoTokenLayer, autoCountLayer, islandGripLayer, feetLayer] + autoConfettiPieces + islandRigLayers + companionPeekEyes {
             layer.removeAllAnimations()
         }
     }
@@ -1774,7 +1962,7 @@ final class RobotCharacterView: NSView {
         for layer in [shadowLayer, bodyLayer, faceLayer, leftEyeLayer, rightEyeLayer,
                       mouthLayer, lidLayer, leftArmLayer, rightArmLayer, intakeLayer,
                       autoPropLayer, autoPropDetailLayer, autoSuccessBadgeLayer,
-                      autoSuccessCheckLayer, autoFlashLayer, autoConfettiLayer, autoTokenLayer, autoCountLayer, islandGripLayer, feetLayer] + autoConfettiPieces + islandRigLayers {
+                      autoSuccessCheckLayer, autoFlashLayer, autoConfettiLayer, autoTokenLayer, autoCountLayer, islandGripLayer, feetLayer] + autoConfettiPieces + islandRigLayers + companionPeekEyes {
             for key in layer.animationKeys() ?? [] where key.hasPrefix(prefix) {
                 layer.removeAnimation(forKey: key)
             }

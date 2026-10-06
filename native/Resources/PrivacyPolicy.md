@@ -1,6 +1,6 @@
 # DaBin privacy & your data
 
-Updated 4 October 2026
+Updated 6 October 2026
 
 ## Your daily board stays on your Mac
 
@@ -30,9 +30,15 @@ macOS does not provide apps with a public notification for every system screensh
 
 DaBin saves a source application when macOS makes one reasonably identifiable at capture time. This is best-effort information: focus can change, and the app can be unknown or imprecise. It is not proof of where content originated. DaBin itself and common password managers are excluded by default. Because source detection has limits, these exclusions are an additional safeguard rather than a guarantee. Pause or turn off Auto Capture before handling content you do not want it to observe.
 
+Clipboard actions marked by their source as concealed, transient or automatically generated are skipped before DaBin reads their content. These markers are voluntary; unmarked sensitive content can still be captured. Adding a source-app exclusion also cancels that source's pending automatic saves before they commit. Explicit manual Paste remains your choice.
+
 For a single image seen through both the screenshot folder and clipboard within a short interval, DaBin compares a normalized image fingerprint and suppresses the second channel's copy. Copying the same image again through one channel remains a new action. Automatic captures use the same local archive as manual captures. Their contents are not uploaded. Automatically captured links never fetch website previews, even if Fetch link previews is enabled for manually saved links.
 
-Successful automatic saves produce a brief, noninteractive robot confirmation unless Quiet mode is enabled. Four or more successful automatic actions in the same capture hour appear as an expandable hourly group in Inbox's Day view. The popup begins after the triggering item has been saved and uses a generic token rather than the saved text, image or file. If the capture is filed to a project, the robot also holds a sign with that project name. This local sign can reveal a project label to someone viewing your screen. Quiet mode hides automatic-save confirmations; the menu bar uses a red recording symbol while capture is active, including when the board is closed. The popup requests exclusion from window capture, but macOS does not guarantee that every screenshot or third-party screen recorder will honor that exclusion.
+Successful automatic saves produce a brief robot confirmation after the item has been saved. The confirmation uses the item type or a combined "Saved N items" acknowledgement rather than the saved text, image or file. Clicking the revealed robot opens DaBin, including while it moves. Quiet mode and Reduce Motion keep these confirmations still.
+
+When Auto Capture has a project destination, the persistent robot holds a sign with that project name. Pausing shows "Paused" alongside the destination; a destination without a project is labelled "Unfiled". These local labels can reveal a project name to someone viewing your screen. The menu bar uses a red recording symbol while capture is active, including when the board is closed or Quiet mode is on. The robot panels request exclusion from window capture, but macOS does not guarantee that every screenshot or third-party screen recorder will honor that exclusion.
+
+Four or more successful automatic actions in the same capture hour appear as an expandable hourly group in Captions' Day view.
 
 ## Optional website previews
 

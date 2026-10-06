@@ -50,6 +50,8 @@ final class ScreenshotFolderMonitor: ScreenshotFolderMonitoring {
     private let folder: URL
     private let settleDelay: Duration
     private let maximumSettleAttempts: Int
+    private let directoryContentsReader: (URL, [URLResourceKey]) throws -> [URL]
+    private let descriptorCloseObserver: (@Sendable (Int32) -> Void)?
     private var source: DispatchSourceFileSystemObject?
     private var knownPaths: Set<String> = []
     private var pendingObservations: [String: PendingObservation] = [:]
@@ -57,31 +59,50 @@ final class ScreenshotFolderMonitor: ScreenshotFolderMonitoring {
     private var scanTask: Task<Void, Never>?
     private var generation: UInt = 0
 
-    init(folder: URL, settleDelay: Duration = .milliseconds(350), maximumSettleAttempts: Int = 30) {
+    init(folder: URL, settleDelay: Duration = .milliseconds(350), maximumSettleAttempts: Int = 30,
+         directoryContentsReader: ((URL, [URLResourceKey]) throws -> [URL])? = nil,
+         descriptorCloseObserver: (@Sendable (Int32) -> Void)? = nil) {
         self.folder = folder.standardizedFileURL
         self.settleDelay = settleDelay
         self.maximumSettleAttempts = max(2, maximumSettleAttempts)
+        self.directoryContentsReader = directoryContentsReader ?? { folder, keys in
+            try FileManager.default.contentsOfDirectory(
+                at: folder, includingPropertiesForKeys: keys,
+                options: [.skipsHiddenFiles, .skipsPackageDescendants]
+            )
+        }
+        self.descriptorCloseObserver = descriptorCloseObserver
     }
 
     func start() throws {
         guard !isRunning else { return }
-        let values: URLResourceValues
-        do {
-            values = try folder.resourceValues(forKeys: [.isDirectoryKey, .isSymbolicLinkKey])
-        } catch {
+        // Reusing URL resource values can reuse cached metadata after shutdown.
+        // Check the current leaf and then pin that exact directory descriptor;
+        // ordinary parent aliases such as macOS temporary paths remain valid.
+        var selected = stat()
+        guard lstat(folder.path, &selected) == 0 else { throw ScreenshotFolderMonitorError.unavailable }
+        guard selected.st_mode & mode_t(S_IFMT) != mode_t(S_IFLNK) else { throw ScreenshotFolderMonitorError.symbolicLink }
+        guard selected.st_mode & mode_t(S_IFMT) == mode_t(S_IFDIR) else { throw ScreenshotFolderMonitorError.notDirectory }
+
+        let descriptor = open(folder.path, O_EVTONLY | O_NOFOLLOW | O_DIRECTORY | O_CLOEXEC)
+        guard descriptor >= 0 else { throw ScreenshotFolderMonitorError.cannotObserve(errno) }
+        var opened = stat()
+        guard fstat(descriptor, &opened) == 0,
+              opened.st_mode & mode_t(S_IFMT) == mode_t(S_IFDIR),
+              opened.st_dev == selected.st_dev, opened.st_ino == selected.st_ino else {
+            close(descriptor)
             throw ScreenshotFolderMonitorError.unavailable
         }
-        guard values.isSymbolicLink != true else { throw ScreenshotFolderMonitorError.symbolicLink }
-        guard values.isDirectory == true else { throw ScreenshotFolderMonitorError.notDirectory }
-
-        let descriptor = open(folder.path, O_EVTONLY)
-        guard descriptor >= 0 else { throw ScreenshotFolderMonitorError.cannotObserve(errno) }
         let watcher = DispatchSource.makeFileSystemObjectSource(
             fileDescriptor: descriptor,
             eventMask: [.write, .extend, .attrib, .rename, .delete, .revoke],
             queue: DispatchQueue.global(qos: .utility)
         )
-        watcher.setCancelHandler { close(descriptor) }
+        let descriptorCloseObserver = self.descriptorCloseObserver
+        watcher.setCancelHandler {
+            let result = close(descriptor)
+            descriptorCloseObserver?(result)
+        }
         watcher.setEventHandler { [weak self, weak watcher] in
             let events = watcher?.data ?? []
             Task { @MainActor [weak self] in
@@ -98,6 +119,9 @@ final class ScreenshotFolderMonitor: ScreenshotFolderMonitoring {
             knownPaths = Set(try currentScreenshots().map(Self.identity))
         } catch {
             watcher.cancel()
+            // A newly created source is suspended. Resume its canceled state so
+            // the cancellation handler can close our descriptor before disposal.
+            watcher.resume()
             throw error
         }
         generation &+= 1
@@ -213,11 +237,7 @@ final class ScreenshotFolderMonitor: ScreenshotFolderMonitoring {
 
     private func currentScreenshots() throws -> [URL] {
         let keys: [URLResourceKey] = [.isRegularFileKey, .isSymbolicLinkKey, .contentTypeKey]
-        return try FileManager.default.contentsOfDirectory(
-            at: folder,
-            includingPropertiesForKeys: keys,
-            options: [.skipsHiddenFiles, .skipsPackageDescendants]
-        ).filter { candidate in
+        return try directoryContentsReader(folder, keys).filter { candidate in
             guard let values = try? candidate.resourceValues(forKeys: Set(keys)),
                   values.isRegularFile == true, values.isSymbolicLink != true else { return false }
             let contentType = values.contentType

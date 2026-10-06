@@ -1,5 +1,6 @@
 import AppKit
 import Foundation
+import Combine
 
 @MainActor private final class ProjectRecordingFixtureNotifications: ReminderNotificationClient {
     private(set) var permissionRequests = 0
@@ -97,15 +98,40 @@ import Foundation
         let state = AppState(store: store, previews: previews, reminders: reminders,
             robotPlacement: placement, autoCapture: service, quickAccessSettings: quickAccess)
         let theme = ThemeSettings(defaults: defaults, systemDarkMode: false)
-        let controller = CornerController(state: state, input: InputService(store: store),
+        let manualInput = InputService(store: store)
+        var reduceMotion = true
+        let controller = CornerController(state: state, input: manualInput,
             placementDefaults: defaults, theme: theme, animateRobotTransitions: false,
-            robotReduceMotion: { true })
+            robotReduceMotion: { reduceMotion })
         let timerRobot = TaskTimerRobotView(frame: CGRect(origin: .zero, size: TaskTimerRobotView.stageSize),
                                            reduceMotion: { true })
         controller.onProjectRecordingChanged = { project, paused in
             timerRobot.setProjectRecording(projectName: project, isPaused: paused)
         }
+        let captureFeedback = AutoCaptureRobotPresenter(primaryScreen: { AutoCaptureRobotGeometry.livePrimaryScreen() },
+                                                       reduceMotion: { true })
+        let timerFeedback = TaskTimerRobotPresenter(primaryScreen: { AutoCaptureRobotGeometry.livePrimaryScreen() },
+                                                   reduceMotion: { true })
+        captureFeedback.onPresentationChanged = { visible in
+            if !visible { controller.refreshProjectRecording() }
+        }
+        timerFeedback.onPresentationChanged = { visible in
+            if !visible { controller.refreshProjectRecording() }
+        }
+        var immediatePauseStayedHidden = false
+        let pauseRouting = Publishers.CombineLatest4(settings.$isEnabled, settings.$isPaused,
+            service.$isRunning, quickAccess.$quietMode).sink { enabled, paused, running, _ in
+                controller.setCapturePaused(paused)
+                captureFeedback.setCapturePaused(paused)
+                timerFeedback.setCapturePaused(paused)
+                captureFeedback.setConfirmationEnabled(enabled && running && !paused)
+                if paused {
+                    immediatePauseStayedHidden = !controller.bin.isVisible
+                        && !captureFeedback.panel.isVisible && !timerFeedback.panel.isVisible
+                }
+            }
         defer {
+            pauseRouting.cancel(); captureFeedback.shutdown(); timerFeedback.shutdown()
             controller.shutdown()
             service.shutdown()
             previews.shutdown()
@@ -226,15 +252,60 @@ import Foundation
         try expect(controller.robot.recordingProjectName == "Fictional Beacon"
                    && controller.appFrame.recordingProjectName == "Fictional Beacon",
                    "Changing the selected destination updates both surfaces without a new capture")
+        // An in-flight manual save or drag must not keep a paused robot visible.
+        manualInput.onBusy?(true)
+        controller.robot.onDragState?(true)
+        _ = captureFeedback.present(confirmation: AutoCaptureSignReceipt(kind: .clipboard, count: 1))
+        _ = timerFeedback.present(task: TaskTimerCompletion(taskID: UUID(), title: "Fictional paused reminder"))
+        try expect(captureFeedback.panel.isVisible && timerFeedback.panel.isVisible,
+                   "Active receipt and alarm exercise synchronous hide callbacks when Pause publishes")
         service.pause()
+        try expect(immediatePauseStayedHidden && !controller.bin.isVisible
+                   && !captureFeedback.panel.isVisible && !timerFeedback.panel.isVisible
+                   && timerFeedback.outstandingReceipts.count == 1,
+                   "The emitted Pause value hides every robot before returning or awaiting the run loop")
+        timerFeedback.reconcile(validTaskIDs: [], validReminderReceiptIDs: [])
         await settle()
         try expect(!service.isRunning && settings.isPaused && settings.status == .paused
                    && !controller.bin.isVisible && !controller.hasPersistentProjectRecording
                    && !controller.robot.recordingSignIsVisible && !controller.appFrame.recordingSignIsVisible
+                   && controller.robot.recordingProjectName == nil && !controller.robot.isPresented
                    && timerRobot.recordingProjectName == nil,
-                   "Pausing stops monitoring and removes every recording sign")
+                   "Pause hides robot and signs immediately even during a manual save and drag")
+        manualInput.onBusy?(false)
+        controller.robot.onDragState?(false)
         try expect(state.libraryProject == "Fictional Beacon",
                    "Pausing preserves the selected capture destination")
+        for home in [RobotHome.cameraIsland, .corners] {
+            placement.setHome(home)
+            for quiet in [false, true] {
+                quickAccess.setQuietMode(quiet)
+                for reduced in [false, true] {
+                    reduceMotion = reduced
+                    await settle()
+                    let trigger = NSPoint(x: screen.frame.maxX - 1, y: screen.frame.maxY - 1)
+                    controller.pollPointer(at: trigger, now: Date().addingTimeInterval(5), pressedMouseButtons: 0)
+                    controller.pollPointer(at: trigger, now: Date().addingTimeInterval(6), pressedMouseButtons: 1)
+                    controller.reveal(on: screen, target: .corner(.topRight), companion: true)
+                    controller.reveal(on: screen, target: .cameraIsland)
+                    try expect(!controller.bin.isVisible && !controller.robot.isPresented
+                               && !controller.robot.recordingSignIsVisible,
+                               "Paused hover/drag/reveal stays hidden for either placement, Quiet and Reduce Motion")
+                }
+            }
+        }
+        quickAccess.setQuietMode(false)
+        reduceMotion = true
+        controller.focusRobot()
+        await settle()
+        try expect(controller.board.isVisible && !controller.bin.isVisible
+                   && controller.appFrame.robotCharacterIsSuppressed
+                   && !controller.appFrame.recordingSignIsVisible,
+                   "Explicit paused access opens usable content without revealing robot artwork")
+        controller.dismiss()
+        await settle()
+        try expect(!controller.board.isVisible && !controller.bin.isVisible && settings.status == .paused,
+                   "Closing paused content keeps the companion hidden and readable Paused service state")
         service.resume()
         await settle()
         try expect(service.isRunning && settings.status == .monitoring
@@ -291,9 +362,10 @@ import Foundation
         service.pause()
         await settle()
         try expect(controller.board.isVisible && !controller.appFrame.recordingSignIsVisible
-                   && !controller.robot.recordingSignIsVisible && timerRobot.recordingProjectName == nil
+                   && controller.appFrame.recordingProjectName == nil
+                   && controller.appFrame.robotCharacterIsSuppressed && timerRobot.recordingProjectName == nil
                    && state.libraryProject == "Fictional Beacon",
-                   "Pausing an open workspace hides signs without closing content or clearing its project")
+                   "Pausing an open workspace removes decorative robot and sign while keeping content usable")
         service.resume()
         await settle()
         try expect(controller.board.isVisible && controller.appFrame.recordingSignIsVisible
@@ -333,6 +405,27 @@ import Foundation
         await settle()
         try expect(!controller.bin.isVisible && !controller.board.isVisible,
                    "Shutdown subscriptions cannot reveal a stale recording surface")
+        service.pause()
+        await settle()
+        let restoredSettings = AutoCaptureSettings(defaults: defaults)
+        let restoredService = AutoCaptureService(settings: restoredSettings, input: InputService(store: store),
+            pasteboardProvider: { board }, sourceApplicationProvider: { healthySource }, pollInterval: 60)
+        let restoredState = AppState(store: store, previews: previews, reminders: reminders,
+            robotPlacement: placement, autoCapture: restoredService, quickAccessSettings: quickAccess)
+        let restored = CornerController(state: restoredState, input: InputService(store: store),
+            placementDefaults: defaults, theme: theme, animateRobotTransitions: false,
+            robotReduceMotion: { false })
+        defer {
+            restored.shutdown(); restoredService.shutdown()
+            restoredState.focusSessions.shutdown(); restoredState.shutdownNotificationPresentation()
+        }
+        restored.start(pointerPosition: { away })
+        await settle()
+        restored.reveal(on: screen, corner: .topRight)
+        try expect(restoredSettings.isPaused && !restored.bin.isVisible && !restored.robot.isPresented
+                   && !restored.robot.recordingSignIsVisible && !restored.appFrame.recordingSignIsVisible
+                   && store.captures.isEmpty,
+                   "Persisted Pause survives reconstructed settings, service and native controller without saving content")
         print("PASS: \(checks) project recording robot checks passed")
     }
 }

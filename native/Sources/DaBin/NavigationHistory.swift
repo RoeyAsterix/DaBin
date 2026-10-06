@@ -19,7 +19,7 @@ struct NavigationViewportAnchor: Equatable {
 struct ProjectNavigationPresentation: Equatable {
     var filterRawValue = "All"
     var dateFilter: WorkspaceDateFilter = .anytime
-    var newestFirst = false
+    var selectedDateRange: ProjectDateSelection?
     var compact = false
     var selectedIDs: Set<String> = []
     var selectionAnchor: String?

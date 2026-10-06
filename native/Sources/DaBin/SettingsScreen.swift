@@ -508,7 +508,7 @@ struct SettingsScreen: View {
                 set: { state.quickAccessSettings.setQuietMode($0) }
             ))
             .toggleStyle(.switch).controlSize(.small).font(.system(size: 14))
-            Text("Open quickly and skip automatic capture celebrations.")
+            Text("Open quickly and keep robot confirmations still.")
                 .font(.system(size: 12)).foregroundStyle(Palette.muted)
         }
     }

@@ -21,10 +21,49 @@ enum ProjectCardRole: String {
     }
 }
 
+/// The title is the only flexible header item. Reserve the native controls
+/// before measuring it, rather than negotiating their widths again for each
+/// window-size and typography proposal during a coupled zoom.
+private struct ProjectWorkspaceHeaderLayout: Layout {
+    let direction: LayoutDirection
+    private let controlSize: CGFloat = 32
+    private let spacing: CGFloat = 6
+
+    private func width(proposed: CGFloat?, subviews: Subviews) -> CGFloat {
+        let reserved = CGFloat(max(0, subviews.count - 1)) * (controlSize + spacing)
+        if let proposed, proposed.isFinite { return max(reserved, proposed) }
+        let title = subviews.count > 1 ? subviews[1].sizeThatFits(.unspecified).width : 0
+        return reserved + (title.isFinite ? max(0, title) : 0)
+    }
+
+    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+        guard subviews.count > 1 else { return .zero }
+        let width = width(proposed: proposal.width, subviews: subviews)
+        let titleWidth = max(0, width - CGFloat(subviews.count - 1) * (controlSize + spacing))
+        let title = subviews[1].sizeThatFits(ProposedViewSize(width: titleWidth, height: nil))
+        return CGSize(width: width, height: max(controlSize, title.height))
+    }
+
+    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
+        guard subviews.count > 1 else { return }
+        let width = width(proposed: bounds.width, subviews: subviews)
+        let titleWidth = max(0, width - CGFloat(subviews.count - 1) * (controlSize + spacing))
+        var offset: CGFloat = 0
+        for index in subviews.indices {
+            let itemWidth = index == 1 ? titleWidth : controlSize
+            let x = direction == .rightToLeft ? bounds.maxX - offset - itemWidth : bounds.minX + offset
+            subviews[index].place(at: CGPoint(x: x, y: bounds.minY), anchor: .topLeading,
+                proposal: ProposedViewSize(width: itemWidth, height: index == 1 ? nil : controlSize))
+            offset += itemWidth + spacing
+        }
+    }
+}
+
 /// Title, selection and completion are independent 32-point targets. Real
 /// media has a bounded preview; text grows only to the lines it actually uses.
 @MainActor struct ProjectWorkspaceCard: View {
     @Environment(\.workspaceZoom) private var zoom
+    @Environment(\.layoutDirection) private var layoutDirection
     let state: AppState
     let item: ProjectWorkspaceItem
     let selected: Bool
@@ -35,13 +74,8 @@ enum ProjectCardRole: String {
     let select: () -> Void
     let details: () -> Void
     let makeTask: () -> Void
-    let earlier: () -> Void
-    let later: () -> Void
-    let canReorder: Bool
     let drag: () throws -> [NSPasteboardWriting]
     var dragEnded: () -> Void = {}
-    var canMoveEarlier: Bool = true
-    var canMoveLater: Bool = true
 
     private var role: ProjectCardRole { ProjectCardRole(item: item) }
     private var completed: Bool { item.capture?.isTask == true && item.capture?.isCompleted == true }
@@ -95,8 +129,11 @@ enum ProjectCardRole: String {
     }
 
     fileprivate var content: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack(alignment: .top, spacing: 6) {
+        // Visible text, VoiceOver and hover help share this immutable receipt.
+        // Formatting it once avoids three civil-date/clock formatter passes.
+        let receiptText = receipt
+        return VStack(alignment: .leading, spacing: 8) {
+            ProjectWorkspaceHeaderLayout(direction: layoutDirection) {
                 selectionButton
                 Button(action: details) {
                     Text(item.title).font(.system(size: zoom.fontSize(15), weight: .semibold))
@@ -124,9 +161,9 @@ enum ProjectCardRole: String {
                 if !hasBodyPreview { preview }
                 VStack(alignment: .leading, spacing: 6) {
                     roleBadge
-                    Text(receipt).font(.system(size: zoom.fontSize(10))).foregroundStyle(Palette.muted)
+                    Text(receiptText).font(.system(size: zoom.fontSize(10))).foregroundStyle(Palette.muted)
                         .fixedSize(horizontal: false, vertical: true)
-                        .accessibilityLabel(receipt).buddyHelp(receipt)
+                        .accessibilityLabel(receiptText).buddyHelp(receiptText)
                         .accessibilityIdentifier("project-receipt-\(item.id)")
                 }.frame(maxWidth: .infinity, alignment: .leading)
             }
@@ -208,6 +245,7 @@ enum ProjectCardRole: String {
             }.contentShape(Rectangle())
         }.buttonStyle(.plain)
             .accessibilityLabel("Open \(role.title.lowercased()), \(item.title)\(completed ? ", completed" : "")")
+            .accessibilityValue(hasBodyPreview && !hasMedia ? excerpt : "")
             .accessibilityIdentifier("project-preview-\(item.id)")
             .buddyHelp(item.capture?.attachmentRelativePath != nil ? "Open saved file" : "Open item")
             .nativeContentDrag(label: item.title, items: drag,
@@ -235,16 +273,13 @@ enum ProjectCardRole: String {
 
     private var actionsMenu: some View {
         Menu {
-            Button("Move earlier", systemImage: "arrow.up", action: earlier).disabled(!canReorder || !canMoveEarlier)
-            Button("Move later", systemImage: "arrow.down", action: later).disabled(!canReorder || !canMoveLater)
-            Divider()
             itemActions
         } label: {
             Image(systemName: "ellipsis").font(.system(size: 14, weight: .medium))
                 .frame(width: 32, height: 32).contentShape(Rectangle())
         }.menuStyle(.button).buttonStyle(.plain).menuIndicator(.hidden).foregroundStyle(Palette.muted)
             .accessibilityLabel("Actions for \(item.title)").accessibilityIdentifier("project-more-\(item.id)")
-            .buddyHelp("Item actions · Move earlier or later")
+            .buddyHelp("Item actions")
             .nativeContentDrag(label: item.title, items: drag,
                 onError: { state.reportFailure($0.localizedDescription) }, onEnd: dragEnded)
     }

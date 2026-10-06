@@ -237,17 +237,18 @@ private final class NativeRenderTests: NSObject, NSApplicationDelegate {
             let state = AppState(store: store, previews: PreviewService(store: store),
                                  reminders: ReminderService(store: store, client: RenderNotificationClient()))
             for mode in ["light", "dark"] {
+                state.filter = .all
                 state.openDaily()
                 try await snapshot(state, name: "weekly-entry-empty-daily", mode: mode, output: output, height: 290)
                 state.selectTimelineMode(.weekly)
                 guard state.route == .weekly, state.weeklyDays.count == 7,
-                      state.weeklyVisibleDays == state.weeklyDays, state.weeklyActiveDays.isEmpty else {
-                    throw RenderError.message("Empty Weekly must render all seven selected date columns with no active dates")
+                      state.weeklyVisibleDays.isEmpty, state.weeklyActiveDays.isEmpty else {
+                    throw RenderError.message("Empty Weekly must retain all seven selected dates without rendering empty columns")
                 }
                 try await snapshot(state, name: "weekly-entry-empty-week", mode: mode, output: output, height: 560, width: 1440)
                 state.filter = .tasks
-                guard state.weeklyVisibleDays == state.weeklyDays, state.weeklyActiveDays.isEmpty else {
-                    throw RenderError.message("The empty Tasks filter must preserve all seven selected date columns")
+                guard state.weeklyVisibleDays.isEmpty, state.weeklyActiveDays.isEmpty else {
+                    throw RenderError.message("The empty Tasks filter must render no date columns")
                 }
                 try await snapshot(state, name: "weekly-entry-empty-tasks", mode: mode, output: output, height: 560, width: 1440)
             }
@@ -255,7 +256,7 @@ private final class NativeRenderTests: NSObject, NSApplicationDelegate {
                 "fixturePrivacy": "Empty isolated archive; no personal captures, clipboard, network or notifications."],
                 options: [.prettyPrinted, .sortedKeys])
                 .write(to: output.appendingPathComponent("weekly-entry-renders.json"), options: .atomic)
-            print("PASS: \(records.count) compact Daily and full seven-date empty Week renders across both appearances")
+            print("PASS: \(records.count) compact Daily and column-free empty Week renders across both appearances")
             return
         }
 
@@ -480,8 +481,8 @@ private final class NativeRenderTests: NSObject, NSApplicationDelegate {
             try await snapshot(weeklyState, name: "weekly-tasks", mode: mode, output: output, height: 560, width: 1440)
             weeklyState.filter = .all
             weeklyState.weekEndingDay = receipt(0, 0, dayOffset: -14)
-            guard weeklyState.weeklyVisibleDays.count == 7, weeklyState.weeklyActiveDays.isEmpty else {
-                throw RenderError.message("Historical empty week must retain all seven date columns with no active dates")
+            guard weeklyState.weeklyDays.count == 7, weeklyState.weeklyVisibleDays.isEmpty, weeklyState.weeklyActiveDays.isEmpty else {
+                throw RenderError.message("Historical empty week must retain its selection without rendering empty columns")
             }
             try await snapshot(weeklyState, name: "weekly-empty", mode: mode, output: output, height: 560, width: 1440)
             try await snapshot(carryoverState, name: "daily-carried-tasks", mode: mode, output: output)
@@ -1553,8 +1554,8 @@ private final class NativeRenderTests: NSObject, NSApplicationDelegate {
                                height: CornerGeometry.dailyPanelHeight(for: state))
             state.filter = .all
             state.selectTimelineMode(.weekly)
-            guard state.weeklyVisibleDays.count == 7, state.weeklyActiveDays.count == 2 else {
-                throw RenderError.message("Sparse release week must render all seven dates with only yesterday and today active")
+            guard state.weeklyDays.count == 7, state.weeklyVisibleDays.count == 2, state.weeklyActiveDays.count == 2 else {
+                throw RenderError.message("Sparse release week must render only yesterday and today while preserving seven selected dates")
             }
             try await snapshot(state, name: "release-week", mode: mode, output: output, height: 560, width: 1440)
             try await snapshot(state, name: "release-week-narrow", mode: mode, output: output, height: 560, width: 380)

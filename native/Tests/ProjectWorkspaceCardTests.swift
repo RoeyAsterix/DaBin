@@ -45,8 +45,7 @@ import SwiftUI
             color: ProjectColorChoice.color(for: "7568D8"), focus: $focus,
             open: { actions.opened += 1 },
             select: { selected.toggle(); actions.selected += 1 },
-            details: { actions.detailed += 1 }, makeTask: {}, earlier: {}, later: {},
-            canReorder: false, drag: { [] })
+            details: { actions.detailed += 1 }, makeTask: {}, drag: { [] })
     }
 }
 

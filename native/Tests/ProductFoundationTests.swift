@@ -292,6 +292,90 @@ import Foundation
         let migratedComposer = AppState(store: composerStore, previews: composerPreviews, reminders: composerReminders)
         try expect(migratedComposer.newNoteProject == "Client Green" && migratedComposer.newTaskProject == "Client Green",
             "Version-one drafts without destination metadata preserve their former selected-project behavior")
+        migratedComposer.libraryProject = "Client Blue"
+        try expect(migratedComposer.quickCaptureProject == "Client Green"
+            && migratedComposer.quickCapturePlaceholder == "An Idea/Task for Client Green",
+            "The Captions composer discloses a recovered legacy draft's frozen project instead of the newly selected project")
+
+        // The inline Captions composer uses the selected project for a new
+        // draft, while the standalone Inbox composers above remain unfiled.
+        let inlineStore = try CaptureStore(root: root.appendingPathComponent("InlineComposerDestinations"))
+        let inlinePreviews = PreviewService(store: inlineStore, defaults: preferences)
+        defer { inlinePreviews.shutdown() }
+        let inlineReminders = ReminderService(store: inlineStore, client: FoundationNotifications())
+        let inline = AppState(store: inlineStore, previews: inlinePreviews, reminders: inlineReminders)
+        inline.libraryProject = "Client Green"
+        try expect(inline.route == .inbox && inline.newNoteText.isEmpty && inline.newNoteProject == nil
+            && inline.quickCaptureProject == "Client Green"
+            && inline.quickCapturePlaceholder == "An Idea/Task for Client Green",
+            "A fresh inline Captions input names its selected Projects destination before typing")
+        inline.newNoteText = "Green inline idea"
+        inline.libraryProject = "Client Blue"
+        try expect(inline.newNoteProject == "Client Green" && inline.quickCaptureProject == "Client Green"
+            && inline.quickCapturePlaceholder == "An Idea/Task for Client Green",
+            "Typing an inline idea freezes its advertised project when another project is selected")
+        inline.newNoteText = ""
+        try expect(inline.quickCaptureProject == "Client Green"
+            && inline.quickCapturePlaceholder == "An Idea/Task for Client Green",
+            "Replacing all inline text keeps the draft's original project visible during the empty edit")
+        inline.newNoteText = "Green inline idea"
+        inline.persistDrafts()
+        let recoveredInline = AppState(store: inlineStore, previews: inlinePreviews, reminders: inlineReminders)
+        try expect(recoveredInline.libraryProject == "Client Blue" && recoveredInline.newNoteProject == "Client Green"
+            && recoveredInline.quickCaptureProject == "Client Green"
+            && recoveredInline.quickCapturePlaceholder == "An Idea/Task for Client Green",
+            "Restart restores the inline draft and its advertised destination independently of the selected project")
+        recoveredInline.saveNewNote()
+        try expect(inlineStore.captures.first { $0.originalText == "Green inline idea" }?.projectName == "Client Green",
+            "A recovered inline idea commits to the project advertised when typing began")
+        try expect(recoveredInline.newNoteText.isEmpty && recoveredInline.quickCaptureProject == "Client Blue"
+            && recoveredInline.quickCapturePlaceholder == "An Idea/Task for Client Blue",
+            "Saving clears the inline draft so the next placeholder follows the selected project")
+        recoveredInline.newNoteText = "Blue inline draft"
+        recoveredInline.libraryProject = "Client Amber"
+        recoveredInline.clearNewNoteDraft()
+        try expect(recoveredInline.newNoteText.isEmpty && recoveredInline.quickCaptureProject == "Client Amber"
+            && recoveredInline.quickCapturePlaceholder == "An Idea/Task for Client Amber",
+            "Explicitly clearing an inline draft lets the next idea use the current project")
+        recoveredInline.newNoteText = "Amber inline draft"
+        try expect(recoveredInline.newNoteProject == "Client Amber",
+            "The next inline draft freezes the newly disclosed project after clearing")
+
+        var unfiledDraft = DraftArchiveSnapshot()
+        unfiledDraft.note = "Explicit unfiled inline recovery"
+        unfiledDraft.noteDestination = ComposerDestination(projectName: nil)
+        try DraftArchive(root: inlineStore.root).save(unfiledDraft)
+        let unfiledInline = AppState(store: inlineStore, previews: inlinePreviews, reminders: inlineReminders)
+        try expect(unfiledInline.libraryProject == "Client Amber" && unfiledInline.quickCaptureProject == nil
+            && unfiledInline.quickCapturePlaceholder == "An Idea/Task for Unfiled",
+            "An explicitly unfiled recovered draft remains visibly unfiled despite a selected project")
+        unfiledInline.libraryProject = "Client Blue"
+        unfiledInline.newNoteText += " — continued"
+        try expect(unfiledInline.quickCaptureProject == nil && unfiledInline.newNoteProject == nil,
+            "Continuing an explicitly unfiled draft cannot silently retarget it to the selected project")
+        unfiledInline.saveNewNote()
+        let savedUnfiledInline = inlineStore.captures.first {
+            $0.originalText == "Explicit unfiled inline recovery — continued"
+        }
+        try expect(savedUnfiledInline != nil && savedUnfiledInline?.projectName == nil,
+            "The explicit unfiled recovery commits without a hidden project assignment")
+
+        var emptyDraft = DraftArchiveSnapshot()
+        emptyDraft.noteDestination = ComposerDestination(projectName: "Client Green")
+        try DraftArchive(root: inlineStore.root).save(emptyDraft)
+        let recoveredEmptyInline = AppState(store: inlineStore, previews: inlinePreviews, reminders: inlineReminders)
+        try expect(recoveredEmptyInline.newNoteText.isEmpty && recoveredEmptyInline.newNoteProject == nil
+            && recoveredEmptyInline.quickCaptureProject == "Client Blue"
+            && recoveredEmptyInline.quickCapturePlaceholder == "An Idea/Task for Client Blue",
+            "Recovery discards an empty note's stale destination so a fresh inline input names the current project")
+        recoveredEmptyInline.libraryProject = "Client Amber"
+        try expect(recoveredEmptyInline.quickCaptureProject == "Client Amber",
+            "An empty recovered composer follows project selection until typing begins")
+        recoveredEmptyInline.newNoteText = "A fresh idea after empty recovery"
+        recoveredEmptyInline.libraryProject = "Client Green"
+        try expect(recoveredEmptyInline.newNoteProject == "Client Amber"
+            && recoveredEmptyInline.quickCaptureProject == "Client Amber",
+            "The first text after empty recovery freezes the project shown by the fresh placeholder")
         let broken = root.appendingPathComponent("CorruptDrafts")
         try FileManager.default.createDirectory(at: broken, withIntermediateDirectories: true)
         let corruptData = Data("invalid preserved data".utf8)

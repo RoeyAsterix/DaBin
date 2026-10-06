@@ -3,7 +3,7 @@ import QuartzCore
 
 @MainActor
 final class RobotView: NSView {
-    private static let interactionTooltip = "Drop here · hover then ⌃V or ⌘V to paste · double-click to open DaBin"
+    private static let interactionTooltip = "Click to open DaBin · drop here · hover then ⌃V or ⌘V to paste"
     var showTooltips = true {
         didSet { toolTip = showTooltips ? Self.interactionTooltip : nil }
     }
@@ -40,7 +40,11 @@ final class RobotView: NSView {
     private var orbitTask: Task<Void, Never>?
     private let orbitMask = CAShapeLayer()
     private let reduceMotion: RobotCharacterView.ReduceMotionProvider
+    private var companionEntrance: RobotEntrance?
+    private(set) var companionProgress: CGFloat = 0
+    private var companionPointer = CGPoint.zero
     private(set) var isPresented = false
+    private var isCapturePaused = false
     private(set) var isIslandStage = false
     var interactionBounds: NSRect {
         if let orbitLayout {
@@ -67,7 +71,7 @@ final class RobotView: NSView {
     var isSaving = false {
         didSet {
             updateIndicator()
-            if isSaving { settleOrbitForCapture() }
+            if isSaving { companionEntrance = nil; companionProgress = 0; settleOrbitForCapture() }
             if isSaving != oldValue { character.send(.saving(isSaving)) }
         }
     }
@@ -108,7 +112,7 @@ final class RobotView: NSView {
         setAccessibilityElement(true)
         setAccessibilityRole(.button)
         setAccessibilityLabel("DaBin purple robot")
-        setAccessibilityHelp("Drop onto the robot, or hover over it and press Control V or Command V to paste. Clicking also focuses the robot. Double-click or press Return to open DaBin. Escape hides DaBin.")
+        setAccessibilityHelp("Click once or press Return to open DaBin, even while the robot moves. Drop onto him, or hover and press Control V or Command V to paste. Escape hides DaBin.")
         toolTip = Self.interactionTooltip
     }
 
@@ -153,10 +157,16 @@ final class RobotView: NSView {
         }
     }
 
-    /// The caller supplies a destination only while its capture service is monitoring.
-    /// Pausing clears this presentation without changing the saved destination.
+    /// Only active monitoring holds a destination sign; Pause removes it.
     func setProjectRecording(projectName: String?, color: NSColor?, isEnabled: Bool,
                              isPaused: Bool = false, statusText: String? = nil) {
+        isCapturePaused = isPaused
+        character.isHidden = isPaused
+        if isPaused { stopFeedback(); hideCharacter() }
+        if isEnabled && !isPaused && projectName != nil, companionEntrance != nil {
+            companionEntrance = nil; companionProgress = 0
+            character.send(.reveal(.top))
+        }
         recordingSign.configure(projectName: isEnabled ? projectName : nil, color: color,
                                 isPaused: isPaused, statusText: statusText)
         character.refreshMotionPreference()
@@ -219,22 +229,32 @@ final class RobotView: NSView {
     }
 
     override func mouseEntered(with event: NSEvent) {
-        character.send(.hover(containsInteraction(convert(event.locationInWindow, from: nil)), pointer: normalizedPointer(for: event)))
+        updatePointerMotion(for: event)
         onHoverChange?()
     }
     override func mouseMoved(with event: NSEvent) {
-        character.send(.hover(containsInteraction(convert(event.locationInWindow, from: nil)), pointer: normalizedPointer(for: event)))
+        updatePointerMotion(for: event)
     }
     override func mouseExited(with event: NSEvent) {
-        character.send(.hover(false))
+        if companionEntrance == nil { character.send(.hover(false)) }
         onHoverChange?()
     }
 
     override func mouseDown(with event: NSEvent) {
+        guard event.clickCount == 1 else { return }
         onFocus?()
         window?.makeKey()
         window?.makeFirstResponder(self)
-        if event.clickCount == 2 { onDaily?() }
+        onDaily?()
+    }
+
+    private func updatePointerMotion(for event: NSEvent) {
+        if companionEntrance != nil {
+            companionPointer = normalizedPointer(for: event)
+            applyCompanionPose()
+        } else {
+            character.send(.hover(containsInteraction(convert(event.locationInWindow, from: nil)), pointer: normalizedPointer(for: event)))
+        }
     }
 
     override func keyDown(with event: NSEvent) {
@@ -326,12 +346,14 @@ final class RobotView: NSView {
     private func setDropActive(_ active: Bool) {
         guard isOverDrop != active else { return }
         isOverDrop = active
-        if active { settleOrbitForCapture() }
+        if active { companionEntrance = nil; companionProgress = 0; settleOrbitForCapture() }
         character.send(.acceptedDrag(active))
         onDragState?(active)
     }
 
     func present(from entrance: RobotEntrance) {
+        guard !isCapturePaused else { return }
+        companionEntrance = nil
         cancelOrbitTransition()
         orbitLayout = nil
         character.layer?.setAffineTransform(.identity)
@@ -342,6 +364,8 @@ final class RobotView: NSView {
     }
 
     func hideCharacter() {
+        companionEntrance = nil
+        companionProgress = 0
         cancelOrbitTransition()
         isPresented = false
         character.send(.hide)
@@ -350,6 +374,7 @@ final class RobotView: NSView {
 
     @discardableResult
     func peekFromIsland() -> TimeInterval {
+        guard !isCapturePaused else { return 0 }
         configureIslandStage(true)
         isPresented = true
         let duration = character.playIslandPeek()
@@ -358,6 +383,7 @@ final class RobotView: NSView {
     }
 
     func climbFromIsland() {
+        guard !isCapturePaused else { return }
         if let orbitLayout {
             revealOrbit(in: orbitLayout, at: orbitPerch)
             return
@@ -376,9 +402,60 @@ final class RobotView: NSView {
         updateTrackingAreas()
     }
 
-    func refreshMotionPreference() { character.refreshMotionPreference() }
+    func refreshMotionPreference() {
+        if companionEntrance != nil { applyCompanionPose() }
+        else { character.refreshMotionPreference() }
+    }
+
+    /// The encounter moves artwork layers inside a fixed native destination.
+    /// The same target remains clickable from the first peek to the last retreat.
+    func presentCompanion(from entrance: RobotEntrance, orbit: QuietOrbitLayout? = nil,
+                          perch: QuietOrbitPerch = .bottom) {
+        guard !isCapturePaused else { return }
+        if let orbit {
+            configureOrbit(orbit, perch: perch)
+            character.frame = offsetOrbitFrame(orbit.robotFrame(for: perch, local: true))
+        } else { present(from: entrance) }
+        let sidePerches: Set<QuietOrbitPerch> = [.upperLeft, .left, .right, .upperRight]
+        companionEntrance = orbit != nil && sidePerches.contains(perch) ? .left : entrance
+        companionProgress = 0
+        companionPointer = .zero
+        isPresented = true
+        applyCompanionPose()
+    }
+
+    func updateCompanion(_ snapshot: RobotCompanionEncounter.Snapshot) {
+        guard companionEntrance != nil else { return }
+        companionProgress = snapshot.progress
+        companionPointer = snapshot.pointer
+        applyCompanionPose()
+    }
+
+    private func applyCompanionPose() {
+        guard let entrance = companionEntrance else { return }
+        var pointer = companionPointer
+        var grip: CGPoint?
+        if let orbitLayout {
+            let camera = offsetOrbitFrame(orbitLayout.cameraFrameInPanel)
+            let renderer = character.frame
+            let scale = min(renderer.width / 64, renderer.height / 78)
+            if scale > 0 {
+                let gripOffset: CGFloat = entrance == .top ? (orbitPerch.isMirrored ? 20 : -20) * scale : 0
+                let contact = CGPoint(x: min(camera.maxX, max(camera.minX, renderer.midX + gripOffset)),
+                                      y: min(camera.maxY, max(camera.minY, renderer.midY)))
+                let designX = 32 + (contact.x - renderer.midX) / scale
+                grip = CGPoint(x: orbitPerch.isMirrored ? 64 - designX : designX,
+                               y: 39 - (contact.y - renderer.midY) / scale)
+            }
+            if orbitPerch.isMirrored { pointer.x = -pointer.x }
+        }
+        character.applyCompanionPose(revealProgress: companionProgress, pointer: pointer,
+            entrance: entrance, expressionOnly: reduceMotion(), duration: reduceMotion() ? 0 : 0.12,
+            gripPoint: grip)
+    }
 
     func stopFeedback() {
+        companionEntrance = nil
         cancelOrbitTransition()
         feedbackTask?.cancel(); feedbackTask = nil
         feedback = nil; isSaving = false; isOverDrop = false
@@ -389,6 +466,8 @@ final class RobotView: NSView {
     }
 
     func digest(success: Bool, partial: Bool = false) {
+        guard !isCapturePaused else { return }
+        companionEntrance = nil; companionProgress = 0
         feedbackTask?.cancel()
         feedback = success ? (partial ? "!" : "✓") : "!"
         updateIndicator()
@@ -408,7 +487,7 @@ final class RobotView: NSView {
 
     /// Only the small usable target accepts input; measured hardware is excluded.
     func containsInteraction(_ localPoint: NSPoint) -> Bool {
-        guard !isOrbitRetreating else { return false }
+        guard !isCapturePaused else { return false }
         if let orbitLayout {
             let point = CGPoint(x: localPoint.x - orbitContentOffset.x, y: localPoint.y - orbitContentOffset.y)
             return orbitLayout.containsInteraction(point, perch: orbitPerch, local: true)
@@ -417,6 +496,7 @@ final class RobotView: NSView {
     }
 
     func configureOrbit(_ layout: QuietOrbitLayout, perch: QuietOrbitPerch) {
+        companionEntrance = nil
         cancelOrbitTransition()
         orbitLayout = layout
         orbitPerch = perch
@@ -431,6 +511,7 @@ final class RobotView: NSView {
     }
 
     func revealOrbit(in layout: QuietOrbitLayout, at perch: QuietOrbitPerch) {
+        guard !isCapturePaused else { return }
         configureOrbit(layout, perch: perch)
         isPresented = true
         character.send(.reveal(.top))

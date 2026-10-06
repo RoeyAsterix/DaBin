@@ -29,6 +29,10 @@ struct PrivacyInformationTests {
                    && automaticText.contains("does not import what was already on the clipboard")
                    && automaticText.contains("not uploaded"),
                    "The in-app policy explains Auto Capture opt-in, baseline and local-storage boundaries")
+        try expect(automaticText.contains("skipped before DaBin reads their content")
+                   && automaticText.contains("unmarked sensitive content can still be captured")
+                   && automaticText.contains("pending automatic saves"),
+                   "The policy describes marker protection and pending-save exclusions with their real limits")
         try expect(automaticText.contains("sign with that project name")
                    && automaticText.contains("someone viewing your screen")
                    && automaticText.contains("not guarantee"),
@@ -36,6 +40,11 @@ struct PrivacyInformationTests {
         try expect(automaticText.contains("red recording symbol")
                    && automaticText.contains("when the board is closed"),
                    "The policy explains the persistent active-recording indication independently of confirmations")
+        try expect(automaticText.contains("Clicking the revealed robot opens DaBin")
+                   && automaticText.contains("Quiet mode and Reduce Motion keep these confirmations still")
+                   && !automaticText.contains("noninteractive")
+                   && !automaticText.contains("Quiet mode hides automatic-save confirmations"),
+                   "The policy accurately explains clickable confirmations and quiet visibility")
         let reminders = sections.first { $0.title == "Reminders" }?.paragraphs.joined(separator: " ") ?? ""
         try expect(reminders.contains("first three words of the task title")
                    && reminders.contains("without marking the task completed")
@@ -94,7 +103,7 @@ struct PrivacyInformationTests {
                    "Support URL is read from the build's configuration")
         try expect(PrivacyInformation.configuredURL(for: "MissingKey", bundle: bundle) == nil, "Missing owner links never use an invented fallback")
         try expect(PrivacyInformation.document(bundle: bundle) == policy, "Bundled policy is loaded without network access")
-        try expect(PrivacyInformation.updatedLine(in: PrivacyInformation.document(bundle: bundle)) == "Updated 4 October 2026",
+        try expect(PrivacyInformation.updatedLine(in: PrivacyInformation.document(bundle: bundle)) == "Updated 6 October 2026",
                    "The isolated bundled policy exposes its current update date rather than the retired sheet date")
         try expect(PrivacyInformation.updatedLine(in: PrivacyInformation.document(bundle: emptyBundle)) == nil,
                    "A missing policy resource never claims the full policy's update date")
@@ -107,8 +116,8 @@ struct PrivacyInformationTests {
         let reasons = Dictionary(uniqueKeysWithValues: APIs.map { ($0["NSPrivacyAccessedAPIType"] as! String, $0["NSPrivacyAccessedAPITypeReasons"] as! [String]) })
         try expect(reasons["NSPrivacyAccessedAPICategoryUserDefaults"] == ["CA92.1"], "Preference use has its app-only reason")
         try expect(reasons["NSPrivacyAccessedAPICategorySystemBootTime"] == ["35F9.1"], "Animation timer use has its elapsed-time reason")
-        try expect(reasons["NSPrivacyAccessedAPICategoryFileTimestamp"] == ["C617.1"],
-                   "Owned preview-cache file metadata declares its app-container reason without unrelated timestamp reasons")
+        try expect(reasons["NSPrivacyAccessedAPICategoryFileTimestamp"] == ["C617.1", "3B52.1"],
+                   "File metadata covers app-container files and explicitly user-authorized import, screenshot and backup paths")
         print("PASS: \(checks) privacy information checks")
     }
 }

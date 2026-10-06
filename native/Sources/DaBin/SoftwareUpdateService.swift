@@ -99,7 +99,8 @@ enum SoftwareUpdateConfiguration {
     }
 
     static func numericVersion(_ value: String) -> Bool {
-        value.range(of: "^\\d+(?:\\.\\d+){0,2}$", options: .regularExpression) != nil
+        guard value.range(of: "^[0-9]+(?:\\.[0-9]+){0,2}$", options: .regularExpression) != nil else { return false }
+        return value.split(separator: ".").allSatisfy { Int($0) != nil }
     }
 
     static func compareVersions(_ lhs: String, _ rhs: String) -> Int {
@@ -133,17 +134,36 @@ enum SoftwareUpdateConfiguration {
         }
     }
 
+    static func isTrustedTransferURL(_ url: URL) -> Bool {
+        guard let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
+              components.scheme?.lowercased() == "https", components.port == nil,
+              components.user == nil, components.password == nil, components.fragment == nil,
+              let host = components.host?.lowercased() else { return false }
+        // GitHub's release CDN uses signed query parameters. Allow those, but
+        // never arbitrary githubusercontent subdomains or an HTTPS port override.
+        return ["github.com", "objects.githubusercontent.com", "release-assets.githubusercontent.com"].contains(host)
+    }
+
     static func validateGitHubResponse(_ response: URLResponse) throws {
         guard let http = response as? HTTPURLResponse, http.statusCode == 200,
-              let url = http.url,
-              let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
-              components.scheme == "https", components.user == nil, components.password == nil,
-              let host = components.host?.lowercased(),
-              host == "github.com" || host == "objects.githubusercontent.com"
-                || host == "release-assets.githubusercontent.com"
-                || host.hasSuffix(".githubusercontent.com") else {
+              let url = http.url, isTrustedTransferURL(url) else {
             throw SoftwareUpdateError.message("GitHub did not return a trusted update response.")
         }
+    }
+}
+
+/// Reject an untrusted redirect before URLSession contacts its destination.
+/// Checking only the final response cannot undo a request already sent there.
+final class SoftwareUpdateRedirectGuard: NSObject, URLSessionTaskDelegate, @unchecked Sendable {
+    func urlSession(_ session: URLSession, task: URLSessionTask,
+                    willPerformHTTPRedirection response: HTTPURLResponse,
+                    newRequest request: URLRequest,
+                    completionHandler: @escaping @Sendable (URLRequest?) -> Void) {
+        guard let url = request.url, SoftwareUpdateConfiguration.isTrustedTransferURL(url) else {
+            completionHandler(nil)
+            return
+        }
+        completionHandler(request)
     }
 }
 
@@ -157,11 +177,23 @@ struct SoftwareUpdateTransport {
         configuration.timeoutIntervalForResource = 180
         configuration.requestCachePolicy = .reloadIgnoringLocalAndRemoteCacheData
         configuration.httpCookieStorage = nil
+        configuration.urlCredentialStorage = nil
         configuration.urlCache = nil
-        let session = URLSession(configuration: configuration)
+        let session = URLSession(configuration: configuration,
+                                 delegate: SoftwareUpdateRedirectGuard(), delegateQueue: nil)
         return SoftwareUpdateTransport(
-            loadData: { url in try await session.data(from: url) },
-            download: { url in try await session.download(from: url) }
+            loadData: { url in
+                guard SoftwareUpdateConfiguration.isTrustedTransferURL(url) else {
+                    throw SoftwareUpdateError.message("The update request is outside DaBin’s HTTPS GitHub release channel.")
+                }
+                return try await session.data(from: url)
+            },
+            download: { url in
+                guard SoftwareUpdateConfiguration.isTrustedTransferURL(url) else {
+                    throw SoftwareUpdateError.message("The update download is outside DaBin’s HTTPS GitHub release channel.")
+                }
+                return try await session.download(from: url)
+            }
         )
     }
 }
@@ -183,6 +215,7 @@ final class SoftwareUpdateService: ObservableObject {
     private let manifestURL: URL?
     private let transport: SoftwareUpdateTransport
     private let updatesDirectory: URL
+    private let updateCache: DailyArchive
     private let helperURL: URL
     private let validateHelper: HelperValidator
     private let launchInstaller: InstallerLauncher
@@ -215,6 +248,7 @@ final class SoftwareUpdateService: ObservableObject {
         self.manifestURL = manifestURL
         self.transport = transport
         self.updatesDirectory = updatesDirectory.standardizedFileURL
+        self.updateCache = DailyArchive(root: updatesDirectory.standardizedFileURL.deletingLastPathComponent())
         self.helperURL = helperURL.standardizedFileURL
         self.validateHelper = validateHelper
         self.launchInstaller = launchInstaller
@@ -332,8 +366,10 @@ final class SoftwareUpdateService: ObservableObject {
     }
 
     private func download(_ release: SoftwareReleaseManifest) async throws -> URL {
-        try FileManager.default.createDirectory(at: updatesDirectory, withIntermediateDirectories: true)
-        let destination = updatesDirectory.appendingPathComponent(release.asset.name)
+        let directoryName = updatesDirectory.lastPathComponent
+        try updateCache.ensureDirectory(directoryName)
+        let destinationRelative = "\(directoryName)/\(release.asset.name)"
+        let destination = try updateCache.safeURL(destinationRelative)
         if try Self.matches(release.asset, file: destination) { return destination }
         if FileManager.default.fileExists(atPath: destination.path) { try FileManager.default.removeItem(at: destination) }
 
@@ -343,12 +379,15 @@ final class SoftwareUpdateService: ObservableObject {
         guard try Self.matches(release.asset, file: temporary) else {
             throw SoftwareUpdateError.message("The downloaded update did not match its published size and SHA-256 checksum.")
         }
-        let partial = updatesDirectory.appendingPathComponent(".\(release.asset.name).\(UUID().uuidString).partial")
+        let partialRelative = "\(directoryName)/.\(release.asset.name).\(UUID().uuidString).partial"
+        let partial = try updateCache.safeURL(partialRelative)
         defer { try? FileManager.default.removeItem(at: partial) }
         try FileManager.default.copyItem(at: temporary, to: partial)
         guard try Self.matches(release.asset, file: partial) else {
             throw SoftwareUpdateError.message("The verified update changed while it was saved.")
         }
+        _ = try updateCache.safeURL(partialRelative)
+        _ = try updateCache.safeURL(destinationRelative)
         try FileManager.default.moveItem(at: partial, to: destination)
         return destination
     }
@@ -361,11 +400,12 @@ final class SoftwareUpdateService: ObservableObject {
         let handle = try FileHandle(forReadingFrom: url)
         defer { try? handle.close() }
         var hasher = SHA256()
-        while true {
+        while try autoreleasepool(invoking: {
             let data = try handle.read(upToCount: 1024 * 1024) ?? Data()
-            if data.isEmpty { break }
+            guard !data.isEmpty else { return false }
             hasher.update(data: data)
-        }
+            return true
+        }) {}
         return hasher.finalize().map { String(format: "%02x", $0) }.joined()
     }
 

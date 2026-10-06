@@ -498,6 +498,7 @@ final class AutoCaptureRobotPresenter {
     private(set) var currentSignPerformance: AutoCaptureSignPerformance?
     private(set) var currentSignReceipt: AutoCaptureSignReceipt?
     private(set) var confirmationEnabled = true
+    private(set) var isCapturePaused = false
     private(set) var isSuspendedForScreenCapture = false
     private(set) var performanceStartCount = 0
     private(set) var isSuspendedForBoard = false
@@ -523,6 +524,37 @@ final class AutoCaptureRobotPresenter {
         pendingBursts.reduce(0) { Self.saturatingAdd($0, $1.count) }
     }
     var onPresentationChanged: ((Bool) -> Void)?
+    /// The sign view keeps its hit target fixed while its layers move. Tests
+    /// and callers without an open action retain the passive panel behavior.
+    var onOpen: (() -> Void)? {
+        didSet {
+            signContent.onOpen = onOpen
+            updatePointerAcceptance(at: NSEvent.mouseLocation)
+        }
+    }
+    var confirmationTarget: () -> RobotRevealTarget = { .cameraIsland }
+
+    /// Reuses the application's existing pointer clock; the transparent stage
+    /// and physical camera remain available to the application underneath.
+    func updatePointerAcceptance(at screenPoint: CGPoint) {
+        refreshMotionPreference()
+        let point = signContent.convert(panel.convertPoint(fromScreen: screenPoint), from: nil)
+        panel.ignoresMouseEvents = currentSignReceipt == nil || !signContent.containsInteraction(point)
+    }
+
+    func refreshMotionPreference() {
+        guard reduceMotionProvider(), let performance = currentSignPerformance,
+              !performance.reduceMotion, let receipt = currentSignReceipt else { return }
+        guard let completionDeadline else { return }
+        let remaining = completionDeadline.timeIntervalSince(currentDateProvider())
+        guard remaining > 0 else { return }
+        // Preserve the receipt's completion and announcement schedule. A fresh
+        // short entrance/exit would hide the artwork before its native target.
+        let reduced = performance.expressionOnly(remainingDuration: remaining)
+        currentSignPerformance = reduced
+        signContent.begin(performance: reduced, receipt: receipt,
+                          islandRect: signContent.housingRect, accent: accentProvider())
+    }
 
     private let content: AutoCaptureRobotContentView
     private let signContent: AutoCaptureSignView
@@ -542,6 +574,7 @@ final class AutoCaptureRobotPresenter {
     private var performanceToken: UInt64 = 0
     private var updateDeadline: Date?
     private var consumptionDeadline: Date?
+    private var completionDeadline: Date?
     private var performanceScreen: AutoCaptureRobotScreen?
     private var activeDestination: AutoCaptureRobotDestination?
     private var pendingBursts: [AutoCaptureRobotPendingBurst] = []
@@ -619,7 +652,7 @@ final class AutoCaptureRobotPresenter {
 
     private func enqueuePresentation(additionalCaptureCount: Int, projectName: String?,
                                      projectColor: NSColor?, confirmation: AutoCaptureSignReceipt?) -> Bool {
-        guard !isShutDown, additionalCaptureCount > 0 else { return false }
+        guard !isShutDown, !isCapturePaused, additionalCaptureCount > 0 else { return false }
         guard confirmation == nil || confirmationEnabled else { return false }
         let destination = AutoCaptureRobotDestination(projectName: projectName,
                                                       projectColor: projectColor)
@@ -706,10 +739,21 @@ final class AutoCaptureRobotPresenter {
         if !active { _ = startPendingPerformanceIfPossible() }
     }
 
-    /// A save receipt may finish after monitoring pauses. Hide its destination
-    /// immediately while preserving every already-saved capture and burst count.
+    /// Inactive destinations omit their sign from manual feedback. Explicit
+    /// Pause uses setCapturePaused to hide the entire presentation.
     func setProjectRecordingActive(_ active: Bool) {
         content.projectSignEnabled = active
+    }
+
+    /// Pause is a visibility boundary for both receipt paths. Saved data stays
+    /// in the archive; obsolete success animations are not replayed on Resume.
+    func setCapturePaused(_ paused: Bool) {
+        guard !isShutDown, paused != isCapturePaused else { return }
+        isCapturePaused = paused
+        if paused {
+            content.hideProjectSign()
+            stopActivePresentation(clearPending: true, closePanel: false)
+        }
     }
 
     /// The full board owns the one robot while it opens and remains visible.
@@ -831,7 +875,7 @@ final class AutoCaptureRobotPresenter {
 
     private func beginPerformance(_ pending: AutoCaptureRobotPendingBurst,
                                   on screen: AutoCaptureRobotScreen) -> Bool {
-        guard pending.count > 0 else { return false }
+        guard !isCapturePaused, pending.count > 0 else { return false }
         if let confirmation = pending.confirmation { return beginSignPerformance(confirmation, on: screen) }
         let frame = AutoCaptureRobotGeometry.panelFrame(on: screen)
         guard !frame.isEmpty, state.present(additionalCount: pending.count) != nil else {
@@ -859,6 +903,7 @@ final class AutoCaptureRobotPresenter {
         performanceStartCount += 1
         let delay = dismissDelayOverride ?? performance.totalDuration
         let now = currentDateProvider()
+        completionDeadline = now.addingTimeInterval(delay)
         let updateDuration = dismissDelayOverride == nil
             ? updateWindow(in: performance)
             : min(updateWindow(in: performance), delay * 0.65)
@@ -892,15 +937,26 @@ final class AutoCaptureRobotPresenter {
 
     private func beginSignPerformance(_ receipt: AutoCaptureSignReceipt,
                                       on screen: AutoCaptureRobotScreen) -> Bool {
-        guard confirmationEnabled else { return false }
-        let frame = AutoCaptureRobotGeometry.signPanelFrame(on: screen)
+        guard !isCapturePaused, confirmationEnabled else { return false }
+        let target = confirmationTarget()
+        let frame: CGRect
+        if case .corner(let corner) = target {
+            let visible = screen.visibleFrame.standardized
+            let size = CGSize(width: min(220, visible.width), height: min(154, visible.height))
+            frame = CGRect(x: corner.isRight ? visible.maxX - size.width - 3 : visible.minX + 3,
+                           y: corner.isTop ? visible.maxY - size.height - 3 : visible.minY + 3,
+                           width: size.width, height: size.height).intersection(visible)
+        } else { frame = AutoCaptureRobotGeometry.signPanelFrame(on: screen) }
         guard !frame.isEmpty, state.present(additionalCount: receipt.count) != nil else { return false }
         hideTask?.cancel(); hideTask = nil
         performanceTask?.cancel(); lifecycleTask?.cancel(); announcementTask?.cancel()
         performanceToken &+= 1
         let token = performanceToken
-        let island = screen.isBuiltIn ? AutoCaptureRobotGeometry.cameraIsland(on: screen) : nil
-        let performance = signDeck.nextPerformance(entrance: island == nil ? .right : .top,
+        let island = target == .cameraIsland && screen.isBuiltIn ? AutoCaptureRobotGeometry.cameraIsland(on: screen) : nil
+        let entrance: RobotEntrance
+        if case .corner(let corner) = target { entrance = corner.isRight ? .right : .left }
+        else { entrance = island == nil ? .right : .top }
+        let performance = signDeck.nextPerformance(entrance: entrance,
             reduceMotion: reduceMotionProvider(), captureCount: receipt.count)
         currentPerformance = nil
         currentSignPerformance = performance
@@ -912,7 +968,8 @@ final class AutoCaptureRobotPresenter {
         _ = lifecycle.send(.captureSaved(count: receipt.count))
         let delay = dismissDelayOverride ?? performance.totalDuration
         let now = currentDateProvider()
-        let updateDuration = max(0, min(delay * 0.65, performance.readableEndTime - 0.25))
+        completionDeadline = now.addingTimeInterval(delay)
+        let updateDuration = performance.mergeWindowDuration(maximumDuration: delay)
         updateDeadline = now.addingTimeInterval(updateDuration)
         consumptionDeadline = now.addingTimeInterval(min(delay,
             max(performance.readableStartTime + 0.30, updateDuration + 0.02)))
@@ -927,6 +984,7 @@ final class AutoCaptureRobotPresenter {
         signContent.begin(performance: performance, receipt: receipt, islandRect: localIsland, accent: accentProvider())
         panel.alphaValue = 1
         panel.orderFrontRegardless()
+        updatePointerAcceptance(at: NSEvent.mouseLocation)
         reportPresentation(true)
 
         // One low-priority announcement after the merge window closes. Every
@@ -987,6 +1045,7 @@ final class AutoCaptureRobotPresenter {
         activeDestination = nil
         updateDeadline = nil
         consumptionDeadline = nil
+        completionDeadline = nil
 
         if !isSuspended, pendingCaptureCount > 0,
            startPendingPerformanceIfPossible() {
@@ -996,7 +1055,7 @@ final class AutoCaptureRobotPresenter {
     }
 
     private func startPendingPerformanceIfPossible(on suppliedScreen: AutoCaptureRobotScreen? = nil) -> Bool {
-        guard !isShutDown, !isSuspended, !state.isVisible,
+        guard !isShutDown, !isCapturePaused, !isSuspended, !state.isVisible,
               !pendingBursts.isEmpty,
               let screen = suppliedScreen ?? validPrimaryScreen() else { return false }
         let pending = pendingBursts.removeFirst()
@@ -1019,6 +1078,7 @@ final class AutoCaptureRobotPresenter {
         activeDestination = nil
         updateDeadline = nil
         consumptionDeadline = nil
+        completionDeadline = nil
         if clearPending { pendingBursts.removeAll() }
         hidePanel(animated: animated)
         if closePanel { panel.close() }

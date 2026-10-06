@@ -49,7 +49,8 @@ def build_update_helper(app, sdk, identity, version, build_number):
     resources.mkdir()
     run(["xcrun", "swiftc", "-swift-version", "5", "-target", TARGET, "-sdk", sdk,
          "-warnings-as-errors", "-O", "-whole-module-optimization", "-parse-as-library",
-         ROOT / "Sources/DaBin/UpdateHandoff.swift", ROOT / "UpdateTools/DaBinUpdater.swift", "-o", executable])
+         ROOT / "Sources/DaBin/UpdateHandoff.swift", ROOT / "Sources/DaBin/UpdateArchiveValidator.swift",
+         ROOT / "UpdateTools/DaBinUpdater.swift", "-o", executable])
     helper_info = {
         "CFBundleIdentifier": "com.dabin.mac.updater.local",
         "CFBundleName": "DaBin Update",

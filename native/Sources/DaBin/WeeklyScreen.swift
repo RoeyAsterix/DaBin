@@ -1,7 +1,7 @@
 import SwiftUI
 
-/// A week is an overview: distribute the available width across every selected
-/// date instead of imposing a zoom-scaled minimum that hides later columns.
+/// A week is an overview: distribute the available width across populated
+/// dates instead of imposing a zoom-scaled minimum that hides later columns.
 struct WeeklyBoardLayout {
     let horizontalPadding: CGFloat
     let gap: CGFloat
@@ -28,9 +28,15 @@ struct WeeklyScreen: View {
     @State private var columnsSettled = false
 
     var body: some View {
+        let days = state.weeklyVisibleDays
         VStack(spacing: 0) {
+            if days.isEmpty {
+                EmptyMessage(symbol: "calendar",
+                    title: state.filter == .all ? "No captures in these days" : "No \(state.filter.title.lowercased()) in these days",
+                    message: state.filter == .all ? "Choose other dates to see your captures." : "Try another filter or choose other dates.")
+                    .accessibilityIdentifier("weekly-empty-state")
+            } else {
             GeometryReader { geometry in
-                let days = state.weeklyVisibleDays
                 let layout = WeeklyBoardLayout(viewportWidth: geometry.size.width, dayCount: days.count)
                 ScrollView(.horizontal) {
                 HStack(alignment: .top, spacing: layout.gap) {
@@ -49,10 +55,11 @@ struct WeeklyScreen: View {
                 .onAppear { columnsSettled = true }
                 }.scrollIndicators(.automatic)
             }
+            }
             HStack {
-                Text("\(state.weeklyDays.count) \(state.weeklyDays.count == 1 ? "day" : "days") · \(state.weeklyActiveDays.count) with activity")
+                Text("\(days.count) of \(state.weeklyDays.count) days shown")
                 Spacer(minLength: 8)
-                Text("Select a day to open Daily")
+                Text(days.isEmpty ? "Choose dates in the calendar" : "Select a day to open Daily")
             }.font(.system(size: 11)).foregroundStyle(Palette.muted)
                 .padding(.horizontal, 17).padding(.vertical, 9)
                 .overlay(alignment: .top) { Rectangle().fill(Palette.line).frame(height: 1) }

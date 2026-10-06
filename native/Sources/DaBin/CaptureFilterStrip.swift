@@ -16,8 +16,9 @@ extension CaptureFilter {
 @MainActor
 struct CaptureFilterStrip: View {
     @Binding var selection: CaptureFilter
+    var spacing: CGFloat = 10
     var body: some View {
-        HStack(spacing: 10) {
+        HStack(spacing: spacing) {
             ForEach(CaptureFilter.allCases) { filter in
                 BuddyIconButton(symbol: filter.buddySymbol,
                     title: filter.title,
@@ -25,7 +26,7 @@ struct CaptureFilterStrip: View {
                     .accessibilityIdentifier("capture-filter-\(filter.rawValue)")
                     .accessibilityAddTraits(selection == filter ? .isSelected : [])
             }
-        }.frame(maxWidth: .infinity)
+        }.fixedSize(horizontal: true, vertical: false)
             .accessibilityElement(children: .contain).accessibilityLabel("Capture filters")
             .daBinTutorialAnchor(.captureFilters)
     }

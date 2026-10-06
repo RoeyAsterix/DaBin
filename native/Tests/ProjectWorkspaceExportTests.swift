@@ -18,6 +18,32 @@ import Foundation
     }
     static func read(_ url: URL) throws -> String { try String(contentsOf: url, encoding: .utf8) }
 
+    @MainActor static func selectedBundle(_ document: ProjectWorkspaceExportDocument, name: String, root: URL) async throws -> URL {
+        let destination = root.appendingPathComponent(name + ".zip")
+        try await ProjectWorkspaceExport.export(document, to: destination)
+        let unpacked = root.appendingPathComponent(name + "-unpacked")
+        let extract = Process()
+        extract.executableURL = URL(fileURLWithPath: "/usr/bin/ditto")
+        extract.arguments = ["-x", "-k", destination.path, unpacked.path]
+        try extract.run(); extract.waitUntilExit()
+        try expect(extract.terminationStatus == 0, "The \(name) selection ZIP opens with the native ZIP reader")
+        let bundle = unpacked.appendingPathComponent("DaBin project")
+        let expectedEntries: Set<String> = document.notes == nil
+            ? ["Items", "Project.md", "manifest.json"] : ["Items", "Project.md", "Notes.md", "manifest.json"]
+        try expect(Set(try files.contentsOfDirectory(atPath: bundle.path)) == expectedEntries,
+                   "The \(name) selection ZIP has exactly the selected content and portable metadata entries")
+        let expectedFiles = Set(document.items.map { URL(fileURLWithPath: $0.contentPath).lastPathComponent })
+        try expect(Set(try files.contentsOfDirectory(atPath: bundle.appendingPathComponent("Items").path)) == expectedFiles,
+                   "The \(name) selection ZIP includes no extra capture files")
+        try expect(try read(bundle.appendingPathComponent("Project.md")) == document.summary,
+                   "The \(name) selection ZIP keeps its selected summary")
+        return bundle
+    }
+
+    static func readManifest(_ bundle: URL) throws -> [String: Any] {
+        try JSONSerialization.jsonObject(with: Data(contentsOf: bundle.appendingPathComponent("manifest.json"))) as! [String: Any]
+    }
+
     @MainActor static func main() async throws {
         let root = files.temporaryDirectory.appendingPathComponent("DaBinProjectExportQA-\(UUID().uuidString)")
         try files.createDirectory(at: root, withIntermediateDirectories: false)
@@ -73,8 +99,63 @@ import Foundation
             orderedItemIDs: ordered.map { "capture:" + $0.id.uuidString }) }, "Explicit order cannot silently omit included project notes")
         let selection = try ProjectWorkspaceExport.document(project: project, captures: [link, first], store: store, scope: .selection)
         try expect(selection.items.map(\.id) == [link.id, first.id] && selection.notes == nil && selection.scope == .selection, "Selected export contains only chosen items and preserves their order")
+        try rejects({ _ = try ProjectWorkspaceExport.document(project: project, captures: [], store: store, scope: .selection) },
+                    "An empty selection cannot fall back to the complete project")
         let onlyNotes = try ProjectWorkspaceExport.document(project: "Empty project", captures: [], store: store, notes: notes)
         try expect(onlyNotes.itemCount == 1 && onlyNotes.items.isEmpty, "A notes-only project is exportable")
+
+        // Selecting one workspace card never implicitly includes its parent,
+        // attachments, other captures, or the unselected live project notes.
+        let noteSelection = try ProjectWorkspaceExport.document(project: project, captures: [], store: store,
+            notes: notes, scope: .selection, orderedItemIDs: ["note:" + WorkspaceSnapshot.projectKey(project)])
+        let noteBundle = try await selectedBundle(noteSelection, name: "Only-selected-notes", root: root)
+        let noteManifest = try readManifest(noteBundle)
+        try expect(try read(noteBundle.appendingPathComponent("Notes.md")) == notes,
+                   "A notes-only selection exports the exact selected live note")
+        try expect(noteManifest["scope"] as? String == "selection"
+            && (noteManifest["items"] as? [[String: Any]])?.isEmpty == true
+            && (noteManifest["content"] as? [[String: Any]])?.isEmpty == true
+            && noteManifest["notesPath"] as? String == "Notes.md",
+                   "A notes-only selected manifest contains no capture metadata or originals")
+        try expect(noteManifest["orderedItemIDs"] as? [String] == noteSelection.orderedItemIDs
+            && !noteSelection.summary.contains(task.originalText!) && !noteSelection.summary.contains(note.originalText!),
+                   "A notes-only selected ZIP excludes unselected task and capture text")
+
+        let taskSelection = try ProjectWorkspaceExport.document(project: project, captures: [task], store: store,
+            scope: .selection, orderedItemIDs: ["capture:" + task.id.uuidString])
+        let taskBundle = try await selectedBundle(taskSelection, name: "Only-selected-task", root: root)
+        let taskManifest = try readManifest(taskBundle)
+        let taskItems = taskManifest["items"] as! [[String: Any]]
+        let taskContent = taskManifest["content"] as! [[String: Any]]
+        try expect(taskManifest["scope"] as? String == "selection"
+            && taskItems.map { $0["id"] as! String } == [task.id.uuidString]
+            && taskContent.map { $0["itemID"] as! String } == [task.id.uuidString]
+            && taskManifest["notesPath"] == nil,
+                   "Selecting a task exports only that task, without its unselected attachment or project notes")
+        try expect(try read(taskBundle.appendingPathComponent(taskSelection.items[0].contentPath)) == task.originalText,
+                   "A selected task ZIP keeps its exact original task text")
+        try expect(!taskSelection.summary.contains(second.id.uuidString)
+            && !taskSelection.summary.contains(notes) && !taskSelection.summary.contains(note.originalText!),
+                   "A selected task summary excludes unselected attachment identity, live note, and capture text")
+
+        let attachmentSelection = try ProjectWorkspaceExport.document(project: project, captures: [second], store: store,
+            scope: .selection, orderedItemIDs: ["capture:" + second.id.uuidString])
+        let attachmentBundle = try await selectedBundle(attachmentSelection, name: "Only-selected-attachment", root: root)
+        let attachmentManifest = try readManifest(attachmentBundle)
+        let attachmentItems = attachmentManifest["items"] as! [[String: Any]]
+        let attachmentContent = attachmentManifest["content"] as! [[String: Any]]
+        try expect(attachmentManifest["scope"] as? String == "selection"
+            && attachmentItems.map { $0["id"] as! String } == [second.id.uuidString]
+            && attachmentContent.map { $0["itemID"] as! String } == [second.id.uuidString]
+            && attachmentItems[0]["parentTaskID"] as? String == task.id.uuidString
+            && attachmentItems[0]["projectName"] as? String == project,
+                   "Selecting an attachment retains its parent identity and effective project without exporting the parent")
+        try expect(try Data(contentsOf: attachmentBundle.appendingPathComponent(attachmentSelection.items[0].contentPath))
+            == Data("Second PDF fixture".utf8), "An attachment-only selected ZIP preserves exact original file bytes")
+        try expect(!attachmentSelection.summary.contains(task.originalText!)
+            && !attachmentSelection.summary.contains(task.comment)
+            && !attachmentSelection.summary.contains(notes) && attachmentManifest["notesPath"] == nil,
+                   "An attachment-only ZIP excludes the unselected parent body, parent comment, and live project notes")
 
         let destination = root.appendingPathComponent("Launch.zip")
         try await ProjectWorkspaceExport.export(document, to: destination)

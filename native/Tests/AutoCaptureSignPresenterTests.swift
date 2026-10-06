@@ -123,6 +123,20 @@ private struct AutoCaptureSignPresenterTests {
         return summaries.isEmpty ? "no stored-layer animations" : summaries.joined(separator: "; ")
     }
 
+    private static func receiptLayersAreVisible(in view: AutoCaptureSignView) -> Bool {
+        let expected = Set(["autoCaptureSign.robotContainer", "autoCaptureSign.plaque"])
+        var visible: Set<String> = []
+        func visit(_ layer: CALayer) {
+            if let name = layer.name, expected.contains(name),
+               (layer.presentation() ?? layer).opacity >= 0.99 {
+                visible.insert(name)
+            }
+            for child in layer.sublayers ?? [] { visit(child) }
+        }
+        if let layer = view.layer { visit(layer) }
+        return visible == expected
+    }
+
     private static func action(origin: CaptureOrigin, captures: [Capture],
                                privateValue: String) -> AutoCaptureSavedAction {
         AutoCaptureSavedAction(
@@ -196,8 +210,8 @@ private struct AutoCaptureSignPresenterTests {
         let mixed = screenshot.merging(AutoCaptureSignReceipt(kind: .clipboard, count: 2))
         try expect(mixed == AutoCaptureSignReceipt(kind: .mixed, count: 3)
                    && mixed.icon == "square.stack.3d.up.fill"
-                   && mixed.message == "Captures saved!"
-                   && mixed.accessibilityText == "3 captures saved",
+                   && mixed.message == "Saved 3 items"
+                   && mixed.accessibilityText == "Saved 3 items",
                    "Mixed rapid receipts expose their exact count and generic capture icon")
         let rendered = [screenshot.icon, screenshot.message, screenshot.accessibilityText,
                         clipboard.icon, clipboard.message, clipboard.accessibilityText,
@@ -240,7 +254,7 @@ private struct AutoCaptureSignPresenterTests {
         }
         try expect(presenter.currentSignReceipt == first
                    && presenter.currentPerformance == nil
-                   && presenter.signMessage == "Screenshot saved!"
+                   && presenter.signMessage == "Saved 2 items"
                    && presenter.badgeText == "×2"
                    && presenter.pendingConfirmationPerformances == 0
                    && presenter.pendingConfirmationCount == 0
@@ -249,9 +263,9 @@ private struct AutoCaptureSignPresenterTests {
         try expect(sign.performance == performance
                    && sign.receipt == first
                    && sign.receipt?.icon == "camera.viewfinder"
-                   && sign.signMessage == "Screenshot saved!"
+                   && sign.signMessage == "Saved 2 items"
                    && sign.countText == "×2"
-                   && sign.accessibilityStatus == "2 screenshots saved"
+                   && sign.accessibilityStatus == "Saved 2 items"
                    && sign.usesIsland
                    && !sign.reduceMotion
                    && sign.nativeArmsAreHidden
@@ -272,7 +286,7 @@ private struct AutoCaptureSignPresenterTests {
         let second = AutoCaptureSignReceipt(kind: .clipboard, count: 3)
         try expect(presenter.present(confirmation: second)
                    && presenter.currentSignReceipt == AutoCaptureSignReceipt(kind: .mixed, count: 5)
-                   && presenter.signMessage == "Captures saved!"
+                   && presenter.signMessage == "Saved 5 items"
                    && presenter.badgeText == "×5"
                    && presenter.state.visibleCount == 5
                    && presenter.currentSignPerformance == performance
@@ -281,9 +295,9 @@ private struct AutoCaptureSignPresenterTests {
                    && presenter.panel.contentView === sign
                    && sign.receipt == AutoCaptureSignReceipt(kind: .mixed, count: 5)
                    && sign.receipt?.icon == "square.stack.3d.up.fill"
-                   && sign.signMessage == "Captures saved!"
+                   && sign.signMessage == "Saved 5 items"
                    && sign.countText == "×5"
-                   && sign.accessibilityStatus == "5 captures saved"
+                   && sign.accessibilityStatus == "Saved 5 items"
                    && ObjectIdentifier(presenter.panel) == panelIdentity,
                    "An immediate mixed burst updates the existing sign and exact count without another panel or performance")
         try expect(announcements.isEmpty,
@@ -318,6 +332,248 @@ private struct AutoCaptureSignPresenterTests {
                    && presenter.pendingConfirmationPerformances == 1
                    && presenter.performanceStartCount == 1,
                    "Ten thousand late saves retain one exact, allocation-bounded pending confirmation")
+    }
+
+    private static func companionBurstChecks() throws {
+        var clock = Date(timeIntervalSinceReferenceDate: 3_500)
+        let presenter = AutoCaptureRobotPresenter(
+            primaryScreen: { builtIn }, reduceMotion: { false },
+            currentDate: { clock }, signDeck: AutoCaptureSignDeck(seed: 0xCA_7C4),
+            announce: { _ in }
+        )
+        defer { presenter.shutdown() }
+        try expect(presenter.present(confirmation: AutoCaptureSignReceipt(kind: .clipboard)),
+                   "One successfully saved item starts a companion performance")
+        let performance = presenter.currentSignPerformance
+        let panelFrame = presenter.panel.frame
+        clock.addTimeInterval(0.80)
+        try expect(presenter.present(confirmation: AutoCaptureSignReceipt(kind: .screenshot)),
+                   "A second rapid save blends into the readable happy sequence")
+        clock.addTimeInterval(0.75)
+        try expect(presenter.present(confirmation: AutoCaptureSignReceipt(kind: .clipboard))
+                   && presenter.currentSignReceipt == AutoCaptureSignReceipt(kind: .mixed, count: 3)
+                   && presenter.signMessage == "Saved 3 items"
+                   && presenter.state.visibleCount == 3
+                   && presenter.performanceStartCount == 1
+                   && presenter.currentSignPerformance == performance
+                   && presenter.pendingConfirmationCount == 0
+                   && presenter.panel.frame == panelFrame,
+                   "Three rapid saves share one stable scene and exact acknowledgement without another entrance")
+        presenter.setConfirmationEnabled(false)
+        try expect(!presenter.present(confirmation: AutoCaptureSignReceipt(kind: .clipboard))
+                   && !presenter.panel.isVisible && presenter.pendingConfirmationCount == 0,
+                   "Paused capture immediately hides a happy sequence and rejects late save receipts")
+    }
+
+    private static func liveMotionPreferenceChecks() async throws {
+        var reduceMotion = false
+        var announcements: [String] = []
+        let presenter = AutoCaptureRobotPresenter(
+            primaryScreen: { builtIn }, reduceMotion: { reduceMotion },
+            signDeck: AutoCaptureSignDeck(seed: 0xE7_E5),
+            announce: { announcements.append($0) }
+        )
+        defer { presenter.shutdown() }
+        let receipt = AutoCaptureSignReceipt(kind: .mixed, count: 3)
+        try expect(presenter.present(confirmation: receipt)
+                   && presenter.currentSignPerformance?.reduceMotion == false,
+                   "A dynamic accessibility preference fixture begins with whole-body motion")
+        guard let sign = presenter.panel.contentView as? AutoCaptureSignView else {
+            throw NSError(domain: "DaBinAutoCaptureSignPresenterTests", code: 44,
+                          userInfo: [NSLocalizedDescriptionKey: "Dynamic motion fixture did not install a sign view."])
+        }
+        let initialStarts = presenter.performanceStartCount
+        let initialFrame = presenter.panel.frame
+        let initialReaction = presenter.currentSignPerformance?.reaction
+        let initialDuration = presenter.currentSignPerformance?.totalDuration ?? 0
+        presenter.onOpen = {}
+        let initialTarget = sign.interactionBounds
+        reduceMotion = true
+        presenter.refreshMotionPreference()
+        guard let reduced = presenter.currentSignPerformance else {
+            throw NSError(domain: "DaBinAutoCaptureSignPresenterTests", code: 45,
+                          userInfo: [NSLocalizedDescriptionKey: "Dynamic motion change removed the active receipt."])
+        }
+        try expect(reduced.reduceMotion && reduced.reaction == initialReaction
+                   && presenter.currentSignReceipt == receipt
+                   && presenter.performanceStartCount == initialStarts
+                   && presenter.panel.frame == initialFrame
+                   && sign.receipt == receipt && sign.signMessage == "Saved 3 items"
+                   && sign.reduceMotion && sign.accessibilityStatus == "Saved 3 items",
+                   "Enabling Quiet Mode or Reduce Motion keeps the current saved count and scene without a new entrance")
+        try expect(reduced.frames.allSatisfy { frame in
+            frame.robotOpacity == 1 && frame.signOpacity == 1
+                && frame.robotTranslationX == 0 && frame.robotTranslationY == 0
+                && frame.robotScaleX == 1 && frame.robotScaleY == 1
+                && frame.robotRotationDegrees == 0
+                && frame.signTranslationX == 0 && frame.signTranslationY == 0
+                && frame.signScaleX == 1 && frame.signScaleY == 1
+                && frame.signRotationDegrees == 0 && frame.signYRotationDegrees == 0
+                && frame.headRotationDegrees == 0 && frame.torsoScaleY == 1
+                && frame.feetTranslationY == 0 && frame.feetRotationDegrees == 0
+                && frame.eyeBrightness == 1.16
+        }, "An accessibility change removes every body, foot and sign movement while preserving a happy expression")
+        try expect(reduced.entranceEndTime == 0 && reduced.readableStartTime == 0
+                   && reduced.readableEndTime == reduced.totalDuration
+                   && reduced.totalDuration > initialDuration - 0.30
+                   && reduced.frames.allSatisfy { $0.robotOpacity == 1 && $0.signOpacity == 1 },
+                   "An early preference change stays fully visible until the existing completion rather than beginning a one-second fade")
+        presenter.refreshMotionPreference()
+        try expect(presenter.currentSignPerformance == reduced
+                   && presenter.performanceStartCount == initialStarts,
+                   "Repeated pointer polling does not restart the static acknowledgement")
+        try await Task.sleep(for: .seconds(1.15))
+        let targetPoint = CGPoint(x: initialTarget.midX, y: initialTarget.midY)
+        presenter.updatePointerAcceptance(at: presenter.panel.convertPoint(
+            toScreen: sign.convert(targetPoint, to: nil)))
+        try expect(presenter.state.isVisible && presenter.panel.isVisible
+                   && presenter.currentSignReceipt == receipt
+                   && sign.receipt == receipt && sign.signMessage == "Saved 3 items"
+                   && receiptLayersAreVisible(in: sign)
+                   && sign.interactionBounds == initialTarget && !presenter.panel.ignoresMouseEvents
+                   && presenter.performanceStartCount == initialStarts,
+                   "The acknowledgement and its steady click target remain visibly present beyond the former premature fade")
+        try await waitUntil(timeout: 4) {
+            !presenter.state.isVisible && !presenter.panel.isVisible
+        }
+        try expect(presenter.currentSignReceipt == nil
+                   && presenter.currentSignPerformance == nil
+                   && !presenter.signHasActiveAnimations
+                   && announcements == ["Saved 3 items"]
+                   && presenter.performanceStartCount == initialStarts,
+                   "The original completion safely clears the changed motion track after one exact announcement")
+        try await Task.sleep(for: .milliseconds(100))
+        try expect(!presenter.panel.isVisible && presenter.currentSignReceipt == nil,
+                   "No cancelled or earlier animation can revive the completed acknowledgement")
+    }
+
+    private static func lateMotionPreferenceChecks() async throws {
+        var reduceMotion = false
+        var announcements: [String] = []
+        let presenter = AutoCaptureRobotPresenter(
+            primaryScreen: { external }, reduceMotion: { reduceMotion },
+            signDeck: AutoCaptureSignDeck(seed: 0x1A_7E),
+            announce: { announcements.append($0) }
+        )
+        defer { presenter.shutdown() }
+        let receipt = AutoCaptureSignReceipt(kind: .mixed, count: 3)
+        try expect(presenter.present(confirmation: receipt),
+                   "The late accessibility-change fixture begins one successful-save sequence")
+        let originalDuration = presenter.currentSignPerformance?.totalDuration ?? 0
+        let starts = presenter.performanceStartCount
+        try await Task.sleep(for: .seconds(1.55))
+        reduceMotion = true
+        presenter.refreshMotionPreference()
+        guard let continuation = presenter.currentSignPerformance,
+              let sign = presenter.panel.contentView as? AutoCaptureSignView else {
+            throw NSError(domain: "DaBinAutoCaptureSignPresenterTests", code: 49,
+                          userInfo: [NSLocalizedDescriptionKey: "Late accessibility change lost its active receipt."])
+        }
+        try expect(continuation.reduceMotion && continuation.totalDuration > 0.30
+                   && continuation.totalDuration < originalDuration - 1.25
+                   && continuation.frames.allSatisfy { $0.robotOpacity == 1 && $0.signOpacity == 1 }
+                   && presenter.currentSignReceipt == receipt && sign.signMessage == "Saved 3 items"
+                   && presenter.performanceStartCount == starts,
+                   "A late change preserves the exact remaining lifetime without restarting an entrance or extending the sequence")
+        try await Task.sleep(for: .milliseconds(100))
+        try expect(receiptLayersAreVisible(in: sign) && presenter.panel.isVisible,
+                   "A late static expression retains a visible robot and readable sign until completion")
+        try await waitUntil(timeout: 2) { !presenter.panel.isVisible && !presenter.state.isVisible }
+        try expect(presenter.currentSignReceipt == nil && !presenter.signHasActiveAnimations
+                   && announcements == ["Saved 3 items"] && presenter.performanceStartCount == starts,
+                   "A late preference change still finishes once with one exact saved-count announcement")
+    }
+
+    private static func openTargetAndCornerChecks() throws {
+        let presenter = AutoCaptureRobotPresenter(
+            dismissDelay: 60, primaryScreen: { builtIn }, reduceMotion: { false },
+            signDeck: AutoCaptureSignDeck(seed: 0xC1_1C), announce: { _ in }
+        )
+        defer { presenter.shutdown() }
+        try expect(presenter.panel.ignoresMouseEvents
+                   && presenter.present(confirmation: AutoCaptureSignReceipt(kind: .clipboard))
+                   && presenter.panel.ignoresMouseEvents,
+                   "A presenter without an open action keeps the full receipt panel click-through")
+        guard let sign = presenter.panel.contentView as? AutoCaptureSignView else {
+            throw NSError(domain: "DaBinAutoCaptureSignPresenterTests", code: 46,
+                          userInfo: [NSLocalizedDescriptionKey: "Open-target fixture did not install a sign view."])
+        }
+        var opens = 0
+        presenter.onOpen = { opens += 1 }
+        let target = sign.interactionBounds
+        let targetPoint = CGPoint(x: target.midX, y: target.midY)
+        let screenPoint = presenter.panel.convertPoint(toScreen: sign.convert(targetPoint, to: nil))
+        presenter.updatePointerAcceptance(at: screenPoint)
+        try expect(!target.isEmpty && target.width >= 44 && target.height >= 44
+                   && !presenter.panel.ignoresMouseEvents
+                   && sign.containsInteraction(targetPoint)
+                   && sign.hasActiveAnimations,
+                   "The revealed companion accepts one-click opening inside its steady target during live movement")
+        guard let click = NSEvent.mouseEvent(with: .leftMouseDown,
+            location: sign.convert(targetPoint, to: nil), modifierFlags: [],
+            timestamp: ProcessInfo.processInfo.systemUptime, windowNumber: presenter.panel.windowNumber,
+            context: nil, eventNumber: 1, clickCount: 1, pressure: 1) else {
+            throw NSError(domain: "DaBinAutoCaptureSignPresenterTests", code: 47,
+                          userInfo: [NSLocalizedDescriptionKey: "Could not construct an isolated native click event."])
+        }
+        let receiver = sign.hitTest(sign.convert(targetPoint, to: sign.superview))
+        receiver?.mouseDown(with: click)
+        try expect(receiver === sign && opens == 1 && !presenter.panel.isKeyWindow,
+                   "A native single click dispatches one open action without focusing the passive receipt panel")
+        for time in [0.08, 0.38, 0.68, 0.89] {
+            sign.applySample(normalizedTime: time)
+            presenter.updatePointerAcceptance(at: screenPoint)
+            try expect(sign.interactionBounds == target && !presenter.panel.ignoresMouseEvents,
+                       "Animated body and sign poses retain exactly the same native click target")
+        }
+        let housingPoint = CGPoint(x: islandRect.midX, y: islandRect.midY)
+        presenter.updatePointerAcceptance(at: housingPoint)
+        try expect(presenter.panel.ignoresMouseEvents,
+                   "The physical camera housing remains click-through")
+        let stageMargin = CGPoint(x: sign.bounds.minX + 1, y: sign.bounds.minY + 1)
+        presenter.updatePointerAcceptance(at: presenter.panel.convertPoint(
+            toScreen: sign.convert(stageMargin, to: nil)))
+        try expect(presenter.panel.ignoresMouseEvents && !sign.containsInteraction(stageMargin),
+                   "Transparent stage margins remain available to the underlying application")
+        presenter.updatePointerAcceptance(at: CGPoint(x: builtIn.frame.minX + 1,
+                                                       y: builtIn.frame.maxY - 1))
+        try expect(presenter.panel.ignoresMouseEvents,
+                   "Menu-bar positions away from the companion cannot be swallowed by the receipt panel")
+        presenter.onOpen = nil
+        presenter.updatePointerAcceptance(at: screenPoint)
+        try expect(presenter.panel.ignoresMouseEvents && sign.hitTest(targetPoint) == nil,
+                   "Removing the open action immediately restores the fully decorative panel")
+
+        let cornerPresenter = AutoCaptureRobotPresenter(
+            dismissDelay: 60, primaryScreen: { external }, reduceMotion: { false },
+            signDeck: AutoCaptureSignDeck(seed: 0xC0_12), announce: { _ in }
+        )
+        defer { cornerPresenter.shutdown() }
+        cornerPresenter.confirmationTarget = { .corner(.bottomLeft) }
+        try expect(cornerPresenter.present(confirmation: AutoCaptureSignReceipt(kind: .clipboard, count: 3)),
+                   "The chosen bottom-left location starts a saved-item acknowledgement")
+        guard let cornerSign = cornerPresenter.panel.contentView as? AutoCaptureSignView else {
+            throw NSError(domain: "DaBinAutoCaptureSignPresenterTests", code: 48,
+                          userInfo: [NSLocalizedDescriptionKey: "Corner fixture did not install a sign view."])
+        }
+        let cornerFrame = cornerPresenter.panel.frame
+        try expect(external.visibleFrame.contains(cornerFrame)
+                   && cornerFrame.minX == external.visibleFrame.minX + 3
+                   && cornerFrame.minY == external.visibleFrame.minY + 3
+                   && cornerFrame.maxX < 0
+                   && cornerPresenter.currentSignPerformance?.entrance == .left
+                   && !cornerSign.usesIsland && cornerSign.housingRect == nil
+                   && cornerSign.signMessage == "Saved 3 items",
+                   "A negative-origin display anchors the full scene to the selected corner and orients its entrance without inventing a housing")
+        let defaultPresenter = AutoCaptureRobotPresenter(
+            dismissDelay: 60, primaryScreen: { external }, reduceMotion: { false },
+            announce: { _ in }
+        )
+        defer { defaultPresenter.shutdown() }
+        try expect(defaultPresenter.present(confirmation: AutoCaptureSignReceipt(kind: .clipboard))
+                   && defaultPresenter.panel.frame == AutoCaptureRobotGeometry.signPanelFrame(on: external)
+                   && defaultPresenter.currentSignPerformance?.entrance == .right,
+                   "Callers that supply no chosen target keep the existing external top-right fallback")
     }
 
     private static func enablementAndReducedMotionChecks() async throws {
@@ -409,7 +665,7 @@ private struct AutoCaptureSignPresenterTests {
                 && $0.signRotationDegrees == 0 && $0.signYRotationDegrees == 0
         }, "Reduced confirmation uses opacity only, without robot or sign travel")
         try expect(reduced.currentSignReceipt == AutoCaptureSignReceipt(kind: .mixed, count: 4)
-                   && reduced.signMessage == "Captures saved!"
+                   && reduced.signMessage == "Saved 4 items"
                    && reduced.signHasActiveAnimations,
                    "Reduced motion preserves exact read-only receipt state and a bounded fade animation")
         guard let reducedSign = reduced.panel.contentView as? AutoCaptureSignView else {
@@ -442,7 +698,7 @@ private struct AutoCaptureSignPresenterTests {
                           userInfo: [NSLocalizedDescriptionKey: "Accessibility merge fixture has no performance."])
         }
         let formerAnnouncementTime = min(4 * 0.55, performance.readableStartTime + 0.1)
-        let updateDuration = max(0, min(4 * 0.65, performance.readableEndTime - 0.25))
+        let updateDuration = performance.mergeWindowDuration(maximumDuration: 4)
         let currentAnnouncementTime = min(4, updateDuration + 0.01)
         let mergeTime = formerAnnouncementTime
             + (currentAnnouncementTime - formerAnnouncementTime) / 2
@@ -452,7 +708,7 @@ private struct AutoCaptureSignPresenterTests {
         try expect(presenter.present(confirmation: AutoCaptureSignReceipt(kind: .clipboard, count: 2)),
                    "A receipt late in the update window merges before accessibility output")
         try await waitUntil(timeout: 3) { announcements.count == 1 }
-        try expect(announcements == ["3 captures saved"]
+        try expect(announcements == ["Saved 3 items"]
                    && presenter.currentSignReceipt == AutoCaptureSignReceipt(kind: .mixed, count: 3)
                    && presenter.performanceStartCount == 1,
                    "The one accessibility announcement includes every receipt merged into the active sign")
@@ -512,7 +768,7 @@ private struct AutoCaptureSignPresenterTests {
                    && presenter.pendingConfirmationPerformances == 0
                    && !presenter.signHasActiveAnimations
                    && presenter.performanceStartCount == 1
-                   && announcements == ["2 clipboard captures saved"],
+                   && announcements == ["Saved 2 items"],
                    "Natural completion clears typed state and animation after one exact announcement")
         presenter.shutdown()
     }
@@ -548,7 +804,7 @@ private struct AutoCaptureSignPresenterTests {
         try expect(interruption.resume(presenter)
                    && presenter.currentSignReceipt == AutoCaptureSignReceipt(kind: .mixed, count: 10)
                    && presenter.state.visibleCount == 10
-                   && presenter.signMessage == "Captures saved!"
+                   && presenter.signMessage == "Saved 10 items"
                    && presenter.pendingConfirmationCount == 0
                    && presenter.pendingConfirmationPerformances == 0
                    && presenter.performanceStartCount == 2
@@ -784,6 +1040,10 @@ private struct AutoCaptureSignPresenterTests {
         try receiptFactoryChecks()
         try panelAndImmediateMergeChecks()
         try lateBurstQueueChecks()
+        try companionBurstChecks()
+        try await liveMotionPreferenceChecks()
+        try await lateMotionPreferenceChecks()
+        try openTargetAndCornerChecks()
         try await enablementAndReducedMotionChecks()
         try await announcementMergeChecks()
         try earlyMergeInterruptionChecks()

@@ -78,6 +78,7 @@ WINDOW += ["ProjectBrowsingNavigationTests", "SnippetNamingInteractionTests"]
 WINDOW.append("CardDeletionInteractionTests")
 NONFOCUS.append("OutgoingFileBatchTests")
 NONFOCUS.append("OutgoingFileSnapshotTests")
+NONFOCUS.append("UpdateArchiveSecurityTests")
 
 
 def capture(arguments):

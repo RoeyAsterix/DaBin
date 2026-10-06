@@ -463,13 +463,21 @@ import SwiftUI
         let noteBoard = try await fixture(BoardView(state: state, theme: ThemeSettings(defaults: defaults)),
             size: NSSize(width: 380, height: 800))
         defer { noteBoard.close() }
-        let noteEntry = try await find(noteBoard.hosting, id: "inbox-note-editor")
-        try expect(noteEntry.label == "Open note editor" && noteEntry.press(),
-                   "Inbox exposes and activates its actual full-note editor entry")
+        try expect(!nodes(noteBoard.hosting).contains {
+            $0.identifier == "inbox-note-editor" || $0.label == "Open note editor" || $0.label == "Note editor"
+        }, "Inbox omits the standalone Note editor button")
+        let originalQuick = try await find(noteBoard.hosting, id: "inbox-quick-text")
+        try expect(originalQuick.valueText == state.newNoteText && state.newNoteProject == noteProject,
+                   "Removing the standalone entry preserves the visible quick draft and its project destination")
+        state.openDaily()
+        state.selectedDay = capturedAt.addingTimeInterval(-86_400)
         await settle(noteBoard.hosting)
+        try expect(state.receiptCaptures(for: state.selectedDay).isEmpty,
+                   "The alternate note entry uses an actually empty Daily date")
+        try await press(noteBoard.hosting, label: "New note")
         try expect(state.route == .newNote && state.newNoteText == "An existing shared note draft"
             && state.newNoteProject == noteProject,
-                   "Opening the note editor preserves the current shared text and destination")
+                   "Daily's existing New note action preserves the current shared text and destination")
         func editableNote(in view: NSView) -> NSTextView? {
             if let editor = view as? NSTextView, editor.isEditable, editor.string == state.newNoteText { return editor }
             return view.subviews.compactMap { editableNote(in: $0) }.first
@@ -484,10 +492,13 @@ import SwiftUI
         let back = try await find(noteBoard.hosting, id: "board-back")
         try expect(back.press(), "The note editor has an actual Back action")
         await settle(noteBoard.hosting)
+        try expect(state.route == .daily, "Back returns to the existing Daily entry point")
+        state.openInbox()
+        await settle(noteBoard.hosting)
         let quick = try await find(noteBoard.hosting, id: "inbox-quick-text")
         try expect(state.route == .inbox && state.newNoteText == continuedText && state.newNoteProject == noteProject
             && quick.valueText == continuedText,
-                   "Back restores Inbox and its visible quick composer with the edited draft and destination intact")
+                   "Returning to Inbox restores its visible quick composer with the edited draft and destination intact")
         try expect(!noteBoard.window.isKeyWindow && !NSApp.isActive,
                    "Note entry, native typing and Back retain the inactive own-process fixture")
 

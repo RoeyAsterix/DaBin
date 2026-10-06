@@ -22,10 +22,116 @@ import Foundation
         try rowAnchors()
         try selection()
         try contents()
+        try dateSelection()
         try summaryCache(root.appendingPathComponent("summary-cache"))
         try persistence(root.appendingPathComponent("workspace"))
         try conversion(root.appendingPathComponent("captures"))
-        print("PASS: \(checks) project-workspace checks; stable ordering, scoped selection, complete project counts, backup-compatible persistence, atomic task conversion, inherited ownership and guarded undo.")
+        print("PASS: \(checks) project-workspace checks; stable ordering, scoped selection, calendar day/week filters, complete project counts, backup-compatible persistence, atomic task conversion, inherited ownership and guarded undo.")
+    }
+
+    @MainActor private static func dateSelection() throws {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(identifier: "America/New_York")!
+        calendar.locale = Locale(identifier: "en_US")
+        calendar.firstWeekday = 1
+        func date(_ day: String) -> Date {
+            ProjectDateSelection.date(for: day, calendar: calendar)!
+        }
+        let exact = ProjectDateSelection(date: date("2026-10-05"), mode: .day, calendar: calendar)
+        try expect(exact.startDay == "2026-10-05" && exact.endDay == "2026-10-05",
+                   "Day selection uses the local Gregorian civil day")
+        try expect(exact.includes(day: "2026-10-05") && !exact.includes(day: "2026-10-04")
+            && !exact.includes(day: "2026-10-06"), "A day filter includes exactly its selected day")
+        let late = calendar.date(bySettingHour: 23, minute: 59, second: 59, of: date("2026-10-05"))!
+        try expect(ProjectDateSelection(date: late, mode: .day, calendar: calendar) == exact,
+                   "A day's filter identity ignores incidental receipt time")
+        let sundayWeek = ProjectDateSelection(date: date("2026-10-05"), mode: .week, calendar: calendar)
+        try expect(sundayWeek.startDay == "2026-10-04" && sundayWeek.endDay == "2026-10-10",
+                   "A Sunday-first locale selects its complete calendar week")
+        calendar.locale = Locale(identifier: "en_GB")
+        calendar.firstWeekday = 2
+        let mondayWeek = ProjectDateSelection(date: date("2026-10-05"), mode: .week, calendar: calendar)
+        try expect(mondayWeek.startDay == "2026-10-05" && mondayWeek.endDay == "2026-10-11",
+                   "A Monday-first locale starts on Monday and ends on Sunday")
+        try expect(mondayWeek.includes(day: mondayWeek.startDay) && mondayWeek.includes(day: mondayWeek.endDay)
+            && !mondayWeek.includes(day: "2026-10-04") && !mondayWeek.includes(day: "2026-10-12"),
+                   "Calendar-week filtering includes both boundaries and excludes neighboring days")
+        try expect(ProjectDateSelection(date: date("2026-10-11"), mode: .week, calendar: calendar) == mondayWeek,
+                   "Choosing another day in the same calendar week retains one filter identity")
+        let monthSpan = ProjectDateSelection(date: date("2026-10-01"), mode: .week, calendar: calendar)
+        try expect(monthSpan.startDay == "2026-09-28" && monthSpan.endDay == "2026-10-04",
+                   "A week filter spans months rather than stopping at the visible month's edge")
+        let yearSpan = ProjectDateSelection(date: date("2026-01-01"), mode: .week, calendar: calendar)
+        try expect(yearSpan.startDay == "2025-12-29" && yearSpan.endDay == "2026-01-04",
+                   "A week filter includes dates on both sides of a year boundary")
+        try expect(yearSpan.includes(day: "2025-12-31") && yearSpan.includes(day: "2026-01-01"),
+                   "Civil date keys sort correctly across a year boundary")
+        for (chosen, start, end) in [("2026-03-08", "2026-03-02", "2026-03-08"),
+                                      ("2026-11-01", "2026-10-26", "2026-11-01")] {
+            let week = ProjectDateSelection(date: date(chosen), mode: .week, calendar: calendar)
+            try expect(week.startDay == start && week.endDay == end,
+                       "DST transition week \(chosen) retains all seven civil days")
+            let anchor = week.date(calendar: calendar)!
+            let days = (0..<7).map { CaptureCalendar.dayString(calendar.date(byAdding: .day, value: $0, to: anchor)!,
+                                                              timeZone: calendar.timeZone) }
+            try expect(days.first == start && days.last == end && Set(days).count == 7 && days.allSatisfy(week.includes),
+                       "Reopening a DST week provides a valid anchor for every included civil day")
+        }
+        for invalid in ["", "2026-2-01", "2026-02-31", "2026-02-29", "2026-13-01", "2026-00-01",
+                        "0000-01-01", "2026-01-00", "2026-01-32", "2026-01-01x", "２０２６-01-01", "+026-01-01"] {
+            try expect(ProjectDateSelection.date(for: invalid, calendar: calendar) == nil,
+                       "Calendar anchors reject malformed or impossible civil date: \(invalid)")
+        }
+        try expect(ProjectDateSelection.date(for: "2024-02-29", calendar: calendar) != nil,
+                   "Calendar anchors accept a valid leap day")
+        var nonGregorian = Calendar(identifier: .hebrew)
+        nonGregorian.timeZone = calendar.timeZone
+        try expect(CaptureCalendar.dayString(exact.date(calendar: nonGregorian)!, timeZone: nonGregorian.timeZone) == exact.startDay,
+                   "Stored Gregorian civil dates reopen correctly with a non-Gregorian presentation calendar")
+        var apia = Calendar(identifier: .gregorian)
+        apia.timeZone = TimeZone(identifier: "Pacific/Apia")!
+        try expect(ProjectDateSelection.date(for: "2011-12-30", calendar: apia) == nil,
+                   "A time zone's skipped civil day is rejected rather than normalized to a neighbor")
+        let locale = Locale(identifier: "en_US")
+        let now = date("2026-10-05")
+        let sameYearTitle = exact.displayTitle(calendar: calendar, locale: locale, now: now)
+        try expect(sameYearTitle.contains("Oct") && sameYearTitle.contains("5") && !sameYearTitle.contains("2026"),
+                   "A current-year day has a compact unambiguous month/day title")
+        let oldDay = ProjectDateSelection(date: date("2025-10-05"), mode: .day, calendar: calendar)
+        try expect(oldDay.displayTitle(calendar: calendar, locale: locale, now: now).contains("2025"),
+                   "A day outside this year includes its year")
+        let spanTitle = yearSpan.displayTitle(calendar: calendar, locale: locale, now: now)
+        try expect(spanTitle.contains("2025") && spanTitle.contains("2026"),
+                   "A year-spanning week title includes both years")
+        let fullLabel = mondayWeek.accessibilityLabel(calendar: calendar, locale: locale)
+        try expect(fullLabel.contains("Monday") && fullLabel.contains("Sunday") && fullLabel.contains("2026"),
+                   "A calendar-week accessibility label speaks both full date boundaries")
+        try expect(exact.cacheKey != mondayWeek.cacheKey && sundayWeek.cacheKey != mondayWeek.cacheKey,
+                   "Filter cache identities distinguish mode and locale-specific week boundaries")
+
+        var project = ProjectNavigationPresentation()
+        try expect(project.selectedDateRange == nil && project.dateFilter == .anytime,
+                   "New project sessions start with all dates")
+        project.selectedDateRange = mondayWeek
+        var other = project
+        other.selectedDateRange = exact
+        try expect(project != other, "Project navigation equality includes its explicit date range")
+        var history = NavigationHistory()
+        var workspace = NavigationSnapshot()
+        workspace.route = .library
+        workspace.project = "Calendar QA"
+        workspace.projectPresentation = project
+        history.visit(workspace)
+        var settings = workspace
+        settings.route = .settings
+        history.visit(settings)
+        try expect(history.back()?.projectPresentation?.selectedDateRange == mondayWeek,
+                   "Returning from Settings preserves the project's chosen calendar week")
+        try expect(history.forward()?.projectPresentation?.selectedDateRange == mondayWeek,
+                   "Forward history preserves the same session-only project date filter")
+        project.selectedDateRange = nil
+        project.dateFilter = .anytime
+        try expect(project == ProjectNavigationPresentation(), "Clearing the date range restores an unfiltered project session")
     }
 
     @MainActor private static func ordering() throws {
