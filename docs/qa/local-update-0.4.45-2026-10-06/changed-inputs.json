@@ -1,0 +1,13 @@
+[
+  "Resources/Info.plist",
+  "Sources/DaBin/AppState.swift",
+  "Sources/DaBin/BoardView.swift",
+  "Sources/DaBin/CapturePresentation.swift",
+  "Sources/DaBin/DaBinIcon.swift",
+  "Sources/DaBin/HoverTooltips.swift",
+  "Sources/DaBin/ProjectWorkspaceCard.swift",
+  "Sources/DaBin/ProjectWorkspaceView.swift",
+  "Sources/DaBin/ScratchpadView.swift",
+  "Sources/DaBin/WorkspaceZoomLayout.swift",
+  "scripts/run_qa.py"
+]

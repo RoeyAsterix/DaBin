@@ -1,0 +1,16 @@
+{
+  "verifiedAtUTC": "2026-10-06T15:12:10.542088+00:00",
+  "checks": {
+    "currentSourceMatchesSnapshot": true,
+    "receiptInputsMatchSnapshot": true,
+    "fingerprintMatches": true,
+    "versionBuildMatch": true,
+    "release": true,
+    "bundleIdentifier": true,
+    "mainHashMatches": true,
+    "updaterHashMatches": true,
+    "arm64": true,
+    "strictSignatureVerified": true
+  },
+  "sourceFingerprint": "d638f6564a9b85ec0769df847f56f45b8675c771c090ffa9c8e5f0291ff29a89"
+}
