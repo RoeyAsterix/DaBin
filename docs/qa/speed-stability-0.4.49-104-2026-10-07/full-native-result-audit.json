@@ -1,0 +1,41 @@
+{
+  "suiteNamesMatchFrozenRegistry": true,
+  "suiteCount": 131,
+  "uniqueSuiteNames": 131,
+  "passedSuites": 130,
+  "failedSuites": 1,
+  "nonPassingSuites": [
+    {
+      "name": "WorkspaceZoomPerformanceTests",
+      "status": "failed",
+      "exitCode": 1,
+      "seconds": 33.661
+    }
+  ],
+  "sourceChangedDuringRun": false,
+  "configuration": "Release",
+  "distribution": "app-store",
+  "compileDefinitions": [],
+  "compiledReceiptCount": 132,
+  "allCompiledOutputsHashVerified": true,
+  "retainedWarnings": {
+    "nativeTableReentrancyWarnings": 10,
+    "affectedPassedSuites": [
+      "ProjectWorkspaceViewTests",
+      "SearchWindowTests",
+      "CaptionSelectionTests"
+    ],
+    "testFixtureActorIsolationCompilerWarnings": 3,
+    "compilerWarningSuite": "TaskPriorityTagTests",
+    "productionCompilerLogEmpty": true
+  },
+  "coverageLimits": [
+    "Only one attached display; physical cross-display gesture skipped.",
+    "Video playback/decoded-frame assertions passed, but all eight native Play/Pause accessibility activation attempts used direct AVPlayer fallback; actual native button presses=0.",
+    "Synthetic native input-to-layout and offscreen rendering do not measure physical input/display latency.",
+    "Native test executables do not enforce signed distribution sandbox or validate installation/upload.",
+    "Graphics stress checks geometry, renderability and disposal with explicitly supplied animation settings; actual OS increaseContrast/reduceMotion/reduceTransparency settings remained false.",
+    "Cold video checks fresh process controller presentation with production AVKit linkage already present; not an unloaded-framework experiment.",
+    "Offscreen graphics do not establish GPU frame-rate, energy behavior or absence of heap leaks."
+  ]
+}

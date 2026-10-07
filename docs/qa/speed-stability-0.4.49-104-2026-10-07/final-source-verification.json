@@ -1,0 +1,14 @@
+{
+  "checkedAtUTC": "2026-10-07T07:42:44.300910+00:00",
+  "version": "0.4.49",
+  "build": "104",
+  "liveCanonicalProductionFingerprint": "85d7f1546715936c17e9867d0acf952459cfc98702faec5ebc12b5f7aca2e24f",
+  "productionInputsMatchFreeze": true,
+  "frozenInputsMatchLive": true,
+  "changedFrozenInputs": [],
+  "fullAndSustainedCompiledReceiptsIdentical": true,
+  "allFullAndSustainedCompiledOutputsVerified": true,
+  "gitHEADAtFinalVerification": "63c107cf3de6b2ad94e1bcb620c08937fead559e",
+  "releaseFreezeEstablished": false,
+  "scope": "QA freeze of the live working tree; this does not establish distribution signing, upgrade evidence or TestFlight readiness."
+}

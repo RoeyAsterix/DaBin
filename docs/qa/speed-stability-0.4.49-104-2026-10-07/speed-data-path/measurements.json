@@ -1,0 +1,28 @@
+{
+  "archiveLoadMS" : 284.80429166665999,
+  "archiveLoadScope" : "Metadata and originals ready, readable mirror repair deferred. Separate firstMirrorGenerationMS measures legacy\/eager folder generation; it is not foreground startup.",
+  "environment" : "Version 26.6.2 (Build 25G83)",
+  "firstMirrorGenerationMS" : 23994.122999996762,
+  "matchesPerQuery" : 100,
+  "metadataSaveMS" : 203.48558333353139,
+  "records" : 10000,
+  "scope" : "Production CaptureSearch.groups over 10,000 in-memory text records; production repository save and store load. No thumbnails, OCR, GPU, automation latency, network, or private archive. One local run, not a broad performance guarantee.",
+  "searchMaxMS" : 52.856249996693805,
+  "searchMedianMS" : 47.658749997935956,
+  "searchSamplesMS" : [
+    52.856249996693805,
+    44.490374995802995,
+    47.636166666052304,
+    47.393708329764195,
+    47.898958328005392,
+    47.542374995828141,
+    48.044499999377877,
+    47.935374997905456,
+    48.138291662326083,
+    45.975416665896773,
+    47.681333329819608,
+    45.840416663850192
+  ],
+  "syntheticOnly" : true,
+  "warmMetadataLoadMS" : 289.09441666473867
+}

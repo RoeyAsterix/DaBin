@@ -1,0 +1,60 @@
+{
+  "finishedAtUTC": "2026-10-07T07:38:56.637853+00:00",
+  "elapsedSeconds": 2201.309,
+  "productionFingerprint": "85d7f1546715936c17e9867d0acf952459cfc98702faec5ebc12b5f7aca2e24f",
+  "version": "0.4.49",
+  "build": "104",
+  "stages": [
+    {
+      "stage": "full-native",
+      "exitCode": 1,
+      "seconds": 1597.3,
+      "log": "/private/tmp/dabin-speed-stability-20261007-070033/full-native.log",
+      "snapshotUnchanged": true,
+      "finishedAtUTC": "2026-10-07T07:28:52.671838+00:00",
+      "reportPath": "/private/tmp/dabin-speed-stability-20261007-070033/full-native-native-report.json",
+      "passedSuites": 130,
+      "failedSuites": 1,
+      "reportStatus": "failed",
+      "reportCoverage": "full_registered_suite"
+    },
+    {
+      "stage": "sustained-speed",
+      "exitCode": 1,
+      "seconds": 603.548,
+      "log": "/private/tmp/dabin-speed-stability-20261007-070033/sustained-speed.log",
+      "snapshotUnchanged": true,
+      "finishedAtUTC": "2026-10-07T07:38:56.299932+00:00",
+      "reportPath": "/private/tmp/dabin-speed-stability-20261007-070033/sustained-speed-native-report.json",
+      "passedSuites": 0,
+      "failedSuites": 1,
+      "reportStatus": "failed",
+      "reportCoverage": "selected_suites"
+    },
+    {
+      "stage": "python-tool-tests",
+      "exitCode": 1,
+      "seconds": 0.14,
+      "log": "/private/tmp/dabin-speed-stability-20261007-070033/python-tool-tests.log",
+      "snapshotUnchanged": true,
+      "finishedAtUTC": "2026-10-07T07:38:56.510412+00:00"
+    },
+    {
+      "stage": "offline-packaging",
+      "exitCode": 0,
+      "seconds": 0.048,
+      "log": "/private/tmp/dabin-speed-stability-20261007-070033/offline-packaging.log",
+      "snapshotUnchanged": true,
+      "finishedAtUTC": "2026-10-07T07:38:56.581743+00:00"
+    },
+    {
+      "stage": "deterministic-project",
+      "exitCode": 1,
+      "seconds": 0.035,
+      "log": "/private/tmp/dabin-speed-stability-20261007-070033/deterministic-project.log",
+      "snapshotUnchanged": true,
+      "finishedAtUTC": "2026-10-07T07:38:56.637623+00:00"
+    }
+  ],
+  "snapshotUnchanged": true
+}

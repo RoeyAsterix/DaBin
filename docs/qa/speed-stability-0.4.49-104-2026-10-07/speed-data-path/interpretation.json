@@ -1,0 +1,6 @@
+{
+  "sourceInspection": "Frozen native/Sources/DaBin/CaptureStore.swift:32-54,1312-1341",
+  "firstMirrorGenerationMS": "Current default CaptureStore initialization performs synchronous readable mirror synchronization before returning. The field includes metadata loading and attempted folder generation; the unmodified harness does not inspect per-record mirror errors or verify every generated folder.",
+  "warmMetadataLoadMS": "Measured after the synchronous default initializer; explicit deferred metadata-only reopening, with no mirror generation in the measured initializer.",
+  "timingGates": "None; count assertions only."
+}

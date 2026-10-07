@@ -1,0 +1,117 @@
+{
+  "checks" : 93867,
+  "fixtures" : [
+    {
+      "cancelledGenerations" : 12,
+      "contentHeight" : 680,
+      "contentWidth" : 380,
+      "finalCompletions" : 1,
+      "interruptions" : 12,
+      "nativeAnimationReduceMotion" : false,
+      "nativeAppearance" : "NSAppearanceNameAqua",
+      "profile" : "light",
+      "render" : "burst-light-380@2x.png",
+      "zoom" : 2
+    },
+    {
+      "cancelledGenerations" : 12,
+      "contentHeight" : 680,
+      "contentWidth" : 760,
+      "finalCompletions" : 1,
+      "interruptions" : 12,
+      "nativeAnimationReduceMotion" : false,
+      "nativeAppearance" : "NSAppearanceNameAqua",
+      "profile" : "light",
+      "render" : "burst-light-760@2x.png",
+      "zoom" : 0.75
+    },
+    {
+      "cancelledGenerations" : 12,
+      "contentHeight" : 680,
+      "contentWidth" : 380,
+      "finalCompletions" : 1,
+      "interruptions" : 12,
+      "nativeAnimationReduceMotion" : false,
+      "nativeAppearance" : "NSAppearanceNameDarkAqua",
+      "profile" : "dark",
+      "render" : "burst-dark-380@2x.png",
+      "zoom" : 2
+    },
+    {
+      "cancelledGenerations" : 12,
+      "contentHeight" : 680,
+      "contentWidth" : 760,
+      "finalCompletions" : 1,
+      "interruptions" : 12,
+      "nativeAnimationReduceMotion" : false,
+      "nativeAppearance" : "NSAppearanceNameDarkAqua",
+      "profile" : "dark",
+      "render" : "burst-dark-760@2x.png",
+      "zoom" : 0.75
+    },
+    {
+      "cancelledGenerations" : 12,
+      "contentHeight" : 680,
+      "contentWidth" : 380,
+      "finalCompletions" : 1,
+      "interruptions" : 12,
+      "nativeAnimationReduceMotion" : true,
+      "nativeAppearance" : "NSAppearanceNameAqua",
+      "profile" : "appkit-contrast-light-reduced",
+      "render" : "burst-appkit-contrast-light-reduced-380@2x.png",
+      "zoom" : 2
+    },
+    {
+      "cancelledGenerations" : 12,
+      "contentHeight" : 680,
+      "contentWidth" : 760,
+      "finalCompletions" : 1,
+      "interruptions" : 12,
+      "nativeAnimationReduceMotion" : true,
+      "nativeAppearance" : "NSAppearanceNameAqua",
+      "profile" : "appkit-contrast-light-reduced",
+      "render" : "burst-appkit-contrast-light-reduced-760@2x.png",
+      "zoom" : 0.75
+    },
+    {
+      "cancelledGenerations" : 12,
+      "contentHeight" : 680,
+      "contentWidth" : 380,
+      "finalCompletions" : 1,
+      "interruptions" : 12,
+      "nativeAnimationReduceMotion" : true,
+      "nativeAppearance" : "NSAppearanceNameDarkAqua",
+      "profile" : "appkit-contrast-dark-reduced",
+      "render" : "burst-appkit-contrast-dark-reduced-380@2x.png",
+      "zoom" : 2
+    },
+    {
+      "cancelledGenerations" : 12,
+      "contentHeight" : 680,
+      "contentWidth" : 760,
+      "finalCompletions" : 1,
+      "interruptions" : 12,
+      "nativeAnimationReduceMotion" : true,
+      "nativeAppearance" : "NSAppearanceNameDarkAqua",
+      "profile" : "appkit-contrast-dark-reduced",
+      "render" : "burst-appkit-contrast-dark-reduced-760@2x.png",
+      "zoom" : 0.75
+    },
+    {
+      "context" : "controller-disposal",
+      "controllers" : 4,
+      "releasedControllers" : 4,
+      "retainedNativeWindows" : 8,
+      "staleCompletions" : 0
+    }
+  ],
+  "limits" : "Read-only SwiftUI accessibility environment follows actual OS settings; high-contrast profiles exercise AppKit NSAppearance and native reduced motion is passed explicitly. Renderability and finite geometry are not physical refresh-rate, GPU scheduling, subjective smoothness or exhaustive heap leak measurements",
+  "schemaVersion" : 1,
+  "scope" : "Own-process offscreen production BoardView\/RobotAppFrameView, isolated archives\/preferences and CornerController disposal; no global input, clipboard, external apps or system preference changes",
+  "seed" : "0xDAB120261005",
+  "systemAccessibility" : {
+    "increaseContrast" : false,
+    "reduceMotion" : false,
+    "reduceTransparency" : false
+  }
+}

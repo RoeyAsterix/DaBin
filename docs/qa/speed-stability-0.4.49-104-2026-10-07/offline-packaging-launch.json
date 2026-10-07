@@ -1,0 +1,21 @@
+{
+  "stage": "offline-packaging",
+  "arguments": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "/private/tmp/dabin-speed-stability-20261007-070033/snapshot/native/scripts/test_app_store_preflight.py"
+  ],
+  "cwd": "/private/tmp/dabin-speed-stability-20261007-070033/snapshot/native",
+  "startedAtUTC": "2026-10-07T07:38:56.520703+00:00",
+  "productionFingerprint": "85d7f1546715936c17e9867d0acf952459cfc98702faec5ebc12b5f7aca2e24f",
+  "controlledEnvironment": {
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "unsetOverrides": [
+    "DABIN_SEARCH_QA_SKIP_KEYBOARD",
+    "DABIN_ZOOM_PERFORMANCE_FIXED_DATA",
+    "DABIN_NATIVE_DRAG_MANUAL",
+    "all inherited DYLD_*"
+  ],
+  "snapshotUnchanged": true
+}

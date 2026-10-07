@@ -1,0 +1,63 @@
+{
+  "startedAtUTC": "2026-10-07T07:39:53.349292+00:00",
+  "productionFingerprint": "85d7f1546715936c17e9867d0acf952459cfc98702faec5ebc12b5f7aca2e24f",
+  "harnessSHA256": "822941fe7341fb969a0da56b43de94918513b8b10e4fd191007021cbd7ddbb58",
+  "compileArguments": [
+    "xcrun",
+    "swiftc",
+    "-swift-version",
+    "5",
+    "-target",
+    "arm64-apple-macosx14.0",
+    "-module-cache-path",
+    "/private/tmp/dabin-speed-stability-20261007-070033/speed-data-path/ModuleCache",
+    "-warnings-as-errors",
+    "-D",
+    "REVIEW_DEFERRED_SUPPORT",
+    "-parse-as-library",
+    "-O",
+    "-whole-module-optimization",
+    "-I",
+    "/private/tmp/dabin-speed-stability-20261007-070033/snapshot/native/build/qa-cache/app-store-71fe750d8b5b6036f2b1ab71a3e47d509f57e5bea4257d8d5cf65854273791fa",
+    "-L",
+    "/private/tmp/dabin-speed-stability-20261007-070033/snapshot/native/build/qa-cache/app-store-71fe750d8b5b6036f2b1ab71a3e47d509f57e5bea4257d8d5cf65854273791fa",
+    "-lDaBinTestCore",
+    "-Xlinker",
+    "-rpath",
+    "-Xlinker",
+    "/private/tmp/dabin-speed-stability-20261007-070033/snapshot/native/build/qa-cache/app-store-71fe750d8b5b6036f2b1ab71a3e47d509f57e5bea4257d8d5cf65854273791fa",
+    "/private/tmp/dabin-speed-stability-20261007-070033/speed-data-path/ReviewPerformance.swift",
+    "-o",
+    "/private/tmp/dabin-speed-stability-20261007-070033/speed-data-path/ReviewPerformance"
+  ],
+  "moduleOutputsBefore": {
+    "DaBinTestCore.swiftmodule": "a3ee2d1b728e5a9224ff2a7112c947a4bc54415a6935666b3889f1b51ebef6eb",
+    "libDaBinTestCore.dylib": "ca0735beb48a420b20e282bfb0b905b7ab11c943029a3997dc5c22295b3be3e5"
+  },
+  "steps": [
+    {
+      "stage": "compile",
+      "exitCode": 0,
+      "seconds": 4.19,
+      "logSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "stage": "run",
+      "exitCode": 0,
+      "seconds": 28.455,
+      "logSHA256": "a6464cb1818ace34d4cb1a4a66e7297227944442a09298bd78c249a4640df10e"
+    }
+  ],
+  "scope": "Synthetic 10,000-record search/save/reopen benchmark; timings are observations with no speed budget.",
+  "executableSHA256BeforeRun": "cfbf3d5c6ec9402a5d93fc559e96e9a032131015acc822759c5b5ef12d9a5f37",
+  "moduleOutputsAfter": {
+    "DaBinTestCore.swiftmodule": "a3ee2d1b728e5a9224ff2a7112c947a4bc54415a6935666b3889f1b51ebef6eb",
+    "libDaBinTestCore.dylib": "ca0735beb48a420b20e282bfb0b905b7ab11c943029a3997dc5c22295b3be3e5"
+  },
+  "moduleOutputsUnchanged": true,
+  "snapshotUnchanged": true,
+  "finishedAtUTC": "2026-10-07T07:40:26.025478+00:00",
+  "status": "passed",
+  "executableSHA256AfterRun": "cfbf3d5c6ec9402a5d93fc559e96e9a032131015acc822759c5b5ef12d9a5f37",
+  "measurementsSHA256": "dbb65e2c1bd0996b6dd3717bc9bafd5b33839b9722c77f96027208f0d5ff8ad0"
+}

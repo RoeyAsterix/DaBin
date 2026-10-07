@@ -1,0 +1,11 @@
+{
+  "harnessSource": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/review-2026-09-30/harness/ReviewPerformance.swift",
+  "harnessSHA256": "822941fe7341fb969a0da56b43de94918513b8b10e4fd191007021cbd7ddbb58",
+  "scope": "10,000 synthetic records, 12 searches, metadata save and archive load; timing observations with exact count assertions, no performance budget",
+  "interpretationLimits": [
+    "The default initializer completes synchronous mirror synchronization attempts; the harness does not verify every folder or assert the absence of per-record mirror warnings.",
+    "Timings are single-host observations, not performance gates. Explicit deferred metadata-only load is separate from full folder generation."
+  ],
+  "gitHEADAtBenchmarkPreparation": "63c107cf3de6b2ad94e1bcb620c08937fead559e",
+  "verifiedInitializerBehavior": "CaptureStore(root:) uses repairArchiveOnOpen=true and synchronously invokes synchronizeArchive before return; production coordinator requests false for deferred foreground startup."
+}
