@@ -1,0 +1,20 @@
+{
+  "appliedAtUTC": "2026-10-07T13:39:01.234677+00:00",
+  "ownedPaths": [
+    "native/Tests/WindowTests.swift",
+    "native/Tests/SearchInputTests.swift",
+    "native/Tests/CardDeletionInteractionTests.swift",
+    "native/Tests/SearchWindowTests.swift",
+    "native/Sources/DaBin/CornerController.swift",
+    "native/Sources/DaBin/SearchResultCard.swift",
+    "native/Sources/DaBin/BoardView.swift",
+    "native/Sources/DaBin/ExplorerScreen.swift",
+    "native/Sources/DaBin/CaptureDetailPanels.swift",
+    "native/Sources/DaBin/SearchScreen.swift",
+    "native/Sources/DaBin/TrashScreen.swift"
+  ],
+  "canonicalFingerprint": "94af9c7a0cb865b9a92d990cdcd365ce5d93ea97851136fe2244002b802990e3",
+  "focusedNativeSuitesPassed": 5,
+  "preexistingWorkingBytesMatched": true,
+  "allCopiedBytesVerified": true
+}

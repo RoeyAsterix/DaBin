@@ -1,0 +1,939 @@
+{
+  "canonicalFingerprint": "94af9c7a0cb865b9a92d990cdcd365ce5d93ea97851136fe2244002b802990e3",
+  "claimsLimit": "101 selected native fixtures and service contracts; not all132, every control/physical flow, performance qualification, signed/sandboxed readiness, installation or upload.",
+  "compiledOutputHashReceiptsVerified": 102,
+  "compiledOutputHashes": [
+    {
+      "kind": "module",
+      "name": "DaBinTestCore.swiftmodule",
+      "sha256": "6ed4550b1479fec860e45d29ba04ee376afc746b68edddc8472065736c9a2f01"
+    },
+    {
+      "kind": "module",
+      "name": "libDaBinTestCore.dylib",
+      "sha256": "38ddf8cc90a16da1009d3fd6ce48468357d561281a7f8206f0814c9a456ce6cc"
+    },
+    {
+      "kind": "executable",
+      "name": "RedesignInteractionTests",
+      "sha256": "5064ffe6c9b0ae6e2858238c52a13b7dd3d33c68f786237329739d9c5da542c0",
+      "testSHA256": "5e693055f6d6b7e0d59b1476bfaaa7cbc7cf87fe8ea45e6767df3cdd65b4ab9b"
+    },
+    {
+      "kind": "executable",
+      "name": "WindowResizeInteractionTests",
+      "sha256": "f29b6d5ff9b1884e74ddf5677868ff3343c32d1f3dea1620dd1fb874d30cacc2",
+      "testSHA256": "5e81b8f64a41607422024b3c507978959fcf281b54f964ef95153e142727f4cf"
+    },
+    {
+      "kind": "executable",
+      "name": "WindowTests",
+      "sha256": "dc18a03c5399ee410915b3eee6ec01915c81e74bf5a86b45cd955c7c38a694ff",
+      "testSHA256": "4e626f396d6e648e48306d763f3d359c8b5e23687be524177e01655f9e098906"
+    },
+    {
+      "kind": "executable",
+      "name": "WeeklyWindowTests",
+      "sha256": "040634b817a2ad263a5374c80a97f07cacacf63d842ac5ba82141918b7840f61",
+      "testSHA256": "e8b2e63de605bb3c485b62a312e0cab961517ba42c36427ac59dc92a3224b930"
+    },
+    {
+      "kind": "executable",
+      "name": "FilterResizeTests",
+      "sha256": "a1011b67cf699637f9dbce7a2368b9dd96e4751b81e3cc4c095d8be515329e32",
+      "testSHA256": "5253b261aa48be2ece5b3342776941e2e951c2812a046015be88dff5c295b690"
+    },
+    {
+      "kind": "executable",
+      "name": "RobotDropTests",
+      "sha256": "f87328a9f99cb52d043a33db290041b15ac3b47b271b5c563c4e9bbc22835783",
+      "testSHA256": "30e75add9d32cf4c57e2e1d0f062c6bb466652fbf127c15bf55df06c9fcef613"
+    },
+    {
+      "kind": "executable",
+      "name": "DailyCaptureTests",
+      "sha256": "42894a1bc94bedeeadf58684bb7b6d88a889fdee8507824df0b88eaeef449713",
+      "testSHA256": "2211ceee7ec0f688252cdf4483d98c07536801737801a5ffdb87b3388259bbb1"
+    },
+    {
+      "kind": "executable",
+      "name": "HeaderInteractionTests",
+      "sha256": "cd2f32f7cada6a13219cfde2fe12f223851779ec686ec1df7d29ed0d1af500fe",
+      "testSHA256": "bc8750cd166525d6ca14034c24e4a74ebc2e580ff247decfb1bd7f60542f4335"
+    },
+    {
+      "kind": "executable",
+      "name": "WorkspaceWindowTests",
+      "sha256": "9b4f2d5a363811ae37547f1370a77cb6f6b988734894a88b54722e40300c1ee7",
+      "testSHA256": "435703a63162405cd04d0ca40cd13055097b31572c6e76cf9ff2a46e8b6a39e1"
+    },
+    {
+      "kind": "executable",
+      "name": "RobotWindowTransitionTests",
+      "sha256": "2a52d9d3ae4aa5188a32e2f135a4148c275c3af9470e8266c6db301b2526c9e6",
+      "testSHA256": "b401a033f3e1a99e5d35b25f951338fc9f97ae67eb865a4f856cba8e3e16ce90"
+    },
+    {
+      "kind": "executable",
+      "name": "DetailPreviewInteractionTests",
+      "sha256": "d9086f7f72bee99989402adc55413102c21d7ad30328c8cbbfa19387d0d50695",
+      "testSHA256": "58c487dabb206b2ced228e6df05fd579584528e3176d5c091704a61790b6ddf6"
+    },
+    {
+      "kind": "executable",
+      "name": "CaptureDetailReadabilityTests",
+      "sha256": "fe6f9f666b5996a3dd1d3d74aef5d596a3a958380667a0fda3379fbd871e3915",
+      "testSHA256": "7d04f1f6a797b4bfb908283b31c46015c96894f376649c7799f8d1d9c68a893e"
+    },
+    {
+      "kind": "executable",
+      "name": "CaptureDetailNavigationTests",
+      "sha256": "32fd2b2069789cb62ea5dbb73c872536686ee52f1227dd9a63ae0aca9194729d",
+      "testSHA256": "43aea99cb4a23f5b30ada7ac56e8e8b71e36a9c4e363c65f58e25eb136ee8db0"
+    },
+    {
+      "kind": "executable",
+      "name": "TaskPlanInteractionTests",
+      "sha256": "e9355405fc157c173cbc77ee07c51850fef7849ba3738558aefc4e5c7576cbeb",
+      "testSHA256": "42b523a232c2e2dc8bf42551d4c74d0362b2a7f9a3139b75c0e40c0f09afd21c"
+    },
+    {
+      "kind": "executable",
+      "name": "CaptureExtendedInteractionTests",
+      "sha256": "6562edfdadc6039ab6c6a735fffe72c4df49b562626b0f4dd391e3cc21bf1feb",
+      "testSHA256": "0cc2f721e0e89bfb93b0dd9403cac53ab2a8cdbbf50061c7e71bd3c70f0a71ea"
+    },
+    {
+      "kind": "executable",
+      "name": "ExtendedMediaInteractionTests",
+      "sha256": "4d2c883cf2ff657f79850d54e3b109f3781634e499cef9ad0a311afb5f903443",
+      "testSHA256": "09eda092ea54bffb9264676c3cf0d9b3867c397e8cae534e1acd580903bcc180"
+    },
+    {
+      "kind": "executable",
+      "name": "CaptureTimestampPresentationTests",
+      "sha256": "93f63dffde3673db1614466520a744f63b77a4c444b7220b901cbd6f56fa7d5d",
+      "testSHA256": "470dc4981d2707aba2c1c8dcbb1e1c4f51ccf725bbefb3e0b610bca58c63be47"
+    },
+    {
+      "kind": "executable",
+      "name": "NativeTooltipPreferenceTests",
+      "sha256": "f54957d21f478ed15ccde28126a3becd4c51b49f72c2b90b2b43269b29f3db6e",
+      "testSHA256": "f3c8dfb76e8621b129977c28a4104c95eccc5f92f75a9c056e3ab619a3257d8b"
+    },
+    {
+      "kind": "executable",
+      "name": "TooltipPresentationTests",
+      "sha256": "b13208c7ec9e76a174a377c7a471dea45bb79466c1656e107916a941df61e84e",
+      "testSHA256": "eda429a9cd2ad27856334606b1f5ee4e262e8b47d95e390fbf8c6a29fb30ba50"
+    },
+    {
+      "kind": "executable",
+      "name": "CollectionCardPresentationTests",
+      "sha256": "52f3b82d98ff16a148bbfd2525cb27be67b5fcd20cd758781982ce7f51633a27",
+      "testSHA256": "3e8257dd3b538e5603b6838221e48d2e81536652656ee8cea5832583f80849a7"
+    },
+    {
+      "kind": "executable",
+      "name": "TaskTimerRobotTests",
+      "sha256": "f358108fa7b0927a39a840b150a5c43835b84793e5cc9d0be0e83a8eddf444be",
+      "testSHA256": "7d5bad5ae995171612d7cac9069d6af32818f4008661f4013bb3b34c470d8439"
+    },
+    {
+      "kind": "executable",
+      "name": "ExplorerCaptureCardPresentationTests",
+      "sha256": "89aa68988d51655f6c6707a95e5fa7486079dac7d731a1c64753bd7086275476",
+      "testSHA256": "37298a0856dca7bd7ddf2c490befb2dccb56abcd5b04a854c81646a80790f955"
+    },
+    {
+      "kind": "executable",
+      "name": "AutoCaptureExplorerResponsivenessTests",
+      "sha256": "e428c0f21a3bf11731b1c7975f881f4abc50c95b566999c61e3e625a4045726d",
+      "testSHA256": "f9887b51a16a0a86be4fcf09a7af4d54748f446a8ffead15af7a7781ff2fdc33"
+    },
+    {
+      "kind": "executable",
+      "name": "ExplorerKeyboardTests",
+      "sha256": "0763e767d0fbf6306fbda2e5dbdb6323ea787eca8e502ceba6d3b29176288fa8",
+      "testSHA256": "ffd1bea8942c9c50d195338c183aca9cb7cc594d0121930b345ef53a019d9112"
+    },
+    {
+      "kind": "executable",
+      "name": "NotificationPresentationTests",
+      "sha256": "efe35b67464a5c123862ef833f01abf2475f3ebfcc006a57e91019518dc471f2",
+      "testSHA256": "294c31d804061746d96f603e8f1aa27e72b5b6ef7b49238ccdb5d6ba478012be"
+    },
+    {
+      "kind": "executable",
+      "name": "WindowChromePresentationTests",
+      "sha256": "dafcac1044b1e6eacb0006be960172262d9c46f112a13483cb94043b74ce86a6",
+      "testSHA256": "541aec9889919a8bc6ece0762a9dc0425745dfd736e385d33b86f61b5c5650bc"
+    },
+    {
+      "kind": "executable",
+      "name": "ProjectRecordingRobotTests",
+      "sha256": "45a6c371f592f8a3b87666cfa1694adca8a867973860d2ae9c3165ca448a18a4",
+      "testSHA256": "4075816571701f5f268d387beb5352a6d4839b41adc09c35c7fa03e6731fe995"
+    },
+    {
+      "kind": "executable",
+      "name": "ProjectWorkspaceViewTests",
+      "sha256": "7880886116f3b165152224e338f6d1851bdc509aa6277e768f47dcbe0095c4ce",
+      "testSHA256": "0c016546a1f7766773a0c4cb7b01dc712e9df9c80b4fb7b57e2196eeb894bd22"
+    },
+    {
+      "kind": "executable",
+      "name": "SearchWindowTests",
+      "sha256": "7bcf076f961bf4d23a9a28da794c2f63f1b24e002cbff93116dc7f73622145fb",
+      "testSHA256": "074dab96d37970367c5aa923ab025d22502fccd7d306ae5d8e815fe8584371fb"
+    },
+    {
+      "kind": "executable",
+      "name": "TaskPriorityTagTests",
+      "sha256": "0996df60b79420b8a9f9f1bbcfdb8a6c4ddb44ec53b1450bbb66d6cbfb729ad6",
+      "testSHA256": "42bae56a6f187ac2ad870ad2d462477dbd78d778ae64e2c6c7283a1c47f044ae"
+    },
+    {
+      "kind": "executable",
+      "name": "LocalFileLocationTests",
+      "sha256": "28d806a132319660301ae2e7788ad764a8f0cbb1b108a47a585577cbd4c67696",
+      "testSHA256": "08bc52812fda67657ea312127b8a0ff97d301815b47ec22fa65f4b6e1564d171"
+    },
+    {
+      "kind": "executable",
+      "name": "NativeContentDragTests",
+      "sha256": "b0ca5bf1b21231535ce7932dfbf5cc66131fa197b3668981f78e74519bce124c",
+      "testSHA256": "f2a173a14cee2f94f9ae5feb96ad33ed1abd9a95819d39c5a4432cb12fbcf900"
+    },
+    {
+      "kind": "executable",
+      "name": "CaptionDragTests",
+      "sha256": "184d35d74a90e5b8c92a897415efff1428097d76a0a36fde4b05e91ff3f9be22",
+      "testSHA256": "76293a735aadc931b0f00d9431958bae99f82e2bd935de53ca24977cafc58241"
+    },
+    {
+      "kind": "executable",
+      "name": "SearchInputTests",
+      "sha256": "03837c86993cade4c1119deb64b47583fbaebe682019f7e7c3998ba9d3ddd116",
+      "testSHA256": "4e581c8fc7e0521cc66ffceb467f642d4b5b144229d6647a2cbc90798a73ef11"
+    },
+    {
+      "kind": "executable",
+      "name": "AutoRecordIndicatorTests",
+      "sha256": "a89fd9a52babebed0bba5006f2945492ff2191e578b979502f760c79366100a9",
+      "testSHA256": "c021b4f90c451807d82dc3a2ae892795a91d5bedccb1b1c0d821d5d9f06ff6eb"
+    },
+    {
+      "kind": "executable",
+      "name": "TimelineCalendarTests",
+      "sha256": "b2074d96a79171fd8016648455839a323a612cc23783422268142b6b5ed35044",
+      "testSHA256": "cb2757ff5dc970dbf0e28d94f7027bd5645ec28fb33f49fee5c88d3a2c556a7f"
+    },
+    {
+      "kind": "executable",
+      "name": "TodayTaskCardTests",
+      "sha256": "683ab83448906b5c06dbff42f7077890a6c9fd0899393f2e880fa187e3d2546e",
+      "testSHA256": "f17f5a982c4d85d5a6e1ade6f01b02be906804685d23f9d8d2b01788097a2423"
+    },
+    {
+      "kind": "executable",
+      "name": "WeeklyLayoutTests",
+      "sha256": "51805abd3932c2f7d7bfd26b9f4325d914373871c95d9635a2e8e1cada4d77ac",
+      "testSHA256": "848f12033597b184db5ea10f8e6d5efaceb286ce8dcfff3f13f340ebf2ac458f"
+    },
+    {
+      "kind": "executable",
+      "name": "DailyGridLayoutTests",
+      "sha256": "b0f4d1d75a9f50f67a1597b653a772bec38ac00bfc80f57aee8efe2026560a96",
+      "testSHA256": "520321252eb4cd930a82f441f157f0f64d49ca68e6d6090ce14df8eb043bce71"
+    },
+    {
+      "kind": "executable",
+      "name": "WorkspaceZoomTests",
+      "sha256": "030fdc56c92e100c7a6b07a7af5b9f6574fdf1551eeb52afda363b25a9ad96ad",
+      "testSHA256": "afa5ca5c81460a7efc5bc4c82db5a853a94158341a686ee38d280e5e0e8377de"
+    },
+    {
+      "kind": "executable",
+      "name": "WorkspaceZoomLayoutTests",
+      "sha256": "3e64a6858832449a01285a950d2622eba02cebc8073112716752ab196044c20e",
+      "testSHA256": "0c4430969caa7faf22bb545233ac939fb27487a66ce9a6abd2c872e23216b2fa"
+    },
+    {
+      "kind": "executable",
+      "name": "WorkspaceInputTests",
+      "sha256": "4dda61bf9c462a2795fe24229fa196d05b42593a997be78cc7ff27bcf4795026",
+      "testSHA256": "63e12db71d433be08517bcf16f72302b80b4155bdb16999739832af652a2d661"
+    },
+    {
+      "kind": "executable",
+      "name": "ViewportLifecycleTests",
+      "sha256": "5488c357e07a39e73286fdc123f0156539ea90d944d0bea2705813d791ec2933",
+      "testSHA256": "e4961f23384200d7e890cd2b1d67d53bcbfe1d66ab853a3b02a35af8b7a05ad2"
+    },
+    {
+      "kind": "executable",
+      "name": "NavigationGestureTests",
+      "sha256": "9c4af2840c31e7b8f6a7de61ff09a5b9cab4ac43065f5930e82c5fe9fe0dbf34",
+      "testSHA256": "8d0f4833b4de032266e265490080b68512036629a69b03661d396539cef5db15"
+    },
+    {
+      "kind": "executable",
+      "name": "VideoPlaybackIntegrationTests",
+      "sha256": "125790cc355d85486fa9eea1c0cccf7135a7428adb950c8d44702b64a7100520",
+      "testSHA256": "83f982f8e61b21474b3052562a58f70ce5b47ec4b9ac1a3fa595882e1009e24d"
+    },
+    {
+      "kind": "executable",
+      "name": "ColdVideoControllerTests",
+      "sha256": "a904aa5861462c0f1592bcc62fdb372fb1117edd7421aeeeeca2863f303a0fb3",
+      "testSHA256": "dac04c98bcda47c940b901471d86be00afacdfdea6415c208c991a6b6557a85a"
+    },
+    {
+      "kind": "executable",
+      "name": "ProjectBrowsingNavigationTests",
+      "sha256": "ebf0989afbb0500d98607da810031f772ca485b800ccbf45669df15d934a360b",
+      "testSHA256": "84a67d23e5f51e4774c35b813ba2ce0a7ed43a7a7ab6550e1e9efe9aabd40415"
+    },
+    {
+      "kind": "executable",
+      "name": "SnippetNamingInteractionTests",
+      "sha256": "6d932d561f2394c59abf8af0b53e8bedd41bf1d3b0577b110209b4962a1c2691",
+      "testSHA256": "d1edb9017dea97c1c8cd557ad9f1982bcf8b72d5cd3b58741f2d9cd2fd1eb0bf"
+    },
+    {
+      "kind": "executable",
+      "name": "CardDeletionInteractionTests",
+      "sha256": "ba3daf17e9c8ab126043ea6ff9da98201735429fc831066016a915befa9cbcc7",
+      "testSHA256": "4c936bd2182c8058034e25cc12c86b3ad79a94304c786674c359af32d90d09f4"
+    },
+    {
+      "kind": "executable",
+      "name": "CaptionSelectionTests",
+      "sha256": "1c9005b8ac75d8d20636860c4918323a63d9cec691eb736a7d73739bf733247a",
+      "testSHA256": "16006257c5322db25c871142623bc6fc0dd42a351d59d3298b120016628c35d5"
+    },
+    {
+      "kind": "executable",
+      "name": "ApplicationLifecycleTests",
+      "sha256": "e8124c450c5a767f289b54773d0396cbed404a3eff244e95ae7ead53886d4f7c",
+      "testSHA256": "67275608b6a4181baa5c038ce09dff2642a0e8810097df4205bb3639507af5b2"
+    },
+    {
+      "kind": "executable",
+      "name": "ConnectedWorkflowTests",
+      "sha256": "7bfb9a811b4750cc3f17755d9640ea04b65e1de6ea8540168d2dba65f54e5319",
+      "testSHA256": "358367ebd4de07ceeaada297c0d4404fa57ecd143214574c3cb8a16cf576db65"
+    },
+    {
+      "kind": "executable",
+      "name": "FlowActionStressTests",
+      "sha256": "a46218c0782040f5cef3c80d04104b286f8c7e3ab5e37e602afb92be41f9988b",
+      "testSHA256": "2265e101454cb89193cdb502188ce97f4e33a5862d8e3918663d9538ef6b4e8d"
+    },
+    {
+      "kind": "executable",
+      "name": "AppDraftSessionTests",
+      "sha256": "e87b1c1ba3afa8872b5e48e6ec96a6c06fa278ac7697c0fc98168f17b4874326",
+      "testSHA256": "c23b032bf8a56f0f0201af30c2a7cef030c57b1a1c8a3b37d5df297dfc5e2c85"
+    },
+    {
+      "kind": "executable",
+      "name": "CommentDraftArchiveTests",
+      "sha256": "7a38f2138460a7f4ff13b08229b451fcb0510a41f77d5c5e7af70867afc52b69",
+      "testSHA256": "ad8353dc5f8c9b8779a7fee226312ce093f0659b421e5ca73ea6afa494249771"
+    },
+    {
+      "kind": "executable",
+      "name": "CaptureAnnotationTests",
+      "sha256": "4dd6867dda49f3c113257568000591e6c93ba0a4c189cc31d5be74b87e02c680",
+      "testSHA256": "dcea5a3736cdc4ddf6db827e5fa0a2946ce45687250f88eed5f936b0c2fad9e5"
+    },
+    {
+      "kind": "executable",
+      "name": "CaptureActionTests",
+      "sha256": "0b51f5d8606a8d5a183464235930ae48aed37c64bd471ca413329ecfbf83d3df",
+      "testSHA256": "ee3c90174253ec05eaccec3f5dab28977ce4f03925b940b52849b5c59013b37f"
+    },
+    {
+      "kind": "executable",
+      "name": "CaptureTaskConversionTests",
+      "sha256": "1b9097dcf80ef4c4823e9171ef692d3d20bb51c65df6adc917b92b17b21dcfb3",
+      "testSHA256": "cb70a52285ce782d51e9d3f6195314e6df491ad30859952bb5a5ab29ec2de8dc"
+    },
+    {
+      "kind": "executable",
+      "name": "CaptureRemovalTests",
+      "sha256": "177005ed15efec9ed0a68d72343cda4be45ebff6a64f072ed98a4185baa43f06",
+      "testSHA256": "ac4818520099f4f05fccda8dba3cb25f504515200729c9a3728d2fa39ea4a7e6"
+    },
+    {
+      "kind": "executable",
+      "name": "ArchiveBackupTests",
+      "sha256": "ba20e089af47677aec446a63da8ee30212fd791562f408b110ef537e4875922a",
+      "testSHA256": "d6f91d3b563f78e4fc536b946678917ab14fcac7f356eda2c633d9d522b12f1b"
+    },
+    {
+      "kind": "executable",
+      "name": "ArchiveRecoveryTests",
+      "sha256": "a3c01c78ffa078b1d5b8b760ff81e161e86b98ceb7e4cf81ac30a87b275fcaeb",
+      "testSHA256": "4fc370c0bb3007647a4edc97d1dad3907680f4bf73a47376bc4c03d2b4275459"
+    },
+    {
+      "kind": "executable",
+      "name": "DeferredArchiveRepairTests",
+      "sha256": "3415c1a1cfb913217d18e7ad7f814d979c71291c46ac148b2a3fe1a1bad52ce4",
+      "testSHA256": "21b28ded7ea508a18b12a6d006d957e72675ef587660606c0472e8642593fa2c"
+    },
+    {
+      "kind": "executable",
+      "name": "QAStorageScopedSaveTests",
+      "sha256": "af93e232a40a858041d51bcff9100820be7ef00aaa670baaf54f5979d557bd10",
+      "testSHA256": "e41fbf714204ad9c08e0ce5cee3de50fa89e81bc2412b7bd8480ce68a33596af"
+    },
+    {
+      "kind": "executable",
+      "name": "TaskStateTests",
+      "sha256": "98b0078850c06cf747c491b9c7a77c186e61b193f7faad975f5fd97c4f842ca4",
+      "testSHA256": "ae4230a54d1167c065deaa429f59330c1c01b36e6da528608a5db76f32fd862d"
+    },
+    {
+      "kind": "executable",
+      "name": "TaskPlanningTests",
+      "sha256": "431c97323b309440dc0e7b989702a2c315803209dae6d2e36df0b66f327531c0",
+      "testSHA256": "6661eeb35a03786f27b0127505f14235c1f23b714e37dcad08d43fcfe949354c"
+    },
+    {
+      "kind": "executable",
+      "name": "TaskFocusTests",
+      "sha256": "934059d30292319841bea9ecbdc794aee10aac307e47f6793e9839d85459e352",
+      "testSHA256": "29204a75196c9f34634dbc67a40932cc9ad3495b3af2ef88c15514d68e3e94a2"
+    },
+    {
+      "kind": "executable",
+      "name": "WorkInboxTests",
+      "sha256": "12e25672b0401eb3fc3b77ac252682624714021c6f6e1b4ad79e77978f229a3b",
+      "testSHA256": "cfa2ba5717d733bfd156301d159924b1216b7329badf2cf602480ca2530c3082"
+    },
+    {
+      "kind": "executable",
+      "name": "WorkspaceTests",
+      "sha256": "630e0516261feb45c3c60b55aefeb74de59d4619c5c61676d4391c6235f4db44",
+      "testSHA256": "f287f18f512b03f1b1c832f553bf92ad04e67cd17e09f77e60b55bbc57d71db9"
+    },
+    {
+      "kind": "executable",
+      "name": "ProjectWorkspaceStateTests",
+      "sha256": "9802017279db23cc76bd930f542a2814fbe8755bec085b004ba143514df37551",
+      "testSHA256": "6bfd6f61692b46aac2af76e1ef79d1ac8522e94b73cd55300e2b72c67fcf1afb"
+    },
+    {
+      "kind": "executable",
+      "name": "ProjectWorkspaceExportTests",
+      "sha256": "059a54b6c17cce3f852d4e02aabc900ef1d7574c07f7b71465fe97a0006e64b4",
+      "testSHA256": "dc9e4b0e3ffc66845c4b1b4d2650389bacbcc02f50bd5f8ba8821965cb57a911"
+    },
+    {
+      "kind": "executable",
+      "name": "ProjectPickerTests",
+      "sha256": "8f7a975020d73a1f046ee281e948f9ce2971c343753bd04edc4e14885870d4c3",
+      "testSHA256": "19925409ce70a2ffd9387f69dfa51a9952e6008f16b10c401ede283b9426600c"
+    },
+    {
+      "kind": "executable",
+      "name": "InputTests",
+      "sha256": "e5a07fd5ea42731a7eb0a79ed2ad5b2b411d1f1ccadb46b8f5fd38d1ddee4141",
+      "testSHA256": "a2d1c59684cee000d9e5b67048a0dd8ba3c5101d7a53205aeb3a0331afd48889"
+    },
+    {
+      "kind": "executable",
+      "name": "ManualCaptureLifecycleTests",
+      "sha256": "bf4bbccc31ade73e72e63f538311c651f6f4625d9dd557d67e2c0b688271ae0d",
+      "testSHA256": "df436b988b1ae297438cff5ed8526153ab3e92abd6f0e3ad79abac1d6a08776b"
+    },
+    {
+      "kind": "executable",
+      "name": "AutoCaptureServiceTests",
+      "sha256": "46c042d6c3f3c56e928445ebbbcac0459332bd806b14335574c195942a3782ef",
+      "testSHA256": "dc70021f21968d3bea226e3fbc5095fb5cbb9239a2430e0f67d36c28120e78cf"
+    },
+    {
+      "kind": "executable",
+      "name": "CaptureClipboardTests",
+      "sha256": "23dbbff44f8a592b9f01a768baf85e50d82a2c64f8741bc8e3ab368ee39db4b2",
+      "testSHA256": "ff86d81f42d5c0ffd5a2d4502f1beed1db0514320b324eac2efac75c53fc9eb7"
+    },
+    {
+      "kind": "executable",
+      "name": "ClipboardRetentionTests",
+      "sha256": "0e2c5c0c7b2e67d28f8e55d85a6f0d6d233e7e716bbad15205aa28d441261ce5",
+      "testSHA256": "3aa3dbbd8bd1d17f6acbe1dc88526c4a63b28c2e39cf16545477c68e3e6735c3"
+    },
+    {
+      "kind": "executable",
+      "name": "ExplorerQueryTests",
+      "sha256": "a2b0d618edda32f7d9cd59c0448f9d09912f1bf8f5c69082508b9ae147ab299d",
+      "testSHA256": "f1a2fa9c4625a703e649b9b1568dca59331b06cf371ebe7f4d649863de360a54"
+    },
+    {
+      "kind": "executable",
+      "name": "ExplorerTransferTests",
+      "sha256": "862e67a1da0a890c5619f2d442ae0c4d943152a406dfbd38dbb75e5a6b7f6b83",
+      "testSHA256": "959e09ba9db1f1d25ab9a7917e3f4e63cb0771e5fc68f0f766e93c467c2a7afa"
+    },
+    {
+      "kind": "executable",
+      "name": "ProjectFileArchiveTests",
+      "sha256": "1ab20ea8398fcf8002daf804e4f36c9f3eb7b1c4efb2d9da8900419f2a440e8e",
+      "testSHA256": "edede0a5e60540687cf7fff42aa547e482e3c7ab66235dd85dce7536e777aebc"
+    },
+    {
+      "kind": "executable",
+      "name": "OutgoingFileBatchTests",
+      "sha256": "130eeaf6baf57e2ae3c4adf35e21d8e3290c98ff2b887046d64baa078470782f",
+      "testSHA256": "50e98d72df7dec91b6e05a9b9153a6e05e1b3f5910d14e4d011ce6b2dec4f4b6"
+    },
+    {
+      "kind": "executable",
+      "name": "OutgoingFileSnapshotTests",
+      "sha256": "666444a639b992e24eda1fac52d4064380f163069da3d877e057803b163af052",
+      "testSHA256": "b1d335bd6d1fa65eca2252473bf365c5be891ec0a8bc4e20b28d09caffb885de"
+    },
+    {
+      "kind": "executable",
+      "name": "MediaIntegrationTests",
+      "sha256": "9eb3efc8ddcf6e46a07da7092499a592864da2be92316b43ca7237d4fb26ee27",
+      "testSHA256": "b55b25d088ceefd4ae4c14ce26c88b605cdaf0a108c41607d56cd78a880cf8d4"
+    },
+    {
+      "kind": "executable",
+      "name": "ThemeSettingsTests",
+      "sha256": "36b0f6a2a764e13804033363e389433e43be3e057104a2782d28798939d3f9b8",
+      "testSHA256": "263c98fd245be1ca2a796e8390ab82aced9776daa7c53cf15037b73abaaebbb0"
+    },
+    {
+      "kind": "executable",
+      "name": "PrivacyInformationTests",
+      "sha256": "2a655dff4ed32702aa0977f15d7cf4a3313806a600b0141f3d2bf740ca651938",
+      "testSHA256": "ca43145dd55139ddacf69461e09355360fcbfccd5490868a80e7e14d40c38a8c"
+    },
+    {
+      "kind": "executable",
+      "name": "QuickAccessTests",
+      "sha256": "5f4923301bdb0f4e14161cd2161c8ff8cf9aa58a43874505220f2cb0b35c9b86",
+      "testSHA256": "a131dab325f6c143c92baa245d4a08de86dade55f615da74c87d19f841396a6b"
+    },
+    {
+      "kind": "executable",
+      "name": "SearchScopeStateTests",
+      "sha256": "9a15debfafabe95ae6bdb395aa4ee20ad30af59c3adc1522f7c0ec01d1a8290a",
+      "testSHA256": "331b1d7767388b6c2f6d514abe8159c3fe1640a3eccb67db1bd4ff088d53b0d9"
+    },
+    {
+      "kind": "executable",
+      "name": "SearchDateBoardTests",
+      "sha256": "fc506919da6dc2ad4a6cad826553273b6a941b305f0be44289f6f1a070e9b07e",
+      "testSHA256": "f9b3930e959efb6889a31c96e0a769f32392de308905566331a51da6a38f689c"
+    },
+    {
+      "kind": "executable",
+      "name": "SearchResultExcerptTests",
+      "sha256": "ae8abd29485cfaef54cb852e4e86530531875b142a72c0c9c24cc01613c58ba9",
+      "testSHA256": "b87eddf21a02649d10bc1a90078c2649d161706e43fd82a8c42d1d1c7e3286d5"
+    },
+    {
+      "kind": "executable",
+      "name": "NavigationHistoryTests",
+      "sha256": "748e4f9be092df8fe3ffc561777f5b9f8fc259d09678db1f2e9207f60542448c",
+      "testSHA256": "6e615af7a251572f6d6c61e9f8c2f574a48f06dd81ae51e12e0fb94b2d6eb4b5"
+    },
+    {
+      "kind": "executable",
+      "name": "DayExportTests",
+      "sha256": "6aec4019f5b9738d6bbd395ac797144e88286ba89af3e3ebe80e5ba8fb64b9e6",
+      "testSHA256": "b1c1125745280b19eaea2561b831c023611d131f8cc20ce351cda31d49a579f7"
+    },
+    {
+      "kind": "executable",
+      "name": "DayExportUITests",
+      "sha256": "5ee0f9a289c1c6ef0dfc2dcf2131da0d8c60957228bd0410948182347525e373",
+      "testSHA256": "6beeec31e09b68071effeaa5476524df011676279ee17eb5e179796d45c03fd3"
+    },
+    {
+      "kind": "executable",
+      "name": "WeeklyStateTests",
+      "sha256": "f3f9927658ebb87f55eb350755fe9603415e8ebafae3dfdf2d39c50e176a2079",
+      "testSHA256": "bdba3746ca3f658529f889a1888a52b058277b0fb0fca8bd6334c734d091fa01"
+    },
+    {
+      "kind": "executable",
+      "name": "DomainTests",
+      "sha256": "7bcf63816330ee92c53f496d70bbff7052b321e392ef24e29b526be6e2a9db1f",
+      "testSHA256": "cbf45049b42993c4ac00d21dc8dc2a510170252c69ae4694e851d959bc3b8bd3"
+    },
+    {
+      "kind": "executable",
+      "name": "LocalContentSearchTests",
+      "sha256": "98e83c2ddf49bfa8a5f4e8b6b466ec7c1b4121b8aed7adc80e7cf6bd8aaad767",
+      "testSHA256": "a9e697891a5395e3d1851b0bd1c08f1277cee712e99eb32aa0620efb8e95c14a"
+    },
+    {
+      "kind": "executable",
+      "name": "LocalDOCXTextExtractorTests",
+      "sha256": "12bbe4ae940a7c9d7d3b2bb6cf0e53098732ca4eb445d1c1729a3488aab849f3",
+      "testSHA256": "dc3f9fc575047364f5e0fe0f1db9334796aaa669cf8cf19fbf81d2f93f1d0976"
+    },
+    {
+      "kind": "executable",
+      "name": "CaptureZoomStateTests",
+      "sha256": "cbd08be665116fe1fc0b6011e5e25898b4d1aa6e87d185644eaba23fd6950525",
+      "testSHA256": "3b5b6fd25e5b3b234e40be4f4f9d367cb919f8f55d64268293b62bc70928a0e7"
+    },
+    {
+      "kind": "executable",
+      "name": "PreviewLifecycleTests",
+      "sha256": "454ff68fdc96c426fa10a9f7e0460bdd22f2d18a20c099a2ff66145b19ffaaf1",
+      "testSHA256": "3dba54ed572e2dbb9acf36581950eb607388957bccff8c8b32821618323ece96"
+    },
+    {
+      "kind": "executable",
+      "name": "ReminderAlertCoordinatorTests",
+      "sha256": "a00604d5c6a5c1a6fadeb6141ef457a23394f85773a9284f8d18bd63e7ac9612",
+      "testSHA256": "69acf2dfe61dab9e84f9730db00635ba8ea351a21c5837b73815a2e6555a1221"
+    },
+    {
+      "kind": "executable",
+      "name": "SoftwareUpdateTests",
+      "sha256": "dec9ce432f897f2df8e9563ab9467e972dcc6c295545158a45cc80641d851333",
+      "testSHA256": "9d8e25fd51cc3ac5aff7f8246b9a9d2716991a384095e23dbfa90617b4fe314d"
+    },
+    {
+      "kind": "executable",
+      "name": "UpdateConfigurationTests",
+      "sha256": "275dc14211a13b624b98102c5c537a72717cbc9632410df9e36034a1c4ec91e0",
+      "testSHA256": "1445b3fc8ee4478f3216eeb4304bbf9b0cf16d1de90cbe4071edcac62f4a5796"
+    },
+    {
+      "kind": "executable",
+      "name": "WeeklyPresentationCacheTests",
+      "sha256": "07d32da17cca9db245f8fb6f793c15d90c83cf51b74e6ad56874d609c8cbdc2d",
+      "testSHA256": "bfb15751c3d507849e0a3d665d643a6a165afb02797b05702bd137c073635f5e"
+    }
+  ],
+  "createdAtUTC": "2026-10-07T13:58:28.120229+00:00",
+  "currentNativeTableWarnings": {
+    "byLog": {
+      "CaptionSelectionTests.log": 1,
+      "ProjectWorkspaceViewTests.log": 8,
+      "SearchWindowTests.log": 4
+    },
+    "count": 13,
+    "status": "open; full raw diagnostic lines preserved"
+  },
+  "inventoryScope": {
+    "additionalUserGoalFamilies": 24,
+    "routes": 12,
+    "uniquePhysicalJourneysClaimed": false
+  },
+  "nativeCompletionReceipts": [
+    {
+      "completion": {
+        "checks": 218,
+        "passed": true,
+        "screens": 1
+      },
+      "log": "build/qa/runs/20261007T133555704008Z-app-store/WindowTests.log",
+      "name": "WindowTests",
+      "role": "focused"
+    },
+    {
+      "completion": {
+        "checks": 1947,
+        "keyboardVerification": "strict native focus and recorder checks passed",
+        "passed": true
+      },
+      "log": "build/qa/runs/20261007T133555704008Z-app-store/HeaderInteractionTests.log",
+      "name": "HeaderInteractionTests",
+      "role": "focused"
+    },
+    {
+      "completion": {
+        "checks": 179,
+        "keyboardVerification": "passed: native focus, Tab followed native popup exclusion, Escape cancels the native dropdown",
+        "passed": true
+      },
+      "log": "build/qa/runs/20261007T133555704008Z-app-store/SearchWindowTests.log",
+      "name": "SearchWindowTests",
+      "role": "focused"
+    }
+  ],
+  "notRequestedSuites": [
+    "ArchiveLayoutTests",
+    "ArchiveStoreTests",
+    "AutoCaptureRobotCelebrationTests",
+    "AutoCaptureRobotPresenterTests",
+    "AutoCaptureSignMotionTests",
+    "AutoCaptureSignPresenterTests",
+    "AutoCaptureSignRenderTests",
+    "BoredRobotArtworkTests",
+    "CapturePreviewPerformanceTests",
+    "CaptureProvenanceTests",
+    "DaBinIconTests",
+    "DurabilityStressTests",
+    "ExternalTransferProcessTests",
+    "HourlyGroupingTests",
+    "IslandRobotChoreographyTests",
+    "ProductFoundationTests",
+    "ProjectWorkspaceCardTests",
+    "QALifecycleTests",
+    "QuietOrbitRenderTests",
+    "RepositoryBatchTests",
+    "RobotAppFrameTests",
+    "RobotCloseVisualTests",
+    "RobotLifecycleTests",
+    "RobotMotionTests",
+    "RobotProjectSignRenderTests",
+    "RobotVisualConsistencyTests",
+    "ServiceTests",
+    "TooltipBehaviorTests",
+    "UpdateArchiveSecurityTests",
+    "VisualAnimationStressTests",
+    "WorkspaceZoomPerformanceTests"
+  ],
+  "originalRemainingFailuresRetained": [
+    {
+      "compile": {
+        "cached": false,
+        "exitCode": 0,
+        "log": "build/qa/runs/20261007T133827710613Z-app-store/UpdateConfigurationTests-compile.log",
+        "seconds": 1.802,
+        "status": "passed"
+      },
+      "exitCode": -5,
+      "log": "build/qa/runs/20261007T133827710613Z-app-store/UpdateConfigurationTests.log",
+      "name": "UpdateConfigurationTests",
+      "reportedSummary": "",
+      "requiresWindowFocus": false,
+      "seconds": 0.51,
+      "status": "failed"
+    }
+  ],
+  "ownedAfterHashesVerified": 11,
+  "phaseReports": [
+    {
+      "failedSuites": 0,
+      "passedSuites": 5,
+      "report": "focused-qa-report.json",
+      "reportSHA256": "a15f8f738236d49f21b2a60985c0bd7e9d7b201fe425b4ad89789b4248b8544f",
+      "requestedSuites": 5,
+      "role": "focused",
+      "sourceFingerprint": "9a39caf74d094574e2b4f116ae46d63990e95e89bbbe0bfa581f234f5b862b9e",
+      "status": "passed"
+    },
+    {
+      "failedSuites": 1,
+      "passedSuites": 95,
+      "report": "remaining-qa-report.json",
+      "reportSHA256": "c39e11ebbdf81cf5dbe8132ccbb7c85de760fbfb891faa2257f4c879c2b6d1b5",
+      "requestedSuites": 96,
+      "role": "remaining",
+      "sourceFingerprint": "41474dc2d093d97fd12d5492c092f1b7451a6ba80719c2b9c52b0771175e0e72",
+      "status": "failed"
+    },
+    {
+      "failedSuites": 0,
+      "passedSuites": 1,
+      "report": "supplemental-qa-report.json",
+      "reportSHA256": "aa2872baa73122d23ffe77189ab5cffd5937244efabe3c23dacce7b90abddeb4",
+      "requestedSuites": 1,
+      "role": "supplemental",
+      "sourceFingerprint": "d573f6f36f045b2d8753decdee520446c4527953b1496d299f80d11ac5f398fc",
+      "status": "passed"
+    }
+  ],
+  "priorOpenIssues": {
+    "priorTableWarnings": 10,
+    "shortComparisonsDoNotExonerateSustainedFailure": true,
+    "sourceDocument": "/Users/roeylibfeld/Documents/KARI Creatives/DaBin/docs/qa/modularity-0.4.49-104-2026-10-07/README.md",
+    "sourceDocumentSHA256": "e8a0c137d1497d3d51d9bbfc60ac5fa7223ca1255c37841781262f77f30a516b",
+    "sourceFingerprint": "45414902e2ea23bd50bb9ce02eb76a5d6cc4576c98193f576e634549a91bee24",
+    "strict600Seconds": {
+      "inputLayoutP95ms": 52.77,
+      "inputLimitMs": 50,
+      "status": "failed_both_original_limits",
+      "steadyTimerP95ms": 36.19,
+      "timerLimitMs": 33
+    }
+  },
+  "qaFingerprint": "60db384192f04e99c2cc2b2a1a4485a488da2ba23e2a26ed0a563d8692800271",
+  "registeredSuites": 132,
+  "schemaVersion": 1,
+  "selectedSuitesPassed": 101,
+  "snapshotAndLiveInputsVerified": true,
+  "status": "passed_selected_101",
+  "supplementalDependencySHA256": {
+    ".github/workflows/stable-latest-downloads.yml": "d6fa6a3abb772e07ca72f2319ed41ee463aed824a86015f1b55f1b7849fe1a18",
+    "README.md": "6bdd538d13a41b73b0add73e8ad93ab523c073cac00a0f599e34444f418f7d5a",
+    "docs/RELEASING.md": "b9c181019dad6b48a1a067f08ab08531fc48ffc1151c5b920c33229acee9ed01",
+    "native/Config/AppStoreSigning.json": "a6072c1ad444175cf204f71d3f8d8d39e0d15bcd3d74d672a4a1924ac525ddf5",
+    "native/DaBin.xcodeproj/project.pbxproj": "100b04f40e8534779ae126a24659187054ac3a9864998e27b12cec84f0d705b0",
+    "native/Resources/Info.plist": "e5e9ee968790984eb46efdba995c757bc52780d2076f1ee7d4b09ff011814000",
+    "native/Resources/PrivacyPolicy.md": "0fc82bcc4a792caa949f0da874b08d4438c6c448862347f2a00fc123117d0981",
+    "native/Sources/DaBin/SoftwareUpdateService.swift": "febb05311551e9f731e9e64c7b3deeb7fa16bed942cad367079e8513cc999656",
+    "native/Sources/DaBin/UpdateHandoff.swift": "c46b112f0ec62cf366454d78cbe8800fe054aa1cde7c0eb07904a2ad4257db6f",
+    "native/UpdateTools/DaBinUpdater.swift": "a8f24ca2e16dec40eb3cc2a2013dedf6806ff1b32ca851280b8dc27316983697",
+    "native/UpdateTools/package_update.py": "aa4b41c67d04e467c6525fe9eb671671e233c09fa9fdc8dc3f4ec1a6c58adc21",
+    "native/scripts/app_store_archive_location.py": "f8f78939bb00cb20f49877d3d477840d6ed964168cc2a0fc19ae43ab3dc2d140",
+    "native/scripts/app_store_preflight.py": "8a6ec4c1e8b3b5e72bdc85dee98f880f29695ef4709b0029aaf25b556c46da4b",
+    "native/scripts/archive_app_store.sh": "6ac746dbfeaa0f15edfd92736664886e93f826d002a1d93b2221f47ba451f665",
+    "native/scripts/build_app.py": "a838278935869a725adf4294818ddc50c10ecab402f2883d19c84e1bcff94d4e",
+    "native/scripts/stage_release_assets.py": "58228c453f6a5ee4f52081f07d2b7bd00e35ecbe55a55d158dac51883948e8e4"
+  },
+  "warningAndBoundaryLines": [
+    {
+      "line": 1,
+      "path": "build/qa/runs/20261007T133555704008Z-app-store/HeaderInteractionTests.log",
+      "text": "NOT TESTED: Record-button Space activation depends on macOS Keyboard navigation; this fixture leaves that preference unchanged."
+    },
+    {
+      "line": 21,
+      "path": "build/qa/runs/20261007T133555704008Z-app-store/SearchWindowTests.log",
+      "text": "2026-10-07 16:37:14.787 DaBinSearchQA[26820:2128576] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future."
+    },
+    {
+      "line": 22,
+      "path": "build/qa/runs/20261007T133555704008Z-app-store/SearchWindowTests.log",
+      "text": "2026-10-07 16:37:15.134 DaBinSearchQA[26820:2128576] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future."
+    },
+    {
+      "line": 26,
+      "path": "build/qa/runs/20261007T133555704008Z-app-store/SearchWindowTests.log",
+      "text": "2026-10-07 16:37:17.955 DaBinSearchQA[26820:2128576] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future."
+    },
+    {
+      "line": 38,
+      "path": "build/qa/runs/20261007T133555704008Z-app-store/SearchWindowTests.log",
+      "text": "2026-10-07 16:37:31.479 DaBinSearchQA[26820:2128576] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future."
+    },
+    {
+      "line": 1,
+      "path": "build/qa/runs/20261007T133827710613Z-app-store/CaptionSelectionTests.log",
+      "text": "2026-10-07 16:56:57.489 CaptionSelectionTests[27844:2169248] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future."
+    },
+    {
+      "line": 1,
+      "path": "build/qa/runs/20261007T133827710613Z-app-store/ProjectWorkspaceViewTests.log",
+      "text": "2026-10-07 16:51:47.905 ProjectWorkspaceViewTests[27660:2157669] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future."
+    },
+    {
+      "line": 6,
+      "path": "build/qa/runs/20261007T133827710613Z-app-store/ProjectWorkspaceViewTests.log",
+      "text": "2026-10-07 16:51:53.076 ProjectWorkspaceViewTests[27660:2157669] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future."
+    },
+    {
+      "line": 7,
+      "path": "build/qa/runs/20261007T133827710613Z-app-store/ProjectWorkspaceViewTests.log",
+      "text": "2026-10-07 16:51:53.604 ProjectWorkspaceViewTests[27660:2157669] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future."
+    },
+    {
+      "line": 8,
+      "path": "build/qa/runs/20261007T133827710613Z-app-store/ProjectWorkspaceViewTests.log",
+      "text": "2026-10-07 16:51:54.882 ProjectWorkspaceViewTests[27660:2157669] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future."
+    },
+    {
+      "line": 11,
+      "path": "build/qa/runs/20261007T133827710613Z-app-store/ProjectWorkspaceViewTests.log",
+      "text": "2026-10-07 16:51:59.020 ProjectWorkspaceViewTests[27660:2157669] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future."
+    },
+    {
+      "line": 57,
+      "path": "build/qa/runs/20261007T133827710613Z-app-store/ProjectWorkspaceViewTests.log",
+      "text": "2026-10-07 16:52:16.448 ProjectWorkspaceViewTests[27660:2157669] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future."
+    },
+    {
+      "line": 62,
+      "path": "build/qa/runs/20261007T133827710613Z-app-store/ProjectWorkspaceViewTests.log",
+      "text": "2026-10-07 16:52:22.907 ProjectWorkspaceViewTests[27660:2157669] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future."
+    },
+    {
+      "line": 63,
+      "path": "build/qa/runs/20261007T133827710613Z-app-store/ProjectWorkspaceViewTests.log",
+      "text": "2026-10-07 16:52:25.691 ProjectWorkspaceViewTests[27660:2157669] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future."
+    },
+    {
+      "line": 1,
+      "path": "build/qa/runs/20261007T133827710613Z-app-store/TaskPriorityTagTests-compile.log",
+      "text": "/private/tmp/dabin-flow-check-20261007/working/native/build/qa-cache/app-store-260c076b7a1d4148a843ff4bb8c3154d8c94c93ffb74786be91d5be871c08413/TaskPriorityTagTests-42bae56a6f187ac2/TaskPriorityTagTests.swift:86:31: warning: call to main actor-isolated instance method 'orderOut' in a synchronous nonisolated context [#ActorIsolatedCall]"
+    },
+    {
+      "line": 5,
+      "path": "build/qa/runs/20261007T133827710613Z-app-store/TaskPriorityTagTests-compile.log",
+      "text": "    |              |                `- warning: call to main actor-isolated instance method 'orderOut' in a synchronous nonisolated context [#ActorIsolatedCall]"
+    },
+    {
+      "line": 19,
+      "path": "build/qa/runs/20261007T133827710613Z-app-store/TaskPriorityTagTests-compile.log",
+      "text": "/private/tmp/dabin-flow-check-20261007/working/native/build/qa-cache/app-store-260c076b7a1d4148a843ff4bb8c3154d8c94c93ffb74786be91d5be871c08413/TaskPriorityTagTests-42bae56a6f187ac2/TaskPriorityTagTests.swift:86:53: warning: main actor-isolated property 'contentView' can not be mutated from a nonisolated context"
+    },
+    {
+      "line": 23,
+      "path": "build/qa/runs/20261007T133827710613Z-app-store/TaskPriorityTagTests-compile.log",
+      "text": "    |              |                                      `- warning: main actor-isolated property 'contentView' can not be mutated from a nonisolated context"
+    },
+    {
+      "line": 36,
+      "path": "build/qa/runs/20261007T133827710613Z-app-store/TaskPriorityTagTests-compile.log",
+      "text": "/private/tmp/dabin-flow-check-20261007/working/native/build/qa-cache/app-store-260c076b7a1d4148a843ff4bb8c3154d8c94c93ffb74786be91d5be871c08413/TaskPriorityTagTests-42bae56a6f187ac2/TaskPriorityTagTests.swift:86:79: warning: call to main actor-isolated instance method 'close()' in a synchronous nonisolated context [#ActorIsolatedCall]"
+    },
+    {
+      "line": 40,
+      "path": "build/qa/runs/20261007T133827710613Z-app-store/TaskPriorityTagTests-compile.log",
+      "text": "    |              |                                                                `- warning: call to main actor-isolated instance method 'close()' in a synchronous nonisolated context [#ActorIsolatedCall]"
+    },
+    {
+      "line": 3,
+      "path": "build/qa/runs/20261007T133827710613Z-app-store/VideoPlaybackIntegrationTests.log",
+      "text": "CONTROL_BOUNDARY: fittedPreview landscape Play: no standard named native button with a supported AXPress was exposed by this inactive offscreen AVKit view; ownProcessAX=0. Exposed buttons: "
+    },
+    {
+      "line": 4,
+      "path": "build/qa/runs/20261007T133827710613Z-app-store/VideoPlaybackIntegrationTests.log",
+      "text": "CONTROL_BOUNDARY: fittedPreview landscape Pause: no standard named native button with a supported AXPress was exposed by this inactive offscreen AVKit view; ownProcessAX=0. Exposed buttons: "
+    },
+    {
+      "line": 6,
+      "path": "build/qa/runs/20261007T133827710613Z-app-store/VideoPlaybackIntegrationTests.log",
+      "text": "CONTROL_BOUNDARY: fittedPreview portrait Play: no standard named native button with a supported AXPress was exposed by this inactive offscreen AVKit view; ownProcessAX=0. Exposed buttons: "
+    },
+    {
+      "line": 7,
+      "path": "build/qa/runs/20261007T133827710613Z-app-store/VideoPlaybackIntegrationTests.log",
+      "text": "CONTROL_BOUNDARY: fittedPreview portrait Pause: no standard named native button with a supported AXPress was exposed by this inactive offscreen AVKit view; ownProcessAX=0. Exposed buttons: "
+    },
+    {
+      "line": 9,
+      "path": "build/qa/runs/20261007T133827710613Z-app-store/VideoPlaybackIntegrationTests.log",
+      "text": "CONTROL_BOUNDARY: extendedCanvas landscape Play: no standard named native button with a supported AXPress was exposed by this inactive offscreen AVKit view; ownProcessAX=0. Exposed buttons: "
+    },
+    {
+      "line": 10,
+      "path": "build/qa/runs/20261007T133827710613Z-app-store/VideoPlaybackIntegrationTests.log",
+      "text": "CONTROL_BOUNDARY: extendedCanvas landscape Pause: no standard named native button with a supported AXPress was exposed by this inactive offscreen AVKit view; ownProcessAX=0. Exposed buttons: "
+    },
+    {
+      "line": 12,
+      "path": "build/qa/runs/20261007T133827710613Z-app-store/VideoPlaybackIntegrationTests.log",
+      "text": "CONTROL_BOUNDARY: extendedCanvas portrait Play: no standard named native button with a supported AXPress was exposed by this inactive offscreen AVKit view; ownProcessAX=0. Exposed buttons: "
+    },
+    {
+      "line": 13,
+      "path": "build/qa/runs/20261007T133827710613Z-app-store/VideoPlaybackIntegrationTests.log",
+      "text": "CONTROL_BOUNDARY: extendedCanvas portrait Pause: no standard named native button with a supported AXPress was exposed by this inactive offscreen AVKit view; ownProcessAX=0. Exposed buttons: "
+    },
+    {
+      "line": 1,
+      "path": "build/qa/runs/20261007T133827710613Z-app-store/WindowResizeInteractionTests.log",
+      "text": "SKIP: physical cross-display gesture requires two attached displays; geometry remains unit-tested"
+    }
+  ]
+}

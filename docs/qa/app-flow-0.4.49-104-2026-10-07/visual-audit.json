@@ -1,0 +1,175 @@
+{
+  "auditor": "qa_harness_audit",
+  "campaignRoot": "/private/tmp/dabin-flow-check-20261007",
+  "contextEvidence": [
+    {
+      "absolutePath": "/private/tmp/dabin-flow-check-20261007/working/native/Tests/CardDeletionInteractionTests.swift",
+      "relativePath": "working/native/Tests/CardDeletionInteractionTests.swift",
+      "sha256": "4c936bd2182c8058034e25cc12c86b3ad79a94304c786674c359af32d90d09f4"
+    },
+    {
+      "absolutePath": "/private/tmp/dabin-flow-check-20261007/working/native/Tests/HeaderInteractionTests.swift",
+      "relativePath": "working/native/Tests/HeaderInteractionTests.swift",
+      "sha256": "bc8750cd166525d6ca14034c24e4a74ebc2e580ff247decfb1bd7f60542f4335"
+    },
+    {
+      "absolutePath": "/private/tmp/dabin-flow-check-20261007/working/native/Sources/DaBin/CaptureDetailPanels.swift",
+      "relativePath": "working/native/Sources/DaBin/CaptureDetailPanels.swift",
+      "sha256": "e83e18bc3212f43945ab890ad1e3b5dc09f98ee8f1ccd22a37080b21c2cc4ff7"
+    },
+    {
+      "absolutePath": "/private/tmp/dabin-flow-check-20261007/working/native/Sources/DaBin/BoardView.swift",
+      "relativePath": "working/native/Sources/DaBin/BoardView.swift",
+      "sha256": "71c2ae46acb182574ef67b9314c18d5c4f7adef45fb2b99d23796fa7607a4a1c"
+    },
+    {
+      "absolutePath": "/private/tmp/dabin-flow-check-20261007/manual-session.json",
+      "relativePath": "manual-session.json",
+      "sha256": "90c10b1f6ace0740788b032c159260236fdb48320866926db44f60d0ca34458e"
+    },
+    {
+      "absolutePath": "/private/tmp/dabin-flow-check-20261007/manual-build.json",
+      "relativePath": "manual-build.json",
+      "sha256": "354022859e561b345a004a6135dc70323ce6e2b56a7102eb64c3206cdb9f6a67"
+    },
+    {
+      "absolutePath": "/private/tmp/dabin-flow-check-20261007/attempts/focused-1/preservation.json",
+      "relativePath": "attempts/focused-1/preservation.json",
+      "sha256": "7b404accd6b8b7dd9c4f558fe9a63ea98caadf34d9b00308d0bcc5754626596d"
+    },
+    {
+      "absolutePath": "/private/tmp/dabin-flow-check-20261007/attempts/focused-2/preservation.json",
+      "relativePath": "attempts/focused-2/preservation.json",
+      "sha256": "3e4079f9248c652aeba9716aea0a687b652e4b26022dda746c2f0fe5fd382c43"
+    }
+  ],
+  "createdAtUTC": "2026-10-07T13:35:37.496692+00:00",
+  "finalCampaignOutcome": "pending; this visual audit is not a suite pass or release verdict",
+  "fixtureBoundaries": [
+    "CardDeletion PNGs use NSView.cacheDisplay on a 980-by-900-point offscreen component host. Their 1960-by-1800 pixels include transparent areas; they are not whole production-window screenshots.",
+    "Project-note/search-note/hour components use explicit 360/360/430-point widths. Trash/comment components occupy the wider host. No compact 380-point Trash-layout claim follows.",
+    "CardDeletion mount only sets tooltip and animation options. The directly mounted comment panel lacks BoardView foregroundStyle, tint, accent injection, board background and preferredColorScheme setup.",
+    "The isolated comment bitmap contrast problem is an evidence limitation. Parent-reported actual current-baseline Board interaction showed a legible purple selected Comments label and successfully activated enabled Post; manual-session.json independently records native posting. No new production contrast failure is claimed.",
+    "None of the five CardDeletion PNGs shows a native confirmation sheet. Tests activate confirmation buttons, but alert layout/wording is not visually certified by these images.",
+    "Header findings concern only the four named PNGs and captured widths/themes/states. Scrollable content outside each captured viewport is not a clipping defect.",
+    "PNG hashes identify exactly the reviewed bytes. They do not independently bind those pixels to every input of a final campaign; final input/cache/live-source provenance remains a separate root verification.",
+    "These images do not establish physical hit delivery, VoiceOver speech/action rotor, every text length or locale, system contrast/text scaling, signed/sandboxed readiness, installation or release.",
+    "The reviewed PNG bytes are preserved under visual-review-inputs so later test rerenders cannot overwrite the visual evidence; hashes refer to these preserved copies as well as source paths at preservation time."
+  ],
+  "images": [
+    {
+      "absolutePath": "/private/tmp/dabin-flow-check-20261007/renders/CardDeletionInteractionTests/trash-item-specific-actions.png",
+      "bytes": 194378,
+      "finding": "Four removed-item cards have readable distinct Restore and Delete permanently controls, with no visible overlap or clipping. Wide fixture only; compact Trash layout is not established.",
+      "inspectionMethod": "functions tools.view_image",
+      "pixelHeight": 1800,
+      "pixelWidth": 1960,
+      "preservedAbsolutePath": "/private/tmp/dabin-flow-check-20261007/visual-review-inputs/CardDeletionInteractionTests/trash-item-specific-actions.png",
+      "preservedRelativePath": "visual-review-inputs/CardDeletionInteractionTests/trash-item-specific-actions.png",
+      "relativePath": "renders/CardDeletionInteractionTests/trash-item-specific-actions.png",
+      "sha256": "ca6437bb58edba0859105b6a864456a643e5027a52f79bd328781bd8229dbbd0"
+    },
+    {
+      "absolutePath": "/private/tmp/dabin-flow-check-20261007/renders/CardDeletionInteractionTests/comment-delete.png",
+      "bytes": 134651,
+      "finding": "Composer and two saved comments are readable; pencil and trash controls remain unobstructed. Selected Comments and enabled Post labels are low contrast or absent in this isolated bitmap; no production defect inferred.",
+      "inspectionMethod": "functions tools.view_image",
+      "pixelHeight": 1800,
+      "pixelWidth": 1960,
+      "preservedAbsolutePath": "/private/tmp/dabin-flow-check-20261007/visual-review-inputs/CardDeletionInteractionTests/comment-delete.png",
+      "preservedRelativePath": "visual-review-inputs/CardDeletionInteractionTests/comment-delete.png",
+      "relativePath": "renders/CardDeletionInteractionTests/comment-delete.png",
+      "sha256": "f5749fd459b5164e1d332bb9d96861e7b0b5b37418b9e5ab587634a83b9a1e3b"
+    },
+    {
+      "absolutePath": "/private/tmp/dabin-flow-check-20261007/renders/CardDeletionInteractionTests/hour-delete.png",
+      "bytes": 104716,
+      "finding": "The explicit 430-point hourly card shows its count, interval, three visible captures and complete More/trash controls without clipping.",
+      "inspectionMethod": "functions tools.view_image",
+      "pixelHeight": 1800,
+      "pixelWidth": 1960,
+      "preservedAbsolutePath": "/private/tmp/dabin-flow-check-20261007/visual-review-inputs/CardDeletionInteractionTests/hour-delete.png",
+      "preservedRelativePath": "visual-review-inputs/CardDeletionInteractionTests/hour-delete.png",
+      "relativePath": "renders/CardDeletionInteractionTests/hour-delete.png",
+      "sha256": "553f86973956441f559f7770500a05df6beb39143cd2d5f3fe6973843e25f772"
+    },
+    {
+      "absolutePath": "/private/tmp/dabin-flow-check-20261007/renders/CardDeletionInteractionTests/project-note-delete.png",
+      "bytes": 104065,
+      "finding": "The explicit 360-point project-note card has readable wrapped body, project name, type/date and complete More control without clipping.",
+      "inspectionMethod": "functions tools.view_image",
+      "pixelHeight": 1800,
+      "pixelWidth": 1960,
+      "preservedAbsolutePath": "/private/tmp/dabin-flow-check-20261007/visual-review-inputs/CardDeletionInteractionTests/project-note-delete.png",
+      "preservedRelativePath": "visual-review-inputs/CardDeletionInteractionTests/project-note-delete.png",
+      "relativePath": "renders/CardDeletionInteractionTests/project-note-delete.png",
+      "sha256": "42cc46c1c3cb3dbea5c86a4eb5e2e990a4781a1cc6c2b90573e16eaf72783de6"
+    },
+    {
+      "absolutePath": "/private/tmp/dabin-flow-check-20261007/renders/CardDeletionInteractionTests/search-note-delete.png",
+      "bytes": 112093,
+      "finding": "The explicit 360-point search-note card has readable wrapped text and complete project/Edit/Copy/More controls without clipping.",
+      "inspectionMethod": "functions tools.view_image",
+      "pixelHeight": 1800,
+      "pixelWidth": 1960,
+      "preservedAbsolutePath": "/private/tmp/dabin-flow-check-20261007/visual-review-inputs/CardDeletionInteractionTests/search-note-delete.png",
+      "preservedRelativePath": "visual-review-inputs/CardDeletionInteractionTests/search-note-delete.png",
+      "relativePath": "renders/CardDeletionInteractionTests/search-note-delete.png",
+      "sha256": "43fe28c3ca9d6d266c8472d6e4b13c715f5ae83b53588ada2f046ebcd0937d18"
+    },
+    {
+      "absolutePath": "/private/tmp/dabin-flow-check-20261007/renders/HeaderInteractionTests/inbox-daily-380.png",
+      "bytes": 105081,
+      "finding": "At 380-point board width, header controls, Projects/Tasks/Captions navigation, timeline controls, visible capture card and footer are legible and contained.",
+      "inspectionMethod": "functions tools.view_image",
+      "pixelHeight": 1120,
+      "pixelWidth": 760,
+      "preservedAbsolutePath": "/private/tmp/dabin-flow-check-20261007/visual-review-inputs/HeaderInteractionTests/inbox-daily-380.png",
+      "preservedRelativePath": "visual-review-inputs/HeaderInteractionTests/inbox-daily-380.png",
+      "relativePath": "renders/HeaderInteractionTests/inbox-daily-380.png",
+      "sha256": "3022da861d37bcf942095ef655198fd61a4f460a359a4f8c62fc05c11f1bb7e1"
+    },
+    {
+      "absolutePath": "/private/tmp/dabin-flow-check-20261007/renders/HeaderInteractionTests/settings-storage-dark-380.png",
+      "bytes": 128325,
+      "finding": "At 380-point dark Settings width, header/category/export/deleted-item controls are legible and contained. Lower content ends at the viewport; this is not full Storage content evidence.",
+      "inspectionMethod": "functions tools.view_image",
+      "pixelHeight": 1120,
+      "pixelWidth": 760,
+      "preservedAbsolutePath": "/private/tmp/dabin-flow-check-20261007/visual-review-inputs/HeaderInteractionTests/settings-storage-dark-380.png",
+      "preservedRelativePath": "visual-review-inputs/HeaderInteractionTests/settings-storage-dark-380.png",
+      "relativePath": "renders/HeaderInteractionTests/settings-storage-dark-380.png",
+      "sha256": "649676bdcda00feb3379029df63742de1df6ba24c02753e10159857d139e726c"
+    },
+    {
+      "absolutePath": "/private/tmp/dabin-flow-check-20261007/renders/HeaderInteractionTests/search-global-380-430.png",
+      "bytes": 102405,
+      "finding": "At 380-by-430-point board size, search field/filter controls/date headings remain legible. Lower result content is cropped by the scroll viewport above the footer, not evidence of a fixed-card overlap.",
+      "inspectionMethod": "functions tools.view_image",
+      "pixelHeight": 860,
+      "pixelWidth": 760,
+      "preservedAbsolutePath": "/private/tmp/dabin-flow-check-20261007/visual-review-inputs/HeaderInteractionTests/search-global-380-430.png",
+      "preservedRelativePath": "visual-review-inputs/HeaderInteractionTests/search-global-380-430.png",
+      "relativePath": "renders/HeaderInteractionTests/search-global-380-430.png",
+      "sha256": "368d5ab8cece3dab6ffd5f1b0c5b77e77bff9a19ec552dfa3687c1d0bdfbba62"
+    },
+    {
+      "absolutePath": "/private/tmp/dabin-flow-check-20261007/renders/HeaderInteractionTests/settings-capture-dark-380.png",
+      "bytes": 150799,
+      "finding": "At 380-point dark Settings width, source consent wording and Clipboard/Screenshots switches are legible and contained. Lower content ends at the viewport.",
+      "inspectionMethod": "functions tools.view_image",
+      "pixelHeight": 1120,
+      "pixelWidth": 760,
+      "preservedAbsolutePath": "/private/tmp/dabin-flow-check-20261007/visual-review-inputs/HeaderInteractionTests/settings-capture-dark-380.png",
+      "preservedRelativePath": "visual-review-inputs/HeaderInteractionTests/settings-capture-dark-380.png",
+      "relativePath": "renders/HeaderInteractionTests/settings-capture-dark-380.png",
+      "sha256": "5fb1c5efe40f364df12e30312c6e654f5f61e94a1cfeee60ceffdf2a92b8f602"
+    }
+  ],
+  "method": "Read existing PNGs with view_image, then inspect snapshot source and retained evidence; no source/test writes or workloads during this audit.",
+  "preservationStatus": "preserved; all nine copies reinspected with view_image and their recorded hashes verified",
+  "productionFinding": "No additional reproduced production usability defect from this visual audit.",
+  "reinspectedAtUTC": "2026-10-07T13:37:20.536382+00:00",
+  "schemaVersion": 1,
+  "status": "completed_with_explicit_visual_scope_limits"
+}

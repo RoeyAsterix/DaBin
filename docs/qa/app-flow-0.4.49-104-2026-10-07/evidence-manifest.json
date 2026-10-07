@@ -1,0 +1,78 @@
+{
+  "entries": {
+    "README.md": {
+      "bytes": 4683,
+      "sha256": "a7ee7343a0175862108f8904eec47a3dba88dfaf051f136c5d3ee59b4616d7b8"
+    },
+    "applied-fixes.json": {
+      "bytes": 805,
+      "sha256": "a21abe0fc0cc9236f5676df4d902546d728917a5e22336fed7ad00f6c6a41533"
+    },
+    "flow-coverage.json": {
+      "bytes": 146534,
+      "sha256": "dcfeb82bbfc3ba20fe00901a1049035f1806c9be0c7140bc5e8556b505d6cfe4"
+    },
+    "flow-verification.json": {
+      "bytes": 4290,
+      "sha256": "8357101fb0933c98422803cbce8fe1884e25054f0961844467f8bddf5af4200a"
+    },
+    "owned-changes.json": {
+      "bytes": 2787,
+      "sha256": "e0c812cd7bbb9e902042076718bdf21db07eb3cd2ad423c5c8a7579835d1fbf1"
+    },
+    "raw-evidence.zip": {
+      "bytes": 1670895,
+      "sha256": "b93413d5a9883b33d68017af1ac93dbbb149bc2e232c83f0e270498b2a2506c7"
+    },
+    "usability-fixes.patch": {
+      "bytes": 37603,
+      "sha256": "5a871ad1ee685d587526a54f9f9c3ba306faced54f1c8cab427e63c6ea8f93bf"
+    },
+    "verification-summary.json": {
+      "bytes": 42852,
+      "sha256": "b4669148865c8a98570b889cc5e056d6c4a6b0228d8b523c58c93046ba6b49bc"
+    },
+    "visual-audit.json": {
+      "bytes": 12702,
+      "sha256": "67bac8397b698553c52a1c8ca6d02a6fa54a8cc75a8aa420e945f4a4c16772c6"
+    },
+    "visual-review-inputs/CardDeletionInteractionTests/comment-delete.png": {
+      "bytes": 134651,
+      "sha256": "f5749fd459b5164e1d332bb9d96861e7b0b5b37418b9e5ab587634a83b9a1e3b"
+    },
+    "visual-review-inputs/CardDeletionInteractionTests/hour-delete.png": {
+      "bytes": 104716,
+      "sha256": "553f86973956441f559f7770500a05df6beb39143cd2d5f3fe6973843e25f772"
+    },
+    "visual-review-inputs/CardDeletionInteractionTests/project-note-delete.png": {
+      "bytes": 104065,
+      "sha256": "42cc46c1c3cb3dbea5c86a4eb5e2e990a4781a1cc6c2b90573e16eaf72783de6"
+    },
+    "visual-review-inputs/CardDeletionInteractionTests/search-note-delete.png": {
+      "bytes": 112093,
+      "sha256": "43fe28c3ca9d6d266c8472d6e4b13c715f5ae83b53588ada2f046ebcd0937d18"
+    },
+    "visual-review-inputs/CardDeletionInteractionTests/trash-item-specific-actions.png": {
+      "bytes": 194378,
+      "sha256": "ca6437bb58edba0859105b6a864456a643e5027a52f79bd328781bd8229dbbd0"
+    },
+    "visual-review-inputs/HeaderInteractionTests/inbox-daily-380.png": {
+      "bytes": 105081,
+      "sha256": "3022da861d37bcf942095ef655198fd61a4f460a359a4f8c62fc05c11f1bb7e1"
+    },
+    "visual-review-inputs/HeaderInteractionTests/search-global-380-430.png": {
+      "bytes": 102405,
+      "sha256": "368d5ab8cece3dab6ffd5f1b0c5b77e77bff9a19ec552dfa3687c1d0bdfbba62"
+    },
+    "visual-review-inputs/HeaderInteractionTests/settings-capture-dark-380.png": {
+      "bytes": 150799,
+      "sha256": "5fb1c5efe40f364df12e30312c6e654f5f61e94a1cfeee60ceffdf2a92b8f602"
+    },
+    "visual-review-inputs/HeaderInteractionTests/settings-storage-dark-380.png": {
+      "bytes": 128325,
+      "sha256": "649676bdcda00feb3379029df63742de1df6ba24c02753e10159857d139e726c"
+    }
+  },
+  "excludesSelf": true,
+  "schemaVersion": 1
+}

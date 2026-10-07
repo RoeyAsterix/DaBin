@@ -1,0 +1,60 @@
+{
+  "changes": [
+    {
+      "path": "native/Tests/WindowTests.swift",
+      "beforeSHA256": "bb49e49f214fb4a5c551851f57722c666342e40a662d51602585d0dfe4c1633e",
+      "afterSHA256": "4e626f396d6e648e48306d763f3d359c8b5e23687be524177e01655f9e098906"
+    },
+    {
+      "path": "native/Tests/SearchInputTests.swift",
+      "beforeSHA256": "2e1450ededf9dbabb86fbd1dc4f066ff2dad58664d6008465abd2f4d3eb9a8dc",
+      "afterSHA256": "4e581c8fc7e0521cc66ffceb467f642d4b5b144229d6647a2cbc90798a73ef11"
+    },
+    {
+      "path": "native/Tests/CardDeletionInteractionTests.swift",
+      "beforeSHA256": "7f1f02e808f3116425d7a8c5e6a8e2be985aeaf631cc40f2c2bb90b419dd4706",
+      "afterSHA256": "4c936bd2182c8058034e25cc12c86b3ad79a94304c786674c359af32d90d09f4"
+    },
+    {
+      "path": "native/Tests/SearchWindowTests.swift",
+      "beforeSHA256": "fe65818197b155773ef5773ec54d54f1100a6bb015181abc9d3ec86e99bfdee5",
+      "afterSHA256": "074dab96d37970367c5aa923ab025d22502fccd7d306ae5d8e815fe8584371fb"
+    },
+    {
+      "path": "native/Sources/DaBin/CornerController.swift",
+      "beforeSHA256": "3261e91c4200ed14a33ae3ea574d88dc15dd8e9fe31d9b0a5c72131d1e25f7d1",
+      "afterSHA256": "35e11911571a7c3ccc56a39cdf48b5c5cb227536463c11b7d67c22d4bfe650a2"
+    },
+    {
+      "path": "native/Sources/DaBin/SearchResultCard.swift",
+      "beforeSHA256": "4a43b69a1f7bd127d5825ba4b7c1a38cc211f121ff6d01f78dc1f1ad6ce2f8c2",
+      "afterSHA256": "12c26a397a855ab0f8e56d82c64d6831ec5337cdd4b5b4ce1c25a7259f817aaa"
+    },
+    {
+      "path": "native/Sources/DaBin/BoardView.swift",
+      "beforeSHA256": "5de554f4a30612f96ed988f3bb0d2f296e3398dc8d402c7447af64cb768e78e9",
+      "afterSHA256": "71c2ae46acb182574ef67b9314c18d5c4f7adef45fb2b99d23796fa7607a4a1c"
+    },
+    {
+      "path": "native/Sources/DaBin/ExplorerScreen.swift",
+      "beforeSHA256": "41c7c5a1f2ca62fbf0e2797d077db63472433ca1ec8c185f98522f320ac9cb28",
+      "afterSHA256": "70ffc02462f3c1c19eeb5dc8f2b4f951afa639b0c149faf2728e8584a0cda673"
+    },
+    {
+      "path": "native/Sources/DaBin/CaptureDetailPanels.swift",
+      "beforeSHA256": "83b8ac3e6178e9fc1a97e06ea95df150882fd363fc914ec424e12f4bdf4d4c25",
+      "afterSHA256": "e83e18bc3212f43945ab890ad1e3b5dc09f98ee8f1ccd22a37080b21c2cc4ff7"
+    },
+    {
+      "path": "native/Sources/DaBin/SearchScreen.swift",
+      "beforeSHA256": "d9963257a2db16c82b6df23a03df7e113b799386d40625996dfea6a22617abf9",
+      "afterSHA256": "9fa9eb3cbc90fa81f0722e133845564f38fad79dc91dcb99e62a0c36e4b536d6"
+    },
+    {
+      "path": "native/Sources/DaBin/TrashScreen.swift",
+      "beforeSHA256": "14ebe052dd494c26ec08f9e54b79f5eb3daf04de5b087afe478eefc641931016",
+      "afterSHA256": "5f0dd010de0fc240e328dda6bcc110fd779e6571f8a36f8923b0673d7342a2d1"
+    }
+  ],
+  "sourceOnlySevenFixes": true
+}

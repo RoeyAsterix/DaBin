@@ -1,0 +1,552 @@
+--- a/native/Tests/WindowTests.swift
++++ b/native/Tests/WindowTests.swift
+@@ -12,6 +12,16 @@
+     func add(_ reminder: ScheduledReminder) async throws { additions += 1 }
+     func removePending(_ identifiers: [String]) { }
+     func removeDelivered(_ identifiers: [String]) { }
++}
++
++@MainActor
++private final class WindowCompositionEditor: NSTextView {
++    private(set) var cancellationCommands = 0
++    override func cancelOperation(_ sender: Any?) {
++        cancellationCommands += 1
++        if hasMarkedText() { unmarkText() }
++        else { super.cancelOperation(sender) }
++    }
+ }
+ 
+ /// Exercises real AppKit panels using injected pointer observations. It neither
+@@ -343,6 +353,73 @@
+                    "Opening Settings from automatic Week full view restores the compact right-side anchor")
+     }
+ 
++    @MainActor private static func verifyCompositionEscape(root: URL) throws {
++        let suite = "DaBinCompositionEscape.\(UUID().uuidString)"
++        let defaults = UserDefaults(suiteName: suite)!
++        defer { defaults.removePersistentDomain(forName: suite) }
++        let store = try CaptureStore(root: root.appendingPathComponent("CompositionEscape"), repairArchiveOnOpen: false)
++        let previews = PreviewService(store: store, defaults: defaults)
++        defer { previews.shutdown(); store.cancelArchiveRepair() }
++        let pasteboard = NSPasteboard(name: .init(suite))
++        defer { pasteboard.releaseGlobally() }
++        let input = InputService(store: store)
++        let autoCapture = AutoCaptureService(settings: AutoCaptureSettings(defaults: defaults), input: input,
++            pasteboardProvider: { pasteboard }, sourceApplicationProvider: { nil })
++        defer { autoCapture.shutdown() }
++        let reminders = ReminderService(store: store, client: WindowNotificationClient())
++        defer { reminders.shutdownPresentation() }
++        let state = AppState(store: store, previews: previews, reminders: reminders, autoCapture: autoCapture,
++            captureClipboard: CaptureClipboardService(pasteboard: pasteboard),
++            folderOpener: { _ in fatalError("Composition QA must not open external files") })
++        defer { state.focusSessions.shutdown() }
++        let controller = CornerController(state: state, input: input,
++            placementDefaults: defaults, animateRobotTransitions: false)
++        defer { controller.shutdown() }
++        state.openNewTask()
++        state.newTaskDraft.text = "Retain this composition draft"
++        controller.showBoard(immediate: true)
++        NSApplication.shared.activate()
++        controller.board.makeKey()
++        RunLoop.main.run(until: Date().addingTimeInterval(0.12))
++        let editor = WindowCompositionEditor(frame: NSRect(x: 5, y: 5, width: 150, height: 30))
++        controller.board.contentView!.addSubview(editor)
++        defer { editor.removeFromSuperview() }
++        try expect(controller.board.isKeyWindow && controller.board.makeFirstResponder(editor),
++                   "Composition Escape uses the actual key panel and its own native editor")
++        editor.setMarkedText("かな", selectedRange: NSRange(location: 2, length: 0),
++                             replacementRange: NSRange(location: NSNotFound, length: 0))
++        try expect(editor.hasMarkedText(), "Composition Escape starts with real native marked text")
++        var tutorialEscapes = 0
++        state.onTutorialEscape = { tutorialEscapes += 1; return false }
++        defer { state.onTutorialEscape = nil }
++        func escape() throws {
++            guard let event = NSEvent.keyEvent(with: .keyDown, location: .zero, modifierFlags: [],
++                timestamp: ProcessInfo.processInfo.systemUptime, windowNumber: controller.board.windowNumber,
++                context: nil, characters: "\u{1b}", charactersIgnoringModifiers: "\u{1b}",
++                isARepeat: false, keyCode: 53) else {
++                throw NSError(domain: "DaBinWindowTests", code: 9,
++                    userInfo: [NSLocalizedDescriptionKey: "Could not construct own-panel Escape"])
++            }
++            // Dispatch through NSApplication so the installed local monitor and
++            // AppKit's native cancelOperation key binding both participate.
++            NSApplication.shared.sendEvent(event)
++        }
++        try escape()
++        try expect(editor.cancellationCommands == 1 && !editor.hasMarkedText(),
++                   "Marked-text Escape reaches the editor's native cancellation command")
++        try expect(controller.board.isVisible && controller.board.firstResponder === editor
++                   && state.route == .newTask && state.newTaskDraft.text == "Retain this composition draft",
++                   "Cancelling composition retains the same panel, editor, route and pending draft")
++        try expect(tutorialEscapes == 0,
++                   "A marked-text Escape reaches its editor before tutorial or window dismissal")
++        try escape()
++        try expect(!controller.board.isVisible && editor.cancellationCommands == 1 && tutorialEscapes == 1,
++                   "The next ordinary Escape preserves existing window dismissal")
++        try expect(state.route == .newTask && state.newTaskDraft.text == "Retain this composition draft"
++                   && store.captures.isEmpty && !input.isBusy,
++                   "Ordinary dismissal preserves the unsaved draft and produces no capture")
++    }
++
+     @MainActor private static func verifyGlobalShortcutActions(screen: NSScreen, root: URL) throws {
+         let suite = "DaBinShortcutWindows.\(UUID().uuidString)"
+         let defaults = UserDefaults(suiteName: suite)!
+@@ -913,6 +990,7 @@
+         try expect(screens.contains { $0.visibleFrame.contains(invalidPlacement.board.frame) }, "Malformed saved placement safely falls back to a visible corner")
+         invalidPlacement.dismiss()
+         try verifyExpandedAutomaticDragging(screen: screen, root: root)
++        try verifyCompositionEscape(root: root)
+         try verifyGlobalShortcutActions(screen: screen, root: root)
+         try expect(store.captures.isEmpty && !input.isBusy, "Window testing creates no captures or paste operations")
+         try expect(notificationClient.permissionRequests == 0 && notificationClient.additions == 0,
+--- a/native/Tests/SearchInputTests.swift
++++ b/native/Tests/SearchInputTests.swift
+@@ -51,6 +51,12 @@
+             .compactMap { $0 as? String }.first { !$0.isEmpty } ?? ""
+     }
+     var identifier: String? { value("accessibilityIdentifier") as? String }
++    var frame: NSRect {
++        let selector = NSSelectorFromString("accessibilityFrame")
++        guard object.responds(to: selector) else { return .zero }
++        typealias FrameGetter = @convention(c) (AnyObject, Selector) -> NSRect
++        return unsafeBitCast(object.method(for: selector), to: FrameGetter.self)(object, selector)
++    }
+     var children: [Any] {
+         var result: [Any] = []
+         for name in ["accessibilityChildren", "accessibilityChildrenInNavigationOrder", "accessibilityContents"] {
+@@ -161,14 +167,27 @@
+             guard depth < 35, let object = candidate as? NSObject,
+                   seen.insert(ObjectIdentifier(object)).inserted else { return nil }
+             let node = SearchInputAX(object: object)
+-            if node.label == "Clear search", object.responds(to: NSSelectorFromString("accessibilityPerformPress")) { return node }
++            if node.identifier == "global-search-clear", object.responds(to: NSSelectorFromString("accessibilityPerformPress")) { return node }
+             for child in node.children { if let match = find(child, depth: depth + 1) { return match } }
+             return nil
+         }
+         guard let clear = find(controller.captureHostingView, depth: 0) else { throw failure("Production Search has no native Clear search action") }
++        let clearFrame = clear.frame
++        let field = try searchField(controller)
++        let fieldFrame = controller.board.convertToScreen(field.convert(field.bounds, to: nil))
++        try expect(clear.label == "Clear search" && clearFrame.width >= 24 && clearFrame.height >= 28,
++                   "Global Clear search retains its label and the usable 24-by-28-point native target used by Week search")
++        try expect(controller.board.frame.insetBy(dx: -1, dy: -1).contains(clearFrame)
++                   && fieldFrame.maxX <= clearFrame.minX + 1,
++                   "Global Clear search remains inside the production panel without overlapping the editable words")
+         try expect(clear.press(), "Clear search exposes its real native press action")
+         await settle()
+         try expect(controller.state.query.isEmpty, "The production Clear search action clears the query")
++        let emptyField = try searchField(controller)
++        let emptyFieldFrame = controller.board.convertToScreen(emptyField.convert(emptyField.bounds, to: nil))
++        try expect(abs(emptyFieldFrame.minX - fieldFrame.minX) <= 1
++                   && abs(emptyFieldFrame.maxY - fieldFrame.maxY) <= 1,
++                   "Showing and removing Clear search preserves the editable field's position")
+     }
+     private static func loseFocus(_ controller: CornerController) throws {
+         try expect(controller.board.makeFirstResponder(controller.captureHostingView), "Production host can receive non-editor focus")
+--- a/native/Tests/CardDeletionInteractionTests.swift
++++ b/native/Tests/CardDeletionInteractionTests.swift
+@@ -457,16 +457,77 @@
+ 
+         try await commentChecks(state: state, host: host, capture: capture)
+         try await groupChecks(state: state, host: host)
++        try await trashLabelChecks(state: state, host: host)
+         print("Card deletion interaction QA passed \(checks) checks.")
++    }
++
++    private static func trashLabelChecks(state: AppState, host: NSHostingView<AnyView>) async throws {
++        // Different rows are mounted together: an action must identify its own
++        // saved capture or note scope, rather than only saying Restore/Delete.
++        let captures = try ["Fictional first removed capture", "Fictional second removed capture"].map {
++            try state.store.createNote(text: $0, projectName: nil)
++        }
++        for capture in captures { try state.store.moveToTrash(capture) }
++        let noteProject = "Fictional removed notes project"
++        try state.workspace.setScratchpad(text: "Removed project notes retain their scope", project: noteProject)
++        try state.workspace.setScratchpad(text: "Removed Scratchpad retains its scope", project: nil)
++        let projectReceipt = try state.workspace.trashScratchpad(project: noteProject)
++        let scratchpadReceipt = try state.workspace.trashScratchpad(project: nil)
++        try await mount(TrashScreen(state: state), in: host)
++
++        var actions: [(id: String, label: String)] = []
++        for capture in captures {
++            let title = capture.title.isEmpty ? "Untitled capture" : capture.title
++            _ = try await find("trash-capture-" + capture.id.uuidString, in: host)
++            actions.append(("trash-restore-" + capture.id.uuidString, "Restore " + title))
++            actions.append(("trash-delete-" + capture.id.uuidString, "Delete " + title + " permanently"))
++        }
++        for receipt in [projectReceipt, scratchpadReceipt] {
++            let title = receipt.note.projectName.map { $0 + " notes" } ?? "Scratchpad"
++            _ = try await find("trash-note-" + receipt.id.uuidString, in: host)
++            actions.append(("trash-note-restore-" + receipt.id.uuidString, "Restore " + title))
++            actions.append(("trash-note-delete-" + receipt.id.uuidString, "Delete " + title + " permanently"))
++        }
++        var actualLabels = Set<String>()
++        for expected in actions {
++            let node = try await find(expected.id, in: host)
++            try expect(node.role == "AXButton" && node.label == expected.label,
++                "Each real Trash action identifies its own content: \(expected.id), actual=\(node.label), expected=\(expected.label)")
++            actualLabels.insert(node.label)
++        }
++        try expect(actualLabels.count == actions.count,
++            "Multiple removed captures, project notes and Scratchpad expose eight distinct Restore/Delete labels")
++        try snapshot(host, name: "trash-item-specific-actions")
+     }
+ 
+     private static func commentChecks(state: AppState, host: NSHostingView<AnyView>, capture: Capture) async throws {
+         let entry = try state.store.appendComment(capture, text: "Fictional saved comment")
+         let later = try state.store.appendComment(capture, text: "Second comment stays saved")
+         let draft = CaptureDraft(capture: capture)
+-        draft.commentComposer = "Unsaved new comment remains exactly as typed"
+         draft.title = "Unsaved title remains"
+         try await mount(CaptureDetailPanels(state: state, capture: capture, draft: draft, selection: .constant(.comments)), in: host)
++        try await press("edit-comment-" + entry.id.uuidString, in: host)
++        let editor = try commentEditor(in: host)
++        try expect(editor.string == entry.text && draft.editingCommentID == entry.id,
++            "The actual saved-comment pencil loads that entry into its native composer")
++        let pending = "Unsaved edited reply\n  with exact indentation"
++        try await typeComment(pending, in: editor, host: host)
++        try expect(draft.commentComposer == pending && draft.editingCommentID == entry.id,
++            "Native comment typing updates the recoverable edited-entry owner")
++        let savedThread = capture.commentThread
++        try await press("edit-comment-" + entry.id.uuidString, in: host)
++        try expect(try commentEditor(in: host).string == pending && draft.commentComposer == pending
++            && draft.editingCommentID == entry.id && draft.title == "Unsaved title remains"
++            && capture.commentThread == savedThread,
++            "Pressing the same comment pencil again preserves every unsaved native character and the saved thread")
++        guard let cancel = nodes(in: host).first(where: { $0.label == "Cancel edit" }) else {
++            throw failure("The comment composer must retain its actual Cancel edit action")
++        }
++        try expect(cancel.press(), "Native Cancel edit remains reachable after repeated Edit")
++        try await settle(host)
++        try expect(draft.editingCommentID == nil && draft.commentComposer.isEmpty,
++            "An explicit Cancel edit clears only the edited reply")
++        try await typeComment("Unsaved new comment remains exactly as typed", in: try commentEditor(in: host), host: host)
+         try snapshot(host, name: "comment-delete")
+         try await press("delete-comment-" + entry.id.uuidString, in: host)
+         try await answer("Cancel", host: host)
+@@ -491,6 +552,25 @@
+         try await settle(host)
+         try expect(draft.editingCommentID == nil && draft.commentComposer == "Unsent edit to deleted comment",
+             "Deleting edited comment keeps typed content as a new unsent comment")
++    }
++
++    private static func commentEditor(in view: NSView) throws -> NSTextView {
++        func find(_ view: NSView) -> NSTextView? {
++            if let editor = view as? NSTextView, editor.isEditable { return editor }
++            return view.subviews.lazy.compactMap(find).first
++        }
++        guard let editor = find(view), editor.window === view.window else {
++            throw failure("The fictional comment fixture must own its mounted native text editor")
++        }
++        return editor
++    }
++
++    private static func typeComment(_ text: String, in editor: NSTextView, host: NSView) async throws {
++        guard let window = host.window else { throw failure("Comment typing requires its own fixture window") }
++        try expect(window.makeFirstResponder(editor), "The owned comment editor accepts native typing focus")
++        editor.insertText(text, replacementRange: NSRange(location: 0, length: (editor.string as NSString).length))
++        try await settle(host)
++        try expect(try commentEditor(in: host).string == text, "The native composer retains exact typed text")
+     }
+ 
+     private static func groupChecks(state: AppState, host: NSHostingView<AnyView>) async throws {
+--- a/native/Tests/SearchWindowTests.swift
++++ b/native/Tests/SearchWindowTests.swift
+@@ -726,7 +726,16 @@
+         state.searchDateAnchor = state.searchDateGroups[0].day
+         state.searchSelectedResultID = nil
+         try await waitForNativeUI()
+-        let capture = fixture.datedCaptures[0]
++        guard let capture = fixture.store.captures.first(where: { $0.id == fixture.datedCaptures[0].id }) else {
++            throw NSError(domain: "SearchWindowTests", code: 1,
++                          userInfo: [NSLocalizedDescriptionKey: "The untitled routing fixture must belong to the current archive"])
++        }
++        let originalTitle = capture.title
++        capture.title = ""
++        try fixture.store.save(captures: [capture])
++        try await waitForNativeUI()
++        try expect((try node(in: hosting, id: "search-select-\(capture.id.uuidString)").label)?.hasPrefix("Open Untitled capture,") == true,
++                   "Compact Search announces the visible Untitled capture fallback on its main Open action")
+         let query = state.query
+         let anchor = state.searchDateAnchor
+         try press(hosting, id: "search-select-\(capture.id.uuidString)")
+@@ -742,6 +751,8 @@
+         state.searchSelectedResultID = nil
+         resize(window, hosting: hosting, width: 1_060)
+         try await waitForNativeUI()
++        try expect((try node(in: hosting, id: "search-select-\(capture.id.uuidString)").label)?.hasPrefix("Preview Untitled capture,") == true,
++                   "Expanded Search announces the same Untitled capture fallback on its main Preview action")
+         try press(hosting, id: "search-select-\(capture.id.uuidString)")
+         try await waitForNativeUI()
+         try expect(state.route == .search && state.searchSelectedResultID == "capture:\(capture.id.uuidString)",
+@@ -752,6 +763,8 @@
+                    && state.newNoteProject == "Alpha Project"
+                    && state.newTaskDraft.destination == ComposerDestination(projectName: "Alpha Project"),
+                    "Capture preview does not replace the Library or composer destination")
++        capture.title = originalTitle
++        try fixture.store.save(captures: [capture])
+     }
+ 
+     @MainActor private static func checkIndependentColumnViewports(_ fixture: SearchWindowFixture,
+@@ -1080,6 +1093,72 @@
+                    && state.filter == .all && state.searchSource == nil && state.searchScope == .all
+                    && !state.showSearchContext,
+                    "Clear filters retains the words and clears every visible refinement")
++    }
++
++    @MainActor private static func checkFilteredBrowseEmptyStates(_ fixture: SearchWindowFixture,
++                                                                  hosting: NSView, window: NSWindow) async throws {
++        let state = fixture.state
++        resize(window, hosting: hosting, width: 380)
++        try press(hosting, id: "global-search-clear")
++        try await waitForNativeUI()
++        try await chooseFilter("Alpha Project", id: "search-project-picker", hosting: hosting)
++        try await chooseFilter(CaptureFilter.media.tooltipLabel, id: "search-type-picker", hosting: hosting)
++        try expect(state.query.isEmpty && state.searchProject == "Alpha Project" && state.filter == .media
++                   && state.searchDateGroups.isEmpty && !fixture.store.captures.isEmpty,
++                   "Blank-query Search is empty because native project and Media filters exclude saved captures")
++        let searchLabels = nodes(in: hosting)
++        try expect(searchLabels.contains { $0.label == "No matching items" && $0.frame.width > 0
++                   && window.frame.insetBy(dx: -1, dy: -1).contains($0.frame) }
++                   && !searchLabels.contains { $0.label == "Your saved work will appear here" },
++                   "Filtered blank-query Search visibly explains no matches instead of implying an empty archive")
++        try press(hosting, id: "search-clear-filters")
++        try await waitForNativeUI()
++        try expect(state.query.isEmpty && state.filter == .all && state.searchProject == nil
++                   && Set(state.searchDateGroups.flatMap(\.captureEntries).map(\.id)) == Set(fixture.store.captures.map(\.id)),
++                   "The visible Search Clear filters action restores every saved capture without adding query words")
++
++        let project = state.libraryProject
++        let mode = state.workspace.mode
++        try expect(state.navigateProject(nil), "Explorer empty-state fixture enters All projects")
++        state.navigateWorkspaceMode(.collection)
++        state.workspace.dateFilter = .anytime
++        state.workspace.sourceApplication = nil
++        state.workspace.originFilter = .all
++        state.libraryPinnedOnly = false
++        state.openLibrary()
++        try await waitForNativeUI()
++        try press(hosting, id: "capture-filter-links")
++        try await waitForNativeUI()
++        try expect(state.filter == .links
++                   && ExplorerQuery.items(fixture.store.captures, workspace: state.workspace,
++                                          project: nil, filter: state.filter, pinnedOnly: state.libraryPinnedOnly,
++                                          query: "").isEmpty,
++                   "The native Explorer Links action excludes the existing text, task and image fixtures")
++        let explorerLabels = nodes(in: hosting)
++        try expect(explorerLabels.contains { $0.label == "No matching items" && $0.frame.width > 0
++                   && window.frame.insetBy(dx: -1, dy: -1).contains($0.frame) }
++                   && explorerLabels.contains { $0.label == "Remove a filter to see more saved items." }
++                   && !explorerLabels.contains { $0.label == "A home for your next idea" },
++                   "Filtered Explorer visibly offers filter recovery instead of new-project onboarding")
++        guard let recovery = explorerLabels.first(where: { $0.identifier == "explorer-clear-filters" }) else {
++            throw NSError(domain: "SearchWindowTests", code: 2,
++                          userInfo: [NSLocalizedDescriptionKey: "Explorer's realized empty row must expose Clear filters"])
++        }
++        try expect(recovery.role == "AXButton" && recovery.label == "Clear filters"
++                   && recovery.frame.width > 0 && recovery.frame.height > 0
++                   && window.frame.insetBy(dx: -1, dy: -1).contains(recovery.frame),
++                   "Explorer Clear filters is a labeled native Button wholly reachable in the compact panel")
++        try expect(recovery.press(), "Explorer's realized Clear filters Button exposes its actual native press action")
++        try await waitForNativeUI()
++        try expect(state.filter == .all
++                   && !ExplorerQuery.items(fixture.store.captures, workspace: state.workspace, project: nil,
++                                           filter: state.filter, pinnedOnly: state.libraryPinnedOnly, query: "").isEmpty
++                   && !nodes(in: hosting).contains { $0.identifier == "explorer-clear-filters" },
++                   "Explorer Clear filters restores saved content and removes the empty-state recovery action")
++        try expect(state.navigateProject(project), "Explorer empty-state fixture restores its original project")
++        state.navigateWorkspaceMode(mode)
++        state.updateGlobalSearch(commonQuery)
++        try await waitForNativeUI()
+     }
+ 
+     @MainActor private static func checkRecyclingAndLiveInsertion(_ fixture: SearchWindowFixture,
+@@ -1432,6 +1511,8 @@
+         try await checkNoteRouting(fixture, hosting: hosting, window: window)
+         phase("filters: inline dropdowns, native dates, keyboard, chips and clear")
+         try await checkFilters(fixture, hosting: hosting, window: window, application: application)
++        phase("empty states: native filtered Search and Explorer recovery")
++        try await checkFilteredBrowseEmptyStates(fixture, hosting: hosting, window: window)
+         phase("recycling: 2000 rows, live insertion and detail restoration")
+         try await checkRecyclingAndLiveInsertion(fixture, hosting: hosting, window: window)
+ 
+--- a/native/Sources/DaBin/CornerController.swift
++++ b/native/Sources/DaBin/CornerController.swift
+@@ -520,6 +520,8 @@
+             name: NSWorkspace.accessibilityDisplayOptionsDidChangeNotification, object: nil)
+         escapeMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
+             if event.keyCode == 53, event.window === self?.board || event.window === self?.bin {
++                // A composing editor owns Escape before window-level dismissal.
++                if (event.window?.firstResponder as? NSTextView)?.hasMarkedText() == true { return event }
+                 // Let native popovers/pickers handle their own Escape first.
+                 if self?.state.onTutorialEscape?() == true { return nil }
+                 self?.dismiss(); return nil
+--- a/native/Sources/DaBin/SearchResultCard.swift
++++ b/native/Sources/DaBin/SearchResultCard.swift
+@@ -65,6 +65,7 @@
+ 
+     private func captureCard(_ entry: SearchEntry) -> some View {
+         let capture = entry.capture
++        let title = capture.title.isEmpty ? "Untitled capture" : capture.title
+         let project = ExplorerQuery.project(of: capture, in: state.store.captures)
+         let excerpt = SearchResultExcerpt.make(entry: entry, query: state.query)
+         let selected = state.searchSelectedResultID == item.id
+@@ -75,7 +76,7 @@
+                 if !expanded { state.openCapture(capture.id) }
+             } label: {
+                 VStack(alignment: .leading, spacing: 6) {
+-                    Text(capture.title.isEmpty ? "Untitled capture" : capture.title)
++                    Text(title)
+                         .font(.system(size: zoom.fontSize(14), weight: .semibold)).lineLimit(2)
+                         .strikethrough(capture.isTask && capture.isCompleted)
+                         .foregroundStyle(capture.isCompleted ? Palette.muted : Palette.foreground)
+@@ -113,14 +114,14 @@
+                     .contentShape(Rectangle()).multilineTextAlignment(.leading)
+             }.buttonStyle(.plain).focusable().focused(focus, equals: item.id)
+                 .accessibilityIdentifier("search-select-\(capture.id.uuidString)")
+-                .accessibilityLabel("\(expanded ? "Preview" : "Open") \(capture.title), \(project ?? "Unfiled"), saved \(captureReceiptText(capture))")
++                .accessibilityLabel("\(expanded ? "Preview" : "Open") \(title), \(project ?? "Unfiled"), saved \(captureReceiptText(capture))")
+                 .accessibilityValue([excerpt?.label, excerpt?.text, WorkspaceQuery.sourceName(capture)].compactMap { $0 }.joined(separator: ". "))
+                 .accessibilityAddTraits(selected ? .isSelected : [])
+                 .captureDragSource(state: state, capture: capture)
+             BuddyActionFlow(spacing: 6) {
+                 ProjectChipLabel(name: project, colorHex: project.flatMap { state.workspace.projectColorHex(for: $0) }, inherited: capture.parentTaskID != nil)
+                 CaptureTaskPriorityTag(capture: capture)
+-                BuddyIconButton(symbol: "arrow.up.forward.square", title: "Open details for \(capture.title.isEmpty ? "Untitled capture" : capture.title)",
++                BuddyIconButton(symbol: "arrow.up.forward.square", title: "Open details for \(title)",
+                                 visualLabel: "Open", interfaceArtwork: true) { state.openCapture(capture.id) }
+                     .accessibilityIdentifier("search-open-\(capture.id.uuidString)")
+                 CaptureCopyButton(state: state, captures: [capture])
+@@ -128,7 +129,7 @@
+                     captureActions(capture, includesInspectorButtons: false)
+                 } label: { moreLabel }
+                     .menuStyle(.button).buttonStyle(.plain).menuIndicator(.hidden).fixedSize()
+-                    .foregroundStyle(accent).accessibilityLabel("More actions for \(capture.title.isEmpty ? "Untitled capture" : capture.title)")
++                    .foregroundStyle(accent).accessibilityLabel("More actions for \(title)")
+                     .accessibilityIdentifier("search-more-\(item.id)")
+                     .disabled(state.removingCaptureID != nil || state.isArchiveOperationRunning)
+             }
+--- a/native/Sources/DaBin/BoardView.swift
++++ b/native/Sources/DaBin/BoardView.swift
+@@ -283,12 +283,17 @@
+                     Button {
+                         state.updateGlobalSearch("")
+                         state.globalSearchFocusRequest &+= 1
+-                    } label: { DaBinIcon(systemName: "xmark.circle.fill").daBinInterfaceGlyphMotion(baseSize: 13, hovered: iconHover.contains("search-clear")) }
++                    } label: {
++                        DaBinIcon(systemName: "xmark.circle.fill")
++                            .daBinInterfaceGlyphMotion(baseSize: 13, hovered: iconHover.contains("search-clear"))
++                            .frame(width: 24, height: 28).contentShape(Rectangle())
++                    }
+                         .buttonStyle(.plain).foregroundStyle(Palette.muted)
+                         .onHover { if $0 { iconHover.insert("search-clear") } else { iconHover.remove("search-clear") } }
+                         .buddyHelp("Clear search").accessibilityLabel("Clear search")
+-                }
+-            }.padding(7).background(Palette.surface, in: RoundedRectangle(cornerRadius: 10))
++                        .accessibilityIdentifier("global-search-clear")
++                }
++            }.frame(minHeight: 28).padding(7).background(Palette.surface, in: RoundedRectangle(cornerRadius: 10))
+                 .overlay(RoundedRectangle(cornerRadius: 10).strokeBorder(Palette.line))
+                 .daBinTutorialAnchor(.searchField)
+     }
+--- a/native/Sources/DaBin/ExplorerScreen.swift
++++ b/native/Sources/DaBin/ExplorerScreen.swift
+@@ -258,15 +258,19 @@
+     }
+ 
+     private var empty: some View {
+-        VStack(spacing: 8) {
+-            EmptyMessage(symbol: "folder", title: "A home for your next idea",
+-                message: "Drop files, paste a link or save a note. Your project’s files stay organized locally.")
+-            if state.filter != .all || state.libraryPinnedOnly || workspace.dateFilter != .anytime
+-                || workspace.sourceApplication != nil || workspace.originFilter != .all {
++        let hasFilters = state.filter != .all || state.libraryPinnedOnly || workspace.dateFilter != .anytime
++            || workspace.sourceApplication != nil || workspace.originFilter != .all
++        return VStack(spacing: 8) {
++            EmptyMessage(symbol: hasFilters ? "magnifyingglass" : "folder",
++                title: hasFilters ? "No matching items" : "A home for your next idea",
++                message: hasFilters ? "Remove a filter to see more saved items."
++                    : "Drop files, paste a link or save a note. Your project’s files stay organized locally.")
++            if hasFilters {
+                 Button("Clear filters") {
+                     state.filter = .all; state.libraryPinnedOnly = false; workspace.explorerQuery = ""
+                     workspace.dateFilter = .anytime; workspace.sourceApplication = nil; workspace.originFilter = .all
+                 }.font(.system(size: 12)).padding(.bottom, 10)
++                    .accessibilityIdentifier("explorer-clear-filters")
+             }
+         }.frame(maxWidth: .infinity)
+     }
+--- a/native/Sources/DaBin/CaptureDetailPanels.swift
++++ b/native/Sources/DaBin/CaptureDetailPanels.swift
+@@ -147,6 +147,7 @@
+                             .font(.system(size: 10)).foregroundStyle(Palette.muted)
+                         Spacer()
+                         Button {
++                            guard draft.editingCommentID != entry.id else { return }
+                             draft.editingCommentID = entry.id
+                             draft.commentComposer = entry.text
+                         } label: { DaBinIcon(systemName: "pencil").frame(width: 32, height: 32).contentShape(Rectangle()) }
+--- a/native/Sources/DaBin/SearchScreen.swift
++++ b/native/Sources/DaBin/SearchScreen.swift
+@@ -89,7 +89,7 @@
+     }
+ 
+     private var emptyResults: some View {
+-        let title = isBrowsing ? "Your saved work will appear here" : "Nothing found yet"
++        let title = hasFilters ? "No matching items" : isBrowsing ? "Your saved work will appear here" : "Nothing found yet"
+         let message = state.contentIndex?.isBusy == true
+             ? "Results update as local text extraction finishes."
+             : hasFilters ? "Remove a filter or try another word."
+@@ -99,7 +99,7 @@
+         // increasing the minimum height of the enclosing board.
+         return GeometryReader { geometry in
+             ViewThatFits(in: .vertical) {
+-                EmptyMessage(symbol: isBrowsing ? "tray" : "magnifyingglass", title: title, message: message)
++                EmptyMessage(symbol: isBrowsing && !hasFilters ? "tray" : "magnifyingglass", title: title, message: message)
+                 VStack(spacing: 5) {
+                     Text(title).font(.system(size: 13, weight: .medium))
+                     Text(message).font(.system(size: 11)).foregroundStyle(Palette.muted)
+--- a/native/Sources/DaBin/TrashScreen.swift
++++ b/native/Sources/DaBin/TrashScreen.swift
+@@ -22,31 +22,39 @@
+                         Text("Restore saved content and notes. Restoring live notes keeps any new notes you have written.")
+                             .font(.system(size: 12)).foregroundStyle(Palette.muted).padding(.top, 10)
+                         ForEach(state.store.trashedCaptures) { capture in
++                            let title = capture.title.isEmpty ? "Untitled capture" : capture.title
+                             VStack(alignment: .leading, spacing: 8) {
+-                                Text(capture.title.isEmpty ? "Untitled capture" : capture.title)
++                                Text(title)
+                                     .font(.system(size: 14, weight: .medium)).lineLimit(3)
+                                 if let deletedAt = capture.deletedAt { deletionDate(deletedAt) }
+                                 HStack(spacing: 12) {
+                                     Button("Restore") { Task { await state.restoreCapture(capture) } }
++                                        .accessibilityLabel("Restore \(title)")
+                                         .accessibilityIdentifier("trash-restore-\(capture.id.uuidString)")
+                                     Spacer(minLength: 0)
+                                     Button("Delete permanently…", role: .destructive) { pendingPermanentRemoval = capture }
++                                        .accessibilityLabel("Delete \(title) permanently")
+                                         .accessibilityIdentifier("trash-delete-\(capture.id.uuidString)")
+                                 }.font(.system(size: 12)).disabled(state.removingCaptureID != nil)
+                             }.padding(12).background(Palette.surface, in: RoundedRectangle(cornerRadius: 11))
+                                 .overlay(RoundedRectangle(cornerRadius: 11).strokeBorder(Palette.line))
++                                .accessibilityElement(children: .contain)
++                                .accessibilityIdentifier("trash-capture-\(capture.id.uuidString)")
+                         }
+                         ForEach(workspace.deletedScratchpads) { receipt in
++                            let title = receipt.note.projectName.map { "\($0) notes" } ?? "Scratchpad"
+                             VStack(alignment: .leading, spacing: 8) {
+-                                Label(receipt.note.projectName.map { "\($0) notes" } ?? "Scratchpad", daBinSystemImage: "note.text", iconSize: 14)
++                                Label(title, daBinSystemImage: "note.text", iconSize: 14)
+                                     .font(.system(size: 14, weight: .medium)).lineLimit(2)
+                                 Text(receipt.note.text).font(.system(size: 12)).lineLimit(3)
+                                 deletionDate(receipt.deletedAt)
+                                 HStack(spacing: 12) {
+                                     Button("Restore") { state.restoreScratchpad(receipt) }
++                                        .accessibilityLabel("Restore \(title)")
+                                         .accessibilityIdentifier("trash-note-restore-\(receipt.id.uuidString)")
+                                     Spacer(minLength: 0)
+                                     Button("Delete permanently…", role: .destructive) { pendingNoteRemoval = receipt }
++                                        .accessibilityLabel("Delete \(title) permanently")
+                                         .accessibilityIdentifier("trash-note-delete-\(receipt.id.uuidString)")
+                                 }.font(.system(size: 12)).disabled(state.removingCaptureID != nil)
+                             }.padding(12).background(Palette.surface, in: RoundedRectangle(cornerRadius: 11))
