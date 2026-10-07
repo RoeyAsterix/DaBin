@@ -1,0 +1,18 @@
+{
+  "allFrozenInputsMatchedExceptDocumentedCorrections": true,
+  "build": "104",
+  "codeTestAndConfigurationInputsUnchanged": true,
+  "documentationDifferences": [
+    {
+      "afterSHA256": "2129679434f4dbe7b79b5948a38c2a4b278862239dc7640e88bbbad54440c9fa",
+      "beforeSHA256": "1e938539184647fc41de79a794d3be1c6c1e6ffd2d4fd0d9adf2eeec2798547f",
+      "path": "native/ARCHITECTURE.md"
+    }
+  ],
+  "matchedInputCount": 395,
+  "noDistributionSigningInstallArchiveOrUploadPerformed": true,
+  "productionFingerprint": "45414902e2ea23bd50bb9ce02eb76a5d6cc4576c98193f576e634549a91bee24",
+  "productionInputsMatched": true,
+  "verifiedAtUTC": "2026-10-07T09:05:05.093920+00:00",
+  "version": "0.4.49"
+}

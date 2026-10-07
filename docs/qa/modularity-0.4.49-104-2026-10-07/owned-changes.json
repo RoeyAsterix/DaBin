@@ -1,0 +1,110 @@
+{
+  "native/ARCHITECTURE.md": {
+    "after": "1e938539184647fc41de79a794d3be1c6c1e6ffd2d4fd0d9adf2eeec2798547f",
+    "before": "9f7eda94c7fb79aa3906a49a209c1df5daad4d67a181226c158a32bbfa4c3ade"
+  },
+  "native/DaBin.xcodeproj/project.pbxproj": {
+    "after": "100b04f40e8534779ae126a24659187054ac3a9864998e27b12cec84f0d705b0",
+    "before": "c8ff0585adddc7d011e230cfd851ada7b7f7ecbfa31eb38afc4967055ff40723"
+  },
+  "native/README.md": {
+    "after": "c060644b5063cc21e5b5978bc8d83cc884935beea07a556918c4a6b8fbe23fd5",
+    "before": "e27dc8ffc5714fce48b4318fb8d5f71a5d81b8d269849348512684deee9233dd"
+  },
+  "native/Sources/DaBin/AppState.swift": {
+    "after": "656f9960d5761d7403588d7bda4dc59e77097aeacbb612ad63dce5a2de31732e",
+    "before": "1d51f51e7e14c0a54f083312c7c8f520400456eb5e50cac9aa3341fa9225aed0"
+  },
+  "native/Sources/DaBin/BoardView.swift": {
+    "after": "5de554f4a30612f96ed988f3bb0d2f296e3398dc8d402c7447af64cb768e78e9",
+    "before": "2b08c5c27ffdac3064fed59445de08f77fe7bca721aba5496aa20262e50db5af"
+  },
+  "native/Sources/DaBin/CaptureStore.swift": {
+    "after": "16cf9ac3da3215bd7c816ec2278604aace2300f03f96f31446f02d7a048f06ac",
+    "before": "e29d896a517f936653c9952e624b5fdd1d06797e404eb0113d3b59f5fc645b38"
+  },
+  "native/Sources/DaBin/Interface/Tutorial/DaBinTutorial.swift": {
+    "after": "e0a5f9e4e0d2dbbc6fde3ed7d48753f387825e3a08f502c390d200a5c1b8aaec",
+    "before": null
+  },
+  "native/Sources/DaBin/Interface/Workspace/ProjectWorkspaceBrowser.swift": {
+    "after": "2097e1c403a60a1990e61efa3fa4e695c6884a2e9fbd6253bc6b928e00302ec4",
+    "before": null
+  },
+  "native/Sources/DaBin/Interface/Workspace/ProjectWorkspaceBrowserActions.swift": {
+    "after": "3e10ac10d16e4b68968066915b060f123e9c1a9b266f58b15dcdc7ada43c2417",
+    "before": null
+  },
+  "native/Sources/DaBin/Interface/Workspace/ProjectWorkspaceContent.swift": {
+    "after": "cf2d0daba720026f68b43e1160c4505eaca3fd63d4f46822e717482352818558",
+    "before": null
+  },
+  "native/Sources/DaBin/Interface/Workspace/ProjectWorkspaceNativeTable.swift": {
+    "after": "42f523342204cdfd3595003d7013a21b4d73d2610b9e227e5afe74206321549a",
+    "before": null
+  },
+  "native/Sources/DaBin/Interface/Workspace/WorkspaceZoomViewport.swift": {
+    "after": "c7eb8a1077fc9af2821973a2b158c6a1ab218e8ca442b32ce73abfbd51eb3c40",
+    "before": null
+  },
+  "native/Sources/DaBin/ProjectWorkspaceView.swift": {
+    "after": "3d12c2ecd50ff02143ae80b6c4e02eb88d471b0a12e7595bc4ffdb9d75ed637b",
+    "before": "f0dd9813107440eee92eb21432ad28384620e53cb2f2c48bc2f8766f226c8877"
+  },
+  "native/Sources/DaBin/State/AppDraftSession.swift": {
+    "after": "1dae7976d513db834dda83a9b7a51a145e32c71afea677ec428bd198d0b41cea",
+    "before": null
+  },
+  "native/Sources/DaBin/State/CaptureDraft.swift": {
+    "after": "46aa881791a50627ad2e4e47bb3fec80fadd26d1b9e1cc389d2359867bd083ce",
+    "before": null
+  },
+  "native/Sources/DaBin/State/CaptureTimelinePresentation.swift": {
+    "after": "edd4329b7d3c5bb08647c6ae1880356c5e6a4099da17e89be90b197c2a329a12",
+    "before": null
+  },
+  "native/Sources/DaBin/State/ChecklistDraftPolicy.swift": {
+    "after": "8fc6f605d54042830af46df73d13f7027cf969c0f5703f79ee81b5928a17f341",
+    "before": null
+  },
+  "native/Sources/DaBin/State/NewTaskDraft.swift": {
+    "after": "0afadcec03d1c2b5d6988c238c336d09eac76962d4de7b0fec7c63da50dd6c43",
+    "before": null
+  },
+  "native/Sources/DaBin/Storage/CaptureArchiveMaintenance.swift": {
+    "after": "e3a3e7eeef404fbc956174df26e8df1dc500c2789f1ad5a55d49fc5a6cd17287",
+    "before": null
+  },
+  "native/Sources/DaBin/Storage/CaptureImportJournalService.swift": {
+    "after": "ab1a627505eaa3bc9be3ef467462d92782439bdefd34a7c98d83dda70251e6db",
+    "before": null
+  },
+  "native/Sources/DaBin/WorkspaceZoomLayout.swift": {
+    "after": "f371ac3142858b89813e8a2dbf7f98a1bb08f5640b7824f75ac3b99d5bca5bed",
+    "before": "edd056306c270dbcc985c4408c8b6a1ae887c7a35f0819ba4ddcbceadc77cb49"
+  },
+  "native/Tests/AppDraftSessionTests.swift": {
+    "after": "c23b032bf8a56f0f0201af30c2a7cef030c57b1a1c8a3b37d5df297dfc5e2c85",
+    "before": null
+  },
+  "native/Tests/ProjectWorkspaceViewTests.swift": {
+    "after": "0c016546a1f7766773a0c4cb7b01dc712e9df9c80b4fb7b57e2196eeb894bd22",
+    "before": "9112c5d4d4266c6779775bb1b34595029447a09ba779d4c8811d938e7c1d4766"
+  },
+  "native/Tests/SoftwareUpdateTests.swift": {
+    "after": "9d8e25fd51cc3ac5aff7f8246b9a9d2716991a384095e23dbfa90617b4fe314d",
+    "before": "1b48302140730b2a443193a72d5347ab7d48c6035dcd3676afef1be6f3b1bf61"
+  },
+  "native/Tests/test_project_inventory.py": {
+    "after": "b3c1ede7459eddde336f5574c3002417250e9b3c7e02f2d3095b6f4694f6e449",
+    "before": null
+  },
+  "native/scripts/project_inventory.py": {
+    "after": "0ce9a6a3d8b92ff0bb69e7b4d997953943ffd38d7b9a237c6565138f83c460f2",
+    "before": "e751883b991f7338326af215b52d1b6fd6351920b508a2ae7051b4a897f19dbf"
+  },
+  "native/scripts/run_qa.py": {
+    "after": "0c9f96ac8dbcb3df792ab12eb21a8dfc6aca5bb900a5904dae6f5ee202796fbc",
+    "before": "e3d0efa3a68221dcbae8193cc2cd7d032a244a38b136f481e958dcef44de222f"
+  }
+}

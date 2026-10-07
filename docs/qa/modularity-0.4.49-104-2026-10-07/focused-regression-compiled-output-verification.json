@@ -1,0 +1,171 @@
+{
+  "build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/AppDraftSessionTests-c23b032bf8a56f0f/executable-ready.json": {
+    "outputHashesVerified": true,
+    "outputs": {
+      "AppDraftSessionTests": "017b69cd393251d25dbb7b2d49a459c19d414dccbd6db1b819c601818614e351"
+    },
+    "receiptSHA256": "f2c3a9303cb8beb9590c2a8fbf8611a675a2af2f5b9a653a8a99bc81a38c55ef"
+  },
+  "build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/ApplicationLifecycleTests-67275608b6a4181b/executable-ready.json": {
+    "outputHashesVerified": true,
+    "outputs": {
+      "ApplicationLifecycleTests": "c4644cae524a9e6ffeee85b971c7ecf038338aac50e5a408c64ec574a1abe01c"
+    },
+    "receiptSHA256": "6a2997fb6b2233d9a0e8485c866def6772e7a64fe3e993ee7aa2866f2a2c2a84"
+  },
+  "build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/ArchiveBackupTests-d6f91d3b563f78e4/executable-ready.json": {
+    "outputHashesVerified": true,
+    "outputs": {
+      "ArchiveBackupTests": "6405ab63b2328967557f3994d3b74a3c57232ebc4617ce35b3fe91fe7e6afcb6"
+    },
+    "receiptSHA256": "580a44d04885dc7570174d0c77ad2907b498d9abc1f811730649ffb102eef0d4"
+  },
+  "build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/ArchiveRecoveryTests-4fc370c0bb300764/executable-ready.json": {
+    "outputHashesVerified": true,
+    "outputs": {
+      "ArchiveRecoveryTests": "a5cb4f2ea490717e900e5170f62918ea8687af824fb70112fbe10dcff13d0d40"
+    },
+    "receiptSHA256": "5feead950006101266ede194bf7f628c773267c3d2d29a372704751fbcacf8c0"
+  },
+  "build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/ArchiveStoreTests-8a73774004c51f87/executable-ready.json": {
+    "outputHashesVerified": true,
+    "outputs": {
+      "ArchiveStoreTests": "3abd181ce86c0229b8a6094b004c34709d0b7720ce53956cebace993d1b93967"
+    },
+    "receiptSHA256": "f8e0b65d48d28ddab691a3b603370803646b25cb739c8b337a06790a8a38f716"
+  },
+  "build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/CaptureRemovalTests-ac4818520099f4f0/executable-ready.json": {
+    "outputHashesVerified": true,
+    "outputs": {
+      "CaptureRemovalTests": "43192b7d811152dae0fc58b1bed02b4762092e287f5277fc02e5a896043e28a1"
+    },
+    "receiptSHA256": "9811dc60daaaadc341684ccd2b77430a717e11727455582ab928f00cebcb4130"
+  },
+  "build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/CaptureTaskConversionTests-cb70a52285ce782d/executable-ready.json": {
+    "outputHashesVerified": true,
+    "outputs": {
+      "CaptureTaskConversionTests": "222919101365fc78c01a1fcbea0512e8c5ca820b0940403fa3a3d7697e455b27"
+    },
+    "receiptSHA256": "dd379f94f93e4848f418558a5db83b78443cd117af6c88aeac204427b59ad850"
+  },
+  "build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/CommentDraftArchiveTests-ad8353dc5f8c9b87/executable-ready.json": {
+    "outputHashesVerified": true,
+    "outputs": {
+      "CommentDraftArchiveTests": "36b56c44aa2111955d3a8ed7904897275c29012ddbfdb5e5c8ad2b88ed2f8af7"
+    },
+    "receiptSHA256": "b6b98134ef56a52366990ccd0cfe960db7b7e59e9f36eccedee6062a0bfc8905"
+  },
+  "build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/DeferredArchiveRepairTests-21b28ded7ea508a1/executable-ready.json": {
+    "outputHashesVerified": true,
+    "outputs": {
+      "DeferredArchiveRepairTests": "220bb709c538951316dc5376a08736c4d7d7c42f1e100b0b365edf3f7709a3bb"
+    },
+    "receiptSHA256": "c78c1d44178c5572b7cee7f819f3a56c2a5c8479c1d3286fdceeb27e78917079"
+  },
+  "build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/HeaderInteractionTests-bc8750cd166525d6/executable-ready.json": {
+    "outputHashesVerified": true,
+    "outputs": {
+      "HeaderInteractionTests": "323b218fbc2c194dc0caf32065ac05dfcd9d9c10d3f1b745eafcec2c241230b4"
+    },
+    "receiptSHA256": "b97076b9b300a97aa6fefb2f1284a74ec6f4535534b651f2940f1540dcc9a5ad"
+  },
+  "build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/NavigationHistoryTests-6e615af7a251572f/executable-ready.json": {
+    "outputHashesVerified": true,
+    "outputs": {
+      "NavigationHistoryTests": "e5c868de755a292d74142e1df4d14896e8ad26e80a168f0fe5c3567eb41bd5e7"
+    },
+    "receiptSHA256": "af40c5a292b0e12e6b82d4c1628605f8347dc10559e4029508edf61925d2dcc8"
+  },
+  "build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/ProjectWorkspaceCardTests-f43feab71b354990/executable-ready.json": {
+    "outputHashesVerified": true,
+    "outputs": {
+      "ProjectWorkspaceCardTests": "465a1253abf9bce0d3e5ae3120e76530dea73303f21fd581e6b6e369630fe9dd"
+    },
+    "receiptSHA256": "f5019d6b9e8efc4582227ac17d531f1ed290be93b133e1f3866488b32c6bba73"
+  },
+  "build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/ProjectWorkspaceExportTests-dc9e4b0e3ffc6684/executable-ready.json": {
+    "outputHashesVerified": true,
+    "outputs": {
+      "ProjectWorkspaceExportTests": "e3514c8fb9671bab3527b48e694c8aad40fc16040773ee58cadc72c0b3800a2e"
+    },
+    "receiptSHA256": "6ba4461cd3b32b26caa8025fc4a557675320c14fd1cbb452aff91bfbf856388b"
+  },
+  "build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/ProjectWorkspaceViewTests-0c016546a1f77667/executable-ready.json": {
+    "outputHashesVerified": true,
+    "outputs": {
+      "ProjectWorkspaceViewTests": "264b5b36dc4198c7970f0f23d92040c5af728bade5a1cf02a192978b33bc4e16"
+    },
+    "receiptSHA256": "317a673c86c527ca784792e4edc383af11a07674798c77fe7e55c45a652c1ef0"
+  },
+  "build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/QAStorageScopedSaveTests-e41fbf714204ad9c/executable-ready.json": {
+    "outputHashesVerified": true,
+    "outputs": {
+      "QAStorageScopedSaveTests": "e0c6284a8416d8766dc694e1ee9ebfd96fa2dff4bb3822be5fdfcd770060e815"
+    },
+    "receiptSHA256": "9a1b717f7717235fa2df3748e6585a856fdada543fd9b2d11e9c0382aecae28c"
+  },
+  "build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/RepositoryBatchTests-d4b518b16947bf22/executable-ready.json": {
+    "outputHashesVerified": true,
+    "outputs": {
+      "RepositoryBatchTests": "3b22ff4d3bb05b35a79b7ad9a569fd56d81cb019c97b1744f2ce024c20107548"
+    },
+    "receiptSHA256": "dd2252a4e1d8b5106c002852b1dbd82bc06a238f9fb4a393db542fe66ca5060d"
+  },
+  "build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/SoftwareUpdateTests-9d8e25fd51cc3ac5/executable-ready.json": {
+    "outputHashesVerified": true,
+    "outputs": {
+      "SoftwareUpdateTests": "3f8e5d67231547e5c98ea87bc95cff418897c07831fea2544124116f5be10703"
+    },
+    "receiptSHA256": "0c88bd3f622a870f54a238457cd928f397c77229f222fe96e8741226ffb74576"
+  },
+  "build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/TaskFocusTests-29204a75196c9f34/executable-ready.json": {
+    "outputHashesVerified": true,
+    "outputs": {
+      "TaskFocusTests": "c8d2322cb5acc8a8de0492f4f058a1a679d8b94ea7b9462faf94537782f223fb"
+    },
+    "receiptSHA256": "e49b4bf27d5bee7b39f9e221fbb2274d510f3119d499b885f7719bf5deb8f9bd"
+  },
+  "build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/ViewportLifecycleTests-e4961f23384200d7/executable-ready.json": {
+    "outputHashesVerified": true,
+    "outputs": {
+      "ViewportLifecycleTests": "a41c2805f474764793e6be89556587495d2c990d699aa3f1ba0b1b97f839ab89"
+    },
+    "receiptSHA256": "ae4c809d8465d55c0dbce4dc615171ba55fee6d15def555d2f1ad4331204cbf3"
+  },
+  "build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/WeeklyPresentationCacheTests-bfb15751c3d50784/executable-ready.json": {
+    "outputHashesVerified": true,
+    "outputs": {
+      "WeeklyPresentationCacheTests": "73d62410b1d246815f260cf87d5435a4122abd75566c195755484a9198ab329c"
+    },
+    "receiptSHA256": "c11a01bef65dc1c1041d93f3d8e14dc922f37c6119118f5f0cc5777b8bba1079"
+  },
+  "build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/WorkInboxTests-cfa2ba5717d733bf/executable-ready.json": {
+    "outputHashesVerified": true,
+    "outputs": {
+      "WorkInboxTests": "f73ba48d1689a3f75d9f6e855ff56d37223e7053d7442fc15cc2be0077059199"
+    },
+    "receiptSHA256": "a12486d076f9a96c11f7e0d3acb87d3927abe7da3789cafa73cd1f64ea41413f"
+  },
+  "build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/WorkspaceInputTests-63e12db71d433be0/executable-ready.json": {
+    "outputHashesVerified": true,
+    "outputs": {
+      "WorkspaceInputTests": "cd06c2c4ff2e396cc2d927af353d56072e2c50961fa5512feb0d0c43c02df3cf"
+    },
+    "receiptSHA256": "2cec9997a9bc210ccf079c8fd392bc82014834ed68e71ac2456cefbe700b6d00"
+  },
+  "build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/WorkspaceZoomLayoutTests-0c4430969caa7faf/executable-ready.json": {
+    "outputHashesVerified": true,
+    "outputs": {
+      "WorkspaceZoomLayoutTests": "7e70a35ab28422809e69a689e004719fe09a54882a0661da6bd04ad120581090"
+    },
+    "receiptSHA256": "39935fe5a1057f1f2559804243ddb977a342303e1fc2959b60c76a8726da30da"
+  },
+  "build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/module-ready.json": {
+    "outputHashesVerified": true,
+    "outputs": {
+      "DaBinTestCore.swiftmodule": "b76a1184c8b8f0a25e7f601a2a8b4929d76e8908fbf2196bdbad3dd697f54e82",
+      "libDaBinTestCore.dylib": "fb9f756da1720a59662ceb590228023d182231627caffe86c65f912841a5e9bb"
+    },
+    "receiptSHA256": "9db7fd8daab4704bf6bb268d6d9eb022a7b8bdddb2e8bc3b9ede7ce467eeb469"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "finishedAtUTC": "2026-10-07T08:15:51.399116+00:00",
+  "elapsedSeconds": 350.953,
+  "productionFingerprint": "45414902e2ea23bd50bb9ce02eb76a5d6cc4576c98193f576e634549a91bee24",
+  "version": "0.4.49",
+  "build": "104",
+  "stages": [
+    {
+      "stage": "focused-regression",
+      "exitCode": 0,
+      "seconds": 350.902,
+      "log": "/private/tmp/dabin-modularity-20261007/focused-regression.log",
+      "snapshotUnchanged": true,
+      "finishedAtUTC": "2026-10-07T08:15:51.374956+00:00",
+      "reportPath": "/private/tmp/dabin-modularity-20261007/focused-regression-native-report.json",
+      "passedSuites": 23,
+      "failedSuites": 0,
+      "reportStatus": "passed",
+      "reportCoverage": "selected_suites"
+    }
+  ],
+  "snapshotUnchanged": true
+}

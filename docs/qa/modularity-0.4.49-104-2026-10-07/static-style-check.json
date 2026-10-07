@@ -1,0 +1,12 @@
+{
+  "scope": "Optional whitespace diff scan of touched existing files; separate from compilation and runtime QA.",
+  "exitCode": 2,
+  "sourceChanged": false,
+  "findings": [
+    {
+      "path": "native/Sources/DaBin/WorkspaceZoomLayout.swift",
+      "line": 64,
+      "message": "new blank line at EOF"
+    }
+  ]
+}

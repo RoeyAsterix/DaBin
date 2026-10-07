@@ -1,0 +1,2305 @@
+{
+  "artifacts": {
+    "applied-refactor.json": {
+      "bytes": 5604,
+      "sha256": "cd4bb4a44a594c183b9e233f842d6b4a8d6159f36c0792bdaec3f88b51362221"
+    },
+    "baseline.json": {
+      "bytes": 49143,
+      "sha256": "10c172afd56db668aaa6cb2bb4b70f6d0ffe0554f54ebe0e8f16a380b46757b2"
+    },
+    "campaign-progress.json": {
+      "bytes": 542,
+      "sha256": "1b11e6ec9ac95663a1c413e7e803ed295d9adabeb856d4576847f8aac707edfa"
+    },
+    "campaign-result.json": {
+      "bytes": 762,
+      "sha256": "81e1a22f26d1376afb7197923a8945ec2d12a43a96541452f97fe8b4c908d895"
+    },
+    "comparison-verification.json": {
+      "bytes": 2129,
+      "sha256": "1b7b67cab93a2d69619ab4aad8a5b6fd71abe6667e5ab4047515979fbcf29b0d"
+    },
+    "deterministic-project-launch.json": {
+      "bytes": 703,
+      "sha256": "abf297b387fa4a1ea3f317907d97759a5912789e7acf6f070c0711037fb8204d"
+    },
+    "deterministic-project.log": {
+      "bytes": 70,
+      "sha256": "2249cb4bcf8e58d592b55ccdf9d60d1137f91ef3a2e2d471874c2c5d3bd79fa5"
+    },
+    "diff-summary.json": {
+      "bytes": 6652,
+      "sha256": "0a121ba442ee421bad6ee3c17a6b9b7e8a8b3d41cafbe4d294493fede7b90deb"
+    },
+    "focused-regression-compiled-output-verification.json": {
+      "bytes": 9866,
+      "sha256": "b9aa0e6a54c816289c956127c6a370248ce8147dc83f72023473a174c8289569"
+    },
+    "focused-regression-launch.json": {
+      "bytes": 5448,
+      "sha256": "6d1cb8080e0d861e054067d2f92e8ebe69f9acec48b7531274c856d64fdb7586"
+    },
+    "focused-regression-native-report.json": {
+      "bytes": 50094,
+      "sha256": "1f70e21382b89ee25d4a5bc8ab01778a94de8d4f00ebca2f4efe8f756c78bc2a"
+    },
+    "focused-regression.log": {
+      "bytes": 4168,
+      "sha256": "c1767ea54dec899b89f6dd80bc3008f7a58df1b8299bb7a03073b8aa5e75a3ca"
+    },
+    "full-campaign-progress.json": {
+      "bytes": 1551,
+      "sha256": "f4317e1d712984cbb51806a8d0407ca71f1f589f8e697f56064b74badc24731f"
+    },
+    "full-campaign-result.json": {
+      "bytes": 1771,
+      "sha256": "a8d6444af8bb9270320c14c9a292c6b38f9fc907bc16327ae4a06b27ea5642d8"
+    },
+    "full-native-compiled-output-verification.json": {
+      "bytes": 54545,
+      "sha256": "8c824578ea5704711d755270bbbc8fd03f5be29f2b59b6cfc2ce58d6c1a803fb"
+    },
+    "full-native-launch.json": {
+      "bytes": 4239,
+      "sha256": "0b7f9533fe878a0e7441655241ee0c834b53e957ebcc7ce3433f60e26343400a"
+    },
+    "full-native-native-report.json": {
+      "bytes": 119935,
+      "sha256": "533f5f611d7b5e5269d40a4a31a0eb3f97c8a2ee9e1533dd61a2673e845fa5a8"
+    },
+    "full-native.log": {
+      "bytes": 22462,
+      "sha256": "adb22b8fb3553f51796fd65e204f9058aa0d2ed652a36fb66d56837e72f5098c"
+    },
+    "offline-packaging-result.json": {
+      "bytes": 109,
+      "sha256": "ae69975fda63b709b35d8350027320e5e7004f6c8109e702c94d6732f088bfa0"
+    },
+    "offline-packaging.log": {
+      "bytes": 4454,
+      "sha256": "28380fe8011505735ef5deffc24774696ceef221a985e9131e6d2eafa4e72bd9"
+    },
+    "outputs/focused-regression/project_workspace_card_qa_output/project-responsive-260-zoom200-compact-geometry.json": {
+      "bytes": 361,
+      "sha256": "6e996935ac4774b7e4997884893e8f0294c9b94eb73f0a5a368253ae4b43ab87"
+    },
+    "outputs/focused-regression/project_workspace_card_qa_output/project-responsive-260-zoom200-grid-geometry.json": {
+      "bytes": 361,
+      "sha256": "899ad46de8663add5ad56bfe7772047b2cf260602be4fb124aee3a204f9e317b"
+    },
+    "outputs/focused-regression/project_workspace_card_qa_output/project-responsive-320-zoom200-compact-geometry.json": {
+      "bytes": 361,
+      "sha256": "774a4c4ad91377bed051cc9dedbebf2aa1593e4c85f630583ae064fea85b8c3b"
+    },
+    "outputs/focused-regression/project_workspace_card_qa_output/project-responsive-320-zoom200-grid-geometry.json": {
+      "bytes": 361,
+      "sha256": "e22a844b6aa6bbc38dfa3dbcd70704492d9d1f56049ee1216318ed89d16797ea"
+    },
+    "outputs/focused-regression/zoom_layout_qa_output/compact-card-geometry.json": {
+      "bytes": 8554,
+      "sha256": "ff5b2849ff0073244b07acb985c03d425155be1aaf0d098296875c608db917d1"
+    },
+    "outputs/full-native/auto_record_render_dir/manifest.json": {
+      "bytes": 576,
+      "sha256": "345fbd832bab02ee7ae0ead99e81947d1d9e045e5255522caba0dece47829e21"
+    },
+    "outputs/full-native/capture_detail_navigation_qa_output/native-navigation-report.json": {
+      "bytes": 8087,
+      "sha256": "9841e8325472f5e7f0a84ed7d667a5de63cc86559794e034dd9d076af09bdc42"
+    },
+    "outputs/full-native/capture_detail_readability_qa_output/native-readability-report.json": {
+      "bytes": 10500,
+      "sha256": "21415d661e5cc36f1020961f2d179d4b1265c7b9b816e6e0a3852349b23d7cb9"
+    },
+    "outputs/full-native/companion_qa_output/companion-renders.json": {
+      "bytes": 2127,
+      "sha256": "20f496807e78e9f909fa094e9d0dcca751ce03108a18be2dd51635835a95528f"
+    },
+    "outputs/full-native/day_layout_qa_output/daily-grid-layout-report.json": {
+      "bytes": 14340,
+      "sha256": "5fa107e2c97138759079b3d4f3c6072c93bccb331ae82d9bcb6a6c838ea95220"
+    },
+    "outputs/full-native/day_layout_qa_output/day-1024-zoom100-light.ax.json": {
+      "bytes": 37391,
+      "sha256": "1a3d534c46ec6b844e4cdaa45a085ef97697ea7b798f33a2e7b8c30c97139fc4"
+    },
+    "outputs/full-native/day_layout_qa_output/day-1024-zoom200-dark.ax.json": {
+      "bytes": 38034,
+      "sha256": "d5c7e8e703f2e7a86c4b9d1867fbcd86c59aae2beaee4b543684e2541aacbd2f"
+    },
+    "outputs/full-native/day_layout_qa_output/day-1024-zoom75-dark.ax.json": {
+      "bytes": 38443,
+      "sha256": "1f9589da8654f89c3d38633c46037b6933e4b9168978fd2bd8410b000e9c6c49"
+    },
+    "outputs/full-native/day_layout_qa_output/day-1440-zoom100-dark.ax.json": {
+      "bytes": 37403,
+      "sha256": "6f422a1c5784e2b9ab9950f191fc18b8406e44bb2dae601cac1a5f14106edd5d"
+    },
+    "outputs/full-native/day_layout_qa_output/day-1440-zoom200-light.ax.json": {
+      "bytes": 38422,
+      "sha256": "8402a85320f0b96ed7398e17c4ac7e11eed8d10bdba24cd1ba7cc6c371fd5382"
+    },
+    "outputs/full-native/day_layout_qa_output/day-1920-zoom100-dark.ax.json": {
+      "bytes": 37391,
+      "sha256": "4c1cac9f06a0985a3d0f4dcff624f3c0936c3c7ff401f089b89704dff35b29b8"
+    },
+    "outputs/full-native/day_layout_qa_output/day-1920-zoom200-dark.ax.json": {
+      "bytes": 37964,
+      "sha256": "63cdd7a685b14ae8fabfaa0001c00b1e82512603dbe8dcbd46ae4b69b5b09077"
+    },
+    "outputs/full-native/day_layout_qa_output/day-1920-zoom75-light.ax.json": {
+      "bytes": 38340,
+      "sha256": "32a496a4376ae6d90d3f28e0a02ed6a18a0801e2b0bd0630e47abf4600ffb6f5"
+    },
+    "outputs/full-native/day_layout_qa_output/day-380-zoom100-dark.ax.json": {
+      "bytes": 30073,
+      "sha256": "4bb27d2541ab4bd9bacad692dcff4836373bc915e424229752d95f6e47baa579"
+    },
+    "outputs/full-native/day_layout_qa_output/day-380-zoom200-light.ax.json": {
+      "bytes": 26706,
+      "sha256": "bcd8e63594f4ed32f126430bac5e868d79d4dcffa689075059f4bfbfcd40b495"
+    },
+    "outputs/full-native/day_layout_qa_output/day-800-zoom100-dark.ax.json": {
+      "bytes": 37617,
+      "sha256": "ce88759d00d16fc462a31c29032531e8c8dfe650e87608e5d4055c4e55bf5eb1"
+    },
+    "outputs/full-native/day_layout_qa_output/day-800-zoom75-light.ax.json": {
+      "bytes": 38080,
+      "sha256": "a12579aa693d94dbd665ea63ec38eb580a7df5e02c1aa5cdf877aeb8c9a19a87"
+    },
+    "outputs/full-native/day_layout_qa_output/day-continuous-resize-1024.ax.json": {
+      "bytes": 37395,
+      "sha256": "2ddf5ba6168852bb2ec18d2d909e0e6dcb0f570306aef8850a4e07463b8655b7"
+    },
+    "outputs/full-native/day_layout_qa_output/day-continuous-resize-1440.ax.json": {
+      "bytes": 37408,
+      "sha256": "b043f385f50c990ab7c50513f59f2631a23b0b4fdde89e764b8a8671d8ec2384"
+    },
+    "outputs/full-native/day_layout_qa_output/day-continuous-resize-1920.ax.json": {
+      "bytes": 37396,
+      "sha256": "b8683da2e9f743e80a5b30c26e18e78ff7b69a283432df220b4ba5aae4535660"
+    },
+    "outputs/full-native/day_layout_qa_output/day-continuous-resize-800.ax.json": {
+      "bytes": 37622,
+      "sha256": "96d1865a87c2d14f0f75dca7a00d0f6c46d44534dfe21a12b37278cc926a98f7"
+    },
+    "outputs/full-native/day_layout_qa_output/day-expanded-collections.ax.json": {
+      "bytes": 62073,
+      "sha256": "37f3650cc1e6cd94eed58d07d424cf779d09092b244acbc2f464fdfd234c1315"
+    },
+    "outputs/full-native/day_layout_qa_output/day-text-filter.ax.json": {
+      "bytes": 45669,
+      "sha256": "34bb42c66f2d179c64722f4d8bfb79e5c75a6c833a28ccb5856fe068d18c22fb"
+    },
+    "outputs/full-native/explorer_card_qa_output/explorer-capture-card-report.json": {
+      "bytes": 11244,
+      "sha256": "77453dabcfbe8991c8a7e53da13dd49410b436f591e4025dce959d7e56c0233b"
+    },
+    "outputs/full-native/native_tooltip_qa_output/row-short-geometry.json": {
+      "bytes": 2433,
+      "sha256": "debc4eecf9f8d81a8f5d47bc03491b0ede858eb1188459eb85e48aeef0efae1a"
+    },
+    "outputs/full-native/project_workspace_card_qa_output/project-responsive-260-zoom200-compact-geometry.json": {
+      "bytes": 361,
+      "sha256": "6e996935ac4774b7e4997884893e8f0294c9b94eb73f0a5a368253ae4b43ab87"
+    },
+    "outputs/full-native/project_workspace_card_qa_output/project-responsive-260-zoom200-grid-geometry.json": {
+      "bytes": 361,
+      "sha256": "899ad46de8663add5ad56bfe7772047b2cf260602be4fb124aee3a204f9e317b"
+    },
+    "outputs/full-native/project_workspace_card_qa_output/project-responsive-320-zoom200-compact-geometry.json": {
+      "bytes": 361,
+      "sha256": "774a4c4ad91377bed051cc9dedbebf2aa1593e4c85f630583ae064fea85b8c3b"
+    },
+    "outputs/full-native/project_workspace_card_qa_output/project-responsive-320-zoom200-grid-geometry.json": {
+      "bytes": 361,
+      "sha256": "e22a844b6aa6bbc38dfa3dbcd70704492d9d1f56049ee1216318ed89d16797ea"
+    },
+    "outputs/full-native/search_qa_dir/manifest.json": {
+      "bytes": 8073,
+      "sha256": "f2c08163f867d9d545e254617add49e8d6ca78ae2ee327282d3e01ccead29443"
+    },
+    "outputs/full-native/search_qa_dir/timings.json": {
+      "bytes": 262,
+      "sha256": "50e946defee04ba7e7c2e91baea62ef05517db62db7d6b779e2528562d464f06"
+    },
+    "outputs/full-native/task_plan_qa_output/native-task-plan-report.json": {
+      "bytes": 1758,
+      "sha256": "fc5d3af3c38e068390486170b15b1ff23856416fc353ce4bd7f70d4940cea6f5"
+    },
+    "outputs/full-native/task_plan_qa_output/title-geometry-zoom100.json": {
+      "bytes": 705,
+      "sha256": "45d71ab6a2dde4e66e0f26924f72ec796eae0c36651e4a49782939641b4b106d"
+    },
+    "outputs/full-native/task_plan_qa_output/title-geometry-zoom200.json": {
+      "bytes": 721,
+      "sha256": "1bd65a8d42ac4ba8116a93be33758de809bd51ff1c226add7ca2a0a8cbfe1458"
+    },
+    "outputs/full-native/task_plan_qa_output/title-resize-1200.json": {
+      "bytes": 855,
+      "sha256": "efd15c9915c86ef36068d571636414b5e69b815f3b4a7a0c3fe4f99df7f4c81a"
+    },
+    "outputs/full-native/task_plan_qa_output/title-resize-380.json": {
+      "bytes": 852,
+      "sha256": "296e4c018b8a122b5be1f340b219fef7252bd267ecbc8f31593215983b847299"
+    },
+    "outputs/full-native/task_plan_qa_output/title-resize-600.json": {
+      "bytes": 852,
+      "sha256": "950c4402cb805090e7881372d96f5f503a2c826515ba9ca12aa2d0e678116b95"
+    },
+    "outputs/full-native/today_card_qa_output/today-card-geometry.json": {
+      "bytes": 19229,
+      "sha256": "6f78b0ca67e82b0792c30147122a84163576153a7150d393bf968f7400adb681"
+    },
+    "outputs/full-native/visual_animation_stress_output/visual-animation-stress-report.json": {
+      "bytes": 3912,
+      "sha256": "839313a6b223c291052dda8d81c3f2075fa8f1fa8555e1c01ddad10769c056e1"
+    },
+    "outputs/full-native/week_layout_qa_output/week-1024-zoom100-dark-collapsed.ax.json": {
+      "bytes": 21263,
+      "sha256": "108cabbca7de10437a2d3324d80c674ec7dca1106c32a046ab0c682c51168fa4"
+    },
+    "outputs/full-native/week_layout_qa_output/week-1024-zoom100-dark-expanded.ax.json": {
+      "bytes": 37940,
+      "sha256": "6b0c663152fa83f2ad8b418e6f728034dc22f87c7cfad7b47f2d6caca9e59a43"
+    },
+    "outputs/full-native/week_layout_qa_output/week-1024-zoom100-light-collapsed.ax.json": {
+      "bytes": 21264,
+      "sha256": "22a1e9864a48e0b0fedee240ed32136f2dd9cb7aabe3e16cadd9f02879110be1"
+    },
+    "outputs/full-native/week_layout_qa_output/week-1024-zoom100-light-expanded.ax.json": {
+      "bytes": 37941,
+      "sha256": "2d91d85c88fd7fa9547b4f9f486a218ec514bdac00079661a2cdfd20eb624d17"
+    },
+    "outputs/full-native/week_layout_qa_output/week-1024-zoom200-dark-collapsed.ax.json": {
+      "bytes": 21253,
+      "sha256": "c7513b1206e7eaf1a872bcd0baa8c826a2d1a13f55369d8179fe5099b1a6c9a9"
+    },
+    "outputs/full-native/week_layout_qa_output/week-1024-zoom200-dark-expanded.ax.json": {
+      "bytes": 37932,
+      "sha256": "5d7e6d852492d2062bfbfde94ea567b27a272c6c04397e4a9059d747fe8478be"
+    },
+    "outputs/full-native/week_layout_qa_output/week-1024-zoom200-light-collapsed.ax.json": {
+      "bytes": 21254,
+      "sha256": "090a69887102aa30570a635c404efa28f951be6c9b477a4be12867f7dd171699"
+    },
+    "outputs/full-native/week_layout_qa_output/week-1024-zoom200-light-expanded.ax.json": {
+      "bytes": 37933,
+      "sha256": "e97d50273c1df09d00662905bcaae7a77dc57b5b977f82d54bb877ee65694883"
+    },
+    "outputs/full-native/week_layout_qa_output/week-1024-zoom75-dark-collapsed.ax.json": {
+      "bytes": 21262,
+      "sha256": "4c8cfd5be1d3cc822705e439313bba498073c4f0316a8e36903313a16e535c73"
+    },
+    "outputs/full-native/week_layout_qa_output/week-1024-zoom75-dark-expanded.ax.json": {
+      "bytes": 37939,
+      "sha256": "b41c3ea04edb9f3639741d11b86af96773e9d11f26e31793d22bfc5cd6b39b30"
+    },
+    "outputs/full-native/week_layout_qa_output/week-1024-zoom75-light-collapsed.ax.json": {
+      "bytes": 21263,
+      "sha256": "85bfeb901189175432cf0a8f4011e63335e95fa25230aba10bcbe2350dc689bd"
+    },
+    "outputs/full-native/week_layout_qa_output/week-1024-zoom75-light-expanded.ax.json": {
+      "bytes": 37940,
+      "sha256": "cd3f8e2d3c3ce83c3fc93c63dc0d59816af2b6c204fd22873c75aa9502256f6f"
+    },
+    "outputs/full-native/week_layout_qa_output/week-1280-zoom100-dark-collapsed.ax.json": {
+      "bytes": 21391,
+      "sha256": "da2df188b51f92549cd9193f14a885c5ce6889df972091a0df8338d2c71ea5e2"
+    },
+    "outputs/full-native/week_layout_qa_output/week-1280-zoom100-dark-expanded.ax.json": {
+      "bytes": 38144,
+      "sha256": "3fcffaa12e203adcdb3b65122ae64916611ae283c8b6370f2ab141d54126081a"
+    },
+    "outputs/full-native/week_layout_qa_output/week-1280-zoom100-light-collapsed.ax.json": {
+      "bytes": 21392,
+      "sha256": "999e1dc6104bbe3c77331ebecda1a66ec93fe03affc179c965e85dc9b7edbb1e"
+    },
+    "outputs/full-native/week_layout_qa_output/week-1280-zoom100-light-expanded.ax.json": {
+      "bytes": 38145,
+      "sha256": "0fbcc9f1baffb2d6b97d593cd324a52112bd0bbacd981a853e77a4a439bb9c56"
+    },
+    "outputs/full-native/week_layout_qa_output/week-1280-zoom200-dark-collapsed.ax.json": {
+      "bytes": 21307,
+      "sha256": "46601cfc4ce2dc4148a7d81ea42b64c78b37455d748404742c380c02e3e872fb"
+    },
+    "outputs/full-native/week_layout_qa_output/week-1280-zoom200-dark-expanded.ax.json": {
+      "bytes": 38054,
+      "sha256": "5938fe2698877ad6ae0bfd791d41716572955a8aa095e1a2e3465987d20d44ce"
+    },
+    "outputs/full-native/week_layout_qa_output/week-1280-zoom200-light-collapsed.ax.json": {
+      "bytes": 21308,
+      "sha256": "0fa0bcb5041d62ae960b1565eb397cce6ea1102ad151931568a8441e852e971c"
+    },
+    "outputs/full-native/week_layout_qa_output/week-1280-zoom200-light-expanded.ax.json": {
+      "bytes": 38055,
+      "sha256": "96ededc8aeec3a1168f79db595dfc45a9b2cbf441d7cbc4a391eb294a16c7930"
+    },
+    "outputs/full-native/week_layout_qa_output/week-1280-zoom75-dark-collapsed.ax.json": {
+      "bytes": 21390,
+      "sha256": "878226f120cba54909ed1a720e281c5a5ea597391c041b4c59ca5dc9e98338d5"
+    },
+    "outputs/full-native/week_layout_qa_output/week-1280-zoom75-dark-expanded.ax.json": {
+      "bytes": 38141,
+      "sha256": "2181a2dc4312b14d0e67ef67a4503d3b18cb95def10a62bb438b93ac93e228e0"
+    },
+    "outputs/full-native/week_layout_qa_output/week-1280-zoom75-light-collapsed.ax.json": {
+      "bytes": 21391,
+      "sha256": "58aabc474b70988a01f4cbdb6dbe1175655e6e4917b87c45eaa43bc6da9ac201"
+    },
+    "outputs/full-native/week_layout_qa_output/week-1280-zoom75-light-expanded.ax.json": {
+      "bytes": 38142,
+      "sha256": "490775fdeae5601620f868b01030071fc19fc2ae82a7aadbaf2234adf6106d52"
+    },
+    "outputs/full-native/week_layout_qa_output/week-1440-zoom100-dark-collapsed.ax.json": {
+      "bytes": 21403,
+      "sha256": "3423a8233a29337a640ec1dd1ca7ed0bc3f2670f696f0cc3251986ee58afb423"
+    },
+    "outputs/full-native/week_layout_qa_output/week-1440-zoom100-dark-expanded.ax.json": {
+      "bytes": 38010,
+      "sha256": "dbb1f7c77bd3183717ab7130bd40ce3efe8cc290959cf970ead384ac17d7001c"
+    },
+    "outputs/full-native/week_layout_qa_output/week-1440-zoom100-light-collapsed.ax.json": {
+      "bytes": 21404,
+      "sha256": "5b09fce1f9fb2e795dc90560caddc83ed5630b78cf35e89788cf0f20d1562b5a"
+    },
+    "outputs/full-native/week_layout_qa_output/week-1440-zoom100-light-expanded.ax.json": {
+      "bytes": 38011,
+      "sha256": "482ae25e1ac56e27f4157f79120a3e9f9c9766c15298d189426030124ef9e272"
+    },
+    "outputs/full-native/week_layout_qa_output/week-1440-zoom200-dark-collapsed.ax.json": {
+      "bytes": 21317,
+      "sha256": "dbbf2a3b374012acf3e0057fcbc435a90836212497828e5728bebcdbc78096e0"
+    },
+    "outputs/full-native/week_layout_qa_output/week-1440-zoom200-dark-expanded.ax.json": {
+      "bytes": 37920,
+      "sha256": "8e36c7815d5a5b5de156852c1f5aebe63e5964a7f349fa1fc3b679d4cce9bac3"
+    },
+    "outputs/full-native/week_layout_qa_output/week-1440-zoom200-light-collapsed.ax.json": {
+      "bytes": 21318,
+      "sha256": "d450309fdb9abbcc58cc502eb3db0fc0ffc957fee795d746335034bd8f0a11ce"
+    },
+    "outputs/full-native/week_layout_qa_output/week-1440-zoom200-light-expanded.ax.json": {
+      "bytes": 37921,
+      "sha256": "92568cdacbfa12664606e959e97142bdd9230c4628591b9e367fcc27f5f9baec"
+    },
+    "outputs/full-native/week_layout_qa_output/week-1440-zoom75-dark-collapsed.ax.json": {
+      "bytes": 21406,
+      "sha256": "4d18238a5a3889dfa8c9db8c084cc85272ea490dd73b611a84f209c67620583a"
+    },
+    "outputs/full-native/week_layout_qa_output/week-1440-zoom75-dark-expanded.ax.json": {
+      "bytes": 38167,
+      "sha256": "e16ce0a04d27d92512bb4053e03942148134296487e2c3bdc4542794b6391947"
+    },
+    "outputs/full-native/week_layout_qa_output/week-1440-zoom75-light-collapsed.ax.json": {
+      "bytes": 21407,
+      "sha256": "8d32c01f7a30ed050867c67ccf76aeeb063e18db403f90c6a5b841869bfebd48"
+    },
+    "outputs/full-native/week_layout_qa_output/week-1440-zoom75-light-expanded.ax.json": {
+      "bytes": 38168,
+      "sha256": "da0e69a1a1229c688a47654ec46a773a353922c5b6945a7229395225006845cb"
+    },
+    "outputs/full-native/week_layout_qa_output/week-1920-zoom100-dark-collapsed.ax.json": {
+      "bytes": 21369,
+      "sha256": "d63f78fd4709e3e8101345932e4cc126307e3d2f01e441879d04cfa2d1e34206"
+    },
+    "outputs/full-native/week_layout_qa_output/week-1920-zoom100-dark-expanded.ax.json": {
+      "bytes": 38274,
+      "sha256": "62e98515baf6e19b3110ca5b3a6f33f57613dbefbd789db6c04d877c46fa450b"
+    },
+    "outputs/full-native/week_layout_qa_output/week-1920-zoom100-light-collapsed.ax.json": {
+      "bytes": 21370,
+      "sha256": "395ff468712841090e864eb0e0421d1dc127c62a58773940760a9a8df7ea18fa"
+    },
+    "outputs/full-native/week_layout_qa_output/week-1920-zoom100-light-expanded.ax.json": {
+      "bytes": 38275,
+      "sha256": "8a9708bbf07f02bcbe7997a056cca4d5d78b3d87a5da444723d23470cce82930"
+    },
+    "outputs/full-native/week_layout_qa_output/week-1920-zoom200-dark-collapsed.ax.json": {
+      "bytes": 21287,
+      "sha256": "3037944d0deead0e350ad62f05027d9402a8daef067fe55fbaa772fb64a4bdad"
+    },
+    "outputs/full-native/week_layout_qa_output/week-1920-zoom200-dark-expanded.ax.json": {
+      "bytes": 38024,
+      "sha256": "d6739f67eb76d6bc4d6e2ea8da4f9b984747abf3dd6dee6436a517609c413b97"
+    },
+    "outputs/full-native/week_layout_qa_output/week-1920-zoom200-light-collapsed.ax.json": {
+      "bytes": 21288,
+      "sha256": "ee6353cecb3d0170fc42699cb1fad712d215ee9d2da347b4182cd1d3ec4d0906"
+    },
+    "outputs/full-native/week_layout_qa_output/week-1920-zoom200-light-expanded.ax.json": {
+      "bytes": 38025,
+      "sha256": "d6fcd8e1980b38a41b8cc0e9b0d3c05e9edd1d791c9319d565f4aafb48c35d7a"
+    },
+    "outputs/full-native/week_layout_qa_output/week-1920-zoom75-dark-collapsed.ax.json": {
+      "bytes": 21372,
+      "sha256": "c586adbf3db662b24627072fa85727744992bfa12111a89d72b5908d50443b9d"
+    },
+    "outputs/full-native/week_layout_qa_output/week-1920-zoom75-dark-expanded.ax.json": {
+      "bytes": 38277,
+      "sha256": "43d2a96a9755d8c913c919b848cec1ee8b00f2e52dabba1637eb4845ff638f92"
+    },
+    "outputs/full-native/week_layout_qa_output/week-1920-zoom75-light-collapsed.ax.json": {
+      "bytes": 21373,
+      "sha256": "351215ba1130241ca6f40bb93edf05c563fb9fd56ef0c7e07e1988786de9c02f"
+    },
+    "outputs/full-native/week_layout_qa_output/week-1920-zoom75-light-expanded.ax.json": {
+      "bytes": 38278,
+      "sha256": "c0b6888ad26bd8d323992e2d78fc715b9d293d2ada718e7577a0939c6ec8f7cb"
+    },
+    "outputs/full-native/week_layout_qa_output/week-filtered-files.ax.json": {
+      "bytes": 10639,
+      "sha256": "1f20eeb0a7b6c0304b51b7bdb099de3fb46b474aeb0015d569030546d6e63f19"
+    },
+    "outputs/full-native/week_layout_qa_output/week-filtered-media.ax.json": {
+      "bytes": 3711,
+      "sha256": "b972f61af5e92fd9daed095c2343bdcdc60b86573f76fb3d8b7b135d91c3b007"
+    },
+    "outputs/full-native/week_layout_qa_output/weekly-layout-report.json": {
+      "bytes": 44088,
+      "sha256": "86ceae0b50e43a6e35aed361053b23d0a0593f586b3e2961cd5c38e638b99ddb"
+    },
+    "outputs/full-native/zoom_layout_qa_output/compact-card-geometry.json": {
+      "bytes": 8554,
+      "sha256": "ff5b2849ff0073244b07acb985c03d425155be1aaf0d098296875c608db917d1"
+    },
+    "outputs/full-native/zoom_performance_qa_output/performance.json": {
+      "bytes": 7252,
+      "sha256": "d9cda2001385f9170e9c7ffe27a72fda9ca476d397f6cd59ccdb41397d4b7c3a"
+    },
+    "outputs/sustained-speed/zoom_performance_qa_output/performance.json": {
+      "bytes": 7612,
+      "sha256": "e42fe83d6bfbeb547ca6f588abf69a66140a30eb6d21e337466e4b91b3deeb29"
+    },
+    "owned-changes.json": {
+      "bytes": 5086,
+      "sha256": "8f8736f24eef300cc0dad8e028596d7f2b31a9792602e88c4984e8993715b4ee"
+    },
+    "python-tool-tests-result.json": {
+      "bytes": 277,
+      "sha256": "130a32e553e3fb92798c65bf3c9a7a4da5f7cbed7d2562c27aff9a8c369ba9f0"
+    },
+    "python-tool-tests.log": {
+      "bytes": 13621,
+      "sha256": "86a0a798508c5e366ee720d45d3ca358ca86ddc5dc48e348c8750172fcdbbcb5"
+    },
+    "source-freeze.json": {
+      "bytes": 76018,
+      "sha256": "af2ecf41b814eee78fbbb152631c4af96bd7f5ae794da709140203b62da5a75a"
+    },
+    "sustained-speed-compiled-output-verification.json": {
+      "bytes": 54545,
+      "sha256": "8c824578ea5704711d755270bbbc8fd03f5be29f2b59b6cfc2ce58d6c1a803fb"
+    },
+    "sustained-speed-launch.json": {
+      "bytes": 4435,
+      "sha256": "dbb778c7a76dc276315b98686e3ac8fb5653c3066905d993319ce13849412317"
+    },
+    "sustained-speed-native-report.json": {
+      "bytes": 35548,
+      "sha256": "c6c78e48665007803f8d7b4fbfd61664971ba4040389fec0c6922ae32a230340"
+    },
+    "sustained-speed.log": {
+      "bytes": 677,
+      "sha256": "eb05835f605e49151b1b83cdac9bc4435b6f5d23e0c1467ead006903b63b343e"
+    },
+    "unsigned-store-build-launch.json": {
+      "bytes": 692,
+      "sha256": "9c905166eb02002f8de4b41d0372b53b4bd165ade557b00df471d32009f828c6"
+    },
+    "unsigned-store-build.log": {
+      "bytes": 301,
+      "sha256": "fb5793048ef8fef86667cf8d3e3c7b239c3465f8ab2d8d047387ea76f8ef7017"
+    },
+    "working/docs/qa/full-certification-2026-10-05/durability-stress-report.json": {
+      "bytes": 1595,
+      "sha256": "0fab523954b202a0101a081ebb62b80256d34da68250556e948799feb8b61cc7"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/AppDraftSessionTests-c23b032bf8a56f0f/executable-ready.json": {
+      "bytes": 17976,
+      "sha256": "f2c3a9303cb8beb9590c2a8fbf8611a675a2af2f5b9a653a8a99bc81a38c55ef"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/ApplicationLifecycleTests-67275608b6a4181b/executable-ready.json": {
+      "bytes": 17981,
+      "sha256": "6a2997fb6b2233d9a0e8485c866def6772e7a64fe3e993ee7aa2866f2a2c2a84"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/ArchiveBackupTests-d6f91d3b563f78e4/executable-ready.json": {
+      "bytes": 17974,
+      "sha256": "580a44d04885dc7570174d0c77ad2907b498d9abc1f811730649ffb102eef0d4"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/ArchiveLayoutTests-a0d0a33d4ef8649d/executable-ready.json": {
+      "bytes": 17974,
+      "sha256": "2a8670e9194ad492958db0336b01777b9b392971d4866672798537420ef7ef58"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/ArchiveRecoveryTests-4fc370c0bb300764/executable-ready.json": {
+      "bytes": 17976,
+      "sha256": "5feead950006101266ede194bf7f628c773267c3d2d29a372704751fbcacf8c0"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/ArchiveStoreTests-8a73774004c51f87/executable-ready.json": {
+      "bytes": 17973,
+      "sha256": "f8e0b65d48d28ddab691a3b603370803646b25cb739c8b337a06790a8a38f716"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/AutoCaptureExplorerResponsivenessTests-f9887b51a16a0a86/executable-ready.json": {
+      "bytes": 17994,
+      "sha256": "8af04707aa5628358e8609b4bd047b31d61167e6f41e9ab20cf5eb8e7c2fbdf0"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/AutoCaptureRobotCelebrationTests-b1da7c80c24f2aae/executable-ready.json": {
+      "bytes": 17988,
+      "sha256": "ab569e52836ce9edda27cfb4c17d0f15f9aec1196b8b7de95d8620f956bc1bc3"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/AutoCaptureRobotPresenterTests-39c6faf6cd4cdf7b/executable-ready.json": {
+      "bytes": 17986,
+      "sha256": "1795c1d485c4a0d708700858a21b19477d9ceb1ed1f1675591548ffdd31bbfac"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/AutoCaptureServiceTests-dc70021f21968d3b/executable-ready.json": {
+      "bytes": 17979,
+      "sha256": "4b8ca4431fac040fe9f50e6f0796d8df1aed9ff61102cb19cdbb0a5fdfa38300"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/AutoCaptureSignMotionTests-8f63b1d9c11931df/executable-ready.json": {
+      "bytes": 17982,
+      "sha256": "cb1dd109b47a57f8c3234b3ac39e0f67e321849da74ee6f4b65895f0dc379e9f"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/AutoCaptureSignPresenterTests-3a569ff2785ecd9e/executable-ready.json": {
+      "bytes": 17985,
+      "sha256": "3413f230e2fe9592bc70d4ea2f823d1fd88a6bf736883ef8d6eee21b3188d3e3"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/AutoCaptureSignRenderTests-13e9b28bce882cf3/executable-ready.json": {
+      "bytes": 17982,
+      "sha256": "2befec2b00eb86d3de1413187ed6b0eadd31b6c5d50a47030133da7cfbbf4167"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/AutoRecordIndicatorTests-c021b4f90c451807/executable-ready.json": {
+      "bytes": 17980,
+      "sha256": "475364b9fd0bbd0984a3baf0be4b0088dfc95d3b51939cba4d65b7a6dcc25112"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/BoredRobotArtworkTests-7584e08ca842fa83/executable-ready.json": {
+      "bytes": 17978,
+      "sha256": "12882f2818d76e72fc8c51a7fda4d94a3e92f06a20b8f7a2a177964c75e80eb4"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/CaptionDragTests-76293a735aadc931/executable-ready.json": {
+      "bytes": 17972,
+      "sha256": "ebfc7e1314649c2b15bee173552d7bbf5d6418ef074b9fed6fca648c1325f591"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/CaptionSelectionTests-16006257c5322db2/executable-ready.json": {
+      "bytes": 17977,
+      "sha256": "d138824f2f576d11325ce5209bd7d95d80f80066e58ecf8f5c60a3e181c9eca9"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/CaptureActionTests-ee3c90174253ec05/executable-ready.json": {
+      "bytes": 17974,
+      "sha256": "47f9d93ee33e48aa743c618d51608a18461fa18edbb002deb86260420a6144ef"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/CaptureAnnotationTests-dcea5a3736cdc4dd/executable-ready.json": {
+      "bytes": 17978,
+      "sha256": "70d34e4ad71b6f5d042a05702ed92d0b5fed5020c5a09ef4c02daa69d7ba591c"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/CaptureClipboardTests-ff86d81f42d5c0ff/executable-ready.json": {
+      "bytes": 17977,
+      "sha256": "00d895b76539e4ce6aec4a1da756db6dd9c55cc02219634c1f85887ce3ff6d30"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/CaptureDetailNavigationTests-43aea99cb4a23f5b/executable-ready.json": {
+      "bytes": 17984,
+      "sha256": "1b519eb90802ce028e2db2949291435c319bd87e51851d38f3e6a047ea6f3876"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/CaptureDetailReadabilityTests-7d04f1f6a797b4bf/executable-ready.json": {
+      "bytes": 17985,
+      "sha256": "635aae1e2f863ac6b8d98dff0b8954db72f1fd51bf13a056bc4376efafa498b0"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/CaptureExtendedInteractionTests-0cc2f721e0e89bfb/executable-ready.json": {
+      "bytes": 17987,
+      "sha256": "53dd7c35f19bb84ad69bbc6f42f530052b3a6d46a4a943356cb910df0fa55b5c"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/CapturePreviewPerformanceTests-2ab8ad6d55448f80/executable-ready.json": {
+      "bytes": 17986,
+      "sha256": "9916ac17a8302b79db5e8127e8d04a0d0d66fa71f067de100f1f4c2ec7ec8a61"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/CaptureProvenanceTests-e866e082018ecdd2/executable-ready.json": {
+      "bytes": 17978,
+      "sha256": "d2f95b815eb96136f54b3741946a64f51e3d6d4ccb4ecfa857bd82abca31dc0b"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/CaptureRemovalTests-ac4818520099f4f0/executable-ready.json": {
+      "bytes": 17975,
+      "sha256": "9811dc60daaaadc341684ccd2b77430a717e11727455582ab928f00cebcb4130"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/CaptureTaskConversionTests-cb70a52285ce782d/executable-ready.json": {
+      "bytes": 17982,
+      "sha256": "dd379f94f93e4848f418558a5db83b78443cd117af6c88aeac204427b59ad850"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/CaptureTimestampPresentationTests-470dc4981d2707ab/executable-ready.json": {
+      "bytes": 17989,
+      "sha256": "31911fbc6a54de7fb6aee87030790c64586fc4522419b5c74cad58f9b8ace3c0"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/CaptureZoomStateTests-3b5b6fd25e5b3b23/executable-ready.json": {
+      "bytes": 17977,
+      "sha256": "00da3eb99f5ac9f045c2565327fc810bf718d7c384d9b97f5902d10420769f09"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/CardDeletionInteractionTests-7f1f02e808f31164/executable-ready.json": {
+      "bytes": 17984,
+      "sha256": "7cb3a3b913c9136652b0b17b771df14fddc0c5b3318c8a712c04997f207a277c"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/ClipboardRetentionTests-3aa3dbbd8bd1d17f/executable-ready.json": {
+      "bytes": 17979,
+      "sha256": "47a16727aa0785fe51e88df5b0a6fa83c6ca7b35dbd92560581efd86cf3536d7"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/ColdVideoControllerTests-dac04c98bcda47c9/executable-ready.json": {
+      "bytes": 17980,
+      "sha256": "91fe4934292d8a924b0b869cf81df67d6d25c7e349b29d71e325987a63efb6b1"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/CollectionCardPresentationTests-3e8257dd3b538e56/executable-ready.json": {
+      "bytes": 17987,
+      "sha256": "8c01aef8c590f3af79776f34d174f41a8941353220bc64b0de66f61790ee74e2"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/CommentDraftArchiveTests-ad8353dc5f8c9b87/executable-ready.json": {
+      "bytes": 17980,
+      "sha256": "b6b98134ef56a52366990ccd0cfe960db7b7e59e9f36eccedee6062a0bfc8905"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/ConnectedWorkflowTests-358367ebd4de07ce/executable-ready.json": {
+      "bytes": 17978,
+      "sha256": "ae9dccbfa4c25bd5bced2464fc49d48ec0be8228356d8a6866524ff129d238f3"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/DaBinIconTests-93a66e7b839cd5a9/executable-ready.json": {
+      "bytes": 17970,
+      "sha256": "0d1ee0a830da50000a6ec7d49b85039bea23f3dbe96f42e5435f0500fd3eb8a1"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/DailyCaptureTests-2211ceee7ec0f688/executable-ready.json": {
+      "bytes": 17973,
+      "sha256": "52fcb075fb8c5f22ee1bf974d86059a323aea623cd82a2533dcce9215c5f9561"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/DailyGridLayoutTests-520321252eb4cd93/executable-ready.json": {
+      "bytes": 17976,
+      "sha256": "b6b20e226c7d9cb89df610d281c3ce9bf75b92c1b8b10e5f27c6872e93ae4bd8"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/DayExportTests-b1c1125745280b19/executable-ready.json": {
+      "bytes": 17970,
+      "sha256": "b10f4cf2c9f70c1ce597280a1e9dc8720c55d1b4d3880ddb44ae64b67d0e7a17"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/DayExportUITests-6beeec31e09b6807/executable-ready.json": {
+      "bytes": 17972,
+      "sha256": "4b826675fc3b38c35e36ed77855bf44f3a83ff49dae1961edd7f63ecf2ed0ec3"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/DeferredArchiveRepairTests-21b28ded7ea508a1/executable-ready.json": {
+      "bytes": 17982,
+      "sha256": "c78c1d44178c5572b7cee7f819f3a56c2a5c8479c1d3286fdceeb27e78917079"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/DetailPreviewInteractionTests-58c487dabb206b2c/executable-ready.json": {
+      "bytes": 17985,
+      "sha256": "7b38e404de38877c735ac5c417ba5902e5db9a13a2a3d66e818cd8dbeaaffc8d"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/DomainTests-cbf45049b42993c4/executable-ready.json": {
+      "bytes": 17967,
+      "sha256": "12c92b52e6cb4929f772a925433c9df8db4bdd9dab5965c6352de2efa6b2fb76"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/DurabilityStressTests-764c2efdf5fd5bad/executable-ready.json": {
+      "bytes": 17977,
+      "sha256": "2d655ea6f6f14d1194eedcde3d3dd00525451fc9cb9dd54993d2ee2ae4e46510"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/ExplorerCaptureCardPresentationTests-37298a0856dca7bd/executable-ready.json": {
+      "bytes": 17992,
+      "sha256": "8dff17b902243a093d2a2ecd60b606155e40224e96c9b150abea932fd8ba1569"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/ExplorerKeyboardTests-ffd1bea8942c9c50/executable-ready.json": {
+      "bytes": 17977,
+      "sha256": "b4e8bfd230f7b5be26f12627726f14b3ce0ff02284fb3da65f91243cb1e87e60"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/ExplorerQueryTests-f1a2fa9c4625a703/executable-ready.json": {
+      "bytes": 17974,
+      "sha256": "4fb3ee4d6b57b9b425f097e804f4a357def5078f7559f84ca59198d5472df27e"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/ExplorerTransferTests-959e09ba9db1f1d2/executable-ready.json": {
+      "bytes": 17977,
+      "sha256": "e939e870609bc0f70768b4365e91c00a0b2bbb068a064e89748346e186b13355"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/ExtendedMediaInteractionTests-09eda092ea54bffb/executable-ready.json": {
+      "bytes": 17985,
+      "sha256": "2d226f762c0f80e92b2d7ea3429a7c8935055e8b984a3c3e31f6f2bfd7f8c217"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/ExternalTransferProcessTests-e0bf983499a63153/executable-ready.json": {
+      "bytes": 17984,
+      "sha256": "7bba049f9058963302c032ae5e371449c1682ce4ae2ce89fbddddad194b2e456"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/FilterResizeTests-5253b261aa48be2e/executable-ready.json": {
+      "bytes": 17973,
+      "sha256": "dbe34cd06e17325de35829897a49d02793cee32d7e35f95abd54330f22203e25"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/FlowActionStressTests-2265e101454cb891/executable-ready.json": {
+      "bytes": 17977,
+      "sha256": "91193bd1c3c353e527877dd04d21f9750715b01e60818ac569ae113ffe9f9a2e"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/HeaderInteractionTests-bc8750cd166525d6/executable-ready.json": {
+      "bytes": 17978,
+      "sha256": "b97076b9b300a97aa6fefb2f1284a74ec6f4535534b651f2940f1540dcc9a5ad"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/HourlyGroupingTests-a7143c276180485b/executable-ready.json": {
+      "bytes": 17975,
+      "sha256": "90dcf87a6b187abdc9d5665196a4d58c7fecd657a2eae662b56b5e6708acdcf1"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/InputTests-a2d1c59684cee000/executable-ready.json": {
+      "bytes": 17966,
+      "sha256": "d890d8b65f6a3190c3f81be8595823d1ea556ddc6ddd747c9d54eefe072cec8e"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/IslandRobotChoreographyTests-233ba14d16b25099/executable-ready.json": {
+      "bytes": 17984,
+      "sha256": "490b9618094c6cf65213f7330d0e95a293dcf66584a3bda4b4f7962d1127e449"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/LocalContentSearchTests-a9e697891a5395e3/executable-ready.json": {
+      "bytes": 17979,
+      "sha256": "2a2a2b5f9169a609f7963fe941de3f858347380f586410db072fc34666b4c5f3"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/LocalDOCXTextExtractorTests-dc3f9fc575047364/executable-ready.json": {
+      "bytes": 17983,
+      "sha256": "cc8c76690b4cf694f60c18d35b276bbf2e144facd07dbe14b842e22b9483e3da"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/LocalFileLocationTests-08bc52812fda6765/executable-ready.json": {
+      "bytes": 17978,
+      "sha256": "d1782e3fb18f25d53ffae95079451bf76b76666518d228ce764b14878b238308"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/ManualCaptureLifecycleTests-df436b988b1ae297/executable-ready.json": {
+      "bytes": 17983,
+      "sha256": "790b6c86fbcd53e62ba5feb5f2ed44d4ce945309dc2d642d99a0117d840400e4"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/MediaIntegrationTests-b55b25d088ceefd4/executable-ready.json": {
+      "bytes": 17977,
+      "sha256": "35e997c889da9bf2b1a43bd67d87f013b073f5982f6fa3bffc56f16466896fad"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/NativeContentDragTests-f2a173a14cee2f94/executable-ready.json": {
+      "bytes": 17978,
+      "sha256": "bc30d5e23896fad5668d1121aff8e2e85b596dda74b1db048f2caac39d9e288a"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/NativeTooltipPreferenceTests-f3c8dfb76e8621b1/executable-ready.json": {
+      "bytes": 17984,
+      "sha256": "91ee94159a96aa40d842323f70697cd14f875959231908ca1ab1690206e7684e"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/NavigationGestureTests-8d0f4833b4de0322/executable-ready.json": {
+      "bytes": 17978,
+      "sha256": "fb816fd8275e6816a514f6b073a6a47f176e7af8daea56a407a1d3fa73d9708e"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/NavigationHistoryTests-6e615af7a251572f/executable-ready.json": {
+      "bytes": 17978,
+      "sha256": "af40c5a292b0e12e6b82d4c1628605f8347dc10559e4029508edf61925d2dcc8"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/NotificationPresentationTests-294c31d804061746/executable-ready.json": {
+      "bytes": 17985,
+      "sha256": "a58370ae800d84011aa04b4374f1dde499a2a3cc787712f2be27d306f07b12f5"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/OutgoingFileBatchTests-50e98d72df7dec91/executable-ready.json": {
+      "bytes": 17978,
+      "sha256": "4988ad066f460a156070fd561e4885a1d04242ed51e4a137eca7883d41237f3f"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/OutgoingFileSnapshotTests-b1d335bd6d1fa65e/executable-ready.json": {
+      "bytes": 17981,
+      "sha256": "e2fee8300dba8a5434df05da9595bb81c5f60f1252f355664bc2e25091e0c2ed"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/PreviewLifecycleTests-3dba54ed572e2dbb/executable-ready.json": {
+      "bytes": 17977,
+      "sha256": "6e9ddb41e0748dd12c586d45672cc567d7e9a484a20805c67331932e5f47eff9"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/PrivacyInformationTests-ca43145dd55139dd/executable-ready.json": {
+      "bytes": 17979,
+      "sha256": "54dadbea11d1295ad982bb01ba4f8966410a3bc901a88f8cea943e3ec94bd647"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/ProductFoundationTests-56b1d7e470349dbd/executable-ready.json": {
+      "bytes": 17978,
+      "sha256": "51431be60e6d069c93260f209658937b001d2656c8eba3599a8ba819334f1e9f"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/ProjectBrowsingNavigationTests-84a67d23e5f51e47/executable-ready.json": {
+      "bytes": 17986,
+      "sha256": "92862e0368bd1666930d48122ecc2d0303466f540c27c52af5f0b71759a5c2ca"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/ProjectFileArchiveTests-edede0a5e6054068/executable-ready.json": {
+      "bytes": 17979,
+      "sha256": "2910c760daa5910042425a09079bc1fae1cd3bff5a8075b0b094b86d66ae2290"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/ProjectPickerTests-19925409ce70a2ff/executable-ready.json": {
+      "bytes": 17974,
+      "sha256": "f7f449142b3406e0a2fe9cf58d5776f8ba9a56c216297ef7e6bd66097b4b5b4c"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/ProjectRecordingRobotTests-4075816571701f5f/executable-ready.json": {
+      "bytes": 17982,
+      "sha256": "03776d55194f7725646f46627b4e3afd51d1d36a318262ee0346b4831fa86056"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/ProjectWorkspaceCardTests-f43feab71b354990/executable-ready.json": {
+      "bytes": 17981,
+      "sha256": "f5019d6b9e8efc4582227ac17d531f1ed290be93b133e1f3866488b32c6bba73"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/ProjectWorkspaceExportTests-dc9e4b0e3ffc6684/executable-ready.json": {
+      "bytes": 17983,
+      "sha256": "6ba4461cd3b32b26caa8025fc4a557675320c14fd1cbb452aff91bfbf856388b"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/ProjectWorkspaceStateTests-6bfd6f61692b46aa/executable-ready.json": {
+      "bytes": 17982,
+      "sha256": "530a76889d78a4d2d3ebb6c2fd2942c2794ddaeadf226885c2000d7624b2781b"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/ProjectWorkspaceViewTests-0c016546a1f77667/executable-ready.json": {
+      "bytes": 17981,
+      "sha256": "317a673c86c527ca784792e4edc383af11a07674798c77fe7e55c45a652c1ef0"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/QALifecycleTests-3390ee15acbd3fcf/executable-ready.json": {
+      "bytes": 17972,
+      "sha256": "004d90185694d8c67f30de5547019191af3395c49b16cc94a3c87c21573f08eb"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/QAStorageScopedSaveTests-e41fbf714204ad9c/executable-ready.json": {
+      "bytes": 17980,
+      "sha256": "9a1b717f7717235fa2df3748e6585a856fdada543fd9b2d11e9c0382aecae28c"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/QuickAccessTests-a131dab325f6c143/executable-ready.json": {
+      "bytes": 17972,
+      "sha256": "cd7eb52c33088e60a056cdc68f3375e1a5abcac9f9ca252b4649783820999938"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/QuietOrbitRenderTests-cf807039c29adb97/executable-ready.json": {
+      "bytes": 17977,
+      "sha256": "08ad972f902149f22dbf11c263094b2919d8ef66dbbafce27c27fdc79a1abb8f"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/RedesignInteractionTests-5e693055f6d6b7e0/executable-ready.json": {
+      "bytes": 17980,
+      "sha256": "d0c1ca7ea08d952b0ecff5ebe1530cf9ca03327e5797cdc7c2deafe37b2749a4"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/ReminderAlertCoordinatorTests-69acf2dfe61dab9e/executable-ready.json": {
+      "bytes": 17985,
+      "sha256": "0893941b5d50381c4a428942fe85187124470c86d986af45a6f4622e6c3a21e3"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/RepositoryBatchTests-d4b518b16947bf22/executable-ready.json": {
+      "bytes": 17976,
+      "sha256": "dd2252a4e1d8b5106c002852b1dbd82bc06a238f9fb4a393db542fe66ca5060d"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/RobotAppFrameTests-10acb299297c0e81/executable-ready.json": {
+      "bytes": 17974,
+      "sha256": "edf358afc333db985079e988190d0506c2fc4ee2a9c3e3ce93808ce4031b1597"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/RobotCloseVisualTests-c616cbc45df08ceb/executable-ready.json": {
+      "bytes": 17977,
+      "sha256": "cc47a9a9f00d23479e5c7f1c3ecfd9c0797e28c5f83e43e46ad2122c8e8ccc24"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/RobotDropTests-30e75add9d32cf4c/executable-ready.json": {
+      "bytes": 17970,
+      "sha256": "2f2302db511cce02afe7ef92049afc5ecaca84870eb046ec255b53205828cf3f"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/RobotLifecycleTests-612fa7341e67b1f3/executable-ready.json": {
+      "bytes": 17975,
+      "sha256": "788d814c11b9c37f4e7d73e894f7803f02500d34886b7f27c22dc40a66c0582c"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/RobotMotionTests-35ca9f440b14e63e/executable-ready.json": {
+      "bytes": 17972,
+      "sha256": "4bf8dc6f2d1a98e532a1239af83d02f081fb090379cd40735367fbcd3b802ce9"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/RobotProjectSignRenderTests-4072682a3566b9f5/executable-ready.json": {
+      "bytes": 17983,
+      "sha256": "396f3a091f9ae709795fdb6275fd365ed1a9b263c6d199d0418b4bf189bdee1d"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/RobotVisualConsistencyTests-53cd7703c19ef37e/executable-ready.json": {
+      "bytes": 17983,
+      "sha256": "fce47268a44b54446b1195df15f85d36da0f4188ca61886cc8f4c827c554e8c0"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/RobotWindowTransitionTests-b401a033f3e1a99e/executable-ready.json": {
+      "bytes": 17982,
+      "sha256": "0cad9a345d437015887fb4b46b9773a5c15b7a71a10a120b6866723fc86f9697"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/SearchDateBoardTests-f9b3930e959efb68/executable-ready.json": {
+      "bytes": 17976,
+      "sha256": "2e2b1c552647531ef2457f8937deabfa7b33492b4483a0c74946b797652b3ecd"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/SearchInputTests-2e1450ededf9dbab/executable-ready.json": {
+      "bytes": 17972,
+      "sha256": "69ceb0d2c5335e56ec4d3c0a30e6c74521a5669d0b2dbcac9056b21f0bc75a15"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/SearchResultExcerptTests-b87eddf21a02649d/executable-ready.json": {
+      "bytes": 17980,
+      "sha256": "362d77a9e3209aa05d50821d1d187e5fc642b2f6cbfafedfd53bd0b4e2c797c2"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/SearchScopeStateTests-331b1d7767388b6c/executable-ready.json": {
+      "bytes": 17977,
+      "sha256": "a05ee0963204b060c6677165e11874aa3cba48e9f5bbd2f82733b38235c53963"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/SearchWindowTests-fe65818197b15577/executable-ready.json": {
+      "bytes": 17973,
+      "sha256": "71fc3d52dad984703fd8f91817aeb2ae07842929c6f6e56154fe85b1b9e531f3"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/ServiceTests-56a669a9c41f6202/executable-ready.json": {
+      "bytes": 17968,
+      "sha256": "4b28470440cd6919cd097925e5cd446c37a8391db24b98c928bded550f5e8973"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/SnippetNamingInteractionTests-d1edb9017dea97c1/executable-ready.json": {
+      "bytes": 17985,
+      "sha256": "49c915d5b0806bdd91973479a8a2090166f4651c509e51cfb88be0ecb67d0c6c"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/SoftwareUpdateTests-9d8e25fd51cc3ac5/executable-ready.json": {
+      "bytes": 17975,
+      "sha256": "0c88bd3f622a870f54a238457cd928f397c77229f222fe96e8741226ffb74576"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/TaskFocusTests-29204a75196c9f34/executable-ready.json": {
+      "bytes": 17970,
+      "sha256": "e49b4bf27d5bee7b39f9e221fbb2274d510f3119d499b885f7719bf5deb8f9bd"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/TaskPlanInteractionTests-42b523a232c2e2dc/executable-ready.json": {
+      "bytes": 17980,
+      "sha256": "d1450f4c86b340fde7c2c5f666d82e86761cb7fd4796b9bc3c23ecd5fa807efa"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/TaskPlanningTests-6661eeb35a03786f/executable-ready.json": {
+      "bytes": 17973,
+      "sha256": "6e874601175dc50190a45078cc7e4cbd2ffaaf1f2cc9ea98713c7454d5861d59"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/TaskPriorityTagTests-42bae56a6f187ac2/executable-ready.json": {
+      "bytes": 17976,
+      "sha256": "6a12e9986c1002bea197194d93c37806e3fc01c22d343568852d34069232b961"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/TaskStateTests-ae4230a54d1167c0/executable-ready.json": {
+      "bytes": 17970,
+      "sha256": "2760477e29e1e35214ff2e32d4a773eb345319a1f6983ddb160bb169c69abddf"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/TaskTimerRobotTests-7d5bad5ae9951716/executable-ready.json": {
+      "bytes": 17975,
+      "sha256": "e544562bbb2cbc2952b4febb56cbb6dc90cb80885d133fa028ab6146bbe63069"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/ThemeSettingsTests-263c98fd245be1ca/executable-ready.json": {
+      "bytes": 17974,
+      "sha256": "dcf49266a90e22c6e29da631f0a917ada3a82471bc6cbc3f44517ff32d699c79"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/TimelineCalendarTests-cb2757ff5dc970db/executable-ready.json": {
+      "bytes": 17977,
+      "sha256": "1d373533bfd3cfb9d7ed0c23a83c4eeea4f69133dd8af17320dd3504f3b0e083"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/TodayTaskCardTests-f17f5a982c4d85d5/executable-ready.json": {
+      "bytes": 17974,
+      "sha256": "6a90e57fb88aa94132e7a8c5c92e69aa3a1ee410713e95fe9d2f946aa98dc61f"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/TooltipBehaviorTests-52b9a0309125bf3a/executable-ready.json": {
+      "bytes": 17976,
+      "sha256": "d5987d5cc6ae9cc90d48e74f392046c907cf3ae81f19d72bd8981928804dd15e"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/TooltipPresentationTests-eda429a9cd2ad278/executable-ready.json": {
+      "bytes": 17980,
+      "sha256": "8db9ff9120c2c6231457d21aac463835e6c04d9cdd5efcf28496554dda922302"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/UpdateArchiveSecurityTests-84a4bf183547da38/executable-ready.json": {
+      "bytes": 17982,
+      "sha256": "458163cde6cf8beb7fc22c918d982465dbb2fa69357456f838b568d370624613"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/UpdateConfigurationTests-1445b3fc8ee4478f/executable-ready.json": {
+      "bytes": 17980,
+      "sha256": "9c780904c38aae086178c42b425b49a3ea2082a902fe739be86193f112cfb845"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/VideoPlaybackIntegrationTests-83f982f8e61b2147/executable-ready.json": {
+      "bytes": 17985,
+      "sha256": "70c2688de9e207dc08dd2c2c8e6fa8127f5efd5e5554742aa29756e44a0731e0"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/ViewportLifecycleTests-e4961f23384200d7/executable-ready.json": {
+      "bytes": 17978,
+      "sha256": "ae4c809d8465d55c0dbce4dc615171ba55fee6d15def555d2f1ad4331204cbf3"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/VisualAnimationStressTests-695e74bb399aa1ec/executable-ready.json": {
+      "bytes": 17982,
+      "sha256": "1fdb292b9fb465e5c016ace63d6ee9da1153b27475a1fb9c1a127372981a69da"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/WeeklyLayoutTests-848f12033597b184/executable-ready.json": {
+      "bytes": 17973,
+      "sha256": "5c2f4e1e8eef9c39e5337325e8ecf2631958538dcd96f3053010876c8bbafc25"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/WeeklyPresentationCacheTests-bfb15751c3d50784/executable-ready.json": {
+      "bytes": 17984,
+      "sha256": "c11a01bef65dc1c1041d93f3d8e14dc922f37c6119118f5f0cc5777b8bba1079"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/WeeklyStateTests-bdba3746ca3f6585/executable-ready.json": {
+      "bytes": 17972,
+      "sha256": "be08d43466a6737c928fb1d2b3c7a89cb0114d6f6f806bed1610361b0750d21a"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/WeeklyWindowTests-e8b2e63de605bb3c/executable-ready.json": {
+      "bytes": 17973,
+      "sha256": "68eeb71e5d45ebbce9dcdbb23c87c337c9dc0e0c7cd2e9cead73d22c4ffd816d"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/WindowChromePresentationTests-541aec9889919a8b/executable-ready.json": {
+      "bytes": 17985,
+      "sha256": "e082e135bd0332d45d7b18dfc23ce2dd2ccacaefd6a5e2bdea7bab1c875f130e"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/WindowResizeInteractionTests-5e81b8f64a416074/executable-ready.json": {
+      "bytes": 17984,
+      "sha256": "2562892bae2984fe179d09a2ab15f8f92ae782c8b4fa4beff51913ea39475b79"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/WindowTests-bb49e49f214fb4a5/executable-ready.json": {
+      "bytes": 17967,
+      "sha256": "1be954da7af7fc6a04eca249cb62d7258a90b1c9583dd8db5d02659553b83309"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/WorkInboxTests-cfa2ba5717d733bf/executable-ready.json": {
+      "bytes": 17970,
+      "sha256": "a12486d076f9a96c11f7e0d3acb87d3927abe7da3789cafa73cd1f64ea41413f"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/WorkspaceInputTests-63e12db71d433be0/executable-ready.json": {
+      "bytes": 17975,
+      "sha256": "2cec9997a9bc210ccf079c8fd392bc82014834ed68e71ac2456cefbe700b6d00"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/WorkspaceTests-f287f18f512b03f1/executable-ready.json": {
+      "bytes": 17970,
+      "sha256": "10995c069d6ba22f420abbdce59ba024ef005f03567c26f1103846d97cbf573a"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/WorkspaceWindowTests-435703a63162405c/executable-ready.json": {
+      "bytes": 17976,
+      "sha256": "0f794934cbba740a9558caf0f840123661b0c20e634002fa60d1a7acc5eaf421"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/WorkspaceZoomLayoutTests-0c4430969caa7faf/executable-ready.json": {
+      "bytes": 17980,
+      "sha256": "39935fe5a1057f1f2559804243ddb977a342303e1fc2959b60c76a8726da30da"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/WorkspaceZoomPerformanceTests-9cdff65ddc4a949a/executable-ready.json": {
+      "bytes": 17985,
+      "sha256": "d6dc5ae0a2b06f7ff03aa42283beaadd7e3fff9dc3223c5a3181074f939c630f"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/WorkspaceZoomTests-afa5ca5c81460a7e/executable-ready.json": {
+      "bytes": 17974,
+      "sha256": "b5d4c6694aa71036477c74d5f409c82eb76385774efe20e88f548d0578fb03f8"
+    },
+    "working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/module-ready.json": {
+      "bytes": 17977,
+      "sha256": "9db7fd8daab4704bf6bb268d6d9eb022a7b8bdddb2e8bc3b9ede7ce467eeb469"
+    },
+    "working/native/build/qa/collection-card-presentation/85AFF969-9DBB-44B6-BC02-B7CC0174D4B2/collection-card-presentation-report.json": {
+      "bytes": 36340,
+      "sha256": "02cca55678e52f5799c73af5b39827dfed51146c9bf940e52dce29c151d5ab67"
+    },
+    "working/native/build/qa/collection-card-presentation/85AFF969-9DBB-44B6-BC02-B7CC0174D4B2/media-explicit72-mixed4-zoom100-diagnostic.json": {
+      "bytes": 1319,
+      "sha256": "c7632022c8ee864fa1c49a12a249d4c429c23ab0c9e19642995bfc6ab8b91c6c"
+    },
+    "working/native/build/qa/collection-card-presentation/85AFF969-9DBB-44B6-BC02-B7CC0174D4B2/media-explicit72-mixed4-zoom200-diagnostic.json": {
+      "bytes": 1319,
+      "sha256": "0e085a0a254e0b5d7661bfa0b6d5e56c80d0dca8214e3e67c2e2483f99618ffd"
+    },
+    "working/native/build/qa/collection-card-presentation/85AFF969-9DBB-44B6-BC02-B7CC0174D4B2/media-explicit72-mixed5-zoom100-diagnostic.json": {
+      "bytes": 1319,
+      "sha256": "36221c0a3e8408b8be2043a235f9ac7d50ba3f25d4d3ddf3543e0d05960a9307"
+    },
+    "working/native/build/qa/collection-card-presentation/85AFF969-9DBB-44B6-BC02-B7CC0174D4B2/media-explicit72-mixed5-zoom200-diagnostic.json": {
+      "bytes": 1319,
+      "sha256": "10d971b27b5d6aa431b8ed1a06495f79ed47951b26f65a7c6f93d161e21f1934"
+    },
+    "working/native/build/qa/latest-run-app-store.json": {
+      "bytes": 35503,
+      "sha256": "935b36618e775c4498e46baaf1b3285a7e7c42d124c7921660f174a3028f2ef2"
+    },
+    "working/native/build/qa/latest-run.json": {
+      "bytes": 35503,
+      "sha256": "935b36618e775c4498e46baaf1b3285a7e7c42d124c7921660f174a3028f2ef2"
+    },
+    "working/native/build/qa/notification-presentation/240F287E-61E1-4FB5-9A80-B4643C85BB97/report.json": {
+      "bytes": 287,
+      "sha256": "48c4d2b0c5cc850f3981ec053ec357f9b92f68c03f660382c27d415e0d7d13da"
+    },
+    "working/native/build/qa/quiet-orbit/quiet-orbit-render-report.json": {
+      "bytes": 981,
+      "sha256": "403f1afefe47e0f4bcb596fcbecaa7a2c529ce50528fd09b6b0189307ca3f38d"
+    },
+    "working/native/build/qa/robot-close-visual/CC594DAF-695D-4310-AAA3-1A37CA2675F0/robot-close-visual-report.json": {
+      "bytes": 82485,
+      "sha256": "9780a162316486a1569ea1b86d80537a8e3b80a8e0f9aeb9d6a88b20a786cb48"
+    },
+    "working/native/build/qa/robot-visual-consistency/robot-visual-consistency-report.json": {
+      "bytes": 2068,
+      "sha256": "cbf17a428802e387cebcf110ec0b626adcc125fdb939329ec52757b1b0b9014f"
+    },
+    "working/native/build/qa/runs/20261007T081000488165Z-app-store/AppDraftSessionTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081000488165Z-app-store/AppDraftSessionTests.log": {
+      "bytes": 128,
+      "sha256": "c10397ca466a5c0e910e7d02c191909fbfc5aafea18360927becaa9423f1b28a"
+    },
+    "working/native/build/qa/runs/20261007T081000488165Z-app-store/ApplicationLifecycleTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081000488165Z-app-store/ApplicationLifecycleTests.log": {
+      "bytes": 136,
+      "sha256": "e506e37d39632e96bcc3b49ca7ab3d2ba3a4fc54bcd27d90646261994471168b"
+    },
+    "working/native/build/qa/runs/20261007T081000488165Z-app-store/ArchiveBackupTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081000488165Z-app-store/ArchiveBackupTests.log": {
+      "bytes": 75,
+      "sha256": "d48d2bc8e88bd5a6355f4c6859d88bce95421b0135525f8fb19d36a54cccc095"
+    },
+    "working/native/build/qa/runs/20261007T081000488165Z-app-store/ArchiveRecoveryTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081000488165Z-app-store/ArchiveRecoveryTests.log": {
+      "bytes": 65,
+      "sha256": "3d5496b7d06b403cfe86f78749023af8b48049ad50081806011c90e08330f55e"
+    },
+    "working/native/build/qa/runs/20261007T081000488165Z-app-store/ArchiveStoreTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081000488165Z-app-store/ArchiveStoreTests.log": {
+      "bytes": 198,
+      "sha256": "eae9ec1c3fb71c4534394c46d6a0bb135deacdb76ce358886e8c4f3465be32a7"
+    },
+    "working/native/build/qa/runs/20261007T081000488165Z-app-store/CaptureRemovalTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081000488165Z-app-store/CaptureRemovalTests.log": {
+      "bytes": 41,
+      "sha256": "25556b23cbe08d5542989641bf0f959ddb5c7091b8fbf4a6e978299ca4ff1349"
+    },
+    "working/native/build/qa/runs/20261007T081000488165Z-app-store/CaptureTaskConversionTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081000488165Z-app-store/CaptureTaskConversionTests.log": {
+      "bytes": 154,
+      "sha256": "838dd19e5875667a1e2a6a5b064c6379b93cac4e7e414827c52447c3f7b43ede"
+    },
+    "working/native/build/qa/runs/20261007T081000488165Z-app-store/CommentDraftArchiveTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081000488165Z-app-store/CommentDraftArchiveTests.log": {
+      "bytes": 144,
+      "sha256": "19507c5683c5425302b289ae18f4e556df83d5172074e6de5d720d3838eb30ac"
+    },
+    "working/native/build/qa/runs/20261007T081000488165Z-app-store/DeferredArchiveRepairTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081000488165Z-app-store/DeferredArchiveRepairTests.log": {
+      "bytes": 88,
+      "sha256": "e51679595fba1bdcf6db1b65522291bb90c58e0ccd738a07b9b0d1e07b840411"
+    },
+    "working/native/build/qa/runs/20261007T081000488165Z-app-store/HeaderInteractionTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081000488165Z-app-store/HeaderInteractionTests.log": {
+      "bytes": 445,
+      "sha256": "b459ef33d3af8c1649b09d83c20fe12a6b3d49b6ab1f75c5c8976422abf18e66"
+    },
+    "working/native/build/qa/runs/20261007T081000488165Z-app-store/NavigationHistoryTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081000488165Z-app-store/NavigationHistoryTests.log": {
+      "bytes": 97,
+      "sha256": "8bc0a7690390f6cb7f8d8620cbbdffadf59f5a1255aaed57cd155c1dc6c92482"
+    },
+    "working/native/build/qa/runs/20261007T081000488165Z-app-store/ProjectWorkspaceCardTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081000488165Z-app-store/ProjectWorkspaceCardTests.log": {
+      "bytes": 5239,
+      "sha256": "7bd8e2ca81196ebdaa2931435bd851ac7e773ce5a302e7991cf2e09192422fb6"
+    },
+    "working/native/build/qa/runs/20261007T081000488165Z-app-store/ProjectWorkspaceExportTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081000488165Z-app-store/ProjectWorkspaceExportTests.log": {
+      "bytes": 121,
+      "sha256": "d88ca10b16a52ffd806b3325d2366ba237f3daffa9aed007bd1e576381e3b195"
+    },
+    "working/native/build/qa/runs/20261007T081000488165Z-app-store/ProjectWorkspaceViewTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081000488165Z-app-store/ProjectWorkspaceViewTests.log": {
+      "bytes": 10683,
+      "sha256": "d6a6a7f12a7e2720981aaddfcc5abcb6303b2ab443b5f658e357a6587a71ee62"
+    },
+    "working/native/build/qa/runs/20261007T081000488165Z-app-store/QAStorageScopedSaveTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081000488165Z-app-store/QAStorageScopedSaveTests.log": {
+      "bytes": 295,
+      "sha256": "435d7017c73dc0f16b1a9bcc8bd54b16e74cd719baea3fbb02da40508986baa6"
+    },
+    "working/native/build/qa/runs/20261007T081000488165Z-app-store/RepositoryBatchTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081000488165Z-app-store/RepositoryBatchTests.log": {
+      "bytes": 143,
+      "sha256": "d14f9f146aa4a6d919440ba8eef06903a15cf53ca97e69e77a0c532d6199a15f"
+    },
+    "working/native/build/qa/runs/20261007T081000488165Z-app-store/SoftwareUpdateTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081000488165Z-app-store/SoftwareUpdateTests.log": {
+      "bytes": 155,
+      "sha256": "650f5f38b91991c416ce70e6fb083d5cd88126efc8f5b4fead7099a93b3aa07c"
+    },
+    "working/native/build/qa/runs/20261007T081000488165Z-app-store/TaskFocusTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081000488165Z-app-store/TaskFocusTests.log": {
+      "bytes": 99,
+      "sha256": "34d3877400506e7238d32efb3104d31c317f00b076cd890f99eedef3fc1b2551"
+    },
+    "working/native/build/qa/runs/20261007T081000488165Z-app-store/ViewportLifecycleTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081000488165Z-app-store/ViewportLifecycleTests.log": {
+      "bytes": 161,
+      "sha256": "6fa04f4ddb7174ddbb6515bc63d5676e03fdebd95e28abd6f3d4e020cc7addde"
+    },
+    "working/native/build/qa/runs/20261007T081000488165Z-app-store/WeeklyPresentationCacheTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081000488165Z-app-store/WeeklyPresentationCacheTests.log": {
+      "bytes": 43,
+      "sha256": "c3ea5d15f5b0f86dceba19ead31a854500ac99f215c9e0bba17d64ab2fe7743d"
+    },
+    "working/native/build/qa/runs/20261007T081000488165Z-app-store/WorkInboxTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081000488165Z-app-store/WorkInboxTests.log": {
+      "bytes": 27,
+      "sha256": "0c65789ee25394352163b829070b20cf2e3e04090f13770d39936ce5d861d664"
+    },
+    "working/native/build/qa/runs/20261007T081000488165Z-app-store/WorkspaceInputTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081000488165Z-app-store/WorkspaceInputTests.log": {
+      "bytes": 135,
+      "sha256": "41a5488ed9802f9248a6f47db1094a863225fe286b518f8d0629620889769c24"
+    },
+    "working/native/build/qa/runs/20261007T081000488165Z-app-store/WorkspaceZoomLayoutTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081000488165Z-app-store/WorkspaceZoomLayoutTests.log": {
+      "bytes": 145,
+      "sha256": "fc06efab59044d94218a30f85dee197b503a1d683628396bf08ac924003eb4d9"
+    },
+    "working/native/build/qa/runs/20261007T081000488165Z-app-store/production-module.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081000488165Z-app-store/report.json": {
+      "bytes": 50094,
+      "sha256": "1f70e21382b89ee25d4a5bc8ab01778a94de8d4f00ebca2f4efe8f756c78bc2a"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/AppDraftSessionTests.log": {
+      "bytes": 128,
+      "sha256": "c10397ca466a5c0e910e7d02c191909fbfc5aafea18360927becaa9423f1b28a"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/ApplicationLifecycleTests.log": {
+      "bytes": 136,
+      "sha256": "e506e37d39632e96bcc3b49ca7ab3d2ba3a4fc54bcd27d90646261994471168b"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/ArchiveBackupTests.log": {
+      "bytes": 75,
+      "sha256": "d48d2bc8e88bd5a6355f4c6859d88bce95421b0135525f8fb19d36a54cccc095"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/ArchiveLayoutTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/ArchiveLayoutTests.log": {
+      "bytes": 94,
+      "sha256": "6d07c6cc7e966cbba6686bf461a8b2ad7b55212219d7104760edc74b3c5842ac"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/ArchiveRecoveryTests.log": {
+      "bytes": 65,
+      "sha256": "3d5496b7d06b403cfe86f78749023af8b48049ad50081806011c90e08330f55e"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/ArchiveStoreTests.log": {
+      "bytes": 198,
+      "sha256": "eae9ec1c3fb71c4534394c46d6a0bb135deacdb76ce358886e8c4f3465be32a7"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/AutoCaptureExplorerResponsivenessTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/AutoCaptureExplorerResponsivenessTests.log": {
+      "bytes": 4088,
+      "sha256": "bcc489d491386f252330cfaa9f0b5fc6a5164e3af0b6075f38f51feed0aa1cbe"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/AutoCaptureRobotCelebrationTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/AutoCaptureRobotCelebrationTests.log": {
+      "bytes": 68,
+      "sha256": "06a8c2520db18a558edfaab41da7f5c4e1f3188653b6036d3e14c1dd99485398"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/AutoCaptureRobotPresenterTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/AutoCaptureRobotPresenterTests.log": {
+      "bytes": 50,
+      "sha256": "f1f4a183320be8c6ac8bba27dc268439c605ac9cca1f8fd7ff207e5a4264a9df"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/AutoCaptureServiceTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/AutoCaptureServiceTests.log": {
+      "bytes": 38,
+      "sha256": "5fd7a8dce11e7aa71884f80853fee461438047df8826e1ba44fc9d4a955eaba7"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/AutoCaptureSignMotionTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/AutoCaptureSignMotionTests.log": {
+      "bytes": 45,
+      "sha256": "9bfbbc88b936d6d8b46b400d499d74f3bdd746f0ea8be6b0aa999661b5d33662"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/AutoCaptureSignPresenterTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/AutoCaptureSignPresenterTests.log": {
+      "bytes": 101,
+      "sha256": "e928a2dd04a647eac09a46b46f28ba817b5a0d93768ca76cb8e6a8c7e6908e79"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/AutoCaptureSignRenderTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/AutoCaptureSignRenderTests.log": {
+      "bytes": 135,
+      "sha256": "d50998b56ef035b1dd57475c1cb9e41f3ae72ac230299ce1962967795ab19568"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/AutoRecordIndicatorTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/AutoRecordIndicatorTests.log": {
+      "bytes": 217,
+      "sha256": "38ffeef886f7b40255def6bd307b8ce98388a65128bad959d193235acd3030d6"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/BoredRobotArtworkTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/BoredRobotArtworkTests.log": {
+      "bytes": 82,
+      "sha256": "2528bcc143c95180497b3154cc1433bd9f91bc1deba1f0942b30241959262b63"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/CaptionDragTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/CaptionDragTests.log": {
+      "bytes": 130,
+      "sha256": "0e423ff62027df51d2afc518a485444ae9ad750ca8061dd3b2a6345688465cef"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/CaptionSelectionTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/CaptionSelectionTests.log": {
+      "bytes": 1352,
+      "sha256": "0a9a8e06d1886fa189d757411fa0c61847909752c0ebc8e17b3f6d3e70ff0d8c"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/CaptureActionTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/CaptureActionTests.log": {
+      "bytes": 132,
+      "sha256": "e78a21a8b5f4f04c71192407dd927798d4b54a13dacd7d1c77bc30ee180cd69c"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/CaptureAnnotationTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/CaptureAnnotationTests.log": {
+      "bytes": 178,
+      "sha256": "d37049b0b5fdb0ca8fc2bd830314c1aaace7d62cda5b814797f49f7d3c65fb0f"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/CaptureClipboardTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/CaptureClipboardTests.log": {
+      "bytes": 98,
+      "sha256": "8c01f14a87a9f11871c541d3b422fc344512072e383302fd5863582cc746ef32"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/CaptureDetailNavigationTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/CaptureDetailNavigationTests.log": {
+      "bytes": 14270,
+      "sha256": "a72696373cd5cedaff035c5c08015d4980403326ae9b1b7d378bef8ed52d1066"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/CaptureDetailReadabilityTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/CaptureDetailReadabilityTests.log": {
+      "bytes": 195,
+      "sha256": "efee396a7a4df30b23748d156527dd74f16e0282291fb2cf7c45b45c4e987d0b"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/CaptureExtendedInteractionTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/CaptureExtendedInteractionTests.log": {
+      "bytes": 44,
+      "sha256": "c8ba410d5aba69a7d900f812b5e8d8d72179d9ee8013d8b908f0b0c387e1ed5b"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/CapturePreviewPerformanceTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/CapturePreviewPerformanceTests.log": {
+      "bytes": 72,
+      "sha256": "57be4d0616e3a7b0107f7b3d5893a681a9f15284ef2b3f3437d5f8de8ec77da8"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/CaptureProvenanceTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/CaptureProvenanceTests.log": {
+      "bytes": 194,
+      "sha256": "da0805d8a4477fce1308d004ba1569e213f8746c2b25d938d8b82b5a214dc496"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/CaptureRemovalTests.log": {
+      "bytes": 41,
+      "sha256": "25556b23cbe08d5542989641bf0f959ddb5c7091b8fbf4a6e978299ca4ff1349"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/CaptureTaskConversionTests.log": {
+      "bytes": 154,
+      "sha256": "838dd19e5875667a1e2a6a5b064c6379b93cac4e7e414827c52447c3f7b43ede"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/CaptureTimestampPresentationTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/CaptureTimestampPresentationTests.log": {
+      "bytes": 286,
+      "sha256": "a51d8c95d7a5be6a6d534a165e0569b53cc92c844a43538b9b51096e1012d2d5"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/CaptureZoomStateTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/CaptureZoomStateTests.log": {
+      "bytes": 91,
+      "sha256": "7cd3767d11dc65e9da37d92579566ef34c26ab345e3470edc1f60092b64b9ea7"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/CardDeletionInteractionTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/CardDeletionInteractionTests.log": {
+      "bytes": 1843,
+      "sha256": "1828a2d56e9199093e28d8a94b79597c54c5d1896c2719151b5cf1ff68b93179"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/ClipboardRetentionTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/ClipboardRetentionTests.log": {
+      "bytes": 81,
+      "sha256": "acfb712558a90f7eb665c68b8020475e0a5e09e23e94d7ed2b1b50c45de26ff8"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/ColdVideoControllerTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/ColdVideoControllerTests.log": {
+      "bytes": 1435,
+      "sha256": "59c4a7d80e7e301a34962fc03b32e8c81b94cae0b321120ebed5033117a206ab"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/CollectionCardPresentationTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/CollectionCardPresentationTests.log": {
+      "bytes": 32580,
+      "sha256": "8b115044cba9ae2f5b25a08336b75b0c028f9b5771b032aa1f39578fdb3a2cf8"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/CommentDraftArchiveTests.log": {
+      "bytes": 144,
+      "sha256": "19507c5683c5425302b289ae18f4e556df83d5172074e6de5d720d3838eb30ac"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/ConnectedWorkflowTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/ConnectedWorkflowTests.log": {
+      "bytes": 108,
+      "sha256": "977f5500527233b55ee1b08c8b5571cc460a6011bcb37c3cb32f3dabeeff059c"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/DaBinIconTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/DaBinIconTests.log": {
+      "bytes": 147,
+      "sha256": "3b6bb83c1035797e65de83d510eb876e7a9034c0ad27bc41076306d3d8c792a4"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/DailyCaptureTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/DailyCaptureTests.log": {
+      "bytes": 143,
+      "sha256": "0ffaa35c2881a6d44ffab1c3f9266b35c4709bd5ed47f492c01c25cb6b73323a"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/DailyGridLayoutTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/DailyGridLayoutTests.log": {
+      "bytes": 174,
+      "sha256": "bac5895b500b29a702e859a232184954a57c29fc0bec9c25956007cbfe1418f9"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/DayExportTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/DayExportTests.log": {
+      "bytes": 122,
+      "sha256": "6877d82d7dbb01bbf975710293537a01008fbd75a8353f8752fb8d27abe1c31c"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/DayExportUITests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/DayExportUITests.log": {
+      "bytes": 150,
+      "sha256": "962762552ad42c42aa531f7a4e4a0bf45f60e06b429bb6dd3b736ea245cd4971"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/DeferredArchiveRepairTests.log": {
+      "bytes": 88,
+      "sha256": "e51679595fba1bdcf6db1b65522291bb90c58e0ccd738a07b9b0d1e07b840411"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/DetailPreviewInteractionTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/DetailPreviewInteractionTests.log": {
+      "bytes": 77,
+      "sha256": "7ec8527d4fa39cddc9ab4679756a18634f941368145225a9fb7c3d86fa0bb2c9"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/DomainTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/DomainTests.log": {
+      "bytes": 1397,
+      "sha256": "906063df7550509bdf51feadc884b34b6a6037026c5a350d07e0044a3bd79b6f"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/DurabilityStressTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/DurabilityStressTests.log": {
+      "bytes": 218,
+      "sha256": "e99d40047870832c5eacc6e3d6c2dd20efbac0798297e7da7a47e297136cfd84"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/ExplorerCaptureCardPresentationTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/ExplorerCaptureCardPresentationTests.log": {
+      "bytes": 204,
+      "sha256": "de99d07406ccb0a9a8af287438d87a9f5e05c8041972e5ea3802f566533da9e6"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/ExplorerKeyboardTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/ExplorerKeyboardTests.log": {
+      "bytes": 409,
+      "sha256": "cc198986f38b8a196b90e479f3bea910586e0f86d545b262e73b71f175f34720"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/ExplorerQueryTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/ExplorerQueryTests.log": {
+      "bytes": 61,
+      "sha256": "24ad440bf8f02b8cd07dd6ba5c42f110caa51ca1502022be997cd21d32577b40"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/ExplorerTransferTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/ExplorerTransferTests.log": {
+      "bytes": 130,
+      "sha256": "af09681f63dcba7dcdf9aeafe4758f64a535b96bedc57e4941ed09a60ec04405"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/ExtendedMediaInteractionTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/ExtendedMediaInteractionTests.log": {
+      "bytes": 515,
+      "sha256": "c66628428938ad3daad4a4038284b45f6cd5e95ec7afe8cfdf3ede35070c275a"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/ExternalTransferProcessTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/ExternalTransferProcessTests.log": {
+      "bytes": 317,
+      "sha256": "09ed677c0c2fc0f523db7fbdbb76af62b6f2f571030cffc0e8515b362641cd9a"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/FilterResizeTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/FilterResizeTests.log": {
+      "bytes": 39,
+      "sha256": "4859c8b50f2b9c1874c4605b634643934447c49185e557c78479550d2db87a26"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/FlowActionStressTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/FlowActionStressTests.log": {
+      "bytes": 2693,
+      "sha256": "f76ff3d6d9e6fb6b1233bfc3fa0e8190d1ec1870050607fa962139a8e3ad272a"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/HeaderInteractionTests.log": {
+      "bytes": 445,
+      "sha256": "372964d8c10914ab7113df27fc5daaa81a45a7ae32de21864ab50921354cd599"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/HourlyGroupingTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/HourlyGroupingTests.log": {
+      "bytes": 139,
+      "sha256": "2e93a2f021debf694d01eecd0fa8ccf9b4bf5bea054f2a48369b7e28b3284652"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/InputTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/InputTests.log": {
+      "bytes": 90,
+      "sha256": "7b7adc0de23e0afd415832fc9653cd9a1ba046bca07f431c8b7bd82d5ad782f1"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/IslandRobotChoreographyTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/IslandRobotChoreographyTests.log": {
+      "bytes": 69,
+      "sha256": "c628719d8b26927215462e8f59a4bdc34568a1c699c57c6a6905eed134dfea57"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/LocalContentSearchTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/LocalContentSearchTests.log": {
+      "bytes": 324,
+      "sha256": "1a19580376f44f0dbf88c269ea62084e11fe883b78cd4b75a5d4db5076daac15"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/LocalDOCXTextExtractorTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/LocalDOCXTextExtractorTests.log": {
+      "bytes": 213,
+      "sha256": "ec77d5a697ca7a8f92800771c7976e69bcb8cab03f9c27e7e7be84f623162b62"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/LocalFileLocationTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/LocalFileLocationTests.log": {
+      "bytes": 373,
+      "sha256": "77c02c05dce9c6d7fbca02573ff1595e2784c8cfb5c3e9984562391462ffcab1"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/ManualCaptureLifecycleTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/ManualCaptureLifecycleTests.log": {
+      "bytes": 69,
+      "sha256": "91e601f7b2c18871984b5edaf4c63be6fa863233fcc06967e424988761fb5c03"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/MediaIntegrationTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/MediaIntegrationTests.log": {
+      "bytes": 2480,
+      "sha256": "57ce83744aa2e28373131e696bcdd1d38a4cecccfde39ea2e7517c27171972c5"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/NativeContentDragTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/NativeContentDragTests.log": {
+      "bytes": 119,
+      "sha256": "5267b7d03b986d5fa975373de082f9126c13749c99bdeb82bb70fb6b5e62b158"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/NativeTooltipPreferenceTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/NativeTooltipPreferenceTests.log": {
+      "bytes": 340,
+      "sha256": "3c11265da4ca09ee159924ef1a4c7bbde7929f971d8df6593ac9deee3263b14b"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/NavigationGestureTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/NavigationGestureTests.log": {
+      "bytes": 161,
+      "sha256": "e314c01a4c41c2b2e5f46b8ea8ebc4d0d7fad050a86fadced06b27cc14d1140c"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/NavigationHistoryTests.log": {
+      "bytes": 97,
+      "sha256": "8bc0a7690390f6cb7f8d8620cbbdffadf59f5a1255aaed57cd155c1dc6c92482"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/NotificationPresentationTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/NotificationPresentationTests.log": {
+      "bytes": 320,
+      "sha256": "e37a3ad54f99e3effc7c8ac92dec46a5e101c17dcc353e95f8cf5606e9dc9d39"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/OutgoingFileBatchTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/OutgoingFileBatchTests.log": {
+      "bytes": 336,
+      "sha256": "c1ae920bf1b200700ac659ab1838eaebbafd5a0fd3be42b283ec399542b635b0"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/OutgoingFileSnapshotTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/OutgoingFileSnapshotTests.log": {
+      "bytes": 196,
+      "sha256": "1931e5686e9c88d7953a7eb5cb648c18ff895f01910dc1b385b723a84c591ea3"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/PreviewLifecycleTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/PreviewLifecycleTests.log": {
+      "bytes": 97,
+      "sha256": "8bf2147f49d1419148f13bc7e35de3ea996f6dfbe41d8489d2a292e31005d4ba"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/PrivacyInformationTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/PrivacyInformationTests.log": {
+      "bytes": 36,
+      "sha256": "e118da245aa3c2406d7c7420cbff1b43e2764db89c855a293327f124de8694f4"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/ProductFoundationTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/ProductFoundationTests.log": {
+      "bytes": 45,
+      "sha256": "394d4812823c2b48b93155291a096ee3b8ac7b60ee16d6250238aeb834c8283a"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/ProjectBrowsingNavigationTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/ProjectBrowsingNavigationTests.log": {
+      "bytes": 175,
+      "sha256": "24c2f4e7c824d25305725ec058dc2642787190da10bacf31839a1722f2ead3de"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/ProjectFileArchiveTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/ProjectFileArchiveTests.log": {
+      "bytes": 101,
+      "sha256": "54852c890df5cdc23f78b6d9700915cdb0ac2f4d63aa0181e36cf577ac5e46ba"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/ProjectPickerTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/ProjectPickerTests.log": {
+      "bytes": 48,
+      "sha256": "d626de47b4c84640449d830b8cadf747507e68dc8f2bc34e7811d6fe6035cc08"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/ProjectRecordingRobotTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/ProjectRecordingRobotTests.log": {
+      "bytes": 48,
+      "sha256": "ad19d41d6fd26e680583e5e1f4026b0b60093a7cf545f57c8d9a3c540336b94b"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/ProjectWorkspaceCardTests.log": {
+      "bytes": 5134,
+      "sha256": "6b07ce234dbd0aaf00196f54fa91f5a739a66e53f5ff6ee49e3b7a687f786794"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/ProjectWorkspaceExportTests.log": {
+      "bytes": 121,
+      "sha256": "d88ca10b16a52ffd806b3325d2366ba237f3daffa9aed007bd1e576381e3b195"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/ProjectWorkspaceStateTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/ProjectWorkspaceStateTests.log": {
+      "bytes": 216,
+      "sha256": "e373b691bb1c55a54d0dfd85d7c5526645bd787925ef14cc08b01a95ecc5fe61"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/ProjectWorkspaceViewTests.log": {
+      "bytes": 10592,
+      "sha256": "a98d4187172bc3d277c89e038f41ed44daa7f8dca614d90421038d28b23f171b"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/QALifecycleTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/QALifecycleTests.log": {
+      "bytes": 99,
+      "sha256": "4c42d31de8e50400e622e7f6a6ad7c270bbba54e764b5190138affcfface3504"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/QAStorageScopedSaveTests.log": {
+      "bytes": 295,
+      "sha256": "e263805f3e90643c9ab48ca30e38269878123fa2f23ab30a9bebca8883b3ff75"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/QuickAccessTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/QuickAccessTests.log": {
+      "bytes": 29,
+      "sha256": "64bd79e6a7d02b1de7631d8ecf5028be4515483c081bf2147178ced37efc79d0"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/QuietOrbitRenderTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/QuietOrbitRenderTests.log": {
+      "bytes": 176,
+      "sha256": "5c1a0cbad6d8325e026647b1872e134ab351fcbc9822705f0c505fad0de6d00b"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/RedesignInteractionTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/RedesignInteractionTests.log": {
+      "bytes": 152,
+      "sha256": "9f0904d33d45e9606e05241f4760b64ccfd8a277720b44100d7624ac19b36123"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/ReminderAlertCoordinatorTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/ReminderAlertCoordinatorTests.log": {
+      "bytes": 152,
+      "sha256": "cf3e11ee248233db3b6789af43c54fea63d2642357445f482be9b83fa58d4830"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/RepositoryBatchTests.log": {
+      "bytes": 143,
+      "sha256": "0c762fca5ebf0fbc28a3eb7550ff14a24bc6396628ddae253f685b17871e1a98"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/RobotAppFrameTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/RobotAppFrameTests.log": {
+      "bytes": 69,
+      "sha256": "4caf0a78070a22746cb07efc1937a8d5d68b01ce59c682034acdc6a3616eb678"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/RobotCloseVisualTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/RobotCloseVisualTests.log": {
+      "bytes": 1957,
+      "sha256": "c10a8e082199e2c3d2046a797fbfb5d459adcbf5e477c89515f89311489a5e01"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/RobotDropTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/RobotDropTests.log": {
+      "bytes": 116,
+      "sha256": "a2e4ddf9a3d8f709673d2ab946012e3d9272a3e94287e6d5a199f4a459bab0a3"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/RobotLifecycleTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/RobotLifecycleTests.log": {
+      "bytes": 32,
+      "sha256": "6d7fd522f4e14cf7e349630e077843241e50253797a58c57356efa1b4fe425be"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/RobotMotionTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/RobotMotionTests.log": {
+      "bytes": 46,
+      "sha256": "dfbb40a3c08a59bb9469c19058678a80907432caf0b2533f16c1ccae0eabb094"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/RobotProjectSignRenderTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/RobotProjectSignRenderTests.log": {
+      "bytes": 135,
+      "sha256": "547ed0be24c174cfec6dae76e45dc08a24a6f3fb4b0a445e6b2d7043a198bd0d"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/RobotVisualConsistencyTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/RobotVisualConsistencyTests.log": {
+      "bytes": 186,
+      "sha256": "04688b14e7a8dd1446a7711e07363f016d9292fe4d3dcf4c7d95eaacaf419e39"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/RobotWindowTransitionTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/RobotWindowTransitionTests.log": {
+      "bytes": 40,
+      "sha256": "6858884b64ecead23e30bca47fdc06a55edceb1e408710cd9c225b7943679f0f"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/SearchDateBoardTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/SearchDateBoardTests.log": {
+      "bytes": 100,
+      "sha256": "71a4953b44342316c76825c5b66bec9befcc486fa4b008758550810570e7bfcb"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/SearchInputTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/SearchInputTests.log": {
+      "bytes": 131,
+      "sha256": "3704d244399f24b2dc7a972ad4ff16c8ad6de6fb350e75db44b0a46a3a5a924e"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/SearchResultExcerptTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/SearchResultExcerptTests.log": {
+      "bytes": 84,
+      "sha256": "696d92e92dcc1b7794264dfbe8e73038bd8233cf12160efa921e3c8e4c2a3736"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/SearchScopeStateTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/SearchScopeStateTests.log": {
+      "bytes": 153,
+      "sha256": "143d3469e6f958f1217fc0ac86b5b15214b82068abff26e10d57411e166cd888"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/SearchWindowTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/SearchWindowTests.log": {
+      "bytes": 5155,
+      "sha256": "98f82c4a232c7aa8d61d183ebb04827d0c530dbc0ffbc45632e6fe2eb0289bdf"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/ServiceTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/ServiceTests.log": {
+      "bytes": 74,
+      "sha256": "1156971b32de2382d41919679bdeef7da28c8a6a3f06aa6d4e4c612c386f8dd4"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/SnippetNamingInteractionTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/SnippetNamingInteractionTests.log": {
+      "bytes": 239,
+      "sha256": "c6028d2c0190885e92d04ffdf0e46cc49440a98b262282f00b5de1ddf1c671ef"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/SoftwareUpdateTests.log": {
+      "bytes": 155,
+      "sha256": "650f5f38b91991c416ce70e6fb083d5cd88126efc8f5b4fead7099a93b3aa07c"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/TaskFocusTests.log": {
+      "bytes": 99,
+      "sha256": "34d3877400506e7238d32efb3104d31c317f00b076cd890f99eedef3fc1b2551"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/TaskPlanInteractionTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/TaskPlanInteractionTests.log": {
+      "bytes": 413,
+      "sha256": "ab0634e2cfb89dd39a6eecb86c1342b39be4c111a71ad0310ec239cbe5134355"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/TaskPlanningTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/TaskPlanningTests.log": {
+      "bytes": 61,
+      "sha256": "4754ffff3f5f6674edb2bbebe5fab728d311efcad84aef332471b5d3ab543d78"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/TaskPriorityTagTests-compile.log": {
+      "bytes": 4668,
+      "sha256": "5b6835639900d1fd5a2a0587c70b25d84ebf7caf931180e5f69c71d71c63da4f"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/TaskPriorityTagTests.log": {
+      "bytes": 284,
+      "sha256": "ce07070cb1ac37a5d257ec7b1f5df742313f27a2316a739718fcbaef7414ded7"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/TaskStateTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/TaskStateTests.log": {
+      "bytes": 71,
+      "sha256": "cea623418bf2000c1ac1a8189105c644f7a4e49b71c1239c192c525d457aed8f"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/TaskTimerRobotTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/TaskTimerRobotTests.log": {
+      "bytes": 240,
+      "sha256": "f3649878720f448542486b74cd157a82f18f2835cbca8568dec5d9ddbdbd736d"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/ThemeSettingsTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/ThemeSettingsTests.log": {
+      "bytes": 32,
+      "sha256": "ab8aedd36900cc939a683487e7106aa5e451796da6c84712c39e46cc13cd33d2"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/TimelineCalendarTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/TimelineCalendarTests.log": {
+      "bytes": 41,
+      "sha256": "640de3980f357e01528baf542dc5dcc014ebe6ce1c5d3bf9c7561308b2f16347"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/TodayTaskCardTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/TodayTaskCardTests.log": {
+      "bytes": 342,
+      "sha256": "fd9fc17e20081300d1813748e4e3a0a93d527a9dfb83fb4d8f79a3310cb97834"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/TooltipBehaviorTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/TooltipBehaviorTests.log": {
+      "bytes": 110,
+      "sha256": "6e092e2cadd257fbecba02c59cfe4df7324473c5ea39e04dd612bb43dc957c4f"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/TooltipPresentationTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/TooltipPresentationTests.log": {
+      "bytes": 1223,
+      "sha256": "3ce4bfd1b8ead3f17b3e1349650e2a5c04024544fd2a6234ddc33966cd0df513"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/UpdateArchiveSecurityTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/UpdateArchiveSecurityTests.log": {
+      "bytes": 117,
+      "sha256": "8e9147dd732b25938e0bc08c203151e16e56b69df4b1a19ca75b42637f94f632"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/UpdateConfigurationTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/UpdateConfigurationTests.log": {
+      "bytes": 45,
+      "sha256": "9910b8fd50a1944796a6515e3253233ecd1cbd3d005f5309b3abd90c6c151607"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/VideoPlaybackIntegrationTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/VideoPlaybackIntegrationTests.log": {
+      "bytes": 3703,
+      "sha256": "985bd6ed63df303d377b87f0b4d412ea5449a3b48dbbb7beacc35d8e95163043"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/ViewportLifecycleTests.log": {
+      "bytes": 161,
+      "sha256": "6fa04f4ddb7174ddbb6515bc63d5676e03fdebd95e28abd6f3d4e020cc7addde"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/VisualAnimationStressTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/VisualAnimationStressTests.log": {
+      "bytes": 187,
+      "sha256": "321d0791082e24064ac638fb82e35042ad7e0ebdf72fac5d42e7ddff2016d32d"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/WeeklyLayoutTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/WeeklyLayoutTests.log": {
+      "bytes": 172,
+      "sha256": "206d1aad379a6dc72bfd5d1ab7eed35509b636ae36edf756a4bb8ea9f2bf5a4c"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/WeeklyPresentationCacheTests.log": {
+      "bytes": 43,
+      "sha256": "c3ea5d15f5b0f86dceba19ead31a854500ac99f215c9e0bba17d64ab2fe7743d"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/WeeklyStateTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/WeeklyStateTests.log": {
+      "bytes": 83,
+      "sha256": "43a6bf73b97cc521b5c6991d47eb3c9deb3bd8d7653b2d6075a3c55ec7002268"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/WeeklyWindowTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/WeeklyWindowTests.log": {
+      "bytes": 39,
+      "sha256": "d2855233c6e7745ec79c99e6c16f07ec40edfd5ea4af93238d94b27d4f3f737a"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/WindowChromePresentationTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/WindowChromePresentationTests.log": {
+      "bytes": 259,
+      "sha256": "6946397e33683a81bf1109e51e2b14f7db202f5612574f53f4b3bddad1d77cd2"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/WindowResizeInteractionTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/WindowResizeInteractionTests.log": {
+      "bytes": 181,
+      "sha256": "a096f8fccf8fd112bfcf3e3ea8eaaf8c39c09e34a6c91ecf41a2993d6b9f0f47"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/WindowTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/WindowTests.log": {
+      "bytes": 191,
+      "sha256": "8f1fa4539e1dec5f8f72b2c2114f7c2132a2c8fb1e957d126700c6d2061a00be"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/WorkInboxTests.log": {
+      "bytes": 27,
+      "sha256": "0c65789ee25394352163b829070b20cf2e3e04090f13770d39936ce5d861d664"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/WorkspaceInputTests.log": {
+      "bytes": 135,
+      "sha256": "41a5488ed9802f9248a6f47db1094a863225fe286b518f8d0629620889769c24"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/WorkspaceTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/WorkspaceTests.log": {
+      "bytes": 69,
+      "sha256": "5a807c019a0893fdc839232d8e995443b14eb6a3635fb8a668966a6279321bde"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/WorkspaceWindowTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/WorkspaceWindowTests.log": {
+      "bytes": 10130,
+      "sha256": "6dab4b869d93bd74bdefe73587a4152af8d761030a9daca0b1eba5fa2f55fe38"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/WorkspaceZoomLayoutTests.log": {
+      "bytes": 145,
+      "sha256": "fc06efab59044d94218a30f85dee197b503a1d683628396bf08ac924003eb4d9"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/WorkspaceZoomPerformanceTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/WorkspaceZoomPerformanceTests.log": {
+      "bytes": 1964,
+      "sha256": "fc32d4dc9ec5f46b796cd2b590265435c5866444445c07997eb9d7c02ecc3ca5"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/WorkspaceZoomTests-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/WorkspaceZoomTests.log": {
+      "bytes": 34,
+      "sha256": "223f7fdad016280ac17189d8da8bd0f800de4c45e37a0049afc729f21ef16abc"
+    },
+    "working/native/build/qa/runs/20261007T081617931479Z-app-store/report.json": {
+      "bytes": 119935,
+      "sha256": "533f5f611d7b5e5269d40a4a31a0eb3f97c8a2ee9e1533dd61a2673e845fa5a8"
+    },
+    "working/native/build/qa/runs/20261007T083941319173Z-app-store/WorkspaceZoomPerformanceTests.log": {
+      "bytes": 2064,
+      "sha256": "151ce7f81d5591c276a9f082c99988703410f00e59e4934d60ccbb4dfcbf5680"
+    },
+    "working/native/build/qa/runs/20261007T083941319173Z-app-store/report.json": {
+      "bytes": 35548,
+      "sha256": "c6c78e48665007803f8d7b4fbfd61664971ba4040389fec0c6922ae32a230340"
+    },
+    "working/native/build/qa/runs/20261007T085535609045Z-app-store/WorkspaceZoomPerformanceTests.log": {
+      "bytes": 1934,
+      "sha256": "95eba1ed34bcdb3bf1062da5641bec9a9220daa95d08c7d7b61e071afff8b1a5"
+    },
+    "working/native/build/qa/runs/20261007T085535609045Z-app-store/report.json": {
+      "bytes": 35503,
+      "sha256": "d526dfe31db9cc8571a1eeec1ceef36231256ba6962a9588c10efef8bbcaa3d3"
+    },
+    "working/native/build/qa/runs/20261007T085609119930Z-app-store/WorkspaceZoomPerformanceTests.log": {
+      "bytes": 1936,
+      "sha256": "75d468df13342beb4fd4b60980f93dc81e66223a7a28a5db32808a9151c97115"
+    },
+    "working/native/build/qa/runs/20261007T085609119930Z-app-store/report.json": {
+      "bytes": 35503,
+      "sha256": "935b36618e775c4498e46baaf1b3285a7e7c42d124c7921660f174a3028f2ef2"
+    },
+    "working/native/build/qa/task-timer-robot/549AAF64-8682-42B7-9D75-818220DD6C6B/task-timer-robot-report.json": {
+      "bytes": 502,
+      "sha256": "eda7b789ca5370b1aa66b1c8c43b5bfaeb4c20e28983bf46c32331ff656b12f7"
+    },
+    "working/native/build/qa/tooltips/tooltip-presentation-report.json": {
+      "bytes": 7650,
+      "sha256": "57b2c8458852a2e528eaf608b7a42942310dc001cbaececab6f45efe4a0b5db4"
+    },
+    "working/native/build/qa/window-chrome/37D39A9D-A90B-4132-985C-4B96E03161DA/report.json": {
+      "bytes": 2502,
+      "sha256": "7caeec39d552b2b9d1e74baade5592a606169a57f2d6445ff0d5f8e0b1375271"
+    },
+    "working/native/build/store-unsigned-20261007T084944Z/store-candidate-receipt.json": {
+      "bytes": 27203,
+      "sha256": "356148f14fe5e6d799618c0c04aaa256bce69ccc53d0437acf4f7e35deda6636"
+    },
+    "working/native/build/store-unsigned-20261007T084944Z/unsigned-packaging-preflight.log": {
+      "bytes": 3482,
+      "sha256": "3185396f156f35ca73d76a5316de4fc6430ef96756d29e5e9fe4bcc9437aa005"
+    },
+    "working/native/build/store-unsigned-20261007T084944Z/xcodebuild-release.log": {
+      "bytes": 145496,
+      "sha256": "30046509ff54d702d8866fbd958e0f35c76e6735e2ad9eb4835e72c57b894d70"
+    }
+  },
+  "scope": "Existing JSON reports/metrics/receipts and text logs only; binary/image outputs excluded from this index. Compiled binaries are verified separately through receipts."
+}

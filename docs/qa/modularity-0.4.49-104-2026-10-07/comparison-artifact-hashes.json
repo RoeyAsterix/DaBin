@@ -1,0 +1,90 @@
+{
+  "1-baseline/launch.json": {
+    "bytes": 848,
+    "sha256": "4d9a6b539e13a7bc925427246f72ca179c1c87b30b7d1f0bb759569c0d5429d0"
+  },
+  "1-baseline/metrics/performance.json": {
+    "bytes": 7402,
+    "sha256": "336dc5960dd5b431ebcc6a28360dc79cdd9cf5c5d5f1d5de5329ab29400b1ba4"
+  },
+  "1-baseline/native-report.json": {
+    "bytes": 33732,
+    "sha256": "67cdc023227a9c0b026baea071f1408d48d546c662c3b9c3243959959ff4c42c"
+  },
+  "1-baseline/runner.log": {
+    "bytes": 646,
+    "sha256": "8c14586677015f0ba8c0aaa3835a45786e98b7bb8dc976f5d0951fbe7ef10dfc"
+  },
+  "1-baseline/suite.log": {
+    "bytes": 1929,
+    "sha256": "46ec1a812907a898c4dba93e538cc3edafbe58c3670f28af1355cb6bf53cb427"
+  },
+  "2-refactor/launch.json": {
+    "bytes": 822,
+    "sha256": "8d2c44faf921013e04f7f06e38d473a70db5a680d4c8d466c03d7118e3d2c448"
+  },
+  "2-refactor/metrics/performance.json": {
+    "bytes": 7542,
+    "sha256": "82ca2653204f916396c54490ceda92dacdf6b0001f9f74ca183f4a537c5eb606"
+  },
+  "2-refactor/native-report.json": {
+    "bytes": 35503,
+    "sha256": "d526dfe31db9cc8571a1eeec1ceef36231256ba6962a9588c10efef8bbcaa3d3"
+  },
+  "2-refactor/runner.log": {
+    "bytes": 633,
+    "sha256": "5877ff23a36b361dbcb634093b3d0f1dd9a70f2d02193b145039a8ea4bf87a22"
+  },
+  "2-refactor/suite.log": {
+    "bytes": 1934,
+    "sha256": "95eba1ed34bcdb3bf1062da5641bec9a9220daa95d08c7d7b61e071afff8b1a5"
+  },
+  "3-refactor/launch.json": {
+    "bytes": 822,
+    "sha256": "8a20259cee047cfccff147d3e832f41248537a2a2ca05d1024665bed86524533"
+  },
+  "3-refactor/metrics/performance.json": {
+    "bytes": 7402,
+    "sha256": "e082cfe5857180647cc9bd58b03d9e68f9acde5cb16f624907ca918803bd87e4"
+  },
+  "3-refactor/native-report.json": {
+    "bytes": 35503,
+    "sha256": "935b36618e775c4498e46baaf1b3285a7e7c42d124c7921660f174a3028f2ef2"
+  },
+  "3-refactor/runner.log": {
+    "bytes": 633,
+    "sha256": "5321ac92eff5d568817692a0ae09adda20a71cf7bcc0fe6c622fdcd038577c09"
+  },
+  "3-refactor/suite.log": {
+    "bytes": 1936,
+    "sha256": "75d468df13342beb4fd4b60980f93dc81e66223a7a28a5db32808a9151c97115"
+  },
+  "4-baseline/launch.json": {
+    "bytes": 848,
+    "sha256": "b5b1eb023b13a94b53dee3962ac5568593b743eed566eb8fa5736193a74d06de"
+  },
+  "4-baseline/metrics/performance.json": {
+    "bytes": 7402,
+    "sha256": "e01c52188b26e03979ded310fe7ef91666d1428ccfec88b4d9d1dca04e7f1921"
+  },
+  "4-baseline/native-report.json": {
+    "bytes": 33732,
+    "sha256": "6edbcef19ce73b760019f18454919e3f8703a639d060a0e162c497d6ba1d8f71"
+  },
+  "4-baseline/runner.log": {
+    "bytes": 646,
+    "sha256": "e48346d21d28a5f927273666dbe67b6d9a0727eaad579f6024f0016b3dea2d6b"
+  },
+  "4-baseline/suite.log": {
+    "bytes": 1934,
+    "sha256": "5d05b82799934ba7275f49970686970e60ce597ed88b27a888711da0ceeff3ed"
+  },
+  "comparison-result.json": {
+    "bytes": 3237,
+    "sha256": "248eb7acaf3e8508d564204ecd93fa4df2b2abea62894bca912de842da37a2a1"
+  },
+  "progress.json": {
+    "bytes": 2706,
+    "sha256": "aa20835186ac2119d97d1c399d294e443cf11834fddf294a0120ed5d328dbab2"
+  }
+}

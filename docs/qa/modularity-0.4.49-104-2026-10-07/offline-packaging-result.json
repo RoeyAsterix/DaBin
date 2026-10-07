@@ -1,0 +1,8 @@
+{
+  "arguments": [
+    "python3",
+    "-B",
+    "scripts/test_app_store_preflight.py"
+  ],
+  "exitCode": 0
+}

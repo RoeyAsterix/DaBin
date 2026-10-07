@@ -1,0 +1,17 @@
+{
+  "arguments": [
+    "python3",
+    "-B",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "Tests",
+    "-p",
+    "test_*.py",
+    "-v"
+  ],
+  "startedAtUTC": "2026-10-07T08:10:48.801626+00:00",
+  "finishedAtUTC": "2026-10-07T08:10:49.055964+00:00",
+  "exitCode": 1
+}

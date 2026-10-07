@@ -1,0 +1,169 @@
+{
+  "artifacts": {
+    "README.md": {
+      "bytes": 8809,
+      "sha256": "e8a0c137d1497d3d51d9bbfc60ac5fa7223ca1255c37841781262f77f30a516b"
+    },
+    "applied-refactor.json": {
+      "bytes": 5604,
+      "sha256": "cd4bb4a44a594c183b9e233f842d6b4a8d6159f36c0792bdaec3f88b51362221"
+    },
+    "apply_documentation.py": {
+      "bytes": 3785,
+      "sha256": "b7c05187a4909392a7a97a3da95f5e921af62fd6da091ebb906a1c4581b7d078"
+    },
+    "baseline.json": {
+      "bytes": 49143,
+      "sha256": "10c172afd56db668aaa6cb2bb4b70f6d0ffe0554f54ebe0e8f16a380b46757b2"
+    },
+    "campaign-result.json": {
+      "bytes": 762,
+      "sha256": "81e1a22f26d1376afb7197923a8945ec2d12a43a96541452f97fe8b4c908d895"
+    },
+    "collect_verification.py": {
+      "bytes": 26836,
+      "sha256": "284f05941f768dd1701f426231d83a55b26b8526890d4b4a83e1695607b3b2ac"
+    },
+    "comparison-artifact-hashes.json": {
+      "bytes": 3028,
+      "sha256": "14943b902b6b00f5c98ec72ca0b6dea306e01d06cb15621bb33763af1223d2d4"
+    },
+    "comparison-evidence.zip": {
+      "bytes": 65177,
+      "sha256": "9b50f6245f2c26defa1c73008bd5efffd71ef068902b505665f88f8ff40d8954"
+    },
+    "comparison-result.json": {
+      "bytes": 3237,
+      "sha256": "248eb7acaf3e8508d564204ecd93fa4df2b2abea62894bca912de842da37a2a1"
+    },
+    "comparison-verification.json": {
+      "bytes": 2129,
+      "sha256": "1b7b67cab93a2d69619ab4aad8a5b6fd71abe6667e5ab4047515979fbcf29b0d"
+    },
+    "deterministic-project-launch.json": {
+      "bytes": 703,
+      "sha256": "abf297b387fa4a1ea3f317907d97759a5912789e7acf6f070c0711037fb8204d"
+    },
+    "diff-summary.json": {
+      "bytes": 6652,
+      "sha256": "0a121ba442ee421bad6ee3c17a6b9b7e8a8b3d41cafbe4d294493fede7b90deb"
+    },
+    "documentation-corrections.json": {
+      "bytes": 661,
+      "sha256": "5edb56b65c639d3226241d93e513afe0ac76c75ffa85fbd0a86961618b8848ee"
+    },
+    "documentation-corrections.patch": {
+      "bytes": 7240,
+      "sha256": "60b0779daa6fba961c6d533a1067b1fa59c1e818a272e8ae9c21c612dd0f15e6"
+    },
+    "final-live-verification.json": {
+      "bytes": 700,
+      "sha256": "8c274becc425f4cd51e3cc7dbe3e801e0f331d55e6695c8d060893acc44511f1"
+    },
+    "focused-regression-compiled-output-verification.json": {
+      "bytes": 9866,
+      "sha256": "b9aa0e6a54c816289c956127c6a370248ce8147dc83f72023473a174c8289569"
+    },
+    "focused-regression-launch.json": {
+      "bytes": 5448,
+      "sha256": "6d1cb8080e0d861e054067d2f92e8ebe69f9acec48b7531274c856d64fdb7586"
+    },
+    "focused-regression-native-report.json": {
+      "bytes": 50094,
+      "sha256": "1f70e21382b89ee25d4a5bc8ab01778a94de8d4f00ebca2f4efe8f756c78bc2a"
+    },
+    "full-campaign-result.json": {
+      "bytes": 1771,
+      "sha256": "a8d6444af8bb9270320c14c9a292c6b38f9fc907bc16327ae4a06b27ea5642d8"
+    },
+    "full-native-launch.json": {
+      "bytes": 4239,
+      "sha256": "0b7f9533fe878a0e7441655241ee0c834b53e957ebcc7ce3433f60e26343400a"
+    },
+    "full-native-native-report.json": {
+      "bytes": 119935,
+      "sha256": "533f5f611d7b5e5269d40a4a31a0eb3f97c8a2ee9e1533dd61a2673e845fa5a8"
+    },
+    "full-native-performance.json": {
+      "bytes": 7252,
+      "sha256": "d9cda2001385f9170e9c7ffe27a72fda9ca476d397f6cd59ccdb41397d4b7c3a"
+    },
+    "offline-packaging-result.json": {
+      "bytes": 109,
+      "sha256": "ae69975fda63b709b35d8350027320e5e7004f6c8109e702c94d6732f088bfa0"
+    },
+    "owned-changes.json": {
+      "bytes": 5086,
+      "sha256": "8f8736f24eef300cc0dad8e028596d7f2b31a9792602e88c4984e8993715b4ee"
+    },
+    "performance-review.md": {
+      "bytes": 8313,
+      "sha256": "538e6c461dc3c0a2ab79d98cf40bd953474698f3a9f743f2d3dbc9439d13ce53"
+    },
+    "preserve_evidence.py": {
+      "bytes": 7980,
+      "sha256": "6adb005b5beec72673ed2b1f4b0fff57e228a4fbc01144c55ad62bc06743eda8"
+    },
+    "python-tool-tests-result.json": {
+      "bytes": 277,
+      "sha256": "130a32e553e3fb92798c65bf3c9a7a4da5f7cbed7d2562c27aff9a8c369ba9f0"
+    },
+    "raw-evidence.zip": {
+      "bytes": 2265675,
+      "sha256": "db9256bda0844776d08ab4e05636b51d2b1f325e10cee459a56d73bc80e220ad"
+    },
+    "refactor.patch": {
+      "bytes": 343714,
+      "sha256": "0861c01399884480822066490776d9da33174090e7c96600a885fb6210177a20"
+    },
+    "run_comparison.py": {
+      "bytes": 4747,
+      "sha256": "868296b5b59dfacfc8288320e466b34bd58f4b97f9891f183fd6310cf9526780"
+    },
+    "run_focused.py": {
+      "bytes": 5800,
+      "sha256": "256400dbb1b1585aad724b0249c84411abd5fd5f60d822682a2f632db6042cad"
+    },
+    "run_full.py": {
+      "bytes": 6094,
+      "sha256": "374e2ca968c709fe127db3050c1c1d50c771fc37214223c51c19d5a3aa573348"
+    },
+    "source-freeze.json": {
+      "bytes": 76018,
+      "sha256": "af2ecf41b814eee78fbbb152631c4af96bd7f5ae794da709140203b62da5a75a"
+    },
+    "static-style-check.json": {
+      "bytes": 315,
+      "sha256": "5aad82aae5784be283c977f40548033220042c3f5a88c85595c24cc35c8877a7"
+    },
+    "static-style-check.log": {
+      "bytes": 74,
+      "sha256": "ab8aa2ba395e7b950502cbd71f7fb345d2819ca4c06d4db22a8acf6b2b95640c"
+    },
+    "sustained-speed-launch.json": {
+      "bytes": 4435,
+      "sha256": "dbb778c7a76dc276315b98686e3ac8fb5653c3066905d993319ce13849412317"
+    },
+    "sustained-speed-native-report.json": {
+      "bytes": 35548,
+      "sha256": "c6c78e48665007803f8d7b4fbfd61664971ba4040389fec0c6922ae32a230340"
+    },
+    "sustained-speed-performance.json": {
+      "bytes": 7612,
+      "sha256": "e42fe83d6bfbeb547ca6f588abf69a66140a30eb6d21e337466e4b91b3deeb29"
+    },
+    "unsigned-store-build-launch.json": {
+      "bytes": 692,
+      "sha256": "9c905166eb02002f8de4b41d0372b53b4bd165ade557b00df471d32009f828c6"
+    },
+    "verification-artifact-hashes.json": {
+      "bytes": 128766,
+      "sha256": "b473fa59ff00f2901b11626c59d56c7700a3d224bdb4eb86b3579565f2c2b9f6"
+    },
+    "verification-summary.json": {
+      "bytes": 74510,
+      "sha256": "75a6a5faf75062e235457fba024b26a893bd1789b24b5debda868d47c82aee16"
+    }
+  },
+  "scope": "Owned modularity refactor evidence only. Source changes remain uncommitted in the shared working tree. Collection integrity does not assert passing performance."
+}

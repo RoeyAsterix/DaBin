@@ -1,0 +1,52 @@
+{
+  "finishedAtUTC": "2026-10-07T08:50:55.999474+00:00",
+  "elapsedSeconds": 2078.143,
+  "productionFingerprint": "45414902e2ea23bd50bb9ce02eb76a5d6cc4576c98193f576e634549a91bee24",
+  "version": "0.4.49",
+  "build": "104",
+  "stages": [
+    {
+      "stage": "full-native",
+      "exitCode": 1,
+      "seconds": 1403.317,
+      "log": "/private/tmp/dabin-modularity-20261007/full-native.log",
+      "snapshotUnchanged": true,
+      "finishedAtUTC": "2026-10-07T08:39:41.212624+00:00",
+      "reportPath": "/private/tmp/dabin-modularity-20261007/full-native-native-report.json",
+      "passedSuites": 131,
+      "failedSuites": 1,
+      "reportStatus": "failed",
+      "reportCoverage": "full_registered_suite"
+    },
+    {
+      "stage": "sustained-speed",
+      "exitCode": 1,
+      "seconds": 603.572,
+      "log": "/private/tmp/dabin-modularity-20261007/sustained-speed.log",
+      "snapshotUnchanged": true,
+      "finishedAtUTC": "2026-10-07T08:49:44.866876+00:00",
+      "reportPath": "/private/tmp/dabin-modularity-20261007/sustained-speed-native-report.json",
+      "passedSuites": 0,
+      "failedSuites": 1,
+      "reportStatus": "failed",
+      "reportCoverage": "selected_suites"
+    },
+    {
+      "stage": "unsigned-store-build",
+      "exitCode": 0,
+      "seconds": 71.009,
+      "log": "/private/tmp/dabin-modularity-20261007/unsigned-store-build.log",
+      "snapshotUnchanged": true,
+      "finishedAtUTC": "2026-10-07T08:50:55.942431+00:00"
+    },
+    {
+      "stage": "deterministic-project",
+      "exitCode": 0,
+      "seconds": 0.036,
+      "log": "/private/tmp/dabin-modularity-20261007/deterministic-project.log",
+      "snapshotUnchanged": true,
+      "finishedAtUTC": "2026-10-07T08:50:55.999226+00:00"
+    }
+  ],
+  "snapshotUnchanged": true
+}

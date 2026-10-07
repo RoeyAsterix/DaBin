@@ -1,0 +1,22 @@
+{
+  "stage": "deterministic-project",
+  "arguments": [
+    "/opt/homebrew/opt/python@3.14/bin/python3.14",
+    "-B",
+    "/private/tmp/dabin-modularity-20261007/working/native/scripts/generate_project.py",
+    "--check"
+  ],
+  "cwd": "/private/tmp/dabin-modularity-20261007/working/native",
+  "startedAtUTC": "2026-10-07T08:50:55.952787+00:00",
+  "productionFingerprint": "45414902e2ea23bd50bb9ce02eb76a5d6cc4576c98193f576e634549a91bee24",
+  "controlledEnvironment": {
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "unsetOverrides": [
+    "DABIN_SEARCH_QA_SKIP_KEYBOARD",
+    "DABIN_ZOOM_PERFORMANCE_FIXED_DATA",
+    "DABIN_NATIVE_DRAG_MANUAL",
+    "all inherited DYLD_*"
+  ],
+  "snapshotUnchanged": true
+}

@@ -1,0 +1,14 @@
+{
+  "afterSHA256": "2129679434f4dbe7b79b5948a38c2a4b278862239dc7640e88bbbad54440c9fa",
+  "appliedAtUTC": "2026-10-07T09:05:05.093920+00:00",
+  "beforeSHA256": "1e938539184647fc41de79a794d3be1c6c1e6ffd2d4fd0d9adf2eeec2798547f",
+  "corrections": [
+    "current primary tab names",
+    "visible board at every cold launch",
+    "enabled full screen/recording global shortcuts"
+  ],
+  "patchSHA256": "60b0779daa6fba961c6d533a1067b1fa59c1e818a272e8ae9c21c612dd0f15e6",
+  "path": "native/ARCHITECTURE.md",
+  "productionFingerprintUnchanged": true,
+  "scope": "Documentation corrections after frozen verification completed; no production/test/config input changes."
+}

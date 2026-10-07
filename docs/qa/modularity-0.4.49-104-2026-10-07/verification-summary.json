@@ -1,0 +1,1014 @@
+{
+  "allNativeAndBuildLogFindings": {
+    "failureLines": [
+      {
+        "line": 1,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/DomainTests.log",
+        "text": "CoreData: error: addPersistentStoreWithType:configuration:URL:options:error: returned error NSCocoaErrorDomain (259)"
+      },
+      {
+        "line": 2,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/DomainTests.log",
+        "text": "CoreData: error: userInfo:"
+      },
+      {
+        "line": 3,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/DomainTests.log",
+        "text": "CoreData: error: \tNSFilePath : /var/folders/qy/zfgc4dgx02x2k_c04330ghy00000gn/T/DaBinDomainTests-B06B43D4-54B5-4252-B69E-EEB6B528023C/corrupt-store/metadata.store"
+      },
+      {
+        "line": 4,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/DomainTests.log",
+        "text": "CoreData: error: \tNSSQLiteErrorDomain : 26"
+      },
+      {
+        "line": 5,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/DomainTests.log",
+        "text": "CoreData: error: storeType: SQLite"
+      },
+      {
+        "line": 6,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/DomainTests.log",
+        "text": "CoreData: error: configuration: (null)"
+      },
+      {
+        "line": 7,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/DomainTests.log",
+        "text": "CoreData: error: URL: file:///var/folders/qy/zfgc4dgx02x2k_c04330ghy00000gn/T/DaBinDomainTests-B06B43D4-54B5-4252-B69E-EEB6B528023C/corrupt-store/metadata.store"
+      },
+      {
+        "line": 12,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/DomainTests.log",
+        "text": "CoreData: error: <NSPersistentStoreCoordinator: 0xb7d2b4280>: Attempting recovery from error encountered during addPersistentStore: 0xb7d2aad90 Error Domain=NSCocoaErrorDomain Code=259 \"The file \u201cmetadata.store\u201d couldn\u2019t be opened because it isn\u2019t in the correct format.\" UserInfo={NSFilePath=/var/folders/qy/zfgc4dgx02x2k_c04330ghy00000gn/T/DaBinDomainTests-B06B43D4-54B5-4252-B69E-EEB6B528023C/corrupt-store/metadata.store, NSSQLiteErrorDomain=26}"
+      }
+    ],
+    "limitations": [
+      {
+        "line": 9,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/CollectionCardPresentationTests.log",
+        "text": "Collection snapshot geometry: file=fallback-batch-2-200-light-zoom100@2x.png, window=(-10000.0, -10000.0, 224.0, 2400.0), content=(0.0, 0.0, 224.0, 2400.0), hosting.frame=(0.0, 0.0, 224.0, 2400.0), hosting.bounds=(0.0, 0.0, 224.0, 2400.0), flipped=true, cardAX=(-9988.0, -7820.000003039837, 200.00000303983688, 208.00000303983688), converted=(12.0, 12.0, 200.00000303983688, 208.00000303983688)"
+      },
+      {
+        "line": 10,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/CollectionCardPresentationTests.log",
+        "text": "Collection snapshot geometry: file=fallback-batch-3-200-light-zoom100@2x.png, window=(-10000.0, -10000.0, 224.0, 2400.0), content=(0.0, 0.0, 224.0, 2400.0), hosting.frame=(0.0, 0.0, 224.0, 2400.0), hosting.bounds=(0.0, 0.0, 224.0, 2400.0), flipped=true, cardAX=(-9988.0, -7880.0, 200.0, 268.0), converted=(12.0, 12.0, 200.0, 268.0)"
+      },
+      {
+        "line": 11,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/CollectionCardPresentationTests.log",
+        "text": "Collection snapshot geometry: file=fallback-batch-4-200-light-zoom100@2x.png, window=(-10000.0, -10000.0, 224.0, 2400.0), content=(0.0, 0.0, 224.0, 2400.0), hosting.frame=(0.0, 0.0, 224.0, 2400.0), hosting.bounds=(0.0, 0.0, 224.0, 2400.0), flipped=true, cardAX=(-9988.0, -7880.0, 200.0, 268.0), converted=(12.0, 12.0, 200.0, 268.0)"
+      },
+      {
+        "line": 12,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/CollectionCardPresentationTests.log",
+        "text": "Collection snapshot geometry: file=fallback-batch-5-200-light-zoom100@2x.png, window=(-10000.0, -10000.0, 224.0, 2400.0), content=(0.0, 0.0, 224.0, 2400.0), hosting.frame=(0.0, 0.0, 224.0, 2400.0), hosting.bounds=(0.0, 0.0, 224.0, 2400.0), flipped=true, cardAX=(-9988.0, -7897.0, 200.0, 285.0), converted=(12.0, 12.0, 200.0, 285.0)"
+      },
+      {
+        "line": 13,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/CollectionCardPresentationTests.log",
+        "text": "Collection snapshot geometry: file=fallback-hour-4-200-light-zoom100@2x.png, window=(-10000.0, -10000.0, 224.0, 2400.0), content=(0.0, 0.0, 224.0, 2400.0), hosting.frame=(0.0, 0.0, 224.0, 2400.0), hosting.bounds=(0.0, 0.0, 224.0, 2400.0), flipped=true, cardAX=(-9988.0, -7857.000003039837, 200.00000303983688, 245.00000303983688), converted=(12.0, 12.0, 200.00000303983688, 245.00000303983688)"
+      },
+      {
+        "line": 14,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/CollectionCardPresentationTests.log",
+        "text": "Collection snapshot geometry: file=fallback-batch-2-200-light-zoom200@2x.png, window=(-10000.0, -10000.0, 224.0, 2400.0), content=(0.0, 0.0, 224.0, 2400.0), hosting.frame=(0.0, 0.0, 224.0, 2400.0), hosting.bounds=(0.0, 0.0, 224.0, 2400.0), flipped=true, cardAX=(-9988.0, -7857.000003039837, 200.00000303983688, 245.00000303983688), converted=(12.0, 12.0, 200.00000303983688, 245.00000303983688)"
+      },
+      {
+        "line": 15,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/CollectionCardPresentationTests.log",
+        "text": "Collection snapshot geometry: file=fallback-batch-3-200-light-zoom200@2x.png, window=(-10000.0, -10000.0, 224.0, 2400.0), content=(0.0, 0.0, 224.0, 2400.0), hosting.frame=(0.0, 0.0, 224.0, 2400.0), hosting.bounds=(0.0, 0.0, 224.0, 2400.0), flipped=true, cardAX=(-9988.0, -7913.0, 200.0, 301.0), converted=(12.0, 12.0, 200.0, 301.0)"
+      },
+      {
+        "line": 16,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/CollectionCardPresentationTests.log",
+        "text": "Collection snapshot geometry: file=fallback-batch-4-200-light-zoom200@2x.png, window=(-10000.0, -10000.0, 224.0, 2400.0), content=(0.0, 0.0, 224.0, 2400.0), hosting.frame=(0.0, 0.0, 224.0, 2400.0), hosting.bounds=(0.0, 0.0, 224.0, 2400.0), flipped=true, cardAX=(-9988.0, -7913.0, 200.0, 301.0), converted=(12.0, 12.0, 200.0, 301.0)"
+      },
+      {
+        "line": 17,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/CollectionCardPresentationTests.log",
+        "text": "Collection snapshot geometry: file=fallback-batch-5-200-light-zoom200@2x.png, window=(-10000.0, -10000.0, 224.0, 2400.0), content=(0.0, 0.0, 224.0, 2400.0), hosting.frame=(0.0, 0.0, 224.0, 2400.0), hosting.bounds=(0.0, 0.0, 224.0, 2400.0), flipped=true, cardAX=(-9988.0, -7932.0, 200.0, 320.0), converted=(12.0, 12.0, 200.0, 320.0)"
+      },
+      {
+        "line": 18,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/CollectionCardPresentationTests.log",
+        "text": "Collection snapshot geometry: file=fallback-hour-4-200-light-zoom200@2x.png, window=(-10000.0, -10000.0, 224.0, 2400.0), content=(0.0, 0.0, 224.0, 2400.0), hosting.frame=(0.0, 0.0, 224.0, 2400.0), hosting.bounds=(0.0, 0.0, 224.0, 2400.0), flipped=true, cardAX=(-9988.0, -7876.0, 200.0, 264.0), converted=(12.0, 12.0, 200.0, 264.0)"
+      },
+      {
+        "line": 19,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/CollectionCardPresentationTests.log",
+        "text": "Collection snapshot geometry: file=fallback-batch-2-200-dark-zoom100@2x.png, window=(-10000.0, -10000.0, 224.0, 2400.0), content=(0.0, 0.0, 224.0, 2400.0), hosting.frame=(0.0, 0.0, 224.0, 2400.0), hosting.bounds=(0.0, 0.0, 224.0, 2400.0), flipped=true, cardAX=(-9988.0, -7820.000003039837, 200.00000303983688, 208.00000303983688), converted=(12.0, 12.0, 200.00000303983688, 208.00000303983688)"
+      },
+      {
+        "line": 20,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/CollectionCardPresentationTests.log",
+        "text": "Collection snapshot geometry: file=fallback-batch-3-200-dark-zoom100@2x.png, window=(-10000.0, -10000.0, 224.0, 2400.0), content=(0.0, 0.0, 224.0, 2400.0), hosting.frame=(0.0, 0.0, 224.0, 2400.0), hosting.bounds=(0.0, 0.0, 224.0, 2400.0), flipped=true, cardAX=(-9988.0, -7880.0, 200.0, 268.0), converted=(12.0, 12.0, 200.0, 268.0)"
+      },
+      {
+        "line": 21,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/CollectionCardPresentationTests.log",
+        "text": "Collection snapshot geometry: file=fallback-batch-4-200-dark-zoom100@2x.png, window=(-10000.0, -10000.0, 224.0, 2400.0), content=(0.0, 0.0, 224.0, 2400.0), hosting.frame=(0.0, 0.0, 224.0, 2400.0), hosting.bounds=(0.0, 0.0, 224.0, 2400.0), flipped=true, cardAX=(-9988.0, -7880.0, 200.0, 268.0), converted=(12.0, 12.0, 200.0, 268.0)"
+      },
+      {
+        "line": 22,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/CollectionCardPresentationTests.log",
+        "text": "Collection snapshot geometry: file=fallback-batch-5-200-dark-zoom100@2x.png, window=(-10000.0, -10000.0, 224.0, 2400.0), content=(0.0, 0.0, 224.0, 2400.0), hosting.frame=(0.0, 0.0, 224.0, 2400.0), hosting.bounds=(0.0, 0.0, 224.0, 2400.0), flipped=true, cardAX=(-9988.0, -7897.0, 200.0, 285.0), converted=(12.0, 12.0, 200.0, 285.0)"
+      },
+      {
+        "line": 23,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/CollectionCardPresentationTests.log",
+        "text": "Collection snapshot geometry: file=fallback-hour-4-200-dark-zoom100@2x.png, window=(-10000.0, -10000.0, 224.0, 2400.0), content=(0.0, 0.0, 224.0, 2400.0), hosting.frame=(0.0, 0.0, 224.0, 2400.0), hosting.bounds=(0.0, 0.0, 224.0, 2400.0), flipped=true, cardAX=(-9988.0, -7857.000003039837, 200.00000303983688, 245.00000303983688), converted=(12.0, 12.0, 200.00000303983688, 245.00000303983688)"
+      },
+      {
+        "line": 24,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/CollectionCardPresentationTests.log",
+        "text": "Collection snapshot geometry: file=fallback-batch-2-200-dark-zoom200@2x.png, window=(-10000.0, -10000.0, 224.0, 2400.0), content=(0.0, 0.0, 224.0, 2400.0), hosting.frame=(0.0, 0.0, 224.0, 2400.0), hosting.bounds=(0.0, 0.0, 224.0, 2400.0), flipped=true, cardAX=(-9988.0, -7857.000003039837, 200.00000303983688, 245.00000303983688), converted=(12.0, 12.0, 200.00000303983688, 245.00000303983688)"
+      },
+      {
+        "line": 25,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/CollectionCardPresentationTests.log",
+        "text": "Collection snapshot geometry: file=fallback-batch-3-200-dark-zoom200@2x.png, window=(-10000.0, -10000.0, 224.0, 2400.0), content=(0.0, 0.0, 224.0, 2400.0), hosting.frame=(0.0, 0.0, 224.0, 2400.0), hosting.bounds=(0.0, 0.0, 224.0, 2400.0), flipped=true, cardAX=(-9988.0, -7913.0, 200.0, 301.0), converted=(12.0, 12.0, 200.0, 301.0)"
+      },
+      {
+        "line": 26,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/CollectionCardPresentationTests.log",
+        "text": "Collection snapshot geometry: file=fallback-batch-4-200-dark-zoom200@2x.png, window=(-10000.0, -10000.0, 224.0, 2400.0), content=(0.0, 0.0, 224.0, 2400.0), hosting.frame=(0.0, 0.0, 224.0, 2400.0), hosting.bounds=(0.0, 0.0, 224.0, 2400.0), flipped=true, cardAX=(-9988.0, -7913.0, 200.0, 301.0), converted=(12.0, 12.0, 200.0, 301.0)"
+      },
+      {
+        "line": 27,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/CollectionCardPresentationTests.log",
+        "text": "Collection snapshot geometry: file=fallback-batch-5-200-dark-zoom200@2x.png, window=(-10000.0, -10000.0, 224.0, 2400.0), content=(0.0, 0.0, 224.0, 2400.0), hosting.frame=(0.0, 0.0, 224.0, 2400.0), hosting.bounds=(0.0, 0.0, 224.0, 2400.0), flipped=true, cardAX=(-9988.0, -7932.0, 200.0, 320.0), converted=(12.0, 12.0, 200.0, 320.0)"
+      },
+      {
+        "line": 28,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/CollectionCardPresentationTests.log",
+        "text": "Collection snapshot geometry: file=fallback-hour-4-200-dark-zoom200@2x.png, window=(-10000.0, -10000.0, 224.0, 2400.0), content=(0.0, 0.0, 224.0, 2400.0), hosting.frame=(0.0, 0.0, 224.0, 2400.0), hosting.bounds=(0.0, 0.0, 224.0, 2400.0), flipped=true, cardAX=(-9988.0, -7876.0, 200.0, 264.0), converted=(12.0, 12.0, 200.0, 264.0)"
+      },
+      {
+        "line": 29,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/CollectionCardPresentationTests.log",
+        "text": "Collection snapshot geometry: file=fallback-batch-2-260-light-zoom100@2x.png, window=(-10000.0, -10000.0, 284.0, 2400.0), content=(0.0, 0.0, 284.0, 2400.0), hosting.frame=(0.0, 0.0, 284.0, 2400.0), hosting.bounds=(0.0, 0.0, 284.0, 2400.0), flipped=true, cardAX=(-9988.0, -7835.0, 260.0, 223.0), converted=(12.0, 12.0, 260.0, 223.0)"
+      },
+      {
+        "line": 30,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/CollectionCardPresentationTests.log",
+        "text": "Collection snapshot geometry: file=fallback-batch-3-260-light-zoom100@2x.png, window=(-10000.0, -10000.0, 284.0, 2400.0), content=(0.0, 0.0, 284.0, 2400.0), hosting.frame=(0.0, 0.0, 284.0, 2400.0), hosting.bounds=(0.0, 0.0, 284.0, 2400.0), flipped=true, cardAX=(-9988.0, -7899.0, 260.0, 287.0), converted=(12.0, 12.0, 260.0, 287.0)"
+      },
+      {
+        "line": 31,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/CollectionCardPresentationTests.log",
+        "text": "Collection snapshot geometry: file=fallback-batch-4-260-light-zoom100@2x.png, window=(-10000.0, -10000.0, 284.0, 2400.0), content=(0.0, 0.0, 284.0, 2400.0), hosting.frame=(0.0, 0.0, 284.0, 2400.0), hosting.bounds=(0.0, 0.0, 284.0, 2400.0), flipped=true, cardAX=(-9988.0, -7899.0, 260.0, 287.0), converted=(12.0, 12.0, 260.0, 287.0)"
+      },
+      {
+        "line": 32,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/CollectionCardPresentationTests.log",
+        "text": "Collection snapshot geometry: file=fallback-batch-5-260-light-zoom100@2x.png, window=(-10000.0, -10000.0, 284.0, 2400.0), content=(0.0, 0.0, 284.0, 2400.0), hosting.frame=(0.0, 0.0, 284.0, 2400.0), hosting.bounds=(0.0, 0.0, 284.0, 2400.0), flipped=true, cardAX=(-9988.0, -7916.0, 260.0, 304.0), converted=(12.0, 12.0, 260.0, 304.0)"
+      },
+      {
+        "line": 33,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/CollectionCardPresentationTests.log",
+        "text": "Collection snapshot geometry: file=fallback-hour-4-260-light-zoom100@2x.png, window=(-10000.0, -10000.0, 284.0, 2400.0), content=(0.0, 0.0, 284.0, 2400.0), hosting.frame=(0.0, 0.0, 284.0, 2400.0), hosting.bounds=(0.0, 0.0, 284.0, 2400.0), flipped=true, cardAX=(-9988.0, -7863.0, 260.0, 251.0), converted=(12.0, 12.0, 260.0, 251.0)"
+      },
+      {
+        "line": 34,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/CollectionCardPresentationTests.log",
+        "text": "Collection snapshot geometry: file=fallback-batch-2-260-light-zoom200@2x.png, window=(-10000.0, -10000.0, 284.0, 2400.0), content=(0.0, 0.0, 284.0, 2400.0), hosting.frame=(0.0, 0.0, 284.0, 2400.0), hosting.bounds=(0.0, 0.0, 284.0, 2400.0), flipped=true, cardAX=(-9988.0, -7856.0, 260.0, 244.0), converted=(12.0, 12.0, 260.0, 244.0)"
+      },
+      {
+        "line": 35,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/CollectionCardPresentationTests.log",
+        "text": "Collection snapshot geometry: file=fallback-batch-3-260-light-zoom200@2x.png, window=(-10000.0, -10000.0, 284.0, 2400.0), content=(0.0, 0.0, 284.0, 2400.0), hosting.frame=(0.0, 0.0, 284.0, 2400.0), hosting.bounds=(0.0, 0.0, 284.0, 2400.0), flipped=true, cardAX=(-9988.0, -7920.0, 260.0, 308.0), converted=(12.0, 12.0, 260.0, 308.0)"
+      },
+      {
+        "line": 36,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/CollectionCardPresentationTests.log",
+        "text": "Collection snapshot geometry: file=fallback-batch-4-260-light-zoom200@2x.png, window=(-10000.0, -10000.0, 284.0, 2400.0), content=(0.0, 0.0, 284.0, 2400.0), hosting.frame=(0.0, 0.0, 284.0, 2400.0), hosting.bounds=(0.0, 0.0, 284.0, 2400.0), flipped=true, cardAX=(-9988.0, -7920.0, 260.0, 308.0), converted=(12.0, 12.0, 260.0, 308.0)"
+      },
+      {
+        "line": 37,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/CollectionCardPresentationTests.log",
+        "text": "Collection snapshot geometry: file=fallback-batch-5-260-light-zoom200@2x.png, window=(-10000.0, -10000.0, 284.0, 2400.0), content=(0.0, 0.0, 284.0, 2400.0), hosting.frame=(0.0, 0.0, 284.0, 2400.0), hosting.bounds=(0.0, 0.0, 284.0, 2400.0), flipped=true, cardAX=(-9988.0, -7939.0, 260.0, 327.0), converted=(12.0, 12.0, 260.0, 327.0)"
+      },
+      {
+        "line": 38,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/CollectionCardPresentationTests.log",
+        "text": "Collection snapshot geometry: file=fallback-hour-4-260-light-zoom200@2x.png, window=(-10000.0, -10000.0, 284.0, 2400.0), content=(0.0, 0.0, 284.0, 2400.0), hosting.frame=(0.0, 0.0, 284.0, 2400.0), hosting.bounds=(0.0, 0.0, 284.0, 2400.0), flipped=true, cardAX=(-9988.0, -7884.0, 260.0, 272.0), converted=(12.0, 12.0, 260.0, 272.0)"
+      },
+      {
+        "line": 39,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/CollectionCardPresentationTests.log",
+        "text": "Collection snapshot geometry: file=fallback-batch-2-260-dark-zoom100@2x.png, window=(-10000.0, -10000.0, 284.0, 2400.0), content=(0.0, 0.0, 284.0, 2400.0), hosting.frame=(0.0, 0.0, 284.0, 2400.0), hosting.bounds=(0.0, 0.0, 284.0, 2400.0), flipped=true, cardAX=(-9988.0, -7835.0, 260.0, 223.0), converted=(12.0, 12.0, 260.0, 223.0)"
+      },
+      {
+        "line": 40,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/CollectionCardPresentationTests.log",
+        "text": "Collection snapshot geometry: file=fallback-batch-3-260-dark-zoom100@2x.png, window=(-10000.0, -10000.0, 284.0, 2400.0), content=(0.0, 0.0, 284.0, 2400.0), hosting.frame=(0.0, 0.0, 284.0, 2400.0), hosting.bounds=(0.0, 0.0, 284.0, 2400.0), flipped=true, cardAX=(-9988.0, -7899.0, 260.0, 287.0), converted=(12.0, 12.0, 260.0, 287.0)"
+      },
+      {
+        "line": 41,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/CollectionCardPresentationTests.log",
+        "text": "Collection snapshot geometry: file=fallback-batch-4-260-dark-zoom100@2x.png, window=(-10000.0, -10000.0, 284.0, 2400.0), content=(0.0, 0.0, 284.0, 2400.0), hosting.frame=(0.0, 0.0, 284.0, 2400.0), hosting.bounds=(0.0, 0.0, 284.0, 2400.0), flipped=true, cardAX=(-9988.0, -7899.0, 260.0, 287.0), converted=(12.0, 12.0, 260.0, 287.0)"
+      },
+      {
+        "line": 42,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/CollectionCardPresentationTests.log",
+        "text": "Collection snapshot geometry: file=fallback-batch-5-260-dark-zoom100@2x.png, window=(-10000.0, -10000.0, 284.0, 2400.0), content=(0.0, 0.0, 284.0, 2400.0), hosting.frame=(0.0, 0.0, 284.0, 2400.0), hosting.bounds=(0.0, 0.0, 284.0, 2400.0), flipped=true, cardAX=(-9988.0, -7916.0, 260.0, 304.0), converted=(12.0, 12.0, 260.0, 304.0)"
+      },
+      {
+        "line": 43,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/CollectionCardPresentationTests.log",
+        "text": "Collection snapshot geometry: file=fallback-hour-4-260-dark-zoom100@2x.png, window=(-10000.0, -10000.0, 284.0, 2400.0), content=(0.0, 0.0, 284.0, 2400.0), hosting.frame=(0.0, 0.0, 284.0, 2400.0), hosting.bounds=(0.0, 0.0, 284.0, 2400.0), flipped=true, cardAX=(-9988.0, -7863.0, 260.0, 251.0), converted=(12.0, 12.0, 260.0, 251.0)"
+      },
+      {
+        "line": 44,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/CollectionCardPresentationTests.log",
+        "text": "Collection snapshot geometry: file=fallback-batch-2-260-dark-zoom200@2x.png, window=(-10000.0, -10000.0, 284.0, 2400.0), content=(0.0, 0.0, 284.0, 2400.0), hosting.frame=(0.0, 0.0, 284.0, 2400.0), hosting.bounds=(0.0, 0.0, 284.0, 2400.0), flipped=true, cardAX=(-9988.0, -7856.0, 260.0, 244.0), converted=(12.0, 12.0, 260.0, 244.0)"
+      },
+      {
+        "line": 45,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/CollectionCardPresentationTests.log",
+        "text": "Collection snapshot geometry: file=fallback-batch-3-260-dark-zoom200@2x.png, window=(-10000.0, -10000.0, 284.0, 2400.0), content=(0.0, 0.0, 284.0, 2400.0), hosting.frame=(0.0, 0.0, 284.0, 2400.0), hosting.bounds=(0.0, 0.0, 284.0, 2400.0), flipped=true, cardAX=(-9988.0, -7920.0, 260.0, 308.0), converted=(12.0, 12.0, 260.0, 308.0)"
+      },
+      {
+        "line": 46,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/CollectionCardPresentationTests.log",
+        "text": "Collection snapshot geometry: file=fallback-batch-4-260-dark-zoom200@2x.png, window=(-10000.0, -10000.0, 284.0, 2400.0), content=(0.0, 0.0, 284.0, 2400.0), hosting.frame=(0.0, 0.0, 284.0, 2400.0), hosting.bounds=(0.0, 0.0, 284.0, 2400.0), flipped=true, cardAX=(-9988.0, -7920.0, 260.0, 308.0), converted=(12.0, 12.0, 260.0, 308.0)"
+      },
+      {
+        "line": 47,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/CollectionCardPresentationTests.log",
+        "text": "Collection snapshot geometry: file=fallback-batch-5-260-dark-zoom200@2x.png, window=(-10000.0, -10000.0, 284.0, 2400.0), content=(0.0, 0.0, 284.0, 2400.0), hosting.frame=(0.0, 0.0, 284.0, 2400.0), hosting.bounds=(0.0, 0.0, 284.0, 2400.0), flipped=true, cardAX=(-9988.0, -7939.0, 260.0, 327.0), converted=(12.0, 12.0, 260.0, 327.0)"
+      },
+      {
+        "line": 48,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/CollectionCardPresentationTests.log",
+        "text": "Collection snapshot geometry: file=fallback-hour-4-260-dark-zoom200@2x.png, window=(-10000.0, -10000.0, 284.0, 2400.0), content=(0.0, 0.0, 284.0, 2400.0), hosting.frame=(0.0, 0.0, 284.0, 2400.0), hosting.bounds=(0.0, 0.0, 284.0, 2400.0), flipped=true, cardAX=(-9988.0, -7884.0, 260.0, 272.0), converted=(12.0, 12.0, 260.0, 272.0)"
+      },
+      {
+        "line": 49,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/CollectionCardPresentationTests.log",
+        "text": "Collection snapshot geometry: file=fallback-explicit72-3-200-light-zoom100@2x.png, window=(-10000.0, -10000.0, 224.0, 2400.0), content=(0.0, 0.0, 224.0, 2400.0), hosting.frame=(0.0, 0.0, 224.0, 2400.0), hosting.bounds=(0.0, 0.0, 224.0, 2400.0), flipped=true, cardAX=(-9988.0, -7788.0, 200.0, 163.5), converted=(12.0, 24.5, 200.0, 163.5)"
+      },
+      {
+        "line": 50,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/CollectionCardPresentationTests.log",
+        "text": "Collection snapshot geometry: file=fallback-explicit72-4-200-light-zoom100@2x.png, window=(-10000.0, -10000.0, 224.0, 2400.0), content=(0.0, 0.0, 224.0, 2400.0), hosting.frame=(0.0, 0.0, 224.0, 2400.0), hosting.bounds=(0.0, 0.0, 224.0, 2400.0), flipped=true, cardAX=(-9988.0, -7788.0, 200.0, 163.5), converted=(12.0, 24.5, 200.0, 163.5)"
+      },
+      {
+        "line": 51,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/CollectionCardPresentationTests.log",
+        "text": "Collection snapshot geometry: file=fallback-explicit72-5-200-light-zoom100@2x.png, window=(-10000.0, -10000.0, 224.0, 2400.0), content=(0.0, 0.0, 224.0, 2400.0), hosting.frame=(0.0, 0.0, 224.0, 2400.0), hosting.bounds=(0.0, 0.0, 224.0, 2400.0), flipped=true, cardAX=(-9988.0, -7805.0, 200.0, 180.5), converted=(12.0, 24.5, 200.0, 180.5)"
+      },
+      {
+        "line": 52,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/CollectionCardPresentationTests.log",
+        "text": "Collection snapshot geometry: file=fallback-explicit72-3-200-light-zoom200@2x.png, window=(-10000.0, -10000.0, 224.0, 2400.0), content=(0.0, 0.0, 224.0, 2400.0), hosting.frame=(0.0, 0.0, 224.0, 2400.0), hosting.bounds=(0.0, 0.0, 224.0, 2400.0), flipped=true, cardAX=(-9988.0, -7800.0, 200.0, 175.5), converted=(12.0, 24.5, 200.0, 175.5)"
+      },
+      {
+        "line": 53,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/CollectionCardPresentationTests.log",
+        "text": "Collection snapshot geometry: file=fallback-explicit72-4-200-light-zoom200@2x.png, window=(-10000.0, -10000.0, 224.0, 2400.0), content=(0.0, 0.0, 224.0, 2400.0), hosting.frame=(0.0, 0.0, 224.0, 2400.0), hosting.bounds=(0.0, 0.0, 224.0, 2400.0), flipped=true, cardAX=(-9988.0, -7800.0, 200.0, 175.5), converted=(12.0, 24.5, 200.0, 175.5)"
+      },
+      {
+        "line": 54,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/CollectionCardPresentationTests.log",
+        "text": "Collection snapshot geometry: file=fallback-explicit72-5-200-light-zoom200@2x.png, window=(-10000.0, -10000.0, 224.0, 2400.0), content=(0.0, 0.0, 224.0, 2400.0), hosting.frame=(0.0, 0.0, 224.0, 2400.0), hosting.bounds=(0.0, 0.0, 224.0, 2400.0), flipped=true, cardAX=(-9988.0, -7819.0, 200.0, 194.5), converted=(12.0, 24.5, 200.0, 194.5)"
+      },
+      {
+        "line": 55,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/CollectionCardPresentationTests.log",
+        "text": "Collection snapshot geometry: file=fallback-explicit72-3-200-dark-zoom100@2x.png, window=(-10000.0, -10000.0, 224.0, 2400.0), content=(0.0, 0.0, 224.0, 2400.0), hosting.frame=(0.0, 0.0, 224.0, 2400.0), hosting.bounds=(0.0, 0.0, 224.0, 2400.0), flipped=true, cardAX=(-9988.0, -7788.0, 200.0, 163.5), converted=(12.0, 24.5, 200.0, 163.5)"
+      },
+      {
+        "line": 56,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/CollectionCardPresentationTests.log",
+        "text": "Collection snapshot geometry: file=fallback-explicit72-4-200-dark-zoom100@2x.png, window=(-10000.0, -10000.0, 224.0, 2400.0), content=(0.0, 0.0, 224.0, 2400.0), hosting.frame=(0.0, 0.0, 224.0, 2400.0), hosting.bounds=(0.0, 0.0, 224.0, 2400.0), flipped=true, cardAX=(-9988.0, -7788.0, 200.0, 163.5), converted=(12.0, 24.5, 200.0, 163.5)"
+      },
+      {
+        "line": 57,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/CollectionCardPresentationTests.log",
+        "text": "Collection snapshot geometry: file=fallback-explicit72-5-200-dark-zoom100@2x.png, window=(-10000.0, -10000.0, 224.0, 2400.0), content=(0.0, 0.0, 224.0, 2400.0), hosting.frame=(0.0, 0.0, 224.0, 2400.0), hosting.bounds=(0.0, 0.0, 224.0, 2400.0), flipped=true, cardAX=(-9988.0, -7805.0, 200.0, 180.5), converted=(12.0, 24.5, 200.0, 180.5)"
+      },
+      {
+        "line": 58,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/CollectionCardPresentationTests.log",
+        "text": "Collection snapshot geometry: file=fallback-explicit72-3-200-dark-zoom200@2x.png, window=(-10000.0, -10000.0, 224.0, 2400.0), content=(0.0, 0.0, 224.0, 2400.0), hosting.frame=(0.0, 0.0, 224.0, 2400.0), hosting.bounds=(0.0, 0.0, 224.0, 2400.0), flipped=true, cardAX=(-9988.0, -7800.0, 200.0, 175.5), converted=(12.0, 24.5, 200.0, 175.5)"
+      },
+      {
+        "line": 59,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/CollectionCardPresentationTests.log",
+        "text": "Collection snapshot geometry: file=fallback-explicit72-4-200-dark-zoom200@2x.png, window=(-10000.0, -10000.0, 224.0, 2400.0), content=(0.0, 0.0, 224.0, 2400.0), hosting.frame=(0.0, 0.0, 224.0, 2400.0), hosting.bounds=(0.0, 0.0, 224.0, 2400.0), flipped=true, cardAX=(-9988.0, -7800.0, 200.0, 175.5), converted=(12.0, 24.5, 200.0, 175.5)"
+      },
+      {
+        "line": 60,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/CollectionCardPresentationTests.log",
+        "text": "Collection snapshot geometry: file=fallback-explicit72-5-200-dark-zoom200@2x.png, window=(-10000.0, -10000.0, 224.0, 2400.0), content=(0.0, 0.0, 224.0, 2400.0), hosting.frame=(0.0, 0.0, 224.0, 2400.0), hosting.bounds=(0.0, 0.0, 224.0, 2400.0), flipped=true, cardAX=(-9988.0, -7819.0, 200.0, 194.5), converted=(12.0, 24.5, 200.0, 194.5)"
+      },
+      {
+        "line": 61,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/CollectionCardPresentationTests.log",
+        "text": "Collection snapshot geometry: file=fallback-explicit72-3-260-light-zoom100@2x.png, window=(-10000.0, -10000.0, 284.0, 2400.0), content=(0.0, 0.0, 284.0, 2400.0), hosting.frame=(0.0, 0.0, 284.0, 2400.0), hosting.bounds=(0.0, 0.0, 284.0, 2400.0), flipped=true, cardAX=(-9988.0, -7800.0, 260.0, 175.5), converted=(12.0, 24.5, 260.0, 175.5)"
+      },
+      {
+        "line": 62,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/CollectionCardPresentationTests.log",
+        "text": "Collection snapshot geometry: file=fallback-explicit72-4-260-light-zoom100@2x.png, window=(-10000.0, -10000.0, 284.0, 2400.0), content=(0.0, 0.0, 284.0, 2400.0), hosting.frame=(0.0, 0.0, 284.0, 2400.0), hosting.bounds=(0.0, 0.0, 284.0, 2400.0), flipped=true, cardAX=(-9988.0, -7800.0, 260.0, 175.5), converted=(12.0, 24.5, 260.0, 175.5)"
+      },
+      {
+        "line": 63,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/CollectionCardPresentationTests.log",
+        "text": "Collection snapshot geometry: file=fallback-explicit72-5-260-light-zoom100@2x.png, window=(-10000.0, -10000.0, 284.0, 2400.0), content=(0.0, 0.0, 284.0, 2400.0), hosting.frame=(0.0, 0.0, 284.0, 2400.0), hosting.bounds=(0.0, 0.0, 284.0, 2400.0), flipped=true, cardAX=(-9988.0, -7817.0, 260.0, 192.5), converted=(12.0, 24.5, 260.0, 192.5)"
+      },
+      {
+        "line": 64,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/CollectionCardPresentationTests.log",
+        "text": "Collection snapshot geometry: file=fallback-explicit72-3-260-light-zoom200@2x.png, window=(-10000.0, -10000.0, 284.0, 2400.0), content=(0.0, 0.0, 284.0, 2400.0), hosting.frame=(0.0, 0.0, 284.0, 2400.0), hosting.bounds=(0.0, 0.0, 284.0, 2400.0), flipped=true, cardAX=(-9988.0, -7816.0, 260.0, 191.5), converted=(12.0, 24.5, 260.0, 191.5)"
+      },
+      {
+        "line": 65,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/CollectionCardPresentationTests.log",
+        "text": "Collection snapshot geometry: file=fallback-explicit72-4-260-light-zoom200@2x.png, window=(-10000.0, -10000.0, 284.0, 2400.0), content=(0.0, 0.0, 284.0, 2400.0), hosting.frame=(0.0, 0.0, 284.0, 2400.0), hosting.bounds=(0.0, 0.0, 284.0, 2400.0), flipped=true, cardAX=(-9988.0, -7816.0, 260.0, 191.5), converted=(12.0, 24.5, 260.0, 191.5)"
+      },
+      {
+        "line": 66,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/CollectionCardPresentationTests.log",
+        "text": "Collection snapshot geometry: file=fallback-explicit72-5-260-light-zoom200@2x.png, window=(-10000.0, -10000.0, 284.0, 2400.0), content=(0.0, 0.0, 284.0, 2400.0), hosting.frame=(0.0, 0.0, 284.0, 2400.0), hosting.bounds=(0.0, 0.0, 284.0, 2400.0), flipped=true, cardAX=(-9988.0, -7835.0, 260.0, 210.5), converted=(12.0, 24.5, 260.0, 210.5)"
+      },
+      {
+        "line": 67,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/CollectionCardPresentationTests.log",
+        "text": "Collection snapshot geometry: file=fallback-explicit72-3-260-dark-zoom100@2x.png, window=(-10000.0, -10000.0, 284.0, 2400.0), content=(0.0, 0.0, 284.0, 2400.0), hosting.frame=(0.0, 0.0, 284.0, 2400.0), hosting.bounds=(0.0, 0.0, 284.0, 2400.0), flipped=true, cardAX=(-9988.0, -7800.0, 260.0, 175.5), converted=(12.0, 24.5, 260.0, 175.5)"
+      },
+      {
+        "line": 68,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/CollectionCardPresentationTests.log",
+        "text": "Collection snapshot geometry: file=fallback-explicit72-4-260-dark-zoom100@2x.png, window=(-10000.0, -10000.0, 284.0, 2400.0), content=(0.0, 0.0, 284.0, 2400.0), hosting.frame=(0.0, 0.0, 284.0, 2400.0), hosting.bounds=(0.0, 0.0, 284.0, 2400.0), flipped=true, cardAX=(-9988.0, -7800.0, 260.0, 175.5), converted=(12.0, 24.5, 260.0, 175.5)"
+      },
+      {
+        "line": 69,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/CollectionCardPresentationTests.log",
+        "text": "Collection snapshot geometry: file=fallback-explicit72-5-260-dark-zoom100@2x.png, window=(-10000.0, -10000.0, 284.0, 2400.0), content=(0.0, 0.0, 284.0, 2400.0), hosting.frame=(0.0, 0.0, 284.0, 2400.0), hosting.bounds=(0.0, 0.0, 284.0, 2400.0), flipped=true, cardAX=(-9988.0, -7817.0, 260.0, 192.5), converted=(12.0, 24.5, 260.0, 192.5)"
+      },
+      {
+        "line": 70,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/CollectionCardPresentationTests.log",
+        "text": "Collection snapshot geometry: file=fallback-explicit72-3-260-dark-zoom200@2x.png, window=(-10000.0, -10000.0, 284.0, 2400.0), content=(0.0, 0.0, 284.0, 2400.0), hosting.frame=(0.0, 0.0, 284.0, 2400.0), hosting.bounds=(0.0, 0.0, 284.0, 2400.0), flipped=true, cardAX=(-9988.0, -7816.0, 260.0, 191.5), converted=(12.0, 24.5, 260.0, 191.5)"
+      },
+      {
+        "line": 71,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/CollectionCardPresentationTests.log",
+        "text": "Collection snapshot geometry: file=fallback-explicit72-4-260-dark-zoom200@2x.png, window=(-10000.0, -10000.0, 284.0, 2400.0), content=(0.0, 0.0, 284.0, 2400.0), hosting.frame=(0.0, 0.0, 284.0, 2400.0), hosting.bounds=(0.0, 0.0, 284.0, 2400.0), flipped=true, cardAX=(-9988.0, -7816.0, 260.0, 191.5), converted=(12.0, 24.5, 260.0, 191.5)"
+      },
+      {
+        "line": 72,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/CollectionCardPresentationTests.log",
+        "text": "Collection snapshot geometry: file=fallback-explicit72-5-260-dark-zoom200@2x.png, window=(-10000.0, -10000.0, 284.0, 2400.0), content=(0.0, 0.0, 284.0, 2400.0), hosting.frame=(0.0, 0.0, 284.0, 2400.0), hosting.bounds=(0.0, 0.0, 284.0, 2400.0), flipped=true, cardAX=(-9988.0, -7835.0, 260.0, 210.5), converted=(12.0, 24.5, 260.0, 210.5)"
+      },
+      {
+        "line": 2,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/DurabilityStressTests.log",
+        "text": "DURABILITY measured wall time 32.070 seconds; no timing threshold asserted"
+      },
+      {
+        "line": 15,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/VideoPlaybackIntegrationTests.log",
+        "text": "BOUNDARIES: Transport is measured on actual production AVPlayerView.player. Native Play/Pause activation is asserted only where a standard named AX button is exposed, and each API fallback is separately reported. Slider dragging, audio, AirPlay, PiP and hardware decoder varieties are not asserted. Live reusable DetailPreview is distinct from DetailScreen's thumbnail/opener flow. Capture replacement follows the production hosting/identity boundary."
+      },
+      {
+        "line": 1,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/WindowResizeInteractionTests.log",
+        "text": "SKIP: physical cross-display gesture requires two attached displays; geometry remains unit-tested"
+      },
+      {
+        "line": 530,
+        "path": "working/native/build/store-unsigned-20261007T084944Z/xcodebuild-release.log",
+        "text": "2026-10-07 11:50:54.905 appintentsmetadataprocessor[15782:1668848] warning: Metadata extraction skipped, no AppIntents.framework dependency found"
+      },
+      {
+        "line": 534,
+        "path": "working/native/build/store-unsigned-20261007T084944Z/xcodebuild-release.log",
+        "text": "    export PATH\\=/Applications/Xcode.app/Contents/SharedFrameworks/SwiftBuild.framework/Versions/A/PlugIns/SWBBuildService.bundle/Contents/PlugIns/SWBUniversalPlatformPlugin.bundle/Contents/Frameworks/SWBUniversalPlatform.framework/Resources:/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin:/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/local/bin:/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/libexec:/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/usr/bin:/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/usr/local/bin:/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/bin:/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/local/bin:/Applications/Xcode.app/Contents/Developer/usr/bin:/Applications/Xcode.app/Contents/Developer/usr/local/bin:/Applications/ChatGPT.app/Contents/Resources/codex-cli/codex-path:/Users/roeylibfeld/.local/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/Users/roeylibfeld/.codex/tmp/arg0/codex-arg0bApRGp:/Users/roeylibfeld/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/override:/Users/roeylibfeld/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/fallback:/Applications/ChatGPT.app/Contents/Resources:/Applications/ChatGPT.app/Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS"
+      }
+    ],
+    "runtimeMetricAndBoundaryLines": [
+      {
+        "line": 1,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/ColdVideoControllerTests.log",
+        "text": "CHECKPOINT: fresh app before any video or window; AVKit-class-present=true; images=[\"/System/Library/Frameworks/AVKit.framework/Versions/A/AVKit\", \"/System/Library/PrivateFrameworks/AVKitCore.framework/Versions/A/AVKitCore\", \"/System/Library/Frameworks/_AVKit_SwiftUI.framework/Versions/A/_AVKit_SwiftUI\"]"
+      },
+      {
+        "line": 2,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/ColdVideoControllerTests.log",
+        "text": "CHECKPOINT: immediately before production CaptureExtendedWindowController.show; AVKit-class-present=true; images=[\"/System/Library/Frameworks/AVKit.framework/Versions/A/AVKit\", \"/System/Library/PrivateFrameworks/AVKitCore.framework/Versions/A/AVKitCore\", \"/System/Library/Frameworks/_AVKit_SwiftUI.framework/Versions/A/_AVKit_SwiftUI\"]"
+      },
+      {
+        "line": 3,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/ColdVideoControllerTests.log",
+        "text": "CHECKPOINT: production show returned; AVKit-class-present=true; images=[\"/System/Library/Frameworks/AVKit.framework/Versions/A/AVKit\", \"/System/Library/PrivateFrameworks/AVKitCore.framework/Versions/A/AVKitCore\", \"/System/Library/Frameworks/_AVKit_SwiftUI.framework/Versions/A/_AVKit_SwiftUI\"]"
+      },
+      {
+        "line": 4,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/ColdVideoControllerTests.log",
+        "text": "CHECKPOINT: cold production path completed; AVKit-class-present=true; images=[\"/System/Library/Frameworks/AVKit.framework/Versions/A/AVKit\", \"/System/Library/PrivateFrameworks/AVKitCore.framework/Versions/A/AVKitCore\", \"/System/Library/Frameworks/_AVKit_SwiftUI.framework/Versions/A/_AVKit_SwiftUI\"]"
+      },
+      {
+        "line": 2,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/DurabilityStressTests.log",
+        "text": "DURABILITY measured wall time 32.070 seconds; no timing threshold asserted"
+      },
+      {
+        "line": 2,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/FlowActionStressTests.log",
+        "text": "SEED: dab120261005; navigationCycles=64; transactionalCycles=32; actualHandlerInvocations=6134; restartChecks=72; seconds=8.527"
+      },
+      {
+        "line": 3,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/FlowActionStressTests.log",
+        "text": "ACTION_COUNTS: assignProject.filed=32, assignProject.unfiled=32, back=1370, back.boundary=40, completeFollowUp.task=32, configureTaskFocus=32, convertToTask=32, convertToTask.failed=32, convertToTask.repeat=32, copyCapturesToClipboard=32, copySearchNote=32, forward=1111, forward.boundary=40, moveDay=64, navigateProject=97, navigateWorkspaceMode=256, openCapture=33, openCapture.attachment=64, openCapture.convertible=32, openCapture.removal=32, openLibrary=65, openNewNote=33, openNewTask=33, postDetailComment.edit=32, postDetailComment.empty=32, postDetailComment.failed=32, postDetailComment.retry=32, removeCapture=32, resetTaskFocus=32, restart.openCapture=40, restoreCapture=32, returnCaptureToInbox=32, returnCaptureToInbox.failed=32, returnCaptureToInbox.repeat=32, route.daily=64, route.detail=128, route.inbox=128, route.library=64, route.newNote=64, route.newTask=64, route.reminders=64, route.search=64, route.searchNote=64, route.settings=128, route.trash=64, route.weekly=64, saveDetail.failed=32, saveDetail.pastReminder=32, saveDetail.repeat=32, saveDetail.retry=32, saveNewNote.empty=32, saveNewNote.failed=32, saveNewNote.retry=32, saveNewTask.failed=32, saveNewTask.invalidChecklist=32, saveNewTask.pastReminder=32, saveNewTask.retry=32, scheduleTask=32, selectSearchProject=64, setDetailReminder=32, showSettings.blocked=32, showTrash=32, store.capture=32, store.captureAttachment=33, store.createTask=1, store.importData=1, toggleMinimized=64, togglePinned=64, togglePinned.failed=32, toggleTaskCompletion.complete=32, toggleTaskCompletion.failed=32, toggleTaskCompletion.reopen=64, toggleTaskFocus.pause=32, toggleTaskFocus.start=32, undoTaskConversion=32, undoTaskConversion.blocked=32, workspace.createProject=4, workspace.markInboxProcessed=32, workspace.setOnShelf=32, workspace.setOnShelf.remove=32, workspace.setScratchpad=33, workspace.setScratchpad.failed=32, workspace.setScratchpad.retry=32, workspace.setSnippetName=32"
+      },
+      {
+        "line": 4,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/FlowActionStressTests.log",
+        "text": "ROUTE_COUNTS: daily=64, detail=128, inbox=128, library=64, newNote=64, newTask=64, reminders=64, search=64, searchNote=64, settings=128, trash=64, weekly=64"
+      },
+      {
+        "line": 3,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/VideoPlaybackIntegrationTests.log",
+        "text": "CONTROL_BOUNDARY: fittedPreview landscape Play: no standard named native button with a supported AXPress was exposed by this inactive offscreen AVKit view; ownProcessAX=0. Exposed buttons: Button [AXPress=true]; Button [AXPress=true]"
+      },
+      {
+        "line": 4,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/VideoPlaybackIntegrationTests.log",
+        "text": "CONTROL_BOUNDARY: fittedPreview landscape Pause: no standard named native button with a supported AXPress was exposed by this inactive offscreen AVKit view; ownProcessAX=0. Exposed buttons: Button [AXPress=true]; Button [AXPress=true]"
+      },
+      {
+        "line": 6,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/VideoPlaybackIntegrationTests.log",
+        "text": "CONTROL_BOUNDARY: fittedPreview portrait Play: no standard named native button with a supported AXPress was exposed by this inactive offscreen AVKit view; ownProcessAX=0. Exposed buttons: Button [AXPress=true]; Button [AXPress=true]"
+      },
+      {
+        "line": 7,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/VideoPlaybackIntegrationTests.log",
+        "text": "CONTROL_BOUNDARY: fittedPreview portrait Pause: no standard named native button with a supported AXPress was exposed by this inactive offscreen AVKit view; ownProcessAX=0. Exposed buttons: Button [AXPress=true]; Button [AXPress=true]"
+      },
+      {
+        "line": 9,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/VideoPlaybackIntegrationTests.log",
+        "text": "CONTROL_BOUNDARY: extendedCanvas landscape Play: no standard named native button with a supported AXPress was exposed by this inactive offscreen AVKit view; ownProcessAX=0. Exposed buttons: Button [AXPress=true]; Button [AXPress=true]"
+      },
+      {
+        "line": 10,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/VideoPlaybackIntegrationTests.log",
+        "text": "CONTROL_BOUNDARY: extendedCanvas landscape Pause: no standard named native button with a supported AXPress was exposed by this inactive offscreen AVKit view; ownProcessAX=0. Exposed buttons: Button [AXPress=true]; Button [AXPress=true]"
+      },
+      {
+        "line": 12,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/VideoPlaybackIntegrationTests.log",
+        "text": "CONTROL_BOUNDARY: extendedCanvas portrait Play: no standard named native button with a supported AXPress was exposed by this inactive offscreen AVKit view; ownProcessAX=0. Exposed buttons: Button [AXPress=true]; Button [AXPress=true]"
+      },
+      {
+        "line": 13,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/VideoPlaybackIntegrationTests.log",
+        "text": "CONTROL_BOUNDARY: extendedCanvas portrait Pause: no standard named native button with a supported AXPress was exposed by this inactive offscreen AVKit view; ownProcessAX=0. Exposed buttons: Button [AXPress=true]; Button [AXPress=true]"
+      },
+      {
+        "line": 14,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/VideoPlaybackIntegrationTests.log",
+        "text": "NATIVE_CONTROL_COUNTS: actualAXButtonPresses=0; unavailable=fittedPreview landscape.Play,fittedPreview landscape.Pause,fittedPreview portrait.Play,fittedPreview portrait.Pause,extendedCanvas landscape.Play,extendedCanvas landscape.Pause,extendedCanvas portrait.Play,extendedCanvas portrait.Pause"
+      },
+      {
+        "line": 15,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/VideoPlaybackIntegrationTests.log",
+        "text": "BOUNDARIES: Transport is measured on actual production AVPlayerView.player. Native Play/Pause activation is asserted only where a standard named AX button is exposed, and each API fallback is separately reported. Slider dragging, audio, AirPlay, PiP and hardware decoder varieties are not asserted. Live reusable DetailPreview is distinct from DetailScreen's thumbnail/opener flow. Capture replacement follows the production hosting/identity boundary."
+      }
+    ],
+    "warningCounts": {
+      "actor_compile": 6,
+      "compile": 1,
+      "table_reentrancy": 17
+    },
+    "warnings": [
+      {
+        "category": "table_reentrancy",
+        "line": 1,
+        "path": "working/native/build/qa/runs/20261007T081000488165Z-app-store/ProjectWorkspaceViewTests.log",
+        "text": "2026-10-07 11:14:23.097 ProjectWorkspaceViewTests[13443:1593735] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future."
+      },
+      {
+        "category": "table_reentrancy",
+        "line": 6,
+        "path": "working/native/build/qa/runs/20261007T081000488165Z-app-store/ProjectWorkspaceViewTests.log",
+        "text": "2026-10-07 11:14:28.248 ProjectWorkspaceViewTests[13443:1593735] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future."
+      },
+      {
+        "category": "table_reentrancy",
+        "line": 7,
+        "path": "working/native/build/qa/runs/20261007T081000488165Z-app-store/ProjectWorkspaceViewTests.log",
+        "text": "2026-10-07 11:14:28.763 ProjectWorkspaceViewTests[13443:1593735] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future."
+      },
+      {
+        "category": "table_reentrancy",
+        "line": 8,
+        "path": "working/native/build/qa/runs/20261007T081000488165Z-app-store/ProjectWorkspaceViewTests.log",
+        "text": "2026-10-07 11:14:30.040 ProjectWorkspaceViewTests[13443:1593735] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future."
+      },
+      {
+        "category": "table_reentrancy",
+        "line": 11,
+        "path": "working/native/build/qa/runs/20261007T081000488165Z-app-store/ProjectWorkspaceViewTests.log",
+        "text": "2026-10-07 11:14:34.128 ProjectWorkspaceViewTests[13443:1593735] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future."
+      },
+      {
+        "category": "table_reentrancy",
+        "line": 61,
+        "path": "working/native/build/qa/runs/20261007T081000488165Z-app-store/ProjectWorkspaceViewTests.log",
+        "text": "2026-10-07 11:14:58.191 ProjectWorkspaceViewTests[13443:1593735] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future."
+      },
+      {
+        "category": "table_reentrancy",
+        "line": 62,
+        "path": "working/native/build/qa/runs/20261007T081000488165Z-app-store/ProjectWorkspaceViewTests.log",
+        "text": "2026-10-07 11:15:01.003 ProjectWorkspaceViewTests[13443:1593735] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future."
+      },
+      {
+        "category": "table_reentrancy",
+        "line": 1,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/CaptionSelectionTests.log",
+        "text": "2026-10-07 11:39:40.378 CaptionSelectionTests[15367:1653058] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future."
+      },
+      {
+        "category": "table_reentrancy",
+        "line": 1,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/ProjectWorkspaceViewTests.log",
+        "text": "2026-10-07 11:32:09.003 ProjectWorkspaceViewTests[15019:1632405] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future."
+      },
+      {
+        "category": "table_reentrancy",
+        "line": 6,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/ProjectWorkspaceViewTests.log",
+        "text": "2026-10-07 11:32:14.176 ProjectWorkspaceViewTests[15019:1632405] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future."
+      },
+      {
+        "category": "table_reentrancy",
+        "line": 7,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/ProjectWorkspaceViewTests.log",
+        "text": "2026-10-07 11:32:14.684 ProjectWorkspaceViewTests[15019:1632405] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future."
+      },
+      {
+        "category": "table_reentrancy",
+        "line": 8,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/ProjectWorkspaceViewTests.log",
+        "text": "2026-10-07 11:32:15.970 ProjectWorkspaceViewTests[15019:1632405] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future."
+      },
+      {
+        "category": "table_reentrancy",
+        "line": 11,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/ProjectWorkspaceViewTests.log",
+        "text": "2026-10-07 11:32:20.088 ProjectWorkspaceViewTests[15019:1632405] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future."
+      },
+      {
+        "category": "table_reentrancy",
+        "line": 61,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/ProjectWorkspaceViewTests.log",
+        "text": "2026-10-07 11:32:43.997 ProjectWorkspaceViewTests[15019:1632405] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future."
+      },
+      {
+        "category": "table_reentrancy",
+        "line": 62,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/ProjectWorkspaceViewTests.log",
+        "text": "2026-10-07 11:32:46.763 ProjectWorkspaceViewTests[15019:1632405] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future."
+      },
+      {
+        "category": "table_reentrancy",
+        "line": 23,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/SearchWindowTests.log",
+        "text": "2026-10-07 11:33:16.905 DaBinSearchQA[15073:1633957] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future."
+      },
+      {
+        "category": "table_reentrancy",
+        "line": 35,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/SearchWindowTests.log",
+        "text": "2026-10-07 11:33:27.833 DaBinSearchQA[15073:1633957] WARNING: Application performed a reentrant operation in its NSTableView delegate. This warning will become an assert in the future."
+      },
+      {
+        "category": "actor_compile",
+        "line": 1,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/TaskPriorityTagTests-compile.log",
+        "sourceLocation": {
+          "column": 31,
+          "line": 86,
+          "path": "/private/tmp/dabin-modularity-20261007/working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/TaskPriorityTagTests-42bae56a6f187ac2/TaskPriorityTagTests.swift"
+        },
+        "text": "/private/tmp/dabin-modularity-20261007/working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/TaskPriorityTagTests-42bae56a6f187ac2/TaskPriorityTagTests.swift:86:31: warning: call to main actor-isolated instance method 'orderOut' in a synchronous nonisolated context [#ActorIsolatedCall]"
+      },
+      {
+        "category": "actor_compile",
+        "line": 5,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/TaskPriorityTagTests-compile.log",
+        "text": "    |              |                `- warning: call to main actor-isolated instance method 'orderOut' in a synchronous nonisolated context [#ActorIsolatedCall]"
+      },
+      {
+        "category": "actor_compile",
+        "line": 19,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/TaskPriorityTagTests-compile.log",
+        "sourceLocation": {
+          "column": 53,
+          "line": 86,
+          "path": "/private/tmp/dabin-modularity-20261007/working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/TaskPriorityTagTests-42bae56a6f187ac2/TaskPriorityTagTests.swift"
+        },
+        "text": "/private/tmp/dabin-modularity-20261007/working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/TaskPriorityTagTests-42bae56a6f187ac2/TaskPriorityTagTests.swift:86:53: warning: main actor-isolated property 'contentView' can not be mutated from a nonisolated context"
+      },
+      {
+        "category": "actor_compile",
+        "line": 23,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/TaskPriorityTagTests-compile.log",
+        "text": "    |              |                                      `- warning: main actor-isolated property 'contentView' can not be mutated from a nonisolated context"
+      },
+      {
+        "category": "actor_compile",
+        "line": 36,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/TaskPriorityTagTests-compile.log",
+        "sourceLocation": {
+          "column": 79,
+          "line": 86,
+          "path": "/private/tmp/dabin-modularity-20261007/working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/TaskPriorityTagTests-42bae56a6f187ac2/TaskPriorityTagTests.swift"
+        },
+        "text": "/private/tmp/dabin-modularity-20261007/working/native/build/qa-cache/app-store-dd7b266c0e108e536c06b30d193963d42272a27ba279a192f18e97ca38b24612/TaskPriorityTagTests-42bae56a6f187ac2/TaskPriorityTagTests.swift:86:79: warning: call to main actor-isolated instance method 'close()' in a synchronous nonisolated context [#ActorIsolatedCall]"
+      },
+      {
+        "category": "actor_compile",
+        "line": 40,
+        "path": "working/native/build/qa/runs/20261007T081617931479Z-app-store/TaskPriorityTagTests-compile.log",
+        "text": "    |              |                                                                `- warning: call to main actor-isolated instance method 'close()' in a synchronous nonisolated context [#ActorIsolatedCall]"
+      },
+      {
+        "category": "compile",
+        "line": 530,
+        "path": "working/native/build/store-unsigned-20261007T084944Z/xcodebuild-release.log",
+        "text": "2026-10-07 11:50:54.905 appintentsmetadataprocessor[15782:1668848] warning: Metadata extraction skipped, no AppIntents.framework dependency found"
+      }
+    ]
+  },
+  "collectedAtUTC": "2026-10-07T09:04:11.304228+00:00",
+  "collectionStatus": "complete_with_native_failures",
+  "compiledReceiptCount": 133,
+  "compiledRequiredReceiptCount": 133,
+  "copiedArtifactHashes": {
+    "applied-refactor.json": "cd4bb4a44a594c183b9e233f842d6b4a8d6159f36c0792bdaec3f88b51362221",
+    "baseline.json": "10c172afd56db668aaa6cb2bb4b70f6d0ffe0554f54ebe0e8f16a380b46757b2",
+    "campaign-result.json": "81e1a22f26d1376afb7197923a8945ec2d12a43a96541452f97fe8b4c908d895",
+    "collect_verification.py": "284f05941f768dd1701f426231d83a55b26b8526890d4b4a83e1695607b3b2ac",
+    "comparison-verification.json": "1b7b67cab93a2d69619ab4aad8a5b6fd71abe6667e5ab4047515979fbcf29b0d",
+    "deterministic-project-launch.json": "abf297b387fa4a1ea3f317907d97759a5912789e7acf6f070c0711037fb8204d",
+    "diff-summary.json": "0a121ba442ee421bad6ee3c17a6b9b7e8a8b3d41cafbe4d294493fede7b90deb",
+    "documentation-corrections.patch": "60b0779daa6fba961c6d533a1067b1fa59c1e818a272e8ae9c21c612dd0f15e6",
+    "focused-regression-compiled-output-verification.json": "b9aa0e6a54c816289c956127c6a370248ce8147dc83f72023473a174c8289569",
+    "focused-regression-launch.json": "6d1cb8080e0d861e054067d2f92e8ebe69f9acec48b7531274c856d64fdb7586",
+    "focused-regression-native-report.json": "1f70e21382b89ee25d4a5bc8ab01778a94de8d4f00ebca2f4efe8f756c78bc2a",
+    "full-campaign-result.json": "a8d6444af8bb9270320c14c9a292c6b38f9fc907bc16327ae4a06b27ea5642d8",
+    "full-native-launch.json": "0b7f9533fe878a0e7441655241ee0c834b53e957ebcc7ce3433f60e26343400a",
+    "full-native-native-report.json": "533f5f611d7b5e5269d40a4a31a0eb3f97c8a2ee9e1533dd61a2673e845fa5a8",
+    "offline-packaging-result.json": "ae69975fda63b709b35d8350027320e5e7004f6c8109e702c94d6732f088bfa0",
+    "owned-changes.json": "8f8736f24eef300cc0dad8e028596d7f2b31a9792602e88c4984e8993715b4ee",
+    "performance-review.md": "538e6c461dc3c0a2ab79d98cf40bd953474698f3a9f743f2d3dbc9439d13ce53",
+    "preserve_evidence.py": "6adb005b5beec72673ed2b1f4b0fff57e228a4fbc01144c55ad62bc06743eda8",
+    "python-tool-tests-result.json": "130a32e553e3fb92798c65bf3c9a7a4da5f7cbed7d2562c27aff9a8c369ba9f0",
+    "refactor.patch": "0861c01399884480822066490776d9da33174090e7c96600a885fb6210177a20",
+    "run_comparison.py": "868296b5b59dfacfc8288320e466b34bd58f4b97f9891f183fd6310cf9526780",
+    "run_focused.py": "256400dbb1b1585aad724b0249c84411abd5fd5f60d822682a2f632db6042cad",
+    "run_full.py": "374e2ca968c709fe127db3050c1c1d50c771fc37214223c51c19d5a3aa573348",
+    "source-freeze.json": "af2ecf41b814eee78fbbb152631c4af96bd7f5ae794da709140203b62da5a75a",
+    "sustained-speed-launch.json": "dbb778c7a76dc276315b98686e3ac8fb5653c3066905d993319ce13849412317",
+    "sustained-speed-native-report.json": "c6c78e48665007803f8d7b4fbfd61664971ba4040389fec0c6922ae32a230340",
+    "unsigned-store-build-launch.json": "9c905166eb02002f8de4b41d0372b53b4bd165ade557b00df471d32009f828c6",
+    "verification-artifact-hashes.json": "b473fa59ff00f2901b11626c59d56c7700a3d224bdb4eb86b3579565f2c2b9f6"
+  },
+  "currentInventorySummary": {
+    "live": {
+      "fingerprint": "45414902e2ea23bd50bb9ce02eb76a5d6cc4576c98193f576e634549a91bee24",
+      "flatTestInventoryDifferences": {
+        "added": [],
+        "missing": []
+      },
+      "matchesFrozenProductionFingerprint": true,
+      "matchesFrozenProductionInputs": true,
+      "nonFocusCount": 78,
+      "productionInputCount": 220,
+      "registryMatchesFrozen": true,
+      "sourceCount": 158,
+      "uniqueRegistry": true,
+      "windowCount": 54
+    },
+    "snapshot": {
+      "fingerprint": "45414902e2ea23bd50bb9ce02eb76a5d6cc4576c98193f576e634549a91bee24",
+      "flatTestInventoryDifferences": {
+        "added": [],
+        "missing": []
+      },
+      "matchesFrozenProductionFingerprint": true,
+      "matchesFrozenProductionInputs": true,
+      "nonFocusCount": 78,
+      "productionInputCount": 220,
+      "registryMatchesFrozen": true,
+      "sourceCount": 158,
+      "uniqueRegistry": true,
+      "windowCount": 54
+    }
+  },
+  "diagnosticComparison": {
+    "archive": "comparison-evidence.zip",
+    "archiveSHA256": "9b50f6245f2c26defa1c73008bd5efffd71ef068902b505665f88f8ff40d8954",
+    "certifiesSustainedPerformance": false,
+    "hashIndex": "comparison-artifact-hashes.json",
+    "hashIndexSHA256": "14943b902b6b00f5c98ec72ca0b6dea306e01d06cb15621bb33763af1223d2d4",
+    "result": "comparison-result.json",
+    "resultSHA256": "248eb7acaf3e8508d564204ecd93fa4df2b2abea62894bca912de842da37a2a1"
+  },
+  "failedNativeSuites": {
+    "focused-regression": [],
+    "full-native": [
+      "WorkspaceZoomPerformanceTests"
+    ],
+    "sustained-speed": [
+      "WorkspaceZoomPerformanceTests"
+    ]
+  },
+  "finalLiveVerificationReceipt": {
+    "path": "final-live-verification.json",
+    "sha256": "8c274becc425f4cd51e3cc7dbe3e801e0f331d55e6695c8d060893acc44511f1"
+  },
+  "finalStageResults": {
+    "deterministic-project": {
+      "exitCode": 0,
+      "finishedAtUTC": "2026-10-07T08:50:55.999226+00:00",
+      "log": "/private/tmp/dabin-modularity-20261007/deterministic-project.log",
+      "seconds": 0.036,
+      "snapshotUnchanged": true,
+      "stage": "deterministic-project"
+    },
+    "full-native": {
+      "exitCode": 1,
+      "failedSuites": 1,
+      "finishedAtUTC": "2026-10-07T08:39:41.212624+00:00",
+      "log": "/private/tmp/dabin-modularity-20261007/full-native.log",
+      "passedSuites": 131,
+      "reportCoverage": "full_registered_suite",
+      "reportPath": "/private/tmp/dabin-modularity-20261007/full-native-native-report.json",
+      "reportStatus": "failed",
+      "seconds": 1403.317,
+      "snapshotUnchanged": true,
+      "stage": "full-native"
+    },
+    "sustained-speed": {
+      "exitCode": 1,
+      "failedSuites": 1,
+      "finishedAtUTC": "2026-10-07T08:49:44.866876+00:00",
+      "log": "/private/tmp/dabin-modularity-20261007/sustained-speed.log",
+      "passedSuites": 0,
+      "reportCoverage": "selected_suites",
+      "reportPath": "/private/tmp/dabin-modularity-20261007/sustained-speed-native-report.json",
+      "reportStatus": "failed",
+      "seconds": 603.572,
+      "snapshotUnchanged": true,
+      "stage": "sustained-speed"
+    },
+    "unsigned-store-build": {
+      "exitCode": 0,
+      "finishedAtUTC": "2026-10-07T08:50:55.942431+00:00",
+      "log": "/private/tmp/dabin-modularity-20261007/unsigned-store-build.log",
+      "seconds": 71.009,
+      "snapshotUnchanged": true,
+      "stage": "unsigned-store-build"
+    }
+  },
+  "frozenInputs": {
+    "live": {
+      "differences": [],
+      "expectedFingerprint": "945f7407ba6fb19adcfc9c0122e433813f3ad0fb2991da6e2060b1fa63b1e38b",
+      "inputCount": 396,
+      "matched": true,
+      "observedFingerprint": "945f7407ba6fb19adcfc9c0122e433813f3ad0fb2991da6e2060b1fa63b1e38b"
+    },
+    "snapshot": {
+      "differences": [],
+      "expectedFingerprint": "945f7407ba6fb19adcfc9c0122e433813f3ad0fb2991da6e2060b1fa63b1e38b",
+      "inputCount": 396,
+      "matched": true,
+      "observedFingerprint": "945f7407ba6fb19adcfc9c0122e433813f3ad0fb2991da6e2060b1fa63b1e38b"
+    }
+  },
+  "fullCollectorSHA256": "261560e50cf053f27440fe18fa853c57d67e93a4406bb253a15435c52d847d80",
+  "inputMatchesDescribeCollectionTimestamp": true,
+  "integrityProblems": [],
+  "metadataMismatch": {
+    "buildMatches": false,
+    "candidateBuild": "100",
+    "candidateVersion": "0.4.45",
+    "sourceBuild": "104",
+    "sourceVersion": "0.4.49",
+    "versionMatches": false
+  },
+  "nativeStageSummary": {
+    "focused-regression": {
+      "liveInputComparison": {
+        "differences": [],
+        "expectedFingerprint": "1870175c7a25a22faf043e4e58c77928da8188e8b82cdf01b52a378dace385df",
+        "inputCount": 220,
+        "matched": true,
+        "observedFingerprint": "1870175c7a25a22faf043e4e58c77928da8188e8b82cdf01b52a378dace385df"
+      },
+      "reportBelongsToLaunch": true,
+      "reportRegistryMatchesFrozen": true,
+      "reportedFingerprintRecomputed": "1870175c7a25a22faf043e4e58c77928da8188e8b82cdf01b52a378dace385df",
+      "requestedCount": 23,
+      "snapshotInputComparison": {
+        "differences": [],
+        "expectedFingerprint": "1870175c7a25a22faf043e4e58c77928da8188e8b82cdf01b52a378dace385df",
+        "inputCount": 220,
+        "matched": true,
+        "observedFingerprint": "1870175c7a25a22faf043e4e58c77928da8188e8b82cdf01b52a378dace385df"
+      },
+      "statusCounts": {
+        "passed": 23
+      }
+    },
+    "full-native": {
+      "liveInputComparison": {
+        "differences": [],
+        "expectedFingerprint": "bdf9a923a17b99de146abd51a76ed75fc814c94caadbeb540268deef976add6e",
+        "inputCount": 330,
+        "matched": true,
+        "observedFingerprint": "bdf9a923a17b99de146abd51a76ed75fc814c94caadbeb540268deef976add6e"
+      },
+      "reportBelongsToLaunch": true,
+      "reportRegistryMatchesFrozen": true,
+      "reportedFingerprintRecomputed": "bdf9a923a17b99de146abd51a76ed75fc814c94caadbeb540268deef976add6e",
+      "requestedCount": 132,
+      "snapshotInputComparison": {
+        "differences": [],
+        "expectedFingerprint": "bdf9a923a17b99de146abd51a76ed75fc814c94caadbeb540268deef976add6e",
+        "inputCount": 330,
+        "matched": true,
+        "observedFingerprint": "bdf9a923a17b99de146abd51a76ed75fc814c94caadbeb540268deef976add6e"
+      },
+      "statusCounts": {
+        "failed": 1,
+        "passed": 131
+      }
+    },
+    "sustained-speed": {
+      "liveInputComparison": {
+        "differences": [],
+        "expectedFingerprint": "37dbdde85bf44bd94c3f6e00965703d6eb849acce0eccb919a3cfd06df2b8735",
+        "inputCount": 198,
+        "matched": true,
+        "observedFingerprint": "37dbdde85bf44bd94c3f6e00965703d6eb849acce0eccb919a3cfd06df2b8735"
+      },
+      "reportBelongsToLaunch": true,
+      "reportRegistryMatchesFrozen": true,
+      "reportedFingerprintRecomputed": "37dbdde85bf44bd94c3f6e00965703d6eb849acce0eccb919a3cfd06df2b8735",
+      "requestedCount": 1,
+      "snapshotInputComparison": {
+        "differences": [],
+        "expectedFingerprint": "37dbdde85bf44bd94c3f6e00965703d6eb849acce0eccb919a3cfd06df2b8735",
+        "inputCount": 198,
+        "matched": true,
+        "observedFingerprint": "37dbdde85bf44bd94c3f6e00965703d6eb849acce0eccb919a3cfd06df2b8735"
+      },
+      "statusCounts": {
+        "failed": 1
+      }
+    }
+  },
+  "nativeWorkloadFailures": {
+    "full-native": 1,
+    "sustained-speed": 1
+  },
+  "pendingArtifacts": [],
+  "postVerificationDocumentationReceipt": {
+    "path": "documentation-corrections.json",
+    "sha256": "5edb56b65c639d3226241d93e513afe0ac76c75ffa85fbd0a86961618b8848ee"
+  },
+  "productionFingerprint": "45414902e2ea23bd50bb9ce02eb76a5d6cc4576c98193f576e634549a91bee24",
+  "rawEvidence": {
+    "binaryAndImageFixtureOutputsExcluded": true,
+    "extraArchiveMembers": 14,
+    "file": "raw-evidence.zip",
+    "indexedArtifactCount": 575,
+    "sha256": "db9256bda0844776d08ab4e05636b51d2b1f325e10cee459a56d73bc80e220ad"
+  },
+  "scope": "Existing refactor verification evidence only; no workload execution or source writes. Native timing is synthetic input/layout and runloop intervals. No performance-cause, leak, physical-latency, signed-readiness or delivery inference.",
+  "sourceBuild": "104",
+  "sourceVersion": "0.4.49",
+  "strictTimingObservations": [
+    {
+      "inputToLayoutP95Milliseconds": 42.02804166561691,
+      "inputWithin50ms": true,
+      "path": "outputs/full-native/zoom_performance_qa_output/performance.json",
+      "recordedGates": {
+        "inputToLayoutP95MaximumMilliseconds": 50,
+        "passed": false,
+        "steadyZoomTimerP95MaximumMilliseconds": 33
+      },
+      "steadyZoomTimerP95Milliseconds": 35.68783333321335,
+      "timerWithin33ms": false
+    },
+    {
+      "inputToLayoutP95Milliseconds": 52.772499999264255,
+      "inputWithin50ms": false,
+      "path": "outputs/sustained-speed/zoom_performance_qa_output/performance.json",
+      "recordedGates": {
+        "inputToLayoutP95MaximumMilliseconds": 50,
+        "passed": false,
+        "steadyZoomTimerP95MaximumMilliseconds": 33
+      },
+      "steadyZoomTimerP95Milliseconds": 36.19179166707909,
+      "timerWithin33ms": false
+    }
+  ],
+  "toolingSummary": {
+    "expectedThreeMetadataFailuresObserved": true,
+    "offline33Passed": true,
+    "sixInventoryTestsPassed": true
+  },
+  "unsignedStoreCandidates": [
+    {
+      "executableHashMatches": true,
+      "executableHashObserved": "68ffa982a8a7f74ccfae38afd642bc1980ce14011dbc185bf278839b94e43e7c",
+      "liveInputComparison": {
+        "differences": [],
+        "expectedFingerprint": "8e3e567177613c8c911a485ca488ee0b4b885e43fd282bed2e0a1ccababc539f",
+        "inputCount": 223,
+        "matched": true,
+        "observedFingerprint": "8e3e567177613c8c911a485ca488ee0b4b885e43fd282bed2e0a1ccababc539f"
+      },
+      "path": "working/native/build/store-unsigned-20261007T084944Z/store-candidate-receipt.json",
+      "receiptData": {
+        "app": "/private/tmp/dabin-modularity-20261007/working/native/build/store-unsigned-20261007T084944Z/derived-data/Build/Products/Release/DaBin.app",
+        "appStoreApproved": false,
+        "architecture": "arm64",
+        "archiveCreated": false,
+        "buildLog": "/private/tmp/dabin-modularity-20261007/working/native/build/store-unsigned-20261007T084944Z/xcodebuild-release.log",
+        "buildNumber": "104",
+        "builtAtUTC": "2026-10-07T08:50:55.777965+00:00",
+        "command": [
+          "xcrun",
+          "xcodebuild",
+          "-project",
+          "/private/tmp/dabin-modularity-20261007/working/native/DaBin.xcodeproj",
+          "-scheme",
+          "DaBin",
+          "-configuration",
+          "Release",
+          "-destination",
+          "generic/platform=macOS",
+          "-derivedDataPath",
+          "/private/tmp/dabin-modularity-20261007/working/native/build/store-unsigned-20261007T084944Z/derived-data",
+          "-disableAutomaticPackageResolution",
+          "CODE_SIGNING_ALLOWED=NO",
+          "CODE_SIGNING_REQUIRED=NO",
+          "CODE_SIGN_IDENTITY=",
+          "ARCHS=arm64",
+          "ONLY_ACTIVE_ARCH=NO",
+          "SWIFT_ACTIVE_COMPILATION_CONDITIONS=",
+          "INFOPLIST_FILE=/private/tmp/dabin-modularity-20261007/working/native/build/store-unsigned-20261007T084944Z/Store-Info.plist",
+          "build"
+        ],
+        "configuration": "Release",
+        "distributionChannel": "mac-app-store-unsigned-compile-only",
+        "executableSHA256": "68ffa982a8a7f74ccfae38afd642bc1980ce14011dbc185bf278839b94e43e7c",
+        "inputsUnchanged": true,
+        "minimumMacOS": "14.0",
+        "packagingPreflightExitCode": 0,
+        "preflightLog": "/private/tmp/dabin-modularity-20261007/working/native/build/store-unsigned-20261007T084944Z/unsigned-packaging-preflight.log",
+        "sandboxRuntimeVerified": false,
+        "schemaVersion": 1,
+        "sdk": {
+          "exitCode": 0,
+          "output": "27.0"
+        },
+        "signed": false,
+        "sourceFingerprint": "45414902e2ea23bd50bb9ce02eb76a5d6cc4576c98193f576e634549a91bee24",
+        "swift": {
+          "exitCode": 0,
+          "output": "swift-driver version: 1.168.6 Apple Swift version 6.4 (swiftlang-6.4.0.34.1 clang-2100.3.34.1)\nTarget: arm64-apple-macosx26.0"
+        },
+        "uploaded": false,
+        "version": "0.4.49",
+        "xcode": {
+          "exitCode": 0,
+          "output": "Xcode 27.0\nBuild version 27A266a"
+        },
+        "xcodebuildExitCode": 0
+      },
+      "sha256": "356148f14fe5e6d799618c0c04aaa256bce69ccc53d0437acf4f7e35deda6636",
+      "snapshotInputComparison": {
+        "differences": [],
+        "expectedFingerprint": "8e3e567177613c8c911a485ca488ee0b4b885e43fd282bed2e0a1ccababc539f",
+        "inputCount": 223,
+        "matched": true,
+        "observedFingerprint": "8e3e567177613c8c911a485ca488ee0b4b885e43fd282bed2e0a1ccababc539f"
+      },
+      "state": "available"
+    }
+  ]
+}
